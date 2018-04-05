@@ -136,7 +136,7 @@ class IndicatorForm(forms.ModelForm):
                                                                     </div>
                                                                 {% else %}
                                                                     <div style="line-height:1;"><strong>{{ pt.period }}</strong></div>
-                                                                    <div style="line-height:1; margin-top:3px;">{{ pt.start_date_formatted }} {% if pt.start_date %} - {% endif %} {{ pt.end_date_formatted }}</div>
+                                                                    <div style="line-height:1; margin-top:3px;">{{ pt.start_date_formatted|default_if_none:"" }} {% if pt.start_date %} - {% endif %} {{ pt.end_date_formatted|default_if_none:"" }}</div>
                                                                 {% endif %}
                                                             </td>
                                                             <td align="right" style="padding:1px; border:none; vertical-align: middle; width: 150px">
