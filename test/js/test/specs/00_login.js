@@ -24,7 +24,7 @@ describe('TolaActivity Login screen', function() {
             if ('TolaActivity' != LoginPage.title) {
                 LoginPage.gUsername = parms.username + '@mercycorps.org';
             }
-            expect(LoginPage.gError).includes("Couldn't find your Google Account");
+            expect(LoginPage.gError).to.include("Couldn't find your Google Account");
         }
     });
 
@@ -38,14 +38,14 @@ describe('TolaActivity Login screen', function() {
             LoginPage.username = parms.username;
             LoginPage.password = parms.password;
             LoginPage.login.click();
-            expect(LoginPage.error).includes('Login failed:');
+            expect(LoginPage.error).to.include('Login failed:');
         } else if (parms.baseurl.includes('localhost')) {
             LoginPage.googleplus.click();
             if ('TolaActivity' != LoginPage.title) {
                 LoginPage.gUsername = parms.username + '@mercycorps.org';
                 LoginPage.gPassword = parms.password;
             }
-            expect(LoginPage.gError).includes('Wrong password.');
+            expect(LoginPage.gError).to.include('Wrong password.');
         }
     });
 
