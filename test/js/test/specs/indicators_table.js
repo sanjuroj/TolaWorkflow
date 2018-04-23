@@ -8,30 +8,29 @@ const msec = 1000;
 const delay = 10*msec;
 
 describe('Program Indicators table', function() {
-  before(function() {
-      // Disable timeouts
-      this.timeout(0);
-      browser.windowHandleMaximize();
-      let parms = Util.readConfig();
-  
-      LoginPage.open(parms.baseurl);
-      if (parms.baseurl.includes('mercycorps.org')) {
-          LoginPage.username = parms.username;
-          LoginPage.password = parms.password;
-          LoginPage.login.click();
-      } else if (parms.baseurl.includes('localhost')) {
-          LoginPage.googleplus.click();
-          if (LoginPage.title != 'TolaActivity') {
-              LoginPage.gUsername = parms.username + '@mercycorps.org';
-              LoginPage.gPassword = parms.password;
-          }
-      }
-  });
+    before(function() {
+        // Disable timeouts
+        this.timeout(0);
+        browser.windowHandleMaximize();
+        let parms = Util.readConfig();
+    
+        LoginPage.open(parms.baseurl);
+        if (parms.baseurl.includes('mercycorps.org')) {
+            LoginPage.username = parms.username;
+            LoginPage.password = parms.password;
+            LoginPage.login.click();
+        } else if (parms.baseurl.includes('localhost')) {
+            LoginPage.googleplus.click();
+            if (LoginPage.title != 'TolaActivity') {
+                LoginPage.gUsername = parms.username + '@mercycorps.org';
+                LoginPage.gPassword = parms.password;
+            }
+        }
+    });
 
-  // FIXME: Still need to get WebDriver code out of this test
+    // FIXME: Still need to get WebDriver code out of this test
     it('should toggle table when a PI button is clicked', function() {
-        //NavBar.Indicators.click();
-        IndPage.clickIndicatorsLink();
+        NavBar.Indicators.click();
         if(browser.isVisible('div#ajaxloading')) {
             browser.waitForVisible('div#ajaxloading', delay, true);
         }
@@ -70,8 +69,7 @@ describe('Program Indicators table', function() {
         if (browser.isVisible('div#ajaxloading')) {
             browser.waitForVisible('div#ajaxloading', delay, true);
         }
-        //NavBar.Indicators.click();
-        IndPage.clickIndicatorsLink();
+        NavBar.Indicators.click();
         // Make list of Indicators buttons
         let buttons = TargetsTab.getProgramIndicatorButtons();
         // Click the first one to expand the table
@@ -89,20 +87,13 @@ describe('Program Indicators table', function() {
     });
 
     it('should be able to create PI by clicking the New Indicator button', function() {
-        IndPage.clickIndicatorsLink();
+        NavBar.Indicators.click();
         IndPage.clickNewIndicatorButton();
         IndPage.saveNewIndicator();
-        TargetsTab.setIndicatorName('New Indicator button test');
-        TargetsTab.setUnitOfMeasure('Bugs fixed');
-        TargetsTab.setLoPTarget(81);
-        TargetsTab.setBaseline(82);
-        TargetsTab.setTargetFrequency('Life of Program (LoP) only');
-        TargetsTab.saveIndicatorChanges();
     });
 
     it('should increase PI count after adding new indicator', function() {
-        IndPage.clickIndicatorsLink();
-        //NavBar.Indicators.click();
+        NavBar.Indicators.click();
         // Get old count
         let buttons = TargetsTab.getProgramIndicatorButtons();
         let buttonText = buttons[0].getText();
@@ -120,14 +111,12 @@ describe('Program Indicators table', function() {
     });
 
     it('should be able to delete PI by clicking its Delete button', function() {
-        IndPage.clickIndicatorsLink();
-        //NavBar.Indicators.click();
+        NavBar.Indicators.click();
         IndPage.deleteIndicator();
     });
 
     it('should decrease PI count after deleting indicator', function() {
-        IndPage.clickIndicatorsLink();
-        //NavBar.Indicators.click();
+        NavBar.Indicators.click();
         // Get old count
         let buttons = TargetsTab.getProgramIndicatorButtons();
         let buttonText = buttons[0].getText();
@@ -146,7 +135,7 @@ describe('Program Indicators table', function() {
     });
 
     it('should edit an indicator by clicking its Edit button', function() {
-        IndPage.clickIndicatorsLink();
+        NavBar.Indicators.click();
         IndPage.editIndicator();
         expect(browser.isVisible('div#indicator_modal_content'));
     });
