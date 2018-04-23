@@ -22,16 +22,10 @@ exports.config = {
             'test/specs/quarterly.js',
             'test/specs/semiannual.js',
             'test/specs/triannual.js',
-            'test/specs/count_indicators.js',
             'test/specs/create_indicator_form.js',
-            'test/specs/filtering_indicators.js',
             'test/specs/indicator_detail_form.js',
-            'test/specs/indicator_perf_metrics.js',
             'test/specs/indicators_landing_page.js',
-            'test/specs/indicators_table.js',
-            'test/specs/pct_indicators.js',
-            'test/specs/sorting_indicators.js',
-            'test/specs/target_actuals.js'
+            'test/specs/indicators_table.js'
         ],
         evidence: [
             'test/specs/attach_evidence.js',
