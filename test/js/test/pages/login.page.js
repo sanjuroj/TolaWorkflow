@@ -36,9 +36,12 @@ class LoginPage extends Page {
         browser.waitForVisible('div#passwordNext');
         browser.$('div#passwordNext').click();
         browser.waitUntil(function() {
-            return browser.getUrl().includes('mercycorps.org');
+            let url = browser.getUrl();
+            if (url.includes('mercycorps') || url.includes('localhost')) {
+                return url;
+            }
         });
-        //browser.waitForText('h4');
+        browser.waitForText('h4');
     }
 
     // Works everywhere (or at least it better)

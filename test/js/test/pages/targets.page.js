@@ -441,7 +441,9 @@ function pageName() {
  * @returns Nothing
  */
 function saveIndicatorChanges() {
-  let elem = $('input#submit-id-submit');
+  if (browser.isVisible('div.alert')) {
+    browser.waitForVisible('div.alert', true);
+  }
   browser.scroll('input#submit-id-submit');
   browser.$('input#submit-id-submit').click();
 }
