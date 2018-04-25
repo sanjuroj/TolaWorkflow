@@ -1,6 +1,8 @@
+import simplejson
 from datetime import datetime
-from django.template import Variable, VariableDoesNotExist
+from django.core.serializers import serialize
 from django import template
+from django.db.models import QuerySet
 from django.utils.translation import ugettext_lazy as _
 from indicators.models import Indicator
 
@@ -61,7 +63,7 @@ def symbolize_measuretype(value):
     return ""
 
 @register.filter('hash')
-def hash(object, attr):
+def hash(dic, attr):
     """
     Loops a key in a dictionary
     Usage:
@@ -72,8 +74,7 @@ def hash(object, attr):
         {% endfor %}
     {% endfor %}
     """
-    pseudo_context = {'object': object }
     try:
-        value = Variable('object.{}'.format(attr)).resolve(pseudo_context)
-    except VariableDoesNotExist:
-        value = None
+        return dic.get(attr)
+    except Exception:
+        return None
