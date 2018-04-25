@@ -22,21 +22,7 @@
   display: block;
 }
 
-/* do not change border color to green when form is validated */
-.was-validated .form-control:valid {
-  border:1px solid #ced4da;
-}
 
-/* keep the blue color shadow around form elements even if form is validated successfully */
-.form-control:focus,
-.was-validated .form-control.is-valid:focus,
-.was-validated .form-control:valid:focus {
-  color: #495057;
-  background-color: #fff;
-  border-color: #80bdff;
-  outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
 
 .td-no-side-borders {
   border-left: 0px !important;
@@ -313,6 +299,7 @@ select.listoption_filters
 }
 .inputs-in-a-box {
     background-color: #F5F5F5;
+    border: 0px;
 }
 
 .periodic-target, #pt_sum_targets {
@@ -330,6 +317,27 @@ select.listoption_filters
 #indicator_modal_body .form-row > label{
     font-weight: bold;
     color: #54585A;
+}
+
+@media (max-width: 575px) {
+    #indicator_modal_body .form-row > label{
+        text-align: left;
+    }
+}
+
+#indicator_modal_body .select2-selection {
+    border-radius: 0px;
+    border-color: #B8BABD;
+}
+
+#indicator_modal_body .select2-container--focus .select2-selection{
+  border-color: #3366cc;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
+}
+
+#id_key_performance_indicator {
+    margin-right: .5rem;
 }
 
 #id_level {
@@ -353,6 +361,7 @@ inputs on the indicator setup page/modal */
 /* In each case, the hieght of these divs changes when the has-error class is
 applied.  This keeps the inputs from getting taller when there is an error. */
 #div_id_target_frequency,
+#div_id_target_frequency .div-input-container,
 #div_id_target_frequency_start,
 #div_id_target_frequency_custom {
     height: 2.25rem;
