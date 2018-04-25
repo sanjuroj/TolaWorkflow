@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block page_title %}Program Indicators{% endblock %}
+
 {% block content %}
     <div id="numDataPoints" style="display: none;">{{ object.collecteddata_set.all.count }}</div>
     <div id="initialTargetFrequencyValue" style="display:none;">{{ object.target_frequency }}</div>
