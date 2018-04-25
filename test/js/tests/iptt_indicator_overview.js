@@ -96,7 +96,6 @@ describe('Indicator evidence percent indicators', function() {
 
     it('should set Start and End date fields based on time period selected');
     it('should allow selecting start and end months');
-    it('should allow choosing a relative time span and then modifying the month');
     it('should open report with filter panel(s) open');
     it('should display Targets and % Met fields for LoP target and actual');
     it('should require the start month to be older than the end date');
