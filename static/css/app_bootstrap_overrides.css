@@ -56,19 +56,66 @@ body > .container {
 .btn-primary {
     background-color: #00A49F;
     border-color: #00A49F;
+    color: #FFFFFF;
+}
+
+.btn-primary:hover {
+    background-color: #33BFBB;
+    border-color: #33BFBB;
+    color: #FFFFFF;
 }
 
 .btn-secondary {
     background-color: #71757B;
     border-color: #71757B;
+    color: #FFFFFF;
+}
+
+.btn-secondary:hover {
+    background-color: #94979C;
+    border-color: #94979C;
+    color: #FFFFFF;
 }
 
 .btn-light {
     background-color: transparent;
-    border-color: #54585A;
+    border-color: #94979C;
+    color: #54585A;
+}
+
+.btn-light:hover {
+    background-color: transparent;
+    border-color: #B8BABD;
+    color: #71757B;
+}
+
+.btn {
+    padding-right: 1.25rem;
+    padding-left: 1.25rem;
 }
 
 .help-link {
     color: #54585A;
     font-size: .875rem;
+}
+
+.form-control {
+    border-radius: 0px;
+    border-color: #B8BABD;
+}
+
+/* do not change border color to green when form is validated */
+.was-validated .form-control:valid {
+  border:1px solid #B8BABD;
+}
+
+/* keep the blue color shadow around form elements even if form is validated successfully */
+.form-control:focus,
+.was-validated .form-control.is-valid:focus,
+.was-validated .form-control:valid:focus {
+  color: #495057;
+  background-color: #fff;
+  border-color: #3366cc;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
 }

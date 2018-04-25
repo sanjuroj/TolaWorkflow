@@ -3,8 +3,8 @@
 
 <script>
     var validation_msgs = {};
+    var mediaSize = window.matchMedia("(max-width: 575px)")
     var userLang = "{{ LANGUAGE_CODE }}";
-
 
     function setupPopupCalendar() {
         $.datepicker.setDefaults($.datepicker.regional[userLang]);
