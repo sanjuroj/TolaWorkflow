@@ -223,14 +223,16 @@ function getIndicatorsDropdownList() {
 
 /**
  * Get a count of the indicators in the currently displayed program table
- * @returns {integer}j The number of indicators displayed in the program
+ * @returns {integer} The number of indicators displayed in the program
  * table
  */
 function getProgramIndicatorsTableCount(targetId) {
   if (browser.isVisible('div#ajaxloading')) {
     browser.waitForVisible('div#ajaxloading', 10*msec, true);
   }
-  let tableDiv = browser.$('div#toplevel_div').$('div.panel');
+
+  let toplevel = browser.$('div#toplevel_div');
+  let tableDiv = toplevel.$('div'+targetId);
   let table = tableDiv.$(targetId).$('table.hiddenTable');
   let rows = table.$$('tbody>tr>td>a');
   let rowCnt = 0;
@@ -300,7 +302,6 @@ function getPageName() {
  */
 function saveNewIndicator() {
   // Accept the default values
-  //browser.debug();
   let saveNew = $('form[name="most"]').$('input[value="save"]');
   saveNew.click();
 }

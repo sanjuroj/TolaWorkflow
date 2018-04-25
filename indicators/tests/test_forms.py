@@ -9,7 +9,7 @@ class TestFilterForm(TestCase):
 
     def test_form_populates(self):
         """The form should populate several fields from the db"""
-        request = RequestFactory().post('/')
+        request = RequestFactory().get('/')
         request.user = UserFactory()
         sectors = SectorFactory.create_batch(3)
         levels = LevelFactory.create_batch(3)
@@ -25,7 +25,7 @@ class TestFilterForm(TestCase):
         collected_data.site.add(expected2)
         collected_data.site.add(expected)
         SiteProfileFactory.create_batch(3)
-        form = IPTTReportFilterForm(*[request], **{'program': p})
+        form = IPTTReportFilterForm(**{'request': request, 'program': p})
 
         stuff = str(form)
         self.assertIn(expected.name, stuff)

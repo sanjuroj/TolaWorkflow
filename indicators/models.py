@@ -132,15 +132,15 @@ class Level(models.Model):
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
     class Meta:
-        verbose_name = ("Level")
+        verbose_name = _("Level")
 
     def __unicode__(self):
         return self.name
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if self.create_date is None:
             self.create_date = timezone.now()
-        super(Level, self).save()
+        super(Level, self).save(*args, **kwargs)
 
 
 class LevelAdmin(admin.ModelAdmin):

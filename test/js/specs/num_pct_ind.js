@@ -74,7 +74,6 @@ describe('Defining number and percent indicators', function() {
         TargetsTab.setNumTargetPeriods(2);
         TargetsTab.saveIndicatorChanges();
         expect(true == TargetsTab.getMeasureIsCumulative());
-
     });
 
     it('should add “%” to LoP target and Baseline fields of percentage indicators');

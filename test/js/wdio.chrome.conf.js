@@ -1,49 +1,43 @@
 exports.config = {
     execArgv: ['--inspect'],
     specs: [
-        './test/specs/**/*.js'
+        './tests/**/*.js'
     ],
     exclude: [
-        //'./test/specs/**/busticated_test.js'
+        //'./tests/**/busticated_test.js'
     ],
     suites: {
         login: [
-            'test/specs/00_login.js'
+            'tests/00_login.js'
         ],
         dashboard: [
-            'test/specs/dashboard.js'
+            'tests/dashboard.js'
         ],
         indicators: [
-            'test/specs/annual.js',
-            'test/specs/event.js',
-            'test/specs/lop_only.js',
-            'test/specs/mid-end_line.js',
-            'test/specs/monthly.js',
-            'test/specs/quarterly.js',
-            'test/specs/semiannual.js',
-            'test/specs/triannual.js',
-            'test/specs/count_indicators.js',
-            'test/specs/create_indicator_form.js',
-            'test/specs/filtering_indicators.js',
-            'test/specs/indicator_detail_form.js',
-            'test/specs/indicator_perf_metrics.js',
-            'test/specs/indicators_landing_page.js',
-            'test/specs/indicators_table.js',
-            'test/specs/pct_indicators.js',
-            'test/specs/sorting_indicators.js',
-            'test/specs/target_actuals.js'
+            'tests/annual.js',
+            'tests/event.js',
+            'tests/lop_only.js',
+            'tests/mid-end_line.js',
+            'tests/monthly.js',
+            'tests/quarterly.js',
+            'tests/semiannual.js',
+            'tests/triannual.js',
+            'tests/create_indicator_form.js',
+            'tests/indicator_detail_form.js',
+            'tests/indicators_landing_page.js',
+            'tests/indicators_table.js'
         ],
         evidence: [
-            'test/specs/attach_evidence.js',
-            'test/specs/collected_data_form.js',
-            'test/specs/indicator_evidence_dropdown.js',
-            'test/specs/indicator_evidence_table.js'
+            'tests/attach_evidence.js',
+            'tests/collected_data_form.js',
+            'tests/indicator_evidence_dropdown.js',
+            'tests/indicator_evidence_table.js'
         ],
         reports: [
-            'test/specs/export_reports.js',
-            'test/specs/grid_report.js',
-            'test/specs/prog_impact_assessment.js',
-            'test/specs/prog_impact_overview.js'
+            'tests/export_reports.js',
+            'tests/grid_report.js',
+            'tests/prog_impact_assessment.js',
+            'tests/prog_impact_overview.js'
         ]
     },
     // Capabilities

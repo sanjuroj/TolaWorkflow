@@ -112,9 +112,15 @@
                 <td align="right">
                   <!-- if it is a NUMBER indicator -->
                   {% if indicator.unit_of_measure_type == 1 %}
-                    {% with k|concat_string:"_sum" as sum %}
-                      {{ indicator|hash:sum|floatformat:"-2"|default_if_none:'' }}
-                    {% endwith %}
+                    {% if indicator.is_cumulative is True %}
+                      {% with k|concat_string:"_rsum" as sum %}
+                        {{ indicator|hash:sum|floatformat:"-2"|default_if_none:'' }}
+                      {% endwith %}
+                    {% else %}
+                      {% with k|concat_string:"_sum" as sum %}
+                        {{ indicator|hash:sum|floatformat:"-2"|default_if_none:'' }}
+                      {% endwith %}
+                    {% endif %}
                     <!-- if indicator is a PERCENT idnicator -->
                   {% elif indicator.unit_of_measure_type == 2 %}
                     {% if indicator.is_cumulative == True %}

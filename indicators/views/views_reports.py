@@ -165,7 +165,11 @@ class IPTT_ReportView(TemplateView):
         Generates queryset annotation(sum, avg, last data record). All three annotations are calculated
         because one of these three values will be used depending on how an indicator is configured.
         """
-        last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-id')
+        last_data_record = CollectedData.objects.filter(
+            indicator=OuterRef('pk'),
+            date_collected__gte=OuterRef('collecteddata__date_collected'),
+            date_collected__lte=OuterRef('collecteddata__date_collected'))\
+            .order_by('-id')
         for k, v in timeperiods.items():
             annotation_sum = Sum(
                 Case(
@@ -359,8 +363,17 @@ class IPTT_ReportView(TemplateView):
                         'id', 'number', 'name', 'program', 'lastlevel', 'unit_of_measure', 'direction_of_change',
                         'unit_of_measure_type', 'is_cumulative', 'baseline', 'lop_target', 'actualsum', 'actualavg',
                         'lastdata')\
-                    .annotate(**self.annotations)
-
+                    .annotate(**self.annotations)\
+                    .order_by('number', 'name')
+                for i, ind in enumerate(indicators):
+                    running_total = 0
+                    for k, v in timeperiods.items():
+                        if ind['unit_of_measure_type'] == Indicator.NUMBER and ind['is_cumulative'] is True:
+                            current_sum = ind["{}_sum".format(k)]
+                            if current_sum > 0:
+                                key = "{}_rsum".format(k)
+                                running_total = running_total + current_sum
+                                ind[key] = running_total
         elif reporttype == 'targetperiods':
             # get the full date range for periodic_targets setup for this program and period
             date_range = Indicator.objects.filter(program__in=[program_id], target_frequency=period).aggregate(
@@ -376,8 +389,6 @@ class IPTT_ReportView(TemplateView):
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid report type."))
             return context
-
-        indicators = indicators.order_by('number', 'name')
 
         context['start_date'] = report_start_date
         context['end_date'] = report_end_date
