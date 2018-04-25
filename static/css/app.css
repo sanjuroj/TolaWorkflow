@@ -33,6 +33,14 @@
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
 
+.fontsize-85 {
+    font-size: .85rem;
+}
+
+.text-muted-footer,
+.text-muted-footer:hover {
+    color: #54585A;
+}
 
 .filter {
     padding: 3px;
