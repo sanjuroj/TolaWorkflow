@@ -137,10 +137,10 @@ class Level(models.Model):
     def __unicode__(self):
         return self.name
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if self.create_date is None:
             self.create_date = timezone.now()
-        super(Level, self).save()
+        super(Level, self).save(*args, **kwargs)
 
 
 class LevelAdmin(admin.ModelAdmin):
