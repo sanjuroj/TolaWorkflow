@@ -3,9 +3,9 @@
  * SSO login page
  * @module LoginPage
  */
-'use strict';
 import Page from './page';
-const msecs = 1000;
+const delay = 1000; // milliseconds
+'use strict';
 
 class LoginPage extends Page {
     // These are for authentication using MC's SSO
@@ -24,21 +24,28 @@ class LoginPage extends Page {
     get gError() { return $('div.dEOOab.RxsGPe').getText(); }
 
     set gUsername(val) {
-        //FIXME: Replace pause with waiting for an element
-        browser.pause(msecs);
+        browser.waitForVisible('input#identifierId');
         // Works on chrome and firefox
         browser.$('form').$('input#identifierId').setValue(val);
         browser.waitForVisible('div#identifierNext');
         browser.$('div#identifierNext').click();
+        browser.pause(delay);
     }
     set gPassword(val) {
-        //FIXME: Replace pause with waiting for an element
-        browser.pause(msecs);
+        browser.waitForVisible('input[name="password"]');
         // Works on chrome and firefox
         browser.$('input[name="password"]').setValue(val);
+        browser.pause(delay);
         browser.waitForVisible('div#passwordNext');
         browser.$('div#passwordNext').click();
-        browser.waitForText('h4');
+        browser.pause(delay);
+        browser.waitUntil(function() {
+            let url = browser.getUrl();
+            if (url.includes('mercycorps') || url.includes('localhost')) {
+                return url;
+            }
+        });
+        //browser.waitForText('h4');
     }
 
     // Works everywhere (or at least it better)
