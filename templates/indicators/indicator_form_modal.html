@@ -36,10 +36,10 @@
     <div id="indicator_modal_header" style="width:100%" class="modal-title">
         <span id = "modalmessages" width="100%"></span>
         <h5 style="color:#94979c;">
-            {% if indicator.levels %}
-                {{ indicator.levels }} {% trans "indicator:" %}"
-            {% endif %}
-            {{ indicator.name|truncatechars:300 }}
+          {% if indicator.levels %}
+              {{ indicator.levels }} indicator:
+          {% endif %}
+          {{ indicator.name|truncatechars:300 }}
         </h5>
     </div>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
