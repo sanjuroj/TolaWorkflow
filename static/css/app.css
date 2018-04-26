@@ -426,7 +426,26 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 
+.blink {
+animation: blink 2s linear infinite;
+}
 
+@keyframes blink {
+0% {
+    opacity: .2;
+    color: blue;
+}
+50% {
+    opacity: .7;
+    color: red;
+}
+80% {
+    opacity: .8;
+}
+100% {
+    opacity: 1;
+}
+}
 /* Hidable side bar filter */
 
 .filter-wrapper {
