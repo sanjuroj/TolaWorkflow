@@ -8,7 +8,7 @@ import { assert, expect } from 'chai';
  * IPTT report: Program indicator overview
  * Tests from mc/issues/119
  */
-describe('Indicator evidence percent indicators', function() {
+describe('Indicator evidence numeric indicators', function() {
     before(function() {
         // Disable timeouts
         this.timeout(0);
@@ -90,13 +90,14 @@ describe('Indicator evidence percent indicators', function() {
         IpttPage.IndicatorOverviewProgram = 2;
         IpttPage.IndicatorOverviewTimePeriods = 'Years';
         IpttPage.IndicatorOverviewViewReport.click();
-        //FIXME: assert/expect something here
-        //expect('TBD' == 'PERIOD WILL GO HERE');
+        // If the table isn't there, we didn't make a report
+        expect(true == browser.isVisible('table#iptt_table'));
     });
 
-    it('should set Start and End date fields based on time period selected');
-    it('should allow selecting start and end months');
-    it('should open report with filter panel(s) open');
+    it('should open report with filter panel(s) open', function () {
+        expect(true == browser.isVisible('form#id_form_indicator_filter'));
+    });
+
     it('should display Targets and % Met fields for LoP target and actual');
     it('should require the start month to be older than the end date');
     it('should only display LoP targets, not intermediate targets');

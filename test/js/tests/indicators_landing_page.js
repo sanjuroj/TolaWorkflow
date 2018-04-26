@@ -1,9 +1,9 @@
-import { assert, expect } from 'chai';
 import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
+import { assert, expect } from 'chai';
 const msec = 1000;
 const delay = 10*msec;
 
@@ -35,9 +35,7 @@ describe("Programs dropdown", function () {
     });
     
     it('should exist', function() {
-        if (browser.isVisible('div#ajaxloading')) {
-          browser.waitForVisible('div#ajaxloading', delay, true);
-        }
+        Util.waitForAjax();
         IndPage.clickProgramsDropdown();
     });
     
@@ -102,9 +100,7 @@ describe("Programs dropdown", function () {
     // FIXME: Still need to get WebDriver code out of this test
     it('should toggle table by clicking Indicators button', function() {
         IndPage.clickIndicatorsLink();
-        if(browser.isVisible('div#ajaxloading')) {
-            browser.waitForVisible('div#ajaxloading', delay, true);
-        }
+        Util.waitForAjax();
         let buttons = TargetsTab.getProgramIndicatorButtons();
         for (let button of buttons) {
             let targetDiv = 'div' + button.getAttribute('data-target');
@@ -114,16 +110,12 @@ describe("Programs dropdown", function () {
     
             // Open it and verify
             button.click();
-            if(browser.isVisible('div#ajaxloading')) {
-                browser.waitForVisible('div#ajaxloading', delay, true);
-            }
+            Util.waitForAjax();
             isVisible = browser.isVisible(targetDiv);
             assert.equal(true, isVisible);
     
             button.click();
-            if(browser.isVisible('div#ajaxloading')) {
-                browser.waitForVisible('div#ajaxloading', delay, true);
-            }
+            Util.waitForAjax();
         }
     });
 });
