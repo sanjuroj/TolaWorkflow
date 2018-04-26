@@ -71,19 +71,14 @@ def hash(obj, attr):
     Usage:
     {{ object|getattr:attribute }}
     """
-    # if hasattr(obj, attr):
-    #     print("hash {} - {}".format(obj.id, obj.unit_of_measure_type))
-    #     if obj.unit_of_measure_type == Indicator.NUMBER:
-    #         print("hash: obj={}, attr={}".format(obj.id, attr))
-    #         return getattr(obj, attr)
-    #     else:
-    #         return 0
-    # elif hasattr(obj, 'has_key') and attr in obj:
+    # try:
     #     return obj.get(attr)
-    # else:
-    #     return 11
-    try:
+    # except Exception:
+    #     return None
+    if hasattr(obj, attr):
+        return getattr(obj, attr)
+    elif hasattr(obj, 'has_key') and attr in obj:
         return obj.get(attr)
-    except Exception:
+    else:
         return None
 
