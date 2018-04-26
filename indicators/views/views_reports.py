@@ -91,12 +91,14 @@ class IPTTReportQuickstartView(FormView):
 
 class IPTT_ReportView(TemplateView):
     template_name = 'indicators/iptt_report.html'
-    annotations = {}
     MONTHS_PER_MONTH = 1
     MONTHS_PER_QUARTER = 3
     MONTHS_PER_TRIANNUAL = 4
     MONTHS_PER_SEMIANNUAL = 6
     MONTHS_PER_YEAR = 12
+
+    def __init__(self, **kwars):
+        self.annotations = {}
 
     @staticmethod
     def _get_num_months(period):
