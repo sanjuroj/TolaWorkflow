@@ -7,6 +7,13 @@ import Util from '../lib/testutil';
 'use strict';
 
 class IpttPage extends Page {
+
+    get title() {
+        browser.waitForVisible('nav.navbar');
+        let h4 = browser.$('nav.navbar').$('h4');
+        return h4.getText();
+    }
+
     // IPTT: Program indicator overview
     /**
      * Return the PROGRAM dropdown for the IPTT indicator overview
@@ -16,47 +23,27 @@ class IpttPage extends Page {
     get IndicatorOverviewProgram() {
         return browser.$('select#id_timeperiods-program');
     }
+
     get IndicatorOverviewProgramList() {
     }
+
     get IndicatorOverviewTimePeriods() {
         return browser.$('select#id_timeperiods-timeperiods');
     }
+
     get IndicatorOverviewTimePeriodsList() {
     }
+
     get IndicatorOverviewTimeFrame() {
         return browser.$('input[name="timeperiods-timeframe"]');
     }
+
     get IndicatorOverviewNumRecent() {
         return browser.$('input#id_timeperiods-numrecentperiods');
     }
+
     get IndicatorOverviewViewReport() {
         return browser.$('button#id_submit_timeperiods_button');
-    }
-
-    // IPTT: Program target overview quickstart
-    get TargetOverviewProgram() {
-        return browser.$('select#id_targetperiods-program');
-    }
-    get TargetOverviewProgramList() {
-    }
-    get TargetOverviewTargetPeriods() {
-        return browser.$('select#id_targetperiods-targetperiods');
-    }
-    get TargetOverviewTargetPeriodsList() {
-    }
-    get TargetOverviewTimeFrame() {
-        return browser.$('input[name="targetperiods-timeframe"]');
-    }
-    get TargetOverviewNumRecent() {
-        return browser.$('input#id_targetperiods-numrecentperiods');
-    }
-    get TargetOverviewViewReport() {
-        return browser.$('button#id_submit_targetperiods_button');
-    }
-    get title() {
-        browser.waitForVisible('nav.navbar');
-        let h4 = browser.$('nav.navbar').$('h4');
-        return h4.getText();
     }
 
     set IndicatorOverviewProgram(val) {
@@ -80,6 +67,33 @@ class IpttPage extends Page {
         elem.click();
         elem.selectByVisibleText(val);
         elem.click();
+    }
+
+
+    // IPTT: Program target overview quickstart
+    get TargetOverviewProgram() {
+        return browser.$('select#id_targetperiods-program');
+    }
+
+    get TargetOverviewProgramList() { }
+
+    get TargetOverviewTargetPeriods() {
+        return browser.$('select#id_targetperiods-targetperiods');
+    }
+
+    get TargetOverviewTargetPeriodsList() {
+    }
+
+    get TargetOverviewTimeFrame() {
+        return browser.$('input[name="targetperiods-timeframe"]');
+    }
+
+    get TargetOverviewNumRecent() {
+        return browser.$('input#id_targetperiods-numrecentperiods');
+    }
+
+    get TargetOverviewViewReport() {
+        return browser.$('button#id_submit_targetperiods_button');
     }
 
     set TargetOverviewProgram(val) {

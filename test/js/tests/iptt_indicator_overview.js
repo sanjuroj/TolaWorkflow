@@ -56,14 +56,15 @@ describe('IPTT: Program indicator overview quickstart', function() {
         // 2 == Show N most recent periods
         IpttPage.open();
         let val = IpttPage.IndicatorOverviewTimeFrame;
+        //FIXME: magic number
         expect(val == 1);
     });
 
     it('should have a View Report button', function() {
-        let val = IpttPage.IndicatorOverviewViewReport;
-        expect(val != undefined);
-        expect(val != null);
-        expect('View Report' == val.getText());
+        let elem = IpttPage.IndicatorOverviewViewReport;
+        expect(elem != undefined);
+        expect(elem != null);
+        expect('View Report' == elem.getText());
     });
 
     it('should allow to specify N recent time periods', function() {
@@ -88,7 +89,7 @@ describe('IPTT: Program indicator overview quickstart', function() {
         expect(IpttPage.IndicatorOverviewViewReport.disabled == 'disabled');
     });
 
-    it('should create report if all params specified when View Report clicked', function() {
+    it('should create report if all params specified correctly', function() {
         IpttPage.open();
         //FIXME: magic number
         IpttPage.IndicatorOverviewProgram = 2;
