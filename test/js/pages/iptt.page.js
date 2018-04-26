@@ -1,12 +1,12 @@
 /**
  * Page object for the IPTT landing page
- * @module IPTTHome
+ * @module IpttPage
  **/
 import Page from './page';
 import Util from '../lib/testutil';
 'use strict';
 
-class IpttHome extends Page {
+class IpttPage extends Page {
     // IPTT: Program indicator overview
     /**
      * Return the PROGRAM dropdown for the IPTT indicator overview
@@ -40,7 +40,7 @@ class IpttHome extends Page {
     get TargetOverviewProgramList() {
     }
     get TargetOverviewTargetPeriods() {
-        return browser.$('select#id_targetperiods-timeperiods');
+        return browser.$('select#id_targetperiods-targetperiods');
     }
     get TargetOverviewTargetPeriodsList() {
     }
@@ -82,9 +82,42 @@ class IpttHome extends Page {
         elem.click();
     }
 
+    set TargetOverviewProgram(val) {
+        let elem = browser.$('select[name="targetperiods-program"]');
+        elem.click();
+        //FIXME: Hard-coded value
+        elem.selectByValue(452);
+        elem.click();
+    }
+
+    set TargetOverviewTimeFrame(val) {
+        if (val == 'Show all') {
+            browser.$('div#div_id_targetperiods-timeframe_0').click();
+        } else if (val == 'Most recent') {
+            browser.$('div#div_id_targetperiods-timeframe_1').click();
+        }
+    }
+
+    set TargetOverviewTargetPeriods(val) {
+        let elem = browser.$('select[name="targetperiods-targetperiods"]');
+        elem.click();
+        elem.selectByVisibleText(val);
+        elem.click();
+    }
+
     open() {
         let parms = Util.readConfig();
         super.open(parms.baseurl + 'indicators/iptt_quickstart');
     }
+
+    quickstart(source) {
+        browser.waitForVisible('div#id_div_top_quickstart_iptt');
+        let cards = browser.$$('div.card');
+        if (source == 'indicator') {
+            return cards[0].$('h5').getText();
+        } else if (source == 'target') {
+            return cards[1].$('h5').getText();
+        }
+    }
 }
-export default new IpttHome();
+export default new IpttPage();

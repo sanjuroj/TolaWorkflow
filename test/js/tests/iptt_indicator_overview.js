@@ -1,14 +1,14 @@
 import IpttPage from '../pages/iptt.page';
 import LoginPage from '../pages/login.page';
 import Util from '../lib/testutil';
-import { assert, expect } from 'chai';
+import { expect } from 'chai';
 'use strict';
 
 /**
- * IPTT report: Program indicator overview
+ * IPTT report: Program indicator overview quickstart
  * Tests from mc/issues/119
  */
-describe('Indicator evidence numeric indicators', function() {
+describe('IPTT: Program indicator overview quickstart', function() {
     before(function() {
         // Disable timeouts
         this.timeout(0);
@@ -31,7 +31,10 @@ describe('Indicator evidence numeric indicators', function() {
 
     it('should exist', function () {
         IpttPage.open();
-        expect('Program indicator overview' == IpttPage.title);
+        expect('Indicator Performance Tracking Table' ==
+            IpttPage.title);
+        expect('Program indicator overview' == 
+            IpttPage.quickstart('indicator'));
     });
 
     it('should have Program dropdown', function() {
@@ -72,12 +75,13 @@ describe('Indicator evidence numeric indicators', function() {
     });
 
     it('should require choosing a program to create report', function() {
-        //FIXME: magic number
+        // Select a time period but not program
         IpttPage.IndicatorOverviewTimePeriods = 'Years';
         expect(IpttPage.IndicatorOverviewViewReport.disabled == 'disabled');
     });
 
     it('should require select a time period to create report', function() {
+        // Select a program, but not a time period
         //FIXME: magic number
         IpttPage.IndicatorOverviewProgram = 2;
         IpttPage.IndicatorOverviewTimeFrame = 'Most recent';
@@ -94,12 +98,7 @@ describe('Indicator evidence numeric indicators', function() {
         expect(true == browser.isVisible('table#iptt_table'));
     });
 
-    it('should open report with filter panel(s) open', function () {
+    it('should open report with filter panel open', function () {
         expect(true == browser.isVisible('form#id_form_indicator_filter'));
     });
-
-    it('should display Targets and % Met fields for LoP target and actual');
-    it('should require the start month to be older than the end date');
-    it('should only display LoP targets, not intermediate targets');
-    it('should only display % Met for LoP targets, not intermediate targets');
 }); 

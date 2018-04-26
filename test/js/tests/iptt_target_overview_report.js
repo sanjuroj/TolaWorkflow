@@ -1,14 +1,16 @@
 import IpttPage from '../pages/iptt.page';
+import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
+import NavBar from '../pages/navbar.page';
+import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
-import { expect } from 'chai';
 'use strict';
 
 /**
- * IPTT report: Program target overview quickstart
+ * IPTT report: Program target overview report
  * Tests from mc/issues/119
  */
-describe('IPTT report: Program target overview quickstart', function() {
+describe('IPTT report: Program target overview report', function() {
     before(function() {
         // Disable timeouts
         this.timeout(0);
@@ -31,18 +33,16 @@ describe('IPTT report: Program target overview quickstart', function() {
    
     it('should exist', function () {
         IpttPage.open();
-        expect('Indicator Performance Tracking Table' == 
-            IpttPage.title);
-        expect('Program target overview' ==
-            IpttPage.quickstart('target'));
+        expect('Program indicator overview' == 
+            IpttPage.ProgramTargetOverview.title);
     });
 
     it('should have Program dropdown', function() {
         IpttPage.TargetOverviewProgram.click();
     });
 
-    it('should have a Target periods dropdown', function() {
-        IpttPage.TargetOverviewTargetPeriods.click();
+    it('should have a Time periods dropdown', function() {
+        IpttPage.TargetOverviewTimePeriods.click();
     });
 
     it('should allow to select time frame', function() {

@@ -29,8 +29,6 @@ describe('Program indicator overview report', function() {
         }        
     });
 
-    it('should display Targets and % Met fields for LoP target and actual');
-    it('should require the start month to be older than the end date');
     it('should only display LoP targets, not intermediate targets');
     it('should only display % Met for LoP targets, not intermediate targets');
 }); 
