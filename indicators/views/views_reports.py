@@ -365,8 +365,11 @@ class IPTT_ReportView(TemplateView):
                         'lastdata')\
                     .annotate(**self.annotations)\
                     .order_by('number', 'name')
+
+                # Calculate the cumulative sum across timeperiods for indicators that are NUMBER and CUMULATIVE
                 for i, ind in enumerate(indicators):
                     running_total = 0
+                    # Go through all timeperiods and calculate the running total
                     for k, v in timeperiods.items():
                         if ind['unit_of_measure_type'] == Indicator.NUMBER and ind['is_cumulative'] is True:
                             current_sum = ind["{}_sum".format(k)]

@@ -3,7 +3,7 @@ from datetime import timedelta
 from decimal import Decimal
 
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Avg
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils import timezone
@@ -640,6 +640,11 @@ class Indicator(models.Model):
             return _("+")
         else:
             return "N/A"
+
+    @property
+    def get_collecteddata_average(self):
+        avg = self.collecteddata_set.aggregate(Avg('achieved'))['achieved__avg']
+        return avg
 
 
 class PeriodicTarget(models.Model):
