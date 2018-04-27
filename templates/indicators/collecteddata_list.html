@@ -138,8 +138,7 @@
                         { title: "{% trans 'Date Collected' %}", data: "date_collected",
                                 "mRender": function ( data, type, row ) {
                                 var javascriptDate = new Date(row.date_collected).toISOString().slice(0, 10);
-                                return "<div class='date'>"+ javascriptDate+"<div>";}},
-                                // return "<div class='date'>"+ formatDate(javascriptDate)+"<div>";}},
+                                return "<div class='date'>"+ formatDate(javascriptDate)+"<div>";}},
                         { title: "{% trans 'Target' %}", data: "periodic_target",
                             "mRender": function(data, type, row) {
                                 var target = parseFloat(row.periodic_target).toFixed(2).replace(/[.,]00$/, "");
