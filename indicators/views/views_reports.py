@@ -176,6 +176,7 @@ class IPTT_ReportView(TemplateView):
             annotation_sum = Sum(
                 Case(
                     When(
+                        Q(unit_of_measure_type=Indicator.NUMBER) &
                         Q(collecteddata__date_collected__gte=datetime.strftime(v[0], '%Y-%m-%d')) &
                         Q(collecteddata__date_collected__lte=datetime.strftime(v[1], '%Y-%m-%d')),
                         then=F('collecteddata__achieved')
@@ -186,6 +187,8 @@ class IPTT_ReportView(TemplateView):
             annotation_avg = Avg(
                 Case(
                     When(
+                        Q(unit_of_measure_type=Indicator.PERCENTAGE) &
+                        Q(is_cumulative=False) &
                         Q(collecteddata__date_collected__gte=datetime.strftime(v[0], '%Y-%m-%d')) &
                         Q(collecteddata__date_collected__lte=datetime.strftime(v[1], '%Y-%m-%d')),
                         then=F('collecteddata__achieved')
@@ -196,6 +199,8 @@ class IPTT_ReportView(TemplateView):
             annotation_last = Max(
                 Case(
                     When(
+                        Q(unit_of_measure_type=Indicator.PERCENTAGE) &
+                        Q(is_cumulative=True) &
                         Q(collecteddata__date_collected__gte=datetime.strftime(v[0], '%Y-%m-%d')) &
                         Q(collecteddata__date_collected__lte=datetime.strftime(v[1], '%Y-%m-%d')),
                         then=Subquery(last_data_record.values('achieved')[:1])
