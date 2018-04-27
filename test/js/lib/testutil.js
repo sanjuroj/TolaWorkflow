@@ -30,15 +30,12 @@ function dp(s) { console.log('***%s***', s); }
  * A function to wait for an ajax loading screen
  * with a spinner to close
  */
-function waitForAjax(secs = 5) {
-    let iter = 1;
+function waitForAjax(secs = 2) {
     let visible = browser.isVisible('div#ajaxloading');
     while (visible == true) {
         browser.pause(secs * msec);
         visible = browser.isVisible('div#ajaxloading');
-        iter++;
     }
-    console.log('***iterations=%s***', iter);
 }
 
 
