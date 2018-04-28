@@ -31,9 +31,7 @@ describe('Program Indicators table', function() {
     // FIXME: Still need to get WebDriver code out of this test
     it('should toggle table when a PI button is clicked', function() {
         NavBar.Indicators.click();
-        if(browser.isVisible('div#ajaxloading')) {
-            browser.waitForVisible('div#ajaxloading', delay, true);
-        }
+        Util.waitForAjax();
 
         let buttons = TargetsTab.getProgramIndicatorButtons();
         for (let button of buttons) {
@@ -43,32 +41,24 @@ describe('Program Indicators table', function() {
             // If it's open, close it; start from a known state
             if (isVisible) {
                 button.click();
-                if (browser.isVisible('div#ajaxloading')) {
-                    browser.waitForVisible('div#ajaxloading', delay, true);
-                }
+                Util.waitForAjax();
             }
             expect(false == browser.isVisible(targetDiv), 'Unable to set initial state');
 
             // Open it
             button.click();
-            if (browser.isVisible('div#ajaxloading')) {
-                browser.waitForVisible('div#ajaxloading', delay, true);
-            }
+            Util.waitForAjax();
             expect(true == browser.isVisible(targetDiv));
 
             // Close it again
             button.click();
-            if (browser.isVisible('div#ajaxloading')) {
-                browser.waitForVisible('div#ajaxloading', delay, true);
-            }
+            Util.waitForAjax();
             expect(false == browser.isVisible(targetDiv));
         }
     });
 
     it('should show a detail screen when an indicator name is clicked', function() {
-        if (browser.isVisible('div#ajaxloading')) {
-            browser.waitForVisible('div#ajaxloading', delay, true);
-        }
+        Util.waitForAjax();
         NavBar.Indicators.click();
         // Make list of Indicators buttons
         let buttons = TargetsTab.getProgramIndicatorButtons();
@@ -79,9 +69,7 @@ describe('Program Indicators table', function() {
         // FIXME: needs to be from table, not dropdown
         let indicatorNameList = IndPage.getIndicatorsDropdownList();
         // Click the first one
-        if (browser.isVisible('div#ajaxloading')) {
-            browser.waitForVisible('div#ajaxloading', delay, true);
-        }
+        Util.waitForAjax();
         let indicatorName = indicatorNameList[0];
         IndPage.clickProgramIndicatorsButton(indicatorName);
     });

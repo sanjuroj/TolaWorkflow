@@ -1,34 +1,36 @@
-# Using Selenium WebDriver to Test the TolaActivity UI
+# Getting started with TolaActivity Test Suite (TATS)
 
 This document describes how to set up your system to test TolaActivity
-front-end code. The tools of choice are:
+front-end code using TATS, the TolaActivity Test Suite. The tools of
+choice are:
 
 * [Selenium WebDriver](http://www.seleniumhq.org/) for browser automation
 * [Chrome](https://www.google.com/chrome/) and/or
   [Firefox](https://www.mozilla.org/firefox/) browsers
-* [WebdriverIO](), a test automation framework for NodeJS that supports both
-  synchronous and asynchronous JavaScript
+* [WebdriverIO](), a test automation framework for NodeJS that supports
+  both synchronous and asynchronous JavaScript
 * [Selenium Server](http://www.seleniumhq.org/) for remote browsers
   (think Saucelabs, BrowserStack, or TestBot), a WebdriverIO dependency
 * [MochaJS test framework](https://mochajs.org/) with assorted plugins,
   particularly the [ChaiJS assertion library](http://chaijs.com/)
 * [Allure](http://allure.qatools.ru/), a test reporter
 
-If you're reading this, you've already probably cloned the repo. If you
+If you're reading this, you've probably already cloned the repo. If you
 haven't, do that, then come back here. Commands listed in this document
 assume you're working from the testing directory, _test/js_ in the
 TolaActivity repo, unless noted otherwise. If you are impatient, start
 with the next section, "The Big Green Button<sup>©</sup>: Quickstart
 guide for the impatient".  If you want to understand more about how
-this thing works, start with the following section, "Manual installation
-and testing".
+to set up and configure TATS works, start with the section, "Manual 
+installation and testing".
 
 ## Runtime configuration files
 
-The framework includes various WebdriverIO, or _WDIO_, runtime configuration
-files. They control which browsers run, which tests get run, and, in some
-cases, start the server process on your behalf. The following are summary
-descriptions of each file.
+The framework includes various WebdriverIO, or _WDIO_, runtime
+configuration files. They control most of TATS' runtime behavior, such as
+which browsers run, which tests to execute, and configure the tests'
+runtime environment. The following are summary descriptions of each
+file.
 
 - **wdio.auto.conf.js** -- This configuration runs all of the tests
   against all of the browsers all of the time. If you feel impatient,
@@ -41,14 +43,12 @@ descriptions of each file.
   the test framework using Chrome's headless mode. I know, right? I didn't
   know Chrome _had_ a headless mode. This option executes all of the tests
   against the Chrome browser.
-- **wdio.manual.conf.js** -- Runs all of the tests in the suite agsinst
-  both the Chrome and the Firefox browsers.
 
 ## The Big Green Button<sup>©</sup>: Quickstart guide for the impatient
 
 ![](docs/big_green_button.jpg)
 
-If you have a functional development system with node and npm installed,
+If you have a functional development system with Node and NPM installed,
 the following sequence of steps and commands will get you going:
 
 ```
@@ -109,7 +109,8 @@ First, download and install all the bits you'll need. These include
 NodeJS, Firefox, Chrome, Selenium, Mocha, and Chai. If you are already
 using NPM, you can use it to install mocha and chai, but do not use
 the NPM-packaged Chrome or Firefox webdrivers because they might not
-be current.
+be current. Version numbers in the steps below were current at the 
+time this document was last updated.
 
 1. Install the latest versions of the
 [Chrome](https://www.google.com/chrome/browser) and
@@ -118,22 +119,21 @@ be current.
 [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver).
 Place it anywhere in your system $PATH. You may also keep it in
 the testing directory of your local repo because it is gitignored.
-The current version (at the time of writing) is 2.34.
+The current version (when this document was last updated) is 2.38.
 1. Download and install Firefox's Selenium browser driver,
 [geckodriver](https://github.com/mozilla/geckodriver/releases).
 Place it anywhere in your system $PATH. You can also keep it in
 the testing directory of your local repo because it is gitignored.
-The current version (at the time of writing) is 0.19.1.
+The current version (as of the last doc update) is 0.20.1.
 1. Download [Selenium Server](https://goo.gl/hvDPsK) and place it
 the testing directory. The current version (at the time of writing) is
-3.9.1.
+3.11.0.
 1. Install [NodeJS](https://nodjs.org) so you can use the
 [Node Package Manager](https://www.npmjos.com), `npm`,  to install
 other JavaScript packages.
-1. Finally, use `npm` to install all of the JavaScript language 
-bindings for Selenium, the Mocha test framework, the Chai plugin for
-Mocha, and WebDriverIO, and all of the other assorted dependencies
-bits:
+1. Finally, use `npm` to install all of the JavaScript language bindings
+for Selenium, the Mocha test framework, the Chai plugin for Mocha,
+WebDriverIO, and all of the other assorted dependencies bits:
 
 ```
 $ npm install 
@@ -153,39 +153,28 @@ live data.**
 1. Start the Seleniuim server (targeting the Firefox browser):
 ```
 $ cd test/js
-$ java -jar -Dwebdriver.gecko.driver=./geckodriver selenium-server-standalone-3.9.1.jar &> selenium-server.log &
+$ java -jar -Dwebdriver.gecko.driver=./geckodriver selenium-server-standalone-3.11.0.jar &> selenium-server.log &
 ```
 1. Execute the test suite:
 ```
 $ cd test/js
 $ ./node_modules/.bin/wdio wdio.gecko.conf.js
-
+Debugger listening on ws://127.0.0.1:9229/3462dfd8-56a5-41cd-abf6-5f4d2788f8c1
+For help see https://nodejs.org/en/docs/inspector
 ------------------------------------------------------------------
-[firefox #0-0] Session ID: db980c3deae94de17354e7000ee25288
-[firefox #0-0] Spec: /Users/kwall/repos/TolaActivity/test/js/test/specs/dashboard.js
-[firefox #0-0] Running: firefox
-[firefox #0-0]
-[firefox #0-0] TolaActivity Dashboard
-[firefox #0-0]   ✓ should require unauthenticated users to login
-[firefox #0-0]   ✓ should have a page header
-[firefox #0-0]   ✓ should have a TolaActivity link
-[...]
+[chrome #0-0] Session ID: a826ed524be3b055a31d79d79205da16
+[chrome #0-0] Spec: /home/kwall/Work/TolaActivity/test/js/tests/00_login.js
+[chrome #0-0] Running: chrome
+
+_output deleted_
+
 ==================================================================
-Number of specs: 6
+Number of specs: 30
 
 
-72 passing (109.10s)
-70 skipped
-1 failing
-
-1) Program Indicators table should toggle table when a PI Indicators button is clicked:
-expected true to equal false
- running chrome
-running firefox
-AssertionError: expected true to equal false
-    at Context.<anonymous> (/home/kwall/Work/TolaActivity/test/js/test/specs/indicators_table.js:51:14)
-    at new Promise (<anonymous>)
-    at new F (/home/kwall/Work/TolaActivity/test/js/node_modules/core-js/library/modules/_export.js:35:28)
+123 passing (515.70s)
+64 skipped
+3 failing
 ```
 
 ## View the results
@@ -221,7 +210,6 @@ be patient. Alternatively, you can use the `allure serve` command,
 which will first generate the reports and then open a browser window as
 described above.
 
-
 ## Don't want to run everything?
 To run the tests in a single file, specify `--spec path/to/file`.
 For example, to run only the dashboard tests in auto mode, the command
@@ -231,7 +219,7 @@ would be
 $ ./node_modules/.bin/wdio wdio.auto.conf.js --spec test/specs/dashboard.js
 ```
 
-You can also use the the `--spec` argument as a crude regex and spec
+You can also use the the `--spec` argument as a crude regex agsinst test
 filenames. For example, to run any test that contains _invalid_ in the
 filename, this command would do it:
 
@@ -241,21 +229,23 @@ $ ./node_modules/.bin/wdio --spec invalid
 
 Better still, you can execute a suite of related tests by specifying
 `--suite _name_`, where `_name_` is one the names defined in the 
-_suites:_ section of the config file. For example, the _login_ suite
-is defined in the wdio.\*.conf.js files like so:
+_suites:_ section of the config file. For example, the _evidence suite
+is defined in the _wdio.\*.conf.js_ files like so:
 
 ```
-    suites: {
-        login: [
-            'test/specs/login.js',
-            'test/specs/password_invalid.js',
-            'test/specs/username_invalid.js'
+        evidence: [
+           'tests/attach_evidence.js',
+           'tests/collected_data_form.js',
+           'tests/indicator_evidence_dropdown.js',
+           'tests/indicator_evidence_table.js'
         ],
+
 ```
 
 Execute it thus:
+
 ```
-$ ./node_modules/.bin/wdio --suite login
+$ ./node_modules/.bin/wdio --suite evidence
 ```
 
 ## Looking for framework documentation?

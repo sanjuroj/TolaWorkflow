@@ -1,9 +1,10 @@
-var assert = require('chai').assert;
-var expect = require('chai').expect;
+import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
-var IndPage = require('../pages/indicators.page.js');
-var util = require('../lib/testutil.js');
+import Util from '../lib/testutil';
+import { assert, expect } from 'chai';
+'use strict';
+
 const msec = 1000;
 
 describe('Create an Indicator form', function() {
@@ -12,7 +13,7 @@ describe('Create an Indicator form', function() {
         this.timeout(0);
         browser.windowHandleMaximize();
     
-        let parms = util.readConfig();
+        let parms = Util.readConfig();
         LoginPage.open(parms.baseurl);
         if (parms.baseurl.includes('mercycorps.org')) {
             LoginPage.username = parms.username;
@@ -88,7 +89,6 @@ describe('Create an Indicator form', function() {
     IndPage.clickIndicatorsLink();
     IndPage.clickNewIndicatorButton();
     IndPage.saveNewIndicator();
-    browser.waitForVisible('h4');
     let title = browser.$('h4').getText().trim();
     expect(title.includes('Goal indicator: Temporary'),
       'Unexpected title text on the indicator detail screen');
@@ -98,8 +98,8 @@ describe('Create an Indicator form', function() {
     IndPage.clickIndicatorsLink();
     IndPage.clickNewIndicatorButton();
     IndPage.saveNewIndicator();
-    let control = $('form#indicator_update_form').$('input[value="Reset"]');
-    assert.equal(true, control.isVisible(), 'Reset button is not visible');
-    control.click();
+    let resetBtn = $('form#indicator_update_form').$('input[value="RESET"]');
+    assert.equal(true, resetBtn.isVisible(), 'Reset button is not visible');
+    resetBtn.click();
   });
 });

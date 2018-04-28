@@ -2,6 +2,10 @@
  * Hodgepodge of helper code that doesn't fit elsewhere
  * @module TestUtil
  */
+'use strict';
+
+// Milliseconds
+const msec = 1000;
 
 /**
  * Read the configuration file to get user session data (username,
@@ -22,5 +26,20 @@ function readConfig(configFile = 'config.json') {
  */
 function dp(s) { console.log('***%s***', s); }
 
+/**
+ * A function to wait for an ajax loading screen
+ * with a spinner to close
+ */
+function waitForAjax(secs = 2) {
+    let visible = browser.isVisible('div#ajaxloading');
+    while (visible == true) {
+        browser.pause(secs * msec);
+        visible = browser.isVisible('div#ajaxloading');
+    }
+}
+
+
+
 exports.dp = dp;
 exports.readConfig = readConfig;
+exports.waitForAjax = waitForAjax;
