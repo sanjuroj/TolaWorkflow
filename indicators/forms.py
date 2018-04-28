@@ -185,11 +185,11 @@ class ReportFormCommon(forms.Form):
     prefix = 'timeperiods'
 
     EMPTY = 0
-    YEARS = 1
-    SEMIANNUAL = 2
-    TRIANNUAL = 3
-    QUARTERS = 4
-    MONTHS = 5
+    YEARS = Indicator.ANNUAL
+    SEMIANNUAL = Indicator.SEMI_ANNUAL
+    TRIANNUAL = Indicator.TRI_ANNUAL
+    QUARTERS = Indicator.QUARTERLY
+    MONTHS = Indicator.MONTHLY
     TIMEPERIODS_CHOICES = (
         (EMPTY, "---------"),
         (YEARS, _("Years")),
