@@ -25,7 +25,7 @@
           <caption>Indicator Performance Tracking Table</caption>
           <colgroup scope="col" span="9"></colgroup>
           <colgroup scope="col" span="3" class="lopCols"></colgroup>
-          <colgroup scope="col" span="{{ timeperiods|length }}"></colgroup>
+          <colgroup scope="col" span="{{ report_date_ranges|length }}"></colgroup>
           <thead class="thead-light">
           <tr>
             <td colspan="9" id="id_td_iptt_program_name">
@@ -34,7 +34,7 @@
             <th scope="colgroup" colspan="3" class="text-center">
               {% trans "LIFE OF PROGRAM" %}
             </th>
-            {% for k, v in timeperiods.items %}
+            {% for k, v in report_date_ranges.items %}
               <th scope="col" class="text-center" style="min-width: 180px;">
                 {{ k }}<br>
                 <small>{{ v.0|date:"M d, Y" }} - {{ v.1|date:"M d, Y" }}</small>
@@ -54,7 +54,7 @@
           <th scope="col">{% trans "TARGET" %}</th>
           <th scope="col">{% trans "ACTUAL" %}</th>
           <th scope="col" style="min-width: 70px;">{% trans "% MET" %}</th>
-          {% for _ in timeperiods.items %}
+          {% for _ in report_date_ranges.items %}
             <th scope="col" class="text-right">{% trans "ACTUALS" %}</th>
           {% endfor %}
           </tr>
@@ -108,7 +108,7 @@
                   {% endif %}
                 {% endif %}
               </td>
-              {% for k, v in timeperiods.items %}
+              {% for k, v in report_date_ranges.items %}
                 <td align="right">
                   <!-- if it is a NUMBER indicator -->
                   {% if indicator.unit_of_measure_type == 1 %}

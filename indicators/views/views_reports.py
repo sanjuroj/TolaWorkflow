@@ -391,12 +391,12 @@ class IPTT_ReportView(TemplateView):
             date_ranges = self._get_date_range_n_numperiods(reporttype, program_id, period)
             report_start_date = self._get_first_period(date_ranges[0], num_months_in_period)
             num_periods = date_ranges[2]
-            timeperiods = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
+            report_date_ranges = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
             try:
-                report_end_date = timeperiods[timeperiods.keys()[-1]][1]
+                report_end_date = report_date_ranges[report_date_ranges.keys()[-1]][1]
             except IndexError:
                 report_end_date = None
-            self.annotations = self._generate_timperiod_annotations(timeperiods)
+            self.annotations = self._generate_timperiod_annotations(report_date_ranges)
             # update the queryset with annotations for timeperiods
             indicators = indicators.annotate(**self.annotations).order_by('number', 'name')
 
@@ -404,7 +404,7 @@ class IPTT_ReportView(TemplateView):
             for i, ind in enumerate(indicators):
                 running_total = 0
                 # Go through all timeperiods and calculate the running total
-                for k, v in timeperiods.items():
+                for k, v in report_date_ranges.items():
                     if ind['unit_of_measure_type'] == Indicator.NUMBER and ind['is_cumulative'] is True:
                         current_sum = ind["{}_sum".format(k)]
                         if current_sum > 0:
@@ -413,12 +413,23 @@ class IPTT_ReportView(TemplateView):
                             ind[key] = running_total
 
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
-            date_ranges = self._get_date_range_n_numperiods(reporttype, program_id, period)
-            report_start_date = date_ranges[0]
-            report_end_date = date_ranges[1]
-            num_periods = date_ranges[2]
-            timeperiods = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
-            self.annotations = self._generate_timperiod_annotations(timeperiods)
+            if period == Indicator.LOP:
+                report_date_ranges = None
+                report_start_date = None
+                report_end_date = None
+                # indicators = indicators.filter(target_frequency=period).order_by('number', 'name')
+                self.annotations = {}
+            elif period == Indicator.MID_END:
+                pass
+            elif period == Indicator.EVENT:
+                pass
+            else:
+                date_ranges = self._get_date_range_n_numperiods(reporttype, program_id, period)
+                report_start_date = date_ranges[0]
+                report_end_date = date_ranges[1]
+                num_periods = date_ranges[2]
+                report_date_ranges = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
+                self.annotations = self._generate_timperiod_annotations(report_date_ranges)
             indicators = indicators.filter(target_frequency=period)\
                 .annotate(**self.annotations).order_by('number', 'name')
         else:
@@ -428,7 +439,7 @@ class IPTT_ReportView(TemplateView):
 
         context['start_date'] = report_start_date
         context['end_date'] = report_end_date
-        context['timeperiods'] = timeperiods
+        context['report_date_ranges'] = report_date_ranges
         context['indicators'] = indicators
         context['program'] = program
         context['reporttype'] = reporttype

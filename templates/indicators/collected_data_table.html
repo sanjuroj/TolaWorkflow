@@ -263,10 +263,10 @@
                 </strong>
             </td>
             <td colspan="2" align="right">
-              <p class="small text-left font-italic font-weight-light blink">
+              <p class="small text-left font-italic font-weight-light">
                 {% if indicator.unit_of_measure_type == 1 %}
                   {% if indicator.is_cumulative == True %}
-                    {% trans "*Results are commulative. The Life of Program result mirrors the latest period result." %}
+                    {% trans "*Results are cumulative. The Life of Program result mirrors the latest period result." %}
                   {% elif indicator.is_cumulative == False %}
                     {% trans "*Results are non-cumulative. The Life of Program result is the sum of target periods results." %}
                   {% endif %}
