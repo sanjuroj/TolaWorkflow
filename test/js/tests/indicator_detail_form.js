@@ -31,8 +31,8 @@ describe('Indicator creation detail form', function() {
     NavBar.Indicators.click();
     assert.equal('Program Indicators', IndPage.getPageName());
     IndPage.createBasicIndicator();
-    browser.waitForVisible('h4');
-    let title = browser.$('h4').getText().trim();
+    browser.waitForVisible('h2');
+    let title = browser.$('h2').getText().trim();
     expect(title.includes('Goal indicator: Temporary'),
       'Unexpected title text on the indicator detail screen');
   });

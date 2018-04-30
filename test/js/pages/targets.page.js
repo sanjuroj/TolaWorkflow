@@ -418,9 +418,9 @@ function open(url = parms.baseurl) {
  * Return the page title
  * @returns {string} The title of the current page
  */
-function pageName() {
-  // On this page, the "title" is actually the <h4> caption
-  return browser.$('h4').getText();
+function getPageName() {
+  // On this page, the "title" is actually the <h2> caption
+  return browser.$('h2').getText();
 }
 
 /**
@@ -645,7 +645,6 @@ exports.getTargetInputBoxes = getTargetInputBoxes;
 exports.getTargetValueErrorHint = getTargetValueErrorHint;
 exports.getUnitOfMeasure = getUnitOfMeasure;
 exports.open = open;
-exports.pageName = pageName;
 exports.saveIndicatorChanges = saveIndicatorChanges;
 exports.setBaseline = setBaseline;
 exports.setBaselineNA = setBaselineNA;

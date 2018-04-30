@@ -89,7 +89,7 @@ describe('Create an Indicator form', function() {
     IndPage.clickIndicatorsLink();
     IndPage.clickNewIndicatorButton();
     IndPage.saveNewIndicator();
-    let title = browser.$('h4').getText().trim();
+    let title = browser.$('h2').getText().trim();
     expect(title.includes('Goal indicator: Temporary'),
       'Unexpected title text on the indicator detail screen');
   });
