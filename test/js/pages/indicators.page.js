@@ -112,7 +112,8 @@ function clickProgramIndicatorsButton(programName) {
  * @returns Nothing
  */
 function clickResetButton() {
-  browser.$('input[value="Reset"]').click();
+  browser.scroll('input[value="RESET"]');
+  browser.$('input[value="RESET"]').click();
 }
 
 /**
