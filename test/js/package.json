@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "test": "mocha --require babel-register --es_staging --harmony --no-timeouts",
+        "test": "mocha --require babel-register --es_staging --harmony --no-timeouts --retries 0",
         "wdio": "node --require babel-register ./node_modules/.bin/wdio"
     },
     "devDependencies": {
