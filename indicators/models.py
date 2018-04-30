@@ -648,6 +648,9 @@ class Indicator(models.Model):
 
 
 class PeriodicTarget(models.Model):
+    MIDLINE = _('Midline')
+    ENDLINE = _('Endline')
+
     indicator = models.ForeignKey(
         Indicator, null=False, blank=False, verbose_name=_("Indicator")
     )
@@ -729,9 +732,9 @@ class CollectedData(models.Model):
         verbose_name=_("Actual"), max_digits=20, decimal_places=2,
         help_text=" ")
 
-    cumulative_achieved = models.DecimalField(
-        verbose_name=_('Cumulative Actuals'), max_digits=20, decimal_places=2,
-        null=True, blank=True, help_text=" ")
+    # cumulative_achieved = models.DecimalField(
+    #     verbose_name=_('Cumulative Actuals'), max_digits=20, decimal_places=2,
+    #     null=True, blank=True, help_text=" ")
 
     disaggregation_value = models.ManyToManyField(
         DisaggregationValue, blank=True, help_text=" ",
@@ -799,18 +802,18 @@ class CollectedData(models.Model):
             self.create_date = timezone.now()
         self.edit_date = timezone.now()
 
-        if self.achieved is not None:
-            # calculate the cumulative sum of achieved value
-            total_achieved = CollectedData.objects.filter(
-                indicator=self.indicator,
-                create_date__lt=self.create_date)\
-                .aggregate(Sum('achieved'))['achieved__sum']
+        # if self.achieved is not None:
+        #     # calculate the cumulative sum of achieved value
+        #     total_achieved = CollectedData.objects.filter(
+        #         indicator=self.indicator,
+        #         create_date__lt=self.create_date)\
+        #         .aggregate(Sum('achieved'))['achieved__sum']
 
-            if total_achieved is None:
-                total_achieved = 0
+        #     if total_achieved is None:
+        #         total_achieved = 0
 
-            total_achieved = total_achieved + self.achieved
-            self.cumulative_achieved = total_achieved
+        #     total_achieved = total_achieved + self.achieved
+        #     self.cumulative_achieved = total_achieved
         super(CollectedData, self).save()
 
     def achieved_sum(self):

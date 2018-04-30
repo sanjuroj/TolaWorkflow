@@ -167,7 +167,7 @@ class IPTT_ReportView(TemplateView):
 
         return period_start_date
 
-    def _generate_timperiod_annotations(self, timeperiods):
+    def _generate_timperiod_annotations(self, timeperiods, period):
         """
         Generates queryset annotation(sum, avg, last data record). All three annotations are calculated
         because one of these three values will be used depending on how an indicator is configured.
@@ -177,51 +177,120 @@ class IPTT_ReportView(TemplateView):
             date_collected__gte=OuterRef('collecteddata__date_collected'),
             date_collected__lte=OuterRef('collecteddata__date_collected'))\
             .order_by('-id')
-        for k, v in timeperiods.items():
-            annotation_sum = Sum(
+        if period == Indicator.LOP:
+            self.annotations = {}
+        elif period == Indicator.MID_END:
+            midline_sum = Sum(
                 Case(
                     When(
                         Q(unit_of_measure_type=Indicator.NUMBER) &
-                        Q(collecteddata__date_collected__gte=datetime.strftime(v[0], '%Y-%m-%d')) &
-                        Q(collecteddata__date_collected__lte=datetime.strftime(v[1], '%Y-%m-%d')),
+                        Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
                         then=F('collecteddata__achieved')
-                        )
                     )
                 )
-
-            annotation_avg = Avg(
+            )
+            midline_avg = Avg(
                 Case(
                     When(
                         Q(unit_of_measure_type=Indicator.PERCENTAGE) &
                         Q(is_cumulative=False) &
-                        Q(collecteddata__date_collected__gte=datetime.strftime(v[0], '%Y-%m-%d')) &
-                        Q(collecteddata__date_collected__lte=datetime.strftime(v[1], '%Y-%m-%d')),
+                        Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
                         then=F('collecteddata__achieved')
-                        )
                     )
                 )
-
-            annotation_last = Max(
+            )
+            midline_last = Max(
                 Case(
                     When(
                         Q(unit_of_measure_type=Indicator.PERCENTAGE) &
                         Q(is_cumulative=True) &
-                        Q(collecteddata__date_collected__gte=datetime.strftime(v[0], '%Y-%m-%d')) &
-                        Q(collecteddata__date_collected__lte=datetime.strftime(v[1], '%Y-%m-%d')),
+                        Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
                         then=Subquery(last_data_record.values('achieved')[:1])
-                        )
                     )
                 )
+            )
 
-            # the following becomes annotations for the queryset
-            # e.g.
-            # Year 1_sum=..., Year2_sum=..., etc.
-            # Year 1_avg=..., Year2_avg=..., etc.
-            # Year 1_last=..., Year2_last=..., etc.
-            #
-            self.annotations["{}_sum".format(k)] = annotation_sum
-            self.annotations["{}_avg".format(k)] = annotation_avg
-            self.annotations["{}_last".format(k)] = annotation_last
+            endline_sum = Sum(
+                Case(
+                    When(
+                        Q(unit_of_measure_type=Indicator.NUMBER) &
+                        Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
+                        then=F('collecteddata__achieved')
+                    )
+                )
+            )
+            endline_avg = Avg(
+                Case(
+                    When(
+                        Q(unit_of_measure_type=Indicator.PERCENTAGE) &
+                        Q(is_cumulative=False) &
+                        Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
+                        then=F('collecteddata__achieved')
+                    )
+                )
+            )
+            endline_last = Max(
+                Case(
+                    When(
+                        Q(unit_of_measure_type=Indicator.PERCENTAGE) &
+                        Q(is_cumulative=True) &
+                        Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
+                        then=Subquery(last_data_record.values('achieved')[:1])
+                    )
+                )
+            )
+            self.annotations['midline_sum'] = midline_sum
+            self.annotations['midline_avg'] = midline_avg
+            self.annotations['midline_last'] = midline_last
+            self.annotations['endline_sum'] = endline_sum
+            self.annotations['endline_avg'] = endline_avg
+            self.annotations['endline_last'] = endline_last
+        else:
+            for k, v in timeperiods.items():
+                annotation_sum = Sum(
+                    Case(
+                        When(
+                            Q(unit_of_measure_type=Indicator.NUMBER) &
+                            Q(collecteddata__date_collected__gte=datetime.strftime(v[0], '%Y-%m-%d')) &
+                            Q(collecteddata__date_collected__lte=datetime.strftime(v[1], '%Y-%m-%d')),
+                            then=F('collecteddata__achieved')
+                            )
+                        )
+                    )
+
+                annotation_avg = Avg(
+                    Case(
+                        When(
+                            Q(unit_of_measure_type=Indicator.PERCENTAGE) &
+                            Q(is_cumulative=False) &
+                            Q(collecteddata__date_collected__gte=datetime.strftime(v[0], '%Y-%m-%d')) &
+                            Q(collecteddata__date_collected__lte=datetime.strftime(v[1], '%Y-%m-%d')),
+                            then=F('collecteddata__achieved')
+                            )
+                        )
+                    )
+
+                annotation_last = Max(
+                    Case(
+                        When(
+                            Q(unit_of_measure_type=Indicator.PERCENTAGE) &
+                            Q(is_cumulative=True) &
+                            Q(collecteddata__date_collected__gte=datetime.strftime(v[0], '%Y-%m-%d')) &
+                            Q(collecteddata__date_collected__lte=datetime.strftime(v[1], '%Y-%m-%d')),
+                            then=Subquery(last_data_record.values('achieved')[:1])
+                            )
+                        )
+                    )
+
+                # the following becomes annotations for the queryset
+                # e.g.
+                # Year 1_sum=..., Year2_sum=..., etc.
+                # Year 1_avg=..., Year2_avg=..., etc.
+                # Year 1_last=..., Year2_last=..., etc.
+                #
+                self.annotations["{}_sum".format(k)] = annotation_sum
+                self.annotations["{}_avg".format(k)] = annotation_avg
+                self.annotations["{}_last".format(k)] = annotation_last
         return self.annotations
 
     def _get_num_periods(self, start_date, end_date, period):
@@ -273,44 +342,6 @@ class IPTT_ReportView(TemplateView):
             timeperiods["{} {}".format(period_name, i)] = [period_start_date, period_end_date]
 
         return timeperiods
-
-    def _generate_targetperiod_annotations(self):
-        """
-        Generates annotations for periodic_targets
-        """
-        last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-id')
-        annotation_sum = Sum(
-            Case(
-                When(
-                    Q(collecteddata__date_collected__gte=F('periodictarget__start_date')) &
-                    Q(collecteddata__date_collected__lte=F('periodictarget__end_date')),
-                    then=F('collecteddata__achieved')
-                )
-            )
-        )
-        annotation_avg = Avg(
-            Case(
-                When(
-                    Q(collecteddata__date_collected__gte=F('periodictarget__start_date')) &
-                    Q(collecteddata__date_collected__lte=F('periodictarget__end_date')),
-                    then=F('collecteddata__achieved')
-                )
-            )
-        )
-        annotation_last = Max(
-            Case(
-                When(
-                    Q(collecteddata__date_collected__gte=F('periodictarget__start_date')) &
-                    Q(collecteddata__date_collected__lte=F('periodictarget__end_date')),
-                    then=Subquery(last_data_record.values('achieved')[:1])
-                )
-            )
-        )
-        self.annotations["target_sum"] = annotation_sum
-        self.annotations["target_avg"] = annotation_avg
-        self.annotations["target_last"] = annotation_last
-
-        return self.annotations
 
     def _get_date_range_n_numperiods(self, reporttype, program_id, period):
         indicators = Indicator.objects.filter(program__in=[program_id]).values('id')
@@ -396,7 +427,7 @@ class IPTT_ReportView(TemplateView):
                 report_end_date = report_date_ranges[report_date_ranges.keys()[-1]][1]
             except IndexError:
                 report_end_date = None
-            self.annotations = self._generate_timperiod_annotations(report_date_ranges)
+            self.annotations = self._generate_timperiod_annotations(report_date_ranges, period)
             # update the queryset with annotations for timeperiods
             indicators = indicators.annotate(**self.annotations).order_by('number', 'name')
 
@@ -413,23 +444,18 @@ class IPTT_ReportView(TemplateView):
                             ind[key] = running_total
 
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
-            if period == Indicator.LOP:
+            if period == Indicator.LOP or period == Indicator.MID_END:
                 report_date_ranges = None
                 report_start_date = None
                 report_end_date = None
-                # indicators = indicators.filter(target_frequency=period).order_by('number', 'name')
-                self.annotations = {}
-            elif period == Indicator.MID_END:
-                pass
-            elif period == Indicator.EVENT:
-                pass
             else:
                 date_ranges = self._get_date_range_n_numperiods(reporttype, program_id, period)
                 report_start_date = date_ranges[0]
                 report_end_date = date_ranges[1]
                 num_periods = date_ranges[2]
                 report_date_ranges = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
-                self.annotations = self._generate_timperiod_annotations(report_date_ranges)
+
+            self.annotations = self._generate_timperiod_annotations(report_date_ranges, period)
             indicators = indicators.filter(target_frequency=period)\
                 .annotate(**self.annotations).order_by('number', 'name')
         else:
