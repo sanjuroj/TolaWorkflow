@@ -40,6 +40,10 @@ a {
     color: #0645AD;
 }
 
+a:hover {
+    color: #3366cc;
+}
+
 h3 {
     font-size: 1.5rem;
     color: #54585A;
@@ -77,6 +81,13 @@ body > .container {
     color: #FFFFFF;
 }
 
+.btn-secondary[disabled="disabled"]:hover,
+.btn-secondary[disabled=true]:hover {
+    background-color: #71757B;
+    border-color: #71757B;
+    color: #FFFFFF;
+}
+
 .btn-light {
     background-color: transparent;
     border-color: #94979C;
@@ -92,6 +103,7 @@ body > .container {
 .btn {
     padding-right: 1.25rem;
     padding-left: 1.25rem;
+    border-radius: 0px;
 }
 
 .help-link {
@@ -104,12 +116,18 @@ body > .container {
     border-color: #B8BABD;
 }
 
+input[type="text"]:read-only {
+  border-color: #B8BABD;
+  background-color: #DBDCDE;
+}
+
 /* do not change border color to green when form is validated */
 .was-validated .form-control:valid {
   border:1px solid #B8BABD;
 }
 
-/* keep the blue color shadow around form elements even if form is validated successfully */
+/* keep the blue color shadow around form elements even if form is validated successfully
+   but don't apply the highlight to radios, checkboxes, or readonlys */
 .form-control:focus,
 .was-validated .form-control.is-valid:focus,
 .was-validated .form-control:valid:focus {
@@ -118,4 +136,13 @@ body > .container {
   border-color: #3366cc;
   outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
+}
+
+input[type="radio"].form-control:focus,
+input[type="checkbox"].form-control:focus,
+input:read-only.form-control:focus {
+  border-color: #B8BABD;
+  background-color: #DBDCDE;
+  outline: 0;
+  box-shadow: none;
 }

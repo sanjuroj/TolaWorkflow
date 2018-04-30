@@ -33,8 +33,18 @@
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
 
+/* ~14pt from a 16pt reference*/
 .fontsize-85 {
     font-size: .85rem;
+}
+
+/* ~20pt from a 16pt reference*/
+.fontsize-125 {
+    font-size: 1.25rem;
+}
+
+.paddingright-80 {
+    padding-right: .80rem;
 }
 
 .text-muted-footer,
@@ -54,6 +64,10 @@
     color: #fff;
     background-color: #808080;
     border-color: #808080;
+}
+
+.btn-destroy {
+    color:  #DD0000;
 }
 
 .date-badge {
@@ -426,8 +440,19 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 
+#id_div_is_cumulative .card-body {
+    border: 1px solid #B8BABD;
+}
+
+#addNewPeriodicTarget:hover {
+    text-decoration: none;
+}
+
+/* END Indicator periodic target creation */
+
+
 .blink {
-animation: blink 2s linear infinite;
+    animation: blink 2s linear infinite;
 }
 
 @keyframes blink {
