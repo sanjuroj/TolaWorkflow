@@ -344,6 +344,9 @@ class IPTT_ReportView(TemplateView):
         return timeperiods
 
     def _get_date_range_n_numperiods(self, reporttype, program_id, period):
+        if period == Indicator.LOP or period == Indicator.MID_END:
+            return (None, None, None)
+
         indicators = Indicator.objects.filter(program__in=[program_id]).values('id')
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
             # determine the full date range of data collection for this program
@@ -416,30 +419,18 @@ class IPTT_ReportView(TemplateView):
                 'id', 'number', 'name', 'program', 'lastlevel', 'unit_of_measure', 'direction_of_change',
                 'unit_of_measure_type', 'is_cumulative', 'baseline', 'lop_target', 'actualsum', 'actualavg',
                 'lastdata')
-        num_months_in_period = self._get_num_months(period)
+
+        report_start_date, report_end_date, num_periods = self._get_date_range_n_numperiods(
+            reporttype, program_id, period)
+        report_date_ranges = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
 
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            date_ranges = self._get_date_range_n_numperiods(reporttype, program_id, period)
-            report_start_date = self._get_first_period(date_ranges[0], num_months_in_period)
-            num_periods = date_ranges[2]
-            report_date_ranges = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
             try:
                 report_end_date = report_date_ranges[report_date_ranges.keys()[-1]][1]
             except IndexError:
                 report_end_date = None
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
-            if period == Indicator.LOP or period == Indicator.MID_END:
-                report_date_ranges = None
-                report_start_date = None
-                report_end_date = None
-            else:
-                date_ranges = self._get_date_range_n_numperiods(reporttype, program_id, period)
-                report_start_date = date_ranges[0]
-                report_end_date = date_ranges[1]
-                num_periods = date_ranges[2]
-                report_date_ranges = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
             indicators = indicators.filter(target_frequency=period)
-
         else:
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid report type."))
