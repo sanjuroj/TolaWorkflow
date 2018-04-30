@@ -834,21 +834,21 @@ class CollectedData(models.Model):
                          in disaggs])
 
 
-@receiver(post_delete, sender=CollectedData)
-def model_post_delete(sender, **kwargs):
-    instance = kwargs.get('instance', None)
-    # print('Deleted: {}'.format(kwargs['instance'].__dict__))
+# @receiver(post_delete, sender=CollectedData)
+# def model_post_delete(sender, **kwargs):
+#     instance = kwargs.get('instance', None)
+#     # print('Deleted: {}'.format(kwargs['instance'].__dict__))
 
-    # the cumulative_achieved values need to be recalculated after an a
-    # CollectedData record is deleted
-    collecteddata = CollectedData.objects.filter(
-        indicator=instance.indicator)\
-        .order_by('id')
+#     # the cumulative_achieved values need to be recalculated after an a
+#     # CollectedData record is deleted
+#     collecteddata = CollectedData.objects.filter(
+#         indicator=instance.indicator)\
+#         .order_by('id')
 
-    # by saving each data reecord the cumulative_achieved is recalculated in
-    # the save method of the CollectedData model class.
-    for c in collecteddata:
-        c.save()
+#     # by saving each data reecord the cumulative_achieved is recalculated in
+#     # the save method of the CollectedData model class.
+#     for c in collecteddata:
+#         c.save()
 
 
 class CollectedDataAdmin(admin.ModelAdmin):
