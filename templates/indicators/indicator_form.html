@@ -1,4 +1,13 @@
 {% extends "base.html" %}
+{% load i18n %}
+{% block bread_crumb %}
+<ol class="breadcrumb">
+  <li><a href="/indicators/home/{{ programId|default:0 }}/0/0/">Indicators</a></li>
+  <li class="active">{% trans "Indicator Form" %}</li>
+</ol>
+{% endblock %}
+
+{% block page_title %}Program Indicators{% endblock %}
 
 {% block content %}
     <div id="numDataPoints" style="display: none;">{{ object.collecteddata_set.all.count }}</div>
@@ -20,7 +29,7 @@
             // $("#id_program").select2().on("select2:selecting select2:unselecting", function(e) {
                 // e.preventDefault();
             // });
-            $("#id_strategic_objectives").select2();
+            $("#id_strategic_objectives").select2({width: "100%"});
         });
     </script>
 

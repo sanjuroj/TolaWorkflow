@@ -3,7 +3,7 @@ from datetime import timedelta
 from decimal import Decimal
 
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Avg
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils import timezone
@@ -132,15 +132,15 @@ class Level(models.Model):
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
     class Meta:
-        verbose_name = ("Level")
+        verbose_name = _("Level")
 
     def __unicode__(self):
         return self.name
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if self.create_date is None:
             self.create_date = timezone.now()
-        super(Level, self).save()
+        super(Level, self).save(*args, **kwargs)
 
 
 class LevelAdmin(admin.ModelAdmin):
@@ -640,6 +640,11 @@ class Indicator(models.Model):
             return _("+")
         else:
             return "N/A"
+
+    @property
+    def get_collecteddata_average(self):
+        avg = self.collecteddata_set.aggregate(Avg('achieved'))['achieved__avg']
+        return avg
 
 
 class PeriodicTarget(models.Model):

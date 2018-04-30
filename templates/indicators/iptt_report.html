@@ -46,9 +46,9 @@
           <th scope="col" class="td-no-side-borders" style="min-width:600px">{% trans "INDICATOR" %}</th>
           <th scope="col" class="td-no-side-borders"></th>
           <th scope="col" style="min-width:90px">{% trans "LEVEL" %}</th>
-          <th scope="col">{% trans "UNIT OF MEASURE" %}</th>
+          <th scope="col" style="min-width:250px">{% trans "UNIT OF MEASURE" %}</th>
           <th scope="col">{% trans "CHANGE" %}</th>
-          <th scope="col" style="min-width:60px">{% trans "C / NC" %}</th>
+          <th scope="col" style="min-width:130px">{% trans "C / NC" %}</th>
           <th scope="col" style="min-width:50px">{% trans "# / %" %}</th>
           <th scope="col">{% trans "BASELINE" %}</th>
           <th scope="col">{% trans "TARGET" %}</th>
@@ -112,9 +112,15 @@
                 <td align="right">
                   <!-- if it is a NUMBER indicator -->
                   {% if indicator.unit_of_measure_type == 1 %}
-                    {% with k|concat_string:"_sum" as sum %}
-                      {{ indicator|hash:sum|floatformat:"-2"|default_if_none:'' }}
-                    {% endwith %}
+                    {% if indicator.is_cumulative is True %}
+                      {% with k|concat_string:"_rsum" as sum %}
+                        {{ indicator|hash:sum|floatformat:"-2"|default_if_none:'' }}
+                      {% endwith %}
+                    {% else %}
+                      {% with k|concat_string:"_sum" as sum %}
+                        {{ indicator|hash:sum|floatformat:"-2"|default_if_none:'' }}
+                      {% endwith %}
+                    {% endif %}
                     <!-- if indicator is a PERCENT idnicator -->
                   {% elif indicator.unit_of_measure_type == 2 %}
                     {% if indicator.is_cumulative == True %}

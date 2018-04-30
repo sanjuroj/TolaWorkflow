@@ -1,4 +1,5 @@
 {% load widget_tweaks %}
+{% load i18n %}
 {% load mytags %}
 {% load i18n %}
     <form
@@ -17,22 +18,22 @@
 
         <ul class="nav nav-tabs" id="indicatorTabs" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" href="#summaryTab" role="tab" data-toggle="tab">Summary</a>
+                <a class="nav-link active" href="#summaryTab" role="tab" data-toggle="tab">{% trans "Summary" %}</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#performanceTab" role="tab" data-toggle="tab">Performance</a>
+                <a class="nav-link" href="#performanceTab" role="tab" data-toggle="tab">{% trans "Performance" %}</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#targetsTab" role="tab" data-toggle="tab">Targets</a>
+                <a class="nav-link" href="#targetsTab" role="tab" data-toggle="tab">{% trans "Targets" %}</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#dataAcquisitionTab" role="tab" data-toggle="tab">Data Acquisition</a>
+                <a class="nav-link" href="#dataAcquisitionTab" role="tab" data-toggle="tab">{% trans "Data Acquisition" %}</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#analysisReportingTab" role="tab" data-toggle="tab">Analysis and Reporting</a>
+                <a class="nav-link" href="#analysisReportingTab" role="tab" data-toggle="tab">{% trans "Analysis and Reporting" %}</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#approvalTab" role="tab" data-toggle="tab">Approval</a>
+                <a class="nav-link" href="#approvalTab" role="tab" data-toggle="tab">{% trans "Approval" %}</a>
             </li>
         </ul>
 
@@ -40,6 +41,15 @@
             <div role="tabpanel" class="tab-pane active" id="summaryTab">
                 <br>
                 <fieldset>
+                    <div class="form-row mb-3" id="div_id_name">
+                        <label for="id_name" class="col-sm-4 col-form-label" align="right">{{ form.name.label }}* </label>
+                        <div class=" col-sm-7 div-input-container">
+                            {% render_field form.name class+="form-control" %}
+                            <small class="form-text text-muted">{{ form.name.help_text }}</small>
+                            <span id="validation_id_name" class="has-error"></span>
+                        </div>
+                    </div>
+
                     <div class="form-row mb-3" id="div_id_program">
                         <label for="id_program2" class="col-sm-4 col-form-label" align="right">{{ form.program.label }}</label>
                         <div class=" col-sm-7 div-input-container">
@@ -48,6 +58,7 @@
                             <span id="validation_id_program" class="has-error"></span>
                         </div>
                     </div>
+
 
                     <!-- <div class="form-row mb-2" id="div_id_program">
                         <label for="id_program" class="col-sm-4 col-form-label" align="right">{{ form.program.label }}</label>
@@ -89,14 +100,14 @@
             <div role="tabpanel" class="tab-pane" id="performanceTab" name="Performance tab">
                 <br>
                 <fieldset>
-                    <div class="form-row mb-3" id="div_id_name">
+                    <!-- <div class="form-row mb-3" id="div_id_name">
                         <label for="id_name" class="col-sm-4 col-form-label" align="right">{{ form.name.label }}* </label>
                         <div class=" col-sm-7 div-input-container">
                             {% render_field form.name class+="form-control" %}
                             <small class="form-text text-muted">{{ form.name.help_text }}</small>
                             <span id="validation_id_name" class="has-error"></span>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="form-row mb-3" id="div_id_level">
                         <label for="id_level" class="col-sm-4 col-form-label" align="right">{{ form.level.label }} </label>
@@ -163,7 +174,7 @@
 
                     <div class="form-row mb-3" id="div_id_key_performance_indicator">
                         <label for="id_key_performance_indicator" class="col-sm-4 col-form-label" align="right"></label>
-                        <div class=" col-sm-7 div-input-container">
+                        <div class=" col-sm-7 div-input-container d-flex">
                             {{ form.key_performance_indicator }}
                             <label for="id_key_performance_indicator" class="col-form-label">{{ form.key_performance_indicator.label }}</label>
                             <small class="form-text text-muted">{{ form.key_performance_indicator.help_text }}</small>
@@ -225,7 +236,7 @@
                                         <small class="form-text text-muted">{{ form.lop_target.help_text }}</small>
                                         <span id="validation_id_lop_target" class="has-error"></span>
                                     </div>
-                                    {% render_field form.direction_of_change class+="form-control mt-2" style="width:70%;" %}
+                                    {% render_field form.direction_of_change class+="form-control mt-2" style="width:100%; border-radius: 0%" %}
                                 </div>
                             </div>
                         </div>
@@ -302,10 +313,10 @@
                     </div>
 
                     <div id="div_id_create_targets_btn" class="form-row mb-3">
-                         <label for="id_create_targets_btn" class="col-sm-4 col-form-label"></label>
-                        <div class=" col-sm-7 div-input-container">
-                            <button type="button" id="id_create_targets_btn" class="btn btn-sm btn-primary">Create targets</button>
-                            <button type="button" id="id_delete_targets_btn" class="btn btn-sm btn-link">Remove all targets</button>
+                        <label for="id_create_targets_btn" class="col-sm-4 col-form-label"></label>
+                        <div class="col-sm-7">
+                            <button type="button" id="id_create_targets_btn" class="btn btn-sm btn-primary">{% trans "Create targets" %}</button>
+                            <button type="button" id="id_delete_targets_btn" class="btn btn-sm btn-link">{% trans "Remove all targets" %}</button>
                         </div>
                     </div>
 
@@ -471,8 +482,8 @@
     <div class="modal-footer justify-content-between p-4 mt-4" style="background-color: #DBDCDE;">
         <div>
             <!-- <input type="submit" class="btn btn-primary" value="Save changes"> -->
-            <input type="submit" name="submit" value="{% trans "SAVE CHANGES" %}" class="btn btn-primary mx-1" id="submit-id-submit">
-            <input type="reset" class="btn btn-light mx-1" value="{% trans "RESET" %}">
+            <input type="submit" name="submit" value="{% trans 'SAVE CHANGES' %}" class="btn btn-primary mx-1" id="submit-id-submit">
+            <input type="reset" class="btn btn-light mx-1" value="{% trans 'RESET' %}">
         </div>
         <div class="text-muted">{% include "form_guidance.html" %}</div>
     </div>

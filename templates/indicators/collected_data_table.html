@@ -1,11 +1,11 @@
 <style>
-    .disable-span {
-        cursor: not-allowed;
-        opacity: .65;
-    }
-    .disable-span a {
-        pointer-events: none;
-    }
+  .disable-span {
+      cursor: not-allowed;
+      opacity: .65;
+  }
+  .disable-span a {
+      pointer-events: none;
+  }
 </style>
 <script type="text/javascript">
     $("#id_indicator_data_span_count_" + `{{indicator.id}}`).text("{{ indicator.collecteddata_set.count|default:0 }}" );
@@ -240,13 +240,12 @@
             <td align="right">
                 {% if indicator.unit_of_measure_type == 1 %}
                     {{ grand_achieved_sum|floatformat:"-2" }}
-                {% else %}
+                {% elif indicator.unit_of_measure_type == 2 %}
                     {% if indicator.is_cumulative == True %}
                         {{ last_data_record_value|floatformat:"-2" }}%
                     {% else %}
-                        {% widthratio grand_achieved_avg 3 1 as avg_of_grand_achieved_avg %}
                         <small><abbr title='{% trans "Average" %}'>{% trans "avg." %}</abbr></small>
-                        {{ avg_of_grand_achieved_avg|floatformat:"-2" }}%
+                        {{ grand_achieved_avg|floatformat:"-2" }}%
                     {% endif %}
                 {% endif %}
             </td>
@@ -254,21 +253,36 @@
                 <strong>
                     {% if indicator.unit_of_measure_type == 1 %}
                         {% widthratio grand_achieved_sum indicator.lop_target 100 %}%
-                    {% else %}
+                    {% elif indicator.unit_of_measure_type == 2 %}
                         {% if indicator.is_cumulative == True %}
                             {% widthratio last_data_record_value indicator.lop_target 100 %}%
                         {% else %}
-                            {% widthratio grand_achieved_avg 3 1 as avg_of_grand_achieved_avg %}
-                            {% widthratio avg_of_grand_achieved_avg indicator.lop_target 100 %}%
+                            {% widthratio grand_achieved_avg indicator.lop_target 100 %}%
                         {% endif %}
                     {% endif %}
                 </strong>
             </td>
-            <td align="right">
+            <td colspan="2" align="right">
+              <p class="small text-left font-italic font-weight-light blink">
+                {% if indicator.unit_of_measure_type == 1 %}
+                  {% if indicator.is_cumulative == True %}
+                    {% trans "*Results are commulative. The Life of Program result mirrors the latest period result." %}
+                  {% elif indicator.is_cumulative == False %}
+                    {% trans "*Results are non-cumulative. The Life of Program result is the sum of target periods results." %}
+                  {% endif %}
+                {% elif indicator.unit_of_measure_type == 2 %}
+                  {% if indicator.is_cumulative == True %}
+                    {% trans "*Results are cumulative. The Life of Program result mirrors the latest period result." %}
+                  {% elif indicator.is_cumulative == False %}
+                    {% trans "*Results are non-cumulative. Target period and Life of Program results are calculated from the average of collected data." %}
+                  {% endif %}
+                {% endif %}
+              </p>
             </td>
-            <td colspan="3" align="right">
+            <td align="right">
                 <span class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
-                    <a href="{% url 'collecteddata_add' program_id indicator.id %}" class="btn-sm btn-info collecteddata-link"> New Data</a>
+                    <a href="{% url 'collecteddata_add' program_id indicator.id %}"
+                       class="btn-sm btn-info collecteddata-link pl-1 pr-1">{% trans "New Data" %}</a>
                 </span>
             </td>
         </tr>
@@ -282,9 +296,7 @@
                         {% endifequal %}
 
                         {% ifequal err 'Error_2' %}
-                            {% blocktrans %}
-                                This record is not associated with a target. Open the data record and select an option from the "Measure against target" menu.
-                            {% endblocktrans %}
+                                {% trans 'This record is not associated with a target. Open the data record and select an option from the "Measure against target" menu.' %}
                         {% endifequal %}
 
                         {% ifequal err 'Error_3' %}
@@ -302,7 +314,7 @@
                 <img src="/static/img/target.png" class="img-responsive center-block" height="85" width="85">
             </td>
             <td valign="top" style="padding-left:10px; padding-top: 38px; font-size: 1.375rem; color: #54585A;">
-                {% trans "Organize your data for this indicator." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link">Set a target frequency.</a>
+                {% trans "Organize your data for this indicator." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link">{% trans "Set a target frequency." %}</a>
             </td>
         </tr>
     </table>
