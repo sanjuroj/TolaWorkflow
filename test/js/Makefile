@@ -9,7 +9,7 @@ help:
 	@echo "update    : refresh packages in top-level package.json file"
 
 clean:
-	@rm -fvr allure-* doc errorShots log *server.log
+	@rm -vfr doc errorShots log *server.log
 
 doc:
 	@./node_modules/.bin/jsdoc --verbose \
@@ -26,4 +26,4 @@ realclean: clean
 	@rm -fvr node_modules
 
 update:
-	@npm update --verbose --save-dev --save --dev
+	@npm update --verbose --save --dev
