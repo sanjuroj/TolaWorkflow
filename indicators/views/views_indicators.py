@@ -259,7 +259,7 @@ def indicator_create(request, id=0):
         latest = new_indicator.id
 
         # redirect to update page
-        messages.success(request, 'Success, Basic Indicator Created!')
+        messages.success(request, _('Success, Basic Indicator Created!'))
         redirect_url = reverse_lazy('indicator_update', kwargs={'pk': latest})
         return HttpResponseRedirect(redirect_url)
 
@@ -316,7 +316,7 @@ class IndicatorCreate(CreateView):
 
     def form_valid(self, form):
         form.save()
-        messages.success(self.request, 'Success, Indicator Created!')
+        messages.success(self.request, _('Success, Indicator Created!'))
         form = ""
         return self.render_to_response(self.get_context_data(form=form))
 
@@ -493,7 +493,7 @@ class IndicatorUpdate(UpdateView):
         return kwargs
 
     def form_invalid(self, form):
-        messages.error(self.request, 'Invalid Form', fail_silently=False)
+        messages.error(self.request, _('Invalid Form'), fail_silently=False)
         print("...............%s.........................." % form.errors)
         return self.render_to_response(self.get_context_data(form=form))
 
@@ -622,7 +622,7 @@ class IndicatorUpdate(UpdateView):
             }
             return HttpResponse(json.dumps(data))
         else:
-            messages.success(self.request, 'Success, Indicator Updated!')
+            messages.success(self.request, _('Success, Indicator Updated!'))
         return self.render_to_response(self.get_context_data(form=form))
 
 
@@ -642,7 +642,7 @@ class IndicatorDelete(DeleteView):
 
     def form_valid(self, form):
         form.save()
-        messages.success(self.request, 'Success, Indicator Deleted!')
+        messages.success(self.request, _('Success, Indicator Deleted!'))
         return self.render_to_response(self.get_context_data(form=form))
 
 
@@ -738,7 +738,7 @@ class CollectedDataCreate(CreateView):
         return kwargs
 
     def form_invalid(self, form):
-        messages.error(self.request, 'Invalid Form', fail_silently=False)
+        messages.error(self.request, _('Invalid Form'), fail_silently=False)
         return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form):
@@ -788,7 +788,7 @@ class CollectedDataCreate(CreateView):
             data = serializers.serialize('json', [new])
             return HttpResponse(data)
 
-        messages.success(self.request, 'Success, Data Created!')
+        messages.success(self.request, _('Success, Data Created!'))
         redirect_url = '/indicators/home/0/0/0/#hidden-%s' % \
                        str(self.kwargs['program'])
         return HttpResponseRedirect(redirect_url)
@@ -915,7 +915,7 @@ class CollectedDataUpdate(UpdateView):
             data = serializers.serialize('json', [self.object])
             return HttpResponse(data)
 
-        messages.success(self.request, 'Success, Data Updated!')
+        messages.success(self.request, _('Success, Data Updated!'))
         redirect_url = '/indicators/home/0/0/0/#hidden-%s' \
                        % str(getIndicator.program.id)
 
@@ -947,7 +947,7 @@ def getTableCount(url, table_id):
         headers = {
             'content-type': 'application/json'
         }
-        print "Token Not Found"
+        print _("Token Not Found")
 
     response = requests.get(url, headers=headers, verify=True)
     data = json.loads(response.content)

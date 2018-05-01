@@ -312,7 +312,7 @@
 
             $(alertsElement).html('');
 
-            createAlert("success", "Success, form data saved.", true, alertsElement);
+            createAlert("success", "{% trans 'Success, form data saved.' %}", true, alertsElement);
 
             var jsondata = $.parseJSON(data);
             var indicator = $.parseJSON(jsondata["indicatorjson"])[0];

@@ -28,7 +28,7 @@ class DatePicker(forms.DateInput):
 class IndicatorForm(forms.ModelForm):
     program2 = forms.CharField(
         widget=forms.TextInput(
-            attrs={'readonly': 'readonly', 'label': 'Program'}
+            attrs={'readonly': 'readonly', 'label': _('Program')}
         )
     )
     unit_of_measure_type = forms.ChoiceField(
@@ -243,13 +243,13 @@ class IPTTReportQuickstartForm(ReportFormCommon):
 
 
 class IPTTReportFilterForm(ReportFormCommon):
-    level = forms.ModelChoiceField(queryset=Level.objects.none(), required=False, label='LEVEL')
-    ind_type = forms.ModelChoiceField(queryset=IndicatorType.objects.none(), required=False, label='TYPE')
-    sector = forms.ModelChoiceField(queryset=Sector.objects.none(), required=False, label='SECTOR')
-    site = forms.ModelChoiceField(queryset=SiteProfile.objects.none(), required=False, label='SITE')
-    indicators = forms.ModelChoiceField(queryset=Indicator.objects.none(), required=False, label='SELECT INDICATORS')
-    start_date = forms.DateField(label='START')
-    end_date = forms.DateField(label='END')
+    level = forms.ModelChoiceField(queryset=Level.objects.none(), required=False, label=_('LEVEL'))
+    ind_type = forms.ModelChoiceField(queryset=IndicatorType.objects.none(), required=False, label=_('TYPE'))
+    sector = forms.ModelChoiceField(queryset=Sector.objects.none(), required=False, label=_('SECTOR'))
+    site = forms.ModelChoiceField(queryset=SiteProfile.objects.none(), required=False, label=_('SITE'))
+    indicators = forms.ModelChoiceField(queryset=Indicator.objects.none(), required=False, label=_('SELECT INDICATORS'))
+    start_date = forms.DateField(label=_('START'))
+    end_date = forms.DateField(label=_('END'))
 
     def __init__(self, *args, **kwargs):
         program = kwargs.pop('program')
