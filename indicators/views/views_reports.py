@@ -172,16 +172,10 @@ class IPTT_ReportView(TemplateView):
         Generates queryset annotation(sum, avg, last data record). All three annotations are calculated
         because one of these three values will be used depending on how an indicator is configured.
         """
-        # last_data_record = CollectedData.objects.filter(
-        #     indicator=OuterRef('pk'),
-        #     date_collected__gte=OuterRef('collecteddata__date_collected'),
-        #     date_collected__lte=OuterRef('collecteddata__date_collected'))\
-        #     .order_by('-id')
-        # last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-id')
-
         if period == Indicator.LOP:
             self.annotations = {}
         elif period == Indicator.MID_END:
+            last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-id')
             midline_sum = Sum(
                 Case(
                     When(
