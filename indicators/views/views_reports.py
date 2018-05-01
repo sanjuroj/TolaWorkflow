@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime
 import datetime as dt
 from django.core.urlresolvers import reverse_lazy
-from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Min, Max
+from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Min, Max, DecimalField
 from django.views.generic import TemplateView, FormView
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect
@@ -172,11 +172,13 @@ class IPTT_ReportView(TemplateView):
         Generates queryset annotation(sum, avg, last data record). All three annotations are calculated
         because one of these three values will be used depending on how an indicator is configured.
         """
-        last_data_record = CollectedData.objects.filter(
-            indicator=OuterRef('pk'),
-            date_collected__gte=OuterRef('collecteddata__date_collected'),
-            date_collected__lte=OuterRef('collecteddata__date_collected'))\
-            .order_by('-id')
+        # last_data_record = CollectedData.objects.filter(
+        #     indicator=OuterRef('pk'),
+        #     date_collected__gte=OuterRef('collecteddata__date_collected'),
+        #     date_collected__lte=OuterRef('collecteddata__date_collected'))\
+        #     .order_by('-id')
+        # last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-id')
+
         if period == Indicator.LOP:
             self.annotations = {}
         elif period == Indicator.MID_END:
@@ -247,29 +249,37 @@ class IPTT_ReportView(TemplateView):
             self.annotations['endline_last'] = endline_last
         else:
             for k, v in timeperiods.items():
+                start_date = datetime.strftime(v[0], '%Y-%m-%d')
+                end_date = datetime.strftime(v[1], '%Y-%m-%d')
+
+                last_data_record = CollectedData.objects.filter(
+                    indicator=OuterRef('pk'),
+                    date_collected__gte=start_date,
+                    date_collected__lte=end_date)\
+                    .order_by('-pk')
+
                 annotation_sum = Sum(
                     Case(
                         When(
                             Q(unit_of_measure_type=Indicator.NUMBER) &
-                            Q(collecteddata__date_collected__gte=datetime.strftime(v[0], '%Y-%m-%d')) &
-                            Q(collecteddata__date_collected__lte=datetime.strftime(v[1], '%Y-%m-%d')),
+                            Q(collecteddata__date_collected__gte=start_date) &
+                            Q(collecteddata__date_collected__lte=end_date),
                             then=F('collecteddata__achieved')
-                            )
                         )
                     )
+                )
 
                 annotation_avg = Avg(
                     Case(
                         When(
                             Q(unit_of_measure_type=Indicator.PERCENTAGE) &
                             Q(is_cumulative=False) &
-                            Q(collecteddata__date_collected__gte=datetime.strftime(v[0], '%Y-%m-%d')) &
-                            Q(collecteddata__date_collected__lte=datetime.strftime(v[1], '%Y-%m-%d')),
+                            Q(collecteddata__date_collected__gte=start_date) &
+                            Q(collecteddata__date_collected__lte=end_date),
                             then=F('collecteddata__achieved')
-                            )
                         )
                     )
-
+                )
                 annotation_last = Max(
                     Case(
                         When(
@@ -278,10 +288,9 @@ class IPTT_ReportView(TemplateView):
                             Q(collecteddata__date_collected__gte=datetime.strftime(v[0], '%Y-%m-%d')) &
                             Q(collecteddata__date_collected__lte=datetime.strftime(v[1], '%Y-%m-%d')),
                             then=Subquery(last_data_record.values('achieved')[:1])
-                            )
                         )
                     )
-
+                )
                 # the following becomes annotations for the queryset
                 # e.g.
                 # Year 1_sum=..., Year2_sum=..., etc.
