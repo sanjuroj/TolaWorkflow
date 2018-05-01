@@ -14,7 +14,7 @@
         //     return false;
         // }
         if ($("#collecteddata_update_form div").hasClass('has-error')) {
-            createAlert("{% trans 'danger' %}", "{% trans 'Please complete all required fields.'%}", true, "#modalmessages");
+            createAlert("danger", "{% trans 'Please complete all required fields.'%}", true, "#modalmessages");
             $('#indicator_collecteddata_div').animate({ scrollTop: 0 }, 'slow');
             return;
         }
@@ -31,16 +31,16 @@
         $.post(form_url, form_data,
                function(response, status, jqXHR) { // success callback
                     $("#modalmessages").empty();
-                    createAlert("{% trans 'success, %}", "{% trans 'Success, form data saved.' %}", true, "#modalmessages");
+                    createAlert("success", "{% trans 'Success, form data saved.' %}", true, "#modalmessages");
                 })
             .fail(function(error){
-                createAlert("{% trans 'danger' %}", "{% trans 'Could not save form.' %}"  + error, true, "#modalmessages");
+                createAlert("danger", "{% trans 'Could not save form.' %}"  + error, true, "#modalmessages");
             });
         $('#indicator_collecteddata_div').animate({ scrollTop: 0 }, 'slow');
     });
 
 
-    $("#indicator_collecteddata_div").on("{% trans 'change' %}", "#id_date_collected", function(e){
+    $("#indicator_collecteddata_div").on("change", "#id_date_collected", function(e){
         // only validate periodicTarget dropdown if it is an existing record
         // if( parseInt(`{{object.id|safe}}`) > 0 ){
             validatePeriodicTarget(onlyPeriodic = true);
@@ -48,11 +48,11 @@
         validateDateCollected();
     });
 
-    $("#indicator_collecteddata_div").on("{% trans 'change' %}", "#id_periodic_target", function(e){
+    $("#indicator_collecteddata_div").on("change", "#id_periodic_target", function(e){
         validatePeriodicTarget();
     });
 
-    $("#indicator_collecteddata_div").on("{% trans 'change' %}", "#id_achieved", function(e){
+    $("#indicator_collecteddata_div").on("change", "#id_achieved", function(e){
         validate_achieved();
     });
 
@@ -86,7 +86,7 @@
         var actual = $("#id_achieved");
         if (!actual.val() || !$.isNumeric(actual.val()) || actual.val() < 0) {
             $("#div_id_achieved").addClass('has-error');
-            $("#hint_id_achieved").text(" {% trans 'Please enter a number with no letters or symbols.' %}");
+            $("#hint_id_achieved").text("{% trans 'Please enter a number with no letters or symbols.' %}");
             return false;
         } else {
             $("#div_id_achieved").removeClass('has-error');
