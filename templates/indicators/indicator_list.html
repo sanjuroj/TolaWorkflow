@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% include "indicators/filter.html"%}
+{% include "indicators/filter.html" %}
 <br>
 <div id="toplevel_div">
     {% for program in programs %}
@@ -19,7 +19,7 @@
             {% if not program.indicator_set.all %}
                 <div class='card-body'>
                     <div class="card-title">{% trans "No Indicators have been entered for this program" %}</div>
-                    <p class="card-text">{% trans "Add a new indicator via the" %} "<a href="/indicators/indicator_create/{{ program.id }}/">{% trans 'New Indicator' %}</a>" {% trans 'button above' %}.</p>
+                    <p class="card-text">{% trans "Add a new indicator via the" %} <a href="/indicators/indicator_create/{{ program.id }}/">{% trans 'New Indicator' %}</a> {% trans 'button above' %}.</p>
                 </div>
             {% else %}
                 <div class='card-body'>
@@ -44,7 +44,7 @@
                 <h4 class="modal-title" id="myModalLabel">{% trans "Warning" %}</h4>
             </div>
             <div class="modal-body" id="confirm_modal_body">
-                {% trans "Are you sure?" %}"
+                {% trans "Are you sure?" %}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" id="modal-btn-yes">{% trans "Yes" %}</button>

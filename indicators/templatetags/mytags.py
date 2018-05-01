@@ -1,4 +1,5 @@
 import simplejson
+import re
 from datetime import datetime
 from django.core.serializers import serialize
 from django import template
@@ -62,19 +63,22 @@ def symbolize_measuretype(value):
 
     return ""
 
+
 @register.filter('hash')
-def hash(dic, attr):
+def hash(obj, attr):
     """
-    Loops a key in a dictionary
+    Extracts an attributes's value from the object
     Usage:
-    {% for user in result.users %}
-        {{user.name}}
-        {% for item in result.items %}
-            {{ user|hash:item }}
-        {% endfor %}
-    {% endfor %}
+    {{ object|getattr:attribute }}
     """
-    try:
-        return dic.get(attr)
-    except Exception:
+    # try:
+    #     return obj.get(attr)
+    # except Exception:
+    #     return None
+    if hasattr(obj, attr):
+        return getattr(obj, attr)
+    elif hasattr(obj, 'has_key') and attr in obj:
+        return obj.get(attr)
+    else:
         return None
+

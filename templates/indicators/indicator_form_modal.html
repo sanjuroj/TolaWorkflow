@@ -7,7 +7,7 @@
         // $("#id_program").select2().on("select2:selecting select2:unselecting", function(e) {
         //     e.preventDefault();
         // });
-        $("#id_strategic_objectives").select2();
+        $("#id_strategic_objectives").select2({width: "100%"});
 
         var targetsonly = `{{targetsonly|safe}}`;
         var targetsactive = `{{targetsactive|safe}}`;
@@ -37,11 +37,13 @@
     <div id="indicator_modal_header" style="width:100%" class="modal-title">
         <span id = "modalmessages" width="100%"></span>
         <h5 style="color:#94979c;">
+
             {% trans "indicator:" as ind %}
             {% if indicator.levels %}
                 {{ indicator.levels }} {{ ind }}
             {% endif %}
             {{ indicator.name|truncatechars:300 }}
+
         </h5>
     </div>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

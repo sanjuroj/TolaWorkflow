@@ -82,19 +82,6 @@ function clickTargetsTab() {
  }
 
 /**
- * Get the text of the current alert message, if any, and return it as a string
- * @returns {string} The current alert message as a string. Fails ugly if the
- * element isn't found.
- */
-// FIXME: broken -- doesn't find the <p> tag in the alert div; I think this
-// is because the success message flashes through faster than I can catch it
-function getAlertMsg() {
-  let alertDiv = browser.$('div#alerts');
-  let msg = alertDiv.getText();
-  return msg;
-}
-
-/**
  * Get the current value of the target baseline from the indicators detail screen
  * @returns {integer} The current value of the Baseline text field
  */
@@ -441,7 +428,12 @@ function pageName() {
  * @returns Nothing
  */
 function saveIndicatorChanges() {
-  let elem = $('input#submit-id-submit');
+  if (browser.isVisible('div.alert')) {
+    browser.waitForVisible('div.alert', true);
+  }
+  if (browser.isVisible('div#alerts')) {
+    browser.waitForVisible('div#alerts', true);
+  }
   browser.scroll('input#submit-id-submit');
   browser.$('input#submit-id-submit').click();
 }
@@ -507,8 +499,9 @@ function setFirstEventName(value) {
  */
 function setFirstTargetPeriod() {
   // Defaults to the current month
-  browser.scroll('input#submit-id-submit');
+  browser.scroll('input#id_target_frequency_start');
   browser.$('input#id_target_frequency_start').click();
+  browser.scroll('button.ui-datepicker-close');
   browser.$('button.ui-datepicker-close').click();
 }
 
@@ -627,7 +620,6 @@ exports.clickPercentType = clickPercentType;
 exports.clickResetButton = clickResetButton;
 exports.clickTargetsTab = clickTargetsTab;
 exports.clickDirectionOfChange = clickDirectionOfChange;
-exports.getAlertMsg = getAlertMsg;
 exports.getBaseline = getBaseline;
 exports.getBaselineErrorHint = getBaselineErrorHint;
 exports.getDirectionOfChange = getDirectionOfChange;

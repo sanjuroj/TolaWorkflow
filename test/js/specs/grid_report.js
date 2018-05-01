@@ -4,14 +4,14 @@ import NavBar from '../pages/navbar.page';
 import IndPage from  '../pages/indicators.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
-const msec = 1000;
 
 describe('Grid/Print Report page', function() {
     before(function() {
         // Disable timeouts
         this.timeout(0);
+        browser.windowHandleMaximize();
         let parms = Util.readConfig();
-        
+
         LoginPage.open(parms.baseurl);
         if (parms.baseurl.includes('mercycorps.org')) {
             LoginPage.username = parms.username;
@@ -42,7 +42,7 @@ describe('Grid/Print Report page', function() {
         IndPage.selectProgram(prog);
         browser.$('=Grid/Print Report').click();
         let pageTitle = IndPage.getPageName();
-        assert(pageTitle.includes('Indicator Print/Grid Report'), 
+        assert(pageTitle.includes('Indicator Print/Grid Report'),
             'Did not receive expected report page title');
     });
 

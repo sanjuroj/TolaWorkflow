@@ -158,7 +158,7 @@
                             {% endif %}
                         </ul>
                     </div>
-                    <h4 class="mt-2 mb-0" style="color:#ffffff80;">{% block page_title %}{% endblock %}</h4>
+
                 </div>
 
             </div>
@@ -168,6 +168,7 @@
         {% else %}
         <div class="container mt-3">
         {% endif %}
+            <h2 class="mt-2 mb-3 mx-3">{% block page_title %}{% endblock %}</h2>
             <div id="id_div_breadcrumb">{% block bread_crumb %}{% endblock %}</div>
             <div id="alerts">
                 <!-- Any messages for users -->
@@ -200,18 +201,18 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 text-left">
-                        <span class="text-muted"><b>Tola</b>Data</span>
+                        <span class="text-muted-footer"><b>Tola</b>Data</span>
                     </div>
                     <div class="col-md-6 text-right">
-                        <a href="https://sites.google.com/mercycorps.org/tolauserguide/home"
-                            class="text-muted"
+                        <a href="https://learn.mercycorps.org/index.php/TOLA:Mainpage/en"
+                            class="text-muted-footer fontsize-85"
                             target="_blank">{% trans "Documentation" %}</a> |
                         <a href="https://thehub.mercycorps.org/page/7271"
-                            class="text-muted">{% trans "FAQ" %}</a> |
+                            class="text-muted-footer fontsize-85"
+                            target="_blank">{% trans "FAQ" %}</a> |
                         <a href="https://goo.gl/forms/VuG2UjlBeTAGdJ503"
-                            class="text-muted">{% trans "Feedback" %}</a> |
-                        <a href="https://github.com/toladata/TolaActivity/blob/master/LICENSE"
-                            class="text-muted">{% trans "License" %}</a>
+                            class="text-muted-footer fontsize-85"
+                            target="_blank">{% trans "Feedback" %}</a>
                     </div>
                 </div>
             </div>
@@ -238,7 +239,6 @@
         <script type="text/javascript" src="{% static 'js/datatables.min.js' %}"></script>
 
         <script type="text/javascript" src="{{ STATIC_URL }}js/select2.min.js"></script>
-
         
 
         {% if GOOGLE_ANALYTICS_PROPERTY_ID %}

@@ -54,7 +54,7 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod,
         lop_target = Indicator.TARGET_FREQUENCIES[Indicator.LOP - 1][1]
         return {'period': lop_target}
     elif tf == Indicator.MID_END:
-        return [{'period': 'Midline'}, {'period': 'Endline'}]
+        return [{'period': PeriodicTarget.MIDLINE}, {'period': PeriodicTarget.ENDLINE}]
     elif tf == Indicator.EVENT:
         return {'period': target_frequency_custom}
 
@@ -1075,28 +1075,16 @@ def collected_data_view(request, indicator, program):
     for index, pt in enumerate(periodictargets):
         if index == 0:
             last_data_record_value = pt.last_data_row
-            grand_achieved_avg = pt.achieved_avg
             grand_achieved_sum = pt.achieved_sum
             pt.cumulative_sum = grand_achieved_sum
         else:
             try:
                 # update this variable only if there is a data value
-                last_data_record_value = pt.last_data_row if pt.last_data_row \
-                                        is not None else last_data_record_value
-
-                grand_achieved_avg = pt.achieved_avg + grand_achieved_avg
+                last_data_record_value = pt.last_data_row if pt.last_data_row is not None else last_data_record_value
                 grand_achieved_sum = pt.achieved_sum + grand_achieved_sum
                 pt.cumulative_sum = grand_achieved_sum
             except TypeError:
                 pass
-
-    # for calculative the grand_achieved_avg only count those periodic_targets
-    # that are not in the future, i.e, their start is less than today's date.
-    num_pts = periodictargets \
-        .filter(start_date__lte=timezone.now().date()).count()
-
-    if grand_achieved_avg is not None and num_pts > 0:
-        grand_achieved_avg = grand_achieved_avg / num_pts
 
     # show all of the data records that do not yet have periodic_targets
     # associated with them.
@@ -1106,11 +1094,10 @@ def collected_data_view(request, indicator, program):
     return render_to_response(
         template_name, {
             'periodictargets': periodictargets,
-            'collecteddata_without_periodictargets':
-                collecteddata_without_periodictargets,
+            'collecteddata_without_periodictargets': collecteddata_without_periodictargets,
             'last_data_record_value': last_data_record_value,
             'grand_achieved_sum': grand_achieved_sum,
-            'grand_achieved_avg': grand_achieved_avg,
+            'grand_achieved_avg': ind.get_collecteddata_average,
             'indicator': ind,
             'program_id': program
         }

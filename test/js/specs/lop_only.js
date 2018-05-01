@@ -1,16 +1,16 @@
-var assert = require('chai').assert;
+import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
-var IndPage = require('../pages/indicators.page.js');
-var TargetsTab = require('../pages/targets.page.js');
-var util = require('../lib/testutil.js');
+import TargetsTab from '../pages/targets.page';
+import Util from '../lib/testutil';
+import { assert } from 'chai';
 
 describe('"Life of Program (LoP) only" target frequency', function() {
   before(function() {
     // Disable timeouts
     this.timeout(0);
     browser.windowHandleMaximize();
-    let parms = util.readConfig();
+    let parms = Util.readConfig();
 
     LoginPage.open(parms.baseurl);
     if (parms.baseurl.includes('mercycorps.org')) {
@@ -26,13 +26,12 @@ describe('"Life of Program (LoP) only" target frequency', function() {
     }
   });
 
-  it('should permit only numeric values for LoP target', function() {
+  it('should permit numeric values for LoP target', function() {
     NavBar.Indicators.click();
-    assert.equal('Program Indicators', IndPage.getPageName(),
-      'Unexpected page name mismatch');
+    assert.equal('Program Indicators', IndPage.getPageName());
     IndPage.createBasicIndicator();
 
-    TargetsTab.setIndicatorName('LoP only target testing');
+    TargetsTab.setIndicatorName('Allow numeric values');
     TargetsTab.setUnitOfMeasure('Furlongs per fortnight');
     TargetsTab.setLoPTarget(30);
     TargetsTab.setBaseline(31);
@@ -42,17 +41,23 @@ describe('"Life of Program (LoP) only" target frequency', function() {
   });
 
   it('should reject non-numeric values for LoP target', function() {
-    TargetsTab.setLoPTarget('"666"');
-    // This should fail
+    NavBar.Indicators.click();
+    IndPage.createBasicIndicator();
+
+    TargetsTab.setIndicatorName('Disallow non-numeric values'); 
+    TargetsTab.setUnitOfMeasure('Gold per goose')
+    TargetsTab.setBaseline(49)
+    TargetsTab.setTargetFrequency('Life of Program (LoP) only');
+
+    // A string should fail
+    TargetsTab.setLoPTarget('"This is a string"');
     TargetsTab.saveIndicatorChanges();
     let errorHint = TargetsTab.getLoPErrorHint();
-    assert(errorHint.includes('Please enter a number larger than zero'),
-      'Did not receive expected failure message');
-    // Make it numeric; this should succeed
-    TargetsTab.setLoPTarget(45);
+    assert(errorHint.includes('Please enter a number larger than zero'));
+
+    // A string that looks like a number should become a number
+    TargetsTab.setLoPTarget('"59"');
     TargetsTab.saveIndicatorChanges();
-    assert.equal(45,
-      TargetsTab.getLoPTarget(),
-      'Did not receive expected value from getLoPTarget()');
+    assert(59 == TargetsTab.getLoPTarget())
   });
 });
