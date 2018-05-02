@@ -89,16 +89,16 @@
                 retrieve: true,
                 data: indicator_records,
                 "columnDefs": [
-                    { "{% trans 'visible' %}": false, "{% trans 'targets' %}": 0 },
-                    { "{% trans 'visible' %}": false, "{% trans 'targets' %}": 1 },
-                    { "{% trans 'visible' %}": false, "t{% trans 'targets' %}": 2 },
+                    { "visible": false, "targets": 0 },
+                    { "visible": false, "targets": 1 },
+                    { "visible": false, "targets": 2 },
                 ],
                 columns: [
                     { title: "{% trans 'PID' %}", class: "noExport", data: "program__id"},
                     { title: "{% trans 'IID' %}", class: "noExport", data: "id"},
                     { title: "{% trans 'ITID' %}", class: "noExport", data: "indicator_type__id"},
                     { title: "{% trans 'Program' %}", data: "program__name"},
-                    { title: "{% trans 'Indicator' %}", data: "{% trans 'name' %}",
+                    { title: "{% trans 'Indicator' %}", data: "name",
                             "mRender": function (data, type, row) {
                                 return '<a class="collecteddata" name=' + row.id + ' href="/indicators/indicator_update/' + row.id + '/">' + row.name + '</a>';
                             }

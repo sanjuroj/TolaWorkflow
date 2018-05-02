@@ -947,7 +947,7 @@ def getTableCount(url, table_id):
         headers = {
             'content-type': 'application/json'
         }
-        print _("Token Not Found")
+        print "Token Not Found"
 
     response = requests.get(url, headers=headers, verify=True)
     data = json.loads(response.content)
