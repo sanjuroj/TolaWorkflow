@@ -60,7 +60,7 @@
                                     {% endif %}
                                 {% else %}
                                     {% if item.achieved_avg %}
-                                        <small><abbr title='Average'>{% trans "avg." %}</abbr></small>
+                                        <small><abbr title='{% trans "Average" %}'>{% trans "avg." %}</abbr></small>
                                         {{ item.achieved_avg|floatformat:"-2" }}%
                                     {% endif %}
                                 {% endif %}
@@ -244,7 +244,7 @@
                     {% if indicator.is_cumulative == True %}
                         {{ last_data_record_value|floatformat:"-2" }}%
                     {% else %}
-                        <small><abbr title='Average'>{% trans "avg." %}</abbr></small>
+                        <small><abbr title='{% trans "Average" %}'>{% trans "avg." %}</abbr></small>
                         {{ grand_achieved_avg|floatformat:"-2" }}%
                     {% endif %}
                 {% endif %}
