@@ -175,7 +175,11 @@ class IPTT_ReportView(TemplateView):
         if period == Indicator.LOP:
             self.annotations = {}
         elif period == Indicator.MID_END:
-            last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-id')
+            # Create annotations for MIDLINE TargetPeriod
+            last_data_record = CollectedData.objects.filter(
+                    indicator=OuterRef('pk'),
+                    periodic_target__period=PeriodicTarget.MIDLINE)\
+                .order_by('-id')
             midline_sum = Sum(
                 Case(
                     When(
@@ -206,6 +210,11 @@ class IPTT_ReportView(TemplateView):
                 )
             )
 
+            # Create annotations for ENDLINE TargetPeriod
+            last_data_record = CollectedData.objects.filter(
+                indicator=OuterRef('pk'),
+                periodic_target__period=PeriodicTarget.ENDLINE)\
+                .order_by('-id')
             endline_sum = Sum(
                 Case(
                     When(
@@ -279,8 +288,8 @@ class IPTT_ReportView(TemplateView):
                         When(
                             Q(unit_of_measure_type=Indicator.PERCENTAGE) &
                             Q(is_cumulative=True) &
-                            Q(collecteddata__date_collected__gte=datetime.strftime(v[0], '%Y-%m-%d')) &
-                            Q(collecteddata__date_collected__lte=datetime.strftime(v[1], '%Y-%m-%d')),
+                            Q(collecteddata__date_collected__gte=start_date) &
+                            Q(collecteddata__date_collected__lte=end_date),
                             then=Subquery(last_data_record.values('achieved')[:1])
                         )
                     )
@@ -458,6 +467,7 @@ class IPTT_ReportView(TemplateView):
                             running_total = running_total + current_sum
                             ind[key] = running_total
             elif period == Indicator.MID_END:
+                print(ind['midline_last'])
                 if ind['unit_of_measure_type'] == Indicator.NUMBER and ind['is_cumulative'] is True:
                     ind['midend_sum'] = ind['midline_sum'] + ind['endline_sum']
 
