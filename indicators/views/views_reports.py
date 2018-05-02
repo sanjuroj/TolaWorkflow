@@ -167,7 +167,7 @@ class IPTT_ReportView(TemplateView):
 
         return period_start_date
 
-    def _generate_timperiod_annotations(self, timeperiods, period):
+    def _generate_annotations(self, timeperiods, period):
         """
         Generates queryset annotation(sum, avg, last data record). All three annotations are calculated
         because one of these three values will be used depending on how an indicator is configured.
@@ -439,15 +439,17 @@ class IPTT_ReportView(TemplateView):
             messages.info(self.request, _("Please select a valid report type."))
             return context
 
-        self.annotations = self._generate_timperiod_annotations(report_date_ranges, period)
+        self.annotations = self._generate_annotations(report_date_ranges, period)
         # update the queryset with annotations for timeperiods
         indicators = indicators.annotate(**self.annotations).order_by('number', 'name')
 
         # Calculate the cumulative sum across timeperiods for indicators that are NUMBER and CUMULATIVE
         for i, ind in enumerate(indicators):
             running_total = 0
-            # Go through all timeperiods and calculate the running total
-            if period in [Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL, Indicator.QUARTERLY, Indicator.MONTHLY]:
+            # if the frequency (period) is periodic, i.e., time-aware then go through each period
+            # and calculate the cumulative total achieved across date ranges (periods)
+            if period in [Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL, Indicator.QUARTERLY,
+                          Indicator.MONTHLY]:
                 for k, v in report_date_ranges.items():
                     if ind['unit_of_measure_type'] == Indicator.NUMBER and ind['is_cumulative'] is True:
                         current_sum = ind["{}_sum".format(k)]
@@ -456,7 +458,6 @@ class IPTT_ReportView(TemplateView):
                             running_total = running_total + current_sum
                             ind[key] = running_total
             elif period == Indicator.MID_END:
-                # for i, ind in enumerate(indicators):
                 if ind['unit_of_measure_type'] == Indicator.NUMBER and ind['is_cumulative'] is True:
                     ind['midend_sum'] = ind['midline_sum'] + ind['endline_sum']
 
