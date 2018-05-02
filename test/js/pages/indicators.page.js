@@ -182,6 +182,7 @@ function getAlertMsg() {
 function getIndicatorName() {
   let targetsTab = browser.$('=Performance');
   targetsTab.click();
+  browser.scroll('input#id_name');
   let val = $('input#id_name').getValue();
   return val;
 }

@@ -141,6 +141,7 @@ function getTargetDateRanges() {
  */
 function getIndicatorName() {
   clickTargetsTab();
+  browser.scroll('input#id_name');
   let val = $('input#id_name').getValue();
   return val;
 }
@@ -517,6 +518,7 @@ function setIndicatorName(name) {
   }
   let perfTab = browser.$('=Performance');
   perfTab.click();
+  browser.scroll('input#id_name');
   let indName = $('input#id_name');
   indName.setValue(name);
 }
