@@ -42,7 +42,14 @@
           {{ indicator.name|truncatechars:300 }}
         </h5>
     </div>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <button
+        type="button"
+        class="close"
+        data-dismiss="modal"
+        aria-label="Close"
+        style="padding-top: 10px;">
+          <span aria-hidden="true" style="font-weight: 100; font-size: 2rem;">&times;</span>
+    </button>
 </div>
 
 {% include 'indicators/indicator_form_helper.html' %}

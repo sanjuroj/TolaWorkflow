@@ -686,6 +686,12 @@
         /* validate fields from the performance tab */
         if (validateForEmptyField("id_name") == false) {
             validationsPerformanceTab = false
+            $("#div_id_name").addClass("marginbottom-225")
+            $("#div_id_name").removeClass("mb-3")
+        }
+        else {
+          $("#div_id_name").addClass("mb-3")
+          $("#div_id_name").removeClass("marginbottom-225")
         }
         if (validationsPerformanceTab == false) {
             validation_msgs['performance'] = '{% trans "Please complete all required fields in the Performance tab." %}';
