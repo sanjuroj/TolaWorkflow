@@ -22,8 +22,6 @@
   display: block;
 }
 
-
-
 .td-no-side-borders {
   border-left: 0px !important;
   border-right: 0px !important;
@@ -47,6 +45,10 @@
     padding-right: .80rem;
 }
 
+.marginbottom-225 {
+    margin-bottom: 2.25rem;
+}
+
 .text-muted-footer,
 .text-muted-footer:hover {
     color: #54585A;
@@ -64,10 +66,6 @@
     color: #fff;
     background-color: #808080;
     border-color: #808080;
-}
-
-.btn-destroy {
-    color:  #DD0000;
 }
 
 .date-badge {
@@ -382,6 +380,7 @@ inputs on the indicator setup page/modal */
 
 /* In each case, the hieght of these divs changes when the has-error class is
 applied.  This keeps the inputs from getting taller when there is an error. */
+#div_id_name,
 #div_id_target_frequency,
 #div_id_target_frequency .div-input-container,
 #div_id_target_frequency_start,
