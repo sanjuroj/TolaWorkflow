@@ -22,8 +22,6 @@
   display: block;
 }
 
-
-
 .td-no-side-borders {
   border-left: 0px !important;
   border-right: 0px !important;
@@ -33,8 +31,28 @@
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
 
+/* ~14pt from a 16pt reference*/
 .fontsize-85 {
     font-size: .85rem;
+}
+
+/* ~20pt from a 16pt reference*/
+.fontsize-125 {
+    font-size: 1.25rem;
+}
+
+.paddingright-80 {
+    padding-right: .80rem;
+}
+
+.marginbottom-225 {
+    margin-bottom: 2.25rem;
+}
+
+.help-link,
+.help-link:hover {
+    color: #54585A;
+    font-size: .875rem;
 }
 
 .text-muted-footer,
@@ -368,11 +386,16 @@ inputs on the indicator setup page/modal */
 
 /* In each case, the hieght of these divs changes when the has-error class is
 applied.  This keeps the inputs from getting taller when there is an error. */
+#div_id_name,
 #div_id_target_frequency,
 #div_id_target_frequency .div-input-container,
 #div_id_target_frequency_start,
 #div_id_target_frequency_custom {
     height: 2.25rem;
+}
+
+#div_id_unit_of_measure_type_0 {
+    margin-left: 2px;
 }
 
 /* Don't define border property here.  Assigning here prevents red border
@@ -426,8 +449,19 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 
+#id_div_is_cumulative .card-body {
+    border: 1px solid #B8BABD;
+}
+
+#addNewPeriodicTarget:hover {
+    text-decoration: none;
+}
+
+/* END Indicator periodic target creation */
+
+
 .blink {
-animation: blink 2s linear infinite;
+    animation: blink 2s linear infinite;
 }
 
 @keyframes blink {

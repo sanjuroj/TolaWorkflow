@@ -51,6 +51,9 @@
     $( document ).ready(function() {
         show_hide_frequency_fields();
         setupPopupCalendar();
+        if ( $('#id_div_periodic_tables_placeholder').children().length > 0 ) {
+            $("#id_create_targets_btn").attr("disabled", true)
+        }
     });
 
     $("#indicator_modal_div").on('shown.bs.tab', function() {
@@ -147,6 +150,8 @@
             return;
         }
         $(this).attr("disabled", true);
+        $(this).removeClass("btn-primary")
+        $(this).addClass("btn-secondary")
         submitForm($("#indicator_update_form"));
     });
 
@@ -203,6 +208,8 @@
                 $("#id_div_periodic_tables_placeholder").empty();
                 reset_frequency_fields();
                 show_hide_frequency_fields();
+                $("#id_create_targets_btn").removeClass("btn-secondary")
+                $("#id_create_targets_btn").addClass("btn-primary")
                 $("#indicator_update_form").data('indicatorchanged', true);
             }
 
@@ -358,13 +365,14 @@
 
     function show_hide_frequency_fields(lock = false) {
         // set the text for the 'create new target' button.
-        var label = '<i class="fas fa-plus"></i> ' + getNewTargetBtnLabel($("#id_target_frequency").val());
+        var label = '<i class="fas fa-plus-circle"></i> ' + getNewTargetBtnLabel($("#id_target_frequency").val());
         $("#addNewPeriodicTarget").html(label);
         var selected_option = $("#id_target_frequency").find("option:selected").text();
-        if ( (lock == true || $('#id_target_frequency').is('[readonly="readonly"]'))
+        if ( (lock == true || $('#id_target_frequency').is('[readonly=true]'))
                  && selected_option != 'Life of Program (LoP) only') {
             $("#id_target_frequency option:not(:selected)").attr("disabled", true);
             $("#id_target_frequency").attr("readonly", true);
+            $("#id_target_frequency").attr("disabled", "disabled");
             $("#id_create_targets_btn").attr("disabled", true);
             $("#div_id_target_frequency_start").hide();
             $("#div_id_target_frequency_num_periods").hide();
@@ -436,10 +444,16 @@
         }
         return label;
     }
-    $("#indicator_modal_content, #indicator_form").on("change", "#id_target_frequency", function(e){
+    $("#indicator_modal_content, #indicator_form").on("change blur", "#id_target_frequency", function(e){
       if ($("#id_target_frequency option:selected").text().indexOf("---") < 0) {
         $("#id_target_frequency").removeClass('is-invalid');
         $("#validation_id_target_frequency").text(" ");
+        $("#div_id_target_frequency").removeClass('marginbottom-225');
+        $("#div_id_target_frequency").addClass('mb-3');
+      }
+      else {
+        $("#div_id_target_frequency").addClass('marginbottom-225');
+        $("#div_id_target_frequency").removeClass('mb-3');
       }
       show_hide_frequency_fields();
     });
@@ -648,6 +662,8 @@
         }
         if (validateForEmptyField("id_target_frequency") == false) {
             validationsTargetTab = false;
+            $("#div_id_target_frequency").addClass("marginbottom-225")
+            $("#div_id_target_frequency").removeClass("mb-3")
         }
         if (validateNumPeriods() == false) {
             validationsTargetTab = false;
@@ -675,9 +691,15 @@
         /* validate fields from the performance tab */
         if (validateForEmptyField("id_name") == false) {
             validationsPerformanceTab = false
+            $("#div_id_name").addClass("marginbottom-225")
+            $("#div_id_name").removeClass("mb-3")
+        }
+        else {
+          $("#div_id_name").addClass("mb-3")
+          $("#div_id_name").removeClass("marginbottom-225")
         }
         if (validationsPerformanceTab == false) {
-            validation_msgs['performance'] = '{% trans "Please complete all required fields in the Performance tab." %}';
+            validation_msgs['performance'] = '{% trans "Please complete all required fields in the Summary tab." %}';
         } else {
             delete validation_msgs['performance'];
         }
@@ -763,22 +785,20 @@
 
     $("#indicator_modal_content, #indicator_form").on("blur", "#id_target_frequency_num_periods", function(e){
         validateNumPeriods();
+
     });
 
     $("#indicator_modal_content, #indicator_form").on("blur", "#id_name", function(e){
-        validateForEmptyField("id_name");
+        var is_valid = validateForEmptyField("id_name");
+        if (!is_valid) {
+          $("#div_id_name").addClass('marginbottom-225')
+          $("#div_id_name").removeClass('mb-3')
+        }
+        else {
+          $("#div_id_name").addClass('mb-3')
+          $("#div_id_name").removeClass('marginbottom-225')
+        }
     });
 
 
 </script>
-
-
-
-
-
-
-
-
-
-
-

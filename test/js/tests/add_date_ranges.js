@@ -46,37 +46,40 @@ describe('Adding target date ranges', function() {
 
         // Scrape a list of date ranges off the screen
         let dateRanges = TargetsTab.getTargetDateRanges();
-        let rangeStart, rangeEnd, diff;
         // Add a target and verify date ranges
         TargetsTab.addTarget();
+        let rangeStart, rangeEnd, dateObj, dateDiff;
         for (let dateRange of dateRanges) {
             // Split dates into start and end date objects
-            rangeStart = new Date(dateRange.split(' - ')[0]);
-            rangeEnd = new Date(dateRange.split(' - ')[1]);
-            //FIXME: code smell
-            // This calculates elapsed time in units of a year, but
-            // also returns a floating point value (dafuq?) that needs
-            // to be rounded to an integer because there's a bug in the
-            // DateMath package
-            diff = DateMath.diff(rangeStart, rangeEnd, 'year', true);
-            expect(Math.round(diff) == 1);
+            dateObj = new Date(dateRange.split(' - ')[0]);
+            rangeStart = DateMath.startOf(dateObj, 'year');
+
+            dateObj = new Date(dateRange.split(' - ')[1]);
+            rangeEnd = DateMath.endOf(dateObj, 'year');
+
+            dateDiff = DateMath.diff(rangeStart, rangeEnd, 'year');
+            expect(1 === dateDiff);
         }
 
         // Save the added target and verify date ranges
         TargetsTab.saveIndicatorChanges();
         dateRanges = TargetsTab.getTargetDateRanges();
         for (let dateRange of dateRanges) {
-            rangeStart = new Date(dateRange.split(' - ')[0]);
-            rangeEnd = new Date(dateRange.split(' - ')[1]);
-            diff = DateMath.diff(rangeStart, rangeEnd, 'year', true);
-            expect(Math.round(diff) == 1);
+            dateObj = new Date(dateRange.split(' - ')[0]);
+            rangeStart = DateMath.startOf(dateObj, 'year');
+
+            dateObj = new Date(dateRange.split(' - ')[1]);
+            rangeEnd = DateMath.endOf(dateObj, 'year');
+
+            dateDiff = DateMath.diff(rangeStart, rangeEnd, 'year');
+            expect(1 === dateDiff);
         }
 
         // Make sure all the target fields are populated
         let inputBoxes = TargetsTab.getTargetInputBoxes();
         let targetCount = inputBoxes.length;
         for(let inputBox of inputBoxes) {
-            if (inputBox.getValue() == '') {
+            if ('' == inputBox.getValue()) {
                 inputBox.setValue(1);
             }
         }
@@ -97,23 +100,30 @@ describe('Adding target date ranges', function() {
         TargetsTab.saveIndicatorChanges();
 
         let dateRanges = TargetsTab.getTargetDateRanges();
-        let rangeStart, rangeEnd, diff;
         TargetsTab.addTarget();
+        let rangeStart, rangeEnd, dateObj, dateDiff;
         for (let dateRange of dateRanges) {
-            rangeStart = new Date(dateRange.split(' - ')[0]);
-            rangeEnd = new Date(dateRange.split(' - ')[1]);
-            //FIXME: code smell
-            diff = DateMath.diff(rangeStart, rangeEnd, 'month', true);
-            expect(Math.round(diff) == 6);
+            dateObj = new Date(dateRange.split(' - ')[0]);
+            rangeStart = DateMath.startOf(dateObj, 'month');
+
+            dateObj = new Date(dateRange.split(' - ')[1]);
+            rangeEnd = DateMath.endOf(dateObj, 'month');
+
+            dateDiff = DateMath.diff(rangeStart, rangeEnd, 'month');
+            expect(6 === dateDiff);
         }
 
         TargetsTab.saveIndicatorChanges();
         dateRanges = TargetsTab.getTargetDateRanges();
         for (let dateRange of dateRanges) {
-            rangeStart = new Date(dateRange.split(' - ')[0]);
-            rangeEnd = new Date(dateRange.split(' - ')[1]);
-            diff = DateMath.diff(rangeStart, rangeEnd, 'year', true);
-            expect(Math.round(diff) == 1);
+            dateObj = new Date(dateRange.split(' - ')[0]);
+            rangeStart = DateMath.startOf(dateObj, 'month');
+
+            dateObj = new Date(dateRange.split(' - ')[1]);
+            rangeEnd = DateMath.endOf(dateObj, 'month');
+
+            dateDiff = DateMath.diff(rangeStart, rangeEnd, 'month');
+            expect(6 === dateDiff);
         }
 
         let inputBoxes = TargetsTab.getTargetInputBoxes();
@@ -139,23 +149,30 @@ describe('Adding target date ranges', function() {
         TargetsTab.saveIndicatorChanges();
 
         let dateRanges = TargetsTab.getTargetDateRanges();
-        let rangeStart, rangeEnd, diff;
         TargetsTab.addTarget();
+        let rangeStart, rangeEnd, dateObj, dateDiff;
         for (let dateRange of dateRanges) {
-            rangeStart = new Date(dateRange.split(' - ')[0]);
-            rangeEnd = new Date(dateRange.split(' - ')[1]);
-            //FIXME: code smell
-            diff = DateMath.diff(rangeStart, rangeEnd, 'month', true);
-            expect(Math.round(diff) == 4);
+            dateObj = new Date(dateRange.split(' - ')[0]);
+            rangeStart = DateMath.startOf(dateObj, 'month');
+
+            dateObj = new Date(dateRange.split(' - ')[1]);
+            rangeEnd = DateMath.endOf(dateObj, 'month');
+
+            dateDiff = DateMath.diff(rangeStart, rangeEnd, 'month');
+            expect(4 === dateDiff);
         }
 
         TargetsTab.saveIndicatorChanges();
         dateRanges = TargetsTab.getTargetDateRanges();
         for (let dateRange of dateRanges) {
-            rangeStart = new Date(dateRange.split(' - ')[0]);
-            rangeEnd = new Date(dateRange.split(' - ')[1]);
-            diff = DateMath.diff(rangeStart, rangeEnd, 'year', true);
-            expect(Math.round(diff) == 1);
+            dateObj = new Date(dateRange.split(' - ')[0]);
+            rangeStart = DateMath.startOf(dateObj, 'month');
+
+            dateObj = new Date(dateRange.split(' - ')[1]);
+            rangeEnd = DateMath.endOf(dateObj, 'month');
+
+            dateDiff = DateMath.diff(rangeStart, rangeEnd, 'month');
+            expect(4 === dateDiff);
         }
 
         let inputBoxes = TargetsTab.getTargetInputBoxes();
@@ -181,23 +198,30 @@ describe('Adding target date ranges', function() {
         TargetsTab.saveIndicatorChanges();
 
         let dateRanges = TargetsTab.getTargetDateRanges();
-        let rangeStart, rangeEnd, diff;
         TargetsTab.addTarget();
+        let rangeStart, rangeEnd, dateObj, dateDiff;
         for (let dateRange of dateRanges) {
-            rangeStart = new Date(dateRange.split(' - ')[0]);
-            rangeEnd = new Date(dateRange.split(' - ')[1]);
-            //FIXME: code smell
-            diff = DateMath.diff(rangeStart, rangeEnd, 'month', true);
-            expect(Math.round(diff) == 3);
+            dateObj = new Date(dateRange.split(' - ')[0]);
+            rangeStart = DateMath.startOf(dateObj, 'month');
+
+            dateObj = new Date(dateRange.split(' - ')[1]);
+            rangeEnd = DateMath.endOf(dateObj, 'month');
+
+            dateDiff = DateMath.diff(rangeStart, rangeEnd, 'month');
+            expect(3 ===  dateDiff);
         }
 
         TargetsTab.saveIndicatorChanges();
         dateRanges = TargetsTab.getTargetDateRanges();
         for (let dateRange of dateRanges) {
-            rangeStart = new Date(dateRange.split(' - ')[0]);
-            rangeEnd = new Date(dateRange.split(' - ')[1]);
-            diff = DateMath.diff(rangeStart, rangeEnd, 'year', true);
-            expect(Math.round(diff) == 1);
+            dateObj = new Date(dateRange.split(' - ')[0]);
+            rangeStart = DateMath.startOf(dateObj, 'month');
+
+            dateObj = new Date(dateRange.split(' - ')[1]);
+            rangeEnd = DateMath.endOf(dateObj, 'month');
+
+            dateDiff = DateMath.diff(rangeStart, rangeEnd, 'month');
+            expect(3 ===  dateDiff);
         }
 
         let inputBoxes = TargetsTab.getTargetInputBoxes();
@@ -223,23 +247,30 @@ describe('Adding target date ranges', function() {
         TargetsTab.saveIndicatorChanges();
 
         let dateRanges = TargetsTab.getTargetDateRanges();
-        let rangeStart, rangeEnd, diff;
         TargetsTab.addTarget();
+        let rangeStart, rangeEnd, dateObj, dateDiff;
         for (let dateRange of dateRanges) {
-            rangeStart = new Date(dateRange.split(' - ')[0]);
-            rangeEnd = new Date(dateRange.split(' - ')[1]);
-            //FIXME: code smell
-            diff = DateMath.diff(rangeStart, rangeEnd, 'month', true);
-            expect(Math.round(diff) == 1);
+            dateObj = new Date(dateRange.split(' - ')[0]);
+            rangeStart = DateMath.startOf(dateObj);
+
+            dateObj = new Date(dateRange.split(' - ')[1]);
+            rangeEnd = DateMath.startOf(dateObj);
+
+            dateDiff = DateMath.diff(rangeStart, rangeEnd, 'month');
+            expect(1 === dateDiff);
         }
 
         TargetsTab.saveIndicatorChanges();
         dateRanges = TargetsTab.getTargetDateRanges();
         for (let dateRange of dateRanges) {
-            rangeStart = new Date(dateRange.split(' - ')[0]);
-            rangeEnd = new Date(dateRange.split(' - ')[1]);
-            diff = DateMath.diff(rangeStart, rangeEnd, 'year', true);
-            expect(Math.round(diff) == 1);
+            dateObj = new Date(dateRange.split(' - ')[0]);
+            rangeStart = DateMath.startOf(dateObj);
+
+            dateObj = new Date(dateRange.split(' - ')[1]);
+            rangeEnd = DateMath.startOf(dateObj);
+
+            dateDiff = DateMath.diff(rangeStart, rangeEnd, 'month');
+            expect(1 === dateDiff);
         }
 
         let inputBoxes = TargetsTab.getTargetInputBoxes();

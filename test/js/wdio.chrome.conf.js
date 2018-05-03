@@ -64,15 +64,9 @@ exports.config = {
     services: [],
     seleniumLogs: './log',
     framework: 'mocha',
-    reporters: ['spec', 'allure'],
-    reporterOptions: {
-        allure: {
-            outputDir: './allure-results'
-        }
-    },
+    reporters: ['spec'],
     mochaOpts: {
         ui: 'bdd',
-        compilers: ['js:babel-register'],
         require: 'babel-register'
     }
 //    onComplete: function(exitCode, config, capabilities) {

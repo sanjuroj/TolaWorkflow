@@ -26,6 +26,10 @@
             $('#indicatorTabs a[href="#targetsTab"][data-toggle="tab"]').tab('show');
             $("#indicator_modal_body").data("targetsactive", "true");
         }
+
+        if ( $('#id_div_periodic_tables_placeholder').children().length > 0 ) {
+            $("#id_create_targets_btn").attr("disabled", true)
+        }
     });
 </script>
 
@@ -42,7 +46,14 @@
           {{ indicator.name|truncatechars:300 }}
         </h5>
     </div>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <button
+        type="button"
+        class="close"
+        data-dismiss="modal"
+        aria-label="Close"
+        style="padding-top: 10px;">
+          <span aria-hidden="true" style="font-weight: 100; font-size: 2rem;">&times;</span>
+    </button>
 </div>
 
 {% include 'indicators/indicator_form_helper.html' %}
