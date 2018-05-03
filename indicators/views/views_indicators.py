@@ -53,7 +53,7 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod,
         lop_target = Indicator.TARGET_FREQUENCIES[Indicator.LOP - 1][1]
         return {'period': lop_target}
     elif tf == Indicator.MID_END:
-        return [{'period': 'Midline'}, {'period': 'Endline'}]
+        return [{'period': PeriodicTarget.MIDLINE}, {'period': PeriodicTarget.ENDLINE}]
     elif tf == Indicator.EVENT:
         return {'period': target_frequency_custom}
 
@@ -1063,9 +1063,6 @@ def collected_data_view(request, indicator, program):
 
     # the total of achieved values across all periodic targets of an indicator
     grand_achieved_sum = 0
-
-    # the avg of the periodic_targets "achieved_avg" values
-    grand_achieved_avg = 0
 
     # the last achieved value reported against any target of an indicator
     last_data_record_value = 0

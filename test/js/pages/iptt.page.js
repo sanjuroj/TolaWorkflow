@@ -1,12 +1,19 @@
 /**
  * Page object for the IPTT landing page
- * @module IPTTHome
+ * @module IpttPage
  **/
 import Page from './page';
 import Util from '../lib/testutil';
 'use strict';
 
-class IpttHome extends Page {
+class IpttPage extends Page {
+
+    get title() {
+        browser.waitForVisible('nav.navbar');
+        let h4 = browser.$('nav.navbar').$('h4');
+        return h4.getText();
+    }
+
     // IPTT: Program indicator overview
     /**
      * Return the PROGRAM dropdown for the IPTT indicator overview
@@ -16,47 +23,27 @@ class IpttHome extends Page {
     get IndicatorOverviewProgram() {
         return browser.$('select#id_timeperiods-program');
     }
+
     get IndicatorOverviewProgramList() {
     }
+
     get IndicatorOverviewTimePeriods() {
         return browser.$('select#id_timeperiods-timeperiods');
     }
+
     get IndicatorOverviewTimePeriodsList() {
     }
+
     get IndicatorOverviewTimeFrame() {
         return browser.$('input[name="timeperiods-timeframe"]');
     }
+
     get IndicatorOverviewNumRecent() {
         return browser.$('input#id_timeperiods-numrecentperiods');
     }
+
     get IndicatorOverviewViewReport() {
         return browser.$('button#id_submit_timeperiods_button');
-    }
-
-    // IPTT: Program target overview quickstart
-    get TargetOverviewProgram() {
-        return browser.$('select#id_targetperiods-program');
-    }
-    get TargetOverviewProgramList() {
-    }
-    get TargetOverviewTargetPeriods() {
-        return browser.$('select#id_targetperiods-timeperiods');
-    }
-    get TargetOverviewTargetPeriodsList() {
-    }
-    get TargetOverviewTimeFrame() {
-        return browser.$('input[name="targetperiods-timeframe"]');
-    }
-    get TargetOverviewNumRecent() {
-        return browser.$('input#id_targetperiods-numrecentperiods');
-    }
-    get TargetOverviewViewReport() {
-        return browser.$('button#id_submit_targetperiods_button');
-    }
-    get title() {
-        browser.waitForVisible('nav.navbar');
-        let h4 = browser.$('nav.navbar').$('h4');
-        return h4.getText();
     }
 
     set IndicatorOverviewProgram(val) {
@@ -82,9 +69,69 @@ class IpttHome extends Page {
         elem.click();
     }
 
+
+    // IPTT: Program target overview quickstart
+    get TargetOverviewProgram() {
+        return browser.$('select#id_targetperiods-program');
+    }
+
+    get TargetOverviewProgramList() { }
+
+    get TargetOverviewTargetPeriods() {
+        return browser.$('select#id_targetperiods-targetperiods');
+    }
+
+    get TargetOverviewTargetPeriodsList() {
+    }
+
+    get TargetOverviewTimeFrame() {
+        return browser.$('input[name="targetperiods-timeframe"]');
+    }
+
+    get TargetOverviewNumRecent() {
+        return browser.$('input#id_targetperiods-numrecentperiods');
+    }
+
+    get TargetOverviewViewReport() {
+        return browser.$('button#id_submit_targetperiods_button');
+    }
+
+    set TargetOverviewProgram(val) {
+        let elem = browser.$('select[name="targetperiods-program"]');
+        elem.click();
+        //FIXME: Hard-coded value
+        elem.selectByValue(452);
+        elem.click();
+    }
+
+    set TargetOverviewTimeFrame(val) {
+        if (val == 'Show all') {
+            browser.$('div#div_id_targetperiods-timeframe_0').click();
+        } else if (val == 'Most recent') {
+            browser.$('div#div_id_targetperiods-timeframe_1').click();
+        }
+    }
+
+    set TargetOverviewTargetPeriods(val) {
+        let elem = browser.$('select[name="targetperiods-targetperiods"]');
+        elem.click();
+        elem.selectByVisibleText(val);
+        elem.click();
+    }
+
     open() {
         let parms = Util.readConfig();
         super.open(parms.baseurl + 'indicators/iptt_quickstart');
     }
+
+    quickstart(source) {
+        browser.waitForVisible('div#id_div_top_quickstart_iptt');
+        let cards = browser.$$('div.card');
+        if (source == 'indicator') {
+            return cards[0].$('h5').getText();
+        } else if (source == 'target') {
+            return cards[1].$('h5').getText();
+        }
+    }
 }
-export default new IpttHome();
+export default new IpttPage();

@@ -22,7 +22,7 @@ doc:
 		--recurse \
 		--destination doc \
 		--readme README.md \
-		test/lib test/pages -R README.md
+		./lib ./pages -R README.md
 
 install:
 	@npm install --verbose --save-dev

@@ -1,14 +1,14 @@
 import IpttPage from '../pages/iptt.page';
 import LoginPage from '../pages/login.page';
 import Util from '../lib/testutil';
-import { assert, expect } from 'chai';
+import { expect } from 'chai';
 'use strict';
 
 /**
- * IPTT report: Program indicator overview
+ * IPTT report: Program indicator overview quickstart
  * Tests from mc/issues/119
  */
-describe('Indicator evidence percent indicators', function() {
+describe('IPTT: Program indicator overview quickstart', function() {
     before(function() {
         // Disable timeouts
         this.timeout(0);
@@ -31,7 +31,10 @@ describe('Indicator evidence percent indicators', function() {
 
     it('should exist', function () {
         IpttPage.open();
-        expect('Program indicator overview' == IpttPage.title);
+        expect('Indicator Performance Tracking Table' ==
+            IpttPage.title);
+        expect('Program indicator overview' == 
+            IpttPage.quickstart('indicator'));
     });
 
     it('should have Program dropdown', function() {
@@ -53,14 +56,15 @@ describe('Indicator evidence percent indicators', function() {
         // 2 == Show N most recent periods
         IpttPage.open();
         let val = IpttPage.IndicatorOverviewTimeFrame;
+        //FIXME: magic number
         expect(val == 1);
     });
 
     it('should have a View Report button', function() {
-        let val = IpttPage.IndicatorOverviewViewReport;
-        expect(val != undefined);
-        expect(val != null);
-        expect('View Report' == val.getText());
+        let elem = IpttPage.IndicatorOverviewViewReport;
+        expect(elem != undefined);
+        expect(elem != null);
+        expect('View Report' == elem.getText());
     });
 
     it('should allow to specify N recent time periods', function() {
@@ -72,33 +76,30 @@ describe('Indicator evidence percent indicators', function() {
     });
 
     it('should require choosing a program to create report', function() {
-        //FIXME: magic number
+        // Select a time period but not program
         IpttPage.IndicatorOverviewTimePeriods = 'Years';
         expect(IpttPage.IndicatorOverviewViewReport.disabled == 'disabled');
     });
 
     it('should require select a time period to create report', function() {
+        // Select a program, but not a time period
         //FIXME: magic number
         IpttPage.IndicatorOverviewProgram = 2;
         IpttPage.IndicatorOverviewTimeFrame = 'Most recent';
         expect(IpttPage.IndicatorOverviewViewReport.disabled == 'disabled');
     });
 
-    it('should create report if all params specified when View Report clicked', function() {
+    it('should create report if all params specified correctly', function() {
         IpttPage.open();
         //FIXME: magic number
         IpttPage.IndicatorOverviewProgram = 2;
         IpttPage.IndicatorOverviewTimePeriods = 'Years';
         IpttPage.IndicatorOverviewViewReport.click();
-        //FIXME: assert/expect something here
-        //expect('TBD' == 'PERIOD WILL GO HERE');
+        // If the table isn't there, we didn't make a report
+        expect(true == browser.isVisible('table#iptt_table'));
     });
 
-    it('should set Start and End date fields based on time period selected');
-    it('should allow selecting start and end months');
-    it('should open report with filter panel(s) open');
-    it('should display Targets and % Met fields for LoP target and actual');
-    it('should require the start month to be older than the end date');
-    it('should only display LoP targets, not intermediate targets');
-    it('should only display % Met for LoP targets, not intermediate targets');
+    it('should open report with filter panel open', function () {
+        expect(true == browser.isVisible('form#id_form_indicator_filter'));
+    });
 }); 

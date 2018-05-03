@@ -8,6 +8,9 @@ const delay = 1000; // milliseconds
 'use strict';
 
 class LoginPage extends Page {
+    // Independent of auth source
+    get title() { return browser.getTitle(); }
+
     // These are for authentication using MC's SSO
     get username() { return $('#login'); }
     get password() { return $('#password'); }
@@ -45,11 +48,8 @@ class LoginPage extends Page {
                 return url;
             }
         });
-        //browser.waitForText('h4');
     }
 
-    // Works everywhere (or at least it better)
-    get title() { return browser.getTitle(); }
 
     open(url) { super.open(url); }
 }

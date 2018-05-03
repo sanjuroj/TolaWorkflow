@@ -204,7 +204,7 @@ class ReportFormCommon(forms.Form):
     )
 
     EMPTY_OPTION = (EMPTY, "---------")
-    TARGETPERIODS_CHOICES = (EMPTY_OPTION,) + Indicator.TARGET_FREQUENCIES
+    TARGETPERIODS_CHOICES = (EMPTY_OPTION,) + Indicator.TARGET_FREQUENCIES[0:7]
 
     program = forms.ModelChoiceField(queryset=Program.objects.none())
     timeperiods = forms.ChoiceField(choices=TIMEPERIODS_CHOICES,
