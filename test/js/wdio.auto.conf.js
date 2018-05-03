@@ -73,15 +73,11 @@ exports.config = {
     services: ['selenium-standalone'],
     seleniumLogs: './log',
     framework: 'mocha',
-    reporters: ['spec', 'allure'],
+    reporters: ['spec'],
     reporterOptions: {
-        allure: {
-            outputDir: './allure-results'
-        }
     },
     mochaOpts: {
         ui: 'bdd',
-        compilers: ['js:babel-register'],
         require: ['babel-register']
     }
 }

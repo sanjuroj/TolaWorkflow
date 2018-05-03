@@ -30,7 +30,7 @@ describe("Programs dropdown", function () {
   
     it('does someting', function() {
         NavBar.Indicators.click();
-        // FIXME: pageName should be a property
+        // FIXME: getPageName should be a property
         assert.equal('Program Indicators', IndPage.getPageName());
     });
     
@@ -69,8 +69,8 @@ describe("Programs dropdown", function () {
                 if (! s.includes('-- All --')) {
                     browser.selectByVisibleText(s);
                 }
-                let h4 = $('h4').getText();
-                assert.equal(s, h4, 'Unexpected text mismtach');
+                let h2 = $('h2').getText();
+                assert.equal(s, h2, 'Unexpected text mismtach');
         }
     }); 
     

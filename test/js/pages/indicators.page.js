@@ -49,7 +49,7 @@ function clickIndicatorsLink() {
   }
   let indicatorsLink = browser.$('ul.navbar-nav').$('=Indicators');
   indicatorsLink.click();
-  browser.waitForVisible('h4=Program Indicators');
+  browser.waitForVisible('h2=Program Indicators');
 }
 
 /**
@@ -112,7 +112,8 @@ function clickProgramIndicatorsButton(programName) {
  * @returns Nothing
  */
 function clickResetButton() {
-  browser.$('input[value="Reset"]').click();
+  browser.scroll('input[value="RESET"]');
+  browser.$('input[value="RESET"]').click();
 }
 
 /**
@@ -121,7 +122,7 @@ function clickResetButton() {
  * specific calls.
  */
 function createBasicIndicator() {
-  if ($('h4').getText() != 'Program Indicators') {
+  if ($('h2').getText() != 'Program Indicators') {
     clickIndicatorsLink();
   }
   clickNewIndicatorButton();
@@ -181,6 +182,7 @@ function getAlertMsg() {
 function getIndicatorName() {
   let targetsTab = browser.$('=Performance');
   targetsTab.click();
+  browser.scroll('input#id_name');
   let val = $('input#id_name').getValue();
   return val;
 }
@@ -292,8 +294,8 @@ function open(url = parms.baseurl) {
  * @returns {string} The title of the current page
  */
 function getPageName() {
-  // On this page, the "title" is actually the <h4> caption
-  return browser.$('h4').getText();
+  // On this page, the "title" is actually the <h2> caption
+  return browser.$('h2').getText();
 }
 
 /**
