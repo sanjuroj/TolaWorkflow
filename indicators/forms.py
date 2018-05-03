@@ -207,6 +207,7 @@ class ReportFormCommon(forms.Form):
     )
 
     EMPTY_OPTION = (EMPTY, "---------")
+    # combine the target_frequencies (except EVENT) and the EMPTY option
     TARGETPERIODS_CHOICES = (EMPTY_OPTION,) + Indicator.TARGET_FREQUENCIES[0:7]
 
     program = forms.ModelChoiceField(queryset=Program.objects.none())
