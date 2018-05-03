@@ -502,8 +502,11 @@ function setFirstTargetPeriod() {
   // Defaults to the current month
   browser.scroll('input#id_target_frequency_start');
   browser.$('input#id_target_frequency_start').click();
-  browser.scroll('button.ui-datepicker-close');
-  browser.$('button.ui-datepicker-close').click();
+  browser.pause(msec/2);
+  //BUG? It is unclear why this selector fails but the next
+  //one succeeds
+  //browser.$('button.ui-datepicker-close').click();
+  browser.$('button=Done').click();
 }
 
 /**
