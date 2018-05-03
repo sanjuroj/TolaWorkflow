@@ -516,11 +516,11 @@ function setFirstTargetPeriod() {
  * @returns Nothing
  */
 function setIndicatorName(name) {
-  if (! browser.isVisible('=Performance')) {
-    browser.waitForVisible('=Performance');
+  if (! browser.isVisible('=Summary')) {
+    browser.waitForVisible('=Summary');
   }
-  let perfTab = browser.$('=Performance');
-  perfTab.click();
+  let tab = browser.$('=Summary');
+  tab.click();
   browser.scroll('input#id_name');
   let indName = $('input#id_name');
   indName.setValue(name);
