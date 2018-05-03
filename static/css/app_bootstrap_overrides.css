@@ -40,9 +40,32 @@ a {
     color: #0645AD;
 }
 
-h3 {
+a:hover {
+    color: #3366cc;
+}
+
+h1 {
+    font-size: 1.75rem;
+    color: #54585A;
+    font-weight: bold;
+}
+
+h2 {
     font-size: 1.5rem;
     color: #54585A;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 1.3rem;
+    color: #54585A;
+    font-weight: normal;
+}
+
+h4 {
+    font-size: 1rem;
+    color: #54585A;
+    font-weight: bold;
 }
 
 body > .container {
@@ -53,55 +76,85 @@ body > .container {
     padding: 10px;
 }
 
-.btn-primary {
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled).active:focus,
+.btn-primary:not(:disabled):not(.disabled):active,
+.btn-primary:not(:disabled):not(.disabled):active:focus,
+.btn-primary,
+.btn-primary.focus,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary:hover {
     background-color: #00A49F;
     border-color: #00A49F;
     color: #FFFFFF;
+    font-size: 1.125rem;
+    box-shadow: none;
 }
 
-.btn-primary:hover {
-    background-color: #33BFBB;
-    border-color: #33BFBB;
-    color: #FFFFFF;
-}
-
-.btn-secondary {
-    background-color: #71757B;
-    border-color: #71757B;
-    color: #FFFFFF;
-}
-
+.btn-secondary:not(:disabled):not(.disabled).active,
+.btn-secondary:not(:disabled):not(.disabled).active:focus,
+.btn-secondary:not(:disabled):not(.disabled):active,
+.btn-secondary:not(:disabled):not(.disabled):active:focus,
+.btn-secondary,
+.btn-secondary.focus,
+.btn-secondary:focus,
+.btn-secondary:active,
 .btn-secondary:hover {
-    background-color: #94979C;
-    border-color: #94979C;
-    color: #FFFFFF;
+    background-color: #FFFFFF;
+    border-color: #00A49F;
+    color: #00A49F;
 }
 
-.btn-light {
-    background-color: transparent;
-    border-color: #94979C;
-    color: #54585A;
-}
-
-.btn-light:hover {
-    background-color: transparent;
+.btn-secondary[disabled="disabled"],
+.btn-secondary[disabled="disabled"]:hover,
+.btn-secondary[disabled=true],
+.btn-secondary[disabled=true]:hover {
+    background-color: #FFFFFF;
     border-color: #B8BABD;
-    color: #71757B;
+    color: #B8BABD;
+}
+
+.btn-link {
+    color: #0645ad;
+}
+
+.btn-link:hover {
+    color: #3366cc;
+}
+
+.btn-danger {
+    color:  #DD0000;
+    border: 0px;
+}
+
+.btn-danger:hover {
+    color:  #DD0000;
+}
+
+input[type="radio"]:checked {
+  background-color: red;
 }
 
 .btn {
     padding-right: 1.25rem;
     padding-left: 1.25rem;
-}
-
-.help-link {
-    color: #54585A;
-    font-size: .875rem;
+    border-radius: 0px;
 }
 
 .form-control {
+    color: #000000;
     border-radius: 0px;
     border-color: #B8BABD;
+}
+
+input[type="text"]:read-only,
+select[disabled="disabled"],
+select[disabled=true],
+.form-control:disabled,
+.form-control[readonly] {
+  border-color: #B8BABD;
+  background-color: #DBDCDE;
 }
 
 /* do not change border color to green when form is validated */
@@ -109,7 +162,8 @@ body > .container {
   border:1px solid #B8BABD;
 }
 
-/* keep the blue color shadow around form elements even if form is validated successfully */
+/* keep the blue color shadow around form elements even if form is validated successfully
+   but don't apply the highlight to radios, checkboxes, or readonlys */
 .form-control:focus,
 .was-validated .form-control.is-valid:focus,
 .was-validated .form-control:valid:focus {
@@ -118,4 +172,13 @@ body > .container {
   border-color: #3366cc;
   outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
+}
+
+input[type="radio"].form-control:focus,
+input[type="checkbox"].form-control:focus,
+input:read-only.form-control:focus {
+  border-color: #B8BABD;
+  background-color: #DBDCDE;
+  outline: 0;
+  box-shadow: none;
 }
