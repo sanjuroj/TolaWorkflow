@@ -142,18 +142,17 @@ input[type="radio"]:checked {
     border-radius: 0px;
 }
 
-.help-link {
-    color: #54585A;
-    font-size: .875rem;
-}
-
 .form-control {
     color: #000000;
     border-radius: 0px;
     border-color: #B8BABD;
 }
 
-input[type="text"]:read-only {
+input[type="text"]:read-only,
+select[disabled="disabled"],
+select[disabled=true],
+.form-control:disabled,
+.form-control[readonly] {
   border-color: #B8BABD;
   background-color: #DBDCDE;
 }

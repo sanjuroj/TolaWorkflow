@@ -26,6 +26,10 @@
             $('#indicatorTabs a[href="#targetsTab"][data-toggle="tab"]').tab('show');
             $("#indicator_modal_body").data("targetsactive", "true");
         }
+
+        if ( $('#id_div_periodic_tables_placeholder').children().length > 0 ) {
+            $("#id_create_targets_btn").attr("disabled", true)
+        }
     });
 </script>
 

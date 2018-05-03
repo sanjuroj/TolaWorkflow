@@ -49,6 +49,12 @@
     margin-bottom: 2.25rem;
 }
 
+.help-link,
+.help-link:hover {
+    color: #54585A;
+    font-size: .875rem;
+}
+
 .text-muted-footer,
 .text-muted-footer:hover {
     color: #54585A;
@@ -386,6 +392,10 @@ applied.  This keeps the inputs from getting taller when there is an error. */
 #div_id_target_frequency_start,
 #div_id_target_frequency_custom {
     height: 2.25rem;
+}
+
+#div_id_unit_of_measure_type_0 {
+    margin-left: 2px;
 }
 
 /* Don't define border property here.  Assigning here prevents red border
