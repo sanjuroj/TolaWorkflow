@@ -5,7 +5,6 @@
  */
 import Page from './page';
 const delay = 1000; // milliseconds
-'use strict';
 
 class LoginPage extends Page {
     // Independent of auth source
@@ -49,7 +48,6 @@ class LoginPage extends Page {
             }
         });
     }
-
 
     open(url) { super.open(url); }
 }

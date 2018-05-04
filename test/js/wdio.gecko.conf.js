@@ -7,11 +7,12 @@ exports.config = {
         // 'path/to/excluded/files'
     ],
     suites: {
-        login: [
-            'tests/00_login.js'
-        ],
         dashboard: [
             'tests/dashboard.js'
+        ],
+        evidence: [
+            'tests/collected_data_form.js',
+            'tests/indicator_evidence_dropdown.js',
         ],
         indicators: [
             'tests/annual.js',
@@ -27,17 +28,18 @@ exports.config = {
             'tests/indicators_landing_page.js',
             'tests/indicators_table.js'
         ],
-        evidence: [
-            'tests/attach_evidence.js',
-            'tests/collected_data_form.js',
-            'tests/indicator_evidence_dropdown.js',
-            'tests/indicator_evidence_table.js'
+        iptt: [
+            'tests/iptt_indicator_overview_report.js',
+            'tests/iptt_indicator_overview.js',
+            'tests/iptt_landing_page.js',
+            'tests/iptt_target_overview_report.js',
+            'tests/iptt_target_overview.js',
+        ],
+        login: [
+            'tests/00_login.js'
         ],
         reports: [
-            'tests/export_reports.js',
             'tests/grid_report.js',
-            'tests/prog_impact_assessment.js',
-            'tests/prog_impact_overview.js'
         ]
     },
     // Capabilities
