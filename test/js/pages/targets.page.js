@@ -4,7 +4,6 @@
  */
 import Util from '../lib/testutil';
 import IndPage from '../pages/indicators.page';
-'use strict';
 
 const msec = 1000;
 
@@ -385,7 +384,7 @@ function getTargetInputBoxes() {
  * @returns {string} The error text present, if any
  */
 function getTargetValueErrorHint() {
-  let errorBox = browser.$('.target-value-error');
+  let errorBox = browser.$('span.target-value-error');
   let errorHint = errorBox.getText();
   return errorHint;
 }
@@ -400,7 +399,7 @@ function getUnitOfMeasure() {
 }
 
 function getMeasureIsCumulative() {
-    browser.pause(1000);
+    browser.pause(msec);
     browser.scroll('input#submit-id-submit');
 
     let val = $('input#id_is_cumulative_1').getValue();
@@ -444,6 +443,12 @@ function saveIndicatorChanges() {
   }
   if (browser.isVisible('div#alerts')) {
     browser.waitForVisible('div#alerts', true);
+  }
+  if (browser.isVisible('.col-md-6.text-left')) {
+    browser.execute('$(".col-md-6.text-left").hide();');
+  }
+  if (browser.isVisible('.col-md-6.text-right')) {
+    browser.execute('$(".col-md-6.text-right").hide();');
   }
   browser.scroll('input#submit-id-submit');
   browser.$('input#submit-id-submit').click();
@@ -512,9 +517,7 @@ function setFirstTargetPeriod() {
   // Defaults to the current month
   browser.scroll('input#id_target_frequency_start');
   browser.$('input#id_target_frequency_start').click();
-  browser.pause(msec/2);
-  //BUG? It is unclear why this selector fails but the next
-  //one succeeds
+  browser.pause(msec);
   //browser.$('button.ui-datepicker-close').click();
   browser.$('button=Done').click();
 }
@@ -555,7 +558,7 @@ function setLoPTarget(value) {
 function setMeasureType(type) {
   clickTargetsTab();
   let element;
-  browser.pause(1000);
+  browser.pause(msec);
   if (type == 'number') { element = browser.$('input#id_unit_of_measure_type_0'); }
   if (type == 'percent') { element = browser.$('input#id_unit_of_measure_type_1'); }
   element.click();
