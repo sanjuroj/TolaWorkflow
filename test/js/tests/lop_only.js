@@ -3,7 +3,7 @@ import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
-import { assert } from 'chai';
+import { expect } from 'chai';
 
 describe('"Life of Program (LoP) only" target frequency', function() {
   before(function() {
@@ -28,7 +28,7 @@ describe('"Life of Program (LoP) only" target frequency', function() {
 
   it('should permit numeric values for LoP target', function() {
     NavBar.Indicators.click();
-    assert.equal('Program Indicators', IndPage.getPageName());
+    expect('Program Indicators' === IndPage.getPageName());
     IndPage.createBasicIndicator();
 
     TargetsTab.setIndicatorName('Allow numeric values');
@@ -53,11 +53,11 @@ describe('"Life of Program (LoP) only" target frequency', function() {
     TargetsTab.setLoPTarget('"This is a string"');
     TargetsTab.saveIndicatorChanges();
     let errorHint = TargetsTab.getLoPErrorHint();
-    assert(errorHint.includes('Please enter a number larger than zero'));
+    expect(errorHint.includes('Please enter a number larger than zero'));
 
     // A string that looks like a number should become a number
     TargetsTab.setLoPTarget('"59"');
     TargetsTab.saveIndicatorChanges();
-    assert(59 == TargetsTab.getLoPTarget())
+    expect(59 === TargetsTab.getLoPTarget())
   });
 });
