@@ -4,7 +4,6 @@ import IndPage from '../pages/indicators.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
 import { expect } from 'chai';
-'use strict';
 
 /**
  * General number and percentage indicator tests
@@ -36,7 +35,7 @@ describe('Defining number and percent indicators', function() {
         IndPage.createBasicIndicator();
         TargetsTab.setMeasureType('percent');
         let indType = TargetsTab.getMeasureType();
-        expect(indType == 1);
+        expect(indType === 1);
     });
 
     it('should default to number indicators', function() {
@@ -44,7 +43,7 @@ describe('Defining number and percent indicators', function() {
         IndPage.createBasicIndicator();
         TargetsTab.clickTargetsTab();
         let indType = TargetsTab.getMeasureType();
-        expect(indType == 0);
+        expect(indType === 0);
     });
 
     it('should default number indicators to non-cumulative indicators', function() {
@@ -58,7 +57,7 @@ describe('Defining number and percent indicators', function() {
         TargetsTab.setFirstTargetPeriod();
         TargetsTab.setNumTargetPeriods(2);
         TargetsTab.saveIndicatorChanges();
-        expect(false == TargetsTab.getMeasureIsCumulative());
+        expect(false === TargetsTab.getMeasureIsCumulative());
     });
 
     it('should default percentage indicators to cumulative indicators', function() {
@@ -73,17 +72,17 @@ describe('Defining number and percent indicators', function() {
         TargetsTab.setFirstTargetPeriod();
         TargetsTab.setNumTargetPeriods(2);
         TargetsTab.saveIndicatorChanges();
-        expect(true == TargetsTab.getMeasureIsCumulative());
+        expect(true === TargetsTab.getMeasureIsCumulative());
     });
 
     it('should add “%” to LoP target and Baseline fields of percentage indicators');
 
     it('should have direction of change option', function() {
-        expect(TargetsTab.getDirectionOfChange() != undefined);
-        expect(TargetsTab.getDirectionOfChange() != null);
+        expect(undefined != TargetsTab.getDirectionOfChange());
+        expect(null != TargetsTab.getDirectionOfChange());
     });
 
     it('should default to no direction of change', function() {
-        expect(TargetsTab.getDirectionOfChange() == 'none');
+        expect('none' === TargetsTab.getDirectionOfChange());
     });
 });
