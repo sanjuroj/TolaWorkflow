@@ -26,6 +26,7 @@ describe('Grid/Print Report page', function() {
         }
     });
 
+    //FIXME: Get webdriver code out of test
     it('should have a Grid/Print Report button for each program', function() {
         NavBar.Indicators.click();
         assert.equal('Program Indicators', IndPage.getPageName());
@@ -35,6 +36,7 @@ describe('Grid/Print Report page', function() {
         assert(browser.isVisible('=Grid/Print Report'));
     });
 
+    //FIXME: Get webdriver code out of test
     it('should open when the Grid/Print Report button is clicked', function() {
         NavBar.Indicators.click();
         let progList = IndPage.getProgramsDropdownList();
@@ -46,6 +48,7 @@ describe('Grid/Print Report page', function() {
             'Did not receive expected report page title');
     });
 
+    //FIXME: Get webdriver code out of test
     it('should have an Export All button', function() {
         NavBar.Indicators.click();
         let progList = IndPage.getProgramsDropdownList();
@@ -60,6 +63,7 @@ describe('Grid/Print Report page', function() {
         assert(text.includes('Export All'), 'Did not find expected button text');
     });
 
+    //FIXME: Get webdriver code out of test
     it('should export all report entries when Export All button is clicked', function() {
         NavBar.Indicators.click();
         let progList = IndPage.getProgramsDropdownList();
