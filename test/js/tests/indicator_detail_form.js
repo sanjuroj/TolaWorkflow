@@ -33,8 +33,7 @@ describe('Indicator creation detail form', function() {
     IndPage.createBasicIndicator();
     browser.waitForVisible('h2');
     let title = browser.$('h2').getText().trim();
-    expect(title.includes('Goal indicator: Temporary'),
-      'Unexpected title text on the indicator detail screen');
+    expect(title.includes('Goal indicator: Temporary'));
   });
 
   //FIXME: Get the webdriver code out of the test
@@ -110,6 +109,6 @@ describe('Indicator creation detail form', function() {
     IndPage.clickResetButton();
     //FIXME: magic number
     let resetVal = options[1].getValue();
-    expect(origVal == resetVal);
+    expect(origVal === resetVal);
   });
 }); // end create indicator detail page tests
