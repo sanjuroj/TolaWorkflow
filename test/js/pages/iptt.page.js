@@ -4,14 +4,13 @@
  **/
 import Page from './page';
 import Util from '../lib/testutil';
-'use strict';
 
 class IpttPage extends Page {
 
     get title() {
         browser.waitForVisible('nav.navbar');
-        let h4 = browser.$('nav.navbar').$('h4');
-        return h4.getText();
+        let h2 = browser.$('h2.mt-2.mb-3.mx-3');
+        return h2.getText();
     }
 
     // IPTT: Program indicator overview
