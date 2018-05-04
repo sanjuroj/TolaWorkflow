@@ -364,6 +364,9 @@ class IPTT_ReportView(TemplateView):
             .values("id", "period", "target", "start_date", "end_date")
 
         for pt in periodic_targets:
+            # if it is LOP Target then do not show any target periods becaseu there are none.
+            if pt['period'] == Indicator.TARGET_FREQUENCIES[0][1]:
+                continue
             targetperiods[pt['period']] = [pt['start_date'], pt['end_date'], pt['target'], pt['id']]
         return targetperiods
 

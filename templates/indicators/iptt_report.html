@@ -34,22 +34,14 @@
             <th scope="colgroup" colspan="3" class="text-center">
               {% trans "LIFE OF PROGRAM" %}
             </th>
-
-            {% if reporttype == 'targetperiods' %}
               {% for k, v in report_date_ranges.items %}
-                <th scope="col" colspan="3" class="text-center" style="min-width: 180px;">
+                <th scope="col"
+                    {% if reporttype == 'targetperiods' %} colspan="3" {% endif %}
+                    class="text-center" style="min-width: 180px;">
                   {{ k }}<br>
                   <small>{{ v.0|date:"M d, Y" }} - {{ v.1|date:"M d, Y" }}</small>
                 </th>
               {% endfor %}
-            {% else %}
-              {% for k, v in report_date_ranges.items %}
-                <th scope="col" class="text-center" style="min-width: 180px;">
-                  {{ k }}<br>
-                  <small>{{ v.0|date:"M d, Y" }} - {{ v.1|date:"M d, Y" }}</small>
-                </th>
-              {% endfor %}
-            {% endif %}
           </tr>
           <tr>
             <th scope="col" style="min-width:80px">{% trans "NO." %}</th>
