@@ -89,13 +89,17 @@
               <td>{{ indicator.is_cumulative|yesno:"Cumulative,Non-cumulative," }}</td>
               <td>{{ indicator.unit_of_measure_type|symbolize_measuretype }}</td>
               <td align="right">{{ indicator.baseline|default_if_none:'' }}</td>
-              <td align="right">{{ indicator.lop_target|default_if_none:'' }}</td>
+              <td align="right">
+                {{ indicator.lop_target|default_if_none:'' }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+              </td>
               <td align="right">
                 {% if indicator.unit_of_measure_type == 1 %}
                   {{ indicator.actualsum|floatformat:"-2"|default_if_none:"" }}
                 {% elif indicator.unit_of_measure_type == 2 %}
                   {% if indicator.is_cumulative == True %}
-                    {{ indicator.lastdata|floatformat:"-2"|default_if_none:"" }}%
+                    {% with indicator.lastdata|floatformat:"-2"|default_if_none:"" as lastdata %}
+                      {{ lastdata }}{% if lastdata %}% {% endif %}
+                    {% endwith %}
                   {% else %}
                     {% if indicator.actualavg is not None %}
                       <small><abbr title='{% trans "Average" %}'>{% trans "avg." %}</abbr></small>
@@ -124,7 +128,7 @@
                 {% for k,v in report_date_ranges.items %}
                   <td align="right" style="border-right: 0px;">
                     {% with k|concat_string:"_target" as target %}
-                      {{ indicator|hash:target|floatformat:'-2'|default_if_none:'' }}
+                      {{ indicator|hash:target|floatformat:'-2'|default_if_none:'' }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                     {% endwith %}
                   </td>
                   <td align="right" style="border-left: 0px; border-right: 0px;">
@@ -141,7 +145,9 @@
                     {% else %} <!-- If it is a PERCENTAGE indicator -->
                       {% if indicator.is_cumulative is True %}
                         {% with k|concat_string:"_last" as ptlast %}
-                          {{ indicator|hash:ptlast|floatformat:'-2'|default_if_none:''}}%
+                          {% with indicator|hash:ptlast|floatformat:'-2'|default_if_none:'' as lastdata %}
+                            {% if lastdata %}{{ lastdata }}% {% endif %}
+                          {% endwith %}
                         {% endwith %}
                       {% else %} <!-- if it is PERCENTAGE AND NON_CUMULATIVE then show avg_midline -->
                         <small>
@@ -155,8 +161,8 @@
                   </td>
                   <td align="right" style="border-left: 0px;">
                     {% with k|concat_string:"_percent_met" as percent_met %}
-                      {{ indicator|hash:percent_met|floatformat:"-2"|default_if_none:'' }}
-                      {% if indicator|hash:percent_met %} % {% endif %}
+                      {{ indicator|hash:percent_met|floatformat:"-2"|default_if_none:'' }}{% if indicator|hash:percent_met %}% {% endif %}
+
                     {% endwith %}
                   </td>
                 {% endfor %}
