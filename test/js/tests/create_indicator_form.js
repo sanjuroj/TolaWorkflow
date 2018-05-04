@@ -27,7 +27,7 @@ describe('Create an Indicator form', function() {
 
   it('should exist', function() {
     NavBar.Indicators.click();
-    assert.equal('Program Indicators', IndPage.getPageName());
+    expect('Program Indicators' === IndPage.getPageName());
     IndPage.clickNewIndicatorButton();
     expect('Create an Indicator' === IndPage.getPageName());
   });
