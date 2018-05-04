@@ -32,13 +32,14 @@
               <h5>{{ program.name|wordwrap:100|linebreaks }}</h5>
             </td>
             <th scope="colgroup" colspan="3" class="text-center">
-              {% trans "LIFE OF PROGRAM" %} {{ reporttype}}
+              {% trans "LIFE OF PROGRAM" %}
             </th>
 
             {% if reporttype == 'targetperiods' %}
-              {% for pt in report_date_ranges %}
-                <th scope="col" colspan="3" class="text-center">
-                  {{ pt.period }}
+              {% for k, v in report_date_ranges.items %}
+                <th scope="col" colspan="3" class="text-center" style="min-width: 180px;">
+                  {{ k }}<br>
+                  <small>{{ v.0|date:"M d, Y" }} - {{ v.1|date:"M d, Y" }}</small>
                 </th>
               {% endfor %}
             {% else %}
@@ -134,9 +135,15 @@
                   </td>
                   <td align="right">
                     {% if indicator.unit_of_measure_type == 1 %} <!-- if it is a NUMBER indicator -->
+                      {% if indicator.is_cumulative is True %}
+                        {% with k|concat_string:"_rsum" as pt_rsum %}
+                          {{ indicator|hash:pt_rsum|floatformat:"-2"|default_if_none:'' }}
+                        {% endwith %}
+                      {% else %}
                       {% with k|concat_string:"_sum" as ptsum %}
                         {{ indicator|hash:ptsum|floatformat:'-2'|default_if_none:'' }}
                       {% endwith %}
+                      {% endif %}
                     {% else %} <!-- If it is a PERCENTAGE indicator -->
                       {% if indicator.is_cumulative is True %}
                         {% with k|concat_string:"_last" as ptlast %}
@@ -153,7 +160,10 @@
                     {% endif %}
                   </td>
                   <td align="right">
-                    {{ indicator|hash:"percent_met" }}
+                    {% with k|concat_string:"_percent_met" as percent_met %}
+                      {{ indicator|hash:percent_met|floatformat:"-2"|default_if_none:'' }}
+                      {% if indicator|hash:percent_met %} % {% endif %}
+                    {% endwith %}
                   </td>
                 {% endfor %}
               {% else %}
