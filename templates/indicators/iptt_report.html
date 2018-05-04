@@ -34,12 +34,22 @@
             <th scope="colgroup" colspan="3" class="text-center">
               {% trans "LIFE OF PROGRAM" %}
             </th>
-            {% for k, v in report_date_ranges.items %}
-              <th scope="col" class="text-center" style="min-width: 180px;">
-                {{ k }}<br>
-                <small>{{ v.0|date:"M d, Y" }} - {{ v.1|date:"M d, Y" }}</small>
-              </th>
-            {% endfor %}
+
+            {% if reporttype == 'targetperiods' %}
+              {% for k, v in report_date_ranges.items %}
+                <th scope="col" colspan="3" class="text-center" style="min-width: 180px;">
+                  {{ k }}<br>
+                  <small>{{ v.0|date:"M d, Y" }} - {{ v.1|date:"M d, Y" }}</small>
+                </th>
+              {% endfor %}
+            {% else %}
+              {% for k, v in report_date_ranges.items %}
+                <th scope="col" class="text-center" style="min-width: 180px;">
+                  {{ k }}<br>
+                  <small>{{ v.0|date:"M d, Y" }} - {{ v.1|date:"M d, Y" }}</small>
+                </th>
+              {% endfor %}
+            {% endif %}
           </tr>
           <tr>
             <th scope="col" style="min-width:80px">{% trans "NO." %}</th>
@@ -54,9 +64,17 @@
             <th scope="col">{% trans "TARGET" %}</th>
             <th scope="col">{% trans "ACTUAL" %}</th>
             <th scope="col" style="min-width: 70px;">{% trans "% MET" %}</th>
-            {% for _ in report_date_ranges.items %}
-              <th scope="col" class="text-right">{% trans "ACTUALS" %}</th>
-            {% endfor %}
+            {% if reporttype == 'targetperiods' %}
+              {% for pt in report_date_ranges %}
+                <th scope="col" class="text-right" style="min-width: 70px;">{% trans "TARGET" %}</th>
+                <th scope="col" class="text-right" style="min-width: 70px;">{% trans "ACTUAL" %}</th>
+                <th scope="col" class="text-right" style="min-width: 70px;">{% trans "% MET" %}</th>
+              {% endfor %}
+            {% else %}
+              {% for _ in report_date_ranges.items %}
+                <th scope="col" class="text-right">{% trans "ACTUALS" %}</th>
+              {% endfor %}
+            {% endif %}
           </tr>
           </thead>
           <tbody>
@@ -108,10 +126,46 @@
                   {% endif %}
                 {% endif %}
               </td>
-              {% if period == 2 %} <!-- if period is MIDLINE_ENDLINE-->
-                <td align="right">
-                    SOMETHING GOOD: {{ period }}
-                </td>
+              {% if reporttype == 'targetperiods' %}
+                {% for k,v in report_date_ranges.items %}
+                  <td align="right">
+                    {% with k|concat_string:"_target" as target %}
+                      {{ indicator|hash:target|floatformat:'-2'|default_if_none:'' }}
+                    {% endwith %}
+                  </td>
+                  <td align="right">
+                    {% if indicator.unit_of_measure_type == 1 %} <!-- if it is a NUMBER indicator -->
+                      {% if indicator.is_cumulative is True %}
+                        {% with k|concat_string:"_rsum" as pt_rsum %}
+                          {{ indicator|hash:pt_rsum|floatformat:"-2"|default_if_none:'' }}
+                        {% endwith %}
+                      {% else %}
+                      {% with k|concat_string:"_sum" as ptsum %}
+                        {{ indicator|hash:ptsum|floatformat:'-2'|default_if_none:'' }}
+                      {% endwith %}
+                      {% endif %}
+                    {% else %} <!-- If it is a PERCENTAGE indicator -->
+                      {% if indicator.is_cumulative is True %}
+                        {% with k|concat_string:"_last" as ptlast %}
+                          {{ indicator|hash:ptlast|floatformat:'-2'|default_if_none:''}}%
+                        {% endwith %}
+                      {% else %} <!-- if it is PERCENTAGE AND NON_CUMULATIVE then show avg_midline -->
+                        <small>
+                          <abbr title='{% trans "Average" %}'>{% trans "avg." %}</abbr>
+                        </small>
+                        {% with k|concat_string:"_avg" as ptavg %}
+                          {{ indicator|hash:ptavg|floatformat:'-2'|default_if_none:''}}%
+                        {% endwith %}
+                      {% endif %}
+                    {% endif %}
+                  </td>
+                  <td align="right">
+                    {% with k|concat_string:"_percent_met" as percent_met %}
+                      {{ indicator|hash:percent_met|floatformat:"-2"|default_if_none:'' }}
+                      {% if indicator|hash:percent_met %} % {% endif %}
+                    {% endwith %}
+                  </td>
+                {% endfor %}
               {% else %}
                 {% for k, v in report_date_ranges.items %}
                   <td align="right">

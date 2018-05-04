@@ -12,7 +12,7 @@ describe('IPTT: Program target overview quickstart', function() {
     before(function() {
         // Disable timeouts
         this.timeout(0);
-        //browser.windowHandleMaximize();
+        browser.windowHandleMaximize();
         let parms = Util.readConfig();
 
         LoginPage.open(parms.baseurl);

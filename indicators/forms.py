@@ -28,7 +28,7 @@ class DatePicker(forms.DateInput):
 class IndicatorForm(forms.ModelForm):
     program2 = forms.CharField(
         widget=forms.TextInput(
-            attrs={'readonly': 'readonly', 'label': _('Program')}
+            attrs={'readonly': True, 'label': 'Program'}
         )
     )
     unit_of_measure_type = forms.ChoiceField(
@@ -88,13 +88,10 @@ class IndicatorForm(forms.ModelForm):
         self.fields['name'].required = True
         self.fields['unit_of_measure'].required = True
         self.fields['target_frequency'].required = True
-        self.fields['target_frequency_start'].widget\
-            .attrs['class'] = 'monthPicker'
+        self.fields['target_frequency_start'].widget.attrs['class'] = 'monthPicker'
         # self.fields['is_cumulative'].widget = forms.RadioSelect()
-        if self.instance.target_frequency and \
-                self.instance.target_frequency != Indicator.LOP:
-            self.fields['target_frequency'].widget.attrs['readonly'] \
-                    = "readonly"
+        if self.instance.target_frequency and self.instance.target_frequency != Indicator.LOP:
+            self.fields['target_frequency'].widget.attrs['readonly'] = True
 
 
 class CollectedDataForm(forms.ModelForm):
@@ -113,12 +110,12 @@ class CollectedDataForm(forms.ModelForm):
 
     program2 = forms.CharField(
         widget=forms.TextInput(
-            attrs={'readonly': 'readonly', 'label': _('Program')}
+            attrs={'readonly': True, 'label': _('Program')}
         )
     )
     indicator2 = forms.CharField(
         widget=forms.TextInput(
-            attrs={'readonly': 'readonly', 'label': _('Indicator')}
+            attrs={'readonly': True, 'label': _('Indicator')}
         )
     )
     target_frequency = forms.CharField()
@@ -207,7 +204,8 @@ class ReportFormCommon(forms.Form):
     )
 
     EMPTY_OPTION = (EMPTY, "---------")
-    TARGETPERIODS_CHOICES = (EMPTY_OPTION,) + Indicator.TARGET_FREQUENCIES
+    # combine the target_frequencies (except EVENT) and the EMPTY option
+    TARGETPERIODS_CHOICES = (EMPTY_OPTION,) + Indicator.TARGET_FREQUENCIES[0:7]
 
     program = forms.ModelChoiceField(queryset=Program.objects.none())
     timeperiods = forms.ChoiceField(choices=TIMEPERIODS_CHOICES,

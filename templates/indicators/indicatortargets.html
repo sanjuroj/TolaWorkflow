@@ -64,7 +64,7 @@
                                 </strong>
                             </td>
                             <td align="right" class="align-middle">
-                                <div class="m-2 pr-1">
+                                <div class="m-2 paddingright-80">
                                     <strong>
                                         <span id="id_span_targets_sum">
                                             {% if indicator.unit_of_measure_type == 1%}
@@ -88,7 +88,7 @@
                         <strong>{% trans "Life of Program (LoP) target" %}</strong>
                     </td>
                     <td align="right" class="align-middle">
-                        <div class="m-2 pr-1">
+                        <div class="m-2 paddingright-80">
                             <strong>
                                 <span id="id_span_loptarget">
                                     {{indicator.lop_target|floatformat:"-2" }}
@@ -108,9 +108,9 @@
                 </tfoot>
             </table>
         </div>
-        <div class="col-sm-11 mx-auto">
+        <div class="col-sm-11 mx-auto mb-1">
             {% if indicator.target_frequency != 2 %}
-                <a href="#" id="addNewPeriodicTarget" class="btn btn-link pl-1"><i class="fas fa-plus"></i> {% trans "Add a target" %}</a>
+                <a href="#" id="addNewPeriodicTarget" class="btn btn-link pl-1 fontsize-125"><i class="fas fa-plus-circle"></i> {% trans "Add a target" %}</a>
             {% endif %}
         </div>
         <div class="col-sm-11 mx-auto">
@@ -119,7 +119,7 @@
                     <!-- UNIT_OF_MEASURE_TYPE = 1 IS NUMBER AND 2 IS PERCENTAGE -->
                     <!-- IS_CUMULATIVE = 2 and NON_CUMULATIVE = 3 -->
                     {% with unit_type=indicator.unit_of_measure_type %}
-                        <div id="id_is_cumulative_section_header" class="d-flex flex-row px-2 pt-2">
+                        <div id="id_is_cumulative_section_header" class="d-flex flex-row px-2 pt-2 mb-1">
                             <strong>
                                 <span id="id_span_is_cumulative_header">
                                     {% if unit_type == 1 %}
@@ -141,9 +141,9 @@
                                 {% else %}
                                     {% if indicator.is_cumulative is True or indicator.is_cumulative is None %} checked {% endif %}
                                 {% endif %}
-                                class="form-control mr-1"
+                                class="form-control mr-1 mt-1"
                                 id="id_is_cumulative_1"
-                                style="width: 6%;">
+                                style="width: 1.78rem;">
                             <label
                                 class="form-check-label"
                                 for="id_is_cumulative_1">
@@ -166,9 +166,9 @@
                                 {% else %}
                                     {% if indicator.is_cumulative is False %} checked {% endif %}
                                 {% endif %}
-                                class="form-control mr-1"
+                                class="form-control mr-1 mt-1"
                                 id="id_is_cumulative_2"
-                                style="width: 6%;">
+                                style="width: 1.5rem;">
                             <label
                                 class="form-check-label"
                                 for="id_is_cumulative_2">

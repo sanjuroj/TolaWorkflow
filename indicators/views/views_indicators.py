@@ -1065,9 +1065,6 @@ def collected_data_view(request, indicator, program):
     # the total of achieved values across all periodic targets of an indicator
     grand_achieved_sum = 0
 
-    # the avg of the periodic_targets "achieved_avg" values
-    grand_achieved_avg = 0
-
     # the last achieved value reported against any target of an indicator
     last_data_record_value = 0
 
