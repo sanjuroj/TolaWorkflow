@@ -1,7 +1,7 @@
 {% load widget_tweaks %}
 {% load i18n %}
 {% load mytags %}
-{% load i18n %}
+
     <form
         action="{% url 'indicator_update' indicator.id %}"
         id="indicator_update_form"
@@ -623,13 +623,13 @@
         var unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
         if (unit_of_measure_type == 2) {  // if unit_type is percent (%)
             var targetsAvg = getTargetsAverage();
-            $("#id_span_label_targets_sum").text("Average of targets");
+            $("#id_span_label_targets_sum").text("{% trans 'Average of targets' %}");
             $("#id_span_targets_sum").text(targetsAvg );
             $("#id_span_targtsaggregate_percent_sign").text("%");
             $("#id_span_loptarget_percent_sign").text("%");
         } else { // if unit_type is Number (#)
             var targetsSum = getTargetsSumAndNum()[0];
-            $("#id_span_label_targets_sum").text("Sum of targets");
+            $("#id_span_label_targets_sum").text("{% trans 'Sum of targets' %}");
             $("#id_span_targets_sum").text(targetsSum);
             $("#id_span_targtsaggregate_percent_sign").text("");
             $("#id_span_loptarget_percent_sign").text("");

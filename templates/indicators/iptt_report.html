@@ -193,7 +193,7 @@
                         <!-- if it is a PERCENT and NON-CUMULATIVE indicator -->
                         {% with k|concat_string:"_avg" as avg %}
                           {% if indicator|hash:avg is not None %}
-                            <small><abbr title='{% trans "Average" %}'>{% trans "avg." %}</abbr></small>
+                            <small><abbr title='{% trans "Average %}'>{% trans "avg." %}</abbr></small>
                             {{ indicator|hash:avg|floatformat:"-2"|default_if_none:'' }}%
                           {% endif %}
                         {% endwith %}
