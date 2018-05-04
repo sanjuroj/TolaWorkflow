@@ -304,7 +304,7 @@ function getProgramIndicatorButtons() {
 
 /**
  * Get a list of the program names in the main Program table
- * @returns {Array<string>} returns an array of the text strings of the
+ * @returns {Array<string>} An array of the text strings of the
  * program names in the programs table
  */
 function getProgramsTable() {
@@ -314,6 +314,16 @@ function getProgramsTable() {
     programs.push(row.$('h4').getText());
   }
   return programs;
+}
+
+/**
+ * Return the value of the Sum of targets field on the indicator 
+ * creation detail form
+ * @returns {Integer} The value of the sum of targets field
+ */
+function getSumOfTargets() {
+  let sum = browser.$('span#id_span_targets_sum').getText();
+  return sum;
 }
 
 /**
@@ -365,7 +375,8 @@ function getTargetFrequency() {
  */
 function getTargetInputBoxes() {
     // Find the input boxes
-    let inputBoxes = browser.$$('input#pt-undefined.form-control.input-value');
+    browser.debug();
+    let inputBoxes = browser.$$('input#pt-.form-control.input-value');
     return inputBoxes;
 }
 
@@ -642,6 +653,7 @@ exports.getProgramIndicatorDeleteButtons = getProgramIndicatorDeleteButtons;
 exports.getProgramIndicatorEditButtons = getProgramIndicatorEditButtons;
 exports.getProgramIndicatorButtons = getProgramIndicatorButtons;
 exports.getProgramsTable = getProgramsTable;
+exports.getSumOfTargets = getSumOfTargets;
 exports.getTargetDateRanges = getTargetDateRanges;
 exports.getTargetFirstEventErrorHint = getTargetFirstEventErrorHint;
 exports.getTargetFirstPeriodErrorHint = getTargetFirstPeriodErrorHint;
