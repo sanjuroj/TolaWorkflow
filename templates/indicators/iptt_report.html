@@ -128,7 +128,9 @@
                 {% for k,v in report_date_ranges.items %}
                   <td align="right" style="border-right: 0px;">
                     {% with k|concat_string:"_target" as target %}
-                      {{ indicator|hash:target|floatformat:'-2'|default_if_none:'' }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                      {% with indicator|hash:target|floatformat:'-2'|default_if_none:'' as target %}
+                        {{ target }}{% if indicator.unit_of_measure_type == 2 and target %}%{% endif %}
+                      {% endwith %}
                     {% endwith %}
                   </td>
                   <td align="right" style="border-left: 0px; border-right: 0px;">
