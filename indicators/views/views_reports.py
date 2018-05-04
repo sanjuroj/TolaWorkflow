@@ -218,12 +218,8 @@ class IPTT_ReportView(TemplateView):
                     )
                 )
             )
-            # the following becomes annotations for the queryset
-            # e.g.
-            # Year 1_sum=..., Year 2_sum=..., etc.
-            # Year 1_avg=..., Year 2_avg=..., etc.
-            # Year 1_last=..., Year 2_last=..., etc.
-            #
+
+            # if this is targetperiods IPTT report then get the target value for each period
             if reporttype == self.REPORT_TYPE_TARGETPERIODS:
                 annotation_target = Max(
                     Case(
@@ -236,6 +232,12 @@ class IPTT_ReportView(TemplateView):
                 )
                 self.annotations["{}_target".format(k)] = annotation_target
 
+            # the following becomes annotations for the queryset
+            # e.g.
+            # Year 1_sum=..., Year 2_sum=..., etc.
+            # Year 1_avg=..., Year 2_avg=..., etc.
+            # Year 1_last=..., Year 2_last=..., etc.
+            #
             self.annotations["{}_sum".format(k)] = annotation_sum
             self.annotations["{}_avg".format(k)] = annotation_avg
             self.annotations["{}_last".format(k)] = annotation_last
@@ -407,10 +409,11 @@ class IPTT_ReportView(TemplateView):
         # Calculate the cumulative sum across timeperiods for indicators that are NUMBER and CUMULATIVE
         for i, ind in enumerate(indicators):
             running_total = 0
-            # if the frequency (period) is periodic, i.e., time-aware then go through each period
-            # and calculate the cumulative total achieved across date ranges (periods)
+
             if period in [Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL, Indicator.QUARTERLY,
                           Indicator.MONTHLY]:
+                # if the frequency (period) is periodic, i.e., time-aware then go through each period
+                # and calculate the cumulative total achieved across date ranges (periods)
                 for k, v in report_date_ranges.items():
                     if ind['unit_of_measure_type'] == Indicator.NUMBER and ind['is_cumulative'] is True:
                         current_sum = ind["{}_sum".format(k)]
@@ -419,21 +422,25 @@ class IPTT_ReportView(TemplateView):
                             running_total = running_total + current_sum
                             ind[key] = running_total
 
-                    # if it is targetperiods IPTT report then calculate % MET for each targetperiod
+                    # if it is targetperiods IPTT report then calculate percent_met vaue for each targetperiod
                     if reporttype == self.REPORT_TYPE_TARGETPERIODS:
                         try:
+                            percent_met = '{}_percent_met'.format(k)
+                            target = float(ind["{}_target".format(k)])
                             if ind['unit_of_measure_type'] == Indicator.NUMBER:
                                 if ind['is_cumulative'] is True:
-                                    ind['{}_percent_met'.format(k)] = ind["{}_rsum".format(k)] / ind["{}_target".format(k)] * 100
+                                    rsum = float(ind["{}_rsum".format(k)])
+                                    ind[percent_met] = rsum / target * 100
                                 else:
-                                    ind['{}_percent_met'.format(k)] = ind["{}_sum".format(k)] / ind["{}_target".format(k)] * 100
+                                    ind[percent_met] = float(ind["{}_sum".format(k)]) / target * 100
                             elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
                                 if ind['is_cumulative'] is True:
-                                    ind['{}_percent_met'.format(k)] = ind["{}_last".format(k)] / ind["{}_target".format(k)] * 100
-                                else:
-                                    ind['{}_percent_met'.format(k)] = ind["{}_avg".format(k)] / ind["{}_target".format(k)] * 100
-                        except TypeError:
-                            ind['{}_percent_met'.format(k)] = None
+                                    ind[percent_met] = float(ind["{}_last".format(k)]) / target * 100
+                                elif ind['is_cumulative'] is False:
+                                    avg = float(ind["{}_avg".format(k)])
+                                    ind[percent_met] = (avg/target) * 100
+                        except TypeError as e:
+                            ind[percent_met] = None
             elif period == Indicator.MID_END:
                 if ind['unit_of_measure_type'] == Indicator.NUMBER and ind['is_cumulative'] is True:
                     ind['midend_sum'] = ind['Midline_sum'] + ind['Endline_sum']
