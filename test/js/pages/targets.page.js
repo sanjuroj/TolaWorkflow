@@ -375,7 +375,6 @@ function getTargetFrequency() {
  */
 function getTargetInputBoxes() {
     // Find the input boxes
-    browser.debug();
     let inputBoxes = browser.$$('input#pt-.form-control.input-value');
     return inputBoxes;
 }
