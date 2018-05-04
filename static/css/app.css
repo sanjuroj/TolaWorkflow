@@ -398,6 +398,10 @@ applied.  This keeps the inputs from getting taller when there is an error. */
     margin-left: 2px;
 }
 
+#id_delete_indicator_btn {
+    font-size: 1rem;
+}
+
 /* Don't define border property here.  Assigning here prevents red border
 from being applied when there is no value */
 .periodic-target .input-value {

@@ -92,6 +92,15 @@ body > .container {
     box-shadow: none;
 }
 
+.btn-primary[disabled="disabled"],
+.btn-primary[disabled="disabled"]:hover,
+.btn-primary[disabled=true],
+.btn-primary[disabled=true]:hover {
+    background-color: #B8BABD;
+    border-color: #B8BABD;
+    color: #FFFFFF;
+}
+
 .btn-secondary:not(:disabled):not(.disabled).active,
 .btn-secondary:not(:disabled):not(.disabled).active:focus,
 .btn-secondary:not(:disabled):not(.disabled):active,
@@ -132,29 +141,17 @@ body > .container {
     color:  #DD0000;
 }
 
-input[type="radio"]:checked {
-  background-color: red;
-}
-
 .btn {
     padding-right: 1.25rem;
     padding-left: 1.25rem;
     border-radius: 0px;
 }
 
-.form-control {
+.form-control,
+.form-control:focus {
     color: #000000;
     border-radius: 0px;
     border-color: #B8BABD;
-}
-
-input[type="text"]:read-only,
-select[disabled="disabled"],
-select[disabled=true],
-.form-control:disabled,
-.form-control[readonly] {
-  border-color: #B8BABD;
-  background-color: #DBDCDE;
 }
 
 /* do not change border color to green when form is validated */
@@ -167,18 +164,30 @@ select[disabled=true],
 .form-control:focus,
 .was-validated .form-control.is-valid:focus,
 .was-validated .form-control:valid:focus {
-  color: #495057;
   background-color: #fff;
   border-color: #3366cc;
   outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
 }
 
-input[type="radio"].form-control:focus,
+/* input[type="radio"].form-control:focus,
 input[type="checkbox"].form-control:focus,
-input:read-only.form-control:focus {
+input[type="text"]:read-only, */
+input:read-only.form-control
+input:read-only.form-control:focus
+select[disabled="disabled"],
+select[disabled=true],
+.form-control:disabled,
+.form-control[readonly] {
   border-color: #B8BABD;
   background-color: #DBDCDE;
   outline: 0;
   box-shadow: none;
+  color: #000000
+}
+
+input[type=checkbox]:focus,
+input[type=radio]:focus {
+    box-shadow: none;
+    border: 0px
 }
