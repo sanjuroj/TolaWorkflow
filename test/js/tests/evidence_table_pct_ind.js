@@ -29,21 +29,10 @@ describe('Indicator evidence percent indicators', function() {
             }
         }        
     });
-
     it('should take the LoP target of a C percentage indicator from LoP target field');
     it('should take the LoP actual of a C percentage indicators from the latest target actual');
     it('should display a % Met value for the LoP row of C percentage indicators');
     it('should display “N/A” for % Met in intermediate target rows of C percentage indicators');
-    it('should take the LoP target of NC percentage indicators from the LoP target field');
-    it('should calculate the LoP actual of NC percentage indicators as average of the periodic values');
-    it('should append “avg.” to the LoP actual value of NC percentage indicators');
-    it('should append "acg." to the target period actual value of NC percentage indicators');
-    it('should display a % Met value for the LoP row of NC percentage indicators');
-    it('should display “N/A” for % Met in intermediate target rows of NC percentage indicators');
-    
-    describe('when a single target period has multiple data records for a NC percentage indicator', function() {
-        it('should calculate the period actual value as the average of those records');
-    });
 }); 
 
 
