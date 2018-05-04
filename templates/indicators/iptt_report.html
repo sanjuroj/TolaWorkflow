@@ -38,8 +38,10 @@
                 <th scope="col"
                     {% if reporttype == 'targetperiods' %} colspan="3" {% endif %}
                     class="text-center" style="min-width: 180px;">
-                  {{ k }}<br>
-                  <small>{{ v.0|date:"M d, Y" }} - {{ v.1|date:"M d, Y" }}</small>
+                  {{ k|upper }}<br>
+                  {% if v.0 is not None and v.1 is not None %}
+                    <small>{{ v.0|date:"M d, Y" }} - {{ v.1|date:"M d, Y" }}</small>
+                  {% endif %}
                 </th>
               {% endfor %}
           </tr>
@@ -53,14 +55,14 @@
             <th scope="col" style="min-width:130px">{% trans "C / NC" %}</th>
             <th scope="col" style="min-width:50px">{% trans "# / %" %}</th>
             <th scope="col">{% trans "BASELINE" %}</th>
-            <th scope="col">{% trans "TARGET" %}</th>
-            <th scope="col">{% trans "ACTUAL" %}</th>
-            <th scope="col" style="min-width: 70px;">{% trans "% MET" %}</th>
+            <th scope="col" class="text-right" style="min-width: 110px;">{% trans "TARGET" %}</th>
+            <th scope="col" class="text-right" style="min-width: 110px;">{% trans "ACTUAL" %}</th>
+            <th scope="col" class="text-right" style="min-width: 110px;">{% trans "% MET" %}</th>
             {% if reporttype == 'targetperiods' %}
               {% for pt in report_date_ranges %}
-                <th scope="col" class="text-right" style="min-width: 70px;">{% trans "TARGET" %}</th>
-                <th scope="col" class="text-right" style="min-width: 70px;">{% trans "ACTUAL" %}</th>
-                <th scope="col" class="text-right" style="min-width: 70px;">{% trans "% MET" %}</th>
+                <th scope="col" class="text-right" style="min-width: 110px;">{% trans "TARGET" %}</th>
+                <th scope="col" class="text-right" style="min-width: 110px;">{% trans "ACTUAL" %}</th>
+                <th scope="col" class="text-right" style="min-width: 110px;">{% trans "% MET" %}</th>
               {% endfor %}
             {% else %}
               {% for _ in report_date_ranges.items %}
@@ -120,12 +122,12 @@
               </td>
               {% if reporttype == 'targetperiods' %}
                 {% for k,v in report_date_ranges.items %}
-                  <td align="right">
+                  <td align="right" style="border-right: 0px;">
                     {% with k|concat_string:"_target" as target %}
                       {{ indicator|hash:target|floatformat:'-2'|default_if_none:'' }}
                     {% endwith %}
                   </td>
-                  <td align="right">
+                  <td align="right" style="border-left: 0px; border-right: 0px;">
                     {% if indicator.unit_of_measure_type == 1 %} <!-- if it is a NUMBER indicator -->
                       {% if indicator.is_cumulative is True %}
                         {% with k|concat_string:"_rsum" as pt_rsum %}
@@ -151,7 +153,7 @@
                       {% endif %}
                     {% endif %}
                   </td>
-                  <td align="right">
+                  <td align="right" style="border-left: 0px;">
                     {% with k|concat_string:"_percent_met" as percent_met %}
                       {{ indicator|hash:percent_met|floatformat:"-2"|default_if_none:'' }}
                       {% if indicator|hash:percent_met %} % {% endif %}
