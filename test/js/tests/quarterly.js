@@ -1,4 +1,4 @@
-import IndPage = require('../pages/indicators.page';
+import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
 import TargetsTab from '../pages/targets.page';
