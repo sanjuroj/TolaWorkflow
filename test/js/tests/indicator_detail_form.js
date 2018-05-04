@@ -27,12 +27,13 @@ describe('Indicator creation detail form', function() {
         }
     });
 
+  //FIXME: Get all of the WebDriver code out of here
   it('should exist', function() {
     NavBar.Indicators.click();
     assert.equal('Program Indicators', IndPage.getPageName());
     IndPage.createBasicIndicator();
-    browser.waitForVisible('h4');
-    let title = browser.$('h4').getText().trim();
+    browser.waitForVisible('h2');
+    let title = browser.$('h2').getText().trim();
     expect(title.includes('Goal indicator: Temporary'),
       'Unexpected title text on the indicator detail screen');
   });
@@ -82,10 +83,10 @@ describe('Indicator creation detail form', function() {
   });
 
   it('should have a Reset button', function() {
-    expect(browser.isVisible('=Reset'));
+    expect(browser.isVisible('=RESET'));
   });
 
-  it('should restore form to pre-edit state when Reset button is clicked', function() {
+  it('should restore form to pre-edit state when RESET button is clicked', function() {
     let select = browser.$('select#id_sector');
     let options = select.$$('option');
     let option = options[1];
@@ -97,6 +98,6 @@ describe('Indicator creation detail form', function() {
     assert.equal(2, newVal, 'Unexpected selection mismatch');
     IndPage.clickResetButton();
     let resetVal = options[1].getValue();
-    assert.equal(origVal, resetVal, 'Unexpected selection mismatch after Reset');
+    assert.equal(origVal, resetVal, 'Unexpected selection mismatch after RESET');
   });
 }); // end create indicator detail page tests

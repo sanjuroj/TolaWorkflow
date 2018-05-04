@@ -141,6 +141,7 @@ function getTargetDateRanges() {
  */
 function getIndicatorName() {
   clickTargetsTab();
+  browser.scroll('input#id_name');
   let val = $('input#id_name').getValue();
   return val;
 }
@@ -303,7 +304,7 @@ function getProgramIndicatorButtons() {
 
 /**
  * Get a list of the program names in the main Program table
- * @returns {Array<string>} returns an array of the text strings of the
+ * @returns {Array<string>} An array of the text strings of the
  * program names in the programs table
  */
 function getProgramsTable() {
@@ -313,6 +314,16 @@ function getProgramsTable() {
     programs.push(row.$('h4').getText());
   }
   return programs;
+}
+
+/**
+ * Return the value of the Sum of targets field on the indicator 
+ * creation detail form
+ * @returns {Integer} The value of the sum of targets field
+ */
+function getSumOfTargets() {
+  let sum = browser.$('span#id_span_targets_sum').getText();
+  return sum;
 }
 
 /**
@@ -364,7 +375,7 @@ function getTargetFrequency() {
  */
 function getTargetInputBoxes() {
     // Find the input boxes
-    let inputBoxes = browser.$$('input#pt-undefined.form-control.input-value');
+    let inputBoxes = browser.$$('input#pt-.form-control.input-value');
     return inputBoxes;
 }
 
@@ -418,9 +429,9 @@ function open(url = parms.baseurl) {
  * Return the page title
  * @returns {string} The title of the current page
  */
-function pageName() {
-  // On this page, the "title" is actually the <h4> caption
-  return browser.$('h4').getText();
+function getPageName() {
+  // On this page, the "title" is actually the <h2> caption
+  return browser.$('h2').getText();
 }
 
 /**
@@ -501,8 +512,11 @@ function setFirstTargetPeriod() {
   // Defaults to the current month
   browser.scroll('input#id_target_frequency_start');
   browser.$('input#id_target_frequency_start').click();
-  browser.scroll('button.ui-datepicker-close');
-  browser.$('button.ui-datepicker-close').click();
+  browser.pause(msec/2);
+  //BUG? It is unclear why this selector fails but the next
+  //one succeeds
+  //browser.$('button.ui-datepicker-close').click();
+  browser.$('button=Done').click();
 }
 
 /**
@@ -512,11 +526,12 @@ function setFirstTargetPeriod() {
  * @returns Nothing
  */
 function setIndicatorName(name) {
-  if (! browser.isVisible('=Performance')) {
-    browser.waitForVisible('=Performance');
+  if (! browser.isVisible('=Summary')) {
+    browser.waitForVisible('=Summary');
   }
-  let perfTab = browser.$('=Performance');
-  perfTab.click();
+  let tab = browser.$('=Summary');
+  tab.click();
+  browser.scroll('input#id_name');
   let indName = $('input#id_name');
   indName.setValue(name);
 }
@@ -637,6 +652,7 @@ exports.getProgramIndicatorDeleteButtons = getProgramIndicatorDeleteButtons;
 exports.getProgramIndicatorEditButtons = getProgramIndicatorEditButtons;
 exports.getProgramIndicatorButtons = getProgramIndicatorButtons;
 exports.getProgramsTable = getProgramsTable;
+exports.getSumOfTargets = getSumOfTargets;
 exports.getTargetDateRanges = getTargetDateRanges;
 exports.getTargetFirstEventErrorHint = getTargetFirstEventErrorHint;
 exports.getTargetFirstPeriodErrorHint = getTargetFirstPeriodErrorHint;
@@ -645,7 +661,6 @@ exports.getTargetInputBoxes = getTargetInputBoxes;
 exports.getTargetValueErrorHint = getTargetValueErrorHint;
 exports.getUnitOfMeasure = getUnitOfMeasure;
 exports.open = open;
-exports.pageName = pageName;
 exports.saveIndicatorChanges = saveIndicatorChanges;
 exports.setBaseline = setBaseline;
 exports.setBaselineNA = setBaselineNA;

@@ -1,5 +1,4 @@
 {% load i18n %}
-{% get_current_language as LANGUAGE_CODE %}
 
 <script>
     var validation_msgs = {};
@@ -7,7 +6,6 @@
     var userLang = "{{ LANGUAGE_CODE }}";
 
     function setupPopupCalendar() {
-        $.datepicker.setDefaults($.datepicker.regional[userLang]);
         $('.monthPicker').datepicker({
             changeMonth: true,
             changeYear: true,
@@ -290,7 +288,8 @@
             form_data += "&periodic_targets=" + JSON.stringify(periodic_targets);
         }
 
-        $("#modalmessages").html("<img src='{{ STATIC_URL }}/img/ajax-loader.gif'>  <span>Saving form... please wait.</span>");
+
+        $("#modalmessages").html("<img src='{{ STATIC_URL }}/img/ajax-loader.gif'>  <span>{% trans 'Saving form... please wait.' %}</span>");
         $.ajax({
             method: 'POST',
             url: form_url,
@@ -310,7 +309,8 @@
 
             $(alertsElement).html('');
 
-            createAlert("success", "Success, form data saved.", true, alertsElement);
+            createAlert("success", "{% trans 'Success, form data saved.' %}", true, alertsElement);
+
             var jsondata = $.parseJSON(data);
             var indicator = $.parseJSON(jsondata["indicatorjson"])[0];
             var targets_sum = jsondata["targets_sum"];

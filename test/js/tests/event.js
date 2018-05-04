@@ -3,7 +3,7 @@ import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
-import { assert } from 'chai';
+import { expect } from 'chai';
 
 describe('"Event" target frequency', function() {
     before(function() {
@@ -29,7 +29,6 @@ describe('"Event" target frequency', function() {
         NavBar.Indicators.click();
         IndPage.createBasicIndicator();
         // Don't set a name
-        TargetsTab.setIndicatorName('Event target first event name required testing');
         TargetsTab.setUnitOfMeasure('Iodine per igloo');
         TargetsTab.setLoPTarget(476);
         TargetsTab.setBaseline(477);
@@ -39,7 +38,7 @@ describe('"Event" target frequency', function() {
         // Should fail
         TargetsTab.saveIndicatorChanges();
         let errorMessage = TargetsTab.getTargetFirstEventErrorHint();
-        assert(errorMessage.includes('Please complete this field.'));
+        expect(errorMessage.includes('Please complete this field.'));
     });
 
     it('should require "Number of events"', function() {
@@ -56,7 +55,7 @@ describe('"Event" target frequency', function() {
 
         TargetsTab.saveIndicatorChanges();
         let errorMessage = TargetsTab.getNumTargetEventsErrorHint();
-        assert(errorMessage.includes('Please complete this field.'));
+        expect(errorMessage.includes('Please complete this field.'));
     });
 
     it('should allow only numeric values in "Number of events"', function () {
@@ -73,7 +72,7 @@ describe('"Event" target frequency', function() {
 
         TargetsTab.saveIndicatorChanges();
         let errorMessage = TargetsTab.getNumTargetEventsErrorHint();
-        assert(errorMessage.includes('Please complete this field.'));
+        expect(errorMessage.includes('Please complete this field.'));
     });
 
     it('should default "Number of events" to 1', function() {
@@ -82,7 +81,7 @@ describe('"Event" target frequency', function() {
 
         TargetsTab.clickTargetsTab();
         TargetsTab.setTargetFrequency('Event');
-        assert.equal(1, TargetsTab.getNumTargetPeriods(),
+        expect(1 === TargetsTab.getNumTargetPeriods(),
             'Did not receive expected number of target events');
     });
 
@@ -101,7 +100,7 @@ describe('"Event" target frequency', function() {
         // Should fail
         TargetsTab.saveIndicatorChanges();
         let errorMessage = TargetsTab.getNumTargetEventsErrorHint();
-        assert(errorMessage.includes('You can start with up to 12 targets and add more later.'));
+        expect(errorMessage.includes('You can start with up to 12 targets and add more later.'));
     });
 
     // FIXME: The next test fails; I can enter 0 events and save
@@ -122,7 +121,7 @@ describe('"Event" target frequency', function() {
         // This test will start to fail when that bug gets fixed.
         TargetsTab.saveIndicatorChanges();
         let errorMessage = TargetsTab.getNumTargetEventsErrorHint();
-        assert.equal('', errorMessage);
+        expect('' === errorMessage);
     });
 }); // end event target frequency tests
 

@@ -66,10 +66,12 @@ describe('Number indicators in the indicator evidence table', function() {
         TargetsTab.setNumTargetPeriods(3);
         TargetsTab.saveIndicatorChanges();
 
-        let progList = IndPage.getProgramsDropdownList();
-        let prog = progList[1];
-        IndPage.selectProgram(prog);
-        IndPage.clickProgramIndicatorsButton(prog);
+        let inputBoxes = TargetsTab.getTargetInputBoxes();
+        inputBoxes[0].setValue(100);
+        inputBoxes[1].setValue(200);
+        inputBoxes[2].setValue(300);
+
+        expect(600 === TargetsTab.getSumOfTargets());
     });
 
     it('should take LoP target of C number indicators from LoP target field');
