@@ -74,9 +74,9 @@ function clickTargetsTab() {
  */
  function setDirectionOfChange(dir = 'none') {
     let val;
-    if (dir == 'none') { val = 1};
-    if (dir == 'pos') { val = 2};
-    if (dir == 'neg') { val = 3};
+    if (dir === 'none') { val = 1};
+    if (dir === 'pos') { val = 2};
+    if (dir === 'neg') { val = 3};
     $('select#id_direction_of_change').selectByValue(val);
  }
 
@@ -108,9 +108,9 @@ function getBaselineErrorHint() {
 function getDirectionOfChange() {
     let dropdown = $('select#id_direction_of_change');
     let changeDir = dropdown.getValue();
-    if (changeDir == 1) { return 'none' };
-    if (changeDir == 2) { return 'pos' };
-    if (changeDir == 3) { return 'neg' };
+    if (changeDir === 1) { return 'none' };
+    if (changeDir === 2) { return 'pos' };
+    if (changeDir === 3) { return 'neg' };
 }
 
 /**
@@ -357,7 +357,7 @@ function getTargetFirstPeriodErrorHint() {
 function getTargetFrequency() {
   clickTargetsTab();
   let val = $('select#target_frequency').getValue();
-  if (val == 0) {
+  if (val === 0) {
     return '---------';
   } else {
     let list = $('select#target_frequency').getText();
@@ -403,8 +403,8 @@ function getMeasureIsCumulative() {
     browser.scroll('input#submit-id-submit');
 
     let val = $('input#id_is_cumulative_1').getValue();
-    if (val == 3) { return true; }
-    if (val == 4) { return false; }
+    if (val === 3) { return true; }
+    if (val === 4) { return false; }
 }
 
 function getMeasureType() {
@@ -501,7 +501,7 @@ function setEndlineTarget(value) {
  */
 function setFirstEventName(value) {
   let textBox = browser.$('input#id_target_frequency_custom');
-  if (value == 0) {
+  if (value === 0) {
     textBox.clear();
   } else {
     textBox.setValue(value);
@@ -518,7 +518,6 @@ function setFirstTargetPeriod() {
   browser.scroll('input#id_target_frequency_start');
   browser.$('input#id_target_frequency_start').click();
   browser.pause(msec);
-  //browser.$('button.ui-datepicker-close').click();
   browser.$('button=Done').click();
 }
 
@@ -559,8 +558,8 @@ function setMeasureType(type) {
   clickTargetsTab();
   let element;
   browser.pause(msec);
-  if (type == 'number') { element = browser.$('input#id_unit_of_measure_type_0'); }
-  if (type == 'percent') { element = browser.$('input#id_unit_of_measure_type_1'); }
+  if (type === 'number') { element = browser.$('input#id_unit_of_measure_type_0'); }
+  if (type === 'percent') { element = browser.$('input#id_unit_of_measure_type_1'); }
   element.click();
 }
 
@@ -587,7 +586,7 @@ function setMidlineTarget(value) {
  */
 function setNumTargetEvents(value) {
   let textBox = browser.$('input#id_target_frequency_num_periods');
-  if (value == 0) {
+  if (value === 0) {
     textBox.clearElement();
   } else {
     textBox.setValue(value);
