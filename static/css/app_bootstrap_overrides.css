@@ -95,7 +95,13 @@ body > .container {
     background-color: #33BFBB;
     border-color: #33BFBB;
     color: #FFFFFF;
-    font-size: 1.125rem;
+    box-shadow: none;
+}
+
+.btn-primary:disabled {
+    background-color: #B8BABD;
+    border-color: #B8BABD;
+    color: #FFFFFF;
     box-shadow: none;
 }
 
@@ -118,18 +124,13 @@ body > .container {
     background-color: #FFFFFF;
     border-color: #33BFBB;
     color: #33BFBB;
-    font-size: 1.125rem;
     box-shadow: none;
 }
 
-.btn-secondary[disabled="disabled"],
-.btn-secondary[disabled="disabled"]:hover,
-.btn-secondary[disabled=true],
-.btn-secondary[disabled=true]:hover {
+.btn-secondary:disabled {
     background-color: #FFFFFF;
     border-color: #B8BABD;
     color: #B8BABD;
-    font-size: 1.125rem;
     box-shadow: none;
 }
 
@@ -183,15 +184,20 @@ body > .container {
     color: #000000;
     border-radius: 0px;
     border-color: #B8BABD;
+    background-color: #FFFFFF;
 }
 
 input[type="text"]:read-only,
 select[disabled="disabled"],
 select[disabled=true],
 .form-control:disabled,
+.form-control:disabled:focus,
+.form-control:disabled.focus,
 .form-control[readonly] {
-  border-color: #B8BABD;
-  background-color: #DBDCDE;
+  border-color: #DBDCDE;
+  background-color: #F5F5F5;
+  outline: 0;
+  box-shadow: none;
 }
 
 /* do not change border color to green when form is validated */
@@ -212,10 +218,7 @@ select[disabled=true],
 }
 
 input[type="radio"].form-control:focus,
-input[type="checkbox"].form-control:focus,
-input:read-only.form-control:focus {
-  border-color: #B8BABD;
-  background-color: #DBDCDE;
+input[type="checkbox"].form-control:focus {
   outline: 0;
   box-shadow: none;
 }
