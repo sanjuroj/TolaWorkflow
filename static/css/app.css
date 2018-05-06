@@ -402,6 +402,11 @@ applied.  This keeps the inputs from getting taller when there is an error. */
     font-size: 1rem;
 }
 
+#indicatorTabs .nav-link.active {
+    font-size: 1rem;
+    color: #54585A;
+    font-weight: bold;
+}
 /* Don't define border property here.  Assigning here prevents red border
 from being applied when there is no value */
 .periodic-target .input-value {

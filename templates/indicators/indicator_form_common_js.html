@@ -219,7 +219,6 @@
             var isLastIteration = true;
             var target_frequency = $("#id_target_frequency").val();
             var markup = createPeriodicTargetRow(pt, target_frequency, isLastIteration);
-
             // if target_frequency is not "EVENT" then hide the delete button
             if (target_frequency != 8) {
                 $("#periodic_targets_table tbody tr:nth-last-child(3)").find("a").hide();
@@ -288,7 +287,6 @@
             form_data += "&periodic_targets=" + JSON.stringify(periodic_targets);
         }
 
-
         $("#modalmessages").html("<img src='{{ STATIC_URL }}/img/ajax-loader.gif'>  <span>{% trans 'Saving form... please wait.' %}</span>");
         $.ajax({
             method: 'POST',
@@ -317,7 +315,6 @@
             var targets_avg = jsondata["targets_avg"];
             var update_indicator_row = jsondata["update_indicator_row"];
             var content = jsondata["content"];
-
             $(form).data('update_indicator_row', parseInt(update_indicator_row));
 
             $("#initialTargetFrequencyValue").text(indicator.fields.target_frequency);
