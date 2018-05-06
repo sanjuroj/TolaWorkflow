@@ -209,6 +209,15 @@ class IPTT_ReportView(TemplateView):
                     )
                 )
             )
+            # Get the midline target value
+            midline_target = Max(
+                Case(
+                    When(
+                        Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
+                        then=Subquery(last_data_record.values('periodic_target__target')[:1])
+                    )
+                )
+            )
 
             # Create annotations for ENDLINE TargetPeriod
             last_data_record = CollectedData.objects.filter(
@@ -244,14 +253,7 @@ class IPTT_ReportView(TemplateView):
                     )
                 )
             )
-            midline_target = Max(
-                Case(
-                    When(
-                        Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
-                        then=Subquery(last_data_record.values('periodic_target__target')[:1])
-                    )
-                )
-            )
+            # Get the endline target value
             endline_target = Max(
                 Case(
                     When(
