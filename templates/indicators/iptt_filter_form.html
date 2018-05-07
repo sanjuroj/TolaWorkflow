@@ -42,8 +42,7 @@
             </div>
           {% endwith %}
         {% endfor %}
-        <div class="form-group filter-form-padding-10" id_div_timeperiods_numrecentperiods
-        ">
+        <div class="form-group filter-form-padding-10">
         {% render_field form.numrecentperiods class+="form-control" %}
       </div>
 
@@ -85,12 +84,10 @@
       <button
         type="submit"
         id="id_submit_form_filter"
-        class="btn btn-primary"
-        style="width:50%; font-size: 50%; margin-left: 10px;">{% trans "SAVE CHANGES" %}
+        class="btn btn-primary">{% trans "SAVE CHANGES" %}
       </button>
       <button type="reset"
-              class="btn btn-secondary"
-              style="width: 25%; font-size: 50%">{% trans "CANCEL" %}
+              class="btn btn-secondary">{% trans "CANCEL" %}
       </button>
     </div>
   </form>

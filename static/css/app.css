@@ -362,18 +362,6 @@ select.listoption_filters
   box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
 }
 
-#id_key_performance_indicator {
-    margin-right: .5rem;
-}
-
-#id_level {
-    min-height: 7.75rem
-}
-
-#id_indicator_type {
-    height: 5.35rem
-}
-
 /* This helps with the predictability of spacing between
 inputs on the indicator setup page/modal */
 #indicator_modal_body .div-input-container > textarea,
@@ -511,9 +499,9 @@ input[type=number]::-webkit-outer-spin-button {
     padding-top: 10px;
 }
 
-.filter-form-label{
+/* .filter-form-label{
     font-size: .010rem;
-}
+} */
 
 #id_iptt_report_filter {
     min-width: 330px;
