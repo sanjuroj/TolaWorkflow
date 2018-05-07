@@ -1,10 +1,9 @@
-import { assert, expect } from 'chai';
-import LoginPage from '../pages/login.page';
 import IndPage from '../pages/indicators.page';
-import TargetsTab from '../pages/targets.page';
+import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
+import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
-const msec = 1000;
+import { expect } from 'chai';
 
 describe('Indicator creation detail form', function() {
     before(function() {
@@ -30,60 +29,59 @@ describe('Indicator creation detail form', function() {
   //FIXME: Get all of the WebDriver code out of here
   it('should exist', function() {
     NavBar.Indicators.click();
-    assert.equal('Program Indicators', IndPage.getPageName());
+    expect('Program Indicators' === IndPage.getPageName());
     IndPage.createBasicIndicator();
     browser.waitForVisible('h2');
     let title = browser.$('h2').getText().trim();
-    expect(title.includes('Goal indicator: Temporary'),
-      'Unexpected title text on the indicator detail screen');
+    expect(true === title.includes('Goal indicator: Temporary'));
   });
 
   describe('Summary tab', function() {
     it('should exist', function() {
-      expect(browser.isVisible('=Summary')); 
+      expect(true === browser.isVisible('=Summary')); 
     });
   }); // end summary tab tests
 
   describe('Performance tab', function() {
     it('should exist', function() {
-      expect(browser.isVisible('=Performance')); 
+      expect(true === browser.isVisible('=Performance')); 
     });
   }); // end performance tab tests
 
   describe('Targets tab', function() {
     it('should exist', function() {
-      expect(browser.isVisible('=Targets')); 
+      expect(true === browser.isVisible('=Targets')); 
     });
   }); // end targets tab tests
 
   describe('Data Acquisition tab', function() {
     it('should exist', function() {
-      expect(browser.isVisible('=Data Acquisition')); 
+      expect(true === browser.isVisible('=Data Acquisition')); 
     });
   }); // end data acquistion tab tests
 
   describe('Analysis and Reporting tab', function() {
     it('should exist', function() {
-      expect(browser.isVisible('=Analysis and Reporting')); 
+      expect(true === browser.isVisible('=Analysis and Reporting')); 
     });
   }); // end analysis tab tests
 
   describe('Approval tab', function() {
     it('should exist', function() {
-      expect(browser.isVisible('=Approval')); 
+      expect(true === browser.isVisible('=Approval')); 
     });
   }); // end approval tab tests
 
   it('should have a Help link', function() {
-    expect(browser.isVisible('=Help'));
+    expect(true === browser.isVisible('=Help'));
   });
 
   it('should have a Save Changes button', function() {
-    expect(browser.isVisible('=Save changes'));
+    expect(true === browser.isVisible('=Save changes'));
   });
 
   it('should have a Reset button', function() {
-    expect(browser.isVisible('=RESET'));
+    expect(true === browser.isVisible('=RESET'));
   });
 
   it('should restore form to pre-edit state when RESET button is clicked', function() {
@@ -95,9 +93,9 @@ describe('Indicator creation detail form', function() {
     // 2 - Basic Needs
     select.selectByValue(2);
     let newVal =  select.getValue();
-    assert.equal(2, newVal, 'Unexpected selection mismatch');
+    expect(2 === newVal);
     IndPage.clickResetButton();
     let resetVal = options[1].getValue();
-    assert.equal(origVal, resetVal, 'Unexpected selection mismatch after RESET');
+    expect(origVal === resetVal);
   });
 }); // end create indicator detail page tests

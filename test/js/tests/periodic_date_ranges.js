@@ -1,11 +1,10 @@
-import { assert, expect } from 'chai';
+import DateMath from 'date-arithmetic';
 import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
-import DateMath from 'date-arithmetic';
-'use strict';
+import { expect } from 'chai';
 
 describe('Periodic target date ranges', function() {
     before(function() {
@@ -52,7 +51,7 @@ describe('Periodic target date ranges', function() {
             rangeEnd = new Date(dateRange.split(' - ')[1]);
             //FIXME: code smell
             diff = DateMath.diff(rangeStart, rangeEnd, 'year', true);
-            expect(Math.round(diff) == 1);
+            expect(1 === Math.round(diff));
         }
     });
 
@@ -77,7 +76,7 @@ describe('Periodic target date ranges', function() {
             rangeEnd = new Date(dateRange.split(' - ')[1]);
             //FIXME: code smell
             diff = DateMath.diff(rangeStart, rangeEnd, 'month', true);
-            expect(Math.round(diff) == 6);
+            expect(=== Math.round(diff));
         }
     });
 
@@ -102,7 +101,7 @@ describe('Periodic target date ranges', function() {
             rangeEnd = new Date(dateRange.split(' - ')[1]);
             //FIXME: code smell
             diff = DateMath.diff(rangeStart, rangeEnd, 'month', true);
-            expect(Math.round(diff) == 4);
+            expect(4 === Math.round(diff));
         }
     });
 
@@ -127,7 +126,7 @@ describe('Periodic target date ranges', function() {
             rangeEnd = new Date(dateRange.split(' - ')[1]);
             //FIXME: code smell
             diff = DateMath.diff(rangeStart, rangeEnd, 'month', true);
-            expect(Math.round(diff) == 3);
+            expect(3 === Math.round(diff));
         }
     });
 
@@ -152,7 +151,7 @@ describe('Periodic target date ranges', function() {
             rangeEnd = new Date(dateRange.split(' - ')[1]);
             //FIXME: code smell
             diff = DateMath.diff(rangeStart, rangeEnd, 'month', true);
-            expect(Math.round(diff) == 1);
+            expect(1 === Math.round(diff));
         }
     });
 });

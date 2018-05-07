@@ -1,8 +1,8 @@
-import { assert } from 'chai';
-import Util from '../lib/testutil';
-import LoginPage from '../pages/login.page';
 import DashboardPage from '../pages/dashboard.page';
+import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
+import Util from '../lib/testutil';
+import { expect } from 'chai';
 
 describe('TolaActivity Dashboard', function() {
     before(function() {
@@ -17,7 +17,7 @@ describe('TolaActivity Dashboard', function() {
             LoginPage.login.click();
         } else if (parms.baseurl.includes('localhost')) {
             LoginPage.googleplus.click();
-            if ('TolaActivity' != LoginPage.title) {
+            if ('TolaActivity' !== LoginPage.title) {
                 LoginPage.gUsername = parms.username + '@mercycorps.org';
                 LoginPage.gPassword = parms.password;
             }
@@ -25,18 +25,18 @@ describe('TolaActivity Dashboard', function() {
     });
 
     it('should have a page header', function() {
-        assert('Tola-Activity Dashboard' == DashboardPage.title);
+        expect('Tola-Activity Dashboard' === DashboardPage.title);
     });
 
     it('should have a TolaActivity link', function() {
-        assert(NavBar.TolaActivity != null);
-        assert(NavBar.TolaActivity != undefined);
+        expect(NavBar.TolaActivity !== null);
+        expect(NavBar.TolaActivity !== undefined);
         NavBar.TolaActivity.click();
     });
 
     it('should have a Workflow dropdown', function() {
-        assert(NavBar.Workflow != null);
-        assert(NavBar.Workflow != undefined);
+        expect(NavBar.Workflow !== null);
+        expect(NavBar.Workflow !== undefined);
         NavBar.Workflow.click();
     });
 
@@ -49,46 +49,46 @@ describe('TolaActivity Dashboard', function() {
     });
 
     it('should have a Reports dropdown', function() {
-        assert(NavBar.Reports != null);
-        assert(NavBar.Reports != undefined);
+        expect(NavBar.Reports !== null);
+        expect(NavBar.Reports !== undefined);
         NavBar.Reports.click();
     });
 
     it('should have a Profile link', function() {
-        assert(NavBar.UserProfile != null);
-        assert(NavBar.UserProfile != undefined);
+        expect(NavBar.UserProfile !== null);
+        expect(NavBar.UserProfile !== undefined);
         NavBar.UserProfile.click();
     });
 
     it('should have a Sites panel', function() {
-        assert(DashboardPage.SitesPanel != null);
-        assert(DashboardPage.SitesPanel != undefined);
-        assert('Sites' == DashboardPage.SitesPanel.getText());
+        expect(DashboardPage.SitesPanel !== null);
+        expect(DashboardPage.SitesPanel !== undefined);
+        expect('Sites' === DashboardPage.SitesPanel.getText());
     });
 
     it('should show map of country sites', function() {
-        assert(DashboardPage.SitesMap != null);
-        assert(DashboardPage.SitesMap != undefined);
+        expect(DashboardPage.SitesMap !== null);
+        expect(DashboardPage.SitesMap !== undefined);
     });
 
     it('should have a Program Projects by Status panel', function() {
-        assert(DashboardPage.ProgramProjectsByStatusPanel != null);
-        assert(DashboardPage.ProgramProjectsByStatusPanel != undefined);
+        expect(DashboardPage.ProgramProjectsByStatusPanel !== null);
+        expect(DashboardPage.ProgramProjectsByStatusPanel !== undefined);
     });
 
     it('should have a project status chart', function() {
-        assert(DashboardPage.ProgramProjectsByStatusChart != null);
-        assert(DashboardPage.ProgramProjectsByStatusChart != undefined);
+        expect(DashboardPage.ProgramProjectsByStatusChart !== null);
+        expect(DashboardPage.ProgramProjectsByStatusChart !== undefined);
     });
 
     it('should have a KPI Targets vs Actuals panel', function() {
-        assert(DashboardPage.KpiTargetsVsActualsPanel != null);
-        assert(DashboardPage.KpiTargetsVsActualsPanel != undefined);
+        expect(DashboardPage.KpiTargetsVsActualsPanel !== null);
+        expect(DashboardPage.KpiTargetsVsActualsPanel !== undefined);
     });
 
     it('should have a KPI Targets vs Actuals chart', function() {
-        assert(DashboardPage.KpiTargetsVsActualsChart != null);
-        assert(DashboardPage.KpiTargetsVsActualsChart != undefined);
+        expect(DashboardPage.KpiTargetsVsActualsChart !== null);
+        expect(DashboardPage.KpiTargetsVsActualsChart !== undefined);
     });
 
     // Enhancements?

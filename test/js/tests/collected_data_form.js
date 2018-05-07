@@ -1,9 +1,8 @@
-var assert = require('chai').assert;
 import LoginPage from '../pages/login.page';
-var IndPage = require('../pages/indicators.page.js');
-var TargetsTab = require('../pages/targets.page.js');
-var util = require('../lib/testutil.js');
-const msec = 1000;
+import IndPage from '../pages/indicators.page';
+import TargetsTab from '../pages/targets.page';
+import Util from '../lib/testutil';
+import { expect } from 'chai';
 
 describe('Collected data record: Actual value field for percentage indicator', function() {
     before(function() {
@@ -12,7 +11,7 @@ describe('Collected data record: Actual value field for percentage indicator', f
         browser.windowHandleMaximize(); 
 
         // Get login data and login
-        let parms = util.readConfig();
+        let parms = Util.readConfig();
         LoginPage.open(parms.baseurl);
         if (parms.baseurl.includes('mercycorps.org')) {
             LoginPage.username = parms.username;

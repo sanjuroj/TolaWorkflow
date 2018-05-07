@@ -1,11 +1,10 @@
-import { assert, expect } from 'chai';
+import DateMath from 'date-arithmetic';
 import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
-import DateMath from 'date-arithmetic';
-'use strict';
+import { expect } from 'chai';
 
 describe('Adding target date ranges', function() {
     before(function() {

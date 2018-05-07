@@ -1,9 +1,9 @@
-import { assert } from 'chai';
 import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
+import { expect } from 'chai';
 
 describe('"Annual" target frequency', function() {
     before(function() {
@@ -28,8 +28,7 @@ describe('"Annual" target frequency', function() {
 
   it('should require date that first target period begins', function() {
     NavBar.Indicators.click();
-    assert.equal('Program Indicators', IndPage.getPageName(),
-      'Unexpected page name mismatch on program indicators page');
+    expect('Program Indicators' === IndPage.getPageName());
     IndPage.createBasicIndicator();
 
     TargetsTab.setIndicatorName('Annual target, first period required');
@@ -41,12 +40,11 @@ describe('"Annual" target frequency', function() {
     // Trying to save without setting the start date should fail
     TargetsTab.saveIndicatorChanges();
     let errorMessage = TargetsTab.getTargetFirstPeriodErrorHint();
-    assert(errorMessage.includes('Please complete this field.'));
+    expect(errorMessage.includes('Please complete this field.'));
   });
 
   it('should default number of periods to 1', function() {
-    assert.equal(1, TargetsTab.getNumTargetPeriods(),
-      'Did not find expected default value');
+    expect(1 === TargetsTab.getNumTargetPeriods());
   });
 
   it('should create target periods for each period requested', function() {
@@ -62,8 +60,7 @@ describe('"Annual" target frequency', function() {
 
     // This should succeed
     TargetsTab.saveIndicatorChanges();
-    assert.equal(2, TargetsTab.getNumTargetPeriods(),
-      'Did not find expected number of target periods');
+    expect(2 === TargetsTab.getNumTargetPeriods());
   });
 
   it('should require entering targets for each target period', function() {
@@ -91,9 +88,9 @@ describe('"Annual" target frequency', function() {
         TargetsTab.saveIndicatorChanges();
         // Did we fail successfully?
         errMsg = TargetsTab.getTargetValueErrorHint();
-        assert(errMsg.includes('Please enter a target value. Your target value can be zero.'));
+        expect(errMsg.includes('Please enter a target value.'));
         errorCount++;
     }
-    assert.equal(targetCount, errorCount, 'Invalid target or error count');
+    expect(targetCount === errorCount);
   });
 });

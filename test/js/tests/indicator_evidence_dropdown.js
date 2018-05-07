@@ -1,16 +1,15 @@
-var assert = require('chai').assert;
+import IndPage from "../pages/indicators.page';
 import LoginPage from '../pages/login.page';
-var IndPage = require('../pages/indicators.page.js');
-var TargetsTab = require('../pages/targets.page.js');
-var util = require('../lib/testutil.js');
-const msec = 1000;
+import TargetsTab from "../pages/targets.page';
+import Util from "../lib/testutil';
+import { expect } from ('chai');
 
 describe('Indicator evidence dropdown', function() {
     before(function() {
         // Disable timeouts
         this.timeout(0);
         browser.windowHandleMaximize();
-        let parms = util.readConfig();
+        let parms = Util.readConfig();
         
         LoginPage.open(parms.baseurl);
         if (parms.baseurl.includes('mercycorps.org')) {

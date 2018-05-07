@@ -3,9 +3,7 @@ import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
-import { assert, expect } from 'chai';
-const msec = 1000;
-const delay = 10*msec;
+import { expect } from 'chai';
 
 describe("Programs dropdown", function () {
     before(function() {
@@ -31,7 +29,7 @@ describe("Programs dropdown", function () {
     it('does someting', function() {
         NavBar.Indicators.click();
         // FIXME: getPageName should be a property
-        assert.equal('Program Indicators', IndPage.getPageName());
+        expect('Program Indicators' === IndPage.getPageName());
     });
     
     it('should exist', function() {
@@ -42,7 +40,7 @@ describe("Programs dropdown", function () {
     it('should have same number of items as programs table', function() {
         let progList = IndPage.getProgramsDropdownList();
         let progTable = IndPage.getProgramsTable();
-        assert.equal(progList.length, progTable.length, 'row count mismatch');
+        expect(progList.length === progTable.length, 'row count mismatch');
     });
     
     it('should have same items as the programs table', function() {
@@ -56,7 +54,7 @@ describe("Programs dropdown", function () {
         let progTable = IndPage.getProgramsTable();
         for (let i = 0; i < progTable.length; i++) {
             let rowText = progTable[i].split('\n')[0].trim();
-            assert.equal(rowText, listItems[i]);
+            expect(rowText === listItems[i]);
         };
     });
     
@@ -70,7 +68,7 @@ describe("Programs dropdown", function () {
                     browser.selectByVisibleText(s);
                 }
                 let h2 = $('h2').getText();
-                assert.equal(s, h2, 'Unexpected text mismtach');
+                expect(s === h2, 'Unexpected text mismtach');
         }
     }); 
     
@@ -81,7 +79,7 @@ describe("Programs dropdown", function () {
     
         it('should have at least one entry', function() {
             let indList = IndPage.getIndicatorsDropdownList();
-            assert(indList.length > 0);
+            expect(length > 0);
         });
     });
     
@@ -92,7 +90,7 @@ describe("Programs dropdown", function () {
 
         it('should have at least one entry', function() {
             let indTypeList = IndPage.getIndicatorTypeList();
-            assert(indTypeList.length > 0);
+            expect(length > 0);
         });
     });
     
@@ -106,13 +104,13 @@ describe("Programs dropdown", function () {
             let targetDiv = 'div' + button.getAttribute('data-target');
             let isVisible = browser.isVisible(targetDiv);
             // Starts out collapsed
-            assert.equal(false, isVisible);
+            expect(false === isVisible);
     
             // Open it and verify
             button.click();
             Util.waitForAjax();
             isVisible = browser.isVisible(targetDiv);
-            assert.equal(true, isVisible);
+            expect(true === isVisible);
     
             button.click();
             Util.waitForAjax();

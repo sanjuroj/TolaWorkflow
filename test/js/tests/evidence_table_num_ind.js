@@ -1,11 +1,10 @@
 import Evidence from '../pages/evidence.page';
+import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
-import IndPage from '../pages/indicators.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
 import { expect } from 'chai';
-'use strict';
 
 /**
  * Indicator evidence table: number indicator config and display

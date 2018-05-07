@@ -1,11 +1,9 @@
-import { assert, expect } from 'chai';
+import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
-import IndPage from '../pages/indicators.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
-const msec = 1000;
-const delay = 10*msec;
+import { expect } from 'chai';
 
 describe('Program Indicators table', function() {
     before(function() {
@@ -21,7 +19,7 @@ describe('Program Indicators table', function() {
             LoginPage.login.click();
         } else if (parms.baseurl.includes('localhost')) {
             LoginPage.googleplus.click();
-            if (LoginPage.title != 'TolaActivity') {
+            if (LoginPage.title !== 'TolaActivity') {
                 LoginPage.gUsername = parms.username + '@mercycorps.org';
                 LoginPage.gPassword = parms.password;
             }
@@ -43,17 +41,17 @@ describe('Program Indicators table', function() {
                 button.click();
                 Util.waitForAjax();
             }
-            expect(false == browser.isVisible(targetDiv), 'Unable to set initial state');
+            expect(false === browser.isVisible(targetDiv));
 
             // Open it
             button.click();
             Util.waitForAjax();
-            expect(true == browser.isVisible(targetDiv));
+            expect(true === browser.isVisible(targetDiv));
 
             // Close it again
             button.click();
             Util.waitForAjax();
-            expect(false == browser.isVisible(targetDiv));
+            expect(false === browser.isVisible(targetDiv));
         }
     });
 
@@ -95,7 +93,7 @@ describe('Program Indicators table', function() {
         buttonText = buttons[0].getText();
         let newCount = parseInt(buttonText);
         // Assert new count > old count
-        expect(newCount == oldCount + 1);
+        expect(newCount === oldCount + 1);
     });
 
     it('should be able to delete PI by clicking its Delete button', function() {
@@ -119,12 +117,12 @@ describe('Program Indicators table', function() {
 
         // Assert new count < old count
         let newCount = buttonText;
-        expect(newCount == oldCount - 1);
+        expect(newCount === oldCount - 1);
     });
 
     it('should edit an indicator by clicking its Edit button', function() {
         NavBar.Indicators.click();
         IndPage.editIndicator();
-        expect(browser.isVisible('div#indicator_modal_content'));
+        expect(true === browser.isVisible('div#indicator_modal_content'));
     });
 });
