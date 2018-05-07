@@ -1,6 +1,6 @@
+import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
-import IndPage from '../pages/indicators.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
 import { expect } from 'chai';
@@ -35,7 +35,7 @@ describe('Defining number and percent indicators', function() {
         IndPage.createBasicIndicator();
         TargetsTab.setMeasureType('percent');
         let indType = TargetsTab.getMeasureType();
-        expect(indType === 1);
+        expect(1 === indType);
     });
 
     it('should default to number indicators', function() {
@@ -43,7 +43,7 @@ describe('Defining number and percent indicators', function() {
         IndPage.createBasicIndicator();
         TargetsTab.clickTargetsTab();
         let indType = TargetsTab.getMeasureType();
-        expect(indType === 0);
+        expect(0 === indType);
     });
 
     it('should default number indicators to non-cumulative indicators', function() {
@@ -78,8 +78,8 @@ describe('Defining number and percent indicators', function() {
     it('should add “%” to LoP target and Baseline fields of percentage indicators');
 
     it('should have direction of change option', function() {
-        expect(undefined != TargetsTab.getDirectionOfChange());
-        expect(null != TargetsTab.getDirectionOfChange());
+        expect(undefined !== TargetsTab.getDirectionOfChange());
+        expect(null !== TargetsTab.getDirectionOfChange());
     });
 
     it('should default to no direction of change', function() {

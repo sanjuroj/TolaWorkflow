@@ -79,7 +79,7 @@ describe("Programs dropdown", function () {
     
         it('should have at least one entry', function() {
             let indList = IndPage.getIndicatorsDropdownList();
-            expect(indList.length > 0);
+            expect(0 > indList.length);
         });
     });
     
@@ -90,7 +90,7 @@ describe("Programs dropdown", function () {
 
         it('should have at least one entry', function() {
             let indTypeList = IndPage.getIndicatorTypeList();
-            expect(indTypeList.length > 0);
+            expect(0 > indTypeList.length);
         });
     });
     

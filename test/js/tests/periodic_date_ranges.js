@@ -76,7 +76,8 @@ describe('Periodic target date ranges', function() {
             rangeEnd = new Date(dateRange.split(' - ')[1]);
             //FIXME: code smell
             diff = DateMath.diff(rangeStart, rangeEnd, 'month', true);
-            expect(6 === Math.round(diff));
+            //expect(6 === Math.round(diff)); // from old HEAD
+            expect(2 === Math.round(diff));
         }
     });
 

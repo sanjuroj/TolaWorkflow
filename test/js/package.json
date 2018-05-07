@@ -19,6 +19,7 @@
         "webdriverio": "^4.12.0"
     },
     "dependencies": {
+        "npm": "^6.0.0",
         "readable-stream": "^2.3.6",
         "string_decoder": "^1.1.1"
     },

@@ -1,8 +1,7 @@
 import IpttPage from '../pages/iptt.page';
 import LoginPage from '../pages/login.page';
 import Util from '../lib/testutil';
-import { assert, expect } from 'chai';
-'use strict';
+import { expect } from 'chai';
 
 /**
  * IPTT report: Program indicator overview report

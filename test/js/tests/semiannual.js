@@ -40,7 +40,7 @@ describe('"Semi-annual" target frequency', function() {
     // Trying to save without setting the start date should fail
     TargetsTab.saveIndicatorChanges();
     let errorMessage = TargetsTab.getTargetFirstPeriodErrorHint();
-    expect(errorMessage.includes('Please complete this field.'));
+    expect(true === errorMessage.includes('Please complete this field.'));
   });
 
   it('should default number of periods to 1', function() {

@@ -4,7 +4,6 @@ import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
-'use strict';
 
 /**
  * IPTT report: Program target overview report

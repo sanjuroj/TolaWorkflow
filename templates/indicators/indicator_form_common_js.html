@@ -1,5 +1,4 @@
 {% load i18n %}
-{% get_current_language as LANGUAGE_CODE %}
 
 <script>
     var validation_msgs = {};
@@ -7,7 +6,6 @@
     var userLang = "{{ LANGUAGE_CODE }}";
 
     function setupPopupCalendar() {
-        $.datepicker.setDefaults($.datepicker.regional[userLang]);
         $('.monthPicker').datepicker({
             changeMonth: true,
             changeYear: true,
@@ -51,9 +49,6 @@
     $( document ).ready(function() {
         show_hide_frequency_fields();
         setupPopupCalendar();
-        if ( $('#id_div_periodic_tables_placeholder').children().length > 0 ) {
-            $("#id_create_targets_btn").attr("disabled", true)
-        }
     });
 
     $("#indicator_modal_div").on('shown.bs.tab', function() {
@@ -150,8 +145,6 @@
             return;
         }
         $(this).attr("disabled", true);
-        $(this).removeClass("btn-primary")
-        $(this).addClass("btn-secondary")
         submitForm($("#indicator_update_form"));
     });
 
@@ -192,7 +185,6 @@
         var indicator_id = form_url.split('/').slice(-2, -1)[0];
         var dataCountAttribute = $("#periodic_targets_table tr").attr("data-collected-count");
         var msg = '';
-
         if (typeof dataCountAttribute !== typeof undefined && dataCountAttribute !== false) {
             msg = '{% trans "Warning: This action cannot be undone. Any data records assigned to a target will need to be reassigned.\n\n Are you sure you want to remove all targets?" %}';
         } else {
@@ -208,8 +200,6 @@
                 $("#id_div_periodic_tables_placeholder").empty();
                 reset_frequency_fields();
                 show_hide_frequency_fields();
-                $("#id_create_targets_btn").removeClass("btn-secondary")
-                $("#id_create_targets_btn").addClass("btn-primary")
                 $("#indicator_update_form").data('indicatorchanged', true);
             }
 
@@ -229,7 +219,6 @@
             var isLastIteration = true;
             var target_frequency = $("#id_target_frequency").val();
             var markup = createPeriodicTargetRow(pt, target_frequency, isLastIteration);
-
             // if target_frequency is not "EVENT" then hide the delete button
             if (target_frequency != 8) {
                 $("#periodic_targets_table tbody tr:nth-last-child(3)").find("a").hide();
@@ -298,7 +287,7 @@
             form_data += "&periodic_targets=" + JSON.stringify(periodic_targets);
         }
 
-        $("#modalmessages").html("<img src='{{ STATIC_URL }}/img/ajax-loader.gif'>  <span>Saving form... please wait.</span>");
+        $("#modalmessages").html("<img src='{{ STATIC_URL }}/img/ajax-loader.gif'>  <span>{% trans 'Saving form... please wait.' %}</span>");
         $.ajax({
             method: 'POST',
             url: form_url,
@@ -318,7 +307,7 @@
 
             $(alertsElement).html('');
 
-            createAlert("success", "Success, form data saved.", true, alertsElement);
+            createAlert("success", "{% trans 'Success, form data saved.' %}", true, alertsElement);
 
             var jsondata = $.parseJSON(data);
             var indicator = $.parseJSON(jsondata["indicatorjson"])[0];
@@ -326,7 +315,6 @@
             var targets_avg = jsondata["targets_avg"];
             var update_indicator_row = jsondata["update_indicator_row"];
             var content = jsondata["content"];
-
             $(form).data('update_indicator_row', parseInt(update_indicator_row));
 
             $("#initialTargetFrequencyValue").text(indicator.fields.target_frequency);
@@ -342,11 +330,12 @@
             }
             if ($('#indicator_modal_div').length == 1) {
                 // for the modal version;
-                $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
+                $("#id_baseline").animate({ scrollTop: 0 }, 'slow');
             } else {
                 // for the non-modal version;
-                $("html, body").animate({ scrollTop: 0 }, "slow");
+                $("html, body").animate({ scrollTop: $("#id_baseline").offset().top }, "slow");
             }
+            // $("html, body").animate({ scrollTop: $("#id_baseline").offset().top }, 'slow');
             show_hide_frequency_fields(true);
         });
     }
@@ -368,11 +357,10 @@
         var label = '<i class="fas fa-plus-circle"></i> ' + getNewTargetBtnLabel($("#id_target_frequency").val());
         $("#addNewPeriodicTarget").html(label);
         var selected_option = $("#id_target_frequency").find("option:selected").text();
-        if ( (lock == true || $('#id_target_frequency').is('[readonly=true]'))
+        if ( (lock == true || $('#id_target_frequency').attr('readonly'))
                  && selected_option != 'Life of Program (LoP) only') {
             $("#id_target_frequency option:not(:selected)").attr("disabled", true);
             $("#id_target_frequency").attr("readonly", true);
-            $("#id_target_frequency").attr("disabled", "disabled");
             $("#id_create_targets_btn").attr("disabled", true);
             $("#div_id_target_frequency_start").hide();
             $("#div_id_target_frequency_num_periods").hide();

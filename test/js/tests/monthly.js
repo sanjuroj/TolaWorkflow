@@ -28,8 +28,7 @@ describe('Monthly target frequency', function() {
 
   it('should require date that first target period begins', function() {
     IndPage.open();
-    expect('Program Indicators' === IndPage.getPageName(),
-      'Unexpected page name mismatch');
+    expect('Program Indicators' === IndPage.getPageName());
     IndPage.createBasicIndicator();
 
     // This should succeed
@@ -42,19 +41,17 @@ describe('Monthly target frequency', function() {
     // Trying to save without setting the start date should fail
     TargetsTab.saveIndicatorChanges();
     let errorMessage = TargetsTab.getTargetFirstPeriodErrorHint();
-    expect(errorMessage.includes('Please complete this field.'));
+    expect(true === errorMessage.includes('Please complete this field.'));
   });
 
   it('should default number of periods to 1', function() {
-    expect(1 === TargetsTab.getNumTargetPeriods(), 
-      'Mismatched target period values');
+    expect(1 === TargetsTab.getNumTargetPeriods());
   });
 
   it('should create target periods for each period requested', function() {
     TargetsTab.setNumTargetPeriods(12);
     TargetsTab.saveIndicatorChanges();
-    expect(12 === TargetsTab.getNumTargetPeriods(),
-      'Mismatched target period values');
+    expect(12 === TargetsTab.getNumTargetPeriods());
   });
 
   it('should require entering targets for each target period', function() {
@@ -81,10 +78,10 @@ describe('Monthly target frequency', function() {
       TargetsTab.saveIndicatorChanges();
       // Did we fail successfully?
       let errMsg = TargetsTab.getTargetValueErrorHint();
-      expect(errMsg.includes('Please enter a target value.'));
+      expect(true === errMsg.includes('Please enter a target value.'));
       errorCount++;
     }
-    expect(targetCount === errorCount, 'Received unexpected error count mismatch');
+    expect(targetCount === errorCount);
   });
 }); // end monthly target frequency tests
 

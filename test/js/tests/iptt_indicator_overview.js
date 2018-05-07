@@ -44,13 +44,13 @@ describe('IPTT: Program indicator overview quickstart', function() {
 
     it('should allow to select time frame', function() {
         let val = IpttPage.IndicatorOverviewTimeFrame;
-        expect(undefined != val);
-        expect(null != val);
+        expect(undefined !== val);
+        expect(null !== val);
     });
 
     it('should default time frame to Show all', function() {
-        // 1 == Show all periods
-        // 2 == Show N most recent periods
+        // 1 === Show all periods
+        // 2 === Show N most recent periods
         IpttPage.open();
         let val = IpttPage.IndicatorOverviewTimeFrame;
         //FIXME: magic number
@@ -59,8 +59,8 @@ describe('IPTT: Program indicator overview quickstart', function() {
 
     it('should have a View Report button', function() {
         let elem = IpttPage.IndicatorOverviewViewReport;
-        expect(undefined != elem);
-        expect(null != elem);
+        expect(undefined !== elem);
+        expect(null !== elem);
         expect('View Report' === elem.getText());
     });
 

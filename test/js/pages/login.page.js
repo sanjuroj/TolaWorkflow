@@ -4,7 +4,8 @@
  * @module LoginPage
  */
 import Page from './page';
-const delay = 1000; // milliseconds
+// Milliseconds
+const delay = 1000;
 
 class LoginPage extends Page {
     // Independent of auth source

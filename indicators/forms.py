@@ -85,6 +85,7 @@ class IndicatorForm(forms.ModelForm):
             country__in=countries).distinct()
         self.fields['approval_submitted_by'].queryset = TolaUser.objects\
             .filter(country__in=countries).distinct()
+        self.fields['name'].label = _('Indicator Name')
         self.fields['name'].required = True
         self.fields['unit_of_measure'].required = True
         self.fields['target_frequency'].required = True
@@ -241,13 +242,13 @@ class IPTTReportQuickstartForm(ReportFormCommon):
 
 
 class IPTTReportFilterForm(ReportFormCommon):
-    level = forms.ModelChoiceField(queryset=Level.objects.none(), required=False, label='LEVEL')
-    ind_type = forms.ModelChoiceField(queryset=IndicatorType.objects.none(), required=False, label='TYPE')
-    sector = forms.ModelChoiceField(queryset=Sector.objects.none(), required=False, label='SECTOR')
-    site = forms.ModelChoiceField(queryset=SiteProfile.objects.none(), required=False, label='SITE')
-    indicators = forms.ModelChoiceField(queryset=Indicator.objects.none(), required=False, label='SELECT INDICATORS')
-    start_date = forms.DateField(label='START')
-    end_date = forms.DateField(label='END')
+    level = forms.ModelChoiceField(queryset=Level.objects.none(), required=False, label=_('LEVEL'))
+    ind_type = forms.ModelChoiceField(queryset=IndicatorType.objects.none(), required=False, label=_('TYPE'))
+    sector = forms.ModelChoiceField(queryset=Sector.objects.none(), required=False, label=_('SECTOR'))
+    site = forms.ModelChoiceField(queryset=SiteProfile.objects.none(), required=False, label=_('SITE'))
+    indicators = forms.ModelChoiceField(queryset=Indicator.objects.none(), required=False, label=_('SELECT INDICATORS'))
+    start_date = forms.DateField(label=_('START'))
+    end_date = forms.DateField(label=_('END'))
 
     def __init__(self, *args, **kwargs):
         program = kwargs.pop('program')

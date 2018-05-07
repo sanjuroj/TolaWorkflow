@@ -3,7 +3,6 @@
  * dashboard
  * @module DashboardPage
  */
-'use strict';
 import Page from './page';
 import Util from '../lib/testutil';
 

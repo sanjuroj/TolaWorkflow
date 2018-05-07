@@ -1,9 +1,9 @@
-import { assert } from  'chai';
+import IndPage from  '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
-import IndPage from  '../pages/indicators.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
+import { expect } from  'chai';
 
 describe('Grid/Print Report page', function() {
     before(function() {
@@ -29,11 +29,11 @@ describe('Grid/Print Report page', function() {
     //FIXME: Get webdriver code out of test
     it('should have a Grid/Print Report button for each program', function() {
         NavBar.Indicators.click();
-        assert.equal('Program Indicators', IndPage.getPageName());
+        expect('Program Indicators' === IndPage.getPageName());
         let progList = IndPage.getProgramsDropdownList();
         let prog = progList[1];
         IndPage.selectProgram(prog);
-        assert(browser.isVisible('=Grid/Print Report'));
+        expect(true === browser.isVisible('=Grid/Print Report'));
     });
 
     //FIXME: Get webdriver code out of test
@@ -44,8 +44,7 @@ describe('Grid/Print Report page', function() {
         IndPage.selectProgram(prog);
         browser.$('=Grid/Print Report').click();
         let pageTitle = IndPage.getPageName();
-        assert(pageTitle.includes('Indicator Print/Grid Report'),
-            'Did not receive expected report page title');
+        expect(true === pageTitle.includes('Indicator Print/Grid Report'));
     });
 
     //FIXME: Get webdriver code out of test
@@ -60,7 +59,7 @@ describe('Grid/Print Report page', function() {
         browser.scroll('button[type="submit"]');
         let button = browser.$('button[type="submit"]');
         let text = button.getText();
-        assert(text.includes('Export All'), 'Did not find expected button text');
+        expect(true === text.includes('Export All'));
     });
 
     //FIXME: Get webdriver code out of test

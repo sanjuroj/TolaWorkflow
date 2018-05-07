@@ -19,7 +19,7 @@ describe('Program Indicators table', function() {
             LoginPage.login.click();
         } else if (parms.baseurl.includes('localhost')) {
             LoginPage.googleplus.click();
-            if (LoginPage.title != 'TolaActivity') {
+            if (LoginPage.title !== 'TolaActivity') {
                 LoginPage.gUsername = parms.username + '@mercycorps.org';
                 LoginPage.gPassword = parms.password;
             }
@@ -98,7 +98,10 @@ describe('Program Indicators table', function() {
         buttonText = buttons[0].getText();
 
         // Assert new count > old count
+<<<<<<< HEAD
         let newCount = parseInt(buttonText);
+=======
+>>>>>>> 8372f45b1d6f8fecc5ea66904e65a2140188174a
         expect(newCount === oldCount + 1);
     });
 
@@ -129,6 +132,6 @@ describe('Program Indicators table', function() {
     it('should edit an indicator by clicking its Edit button', function() {
         NavBar.Indicators.click();
         IndPage.editIndicator();
-        expect(browser.isVisible('div#indicator_modal_content'));
+        expect(true === browser.isVisible('div#indicator_modal_content'));
     });
 });

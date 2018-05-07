@@ -42,7 +42,7 @@ describe('Tri-annual target frequency', function() {
     // Trying to save without setting the start date should fail
     TargetsTab.saveIndicatorChanges();
     let errorMessage = TargetsTab.getTargetFirstPeriodErrorHint();
-    expect(errorMessage.includes('Please complete this field.'));
+    expect(true === errorMessage.includes('Please complete this field.'));
   });
 
   it('should default number of periods to 1', function() {
@@ -88,7 +88,7 @@ describe('Tri-annual target frequency', function() {
         TargetsTab.saveIndicatorChanges();
         // Did we fail successfully?
         let errMsg = TargetsTab.getTargetValueErrorHint();
-        expect(errMsg.includes('Please enter a target value.'));
+        expect(true === errMsg.includes('Please enter a target value.'));
         errorCount++;
     }
     expect(targetCount === errorCount);

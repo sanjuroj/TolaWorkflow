@@ -2,7 +2,6 @@
  * "Page" model for testing the indicator evidence table
  * @module Evidence
  */
-'use strict';
 
 /**
  * Get the LoP target from the bottom of an indicator's evidence table.
