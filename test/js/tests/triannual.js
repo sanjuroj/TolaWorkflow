@@ -1,8 +1,8 @@
-import IndPage = require('../pages/indicators.page';
+import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
-import TargetsTab = require('../pages/targets.page';
-import Util = require('../lib/testutil';
+import TargetsTab from '../pages/targets.page';
+import Util from '../lib/testutil';
 import { expect } from 'chai';
 
 describe('Tri-annual target frequency', function() {
