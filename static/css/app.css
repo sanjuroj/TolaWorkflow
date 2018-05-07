@@ -55,6 +55,10 @@
     font-size: .875rem;
 }
 
+.help-link:hover {
+    text-decoration: underline;
+}
+
 .text-muted-footer,
 .text-muted-footer:hover {
     color: #54585A;
@@ -390,6 +394,7 @@ applied.  This keeps the inputs from getting taller when there is an error. */
 #div_id_target_frequency,
 #div_id_target_frequency .div-input-container,
 #div_id_target_frequency_start,
+#id_baseline,
 #div_id_target_frequency_custom {
     height: 2.25rem;
 }
