@@ -3,7 +3,6 @@
  * TolaActivity navigation bar/page header
  * @module NavBar
  */
-
 class NavBar {
     get TolaActivity() { return browser.$('a.navbar-brand'); }
     get Workflow() { return browser.$('=Workflow'); }

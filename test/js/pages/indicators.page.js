@@ -2,12 +2,12 @@
  * Page model for testing the Program Indicators screen.
  * @module Indicators
  */
-import TargetsTab from '../pages/targets.page.js');
-import Util from '../lib/testutil.js');
+import TargetsTab from '../pages/targets.page';
+import Util from '../lib/testutil';
 // Milliseconds
 const msec = 1000;
 
-var parms = util.readConfig();
+var parms = Util.readConfig();
 parms.baseurl += 'indicators/home/0/0/0';
 
 /*

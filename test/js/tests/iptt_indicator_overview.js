@@ -45,7 +45,7 @@ describe('IPTT: Program indicator overview quickstart', function() {
     it('should allow to select time frame', function() {
         let val = IpttPage.IndicatorOverviewTimeFrame;
         expect(undefined !== val);
-        expect(null !=== val);
+        expect(null !== val);
     });
 
     it('should default time frame to Show all', function() {
@@ -60,7 +60,7 @@ describe('IPTT: Program indicator overview quickstart', function() {
     it('should have a View Report button', function() {
         let elem = IpttPage.IndicatorOverviewViewReport;
         expect(undefined !== elem);
-        expect(null !=== elem);
+        expect(null !== elem);
         expect('View Report' === elem.getText());
     });
 
