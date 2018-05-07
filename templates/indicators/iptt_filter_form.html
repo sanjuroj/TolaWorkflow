@@ -1,11 +1,8 @@
 {% load widget_tweaks %}
 {% load i18n %}
 
-<nav id="id_iptt_report_filter">
-  <form
-    id="id_form_indicator_filter"
-    method="post"
-    novalidate>
+<nav id="id_iptt_report_filter" style="font-size: .875rem;">
+  <form id="id_form_indicator_filter" method="post" novalidate>
     {% csrf_token %}
     {% for hidden_field in form.hidden_fields %}
       {{ hidden_field }}
@@ -32,76 +29,97 @@
           {% endif %}
       </div>
 
-      <div class="form-group d-flex">
+      <div class="form-row">
         {% for item in form.timeframe %}
           {% with id=form.timeframe.auto_id %}
-            <div class="form-check form-check-inline pt-1" id="div_{{ id }}_{{ forloop.counter0 }}">
-              <span class="form-check-input ">
-                  {{ item.tag }}
-              </span>
-              <label class="form-check-label" for="{{ item.id_for_label }}">
-                {{ item.choice_label }}
-              </label>
+            <div class="{% if forloop.counter0 == 0 %}col-sm-4 {% else %} col-sm-5 {% endif %}">
+              <div class="form-check form-check-inline pt-1" id="div_{{ id }}_{{ forloop.counter0 }}">
+                <span class="form-check-input ">
+                    {{ item.tag }}
+                </span>
+                <label class="form-check-label" for="{{ item.id_for_label }}">
+                  {{ item.choice_label }}
+                </label>
+              </div>
             </div>
           {% endwith %}
         {% endfor %}
-        <div class="form-group">
+        <div class="col-sm-3">
           {% render_field form.numrecentperiods placeholder="" class+="form-control" %}
         </div>
       </div>
-      <div class="form-group">
-        <label for="{{ form.start_date.auto_id }}" class="col-form-label">
-          {{ form.start_date.label }}
-        </label>
-        <input type="text"
-               name="{{ form.start_date.name }}"
-               class="form-control"
-               value="{{ form.start_date.value }}"
-               id="{{ form.start_date.auto_id }}">
-      </div>
-      <div class="form-group">
-        <label for="{{ form.end_date.auto_id }}" class="col-form-label">
-          {{ form.end_date.label }}
-        </label>
-        <input type="text"
-               name="{{ form.end_date.name }}"
-               class="form-control"
-               value="{{ form.end_date.value }}"
-               id="{{ form.end_date.auto_id }}">
+      <div class="form-row mb-2">
+        <div class="col">
+          <label for="{{ form.start_date.auto_id }}" class="col-form-label">
+            {{ form.start_date.label }}
+          </label>
+            <input type="text"
+                   name="{{ form.start_date.name }}"
+                   class="form-control"
+                   value="{{ form.start_date.value }}"
+                   id="{{ form.start_date.auto_id }}">
+        </div>
+
+        <div class="col">
+          <label for="{{ form.end_date.auto_id }}" class="col-form-label">
+            {{ form.end_date.label }}
+          </label>
+          <input type="text"
+                 name="{{ form.end_date.name }}"
+                 class="form-control"
+                 value="{{ form.end_date.value }}"
+                 id="{{ form.end_date.auto_id }}">
+        </div>
       </div>
     </div>
 
     <div id="filter-middle" class="filter-form-padding-10">
-      <div class="form-group" id="id_level">
+      <div class="form-group mb-2" id="id_div_level">
         <label for="id_level" class="col-form-label">
           {{ form.level.label }}
         </label>
-        {% render_field form.level class+="form-control" %}
+        <div class="form-group-row">
+          {% render_field form.level class+="form-control" %}
+        </div>
       </div>
-      <div class="form-group" id="id_type">
+
+      <div class="form-group mb-2" id="id_div_type">
         <label for="id_type" class="col-form-label">
           {{ form.ind_type.label }}
         </label>
-        {% render_field form.ind_type class+="form-control" %}
+        <div class="form-group-row">
+          {% render_field form.ind_type class+="form-control" %}
+        </div>
       </div>
-      <div class="form-group" id="id_sector">
+
+      <div class="form-group mb-2" id="id_div_sector">
         <label for="id_sector" class="col-form-label">
           {{ form.sector.label }}
         </label>
-        {% render_field form.sector class+="form-control" %}
+        <div class="form-group-row">
+          {% render_field form.sector class+="form-control" %}
+        </div>
       </div>
-      <div class="form-group" id="id_site">
+
+      <div class="form-group mb-2" id="id_div_site">
         <label for="id_site" class="col-form-label">
           {{ form.site.label }}
         </label>
-        {% render_field form.site class+="form-control" %}
+        <div class="form-group-row">
+          {% render_field form.site class+="form-control" %}
+        </div>
       </div>
-      <div class="form-group" id="id_indicators">
-        <label for="id_indicators" class="col-form-label">
+
+
+      <div class="form-group mb-2" id="id_div_indicators">
+        <label for="id_indicators" class="col-form-label" align="right">
           {{ form.indicators.label }}
         </label>
-        {% render_field form.indicators class+="form-control" %}
+        <div class="form-group-row">
+          {% render_field form.indicators class+="form-control" %}
+        </div>
       </div>
+
     </div>
 
     <div id="filter-bottom" class="filter-form-padding-10">
@@ -114,3 +132,17 @@
     </div>
   </form>
 </nav>
+
+<script>
+  $(document).ready(function () {
+    let start_date_field = $("#id_start_date");
+    let end_date_field = $("#id_end_date");
+    start_date_field.val(formatDate(start_date_field.val()));
+    end_date_field.val(formatDate(end_date_field.val()));
+    $("#id_level").select2({"placeholder": "All levels"});
+    $("#id_ind_type").select2({"placeholder": "All types"});
+    $("#id_sector").select2({"placeholder": "All sectors"});
+    $("#id_site").select2({"placeholder": "All sites"});
+    $("#id_indicators").select2({"placeholder": "All indicators"});
+  });
+</script>
