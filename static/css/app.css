@@ -487,8 +487,7 @@ input[type=number]::-webkit-outer-spin-button {
 #filter-top {
     background-color: #54585A!important;
     color:#fff;
-    margin-bottom: -20px;
-
+    /* margin-bottom: -20px; */
 }
 
 #filter-middle {
@@ -508,15 +507,10 @@ input[type=number]::-webkit-outer-spin-button {
     padding-top: 10px;
 }
 
-/* .filter-form-label{
-    font-size: .010rem;
-} */
-
 #id_iptt_report_filter {
     min-width: 330px;
     max-width: 330px;
 }
-
 
 .filter-form-padding-10 {
     width: 100%;

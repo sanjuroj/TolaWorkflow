@@ -554,8 +554,19 @@ class IPTT_ReportView(TemplateView):
         return context
 
     def get(self, request, *args, **kwargs):
+        # reporttype = kwargs.get('reporttype')
         context = self.get_context_data(**kwargs)
-        context['form'] = IPTTReportFilterForm(request=request, program=context['program'])
+        initial_data = {
+            'program': context['program'],
+            'start_date': context['start_date'],
+            'end_date': context['end_date'],
+            'timeframe': request.GET.get('timeframe'),
+            'numrecentperiods': request.GET.get('numrecentperiods'),
+            'targetperiods': request.GET.get('period'),
+            'timeperiods': request.GET.get('period')
+        }
+
+        context['form'] = IPTTReportFilterForm(initial=initial_data, request=request)
         context['report_wide'] = True
         if context.get('redirect', None):
             return HttpResponseRedirect(reverse_lazy('iptt_quickstart'))
