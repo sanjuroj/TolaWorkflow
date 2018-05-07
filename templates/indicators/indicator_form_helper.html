@@ -1,7 +1,6 @@
 {% load widget_tweaks %}
 {% load i18n %}
 {% load mytags %}
-
     <form
         action="{% url 'indicator_update' indicator.id %}"
         id="indicator_update_form"
@@ -204,7 +203,7 @@
                         <label for="id_unit_of_measure" class="col-sm-4 col-form-label" align="right">{{ form.unit_of_measure.label }} </label>
                         <div class=" col-sm-7 div-input-container">
                             <div class="card inputs-in-a-box" id="fieldgroup_id_unit_of_measure">
-                                <div class="card-body px-2 pt-2 pb-0">
+                                <div class="card-body p-3">
                                     <div id="div_id_unit_of_measure">
                                         {% render_field form.unit_of_measure class+="form-control" %}
                                         <small class="form-text text-muted">{{ form.unit_of_measure.help_text }}</small>
@@ -233,7 +232,7 @@
                         <label for="id_lop_target" class="col-sm-4 col-form-label" align="right">{{ form.lop_target.label }} </label>
                         <div class=" col-sm-7 div-input-container">
                             <div class="card inputs-in-a-box" id="fieldgroup_id_lop_target">
-                                <div class="card-body p-2">
+                                <div class="card-body p-3">
                                     <div id="div_id_lop_target">
                                         <!-- {% render_field form.lop_target class+="form-control" %} -->
                                         <span id="span_{{ form.lop_target.id_for_label }}">
@@ -267,8 +266,8 @@
                     <div class="form-row mb-3" id="div_id_baseline">
                         <label for="id_baseline" class="col-sm-4 col-form-label" align="right">{{ form.baseline.label }} </label>
                         <div class=" col-sm-7 div-input-container">
-                            <div class="card inputs-in-a-box"  id="groupfield_id_baseline">
-                                <div class="card-body px-2 pt-2 pb-0">
+                            <div class="card inputs-in-a-box"  id="fieldgroup_id_baseline">
+                                <div class="card-body p-3">
                                     <div id="div_id_baseline">
                                         <span id="span_{{ form.baseline.id_for_label }}">
                                             <input type="number"
