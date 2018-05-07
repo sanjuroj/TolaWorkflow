@@ -4,8 +4,7 @@ from django.db.models import Q
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from workflow.models import (
-    Program, SiteProfile, Documentation, ProjectComplete, TolaUser,
-    Sector
+    Program, SiteProfile, Documentation, ProjectComplete, TolaUser, Sector
 )
 from tola.util import getCountry
 from indicators.models import (
@@ -180,8 +179,6 @@ class CollectedDataForm(forms.ModelForm):
 
 
 class ReportFormCommon(forms.Form):
-    prefix = 'timeperiods'
-
     EMPTY = 0
     YEARS = Indicator.ANNUAL
     SEMIANNUAL = Indicator.SEMI_ANNUAL
@@ -242,16 +239,17 @@ class IPTTReportQuickstartForm(ReportFormCommon):
 
 
 class IPTTReportFilterForm(ReportFormCommon):
-    level = forms.ModelChoiceField(queryset=Level.objects.none(), required=False, label=_('LEVEL'))
-    ind_type = forms.ModelChoiceField(queryset=IndicatorType.objects.none(), required=False, label=_('TYPE'))
-    sector = forms.ModelChoiceField(queryset=Sector.objects.none(), required=False, label=_('SECTOR'))
-    site = forms.ModelChoiceField(queryset=SiteProfile.objects.none(), required=False, label=_('SITE'))
-    indicators = forms.ModelChoiceField(queryset=Indicator.objects.none(), required=False, label=_('SELECT INDICATORS'))
+    level = forms.ModelMultipleChoiceField(queryset=Level.objects.none(), required=False, label=_('LEVEL'))
+    ind_type = forms.ModelMultipleChoiceField(queryset=IndicatorType.objects.none(), required=False, label=_('TYPE'))
+    sector = forms.ModelMultipleChoiceField(queryset=Sector.objects.none(), required=False, label=_('SECTOR'))
+    site = forms.ModelMultipleChoiceField(queryset=SiteProfile.objects.none(), required=False, label=_('SITE'))
+    indicators = forms.ModelMultipleChoiceField(
+        queryset=Indicator.objects.none(), required=False, label=_('SELECT INDICATORS'))
     start_date = forms.DateField(label=_('START'))
     end_date = forms.DateField(label=_('END'))
 
     def __init__(self, *args, **kwargs):
-        program = kwargs.pop('program')
+        program = kwargs['initial'].get('program')
         super(IPTTReportFilterForm, self).__init__(*args, **kwargs)
         self.fields['sector'].queryset = Sector.objects.all()
         self.fields['level'].queryset = Level.objects.all()
