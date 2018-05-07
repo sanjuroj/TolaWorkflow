@@ -2,8 +2,6 @@
  * Hodgepodge of helper code that doesn't fit elsewhere
  * @module TestUtil
  */
-'use strict';
-
 // Milliseconds
 const msec = 1000;
 
@@ -37,8 +35,6 @@ function waitForAjax(secs = 2) {
         visible = browser.isVisible('div#ajaxloading');
     }
 }
-
-
 
 exports.dp = dp;
 exports.readConfig = readConfig;

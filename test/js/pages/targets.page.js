@@ -4,7 +4,6 @@
  */
 import Util from '../lib/testutil';
 import IndPage from '../pages/indicators.page';
-'use strict';
 
 const msec = 1000;
 

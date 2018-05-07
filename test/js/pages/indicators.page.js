@@ -2,10 +2,11 @@
  * Page model for testing the Program Indicators screen.
  * @module Indicators
  */
-const TargetsTab = require('../pages/targets.page.js');
-const util = require('../lib/testutil.js');
-// milliseconds
+import TargetsTab from '../pages/targets.page.js');
+import Util from '../lib/testutil.js');
+// Milliseconds
 const msec = 1000;
+
 var parms = util.readConfig();
 parms.baseurl += 'indicators/home/0/0/0';
 
