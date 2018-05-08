@@ -1,20 +1,20 @@
 from base import *
+import sys
+TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
+if TESTING:
+    print('=========================')
+    print('In TEST Mode - Disableling Migrations')
+    print('=========================')
 
-# TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
-# if TESTING:
-#     print('=========================')
-#     print('In TEST Mode - Disableling Migrations')
-#     print('=========================')
-#
-#     class DisableMigrations(object):
-#
-#         def __contains__(self, item):
-#             return True
-#
-#         def __getitem__(self, item):
-#             return None
-#
-#     MIGRATION_MODULES = DisableMigrations()
+    class DisableMigrations(object):
+
+        def __contains__(self, item):
+            return True
+
+        def __getitem__(self, item):
+            return None
+
+    MIGRATION_MODULES = DisableMigrations()
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.MD5PasswordHasher',
