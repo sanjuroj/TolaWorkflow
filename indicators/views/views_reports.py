@@ -356,7 +356,7 @@ class IPTT_ReportView(TemplateView):
             num_periods = 0
         return num_periods
 
-    def _generate_targetperiods(self, program_id, period):
+    def _generate_targetperiods(self, program_id, period, num_recents):
         targetperiods = OrderedDict()
         # targetperiods = OrderedDict()
         # All indicators within a program that have the same target_frequency (annual, monthly, etc)
@@ -405,7 +405,7 @@ class IPTT_ReportView(TemplateView):
             # do not include periods that are earlier than most_recent specified by user
             if i <= num_recents:
                 continue
-            print('.... i = {}'.format(i))
+
             timeperiods["{} {}".format(period_name, i)] = [period_start_date, period_end_date]
 
         return timeperiods
@@ -497,7 +497,7 @@ class IPTT_ReportView(TemplateView):
             except IndexError:
                 report_end_date = None
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
-            report_date_ranges = self._generate_targetperiods(program_id, period)
+            report_date_ranges = self._generate_targetperiods(program_id, period, num_recents)
             indicators = indicators.filter(target_frequency=period)
         else:
             context['redirect'] = reverse_lazy('iptt_quickstart')
