@@ -358,8 +358,8 @@ class IPTT_ReportView(TemplateView):
 
     def _generate_targetperiods(self, program_id, period, num_recents):
         targetperiods = OrderedDict()
-        # today = datetime.today().date()
-        today = datetime.strptime('2020-02-23', '%Y-%m-%d').date()
+        today = datetime.today().date()
+        # today = datetime.strptime('2020-02-23', '%Y-%m-%d').date()
 
         # All indicators within a program that have the same target_frequency (annual, monthly, etc)
         # have the same number of target periods with the same start and end dates, thus we can just
