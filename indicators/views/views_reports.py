@@ -375,7 +375,7 @@ class IPTT_ReportView(TemplateView):
                 continue
             targetperiods[pt['period']] = [pt['start_date'], pt['end_date'], pt['target'], pt['id']]
 
-        if num_recents is not None and num_recents > 0:
+        if num_recents is not None and num_recents > 0 and period not in [Indicator.LOP, Indicator.MID_END]:
             # filter out those timeperiods whose end_dates are larger than today's date
             targetperiods_less_than_today = filter(lambda v: v[1][0] <= today, targetperiods.items())
 
