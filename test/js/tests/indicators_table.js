@@ -98,11 +98,8 @@ describe('Program Indicators table', function() {
         buttonText = buttons[0].getText();
 
         // Assert new count > old count
-<<<<<<< HEAD
         let newCount = parseInt(buttonText);
-=======
->>>>>>> 8372f45b1d6f8fecc5ea66904e65a2140188174a
-        expect(newCount === oldCount + 1);
+        expect(oldCount + 1 === newCount);
     });
 
     it('should be able to delete PI by clicking its Delete button', function() {
