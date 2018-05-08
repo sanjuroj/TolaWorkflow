@@ -358,7 +358,9 @@ class IPTT_ReportView(TemplateView):
 
     def _generate_targetperiods(self, program_id, period, num_recents):
         targetperiods = OrderedDict()
-        # targetperiods = OrderedDict()
+        # today = datetime.today().date()
+        today = datetime.strptime('2020-02-23', '%Y-%m-%d').date()
+
         # All indicators within a program that have the same target_frequency (annual, monthly, etc)
         # have the same number of target periods with the same start and end dates, thus we can just
         # get the first indicator that is within this program and have the same target_frequency(period)
@@ -372,6 +374,17 @@ class IPTT_ReportView(TemplateView):
             if pt['period'] == Indicator.TARGET_FREQUENCIES[0][1]:
                 continue
             targetperiods[pt['period']] = [pt['start_date'], pt['end_date'], pt['target'], pt['id']]
+
+        if num_recents is not None and num_recents > 0:
+            # filter out those timeperiods whose end_dates are larger than today's date
+            targetperiods_less_than_today = filter(lambda v: v[1][0] <= today, targetperiods.items())
+
+            # filter out dates that are outside of the most_recent index specified by user
+            most_recent_targetperiods = targetperiods_less_than_today[(
+                len(targetperiods_less_than_today)-num_recents):]
+
+            # convert to oredered dictionary to preserve order (IMPORTANT!)
+            targetperiods = OrderedDict((k, v) for k, v in most_recent_targetperiods)
         return targetperiods
 
     def _generate_timeperiods(self, period_start_date, period, num_periods, num_recents):
