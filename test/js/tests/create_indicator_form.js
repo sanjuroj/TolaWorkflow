@@ -73,7 +73,6 @@ describe('Create an Indicator form', function() {
     IndPage.clickNewIndicatorButton();
     let control = $('form[name="most"]').$('input[value="save"]');
     expect(true === control.isVisible());
->>>>>>> 8372f45b1d6f8fecc5ea66904e65a2140188174a
     control.click();
   });
 
