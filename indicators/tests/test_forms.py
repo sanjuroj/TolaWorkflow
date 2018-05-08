@@ -15,8 +15,8 @@ class TestFilterForm(TestCase):
         levels = LevelFactory.create_batch(3)
         ind_types = IndicatorTypeFactory.create_batch(3)
 
-        p = ProgramFactory()
-        indicator = IndicatorFactory(program=p)
+        program = ProgramFactory()
+        indicator = IndicatorFactory(program=program)
         IndicatorFactory.create_batch(3)
         collected_data = CollectedDataFactory(indicator=indicator)
         CollectedDataFactory.create_batch(3)
@@ -25,7 +25,8 @@ class TestFilterForm(TestCase):
         collected_data.site.add(expected2)
         collected_data.site.add(expected)
         SiteProfileFactory.create_batch(3)
-        form = IPTTReportFilterForm(**{'request': request, 'program': p})
+        initial_data = {'program': program}
+        form = IPTTReportFilterForm(initial=initial_data, request=request)
 
         stuff = str(form)
         self.assertIn(expected.name, stuff)

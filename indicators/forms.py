@@ -206,12 +206,9 @@ class ReportFormCommon(forms.Form):
     TARGETPERIODS_CHOICES = (EMPTY_OPTION,) + Indicator.TARGET_FREQUENCIES[0:7]
 
     program = forms.ModelChoiceField(queryset=Program.objects.none())
-    timeperiods = forms.ChoiceField(choices=TIMEPERIODS_CHOICES,
-                                    required=False)
-    targetperiods = forms.ChoiceField(choices=TARGETPERIODS_CHOICES,
-                                      required=False)
-    timeframe = forms.ChoiceField(choices=TIMEFRAME_CHOCIES,
-                                  widget=forms.RadioSelect())
+    timeperiods = forms.ChoiceField(choices=TIMEPERIODS_CHOICES, required=False)
+    targetperiods = forms.ChoiceField(choices=TARGETPERIODS_CHOICES, required=False)
+    timeframe = forms.ChoiceField(choices=TIMEFRAME_CHOCIES, widget=forms.RadioSelect())
     numrecentperiods = forms.IntegerField(required=False)
     formprefix = forms.CharField(widget=forms.HiddenInput(), required=False)
 
