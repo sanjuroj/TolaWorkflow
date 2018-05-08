@@ -45,14 +45,15 @@ exports.config = {
     // Capabilities
     maxInstances: 1,
     capabilities: [
-    {
-        browserName: 'firefox',
-        maxInstances: 1,
-        args: '[--jsdebugger]',
-        'moz:firefoxOptions': {
-            //[]
-       }
-    }],
+        {
+            browserName: 'firefox',
+            maxInstances: 1,
+            args: '[--jsdebugger]',
+            'moz:firefoxOptions': {
+                //[]
+            }
+        }
+    ],
     sync: true,
     logLevel: 'verbose',
     logOutput: './log',
