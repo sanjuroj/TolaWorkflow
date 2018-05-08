@@ -73,9 +73,11 @@ class IPTTReportQuickstartView(FormView):
 
         program = form.cleaned_data.get('program')
         num_recents = form.cleaned_data.get('numrecentperiods')
+        timeframe = form.cleaned_data.get('timeframe')
         redirect_url = reverse_lazy('iptt_report', kwargs={'program_id': program.id, 'reporttype': prefix})
 
-        redirect_url = "{}?period={}&numrecentperiods={}".format(redirect_url, period, num_recents)
+        redirect_url = "{}?period={}&timeframe={}&numrecentperiods={}".format(
+            redirect_url, period, timeframe, num_recents)
         return HttpResponseRedirect(redirect_url)
 
     def form_invalid(self, form, **kwargs):
@@ -401,8 +403,9 @@ class IPTT_ReportView(TemplateView):
                 relativedelta(months=+num_months_in_period) + relativedelta(days=-1)
 
             # do not include periods that are earlier than most_recent specified by user
-            if i < num_recents:
+            if i <= num_recents:
                 continue
+            print('.... i = {}'.format(i))
             timeperiods["{} {}".format(period_name, i)] = [period_start_date, period_end_date]
 
         return timeperiods
@@ -459,7 +462,7 @@ class IPTT_ReportView(TemplateView):
             period = Indicator.ANNUAL  # default to annual interval
 
         try:
-            num_recents = int(self.request.GET.get('numrecents', 0))
+            num_recents = int(self.request.GET.get('numrecentperiods', 0))
         except ValueError:
             num_recents = 0  # default to 0, which is all periods or targets
 
@@ -563,8 +566,9 @@ class IPTT_ReportView(TemplateView):
             'timeframe': request.GET.get('timeframe'),
             'numrecentperiods': request.GET.get('numrecentperiods'),
             'targetperiods': request.GET.get('period'),
-            'timeperiods': request.GET.get('period')
+            'timeperiods': request.GET.get('period'),
         }
+        print(initial_data)
 
         context['form'] = IPTTReportFilterForm(initial=initial_data, request=request)
         context['report_wide'] = True
