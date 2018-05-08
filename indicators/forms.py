@@ -246,8 +246,9 @@ class IPTTReportFilterForm(ReportFormCommon):
     end_date = forms.DateField(label=_('END'))
 
     def __init__(self, *args, **kwargs):
-        program = kwargs['initial'].get('program')
+        program = kwargs.pop('program')
         super(IPTTReportFilterForm, self).__init__(*args, **kwargs)
+        del self.fields['formprefix']
         self.fields['sector'].queryset = Sector.objects.all()
         self.fields['level'].queryset = Level.objects.all()
         self.fields['ind_type'].queryset = IndicatorType.objects.all()
