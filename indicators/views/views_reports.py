@@ -379,15 +379,19 @@ class IPTT_ReportView(TemplateView):
         Create date ranges for time-periods.
         """
         timeperiods = OrderedDict()
+        today_date = datetime.today().date()
+        # today_date = datetime.strptime('2020-02-23', '%Y-%m-%d').date()
         if period_start_date is None:
             return timeperiods
 
         period_name = self._get_period_name(period)
         num_months_in_period = self._get_num_months(period)
 
-        # if uesr specified num_recents periods then set it to retrieve only the last N entries
-        if num_recents > 0:
-            num_recents = num_periods - num_recents
+        # Get the first day of the period that encomposses today's date
+        today = self._get_first_period(today_date, num_months_in_period)
+
+        # Now calculate the last day of the current period that encompasses today's date
+        today = today + relativedelta(months=+num_months_in_period)
 
         # bump up num_periods by 1 because the loop starts from 1 instead of 0
         num_periods += 1
@@ -402,12 +406,17 @@ class IPTT_ReportView(TemplateView):
             period_end_date = period_start_date + \
                 relativedelta(months=+num_months_in_period) + relativedelta(days=-1)
 
-            # do not include periods that are earlier than most_recent specified by user
-            if i <= num_recents:
-                continue
-
             timeperiods["{} {}".format(period_name, i)] = [period_start_date, period_end_date]
 
+        if (num_recents is not None and num_recents > 0):
+            # filter out those timeperiods whose end_dates are larger than today's date
+            timeperiods_less_than_today = filter(lambda v: v[1][1] < today, timeperiods.items())
+
+            # filter out dates that are outside of the most_recent index specified by user
+            most_recent_timeperiods = timeperiods_less_than_today[(len(timeperiods_less_than_today)-num_recents):]
+
+            # convert to oredered dictionary to preserve order (IMPORTANT!)
+            timeperiods = OrderedDict((k, v) for k, v in most_recent_timeperiods)
         return timeperiods
 
     def _get_date_range_n_numperiods(self, reporttype, program_id, period):
@@ -568,7 +577,7 @@ class IPTT_ReportView(TemplateView):
             'targetperiods': request.GET.get('period'),
             'timeperiods': request.GET.get('period'),
         }
-        print(initial_data)
+        # print(initial_data)
 
         context['form'] = IPTTReportFilterForm(initial=initial_data, request=request)
         context['report_wide'] = True
