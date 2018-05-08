@@ -64,6 +64,7 @@ describe('Grid/Print Report page', function() {
 
     //FIXME: Get webdriver code out of test
     it('should export all report entries when Export All button is clicked', function() {
+    /*
         NavBar.Indicators.click();
         let progList = IndPage.getProgramsDropdownList();
         let prog = progList[1];
@@ -74,7 +75,9 @@ describe('Grid/Print Report page', function() {
         let button = browser.$('button[type="submit"]');
         browser.scroll('button[type="submit"]');
         button.click();
-        //IndPage.clickExportAllButton('myexportfile.csv');
+    */
+    browser.$('button[type="submit"]').click();
+    //IndPage.clickExportAllButton('myexportfile.csv');
     });
     it('should be able to save reports as CSV');
     it('should be able to save reports as PDF');
