@@ -119,7 +119,7 @@ function getDirectionOfChange() {
  */
 function getTargetDateRanges() {
     browser.pause(msec);
-    browser.scroll('h5');
+    browser.scroll('h3');
     let placeholder = browser.$('div#id_div_periodic_tables_placeholder');
     let targetsDiv = placeholder.$('div#periodic-targets-tablediv');
     let targetsTable = targetsDiv.$('table#periodic_targets_table');
@@ -226,9 +226,7 @@ function getNumTargetPeriodsErrorHint() {
 function getProgramIndicatorDeleteButtons() {
   let link = browser.$('div#toplevel_div').$('div.card-body').$('a');
   let dataTarget = link.getAttribute('data-target');
-  if (browser.isVisible('div#ajaxloading')) {
-    browser.waitForVisible('div#ajaxloading', 10*msec, true);
-  }
+  Util.waitForAjax();
   let table = $('div'+dataTarget).$('table');
   let rows = table.$$('a[href*=indicator_delete]');
   return rows;
@@ -243,9 +241,7 @@ function getProgramIndicatorDeleteButtons() {
 function getProgramIndicatorEditButtons() {
   let link = browser.$('div#toplevel_div').$('div.card-body').$('a');
   let dataTarget = link.getAttribute('data-target');
-  if (browser.isVisible('div#ajaxloading')) {
-    browser.waitForVisible('div#ajaxloading', 10*msec, true);
-  }
+  Util.waitForAjax();
   let table = $('div'+dataTarget).$('table');
   let rows = table.$$('a[href*=indicator_update]');
   return rows;
@@ -261,9 +257,7 @@ function getProgramIndicatorEditButtons() {
 function getProgramIndicatorsTable() {
   let link = browser.$('div#toplevel_div').$('div.card-body').$('a');
   let dataTarget = link.getAttribute('data-target');
-  if (browser.isVisible('div#ajaxloading')) {
-    browser.waitForVisible('div#ajaxloading', 10*msec, true);
-  }
+  Util.waitForAjax();
   let table = $('div'+dataTarget).$('table');
   let rows = table.$$('=Delete');
   return rows;
@@ -279,9 +273,7 @@ function getProgramIndicatorsTable() {
 function getProgramIndicatorsTableCount() {
   let link = browser.$('div#toplevel_div').$('div.card-body').$('a');
   let dataTarget = link.getAttribute('data-target');
-  if (browser.isVisible('div#ajaxloading')) {
-    browser.waitForVisible('div#ajaxloading', 10*msec, true);
-  }
+  Util.waitForAjax();
   let table = $('div'+dataTarget).$('table');
   let rows = table.$$('=Delete');
   return rows.length;

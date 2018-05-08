@@ -63,6 +63,6 @@ describe('Midline and endline target frequency', function() {
     TargetsTab.setMidlineTarget(63);
     TargetsTab.saveIndicatorChanges();
     let errorMessage = TargetsTab.getTargetValueErrorHint();
-    expect(true === ErrorMessage.includes('Please enter a target value.'));
+    expect(true === errorMessage.includes('Please enter a target value.'));
   });
 });

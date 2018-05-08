@@ -45,9 +45,7 @@ function clickIndicatorsDropdown() {
  * @returns Nothing
  */
 function clickIndicatorsLink() {
-  if (browser.isVisible('div#ajaxloading')) {
-    browser.waitForVisible('div#ajaxloading', 10*msec, true);
-  }
+  Util.waitForAjax();
   let indicatorsLink = browser.$('ul.navbar-nav').$('=Indicators');
   indicatorsLink.click();
   browser.waitForVisible('h2=Program Indicators');
@@ -230,9 +228,7 @@ function getIndicatorsDropdownList() {
  * table
  */
 function getProgramIndicatorsTableCount(targetId) {
-  if (browser.isVisible('div#ajaxloading')) {
-    browser.waitForVisible('div#ajaxloading', 10*msec, true);
-  }
+  Util.waitForAjax();
 
   let toplevel = browser.$('div#toplevel_div');
   let tableDiv = toplevel.$('div'+targetId);
