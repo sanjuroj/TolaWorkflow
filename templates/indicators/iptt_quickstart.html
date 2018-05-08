@@ -136,6 +136,7 @@
             const timeperiods = $("#id_timeperiods-timeperiods");
             const mostRecentTimeperiods = $("#id_timeperiods-timeframe_1");
             const numRecentPeriods = $("#id_timeperiods-numrecentperiods");
+            programTimeperiods.select2();
 
             function setNumRecentNumberField(is_disabled){
                 if (is_disabled == true) {
@@ -177,6 +178,7 @@
             const targetperiods = $("#id_targetperiods-targetperiods");
             const mostRecentTargets = $("#id_targetperiods-timeframe_1");
             const numRecentPeriodsTargets = $("#id_targetperiods-numrecentperiods");
+            programTargets.select2();
 
             function setNumRecentPeriodsTargets(isDisabled){
                 if (isDisabled == true) {
