@@ -49,6 +49,10 @@
     $( document ).ready(function() {
         show_hide_frequency_fields();
         setupPopupCalendar();
+        if ($("#id_objectives option").length < 1) {
+            $("#id_objectives").attr("disabled", true)
+        }
+
     });
 
     $("#indicator_modal_div").on('shown.bs.tab', function() {
