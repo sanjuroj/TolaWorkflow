@@ -2,10 +2,7 @@ import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
 import Util from '../lib/testutil';
-import { assert, expect } from 'chai';
-'use strict';
-
-const msec = 1000;
+import { expect } from 'chai';
 
 describe('Create an Indicator form', function() {
     before(function() {
@@ -30,49 +27,52 @@ describe('Create an Indicator form', function() {
 
   it('should exist', function() {
     NavBar.Indicators.click();
-    assert.equal('Program Indicators', IndPage.getPageName());
+    expect('Program Indicators' === IndPage.getPageName());
     IndPage.clickNewIndicatorButton();
-    assert.equal('Create an Indicator', IndPage.getPageName());
+    expect('Create an Indicator' === IndPage.getPageName());
   });
 
+  //FIXME: Get webdriver code out of test
   it('should have an Indicator Service Templates dropdown', function() {
     IndPage.clickIndicatorsLink();
     IndPage.clickNewIndicatorButton();
     let control = $('select#services');
-    assert.equal(true, control.isVisible());
+    expect(true === control.isVisible());
     IndPage.saveNewIndicator();
   });
 
+  //FIXME: Get webdriver code out of test
   it('should have a Service Indicator dropdown', function() {
     IndPage.clickIndicatorsLink();
     IndPage.clickNewIndicatorButton();
     let control = $('select#service_indicator');
-    assert.equal(true, control.isVisible());
+    expect(true === control.isVisible());
     IndPage.saveNewIndicator();
   });
 
+  //FIXME: Get webdriver code out of test
   it('should have a Country dropdown', function() {
     IndPage.clickIndicatorsLink();
     IndPage.clickNewIndicatorButton();
     let control = $('select#country');
-    assert.equal(true, control.isVisible());
+    expect(true === control.isVisible());
     IndPage.saveNewIndicator();
   });
 
+  //FIXME: Get webdriver code out of test
   it('should have a Program dropdown', function() {
     IndPage.clickIndicatorsLink();
     IndPage.clickNewIndicatorButton();
     let control = $('select#program');
-    assert.equal(true, control.isVisible());
+    expect(true === control.isVisible());
     IndPage.saveNewIndicator();
   });
 
   it('should have a save button', function() {
     IndPage.clickIndicatorsLink();
     IndPage.clickNewIndicatorButton();
-    //let control = $('form').$('input[value="save"]');
     let control = $('form[name="most"]').$('input[value="save"]');
-    assert.equal(true, control.isVisible(), 'Save button is not visible');
+    expect(true === control.isVisible());
     control.click();
   });
 
@@ -81,25 +81,25 @@ describe('Create an Indicator form', function() {
     IndPage.clickNewIndicatorButton();
     IndPage.saveNewIndicator();
     let message = IndPage.getAlertMsg();
-    expect(message.includes('Success, Basic Indicator Created!'),
-      'Unexpected message during indicator creation');
+    expect(message.includes('Success, Basic Indicator Created!'));
   });
 
+  //FIXME: Get webdriver code out of test
   it('should open Indicator detail form after clicking Save button', function() {
     IndPage.clickIndicatorsLink();
     IndPage.clickNewIndicatorButton();
     IndPage.saveNewIndicator();
     let title = browser.$('h2').getText().trim();
-    expect(title.includes('Goal indicator: Temporary'),
-      'Unexpected title text on the indicator detail screen');
+    expect(title.includes('Goal indicator: Temporary'));
   });
 
+  //FIXME: Get webdriver code out of test
   it('should have a Reset button to reset form', function() {
     IndPage.clickIndicatorsLink();
     IndPage.clickNewIndicatorButton();
     IndPage.saveNewIndicator();
     let resetBtn = $('form#indicator_update_form').$('input[value="RESET"]');
-    assert.equal(true, resetBtn.isVisible(), 'Reset button is not visible');
+    expect(true === resetBtn.isVisible());
     resetBtn.click();
   });
 });

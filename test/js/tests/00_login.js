@@ -1,6 +1,6 @@
-import { expect } from 'chai';
-import Util from '../lib/testutil';
 import LoginPage from '../pages/login.page';
+import Util from '../lib/testutil';
+import { expect } from 'chai';
 
 describe('TolaActivity Login screen', function() {
     before(function() {

@@ -1,11 +1,9 @@
-import { assert, expect } from 'chai';
+import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
-import IndPage from '../pages/indicators.page';
 import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
-const msec = 1000;
-const delay = 10*msec;
+import { expect } from 'chai';
 
 describe('Program Indicators table', function() {
     before(function() {
@@ -21,14 +19,14 @@ describe('Program Indicators table', function() {
             LoginPage.login.click();
         } else if (parms.baseurl.includes('localhost')) {
             LoginPage.googleplus.click();
-            if (LoginPage.title != 'TolaActivity') {
+            if (LoginPage.title !== 'TolaActivity') {
                 LoginPage.gUsername = parms.username + '@mercycorps.org';
                 LoginPage.gPassword = parms.password;
             }
         }
     });
 
-    // FIXME: Still need to get WebDriver code out of this test
+    //FIXME: Get webdriver code out of test
     it('should toggle table when a PI button is clicked', function() {
         NavBar.Indicators.click();
         Util.waitForAjax();
@@ -43,17 +41,17 @@ describe('Program Indicators table', function() {
                 button.click();
                 Util.waitForAjax();
             }
-            expect(false == browser.isVisible(targetDiv), 'Unable to set initial state');
+            expect(false === browser.isVisible(targetDiv));
 
             // Open it
             button.click();
             Util.waitForAjax();
-            expect(true == browser.isVisible(targetDiv));
+            expect(true === browser.isVisible(targetDiv));
 
             // Close it again
             button.click();
             Util.waitForAjax();
-            expect(false == browser.isVisible(targetDiv));
+            expect(false === browser.isVisible(targetDiv));
         }
     });
 
@@ -62,14 +60,17 @@ describe('Program Indicators table', function() {
         NavBar.Indicators.click();
         // Make list of Indicators buttons
         let buttons = TargetsTab.getProgramIndicatorButtons();
+
         // Click the first one to expand the table
         let button = buttons[0];
         button.click();
+
         // Make list of indicator names in resulting table
-        // FIXME: needs to be from table, not dropdown
+        //FIXME: needs to be from table, not dropdown
         let indicatorNameList = IndPage.getIndicatorsDropdownList();
-        // Click the first one
         Util.waitForAjax();
+
+        // Click the first one
         let indicatorName = indicatorNameList[0];
         IndPage.clickProgramIndicatorsButton(indicatorName);
     });
@@ -86,16 +87,19 @@ describe('Program Indicators table', function() {
         let buttons = TargetsTab.getProgramIndicatorButtons();
         let buttonText = buttons[0].getText();
         let oldCount = parseInt(buttonText);
+
         // Create new indicator
         IndPage.clickNewIndicatorButton();
         IndPage.saveNewIndicator();
         IndPage.clickIndicatorsLink();
+
         // Get new count
         buttons = TargetsTab.getProgramIndicatorButtons();
         buttonText = buttons[0].getText();
-        let newCount = parseInt(buttonText);
+
         // Assert new count > old count
-        expect(newCount == oldCount + 1);
+        let newCount = parseInt(buttonText);
+        expect(oldCount + 1 === newCount);
     });
 
     it('should be able to delete PI by clicking its Delete button', function() {
@@ -119,12 +123,12 @@ describe('Program Indicators table', function() {
 
         // Assert new count < old count
         let newCount = buttonText;
-        expect(newCount == oldCount - 1);
+        expect(newCount === oldCount - 1);
     });
 
     it('should edit an indicator by clicking its Edit button', function() {
         NavBar.Indicators.click();
         IndPage.editIndicator();
-        expect(browser.isVisible('div#indicator_modal_content'));
+        expect(true === browser.isVisible('div#indicator_modal_content'));
     });
 });

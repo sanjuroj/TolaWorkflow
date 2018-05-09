@@ -2,7 +2,6 @@
  * Base page object
  * @module Page
  */
-
 class Page {
     constructor() {
     }

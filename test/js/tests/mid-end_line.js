@@ -1,16 +1,16 @@
-import { assert, expect } from 'chai';
+import IndPage from '../pages/indicators.page';
 import LoginPage from '../pages/login.page';
 import NavBar from '../pages/navbar.page';
-var IndPage = require('../pages/indicators.page.js');
-var TargetsTab = require('../pages/targets.page.js');
-var util = require('../lib/testutil.js');
+import TargetsTab from '../pages/targets.page';
+import Util from '../lib/testutil';
+import { expect } from 'chai';
 
 describe('Midline and endline target frequency', function() {
   before(function() {
       // Disable timeouts
       this.timeout(0);
       browser.windowHandleMaximize();
-      let parms = util.readConfig();
+      let parms = Util.readConfig();
       
       LoginPage.open(parms.baseurl);
       if (parms.baseurl.includes('mercycorps.org')) {
@@ -43,7 +43,7 @@ describe('Midline and endline target frequency', function() {
     TargetsTab.setEndlineTarget(44);
     TargetsTab.saveIndicatorChanges();
     let errorMessage = TargetsTab.getTargetValueErrorHint();
-    assert(errorMessage.includes('Please enter a target value. Your target value can be zero.'));
+    expect(true === errorMessage.includes('Please enter a target value.'));
  
   });
  
@@ -63,6 +63,6 @@ describe('Midline and endline target frequency', function() {
     TargetsTab.setMidlineTarget(63);
     TargetsTab.saveIndicatorChanges();
     let errorMessage = TargetsTab.getTargetValueErrorHint();
-    assert(errorMessage.includes('Please enter a target value. Your target value can be zero.'));
+    expect(true === errorMessage.includes('Please enter a target value.'));
   });
 });

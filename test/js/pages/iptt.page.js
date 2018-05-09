@@ -127,9 +127,9 @@ class IpttPage extends Page {
         browser.waitForVisible('div#id_div_top_quickstart_iptt');
         let cards = browser.$$('div.card');
         if (source == 'indicator') {
-            return cards[0].$('h5').getText();
+            return cards[0].$('h5.card-title').getText();
         } else if (source == 'target') {
-            return cards[1].$('h5').getText();
+            return cards[1].$('h5.card-title').getText();
         }
     }
 }

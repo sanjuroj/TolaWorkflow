@@ -2,7 +2,6 @@ import IpttPage from '../pages/iptt.page';
 import LoginPage from '../pages/login.page';
 import Util from '../lib/testutil';
 import { expect } from 'chai';
-'use strict';
 
 /**
  * IPTT report: Program target overview quickstart
@@ -31,8 +30,8 @@ describe('IPTT: Program target overview quickstart', function() {
    
     it('should exist', function () {
         IpttPage.open();
-        expect('Indicator Performance Tracking Table' == IpttPage.title);
-        expect('Program target overview' == IpttPage.quickstart('target'));
+        expect('Indicator Performance Tracking Table' === IpttPage.title);
+        expect('Program target overview' === IpttPage.quickstart('target'));
     });
 
     it('should have a Program dropdown', function() {
@@ -55,13 +54,14 @@ describe('IPTT: Program target overview quickstart', function() {
         // 1 == Show all periods
         // 2 == Show N most recent periods
         let val = IpttPage.TargetOverviewTimeFrame;
-        expect(1 == val);
+        expect(1 === val);
     });
 
+    //FIXME: get webdriver code out of test
     it('should have a View Report button', function() {
         IpttPage.open();
         let elem = IpttPage.TargetOverviewViewReport;
-        expect('View Report' == elem.getText());
+        expect('View Report' === elem.getText());
 
     });
 
@@ -73,15 +73,15 @@ describe('IPTT: Program target overview quickstart', function() {
         IpttPage.TargetOverviewTimeFrame = 'Most recent';
         let val = IpttPage.TargetOverviewTimeFrame;
         //FIXME: magic number
-        expect(2 == val);
+        expect(2 === val);
     });
 
     it('should require choosing a program to create report', function() {
         IpttPage.open();
         // Select a target period but not a program
         IpttPage.TargetOverviewTimePeriods = 'Annual';
-        let val  = IpttPage.TargetOverviewViewReport.disabled;
-        expect('disabled' == val);
+        let val = IpttPage.TargetOverviewViewReport.disabled;
+        expect('disabled' === val);
     });
 
     it('should require choosing a target period to create report', function() {
@@ -89,9 +89,10 @@ describe('IPTT: Program target overview quickstart', function() {
         // Select a program but not a target period
         //FIXME: magic number
         IpttPage.TargetOverviewProgram = 2;
-        expect('disabled' == IpttPage.TargetOverviewViewReport.disabled);
+        expect('disabled' === IpttPage.TargetOverviewViewReport.disabled);
     });
 
+    //FIXME: get webdriver code out of test
     it('should create report if all params correctly specified', function() {
         IpttPage.open();
         //FIXME: magic number
@@ -99,10 +100,11 @@ describe('IPTT: Program target overview quickstart', function() {
         IpttPage.TargetOverviewTimePeriods = 'Years';
         IpttPage.TargetOverviewViewReport.click();
         // If the table isn't there, we didn't make a report
-        expect(false == browser.isVisible('table#iptt_table'));
+        expect(false === browser.isVisible('table#iptt_table'));
     });
 
+    //FIXME: get webdriver code out of test
     it('should open report with filter panel open', function() {
-        expect(false == browser.isVisible('form#id_form_target_filter'));
+        expect(false === browser.isVisible('form#id_form_target_filter'));
     });
 }); 

@@ -2,11 +2,12 @@
  * Page model for testing the Program Indicators screen.
  * @module Indicators
  */
-const TargetsTab = require('../pages/targets.page.js');
-const util = require('../lib/testutil.js');
-// milliseconds
+import TargetsTab from '../pages/targets.page';
+import Util from '../lib/testutil';
+// Milliseconds
 const msec = 1000;
-var parms = util.readConfig();
+
+var parms = Util.readConfig();
 parms.baseurl += 'indicators/home/0/0/0';
 
 /*
@@ -44,9 +45,7 @@ function clickIndicatorsDropdown() {
  * @returns Nothing
  */
 function clickIndicatorsLink() {
-  if (browser.isVisible('div#ajaxloading')) {
-    browser.waitForVisible('div#ajaxloading', 10*msec, true);
-  }
+  Util.waitForAjax();
   let indicatorsLink = browser.$('ul.navbar-nav').$('=Indicators');
   indicatorsLink.click();
   browser.waitForVisible('h2=Program Indicators');
@@ -229,9 +228,7 @@ function getIndicatorsDropdownList() {
  * table
  */
 function getProgramIndicatorsTableCount(targetId) {
-  if (browser.isVisible('div#ajaxloading')) {
-    browser.waitForVisible('div#ajaxloading', 10*msec, true);
-  }
+  Util.waitForAjax();
 
   let toplevel = browser.$('div#toplevel_div');
   let tableDiv = toplevel.$('div'+targetId);
