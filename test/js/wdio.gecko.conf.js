@@ -1,5 +1,5 @@
 exports.config = {
-    execArgv: ['--inspect'],
+    //execArgv: ['--inspect'],
     specs: [
         './tests/**/*.js'
     ],
@@ -68,7 +68,7 @@ exports.config = {
     services: [],
     seleniumLogs: './log',
     framework: 'mocha',
-    reporters: ['spec'],
+    reporters: ['dot'],
     mochaOpts: {
         ui: 'bdd',
         require: 'babel-register'
