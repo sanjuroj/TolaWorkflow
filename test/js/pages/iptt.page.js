@@ -17,7 +17,7 @@ class IpttPage extends Page {
   /**
    * Return the PROGRAM dropdown for the IPTT indicator overview
    * report as a clickable element
-   * @returns {athing} A clickable object for the dropdown
+   * @returns {FIXME} A clickable object for the dropdown
    */
   get IndicatorOverviewProgram() {
     return browser.$('select#id_timeperiods-program');
@@ -71,20 +71,28 @@ class IpttPage extends Page {
 
   // IPTT: Program target overview quickstart
   get TargetOverviewProgram() {
-    return browser.$('select#id_targetperiods-program');
+    let div = browser.$('div#div_id_targets_program');
+    // Yeah, the select2 widget does bizarre stuff to HTML markup
+    return div.$('span.select2-selection');
   }
 
-  get TargetOverviewProgramList() { }
-
+  /**
+   * Return the IPTT TARGET PERIODS dropdown itself as
+   * a clickable web element
+   * @returns {FIXME} the target periods dropdown as a clickable
+   * object
+   */
   get TargetOverviewTargetPeriods() {
-    return browser.$('select#id_targetperiods-targetperiods');
+    let div = browser.$('div#div_id_targetperiodss');
+    return div.$('select#id_targetperiods-targetperiods');
   }
 
   get TargetOverviewTargetPeriodsList() {
   }
 
   get TargetOverviewTimeFrame() {
-    return browser.$('input[name="targetperiods-timeframe"]');
+    let div = browser.$('input[name="targetperiods-timeframe"]');
+    return div.$('input[name="targetperiods-timeframe"]');
   }
 
   get TargetOverviewNumRecent() {
@@ -96,11 +104,9 @@ class IpttPage extends Page {
   }
 
   set TargetOverviewProgram(val) {
-    let elem = browser.$('select[name="targetperiods-program"]');
-    elem.click();
-    //FIXME: Hard-coded value
-    elem.selectByValue(452);
-    elem.click();
+    let div = browser.$('div#div_id_targets_program');
+    let select = div.$('select[name="targetperiods-program"]');
+    select.selectByIndex(val);
   }
 
   set TargetOverviewTimeFrame(val) {
@@ -131,6 +137,10 @@ class IpttPage extends Page {
     } else if (source == 'target') {
       return cards[1].$('h5.card-title').getText();
     }
+  }
+
+  refresh() {
+    return browser.reload();
   }
 }
 export default new IpttPage();
