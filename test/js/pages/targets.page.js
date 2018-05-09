@@ -4,10 +4,9 @@
  */
 import Util from '../lib/testutil';
 import IndPage from '../pages/indicators.page';
-
 const msec = 1000;
 
-var parms = Util.readConfig();
+let parms = Util.readConfig();
 parms.baseurl += '/indicators/home/0/0/0';
 
 /**
@@ -70,7 +69,7 @@ function clickTargetsTab() {
 }
 
 /**
- * Return the Direction of change dropdown
+ * Set the value of the Direction of change dropdown
  */
  function setDirectionOfChange(dir = 'none') {
   let val;
@@ -78,7 +77,7 @@ function clickTargetsTab() {
   if (dir === 'pos') { val = 2};
   if (dir === 'neg') { val = 3};
   $('select#id_direction_of_change').selectByValue(val);
-
+}
 
 /**
  * Get the current value of the target baseline from the indicators detail screen
@@ -171,7 +170,6 @@ function getNumberType() {
 
 function getPercentType() {
   let val = browser.$('div#div_id_unit_of_measure_type_1').getText();
-  Util.dp('val='+val);
   return val;
 }
 
@@ -288,7 +286,7 @@ function getProgramIndicatorButtons() {
   let rows = browser.$('div#toplevel_div').$$('div.card-body');
   let buttons = new Array();
   for (let row of rows) {
-  buttons.push(row.$('*=Indicators'));
+    buttons.push(row.$('*=Indicators'));
   }
   return buttons;
 }
@@ -302,7 +300,7 @@ function getProgramsTable() {
   let rows = browser.$('div#toplevel_div').$$('div.panel-heading');
   let programs = new Array();
   for(let row of rows) {
-  programs.push(row.$('h4').getText());
+    programs.push(row.$('h4').getText());
   }
   return programs;
 }
@@ -350,12 +348,12 @@ function getTargetFrequency() {
   clickTargetsTab();
   let val = $('select#target_frequency').getValue();
   if (val === 0) {
-  return '---------';
+    return '---------';
   } else {
-  let list = $('select#target_frequency').getText();
-  let rows = list.split('\n');
-  let result = rows[val];
-  return result.trim();
+    let list = $('select#target_frequency').getText();
+    let rows = list.split('\n');
+    let result = rows[val];
+    return result.trim();
   }
 }
 
@@ -431,16 +429,16 @@ function getPageName() {
  */
 function saveIndicatorChanges() {
   if (browser.isVisible('div.alert')) {
-  browser.waitForVisible('div.alert', true);
+    browser.waitForVisible('div.alert', true);
   }
   if (browser.isVisible('div#alerts')) {
-  browser.waitForVisible('div#alerts', true);
+    browser.waitForVisible('div#alerts', true);
   }
   if (browser.isVisible('.col-md-6.text-left')) {
-  browser.execute('$(".col-md-6.text-left").hide();');
+    browser.execute('$(".col-md-6.text-left").hide();');
   }
   if (browser.isVisible('.col-md-6.text-right')) {
-  browser.execute('$(".col-md-6.text-right").hide();');
+    browser.execute('$(".col-md-6.text-right").hide();');
   }
   browser.scroll('input#submit-id-submit');
   browser.$('input#submit-id-submit').click();
@@ -479,7 +477,7 @@ function setBaselineNA() {
 function setEndlineTarget(value) {
   clickTargetsTab();
   if (! browser.isVisible('input[name="Endline"]')) {
-  browser.waitForVisible('input[name="Endline"]');
+    browser.waitForVisible('input[name="Endline"]');
   }
   let endline = $('input[name="Endline"]');
   endline.setValue(value);
@@ -494,9 +492,9 @@ function setEndlineTarget(value) {
 function setFirstEventName(value) {
   let textBox = browser.$('input#id_target_frequency_custom');
   if (value === 0) {
-  textBox.clear();
+    textBox.clear();
   } else {
-  textBox.setValue(value);
+    textBox.setValue(value);
   }
 }
 
@@ -521,7 +519,7 @@ function setFirstTargetPeriod() {
  */
 function setIndicatorName(name) {
   if (! browser.isVisible('=Summary')) {
-  browser.waitForVisible('=Summary');
+    browser.waitForVisible('=Summary');
   }
   let tab = browser.$('=Summary');
   tab.click();
@@ -564,10 +562,10 @@ function setMeasureType(type) {
 function setMidlineTarget(value) {
   clickTargetsTab();
   if (! browser.isVisible('input[name="Midline"]')) {
-  browser.waitForVisible('input[name="Midline"]');
+    browser.waitForVisible('input[name="Midline"]');
   }
   let midline = $('input[name="Midline"]');
-  midline.setValue(value);
+    midline.setValue(value);
 }
 
 /**
@@ -579,9 +577,9 @@ function setMidlineTarget(value) {
 function setNumTargetEvents(value) {
   let textBox = browser.$('input#id_target_frequency_num_periods');
   if (value === 0) {
-  textBox.clearElement();
+    textBox.clearElement();
   } else {
-  textBox.setValue(value);
+    textBox.setValue(value);
   }
 }
 
