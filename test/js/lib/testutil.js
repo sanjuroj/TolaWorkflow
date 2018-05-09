@@ -2,8 +2,6 @@
  * Hodgepodge of helper code that doesn't fit elsewhere
  * @module TestUtil
  */
-'use strict';
-
 // Milliseconds
 const msec = 1000;
 
@@ -14,9 +12,9 @@ const msec = 1000;
  * @returns {JSON} - JSON object containing user session data
  */
 function readConfig(configFile = 'config.json') {
-    let fs = require('fs');
-    let data = fs.readFileSync(configFile);
-    return JSON.parse(data);
+  let fs = require('fs');
+  let data = fs.readFileSync(configFile);
+  return JSON.parse(data);
 }
 
 /**
@@ -31,14 +29,12 @@ function dp(s) { console.log('***%s***', s); }
  * with a spinner to close
  */
 function waitForAjax(secs = 2) {
-    let visible = browser.isVisible('div#ajaxloading');
-    while (visible == true) {
-        browser.pause(secs * msec);
-        visible = browser.isVisible('div#ajaxloading');
-    }
+  let visible = browser.isVisible('div#ajaxloading');
+  while (visible == true) {
+    browser.pause(secs * msec);
+    visible = browser.isVisible('div#ajaxloading');
+  }
 }
-
-
 
 exports.dp = dp;
 exports.readConfig = readConfig;

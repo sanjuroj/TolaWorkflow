@@ -177,12 +177,12 @@ body > .container {
 .btn {
     padding-right: 1.25rem;
     padding-left: 1.25rem;
-    border-radius: 0px;
+    border-radius: .001rem;
 }
 
 .form-control {
     color: #000000;
-    border-radius: 0px;
+    border-radius: .001rem;
     border-color: #B8BABD;
     background-color: #FFFFFF;
 }
