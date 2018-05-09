@@ -122,7 +122,7 @@ function clickResetButton() {
  */
 function createBasicIndicator() {
   if ($('h2').getText() != 'Program Indicators') {
-    clickIndicatorsLink();
+  clickIndicatorsLink();
   }
   clickNewIndicatorButton();
   saveNewIndicator();
@@ -136,14 +136,14 @@ function createBasicIndicator() {
  * @returns Nothing
  */
 function deleteIndicator(indName = 'default') {
-    let indButtons = TargetsTab.getProgramIndicatorButtons();
-    let indButton = indButtons[0];
-    indButton.click();
-    let deleteBtns = TargetsTab.getProgramIndicatorDeleteButtons();
-    let deleteBtn = deleteBtns[0];
-    deleteBtn.click();
-    let confirmBtn = $('input[value="Confirm"]');
-    confirmBtn.click();
+  let indButtons = TargetsTab.getProgramIndicatorButtons();
+  let indButton = indButtons[0];
+  indButton.click();
+  let deleteBtns = TargetsTab.getProgramIndicatorDeleteButtons();
+  let deleteBtn = deleteBtns[0];
+  deleteBtn.click();
+  let confirmBtn = $('input[value="Confirm"]');
+  confirmBtn.click();
 }
 
 /** 
@@ -154,13 +154,13 @@ function deleteIndicator(indName = 'default') {
  * @returns Nothing
  */
 function editIndicator(indName = 'default') {
-    let indButtons = TargetsTab.getProgramIndicatorButtons();
-    let indButton = indButtons[0];
-    indButton.click();
+  let indButtons = TargetsTab.getProgramIndicatorButtons();
+  let indButton = indButtons[0];
+  indButton.click();
 
-    let editBtns = TargetsTab.getProgramIndicatorEditButtons();
-    let editBtn = editBtns[0];
-    editBtn.click();
+  let editBtns = TargetsTab.getProgramIndicatorEditButtons();
+  let editBtn = editBtns[0];
+  editBtn.click();
 }
 
 /**
@@ -196,10 +196,10 @@ function getIndicatorTypeList() {
   let listItems = selectList.$$('option');
   let indicatorTypes = new Array();
   for (let listItem of listItems) {
-    let s = listItem.getText();
-    if (! s.includes('-- All --')) {
-      indicatorTypes.push(s);
-    }
+  let s = listItem.getText();
+  if (! s.includes('-- All --')) {
+    indicatorTypes.push(s);
+  }
   }
   return indicatorTypes;
 }
@@ -214,10 +214,10 @@ function getIndicatorsDropdownList() {
   let listItems = selectList.$$('option');
   let indicators = new Array();
   for (let listItem of listItems) {
-    let s = listItem.getText();
-    if (! s.includes('-- All --')) {
-      indicators.push(s);
-    }
+  let s = listItem.getText();
+  if (! s.includes('-- All --')) {
+    indicators.push(s);
+  }
   }
   return indicators;
 }
@@ -236,10 +236,10 @@ function getProgramIndicatorsTableCount(targetId) {
   let rows = table.$$('tbody>tr>td>a');
   let rowCnt = 0;
   for (let row of rows) {
-    let text = row.getText();
-    if (text.length > 0) {
-      rowCnt++;
-    }
+  let text = row.getText();
+  if (text.length > 0) {
+    rowCnt++;
+  }
   }
   return rowCnt;
 }
@@ -254,11 +254,11 @@ function getProgramsDropdownList() {
   let listItems = selectList.$$('option');
   let programs = new Array();
   for (let listItem of listItems) {
-    let s = listItem.getText();
-    if (! s.includes('-- All --'))
-      programs.push(s);
-    }
-    return programs;
+  let s = listItem.getText();
+  if (! s.includes('-- All --'))
+    programs.push(s);
+  }
+  return programs;
 }
 
 /**
@@ -270,8 +270,8 @@ function getProgramsTable() {
   let rows = browser.$('div#toplevel_div').$$('div.card');
   let programs = new Array();
   for(let row of rows) {
-    let s = row.getText();
-    programs.push(s);
+  let s = row.getText();
+  programs.push(s);
   }
   return programs;
 }
@@ -317,12 +317,12 @@ function selectProgram(program) {
   let programsDropdown = span.$('span#select2-id_programs_filter_dropdown-container');
   let listItems = programsDropdown.$$('option');
   for (let listItem of listItems) {
-    let s = listItem.getText();
-    let v = listItem.getValue();
-    if (s.includes(program)) {
-      selectList.selectByValue(v);
-      break;
-    }
+  let s = listItem.getText();
+  let v = listItem.getValue();
+  if (s.includes(program)) {
+    selectList.selectByValue(v);
+    break;
+  }
   }
 }
 

@@ -18,14 +18,14 @@ parms.baseurl += '/indicators/home/0/0/0';
  * @returns {integer} The total number of target periods
  */
 function addTarget(num = 1) {
-    let link = browser.$('a#addNewPeriodicTarget');
-    let cnt = 0;
+  let link = browser.$('a#addNewPeriodicTarget');
+  let cnt = 0;
 
-    while (cnt < num) {
-        link.click();
-        cnt++;
-    }
-    return cnt;
+  while (cnt < num) {
+    link.click();
+    cnt++;
+  }
+  return cnt;
 }
 
 /**
@@ -33,23 +33,23 @@ function addTarget(num = 1) {
  * @returns {Nothing}
  */
 function clickDirectionOfChange() {
-    $('select#id_direction_of_change').click();
+  $('select#id_direction_of_change').click();
 }
 
 /**
  * Click the percent radio button to set an indicator as a percentage indicator
  */
 function clickNumberType() {
-    let control = browser.$('div#div_id_unit_of_measure_type_0');
-    control.click();
+  let control = browser.$('div#div_id_unit_of_measure_type_0');
+  control.click();
 }
 
 /**
  * Click the number radio button to set an indicator as a number indicator
  */
 function clickPercentType() {
-    let control = browser.$('div#div_id_unit_of_measure_type_1');
-    control.click();
+  let control = browser.$('div#div_id_unit_of_measure_type_1');
+  control.click();
 }
 
 /***
@@ -73,12 +73,12 @@ function clickTargetsTab() {
  * Return the Direction of change dropdown
  */
  function setDirectionOfChange(dir = 'none') {
-    let val;
-    if (dir === 'none') { val = 1};
-    if (dir === 'pos') { val = 2};
-    if (dir === 'neg') { val = 3};
-    $('select#id_direction_of_change').selectByValue(val);
- }
+  let val;
+  if (dir === 'none') { val = 1};
+  if (dir === 'pos') { val = 2};
+  if (dir === 'neg') { val = 3};
+  $('select#id_direction_of_change').selectByValue(val);
+
 
 /**
  * Get the current value of the target baseline from the indicators detail screen
@@ -106,11 +106,11 @@ function getBaselineErrorHint() {
  * @returns String representation of value of the dropdown
  */
 function getDirectionOfChange() {
-    let dropdown = $('select#id_direction_of_change');
-    let changeDir = dropdown.getValue();
-    if (changeDir === 1) { return 'none' };
-    if (changeDir === 2) { return 'pos' };
-    if (changeDir === 3) { return 'neg' };
+  let dropdown = $('select#id_direction_of_change');
+  let changeDir = dropdown.getValue();
+  if (changeDir === 1) { return 'none' };
+  if (changeDir === 2) { return 'pos' };
+  if (changeDir === 3) { return 'neg' };
 }
 
 /**
@@ -118,19 +118,19 @@ function getDirectionOfChange() {
  * @returns {Array<string>} an array of hyphen-separated start and end dates
  */
 function getTargetDateRanges() {
-    browser.pause(msec);
-    browser.scroll('h3');
-    let placeholder = browser.$('div#id_div_periodic_tables_placeholder');
-    let targetsDiv = placeholder.$('div#periodic-targets-tablediv');
-    let targetsTable = targetsDiv.$('table#periodic_targets_table');
-    let rows = targetsTable.$$('tbody>tr.periodic-target');
+  browser.pause(msec);
+  browser.scroll('h3');
+  let placeholder = browser.$('div#id_div_periodic_tables_placeholder');
+  let targetsDiv = placeholder.$('div#periodic-targets-tablediv');
+  let targetsTable = targetsDiv.$('table#periodic_targets_table');
+  let rows = targetsTable.$$('tbody>tr.periodic-target');
 
-    let dateRanges = new Array();
-    for (let row of rows) {
-        let dateRange = row.$('div').getText();
-        dateRanges.push(dateRange.trim());
-    }
-    return dateRanges;
+  let dateRanges = new Array();
+  for (let row of rows) {
+    let dateRange = row.$('div').getText();
+    dateRanges.push(dateRange.trim());
+  }
+  return dateRanges;
 }
 
 /**
@@ -165,14 +165,14 @@ function getLoPTarget() {
 }
 
 function getNumberType() {
-    let val = browser.$('div#div_id_unit_of_measure_type_0').getText();
-    return val;
+  let val = browser.$('div#div_id_unit_of_measure_type_0').getText();
+  return val;
 }
 
 function getPercentType() {
-    let val = browser.$('div#div_id_unit_of_measure_type_1').getText();
-    Util.dp('val='+val);
-    return val;
+  let val = browser.$('div#div_id_unit_of_measure_type_1').getText();
+  Util.dp('val='+val);
+  return val;
 }
 
 /**
@@ -288,7 +288,7 @@ function getProgramIndicatorButtons() {
   let rows = browser.$('div#toplevel_div').$$('div.card-body');
   let buttons = new Array();
   for (let row of rows) {
-    buttons.push(row.$('*=Indicators'));
+  buttons.push(row.$('*=Indicators'));
   }
   return buttons;
 }
@@ -302,7 +302,7 @@ function getProgramsTable() {
   let rows = browser.$('div#toplevel_div').$$('div.panel-heading');
   let programs = new Array();
   for(let row of rows) {
-    programs.push(row.$('h4').getText());
+  programs.push(row.$('h4').getText());
   }
   return programs;
 }
@@ -324,9 +324,9 @@ function getSumOfTargets() {
  * @returns {string} The error text present, if any
  */
 function getTargetFirstEventErrorHint() {
-    let errorBox = browser.$('#validation_id_target_frequency_custom');
-    let errorHint = errorBox.getText();
-    return errorHint;
+  let errorBox = browser.$('#validation_id_target_frequency_custom');
+  let errorHint = errorBox.getText();
+  return errorHint;
 }
 
 /**
@@ -350,12 +350,12 @@ function getTargetFrequency() {
   clickTargetsTab();
   let val = $('select#target_frequency').getValue();
   if (val === 0) {
-    return '---------';
+  return '---------';
   } else {
-    let list = $('select#target_frequency').getText();
-    let rows = list.split('\n');
-    let result = rows[val];
-    return result.trim();
+  let list = $('select#target_frequency').getText();
+  let rows = list.split('\n');
+  let result = rows[val];
+  return result.trim();
   }
 }
 
@@ -365,9 +365,9 @@ function getTargetFrequency() {
  * current target entry form
  */
 function getTargetInputBoxes() {
-    // Find the input boxes
-    let inputBoxes = browser.$$('input#pt-.form-control.input-value');
-    return inputBoxes;
+  // Find the input boxes
+  let inputBoxes = browser.$$('input#pt-.form-control.input-value');
+  return inputBoxes;
 }
 
 /**
@@ -391,18 +391,18 @@ function getUnitOfMeasure() {
 }
 
 function getMeasureIsCumulative() {
-    browser.pause(msec);
-    browser.scroll('input#submit-id-submit');
+  browser.pause(msec);
+  browser.scroll('input#submit-id-submit');
 
-    let val = $('input#id_is_cumulative_1').getValue();
-    if (val === 3) { return true; }
-    if (val === 4) { return false; }
+  let val = $('input#id_is_cumulative_1').getValue();
+  if (val === 3) { return true; }
+  if (val === 4) { return false; }
 }
 
 function getMeasureType() {
-    let element = $('input[name="unit_of_measure_type"]');
-    let val = element.getValue();
-    return val;
+  let element = $('input[name="unit_of_measure_type"]');
+  let val = element.getValue();
+  return val;
 }
 
 /**
@@ -431,16 +431,16 @@ function getPageName() {
  */
 function saveIndicatorChanges() {
   if (browser.isVisible('div.alert')) {
-    browser.waitForVisible('div.alert', true);
+  browser.waitForVisible('div.alert', true);
   }
   if (browser.isVisible('div#alerts')) {
-    browser.waitForVisible('div#alerts', true);
+  browser.waitForVisible('div#alerts', true);
   }
   if (browser.isVisible('.col-md-6.text-left')) {
-    browser.execute('$(".col-md-6.text-left").hide();');
+  browser.execute('$(".col-md-6.text-left").hide();');
   }
   if (browser.isVisible('.col-md-6.text-right')) {
-    browser.execute('$(".col-md-6.text-right").hide();');
+  browser.execute('$(".col-md-6.text-right").hide();');
   }
   browser.scroll('input#submit-id-submit');
   browser.$('input#submit-id-submit').click();
@@ -479,7 +479,7 @@ function setBaselineNA() {
 function setEndlineTarget(value) {
   clickTargetsTab();
   if (! browser.isVisible('input[name="Endline"]')) {
-    browser.waitForVisible('input[name="Endline"]');
+  browser.waitForVisible('input[name="Endline"]');
   }
   let endline = $('input[name="Endline"]');
   endline.setValue(value);
@@ -494,9 +494,9 @@ function setEndlineTarget(value) {
 function setFirstEventName(value) {
   let textBox = browser.$('input#id_target_frequency_custom');
   if (value === 0) {
-    textBox.clear();
+  textBox.clear();
   } else {
-    textBox.setValue(value);
+  textBox.setValue(value);
   }
 }
 
@@ -521,7 +521,7 @@ function setFirstTargetPeriod() {
  */
 function setIndicatorName(name) {
   if (! browser.isVisible('=Summary')) {
-    browser.waitForVisible('=Summary');
+  browser.waitForVisible('=Summary');
   }
   let tab = browser.$('=Summary');
   tab.click();
@@ -564,7 +564,7 @@ function setMeasureType(type) {
 function setMidlineTarget(value) {
   clickTargetsTab();
   if (! browser.isVisible('input[name="Midline"]')) {
-    browser.waitForVisible('input[name="Midline"]');
+  browser.waitForVisible('input[name="Midline"]');
   }
   let midline = $('input[name="Midline"]');
   midline.setValue(value);
@@ -579,9 +579,9 @@ function setMidlineTarget(value) {
 function setNumTargetEvents(value) {
   let textBox = browser.$('input#id_target_frequency_num_periods');
   if (value === 0) {
-    textBox.clearElement();
+  textBox.clearElement();
   } else {
-    textBox.setValue(value);
+  textBox.setValue(value);
   }
 }
 
@@ -603,8 +603,8 @@ function setNumTargetPeriods(value) {
  */
 function setTargetFrequency(freqName) {
   let frequencies = ['', 'Life of Program (LoP) only',
-    'Midline and endline', 'Annual', 'Semi-annual',
-    'Tri-annual', 'Quarterly', 'Monthly', 'Event'];
+  'Midline and endline', 'Annual', 'Semi-annual',
+  'Tri-annual', 'Quarterly', 'Monthly', 'Event'];
   let freqValue = frequencies.indexOf(freqName);
   let targetFreq = $('select#id_target_frequency');
   browser.scroll('select#id_target_frequency');

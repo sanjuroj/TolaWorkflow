@@ -8,9 +8,9 @@ import TargetsTab from '../pages/targets.page';
  * Tests from mc/issues/116
  */
 describe('Number indicators config and display', function() {
-    before(function() {});
+  before(function() {});
 
-    it('should allow to specify number indicators as non-cumulative or cumulative');
-    it('should make non-cumulative number indicators the default option');
-    it('should remove the “Sum of targets” row from the table for a cumulative number indicator');
+  it('should allow to specify number indicators as non-cumulative or cumulative');
+  it('should make non-cumulative number indicators the default option');
+  it('should remove the “Sum of targets” row from the table for a cumulative number indicator');
 }); 
