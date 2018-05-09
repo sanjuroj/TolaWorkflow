@@ -32,6 +32,10 @@
             $("#id_create_targets_btn").attr("disabled", true)
             $("#id_target_frequency").attr("readonly", true)
         }
+
+        if ($("#id_objectives option").length < 1) {
+            $("#id_objectives").attr("disabled", true)
+        }
     });
 </script>
 
