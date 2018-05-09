@@ -488,10 +488,7 @@ class IPTT_ReportView(TemplateView):
                 try:
                     v = int(v)
                 except ValueError:
-                    v = Indicator.ANNUAL  # defaults to annual
-
-                # set an alias for timeperiods or targetperiods
-                self.filter_form_key_value_pairs['period'] = 2
+                    v = int(Indicator.ANNUAL)  # defaults to annual
 
             if k == 'numrecentperiods':
                 try:
@@ -516,8 +513,11 @@ class IPTT_ReportView(TemplateView):
         self._update_filter_form_key_value_pairs(self.request.GET, kwargs)
         self.filter_form_key_value_pairs['program'] = program.id
 
-        period = self.filter_form_key_value_pairs['period']
-        print(self.filter_form_key_value_pairs)
+        if reporttype == self.REPORT_TYPE_TIMEPERIODS:
+            period = self.filter_form_key_value_pairs[self.REPORT_TYPE_TIMEPERIODS]
+        else:
+            period = self.filter_form_key_value_pairs[self.REPORT_TYPE_TARGETPERIODS]
+
         if 'numrecentperiods' in self.filter_form_key_value_pairs:
             num_recents = self.filter_form_key_value_pairs['numrecentperiods']
         else:
