@@ -6,7 +6,7 @@ class Page {
   constructor() {
   }
   open(path) {
-    browser.url(path);
+    browser.url(path)
   }
 }
-module.exports = Page;
+module.exports = Page

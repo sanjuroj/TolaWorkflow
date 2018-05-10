@@ -2,18 +2,20 @@
  * Page model for testing the Program Indicators screen.
  * @module Indicators
  */
-import TargetsTab from '../pages/targets.page';
-import Util from '../lib/testutil';
-// Milliseconds
-const msec = 1000;
+import TargetsTab from '../pages/targets.page'
+import Util from '../lib/testutil'
+import { browser } from 'webdriverio'
 
-var parms = Util.readConfig();
-parms.baseurl += 'indicators/home/0/0/0';
+// Milliseconds
+const msec = 1000
+
+var parms = Util.readConfig()
+parms.baseurl += 'indicators/home/0/0/0'
 
 /*
- * dropdowns = $$('span.select2-selection--single');
- * programsDropdown = dropdowns[0];
- * indicatorsDropdown = dropdowns[1];
+ * dropdowns = $$('span.select2-selection--single')
+ * programsDropdown = dropdowns[0]
+ * indicatorsDropdown = dropdowns[1]
  * indicatorTypesDropdown = dropdowns[2]
 */
 
@@ -24,10 +26,10 @@ parms.baseurl += 'indicators/home/0/0/0';
  * @returns Nothing
  */
 function clickExportAllButton(fileName) {
-  let button = $('button[type="submit"]');
-  let height = browser.getViewportSize('height');
-  browser.scroll(0, 5000);
-  button.click();
+  let button = $('button[type="submit"]')
+  let height = browser.getViewportSize('height')
+  browser.scroll(0, 5000)
+  button.click()
 }
  
 /**
@@ -35,9 +37,9 @@ function clickExportAllButton(fileName) {
  * @returns Nothing
  */
 function clickIndicatorsDropdown() {
-  let span = $$('span.select2-selection--single')[1];
-  let indicatorsDropdown = span.$('span#select2-id_indicators_filter_dropdown-container');
-  indicatorsDropdown.click();
+  let span = $$('span.select2-selection--single')[1]
+  let indicatorsDropdown = span.$('span#select2-id_indicators_filter_dropdown-container')
+  indicatorsDropdown.click()
 }
 
 /**
@@ -45,10 +47,10 @@ function clickIndicatorsDropdown() {
  * @returns Nothing
  */
 function clickIndicatorsLink() {
-  Util.waitForAjax();
-  let indicatorsLink = browser.$('ul.navbar-nav').$('=Indicators');
-  indicatorsLink.click();
-  browser.waitForVisible('h2=Program Indicators');
+  Util.waitForAjax()
+  let indicatorsLink = browser.$('ul.navbar-nav').$('=Indicators')
+  indicatorsLink.click()
+  browser.waitForVisible('h2=Program Indicators')
 }
 
 /**
@@ -56,9 +58,9 @@ function clickIndicatorsLink() {
  * @returns Nothing
  */
 function clickIndicatorTypeDropdown() {
-  let span = $$('span.select2-selection--single')[2];
-  let indicatorTypesDropdown = span.$('span#select2-id_indicatortypes_filter_dropdown-container');
-  indicatorTypesDropdown.click();
+  let span = $$('span.select2-selection--single')[2]
+  let indicatorTypesDropdown = span.$('span#select2-id_indicatortypes_filter_dropdown-container')
+  indicatorTypesDropdown.click()
 }
 
 // FIXME: Should this be a per-program method?
@@ -68,8 +70,8 @@ function clickIndicatorTypeDropdown() {
  * @returns Nothing
  */
 function clickNewIndicatorButton() {
-  let progList = browser.$$('panel-heading>h4');
-  browser.$('=New Indicator').click();
+  let progList = browser.$$('panel-heading>h4')
+  browser.$('=New Indicator').click()
 }
 
 /**
@@ -77,9 +79,9 @@ function clickNewIndicatorButton() {
  * @returns Nothing
  */
 function clickProgramsDropdown() {
-  let span = $$('span.select2-selection--single')[0];
-  let programsDropdown = span.$('span#select2-id_programs_filter_dropdown-container');
-  programsDropdown.click();
+  let span = $$('span.select2-selection--single')[0]
+  let programsDropdown = span.$('span#select2-id_programs_filter_dropdown-container')
+  programsDropdown.click()
 }
 
 /**
@@ -90,8 +92,8 @@ function clickProgramsDropdown() {
  * @returns Nothing
  */
 function clickProgramIndicator(indicatorName) {
-  let link = browser.$('=' + indicatorName);
-  link.click();
+  let link = browser.$('=' + indicatorName)
+  link.click()
 }
 
 /**
@@ -102,7 +104,7 @@ function clickProgramIndicator(indicatorName) {
  * @returns Nothing
  */
 function clickProgramIndicatorsButton(programName) {
-  selectProgram(programName);
+  selectProgram(programName)
 }
 
 
@@ -111,8 +113,8 @@ function clickProgramIndicatorsButton(programName) {
  * @returns Nothing
  */
 function clickResetButton() {
-  browser.scroll('input[value="RESET"]');
-  browser.$('input[value="RESET"]').click();
+  browser.scroll('input[value="RESET"]')
+  browser.$('input[value="RESET"]').click()
 }
 
 /**
@@ -122,10 +124,10 @@ function clickResetButton() {
  */
 function createBasicIndicator() {
   if ($('h2').getText() != 'Program Indicators') {
-  clickIndicatorsLink();
+  clickIndicatorsLink()
   }
-  clickNewIndicatorButton();
-  saveNewIndicator();
+  clickNewIndicatorButton()
+  saveNewIndicator()
 }
 
 /** 
@@ -136,14 +138,14 @@ function createBasicIndicator() {
  * @returns Nothing
  */
 function deleteIndicator(indName = 'default') {
-  let indButtons = TargetsTab.getProgramIndicatorButtons();
-  let indButton = indButtons[0];
-  indButton.click();
-  let deleteBtns = TargetsTab.getProgramIndicatorDeleteButtons();
-  let deleteBtn = deleteBtns[0];
-  deleteBtn.click();
-  let confirmBtn = $('input[value="Confirm"]');
-  confirmBtn.click();
+  let indButtons = TargetsTab.getProgramIndicatorButtons()
+  let indButton = indButtons[0]
+  indButton.click()
+  let deleteBtns = TargetsTab.getProgramIndicatorDeleteButtons()
+  let deleteBtn = deleteBtns[0]
+  deleteBtn.click()
+  let confirmBtn = $('input[value="Confirm"]')
+  confirmBtn.click()
 }
 
 /** 
@@ -154,13 +156,13 @@ function deleteIndicator(indName = 'default') {
  * @returns Nothing
  */
 function editIndicator(indName = 'default') {
-  let indButtons = TargetsTab.getProgramIndicatorButtons();
-  let indButton = indButtons[0];
-  indButton.click();
+  let indButtons = TargetsTab.getProgramIndicatorButtons()
+  let indButton = indButtons[0]
+  indButton.click()
 
-  let editBtns = TargetsTab.getProgramIndicatorEditButtons();
-  let editBtn = editBtns[0];
-  editBtn.click();
+  let editBtns = TargetsTab.getProgramIndicatorEditButtons()
+  let editBtn = editBtns[0]
+  editBtn.click()
 }
 
 /**
@@ -169,8 +171,8 @@ function editIndicator(indName = 'default') {
  * element isn't found.
  */
 function getAlertMsg() {
-  let alertDiv = browser.$('div#alerts');
-  return alertDiv.getText();
+  let alertDiv = browser.$('div#alerts')
+  return alertDiv.getText()
 }
 
 /**
@@ -179,11 +181,11 @@ function getAlertMsg() {
  * @returns {string} The indicator name
  */
 function getIndicatorName() {
-  let targetsTab = browser.$('=Performance');
-  targetsTab.click();
-  browser.scroll('input#id_name');
-  let val = $('input#id_name').getValue();
-  return val;
+  let targetsTab = browser.$('=Performance')
+  targetsTab.click()
+  browser.scroll('input#id_name')
+  let val = $('input#id_name').getValue()
+  return val
 }
 
 /**
@@ -192,16 +194,16 @@ function getIndicatorName() {
  * indicator types dropdown menu
  */
 function getIndicatorTypeList() {
-  let selectList = browser.$('select#id_indicatortypes_filter_dropdown');
-  let listItems = selectList.$$('option');
-  let indicatorTypes = new Array();
+  let selectList = browser.$('select#id_indicatortypes_filter_dropdown')
+  let listItems = selectList.$$('option')
+  let indicatorTypes = new Array()
   for (let listItem of listItems) {
-  let s = listItem.getText();
+  let s = listItem.getText()
   if (! s.includes('-- All --')) {
-    indicatorTypes.push(s);
+    indicatorTypes.push(s)
   }
   }
-  return indicatorTypes;
+  return indicatorTypes
 }
 
 /**
@@ -210,16 +212,16 @@ function getIndicatorTypeList() {
  * indicators dropdown menu
  */
 function getIndicatorsDropdownList() {
-  let selectList = browser.$('select#id_indicators_filter_dropdown');
-  let listItems = selectList.$$('option');
-  let indicators = new Array();
+  let selectList = browser.$('select#id_indicators_filter_dropdown')
+  let listItems = selectList.$$('option')
+  let indicators = new Array()
   for (let listItem of listItems) {
-  let s = listItem.getText();
+  let s = listItem.getText()
   if (! s.includes('-- All --')) {
-    indicators.push(s);
+    indicators.push(s)
   }
   }
-  return indicators;
+  return indicators
 }
 
 /**
@@ -228,20 +230,20 @@ function getIndicatorsDropdownList() {
  * table
  */
 function getProgramIndicatorsTableCount(targetId) {
-  Util.waitForAjax();
+  Util.waitForAjax()
 
-  let toplevel = browser.$('div#toplevel_div');
-  let tableDiv = toplevel.$('div'+targetId);
-  let table = tableDiv.$(targetId).$('table.hiddenTable');
-  let rows = table.$$('tbody>tr>td>a');
-  let rowCnt = 0;
+  let toplevel = browser.$('div#toplevel_div')
+  let tableDiv = toplevel.$('div'+targetId)
+  let table = tableDiv.$(targetId).$('table.hiddenTable')
+  let rows = table.$$('tbody>tr>td>a')
+  let rowCnt = 0
   for (let row of rows) {
-  let text = row.getText();
+  let text = row.getText()
   if (text.length > 0) {
-    rowCnt++;
+    rowCnt++
   }
   }
-  return rowCnt;
+  return rowCnt
 }
 
 /**
@@ -250,15 +252,15 @@ function getProgramIndicatorsTableCount(targetId) {
  * dropdown menu
  */
 function getProgramsDropdownList() {
-  let selectList = browser.$('select#id_programs_filter_dropdown');
-  let listItems = selectList.$$('option');
-  let programs = new Array();
+  let selectList = browser.$('select#id_programs_filter_dropdown')
+  let listItems = selectList.$$('option')
+  let programs = new Array()
   for (let listItem of listItems) {
-  let s = listItem.getText();
+  let s = listItem.getText()
   if (! s.includes('-- All --'))
-    programs.push(s);
+    programs.push(s)
   }
-  return programs;
+  return programs
 }
 
 /**
@@ -267,23 +269,23 @@ function getProgramsDropdownList() {
  * program names in the programs table
  */
 function getProgramsTable() {
-  let rows = browser.$('div#toplevel_div').$$('div.card');
-  let programs = new Array();
+  let rows = browser.$('div#toplevel_div').$$('div.card')
+  let programs = new Array()
   for(let row of rows) {
-  let s = row.getText();
-  programs.push(s);
+  let s = row.getText()
+  programs.push(s)
   }
-  return programs;
+  return programs
 }
 
 /**
  * Open the specified page in the browser
- * @param {string} url The URL to display in the browser; defaults
+ * @param {string} url The URL to display in the browser defaults
  * to the baseurl value from the config file
  * @returns Nothing
  */
 function open(url = parms.baseurl) {
-  browser.url(url);
+  browser.url(url)
 }
 
 /**
@@ -292,7 +294,7 @@ function open(url = parms.baseurl) {
  */
 function getPageName() {
   // On this page, the "title" is actually the <h2> caption
-  return browser.$('h2').getText();
+  return browser.$('h2').getText()
 }
 
 /**
@@ -301,8 +303,8 @@ function getPageName() {
  */
 function saveNewIndicator() {
   // Accept the default values
-  let saveNew = $('form[name="most"]').$('input[value="save"]');
-  saveNew.click();
+  let saveNew = $('form[name="most"]').$('input[value="save"]')
+  saveNew.click()
 }
 
 /**
@@ -312,40 +314,40 @@ function saveNewIndicator() {
  * @returns Nothing
  */
 function selectProgram(program) {
-  clickProgramsDropdown();
-  let span = $$('span.select2-selection--single')[0];
-  let programsDropdown = span.$('span#select2-id_programs_filter_dropdown-container');
-  let listItems = programsDropdown.$$('option');
+  clickProgramsDropdown()
+  let span = $$('span.select2-selection--single')[0]
+  let programsDropdown = span.$('span#select2-id_programs_filter_dropdown-container')
+  let listItems = programsDropdown.$$('option')
   for (let listItem of listItems) {
-  let s = listItem.getText();
-  let v = listItem.getValue();
+  let s = listItem.getText()
+  let v = listItem.getValue()
   if (s.includes(program)) {
-    selectList.selectByValue(v);
-    break;
+    selectList.selectByValue(v)
+    break
   }
   }
 }
 
-exports.clickExportAllButton = clickExportAllButton;
-exports.clickIndicatorsDropdown = clickIndicatorsDropdown;
-exports.clickIndicatorsLink = clickIndicatorsLink;
-exports.clickIndicatorTypeDropdown = clickIndicatorTypeDropdown;
-exports.clickNewIndicatorButton = clickNewIndicatorButton;
-exports.clickProgramIndicator = clickProgramIndicator;
-exports.clickProgramIndicatorsButton = clickProgramIndicatorsButton;
-exports.clickProgramsDropdown = clickProgramsDropdown;
-exports.clickResetButton = clickResetButton;
-exports.createBasicIndicator = createBasicIndicator;
-exports.deleteIndicator = deleteIndicator;
-exports.editIndicator = editIndicator;
-exports.getAlertMsg = getAlertMsg;
-exports.getIndicatorName = getIndicatorName;
-exports.getIndicatorTypeList = getIndicatorTypeList;
-exports.getIndicatorsDropdownList = getIndicatorsDropdownList;
-exports.getProgramIndicatorsTableCount = getProgramIndicatorsTableCount;
-exports.getProgramsDropdownList = getProgramsDropdownList;
-exports.getProgramsTable = getProgramsTable;
-exports.open = open;
-exports.getPageName = getPageName;
-exports.saveNewIndicator = saveNewIndicator;
-exports.selectProgram = selectProgram;
+exports.clickExportAllButton = clickExportAllButton
+exports.clickIndicatorsDropdown = clickIndicatorsDropdown
+exports.clickIndicatorsLink = clickIndicatorsLink
+exports.clickIndicatorTypeDropdown = clickIndicatorTypeDropdown
+exports.clickNewIndicatorButton = clickNewIndicatorButton
+exports.clickProgramIndicator = clickProgramIndicator
+exports.clickProgramIndicatorsButton = clickProgramIndicatorsButton
+exports.clickProgramsDropdown = clickProgramsDropdown
+exports.clickResetButton = clickResetButton
+exports.createBasicIndicator = createBasicIndicator
+exports.deleteIndicator = deleteIndicator
+exports.editIndicator = editIndicator
+exports.getAlertMsg = getAlertMsg
+exports.getIndicatorName = getIndicatorName
+exports.getIndicatorTypeList = getIndicatorTypeList
+exports.getIndicatorsDropdownList = getIndicatorsDropdownList
+exports.getProgramIndicatorsTableCount = getProgramIndicatorsTableCount
+exports.getProgramsDropdownList = getProgramsDropdownList
+exports.getProgramsTable = getProgramsTable
+exports.open = open
+exports.getPageName = getPageName
+exports.saveNewIndicator = saveNewIndicator
+exports.selectProgram = selectProgram

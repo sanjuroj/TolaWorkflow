@@ -2,36 +2,36 @@
  * "Page" model for testing the indicator evidence table
  * @module Evidence
  */
+import { browser } from 'webdriverio'
 
 /**
  * Get the LoP target from the bottom of an indicator's evidence table.
  * @returns {integer} The value of the LoP target field
  */
 function getLoPTarget() {
-  let val = $('input#id_lop_target').getValue();
-  return val;
+  let val = $('input#id_lop_target').getValue()
+  return val
 }
 
 function getSumOfTargets() {
-  return false;
+  return false
 }
 
 function getTargetsTable() {
-  return false;
+  return false
 }
 
 function getTargetPeriodValue(period, val) {
-  return false;
+  return false
 }
 
 function setTargetPeriodValue(period, val) {
-  return false;
+  return false
 }
 
 // Function exports
-exports.getLoPTarget = getLoPTarget;
-exports.getSumOfTargets = getSumOfTargets;
-exports.getTargetsTable = getTargetsTable;
-exports.getTargetPeriodValue = getTargetPeriodValue;
-exports.setTargetPeriodValue = setTargetPeriodValue;
-
+exports.getLoPTarget = getLoPTarget
+exports.getSumOfTargets = getSumOfTargets
+exports.getTargetsTable = getTargetsTable
+exports.getTargetPeriodValue = getTargetPeriodValue
+exports.setTargetPeriodValue = setTargetPeriodValue
