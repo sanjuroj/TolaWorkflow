@@ -1,5 +1,5 @@
 exports.config = {
-  //execArgv: ['--inspect'],
+  // execArgv: ['--inspect'],
   specs: [
     './tests/**/*.js'
   ],
@@ -12,7 +12,7 @@ exports.config = {
     ],
     evidence: [
       'tests/collected_data_form.js',
-      'tests/indicator_evidence_dropdown.js',
+      'tests/indicator_evidence_dropdown.js'
     ],
     indicators: [
       'tests/annual.js',
@@ -33,13 +33,13 @@ exports.config = {
       'tests/iptt_indicator_overview.js',
       'tests/iptt_landing_page.js',
       'tests/iptt_target_overview_report.js',
-      'tests/iptt_target_overview.js',
+      'tests/iptt_target_overview.js'
     ],
     login: [
       'tests/00_login.js'
     ],
     reports: [
-      'tests/grid_report.js',
+      'tests/grid_report.js'
     ]
   },
   // Capabilities
@@ -50,7 +50,7 @@ exports.config = {
       maxInstances: 1,
       args: '[--jsdebugger]',
       'moz:firefoxOptions': {
-        //[]
+      // []
       }
     }
   ],
