@@ -1,5 +1,4 @@
 import bisect
-from urllib import urlencode
 from collections import OrderedDict
 from dateutil import rrule
 from dateutil.relativedelta import relativedelta
@@ -108,7 +107,7 @@ class IPTT_ReportView(TemplateView):
     def __init__(self, **kwars):
         self.annotations = {}
         self.reporttype = None
-        self.filter_form_key_value_pairs = {}
+        self.filter_form_initial_data = {}
 
     @staticmethod
     def _get_num_months(period):
@@ -476,9 +475,10 @@ class IPTT_ReportView(TemplateView):
 
         return (start_date, end_date, num_periods)
 
-    def _update_filter_form_key_value_pairs(self, formdata, kwargs):
-        self.filter_form_key_value_pairs = {}
-        for k, v in formdata.items():
+    def _update_filter_form_initial(self, formdata):
+        self.filter_form_initial_data = {}
+        for k in formdata:
+            v = formdata.getlist(k)
             if k == 'csrfmiddlewaretoken':
                 continue
             if isinstance(v, list) and len(v) == 1:
@@ -495,8 +495,8 @@ class IPTT_ReportView(TemplateView):
                     v = int(v)
                 except ValueError:
                     continue
-
-            self.filter_form_key_value_pairs[k] = v
+            # print("{} = {}".format(k, v))
+            self.filter_form_initial_data[k] = v
 
     def get_context_data(self, **kwargs):
         context = super(IPTT_ReportView, self).get_context_data(**kwargs)
@@ -510,16 +510,16 @@ class IPTT_ReportView(TemplateView):
             messages.info(self.request, _("Please select a valid program."))
             return context
 
-        self._update_filter_form_key_value_pairs(self.request.GET, kwargs)
-        self.filter_form_key_value_pairs['program'] = program.id
+        self._update_filter_form_initial(self.request.GET)
+        self.filter_form_initial_data['program'] = program.id
 
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            period = self.filter_form_key_value_pairs[self.REPORT_TYPE_TIMEPERIODS]
+            period = self.filter_form_initial_data[self.REPORT_TYPE_TIMEPERIODS]
         else:
-            period = self.filter_form_key_value_pairs[self.REPORT_TYPE_TARGETPERIODS]
+            period = self.filter_form_initial_data[self.REPORT_TYPE_TARGETPERIODS]
 
-        if 'numrecentperiods' in self.filter_form_key_value_pairs:
-            num_recents = self.filter_form_key_value_pairs['numrecentperiods']
+        if 'numrecentperiods' in self.filter_form_initial_data:
+            num_recents = self.filter_form_initial_data['numrecentperiods']
         else:
             num_recents = 0
 
@@ -605,16 +605,16 @@ class IPTT_ReportView(TemplateView):
     def get(self, request, *args, **kwargs):
         # reporttype = kwargs.get('reporttype')
         context = self.get_context_data(**kwargs)
-        # if user has not specified a start_date already then set it
-        if 'start_date' not in self.filter_form_key_value_pairs:
-            self.filter_form_key_value_pairs['start_date'] = context['start_date']
+        # if user has not specified a start_date/enddates already then set it so the filter form
+        # shows the program reporting start_date
+        if 'start_date' not in self.filter_form_initial_data:
+            self.filter_form_initial_data['start_date'] = context['start_date']
 
-        # if user has specified an end_date then do not override it.
-        if 'end_date' not in self.filter_form_key_value_pairs:
-            self.filter_form_key_value_pairs['end_date'] = context['end_date']
+        if 'end_date' not in self.filter_form_initial_data:
+            self.filter_form_initial_data['end_date'] = context['end_date']
 
         form_kwargs = {'request': request, 'program': context['program']}
-        context['form'] = IPTTReportFilterForm(initial=self.filter_form_key_value_pairs, **form_kwargs)
+        context['form'] = IPTTReportFilterForm(initial=self.filter_form_initial_data, **form_kwargs)
 
         context['report_wide'] = True
         if context.get('redirect', None):
@@ -622,11 +622,12 @@ class IPTT_ReportView(TemplateView):
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
-        self._update_filter_form_key_value_pairs(request.POST, {})
+        filterdata = request.POST.copy()
+        del(filterdata['csrfmiddlewaretoken'])
         url_kwargs = {
-            'program_id': self.filter_form_key_value_pairs['program'],
+            'program_id': filterdata['program'],
             'reporttype': kwargs['reporttype'],
         }
         redirect_url = "{}?{}".format(reverse_lazy('iptt_report', kwargs=url_kwargs),
-                                      urlencode(self.filter_form_key_value_pairs))
+                                      filterdata.urlencode())
         return HttpResponseRedirect(redirect_url)
