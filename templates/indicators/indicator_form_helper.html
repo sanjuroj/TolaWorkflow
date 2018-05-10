@@ -513,7 +513,7 @@
     function togglePercentSymbol(unit_of_measure_type){
         var unit_of_measure_type = parseInt(unit_of_measure_type);
 
-        if (unit_of_measure_type == 2) { // 2 is for percente option
+        if (unit_of_measure_type == 2) { // 2 is for percent option
             $("#span_id_lop_target").addClass('input-symbol-percent')
             $("#span_id_baseline").addClass('input-symbol-percent');
 
@@ -549,21 +549,38 @@
     */
     function toggleCummulativeOptions(unit_of_measure_type) {
         // the top option is always the default option
-        $("#id_is_cumulative_1").prop('checked', 'checked');
-
         if (unit_of_measure_type == 2) {
-            $("#id_span_is_cumulative_header").text("OPTIONS FOR PERCENTAGE (%) INDICATORS");
-            $("#id_is_cumulative_1").val(2);
-            $("#id_is_cumulative_2").val(3);
-            $("label[for=id_is_cumulative_1]").html("CUMULATIVE (C): The Life of Program result mirrors the latest period value. No automatic calculations are performed with collected data.");
-            $("label[for=id_is_cumulative_2]").html("NON-CUMULATIVE (NC): The Life of Program result is the average of target period values. No other automatic calculations are performed.");
+            $("#id_span_is_cumulative_header").text("PERCENTAGE (%) INDICATORS");
+            show_hide_cummulative_inputs('percent')
+            $("#id_is_cumulative_1").prop("checked", false);
+            // Although it's not displayed, when the measurement type is cumulative, the input should be set to true
+            // so the is_cumulative input can be submitted with the correct value
+            $("#id_is_cumulative_2").prop("checked", true);
         } else {
             $("#id_span_is_cumulative_header").text("OPTIONS FOR NUMBER (#) INDICATORS");
-            $("#id_is_cumulative_1").val(3);
-            $("#id_is_cumulative_2").val(2);
-            $("label[for=id_is_cumulative_1]").html("NON-CUMULATIVE (NC): Target period results are automatically calculated from data collected during the period. The Life of Program result is the sum of target period values.");
-            $("label[for=id_is_cumulative_2]").html("CUMULATIVE (C): Target period results automatically include data from previous periods. The Life of Program result mirrors the latest period value.");
+            show_hide_cummulative_inputs('number')
+            $("#id_is_cumulative_1").prop("checked", true);
+            $("#id_is_cumulative_2").prop("checked", false);
+        }
+    }
 
+    function show_hide_cummulative_inputs(type) {
+        //d-flex overrides display settings, so we need to apply and unapply depending on visibility
+        if (type == 'number') {
+            $("#id_div_is_cumulative_section1").show();
+            $("#id_div_is_cumulative_section1").addClass("d-flex");
+            $("#id_div_is_cumulative_section2").show();
+            $("#id_div_is_cumulative_section2").addClass("d-flex");
+            $("#id_div_is_cumulative_section3").hide();
+            $("#id_div_is_cumulative_section3").removeClass("d-flex");
+        }
+        else {
+            $("#id_div_is_cumulative_section3").show();
+            $("#id_div_is_cumulative_section3").addClass("d-flex");
+            $("#id_div_is_cumulative_section1").hide();
+            $("#id_div_is_cumulative_section1").removeClass("d-flex");
+            $("#id_div_is_cumulative_section2").hide();
+            $("#id_div_is_cumulative_section2").removeClass("d-flex");
         }
     }
 
@@ -601,7 +618,8 @@
     */
     function toggleTargetsSumOrAvgRow(cumulative=null) {
         var is_cumulative = cumulative == null ? $("input[type='radio'][name='is_cumulative']:checked").val() : cumulative;
-        if (is_cumulative == 2) {
+        var uomType = $("#id_unit_of_measure_type_0").is(":checked") == true ? "number" : "percent";
+        if (is_cumulative == 2 || uomType == 'percent') {
             $("#pt_sum_targets").hide();
         } else {
             $("#pt_sum_targets").show();
@@ -620,13 +638,7 @@
     function updateAggregateRowValueAndLabel(cumulative=null) {
         toggleTargetsSumOrAvgRow();
         var unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
-        if (unit_of_measure_type == 2) {  // if unit_type is percent (%)
-            var targetsAvg = getTargetsAverage();
-            $("#id_span_label_targets_sum").text("{% trans 'Average of targets' %}");
-            $("#id_span_targets_sum").text(targetsAvg );
-            $("#id_span_targtsaggregate_percent_sign").text("%");
-            $("#id_span_loptarget_percent_sign").text("%");
-        } else { // if unit_type is Number (#)
+        if (unit_of_measure_type == 1) { // if unit_type is Number (#)
             var targetsSum = getTargetsSumAndNum()[0];
             $("#id_span_label_targets_sum").text("{% trans 'Sum of targets' %}");
             $("#id_span_targets_sum").text(targetsSum);
@@ -639,6 +651,13 @@
     $( document ).ready(function() {
         var unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
         togglePercentSymbol(unit_of_measure_type);
+        if (unit_of_measure_type == 2){
+            show_hide_cummulative_inputs('percent')
+        }
+        else {
+            show_hide_cummulative_inputs('number')
+        }
+
         toggleTargetsSumOrAvgRow();
     });
 

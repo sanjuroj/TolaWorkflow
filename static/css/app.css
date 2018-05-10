@@ -459,6 +459,12 @@ input[type=number]::-webkit-outer-spin-button {
     text-decoration: none;
 }
 
+#id_div_is_cumulative_section1,
+#id_div_is_cumulative_section2,
+#id_div_is_cumulative_section3 {
+    display: none;
+}
+
 /* END Indicator periodic target creation */
 
 

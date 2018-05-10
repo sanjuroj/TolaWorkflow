@@ -341,6 +341,13 @@
             }
             // $("html, body").animate({ scrollTop: $("#id_baseline").offset().top }, 'slow');
             show_hide_frequency_fields(true);
+            toggleTargetsSumOrAvgRow()
+            if ($("#id_unit_of_measure_type_1").is(":checked")) {
+                show_hide_cummulative_inputs('percent')
+            }
+            else {
+                show_hide_cummulative_inputs('number')
+            }
         });
     }
 
@@ -415,7 +422,6 @@
             }
         }
     }
-
 
     function getNewTargetBtnLabel(index) {
         var label = '';
