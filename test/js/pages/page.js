@@ -3,9 +3,10 @@
  * @module Page
  */
 class Page {
-  constructor() {
+  constructor () {
+    this.title = 'I Forgot to Change the Title'
   }
-  open(path) {
+  open (path) {
     browser.url(path)
   }
 }

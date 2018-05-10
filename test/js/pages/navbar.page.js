@@ -4,16 +4,17 @@
  * @module NavBar
  */
 import { browser } from 'webdriverio'
+
 class NavBar {
-  get TolaActivity() { return browser.$('a.navbar-brand') }
-  get Workflow() { return browser.$('=Workflow') }
-  get Indicators() {
-    if (! browser.isVisible('nav.navbar')) {
+  get TolaActivity () { return browser.$('a.navbar-brand') }
+  get Workflow () { return browser.$('=Workflow') }
+  get Indicators () {
+    if (!browser.isVisible('nav.navbar')) {
       browser.waitForVisible('nav.navbar')
     }
     return browser.$('ul.navbar-nav').$('=Indicators')
   }
-  get Reports() { return browser.$('=Reports') }
-  get UserProfile() { return browser.$('ul>li.dropdown>a') }
+  get Reports () { return browser.$('=Reports') }
+  get UserProfile () { return browser.$('ul>li.dropdown>a') }
 }
 export default new NavBar()
