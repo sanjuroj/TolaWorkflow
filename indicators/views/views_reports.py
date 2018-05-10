@@ -630,10 +630,12 @@ class IPTT_ReportView(TemplateView):
         context = self.get_context_data(**kwargs)
         # if user has not specified a start_date/enddates already then set it so the filter form
         # shows the program reporting start_date
-        if 'start_date' not in self.filter_form_initial_data:
+        if 'start_date' not in self.filter_form_initial_data \
+                or self.filter_form_initial_data['start_date'] in ['None', None, '']:
             self.filter_form_initial_data['start_date'] = context['start_date']
 
-        if 'end_date' not in self.filter_form_initial_data:
+        if 'end_date' not in self.filter_form_initial_data \
+                or self.filter_form_initial_data['end_date'] in ['None', None, '']:
             self.filter_form_initial_data['end_date'] = context['end_date']
 
         form_kwargs = {'request': request, 'program': context['program']}
@@ -646,11 +648,14 @@ class IPTT_ReportView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         filterdata = request.POST.copy()
+        # no need to include this token in querystring
         del(filterdata['csrfmiddlewaretoken'])
         url_kwargs = {
             'program_id': filterdata['program'],
             'reporttype': kwargs['reporttype'],
         }
+        # do not include it in the querystring because it is already part of the url kwargs
+        del filterdata['program']
         redirect_url = "{}?{}".format(reverse_lazy('iptt_report', kwargs=url_kwargs),
                                       filterdata.urlencode())
         return HttpResponseRedirect(redirect_url)
