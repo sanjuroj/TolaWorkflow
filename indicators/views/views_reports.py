@@ -479,7 +479,7 @@ class IPTT_ReportView(TemplateView):
         self.filter_form_initial_data = {}
         for k in formdata:
             v = formdata.getlist(k)
-            if k == 'csrfmiddlewaretoken':
+            if k == 'csrfmiddlewaretoken' or k == 'program':
                 continue
             if isinstance(v, list) and len(v) == 1:
                 v = v[0]
@@ -498,6 +498,29 @@ class IPTT_ReportView(TemplateView):
             # print("{} = {}".format(k, v))
             self.filter_form_initial_data[k] = v
 
+    def _get_filters(self, data):
+        filters = {}
+
+        # 'level__in': data['level'],
+        # 'sector__in': data['sector'],
+        # 'indicator_type__in': data['ind_type'],
+        # 'collecteddata__site__in': data['site'],
+        # 'id__in': data['indicators'],
+        # # 'start_date': None, 'end_date': None,
+        # # 'timeframe': None, 'targetperiods': None, 'timeperiods': None
+
+        if 'level' in data:
+            filters['level__in'] = data['level']
+        if 'sector' in data:
+            filters['sector__in'] = data['sector']
+        if 'ind_type' in data:
+            filters['indicator_type__in'] = data['ind_type']
+        if 'site' in data:
+            filters['collecteddata__site__in'] = data['site']
+        if 'indicators' in data:
+            filters['id__in'] = data['indicators'] if isinstance(data['indicators'], list) else [data['indicators']]
+        return filters
+
     def get_context_data(self, **kwargs):
         context = super(IPTT_ReportView, self).get_context_data(**kwargs)
         reporttype = kwargs.get('reporttype')
@@ -511,7 +534,8 @@ class IPTT_ReportView(TemplateView):
             return context
 
         self._update_filter_form_initial(self.request.GET)
-        self.filter_form_initial_data['program'] = program.id
+        filters = self._get_filters(self.filter_form_initial_data)
+        print(filters)
 
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
             period = self.filter_form_initial_data[self.REPORT_TYPE_TIMEPERIODS]
@@ -527,7 +551,7 @@ class IPTT_ReportView(TemplateView):
         # (monthly, quarterly, tri-annually, seminu-annualy, and yearly) for each indicator
         lastlevel = Level.objects.filter(indicator__id=OuterRef('pk')).order_by('-id')
         last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-id')
-        indicators = Indicator.objects.filter(program__in=[program_id])\
+        indicators = Indicator.objects.filter(program__in=[program_id], **filters) \
             .annotate(actualsum=Sum('collecteddata__achieved'),
                       actualavg=Avg('collecteddata__achieved'),
                       lastlevel=Subquery(lastlevel.values('name')[:1]),
@@ -603,7 +627,6 @@ class IPTT_ReportView(TemplateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        # reporttype = kwargs.get('reporttype')
         context = self.get_context_data(**kwargs)
         # if user has not specified a start_date/enddates already then set it so the filter form
         # shows the program reporting start_date
