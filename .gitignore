@@ -21,6 +21,8 @@ build
 *.log
 
 # Testing noise
+package-lock.json
+node_modules/
 test/js/*.jar
 test/js/chromedriver
 test/js/config.json
