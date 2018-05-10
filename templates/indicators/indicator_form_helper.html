@@ -550,14 +550,14 @@
     function toggleCummulativeOptions(unit_of_measure_type) {
         // the top option is always the default option
         if (unit_of_measure_type == 2) {
-            $("#id_span_is_cumulative_header").text("PERCENTAGE (%) INDICATORS");
+            $("#id_span_is_cumulative_header h4").text("{% trans "PERCENTAGE (%) INDICATORS" %}");
             show_hide_cummulative_inputs('percent')
             $("#id_is_cumulative_1").prop("checked", false);
             // Although it's not displayed, when the measurement type is cumulative, the input should be set to true
             // so the is_cumulative input can be submitted with the correct value
             $("#id_is_cumulative_2").prop("checked", true);
         } else {
-            $("#id_span_is_cumulative_header").text("OPTIONS FOR NUMBER (#) INDICATORS");
+            $("#id_span_is_cumulative_header h4").text("{% trans "OPTIONS FOR NUMBER (#) INDICATORS" %}");
             show_hide_cummulative_inputs('number')
             $("#id_is_cumulative_1").prop("checked", true);
             $("#id_is_cumulative_2").prop("checked", false);
