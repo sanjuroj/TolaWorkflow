@@ -29,7 +29,7 @@ function clickExportAllButton(fileName) {
   browser.scroll(0, 5000);
   button.click();
 }
- 
+
 /**
  * Click the Indicators dropdown button
  * @returns Nothing
@@ -128,7 +128,7 @@ function createBasicIndicator() {
   saveNewIndicator();
 }
 
-/** 
+/**
  * Delete the first indicator for the first program currently displayed
  * on the screen
  * @param {string} indName This parameter is currently ignored but reserved
@@ -146,7 +146,7 @@ function deleteIndicator(indName = 'default') {
   confirmBtn.click();
 }
 
-/** 
+/**
  * Edit the first indicator for the first program currently displayed
  * on the screen
  * @param {string} indName This parameter is currently ignored but reserved
@@ -230,7 +230,7 @@ function getIndicatorsDropdownList() {
 function getProgramIndicatorsTableCount(targetId) {
   Util.waitForAjax();
 
-  let toplevel = browser.$('div#toplevel_div');
+  let toplevel = browser.$('div#div-id-indicator-list');
   let tableDiv = toplevel.$('div'+targetId);
   let table = tableDiv.$(targetId).$('table.hiddenTable');
   let rows = table.$$('tbody>tr>td>a');
@@ -246,7 +246,7 @@ function getProgramIndicatorsTableCount(targetId) {
 
 /**
  * Get a list of the program name in the Programs dropdown.
- * @returns {Array<string>} an array of the text strings in the Programs 
+ * @returns {Array<string>} an array of the text strings in the Programs
  * dropdown menu
  */
 function getProgramsDropdownList() {
@@ -267,7 +267,7 @@ function getProgramsDropdownList() {
  * program names in the programs table
  */
 function getProgramsTable() {
-  let rows = browser.$('div#toplevel_div').$$('div.card');
+  let rows = browser.$('div#div-id-indicator-list').$$('div.card');
   let programs = new Array();
   for(let row of rows) {
   let s = row.getText();

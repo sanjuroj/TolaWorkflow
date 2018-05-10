@@ -6,7 +6,7 @@
 
 {% include "indicators/filter.html" %}
 <br>
-<div id="toplevel_div">
+<div id="div-id-indicator-list">
     {% for program in programs %}
         <div class='card'>
             <div class='card-header'>
@@ -194,7 +194,7 @@
     })
 
     // Open the CollectDataUpdate form in a modal
-    $("#toplevel_div").on("click", ".collecteddata-link", function(e) {
+    $("#div-id-indicator-list").on("click", ".collecteddata-link", function(e) {
         e.preventDefault();
         var url = $(this).attr("href");
         url += "?modal=1";
@@ -207,7 +207,7 @@
 
 
     // Open the IndicatorUpdate Form in a modal
-    $("#toplevel_div").on("click", ".indicator-link", function(e) {
+    $("#div-id-indicator-list").on("click", ".indicator-link", function(e) {
         e.preventDefault();
         var url = $(this).attr("href");
         url += "?modal=1";
