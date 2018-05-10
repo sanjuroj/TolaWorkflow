@@ -500,25 +500,26 @@ class IPTT_ReportView(TemplateView):
 
     def _get_filters(self, data):
         filters = {}
-
-        # 'level__in': data['level'],
-        # 'sector__in': data['sector'],
-        # 'indicator_type__in': data['ind_type'],
-        # 'collecteddata__site__in': data['site'],
-        # 'id__in': data['indicators'],
-        # # 'start_date': None, 'end_date': None,
-        # # 'timeframe': None, 'targetperiods': None, 'timeperiods': None
-
-        if 'level' in data:
+        try:
             filters['level__in'] = data['level']
-        if 'sector' in data:
+        except KeyError:
+            pass
+        try:
             filters['sector__in'] = data['sector']
-        if 'ind_type' in data:
+        except KeyError:
+            pass
+        try:
             filters['indicator_type__in'] = data['ind_type']
-        if 'site' in data:
+        except KeyError:
+            pass
+        try:
             filters['collecteddata__site__in'] = data['site']
-        if 'indicators' in data:
+        except KeyError:
+            pass
+        try:
             filters['id__in'] = data['indicators'] if isinstance(data['indicators'], list) else [data['indicators']]
+        except KeyError:
+            pass
         return filters
 
     def get_context_data(self, **kwargs):
@@ -535,16 +536,15 @@ class IPTT_ReportView(TemplateView):
 
         self._update_filter_form_initial(self.request.GET)
         filters = self._get_filters(self.filter_form_initial_data)
-        print(filters)
 
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
             period = self.filter_form_initial_data[self.REPORT_TYPE_TIMEPERIODS]
         else:
             period = self.filter_form_initial_data[self.REPORT_TYPE_TARGETPERIODS]
 
-        if 'numrecentperiods' in self.filter_form_initial_data:
+        try:
             num_recents = self.filter_form_initial_data['numrecentperiods']
-        else:
+        except KeyError:
             num_recents = 0
 
         # calculate aggregated actuals (sum, avg, last) per reporting period
