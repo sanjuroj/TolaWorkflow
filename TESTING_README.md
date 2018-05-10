@@ -22,10 +22,7 @@ If you would like to generate coverage reports locally you will need to install 
 python coverage module http://coverage.readthedocs.io/en/coverage-4.5.1/install.html
 
 This readme will go over installing on linux for other opperating systems please
-see the documention linked above. If you are really having trouble you can contact
-sparky at davila@mercycorps.org OR my personal email sparkytwobillion@gmail.com.
-
-I will provide what support I can.
+see the documention linked above.
 
 From the linux commandline installing the coverage module is pretty simple
 

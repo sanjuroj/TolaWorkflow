@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime
 import datetime as dt
 from django.core.urlresolvers import reverse_lazy
-from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Min, Max, DecimalField, Value
+from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Min, Max
 from django.views.generic import TemplateView, FormView
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect
@@ -76,8 +76,9 @@ class IPTTReportQuickstartView(FormView):
         timeframe = form.cleaned_data.get('timeframe')
         redirect_url = reverse_lazy('iptt_report', kwargs={'program_id': program.id, 'reporttype': prefix})
 
-        redirect_url = "{}?period={}&timeframe={}&numrecentperiods={}".format(
-            redirect_url, period, timeframe, num_recents)
+        redirect_url = "{}?{}={}&timeframe={}".format(redirect_url, prefix, period, timeframe)
+        if num_recents:
+            redirect_url = "{}&numrecentperiods={}".format(redirect_url, num_recents)
         return HttpResponseRedirect(redirect_url)
 
     def form_invalid(self, form, **kwargs):
@@ -106,6 +107,7 @@ class IPTT_ReportView(TemplateView):
     def __init__(self, **kwars):
         self.annotations = {}
         self.reporttype = None
+        self.filter_form_initial_data = {}
 
     @staticmethod
     def _get_num_months(period):
@@ -473,20 +475,33 @@ class IPTT_ReportView(TemplateView):
 
         return (start_date, end_date, num_periods)
 
+    def _update_filter_form_initial(self, formdata):
+        self.filter_form_initial_data = {}
+        for k in formdata:
+            v = formdata.getlist(k)
+            if k == 'csrfmiddlewaretoken':
+                continue
+            if isinstance(v, list) and len(v) == 1:
+                v = v[0]
+
+            if k == self.REPORT_TYPE_TIMEPERIODS or k == self.REPORT_TYPE_TARGETPERIODS:
+                try:
+                    v = int(v)
+                except ValueError:
+                    v = int(Indicator.ANNUAL)  # defaults to annual
+
+            if k == 'numrecentperiods':
+                try:
+                    v = int(v)
+                except ValueError:
+                    continue
+            # print("{} = {}".format(k, v))
+            self.filter_form_initial_data[k] = v
+
     def get_context_data(self, **kwargs):
         context = super(IPTT_ReportView, self).get_context_data(**kwargs)
         reporttype = kwargs.get('reporttype')
         program_id = kwargs.get('program_id')
-
-        try:
-            period = int(self.request.GET.get('period', Indicator.ANNUAL))
-        except ValueError:
-            period = Indicator.ANNUAL  # default to annual interval
-
-        try:
-            num_recents = int(self.request.GET.get('numrecentperiods', 0))
-        except ValueError:
-            num_recents = 0  # default to 0, which is all periods or targets
 
         try:
             program = Program.objects.get(pk=program_id)
@@ -494,6 +509,19 @@ class IPTT_ReportView(TemplateView):
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid program."))
             return context
+
+        self._update_filter_form_initial(self.request.GET)
+        self.filter_form_initial_data['program'] = program.id
+
+        if reporttype == self.REPORT_TYPE_TIMEPERIODS:
+            period = self.filter_form_initial_data[self.REPORT_TYPE_TIMEPERIODS]
+        else:
+            period = self.filter_form_initial_data[self.REPORT_TYPE_TARGETPERIODS]
+
+        if 'numrecentperiods' in self.filter_form_initial_data:
+            num_recents = self.filter_form_initial_data['numrecentperiods']
+        else:
+            num_recents = 0
 
         # calculate aggregated actuals (sum, avg, last) per reporting period
         # (monthly, quarterly, tri-annually, seminu-annualy, and yearly) for each indicator
@@ -563,13 +591,9 @@ class IPTT_ReportView(TemplateView):
                                 elif ind['is_cumulative'] is False:
                                     avg = float(ind["{}_avg".format(k)])
                                     ind[percent_met] = (avg/target) * 100
-                        except TypeError as e:
+                        except TypeError:
                             ind[percent_met] = None
-            # elif period == Indicator.MID_END:
-            #     if ind['unit_of_measure_type'] == Indicator.NUMBER and ind['is_cumulative'] is True:
-            #         ind['midend_sum'] = ind['Midline_sum'] + ind['Endline_sum']
 
-        context['period'] = period
         context['start_date'] = report_start_date
         context['end_date'] = report_end_date
         context['report_date_ranges'] = report_date_ranges
@@ -581,38 +605,29 @@ class IPTT_ReportView(TemplateView):
     def get(self, request, *args, **kwargs):
         # reporttype = kwargs.get('reporttype')
         context = self.get_context_data(**kwargs)
-        initial_data = {
-            'program': context['program'],
-            'start_date': context['start_date'],
-            'end_date': context['end_date'],
-            'timeframe': request.GET.get('timeframe'),
-            'numrecentperiods': request.GET.get('numrecentperiods'),
-            'targetperiods': request.GET.get('period'),
-            'timeperiods': request.GET.get('period'),
-        }
-        # print(initial_data)
+        # if user has not specified a start_date/enddates already then set it so the filter form
+        # shows the program reporting start_date
+        if 'start_date' not in self.filter_form_initial_data:
+            self.filter_form_initial_data['start_date'] = context['start_date']
 
-        context['form'] = IPTTReportFilterForm(initial=initial_data, request=request)
+        if 'end_date' not in self.filter_form_initial_data:
+            self.filter_form_initial_data['end_date'] = context['end_date']
+
+        form_kwargs = {'request': request, 'program': context['program']}
+        context['form'] = IPTTReportFilterForm(initial=self.filter_form_initial_data, **form_kwargs)
+
         context['report_wide'] = True
         if context.get('redirect', None):
             return HttpResponseRedirect(reverse_lazy('iptt_quickstart'))
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
-        form = IPTTReportFilterForm(request.POST, request=request)
-        if form.is_valid():
-            return self.form_valid(form, request, **kwargs)
-        elif not form.is_valid():
-            return self.form_invalid(form, request, **kwargs)
-
-    def form_valid(self, form, request, **kwargs):
-        context = self._generate_context(request, **kwargs)
-        context['form'] = form
-        context['report_wide'] = True
-        return self.render_to_response(context=context)
-
-    def form_invalid(self, form, request, **kwargs):
-        context = self._generate_context(request, **kwargs)
-        context['form'] = form
-        context['report_wide'] = True
-        return self.render_to_response(context=context)
+        filterdata = request.POST.copy()
+        del(filterdata['csrfmiddlewaretoken'])
+        url_kwargs = {
+            'program_id': filterdata['program'],
+            'reporttype': kwargs['reporttype'],
+        }
+        redirect_url = "{}?{}".format(reverse_lazy('iptt_report', kwargs=url_kwargs),
+                                      filterdata.urlencode())
+        return HttpResponseRedirect(redirect_url)
