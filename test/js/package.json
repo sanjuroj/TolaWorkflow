@@ -1,14 +1,16 @@
 {
     "scripts": {
-        "test": "mocha --require babel-register --es_staging --harmony --no-timeouts --retries 0",
-        "wdio": "node --require babel-register ./node_modules/.bin/wdio"
+        "test": "mocha --require babel-register --harmony --es_staging --use_strict --no-timeouts --retries 0",
+        "wdio": "node --require babel-register --harmony --es_staging --future --fast_math ./node_modules/.bin/wdio",
+        "lint": "node --require babel-register --harmony --es_staging --future --fast_math ./node_modules/.bin/eslint"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",
-        "babel-preset-env": "^1.6.1",
+        "babel-preset-env": "^1.7.0",
         "babel-register": "^6.26.0",
         "chai": "^4.1.2",
         "date-arithmetic": "^3.1.0",
+        "eslint": "^4.19.1",
         "jsdoc": "^3.5.5",
         "mocha": "^5.1.1",
         "selenium-webdriver": "^4.0.0-alpha.1",
@@ -19,7 +21,7 @@
         "webdriverio": "^4.12.0"
     },
     "dependencies": {
-        "npm": "^6.0.0",
+        "npm": "^6.0.1",
         "readable-stream": "^2.3.6",
         "string_decoder": "^1.1.1"
     },
