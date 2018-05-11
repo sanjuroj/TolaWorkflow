@@ -222,7 +222,7 @@ function getNumTargetPeriodsErrorHint () {
  * "Delete" button objects
  */
 function getProgramIndicatorDeleteButtons () {
-  let link = browser.$('div#toplevel_div').$('div.card-body').$('a')
+  let link = browser.$('div#div-id-indicator-list').$('div.card-body').$('a')
   let dataTarget = link.getAttribute('data-target')
   Util.waitForAjax()
   let table = browser.$('div' + dataTarget).$('table')
@@ -237,7 +237,7 @@ function getProgramIndicatorDeleteButtons () {
  * "Edit" button objects
  */
 function getProgramIndicatorEditButtons () {
-  let link = browser.$('div#toplevel_div').$('div.card-body').$('a')
+  let link = browser.$('div#div-id-indicator-list').$('div.card-body').$('a')
   let dataTarget = link.getAttribute('data-target')
   Util.waitForAjax()
   let table = browser.$('div' + dataTarget).$('table')
@@ -253,7 +253,7 @@ function getProgramIndicatorEditButtons () {
  */
 // FIXME: should probably returns linkage to all the buttons and links?
 function getProgramIndicatorsTable () {
-  let link = browser.$('div#toplevel_div').$('div.card-body').$('a')
+  let link = browser.$('div#div-id-indicator-list').$('div.card-body').$('a')
   let dataTarget = link.getAttribute('data-target')
   Util.waitForAjax()
   let table = browser.$('div' + dataTarget).$('table')
@@ -269,7 +269,7 @@ function getProgramIndicatorsTable () {
  */
 // FIXME: should probably returns linkage to all the buttons and links?
 function getProgramIndicatorsTableCount () {
-  let link = browser.$('div#toplevel_div').$('div.card-body').$('a')
+  let link = browser.$('div#div-id-indicator-list').$('div.card-body').$('a')
   let dataTarget = link.getAttribute('data-target')
   Util.waitForAjax()
   let table = browser.$('div' + dataTarget).$('table')
@@ -283,7 +283,7 @@ function getProgramIndicatorsTableCount () {
  * which are actually anchor (<a />) elements, from the programs table
  */
 function getProgramIndicatorButtons () {
-  let rows = browser.$('div#toplevel_div').$$('div.card-body')
+  let rows = browser.$('div#div-id-indicator-list').$$('div.card-body')
   let buttons = []
   for (let row of rows) {
     buttons.push(row.$('*=Indicators'))
@@ -297,7 +297,7 @@ function getProgramIndicatorButtons () {
  * program names in the programs table
  */
 function getProgramsTable () {
-  let rows = browser.$('div#toplevel_div').$$('div.panel-heading')
+  let rows = browser.$('div#div-id-indicator-list').$$('div.panel-heading')
   let programs = []
   for (let row of rows) {
     programs.push(row.$('h4').getText())

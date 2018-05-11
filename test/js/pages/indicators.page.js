@@ -226,7 +226,7 @@ function getIndicatorsDropdownList () {
 function getProgramIndicatorsTableCount (targetId) {
   Util.waitForAjax()
 
-  let toplevel = browser.$('div#toplevel_div')
+  let toplevel = browser.$('div#div-id-indicator-list')
   let tableDiv = toplevel.$('div' + targetId)
   let table = tableDiv.$(targetId).$('table.hiddenTable')
   let rows = table.$$('tbody>tr>td>a')
@@ -263,8 +263,9 @@ function getProgramsDropdownList () {
  * @returns {Array<string>} returns an array of the text strings of the
  * program names in the programs table
  */
+
 function getProgramsTable () {
-  let rows = browser.$('div#toplevel_div').$$('div.card')
+  let rows = browser.$('div#div-id-indicator-list').$$('div.card')
   let programs = []
   for (let row of rows) {
     let s = row.getText()

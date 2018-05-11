@@ -50,18 +50,15 @@
 }
 
 .help-link,
-.help-link:hover {
+.help-link:hover,
+.help-link:active,
+.help-link:focus {
     color: #54585A;
     font-size: .875rem;
 }
 
 .help-link:hover {
     text-decoration: underline;
-}
-
-.text-muted-footer,
-.text-muted-footer:hover {
-    color: #54585A;
 }
 
 .filter {
@@ -455,10 +452,6 @@ input[type=number]::-webkit-outer-spin-button {
     border: 1px solid #B8BABD;
 }
 
-#addNewPeriodicTarget:hover {
-    text-decoration: none;
-}
-
 #id_div_is_cumulative_section1,
 #id_div_is_cumulative_section2,
 #id_div_is_cumulative_section3 {
@@ -466,6 +459,48 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 /* END Indicator periodic target creation */
+
+
+/* START Indicator list page css */
+
+#div-id-indicator-list .card-header {
+    background-color: #54585A;
+    color: #FFFFFF;
+}
+
+
+#div-id-indicator-list .card-body {
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+}
+
+#div-id-indicator-list .card-header .program-name {
+    width: 78%;
+}
+
+.btn-indicator-expand,
+.btn-indicator-expand:active,
+.btn-indicator-expand:hover,
+.btn-indicator-expand:focus {
+    padding: .001rem;
+    color: #54585A;
+}
+
+.btn-white,
+.btn-white:hover,
+.btn-white:active,
+.btn-white:focus {
+    color: #FFFFFF;
+}
+
+.div-expand-symbol {
+    width: .7rem;
+    display: inline-block;
+}
+
+/* END Indicator list page css */
+
+
 
 
 .blink {
