@@ -7,8 +7,7 @@ import Util from '../lib/testutil'
 import { browser } from 'webdriverio'
 
 class IpttPage extends Page {
-
-  get title() {
+  get title () {
     browser.waitForVisible('nav.navbar')
     let h2 = browser.$('h2.mt-2.mb-3.mx-3')
     return h2.getText()
@@ -20,58 +19,57 @@ class IpttPage extends Page {
    * report as a clickable element
    * @returns {FIXME} A clickable object for the dropdown
    */
-  get IndicatorOverviewProgram() {
+  get IndicatorOverviewProgram () {
     return browser.$('select#id_timeperiods-program')
   }
 
-  get IndicatorOverviewProgramList() {
+  get IndicatorOverviewProgramList () {
   }
 
-  get IndicatorOverviewTimePeriods() {
+  get IndicatorOverviewTimePeriods () {
     return browser.$('select#id_timeperiods-timeperiods')
   }
 
-  get IndicatorOverviewTimePeriodsList() {
+  get IndicatorOverviewTimePeriodsList () {
   }
 
-  get IndicatorOverviewTimeFrame() {
+  get IndicatorOverviewTimeFrame () {
     return browser.$('input[name="timeperiods-timeframe"]')
   }
 
-  get IndicatorOverviewNumRecent() {
+  get IndicatorOverviewNumRecent () {
     return browser.$('input#id_timeperiods-numrecentperiods')
   }
 
-  get IndicatorOverviewViewReport() {
+  get IndicatorOverviewViewReport () {
     return browser.$('button#id_submit_timeperiods_button')
   }
 
-  set IndicatorOverviewProgram(val) {
+  set IndicatorOverviewProgram (val) {
     let elem = browser.$('select[name="timeperiods-program"]')
     elem.click()
-    //FIXME: Hard-coded value
+    // FIXME: Hard-coded value
     elem.selectByValue(452)
     elem.click()
   }
 
-  set IndicatorOverviewTimeFrame(val) {
-    if (val == 'Show all') {
+  set IndicatorOverviewTimeFrame (val) {
+    if (val === 'Show all') {
       browser.$('div#div_id_timeperiods-timeframe_0').click()
-    } else if (val == 'Most recent') {
+    } else if (val === 'Most recent') {
       browser.$('div#div_id_timeperiods-timeframe_1').click()
     }
   }
 
-  set IndicatorOverviewTimePeriods(val) {
+  set IndicatorOverviewTimePeriods (val) {
     let elem = browser.$('select[name="timeperiods-timeperiods"]')
     elem.click()
     elem.selectByVisibleText(val)
     elem.click()
   }
 
-
   // IPTT: Program target overview quickstart
-  get TargetOverviewProgram() {
+  get TargetOverviewProgram () {
     let div = browser.$('div#div_id_targets_program')
     // Yeah, the select2 widget does bizarre stuff to HTML markup
     return div.$('span.select2-selection')
@@ -83,64 +81,64 @@ class IpttPage extends Page {
    * @returns {FIXME} the target periods dropdown as a clickable
    * object
    */
-  get TargetOverviewTargetPeriods() {
+  get TargetOverviewTargetPeriods () {
     let div = browser.$('div#div_id_targetperiodss')
     return div.$('select#id_targetperiods-targetperiods')
   }
 
-  get TargetOverviewTargetPeriodsList() {
+  get TargetOverviewTargetPeriodsList () {
   }
 
-  get TargetOverviewTimeFrame() {
+  get TargetOverviewTimeFrame () {
     let div = browser.$('input[name="targetperiods-timeframe"]')
     return div.$('input[name="targetperiods-timeframe"]')
   }
 
-  get TargetOverviewNumRecent() {
+  get TargetOverviewNumRecent () {
     return browser.$('input#id_targetperiods-numrecentperiods')
   }
 
-  get TargetOverviewViewReport() {
+  get TargetOverviewViewReport () {
     return browser.$('button#id_submit_targetperiods_button')
   }
 
-  set TargetOverviewProgram(val) {
+  set TargetOverviewProgram (val) {
     let div = browser.$('div#div_id_targets_program')
     let select = div.$('select[name="targetperiods-program"]')
     select.selectByIndex(val)
   }
 
-  set TargetOverviewTimeFrame(val) {
-    if (val == 'Show all') {
+  set TargetOverviewTimeFrame (val) {
+    if (val === 'Show all') {
       browser.$('div#div_id_targetperiods-timeframe_0').click()
-    } else if (val == 'Most recent') {
+    } else if (val === 'Most recent') {
       browser.$('div#div_id_targetperiods-timeframe_1').click()
     }
   }
 
-  set TargetOverviewTargetPeriods(val) {
+  set TargetOverviewTargetPeriods (val) {
     let elem = browser.$('select[name="targetperiods-targetperiods"]')
     elem.click()
     elem.selectByVisibleText(val)
     elem.click()
   }
 
-  open() {
+  open () {
     let parms = Util.readConfig()
     super.open(parms.baseurl + 'indicators/iptt_quickstart')
   }
 
-  quickstart(source) {
+  quickstart (source) {
     browser.waitForVisible('div#id_div_top_quickstart_iptt')
     let cards = browser.$$('div.card')
-    if (source == 'indicator') {
+    if (source === 'indicator') {
       return cards[0].$('h5.card-title').getText()
-    } else if (source == 'target') {
+    } else if (source === 'target') {
       return cards[1].$('h5.card-title').getText()
     }
   }
 
-  refresh() {
+  refresh () {
     return browser.reload()
   }
 }
