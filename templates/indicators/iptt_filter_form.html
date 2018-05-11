@@ -1,6 +1,6 @@
 {% load widget_tweaks %}
 {% load i18n %}
-<style>
+<style type="text/css">
   .ui-datepicker-calendar {
     display: none;
   }
@@ -61,7 +61,7 @@
           <div class="input-group input-group-sm">
             <input type="text"
                    name="{{ form.start_date.name }}"
-                   class="form-control month-picker"
+                   class="form-control"
                    value="{{ form.start_date.value }}"
                    id="{{ form.start_date.auto_id }}">
             <div class="input-group-append">
@@ -79,7 +79,7 @@
           <div class="input-group input-group-sm">
             <input type="text"
                  name="{{ form.end_date.name }}"
-                 class="form-control month-picker"
+                 class="form-control"
                  value="{{ form.end_date.value }}"
                  id="{{ form.end_date.auto_id }}">
             <div class="input-group-append">
@@ -153,19 +153,38 @@
 
 <script>
   $(document).ready(function () {
-    $('.month-picker').datepicker({
+    let start_date_id = `{{ form.start_date.auto_id }}`;
+    let end_date_id = `{{ form.end_date.auto_id }}`;
+    $(`#${start_date_id}`).val(formatDate($(`#${start_date_id}`).val()));
+    $(`#${end_date_id}`).val(formatDate($(`#${end_date_id}`).val()));
+
+    $(`#${start_date_id}, #${end_date_id}`).datepicker({
       changeMonth: true,
       changeYear: true,
       showButtonPanel: true,
-      dateFormat: 'MM d, yy',
+      dateFormat: 'M d, yy',
       onClose: function (dateText, inst) {
-        $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+        let month = inst.selectedMonth;
+        let year = inst.selectedYear;
+        $(this).datepicker('setDate', new Date(year, month, 1));
+      },
+      beforeShow: function (input, inst) {
+        if ((datestr = $(this).val()).length > 0) {
+          year = datestr.substring(datestr.length - 4, datestr.length);
+          month = jQuery.inArray(datestr.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
+          $(this).datepicker('option', 'defaultDate', new Date(year, month, 1));
+          $(this).datepicker('setDate', new Date(year, month, 1));
+        }
+        var other = this.id == start_date_id ? `#${end_date_id}` : `#${start_date_id}`;
+        var option = this.id == start_date_id ? "maxDate" : "minDate";
+        if ((selectedDate = $(other).val()).length > 0) {
+          year = selectedDate.substring(selectedDate.length - 4, selectedDate.length);
+          month = jQuery.inArray(selectedDate.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
+          $(this).datepicker("option", option, new Date(year, month, 1));
+        }
       }
     });
-    let start_date_field = $("#id_start_date");
-    let end_date_field = $("#id_end_date");
-    start_date_field.val(formatDate(start_date_field.val()));
-    end_date_field.val(formatDate(end_date_field.val()));
+
     $("#id_level").select2({"placeholder": "All levels"});
     $("#id_ind_type").select2({"placeholder": "All types"});
     $("#id_sector").select2({"placeholder": "All sectors"});
