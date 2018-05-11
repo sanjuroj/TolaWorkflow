@@ -493,6 +493,10 @@ input[type=number]::-webkit-outer-spin-button {
     color: #FFFFFF;
 }
 
+.div-expand-symbol {
+    width: .7rem;
+    display: inline-block;
+}
 
 /* END Indicator list page css */
 

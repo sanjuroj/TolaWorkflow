@@ -27,13 +27,14 @@
             {% else %}
                 <div class='card-body d-flex justify-content-between align-items-center'>
                     <a
-                        id="id_btnOpenindicatorsForProgramId_{{ program.id}}"
+                        id="id_btnOpenindicatorsForProgramId_{{ program.id }}"
                         href="#"
                         onclick="loadIndicators({{ program.id }}, {{ indicator_id }}, {{ type_id }})"
                         class="btn btn-link btn-indicator-expand"
                         data-toggle="collapse"
                         data-target="#hidden-{{ program.id }}">
-                            <i class="fas fa-caret-right"></i>
+                            <!-- Need the div to make ensure rotating symbol doesn't push text to the right -->
+                            <div class="div-expand-symbol"><i class="fas fa-caret-right"></i></div>
                             {{ program.indicator_count }}
                             {% if program.indicator_count == 1 %}
                                 {% trans "program indicator" %}
@@ -41,10 +42,12 @@
                                 {% trans "program indicators" %}
                             {% endif %}
                     </a>
-                    <span class="small">
-                        <strong><a href="/indicators/program_report/{{ program.id }}/">Indicator Plan</a></strong>
-                        &nbsp&nbsp|&nbsp&nbsp
-                        <strong><a href="">Reporting Period</a></strong>
+                    <span class="small d-flex align-items-center">
+                        <strong>
+                            <a class="pr-1" href="/indicators/program_report/{{ program.id }}/">Indicator Plan</a>
+                        </strong>
+                        |
+                        <strong><a class="pl-1" href="">Reporting Period</a></strong>
                     </span>
                 </div>
                 <div id="hidden-{{ program.id }}" class="collapse">
@@ -130,13 +133,13 @@
             $('#hidden-' + program).html(data);
             $("body").removeClass("modal-open");
           });
-        $('#hidden-' + program).on('shown', function () {
-           $(".icon-chevron-down").removeClass("icon-chevron-down").addClass("icon-chevron-up");
-        });
 
-        $('#hidden-' + program).on('hidden', function () {
-           $(".icon-chevron-up").removeClass("icon-chevron-up").addClass("icon-chevron-down");
-        });
+        let icon = $(`#id_btnOpenindicatorsForProgramId_${program}`).find("svg");
+            if (icon.hasClass('fa-caret-right')) {
+              icon.attr('class', 'fa-caret-down');
+            } else {
+              icon.attr('class', 'fa-caret-right');
+            }
     };
 
     $("#indicator_collecteddata_div").on("click", "#targetsTabLink", function(e){
