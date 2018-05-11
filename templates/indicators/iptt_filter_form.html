@@ -1,6 +1,10 @@
 {% load widget_tweaks %}
 {% load i18n %}
-
+<style>
+  .ui-datepicker-calendar {
+    display: none;
+  }
+</style>
 <nav id="id_iptt_report_filter" style="font-size: .875rem;">
   <form id="id_form_indicator_filter" method="POST" novalidate>
     {% csrf_token %}
@@ -57,7 +61,7 @@
           <div class="input-group input-group-sm">
             <input type="text"
                    name="{{ form.start_date.name }}"
-                   class="form-control"
+                   class="form-control month-picker"
                    value="{{ form.start_date.value }}"
                    id="{{ form.start_date.auto_id }}">
             <div class="input-group-append">
@@ -75,7 +79,7 @@
           <div class="input-group input-group-sm">
             <input type="text"
                  name="{{ form.end_date.name }}"
-                 class="form-control"
+                 class="form-control month-picker"
                  value="{{ form.end_date.value }}"
                  id="{{ form.end_date.auto_id }}">
             <div class="input-group-append">
@@ -149,6 +153,15 @@
 
 <script>
   $(document).ready(function () {
+    $('.month-picker').datepicker({
+      changeMonth: true,
+      changeYear: true,
+      showButtonPanel: true,
+      dateFormat: 'MM d, yy',
+      onClose: function (dateText, inst) {
+        $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+      }
+    });
     let start_date_field = $("#id_start_date");
     let end_date_field = $("#id_end_date");
     start_date_field.val(formatDate(start_date_field.val()));

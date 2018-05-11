@@ -460,12 +460,14 @@ class IPTT_ReportView(TemplateView):
             # and only get the first indicator since indicators that share the same period
             # have the same set of periodic targets
             indicators = indicators.filter(target_frequency=period)[:1]
-
-            periodic_targets = PeriodicTarget.objects.filter(indicator=indicators[0].get('id'))\
-                .values('id', 'start_date', 'end_date')
-            start_date = periodic_targets.first()['start_date']
-            end_date = periodic_targets.last()['end_date']
-            num_periods = periodic_targets.count()
+            if indicators.count() > 0:
+                periodic_targets = PeriodicTarget.objects.filter(indicator=indicators[0].get('id'))\
+                    .values('id', 'start_date', 'end_date')
+                start_date = periodic_targets.first()['start_date']
+                end_date = periodic_targets.last()['end_date']
+                num_periods = periodic_targets.count()
+            else:
+                start_date, end_date, num_periods = (None, None, 0)
 
         if isinstance(start_date, dt.datetime):
             start_date = start_date.date()
