@@ -135,11 +135,11 @@
           });
 
         let icon = $(`#id_btnOpenindicatorsForProgramId_${program}`).find("svg");
-            if (icon.hasClass('fa-caret-right')) {
-              icon.attr('class', 'fa-caret-down');
-            } else {
-              icon.attr('class', 'fa-caret-right');
-            }
+        if (icon.hasClass('fa-caret-right')) {
+          icon.attr('class', 'fa-caret-down');
+        } else {
+          icon.attr('class', 'fa-caret-right');
+        }
     };
 
     $("#indicator_collecteddata_div").on("click", "#targetsTabLink", function(e){
