@@ -27,41 +27,41 @@ describe('IPTT: Program target overview quickstart', function() {
       }
     }    
   });
-   
+  
   it('should exist', function () {
     IpttPage.open();
     expect('Indicator Performance Tracking Table' === IpttPage.title);
     expect('Program target overview' === IpttPage.quickstart('target'));
   });
 
-  it('should have a Program dropdown', function() {
-    IpttPage.open();
-    IpttPage.TargetOverviewProgram.click();
+  it('should have a Target Periods dropdown', function() {
+    IpttPage.TargetOverviewTargetPeriods.click();
+    IpttPage.TargetOverviewTargetPeriods.click();
   });
 
-  it('should have a Target periods dropdown', function() {
-    IpttPage.TargetOverviewTargetPeriods.click();
+  it('should have a Program dropdown', function() {
+    IpttPage.TargetOverviewProgram.click();
+    IpttPage.TargetOverviewProgram.click();
   });
 
   it('should allow to select time frame', function() {
     let elem = IpttPage.TargetOverviewTimeFrame;
-    expect(elem != undefined);
-    expect(elem != null);
+    expect(undefined !== elem);
+    expect(null !== elem);
   });
 
   it('should default time frame to Show all', function() {
-    IpttPage.open();
-    // 1 == Show all periods
-    // 2 == Show N most recent periods
+    // 1 = Show all periods
+    // 2 = Show N most recent periods
     let val = IpttPage.TargetOverviewTimeFrame;
     expect(1 === val);
   });
 
-  //FIXME: get webdriver code out of test
   it('should have a View Report button', function() {
     IpttPage.open();
     let elem = IpttPage.TargetOverviewViewReport;
-    expect('View Report' === elem.getText());
+    expect(undefined !== elem);
+    expect(null !== elem);
 
   });
 

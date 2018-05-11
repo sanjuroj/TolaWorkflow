@@ -29,7 +29,7 @@
                         </td>
 
                         <td class="align-middle" align="right" width="150px">
-                            <span id="id_span_{{ pt.id }}" class="{% if indicator.unit_of_measure_type == 2 %}input-symbol-percent{% endif %}"">
+                            <span id="id_span_{{ pt.id }}" class="{% if indicator.unit_of_measure_type == 2 %}input-symbol-percent{% endif %}">
                                 <input
                                     type="number"
                                     id="pt-{{ pt.id }}"
@@ -92,7 +92,7 @@
                             <strong>
                                 <span id="id_span_loptarget">
                                     {{indicator.lop_target|floatformat:"-2" }}
-                                    <span id="id_span_loptarget_percent_sign">
+                                    <span id="id_span_loptarget_percent_sign" style="margin-left: -.20rem">
                                         {% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                                     </span>
                                 </span>
@@ -123,61 +123,49 @@
                             <strong>
                                 <span id="id_span_is_cumulative_header">
                                     {% if unit_type == 1 %}
-                                        {% trans "OPTIONS FOR NUMBER (#) INDICATORS" %}
+                                        <h4>{% trans "OPTIONS FOR NUMBER (#) INDICATORS" %}</h4>
                                     {% else %}
-                                        {% trans "OPTIONS FOR PERCENTAGE (%) INDICATORS" %}
+                                        <h4>{% trans "PERCENTAGE (%) INDICATORS" %}</h4>
                                     {% endif %}
                                 </span>
                             </strong>
                         </div>
-                        <div id="id_div_is_cumulative_section1" class="d-flex flex-row px-2 pb-2">
+                        <div id="id_div_is_cumulative_section1" class="flex-row px-2 pb-2">
                             <input
                                 type="radio"
                                 name="is_cumulative"
-                                value="{% if unit_type == 1 %}3{% else %}2{% endif %}"
+                                value="3"
                                 required
-                                {% if unit_type == 1 %}
-                                    {% if indicator.is_cumulative is None or indicator.is_cumulative is False %} checked {% endif %}
-                                {% else %}
-                                    {% if indicator.is_cumulative is True or indicator.is_cumulative is None %} checked {% endif %}
-                                {% endif %}
+                                {% if indicator.is_cumulative is None or indicator.is_cumulative is False %} checked {% endif %}
                                 class="form-control mr-1 mt-1"
                                 id="id_is_cumulative_1"
                                 style="width: 1.78rem;">
                             <label
                                 class="form-check-label"
                                 for="id_is_cumulative_1">
-                                {% if unit_type == 1 %}
-                                    {% trans "NON-CUMULATIVE (NC): Target period results are automatically calculated from data collected during the period. The Life of Program result is the sum of target period values." %}
-                                {% else %}
-                                    {% trans "CUMULATIVE (C): The Life of Program result mirrors the latest period value. No automatic calculations are performed with collected data." %}
-                                {% endif %}
+                                {% trans "NON-CUMULATIVE (NC): Target period results are automatically calculated from data collected during the period. The Life of Program result is the sum of target period values." %}
                             </label>
                         </div>
-
-                        <div id="id_div_is_cumulative_section2" class="d-flex flex-row px-2">
+                        <div id="id_div_is_cumulative_section2" class="flex-row px-2">
                             <input
                                 type="radio"
                                 name="is_cumulative"
-                                value="{% if unit_type == 1 %}2{% else %}3{% endif %}"
+                                value="2"
                                 required
-                                {% if unit_type == 1 %}
-                                    {% if indicator.is_cumulative is True %} checked {% endif %}
-                                {% else %}
-                                    {% if indicator.is_cumulative is False %} checked {% endif %}
-                                {% endif %}
+                                {% if indicator.is_cumulative is True %} checked {% endif %}
                                 class="form-control mr-1 mt-1"
                                 id="id_is_cumulative_2"
                                 style="width: 1.5rem;">
                             <label
                                 class="form-check-label"
                                 for="id_is_cumulative_2">
-                                {% if unit_type == 1 %}
-                                    {% trans "CUMULATIVE (C): Target period results automatically include data from previous periods. The Life of Program result mirrors the latest period value." %}
-                                {% else %}
-                                    {% trans "NON-CUMULATIVE (NC): The Life of Program result is the average of target period values. No other automatic calculations are performed." %}
-                                {% endif %}
+                                {% trans "CUMULATIVE (C): Target period results automatically include data from previous periods. The Life of Program result mirrors the latest period value." %}
                             </label>
+                        </div>
+                        <div id="id_div_is_cumulative_section3" class="flex-row px-2">
+                            <span class="form-check-label">
+                                {% trans "CUMULATIVE (C): The Life of Program result mirrors the latest period result. No calculations are performed with collected data." %}
+                            </span>
                         </div>
                     {% endwith %}
 

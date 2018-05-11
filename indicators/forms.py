@@ -249,6 +249,7 @@ class IPTTReportFilterForm(ReportFormCommon):
         program = kwargs.pop('program')
         super(IPTTReportFilterForm, self).__init__(*args, **kwargs)
         del self.fields['formprefix']
+        self.fields['program'].initial = program
         self.fields['sector'].queryset = Sector.objects.all()
         self.fields['level'].queryset = Level.objects.all()
         self.fields['ind_type'].queryset = IndicatorType.objects.all()

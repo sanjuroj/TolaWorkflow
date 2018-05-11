@@ -452,7 +452,14 @@ input[type=number]::-webkit-outer-spin-button {
     border: 1px solid #B8BABD;
 }
 
+#id_div_is_cumulative_section1,
+#id_div_is_cumulative_section2,
+#id_div_is_cumulative_section3 {
+    display: none;
+}
+
 /* END Indicator periodic target creation */
+
 
 /* START Indicator list page css */
 
@@ -460,6 +467,7 @@ input[type=number]::-webkit-outer-spin-button {
     background-color: #54585A;
     color: #FFFFFF;
 }
+
 
 #div-id-indicator-list .card-body {
     padding-top: .5rem;
@@ -487,6 +495,8 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 /* END Indicator list page css */
+
+
 
 
 .blink {

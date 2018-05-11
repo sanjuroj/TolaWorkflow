@@ -762,7 +762,7 @@ class CollectedData(models.Model):
         Program, blank=True, null=True, related_name="i_program",
         help_text=" ", verbose_name=_("Program"))
 
-    date_collected = models.DateTimeField(
+    date_collected = models.DateField(
         null=True, blank=True, help_text=" ", verbose_name=_("Date collected"))
 
     comment = models.TextField(
