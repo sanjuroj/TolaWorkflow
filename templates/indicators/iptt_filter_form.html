@@ -177,6 +177,8 @@
         }
         var other = this.id == start_date_id ? `#${end_date_id}` : `#${start_date_id}`;
         var option = this.id == start_date_id ? "maxDate" : "minDate";
+        $(`#${start_date_id}`).datepicker("option", "minDate", new Date(`{{start_date}}`));
+        $(`#${end_date_id}`).datepicker("option", "maxDate", new Date(`{{end_date}}`));
         if ((selectedDate = $(other).val()).length > 0) {
           year = selectedDate.substring(selectedDate.length - 4, selectedDate.length);
           month = jQuery.inArray(selectedDate.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
