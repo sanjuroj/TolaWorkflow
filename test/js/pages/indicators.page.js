@@ -6,9 +6,6 @@ import TargetsTab from '../pages/targets.page'
 import Util from '../lib/testutil'
 import { browser } from 'webdriverio'
 
-// Milliseconds
-const msec = 1000
-
 var parms = Util.readConfig()
 parms.baseurl += 'indicators/home/0/0/0'
 
@@ -27,8 +24,7 @@ parms.baseurl += 'indicators/home/0/0/0'
  */
 function clickExportAllButton (fileName) {
   let button = browser.$('button[type="submit"]')
-  let height = browser.getViewportSize('height')
-  browser.scroll(0, 5000)
+  browser.scroll('button[type="submit"]')
   button.click()
 }
 
@@ -70,7 +66,6 @@ function clickIndicatorTypeDropdown () {
  * @returns Nothing
  */
 function clickNewIndicatorButton () {
-  let progList = browser.$$('panel-heading>h4')
   browser.$('=New Indicator').click()
 }
 
