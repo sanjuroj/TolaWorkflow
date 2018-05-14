@@ -4,7 +4,6 @@
  */
 import TargetsTab from '../pages/targets.page'
 import Util from '../lib/testutil'
-import { browser } from 'webdriverio'
 
 var parms = Util.readConfig()
 parms.baseurl += 'indicators/home/0/0/0'

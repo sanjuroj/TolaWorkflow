@@ -1,6 +1,5 @@
 import LoginPage from '../pages/login.page'
 import Util from '../lib/testutil'
-import { browser, describe, it, before } from 'webdriverio'
 import { expect } from 'chai'
 
 describe('TolaActivity Login screen', function () {

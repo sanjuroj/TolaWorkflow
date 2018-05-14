@@ -1,8 +1,7 @@
 {
   "scripts": {
     "test": "mocha --require babel-register --harmony --es_staging --use_strict --no-timeouts",
-    "wdio": "node --require babel-register --harmony --es_staging --future ./node_modules/.bin/wdio",
-    "lint": "node --require babel-register --harmony --es_staging --future ./node_modules/.bin/eslint"
+    "wdio": "node --require babel-register --harmony --es_staging --future ./node_modules/.bin/wdio"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -10,7 +9,6 @@
     "babel-register": "^6.26.0",
     "chai": "^4.1.2",
     "date-arithmetic": "^3.1.0",
-    "eslint": "^4.19.1",
     "jsdoc": "^3.5.5",
     "mocha": "^5.1.1",
     "selenium-webdriver": "^4.0.0-alpha.1",

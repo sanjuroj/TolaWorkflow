@@ -4,7 +4,6 @@
  **/
 import Page from './page'
 import Util from '../lib/testutil'
-import { browser } from 'webdriverio'
 
 class IpttPage extends Page {
   get title () {

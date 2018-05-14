@@ -3,7 +3,6 @@
  * @module Targets
  */
 import Util from '../lib/testutil'
-import { browser } from 'webdriverio'
 const msec = 1000
 
 let parms = Util.readConfig()
