@@ -3,8 +3,8 @@ import Util from '../lib/testutil'
 import { expect } from 'chai'
 
 describe('TolaActivity Login screen', function () {
+  this.timeout(0)
   before(function () {
-    this.timeout(0)
     browser.windowHandleMaximize()
   })
 

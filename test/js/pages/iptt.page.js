@@ -19,7 +19,7 @@ class IpttPage extends Page {
    * @returns {FIXME} A clickable object for the dropdown
    */
   get IndicatorOverviewProgram () {
-    return browser.$('select#id_timeperiods-program')
+    return browser.$('span#select2-id_timeperiods-program-container')
   }
 
   get IndicatorOverviewProgramList () {
@@ -61,7 +61,7 @@ class IpttPage extends Page {
   }
 
   set IndicatorOverviewTimePeriods (val) {
-    let elem = browser.$('select[name="timeperiods-timeperiods"]')
+    let elem = browser.$('select#id_timeperiods-timeperiods')
     elem.click()
     elem.selectByVisibleText(val)
     elem.click()

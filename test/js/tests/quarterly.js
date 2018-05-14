@@ -6,9 +6,9 @@ import Util from '../lib/testutil';
 import { expect } from 'chai';
 
 describe('Quarterly target frequency', function() {
+  this.timeout(0);
   before(function() {
     // Disable timeouts
-    this.timeout(0);
     browser.windowHandleMaximize();
     let parms = Util.readConfig();
     

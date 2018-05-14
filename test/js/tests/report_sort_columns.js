@@ -6,9 +6,9 @@ import TargetsTab from '../pages/targets.page';
 import Util from '../lib/testutil';
 
 describe('Report filter panel', function() {
+  this.timeout(0);
   before(function() {
     // Disable timeouts
-    this.timeout(0);
     browser.windowHandleMaximize();
 
     let parms = Util.readConfig();

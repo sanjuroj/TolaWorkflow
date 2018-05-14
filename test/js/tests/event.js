@@ -6,8 +6,8 @@ import Util from '../lib/testutil';
 import { expect } from 'chai';
 
 describe('"Event" target frequency', function() {
+  this.timeout(0);
   before(function() {
-    this.timeout(0);
     browser.windowHandleMaximize();
     let parms = Util.readConfig();
 

@@ -8,9 +8,9 @@ import { expect } from 'chai';
  * Tests from mc/issues/119
  */
 describe('IPTT: Program indicator overview quickstart', function() {
+  this.timeout(0);
   before(function() {
     // Disable timeouts
-    this.timeout(0);
     browser.windowHandleMaximize();
     let parms = Util.readConfig();
 
@@ -35,11 +35,15 @@ describe('IPTT: Program indicator overview quickstart', function() {
   });
 
   it('should have Program dropdown', function() {
+    expect(undefined != IpttPage.IndicatorOverviewProgram);
+    expect(null != IpttPage.IndicatorOverviewProgram);
+    IpttPage.IndicatorOverviewProgram.click();
     IpttPage.IndicatorOverviewProgram.click();
   });
 
   it('should have a Time periods dropdown', function() {
-    IpttPage.IndicatorOverviewTimePeriods.click();
+    expect(undefined != IpttPage.IndicatorOverviewTimePeriods);
+    expect(null != IpttPage.IndicatorOverviewTimePeriods);
   });
 
   it('should allow to select time frame', function() {

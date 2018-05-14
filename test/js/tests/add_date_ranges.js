@@ -8,7 +8,6 @@ import { expect } from 'chai';
 
 describe('Adding target date ranges', function() {
   this.timeout(0);
-
   before(function() {
     // Disable timeouts
     browser.windowHandleMaximize();

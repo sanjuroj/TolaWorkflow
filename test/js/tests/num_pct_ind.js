@@ -10,9 +10,9 @@ import { expect } from 'chai';
  * Tests from mc/issues/114, mc/issues/117, and mc/issues/144
  */
 describe('Defining number and percent indicators', function() {
+  this.timeout(0);
   before(function() {
     // Disable timeouts
-    this.timeout(0);
     browser.windowHandleMaximize();
     let parms = Util.readConfig();
 
