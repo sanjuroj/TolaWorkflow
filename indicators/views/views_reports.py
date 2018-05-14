@@ -628,6 +628,8 @@ class IPTT_ReportView(TemplateView):
 
         context['start_date'] = report_start_date
         context['end_date'] = report_end_date
+        context['report_start_date'] = report_start_date
+        context['report_end_date'] = report_end_date
         context['report_date_ranges'] = periods_date_ranges
         context['indicators'] = indicators
         context['program'] = program
