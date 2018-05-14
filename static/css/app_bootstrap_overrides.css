@@ -85,7 +85,9 @@ body > .container {
     border-color: #00A49F;
     color: #FFFFFF;
     font-size: 1.125rem;
+    font-weight: bold;
     box-shadow: none;
+    text-transform: uppercase;
 }
 
 .btn-primary:not(:disabled):not(.disabled).active,
@@ -114,7 +116,9 @@ body > .container {
     border-color: #00A49F;
     color: #00A49F;
     font-size: 1.125rem;
+    font-weight: bold;
     box-shadow: none;
+    text-transform: uppercase;
 }
 
 .btn-secondary:not(:disabled):not(.disabled).active,
