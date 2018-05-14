@@ -65,7 +65,7 @@ function clickIndicatorTypeDropdown () {
  * @returns Nothing
  */
 function clickNewIndicatorButton () {
-  browser.$('=New Indicator').click()
+  browser.$('=Add indicator').click()
 }
 
 /**
