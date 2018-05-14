@@ -177,8 +177,8 @@
         }
         var other = this.id == start_date_id ? `#${end_date_id}` : `#${start_date_id}`;
         var option = this.id == start_date_id ? "maxDate" : "minDate";
-        $(`#${start_date_id}`).datepicker("option", "minDate", new Date(`{{start_date}}`));
-        $(`#${end_date_id}`).datepicker("option", "maxDate", new Date(`{{end_date}}`));
+        $(`#${start_date_id}`).datepicker("option", "minDate", new Date(`{{report_start_date}}`));
+        $(`#${end_date_id}`).datepicker("option", "maxDate", new Date(`{{report_end_date}}`));
         if ((selectedDate = $(other).val()).length > 0) {
           year = selectedDate.substring(selectedDate.length - 4, selectedDate.length);
           month = jQuery.inArray(selectedDate.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
@@ -192,5 +192,20 @@
     $("#id_sector").select2({"placeholder": "All sectors"});
     $("#id_site").select2({"placeholder": "All sites"});
     $("#id_indicators").select2({"placeholder": "All indicators"});
+
+    $("#id_form_indicator_filter").on("input", "#id_program", function (e) {
+      const program_id = $(this).val();
+      const site_profile = $("#id_site");
+      $.getJSON(`/api/siteprofile/?program=${program_id}`, function( data ){
+        site_profile.empty();
+        $.each(data, function(index, option){
+          console.log(`${index}, ${option.id}=${option.name}`);
+          site_profile.append($("<option></option>").attr("value", option.id).text(option.name));
+        });
+      });
+    });
+
+
+
   });
 </script>

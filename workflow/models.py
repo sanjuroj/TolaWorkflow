@@ -341,7 +341,7 @@ class Program(models.Model):
     public_dashboard = models.BooleanField(_("Enable Public Dashboard"), default=False)
 
     class Meta:
-        verbose_name=_("Program")
+        verbose_name = _("Program")
         ordering = ('name',)
 
     # on save add create date or update edit date
@@ -362,25 +362,9 @@ class Program(models.Model):
         return self.name
 
     def get_sites(self):
-        """Fetch a query set of sites associated with a given program
-
-            Notes:
-                Programs are associated via proxy to particular site profiles. The mapping is as follows:
-
-                Program => Indicator => CollectedData => SiteProfile
-            Args:
-                self
-
-            Returns:
-                QuerySet (SiteProfile) a query set of SiteProfiles associated with this program via the proxy of
-                    indicators and collected data
-
-        """
-
-
         indicator_ids = Indicator.objects.filter(program__in=[self.id]).values_list('id')
         collecteddata = CollectedData.objects.filter(indicator__id__in=indicator_ids)
-        return SiteProfile.objects.filter(collecteddata__id__in=collecteddata)
+        return SiteProfile.objects.filter(collecteddata__id__in=collecteddata).distinct()
 
 
 class ApprovalAuthority(models.Model):
