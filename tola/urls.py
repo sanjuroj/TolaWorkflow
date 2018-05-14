@@ -1,6 +1,16 @@
 from tola import views
 from tola.views import *
-from feed.views import *
+from feed.views import (
+    UserViewSet, ProgramViewSet, SectorViewSet, ProjectTypeViewSet, SiteProfileViewSet, OfficeViewSet,
+    CountryViewSet, AgreementViewSet, CompleteViewSet, IndicatorViewSet, ReportingFrequencyViewSet,
+    TolaUserViewSet, IndicatorTypeViewSet, ObjectiveViewSet, DisaggregationTypeViewSet, LevelViewSet,
+    ExternalServiceViewSet, ExternalServiceRecordViewSet, StrategicObjectiveViewSet, StakeholderViewSet,
+    StakeholderTypeViewSet, CapacityViewSet, EvaluateViewSet, ProfileTypeViewSet, ProvinceViewSet,
+    DistrictViewSet, AdminLevelThreeViewSet, VillageViewSet, ContactViewSet, DocumentationViewSet,
+    CollectedDataViewSet, TolaTableViewSet, DisaggregationValueViewSet, ProjectAgreementViewSet,
+    LoggedUserViewSet, ChecklistViewSet, OrganizationViewSet, PogramIndicatorReadOnlyViewSet,
+    PeriodicTargetReadOnlyViewSet
+)
 from django.conf.urls import include, url
 # Import i18n_patterns
 from django.views.generic import TemplateView
@@ -9,7 +19,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.authtoken import views as auth_views
 from django.contrib.auth import views as authviews
-from django.views.generic import TemplateView
 
 from tola import views as tolaviews
 
