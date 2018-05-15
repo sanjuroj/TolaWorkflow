@@ -17,7 +17,7 @@ describe('Number indicators in the indicator evidence table', function() {
   before(function() {
     browser.windowHandleMaximize()
     let parms = Util.readConfig()
-              
+
     LoginPage.open(parms.baseurl)
     if (parms.baseurl.includes('mercycorps.org')) {
       LoginPage.username = parms.username
@@ -75,4 +75,4 @@ describe('Number indicators in the indicator evidence table', function() {
 
   it('should take LoP target of C number indicators from LoP target field')
   it('should take LoP actual of C number indicators from the latest target actual')
-}) 
+})

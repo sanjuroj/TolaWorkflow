@@ -28,7 +28,7 @@ class IpttPage extends Page {
 
   get IndicatorOverviewTimePeriods () {
     //return browser.$('select#id_timeperiods-timeperiods')
-    return browser.$('li.seelct2-results__option');
+    return browser.$('li.seelct2-results__option')
   }
 
   get IndicatorOverviewTimePeriodsList () {
