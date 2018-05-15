@@ -48,8 +48,13 @@
                         </strong>
                         |
                         <strong>
-                            <a class="pl-1" href="#" data-toggle="modal" data-target="#id_reporting_period_modal">
-                                Reporting Period
+                            <a
+                                class="pl-1"
+                                href="#"
+                                data-toggle="modal"
+                                data-periods='{"startDate":"", "endDate":"", "rStart":"", "rEnd":""}'
+                                data-target="#id_reporting_period_modal">
+                                    Reporting Period
                             </a>
                         </strong>
                     </span>
@@ -114,69 +119,7 @@
     </div> <!-- /.modal-dialog -->
 </div> <!-- /.modal -->
 
-<div id="id_reporting_period_modal" class="modal fade" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content" id="reporting_period_content">
-            <div class="modal-body ml-4 mb-3" id="reporting_period_body" style="padding-top:10px">
-                <div class="mb-4">
-                    <div class="pt-3" style="display:inline-block; width: 90%">
-                        <div class="mb-4"><h2>Reporting period</h2></div>
-                        <span>The program reporting period is used in the setup of periodic targets and in Indicator Performance Tracking Tables (IPTT). TolaActivity initially sets the reporting period to include the program’s official start and end dates, as recorded in the Grant and Award Information Tracker (GAIT) system. The reporting period may be adjusted to align with the program’s indicator plan.</span>
-                    </div>
-                    <button
-                        type="button"
-                        class="close"
-                        data-dismiss="modal"
-                        style="display:inline-block;"
-                        aria-label="Close">
-                        <span class="x-modal">&times;</span>
-                    </button>
-                </div>
-                <div id="div-gait-dates" class="mb-3">
-                    <div class="mb-3">
-                        <h3>GAIT program dates</h3>
-                    </div>
-                    <div style="display:inline-block;">
-                        <div
-                            id="gait_start_date"
-                            class="mr-4"
-                            style="display: inline-block;">
-                                <h4 class="mb-0">START DATE</h4>
-                                <h4>Dec 22, 2018</h4>
-                        </div>
-                        <div id="gait_start_date" style="display: inline-block;">
-                            <h4 class="mb-0">END DATE</h4>
-                            <h4>Dec 22, 2020</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="card inputs-in-a-box" id="div-card-user-dates" style="width: 90%">
-                    <div class="card-body p-4">
-                        <div>
-                            <h3>Reporting start and end dates</h3>
-                        </div>
-                        <div>
-                            <div
-                                id="gait_start_date"
-                                class="mr-5"
-                                style="display: inline-block;">
-                                    <h4 class="mb-0">START DATE</h4>
-                                    <h4>Dec 22, 2018</h4>
-                            </div>
-                            <div id="gait_start_date" style="display: inline-block;">
-                                <h4 class="mb-0">END DATE</h4>
-                                <h4>Dec 22, 2020</h4>
-                            </div>
-                        </div>
-                        <div>
-                            While a program may begin and end any day of the month, reporting periods must begin on the first day of the month and end on the last day of the month. Please note that the reporting start month can only be adjusted <span class="color-red">before targets are set up and a program begins submitting performance results.</span> The reporting end month can still be extended.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% include 'indicators/indicator_reportingperiod_modal.html'%}
 
 <script type="text/javascript">
     /*
