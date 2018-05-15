@@ -196,11 +196,21 @@
     $("#id_form_indicator_filter").on("input", "#id_program", function (e) {
       const program_id = $(this).val();
       const site_profile = $("#id_site");
+      const indicators_select = $("#id_indicators");
+
       $.getJSON(`/api/siteprofile/?program=${program_id}`, function( data ){
         site_profile.empty();
         $.each(data, function(index, option){
-          console.log(`${index}, ${option.id}=${option.name}`);
+          // console.log(`${index}, ${option.id}=${option.name}`);
           site_profile.append($("<option></option>").attr("value", option.id).text(option.name));
+        });
+      });
+
+      $.getJSON(`/api/indicator/?program=${program_id}`, function (data) {
+        indicators_select.empty();
+        $.each(data, function (index, option) {
+          console.log(`${index}, ${option.id}=${option.name}`);
+          indicators_select.append($("<option></option>").attr("value", option.id).text(option.name));
         });
       });
     });

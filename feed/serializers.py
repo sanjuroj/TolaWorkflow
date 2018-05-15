@@ -178,6 +178,13 @@ class IndicatorSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
+class IndicatorIdAndNameSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Indicator
+        fields = ('id', 'name')
+
+
 class IndicatorTypeLightSerializer(serializers.ModelSerializer):
     class Meta:
         model = IndicatorType

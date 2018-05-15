@@ -7,7 +7,7 @@ from .serializers import (
     StakeholderTypeSerializer, EvaluateSerializer, ProfileTypeSerializer, ProvinceSerializer, DistrictSerializer,
     AdminLevelThreeSerializer, TolaTableSerializer, DisaggregationValueSerializer, VillageSerializer,
     ContactSerializer, DocumentationSerializer, CollectedDataSerializer, LoggedUserSerializer,
-    ChecklistSerializer, OrganizationSerializer, SiteProfileLightSerializer
+    ChecklistSerializer, OrganizationSerializer, SiteProfileLightSerializer, IndicatorIdAndNameSerializer
 )
 
 from workflow.models import (
@@ -63,14 +63,22 @@ class PeriodicTargetReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class PogramIndicatorReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = ProgramIndicatorSerializer
+    # serializer_class = ProgramIndicatorSerializer
     pagination_class = StandardResultsSetPagination
 
+    def get_serializer_class(self):
+        if self.request.query_params.get('program', None):
+            return IndicatorIdAndNameSerializer
+        return ProgramIndicatorSerializer
+
     def get_queryset(self):
-        queryset = Program.objects.prefetch_related('indicator_set', \
-            'indicator_set__indicator_type',\
-            'indicator_set__sector', 'indicator_set__level', \
-            'indicator_set__collecteddata_set').all()
+        program_id = self.request.query_params.get('program', None)
+        if program_id:
+            queryset = Indicator.objects.filter(program__in=[program_id]).values('id', 'name')
+        else:
+            queryset = Program.objects.prefetch_related(
+                'indicator_set', 'indicator_set__indicator_type', 'indicator_set__sector', 'indicator_set__level',
+                'indicator_set__collecteddata_set').all()
         return queryset
 
 
@@ -155,8 +163,6 @@ class SiteProfileViewSet(viewsets.ModelViewSet):
     queryset = SiteProfile .objects.all()
 
 
-
-
 class CountryViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
@@ -217,22 +223,24 @@ class CompleteViewSet(viewsets.ModelViewSet):
 
 
 class IndicatorViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    Search by country name and program name
-    limit to users logged in country permissions
-    """
+    def get_serializer_class(self):
+        if self.request.query_params.get('program', None):
+            return IndicatorIdAndNameSerializer
+        return IndicatorSerializer
+
     def list(self, request):
-        user_countries = getCountry(request.user)
-        queryset = Indicator.objects.all().filter(program__country__in=user_countries)
+        program_id = request.query_params.get('program', None)
+        if program_id:
+            queryset = Indicator.objects.filter(program__in=[program_id])
+        else:
+            user_countries = getCountry(request.user)
+            queryset = Indicator.objects.filter(program__country__in=user_countries)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
     filter_fields = ('program__country__country', 'program__name')
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     queryset = Indicator.objects.all()
-    serializer_class = IndicatorSerializer
 
 
 class ReportingFrequencyViewSet(viewsets.ModelViewSet):
