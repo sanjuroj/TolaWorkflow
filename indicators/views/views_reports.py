@@ -563,9 +563,9 @@ class IPTT_ReportView(TemplateView):
                       lastlevel=Subquery(lastlevel.values('name')[:1]),
                       lastdata=Subquery(last_data_record.values('achieved')[:1]))\
             .values(
-                'id', 'number', 'name', 'program', 'lastlevel', 'unit_of_measure', 'direction_of_change',
-                'unit_of_measure_type', 'is_cumulative', 'baseline', 'lop_target', 'actualsum', 'actualavg',
-                'lastdata')
+                'id', 'number', 'name', 'program', 'target_frequency', 'lastlevel', 'unit_of_measure',
+                'direction_of_change', 'unit_of_measure_type', 'is_cumulative', 'baseline', 'lop_target',
+                'actualsum', 'actualavg', 'lastdata')
 
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
             report_start_date, report_end_date, num_periods = self._get_date_range_n_numperiods(
@@ -588,7 +588,7 @@ class IPTT_ReportView(TemplateView):
 
         self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
         # update the queryset with annotations for timeperiods
-        indicators = indicators.annotate(**self.annotations).order_by('number', 'name')
+        indicators = indicators.annotate(**self.annotations).order_by('lastlevel', 'number', 'name')
 
         # Calculate the cumulative sum across timeperiods for indicators that are NUMBER and CUMULATIVE
         for i, ind in enumerate(indicators):

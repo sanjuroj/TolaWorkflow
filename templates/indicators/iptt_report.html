@@ -2,8 +2,8 @@
 {% load widget_tweaks %}
 {% load i18n %}
 {% load mytags %}
-{% block page_title %}Indicator Performance Tracking Table{% endblock %}
 {% block title %}Indicator Performance Tracking Table{% endblock %}
+{% block page_title %}{% endblock %}
 
 {% block content %}
 <div class="row d-flex d-md-block flex-nowrap wrapper" style="margin-left: 0px">
@@ -19,6 +19,7 @@
   <main class="col-md-9 float-left col px-5 pl-md-2 pt-2 main">
     <div id="id_div_top_iptt_report">
         <span id="id_span_iptt_date_range">
+          <h2>Indicator Performance Tracking Table</h2>
           <strong>{{ start_date|date:"M d, Y" }} - {{ end_date|date:"M d, Y" }}</strong>
         </span>
         <table id="iptt_table" class="table table-sm table-bordered table-hover">
@@ -29,20 +30,22 @@
           <thead class="thead-light">
           <tr>
             <td colspan="9" id="id_td_iptt_program_name">
-              <h5>{{ program.name|wordwrap:100|linebreaks }}</h5>
+              <h5 style="margin-left:-5px;">
+                  {{ program.name|wordwrap:100|linebreaks }}
+              </h5>
             </td>
-            <th scope="colgroup" colspan="3" class="text-center">
+            <td scope="colgroup" colspan="3" style="vertical-align: bottom;" class="text-center">
               {% trans "LIFE OF PROGRAM" %}
-            </th>
+            </td>
               {% for k, v in report_date_ranges.items %}
-                <th scope="col"
+                <td scope="col"
                     {% if reporttype == 'targetperiods' %} colspan="3" {% endif %}
                     class="text-center" style="min-width: 180px;">
                   {{ k|upper }}<br>
                   {% if v.0 is not None and v.1 is not None %}
                     <small>{{ v.0|date:"M d, Y" }} - {{ v.1|date:"M d, Y" }}</small>
                   {% endif %}
-                </th>
+                </td>
               {% endfor %}
           </tr>
           <tr>
@@ -66,7 +69,7 @@
               {% endfor %}
             {% else %}
               {% for _ in report_date_ranges.items %}
-                <th scope="col" class="text-right">{% trans "ACTUALS" %}</th>
+                <th scope="col" class="text-right">{% trans "ACTUAL" %}</th>
               {% endfor %}
             {% endif %}
           </tr>
@@ -86,7 +89,12 @@
               <td>{{ indicator.lastlevel|default_if_none:'' }}</td>
               <td>{{ indicator.unit_of_measure|default_if_none:'' }}</td>
               <td align="right">{{ indicator.direction_of_change|symbolize_change }}</td>
-              <td>{{ indicator.is_cumulative|yesno:"Cumulative,Non-cumulative," }}</td>
+              <td>{% if indicator.target_frequency == 1 %}
+                    {% trans "N/A" %}
+                  {% else %}
+                    {{ indicator.is_cumulative|yesno:"Cumulative,Non-cumulative," }}
+                  {% endif %}
+                </td>
               <td>{{ indicator.unit_of_measure_type|symbolize_measuretype }}</td>
               <td align="right">{{ indicator.baseline|default_if_none:'' }}</td>
               <td align="right">

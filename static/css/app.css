@@ -101,9 +101,18 @@
 }
 
 .lopCols {
-	background-color:#efede4;
+	background-color:#F5F5F5 !important;
 }
 
+#iptt_table thead tr td{
+    border: 0px !important;
+}
+#iptt_table tr th {
+    background-color:#F5F5F5 !important;
+}
+#id_div_top_iptt_report {
+    color: #545858;
+}
 
 /* Start by setting display:none to make this hidden.
    Then we position it in relation to the viewport window
