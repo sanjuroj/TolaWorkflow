@@ -10,9 +10,10 @@ import Util from '../lib/testutil';
  * Tests from mc/issues/119
  */
 describe('IPTT report: Program target overview report', function() {
-    this.timeout(0);
+  // Disable timeouts
+  this.timeout(0);
+
   before(function() {
-    // Disable timeouts
     browser.windowHandleMaximize();
     let parms = Util.readConfig();
 

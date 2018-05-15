@@ -5,7 +5,9 @@ import Util from '../lib/testutil';
 import { expect } from 'chai';
 
 describe('TolaActivity Dashboard', function() {
+  // Disable timeouts
   this.timeout(0);
+
   before(function() {
     browser.windowHandleMaximize();
     let parms = Util.readConfig();

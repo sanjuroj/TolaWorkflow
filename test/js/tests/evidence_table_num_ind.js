@@ -11,11 +11,10 @@ import { expect } from 'chai'
  * Tests from mc/issues/115, mc/issues/118
  */
 describe('Number indicators in the indicator evidence table', function() {
+  // Disable timeouts
   this.timeout(0)
 
   before(function() {
-    // Disable timeouts
-    this.timeout(0)
     browser.windowHandleMaximize()
     let parms = Util.readConfig()
               

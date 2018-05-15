@@ -3,7 +3,9 @@ import Util from '../lib/testutil'
 import { expect } from 'chai'
 
 describe('TolaActivity Login screen', function () {
+  // Disable timeouts
   this.timeout(0)
+
   before(function () {
     browser.windowHandleMaximize()
   })

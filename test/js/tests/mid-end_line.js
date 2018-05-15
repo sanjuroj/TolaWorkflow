@@ -6,9 +6,10 @@ import Util from '../lib/testutil';
 import { expect } from 'chai';
 
 describe('Midline and endline target frequency', function() {
- this.timeout(0);
+  // Disable timeouts
+  this.timeout(0);
+
   before(function() {
-    // Disable timeouts
     browser.windowHandleMaximize();
     let parms = Util.readConfig();
     

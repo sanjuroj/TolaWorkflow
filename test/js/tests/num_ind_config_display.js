@@ -8,6 +8,9 @@ import TargetsTab from '../pages/targets.page';
  * Tests from mc/issues/116
  */
 describe('Number indicators config and display', function() {
+  // Disable timeouts
+  this.timeout(0);
+
   before(function() {});
 
   it('should allow to specify number indicators as non-cumulative or cumulative');

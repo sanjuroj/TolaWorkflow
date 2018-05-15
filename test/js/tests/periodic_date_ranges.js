@@ -7,9 +7,10 @@ import Util from '../lib/testutil';
 import { expect } from 'chai';
 
 describe('Periodic target date ranges', function() {
+  // Disable timeouts
   this.timeout(0);
+
   before(function() {
-    // Disable timeouts
     browser.windowHandleMaximize();
     let parms = Util.readConfig();
               

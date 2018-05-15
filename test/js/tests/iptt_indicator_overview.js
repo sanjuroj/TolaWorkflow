@@ -8,9 +8,10 @@ import { expect } from 'chai';
  * Tests from mc/issues/119
  */
 describe('IPTT: Program indicator overview quickstart', function() {
+  // Disable timeouts
   this.timeout(0);
+
   before(function() {
-    // Disable timeouts
     browser.windowHandleMaximize();
     let parms = Util.readConfig();
 

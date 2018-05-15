@@ -8,9 +8,10 @@ import { expect } from 'chai';
  * Tests from mc/issues/119
  */
 describe('Program indicator overview report', function() {
-    this.timeout(0);
+  // Disable timeouts
+  this.timeout(0);
+
   before(function() {
-    // Disable timeouts
     browser.windowHandleMaximize();
     let parms = Util.readConfig();
 

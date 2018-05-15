@@ -20,13 +20,15 @@ class IpttPage extends Page {
    */
   get IndicatorOverviewProgram () {
     return browser.$('span#select2-id_timeperiods-program-container')
+    //return browser.$('select#id_timeperiods-program')
   }
 
   get IndicatorOverviewProgramList () {
   }
 
   get IndicatorOverviewTimePeriods () {
-    return browser.$('select#id_timeperiods-timeperiods')
+    //return browser.$('select#id_timeperiods-timeperiods')
+    return browser.$('li.seelct2-results__option');
   }
 
   get IndicatorOverviewTimePeriodsList () {
@@ -45,7 +47,7 @@ class IpttPage extends Page {
   }
 
   set IndicatorOverviewProgram (val) {
-    let elem = browser.$('select[name="timeperiods-program"]')
+    let elem = browser.$('span#select2_id_timeperiods-program-container')
     elem.click()
     // FIXME: Hard-coded value
     elem.selectByValue(452)

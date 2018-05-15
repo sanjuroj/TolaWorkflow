@@ -9,9 +9,10 @@ import Util from '../lib/testutil';
  * Tests from mc/issues/115
  */
 describe('Indicator evidence percent indicators', function() {
+  // Disable timeouts
   this.timeout(0);
+
   before(function() {
-    // Disable timeouts
     browser.windowHandleMaximize();
     let parms = Util.readConfig();
 
