@@ -6,17 +6,15 @@
 {% block page_title %}{% endblock %}
 
 {% block content %}
-<div class="row d-flex d-md-block flex-nowrap wrapper" style="margin-left: 0px">
   <div class="float-left collapse width show" id="sidebar">
     {% include 'indicators/iptt_filter_form.html' %}
   </div>
-  <div class="row" style="margin-top:0px; margin-left:0px; background-color:#00A49F; padding-left: 3px;
-     color: #fff;">
+  <div style="background-color:#00A49F; color: #fff;">
     <a href="#" data-target="#sidebar" data-toggle="collapse" style="color: white;">
       <i class="fa fa-cog"></i>
     </a>Options
   </div>
-  <main class="col-md-9 float-left col px-5 pl-md-2 pt-2 main">
+  <main class="col-md-9 float-left pt-1">
     <div id="id_div_top_iptt_report">
         <span id="id_span_iptt_date_range">
           <h2>Indicator Performance Tracking Table</h2>
@@ -245,5 +243,4 @@
 
     {% include 'indicators/indicator_form_common_js.html' %}
   </main>
-</div>
 {% endblock content %}
