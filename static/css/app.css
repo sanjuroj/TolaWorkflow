@@ -4,6 +4,9 @@
     content: none;
   }
 }
+body {
+    background-color: #F5F5F5;
+}
 .dataTables_wrapper.container-fluid {
   padding-right: 0px !important;
   padding-left: 0px !important;
@@ -104,12 +107,19 @@
 	background-color:#F5F5F5 !important;
 }
 
-#iptt_table thead tr td{
+table.table-hover tbody tr:hover {
+    background-color: #CCEFEE !important;
+}
+
+#iptt_table, #iptt_table thead tr td{
     border: 0px !important;
 }
 #iptt_table tr th {
     background-color:#F5F5F5 !important;
 }
+/* #iptt_table tbody{
+    background-color:#ffffff !important;
+} */
 #id_div_top_iptt_report {
     color: #545858;
 }
