@@ -10,9 +10,9 @@
     {% for program in programs %}
         <div class='card'>
             <div class='card-header d-flex justify-content-between align-items-center'>
-                <span class="program-name">{{ program.name|truncatechars:185 }}</span>
+                <span class="program-name fontsize-130">{{ program.name|truncatechars:185 }}</span>
                 <span>
-                    <a href="/indicators/indicator_create/{{ program.id }}/" roll="button" class="btn btn-link btn-white"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
+                    <a href="/indicators/indicator_create/{{ program.id }}/" roll="button" class="fontsize-130 btn btn-link btn-white"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
                 </span>
             </div>
             {% if not program.indicator_set.all %}
@@ -30,7 +30,7 @@
                         id="id_btnOpenindicatorsForProgramId_{{ program.id }}"
                         href="#"
                         onclick="loadIndicators({{ program.id }}, {{ indicator_id }}, {{ type_id }})"
-                        class="btn btn-link btn-indicator-expand"
+                        class="fontsize-130 btn btn-link"
                         data-toggle="collapse"
                         data-target="#hidden-{{ program.id }}">
                             <!-- Need the div to make ensure rotating symbol doesn't push text to the right -->
@@ -42,9 +42,9 @@
                                 {% trans "program indicators" %}
                             {% endif %}
                     </a>
-                    <span class="small d-flex align-items-center">
+                    <span class="d-flex align-items-center">
                         <strong>
-                            <a class="pr-1" href="/indicators/program_report/{{ program.id }}/">{% trans 'Indicator Plan' %}</a>
+                            <a class="pr-1" href="/indicators/program_report/{{ program.id }}/">{% trans 'Indicator plan' %}</a>
                         </strong>
                         |
                         <strong>
@@ -54,7 +54,7 @@
                                 data-toggle="modal"
                                 data-periods='{"pStart":"{{ program.start_date }}", "pEnd":"{{ program.end_date }}", "rStart":"{{ program.reporting_period_start }}", "rEnd":"{{ program.reporting_period_end }}"}'
                                 data-target="#id_reporting_period_modal">
-                                    {% trans 'Reporting Period' %}
+                                    {% trans 'Reporting period' %}
                             </a>
                         </strong>
                     </span>
