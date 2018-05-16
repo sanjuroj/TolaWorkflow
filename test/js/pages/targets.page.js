@@ -3,7 +3,6 @@
  * @module Targets
  */
 import Util from '../lib/testutil'
-import { browser } from 'webdriverio'
 const msec = 1000
 
 let parms = Util.readConfig()
@@ -283,10 +282,10 @@ function getProgramIndicatorsTableCount () {
  * which are actually anchor (<a />) elements, from the programs table
  */
 function getProgramIndicatorButtons () {
-  let rows = browser.$('div#div-id-indicator-list').$$('div.card-body')
+  let rows = browser.$('div#div-id-indicator-list').$$('.card-body')
   let buttons = []
   for (let row of rows) {
-    buttons.push(row.$('*=Indicators'))
+    buttons.push(row.$('*=program indicators'))
   }
   return buttons
 }

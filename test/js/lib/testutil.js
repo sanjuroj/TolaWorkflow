@@ -2,7 +2,6 @@
  * Hodgepodge of helper code that doesn't fit elsewhere
  * @module TestUtil
  */
-import { browser } from 'webdriverio'
 
 // Milliseconds
 const msec = 1000
@@ -31,10 +30,12 @@ function dp (s) { console.log('***%s***', s) }
  * with a spinner to close
  */
 function waitForAjax (secs = 2) {
-  let visible = browser.isVisible('div#ajaxloading')
-  while (visible === true) {
-    browser.pause(secs * msec)
-    visible = browser.isVisible('div#ajaxloading')
+  if (true == browser.isVisible('div#ajaxloading')) {
+    let visible = browser.isVisible('div#ajaxloading')
+    while (visible === true) {
+      browser.pause(secs * msec)
+      visible = browser.isVisible('div#ajaxloading')
+    }
   }
 }
 

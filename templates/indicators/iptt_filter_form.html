@@ -12,7 +12,7 @@
       {{ hidden_field }}
     {% endfor %}
     <div id="filter-top" class="filter-form-padding-10 pb-1">
-      <h3 class="card-title" style="color: #a7a7a3;">Report Options</h3>
+      <h3 class="card-title pt-3" style="color: #a7a7a3;">Report Options</h3>
 
       <div class="form-row mb-3" id="id_div_program">
         <label for="id_program" class="col-form-label">
@@ -37,7 +37,7 @@
       <div class="form-row mb-3">
         {% for item in form.timeframe %}
           {% with id=form.timeframe.auto_id %}
-            <div class="{% if forloop.counter0 == 0 %}col-sm-4 {% else %} col-sm-5 {% endif %}">
+            <div class="{% if forloop.counter0 == 0 %}col-sm-4 {% else %} col-sm-4 p-0 {% endif %}">
               <div class="form-check form-check-inline pt-1" id="div_{{ id }}_{{ forloop.counter0 }}">
                 <span class="form-check-input ">
                     {{ item.tag }}
@@ -49,7 +49,7 @@
             </div>
           {% endwith %}
         {% endfor %}
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           {% render_field form.numrecentperiods placeholder="" class+="form-control" %}
         </div>
       </div>
@@ -177,8 +177,8 @@
         }
         var other = this.id == start_date_id ? `#${end_date_id}` : `#${start_date_id}`;
         var option = this.id == start_date_id ? "maxDate" : "minDate";
-        $(`#${start_date_id}`).datepicker("option", "minDate", new Date(`{{start_date}}`));
-        $(`#${end_date_id}`).datepicker("option", "maxDate", new Date(`{{end_date}}`));
+        $(`#${start_date_id}`).datepicker("option", "minDate", new Date(`{{report_start_date}}`));
+        $(`#${end_date_id}`).datepicker("option", "maxDate", new Date(`{{report_end_date}}`));
         if ((selectedDate = $(other).val()).length > 0) {
           year = selectedDate.substring(selectedDate.length - 4, selectedDate.length);
           month = jQuery.inArray(selectedDate.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
@@ -192,5 +192,30 @@
     $("#id_sector").select2({"placeholder": "All sectors"});
     $("#id_site").select2({"placeholder": "All sites"});
     $("#id_indicators").select2({"placeholder": "All indicators"});
+
+    $("#id_form_indicator_filter").on("input", "#id_program", function (e) {
+      const program_id = $(this).val();
+      const site_profile = $("#id_site");
+      const indicators_select = $("#id_indicators");
+
+      $.getJSON(`/api/siteprofile/?program=${program_id}`, function( data ){
+        site_profile.empty();
+        $.each(data, function(index, option){
+          // console.log(`${index}, ${option.id}=${option.name}`);
+          site_profile.append($("<option></option>").attr("value", option.id).text(option.name));
+        });
+      });
+
+      $.getJSON(`/api/indicator/?program=${program_id}`, function (data) {
+        indicators_select.empty();
+        $.each(data, function (index, option) {
+          console.log(`${index}, ${option.id}=${option.name}`);
+          indicators_select.append($("<option></option>").attr("value", option.id).text(option.name));
+        });
+      });
+    });
+
+
+
   });
 </script>

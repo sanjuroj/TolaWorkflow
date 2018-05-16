@@ -4,7 +4,6 @@
  **/
 import Page from './page'
 import Util from '../lib/testutil'
-import { browser } from 'webdriverio'
 
 class IpttPage extends Page {
   get title () {
@@ -20,14 +19,16 @@ class IpttPage extends Page {
    * @returns {FIXME} A clickable object for the dropdown
    */
   get IndicatorOverviewProgram () {
-    return browser.$('select#id_timeperiods-program')
+    return browser.$('span#select2-id_timeperiods-program-container')
+    //return browser.$('select#id_timeperiods-program')
   }
 
   get IndicatorOverviewProgramList () {
   }
 
   get IndicatorOverviewTimePeriods () {
-    return browser.$('select#id_timeperiods-timeperiods')
+    //return browser.$('select#id_timeperiods-timeperiods')
+    return browser.$('li.seelct2-results__option')
   }
 
   get IndicatorOverviewTimePeriodsList () {
@@ -46,7 +47,7 @@ class IpttPage extends Page {
   }
 
   set IndicatorOverviewProgram (val) {
-    let elem = browser.$('select[name="timeperiods-program"]')
+    let elem = browser.$('span#select2_id_timeperiods-program-container')
     elem.click()
     // FIXME: Hard-coded value
     elem.selectByValue(452)
@@ -62,7 +63,7 @@ class IpttPage extends Page {
   }
 
   set IndicatorOverviewTimePeriods (val) {
-    let elem = browser.$('select[name="timeperiods-timeperiods"]')
+    let elem = browser.$('select#id_timeperiods-timeperiods')
     elem.click()
     elem.selectByVisibleText(val)
     elem.click()

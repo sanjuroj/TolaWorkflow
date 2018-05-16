@@ -1,12 +1,26 @@
-from .serializers import *
+from .serializers import (
+    PeriodicTargetSerializer, ProgramIndicatorSerializer, ProgramSerializer, UserSerializer,
+    SectorSerializer, ProjectTypeSerializer, OfficeSerializer, SiteProfileSerializer, CountrySerializer,
+    AgreementSerializer, CompleteSerializer, IndicatorSerializer, ReportingFrequencySerializer, TolaUserSerializer,
+    IndicatorTypeSerializer, ObjectiveSerializer, DisaggregationTypeSerializer, LevelSerializer, StakeholderSerializer,
+    ExternalServiceRecordSerializer, ExternalServiceSerializer, StrategicObjectiveSerializer, CapacitySerializer,
+    StakeholderTypeSerializer, EvaluateSerializer, ProfileTypeSerializer, ProvinceSerializer, DistrictSerializer,
+    AdminLevelThreeSerializer, TolaTableSerializer, DisaggregationValueSerializer, VillageSerializer,
+    ContactSerializer, DocumentationSerializer, CollectedDataSerializer, LoggedUserSerializer,
+    ChecklistSerializer, OrganizationSerializer, SiteProfileLightSerializer, IndicatorIdAndNameSerializer
+)
 
-from workflow.models import Program, Sector, ProjectType, Office, SiteProfile, Country, ProjectComplete, \
-    ProjectAgreement, Stakeholder, Capacity, Evaluate, ProfileType, \
+from workflow.models import (
+    Program, Sector, ProjectType, Office, SiteProfile, Country, ProjectComplete, Organization,
+    ProjectAgreement, Stakeholder, Capacity, Evaluate, ProfileType, LoggedUser,
     Province, District, AdminLevelThree, Village, StakeholderType, Contact, Documentation, Checklist
-from indicators.models import Indicator, Objective, ReportingFrequency, TolaUser, IndicatorType, DisaggregationType, \
-    Level, ExternalService, ExternalServiceRecord, StrategicObjective, CollectedData, TolaTable, DisaggregationValue, DisaggregationLabel
+)
+from indicators.models import (
+    Indicator, Objective, ReportingFrequency, TolaUser, IndicatorType, DisaggregationType,
+    Level, ExternalService, ExternalServiceRecord, StrategicObjective, CollectedData, TolaTable,
+    DisaggregationValue, PeriodicTarget
+)
 
-from django.db.models import Count
 from django.contrib.auth.models import User
 from tola.util import getCountry
 from django.shortcuts import get_object_or_404
@@ -18,10 +32,12 @@ import django_filters
 
 from workflow.mixins import APIDefaultsMixin
 
+
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 1000
     page_size_query_param = 'page_size'
     max_page_size = 10000
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 100
@@ -33,7 +49,6 @@ class SmallResultsSetPagination(PageNumberPagination):
     page_size = 20
     page_size_query_param = 'page_size'
     max_page_size = 50
-
 
 
 class PeriodicTargetReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
@@ -48,15 +63,24 @@ class PeriodicTargetReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class PogramIndicatorReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = ProgramIndicatorSerializer
+    # serializer_class = ProgramIndicatorSerializer
     pagination_class = StandardResultsSetPagination
 
+    def get_serializer_class(self):
+        if self.request.query_params.get('program', None):
+            return IndicatorIdAndNameSerializer
+        return ProgramIndicatorSerializer
+
     def get_queryset(self):
-        queryset = Program.objects.prefetch_related('indicator_set', \
-            'indicator_set__indicator_type',\
-            'indicator_set__sector', 'indicator_set__level', \
-            'indicator_set__collecteddata_set').all()
+        program_id = self.request.query_params.get('program', None)
+        if program_id:
+            queryset = Indicator.objects.filter(program__in=[program_id]).values('id', 'name')
+        else:
+            queryset = Program.objects.prefetch_related(
+                'indicator_set', 'indicator_set__indicator_type', 'indicator_set__sector', 'indicator_set__level',
+                'indicator_set__collecteddata_set').all()
         return queryset
+
 
 # API Classes
 class UserViewSet(viewsets.ModelViewSet):
@@ -65,6 +89,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
 
 class ProgramViewSet(viewsets.ModelViewSet):
     """
@@ -114,21 +139,28 @@ class OfficeViewSet(viewsets.ModelViewSet):
 
 class SiteProfileViewSet(viewsets.ModelViewSet):
     """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
     Search by country name and program name
     limit to users logged in country permissions
     """
+    def get_serializer_class(self):
+        if self.request.query_params.get('program', None):
+            return SiteProfileLightSerializer
+        return SiteProfileSerializer
+
     def list(self, request):
-        user_countries = getCountry(request.user)
-        queryset = SiteProfile.objects.all().filter(country__in=user_countries)
+        program_id = request.query_params.get('program', None)
+        if program_id:
+            program = Program.objects.get(pk=program_id)
+            queryset = program.get_sites()
+        else:
+            user_countries = getCountry(request.user)
+            queryset = SiteProfile.objects.all().filter(country__in=user_countries)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
     filter_fields = ('country__country',)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     queryset = SiteProfile .objects.all()
-    serializer_class = SiteProfileSerializer
 
 
 class CountryViewSet(viewsets.ModelViewSet):
@@ -163,7 +195,7 @@ class AgreementViewSet(viewsets.ModelViewSet):
         return blank
     """
 
-    filter_fields = ('program__country__country','program__name')
+    filter_fields = ('program__country__country', 'program__name')
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     queryset = ProjectAgreement.objects.all()
     serializer_class = AgreementSerializer
@@ -183,7 +215,7 @@ class CompleteViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    filter_fields = ('program__country__country','program__name')
+    filter_fields = ('program__country__country', 'program__name')
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     queryset = ProjectComplete.objects.all()
     serializer_class = CompleteSerializer
@@ -191,22 +223,24 @@ class CompleteViewSet(viewsets.ModelViewSet):
 
 
 class IndicatorViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    Search by country name and program name
-    limit to users logged in country permissions
-    """
+    def get_serializer_class(self):
+        if self.request.query_params.get('program', None):
+            return IndicatorIdAndNameSerializer
+        return IndicatorSerializer
+
     def list(self, request):
-        user_countries = getCountry(request.user)
-        queryset = Indicator.objects.all().filter(program__country__in=user_countries)
+        program_id = request.query_params.get('program', None)
+        if program_id:
+            queryset = Indicator.objects.filter(program__in=[program_id])
+        else:
+            user_countries = getCountry(request.user)
+            queryset = Indicator.objects.filter(program__country__in=user_countries)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    filter_fields = ('program__country__country','program__name')
+    filter_fields = ('program__country__country', 'program__name')
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     queryset = Indicator.objects.all()
-    serializer_class = IndicatorSerializer
 
 
 class ReportingFrequencyViewSet(viewsets.ModelViewSet):
@@ -225,7 +259,7 @@ class TolaUserViewSet(viewsets.ModelViewSet):
     """
     def list(self, request):
         queryset = TolaUser.objects.all()
-        serializer = TolaUserSerializer(instance=queryset,context={'request': request},many=True)
+        serializer = TolaUserSerializer(instance=queryset, context={'request': request}, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
@@ -474,7 +508,7 @@ class DisaggregationValueViewSet(viewsets.ModelViewSet):
     serializer_class = DisaggregationValueSerializer
     pagination_class = StandardResultsSetPagination
 
-#Returns a list of all project agreement and feed to TolaWork
+
 class ProjectAgreementViewSet(APIDefaultsMixin, viewsets.ModelViewSet):
     """API endpoint for getting ProjectAgreement."""
 
@@ -488,9 +522,11 @@ class LoggedUserViewSet(APIDefaultsMixin, viewsets.ModelViewSet):
     queryset = LoggedUser.objects.all()
     serializer_class = LoggedUserSerializer
 
+
 class ChecklistViewSet(APIDefaultsMixin, viewsets.ModelViewSet):
     queryset = Checklist.objects.all()
     serializer_class = ChecklistSerializer
+
 
 class OrganizationViewSet(APIDefaultsMixin, viewsets.ModelViewSet):
     queryset = Organization.objects.all()

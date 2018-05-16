@@ -1,6 +1,6 @@
 import bisect
 from collections import OrderedDict
-from dateutil import rrule
+from dateutil import rrule, parser
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 import datetime as dt
@@ -359,6 +359,7 @@ class IPTT_ReportView(TemplateView):
         return num_periods
 
     def _generate_targetperiods(self, program_id, period, num_recents):
+        date_ranges = []
         targetperiods = OrderedDict()
         today = datetime.today().date()
         # today = datetime.strptime('2020-02-23', '%Y-%m-%d').date()
@@ -370,6 +371,17 @@ class IPTT_ReportView(TemplateView):
         ind = Indicator.objects.filter(program__in=[program_id], target_frequency=period).first()
         periodic_targets = PeriodicTarget.objects.filter(indicator=ind)\
             .values("id", "period", "target", "start_date", "end_date")
+        try:
+            date_ranges.append(periodic_targets.first()['start_date'])
+            date_ranges.append(periodic_targets.last()['end_date'])
+        except KeyError:
+            pass
+        try:
+            start_date = parser.parse(self.filter_form_initial_data['start_date']).date()
+            end_date = parser.parse(self.filter_form_initial_data['end_date']).date()
+            periodic_targets = periodic_targets.filter(start_date__gte=start_date, end_date__lte=end_date)
+        except (KeyError, ValueError):
+            pass
 
         for pt in periodic_targets:
             # if it is LOP Target then do not show any target periods becaseu there are none.
@@ -387,7 +399,7 @@ class IPTT_ReportView(TemplateView):
 
             # convert to oredered dictionary to preserve order (IMPORTANT!)
             targetperiods = OrderedDict((k, v) for k, v in most_recent_targetperiods)
-        return targetperiods
+        return (date_ranges, targetperiods)
 
     def _generate_timeperiods(self, period_start_date, period, num_periods, num_recents):
         """
@@ -440,34 +452,26 @@ class IPTT_ReportView(TemplateView):
 
         indicators = Indicator.objects.filter(program__in=[program_id]).values('id')
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            # determine the full date range of data collection for this program
-            data_date_range = indicators\
-                .aggregate(sdate=Min('collecteddata__date_collected'), edate=Max('collecteddata__date_collected'))
-
-            start_date = data_date_range['sdate']
+            try:
+                start_date = parser.parse(self.filter_form_initial_data['start_date']).date()
+                end_date = parser.parse(self.filter_form_initial_data['end_date']).date()
+            except (KeyError, ValueError):
+                # determine the full date range of data collection for this program
+                data_date_range = indicators\
+                    .aggregate(sdate=Min('collecteddata__date_collected'), edate=Max('collecteddata__date_collected'))
+                start_date = data_date_range['sdate']
+                end_date = data_date_range['edate']
 
             # get the number of months in this period
             num_months_in_period = self._get_num_months(period)
 
             # Find out the start date based on the calendar period (year, semi-annual, etc)
             start_date = self._get_first_period(start_date, num_months_in_period)
-            end_date = data_date_range['edate']
 
             # get the number of periods in this date range
             num_periods = self._get_num_periods(start_date, end_date, period)
-        elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
-            # filter the set of indicators further by the period (annual, semi-annual, etc.)
-            # and only get the first indicator since indicators that share the same period
-            # have the same set of periodic targets
-            indicators = indicators.filter(target_frequency=period)[:1]
-            if indicators.count() > 0:
-                periodic_targets = PeriodicTarget.objects.filter(indicator=indicators[0].get('id'))\
-                    .values('id', 'start_date', 'end_date')
-                start_date = periodic_targets.first()['start_date']
-                end_date = periodic_targets.last()['end_date']
-                num_periods = periodic_targets.count()
-            else:
-                start_date, end_date, num_periods = (None, None, 0)
+        else:
+            start_date, end_date, num_periods = (None, None, 0)
 
         if isinstance(start_date, dt.datetime):
             start_date = start_date.date()
@@ -559,30 +563,32 @@ class IPTT_ReportView(TemplateView):
                       lastlevel=Subquery(lastlevel.values('name')[:1]),
                       lastdata=Subquery(last_data_record.values('achieved')[:1]))\
             .values(
-                'id', 'number', 'name', 'program', 'lastlevel', 'unit_of_measure', 'direction_of_change',
-                'unit_of_measure_type', 'is_cumulative', 'baseline', 'lop_target', 'actualsum', 'actualavg',
-                'lastdata')
-
-        report_start_date, report_end_date, num_periods = self._get_date_range_n_numperiods(
-            reporttype, program_id, period)
+                'id', 'number', 'name', 'program', 'target_frequency', 'lastlevel', 'unit_of_measure',
+                'direction_of_change', 'unit_of_measure_type', 'is_cumulative', 'baseline', 'lop_target',
+                'actualsum', 'actualavg', 'lastdata')
 
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            report_date_ranges = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
+            report_start_date, report_end_date, num_periods = self._get_date_range_n_numperiods(
+                reporttype, program_id, period)
+            periods_date_ranges = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
             try:
-                report_end_date = report_date_ranges[report_date_ranges.keys()[-1]][1]
+                report_end_date = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
             except IndexError:
                 report_end_date = None
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
-            report_date_ranges = self._generate_targetperiods(program_id, period, num_recents)
+            date_ranges, periods_date_ranges = self._generate_targetperiods(program_id, period, num_recents)
+            report_start_date = date_ranges[0]
+            report_end_date = date_ranges[1]
+
             indicators = indicators.filter(target_frequency=period)
         else:
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid report type."))
             return context
 
-        self.annotations = self._generate_annotations(report_date_ranges, period, reporttype)
+        self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
         # update the queryset with annotations for timeperiods
-        indicators = indicators.annotate(**self.annotations).order_by('number', 'name')
+        indicators = indicators.annotate(**self.annotations).order_by('lastlevel', 'number', 'name')
 
         # Calculate the cumulative sum across timeperiods for indicators that are NUMBER and CUMULATIVE
         for i, ind in enumerate(indicators):
@@ -592,7 +598,7 @@ class IPTT_ReportView(TemplateView):
                           Indicator.MONTHLY, Indicator.MID_END]:
                 # if the frequency (period) is periodic, i.e., time-aware then go through each period
                 # and calculate the cumulative total achieved across date ranges (periods)
-                for k, v in report_date_ranges.items():
+                for k, v in periods_date_ranges.items():
                     if ind['unit_of_measure_type'] == Indicator.NUMBER and ind['is_cumulative'] is True:
                         current_sum = ind["{}_sum".format(k)]
                         if current_sum > 0:
@@ -622,7 +628,9 @@ class IPTT_ReportView(TemplateView):
 
         context['start_date'] = report_start_date
         context['end_date'] = report_end_date
-        context['report_date_ranges'] = report_date_ranges
+        context['report_start_date'] = report_start_date
+        context['report_end_date'] = report_end_date
+        context['report_date_ranges'] = periods_date_ranges
         context['indicators'] = indicators
         context['program'] = program
         context['reporttype'] = reporttype

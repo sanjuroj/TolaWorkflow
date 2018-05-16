@@ -2,7 +2,6 @@
  * "Page" model for testing the indicator evidence table
  * @module Evidence
  */
-import { browser } from 'webdriverio'
 
 /**
  * Get the LoP target from the bottom of an indicator's evidence table.

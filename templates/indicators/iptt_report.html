@@ -2,47 +2,53 @@
 {% load widget_tweaks %}
 {% load i18n %}
 {% load mytags %}
-{% block page_title %}Indicator Performance Tracking Table{% endblock %}
 {% block title %}Indicator Performance Tracking Table{% endblock %}
+{% block page_title %}{% endblock %}
 
 {% block content %}
-<div class="row d-flex d-md-block flex-nowrap wrapper" style="margin-left: 0px">
+<style>
+  .popover{
+    max-width: 100%; /* Max Width of the popover (depending on the container) */
+  }
+</style>
   <div class="float-left collapse width show" id="sidebar">
     {% include 'indicators/iptt_filter_form.html' %}
   </div>
-  <div class="row" style="margin-top:0px; margin-left:0px; background-color:#00A49F; padding-left: 3px;
-     color: #fff;">
+  <div style="background-color:#00A49F; color: #fff;">
     <a href="#" data-target="#sidebar" data-toggle="collapse" style="color: white;">
       <i class="fa fa-cog"></i>
     </a>Options
   </div>
-  <main class="col-md-9 float-left col px-5 pl-md-2 pt-2 main">
+  <main class="col-md-9 float-left pt-1">
     <div id="id_div_top_iptt_report">
         <span id="id_span_iptt_date_range">
+          <h2>Indicator Performance Tracking Table</h2>
           <strong>{{ start_date|date:"M d, Y" }} - {{ end_date|date:"M d, Y" }}</strong>
         </span>
-        <table id="iptt_table" class="table table-sm table-bordered table-hover">
+        <table id="iptt_table" class="table table-sm table-bordered table-hover" style="background-color: white;">
           <caption>Indicator Performance Tracking Table</caption>
           <colgroup scope="col" span="9"></colgroup>
           <colgroup scope="col" span="3" class="lopCols"></colgroup>
           <colgroup scope="col" span="{{ report_date_ranges|length }}"></colgroup>
           <thead class="thead-light">
           <tr>
-            <td colspan="9" id="id_td_iptt_program_name">
-              <h5>{{ program.name|wordwrap:100|linebreaks }}</h5>
+            <td colspan="9" id="id_td_iptt_program_name" class="lopCols">
+              <h5 style="margin-left:-5px;">
+                  {{ program.name|wordwrap:100|linebreaks }}
+              </h5>
             </td>
-            <th scope="colgroup" colspan="3" class="text-center">
+            <td scope="colgroup" colspan="3" style="vertical-align: bottom;" class="text-center">
               {% trans "LIFE OF PROGRAM" %}
-            </th>
+            </td>
               {% for k, v in report_date_ranges.items %}
-                <th scope="col"
+                <td scope="col"
                     {% if reporttype == 'targetperiods' %} colspan="3" {% endif %}
-                    class="text-center" style="min-width: 180px;">
+                    class="text-center lopCols" style="min-width: 180px;">
                   {{ k|upper }}<br>
                   {% if v.0 is not None and v.1 is not None %}
                     <small>{{ v.0|date:"M d, Y" }} - {{ v.1|date:"M d, Y" }}</small>
                   {% endif %}
-                </th>
+                </td>
               {% endfor %}
           </tr>
           <tr>
@@ -55,9 +61,9 @@
             <th scope="col" style="min-width:130px">{% trans "C / NC" %}</th>
             <th scope="col" style="min-width:50px">{% trans "# / %" %}</th>
             <th scope="col">{% trans "BASELINE" %}</th>
-            <th scope="col" class="text-right" style="min-width: 110px;">{% trans "TARGET" %}</th>
-            <th scope="col" class="text-right" style="min-width: 110px;">{% trans "ACTUAL" %}</th>
-            <th scope="col" class="text-right" style="min-width: 110px;">{% trans "% MET" %}</th>
+            <th scope="col" class="text-right td-no-side-borders" style="min-width: 110px;">{% trans "TARGET" %}</th>
+            <th scope="col" class="text-right td-no-side-borders" style="min-width: 110px;">{% trans "ACTUAL" %}</th>
+            <th scope="col" class="text-right td-no-side-borders" style="min-width: 110px;">{% trans "% MET" %}</th>
             {% if reporttype == 'targetperiods' %}
               {% for pt in report_date_ranges %}
                 <th scope="col" class="text-right" style="min-width: 110px;">{% trans "TARGET" %}</th>
@@ -66,7 +72,7 @@
               {% endfor %}
             {% else %}
               {% for _ in report_date_ranges.items %}
-                <th scope="col" class="text-right">{% trans "ACTUALS" %}</th>
+                <th scope="col" class="text-right">{% trans "ACTUAL" %}</th>
               {% endfor %}
             {% endif %}
           </tr>
@@ -74,8 +80,19 @@
           <tbody>
           {% for indicator in indicators %}
             <tr>
-              <td>{{ indicator.number|default_if_none:'' }}</td>
-              <td class="td-no-side-borders">{{ indicator.name }}</td>
+              <td class="td-no-side-borders">{{ indicator.number|default_if_none:'' }}</td>
+              <td class="td-no-side-borders">
+                <button type="button"
+                        class="btn btn-link p-1 indicator-ajax-popup indicator-data"
+                        data-indicatorid={{indicator.id}}
+                        data-container="body"
+                        data-trigger="focus"
+                        data-toggle="popover"
+                        data-placement="right">
+                  <i class="fas fa-ellipsis-v"></i>
+                </button>
+                {{ indicator.name }}
+              </td>
               <td class="td-no-side-borders">
                 <a href="{% url 'indicator_update' indicator.id %}"
                    data-programid="{{ program.id }}"
@@ -83,16 +100,22 @@
                   <i class="fas fa-cog"></i>
                 </a>
               </td>
-              <td>{{ indicator.lastlevel|default_if_none:'' }}</td>
-              <td>{{ indicator.unit_of_measure|default_if_none:'' }}</td>
-              <td align="right">{{ indicator.direction_of_change|symbolize_change }}</td>
-              <td>{{ indicator.is_cumulative|yesno:"Cumulative,Non-cumulative," }}</td>
-              <td>{{ indicator.unit_of_measure_type|symbolize_measuretype }}</td>
-              <td align="right">{{ indicator.baseline|default_if_none:'' }}</td>
-              <td align="right">
+              <td class="td-no-side-borders">{{ indicator.lastlevel|default_if_none:'' }}</td>
+              <td class="td-no-side-borders">{{ indicator.unit_of_measure|default_if_none:'' }}</td>
+              <td class="td-no-side-borders" align="right">{{ indicator.direction_of_change|symbolize_change }}</td>
+              <td class="td-no-side-borders">
+                {% if indicator.target_frequency == 1 %}
+                    {% trans "N/A" %}
+                  {% else %}
+                    {{ indicator.is_cumulative|yesno:"Cumulative,Non-cumulative," }}
+                  {% endif %}
+                </td>
+              <td class="td-no-side-borders">{{ indicator.unit_of_measure_type|symbolize_measuretype }}</td>
+              <td class="td-no-side-borders" align="right">{{ indicator.baseline|default_if_none:'' }}</td>
+              <td class="td-no-side-borders" align="right">
                 {{ indicator.lop_target|default_if_none:'' }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
               </td>
-              <td align="right">
+              <td class="td-no-side-borders" align="right">
                 {% if indicator.unit_of_measure_type == 1 %}
                   {{ indicator.actualsum|floatformat:"-2"|default_if_none:"" }}
                 {% elif indicator.unit_of_measure_type == 2 %}
@@ -108,7 +131,7 @@
                   {% endif %}
                 {% endif %}
               </td>
-              <td align="right">
+              <td class="td-no-side-borders" align="right">
                 {% if indicator.unit_of_measure_type == 1 %}
                   {% widthratio indicator.actualsum indicator.lop_target 100 as percent_met1 %}
                   {% if percent_met1 %} {{ percent_met1 }}% {% endif %}
@@ -219,6 +242,24 @@
     </div>
 
     <script>
+        // initialize popovers
+        $(function () {
+          $('button.indicator-ajax-popup').popover({ // [data-toggle="popover"]
+            html: true,
+            container: 'body',
+            // trigger: "manual",
+            "content": function () {
+              const indicatorId = $(this).data('indicatorid');
+              const url = `/indicators/collected_data_table/${indicatorId}/0/?edit=false`;
+              const serverResponse = $.ajax({ url: url, dataType: 'html', async: false }).responseText;
+              return serverResponse;
+            }
+          })
+          // .click(function (e) {
+          //   $(this).popover('toggle');
+          // });
+        })
+
         // Open the IndicatorUpdate Form in a modal
         $("#id_div_top_iptt_report").on("click", ".indicator-link", function (e) {
           e.preventDefault();
@@ -237,5 +278,4 @@
 
     {% include 'indicators/indicator_form_common_js.html' %}
   </main>
-</div>
 {% endblock content %}

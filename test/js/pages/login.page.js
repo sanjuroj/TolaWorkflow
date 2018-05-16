@@ -4,7 +4,6 @@
  * @module LoginPage
  */
 import Page from './page'
-import { browser } from 'webdriverio'
 
 // Milliseconds
 const delay = 1000

@@ -59,7 +59,7 @@
                             <td align="left" class="align-middle">
                                 <strong>
                                     <span id="id_span_label_targets_sum">
-                                        {% if indicator.unit_of_measure_type == 1%}{% trans "Sum" %}{% else %}{% trans "Average" %}{% endif %} {% trans "of targets" %}
+                                        {% trans "Sum of targets" %}
                                     </span>
                                 </strong>
                             </td>
@@ -121,13 +121,11 @@
                     {% with unit_type=indicator.unit_of_measure_type %}
                         <div id="id_is_cumulative_section_header" class="d-flex flex-row px-2 pt-2 mb-1">
                             <strong>
-                                <span id="id_span_is_cumulative_header">
-                                    {% if unit_type == 1 %}
-                                        <h4>{% trans "OPTIONS FOR NUMBER (#) INDICATORS" %}</h4>
-                                    {% else %}
-                                        <h4>{% trans "PERCENTAGE (%) INDICATORS" %}</h4>
-                                    {% endif %}
-                                </span>
+                                <h4>
+                                    <span id="id_span_is_cumulative_header">
+                                        {% trans "OPTIONS FOR NUMBER (#) INDICATORS" %}
+                                    </span>
+                                </h4>
                             </strong>
                         </div>
                         <div id="id_div_is_cumulative_section1" class="flex-row px-2 pb-2">

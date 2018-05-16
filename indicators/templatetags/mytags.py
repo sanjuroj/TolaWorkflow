@@ -46,7 +46,7 @@ def symbolize_change(value):
     if value == Indicator.DIRECTION_OF_CHANGE_POSITIVE:
         return _("+")
 
-    return _("NA")
+    return _("N/A")
 
 @register.filter('symbolize_measuretype')
 def symbolize_measuretype(value):
