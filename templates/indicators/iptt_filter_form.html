@@ -37,7 +37,7 @@
       <div class="form-row mb-3">
         {% for item in form.timeframe %}
           {% with id=form.timeframe.auto_id %}
-            <div class="{% if forloop.counter0 == 0 %}col-sm-4 {% else %} col-sm-5 {% endif %}">
+            <div class="{% if forloop.counter0 == 0 %}col-sm-4 {% else %} col-sm-4 p-0 {% endif %}">
               <div class="form-check form-check-inline pt-1" id="div_{{ id }}_{{ forloop.counter0 }}">
                 <span class="form-check-input ">
                     {{ item.tag }}
@@ -49,7 +49,7 @@
             </div>
           {% endwith %}
         {% endfor %}
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           {% render_field form.numrecentperiods placeholder="" class+="form-control" %}
         </div>
       </div>

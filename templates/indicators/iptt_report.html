@@ -6,6 +6,11 @@
 {% block page_title %}{% endblock %}
 
 {% block content %}
+<style>
+  .popover{
+    max-width: 100%; // Max Width of the popover (depending on the container!)
+}
+</style>
   <div class="float-left collapse width show" id="sidebar">
     {% include 'indicators/iptt_filter_form.html' %}
   </div>
@@ -76,7 +81,18 @@
           {% for indicator in indicators %}
             <tr>
               <td>{{ indicator.number|default_if_none:'' }}</td>
-              <td class="td-no-side-borders">{{ indicator.name }}</td>
+              <td class="td-no-side-borders">
+                <button type="button"
+                        class="btn btn-link p-1 indicator-ajax-popup indicator-data"
+                        data-indicatorid={{indicator.id}}
+                        data-container="body"
+                        data-trigger="focus"
+                        data-toggle="popover"
+                        data-placement="right">
+                  <i class="fas fa-ellipsis-v"></i>
+                </button>
+                {{ indicator.name }}
+              </td>
               <td class="td-no-side-borders">
                 <a href="{% url 'indicator_update' indicator.id %}"
                    data-programid="{{ program.id }}"
@@ -225,6 +241,24 @@
     </div>
 
     <script>
+        // initialize popovers
+        $(function () {
+          $('button.indicator-ajax-popup').popover({ // [data-toggle="popover"]
+            html: true,
+            container: 'body',
+            // trigger: "manual",
+            "content": function () {
+              const indicatorId = $(this).data('indicatorid');
+              const url = `/indicators/collected_data_table/${indicatorId}/0/?edit=false`;
+              const serverResponse = $.ajax({ url: url, dataType: 'html', async: false }).responseText;
+              return serverResponse;
+            }
+          })
+          // .click(function (e) {
+          //   $(this).popover('toggle');
+          // });
+        })
+
         // Open the IndicatorUpdate Form in a modal
         $("#id_div_top_iptt_report").on("click", ".indicator-link", function (e) {
           e.preventDefault();

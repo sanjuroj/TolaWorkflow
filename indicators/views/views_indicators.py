@@ -1088,6 +1088,7 @@ def collected_data_view(request, indicator, program):
     collecteddata_without_periodictargets = CollectedData.objects \
         .filter(indicator=indicator, periodic_target__isnull=True)
 
+    is_editable = False if request.GET.get('edit') == 'false' else True
     return render_to_response(
         template_name, {
             'periodictargets': periodictargets,
@@ -1096,7 +1097,8 @@ def collected_data_view(request, indicator, program):
             'grand_achieved_sum': grand_achieved_sum,
             'grand_achieved_avg': ind.get_collecteddata_average,
             'indicator': ind,
-            'program_id': program
+            'program_id': program,
+            'is_editable': is_editable
         }
     )
 
