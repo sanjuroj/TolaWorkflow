@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-02 07:12-0700\n"
+"POT-Creation-Date: 2018-05-15 13:36-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,8 +18,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: indicators/forms.py:31 indicators/forms.py:116 indicators/forms.py:160
-#: indicators/models.py:101 indicators/models.py:525 indicators/models.py:763
+#: indicators/forms.py:87 templates/indicators/program_indicators_table.html:7
+msgid "Indicator Name"
+msgstr "Nom de l'indicateur"
+
+#: indicators/forms.py:113 indicators/forms.py:157 indicators/models.py:101
+#: indicators/models.py:525 indicators/models.py:763
 #: templates/indicators/collecteddata_list.html:126
 #: templates/indicators/data_report.html:100
 #: templates/indicators/indicator_create.html:82
@@ -29,7 +33,7 @@ msgstr ""
 msgid "Program"
 msgstr "Programme"
 
-#: indicators/forms.py:121 indicators/forms.py:169 indicators/models.py:568
+#: indicators/forms.py:118 indicators/forms.py:166 indicators/models.py:568
 #: indicators/models.py:655 indicators/models.py:748
 #: templates/indicators/collecteddata_list.html:127
 #: templates/indicators/data_report.html:101
@@ -40,87 +44,87 @@ msgstr "Programme"
 msgid "Indicator"
 msgstr "Indicateurs"
 
-#: indicators/forms.py:143 workflow/models.py:1187
+#: indicators/forms.py:140 workflow/models.py:1187
 msgid "Project"
 msgstr "Projet"
 
-#: indicators/forms.py:179
+#: indicators/forms.py:176
 msgid "Measure against target*"
 msgstr "Mesurer par rapport à la cible"
 
-#: indicators/forms.py:180
+#: indicators/forms.py:177
 msgid "Actual value"
 msgstr "Valeur actuelle"
 
-#: indicators/forms.py:195
+#: indicators/forms.py:190
 msgid "Years"
 msgstr "Années"
 
-#: indicators/forms.py:196
+#: indicators/forms.py:191
 msgid "Semi-annual periods"
 msgstr "Périodes semi-annuelles"
 
-#: indicators/forms.py:197
+#: indicators/forms.py:192
 msgid "Tri-annual periods"
 msgstr "Périodes tri-annuelles"
 
-#: indicators/forms.py:198
+#: indicators/forms.py:193
 msgid "Quarters"
 msgstr "Trimestres"
 
-#: indicators/forms.py:199
+#: indicators/forms.py:194
 msgid "Months"
 msgstr "Mois"
 
-#: indicators/forms.py:205
+#: indicators/forms.py:200
 msgid "Show all"
 msgstr "Montre tout"
 
-#: indicators/forms.py:206
+#: indicators/forms.py:201
 msgid "Most recent"
 msgstr "Le plus récent"
 
-#: indicators/forms.py:226
+#: indicators/forms.py:219
 msgid "PROGRAM"
 msgstr "PROGRAMME"
 
-#: indicators/forms.py:227
+#: indicators/forms.py:220
 msgid "TIME PERIODS"
 msgstr "PÉRIODES DE TEMPS"
 
-#: indicators/forms.py:228
+#: indicators/forms.py:221
 msgid "enter a number"
 msgstr "entrez nombre"
 
-#: indicators/forms.py:229
+#: indicators/forms.py:222
 msgid "TARGET PERIODS"
 msgstr "PERIODES CIBLES"
 
-#: indicators/forms.py:246 templates/indicators/iptt_report.html:48
+#: indicators/forms.py:239 templates/indicators/iptt_report.html:52
 msgid "LEVEL"
 msgstr "NIVEAU"
 
-#: indicators/forms.py:247
+#: indicators/forms.py:240
 msgid "TYPE"
 msgstr "TYPE"
 
-#: indicators/forms.py:248
+#: indicators/forms.py:241
 msgid "SECTOR"
 msgstr "SECTEUR"
 
-#: indicators/forms.py:249
+#: indicators/forms.py:242
 msgid "SITE"
 msgstr "SITE"
 
-#: indicators/forms.py:250
+#: indicators/forms.py:244
 msgid "SELECT INDICATORS"
 msgstr "CHOISIR INDICATEURS"
 
-#: indicators/forms.py:251
+#: indicators/forms.py:245
 msgid "START"
 msgstr "DÉBUT"
 
-#: indicators/forms.py:252
+#: indicators/forms.py:246
 msgid "END"
 msgstr "FIN"
 
@@ -298,11 +302,11 @@ msgstr "Ligne médiane et fin de ligne"
 msgid "Annual"
 msgstr "Annuel"
 
-#: indicators/models.py:334
+#: indicators/models.py:334 indicators/views/views_reports.py:136
 msgid "Semi-annual"
 msgstr "Semi-annuel"
 
-#: indicators/models.py:335
+#: indicators/models.py:335 indicators/views/views_reports.py:137
 msgid "Tri-annual"
 msgstr "Tri-annuel"
 
@@ -396,7 +400,7 @@ msgstr "Cible de la vie du programme (LOP)*"
 msgid "Direction of Change"
 msgstr "Direction du changement"
 
-#: indicators/models.py:437 templates/indicators/iptt_report.html:51
+#: indicators/models.py:437 templates/indicators/iptt_report.html:55
 msgid "C / NC"
 msgstr "C / NC"
 
@@ -634,36 +638,48 @@ msgstr "Succès, données créées!"
 msgid "Success, Data Updated!"
 msgstr "Succès, données mises à jour!"
 
-#: indicators/views/views_reports.py:406
+#: indicators/views/views_reports.py:135
+msgid "Year"
+msgstr "An"
+
+#: indicators/views/views_reports.py:138
+msgid "Quarter"
+msgstr "Trimestre"
+
+#: indicators/views/views_reports.py:139
+msgid "Month"
+msgstr "Mois"
+
+#: indicators/views/views_reports.py:536
 msgid "Please select a valid program."
 msgstr "Veuillez sélectionner un programme valide"
 
-#: indicators/views/views_reports.py:436
+#: indicators/views/views_reports.py:580
 msgid "Please select a valid report type."
 msgstr "Veuillez sélectionner un type de rapport valide."
 
-#: templates/base.html:95
+#: templates/base.html:80
 msgid "Workflow"
 msgstr "Flux de travail"
 
-#: templates/base.html:97
+#: templates/base.html:82
 msgid "Program Index"
 msgstr "Index Du Programme"
 
-#: templates/base.html:98
+#: templates/base.html:83
 msgid "Documents"
 msgstr "Documents"
 
-#: templates/base.html:99 templates/index.html:438
+#: templates/base.html:84 templates/index.html:438
 #: templates/indicators/data_report.html:32
 msgid "Sites"
 msgstr "Des Sites"
 
-#: templates/base.html:100 workflow/models.py:867 workflow/models.py:945
+#: templates/base.html:85 workflow/models.py:867 workflow/models.py:945
 msgid "Stakeholders"
 msgstr "Les Parties Prenantes"
 
-#: templates/base.html:104 templates/index.html:463
+#: templates/base.html:89 templates/index.html:463
 #: templates/indicators/collecteddata_form.html:5
 #: templates/indicators/collecteddata_list.html:7
 #: templates/indicators/data_report.html:6
@@ -671,68 +687,67 @@ msgstr "Les Parties Prenantes"
 #: templates/indicators/filter.html:97 templates/indicators/grid_report.html:5
 #: templates/indicators/home.html:5 templates/indicators/home.html:27
 #: templates/indicators/indicator_create.html:5
-#: templates/indicators/indicator_list.html:26
 #: templates/indicators/report.html:7 templates/indicators/tva_report.html:8
 msgid "Indicators"
 msgstr "Indicateurs"
 
-#: templates/base.html:108 templates/indicators/data_report.html:7
+#: templates/base.html:93 templates/indicators/data_report.html:7
 #: templates/indicators/grid_report.html:6 templates/indicators/report.html:9
 msgid "Reports"
 msgstr "Rapports"
 
-#: templates/base.html:110 templates/indicators/iptt_quickstart.html:4
+#: templates/base.html:95 templates/indicators/iptt_quickstart.html:4
 #: templates/indicators/iptt_quickstart.html:5
 msgid "Indicator Performance Tracking Table"
 msgstr "Tableau de suivi des performances de l'indicateur"
 
-#: templates/base.html:111
+#: templates/base.html:96
 msgid "Program Report"
 msgstr "Rapport De Programme"
 
-#: templates/base.html:112
+#: templates/base.html:97
 msgid "Program Dashboards"
 msgstr "Tableaux De Bord Du Programme"
 
-#: templates/base.html:113
+#: templates/base.html:98
 msgid "Project Report"
 msgstr "Rapport De Projet"
 
-#: templates/base.html:114
+#: templates/base.html:99
 msgid "Indicator Data Report"
 msgstr "Rapport De Données D'Indicateur"
 
-#: templates/base.html:115
+#: templates/base.html:100
 msgid "Indicator Visual Report"
 msgstr "Rapport Visuel D'Indicateur"
 
-#: templates/base.html:116
+#: templates/base.html:101
 msgid "Indicator Library"
 msgstr "Bibliothèque D'Indicateurs"
 
-#: templates/base.html:117
+#: templates/base.html:102
 msgid "Target vs Actual Report"
 msgstr "Cible vs Rapport Réel"
 
-#: templates/base.html:118 templates/indicators/disaggregation_report.html:8
+#: templates/base.html:103 templates/indicators/disaggregation_report.html:8
 #: templates/indicators/disaggregation_report.html:13
 #: templates/indicators/disaggregation_report.html:123
 msgid "Indicator Disaggregation Report"
 msgstr "Rapport De Désagrégation Des Indicateurs"
 
-#: templates/base.html:155
+#: templates/base.html:154
 msgid "Login with Tola account"
 msgstr "Connectez-vous avec votre compte Tola"
 
-#: templates/base.html:209 workflow/models.py:1208
+#: templates/base.html:208 workflow/models.py:1208
 msgid "Documentation"
 msgstr "Documentation"
 
-#: templates/base.html:212
+#: templates/base.html:211
 msgid "FAQ"
 msgstr "FAQ"
 
-#: templates/base.html:215
+#: templates/base.html:214
 msgid "Feedback"
 msgstr "Retour d'information"
 
@@ -788,7 +803,7 @@ msgstr "KPI Cibles vs Rapports Réels"
 msgid "Results"
 msgstr "Résultats"
 
-#: templates/index.html:97 templates/indicators/indicator_form_helper.html:27
+#: templates/index.html:97 templates/indicators/indicator_form_helper.html:26
 #: templates/indicators/indicator_graphs.html:51
 msgid "Targets"
 msgstr "Cibles"
@@ -920,17 +935,20 @@ msgid "TARGET PERIOD"
 msgstr "PÉRIODE CIBLE"
 
 #: templates/indicators/collected_data_table.html:20
-#: templates/indicators/iptt_report.html:54
+#: templates/indicators/iptt_report.html:58
+#: templates/indicators/iptt_report.html:63
 msgid "TARGET"
 msgstr "CIBLE"
 
 #: templates/indicators/collected_data_table.html:21
-#: templates/indicators/iptt_report.html:55
+#: templates/indicators/iptt_report.html:59
+#: templates/indicators/iptt_report.html:64
 msgid "ACTUAL"
 msgstr "RAPPORT RÉEL"
 
 #: templates/indicators/collected_data_table.html:22
-#: templates/indicators/iptt_report.html:56
+#: templates/indicators/iptt_report.html:60
+#: templates/indicators/iptt_report.html:65
 #, python-format
 msgid "%% MET"
 msgstr "%% ATTEINT"
@@ -946,14 +964,17 @@ msgstr "PREUVE"
 #: templates/indicators/collected_data_table.html:63
 #: templates/indicators/collected_data_table.html:247
 #: templates/indicators/indicatortargets.html:62
-#: templates/indicators/iptt_report.html:89
+#: templates/indicators/iptt_report.html:105
+#: templates/indicators/iptt_report.html:156
+#: templates/indicators/iptt_report.html:198
 msgid "Average"
 msgstr "Moyenne"
 
 #: templates/indicators/collected_data_table.html:63
 #: templates/indicators/collected_data_table.html:247
-#: templates/indicators/iptt_report.html:89
-#: templates/indicators/iptt_report.html:142
+#: templates/indicators/iptt_report.html:105
+#: templates/indicators/iptt_report.html:156
+#: templates/indicators/iptt_report.html:198
 msgid "avg."
 msgstr "moy."
 
@@ -978,8 +999,8 @@ msgid ""
 "*Results are cumulative. The Life of Program result mirrors the latest "
 "period result."
 msgstr ""
-"*Les résultats sont cumulatifs. Le résultat de Vie du Programme reflète les plus récents "
-"résultat de la période."
+"*Les résultats sont cumulatifs. Le résultat de Vie du Programme reflète les "
+"plus récents résultat de la période."
 
 #: templates/indicators/collected_data_table.html:271
 msgid ""
@@ -992,8 +1013,8 @@ msgid ""
 "*Results are non-cumulative. Target period and Life of Program results are "
 "calculated from the average of collected data."
 msgstr ""
-"*Les résultats sont non cumulatifs. La période cible et la durée de vie du programme sont "
-"calculé à partir de la moyenne des données collectées."
+"*Les résultats sont non cumulatifs. La période cible et la durée de vie du "
+"programme sont calculé à partir de la moyenne des données collectées."
 
 #: templates/indicators/collected_data_table.html:285
 msgid "New Data"
@@ -1060,7 +1081,7 @@ msgid "Please complete all required fields."
 msgstr "S`il-vous-plaît complétez tous les champs requis."
 
 #: templates/indicators/collecteddata_form_common_js.html:34
-#: templates/indicators/indicator_form_common_js.html:313
+#: templates/indicators/indicator_form_common_js.html:314
 msgid "Success, form data saved."
 msgstr "Succès, les données de formulaire enregistrées."
 
@@ -1073,16 +1094,16 @@ msgid "Please enter a number with no letters or symbols."
 msgstr "Veuillez entrer un nombre sans lettres ou symboles."
 
 #: templates/indicators/collecteddata_form_common_js.html:102
-#: templates/indicators/indicator_form_common_js.html:505
-#: templates/indicators/indicator_form_common_js.html:522
-#: templates/indicators/indicator_form_common_js.html:547
+#: templates/indicators/indicator_form_common_js.html:518
+#: templates/indicators/indicator_form_common_js.html:535
+#: templates/indicators/indicator_form_common_js.html:560
 #: templates/workflow/documentation_form.html:113
 #: templates/workflow/documentation_form.html:140
 msgid "Please complete this field."
 msgstr "Merci de compléter ce champ."
 
 #: templates/indicators/collecteddata_form_common_js.html:105
-#: templates/indicators/indicator_form_common_js.html:549
+#: templates/indicators/indicator_form_common_js.html:562
 msgid "Please enter a valid date."
 msgstr "Veuillez entrer une date valide."
 
@@ -1369,8 +1390,6 @@ msgid "Indicator Planning Tool"
 msgstr "Outil de planification des indicateurs"
 
 #: templates/indicators/home.html:23
-#: templates/indicators/indicator_list.html:15
-#: templates/indicators/indicator_list.html:22
 msgid "New Indicator"
 msgstr "Nouvel indicateur"
 
@@ -1400,7 +1419,6 @@ msgid "Are you sure you want to delete?"
 msgstr "Etes-vous sûr que vous voulez supprimer?"
 
 #: templates/indicators/indicator_create.html:6
-#: templates/indicators/indicator_form.html:6
 msgid "Indicator Form"
 msgstr "Formulaire des indicateurs"
 
@@ -1462,13 +1480,17 @@ msgstr ""
 msgid "save"
 msgstr "enregistrer"
 
-#: templates/indicators/indicator_form_common_js.html:73
+#: templates/indicators/indicator_form.html:5
+msgid "Indicator setup"
+msgstr "Configuration de l'indicateur"
+
+#: templates/indicators/indicator_form_common_js.html:77
 msgid "Warning: This action cannot be undone. Removing this target means that"
 msgstr ""
 "Attention: Cette action ne peut pas être annulée. Supprimer cette cible "
 "signifie que"
 
-#: templates/indicators/indicator_form_common_js.html:73
+#: templates/indicators/indicator_form_common_js.html:77
 msgid ""
 "data record/s will no longer have targets associated with them. \\n"
 "\\nProceed anyway?"
@@ -1476,12 +1498,12 @@ msgstr ""
 "Les enregistrements de données n'auront plus de cibles associées. \\ n"
 "\\nContinuer malgré tout?"
 
-#: templates/indicators/indicator_form_common_js.html:172
+#: templates/indicators/indicator_form_common_js.html:176
 #: templates/indicators/indicatortargets.html:41
 msgid "Enter target"
 msgstr "Entrer la cible"
 
-#: templates/indicators/indicator_form_common_js.html:190
+#: templates/indicators/indicator_form_common_js.html:193
 msgid ""
 "Warning: This action cannot be undone. Any data records assigned to a target "
 "will need to be reassigned.\\n\\n Are you sure you want to remove all "
@@ -1491,7 +1513,7 @@ msgstr ""
 "de données affectés à une cible devra être réaffecté.\\n\\n Êtes-vous sûr de "
 "vouloir supprimer toutes les cibles?"
 
-#: templates/indicators/indicator_form_common_js.html:192
+#: templates/indicators/indicator_form_common_js.html:195
 msgid ""
 "Warning: This action cannot be undone. Are you sure you want to remove all "
 "targets?"
@@ -1499,13 +1521,13 @@ msgstr ""
 "Attention: Cette action ne peut pas être annulée. Êtes-vous sûr de vouloir "
 "supprimer toutes les cibles?"
 
-#: templates/indicators/indicator_form_common_js.html:240
+#: templates/indicators/indicator_form_common_js.html:242
 msgid "Warning: This action cannot be undone. If we make these changes,"
 msgstr ""
 "Attention: Cette action ne peut pas être annulée. Si nous faisons ces "
 "changements,"
 
-#: templates/indicators/indicator_form_common_js.html:240
+#: templates/indicators/indicator_form_common_js.html:242
 msgid ""
 "data record/s will no longer be associated with the Life of Program target, "
 "and will need to be reassigned to new targets. \\n\\nProceed anyway?"
@@ -1514,50 +1536,50 @@ msgstr ""
 "du programme et devra être réaffecté à de nouvelles cibles. \n"
 "\\nProceed de toute façon?"
 
-#: templates/indicators/indicator_form_common_js.html:293
+#: templates/indicators/indicator_form_common_js.html:294
 msgid "Saving form... please wait."
 msgstr "Enregistrement du formulaire ... veuillez patienter."
 
-#: templates/indicators/indicator_form_common_js.html:422
+#: templates/indicators/indicator_form_common_js.html:429
 msgid "Add a year"
 msgstr "Ajouter une année"
 
-#: templates/indicators/indicator_form_common_js.html:424
+#: templates/indicators/indicator_form_common_js.html:431
 msgid "Add a semi-annual period"
 msgstr "Ajouter une période semestrielle"
 
-#: templates/indicators/indicator_form_common_js.html:426
+#: templates/indicators/indicator_form_common_js.html:433
 msgid "Add a tri-annual period"
 msgstr "Ajouter une période tri-annuelle"
 
-#: templates/indicators/indicator_form_common_js.html:428
+#: templates/indicators/indicator_form_common_js.html:435
 msgid "Add a quarter"
 msgstr "Ajouter un trimestre"
 
-#: templates/indicators/indicator_form_common_js.html:430
+#: templates/indicators/indicator_form_common_js.html:437
 msgid "Add a month"
 msgstr "Ajouter un mois"
 
-#: templates/indicators/indicator_form_common_js.html:432
+#: templates/indicators/indicator_form_common_js.html:439
 msgid "Add an event"
 msgstr "Ajouter un événement"
 
-#: templates/indicators/indicator_form_common_js.html:434
+#: templates/indicators/indicator_form_common_js.html:441
 #: templates/indicators/indicatortargets.html:113
 msgid "Add a target"
 msgstr "Ajouter une cible"
 
-#: templates/indicators/indicator_form_common_js.html:464
-#: templates/indicators/indicator_form_common_js.html:466
+#: templates/indicators/indicator_form_common_js.html:477
+#: templates/indicators/indicator_form_common_js.html:479
 msgid "Please complete this field. Your baseline can be zero."
 msgstr "Merci de compléter ce champ. Votre ligne de base peut être zéro."
 
-#: templates/indicators/indicator_form_common_js.html:484
-#: templates/indicators/indicator_form_common_js.html:524
+#: templates/indicators/indicator_form_common_js.html:497
+#: templates/indicators/indicator_form_common_js.html:537
 msgid "Please enter a number larger than zero."
 msgstr "Veuillez entrer un nombre supérieur à zéro."
 
-#: templates/indicators/indicator_form_common_js.html:486
+#: templates/indicators/indicator_form_common_js.html:499
 msgid ""
 "Please enter a number larger than zero with no letters or symbols. If your "
 "target is a percentage, describe it in the unit of measure field."
@@ -1565,11 +1587,11 @@ msgstr ""
 "Veuillez entrer un nombre supérieur à zéro sans lettres ni symboles. Si ton "
 "target est un pourcentage, décrivez-le dans le champ de l`unité de mesure."
 
-#: templates/indicators/indicator_form_common_js.html:520
+#: templates/indicators/indicator_form_common_js.html:533
 msgid "You can start with up to 12 targets and add more later."
 msgstr "Vous pouvez commencer avec jusqu1à 12 cibles et en ajouter plus tard."
 
-#: templates/indicators/indicator_form_common_js.html:602
+#: templates/indicators/indicator_form_common_js.html:615
 msgid ""
 "Please enter a name and target number for every event. Your target value can "
 "be zero."
@@ -1577,65 +1599,75 @@ msgstr ""
 "Veuillez entrer un nom et un numéro de cible pour chaque événement, votre "
 "valeur cible peutêtre zéro."
 
-#: templates/indicators/indicator_form_common_js.html:605
+#: templates/indicators/indicator_form_common_js.html:618
 msgid "Please enter a target value. Your target value can be zero."
 msgstr "Veuillez entrer une valeur cible. Votre valeur cible peut être zéro."
 
-#: templates/indicators/indicator_form_common_js.html:669
+#: templates/indicators/indicator_form_common_js.html:684
 msgid "Please complete all required fields in the Targets tab."
 msgstr "Veuillez compléter tous les champs requis dans l`onglet cibles."
 
-#: templates/indicators/indicator_form_common_js.html:679
-msgid "Please complete all required fields in the Performance tab."
-msgstr "Veuillez compléter tous les champs requis dans l`onglet cibles."
+#: templates/indicators/indicator_form_common_js.html:700
+msgid "Please complete all required fields in the Summary tab."
+msgstr "Veuillez compléter tous les champs requis dans l`onglet Résumé."
 
-#: templates/indicators/indicator_form_helper.html:21
+#: templates/indicators/indicator_form_helper.html:20
 msgid "Summary"
 msgstr "Résumé"
 
-#: templates/indicators/indicator_form_helper.html:24
+#: templates/indicators/indicator_form_helper.html:23
 msgid "Performance"
 msgstr "Performance"
 
-#: templates/indicators/indicator_form_helper.html:30
+#: templates/indicators/indicator_form_helper.html:29
 msgid "Data Acquisition"
 msgstr "L'Acquisition des données"
 
-#: templates/indicators/indicator_form_helper.html:33
+#: templates/indicators/indicator_form_helper.html:32
 msgid "Analysis and Reporting"
 msgstr "Analyse et rapport"
 
-#: templates/indicators/indicator_form_helper.html:36 workflow/models.py:670
+#: templates/indicators/indicator_form_helper.html:35 workflow/models.py:670
 #: workflow/models.py:856
 msgid "Approval"
 msgstr "Approbation"
 
-#: templates/indicators/indicator_form_helper.html:318
-msgid "Create targets"
-msgstr "Créer des cibles"
+#: templates/indicators/indicator_form_helper.html:105
+msgid "Delete this indicator"
+msgstr "Supprimer cet indicateur"
 
-#: templates/indicators/indicator_form_helper.html:319
+#: templates/indicators/indicator_form_helper.html:329
+msgid "CREATE TARGETS"
+msgstr "CRÉER DES CIBLES"
+
+#: templates/indicators/indicator_form_helper.html:330
 msgid "Remove all targets"
 msgstr "Supprimer toutes les cibles"
 
-#: templates/indicators/indicator_form_helper.html:485
-#: templates/indicators/iptt_filter_form.html:89
+#: templates/indicators/indicator_form_helper.html:496
 msgid "SAVE CHANGES"
 msgstr "ENREGISTRER LES MODIFICATIONS"
 
-#: templates/indicators/indicator_form_helper.html:486
+#: templates/indicators/indicator_form_helper.html:497
+#: templates/indicators/iptt_filter_form.html:148
 msgid "RESET"
 msgstr "RÉINITIALISER"
 
-#: templates/indicators/indicator_form_helper.html:609
-msgid "Average of targets"
-msgstr "Moyenne des cibles"
+#: templates/indicators/indicator_form_helper.html:553
+#: templates/indicators/indicatortargets.html:128
+msgid "PERCENTAGE (%%) INDICATORS"
+msgstr "INDICATEURS EN POURCENTAGE (%%)"
 
-#: templates/indicators/indicator_form_helper.html:615
+#: templates/indicators/indicator_form_helper.html:560
+#: templates/indicators/indicatortargets.html:126
+msgid "OPTIONS FOR NUMBER (#) INDICATORS"
+msgstr "OPTIONS POUR LES NUMÉROS (#) INDICATEURS"
+
+#: templates/indicators/indicator_form_helper.html:643
 msgid "Sum of targets"
 msgstr "Somme des cibles"
 
-#: templates/indicators/indicator_form_modal.html:41
+#: templates/indicators/indicator_form_modal.html:50
 msgid "indicator:"
 msgstr "Indicateur:"
 
@@ -1647,11 +1679,12 @@ msgstr "Cibles vs Rapports Réels"
 msgid "Program Indicators"
 msgstr "Indicateurs de programme"
 
-#: templates/indicators/indicator_list.html:16
-msgid "Grid/Print Report"
-msgstr "Grille/Imprimer le rapport"
+#: templates/indicators/indicator_list.html:15
+#: templates/indicators/indicator_list.html:23
+msgid "Add indicator"
+msgstr "Ajouter un indicateur"
 
-#: templates/indicators/indicator_list.html:21
+#: templates/indicators/indicator_list.html:20
 msgid "No Indicators have been entered for this program"
 msgstr "Aucun indicateur n'a été entré pour ce programme"
 
@@ -1659,27 +1692,35 @@ msgstr "Aucun indicateur n'a été entré pour ce programme"
 msgid "Add a new indicator via the"
 msgstr "Ajouter un nouvel indicateur via le"
 
-#: templates/indicators/indicator_list.html:22
+#: templates/indicators/indicator_list.html:24
 msgid "button above"
 msgstr "bouton ci-dessus"
 
-#: templates/indicators/indicator_list.html:35
+#: templates/indicators/indicator_list.html:40
+msgid "program indicator"
+msgstr "indicateur de programme"
+
+#: templates/indicators/indicator_list.html:42
+msgid "program indicators"
+msgstr "indicateurs de programme"
+
+#: templates/indicators/indicator_list.html:60
 msgid "No Programs"
 msgstr "Pas de programmes"
 
-#: templates/indicators/indicator_list.html:44
+#: templates/indicators/indicator_list.html:69
 msgid "Warning"
 msgstr "Attention"
 
-#: templates/indicators/indicator_list.html:47
+#: templates/indicators/indicator_list.html:72
 msgid "Are you sure?"
 msgstr "Êtes-vous sûr?"
 
-#: templates/indicators/indicator_list.html:50
+#: templates/indicators/indicator_list.html:75
 msgid "Yes"
 msgstr "Qui"
 
-#: templates/indicators/indicator_list.html:51
+#: templates/indicators/indicator_list.html:76
 #: templates/indicators/tva_print.html:47
 #: templates/indicators/tva_report.html:26
 msgid "No"
@@ -1701,16 +1742,7 @@ msgstr "des cibles"
 msgid "Life of Program (LoP) target"
 msgstr "Cible de la vie du programme (LOP)"
 
-#: templates/indicators/indicatortargets.html:126
-msgid "OPTIONS FOR NUMBER (#) INDICATORS"
-msgstr "OPTIONS POUR LES NUMÉROS (#) INDICATEURS"
-
-#: templates/indicators/indicatortargets.html:128
-#, python-format
-msgid "OPTIONS FOR PERCENTAGE (%%) INDICATORS"
-msgstr "OPTIONS POUR LES INDICATEURS EN POURCENTAGE (%%)"
-
-#: templates/indicators/indicatortargets.html:151
+#: templates/indicators/indicatortargets.html:146
 msgid ""
 "NON-CUMULATIVE (NC): Target period results are automatically calculated from "
 "data collected during the period. The Life of Program result is the sum of "
@@ -1720,16 +1752,7 @@ msgstr ""
 "calculés à partir dedonnées collectées au cours de la période. Le résultat "
 "de lavie du programme est la somme de valeurs de période cible."
 
-#: templates/indicators/indicatortargets.html:153
-msgid ""
-"CUMULATIVE (C): The Life of Program result mirrors the latest period value. "
-"No automatic calculations are performed with collected data."
-msgstr ""
-"CUMULATIVE (C): Le résultat de la vie du programmereflète la dernière valeur "
-"de période.Aucun calcul automatique n'est effectué avec les données "
-"collectées."
-
-#: templates/indicators/indicatortargets.html:176
+#: templates/indicators/indicatortargets.html:162
 msgid ""
 "CUMULATIVE (C): Target period results automatically include data from "
 "previous periods. The Life of Program result mirrors the latest period value."
@@ -1738,17 +1761,17 @@ msgstr ""
 "les données de périodes précédentes.Le résultat de la vie du programme "
 "reflète ladernière valeur de période."
 
-#: templates/indicators/indicatortargets.html:178
+#: templates/indicators/indicatortargets.html:167
 msgid ""
-"NON-CUMULATIVE (NC): The Life of Program result is the average of target "
-"period values. No other automatic calculations are performed."
+"CUMULATIVE (C): The Life of Program result mirrors the latest period result. "
+"No calculations are performed with collected data."
 msgstr ""
-"NON-CUMULATIF (NC): Le résultat de la vie du programmeest la moyenne des "
-"valeurs de la période cible. Aucun autrecalcul automatique n'est effectué."
+"CUMULATIVE (C): Le résultat de la vie du programme reflète le dernier résultat de période. Aucun calcul n'est effectué avec les données "
+"collectées."
 
-#: templates/indicators/iptt_filter_form.html:93
-msgid "CANCEL"
-msgstr "Annuler"
+#: templates/indicators/iptt_filter_form.html:145
+msgid "APPLY"
+msgstr "APPLIQUER"
 
 #: templates/indicators/iptt_quickstart.html:13
 msgid "Program indicator overview"
@@ -1783,42 +1806,38 @@ msgstr ""
 msgid "LIFE OF PROGRAM"
 msgstr "VIE DU PROGRAMME"
 
-#: templates/indicators/iptt_report.html:45
+#: templates/indicators/iptt_report.html:49
 msgid "NO."
 msgstr "NO"
 
-#: templates/indicators/iptt_report.html:46
+#: templates/indicators/iptt_report.html:50
 msgid "INDICATOR"
 msgstr "INDICATEUR"
 
-#: templates/indicators/iptt_report.html:49
+#: templates/indicators/iptt_report.html:53
 msgid "UNIT OF MEASURE"
 msgstr "UNITÉ DE MESURE"
 
-#: templates/indicators/iptt_report.html:50
+#: templates/indicators/iptt_report.html:54
 msgid "CHANGE"
 msgstr "CHANGEMENT"
 
-#: templates/indicators/iptt_report.html:52
+#: templates/indicators/iptt_report.html:56
 #, python-format
 msgid "# / %%"
 msgstr ""
 
-#: templates/indicators/iptt_report.html:53
+#: templates/indicators/iptt_report.html:57
 msgid "BASELINE"
 msgstr "BASE"
 
-#: templates/indicators/iptt_report.html:58
+#: templates/indicators/iptt_report.html:69
 msgid "ACTUALS"
 msgstr "RAPPORTS RÉEL"
 
 #: templates/indicators/program_indicators_table.html:6
 msgid "Indicator Level"
 msgstr "Niveau de l'indicateur"
-
-#: templates/indicators/program_indicators_table.html:7
-msgid "Indicator Name"
-msgstr "Nom de l'indicateur"
 
 #: templates/indicators/program_indicators_table.html:8
 msgid "Indicator Number"
@@ -1866,7 +1885,6 @@ msgid "District:"
 msgstr "District:"
 
 #: templates/indicators/tva_print.html:42
-#, fuzzy, python-format
 msgid "Indicator Target vs Actual Report for %(program)s "
 msgstr "Indicateur Cible vs Rapport réel pour %%(programme)s"
 
@@ -2926,12 +2944,10 @@ msgid "URL (Link to document or document repository)"
 msgstr "URL (lien vers le référentiel de documents ou de documents)"
 
 #: workflow/models.py:1226
-#, fuzzy, python-format
 msgid "% complete"
 msgstr "%% terminé"
 
 #: workflow/models.py:1227
-#, fuzzy, python-format
 msgid "% cumulative completion"
 msgstr "%% d`achèvement cumulé"
 
@@ -2990,6 +3006,28 @@ msgstr "Article de la liste"
 #: workflow/models.py:1387
 msgid "Username"
 msgstr "Nom d`utilisateur"
+
+#~ msgid "Please complete all required fields in the Performance tab."
+#~ msgstr "Veuillez compléter tous les champs requis dans l`onglet cibles."
+
+#~ msgid "Create targets"
+#~ msgstr "Créer des cibles"
+
+#~ msgid "Average of targets"
+#~ msgstr "Moyenne des cibles"
+
+#~ msgid "Grid/Print Report"
+#~ msgstr "Grille/Imprimer le rapport"
+
+#~ msgid ""
+#~ "NON-CUMULATIVE (NC): The Life of Program result is the average of target "
+#~ "period values. No other automatic calculations are performed."
+#~ msgstr ""
+#~ "NON-CUMULATIF (NC): Le résultat de la vie du programmeest la moyenne des "
+#~ "valeurs de la période cible. Aucun autrecalcul automatique n'est effectué."
+
+#~ msgid "CANCEL"
+#~ msgstr "Annuler"
 
 #~ msgid "Cumulative Actuals"
 #~ msgstr "Rapports réels cumulés"
