@@ -1,3 +1,4 @@
+{% include indicator_form_common_js.html %}
 
 <div id="id_reporting_period_modal" class="modal fade" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -18,42 +19,53 @@
                     </button>
                 </div>
                 <div id="div-gait-dates" class="mb-3">
-                    <div class="mb-3">
+                    <div id="div_gait_dates_title" class="mb-3">
                         <h3>GAIT program dates</h3>
                     </div>
-                    <div style="display:inline-block;">
-                        <div
-                            id="gait_start_date"
-                            class="mr-4"
-                            style="display: inline-block;">
-                                <h4 class="mb-0">START DATE</h4>
-                                <h4>Dec 22, 2018</h4>
+                    <div id="div_gait_dates">
+                        <div id="div_id_gait_start_date" class="mr-4" style="display: inline-block;">
+                            <h4>
+                                <div class="mb-0">START DATE</div>
+                                <div id="id_gait_start_date"></div>
+                            </h4>
                         </div>
-                        <div id="gait_start_date" style="display: inline-block;">
-                            <h4 class="mb-0">END DATE</h4>
-                            <h4>Dec 22, 2020</h4>
+
+                        <div id="div_id_gait_start_date" style="display: inline-block;">
+                            <h4>
+                                <div class="mb-0">END DATE</div>
+                                <div id="id_gait_end_date"></div>
+                            </h4>
                         </div>
                     </div>
                 </div>
                 <div class="card inputs-in-a-box" id="div-card-user-dates" style="width: 90%">
                     <div class="card-body p-4">
-                        <div>
+                        <div id="div_reporting_dates_title">
                             <h3>Reporting start and end dates</h3>
                         </div>
-                        <div>
-                            <div
-                                id="gait_start_date"
-                                class="mr-5"
-                                style="display: inline-block;">
-                                    <h4 class="mb-0">START DATE</h4>
-                                    <h4>Dec 22, 2018</h4>
+                        <div id="div_reporting_dates">
+                            <div id="div_id_reporting_start_date" style="display: inline-block;" class="mr-5">
+                                <h4>
+                                    <div class="mb-0">START MONTH</div>
+                                    <input type="text"
+                                           name="reporting_period_start"
+                                           class="form-control monthPicker"
+                                           value="2018-03-04"
+                                           id="id_reporting_start_date">
+                                </h4>
                             </div>
-                            <div id="gait_start_date" style="display: inline-block;">
-                                <h4 class="mb-0">END DATE</h4>
-                                <h4>Dec 22, 2020</h4>
+                            <div id="div_reporting_end_date" style="display: inline-block;">
+                                <h4>
+                                    <div class="mb-0">END MONTH</div>
+                                    <input type="text"
+                                           name="reporting_period_end"
+                                           class="form-control monthPicker"
+                                           value="2018-03-04"
+                                           id="id_reporting_end_date">
+                                </h4>
                             </div>
                         </div>
-                        <div>
+                        <div id="div_reporting_dates_description">
                             While a program may begin and end any day of the month, reporting periods must begin on the first day of the month and end on the last day of the month. Please note that the reporting start month can only be adjusted <span class="color-red">before targets are set up and a program begins submitting performance results.</span> The reporting end month can still be extended.
                         </div>
                     </div>
@@ -65,17 +77,19 @@
 
 <script type="text/javascript">
     /*
-    *  Load the collected data for an indicator on the results page
+    *  Populate the programs start and end datestr
     */
-    function loadCollected(indicator,program){
-        var url = '/indicators/collected_data_table/' + indicator + '/' + program + '/';
-        var div_name = '#hidden-indicator-' + indicator;
-        $(div_name).empty();
-        $.get(url, function(data){
-            $(div_name).html(data);
-            $("body").removeClass("modal-open");
-        });
-        $("#id_indicator_data_count_btn_"+indicator).blur();
-    };
+    $('#id_reporting_period_modal').on('show.bs.modal', function (event) {
+        var periods = $(event.relatedTarget).data('periods');
+        console.log('periods', periods);
+        $("#id_gait_start_date").text(periods.pStart)
+        $("#id_gait_end_date").text(periods.pEnd)
+        $("#id_reporting_start_date").val(periods.rStart)
+        $("#id_reporting_end_date").val(periods.rEnd)
+
+        setupPopupCalendar()
+
+
+    });
 
  </script>

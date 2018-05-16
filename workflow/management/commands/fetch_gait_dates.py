@@ -14,10 +14,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         base_url = 'https://mcapi.mercycorps.org/gaitprogram/?gaitid='
-        for program in Program.objects.all():
-            program.start_date = None
-            program.end_date = None
-            program.save()
+        # for program in Program.objects.all():
+        #     program.start_date = None
+        #     program.end_date = None
+        #     program.save()
 
         programs = Program.objects.filter(
             Q(gaitid__isnull=False),

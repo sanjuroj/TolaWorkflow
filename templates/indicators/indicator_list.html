@@ -44,7 +44,7 @@
                     </a>
                     <span class="small d-flex align-items-center">
                         <strong>
-                            <a class="pr-1" href="/indicators/program_report/{{ program.id }}/">Indicator Plan</a>
+                            <a class="pr-1" href="/indicators/program_report/{{ program.id }}/">{% trans 'Indicator Plan' %}</a>
                         </strong>
                         |
                         <strong>
@@ -52,9 +52,9 @@
                                 class="pl-1"
                                 href="#"
                                 data-toggle="modal"
-                                data-periods='{"startDate":"", "endDate":"", "rStart":"", "rEnd":""}'
+                                data-periods='{"pStart":"{{ program.start_date }}", "pEnd":"{{ program.end_date }}", "rStart":"{{ program.reporting_period_start }}", "rEnd":"{{ program.reporting_period_end }}"}'
                                 data-target="#id_reporting_period_modal">
-                                    Reporting Period
+                                    {% trans 'Reporting Period' %}
                             </a>
                         </strong>
                     </span>
