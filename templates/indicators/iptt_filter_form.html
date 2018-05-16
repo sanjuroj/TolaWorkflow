@@ -50,7 +50,7 @@
           {% endwith %}
         {% endfor %}
         <div class="col-sm-4">
-          {% render_field form.numrecentperiods placeholder="" class+="form-control" %}
+          {% render_field form.numrecentperiods placeholder="" disabled="true" class+="form-control" %}
         </div>
       </div>
       <div class="form-row mb-3">
@@ -153,8 +153,12 @@
 
 <script>
   $(document).ready(function () {
-    let start_date_id = `{{ form.start_date.auto_id }}`;
-    let end_date_id = `{{ form.end_date.auto_id }}`;
+    const site_profile = $("#id_site");
+    const indicators_select = $("#id_indicators");
+    const numRecentPeriods = $("#id_numrecentperiods");
+
+    const start_date_id = `{{ form.start_date.auto_id }}`;
+    const end_date_id = `{{ form.end_date.auto_id }}`;
     $(`#${start_date_id}`).val(formatDate($(`#${start_date_id}`).val()));
     $(`#${end_date_id}`).val(formatDate($(`#${end_date_id}`).val()));
 
@@ -195,8 +199,6 @@
 
     $("#id_form_indicator_filter").on("input", "#id_program", function (e) {
       const program_id = $(this).val();
-      const site_profile = $("#id_site");
-      const indicators_select = $("#id_indicators");
 
       $.getJSON(`/api/siteprofile/?program=${program_id}`, function( data ){
         site_profile.empty();
@@ -216,6 +218,15 @@
     });
 
 
+    // everytime the radio buttons value changes, lock or unlock
+    $("#id_form_indicator_filter").on("change", "input[type=radio][name='timeframe']", function (e) {
+      if ($(e.target).val() == 2) {
+        numRecentPeriods.attr("disabled", false);
+      } else {
+        numRecentPeriods.val(null);
+        numRecentPeriods.attr("disabled", true);
+      }
+    });
 
   });
 </script>
