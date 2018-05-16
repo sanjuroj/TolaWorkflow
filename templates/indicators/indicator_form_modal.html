@@ -44,8 +44,9 @@
 
 <div class="modal-header" style="border-bottom:none;">
     <div id="indicator_modal_header" style="width:100%" class="modal-title">
+        <h2 class="mb-3">{% trans 'Indicator setup' %}</h2>
         <span id = "modalmessages" width="100%"></span>
-        <h5 style="color:#94979c;">
+        <h3>
 
             {% trans "indicator:" as ind %}
             {% if indicator.levels %}
@@ -53,7 +54,7 @@
             {% endif %}
             {{ indicator.name|truncatechars:300 }}
 
-        </h5>
+        </h3>
     </div>
     <button
         type="button"

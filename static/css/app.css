@@ -56,6 +56,10 @@ body {
     padding-right: .80rem;
 }
 
+.paddingright-175 {
+    padding-right: 1.75rem;
+}
+
 .marginbottom-225 {
     margin-bottom: 2.25rem;
 }
@@ -373,6 +377,15 @@ select.listoption_filters
   border: none;
 }
 
+#indicator_modal_body {
+    padding-right: .0001rem;
+    padding-left: .0001rem;
+}
+
+#indicator_modal_body .tab-content {
+    background-color: #FFFFFF;
+}
+
 #indicator_modal_body .form-row > label{
     font-weight: bold;
     color: #54585A;
@@ -439,6 +452,10 @@ from being applied when there is no value */
   display: table-cell;
 }
 
+.input-symbol-percent .input-value {
+    padding-right: 1.60rem;
+}
+
 /* Don't define border property here.  Assigning here prevents red border
 from being applied when there is no value */
 .periodic-target .input-text {
@@ -482,6 +499,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 #id_div_is_cumulative .card-body {
     border: 1px solid #B8BABD;
+    border-radius: .25rem;
 }
 
 #id_div_is_cumulative_section1,
