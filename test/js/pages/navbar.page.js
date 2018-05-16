@@ -3,7 +3,6 @@
  * TolaActivity navigation bar/page header
  * @module NavBar
  */
-import { browser } from 'webdriverio'
 
 class NavBar {
   get TolaActivity () { return browser.$('a.navbar-brand') }

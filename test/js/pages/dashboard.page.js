@@ -5,7 +5,6 @@
  */
 import Page from './page'
 import Util from '../lib/testutil'
-import { browser } from 'webdriverio'
 
 class DashboardPage extends Page {
   get title () {
