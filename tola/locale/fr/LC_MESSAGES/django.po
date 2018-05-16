@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-15 13:36-0700\n"
+"POT-Creation-Date: 2018-05-16 09:40-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1007,6 +1007,8 @@ msgid ""
 "*Results are non-cumulative. The Life of Program result is the sum of target "
 "periods results."
 msgstr ""
+"* Les résultats sont non cumulatifs. Le résultat de la vie du programme est "
+"la somme des résultats des périodes cibles."
 
 #: templates/indicators/collected_data_table.html:277
 msgid ""
@@ -1142,7 +1144,7 @@ msgstr ""
 
 #: templates/indicators/collecteddata_form_modal.html:248
 msgid "New Disaggregations"
-msgstr "Nouvelles Désagrégation"
+msgstr "Nouvelles Désagrégations"
 
 #: templates/indicators/collecteddata_form_modal.html:271
 msgid "Disaggregation Levels Not Entered For This Indicator"
@@ -1655,6 +1657,7 @@ msgstr "RÉINITIALISER"
 
 #: templates/indicators/indicator_form_helper.html:553
 #: templates/indicators/indicatortargets.html:128
+#, python-format
 msgid "PERCENTAGE (%%) INDICATORS"
 msgstr "INDICATEURS EN POURCENTAGE (%%)"
 
@@ -1766,8 +1769,8 @@ msgid ""
 "CUMULATIVE (C): The Life of Program result mirrors the latest period result. "
 "No calculations are performed with collected data."
 msgstr ""
-"CUMULATIVE (C): Le résultat de la vie du programme reflète le dernier résultat de période. Aucun calcul n'est effectué avec les données "
-"collectées."
+"CUMULATIVE (C): Le résultat de la vie du programme reflète le dernier "
+"résultat de période. Aucun calcul n'est effectué avec les données collectées."
 
 #: templates/indicators/iptt_filter_form.html:145
 msgid "APPLY"
@@ -1825,7 +1828,7 @@ msgstr "CHANGEMENT"
 #: templates/indicators/iptt_report.html:56
 #, python-format
 msgid "# / %%"
-msgstr ""
+msgstr "# / %%"
 
 #: templates/indicators/iptt_report.html:57
 msgid "BASELINE"
@@ -1885,8 +1888,10 @@ msgid "District:"
 msgstr "District:"
 
 #: templates/indicators/tva_print.html:42
-msgid "Indicator Target vs Actual Report for %(program)s "
-msgstr "Indicateur Cible vs Rapport réel pour %%(programme)s"
+#, fuzzy
+#| msgid "Indicator Targets vs Actuals Report"
+msgid "Indicator Target vs Actual Report for "
+msgstr "Rapport sur les indicateurs et les résultats réels"
 
 #: templates/indicators/tva_report.html:15
 msgid "Indicator Targets vs Actuals Report"
@@ -2046,11 +2051,11 @@ msgstr "Madame"
 
 #: workflow/models.py:133
 msgid "ms"
-msgstr ""
+msgstr "ms"
 
 #: workflow/models.py:133
 msgid "Ms."
-msgstr ""
+msgstr "Mme"
 
 #: workflow/models.py:138 workflow/models.py:269
 msgid "Title"
@@ -2944,11 +2949,11 @@ msgid "URL (Link to document or document repository)"
 msgstr "URL (lien vers le référentiel de documents ou de documents)"
 
 #: workflow/models.py:1226
-msgid "% complete"
+msgid "%% complete"
 msgstr "%% terminé"
 
 #: workflow/models.py:1227
-msgid "% cumulative completion"
+msgid "%% cumulative completion"
 msgstr "%% d`achèvement cumulé"
 
 #: workflow/models.py:1228
@@ -3006,52 +3011,3 @@ msgstr "Article de la liste"
 #: workflow/models.py:1387
 msgid "Username"
 msgstr "Nom d`utilisateur"
-
-#~ msgid "Please complete all required fields in the Performance tab."
-#~ msgstr "Veuillez compléter tous les champs requis dans l`onglet cibles."
-
-#~ msgid "Create targets"
-#~ msgstr "Créer des cibles"
-
-#~ msgid "Average of targets"
-#~ msgstr "Moyenne des cibles"
-
-#~ msgid "Grid/Print Report"
-#~ msgstr "Grille/Imprimer le rapport"
-
-#~ msgid ""
-#~ "NON-CUMULATIVE (NC): The Life of Program result is the average of target "
-#~ "period values. No other automatic calculations are performed."
-#~ msgstr ""
-#~ "NON-CUMULATIF (NC): Le résultat de la vie du programmeest la moyenne des "
-#~ "valeurs de la période cible. Aucun autrecalcul automatique n'est effectué."
-
-#~ msgid "CANCEL"
-#~ msgstr "Annuler"
-
-#~ msgid "Cumulative Actuals"
-#~ msgstr "Rapports réels cumulés"
-
-#~ msgid "Token Not Found"
-#~ msgstr "Jeton introuvable"
-
-#~ msgid "License"
-#~ msgstr "Licence"
-
-#~ msgid "danger"
-#~ msgstr "danger"
-
-#~ msgid "change"
-#~ msgstr "change"
-
-#~ msgid "visible"
-#~ msgstr "visible"
-
-#~ msgid "name"
-#~ msgstr "nom"
-
-#~ msgid "achieved"
-#~ msgstr "atteint"
-
-#~ msgid "success"
-#~ msgstr "Succès"
