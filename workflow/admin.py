@@ -138,6 +138,7 @@ class ProgramAdmin(admin.ModelAdmin):
     search_fields = ('name','gaitid')
     list_filter = ('funding_status','country','budget_check','funding_status')
     display = 'Program'
+    readonly_fields = ('start_date', 'end_date', 'reporting_period_start', 'reporting_period_end', )
 
 
 class ApprovalAuthorityAdmin(admin.ModelAdmin):
