@@ -46,10 +46,8 @@ class TolaTableAdmin(admin.ModelAdmin):
 
 
 class IndicatorType(models.Model):
-    indicator_type = models.CharField(
-        _("Indicator type"), max_length=135, blank=True)
-    description = models.TextField(
-        _("Description"), max_length=765, blank=True)
+    indicator_type = models.CharField(_("Indicator type"), max_length=135, blank=True)
+    description = models.TextField(_("Description"), max_length=765, blank=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 

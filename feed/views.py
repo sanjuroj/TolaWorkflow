@@ -7,7 +7,8 @@ from .serializers import (
     StakeholderTypeSerializer, EvaluateSerializer, ProfileTypeSerializer, ProvinceSerializer, DistrictSerializer,
     AdminLevelThreeSerializer, TolaTableSerializer, DisaggregationValueSerializer, VillageSerializer,
     ContactSerializer, DocumentationSerializer, CollectedDataSerializer, LoggedUserSerializer,
-    ChecklistSerializer, OrganizationSerializer, SiteProfileLightSerializer, IndicatorIdAndNameSerializer
+    ChecklistSerializer, OrganizationSerializer, SiteProfileLightSerializer, IndicatorIdAndNameSerializer,
+    SectorIdAndNameSerializer
 )
 
 from workflow.models import (
@@ -115,8 +116,18 @@ class SectorViewSet(viewsets.ModelViewSet):
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
     """
-    queryset = Sector.objects.all()
-    serializer_class = SectorSerializer
+    def get_serializer_class(self):
+        if self.request.query_params.get('program', None):
+            return SectorIdAndNameSerializer
+        return SectorSerializer
+
+    def get_queryset(self):
+        program_id = self.request.query_params.get('program', None)
+        if program_id:
+            queryset = Sector.objects.filter(indicator__program__in=[program_id]).values('id', 'sector').distinct()
+        else:
+            queryset = Sector.objects.all()
+        return queryset
 
 
 class ProjectTypeViewSet(viewsets.ModelViewSet):
@@ -279,6 +290,16 @@ class IndicatorTypeViewSet(viewsets.ModelViewSet):
     """
     queryset = IndicatorType.objects.all()
     serializer_class = IndicatorTypeSerializer
+
+    def get_queryset(self):
+        program_id = self.request.query_params.get('program', None)
+        if program_id:
+            type_ids = Indicator.objects.filter(program__in=[program_id]).values(
+                'indicator_type__id').distinct().order_by('indicator_type')
+            queryset = IndicatorType.objects.filter(id__in=type_ids).distinct()
+        else:
+            queryset = IndicatorType.objects.all()
+        return queryset
 
 
 class ObjectiveViewSet(viewsets.ModelViewSet):

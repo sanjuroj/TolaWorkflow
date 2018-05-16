@@ -66,11 +66,17 @@ class ProgramSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class SectorSerializer(serializers.HyperlinkedModelSerializer):
+class SectorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sector
         fields = '__all__'
+
+
+class SectorIdAndNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sector
+        fields = ('id', 'sector')
 
 
 class ProjectTypeSerializer(serializers.HyperlinkedModelSerializer):
