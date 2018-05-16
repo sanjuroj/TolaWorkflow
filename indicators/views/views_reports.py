@@ -132,11 +132,11 @@ class IPTT_ReportView(TemplateView):
         """
         try:
             return {
-                Indicator.ANNUAL: 'Year',
-                Indicator.SEMI_ANNUAL: 'Semi-annual',
-                Indicator.TRI_ANNUAL: 'Tri-annual',
-                Indicator.QUARTERLY: 'Quarter',
-                Indicator.MONTHLY: 'Month'
+                Indicator.ANNUAL: _('Year'),
+                Indicator.SEMI_ANNUAL: _('Semi-annual'),
+                Indicator.TRI_ANNUAL: _('Tri-annual'),
+                Indicator.QUARTERLY: _('Quarter'),
+                Indicator.MONTHLY: _('Month')
             }[period]
         except KeyError:
             return 0
