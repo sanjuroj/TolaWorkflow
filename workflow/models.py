@@ -339,6 +339,10 @@ class Program(models.Model):
     country = models.ManyToManyField(Country, verbose_name=_("Country"))
     user_access = models.ManyToManyField(TolaUser, blank=True)
     public_dashboard = models.BooleanField(_("Enable Public Dashboard"), default=False)
+    start_date = models.DateField(_("Program Start Date"), null=True, blank=True)
+    end_date = models.DateField(_("Program End Date"), null=True, blank=True)
+    reporting_period_start = models.DateField(_("Reporting Period Start Date"), null=True, blank=True)
+    reporting_period_end = models.DateField(_("Reporting Period End Date"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("Program")

@@ -44,6 +44,14 @@ body {
     font-size: 1.25rem;
 }
 
+.fontsize-130 {
+    font-size: 1.3rem;
+}
+
+.color-red {
+    color: #DD0000;
+}
+
 .paddingright-80 {
     padding-right: .80rem;
 }
@@ -76,6 +84,11 @@ body {
     color: #fff;
     background-color: #808080;
     border-color: #808080;
+}
+
+.x-modal {
+    font-weight: 100;
+    font-size: 2rem;
 }
 
 .date-badge {
@@ -515,6 +528,10 @@ input[type=number]::-webkit-outer-spin-button {
 .div-expand-symbol {
     width: .7rem;
     display: inline-block;
+}
+
+#id_reporting_period_modal {
+    line-height: 1.2;
 }
 
 /* END Indicator list page css */
