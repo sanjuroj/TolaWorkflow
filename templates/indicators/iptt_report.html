@@ -61,9 +61,9 @@
             <th scope="col" style="min-width:130px">{% trans "C / NC" %}</th>
             <th scope="col" style="min-width:50px">{% trans "# / %" %}</th>
             <th scope="col">{% trans "BASELINE" %}</th>
-            <th scope="col" class="text-right" style="min-width: 110px;">{% trans "TARGET" %}</th>
-            <th scope="col" class="text-right" style="min-width: 110px;">{% trans "ACTUAL" %}</th>
-            <th scope="col" class="text-right" style="min-width: 110px;">{% trans "% MET" %}</th>
+            <th scope="col" class="text-right td-no-side-borders" style="min-width: 110px;">{% trans "TARGET" %}</th>
+            <th scope="col" class="text-right td-no-side-borders" style="min-width: 110px;">{% trans "ACTUAL" %}</th>
+            <th scope="col" class="text-right td-no-side-borders" style="min-width: 110px;">{% trans "% MET" %}</th>
             {% if reporttype == 'targetperiods' %}
               {% for pt in report_date_ranges %}
                 <th scope="col" class="text-right" style="min-width: 110px;">{% trans "TARGET" %}</th>
@@ -80,7 +80,7 @@
           <tbody>
           {% for indicator in indicators %}
             <tr>
-              <td>{{ indicator.number|default_if_none:'' }}</td>
+              <td class="td-no-side-borders">{{ indicator.number|default_if_none:'' }}</td>
               <td class="td-no-side-borders">
                 <button type="button"
                         class="btn btn-link p-1 indicator-ajax-popup indicator-data"
@@ -100,21 +100,22 @@
                   <i class="fas fa-cog"></i>
                 </a>
               </td>
-              <td>{{ indicator.lastlevel|default_if_none:'' }}</td>
-              <td>{{ indicator.unit_of_measure|default_if_none:'' }}</td>
-              <td align="right">{{ indicator.direction_of_change|symbolize_change }}</td>
-              <td>{% if indicator.target_frequency == 1 %}
+              <td class="td-no-side-borders">{{ indicator.lastlevel|default_if_none:'' }}</td>
+              <td class="td-no-side-borders">{{ indicator.unit_of_measure|default_if_none:'' }}</td>
+              <td class="td-no-side-borders" align="right">{{ indicator.direction_of_change|symbolize_change }}</td>
+              <td class="td-no-side-borders">
+                {% if indicator.target_frequency == 1 %}
                     {% trans "N/A" %}
                   {% else %}
                     {{ indicator.is_cumulative|yesno:"Cumulative,Non-cumulative," }}
                   {% endif %}
                 </td>
-              <td>{{ indicator.unit_of_measure_type|symbolize_measuretype }}</td>
-              <td align="right">{{ indicator.baseline|default_if_none:'' }}</td>
-              <td align="right">
+              <td class="td-no-side-borders">{{ indicator.unit_of_measure_type|symbolize_measuretype }}</td>
+              <td class="td-no-side-borders" align="right">{{ indicator.baseline|default_if_none:'' }}</td>
+              <td class="td-no-side-borders" align="right">
                 {{ indicator.lop_target|default_if_none:'' }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
               </td>
-              <td align="right">
+              <td class="td-no-side-borders" align="right">
                 {% if indicator.unit_of_measure_type == 1 %}
                   {{ indicator.actualsum|floatformat:"-2"|default_if_none:"" }}
                 {% elif indicator.unit_of_measure_type == 2 %}
@@ -130,7 +131,7 @@
                   {% endif %}
                 {% endif %}
               </td>
-              <td align="right">
+              <td class="td-no-side-borders" align="right">
                 {% if indicator.unit_of_measure_type == 1 %}
                   {% widthratio indicator.actualsum indicator.lop_target 100 as percent_met1 %}
                   {% if percent_met1 %} {{ percent_met1 }}% {% endif %}
