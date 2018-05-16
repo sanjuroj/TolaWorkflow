@@ -99,13 +99,15 @@
                     <td {% if cdata.periodic_target == None %}
                             style="border: 3px solid red;"
                         {% endif %}>
-
+                        {% if is_editable is False %}
+                          {{ cdata.date_collected_formatted|default_if_none:"" }}
+                        {% else %}
                         <a href="{% url 'collecteddata_update' cdata.id %}"
                            class="collecteddata-link"
                            id="collected-{{cdata.id}}">
                                 {{ cdata.date_collected_formatted|default_if_none:"" }}
                         </a>
-
+                        {% endif %}
                         <span class="float-right">
                             {% with achieved=cdata.achieved|floatformat:"-2" %}
                                 {% if indicator.unit_of_measure_type == 2 %}
@@ -177,9 +179,13 @@
                 </td>
                 <td align="right"></td>
                 <td style="border: 3px solid red;">
-                    <a href="{% url 'collecteddata_update' coldata.id %}" class="collecteddata-link" id="collected-{{coldata.id}}">
-                        {{ coldata.date_collected_formatted|default_if_none:"" }}
-                    </a>
+                    {% if is_editable is False %}
+                      {{ coldata.date_collected_formatted|default_if_none:"" }}
+                    {% else %}
+                      <a href="{% url 'collecteddata_update' coldata.id %}" class="collecteddata-link" id="collected-{{coldata.id}}">
+                          {{ coldata.date_collected_formatted|default_if_none:"" }}
+                      </a>
+                    {% endif %}
                 </td>
                 <td>
                     {% if coldata.evidence %}
