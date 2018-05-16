@@ -6,6 +6,11 @@
 {% block page_title %}{% endblock %}
 
 {% block content %}
+<style>
+  .popover{
+    max-width: 100%; /* Max Width of the popover (depending on the container) */
+  }
+</style>
   <div class="float-left collapse width show" id="sidebar">
     {% include 'indicators/iptt_filter_form.html' %}
   </div>

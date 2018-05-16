@@ -111,10 +111,6 @@ table.table-hover tbody tr:hover {
     background-color: #CCEFEE !important;
 }
 
-.popover{
-    max-width: 100%; /* Max Width of the popover (depending on the container) */
-}
-
 #iptt_table, #iptt_table thead tr td{
     border: 0px !important;
 }
