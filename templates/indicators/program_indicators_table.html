@@ -23,12 +23,18 @@
         <td id="id_indicator_sector_{{ indicator.id }}">{{ indicator.sector|default_if_none:''}}</td>
         <td id="id_indicator_buttons_{{ indicator.id }}"width="150">
             <span class="btn-group" role="group">
-                <a href="/indicators/indicator_update/{{ indicator.id }}" class="btn btn-sm btn-info indicator-link"><i class="fas fa-edit"></i></a>
-                <a id="id_indicator_data_count_btn_{{ indicator.id }}" href="#" onclick="loadCollected({{ indicator.id }}, {{ program_id }})"
-                    class="btn btn-sm btn-secondary"
+                <a
+                    id="id_indicator_data_count_btn_{{ indicator.id }}"
+                    href="#"
+                    onclick="loadCollected({{ indicator.id }}, {{ program_id }})"
+                    class="btn btn-primary"
                     data-toggle="collapse"
-                    data-target="#hidden-indicator-{{ indicator.id }}"><i class="fas fa-database"></i> <span id="id_indicator_data_span_count_{{ indicator.id }}" {{ indicator.data_count }}</span></a>
-                <a href="/indicators/indicator_delete/{{ indicator.id }}" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></a>
+                    data-target="#hidden-indicator-{{ indicator.id }}">
+                        <span id="id_indicator_data_span_count_{{ indicator.id }}">
+                            {% trans 'Results' %} ({{ indicator.data_count }})
+                        </span>
+                </a>
+
             </span>
         </td>
     </tr>

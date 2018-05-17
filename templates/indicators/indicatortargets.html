@@ -3,7 +3,7 @@
 {% load mytags %}
 
 {% if periodic_targets and indicator.target_frequency != 1%}
-    <div class="d-flex flex-column p-4 inputs-in-a-box" style="margin-left:-15px; margin-right:-15px;">
+    <div class="d-flex flex-column p-4 inputs-in-a-box">
         <div class="col-sm-11 mx-auto">
             <h3 class="mb-1">{{ indicator.get_target_frequency_label }} {% trans "targets" %}</h3>
         </div>
@@ -39,7 +39,7 @@
                                     data-start-date="{{pt.start_date|convert2dateobject|date:"M d, Y"|default:''}}"
                                     data-end-date="{{pt.end_date|convert2dateobject|date:"M d, Y"|default:''}}"
                                     placeholder="{% trans 'Enter target' %}"
-                                    class="form-control input-value {% if indicator.unit_of_measure_type == 2 %} pr-4{% endif %}">
+                                    class="form-control input-value">
                             </span>
                             <span id="hint_id_pt_{{pt.pk}}" style="margin:0px;" class="help-block"> </span>
                         </td>

@@ -334,12 +334,12 @@
             }
             if ($('#indicator_modal_div').length == 1) {
                 // for the modal version;
-                $("#id_baseline").animate({ scrollTop: 0 }, 'slow');
+                $("#indicator_modal_div").animate({ scrollTop: 0 }, 'slow');
             } else {
                 // for the non-modal version;
-                $("html, body").animate({ scrollTop: $("#id_baseline").offset().top }, "slow");
+                $("html, body").animate({ scrollTop: 0 }, "slow");
             }
-            // $("html, body").animate({ scrollTop: $("#id_baseline").offset().top }, 'slow');
+
             show_hide_frequency_fields(true);
             toggleTargetsSumOrAvgRow()
             if ($("#id_unit_of_measure_type_1").is(":checked")) {

@@ -1,3 +1,6 @@
+{% load i18n %}
+{% load assign %}
+
 <style>
   .disable-span {
       cursor: not-allowed;
@@ -8,10 +11,9 @@
   }
 </style>
 <script type="text/javascript">
-    $("#id_indicator_data_span_count_" + `{{indicator.id}}`).text("{{ indicator.collecteddata_set.count|default:0 }}" );
+    $("#id_indicator_data_span_count_" + `{{indicator.id}}`).text("{% trans 'Results' %} ({{ indicator.collecteddata_set.count|default:0 }})" );
 </script>
-{% load assign %}
-{% load i18n %}
+
 {% if indicator.target_frequency  %}
     <table class="table table-sm table-bordered">
         <thead>
@@ -20,7 +22,7 @@
                 <th style="vertical-align:bottom; text-align: right;">{% trans "TARGET" %}</th>
                 <th style="vertical-align:bottom; text-align: right;">{% trans "ACTUAL" %}</th>
                 <th style="vertical-align:bottom; text-align: right;">{% trans "% MET" %}</th>
-                <th style="vertical-align:bottom; min-width: 125px;">{% trans "DATA COLLECTED" %}</th>
+                <th style="vertical-align:bottom; min-width: 160px;">{% trans "RESULTS" %}</th>
                 <th style="vertical-align:bottom;">{% trans "EVIDENCE" %}</th>
                 {% if is_editable is not False %}
                   <th style="vertical-align:bottom;" width="80"></th>
@@ -248,16 +250,18 @@
                 </strong>
             </td>
             <td align="right">
-                {% if indicator.unit_of_measure_type == 1 %}
-                    {{ grand_achieved_sum|floatformat:"-2" }}
-                {% elif indicator.unit_of_measure_type == 2 %}
-                    {% if indicator.is_cumulative == True %}
-                        {{ last_data_record_value|floatformat:"-2" }}%
-                    {% else %}
-                        <small><abbr title='{% trans "Average" %}'>{% trans "avg." %}</abbr></small>
-                        {{ grand_achieved_avg|floatformat:"-2" }}%
+                <strong>
+                    {% if indicator.unit_of_measure_type == 1 %}
+                        {{ grand_achieved_sum|floatformat:"-2" }}
+                    {% elif indicator.unit_of_measure_type == 2 %}
+                        {% if indicator.is_cumulative == True %}
+                            {{ last_data_record_value|floatformat:"-2" }}%
+                        {% else %}
+                            <small><abbr title='{% trans "Average" %}'>{% trans "avg." %}</abbr></small>
+                            {{ grand_achieved_avg|floatformat:"-2" }}%
+                        {% endif %}
                     {% endif %}
-                {% endif %}
+                </strong>
             </td>
             <td align="right">
                 <strong>
@@ -293,7 +297,9 @@
               <td align="right">
                   <span class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
                       <a href="{% url 'collecteddata_add' program_id indicator.id %}"
-                        class="btn-sm btn-info collecteddata-link pl-1 pr-1">{% trans "New Data" %}</a>
+                              class="btn btn-link collecteddata-link pl-1 pr-1 fontsize-130">
+                          <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
+                      </a>
                   </span>
               </td>
             {% endif %}

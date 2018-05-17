@@ -519,7 +519,6 @@
 
             // add the % sign to target values
             $("#periodic_targets_table input[data-periodictarget]").each(function(index, element) {
-                $(element).addClass('pr-4');
                 $(element).parent().addClass('input-symbol-percent');
             });
         } else {
@@ -528,7 +527,6 @@
 
             // remove the % sign from target values
             $("#periodic_targets_table input[data-periodictarget]").each(function(index, element) {
-                $(element).removeClass('pr-4');
                 $(element).parent().removeClass('input-symbol-percent');
             });
         }
