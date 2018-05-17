@@ -1211,8 +1211,8 @@ class Migration(migrations.Migration):
     ]
 """
 class Benchmarks(models.Model):
-    percent_complete = models.IntegerField(_("%% complete"), blank=True, null=True)
-    percent_cumulative = models.IntegerField(_("%% cumulative completion"), blank=True, null=True)
+    percent_complete = models.IntegerField(_("% complete"), blank=True, null=True)
+    percent_cumulative = models.IntegerField(_("% cumulative completion"), blank=True, null=True)
     est_start_date = models.DateTimeField(_("Est start date"), null=True, blank=True)
     est_end_date = models.DateTimeField(_("Est end date"), null=True, blank=True)
     actual_start_date = models.DateTimeField(_("Actual start date"), null=True, blank=True)
