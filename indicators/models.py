@@ -126,6 +126,7 @@ class Level(models.Model):
     name = models.CharField(_("Name"), max_length=135, blank=True)
     description = models.TextField(
         _("Description"), max_length=765, blank=True)
+    customsort = models.IntegerField(_("Customsort"), blank=True, null=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 

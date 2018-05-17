@@ -111,7 +111,13 @@
                   {% endif %}
                 </td>
               <td class="td-no-side-borders">{{ indicator.unit_of_measure_type|symbolize_measuretype }}</td>
-              <td class="td-no-side-borders" align="right">{{ indicator.baseline|default_if_none:'' }}</td>
+              <td class="td-no-side-borders" align="right">
+                {% if indicator.baseline_na is True %}
+                  {% trans "N/A" %}
+                {% else %}
+                  {{ indicator.baseline|default_if_none:'' }}
+                {% endif %}
+              </td>
               <td class="td-no-side-borders" align="right">
                 {{ indicator.lop_target|default_if_none:'' }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
               </td>
