@@ -21,7 +21,7 @@ describe('Adding target date ranges', function() {
       LoginPage.login.click()
     } else if (parms.baseurl.includes('localhost')) {
       LoginPage.googleplus.click()
-      if (LoginPage.title != 'TolaActivity') {
+      if (LoginPage.title !== 'TolaActivity') {
         LoginPage.gUsername = parms.username + '@mercycorps.org'
         LoginPage.gPassword = parms.password
       }
@@ -29,15 +29,16 @@ describe('Adding target date ranges', function() {
   })
 
   it('to pre-existing annual periodic targets should produce valid date ranges', function() {
+    // Create an indicator
     NavBar.Indicators.click()
     IndPage.createBasicIndicator()
+
+    // Set other required values
     TargetsTab.clickTargetsTab()
     TargetsTab.setTargetFrequency('Annual')
-    // Set first period to current month
+    // Set first period and number of periods
     TargetsTab.setFirstTargetPeriod()
-    // Set number of target periods to 1
     TargetsTab.setNumTargetPeriods(1)
-    // Set other required values
     TargetsTab.setUnitOfMeasure('Faeries per field')
     TargetsTab.setLoPTarget(43)
     TargetsTab.setBaseline(44)
@@ -79,7 +80,7 @@ describe('Adding target date ranges', function() {
     let inputBoxes = TargetsTab.getTargetInputBoxes()
     let targetCount = inputBoxes.length
     for(let inputBox of inputBoxes) {
-      if ('' == inputBox.getValue()) {
+      if ('' === inputBox.getValue()) {
         inputBox.setValue(1)
       }
     }
@@ -129,7 +130,7 @@ describe('Adding target date ranges', function() {
     let inputBoxes = TargetsTab.getTargetInputBoxes()
     let targetCount = inputBoxes.length
     for(let inputBox of inputBoxes) {
-      if (inputBox.getValue() == '') {
+      if ('' === inputBox.getValue()) {
         inputBox.setValue(1)
       }
     }
@@ -178,7 +179,7 @@ describe('Adding target date ranges', function() {
     let inputBoxes = TargetsTab.getTargetInputBoxes()
     let targetCount = inputBoxes.length
     for(let inputBox of inputBoxes) {
-      if (inputBox.getValue() == '') {
+      if ('' === inputBox.getValue()) {
         inputBox.setValue(1)
       }
     }
@@ -227,7 +228,7 @@ describe('Adding target date ranges', function() {
     let inputBoxes = TargetsTab.getTargetInputBoxes()
     let targetCount = inputBoxes.length
     for(let inputBox of inputBoxes) {
-      if (inputBox.getValue() == '') {
+      if ('' === inputBox.getValue()) {
         inputBox.setValue(1)
       }
     }
@@ -276,7 +277,7 @@ describe('Adding target date ranges', function() {
     let inputBoxes = TargetsTab.getTargetInputBoxes()
     let targetCount = inputBoxes.length
     for(let inputBox of inputBoxes) {
-      if (inputBox.getValue() == '') {
+      if ('' === inputBox.getValue()) {
         inputBox.setValue(1)
       }
     }

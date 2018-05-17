@@ -9,11 +9,10 @@ let parms = Util.readConfig()
 parms.baseurl += '/indicators/home/0/0/0'
 
 /**
- * Add num target periods to the targets list, or
- * 1 target period if num not specified
- * @param {integer} num The number of target periods
- * to add
- * @returns {integer} The total number of target periods
+ * Add num target periods to the targets list, or 1 target period if num
+ * not specified
+ * @param {integer} num The number of target periods to add
+ * @returns {integer} The total number of target periods added
  */
 function addTarget (num = 1) {
   let link = browser.$('a#addNewPeriodicTarget')
@@ -120,7 +119,8 @@ function getTargetDateRanges () {
   browser.scroll('h3')
   let placeholder = browser.$('div#id_div_periodic_tables_placeholder')
   let targetsDiv = placeholder.$('div#periodic-targets-tablediv')
-  let targetsTable = targetsDiv.$('table#periodic_targets_table')
+  browser.waitForVisible('table#periodic_targets_table')
+	let targetsTable = targetsDiv.$('table#periodic_targets_table')
   let rows = targetsTable.$$('tbody>tr.periodic-target')
 
   let dateRanges = []
@@ -490,7 +490,7 @@ function setEndlineTarget (value) {
  */
 function setFirstEventName (value) {
   let textBox = browser.$('input#id_target_frequency_custom')
-  if (value === 0) {
+  if (0 === value) {
     textBox.clear()
   } else {
     textBox.setValue(value)
@@ -507,7 +507,15 @@ function setFirstTargetPeriod () {
   browser.scroll('input#id_target_frequency_start')
   browser.$('input#id_target_frequency_start').click()
   browser.pause(msec)
-  browser.$('button=Done').click()
+  if (browser.isVisible('button=Done')) {
+    // Chrome
+    browser.$('button=Done').click()
+  } else if (browser.isVisible('button.ui-datepicker-close')) {
+    // Firefox/Gecko
+    browser.$('button.ui-datepicker-close').click()
+  } else {
+    Util.dp('Shit. This should not have happened.');
+  }
 }
 
 /**
