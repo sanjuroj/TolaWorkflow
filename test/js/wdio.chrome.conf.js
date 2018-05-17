@@ -66,7 +66,7 @@ exports.config = {
   services: [],
   seleniumLogs: './log',
   framework: 'mocha',
-  reporters: ['dot'],
+  reporters: ['spec'],
   mochaOpts: {
     ui: 'bdd',
     require: 'babel-register'
