@@ -119,7 +119,9 @@ function getTargetDateRanges () {
   browser.scroll('h3')
   let placeholder = browser.$('div#id_div_periodic_tables_placeholder')
   let targetsDiv = placeholder.$('div#periodic-targets-tablediv')
-  browser.waitForVisible('table#periodic_targets_table')
+  if (!browser.isVisible('table#periodic_targets_table')) {
+    browser.waitForVisible('table#periodic_targets_table')
+  }
 	let targetsTable = targetsDiv.$('table#periodic_targets_table')
   let rows = targetsTable.$$('tbody>tr.periodic-target')
 
@@ -500,7 +502,7 @@ function setFirstEventName (value) {
 /**
  * Sets the date of the first target period to the 1st day of the
  * current month
- * @returns Nothing
+ * @returns {Null}
  */
 function setFirstTargetPeriod () {
   // Defaults to the current month
@@ -514,8 +516,15 @@ function setFirstTargetPeriod () {
     // Works on Firefox/Gecko but not Chrome
     browser.$('button.ui-datepicker-close').click()
   } else {
-    browser.saveScreenshot('dafaq.png')
-    Util.dp('This should not have happened. Screenshot saved as "dafaq.png"')
+    // If we get here, make one last blind, unconditional attempt to click
+    // the buttons
+    try {
+      browser.$('button=Done').click()
+    }
+    catch(NoSuchElementError) {
+      browser.$('button.ui-datepicker-close').click()
+    }
+    return null
   }
 }
 
