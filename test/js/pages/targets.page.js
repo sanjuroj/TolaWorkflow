@@ -164,6 +164,11 @@ function getLoPTarget () {
   return val
 }
 
+function getLoPTargetActual () {
+  let val = browser.$('span#id_span_loptarget').getText()
+  return val
+}
+
 function getNumberType () {
   let val = browser.$('div#div_id_unit_of_measure_type_0').getText()
   return val
@@ -557,6 +562,20 @@ function setLoPTarget (value) {
   lopTarget.setValue(value)
 }
 
+function setMeasureIsCumulative () {
+  browser.pause(msec)
+  browser.scroll('input#submit-id-submit')
+  // 2 == true == cumulative
+  browser.$('input#id_is_cumulative_2').setValue(2)
+}
+
+function setMeasureIsNonCumulative () {
+  browser.pause(msec)
+  browser.scroll('input#submit-id-submit')
+  // 3 == cumulative
+  browser.$('input#id_is_cumulative_2').setValue(2)
+}
+
 /**
  * Set the type of the unit of measure (number or percent)
  * @returns {Nothing}
@@ -650,6 +669,7 @@ exports.getDirectionOfChange = getDirectionOfChange
 exports.getIndicatorName = getIndicatorName
 exports.getLoPErrorHint = getLoPErrorHint
 exports.getLoPTarget = getLoPTarget
+exports.getLoPTargetActual = getLoPTargetActual
 exports.getMeasureIsCumulative = getMeasureIsCumulative
 exports.getMeasureType = getMeasureType
 exports.getNumTargetEvents = getNumTargetEvents
@@ -679,6 +699,8 @@ exports.setFirstEventName = setFirstEventName
 exports.setFirstTargetPeriod = setFirstTargetPeriod
 exports.setIndicatorName = setIndicatorName
 exports.setLoPTarget = setLoPTarget
+exports.setMeasureIsCumulative = setMeasureIsCumulative
+exports.setMeasureIsNonCumulative = setMeasureIsNonCumulative
 exports.setMeasureType = setMeasureType
 exports.setMidlineTarget = setMidlineTarget
 exports.setNumTargetEvents = setNumTargetEvents
