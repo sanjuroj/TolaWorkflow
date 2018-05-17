@@ -508,13 +508,14 @@ function setFirstTargetPeriod () {
   browser.$('input#id_target_frequency_start').click()
   browser.pause(msec)
   if (browser.isVisible('button=Done')) {
-    // Chrome
+    // Works on Chrome but not Firefox/Gecko
     browser.$('button=Done').click()
   } else if (browser.isVisible('button.ui-datepicker-close')) {
-    // Firefox/Gecko
+    // Works on Firefox/Gecko but not Chrome
     browser.$('button.ui-datepicker-close').click()
   } else {
-    Util.dp('Shit. This should not have happened.');
+    browser.saveScreenshot('dafaq.png')
+    Util.dp('This should not have happened. Screenshot saved as "dafaq.png"')
   }
 }
 
