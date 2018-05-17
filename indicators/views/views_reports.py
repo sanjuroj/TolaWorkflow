@@ -358,7 +358,7 @@ class IPTT_ReportView(TemplateView):
             num_periods = 0
         return num_periods
 
-    def _generate_targetperiods(self, program_id, period, num_recents):
+    def _generate_targetperiods(self, program, period, num_recents):
         date_ranges = []
         targetperiods = OrderedDict()
         today = datetime.today().date()
@@ -368,14 +368,15 @@ class IPTT_ReportView(TemplateView):
         # have the same number of target periods with the same start and end dates, thus we can just
         # get the first indicator that is within this program and have the same target_frequency(period)
         # and fetch the related set of periodic_targets
-        ind = Indicator.objects.filter(program__in=[program_id], target_frequency=period).first()
+        ind = Indicator.objects.filter(program__in=[program.id], target_frequency=period).first()
         periodic_targets = PeriodicTarget.objects.filter(indicator=ind)\
             .values("id", "period", "target", "start_date", "end_date")
         try:
             date_ranges.append(periodic_targets.first()['start_date'])
             date_ranges.append(periodic_targets.last()['end_date'])
-        except KeyError:
-            pass
+        except (KeyError, TypeError):
+            date_ranges.append(program.reporting_period_start)
+            date_ranges.append(program.reporting_period_end)
         try:
             start_date = parser.parse(self.filter_form_initial_data['start_date']).date()
             end_date = parser.parse(self.filter_form_initial_data['end_date']).date()
@@ -577,7 +578,7 @@ class IPTT_ReportView(TemplateView):
             except IndexError:
                 report_end_date = None
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
-            date_ranges, periods_date_ranges = self._generate_targetperiods(program_id, period, num_recents)
+            date_ranges, periods_date_ranges = self._generate_targetperiods(program, period, num_recents)
             report_start_date = date_ranges[0]
             report_end_date = date_ranges[1]
 
