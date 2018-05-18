@@ -328,6 +328,16 @@ class LevelViewSet(viewsets.ModelViewSet):
     queryset = Level.objects.all()
     serializer_class = LevelSerializer
 
+    def get_queryset(self):
+        program_id = self.request.query_params.get('program', None)
+        if program_id:
+            level_ids = Indicator.objects.filter(program__in=[program_id]).values(
+                'level__id').distinct().order_by('level')
+            queryset = Level.objects.filter(id__in=level_ids).distinct()
+        else:
+            queryset = Level.objects.all()
+        return queryset
+
 
 class StakeholderViewSet(viewsets.ModelViewSet):
     """

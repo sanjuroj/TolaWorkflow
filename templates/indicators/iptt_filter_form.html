@@ -158,6 +158,7 @@
     const numRecentPeriods = $("#id_numrecentperiods");
     const sector_select = $("#id_sector");
     const indicatortype_select = $("#id_ind_type");
+    const level_select = $("#id_level");
 
     const start_date_id = `{{ form.start_date.auto_id }}`;
     const end_date_id = `{{ form.end_date.auto_id }}`;
@@ -237,6 +238,13 @@
           indicatortype_select.append($("<option></option>").attr("value", option.id).text(option.indicator_type));
         });
       });
+
+      $.getJSON(`/api/level/?program=${program_id}`, function(data) {
+        level_select.empty();
+        $.each(data, function(index, option){
+          level_select.append($("<option></option>").attr("value", option.id).text(option.name));
+        });
+      })
     });
 
 

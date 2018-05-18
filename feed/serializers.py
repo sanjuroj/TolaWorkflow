@@ -249,7 +249,7 @@ class TolaUserSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class IndicatorTypeSerializer(serializers.HyperlinkedModelSerializer):
+class IndicatorTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IndicatorType
@@ -270,7 +270,7 @@ class DisaggregationTypeSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class LevelSerializer(serializers.HyperlinkedModelSerializer):
+class LevelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Level
