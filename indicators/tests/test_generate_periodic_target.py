@@ -37,7 +37,7 @@ class GeneratePeriodicTargetTests(TestCase):
         tf = Indicator.EVENT
         expected = {'period': self.target_frequency_custom}
         result = generate_periodic_target_single(tf, self.start_date,
-                                                 self.nth_target_period,
+                                                 0,
                                                  target_frequency_custom=self.target_frequency_custom)
         self.assertEqual(expected, result)
 
