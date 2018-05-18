@@ -33,12 +33,13 @@ $ brew install pip
 $ brew install mysql mysql-utilies
 $ brew install py2cairo pango
 $ git clone https://github.com/mercycorps.org/TolaActivity.git
-$ git checkout dev
-$ virtualenv TolaActivty --no-site-packages
 $ cd TolaActivity
-$ source bin/activate
+$ git checkout dev
+$ virtualenv -p python2 TolaActivty --no-site-packages venv # need to specify Python 2 for systems that might have Python 3 as default system version
+$ source venv/bin/activate
 $ mkdir config
 # Place settings.secret.yml into config/ directory
+$ cp config/sample-settings.secret.yml config/settings.secret.yml
 $ pip install -r requirements.txt
 $ pip install --upgrade google-api-python-client
 ```
@@ -118,6 +119,32 @@ Operations to perform:
   Applying workflow.0015_stakeholder_notes... OK
   Applying workflow.0016_auto_20170623_1306... OK
 ```
+
+### If you get this error during migration `social_django.0005_auto_20160727_2333`
+
+```bash
+django.db.utils.OperationalError: (1071, 'Specified key was too long; max key length is 1000 bytes')
+```
+
+The __social_django__ app creates a unique_together relationship between two rows that concatenate to a value too long for the destination row. Manually change the following two fields:
+
+* social_auth_association.server_url to varchar(100)
+* social_auth_association.handle to varchar(100)
+
+In the MySQL CLI:
+
+```bash
+mysql> USE tola_activity;
+mysql> ALTER TABLE social_auth_association MODIFY server_url varchar(100) NOT NULL;
+mysql> ALTER TABLE social_auth_association MODIFY handle varchar(100) NOT NULL;
+```
+
+...then re-run the migration as normal
+
+```bash
+$ python manage.py migrate
+```
+
 
 Start the server:
 
