@@ -1,7 +1,7 @@
 # Getting started with TolaActivity Test Suite (TATS)
 
 This document describes how to set up your system to test TolaActivity
-front-end code using TATS, the TolaActivity Test Suite. The tools of
+front-end code using _TATS_, the TolaActivity Test Suite. The tools of
 choice are:
 
 * [Selenium WebDriver](http://www.seleniumhq.org/) for browser automation
@@ -29,34 +29,26 @@ installation and testing".
 The framework includes various WebdriverIO, or _WDIO_, runtime
 configuration files. They control most of TATS' runtime behavior, such as
 which browsers run, which tests to execute, and configure the tests'
-runtime environment. The following are summary descriptions of each
-file.
+runtime environment. The following descriptions summarize each file.
 
-- **wdio.auto.conf.js** -- This configuration runs all of the tests
-  against all of the browsers all of the time. If you feel impatient,
-  this is the config for you. Read "The Big Green Button" to get started.
 - **wdio.chrome.conf.js** -- Runs all of the tests in the suite against
   the Chrome browser.
 - **wdio.gecko.conf.js** -- Runs all of the tests in the suite against
   the Firefox browser.
-- **wdio.headless.conf.js** -- This is an experimental option that runs
-  the test framework using Chrome's headless mode. I know, right? I didn't
-  know Chrome _had_ a headless mode. This option executes all of the tests
-  against the Chrome browser.
 
-## The Big Green Button<sup>©</sup>: Quickstart guide for the impatient
+## Manual installation and testing
 
-![](docs/big_green_button.jpg)
+**NOTE:** There used to be a _The Big Green Button_ section here. It has
+been removed because the packages it relied on had dependencies on old 
+Selenium server and WebDriver browser driver versions. The result was
+spurious failures and false positives in TATS. As a result, I removed the
+_The Big Green Button_ and will find a better way to implement high-level
+"test-all-the-things-and-leave-me-alone" command.
 
-If you have a functional development system with Node and NPM installed,
-the following sequence of steps and commands will get you going:
-
+### Clone the repo
 ```
 $ git clone https://github.com/mercycorps.org/TolaActivity.git
 $ cd TolaActivity/test/js
-[edit user config file as described in the next section]
-$ make install
-$ ./node_modules/.bin/wdio wdio.auto.conf.js
 ```
 
 ### Create the user config file
@@ -67,50 +59,17 @@ _username_, _password_, and _baseurl_ to suit your needs. In particular:
 - _username_ and _password_ must correspond to your MercyCorps SSO login
 - _baseurl_ points to the home page of the TolaActivity instance you
   are testing
-- **Under no circumstances should this suite be run against the production
+- **Under no circumstances run the TATS suite against the production
   TolaActivity server. Doing so will create bad data and result in a lot
   of work to remove it, and potentially result in losing known-good,
   live data.**
 
-The last command, `./node_modules/.bin/wdio`, starts Selenium server,
-which is a Java app. As a result, there might be a multi-second pause
-while it starts. When web browsers start operating themselves on your
-desktop, the tests have started. After they tests complete, WDIO shows
-the test results, and then exits, terminating the server as it goes. The
-output should resemble the following, hopefully without the test failures:
-
-```
-$ cd test/js
-$ ./node_modules/.bin/wdio wdio.auto.conf.js 
-
-․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․
-․․․․․․․․․․․․․․․․․․․․․F․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․
-․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․
-․․․․F․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․․
-
-144 passing (396.40s)
-140 skipped
-2 failing
-
-1) Program Indicators table should toggle table when a PI Indicators button is clicked:
-expected true to equal false
-running chrome
-running firefox
-AssertionError: expected true to equal false
-    at Context.<anonymous> (/home/kwall/Work/TolaActivity/test/js/test/specs/indicators_table.js:51:14)
-    at new Promise (<anonymous>)
-    at new F (/home/kwall/Work/TolaActivity/test/js/node_modules/core-js/library/modules/_export.js:35:28)
-
-```
-
-## Manual installation and testing
-
 First, download and install all the bits you'll need. These include
 NodeJS, Firefox, Chrome, Selenium, Mocha, and Chai. If you are already
-using NPM, you can use it to install mocha and chai, but do not use
-the NPM-packaged Chrome or Firefox webdrivers because they might not
-be current. Version numbers in the steps below were current at the 
-time this document was last updated.
+using NPM (and thus already have installed Node), you can use it to
+install mocha and chai, but do _not_ use the NPM-packaged Chrome or Firefox
+webdrivers because they probably aren't current. Version numbers in the
+steps below were current at the time this document was last updated.
 
 1. Install the latest versions of the
 [Chrome](https://www.google.com/chrome/browser) and
@@ -119,7 +78,9 @@ time this document was last updated.
 [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver).
 Place it anywhere in your system $PATH. You may also keep it in
 the testing directory of your local repo because it is gitignored.
-The current version (when this document was last updated) is 2.38.
+The current version (when this document was last updated) is 2.37.
+**NOTE:** Chromedriver v2.38 does not work with TATS at this time.
+Please stick to 2.37.
 1. Download and install Firefox's Selenium browser driver,
 [geckodriver](https://github.com/mozilla/geckodriver/releases).
 Place it anywhere in your system $PATH. You can also keep it in
@@ -127,13 +88,13 @@ the testing directory of your local repo because it is gitignored.
 The current version (as of the last doc update) is 0.20.1.
 1. Download [Selenium Server](https://goo.gl/hvDPsK) and place it
 the testing directory. The current version (at the time of writing) is
-3.11.0.
-1. Install [NodeJS](https://nodjs.org) so you can use the
-[Node Package Manager](https://www.npmjos.com), `npm`,  to install
-other JavaScript packages.
+3.12.0.
+1. Install [NodeJS](https://nodjs.org), if you haven't already, so you 
+can use `npm`, the [Node Package Manager](https://www.npmjos.com), to 
+install other JavaScript packages, like in the next step for example.
 1. Finally, use `npm` to install all of the JavaScript language bindings
 for Selenium, the Mocha test framework, the Chai plugin for Mocha,
-WebDriverIO, and all of the other assorted dependencies bits:
+WebDriverIO, and all of the other assorted dependencies and bits:
 
 ```
 $ npm install 
@@ -142,14 +103,14 @@ $ npm install
 
 ## Validate the Installation
 1. Create and modify `config.json` as described previously.
+   **Under no circumstances run the TATS suite against the production
+   TolaActivity server. Doing so will create bad data and result in a lot
+   of work to remove it, and potentially result in losing known-good,
+   live data.**
 ```
 $ cd test/js
 $ cp config-example.json config.json
 ```
-**Under no circumstances should this suite be run against the
-production TolaActivity server. It will create bad data, result in
-a lot of work to remove, and potentially result in losing known-good,
-live data.**
 1. Start the Seleniuim server (targeting the Firefox browser):
 ```
 $ cd test/js
@@ -162,9 +123,9 @@ $ ./node_modules/.bin/wdio wdio.gecko.conf.js
 Debugger listening on ws://127.0.0.1:9229/3462dfd8-56a5-41cd-abf6-5f4d2788f8c1
 For help see https://nodejs.org/en/docs/inspector
 ------------------------------------------------------------------
-[chrome #0-0] Session ID: a826ed524be3b055a31d79d79205da16
-[chrome #0-0] Spec: /home/kwall/Work/TolaActivity/test/js/tests/00_login.js
-[chrome #0-0] Running: chrome
+[firefox #0-0] Session ID: a826ed524be3b055a31d79d79205da16
+[firefox #0-0] Spec: /home/kwall/Work/TolaActivity/test/js/tests/00_login.js
+[firefox #0-0] Running: chrome
 
 _output deleted_
 
@@ -176,39 +137,6 @@ Number of specs: 30
 64 skipped
 3 failing
 ```
-
-## View the results
-
-The test framework is configured to use Allure to generate visual reports
-from the test results. After a test is complete, you are currently required
-to generate the reports manually. Doing so requires just a couple of commands.
-
-First, generate the report from the raw test results. If you are using the 
-Makefile, you can just say `make report` and Allure will generate a report
-and open it in a new tab in your currently running browser or in a new window 
-in your default configured browser if one isn't already running.
-
-If you are not using the Makefile, first use the command `allure generate` to
-massage raw test data into Allure format. Then use the `allure open` command to
-view the report in your browser. Allure uses a small, built-in web server named
-Jetty to serve the report page. The `open` command starts this server and
-displays the test results in a new browser tab (if one is open) or in your 
-default browser if a browser is not already running:
-
-```
-$ make allure
-$ allure open
-Starting web server...
-2018-03-13 11:32:44.749:INFO::main: Logging initialized @346ms to org.eclipse.jetty.util.log.StdErrLog
-Server started at <http://10.10.24.108:53285/>. Press <Ctrl+C> to exit
-```
-![](docs/tola_allure_report.png)
-
-If you have run a lot of tests, both the `make report` and `allure
-generate` command might take 20 or 30 seconds to complete, so please
-be patient. Alternatively, you can use the `allure serve` command,
-which will first generate the reports and then open a browser window as
-described above.
 
 ## Don't want to run everything?
 To run the tests in a single file, specify `--spec path/to/file`.
