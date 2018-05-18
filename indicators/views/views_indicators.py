@@ -56,7 +56,10 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod,
     elif tf == Indicator.MID_END:
         return [{'period': PeriodicTarget.MIDLINE}, {'period': PeriodicTarget.ENDLINE}]
     elif tf == Indicator.EVENT:
-        return {'period': target_frequency_custom}
+        if i == 0:
+            return {'period': target_frequency_custom}
+        else:
+            return {'period': ''}
 
     if tf == Indicator.ANNUAL:
         start = ((start_date + relativedelta(years=+i)).replace(day=1)) \
