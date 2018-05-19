@@ -38,8 +38,8 @@ describe('IPTT: Program indicator overview quickstart', function() {
   it('should have Program dropdown', function() {
     expect(undefined != IpttPage.IndicatorOverviewProgram)
     expect(null != IpttPage.IndicatorOverviewProgram)
-    IpttPage.IndicatorOverviewProgram.click()
-    IpttPage.IndicatorOverviewProgram.click()
+    //IpttPage.IndicatorOverviewProgram.click()
+    //IpttPage.IndicatorOverviewProgram.click()
   })
 
   it('should have a Time periods dropdown', function() {
@@ -58,7 +58,6 @@ describe('IPTT: Program indicator overview quickstart', function() {
     // 2 === Show N most recent periods
     IpttPage.open()
     let val = IpttPage.IndicatorOverviewTimeFrame
-    //FIXME: magic number
     expect(1 === val)
   })
 
@@ -70,7 +69,7 @@ describe('IPTT: Program indicator overview quickstart', function() {
   })
 
   it('should allow to specify N recent time periods', function() {
-    //FIXME: magic number
+    // FIXME: magic number
     IpttPage.IndicatorOverviewProgram = 2
     IpttPage.IndicatorOverviewTimePeriods = 'Years'
     IpttPage.IndicatorOverviewTimeFrame = 'Most recent'
@@ -83,7 +82,7 @@ describe('IPTT: Program indicator overview quickstart', function() {
     expect('disabled' === IpttPage.IndicatorOverviewViewReport.disabled)
   })
 
-  it('should require select a time period to create report', function() {
+  it('should require choosing a time period to create report', function() {
     // Select a program, but not a time period
     //FIXME: magic number
     IpttPage.IndicatorOverviewProgram = 2
@@ -92,8 +91,8 @@ describe('IPTT: Program indicator overview quickstart', function() {
   })
 
   it('should create report if all params specified correctly', function() {
-    IpttPage.open()
     //FIXME: magic number
+    IpttPage.open()
     IpttPage.IndicatorOverviewProgram = 2
     IpttPage.IndicatorOverviewTimePeriods = 'Years'
     IpttPage.IndicatorOverviewViewReport.click()

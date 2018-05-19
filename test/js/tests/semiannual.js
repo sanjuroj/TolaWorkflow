@@ -28,38 +28,70 @@ describe('"Semi-annual" target frequency', function() {
   })
 
   it('should require entering the date that first period begins', function() {
-  NavBar.Indicators.click()
-  expect('Program Indicators' === IndPage.getPageName())
-  IndPage.createBasicIndicator()
-
-  TargetsTab.setIndicatorName('Semi-annual target, first period start date required')
-  TargetsTab.setUnitOfMeasure('Klingons per kiloton')
-  TargetsTab.setLoPTarget(30)
-  TargetsTab.setBaseline(31)
-  TargetsTab.setTargetFrequency('Semi-annual')
-
-  // Trying to save without setting the start date should fail
-  TargetsTab.saveIndicatorChanges()
-  let errorMessage = TargetsTab.getTargetFirstPeriodErrorHint()
-  expect(true === errorMessage.includes('Please complete this field.'))
+    NavBar.Indicators.click()
+    expect('Program Indicators' === IndPage.getPageName())
+    IndPage.createBasicIndicator()
+  
+    TargetsTab.setIndicatorName('Semi-annual target, first period start date required')
+    TargetsTab.setUnitOfMeasure('Klingons per kiloton')
+    TargetsTab.setLoPTarget(30)
+    TargetsTab.setBaseline(31)
+    TargetsTab.setTargetFrequency('Semi-annual')
+  
+    // Trying to save without setting the start date should fail
+    TargetsTab.saveIndicatorChanges()
+    let errorMessage = TargetsTab.getTargetFirstPeriodErrorHint()
+    expect(true === errorMessage.includes('Please complete this field.'))
   })
 
   it('should default number of periods to 1', function() {
-  expect(1 === TargetsTab.getNumTargetPeriods())
+    expect(1 === TargetsTab.getNumTargetPeriods())
   })
 
   it('should create target periods for each period requested', function() {
-  IndPage.createBasicIndicator()
+    IndPage.createBasicIndicator()
 
-  // This should succeed
-  TargetsTab.setIndicatorName('Semi-annual target create target periods testing')
-  TargetsTab.setUnitOfMeasure('Llamas per lane')
-  TargetsTab.setLoPTarget(358)
-  TargetsTab.setBaseline(359)
-  TargetsTab.setTargetFrequency('Semi-annual')
-  TargetsTab.setNumTargetPeriods(2)
+    // This should succeed
+    TargetsTab.setIndicatorName('Semi-annual target create target periods testing')
+    TargetsTab.setUnitOfMeasure('Llamas per lane')
+    TargetsTab.setLoPTarget(358)
+    TargetsTab.setBaseline(359)
+    TargetsTab.setTargetFrequency('Semi-annual')
+    TargetsTab.setNumTargetPeriods(3)
 
-  TargetsTab.saveIndicatorChanges()
-  expect(2 === TargetsTab.getNumTargetPeriods())
+    TargetsTab.saveIndicatorChanges()
+    expect(3 === TargetsTab.getNumTargetPeriods())
+  })
+
+  it('should require entering targets for each target period', function() {
+    NavBar.Indicators.click()
+    IndPage.createBasicIndicator()
+
+    TargetsTab.setIndicatorName('Semi-annual target, target period value(s) required')
+    TargetsTab.setUnitOfMeasure('Inedibles per iguana')
+    TargetsTab.setLoPTarget(308)
+    TargetsTab.setBaseline(309)
+    TargetsTab.setTargetFrequency('Semi-annual')
+    TargetsTab.setFirstTargetPeriod()
+    TargetsTab.setNumTargetPeriods(3)
+    TargetsTab.saveIndicatorChanges()
+    expect(3 === TargetsTab.getNumTargetPeriods())
+
+    // Find the input boxes
+    let inputBoxes = TargetsTab.getTargetInputBoxes()
+    let targetCount = inputBoxes.length
+    // Place values in each box one at a time and attempt to save.
+    // This should *fail* until all the fields are filled.
+    let errMsg
+    let errorCount = targetCount;
+    for(let inputBox of inputBoxes) {
+      inputBox.setValue(86)
+      TargetsTab.saveIndicatorChanges()
+      // Did we fail successfully? If not, she's gonna blow Captain!
+      errMsg = TargetsTab.getTargetValueErrorHint()
+      expect(true === errMsg.includes('Please enter a target value.'))
+      errorCount--
+    }
+    expect(0 === errorCount)
   })
 })

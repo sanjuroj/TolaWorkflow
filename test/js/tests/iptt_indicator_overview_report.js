@@ -29,6 +29,45 @@ describe('Program indicator overview report', function() {
     }
   })
 
-  it('should only display LoP targets, not intermediate targets')
-  it('should only display % Met for LoP targets, not intermediate targets')
+  it('should only display LoP targets, not intermediate targets', function() {
+    IpttPage.open()
+    // FIXME: magic number
+    IpttPage.TargetOvervewProgram = 2
+    let periods = [
+      'Years',
+      'Semi-annual periods',
+      'Tri-annual periods',
+      'Quarters',
+      'Months'
+    ]
+
+    for (let period of periods) {
+      IpttPage.TargetOverviewTimePeriods = period
+      IpttPage.TargetOverviewViewReport.click()
+      // validate there are no intermediate targets
+      // validate that displayed LOP targets match what was input
+      // validate calculations (?)
+    }
+  })
+
+  it('should only display % Met for LoP targets, not intermediate targets', function() {
+    IpttPage.open()
+    // FIXME: magic number
+    IpttPage.TargetOvervewProgram = 2
+    let periods = [
+      'Years',
+      'Semi-annual periods',
+      'Tri-annual periods',
+      'Quarters',
+      'Months'
+    ]
+
+    for (let period of periods) {
+      IpttPage.TargetOverviewTimePeriods = period
+      IpttPage.TargetOverviewViewReport.click()
+      // validate there are no intermediate targets
+      // validate that displayed LOP targets match what was input
+      // validate calculations (?)
+    }
+  })
 })

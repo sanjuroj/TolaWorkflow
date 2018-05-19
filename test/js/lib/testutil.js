@@ -26,11 +26,13 @@ function readConfig (configFile = 'config.json') {
 function dp (s) { console.log('***%s***', s) }
 
 /**
- * A function to wait for an ajax loading screen
- * with a spinner to close
+ * A function to check every secs seconds to see if
+ * an ajax loading screen with a spinner has closed
+ * @param {integer} secs Retry interval (default 2 seconds)
+ * @returns Nothing
  */
 function waitForAjax (secs = 2) {
-  if (true == browser.isVisible('div#ajaxloading')) {
+  if (true === browser.isVisible('div#ajaxloading')) {
     let visible = browser.isVisible('div#ajaxloading')
     while (visible === true) {
       browser.pause(secs * msec)

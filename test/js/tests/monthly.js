@@ -73,16 +73,16 @@ describe('Monthly target frequency', function() {
   let targetCount = inputBoxes.length
   // Place values in each box one at a time and attempt to save.
   // This should *fail* until all the fields are filled.
-  let errorCount = 0
+  let errorCount = targetCount
   for(let inputBox of inputBoxes) {
-    inputBox.setValue(71)
+    inputBox.setValue(78)
     TargetsTab.saveIndicatorChanges()
-    // Did we fail successfully?
+    // Did we fail successfully? If not, she's gonna blow Captain!
     let errMsg = TargetsTab.getTargetValueErrorHint()
     expect(true === errMsg.includes('Please enter a target value.'))
-    errorCount++
+    errorCount--
   }
-  expect(targetCount === errorCount)
+  expect(0 === errorCount)
   })
 })
 
