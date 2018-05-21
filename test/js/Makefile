@@ -1,11 +1,20 @@
 .DEFAULT: help
-SESERVER='http://selenium-release.storage.googleapis.com/3.12/selenium-server-standalone-3.12.0.jar'
+
+SESRC="http://selenium-release.storage.googleapis.com/3.12/selenium-server-standalone-3.12.0.jar"
+CHROMESRC="https://chromedriver.storage.googleapis.com"
+GECKOSRC="https://github.com/mozilla/geckodriver/releases/download"
+ifeq ($(XDG_SESSION_TYPE),x11)
 # Linux
-CHROMEDRIVER='https://chromedriver.storage.googleapis.com/2.37/chromedriver_linux64.zip'
-GECKODRIVER='https://github.com/mozilla/geckodriver/releases/download/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz'
+CHROMEURL=$(CHROMESRC)/2.37/chromedriver_linux64.zip
+GECKOURL=$(GECKOSRC)/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz
+else
 # Mac
-#CHROMEDRIVER='https://chromedriver.storage.googleapis.com/2.37/chromedriver_mac64.zip'
-#GECKODRIVER='https://github.com/mozilla/geckodriver/releases/download/v0.20.1/geckodriver-v0.20.1-macos.tar.gz'
+CHROMEURL=$(CHROMESRC)/2.37/chromedriver_mac64.zip
+GECKOURL=$(GECKOSRC)/v0.20.1/geckodriver-v0.20.1-macos.tar.gz
+endif
+SESERVER=$(shell basename $(SESRC))
+CHROMEDRIVER=$(shell basename $(CHROMEURL))
+GECKODRIVER=$(shell basename $(GECKOURL))
 
 help:
 	@echo "clean       : remove all logs, generated files, and test results"
@@ -31,31 +40,28 @@ doc:
 install:
 	@npm install --verbose --save-dev
 	@echo "Downloading Selenium server..."
-	@curl --location  -O $(SESERVER)
+	@curl --location -O $(SESRC)
 	@echo "Downloading Chrome chromedriver webdriver client..."
-	@curl --location  -O $(CHROMEDRIVER)
-	@unzip -o -d . $(shell basename $(CHROMEDRIVER))
+	@curl --location -O $(CHROMEURL)
+	@unzip -o -d . $(CHROMEDRIVER)
 	@echo "Downloading Firefox geckodriver webdriver client..."
-	@curl --location  -O $(GECKODRIVER)
-	@tar xzvf $(shell basename $(GECKODRIVER))
+	@curl --location -O $(GECKOURL)
+	@tar xzvf $(GECKODRIVER)
 
 realclean: clean
-	@rm -fvr node_modules $(CHROMEDRIVER) $(GECKODRIVER) $(SESERVER) \
-    $(shell basename $(CHROMEDRIVER)) \
-    $(shell basename $(GECKODRIVER)) \
-    $(shell basename $(SESERVER))
+	@rm -fvr node_modules chromedriver geckodriver $(CHROMEDRIVER) $(GECKODRIVER) $(SESERVER)
 
 run-chrome:
-	-killall -q java
-	@java -jar -Dwebdriver.chrome.driver=chromedriver $(shell basename $(SESERVER)) | tee server.log 2>&1 &
+	-killall -qw java
+	@java -jar -Dwebdriver.chrome.driver=chromedriver $(SESERVER) | tee server.log 2>&1 &
 	@npm run wdio wdio.chrome.conf | tee chrome.log 2>&1
-	-killall -q java
+	-killall -qw java
 
 run-gecko:
-	-killall -q java
-	@java -jar -Dwebdriver.gecko.driver=geckodriver $(shell basename $(SESERVER)) | tee server.log 2>&1 &
+	-killall -qw java
+	@java -jar -Dwebdriver.gecko.driver=geckodriver $(SESERVER) | tee server.log 2>&1 &
 	@npm run wdio wdio.gecko.conf | tee gecko.log 2>&1
-	-killall -q java
+	-killall -qw java
 
 update:
 	@npm update --verbose --save --dev
