@@ -55,7 +55,7 @@
         {% endblock %}
 
     </head>
-    <body>
+    <body class="{% block bodyclasses %}{% endblock %}">
 
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
             <div class="container">
@@ -232,6 +232,8 @@
 
         {% block extra_js_in_body %}
 
+        {% endblock %}
+        {% block debug %}
         {% endblock %}
     </body>
 </html>
