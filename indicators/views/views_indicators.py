@@ -1121,8 +1121,8 @@ def program_indicators_json(request, program, indicator, type):
                           'periodictarget_set') \
         .filter(**q) \
         .annotate(data_count=Count('collecteddata'),
-                  levelmin=Min('level__id')) \
-        .order_by('levelmin', 'number')
+                  levelmin=Min('level__customsort')) \
+        .order_by('levelmin', 'number', 'name')
 
     return render_to_response(
         template_name,

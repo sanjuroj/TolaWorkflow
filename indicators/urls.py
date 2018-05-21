@@ -123,9 +123,7 @@ urlpatterns = [
         collected_data_view, name='collected_data_view'),
 
     url(r'^program_indicators/(?P<program>\d+)/(?P<indicator>\d+)/'
-        r'(?P<type>\d+)',
-        program_indicators_json,
-        name='program_indicators_json'),
+        r'(?P<type>\d+)', program_indicators_json, name='program_indicators_json'),
 
     url(r'^report_data/(?P<id>\w+)/(?P<program>\d+)/(?P<type>\d+)/$',
         IndicatorReportData.as_view(), name='indicator_report_data'),
