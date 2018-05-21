@@ -14,7 +14,7 @@
     $("#id_indicator_data_span_count_" + `{{indicator.id}}`).text("{% trans 'Results' %} ({{ indicator.collecteddata_set.count|default:0 }})" );
 </script>
 
-{% if indicator.target_frequency  %}
+{% if indicator.collecteddata_set.count > 0 or indicator.target_frequency %}
     <table class="table table-sm table-bordered">
         <thead>
             <tr>
@@ -94,7 +94,7 @@
                     {% endwith %}
                 {% endifchanged %}
 
-                {% for cdata in item.collecteddata_set.all %}
+                {% for cdata in item.collecteddata_set.all.order_by %}
                     {% if not forloop.first %}
                         <tr>
                     {% endif %}
