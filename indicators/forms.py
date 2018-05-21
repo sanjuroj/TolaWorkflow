@@ -249,9 +249,15 @@ class IPTTReportFilterForm(ReportFormCommon):
         program = kwargs.pop('program')
         super(IPTTReportFilterForm, self).__init__(*args, **kwargs)
         del self.fields['formprefix']
+        level_ids = Indicator.objects.filter(program__in=[program.id]).values(
+            'level__id').distinct().order_by('level')
+
         self.fields['program'].initial = program
-        self.fields['sector'].queryset = Sector.objects.all()
-        self.fields['level'].queryset = Level.objects.all()
-        self.fields['ind_type'].queryset = IndicatorType.objects.all()
+        self.fields['sector'].queryset = Sector.objects.filter(
+            indicator__program__in=[program.id]).distinct()
+        self.fields['level'].queryset = Level.objects.filter(id__in=level_ids).distinct().order_by('customsort')
+        ind_type_ids = Indicator.objects.filter(program__in=[program.id]).values(
+            'indicator_type__id').distinct().order_by('indicator_type')
+        self.fields['ind_type'].queryset = IndicatorType.objects.filter(id__in=ind_type_ids).distinct()
         self.fields['site'].queryset = program.get_sites()
         self.fields['indicators'].queryset = Indicator.objects.filter(program=program)
