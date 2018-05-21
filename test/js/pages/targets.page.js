@@ -9,11 +9,10 @@ let parms = Util.readConfig()
 parms.baseurl += '/indicators/home/0/0/0'
 
 /**
- * Add num target periods to the targets list, or
- * 1 target period if num not specified
- * @param {integer} num The number of target periods
- * to add
- * @returns {integer} The total number of target periods
+ * Add num target periods to the targets list, or 1 target period if num
+ * not specified
+ * @param {integer} num The number of target periods to add
+ * @returns {integer} The total number of target periods added
  */
 function addTarget (num = 1) {
   let link = browser.$('a#addNewPeriodicTarget')
@@ -120,7 +119,10 @@ function getTargetDateRanges () {
   browser.scroll('h3')
   let placeholder = browser.$('div#id_div_periodic_tables_placeholder')
   let targetsDiv = placeholder.$('div#periodic-targets-tablediv')
-  let targetsTable = targetsDiv.$('table#periodic_targets_table')
+  if (!browser.isVisible('table#periodic_targets_table')) {
+    browser.waitForVisible('table#periodic_targets_table')
+  }
+	let targetsTable = targetsDiv.$('table#periodic_targets_table')
   let rows = targetsTable.$$('tbody>tr.periodic-target')
 
   let dateRanges = []
@@ -159,6 +161,11 @@ function getLoPErrorHint () {
  */
 function getLoPTarget () {
   let val = browser.$('input#id_lop_target').getValue()
+  return val
+}
+
+function getLoPTargetActual () {
+  let val = browser.$('span#id_span_loptarget').getText()
   return val
 }
 
@@ -490,7 +497,7 @@ function setEndlineTarget (value) {
  */
 function setFirstEventName (value) {
   let textBox = browser.$('input#id_target_frequency_custom')
-  if (value === 0) {
+  if (0 === value) {
     textBox.clear()
   } else {
     textBox.setValue(value)
@@ -500,14 +507,30 @@ function setFirstEventName (value) {
 /**
  * Sets the date of the first target period to the 1st day of the
  * current month
- * @returns Nothing
+ * @returns {Null}
  */
 function setFirstTargetPeriod () {
   // Defaults to the current month
   browser.scroll('input#id_target_frequency_start')
   browser.$('input#id_target_frequency_start').click()
   browser.pause(msec)
-  browser.$('button=Done').click()
+  if (browser.isVisible('button=Done')) {
+    // Works on Chrome but not Firefox/Gecko
+    browser.$('button=Done').click()
+  } else if (browser.isVisible('button.ui-datepicker-close')) {
+    // Works on Firefox/Gecko but not Chrome
+    browser.$('button.ui-datepicker-close').click()
+  } else {
+    // If we get here, make one last blind, unconditional attempt to click
+    // the buttons
+    try {
+      browser.$('button=Done').click()
+    }
+    catch(NoSuchElementError) {
+      browser.$('button.ui-datepicker-close').click()
+    }
+    return null
+  }
 }
 
 /**
@@ -537,6 +560,20 @@ function setLoPTarget (value) {
   clickTargetsTab()
   let lopTarget = browser.$('input#id_lop_target')
   lopTarget.setValue(value)
+}
+
+function setMeasureIsCumulative () {
+  browser.pause(msec)
+  browser.scroll('input#submit-id-submit')
+  // 2 == true == cumulative
+  browser.$('input#id_is_cumulative_2').setValue(2)
+}
+
+function setMeasureIsNonCumulative () {
+  browser.pause(msec)
+  browser.scroll('input#submit-id-submit')
+  // 3 == cumulative
+  browser.$('input#id_is_cumulative_2').setValue(2)
 }
 
 /**
@@ -632,6 +669,7 @@ exports.getDirectionOfChange = getDirectionOfChange
 exports.getIndicatorName = getIndicatorName
 exports.getLoPErrorHint = getLoPErrorHint
 exports.getLoPTarget = getLoPTarget
+exports.getLoPTargetActual = getLoPTargetActual
 exports.getMeasureIsCumulative = getMeasureIsCumulative
 exports.getMeasureType = getMeasureType
 exports.getNumTargetEvents = getNumTargetEvents
@@ -661,6 +699,8 @@ exports.setFirstEventName = setFirstEventName
 exports.setFirstTargetPeriod = setFirstTargetPeriod
 exports.setIndicatorName = setIndicatorName
 exports.setLoPTarget = setLoPTarget
+exports.setMeasureIsCumulative = setMeasureIsCumulative
+exports.setMeasureIsNonCumulative = setMeasureIsNonCumulative
 exports.setMeasureType = setMeasureType
 exports.setMidlineTarget = setMidlineTarget
 exports.setNumTargetEvents = setNumTargetEvents

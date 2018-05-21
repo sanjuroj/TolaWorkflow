@@ -64,8 +64,8 @@ describe('Periodic target date ranges', function() {
     TargetsTab.setFirstTargetPeriod()
     TargetsTab.setNumTargetPeriods(3)
     TargetsTab.setUnitOfMeasure('Bees per bonnet')
-    TargetsTab.setLoPTarget(70)
-    TargetsTab.setBaseline(71)
+    TargetsTab.setLoPTarget(67)
+    TargetsTab.setBaseline(68)
     // Save changes
     TargetsTab.saveIndicatorChanges()
 
@@ -77,7 +77,6 @@ describe('Periodic target date ranges', function() {
       rangeEnd = new Date(dateRange.split(' - ')[1])
       //FIXME: code smell
       diff = DateMath.diff(rangeStart, rangeEnd, 'month', true)
-      //expect(6 === Math.round(diff)) // from old HEAD
       expect(2 === Math.round(diff))
     }
   })

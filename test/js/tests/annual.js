@@ -28,70 +28,70 @@ describe('"Annual" target frequency', function() {
   })
 
   it('should require date that first target period begins', function() {
-  NavBar.Indicators.click()
-  expect('Program Indicators' === IndPage.getPageName())
-  IndPage.createBasicIndicator()
+    NavBar.Indicators.click()
+    expect('Program Indicators' === IndPage.getPageName())
+    IndPage.createBasicIndicator()
 
-  TargetsTab.setIndicatorName('Annual target, first period required')
-  TargetsTab.setUnitOfMeasure('Hawks per hectare')
-  TargetsTab.setLoPTarget(271)
-  TargetsTab.setBaseline(272)
-  TargetsTab.setTargetFrequency('Annual')
+    TargetsTab.setIndicatorName('Annual target, first period required')
+    TargetsTab.setUnitOfMeasure('Hawks per hectare')
+    TargetsTab.setLoPTarget(271)
+    TargetsTab.setBaseline(272)
+    TargetsTab.setTargetFrequency('Annual')
 
-  // Trying to save without setting the start date should fail
-  TargetsTab.saveIndicatorChanges()
-  let errorMessage = TargetsTab.getTargetFirstPeriodErrorHint()
-  expect(errorMessage.includes('Please complete this field.'))
+    // Trying to save without setting the start date should fail
+    TargetsTab.saveIndicatorChanges()
+    let errorMessage = TargetsTab.getTargetFirstPeriodErrorHint()
+    expect(errorMessage.includes('Please complete this field.'))
   })
 
   it('should default number of periods to 1', function() {
-  expect(1 === TargetsTab.getNumTargetPeriods())
+    expect(1 === TargetsTab.getNumTargetPeriods())
   })
 
   it('should create target periods for each period requested', function() {
-  NavBar.Indicators.click()
-  IndPage.createBasicIndicator()
+    NavBar.Indicators.click()
+    IndPage.createBasicIndicator()
 
-  TargetsTab.setIndicatorName('Annual target, create target periods')
-  TargetsTab.setUnitOfMeasure('Inkblots per Injunction')
-  TargetsTab.setLoPTarget(293)
-  TargetsTab.setBaseline(294)
-  TargetsTab.setTargetFrequency('Annual')
-  TargetsTab.setNumTargetPeriods(2)
+    TargetsTab.setIndicatorName('Annual target, create target periods')
+    TargetsTab.setUnitOfMeasure('Inkblots per Injunction')
+    TargetsTab.setLoPTarget(293)
+    TargetsTab.setBaseline(294)
+    TargetsTab.setTargetFrequency('Annual')
+    TargetsTab.setNumTargetPeriods(2)
 
-  // This should succeed
-  TargetsTab.saveIndicatorChanges()
-  expect(2 === TargetsTab.getNumTargetPeriods())
+    // This should succeed
+    TargetsTab.saveIndicatorChanges()
+    expect(2 === TargetsTab.getNumTargetPeriods())
   })
 
   it('should require entering targets for each target period', function() {
-  NavBar.Indicators.click()
-  IndPage.createBasicIndicator()
+    NavBar.Indicators.click()
+    IndPage.createBasicIndicator()
 
-  TargetsTab.setIndicatorName('Annual target, target period value(s) required')
-  TargetsTab.setUnitOfMeasure('Inedibles per iguana')
-  TargetsTab.setLoPTarget(308)
-  TargetsTab.setBaseline(309)
-  TargetsTab.setTargetFrequency('Annual')
-  TargetsTab.setNumTargetPeriods(2)
-  TargetsTab.setFirstTargetPeriod()
-  TargetsTab.saveIndicatorChanges()
-
-  // Find the input boxes
-  let inputBoxes = TargetsTab.getTargetInputBoxes()
-  let targetCount = inputBoxes.length
-  // Place values in each box one at a time and attempt to save.
-  // This should *fail* until all the fields are filled.
-  let errorCount = 0
-  let errMsg
-  for(let inputBox of inputBoxes) {
-    inputBox.setValue(86)
+    TargetsTab.setIndicatorName('Annual target, target period value(s) required')
+    TargetsTab.setUnitOfMeasure('Inedibles per iguana')
+    TargetsTab.setLoPTarget(308)
+    TargetsTab.setBaseline(309)
+    TargetsTab.setTargetFrequency('Annual')
+    TargetsTab.setFirstTargetPeriod()
+    TargetsTab.setNumTargetPeriods(2)
     TargetsTab.saveIndicatorChanges()
-    // Did we fail successfully?
-    errMsg = TargetsTab.getTargetValueErrorHint()
-    expect(errMsg.includes('Please enter a target value.'))
-    errorCount++
-  }
-  expect(targetCount === errorCount)
+
+    // Find the input boxes
+    let inputBoxes = TargetsTab.getTargetInputBoxes()
+    let targetCount = inputBoxes.length
+    // Place values in each box one at a time and attempt to save.
+    // This should *fail* until all the fields are filled.
+    let errMsg
+    let errorCount = targetCount;
+    for(let inputBox of inputBoxes) {
+      inputBox.setValue(86)
+      TargetsTab.saveIndicatorChanges()
+      // Did we fail successfully? If not, she's gonna blow Captain!
+      errMsg = TargetsTab.getTargetValueErrorHint()
+      expect(errMsg.includes('Please enter a target value.'))
+      errorCount--
+    }
+    expect(0 === errorCount)
   })
 })

@@ -28,7 +28,7 @@ class IpttPage extends Page {
 
   get IndicatorOverviewTimePeriods () {
     //return browser.$('select#id_timeperiods-timeperiods')
-    return browser.$('li.seelct2-results__option')
+    return browser.$('li.select2-results__option')
   }
 
   get IndicatorOverviewTimePeriodsList () {
@@ -49,8 +49,7 @@ class IpttPage extends Page {
   set IndicatorOverviewProgram (val) {
     let elem = browser.$('span#select2_id_timeperiods-program-container')
     elem.click()
-    // FIXME: Hard-coded value
-    elem.selectByValue(452)
+    elem.selectByValue(val)
     elem.click()
   }
 

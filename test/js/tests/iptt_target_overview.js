@@ -90,7 +90,9 @@ describe('IPTT: Program target overview quickstart', function() {
     // Select a program but not a target period
     //FIXME: magic number
     IpttPage.TargetOverviewProgram = 2
-    expect('disabled' === IpttPage.TargetOverviewViewReport.disabled)
+    let val = IpttPage.TargetOverviewViewReport.disabled
+    //expect('disabled' === IpttPage.TargetOverviewViewReport.disabled)
+    expect('disabled' === val)
   })
 
   //FIXME: get webdriver code out of test
@@ -101,11 +103,11 @@ describe('IPTT: Program target overview quickstart', function() {
     IpttPage.TargetOverviewTimePeriods = 'Years'
     IpttPage.TargetOverviewViewReport.click()
     // If the table isn't there, we didn't make a report
-    expect(false === browser.isVisible('table#iptt_table'))
+    expect(true === browser.isVisible('table#iptt_table'))
   })
 
   //FIXME: get webdriver code out of test
   it('should open report with filter panel open', function() {
-    expect(false === browser.isVisible('form#id_form_target_filter'))
+    expect(true === browser.isVisible('form#id_form_target_filter'))
   })
 })

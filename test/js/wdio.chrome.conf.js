@@ -11,35 +11,41 @@ exports.config = {
       'tests/dashboard.js'
     ],
     evidence: [
-      'tests/collected_data_form.js',
+      'tests/evidence_table_num_ind.js',
+      'tests/evidence_table_pct_ind.js',
       'tests/indicator_evidence_dropdown.js'
     ],
     indicators: [
-      'tests/annual.js',
-      'tests/event.js',
-      'tests/lop_only.js',
-      'tests/mid-end_line.js',
-      'tests/monthly.js',
-      'tests/quarterly.js',
-      'tests/semiannual.js',
-      'tests/triannual.js',
+      'tests/indicators_landing_page.js',
+      'tests/indicators_table.js',
       'tests/create_indicator_form.js',
       'tests/indicator_detail_form.js',
-      'tests/indicators_landing_page.js',
-      'tests/indicators_table.js'
+      'tests/num_ind_config_display.js',
+      'tests/num_pct_ind.js'
     ],
     iptt: [
-      'tests/iptt_indicator_overview_report.js',
-      'tests/iptt_indicator_overview.js',
       'tests/iptt_landing_page.js',
+      'tests/iptt_indicator_overview.js',
+      'tests/iptt_target_overview.js',
+      'tests/iptt_indicator_overview_report.js',
       'tests/iptt_target_overview_report.js',
-      'tests/iptt_target_overview.js'
+      'tests/report_filter_panel.js',
+      'tests/report_sort_columns.js'
     ],
     login: [
       'tests/00_login.js'
     ],
-    reports: [
-      'tests/grid_report.js'
+    periodic: [
+      'tests/event.js',
+      'tests/lop_only.js',
+      'tests/mid-end_line.js',
+      'tests/annual.js',
+      'tests/semiannual.js',
+      'tests/triannual.js',
+      'tests/monthly.js',
+      'tests/quarterly.js',
+      'tests/add_date_ranges.js',
+      'tests/periodic_date_ranges.js'
     ]
   },
   // Capabilities
@@ -66,7 +72,7 @@ exports.config = {
   services: [],
   seleniumLogs: './log',
   framework: 'mocha',
-  reporters: ['dot'],
+  reporters: ['spec'],
   mochaOpts: {
     ui: 'bdd',
     require: 'babel-register'
