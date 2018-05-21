@@ -111,9 +111,11 @@
             if (!nameField.val()) {
                 nameField.addClass('is-invalid');
                 $(`#validation_${nameFieldId}`).text('{% trans "Please complete this field." %}');
+                $("#div_id_name").addClass("mb-5");
                 return false;
             }
             nameField.removeClass('is-invalid');
+            $("#div_id_name").removeClass("mb-5");
             $(`#validation_${nameFieldId}`).text("");
             return true;
         }
@@ -215,7 +217,7 @@
                     <small class="form-text text-muted">{{ form.url.help_text }}</small>
                     <span id="validation_id_url" class="has-error"></span>
                 </div>
-                <button type="button" class="col-sm-1 btn btn-sm btn-secondary" onclick="onApiLoad();">gdrive</button>
+                <button type="button" style="height: 38px;" class="col-sm-1 btn btn-sm btn-secondary" onclick="onApiLoad();">gdrive</button>
             </div>
 
             <div class="form-row mb-2" id="div_id_description">
