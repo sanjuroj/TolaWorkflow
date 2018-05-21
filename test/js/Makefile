@@ -1,6 +1,11 @@
 .DEFAULT: help
 
-SESRC="http://selenium-release.storage.googleapis.com/3.12/selenium-server-standalone-3.12.0.jar"
+# Server version is 
+SESRC="http://selenium-release.storage.googleapis.com"
+SEURL=$(SESRC)/3.12/selenium-server-standalone-3.12.0.jar
+SESERVER=$(shell basename $(SEURL))
+
+# Figure out which browser drivers we want
 CHROMESRC="https://chromedriver.storage.googleapis.com"
 GECKOSRC="https://github.com/mozilla/geckodriver/releases/download"
 ifeq ($(XDG_SESSION_TYPE),x11)
@@ -12,7 +17,6 @@ else
 CHROMEURL=$(CHROMESRC)/2.37/chromedriver_mac64.zip
 GECKOURL=$(GECKOSRC)/v0.20.1/geckodriver-v0.20.1-macos.tar.gz
 endif
-SESERVER=$(shell basename $(SESRC))
 CHROMEDRIVER=$(shell basename $(CHROMEURL))
 GECKODRIVER=$(shell basename $(GECKOURL))
 
@@ -40,7 +44,7 @@ doc:
 install:
 	@npm install --verbose --save-dev
 	@echo "Downloading Selenium server..."
-	@curl --location -O $(SESRC)
+	@curl --location -O $(SEURL)
 	@echo "Downloading Chrome chromedriver webdriver client..."
 	@curl --location -O $(CHROMEURL)
 	@unzip -o -d . $(CHROMEDRIVER)
@@ -52,13 +56,11 @@ realclean: clean
 	@rm -fvr node_modules chromedriver geckodriver $(CHROMEDRIVER) $(GECKODRIVER) $(SESERVER)
 
 run-chrome:
-	-killall -qw java
 	@java -jar -Dwebdriver.chrome.driver=chromedriver $(SESERVER) | tee server.log 2>&1 &
 	@npm run wdio wdio.chrome.conf | tee chrome.log 2>&1
 	-killall -qw java
 
 run-gecko:
-	-killall -qw java
 	@java -jar -Dwebdriver.gecko.driver=geckodriver $(SESERVER) | tee server.log 2>&1 &
 	@npm run wdio wdio.gecko.conf | tee gecko.log 2>&1
 	-killall -qw java
