@@ -1051,18 +1051,14 @@ def collected_data_view(request, indicator, program):
     ind = Indicator.objects.get(pk=indicator)
     template_name = 'indicators/collected_data_table.html'
 
-    last_data_record = CollectedData.objects.filter(
-        periodic_target=OuterRef('pk')).order_by('-id')
+    last_data_record = CollectedData.objects.filter(periodic_target=OuterRef('pk')).order_by('-date_collected')
     periodictargets = PeriodicTarget.objects \
         .filter(indicator=indicator) \
         .prefetch_related('collecteddata_set') \
         .annotate(
-            achieved_sum=Sum(
-                'collecteddata__achieved', output_field=DecimalField()),
-            achieved_avg=Avg(
-                'collecteddata__achieved', output_field=DecimalField()),
-            last_data_row=Subquery(
-                last_data_record.values('achieved')[:1])) \
+            achieved_sum=Sum('collecteddata__achieved', output_field=DecimalField()),
+            achieved_avg=Avg('collecteddata__achieved', output_field=DecimalField()),
+            last_data_row=Subquery(last_data_record.values('achieved')[:1])) \
         .order_by('customsort')
 
     # the total of achieved values across all periodic targets of an indicator

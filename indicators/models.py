@@ -790,7 +790,7 @@ class CollectedData(models.Model):
     objects = CollectedDataManager()
 
     class Meta:
-        ordering = ('indicator', 'create_date', 'date_collected')
+        ordering = ('indicator', 'date_collected')
         verbose_name_plural = "Indicator Output/Outcome Collected Data"
 
     def __unicode__(self):

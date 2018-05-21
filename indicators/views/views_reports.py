@@ -557,7 +557,7 @@ class IPTT_ReportView(TemplateView):
         # calculate aggregated actuals (sum, avg, last) per reporting period
         # (monthly, quarterly, tri-annually, seminu-annualy, and yearly) for each indicator
         lastlevel = Level.objects.filter(indicator__id=OuterRef('pk')).order_by('-id')
-        last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-id')
+        last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-date_collected')
         indicators = Indicator.objects.filter(program__in=[program_id], **filters) \
             .annotate(actualsum=Sum('collecteddata__achieved'),
                       actualavg=Avg('collecteddata__achieved'),
