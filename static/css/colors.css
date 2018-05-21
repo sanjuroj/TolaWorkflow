@@ -16,6 +16,7 @@
     --gray-lightest: #F5F5F5;
     --green-medium: #4CAF50;
     --practically-white: #FAFAFA; /* should probably be #F5F5F5 */
+    --teal-dark: #046C69;
     --teal-medium: #00A49F;
     --teal-light: #33BFBB;
     --teal-lighter: #CCEFEE;
@@ -28,7 +29,7 @@
     --gray2-medium: #495057; /* should probably be #54585A */
     --gray2-lighter: #dddddd; /* should probably be #DBDCDE */
     --blue2-lighter: #59b5fa; /* highlighted state for blue-lighter */
-    --yellow-light: #FAFAD2; /* AKA lightgoldenrodyellow */
+    --yellow-light: #FAFAD2; /* AKA lighttgoldenrodyellow */
 }
 
 
