@@ -100,4 +100,5 @@ urlpatterns = [
     #ajax calls
     url(r'^service/(?P<service>[-\w]+)/service_json/', service_json, name='service_json'),
     url(r'^new_bookmark/$', save_bookmark, name='save_bookmark'),
+    url(r'^reportingperiod_update/(?P<pk>\w+)$', reportingperiod_update, name='reportingperiod_update'),
 ]

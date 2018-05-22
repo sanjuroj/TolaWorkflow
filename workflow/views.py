@@ -53,6 +53,7 @@ APPROVALS = (
 
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from dateutil import parser
 from django.core.serializers.json import DjangoJSONEncoder
 
 
@@ -2470,4 +2471,18 @@ class DocumentationListObjects(View, AjaxableResponseMixin):
 
         return JsonResponse(final_dict, safe=False)
 
-
+def reportingperiod_update(request, pk):
+    program = Program.objects.get(pk=pk)
+    print 'requesteddd', request.POST
+    dated = parser.parse(request.POST['reporting_period_end'])
+    print 'datedd', dated
+    program.reporting_period_start = parser.parse(request.POST['reporting_period_start'])
+    program.reporting_period_end = parser.parse(request.POST['reporting_period_end'])
+    program.save()
+    print 'got to reportingperiodupdate'
+    return JsonResponse({
+        'msg': 'success',
+        'program_id': pk,
+        'rptstart': program.reporting_period_start,
+        'rptend': program.reporting_period_end,
+    })

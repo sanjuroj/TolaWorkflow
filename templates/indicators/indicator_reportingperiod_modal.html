@@ -1,76 +1,92 @@
+{% load i18n %}
 {% include indicator_form_common_js.html %}
 
 <div id="id_reporting_period_modal" class="modal fade" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="reporting_period_content">
-            <div class="modal-body ml-4 mb-3" id="reporting_period_body" style="padding-top:10px">
-                <div class="mb-4">
-                    <div class="pt-3" style="display:inline-block; width: 90%">
-                        <div class="mb-4"><h2>Reporting period</h2></div>
-                        <span>The program reporting period is used in the setup of periodic targets and in Indicator Performance Tracking Tables (IPTT). TolaActivity initially sets the reporting period to include the program’s official start and end dates, as recorded in the Grant and Award Information Tracker (GAIT) system. The reporting period may be adjusted to align with the program’s indicator plan.</span>
-                    </div>
-                    <button
-                        type="button"
-                        class="close"
-                        data-dismiss="modal"
-                        style="display:inline-block;"
-                        aria-label="Close">
-                        <span class="x-modal">&times;</span>
-                    </button>
-                </div>
-                <div id="div-gait-dates" class="mb-3">
-                    <div id="div_gait_dates_title" class="mb-3">
-                        <h3>GAIT program dates</h3>
-                    </div>
-                    <div id="div_gait_dates">
-                        <div id="div_id_gait_start_date" class="mr-4" style="display: inline-block;">
-                            <h4>
-                                <div class="mb-0">START DATE</div>
-                                <div id="id_gait_start_date"></div>
-                            </h4>
+          <form
+              action=""
+              id="reportingperiod_update_form"
+              method="post"
+              novalidate>
+                {% csrf_token %}
+                <div class="modal-body ml-4 mb-3" id="reporting_period_body" style="padding-top:10px">
+                    <input hidden=true name="program_id" value=0>
+                    <div class="mb-4">
+                        <div class="pt-3" style="display:inline-block; width: 90%">
+                            <div class="mb-4"><h2>Reporting period</h2></div>
+                            <span>The program reporting period is used in the setup of periodic targets and in Indicator Performance Tracking Tables (IPTT). TolaActivity initially sets the reporting period to include the program’s official start and end dates, as recorded in the Grant and Award Information Tracker (GAIT) system. The reporting period may be adjusted to align with the program’s indicator plan.</span>
                         </div>
-
-                        <div id="div_id_gait_start_date" style="display: inline-block;">
-                            <h4>
-                                <div class="mb-0">END DATE</div>
-                                <div id="id_gait_end_date"></div>
-                            </h4>
-                        </div>
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            style="display:inline-block;"
+                            aria-label="Close">
+                            <span class="x-modal">&times;</span>
+                        </button>
                     </div>
-                </div>
-                <div class="card inputs-in-a-box" id="div-card-user-dates" style="width: 90%">
-                    <div class="card-body p-4">
-                        <div id="div_reporting_dates_title">
-                            <h3>Reporting start and end dates</h3>
+                    <div id="div-gait-dates" class="mb-3">
+                        <div id="div_gait_dates_title" class="mb-3">
+                            <h3>GAIT program dates</h3>
                         </div>
-                        <div id="div_reporting_dates">
-                            <div id="div_id_reporting_start_date" style="display: inline-block;" class="mr-5">
+                        <div id="div_gait_dates">
+                            <div id="div_id_gait_start_date" class="mr-4" style="display: inline-block;">
                                 <h4>
-                                    <div class="mb-0">START MONTH</div>
-                                    <input type="text"
-                                           name="reporting_period_start"
-                                           class="form-control monthPicker"
-                                           value="2018-03-04"
-                                           id="id_reporting_start_date">
+                                    <div class="mb-0">START DATE</div>
+                                    <div id="id_gait_start_date"></div>
                                 </h4>
                             </div>
-                            <div id="div_reporting_end_date" style="display: inline-block;">
+
+                            <div id="div_id_gait_start_date" style="display: inline-block;">
                                 <h4>
-                                    <div class="mb-0">END MONTH</div>
-                                    <input type="text"
+                                    <div class="mb-0">END DATE</div>
+                                    <div id="id_gait_end_date"></div>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card inputs-in-a-box" id="div-card-user-dates" style="width: 90%">
+                        <div class="card-body p-4">
+                            <div id="div_reporting_dates_title">
+                                <h3>Reporting start and end dates</h3>
+                            </div>
+                            <div id="div_reporting_dates">
+                                <div id="div_id_reporting_start_date" style="display: inline-block;" class="mr-5">
+                                    <h4>
+                                        <div class="mb-0">START MONTH</div>
+                                        <input type="text"
+                                               name="reporting_period_start"
+                                               class="form-control monthPicker"
+                                               value="2018-03-04"
+                                               id="id_reporting_start_date">
+                                    </h4>
+                                </div>
+                                <div id="div_reporting_end_date" style="display: inline-block;">
+                                    <h4>
+                                        <div class="mb-0">END MONTH</div>
+                                        <input type="text"
                                            name="reporting_period_end"
                                            class="form-control monthPicker"
                                            value="2018-03-04"
                                            id="id_reporting_end_date">
-                                </h4>
+                                    </h4>
+                                </div>
                             </div>
-                        </div>
-                        <div id="div_reporting_dates_description">
-                            While a program may begin and end any day of the month, reporting periods must begin on the first day of the month and end on the last day of the month. Please note that the reporting start month can only be adjusted <span class="color-red">before targets are set up and a program begins submitting performance results.</span> The reporting end month can still be extended.
+                            <div id="div_reporting_dates_description">
+                                While a program may begin and end any day of the month, reporting periods must begin on the first day of the month and end on the last day of the month. Please note that the reporting start month can only be adjusted <span class="color-red">before targets are set up and a program begins submitting performance results.</span> The reporting end month can still be extended.
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="modal-footer justify-content-between p-4" style="background-color: #DBDCDE;">
+                    <div>
+                        <input type="submit" name="submit" value="{% trans 'SAVE CHANGES' %}" class="btn btn-primary mx-1" id="submit-id-submit">
+                        <input type="reset" class="btn btn-secondary mx-1" value="{% trans 'RESET' %}">
+                    </div>
+                    <div class="text-muted">{% include "form_guidance.html" %}</div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -80,16 +96,32 @@
     *  Populate the programs start and end datestr
     */
     $('#id_reporting_period_modal').on('show.bs.modal', function (event) {
-        var periods = $(event.relatedTarget).data('periods');
-        console.log('periods', periods);
-        $("#id_gait_start_date").text(periods.pStart)
-        $("#id_gait_end_date").text(periods.pEnd)
-        $("#id_reporting_start_date").val(periods.rStart)
-        $("#id_reporting_end_date").val(periods.rEnd)
+        $("input[name=program_id]").val($(event.relatedTarget).data('program'));
+        $("#reportingperiod_update_form").attr("action", "/workflow/reportingperiod_update/" + $(event.relatedTarget).data('program'));
+        $("#id_gait_start_date").html($.datepicker.formatDate('M d, y', new Date($(event.relatedTarget).data('progstart'))));
+        $("#id_gait_end_date").html($.datepicker.formatDate('M d, y', new Date($(event.relatedTarget).data('progend'))));
+        $("#id_reporting_start_date").val($.datepicker.formatDate('M d, y', new Date($(event.relatedTarget).data('rptstart'))));
+        $("#id_reporting_end_date").val($.datepicker.formatDate('M d, y', new Date($(event.relatedTarget).data('rptend'))));
 
-        setupPopupCalendar()
+        setupPopupCalendar();
 
 
+    });
+
+    $("#reportingperiod_update_form").on('submit', function(e) {
+        e.preventDefault();
+        var serializedData = $(this).serializeArray();
+
+        $.post($(this).attr('action'), $(this).serialize(), function(data){
+            var program_id = data.program_id;
+            var modalLink = $(`a[data-program="${program_id}"]`);
+            modalLink.data("rptstart", data.rptstart);
+            modalLink.data("rptend", data.rptend);
+
+        }).fail(function(data) {
+            console.log('error');
+
+        });
     });
 
  </script>
