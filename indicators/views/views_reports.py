@@ -10,9 +10,11 @@ from django.views.generic import TemplateView, FormView
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+from tola.util import formatFloat
 from workflow.models import Program
 from ..models import Indicator, CollectedData, Level, PeriodicTarget
 from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm
+from ..templatetags.mytags import symbolize_change, symbolize_measuretype
 
 
 class IPTTReportQuickstartView(FormView):
@@ -595,6 +597,56 @@ class IPTT_ReportView(TemplateView):
         # Calculate the cumulative sum across timeperiods for indicators that are NUMBER and CUMULATIVE
         for i, ind in enumerate(indicators):
             running_total = 0
+            if ind['number'] is None:
+                ind['number'] = ''
+
+            if ind['lastlevel'] is None:
+                ind['lastlevel'] = ''
+
+            if ind['unit_of_measure'] is None:
+                ind['unit_of_measure'] = ''
+
+            ind['direction_of_change'] = symbolize_change(ind['direction_of_change'])
+
+            if ind['target_frequency'] == Indicator.LOP:
+                ind['is_cumulative'] = _("N/A")
+            elif ind['is_cumulative'] is True:
+                ind['is_cumulative'] = _("Cumulative")
+            else:
+                ind['is_cumulative'] = _("Non-cumulative")
+
+            ind['unittype'] = symbolize_measuretype(ind['unit_of_measure_type'])
+
+            if ind['baseline_na'] is True:
+                ind['baseline'] = _("N/A")
+            else:
+                if ind['baseline'] is None:
+                    ind['baseline'] = ''
+
+            # process lop_target
+            lop_target = float(ind['lop_target'])
+            if ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
+                ind['lop_target'] = "{}%".format(formatFloat(lop_target))
+
+            # process lop_actual
+            lop_actual = ''
+            percent = ''
+            if ind['unit_of_measure_type'] == Indicator.NUMBER:
+                if ind['actualsum'] is not None:
+                    lop_actual = float(ind['actualsum'])
+            elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
+                if ind['lastdata'] is not None:
+                    lop_actual = float(ind['lastdata'])
+                    percent = "%"
+            try:
+                ind['lop_actual'] = "{}{}".format(formatFloat(lop_actual), percent)
+            except TypeError:
+                ind['lop_actual'] = ''
+            try:
+                ind['lop_percent_met'] = "{}%".format(formatFloat(lop_actual / lop_target * 100))
+            except TypeError:
+                # print('actual={}, lop={}'.format(lop_actual, lop_target))
+                ind['lop_percent_met'] = ''
 
             if period in [Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL, Indicator.QUARTERLY,
                           Indicator.MONTHLY, Indicator.MID_END]:
