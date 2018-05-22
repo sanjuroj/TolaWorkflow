@@ -1,0 +1,35 @@
+/* CSS color variables
+    for future reference, not used.
+    These are CSS variables, not Sass variables.
+-------------------------------------------------- */
+
+:tola { /* plz note namespace */
+    --blue-medium: #0645AD;
+    --blue-light: #3366cc;
+    --blue-lighter: #55acee;
+    --gray-more-darker: #2C2C2C;
+    --gray-darker: #323232; /* AKA rgb(50,50,50) */
+    --gray-dark: #54585A;
+    --gray-medium: #808080;
+    --gray-light: #B8BABD;
+    --gray-lighter: #DBDCDE;
+    --gray-lightest: #F5F5F5;
+    --green-medium: #4CAF50;
+    --practically-white: #FAFAFA; /* should probably be #F5F5F5 */
+    --teal-dark: #046C69;
+    --teal-medium: #00A49F;
+    --teal-light: #33BFBB;
+    --teal-lighter: #CCEFEE;
+    --danger-medium: #DD0000;
+    --danger-light: #EE7F7F;
+    --red2-medium: #ff0000; /* aka red */
+    --blue2-medium: #0000ff; /* aka blue */
+    --gray2-more-darker: #222222;
+    --gray2-darker: #333333; /* should probably be #323232 */
+    --gray2-medium: #495057; /* should probably be #54585A */
+    --gray2-lighter: #dddddd; /* should probably be #DBDCDE */
+    --blue2-lighter: #59b5fa; /* highlighted state for blue-lighter */
+    --yellow-light: #FAFAD2; /* AKA lighttgoldenrodyellow */
+}
+
+

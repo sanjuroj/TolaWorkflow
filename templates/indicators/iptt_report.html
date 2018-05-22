@@ -4,6 +4,7 @@
 {% load mytags %}
 {% block title %}Indicator Performance Tracking Table{% endblock %}
 {% block page_title %}{% endblock %}
+{% block bodyclasses %}iptt-table{% endblock %}
 
 {% block content %}
 <style>
@@ -14,10 +15,10 @@
   <div class="float-left collapse width show" id="sidebar">
     {% include 'indicators/iptt_filter_form.html' %}
   </div>
-  <div style="background-color:#00A49F; color: #fff;">
-    <a href="#" data-target="#sidebar" data-toggle="collapse" style="color: white;">
-      <i class="fa fa-cog"></i>
-    </a>Options
+  <div class="sidebar-toggle" style="">
+    <a href="#" data-target="#sidebar" data-toggle="collapse" style="" title="Show/hide filters">
+      <i class="fa fa-chevron-left"></i>
+    </a>
   </div>
   <main class="col-md-9 float-left pt-1">
     <div id="id_div_top_iptt_report">
