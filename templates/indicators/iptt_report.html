@@ -105,7 +105,7 @@
               <td class="td-no-side-borders">{{ indicator.unit_of_measure  }}</td>
               <td class="td-no-side-borders" align="right">{{ indicator.direction_of_change }}</td>
               <td class="td-no-side-borders">
-                {{ indicator.is_cumulative }}
+                {{ indicator.cumulative }}
               </td>
               <td class="td-no-side-borders">{{ indicator.unittype }}</td>
               <td class="td-no-side-borders" align="right">
@@ -139,39 +139,12 @@
                     {% endwith %}
                   </td>
                 {% endfor %}
-              {% else %}
+              {% else %} <!-- if it is a NUMBER indicator -->
                 {% for k, v in report_date_ranges.items %}
                   <td align="right">
-                    <!-- if it is a NUMBER indicator -->
-                    {% if indicator.unit_of_measure_type == 1 %}
-                      {% if indicator.is_cumulative is True %}
-                        {% with k|concat_string:"_rsum" as sum %}
-                          {{ indicator|hash:sum|floatformat:"-2"|default_if_none:'' }}
-                        {% endwith %}
-                      {% else %}
-                        {% with k|concat_string:"_sum" as sum %}
-                          {{ indicator|hash:sum|floatformat:"-2"|default_if_none:'' }}
-                        {% endwith %}
-                      {% endif %}
-                      <!-- if indicator is a PERCENT idnicator -->
-                    {% elif indicator.unit_of_measure_type == 2 %}
-                      {% if indicator.is_cumulative == True %}
-                        <!-- if it is PERCENT and CUMULATIVE indicator then show the last data record's value -->
-                        {% with k|concat_string:"_last" as last %}
-                          {% if indicator|hash:last is not None %}
-                            {{ indicator|hash:last|floatformat:"-2"|default_if_none:'' }}%
-                          {% endif %}
-                        {% endwith %}
-                      {% else %}
-                        <!-- if it is a PERCENT and NON-CUMULATIVE indicator -->
-                        {% with k|concat_string:"_avg" as avg %}
-                          {% if indicator|hash:avg is not None %}
-                            <small><abbr title='{% trans "Average" %}'>{% trans "avg." %}</abbr></small>
-                            {{ indicator|hash:avg|floatformat:"-2"|default_if_none:'' }}%
-                          {% endif %}
-                        {% endwith %}
-                      {% endif %}
-                    {% endif %}
+                    {% with k|concat_string:"_actual" as actual %}
+                      {{ indicator|hash:actual }}
+                    {% endwith %}
                   </td>
                 {% endfor %}
               {% endif %}

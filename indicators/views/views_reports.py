@@ -614,11 +614,11 @@ class IPTT_ReportView(TemplateView):
 
             # process indicator is_cumulative status
             if ind['target_frequency'] == Indicator.LOP:
-                ind['is_cumulative'] = _("N/A")
+                ind['cumulative'] = _("N/A")
             elif ind['is_cumulative'] is True:
-                ind['is_cumulative'] = _("Cumulative")
-            else:
-                ind['is_cumulative'] = _("Non-cumulative")
+                ind['cumulative'] = _("Cumulative")
+            elif ind['is_cumulative'] is False:
+                ind['cumulative'] = _("Non-cumulative")
 
             # process indicator_unit_type
             ind['unittype'] = symbolize_measuretype(ind['unit_of_measure_type'])
@@ -664,10 +664,32 @@ class IPTT_ReportView(TemplateView):
                 for k, v in periods_date_ranges.items():
                     if ind['unit_of_measure_type'] == Indicator.NUMBER and ind['is_cumulative'] is True:
                         current_sum = ind["{}_sum".format(k)]
-                        if current_sum > 0:
+                        if current_sum is not None:
+                            # current_sum = 0
                             key = "{}_rsum".format(k)
                             running_total = running_total + current_sum
                             ind[key] = running_total
+
+                    # process target_period actual value
+                    actual = '{}_actual'.format(k)
+                    actual_val = ''
+                    percent_sign = ''
+                    if ind['unit_of_measure_type'] == Indicator.NUMBER:
+                        if ind['is_cumulative'] is True:
+                            try:
+                                actual_val = ind["{}_rsum".format(k)]
+                            except KeyError:
+                                actual_val = ''
+                        else:  # if it is not set to cumulative then default to non-cumulative even it is it not set
+                            actual_val = ind["{}_sum".format(k)]
+                    elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
+                        percent_sign = '%'
+                        actual_val = ind["{}_last".format(k)]
+
+                    if actual_val is not None and actual_val != '':
+                        ind[actual] = "{}{}".format(formatFloat(actual_val), percent_sign)
+                    else:
+                        ind[actual] = ''
 
                     if reporttype == self.REPORT_TYPE_TARGETPERIODS:
                         # process target_period target value
@@ -681,24 +703,6 @@ class IPTT_ReportView(TemplateView):
                             ind['{}_period_target'.format(k)] = "{}%".format(target_val)
                         else:
                             ind['{}_period_target'.format(k)] = target_val
-
-                        # process target_period actual value
-                        actual = '{}_actual'.format(k)
-                        actual_val = ''
-                        percent_sign = ''
-                        if ind['unit_of_measure_type'] == Indicator.NUMBER:
-                            if ind['is_cumulative'] is True:
-                                actual_val = ind["{}_rsum".format(k)]
-                            else:
-                                actual_val = ind["{}_sum".format(k)]
-                        elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
-                            percent_sign = '%'
-                            actual_val = ind["{}_last".format(k)]
-
-                        if actual_val is not None:
-                            ind[actual] = "{}{}".format(formatFloat(actual_val), percent_sign)
-                        else:
-                            ind[actual] = ''
 
                         # process target_period percent_met value
                         try:
