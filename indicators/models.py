@@ -704,6 +704,9 @@ class PeriodicTarget(models.Model):
             return self.end_date.strftime('%b %d, %Y').replace(" 0", " ")
         return self.end_date
 
+    @property
+    def getcollected_data(self):
+        return self.collecteddata_set.all().order_by('date_collected')
 
 class PeriodicTargetAdmin(admin.ModelAdmin):
     list_display = ('period', 'target', 'customsort',)

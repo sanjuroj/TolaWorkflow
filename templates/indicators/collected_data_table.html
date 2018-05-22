@@ -94,7 +94,7 @@
                     {% endwith %}
                 {% endifchanged %}
 
-                {% for cdata in item.collecteddata_set.all.order_by %}
+                {% for cdata in item.getcollected_data %}
                     {% if not forloop.first %}
                         <tr>
                     {% endif %}
