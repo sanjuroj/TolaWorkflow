@@ -708,6 +708,7 @@ class PeriodicTarget(models.Model):
     def getcollected_data(self):
         return self.collecteddata_set.all().order_by('date_collected')
 
+
 class PeriodicTargetAdmin(admin.ModelAdmin):
     list_display = ('period', 'target', 'customsort',)
     display = 'Indicator Periodic Target'

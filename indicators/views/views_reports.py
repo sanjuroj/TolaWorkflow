@@ -597,17 +597,22 @@ class IPTT_ReportView(TemplateView):
         # Calculate the cumulative sum across timeperiods for indicators that are NUMBER and CUMULATIVE
         for i, ind in enumerate(indicators):
             running_total = 0
+            # process indicator number
             if ind['number'] is None:
                 ind['number'] = ''
 
+            # process level
             if ind['lastlevel'] is None:
                 ind['lastlevel'] = ''
 
+            # process unit_of_measure
             if ind['unit_of_measure'] is None:
                 ind['unit_of_measure'] = ''
 
+            # process direction_of_change
             ind['direction_of_change'] = symbolize_change(ind['direction_of_change'])
 
+            # process indicator is_cumulative status
             if ind['target_frequency'] == Indicator.LOP:
                 ind['is_cumulative'] = _("N/A")
             elif ind['is_cumulative'] is True:
@@ -615,8 +620,10 @@ class IPTT_ReportView(TemplateView):
             else:
                 ind['is_cumulative'] = _("Non-cumulative")
 
+            # process indicator_unit_type
             ind['unittype'] = symbolize_measuretype(ind['unit_of_measure_type'])
 
+            # process baseline
             if ind['baseline_na'] is True:
                 ind['baseline'] = _("N/A")
             else:
@@ -642,6 +649,8 @@ class IPTT_ReportView(TemplateView):
                 ind['lop_actual'] = "{}{}".format(formatFloat(lop_actual), percent)
             except TypeError:
                 ind['lop_actual'] = ''
+
+            # process lop_percent_met
             try:
                 ind['lop_percent_met'] = "{}%".format(formatFloat(lop_actual / lop_target * 100))
             except TypeError:
@@ -660,25 +669,52 @@ class IPTT_ReportView(TemplateView):
                             running_total = running_total + current_sum
                             ind[key] = running_total
 
-                    # if it is targetperiods IPTT report then calculate percent_met vaue for each targetperiod
                     if reporttype == self.REPORT_TYPE_TARGETPERIODS:
+                        # process target_period target value
+                        target_key = "{}_target".format(k)
+                        if ind[target_key] is None:
+                            target_val = ''
+                        else:
+                            target_val = formatFloat(float(ind[target_key]))
+
+                        if ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
+                            ind['{}_period_target'.format(k)] = "{}%".format(target_val)
+                        else:
+                            ind['{}_period_target'.format(k)] = target_val
+
+                        # process target_period actual value
+                        actual = '{}_actual'.format(k)
+                        actual_val = ''
+                        percent_sign = ''
+                        if ind['unit_of_measure_type'] == Indicator.NUMBER:
+                            if ind['is_cumulative'] is True:
+                                actual_val = ind["{}_rsum".format(k)]
+                            else:
+                                actual_val = ind["{}_sum".format(k)]
+                        elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
+                            percent_sign = '%'
+                            actual_val = ind["{}_last".format(k)]
+
+                        if actual_val is not None:
+                            ind[actual] = "{}{}".format(formatFloat(actual_val), percent_sign)
+                        else:
+                            ind[actual] = ''
+
+                        # process target_period percent_met value
                         try:
                             percent_met = '{}_percent_met'.format(k)
                             target = float(ind["{}_target".format(k)])
                             if ind['unit_of_measure_type'] == Indicator.NUMBER:
                                 if ind['is_cumulative'] is True:
                                     rsum = float(ind["{}_rsum".format(k)])
-                                    ind[percent_met] = rsum / target * 100
+                                    ind[percent_met] = formatFloat(rsum / target * 100)
                                 else:
-                                    ind[percent_met] = float(ind["{}_sum".format(k)]) / target * 100
+                                    ind[percent_met] = formatFloat(float(ind["{}_sum".format(k)]) / target * 100)
                             elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
-                                if ind['is_cumulative'] is True:
-                                    ind[percent_met] = float(ind["{}_last".format(k)]) / target * 100
-                                elif ind['is_cumulative'] is False:
-                                    avg = float(ind["{}_avg".format(k)])
-                                    ind[percent_met] = (avg/target) * 100
+                                percent_met_val = formatFloat(float(ind["{}_last".format(k)]) / target * 100)
+                                ind[percent_met] = "{}%".format(percent_met_val)
                         except TypeError:
-                            ind[percent_met] = None
+                            ind[percent_met] = ''
 
         context['start_date'] = report_start_date
         context['end_date'] = report_end_date
