@@ -1,5 +1,11 @@
 # Unit Testing
 
+Install the _mock_ package if it isn't already installed:
+
+```
+pip install mock
+```
+
 ## Running unit tests
 The unit test harness follows the CI and production environments
 closely. To run all of the tests (replace _REPO_ with the location
@@ -43,4 +49,7 @@ coverage html
 ```
 
 After running the coverage command you will notice there is a new
-directory named _htmlcov_ in the top-level directory
+directory named _htmlcov_ in the top-level directory. Point your
+browser at _htmlcov/index.html_ to view the coverage report. On 
+macOS, you can just say `open /path/to/html` and the file will open
+in your default browser.

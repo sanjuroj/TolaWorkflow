@@ -3,7 +3,7 @@ import sys
 TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 if TESTING:
     print('=========================')
-    print('In TEST Mode - Disableling Migrations')
+    print('In TEST Mode - Disabling Migrations')
     print('=========================')
 
     class DisableMigrations(object):
