@@ -4,19 +4,14 @@
 {% load mytags %}
 {% block title %}Indicator Performance Tracking Table{% endblock %}
 {% block page_title %}{% endblock %}
-{% block bodyclasses %}iptt-table{% endblock %}
+{% block bodyclasses %}page_iptt_table{% endblock %}
 
 {% block content %}
-<style>
-  .popover{
-    max-width: 100%; /* Max Width of the popover (depending on the container) */
-  }
-</style>
   <div class="float-left collapse width show" id="sidebar">
     {% include 'indicators/iptt_filter_form.html' %}
   </div>
-  <div class="sidebar-toggle" style="">
-    <a href="#" data-target="#sidebar" data-toggle="collapse" style="" title="Show/hide filters">
+  <div class="sidebar-toggle">
+    <a href="#" data-target="#sidebar" data-toggle="collapse" title="Show/hide filters">
       <i class="fa fa-chevron-left"></i>
     </a>
   </div>
@@ -26,7 +21,7 @@
           <h2>Indicator Performance Tracking Table</h2>
           <strong>{{ start_date|date:"M d, Y" }} - {{ end_date|date:"M d, Y" }}</strong>
         </span>
-        <table id="iptt_table" class="table table-sm table-bordered table-hover" style="background-color: white;">
+        <table id="iptt_table" class="table table-sm table-bordered table-hover">
           <caption>Indicator Performance Tracking Table</caption>
           <colgroup scope="col" span="9"></colgroup>
           <colgroup scope="col" span="3" class="lopCols"></colgroup>
@@ -34,17 +29,17 @@
           <thead class="thead-light">
           <tr>
             <td colspan="9" id="id_td_iptt_program_name" class="lopCols">
-              <h5 style="margin-left:-5px;">
+              <h5>
                   {{ program.name|wordwrap:100|linebreaks }}
               </h5>
             </td>
-            <td scope="colgroup" colspan="3" style="vertical-align: bottom;" class="text-center">
+            <td scope="colgroup" colspan="3" class="text-center align-bottom text-uppercase">
               {% trans "LIFE OF PROGRAM" %}
             </td>
               {% for k, v in report_date_ranges.items %}
                 <td scope="col"
                     {% if reporttype == 'targetperiods' %} colspan="3" {% endif %}
-                    class="text-center lopCols" style="min-width: 180px;">
+                    class="text-center lopCols text-nowrap">
                   {{ k|upper }}<br>
                   {% if v.0 is not None and v.1 is not None %}
                     <small>{{ v.0|date:"M d, Y" }} - {{ v.1|date:"M d, Y" }}</small>
@@ -123,17 +118,17 @@
               </td>
               {% if reporttype == 'targetperiods' %}
                 {% for k,v in report_date_ranges.items %}
-                  <td align="right" style="border-right: 0px;">
+                  <td align="right" class="border-right-0">
                     {% with k|concat_string:"_period_target" as target %}
                       {{ indicator|hash:target }}
                     {% endwith %}
                   </td>
-                  <td align="right" style="border-left: 0px; border-right: 0px;">
+                  <td align="right" class="border-right-0 border-left-0">
                     {% with k|concat_string:"_actual" as actual %}
                       {{ indicator|hash:actual }}
                     {% endwith %}
                   </td>
-                  <td align="right" style="border-left: 0px;">
+                  <td align="right" class="border-left-0">
                     {% with k|concat_string:"_percent_met" as percent_met %}
                       {{ indicator|hash:percent_met }}
                     {% endwith %}
