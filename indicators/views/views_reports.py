@@ -10,9 +10,11 @@ from django.views.generic import TemplateView, FormView
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+from tola.util import formatFloat
 from workflow.models import Program
 from ..models import Indicator, CollectedData, Level, PeriodicTarget
 from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm
+from ..templatetags.mytags import symbolize_change, symbolize_measuretype
 
 
 class IPTTReportQuickstartView(FormView):
@@ -193,21 +195,21 @@ class IPTT_ReportView(TemplateView):
                     )
                 )
             )
-            midline_avg = Avg(
-                Case(
-                    When(
-                        Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-                        Q(is_cumulative=False) &
-                        Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
-                        then=F('collecteddata__achieved')
-                    )
-                )
-            )
+            # midline_avg = Avg(
+            #     Case(
+            #         When(
+            #             Q(unit_of_measure_type=Indicator.PERCENTAGE) &
+            #             Q(is_cumulative=False) &
+            #             Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
+            #             then=F('collecteddata__achieved')
+            #         )
+            #     )
+            # )
             midline_last = Max(
                 Case(
                     When(
                         Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-                        Q(is_cumulative=True) &
+                        # Q(is_cumulative=True) &
                         Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
                         then=Subquery(last_data_record.values('achieved')[:1])
                     )
@@ -237,21 +239,21 @@ class IPTT_ReportView(TemplateView):
                     )
                 )
             )
-            endline_avg = Avg(
-                Case(
-                    When(
-                        Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-                        Q(is_cumulative=False) &
-                        Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
-                        then=F('collecteddata__achieved')
-                    )
-                )
-            )
+            # endline_avg = Avg(
+            #     Case(
+            #         When(
+            #             Q(unit_of_measure_type=Indicator.PERCENTAGE) &
+            #             Q(is_cumulative=False) &
+            #             Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
+            #             then=F('collecteddata__achieved')
+            #         )
+            #     )
+            # )
             endline_last = Max(
                 Case(
                     When(
                         Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-                        Q(is_cumulative=True) &
+                        # Q(is_cumulative=True) &
                         Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
                         then=Subquery(last_data_record.values('achieved')[:1])
                     )
@@ -269,10 +271,10 @@ class IPTT_ReportView(TemplateView):
             self.annotations["Midline_target"] = midline_target
             self.annotations["Endline_target"] = endline_target
             self.annotations['Midline_sum'] = midline_sum
-            self.annotations['Midline_avg'] = midline_avg
+            # self.annotations['Midline_avg'] = midline_avg
             self.annotations['Midline_last'] = midline_last
             self.annotations['Endline_sum'] = endline_sum
-            self.annotations['Endline_avg'] = endline_avg
+            # self.annotations['Endline_avg'] = endline_avg
             self.annotations['Endline_last'] = endline_last
         else:
             for k, v in timeperiods.items():
@@ -296,22 +298,22 @@ class IPTT_ReportView(TemplateView):
                     )
                 )
 
-                annotation_avg = Avg(
-                    Case(
-                        When(
-                            Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-                            Q(is_cumulative=False) &
-                            Q(collecteddata__date_collected__gte=start_date) &
-                            Q(collecteddata__date_collected__lte=end_date),
-                            then=F('collecteddata__achieved')
-                        )
-                    )
-                )
+                # annotation_avg = Avg(
+                #     Case(
+                #         When(
+                #             Q(unit_of_measure_type=Indicator.PERCENTAGE) &
+                #             Q(is_cumulative=False) &
+                #             Q(collecteddata__date_collected__gte=start_date) &
+                #             Q(collecteddata__date_collected__lte=end_date),
+                #             then=F('collecteddata__achieved')
+                #         )
+                #     )
+                # )
                 annotation_last = Max(
                     Case(
                         When(
                             Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-                            Q(is_cumulative=True) &
+                            # Q(is_cumulative=True) &
                             Q(collecteddata__date_collected__gte=start_date) &
                             Q(collecteddata__date_collected__lte=end_date),
                             then=Subquery(last_data_record.values('achieved')[:1])
@@ -339,7 +341,7 @@ class IPTT_ReportView(TemplateView):
                 # Year 1_last=..., Year 2_last=..., etc.
                 #
                 self.annotations["{}_sum".format(k)] = annotation_sum
-                self.annotations["{}_avg".format(k)] = annotation_avg
+                # self.annotations["{}_avg".format(k)] = annotation_avg
                 self.annotations["{}_last".format(k)] = annotation_last
         return self.annotations
 
@@ -371,12 +373,16 @@ class IPTT_ReportView(TemplateView):
         ind = Indicator.objects.filter(program__in=[program.id], target_frequency=period).first()
         periodic_targets = PeriodicTarget.objects.filter(indicator=ind)\
             .values("id", "period", "target", "start_date", "end_date")
-        try:
-            date_ranges.append(periodic_targets.first()['start_date'])
-            date_ranges.append(periodic_targets.last()['end_date'])
-        except (KeyError, TypeError):
-            date_ranges.append(program.reporting_period_start)
-            date_ranges.append(program.reporting_period_end)
+        # try:
+        #     date_ranges.append(periodic_targets.first()['start_date'])
+        #     date_ranges.append(periodic_targets.last()['end_date'])
+        # except (KeyError, TypeError):
+        #     date_ranges.append(program.reporting_period_start)
+        #     date_ranges.append(program.reporting_period_end)
+
+        date_ranges.append(program.reporting_period_start)
+        date_ranges.append(program.reporting_period_end)
+
         try:
             start_date = parser.parse(self.filter_form_initial_data['start_date']).date()
             end_date = parser.parse(self.filter_form_initial_data['end_date']).date()
@@ -447,38 +453,41 @@ class IPTT_ReportView(TemplateView):
             timeperiods = OrderedDict((k, v) for k, v in most_recent_timeperiods)
         return timeperiods
 
-    def _get_date_range_n_numperiods(self, reporttype, program_id, period):
+    def _get_date_range_n_numperiods(self, reporttype, program, period):
         if period == Indicator.LOP or period == Indicator.MID_END:
             return (None, None, None)
 
-        indicators = Indicator.objects.filter(program__in=[program_id]).values('id')
+        # indicators = Indicator.objects.filter(program__in=[program_id]).values('id')
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            try:
-                start_date = parser.parse(self.filter_form_initial_data['start_date']).date()
-                end_date = parser.parse(self.filter_form_initial_data['end_date']).date()
-            except (KeyError, ValueError):
-                # determine the full date range of data collection for this program
-                data_date_range = indicators\
-                    .aggregate(sdate=Min('collecteddata__date_collected'), edate=Max('collecteddata__date_collected'))
-                start_date = data_date_range['sdate']
-                end_date = data_date_range['edate']
+            # try:
+            #     start_date = parser.parse(self.filter_form_initial_data['start_date']).date()
+            #     end_date = parser.parse(self.filter_form_initial_data['end_date']).date()
+            # except (KeyError, ValueError):
+            #     # determine the full date range of data collection for this program
+            #     data_date_range = indicators\
+            #         .aggregate(sdate=Min('collecteddata__date_collected'), edate=Max('collecteddata__date_collected'))
+            #     start_date = data_date_range['sdate']
+            #     end_date = data_date_range['edate']
+
+            start_date = program.reporting_period_start
+            end_date = program.reporting_period_end
 
             # get the number of months in this period
-            num_months_in_period = self._get_num_months(period)
+            # num_months_in_period = self._get_num_months(period)
 
             # Find out the start date based on the calendar period (year, semi-annual, etc)
-            start_date = self._get_first_period(start_date, num_months_in_period)
+            # start_date = self._get_first_period(start_date, num_months_in_period)
 
             # get the number of periods in this date range
             num_periods = self._get_num_periods(start_date, end_date, period)
         else:
             start_date, end_date, num_periods = (None, None, 0)
 
-        if isinstance(start_date, dt.datetime):
-            start_date = start_date.date()
+        # if isinstance(start_date, dt.datetime):
+        #     start_date = start_date.date()
 
-        if isinstance(end_date, dt.datetime):
-            end_date = end_date.date()
+        # if isinstance(end_date, dt.datetime):
+        #     end_date = end_date.date()
 
         return (start_date, end_date, num_periods)
 
@@ -529,6 +538,143 @@ class IPTT_ReportView(TemplateView):
             pass
         return filters
 
+    def prepare_indicators(self, reporttype, period, periods_date_ranges, indicators):
+        # Calculate the cumulative sum across timeperiods for indicators that are NUMBER and CUMULATIVE
+        for i, ind in enumerate(indicators):
+            running_total = 0
+            # process indicator number
+            if ind['number'] is None:
+                ind['number'] = ''
+
+            # process level
+            if ind['lastlevel'] is None:
+                ind['lastlevel'] = ''
+
+            # process unit_of_measure
+            if ind['unit_of_measure'] is None:
+                ind['unit_of_measure'] = ''
+
+            # process direction_of_change
+            ind['direction_of_change'] = symbolize_change(ind['direction_of_change'])
+
+            # process indicator is_cumulative status
+            if ind['target_frequency'] == Indicator.LOP:
+                ind['cumulative'] = _("N/A")
+            elif ind['is_cumulative'] is True:
+                ind['cumulative'] = _("Cumulative")
+            elif ind['is_cumulative'] is False:
+                ind['cumulative'] = _("Non-cumulative")
+
+            # process indicator_unit_type
+            ind['unittype'] = symbolize_measuretype(ind['unit_of_measure_type'])
+
+            # process baseline
+            if ind['baseline_na'] is True:
+                ind['baseline'] = _("N/A")
+            else:
+                if ind['baseline'] is None:
+                    ind['baseline'] = ''
+
+            # process lop_target
+            try:
+                lop_target = float(ind['lop_target'])
+                if ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
+                    ind['lop_target'] = "{}%".format(formatFloat(lop_target))
+                else:
+                    ind['lop_target'] = formatFloat(lop_target)
+            except (ValueError, TypeError):
+                lop_target = ''
+                ind['lop_target'] = lop_target
+
+            # process lop_actual
+            lop_actual = ''
+            percent = ''
+            if ind['unit_of_measure_type'] == Indicator.NUMBER:
+                if ind['actualsum'] is not None:
+                    lop_actual = float(ind['actualsum'])
+            elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
+                if ind['lastdata'] is not None:
+                    lop_actual = float(ind['lastdata'])
+                    percent = "%"
+            try:
+                ind['lop_actual'] = "{}{}".format(formatFloat(lop_actual), percent)
+            except TypeError:
+                ind['lop_actual'] = ''
+
+            # process lop_percent_met
+            try:
+                ind['lop_percent_met'] = "{}%".format(formatFloat(lop_actual / lop_target * 100))
+            except TypeError:
+                # print('actual={}, lop={}'.format(lop_actual, lop_target))
+                ind['lop_percent_met'] = ''
+
+            if period in [Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL, Indicator.QUARTERLY,
+                          Indicator.MONTHLY, Indicator.MID_END]:
+                # if the frequency (period) is periodic, i.e., time-aware then go through each period
+                # and calculate the cumulative total achieved across date ranges (periods)
+                for k, v in periods_date_ranges.items():
+                    if ind['unit_of_measure_type'] == Indicator.NUMBER and ind['is_cumulative'] is True:
+                        current_sum = ind["{}_sum".format(k)]
+                        if current_sum is not None:
+                            # current_sum = 0
+                            key = "{}_rsum".format(k)
+                            running_total = running_total + current_sum
+                            ind[key] = running_total
+
+                    # process target_period actual value
+                    actual = '{}_actual'.format(k)
+                    actual_val = ''
+                    percent_sign = ''
+                    if ind['unit_of_measure_type'] == Indicator.NUMBER:
+                        if ind['is_cumulative'] is True:
+                            try:
+                                actual_val = ind["{}_rsum".format(k)]
+                            except KeyError:
+                                actual_val = ''
+                        else:  # if it is not set to cumulative then default to non-cumulative even it is it not set
+                            actual_val = ind["{}_sum".format(k)]
+                    elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
+                        percent_sign = '%'
+                        actual_val = ind["{}_last".format(k)]
+
+                    if actual_val is not None and actual_val != '':
+                        ind[actual] = "{}{}".format(formatFloat(actual_val), percent_sign)
+                    else:
+                        ind[actual] = ''
+
+                    if reporttype == self.REPORT_TYPE_TARGETPERIODS:
+                        # process target_period target value
+                        target_key = "{}_target".format(k)
+                        if ind[target_key] is None:
+                            target_val = ''
+                        else:
+                            target_val = formatFloat(float(ind[target_key]))
+
+                        if ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
+                            if target_val > 0 and target_val != '':
+                                ind['{}_period_target'.format(k)] = "{}%".format(target_val)
+                            else:
+                                ind['{}_period_target'.format(k)] = ''
+                        else:
+                            ind['{}_period_target'.format(k)] = target_val
+
+                        # process target_period percent_met value
+                        try:
+                            percent_met = '{}_percent_met'.format(k)
+                            target = float(ind["{}_target".format(k)])
+                            if ind['unit_of_measure_type'] == Indicator.NUMBER:
+                                if ind['is_cumulative'] is True:
+                                    rsum = float(ind["{}_rsum".format(k)])
+                                    ind[percent_met] = formatFloat(rsum / target * 100)
+                                else:
+                                    ind[percent_met] = formatFloat(float(ind["{}_sum".format(k)]) / target * 100)
+                            elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
+                                percent_met_val = formatFloat(float(ind["{}_last".format(k)]) / target * 100)
+                                ind[percent_met] = "{}%".format(percent_met_val)
+                        except TypeError:
+                            ind[percent_met] = ''
+        return indicators
+
     def get_context_data(self, **kwargs):
         context = super(IPTT_ReportView, self).get_context_data(**kwargs)
         reporttype = kwargs.get('reporttype')
@@ -571,7 +717,7 @@ class IPTT_ReportView(TemplateView):
 
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
             report_start_date, report_end_date, num_periods = self._get_date_range_n_numperiods(
-                reporttype, program_id, period)
+                reporttype, program, period)
             periods_date_ranges = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
             try:
                 report_end_date = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
@@ -592,41 +738,7 @@ class IPTT_ReportView(TemplateView):
         # update the queryset with annotations for timeperiods
         indicators = indicators.annotate(**self.annotations).order_by('lastlevelcustomsort', 'number', 'name')
 
-        # Calculate the cumulative sum across timeperiods for indicators that are NUMBER and CUMULATIVE
-        for i, ind in enumerate(indicators):
-            running_total = 0
-
-            if period in [Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL, Indicator.QUARTERLY,
-                          Indicator.MONTHLY, Indicator.MID_END]:
-                # if the frequency (period) is periodic, i.e., time-aware then go through each period
-                # and calculate the cumulative total achieved across date ranges (periods)
-                for k, v in periods_date_ranges.items():
-                    if ind['unit_of_measure_type'] == Indicator.NUMBER and ind['is_cumulative'] is True:
-                        current_sum = ind["{}_sum".format(k)]
-                        if current_sum > 0:
-                            key = "{}_rsum".format(k)
-                            running_total = running_total + current_sum
-                            ind[key] = running_total
-
-                    # if it is targetperiods IPTT report then calculate percent_met vaue for each targetperiod
-                    if reporttype == self.REPORT_TYPE_TARGETPERIODS:
-                        try:
-                            percent_met = '{}_percent_met'.format(k)
-                            target = float(ind["{}_target".format(k)])
-                            if ind['unit_of_measure_type'] == Indicator.NUMBER:
-                                if ind['is_cumulative'] is True:
-                                    rsum = float(ind["{}_rsum".format(k)])
-                                    ind[percent_met] = rsum / target * 100
-                                else:
-                                    ind[percent_met] = float(ind["{}_sum".format(k)]) / target * 100
-                            elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
-                                if ind['is_cumulative'] is True:
-                                    ind[percent_met] = float(ind["{}_last".format(k)]) / target * 100
-                                elif ind['is_cumulative'] is False:
-                                    avg = float(ind["{}_avg".format(k)])
-                                    ind[percent_met] = (avg/target) * 100
-                        except TypeError:
-                            ind[percent_met] = None
+        indicators = self.prepare_indicators(reporttype, period, periods_date_ranges, indicators)
 
         context['start_date'] = report_start_date
         context['end_date'] = report_end_date

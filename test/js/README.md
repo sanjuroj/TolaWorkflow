@@ -21,7 +21,7 @@ assume you're working from the testing directory, _test/js_ in the
 TolaActivity repo, unless noted otherwise. If you are impatient, start
 with the next section, "The Big Green Button<sup>©</sup>: Quickstart
 guide for the impatient".  If you want to understand more about how
-to set up and configure TATS works, start with the section, "Manual 
+to set up and configure TATS works, start with the section, "Manual
 installation and testing".
 
 ## Runtime configuration files
@@ -36,14 +36,49 @@ runtime environment. The following descriptions summarize each file.
 - **wdio.gecko.conf.js** -- Runs all of the tests in the suite against
   the Firefox browser.
 
+## The Big Green Button<sup>&copy;</sup>: Quickstart guide for the impatient
+
+![](docs/big_green_button.jpg)
+
+If you have already cloned the repo, the following is the fastest path
+to running tests using the fewest keystrokes possible:
+
+```
+cd test/js
+make realclean
+make install
+make run-chrome
+make run-gecko
+```
+
+The following form is identical to the previous one, only slight more concise:
+
+```
+cd test/js
+make realclean install run-chrome run-gecko
+```
+
+- The `realclean` target deletes all generated files, including the
+  _node_modules_ directory
+- The `install` target, in addition to installing all the necessary
+  JavaScript packages, also downloads the Selenium Server and the latest
+  known-good versions of the Chrome and Firefox WebDriver clients,
+  `chromedriver` and `geckodriver`, respectively
+- The `run-chrome` and `run-gecko` targets will start the Selenium server,
+  run all of the tests for the indicated browser, and then terminate the
+  server after the test completes
+- The tests log to _chrome.log_ or _gecko.log_ in the top-level directory
+- The server logs to _selenium-server.log_ in the top-level directory
+- Additional log output is saved to _log/*_ and screenshots captured when
+  errors occur go into _errorShots/_
+
+Skip to the section titled, "Validate the installation".
+
 ## Manual installation and testing
 
-**NOTE:** There used to be a _The Big Green Button_ section here. It has
-been removed because the packages it relied on had dependencies on old 
-Selenium server and WebDriver browser driver versions. The result was
-spurious failures and false positives in TATS. As a result, I removed the
-_The Big Green Button_ and will find a better way to implement high-level
-"test-all-the-things-and-leave-me-alone" command.
+**TIP:** Readers will be rewarded for the modest additional effort of
+typing `make help` in the top-level test directory, reading the output,
+and learning therefrom.
 
 ### Clone the repo
 ```
@@ -72,32 +107,32 @@ webdrivers because they probably aren't current. Version numbers in the
 steps below were current at the time this document was last updated.
 
 1. Install the latest versions of the
-[Chrome](https://www.google.com/chrome/browser) and
-[Firefox](https://www.mozilla.org/download) browsers.
+   [Chrome](https://www.google.com/chrome/browser) and
+   [Firefox](https://www.mozilla.org/download) browsers.
 1. Download and install Chrome's Selenium browser driver,
-[ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver).
-Place it anywhere in your system $PATH. You may also keep it in
-the testing directory of your local repo because it is gitignored.
-The current version (when this document was last updated) is 2.37.
-**NOTE:** Chromedriver v2.38 does not work with TATS at this time.
-Please stick to 2.37.
+   [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver).
+   Place it anywhere in your system $PATH. You may also keep it in
+   the testing directory of your local repo because it is gitignored.
+   The current version (when this document was last updated) is 2.37.
+   **NOTE:** Chromedriver v2.38 does not work with TATS at this time.
+   Please stick to 2.37.
 1. Download and install Firefox's Selenium browser driver,
-[geckodriver](https://github.com/mozilla/geckodriver/releases).
-Place it anywhere in your system $PATH. You can also keep it in
-the testing directory of your local repo because it is gitignored.
-The current version (as of the last doc update) is 0.20.1.
+   [geckodriver](https://github.com/mozilla/geckodriver/releases).
+   Place it anywhere in your system $PATH. You can also keep it in
+   the testing directory of your local repo because it is gitignored.
+   The current version (as of the last doc update) is 0.20.1.
 1. Download [Selenium Server](https://goo.gl/hvDPsK) and place it
-the testing directory. The current version (at the time of writing) is
-3.12.0.
-1. Install [NodeJS](https://nodjs.org), if you haven't already, so you 
-can use `npm`, the [Node Package Manager](https://www.npmjos.com), to 
-install other JavaScript packages, like in the next step for example.
+   the testing directory. The current version (at the time of writing) is
+   3.12.0.
+1. Install [NodeJS](https://nodjs.org), if you haven't already, so you
+   can use `npm`, the [Node Package Manager](https://www.npmjos.com), to
+   install other JavaScript packages, like in the next step for example.
 1. Finally, use `npm` to install all of the JavaScript language bindings
-for Selenium, the Mocha test framework, the Chai plugin for Mocha,
-WebDriverIO, and all of the other assorted dependencies and bits:
+   for Selenium, the Mocha test framework, the Chai plugin for Mocha,
+   WebDriverIO, and all of the other assorted dependencies and bits:
 
 ```
-$ npm install 
+$ npm install
 [...]
 ```
 
@@ -107,36 +142,36 @@ $ npm install
    TolaActivity server. Doing so will create bad data and result in a lot
    of work to remove it, and potentially result in losing known-good,
    live data.**
-```
-$ cd test/js
-$ cp config-example.json config.json
-```
+    ```
+    $ cd test/js
+    $ cp config-example.json config.json
+    ```
 1. Start the Seleniuim server (targeting the Firefox browser):
-```
-$ cd test/js
-$ java -jar -Dwebdriver.gecko.driver=./geckodriver selenium-server-standalone-3.11.0.jar &> selenium-server.log &
-```
+    ```
+    $ cd test/js
+    $ java -jar -Dwebdriver.gecko.driver=./geckodriver selenium-server-standalone-3.11.0.jar &> selenium-server.log &
+    ```
 1. Execute the test suite:
-```
-$ cd test/js
-$ ./node_modules/.bin/wdio wdio.gecko.conf.js
-Debugger listening on ws://127.0.0.1:9229/3462dfd8-56a5-41cd-abf6-5f4d2788f8c1
-For help see https://nodejs.org/en/docs/inspector
-------------------------------------------------------------------
-[firefox #0-0] Session ID: a826ed524be3b055a31d79d79205da16
-[firefox #0-0] Spec: /home/kwall/Work/TolaActivity/test/js/tests/00_login.js
-[firefox #0-0] Running: chrome
-
-_output deleted_
-
-==================================================================
-Number of specs: 30
-
-
-123 passing (515.70s)
-64 skipped
-3 failing
-```
+    ```
+    $ cd test/js
+    $ ./node_modules/.bin/wdio wdio.gecko.conf.js
+    Debugger listening on ws://127.0.0.1:9229/3462dfd8-56a5-41cd-abf6-5f4d2788f8c1
+    For help see https://nodejs.org/en/docs/inspector
+    ------------------------------------------------------------------
+    [firefox #0-0] Session ID: a826ed524be3b055a31d79d79205da16
+    [firefox #0-0] Spec: /home/kwall/Work/TolaActivity/test/js/tests/00_login.js
+    [firefox #0-0] Running: chrome
+1. Rejoice!
+    _output deleted_
+    
+    ==================================================================
+    Number of specs: 30
+    
+    
+    123 passing (515.70s)
+    64 skipped
+    3 failing
+    ```
 
 ## Don't want to run everything?
 To run the tests in a single file, specify `--spec path/to/file`.
