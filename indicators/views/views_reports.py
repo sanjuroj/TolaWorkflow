@@ -195,21 +195,21 @@ class IPTT_ReportView(TemplateView):
                     )
                 )
             )
-            midline_avg = Avg(
-                Case(
-                    When(
-                        Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-                        Q(is_cumulative=False) &
-                        Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
-                        then=F('collecteddata__achieved')
-                    )
-                )
-            )
+            # midline_avg = Avg(
+            #     Case(
+            #         When(
+            #             Q(unit_of_measure_type=Indicator.PERCENTAGE) &
+            #             Q(is_cumulative=False) &
+            #             Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
+            #             then=F('collecteddata__achieved')
+            #         )
+            #     )
+            # )
             midline_last = Max(
                 Case(
                     When(
                         Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-                        Q(is_cumulative=True) &
+                        # Q(is_cumulative=True) &
                         Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
                         then=Subquery(last_data_record.values('achieved')[:1])
                     )
@@ -239,21 +239,21 @@ class IPTT_ReportView(TemplateView):
                     )
                 )
             )
-            endline_avg = Avg(
-                Case(
-                    When(
-                        Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-                        Q(is_cumulative=False) &
-                        Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
-                        then=F('collecteddata__achieved')
-                    )
-                )
-            )
+            # endline_avg = Avg(
+            #     Case(
+            #         When(
+            #             Q(unit_of_measure_type=Indicator.PERCENTAGE) &
+            #             Q(is_cumulative=False) &
+            #             Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
+            #             then=F('collecteddata__achieved')
+            #         )
+            #     )
+            # )
             endline_last = Max(
                 Case(
                     When(
                         Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-                        Q(is_cumulative=True) &
+                        # Q(is_cumulative=True) &
                         Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
                         then=Subquery(last_data_record.values('achieved')[:1])
                     )
@@ -271,10 +271,10 @@ class IPTT_ReportView(TemplateView):
             self.annotations["Midline_target"] = midline_target
             self.annotations["Endline_target"] = endline_target
             self.annotations['Midline_sum'] = midline_sum
-            self.annotations['Midline_avg'] = midline_avg
+            # self.annotations['Midline_avg'] = midline_avg
             self.annotations['Midline_last'] = midline_last
             self.annotations['Endline_sum'] = endline_sum
-            self.annotations['Endline_avg'] = endline_avg
+            # self.annotations['Endline_avg'] = endline_avg
             self.annotations['Endline_last'] = endline_last
         else:
             for k, v in timeperiods.items():
@@ -298,22 +298,22 @@ class IPTT_ReportView(TemplateView):
                     )
                 )
 
-                annotation_avg = Avg(
-                    Case(
-                        When(
-                            Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-                            Q(is_cumulative=False) &
-                            Q(collecteddata__date_collected__gte=start_date) &
-                            Q(collecteddata__date_collected__lte=end_date),
-                            then=F('collecteddata__achieved')
-                        )
-                    )
-                )
+                # annotation_avg = Avg(
+                #     Case(
+                #         When(
+                #             Q(unit_of_measure_type=Indicator.PERCENTAGE) &
+                #             Q(is_cumulative=False) &
+                #             Q(collecteddata__date_collected__gte=start_date) &
+                #             Q(collecteddata__date_collected__lte=end_date),
+                #             then=F('collecteddata__achieved')
+                #         )
+                #     )
+                # )
                 annotation_last = Max(
                     Case(
                         When(
                             Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-                            Q(is_cumulative=True) &
+                            # Q(is_cumulative=True) &
                             Q(collecteddata__date_collected__gte=start_date) &
                             Q(collecteddata__date_collected__lte=end_date),
                             then=Subquery(last_data_record.values('achieved')[:1])
@@ -341,7 +341,7 @@ class IPTT_ReportView(TemplateView):
                 # Year 1_last=..., Year 2_last=..., etc.
                 #
                 self.annotations["{}_sum".format(k)] = annotation_sum
-                self.annotations["{}_avg".format(k)] = annotation_avg
+                # self.annotations["{}_avg".format(k)] = annotation_avg
                 self.annotations["{}_last".format(k)] = annotation_last
         return self.annotations
 
@@ -700,7 +700,10 @@ class IPTT_ReportView(TemplateView):
                             target_val = formatFloat(float(ind[target_key]))
 
                         if ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
-                            ind['{}_period_target'.format(k)] = "{}%".format(target_val)
+                            if target_val > 0 and target_val != '':
+                                ind['{}_period_target'.format(k)] = "{}%".format(target_val)
+                            else:
+                                ind['{}_period_target'.format(k)] = ''
                         else:
                             ind['{}_period_target'.format(k)] = target_val
 
