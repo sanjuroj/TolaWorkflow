@@ -141,8 +141,21 @@ table.table-hover tbody tr:hover {
 #iptt_table tr th {
     background-color:#F5F5F5 !important;
 }
+body.page_iptt_table {
+    margin-bottom: 0;
+}
+.page_iptt_table #id_div_content {
+    display: flex;
+}
 .page_iptt_table .popover {
     max-width: 100%; /* Max Width of the popover (depending on the container) */
+}
+.page_iptt_table #footer {
+    position: relative;
+}
+.iptt_table_wrapper {
+    width: 100%;
+    overflow-x: auto;
 }
 /* #iptt_table tbody{
     background-color:#ffffff !important;
@@ -621,16 +634,13 @@ input[type=number]::-webkit-outer-spin-button {
     padding-right: 10px;
 }
 .filter-title {
-    background: #196E6B;
-    color: #fff;
-    height: 42px;
+    color: #ddd;
     line-height: 42px;
-    padding: 0 0.85em;
-    margin: 0 -0.85em;
 }
 
 
 #sidebar {
+    flex-basis: 1;
     overflow: hidden;
     z-index: 3;
 }
@@ -756,9 +766,12 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 /* Sidebar toggle */
+.sidebar_wrapper {
+    display: flex;
+    padding-right: 10px;
+}
 .sidebar-toggle {
     display: block;
-    float: left;
     height: 42px;
     text-align: center;
     width: 40px;

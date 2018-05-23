@@ -7,15 +7,17 @@
 {% block bodyclasses %}page_iptt_table{% endblock %}
 
 {% block content %}
-  <div class="float-left collapse width show" id="sidebar">
-    {% include 'indicators/iptt_filter_form.html' %}
+  <div class="sidebar_wrapper">
+      <div class="collapse width show" id="sidebar">
+        {% include 'indicators/iptt_filter_form.html' %}
+      </div>
+      <div class="sidebar-toggle">
+        <a href="#" data-target="#sidebar" data-toggle="collapse" title="Show/hide filters">
+          <i class="fa fa-chevron-left"></i>
+        </a>
+      </div>
   </div>
-  <div class="sidebar-toggle">
-    <a href="#" data-target="#sidebar" data-toggle="collapse" title="Show/hide filters">
-      <i class="fa fa-chevron-left"></i>
-    </a>
-  </div>
-  <main class="col-md-9 float-left pt-1">
+  <main class="iptt_table_wrapper">
     <div id="id_div_top_iptt_report">
         <span id="id_span_iptt_date_range">
           <h2>Indicator Performance Tracking Table</h2>
