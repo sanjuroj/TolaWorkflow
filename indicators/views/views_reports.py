@@ -631,9 +631,15 @@ class IPTT_ReportView(TemplateView):
                     ind['baseline'] = ''
 
             # process lop_target
-            lop_target = float(ind['lop_target'])
-            if ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
-                ind['lop_target'] = "{}%".format(formatFloat(lop_target))
+            try:
+                lop_target = float(ind['lop_target'])
+                if ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
+                    ind['lop_target'] = "{}%".format(formatFloat(lop_target))
+                else:
+                    ind['lop_target'] = formatFloat(lop_target)
+            except (ValueError, TypeError):
+                lop_target = ''
+                ind['lop_target'] = lop_target
 
             # process lop_actual
             lop_actual = ''

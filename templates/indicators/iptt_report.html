@@ -168,7 +168,6 @@
           $('button.indicator-ajax-popup').popover({ // [data-toggle="popover"]
             html: true,
             container: 'body',
-            // trigger: "manual",
             "content": function () {
               const indicatorId = $(this).data('indicatorid');
               const url = `/indicators/collected_data_table/${indicatorId}/0/?edit=false`;
@@ -176,9 +175,6 @@
               return serverResponse;
             }
           })
-          // .click(function (e) {
-          //   $(this).popover('toggle');
-          // });
         })
 
         // Open the IndicatorUpdate Form in a modal
