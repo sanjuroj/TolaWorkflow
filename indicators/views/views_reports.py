@@ -531,69 +531,7 @@ class IPTT_ReportView(TemplateView):
             pass
         return filters
 
-    def get_context_data(self, **kwargs):
-        context = super(IPTT_ReportView, self).get_context_data(**kwargs)
-        reporttype = kwargs.get('reporttype')
-        program_id = kwargs.get('program_id')
-
-        try:
-            program = Program.objects.get(pk=program_id)
-        except Program.DoesNotExist:
-            context['redirect'] = reverse_lazy('iptt_quickstart')
-            messages.info(self.request, _("Please select a valid program."))
-            return context
-
-        self._update_filter_form_initial(self.request.GET)
-        filters = self._get_filters(self.filter_form_initial_data)
-
-        if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            period = self.filter_form_initial_data[self.REPORT_TYPE_TIMEPERIODS]
-        else:
-            period = self.filter_form_initial_data[self.REPORT_TYPE_TARGETPERIODS]
-
-        try:
-            num_recents = self.filter_form_initial_data['numrecentperiods']
-        except KeyError:
-            num_recents = 0
-
-        # calculate aggregated actuals (sum, avg, last) per reporting period
-        # (monthly, quarterly, tri-annually, seminu-annualy, and yearly) for each indicator
-        lastlevel = Level.objects.filter(indicator__id=OuterRef('pk')).order_by('-id')
-        last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-date_collected')
-        indicators = Indicator.objects.filter(program__in=[program_id], **filters) \
-            .annotate(actualsum=Sum('collecteddata__achieved'),
-                      actualavg=Avg('collecteddata__achieved'),
-                      lastlevel=Subquery(lastlevel.values('name')[:1]),
-                      lastlevelcustomsort=Subquery(lastlevel.values('customsort')[:1]),
-                      lastdata=Subquery(last_data_record.values('achieved')[:1]))\
-            .values(
-                'id', 'number', 'name', 'program', 'target_frequency', 'lastlevel', 'unit_of_measure',
-                'direction_of_change', 'unit_of_measure_type', 'is_cumulative', 'baseline', 'baseline_na',
-                'lop_target', 'actualsum', 'actualavg', 'lastdata', 'lastlevelcustomsort')
-
-        if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            report_start_date, report_end_date, num_periods = self._get_date_range_n_numperiods(
-                reporttype, program_id, period)
-            periods_date_ranges = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
-            try:
-                report_end_date = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
-            except IndexError:
-                report_end_date = None
-        elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
-            date_ranges, periods_date_ranges = self._generate_targetperiods(program, period, num_recents)
-            report_start_date = date_ranges[0]
-            report_end_date = date_ranges[1]
-
-            indicators = indicators.filter(target_frequency=period)
-        else:
-            context['redirect'] = reverse_lazy('iptt_quickstart')
-            messages.info(self.request, _("Please select a valid report type."))
-            return context
-
-        self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
-        # update the queryset with annotations for timeperiods
-        indicators = indicators.annotate(**self.annotations).order_by('lastlevelcustomsort', 'number', 'name')
-
+    def prepare_indicators(self, reporttype, period, periods_date_ranges, indicators):
         # Calculate the cumulative sum across timeperiods for indicators that are NUMBER and CUMULATIVE
         for i, ind in enumerate(indicators):
             running_total = 0
@@ -631,9 +569,15 @@ class IPTT_ReportView(TemplateView):
                     ind['baseline'] = ''
 
             # process lop_target
-            lop_target = float(ind['lop_target'])
-            if ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
-                ind['lop_target'] = "{}%".format(formatFloat(lop_target))
+            try:
+                lop_target = float(ind['lop_target'])
+                if ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
+                    ind['lop_target'] = "{}%".format(formatFloat(lop_target))
+                else:
+                    ind['lop_target'] = formatFloat(lop_target)
+            except (ValueError, TypeError):
+                lop_target = ''
+                ind['lop_target'] = lop_target
 
             # process lop_actual
             lop_actual = ''
@@ -722,6 +666,72 @@ class IPTT_ReportView(TemplateView):
                                 ind[percent_met] = "{}%".format(percent_met_val)
                         except TypeError:
                             ind[percent_met] = ''
+        return indicators
+
+    def get_context_data(self, **kwargs):
+        context = super(IPTT_ReportView, self).get_context_data(**kwargs)
+        reporttype = kwargs.get('reporttype')
+        program_id = kwargs.get('program_id')
+
+        try:
+            program = Program.objects.get(pk=program_id)
+        except Program.DoesNotExist:
+            context['redirect'] = reverse_lazy('iptt_quickstart')
+            messages.info(self.request, _("Please select a valid program."))
+            return context
+
+        self._update_filter_form_initial(self.request.GET)
+        filters = self._get_filters(self.filter_form_initial_data)
+
+        if reporttype == self.REPORT_TYPE_TIMEPERIODS:
+            period = self.filter_form_initial_data[self.REPORT_TYPE_TIMEPERIODS]
+        else:
+            period = self.filter_form_initial_data[self.REPORT_TYPE_TARGETPERIODS]
+
+        try:
+            num_recents = self.filter_form_initial_data['numrecentperiods']
+        except KeyError:
+            num_recents = 0
+
+        # calculate aggregated actuals (sum, avg, last) per reporting period
+        # (monthly, quarterly, tri-annually, seminu-annualy, and yearly) for each indicator
+        lastlevel = Level.objects.filter(indicator__id=OuterRef('pk')).order_by('-id')
+        last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-date_collected')
+        indicators = Indicator.objects.filter(program__in=[program_id], **filters) \
+            .annotate(actualsum=Sum('collecteddata__achieved'),
+                      actualavg=Avg('collecteddata__achieved'),
+                      lastlevel=Subquery(lastlevel.values('name')[:1]),
+                      lastlevelcustomsort=Subquery(lastlevel.values('customsort')[:1]),
+                      lastdata=Subquery(last_data_record.values('achieved')[:1]))\
+            .values(
+                'id', 'number', 'name', 'program', 'target_frequency', 'lastlevel', 'unit_of_measure',
+                'direction_of_change', 'unit_of_measure_type', 'is_cumulative', 'baseline', 'baseline_na',
+                'lop_target', 'actualsum', 'actualavg', 'lastdata', 'lastlevelcustomsort')
+
+        if reporttype == self.REPORT_TYPE_TIMEPERIODS:
+            report_start_date, report_end_date, num_periods = self._get_date_range_n_numperiods(
+                reporttype, program_id, period)
+            periods_date_ranges = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
+            try:
+                report_end_date = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
+            except IndexError:
+                report_end_date = None
+        elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
+            date_ranges, periods_date_ranges = self._generate_targetperiods(program, period, num_recents)
+            report_start_date = date_ranges[0]
+            report_end_date = date_ranges[1]
+
+            indicators = indicators.filter(target_frequency=period)
+        else:
+            context['redirect'] = reverse_lazy('iptt_quickstart')
+            messages.info(self.request, _("Please select a valid report type."))
+            return context
+
+        self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
+        # update the queryset with annotations for timeperiods
+        indicators = indicators.annotate(**self.annotations).order_by('lastlevelcustomsort', 'number', 'name')
+
+        indicators = self.prepare_indicators(reporttype, period, periods_date_ranges, indicators)
 
         context['start_date'] = report_start_date
         context['end_date'] = report_end_date
