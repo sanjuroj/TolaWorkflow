@@ -128,11 +128,21 @@ table.table-hover tbody tr:hover {
     background-color: #CCEFEE !important;
 }
 
+#iptt_table {
+    background-color: white;
+}
+#id_td_iptt_program_name {
+    padding-left: 0; /* overloads .table-sm td */
+    padding-right: 0; /* overloads .table-sm td */
+}
 #iptt_table, #iptt_table thead tr td{
     border: 0px !important;
 }
 #iptt_table tr th {
     background-color:#F5F5F5 !important;
+}
+.page_iptt_table .popover {
+    max-width: 100%; /* Max Width of the popover (depending on the container) */
 }
 /* #iptt_table tbody{
     background-color:#ffffff !important;
