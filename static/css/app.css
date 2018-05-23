@@ -141,9 +141,31 @@ table.table-hover tbody tr:hover {
 #iptt_table tr th {
     background-color:#F5F5F5 !important;
 }
-body.page_iptt_table {
+body.page_iptt_table { /* body element for extra specificity */
     margin-bottom: 0;
 }
+/* following media queries overload boostrap container behavior in _grid.scss */
+@media (min-width: 1200px) { 
+    .page_iptt_table .container {
+        max-width: 100%;
+    }
+}
+@media (min-width: 992px) {
+    .page_iptt_table .container {
+        max-width: 100%;
+    }
+}
+@media (min-width: 768px) {
+    .page_iptt_table .container {
+        max-width: 100%;
+    }
+}
+@media (min-width: 576px) {
+    .page_iptt_table .container {
+        max-width: 100%;
+    }
+}
+
 .page_iptt_table #id_div_content {
     display: flex;
 }
