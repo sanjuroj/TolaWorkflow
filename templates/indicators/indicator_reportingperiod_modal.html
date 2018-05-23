@@ -1,5 +1,4 @@
 {% load i18n %}
-{% include indicator_form_common_js.html %}
 
 <div id="id_reporting_period_modal" class="modal fade" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -14,8 +13,10 @@
                     <input hidden=true name="program_id" value=0>
                     <div class="mb-4">
                         <div class="pt-3" style="display:inline-block; width: 90%">
-                            <div class="mb-4"><h2>Reporting period</h2></div>
-                            <span>The program reporting period is used in the setup of periodic targets and in Indicator Performance Tracking Tables (IPTT). TolaActivity initially sets the reporting period to include the program’s official start and end dates, as recorded in the Grant and Award Information Tracker (GAIT) system. The reporting period may be adjusted to align with the program’s indicator plan.</span>
+                            <div id="id-reportingperiod-title" class="mb-4"><h2>Reporting period</h2></div>
+                                <div id="div-id-reportingperiod-alert">
+                                </div>
+                            <div>The program reporting period is used in the setup of periodic targets and in Indicator Performance Tracking Tables (IPTT). TolaActivity initially sets the reporting period to include the program’s official start and end dates, as recorded in the Grant and Award Information Tracker (GAIT) system. The reporting period may be adjusted to align with the program’s indicator plan.</div>
                         </div>
                         <button
                             type="button"
@@ -92,16 +93,59 @@
 </div>
 
 <script type="text/javascript">
+
+    function setupPopupCalendar() {
+        console.log('this')
+        $('.monthPicker').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            dateFormat: 'M d, yy',
+            beforeShow(input, inst){
+                // move date picker popup div inside modal dialog(fix for firefox)
+                $(input).parent().append($('#ui-datepicker-div'));
+                $('#ui-datepicker-div').hide();
+            }
+            /*
+            onClose: function (dateText, inst) {
+                const field = $(this);
+                field.datepicker("setDate", new Date(inst.selectedYear, inst.selectedMonth, 1));
+                $(this).datepicker("widget").find(".ui-datepicker-calendar").hide();
+            },
+            */
+        }).focus(function(){
+            const field = $(this);
+            // hide the days part of the calendar
+            $(".ui-datepicker-calendar").hide();
+            // hide the "Today" button
+            $("#ui-datepicker-div button.ui-datepicker-current").hide();
+            $("#ui-datepicker-div").position({
+                my: "left top",
+                at: "left bottom",
+                of: $(this)
+            });
+            // detach it from the field so that onclose the field is not populated automatically
+            $('.ui-datepicker-calendar').detach();
+            $('.ui-datepicker-close').click(function() {
+                // this is only called when the done button is clicked.
+                const month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                const year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                field.datepicker('setDate', new Date(year, month, 1));
+                field.trigger('change');
+            });
+        });
+    }
+
     /*
     *  Populate the programs start and end datestr
     */
     $('#id_reporting_period_modal').on('show.bs.modal', function (event) {
         $("input[name=program_id]").val($(event.relatedTarget).data('program'));
         $("#reportingperiod_update_form").attr("action", "/workflow/reportingperiod_update/" + $(event.relatedTarget).data('program'));
-        $("#id_gait_start_date").html($.datepicker.formatDate('M d, y', new Date($(event.relatedTarget).data('progstart'))));
-        $("#id_gait_end_date").html($.datepicker.formatDate('M d, y', new Date($(event.relatedTarget).data('progend'))));
-        $("#id_reporting_start_date").val($.datepicker.formatDate('M d, y', new Date($(event.relatedTarget).data('rptstart'))));
-        $("#id_reporting_end_date").val($.datepicker.formatDate('M d, y', new Date($(event.relatedTarget).data('rptend'))));
+        $("#id_gait_start_date").html($.datepicker.formatDate('M d, yy', new Date($(event.relatedTarget).data('progstart'))));
+        $("#id_gait_end_date").html($.datepicker.formatDate('M d, yy', new Date($(event.relatedTarget).data('progend'))));
+        $("#id_reporting_start_date").val($.datepicker.formatDate('M yy', new Date($(event.relatedTarget).data('rptstart'))));
+        $("#id_reporting_end_date").val($.datepicker.formatDate('M yy', new Date($(event.relatedTarget).data('rptend'))));
 
         setupPopupCalendar();
 
@@ -117,9 +161,10 @@
             var modalLink = $(`a[data-program="${program_id}"]`);
             modalLink.data("rptstart", data.rptstart);
             modalLink.data("rptend", data.rptend);
+            createAlert("success", "Changes saved!", true, "#div-id-reportingperiod-alert")
 
         }).fail(function(data) {
-            console.log('error');
+            createAlert("danger", "There was a problem saving your changes.", false, "#div-id-reportingperiod-alert")
 
         });
     });

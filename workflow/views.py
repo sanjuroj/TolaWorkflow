@@ -2484,5 +2484,4 @@ def reportingperiod_update(request, pk):
         'msg': 'success',
         'program_id': pk,
         'rptstart': program.reporting_period_start,
-        'rptend': program.reporting_period_end,
-    })
+        'rptend': program.reporting_period_end, })
