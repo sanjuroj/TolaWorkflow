@@ -569,8 +569,13 @@ input[type=number]::-webkit-outer-spin-button {
 
 /* END Indicator list page css */
 
+/* BEGIN datepicker styling */
 
+.month-only .ui-datepicker-calendar {
+  display: none;
+}
 
+/* END datepicker styling */
 
 .blink {
     animation: blink 2s linear infinite;

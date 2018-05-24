@@ -36,15 +36,15 @@ describe('IPTT: Program indicator overview quickstart', function() {
   })
 
   it('should have Program dropdown', function() {
-    expect(undefined != IpttPage.IndicatorOverviewProgram)
-    expect(null != IpttPage.IndicatorOverviewProgram)
-    //IpttPage.IndicatorOverviewProgram.click()
-    //IpttPage.IndicatorOverviewProgram.click()
+    let val = IpttPage.IndicatorOverviewProgram
+    expect(undefined !== val)
+    expect(null !== val)
   })
 
   it('should have a Time periods dropdown', function() {
-    expect(undefined != IpttPage.IndicatorOverviewTimePeriods)
-    expect(null != IpttPage.IndicatorOverviewTimePeriods)
+    let val = IpttPage.IndicatorOverviewTimePeriods
+    expect(undefined !== val)
+    expect(null !== val)
   })
 
   it('should allow to select time frame', function() {
