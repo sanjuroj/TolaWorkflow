@@ -126,4 +126,8 @@ def group_required(*group_names, **url):
 def formatFloat(value):
     if value is None:
         return None
+    try:
+        value = float(value)
+    except ValueError:
+        return value
     return ("%.2f" % value).rstrip('0').rstrip('.')

@@ -128,11 +128,56 @@ table.table-hover tbody tr:hover {
     background-color: #CCEFEE !important;
 }
 
+#iptt_table {
+    background-color: white;
+}
+#id_td_iptt_program_name {
+    padding-left: 0; /* overloads .table-sm td */
+    padding-right: 0; /* overloads .table-sm td */
+}
 #iptt_table, #iptt_table thead tr td{
     border: 0px !important;
 }
 #iptt_table tr th {
     background-color:#F5F5F5 !important;
+}
+body.page_iptt_table { /* body element for extra specificity */
+    margin-bottom: 0;
+}
+/* following media queries overload boostrap container behavior in _grid.scss */
+@media (min-width: 1200px) { 
+    .page_iptt_table .container {
+        max-width: 100%;
+    }
+}
+@media (min-width: 992px) {
+    .page_iptt_table .container {
+        max-width: 100%;
+    }
+}
+@media (min-width: 768px) {
+    .page_iptt_table .container {
+        max-width: 100%;
+    }
+}
+@media (min-width: 576px) {
+    .page_iptt_table .container {
+        max-width: 100%;
+    }
+}
+
+.page_iptt_table #id_div_content {
+    display: flex;
+}
+.page_iptt_table .popover {
+    max-width: 100%; /* Max Width of the popover (depending on the container) */
+}
+.page_iptt_table #footer {
+    position: relative;
+}
+.iptt_table_wrapper {
+    width: 100%;
+    overflow-x: auto;
 }
 /* #iptt_table tbody{
     background-color:#ffffff !important;
@@ -546,8 +591,13 @@ input[type=number]::-webkit-outer-spin-button {
 
 /* END Indicator list page css */
 
+/* BEGIN datepicker styling */
 
+.month-only .ui-datepicker-calendar {
+  display: none;
+}
 
+/* END datepicker styling */
 
 .blink {
     animation: blink 2s linear infinite;
@@ -611,16 +661,13 @@ input[type=number]::-webkit-outer-spin-button {
     padding-right: 10px;
 }
 .filter-title {
-    background: #196E6B;
-    color: #fff;
-    height: 42px;
+    color: #ddd;
     line-height: 42px;
-    padding: 0 0.85em;
-    margin: 0 -0.85em;
 }
 
 
 #sidebar {
+    flex-basis: 1;
     overflow: hidden;
     z-index: 3;
 }
@@ -746,9 +793,12 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 /* Sidebar toggle */
+.sidebar_wrapper {
+    display: flex;
+    padding-right: 10px;
+}
 .sidebar-toggle {
     display: block;
-    float: left;
     height: 42px;
     text-align: center;
     width: 40px;

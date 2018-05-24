@@ -52,7 +52,11 @@
                                 class="pl-1"
                                 href="#"
                                 data-toggle="modal"
-                                data-periods='{"pStart":"{{ program.start_date }}", "pEnd":"{{ program.end_date }}", "rStart":"{{ program.reporting_period_start }}", "rEnd":"{{ program.reporting_period_end }}"}'
+                                data-program="{{ program.id }}"
+                                data-progstart="{{ program.start_date }}"
+                                data-progend="{{ program.end_date }}"
+                                data-rptstart="{{ program.reporting_period_start }}"
+                                data-rptend="{{ program.reporting_period_end }}"
                                 data-target="#id_reporting_period_modal">
                                     {% trans 'Reporting period' %}
                             </a>
