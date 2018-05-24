@@ -1057,7 +1057,6 @@ def collected_data_view(request, indicator, program):
         .prefetch_related('collecteddata_set') \
         .annotate(
             achieved_sum=Sum('collecteddata__achieved', output_field=DecimalField()),
-            achieved_avg=Avg('collecteddata__achieved', output_field=DecimalField()),
             last_data_row=Subquery(last_data_record.values('achieved')[:1])) \
         .order_by('customsort')
 
@@ -1071,16 +1070,25 @@ def collected_data_view(request, indicator, program):
     for index, pt in enumerate(periodictargets):
         if index == 0:
             last_data_record_value = pt.last_data_row
-            grand_achieved_sum = pt.achieved_sum
-            pt.cumulative_sum = grand_achieved_sum
+            grand_achieved_sum = pt.achieved_sum if pt.achieved_sum is not None else 0
+            if grand_achieved_sum == 0:
+                pt.cumulative_sum = ''
+            else:
+                pt.cumulative_sum = grand_achieved_sum
         else:
             try:
                 # update this variable only if there is a data value
                 last_data_record_value = pt.last_data_row if pt.last_data_row is not None else last_data_record_value
-                grand_achieved_sum = pt.achieved_sum + grand_achieved_sum
-                pt.cumulative_sum = grand_achieved_sum
+                grand_achieved_sum += pt.achieved_sum
+                if grand_achieved_sum == 0:
+                    pt.cumulative_sum = ''
+                else:
+                    pt.cumulative_sum = grand_achieved_sum
             except TypeError:
                 pass
+
+    if grand_achieved_sum == 0:
+        grand_achieved_sum = ''
 
     # show all of the data records that do not yet have periodic_targets
     # associated with them.

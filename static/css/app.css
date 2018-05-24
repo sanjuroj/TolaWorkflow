@@ -144,28 +144,6 @@ table.table-hover tbody tr:hover {
 body.page_iptt_table { /* body element for extra specificity */
     margin-bottom: 0;
 }
-/* following media queries overload boostrap container behavior in _grid.scss */
-@media (min-width: 1200px) { 
-    .page_iptt_table .container {
-        max-width: 100%;
-    }
-}
-@media (min-width: 992px) {
-    .page_iptt_table .container {
-        max-width: 100%;
-    }
-}
-@media (min-width: 768px) {
-    .page_iptt_table .container {
-        max-width: 100%;
-    }
-}
-@media (min-width: 576px) {
-    .page_iptt_table .container {
-        max-width: 100%;
-    }
-}
-
 .page_iptt_table #id_div_content {
     display: flex;
 }
@@ -178,6 +156,7 @@ body.page_iptt_table { /* body element for extra specificity */
 .iptt_table_wrapper {
     width: 100%;
     overflow-x: auto;
+    padding-left: 10px;
 }
 /* #iptt_table tbody{
     background-color:#ffffff !important;
@@ -734,14 +713,28 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 @media (max-width:768px) {
+    .iptt_table_wrapper {
+        padding-left: 0;
+    }
+    #id_span_iptt_date_range {
+        display: block;
+        padding-left: 45px;
+    }
+    .sidebar_wrapper {
+        padding-right: 40px;
+        position: fixed;
+    }
+    .sidebar-toggle {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
     #sidebar {
-        min-width: 35px;
-        max-width: 40px;
+        width: 330px;
         overflow-y: auto;
         overflow-x: visible;
-        transition: all 0.25s ease;
-        transform: translateX(-45px);
-        position: fixed;
+        transition: all .2 ease;
+        transform: translateX(0);
     }
 
     #sidebar.show {
@@ -780,22 +773,21 @@ input[type=number]::-webkit-outer-spin-button {
   height: 0;
   -webkit-transition-property: height, visibility;
   transition-property: height, visibility;
-  -webkit-transition-timing-function: ease-out;
-  transition-timing-function: ease-out;
+  -webkit-transition-timing-function: ease;
+  transition-timing-function: ease;
 }
 .collapsing.width {
   -webkit-transition-property: width, visibility;
   transition-property: width, visibility;
   width: 0;
   height: 100%;
-  -webkit-transition-timing-function: ease-out;
-  transition-timing-function: ease-out;
+  -webkit-transition-timing-function: ease;
+  transition-timing-function: ease;
 }
 
 /* Sidebar toggle */
 .sidebar_wrapper {
     display: flex;
-    padding-right: 10px;
 }
 .sidebar-toggle {
     display: block;

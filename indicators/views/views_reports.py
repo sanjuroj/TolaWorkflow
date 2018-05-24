@@ -373,12 +373,6 @@ class IPTT_ReportView(TemplateView):
         ind = Indicator.objects.filter(program__in=[program.id], target_frequency=period).first()
         periodic_targets = PeriodicTarget.objects.filter(indicator=ind)\
             .values("id", "period", "target", "start_date", "end_date")
-        # try:
-        #     date_ranges.append(periodic_targets.first()['start_date'])
-        #     date_ranges.append(periodic_targets.last()['end_date'])
-        # except (KeyError, TypeError):
-        #     date_ranges.append(program.reporting_period_start)
-        #     date_ranges.append(program.reporting_period_end)
 
         date_ranges.append(program.reporting_period_start)
         date_ranges.append(program.reporting_period_end)
@@ -459,35 +453,13 @@ class IPTT_ReportView(TemplateView):
 
         # indicators = Indicator.objects.filter(program__in=[program_id]).values('id')
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            # try:
-            #     start_date = parser.parse(self.filter_form_initial_data['start_date']).date()
-            #     end_date = parser.parse(self.filter_form_initial_data['end_date']).date()
-            # except (KeyError, ValueError):
-            #     # determine the full date range of data collection for this program
-            #     data_date_range = indicators\
-            #         .aggregate(sdate=Min('collecteddata__date_collected'), edate=Max('collecteddata__date_collected'))
-            #     start_date = data_date_range['sdate']
-            #     end_date = data_date_range['edate']
-
             start_date = program.reporting_period_start
             end_date = program.reporting_period_end
-
-            # get the number of months in this period
-            # num_months_in_period = self._get_num_months(period)
-
-            # Find out the start date based on the calendar period (year, semi-annual, etc)
-            # start_date = self._get_first_period(start_date, num_months_in_period)
 
             # get the number of periods in this date range
             num_periods = self._get_num_periods(start_date, end_date, period)
         else:
             start_date, end_date, num_periods = (None, None, 0)
-
-        # if isinstance(start_date, dt.datetime):
-        #     start_date = start_date.date()
-
-        # if isinstance(end_date, dt.datetime):
-        #     end_date = end_date.date()
 
         return (start_date, end_date, num_periods)
 

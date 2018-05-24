@@ -58,7 +58,7 @@
     <body class="{% block bodyclasses %}{% endblock %}">
 
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-            <div class="container">
+            <div class="container-fluid">
                 <button
                     class="navbar-toggler"
                     type="button"
@@ -151,7 +151,7 @@
         {% if report_wide %}
           <div style="margin-top:-16px;">
         {% else %}
-        <div class="container mt-3">
+        <div id="nonfooter" class="container mt-3 mb-3">
         {% endif %}
             <h2 class="mt-2 mb-3 mx-3">{% block page_title %}{% endblock %}</h2>
             <div id="id_div_breadcrumb">{% block bread_crumb %}{% endblock %}</div>
@@ -183,7 +183,7 @@
         <div id = "ajaxloading" class="modal ajax_loading"></div>
         <div id="footer">
             <!-- Sticky Footer -->
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-6 text-left">
                         <span class="text-muted-footer"><b>Tola</b>Data</span>

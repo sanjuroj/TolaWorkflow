@@ -58,15 +58,8 @@
                                     {{ item.achieved_sum|floatformat:"-2" }}
                                 {% endif %}
                             {% else %}
-                                {% if indicator.is_cumulative == True %}
-                                    {% if item.last_data_row %}
-                                        {{ item.last_data_row|floatformat:"-2" }}%
-                                    {% endif %}
-                                {% else %}
-                                    {% if item.achieved_avg %}
-                                        <small><abbr title='{% trans "Average" %}'>{% trans "avg." %}</abbr></small>
-                                        {{ item.achieved_avg|floatformat:"-2" }}%
-                                    {% endif %}
+                                {% if item.last_data_row %}
+                                    {{ item.last_data_row|floatformat:"-2" }}%
                                 {% endif %}
                             {% endif %}
                         </td>
@@ -80,14 +73,8 @@
                                     {% if percent_met %} {{ percent_met }}% {% endif %}
                                 {% endif %}
                             {% else %}
-                                {% if indicator.is_cumulative == True %}
-                                    {% widthratio item.last_data_row item.target 100 as percent_met %}
-                                    {% if percent_met %} {{ percent_met }}% {% endif %}
-                                {% else %}
-                                    {% widthratio item.achieved_avg item.target 100 as percent_met %}
-                                    {% if percent_met %} {{ percent_met }}% {% endif %}
-                                {% endif %}
-
+                                {% widthratio item.last_data_row item.target 100 as percent_met %}
+                                {% if percent_met %} {{ percent_met }}% {% endif %}
                             {% endif %}
 
                         </td>
@@ -254,12 +241,7 @@
                     {% if indicator.unit_of_measure_type == 1 %}
                         {{ grand_achieved_sum|floatformat:"-2" }}
                     {% elif indicator.unit_of_measure_type == 2 %}
-                        {% if indicator.is_cumulative == True %}
-                            {{ last_data_record_value|floatformat:"-2" }}%
-                        {% else %}
-                            <small><abbr title='{% trans "Average" %}'>{% trans "avg." %}</abbr></small>
-                            {{ grand_achieved_avg|floatformat:"-2" }}%
-                        {% endif %}
+                        {{ last_data_record_value|floatformat:"-2" }}%
                     {% endif %}
                 </strong>
             </td>
@@ -268,11 +250,7 @@
                     {% if indicator.unit_of_measure_type == 1 %}
                         {% widthratio grand_achieved_sum indicator.lop_target 100 %}%
                     {% elif indicator.unit_of_measure_type == 2 %}
-                        {% if indicator.is_cumulative == True %}
-                            {% widthratio last_data_record_value indicator.lop_target 100 %}%
-                        {% else %}
-                            {% widthratio grand_achieved_avg indicator.lop_target 100 %}%
-                        {% endif %}
+                        {% widthratio last_data_record_value indicator.lop_target 100 %}%
                     {% endif %}
                 </strong>
             </td>
