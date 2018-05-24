@@ -154,17 +154,47 @@
     *  Populate the programs start and end datestr
     */
     $('#id_reporting_period_modal').on('show.bs.modal', function (event) {
-        var base_url = "{% url 'reportingperiod_update' 0 %}"
-        base_url = base_url.slice(0,-1)
+        var base_url = "{% url 'reportingperiod_update' 0 %}";
+        base_url = base_url.slice(0,-1);
         $("input[name=program_id]").val($(event.relatedTarget).data('program'));
         $("#reportingperiod_update_form").attr("action", base_url + $(event.relatedTarget).data('program'));
-        $("#id_gait_start_date").html($.datepicker.formatDate('M d, yy', new Date($(event.relatedTarget).data('progstart'))));
-        $("#id_gait_end_date").html($.datepicker.formatDate('M d, yy', new Date($(event.relatedTarget).data('progend'))));
-        // Need to save the original report start and end dates for the Reset button
-        origRptStart = $(event.relatedTarget).data('rptstart');
-        origRptEnd = $(event.relatedTarget).data('rptend');
-        $("#id_reporting_start_date").val($.datepicker.formatDate('M d, yy', new Date(origRptStart)));
-        $("#id_reporting_end_date").val($.datepicker.formatDate('M d, yy', new Date(origRptEnd)));
+        var testDate = "";
+        if ((testDate = new Date($(event.relatedTarget).data('progstart'))) == "Invalid Date"){
+            $("#id_gait_start_date").html("Unavailable");
+            $("#id_gait_start_date").addClass("color-red");
+            $("#id_reporting_start_date").attr("disabled", true);
+            $("#id_reporting_end_date").attr("disabled", true);
+            $("#submit-id-submit").attr("disabled", true);
+        }
+        else {
+            $("#id_gait_start_date").html($.datepicker.formatDate('M d, yy', testDate));
+        }
+        if ((testDate = new Date($(event.relatedTarget).data('progend'))) == "Invalid Date"){
+            $("#id_gait_end_date").html("Unavailable");
+            $("#id_gait_end_date").addClass("color-red");
+            $("#id_reporting_start_date").attr("disabled", true);
+            $("#id_reporting_end_date").attr("disabled", true);
+            $("#submit-id-submit").attr("disabled", true);
+        }
+        else {
+            $("#id_gait_end_date").html($.datepicker.formatDate('M d, yy', testDate));
+        }
+        if ((testDate = new Date($(event.relatedTarget).data('rptstart'))) == "Invalid Date"){
+            $("#id_reporting_start_date").val("Unavailable");
+            $("#id_reporting_start_date").addClass("color-red");
+        }
+        else {
+            $("#id_reporting_start_date").val($.datepicker.formatDate('M d, yy', testDate));
+            origRptStart = $(event.relatedTarget).data('rptstart');
+        }
+        if ((testDate = new Date($(event.relatedTarget).data('rptend'))) == "Invalid Date"){
+            $("#id_reporting_end_date").val("Unavailable");
+            $("#id_reporting_end_date").addClass("color-red");
+        }
+        else {
+            $("#id_reporting_end_date").val($.datepicker.formatDate('M d, yy', testDate));
+            origRptEnd = $(event.relatedTarget).data('rptend');
+        }
 
         setupMonthPickers();
     });
