@@ -370,6 +370,14 @@ class Program(models.Model):
         collecteddata = CollectedData.objects.filter(indicator__id__in=indicator_ids)
         return SiteProfile.objects.filter(collecteddata__id__in=collecteddata).distinct()
 
+    @property
+    def collected_record_count(self):
+        record_count = 0
+        for indicator in self.indicator_set.all():
+            record_count += indicator.collecteddata_set.count()
+        return record_count
+
+
 
 class ApprovalAuthority(models.Model):
     approval_user = models.ForeignKey(TolaUser,help_text=_('User with Approval Authority'), blank=True, null=True, related_name="auth_approving", verbose_name=_("Tola User"))

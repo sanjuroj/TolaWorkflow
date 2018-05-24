@@ -196,11 +196,28 @@
             origRptEnd = $(event.relatedTarget).data('rptend');
         }
 
+        if ($(event.relatedTarget).data('recordcount') > 0) {
+            $("#id_reporting_start_date").attr("disabled", true);
+            $("#id_reporting_end_date").attr("disabled", true);
+            $("#submit-id-submit").attr("disabled", true);
+        }
+
         setupMonthPickers();
     });
 
     $('#id_reporting_period_modal').on('hide.bs.modal', function (event) {
+        // Need to remove the month-only class from the date-picker so it doesn't interfere with other datepickers
+        // on the page.  Can't do it in the picker because it results in a calendar flash before picker is closed.
         $("#ui-datepicker-div").removeClass("month-only");
+
+        // Remove the classes on close because they will still be there if a different link is clicked
+        $("#id_gait_start_date").removeClass("color-red");
+        $("#id_gait_end_date").removeClass("color-red");
+        $("#id_reporting_start_date").removeClass("color-red");
+        $("#id_reporting_end_date").removeClass("color-red");
+        $("#id_reporting_start_date").attr("disabled", false);
+        $("#id_reporting_end_date").attr("disabled", false);
+        $("#submit-id-submit").attr("disabled", false);
     });
 
     $("#reportingperiod_update_form").on('submit', function(e) {
