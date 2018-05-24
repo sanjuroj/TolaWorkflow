@@ -255,7 +255,7 @@ input[type="checkbox"].form-control:focus {
 
 /* overload collapsing style */
 .collapsing {
-    -webkit-transition: width .2s ease-out;
-    -o-transition:      width .2s ease-out;
-    transition:         width .2s ease-out;
+    -webkit-transition: all .2s ease;
+    -o-transition:      all .2s ease;
+    transition:         all .2s ease;
 }
