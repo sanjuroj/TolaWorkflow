@@ -1057,7 +1057,6 @@ def collected_data_view(request, indicator, program):
         .prefetch_related('collecteddata_set') \
         .annotate(
             achieved_sum=Sum('collecteddata__achieved', output_field=DecimalField()),
-            achieved_avg=Avg('collecteddata__achieved', output_field=DecimalField()),
             last_data_row=Subquery(last_data_record.values('achieved')[:1])) \
         .order_by('customsort')
 

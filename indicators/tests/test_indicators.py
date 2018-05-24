@@ -45,7 +45,7 @@ class IndicatorTestCase(TestCase):
                           'program': self.program.id
                       })
         response = self.client.get(url)
-        self.assertEqual(0, response.context['grand_achieved_sum'])
+        self.assertEqual('', response.context['grand_achieved_sum'])
 
     def test_generate_periodic_targets(self):
         self.indicator.target_frequency = Indicator.ANNUAL
