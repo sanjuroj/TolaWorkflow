@@ -91,6 +91,8 @@
 </div>
 
 <script type="text/javascript">
+    var origRptStart = "";
+    var origRptEnd = "";
 
     function setupMonthPickers() {
         const start_date_id = "id_reporting_start_date";
@@ -158,8 +160,11 @@
         $("#reportingperiod_update_form").attr("action", base_url + $(event.relatedTarget).data('program'));
         $("#id_gait_start_date").html($.datepicker.formatDate('M d, yy', new Date($(event.relatedTarget).data('progstart'))));
         $("#id_gait_end_date").html($.datepicker.formatDate('M d, yy', new Date($(event.relatedTarget).data('progend'))));
-        $("#id_reporting_start_date").val($.datepicker.formatDate('M d, yy', new Date($(event.relatedTarget).data('rptstart'))));
-        $("#id_reporting_end_date").val($.datepicker.formatDate('M d, yy', new Date($(event.relatedTarget).data('rptend'))));
+        // Need to save the original report start and end dates for the Reset button
+        origRptStart = $(event.relatedTarget).data('rptstart');
+        origRptEnd = $(event.relatedTarget).data('rptend');
+        $("#id_reporting_start_date").val($.datepicker.formatDate('M d, yy', new Date(origRptStart)));
+        $("#id_reporting_end_date").val($.datepicker.formatDate('M d, yy', new Date(origRptEnd)));
 
         setupMonthPickers();
     });
@@ -190,6 +195,13 @@
               "#div-id-reportingperiod-alert")
 
         });
+    });
+
+    $("#reportingperiod_update_form").on('reset', function(e) {
+        e.preventDefault();
+        $("#id_reporting_start_date").val($.datepicker.formatDate('M d, yy', new Date(origRptStart)));
+        $("#id_reporting_end_date").val($.datepicker.formatDate('M d, yy', new Date(origRptEnd)));
+
     });
 
 </script>
