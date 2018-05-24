@@ -12,8 +12,7 @@
       {{ hidden_field }}
     {% endfor %}
     <div id="filter-top" class="filter-form-padding-10 pb-1">
-      <h3 class="filter-title">Report Options</h3>
-
+      <h3 class="filter-title">{% trans "Report Options" %}</h3>
       <div class="form-row mb-3" id="id_div_program">
         <label for="id_program" class="col-form-label">
           {{ form.program.label }}
@@ -200,11 +199,11 @@
       },
     });
 
-    $("#id_level").select2({"placeholder": "All levels"});
-    $("#id_ind_type").select2({"placeholder": "All types"});
-    $("#id_sector").select2({"placeholder": "All sectors"});
-    $("#id_site").select2({"placeholder": "All sites"});
-    $("#id_indicators").select2({"placeholder": "All indicators"});
+    $("#id_level").select2({"placeholder": "{% trans 'All levels' %}"});
+    $("#id_ind_type").select2({"placeholder": "{% trans 'All types' %}"});
+    $("#id_sector").select2({"placeholder": "{% trans 'All sectors' %}"});
+    $("#id_site").select2({"placeholder": "{% trans 'All sites' %}"});
+    $("#id_indicators").select2({"placeholder": "{% trans 'All indicators' %}"});
 
     $("#id_form_indicator_filter").on("input", "#id_program", function (e) {
       const program_id = $(this).val();
