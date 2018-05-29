@@ -378,7 +378,6 @@ class Program(models.Model):
         return record_count
 
 
-
 class ApprovalAuthority(models.Model):
     approval_user = models.ForeignKey(TolaUser,help_text=_('User with Approval Authority'), blank=True, null=True, related_name="auth_approving", verbose_name=_("Tola User"))
     budget_limit = models.IntegerField(null=True, blank=True)
