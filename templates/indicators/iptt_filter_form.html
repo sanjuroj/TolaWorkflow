@@ -173,28 +173,44 @@
         const month = inst.selectedMonth;
         const year = inst.selectedYear;
         const existingDate = $(this).val();
-        const newDate = formatDate(new Date(year, month, 1));
+        let newDate;
+        if (this.id == start_date_id) {
+          newDate = formatDate(new Date(year, month, 1));
+        } else {
+          newDate = formatDate(new Date(year, month + 1, 0));
+        }
         if (existingDate != newDate) {
           $(this).change();
         }
-        $(this).datepicker('setDate', new Date(year, month, 1));
+        $(this).datepicker('setDate', newDate);
 
       },
       beforeShow: function (input, inst) {
         if ((datestr = $(this).val()).length > 0) {
           year = datestr.substring(datestr.length - 4, datestr.length);
           month = jQuery.inArray(datestr.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
-          $(this).datepicker('option', 'defaultDate', new Date(year, month, 1));
-          $(this).datepicker('setDate', new Date(year, month, 1));
+          let newDate;
+          if (this.id == start_date_id) {
+            newDate = new Date(year, month, 1);
+          } else {
+            newDate = new Date(year, month + 1, 0);
+          }
+          $(this).datepicker('option', 'defaultDate', newDate);
+          $(this).datepicker('setDate', newDate);
         }
-        var other = this.id == start_date_id ? `#${end_date_id}` : `#${start_date_id}`;
-        var option = this.id == start_date_id ? "maxDate" : "minDate";
+        const other = this.id == start_date_id ? `#${end_date_id}` : `#${start_date_id}`;
+        const option = this.id == start_date_id ? "maxDate" : "minDate";
         $(`#${start_date_id}`).datepicker("option", "minDate", new Date(`{{report_start_date}}`));
         $(`#${end_date_id}`).datepicker("option", "maxDate", new Date(`{{report_end_date}}`));
         if ((selectedDate = $(other).val()).length > 0) {
           year = selectedDate.substring(selectedDate.length - 4, selectedDate.length);
           month = jQuery.inArray(selectedDate.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
-          $(this).datepicker("option", option, new Date(year, month, 1));
+          // $(this).datepicker("option", option, new Date(year, month, 1));
+          if (this.id == start_date_id) {
+            $(this).datepicker("option", option, new Date(year, month, 1));
+          } else {
+            $(this).datepicker("option", option, new Date(year, month + 1, 0));
+          }
         }
       },
     });
