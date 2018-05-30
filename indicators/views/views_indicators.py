@@ -148,6 +148,7 @@ class IndicatorList(ListView):
         indicator_id = int(self.kwargs['indicator'])
         indicator_name = Indicator.objects.filter(id=indicator_id)[0] if indicator_id else ''
         type_id = int(self.kwargs['type'])
+        type_name = IndicatorType.objects.filter(id=type_id)[0] if type_id else ''
         filters = {'id__isnull': False}
 
         if program_id != 0:
@@ -174,6 +175,7 @@ class IndicatorList(ListView):
             'program_name': program_name,
             'indicator_id': indicator_id,
             'indicator_name': indicator_name,
+            'type_name': type_name,
             'type_id': type_id,
             'programs': programs}
         return render(request, self.template_name, c_data)

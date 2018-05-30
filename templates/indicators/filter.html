@@ -60,6 +60,7 @@
 <script>
     var programName = ({{ program_id }} ? "{{ program_name|truncatechars:55 }}" : "{% trans 'Programs' %}");
     var indicatorName = ({{ indicator_id }} ? "{{ indicator_name|truncatechars:55 }}" : "{% trans 'Indicators' %}");
+    var typeName = ({{ type_id }} ? "{{ type_name|truncatechars:55 }}" : "{% trans 'Type' %}");
     //var indicatorId = `{{ indicator_id }}`;
     $(document).ready(function() {
         var programDropdown = $("#id_programs_filter_dropdown");
@@ -90,23 +91,19 @@
           }
         });
 
-        var typeId = `{{ type_id }}`;
         var indicatorTypeDropdown = $("#id_indicatortypes_filter_dropdown");
-        indicatorTypeDropdown.prop("selectedIndex", -1);
-        indicatorTypeDropdown.select2({
-            placeholder: {id: -1, text: "{% trans 'Types' %}"},
-            allowClear: false,
-            dropdownAutoWidth: true,
-            // width: "200px",
-            // width: 'resolve',
-            width: '100%',
+        indicatorTypeDropdown.prop("selectedIndex", -1); // ?
+        indicatorTypeDropdown.multiselect({
+          nonSelectedText: typeName,
+          enableFiltering: true,
+          enableCaseInsensitiveFiltering: true,
+          maxHeight: 320,
+          buttonClass: 'btn form-control',
+          templates: {
+            filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
+            filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
+          }
         });
-        if (parseInt(typeId) > 0 ) {
-            $("#type_filter_value").data('typeid', typeId);
-            // only trigger event with the namespace that Select2 is looking for
-            // so other event handlers will not be triggered.
-            indicatorTypeDropdown.val(typeId).trigger('change.select2');
-        }
 
     });
 
