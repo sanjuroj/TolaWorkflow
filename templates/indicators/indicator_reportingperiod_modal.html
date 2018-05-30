@@ -53,23 +53,39 @@
                                 <h3>{% trans 'Reporting start and end dates' %}</h3>
                             </div>
                             <div id="div_reporting_dates">
-                                <div id="div_id_reporting_start_date" style="display: inline-block;" class="mr-5">
-                                    <h4>
-                                        <div class="mb-0 text-uppercase">{% trans 'Start date' %}</div>
-                                        <input type="text"
-                                               name="reporting_period_start"
-                                               class="form-control rptMonthPicker"
-                                               id="id_reporting_start_date">
-                                    </h4>
+                                <div id="div_id_reporting_start_date" class="mr-5 div-rpt-date-input">
+                                    <div class="mb-0 text-uppercase"><h4>{% trans 'Start date' %}</h4></div>
+                                    <div class="input-group">
+                                        <h4>
+                                            <input type="text"
+                                                   name="reporting_period_start"
+                                                   class="form-control rptMonthPicker"
+                                                   autocomplete="off"
+                                                   id="id_reporting_start_date">
+                                        </h4>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text mb-2">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div id="div_reporting_end_date" style="display: inline-block;">
-                                    <h4>
-                                        <div class="mb-0 text-uppercase">{% trans 'End date' %}</div>
-                                        <input type="text"
-                                           name="reporting_period_end"
-                                           class="form-control rptMonthPicker"
-                                           id="id_reporting_end_date">
-                                    </h4>
+                                <div id="div_reporting_end_date" class="div-rpt-date-input">
+                                    <div class="text-uppercase"><h4 class="mb-0">{% trans 'End date' %}</h4></div>
+                                    <div class="input-group">
+                                        <h4>
+                                            <input type="text"
+                                                name="reporting_period_end"
+                                                class="form-control rptMonthPicker"
+                                                autocomplete="off"
+                                                id="id_reporting_end_date">
+                                        </h4>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text mb-2">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div id="div_reporting_dates_description">
@@ -180,16 +196,14 @@
             $("#id_gait_end_date").html(formatDate(testDate));
         }
         if ((testDate = new Date($(event.relatedTarget).data('rptstart'))) == "Invalid Date"){
-            $("#id_reporting_start_date").val("Unavailable");
-            $("#id_reporting_start_date").addClass("color-red");
+            $("#id_reporting_start_date").val("");
         }
         else {
             $("#id_reporting_start_date").val(formatDate(testDate));
             origRptStart = $(event.relatedTarget).data('rptstart');
         }
         if ((testDate = new Date($(event.relatedTarget).data('rptend'))) == "Invalid Date"){
-            $("#id_reporting_end_date").val("Unavailable");
-            $("#id_reporting_end_date").addClass("color-red");
+            $("#id_reporting_end_date").val("");
         }
         else {
             $("#id_reporting_end_date").val(formatDate(testDate));
