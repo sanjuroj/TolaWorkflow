@@ -28,6 +28,9 @@ body {
 #nonfooter {
     flex-grow: 1;
 }
+.report-wide {
+    margin-top: -16px;
+}
 
 #footer {
     bottom: 0px;
@@ -284,3 +287,5 @@ input[type="checkbox"].form-control:focus {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
 }
+
+
