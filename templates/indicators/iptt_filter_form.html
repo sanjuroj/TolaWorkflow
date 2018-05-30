@@ -171,7 +171,11 @@
       enableFiltering: true,
       enableCaseInsensitiveFiltering: true,
       maxHeight: 320,
-      buttonClass: 'btn form-control'
+      buttonClass: 'btn form-control',
+      templates: {
+        filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
+        filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
+      }
     });
 
     $(`#${start_date_id}, #${end_date_id}`).datepicker({
