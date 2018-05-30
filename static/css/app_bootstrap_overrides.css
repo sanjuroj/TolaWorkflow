@@ -275,13 +275,24 @@ input[type="checkbox"].form-control:focus {
     width: 100%;
 }
 .multiselect-container > li > a {
+    display: block;
     color: inherit;
+}
+.multiselect-container > li > a:hover {
+  background: #DBDCDE;
 }
 .multiselect-container .input-group {
     width: auto;
 }
 .multiselect-container > li > a > label {
     text-indent: -20px;
+}
+.multiselect-container > li > a > label.radio {
+  text-indent: 0;
+  padding-left: 20px;
+}
+.multiselect-container > li input[type=radio] {
+  display: none;
 }
 .multiselect-clear-filter {
     padding-left: 0.75rem;
