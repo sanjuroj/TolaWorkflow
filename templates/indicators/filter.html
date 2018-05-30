@@ -64,21 +64,26 @@
     var indicatorName = ({{ indicator_id }} ? "{{ indicator_name|truncatechars:55 }}" : "{% trans 'Indicators' %}");
     var typeId = `{{ type_id }}`;
     var typeName = ({{ type_id }} ? "{{ type_name|truncatechars:55 }}" : "{% trans 'Type' %}");
-    //var indicatorId = `{{ indicator_id }}`;
-    $(document).ready(function() {
-        var programDropdown = $("#id_programs_filter_dropdown");
-        programDropdown.prop("selectedIndex", -1); //? 
-        programDropdown.multiselect({
-          nonSelectedText: programName,
+
+    var multiselectOptions = {
           enableFiltering: true,
           enableCaseInsensitiveFiltering: true,
           maxHeight: 320,
           buttonClass: 'btn form-control',
+          onDropdownShown : function(event) {
+            this.$select.parent().find("button.multiselect-clear-filter").click();
+            this.$select.parent().find("input[type='text'].multiselect-search").focus();
+	        },
           templates: {
             filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
             filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
           }
-        });
+    }
+
+    $(document).ready(function() {
+        var programDropdown = $("#id_programs_filter_dropdown");
+        programDropdown.prop("selectedIndex", -1); //? 
+        programDropdown.multiselect(Object.assign({}, multiselectOptions, { nonSelectedText: programName }));
 
         if (parseInt(programId) > 0 ) {
             $("#program_filter_value").data('programid', programId);
@@ -87,19 +92,10 @@
             programDropdown.val(programId).trigger('change.multiselect');
         }
 
+
         var indicatorDropdown = $("#id_indicators_filter_dropdown");
         indicatorDropdown.prop("selectedIndex", -1); // ?
-        indicatorDropdown.multiselect({
-          nonSelectedText: indicatorName,
-          enableFiltering: true,
-          enableCaseInsensitiveFiltering: true,
-          maxHeight: 320,
-          buttonClass: 'btn form-control',
-          templates: {
-            filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
-            filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
-          }
-        });
+        indicatorDropdown.multiselect(Object.assign({}, multiselectOptions, { nonSelectedText: indicatorName }));
 
         if (parseInt(indicatorId) > 0 ) {
             $("#indicator_filter_value").data('indicatorid', indicatorId);
@@ -110,17 +106,7 @@
 
         var indicatorTypeDropdown = $("#id_indicatortypes_filter_dropdown");
         indicatorTypeDropdown.prop("selectedIndex", -1); // ?
-        indicatorTypeDropdown.multiselect({
-          nonSelectedText: typeName,
-          enableFiltering: true,
-          enableCaseInsensitiveFiltering: true,
-          maxHeight: 320,
-          buttonClass: 'btn form-control',
-          templates: {
-            filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
-            filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
-          }
-        });
+        indicatorTypeDropdown.multiselect(Object.assign({}, multiselectOptions, { nonSelectedText: typeName }));
 
         if (parseInt(typeId) > 0 ) {
             $("#type_filter_value").data('typeid', typeId);
