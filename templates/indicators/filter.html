@@ -58,8 +58,11 @@
 </div>
 
 <script>
+    var programId = `{{ program_id }}`;
     var programName = ({{ program_id }} ? "{{ program_name|truncatechars:55 }}" : "{% trans 'Programs' %}");
+    var indicatorId = `{{ indicator_id }}`;
     var indicatorName = ({{ indicator_id }} ? "{{ indicator_name|truncatechars:55 }}" : "{% trans 'Indicators' %}");
+    var typeId = `{{ type_id }}`;
     var typeName = ({{ type_id }} ? "{{ type_name|truncatechars:55 }}" : "{% trans 'Type' %}");
     //var indicatorId = `{{ indicator_id }}`;
     $(document).ready(function() {
@@ -77,6 +80,13 @@
           }
         });
 
+        if (parseInt(programId) > 0 ) {
+            $("#program_filter_value").data('programid', programId);
+            // only trigger event with the namespace that multiselect is looking for
+            // so other event handlers will not be triggered.
+            programDropdown.val(programId).trigger('change.multiselect');
+        }
+
         var indicatorDropdown = $("#id_indicators_filter_dropdown");
         indicatorDropdown.prop("selectedIndex", -1); // ?
         indicatorDropdown.multiselect({
@@ -90,6 +100,13 @@
             filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
           }
         });
+
+        if (parseInt(indicatorId) > 0 ) {
+            $("#indicator_filter_value").data('indicatorid', indicatorId);
+            // only trigger event with the namespace that multiselect is looking for
+            // so other event handlers will not be triggered.
+            indicatorDropdown.val(indicatorId).trigger('change.multiselect');
+        }
 
         var indicatorTypeDropdown = $("#id_indicatortypes_filter_dropdown");
         indicatorTypeDropdown.prop("selectedIndex", -1); // ?
@@ -105,6 +122,13 @@
           }
         });
 
+        if (parseInt(typeId) > 0 ) {
+            $("#type_filter_value").data('typeid', typeId);
+            // only trigger event with the namespace that multiselect is looking for
+            // so other event handlers will not be triggered.
+            indicatorTypeDropdown.val(typeId).trigger('change.multiselect');
+        }
+
     });
 
 
@@ -116,7 +140,7 @@
         $("#id_programs_filter_dropdown").trigger("programFilterUpdated");
     });
 
-    $("#id_programs_filter_dropdown").on("select2:select select2:unselecting", function(e) {
+    $("#id_programs_filter_dropdown").on("multiselect:select multiselect:unselecting", function(e) {
         $("#program_filter_value").data('programid', 0);
         $("#indicator_filter_value").data('indicatorid', 0);
     });
@@ -128,7 +152,7 @@
         $("#id_indicators_filter_dropdown").trigger("indicatorFilterUpdated");
     });
 
-    $("#id_indicators_filter_dropdown").on("select2:select select2:unselecting", function(e) {
+    $("#id_indicators_filter_dropdown").on("multiselect:select multiselect:unselecting", function(e) {
         $("#indicator_filter_value").data('indicatorid', 0);
     });
 
@@ -139,7 +163,7 @@
         $("#id_indicatortypes_filter_dropdown").trigger("indicatorTypeFilterUpdated");
     });
 
-    $("#id_indicatortypes_filter_dropdown").on("select2:select select2:unselecting", function(e) {
+    $("#id_indicatortypes_filter_dropdown").on("multiselect:select multiselect:unselecting", function(e) {
         $("#type_filter_value").data('typeid', 0);
     });
 </script>
