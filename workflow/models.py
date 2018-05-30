@@ -10,6 +10,7 @@ import uuid
 from django.utils.translation import ugettext_lazy as _
 
 from django.conf import settings
+from django.db.models import Count
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
@@ -372,10 +373,7 @@ class Program(models.Model):
 
     @property
     def collected_record_count(self):
-        record_count = 0
-        for indicator in self.indicator_set.all():
-            record_count += indicator.collecteddata_set.count()
-        return record_count
+        return Program.objects.filter(pk=self.pk).annotate(num_data=Count('indicator__collecteddata')).values('id', 'num_data')[0]['num_data']
 
 
 class ApprovalAuthority(models.Model):

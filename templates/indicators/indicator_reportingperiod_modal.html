@@ -167,7 +167,7 @@
             $("#submit-id-submit").attr("disabled", true);
         }
         else {
-            $("#id_gait_start_date").html($.datepicker.formatDate('M d, yy', testDate));
+            $("#id_gait_start_date").html(formatDate(testDate));
         }
         if ((testDate = new Date($(event.relatedTarget).data('progend'))) == "Invalid Date"){
             $("#id_gait_end_date").html("Unavailable");
@@ -177,14 +177,14 @@
             $("#submit-id-submit").attr("disabled", true);
         }
         else {
-            $("#id_gait_end_date").html($.datepicker.formatDate('M d, yy', testDate));
+            $("#id_gait_end_date").html(formatDate(testDate));
         }
         if ((testDate = new Date($(event.relatedTarget).data('rptstart'))) == "Invalid Date"){
             $("#id_reporting_start_date").val("Unavailable");
             $("#id_reporting_start_date").addClass("color-red");
         }
         else {
-            $("#id_reporting_start_date").val($.datepicker.formatDate('M d, yy', testDate));
+            $("#id_reporting_start_date").val(formatDate(testDate));
             origRptStart = $(event.relatedTarget).data('rptstart');
         }
         if ((testDate = new Date($(event.relatedTarget).data('rptend'))) == "Invalid Date"){
@@ -192,7 +192,7 @@
             $("#id_reporting_end_date").addClass("color-red");
         }
         else {
-            $("#id_reporting_end_date").val($.datepicker.formatDate('M d, yy', testDate));
+            $("#id_reporting_end_date").val(formatDate(testDate));
             origRptEnd = $(event.relatedTarget).data('rptend');
         }
 
@@ -242,8 +242,8 @@
 
     $("#reportingperiod_update_form").on('reset', function(e) {
         e.preventDefault();
-        $("#id_reporting_start_date").val($.datepicker.formatDate('M d, yy', new Date(origRptStart)));
-        $("#id_reporting_end_date").val($.datepicker.formatDate('M d, yy', new Date(origRptEnd)));
+        $("#id_reporting_start_date").val(formatDate(new Date(origRptStart)));
+        $("#id_reporting_end_date").val(formatDate(new Date(origRptEnd)));
 
     });
 
