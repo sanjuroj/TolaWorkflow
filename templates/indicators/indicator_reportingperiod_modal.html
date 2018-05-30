@@ -116,7 +116,7 @@
                     $(this).change();
                 }
                 $(this).datepicker('setDate', newDate);
-
+                $(this).blur();
             },
             beforeShow: function (input, inst) {
                 $("#ui-datepicker-div").addClass("month-only");
