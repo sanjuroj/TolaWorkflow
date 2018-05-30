@@ -5,19 +5,6 @@
     <span class="filter" id="program_filter_value"></span>
     <span class="filter" id="type_filter_value"></span>
 </div>
-<style>
-    .select2-selection__clear {
-        position: absolute !important;
-        right: 20px !important;
-    }
-
-    .select2-container .select2-selection--single .select2-selection__rendered {
-        padding-right: 30px !important;
-    }
-    .select2-results__options {
-        white-space: nowrap;
-    }
-</style>
 <div id="id_filtersDropdown">
     <div class="row">
         <div class="col-sm-5" style="padding-right: 2px;">
@@ -71,25 +58,23 @@
 </div>
 
 <script>
-    var programId = `{{ program_id }}`;
+    var programName = ({{ program_id }} ? `{{ program_name|truncatechars:55 }}` : "{% trans 'Programs' %}");
     var indicatorId = `{{ indicator_id }}`;
     $(document).ready(function() {
         var programDropdown = $("#id_programs_filter_dropdown");
         programDropdown.prop("selectedIndex", -1);
-        programDropdown.select2({
-            placeholder: {id: -1, text: "{% trans 'Programs' %}"},
-            allowClear: false,
-            dropdownAutoWidth: true,
-            // width: "400px",
-            // width: 'resolve',
-            width: '100%',
+
+        programDropdown.multiselect({
+          nonSelectedText: programName,
+          enableFiltering: true,
+          enableCaseInsensitiveFiltering: true,
+          maxHeight: 320,
+          buttonClass: 'btn form-control',
+          templates: {
+            filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
+            filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
+          }
         });
-        if (parseInt(programId) > 0 ) {
-            $("#program_filter_value").data('programid', programId);
-            // only trigger event with the namespace that Select2 is looking for
-            // so other event handlers will not be triggered.
-            programDropdown.val(programId).trigger('change.select2');
-        }
 
         var indicatorDropdown = $("#id_indicators_filter_dropdown");
         indicatorDropdown.prop("selectedIndex", -1);
