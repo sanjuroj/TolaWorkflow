@@ -147,10 +147,10 @@
 
     <div id="filter-bottom" class="filter-form-padding-10">
       <button type="submit" id="id_submit_form_filter" class="btn btn-primary">
-        {% trans "APPLY" %}
+        {% trans "Apply" %}
       </button>
       <button type="reset" class="btn btn-secondary">
-        {% trans "RESET" %}
+        {% trans "Reset" %}
       </button>
     </div>
   </form>
@@ -167,7 +167,10 @@
     $(`#${end_date_id}`).val(formatDate($(`#${end_date_id}`).val()));
 
     $('.bs-multiselect').multiselect({
-      includeSelectAllOption: true
+      includeSelectAllOption: true,
+      enableFiltering: true,
+      enableCaseInsensitiveFiltering: true,
+      maxHeight: 320
     });
 
     $(`#${start_date_id}, #${end_date_id}`).datepicker({
