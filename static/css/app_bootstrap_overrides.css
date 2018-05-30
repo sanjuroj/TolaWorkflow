@@ -258,3 +258,13 @@ input[type="checkbox"].form-control:focus {
     -o-transition:      all .2s ease;
     transition:         all .2s ease;
 }
+
+/* overload bootstrap-multiselect */
+.multiselect-native-select .btn-group { 
+    width: 100%;
+}
+.multiselect.btn {
+    display: block;
+    text-align: left;
+    width: 100%;
+}
