@@ -268,3 +268,12 @@ input[type="checkbox"].form-control:focus {
     text-align: left;
     width: 100%;
 }
+.multiselect-container {
+    width: 100%;
+}
+.multiselect-container > li > a {
+    color: inherit;
+}
+.multiselect-container > li > a > label {
+    text-indent: -20px;
+}
