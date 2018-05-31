@@ -60,6 +60,10 @@ body {
     padding-right: 1.75rem;
 }
 
+.paddingleft-125 {
+    padding-left: 1.25rem;
+}
+
 .marginbottom-225 {
     margin-bottom: 2.25rem;
 }
@@ -796,7 +800,7 @@ input[type=number]::-webkit-outer-spin-button {
     width: 40px;
 }
 .sidebar-toggle a {
-    background-color:#00A49F; 
+    background-color:#00A49F;
     color: white;
     display: block;
     font-size: 1.25rem;
