@@ -35,29 +35,28 @@
                                 {% trans "program indicators" %}
                             {% endif %}
                     </a>
-                {% endif %}
-                <span class="d-flex align-items-center">
-                    <strong>
-                        <a class="pr-1" href="{% url 'programIndicatorReport' program.id %}">{% trans 'Indicator plan' %}</a>
-                    </strong>
-                    |
-                    <strong>
-                        <a
-                            class="pl-1"
-                            href="#"
-                            data-toggle="modal"
-                            data-program="{{ program.id }}"
-                            data-progstart="{{ program.start_date }}"
-                            data-progend="{{ program.end_date }}"
-                            data-rptstart="{{ program.reporting_period_start }}"
-                            data-rptend="{{ program.reporting_period_end }}"
-                            data-target="#id_reporting_period_modal">
-                                {% trans 'Reporting period' %}
-                        </a>
-                    </strong>
-                </span>
-            </div>
-            {% if program.indicator_set.all %}
+                    <span class="d-flex align-items-center">
+                        <strong>
+                            <a class="pr-1" href="{% url 'programIndicatorReport' program.id %}">{% trans 'Indicator plan' %}</a>
+                        </strong>
+                        |
+                        <strong>
+                            <a
+                                class="pl-1"
+                                href="#"
+                                data-toggle="modal"
+                                data-recordcount="{{ program.collected_record_count }}"
+                                data-program="{{ program.id }}"
+                                data-progstart="{{ program.start_date }}"
+                                data-progend="{{ program.end_date }}"
+                                data-rptstart="{{ program.reporting_period_start }}"
+                                data-rptend="{{ program.reporting_period_end }}"
+                                data-target="#id_reporting_period_modal">
+                                    {% trans 'Reporting period' %}
+                            </a>
+                        </strong>
+                    </span>
+                </div>
                 <div id="hidden-{{ program.id }}" class="collapse">
                     {% include "indicators/program_indicators_table.html" %}
                 </div>

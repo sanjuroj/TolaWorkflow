@@ -577,10 +577,31 @@ input[type=number]::-webkit-outer-spin-button {
 /* BEGIN datepicker styling */
 
 .month-only .ui-datepicker-calendar {
-  display: none;
+    display: none;
 }
 
 /* END datepicker styling */
+
+
+/* BEGIN reporting date modal styling */
+
+#div_reporting_dates .div-rpt-date-input {
+    display: inline-block;
+}
+
+#div_reporting_dates .div-rpt-date-input .input-group-text{
+    border-color: #B8BABD;
+}
+
+#div_reporting_dates .div-rpt-date-input input{
+    width: 10rem;
+}
+
+/* END reporting date modal styling */
+
+
+
+
 
 .blink {
     animation: blink 2s linear infinite;
