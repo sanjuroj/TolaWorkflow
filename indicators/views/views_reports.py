@@ -398,7 +398,7 @@ class IPTT_ReportView(TemplateView):
             targetperiods = OrderedDict((k, v) for k, v in most_recent_targetperiods)
         return targetperiods
 
-    def _gen_timeperiods(self, filter_start_date, filter_end_date, frequency, show_all, num_recents):
+    def _generate_timeperiods(self, filter_start_date, filter_end_date, frequency, show_all, num_recents):
         timeperiods = OrderedDict()
         today_date = datetime.today().date()
         # today_date = datetime.strptime('2020-02-23', '%Y-%m-%d').date()
@@ -705,7 +705,9 @@ class IPTT_ReportView(TemplateView):
             end_date = report_end_date
 
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            report_end_date, periods_date_ranges = self._gen_timeperiods(
+            # Update the report_end_date to make sure it ends with the last period's end_date
+            # Also, get the all of the periodic date ranges based on the selected period
+            report_end_date, periods_date_ranges = self._generate_timeperiods(
                 start_date, end_date, period, show_all, num_recents)
             # Get the last period's end_date
             last_filtered_period_date = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
