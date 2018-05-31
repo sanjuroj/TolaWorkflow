@@ -15,7 +15,6 @@ body {
     font-family: Arial;
     height: 100%;
     justify-content: space-between;
-    overflow: auto;
 }
 
 /** {
@@ -29,13 +28,14 @@ body {
 #nonfooter {
     flex-grow: 1;
 }
+.report-wide {
+    margin-top: -16px;
+}
 
 #footer {
     bottom: 0px;
     flex-grow: 0;
     width: 100%;
-    /* Set the fixed height of the footer here */
-    height: 40px;
     border-top: 1px solid #f5f5f5;
     background-color: #DBDCDE;
     vertical-align: top;
@@ -51,7 +51,7 @@ a {
 }
 
 a:hover {
-h    color: #3366cc;
+    color: #3366cc;
     text-decoration: none;
 }
 
@@ -88,7 +88,9 @@ body > .container {
 }
 
 #footer > .container-fluid {
-    padding: 10px;
+    padding: 15px;
+}
+#footer > .container-fluid  .row {
 }
 
 .btn-primary,
@@ -259,3 +261,55 @@ input[type="checkbox"].form-control:focus {
     -o-transition:      all .2s ease;
     transition:         all .2s ease;
 }
+
+/* overload dropdown menus */
+.dropdown-menu {
+    box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+}
+
+/* overload bootstrap-multiselect */
+.multiselect-native-select .btn-group { 
+    width: 100%;
+}
+
+/* expand the caret */
+.btn-group.show .multiselect.dropdown-toggle::after {
+}
+.multiselect.btn {
+    align-items: center;
+    color: #808080;
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+    width: 100%;
+}
+.multiselect-container {
+    width: 100%;
+}
+.multiselect-container > li > a {
+    display: block;
+    color: #808080;
+}
+.multiselect-container > li > a:hover {
+  background: #5897fb;
+  color: white;
+}
+.multiselect-container .input-group {
+    width: auto;
+}
+.multiselect-container > li > a > label {
+    text-indent: -20px;
+}
+.multiselect-container > li > a > label.radio {
+  text-indent: 0;
+  padding-left: 20px;
+}
+.multiselect-container > li input[type=radio] {
+  display: none;
+}
+.multiselect-clear-filter {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+

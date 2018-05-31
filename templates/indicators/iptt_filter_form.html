@@ -1,5 +1,8 @@
+{% load static %}
 {% load widget_tweaks %}
 {% load i18n %}
+
+
 <style type="text/css">
   .ui-datepicker-calendar {
     display: none;
@@ -97,7 +100,7 @@
           {{ form.level.label }}
         </label>
         <div class="form-group-row">
-          {% render_field form.level class+="form-control" %}
+          {% render_field form.level class+="form-control bs-multiselect" multiple="multiple" %}
         </div>
       </div>
 
@@ -106,7 +109,7 @@
           {{ form.ind_type.label }}
         </label>
         <div class="form-group-row">
-          {% render_field form.ind_type class+="form-control" %}
+          {% render_field form.ind_type class+="form-control bs-multiselect" multiple="multiple" %}
         </div>
       </div>
 
@@ -115,7 +118,7 @@
           {{ form.sector.label }}
         </label>
         <div class="form-group-row">
-          {% render_field form.sector class+="form-control" %}
+          {% render_field form.sector class+="form-control bs-multiselect" multiple="multiple"  %}
         </div>
       </div>
 
@@ -124,7 +127,7 @@
           {{ form.site.label }}
         </label>
         <div class="form-group-row">
-          {% render_field form.site class+="form-control" %}
+          {% render_field form.site class+="form-control bs-multiselect" multiple="multiple" %}
         </div>
       </div>
 
@@ -133,7 +136,7 @@
           {{ form.indicators.label }}
         </label>
         <div class="form-group-row">
-          {% render_field form.indicators class+="form-control" %}
+          {% render_field form.indicators class+="form-control bs-multiselect" multiple="multiple" %}
         </div>
       </div>
 
@@ -141,10 +144,10 @@
 
     <div id="filter-bottom" class="filter-form-padding-10">
       <button type="submit" id="id_submit_form_filter" class="btn btn-primary">
-        {% trans "APPLY" %}
+        {% trans "Apply" %}
       </button>
       <button type="reset" class="btn btn-secondary">
-        {% trans "RESET" %}
+        {% trans "Reset" %}
       </button>
     </div>
   </form>
@@ -154,16 +157,24 @@
   $(document).ready(function () {
     // console.log(`{{ report_start_date }}`, `{{ report_end_date }}`);
     const site_profile = $("#id_site");
-    const indicators_select = $("#id_indicators");
     const numRecentPeriods = $("#id_numrecentperiods");
-    const sector_select = $("#id_sector");
-    const indicatortype_select = $("#id_ind_type");
-    const level_select = $("#id_level");
 
     const start_date_id = `{{ form.start_date.auto_id }}`;
     const end_date_id = `{{ form.end_date.auto_id }}`;
     $(`#${start_date_id}`).val(formatDate($(`#${start_date_id}`).val()));
     $(`#${end_date_id}`).val(formatDate($(`#${end_date_id}`).val()));
+
+    $('.bs-multiselect').multiselect({
+      includeSelectAllOption: true,
+      enableFiltering: true,
+      enableCaseInsensitiveFiltering: true,
+      maxHeight: 320,
+      buttonClass: 'btn form-control',
+      templates: {
+        filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
+        filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
+      }
+    });
 
     $(`#${start_date_id}, #${end_date_id}`).datepicker({
       changeMonth: true,
@@ -216,11 +227,6 @@
       },
     });
 
-    $("#id_level").select2({"placeholder": "{% trans 'All levels' %}"});
-    $("#id_ind_type").select2({"placeholder": "{% trans 'All types' %}"});
-    $("#id_sector").select2({"placeholder": "{% trans 'All sectors' %}"});
-    $("#id_site").select2({"placeholder": "{% trans 'All sites' %}"});
-    $("#id_indicators").select2({"placeholder": "{% trans 'All indicators' %}"});
 
     $("#id_form_indicator_filter").on("input", "#id_program", function (e) {
       const program_id = $(this).val();
@@ -233,34 +239,6 @@
         });
       });
 
-      $.getJSON(`/api/indicator/?program=${program_id}`, function(data) {
-        indicators_select.empty();
-        $.each(data, function (index, option) {
-          // console.log(`${index}, ${option.id}=${option.name}`);
-          indicators_select.append($("<option></option>").attr("value", option.id).text(option.name));
-        });
-      });
-
-      $.getJSON(`/api/sector/?program=${program_id}`, function( data ) {
-        sector_select.empty();
-        $.each(data, function(index, option){
-          sector_select.append($("<option></option>").attr("value", option.id).text(option.sector));
-        });
-      });
-
-      $.getJSON(`/api/indicatortype/?program=${program_id}`, function( data ){
-        indicatortype_select.empty();
-        $.each(data, function(index, option){
-          indicatortype_select.append($("<option></option>").attr("value", option.id).text(option.indicator_type));
-        });
-      });
-
-      $.getJSON(`/api/level/?program=${program_id}`, function(data) {
-        level_select.empty();
-        $.each(data, function(index, option){
-          level_select.append($("<option></option>").attr("value", option.id).text(option.name));
-        });
-      })
     });
 
 
@@ -281,5 +259,35 @@
       $("input[type=radio][name='timeframe']").prop("checked", false);
       numRecentPeriods.val(null);
     });
+
+
+    $.getJSON(`/api/indicator/?program=${program_id}`, function(data) {
+     indicators_select.empty();		
+     $.each(data, function (index, option) {		
+       // console.log(`${index}, ${option.id}=${option.name}`);		
+       indicators_select.append($("<option></option>").attr("value", option.id).text(option.name));		
+     });		
+    });		
+
+    $.getJSON(`/api/sector/?program=${program_id}`, function( data ) {		
+     sector_select.empty();		
+     $.each(data, function(index, option){		
+       sector_select.append($("<option></option>").attr("value", option.id).text(option.sector));		
+     });		
+    });		
+
+    $.getJSON(`/api/indicatortype/?program=${program_id}`, function( data ){		
+     indicatortype_select.empty();		
+     $.each(data, function(index, option){		
+       indicatortype_select.append($("<option></option>").attr("value", option.id).text(option.indicator_type));		
+     });		
+    });		
+
+    $.getJSON(`/api/level/?program=${program_id}`, function(data) {		
+     level_select.empty();		
+     $.each(data, function(index, option){		
+       level_select.append($("<option></option>").attr("value", option.id).text(option.name));		
+     });		
+    })
   });
 </script>

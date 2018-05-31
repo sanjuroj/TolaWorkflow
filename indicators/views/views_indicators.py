@@ -144,8 +144,11 @@ class IndicatorList(ListView):
         get_indicator_types = IndicatorType.objects.all()
 
         program_id = int(self.kwargs['program'])
+        program_name = get_programs.get(pk=program_id).name if program_id else ''
         indicator_id = int(self.kwargs['indicator'])
+        indicator_name = get_indicators.get(pk=indicator_id).name if indicator_id else ''
         type_id = int(self.kwargs['type'])
+        type_name = get_indicator_types.get(pk=type_id).indicator_type if type_id else ''
         filters = {'id__isnull': False}
 
         if program_id != 0:
@@ -169,7 +172,10 @@ class IndicatorList(ListView):
             'getIndicators': get_indicators,
             'getIndicatorTypes': get_indicator_types,
             'program_id': program_id,
+            'program_name': program_name,
             'indicator_id': indicator_id,
+            'indicator_name': indicator_name,
+            'type_name': type_name,
             'type_id': type_id,
             'programs': programs}
         return render(request, self.template_name, c_data)

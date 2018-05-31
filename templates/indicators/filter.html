@@ -5,19 +5,6 @@
     <span class="filter" id="program_filter_value"></span>
     <span class="filter" id="type_filter_value"></span>
 </div>
-<style>
-    .select2-selection__clear {
-        position: absolute !important;
-        right: 20px !important;
-    }
-
-    .select2-container .select2-selection--single .select2-selection__rendered {
-        padding-right: 30px !important;
-    }
-    .select2-results__options {
-        white-space: nowrap;
-    }
-</style>
 <div id="id_filtersDropdown">
     <div class="row">
         <div class="col-sm-5" style="padding-right: 2px;">
@@ -72,58 +59,60 @@
 
 <script>
     var programId = `{{ program_id }}`;
+    var programName = ({{ program_id }} ? "{{ program_name|truncatechars:55 }}" : "{% trans 'Programs' %}");
     var indicatorId = `{{ indicator_id }}`;
+    var indicatorName = ({{ indicator_id }} ? "{{ indicator_name|truncatechars:55 }}" : "{% trans 'Indicators' %}");
+    var typeId = `{{ type_id }}`;
+    var typeName = ({{ type_id }} ? "{{ type_name|truncatechars:55 }}" : "{% trans 'Type' %}");
+
+    var multiselectOptions = {
+          enableFiltering: true,
+          enableCaseInsensitiveFiltering: true,
+          maxHeight: 320,
+          buttonClass: 'btn form-control',
+          onDropdownShown : function(event) {
+            this.$select.parent().find("button.multiselect-clear-filter").click();
+            this.$select.parent().find("input[type='text'].multiselect-search").focus();
+	        },
+          templates: {
+            filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
+            filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
+          }
+    }
+
     $(document).ready(function() {
         var programDropdown = $("#id_programs_filter_dropdown");
-        programDropdown.prop("selectedIndex", -1);
-        programDropdown.select2({
-            placeholder: {id: -1, text: "{% trans 'Programs' %}"},
-            allowClear: false,
-            dropdownAutoWidth: true,
-            // width: "400px",
-            // width: 'resolve',
-            width: '100%',
-        });
+        programDropdown.prop("selectedIndex", -1); //? 
+        programDropdown.multiselect(Object.assign({}, multiselectOptions, { nonSelectedText: programName }));
+
         if (parseInt(programId) > 0 ) {
             $("#program_filter_value").data('programid', programId);
-            // only trigger event with the namespace that Select2 is looking for
+            // only trigger event with the namespace that multiselect is looking for
             // so other event handlers will not be triggered.
-            programDropdown.val(programId).trigger('change.select2');
+            programDropdown.val(programId).trigger('change.multiselect');
         }
+
 
         var indicatorDropdown = $("#id_indicators_filter_dropdown");
-        indicatorDropdown.prop("selectedIndex", -1);
-        indicatorDropdown.select2({
-            placeholder: {id: -1, text: "{% trans 'Indicators' %}"},
-            allowClear: false,
-            dropdownAutoWidth: true,
-            // width: "400px",
-            // width: 'resolve',
-            width: '100%',
-        });
+        indicatorDropdown.prop("selectedIndex", -1); // ?
+        indicatorDropdown.multiselect(Object.assign({}, multiselectOptions, { nonSelectedText: indicatorName }));
+
         if (parseInt(indicatorId) > 0 ) {
             $("#indicator_filter_value").data('indicatorid', indicatorId);
-            // only trigger event with the namespace that Select2 is looking for
+            // only trigger event with the namespace that multiselect is looking for
             // so other event handlers will not be triggered.
-            indicatorDropdown.val(indicatorId).trigger('change.select2');
+            indicatorDropdown.val(indicatorId).trigger('change.multiselect');
         }
 
-        var typeId = `{{ type_id }}`;
         var indicatorTypeDropdown = $("#id_indicatortypes_filter_dropdown");
-        indicatorTypeDropdown.prop("selectedIndex", -1);
-        indicatorTypeDropdown.select2({
-            placeholder: {id: -1, text: "{% trans 'Types' %}"},
-            allowClear: false,
-            dropdownAutoWidth: true,
-            // width: "200px",
-            // width: 'resolve',
-            width: '100%',
-        });
+        indicatorTypeDropdown.prop("selectedIndex", -1); // ?
+        indicatorTypeDropdown.multiselect(Object.assign({}, multiselectOptions, { nonSelectedText: typeName }));
+
         if (parseInt(typeId) > 0 ) {
             $("#type_filter_value").data('typeid', typeId);
-            // only trigger event with the namespace that Select2 is looking for
+            // only trigger event with the namespace that multiselect is looking for
             // so other event handlers will not be triggered.
-            indicatorTypeDropdown.val(typeId).trigger('change.select2');
+            indicatorTypeDropdown.val(typeId).trigger('change.multiselect');
         }
 
     });
@@ -137,7 +126,7 @@
         $("#id_programs_filter_dropdown").trigger("programFilterUpdated");
     });
 
-    $("#id_programs_filter_dropdown").on("select2:select select2:unselecting", function(e) {
+    $("#id_programs_filter_dropdown").on("multiselect:select multiselect:unselecting", function(e) {
         $("#program_filter_value").data('programid', 0);
         $("#indicator_filter_value").data('indicatorid', 0);
     });
@@ -149,7 +138,7 @@
         $("#id_indicators_filter_dropdown").trigger("indicatorFilterUpdated");
     });
 
-    $("#id_indicators_filter_dropdown").on("select2:select select2:unselecting", function(e) {
+    $("#id_indicators_filter_dropdown").on("multiselect:select multiselect:unselecting", function(e) {
         $("#indicator_filter_value").data('indicatorid', 0);
     });
 
@@ -160,7 +149,7 @@
         $("#id_indicatortypes_filter_dropdown").trigger("indicatorTypeFilterUpdated");
     });
 
-    $("#id_indicatortypes_filter_dropdown").on("select2:select select2:unselecting", function(e) {
+    $("#id_indicatortypes_filter_dropdown").on("multiselect:select multiselect:unselecting", function(e) {
         $("#type_filter_value").data('typeid', 0);
     });
 </script>
