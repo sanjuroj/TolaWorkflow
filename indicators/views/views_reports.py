@@ -727,8 +727,12 @@ class IPTT_ReportView(TemplateView):
         indicators = indicators.annotate(**self.annotations).order_by('lastlevelcustomsort', 'number', 'name')
         indicators = self.prepare_indicators(reporttype, period, periods_date_ranges, indicators)
 
+        # Update the filter form's start_date and end_date values.
+        self.filter_form_initial_data['start_date'] = start_date
+        self.filter_form_initial_data['end_date'] = end_date
+
         context['start_date'] = start_date.strftime("%b %d, %Y")
-        context['end_date'] = end_date.strftime("%b %d, %Y")  # self.filter_form_initial_data.get('end_date', report_end_date.strftime('%b %d, %Y'))
+        context['end_date'] = end_date.strftime("%b %d, %Y")
         context['report_start_date'] = report_start_date
         context['report_end_date'] = report_end_date
         context['report_date_ranges'] = periods_date_ranges

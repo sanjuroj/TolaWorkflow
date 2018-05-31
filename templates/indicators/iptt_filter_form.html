@@ -152,7 +152,7 @@
 
 <script>
   $(document).ready(function () {
-    console.log(`{{ report_start_date }}`, `{{ report_end_date }}`);
+    // console.log(`{{ report_start_date }}`, `{{ report_end_date }}`);
     const site_profile = $("#id_site");
     const indicators_select = $("#id_indicators");
     const numRecentPeriods = $("#id_numrecentperiods");
@@ -267,7 +267,6 @@
     // everytime the radio buttons value changes, lock or unlock
     $("#id_form_indicator_filter").on("change", "input[type=radio][name='timeframe']", function (e) {
       const timeframe = $(e.target).val();
-      console.log(timeframe);
       if (timeframe == 2) {
         numRecentPeriods.attr("disabled", false);
       } else if (timeframe == 1) {
