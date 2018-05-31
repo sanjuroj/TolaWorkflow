@@ -255,5 +255,35 @@
       $("input[type=radio][name='timeframe']").prop("checked", false);
       numRecentPeriods.val(null);
     });
+
+
+    $.getJSON(`/api/indicator/?program=${program_id}`, function(data) {
+     indicators_select.empty();		
+     $.each(data, function (index, option) {		
+       // console.log(`${index}, ${option.id}=${option.name}`);		
+       indicators_select.append($("<option></option>").attr("value", option.id).text(option.name));		
+     });		
+    });		
+
+    $.getJSON(`/api/sector/?program=${program_id}`, function( data ) {		
+     sector_select.empty();		
+     $.each(data, function(index, option){		
+       sector_select.append($("<option></option>").attr("value", option.id).text(option.sector));		
+     });		
+    });		
+
+    $.getJSON(`/api/indicatortype/?program=${program_id}`, function( data ){		
+     indicatortype_select.empty();		
+     $.each(data, function(index, option){		
+       indicatortype_select.append($("<option></option>").attr("value", option.id).text(option.indicator_type));		
+     });		
+    });		
+
+    $.getJSON(`/api/level/?program=${program_id}`, function(data) {		
+     level_select.empty();		
+     $.each(data, function(index, option){		
+       level_select.append($("<option></option>").attr("value", option.id).text(option.name));		
+     });		
+    })
   });
 </script>

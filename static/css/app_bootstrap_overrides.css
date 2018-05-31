@@ -262,12 +262,24 @@ input[type="checkbox"].form-control:focus {
     transition:         all .2s ease;
 }
 
+/* overload dropdown menus */
+.dropdown-menu {
+    box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+}
+
 /* overload bootstrap-multiselect */
 .multiselect-native-select .btn-group { 
     width: 100%;
 }
+
+/* expand the caret */
+.btn-group.show .multiselect.dropdown-toggle::after {
+}
 .multiselect.btn {
-    display: block;
+    align-items: center;
+    color: #808080;
+    display: flex;
+    justify-content: space-between;
     text-align: left;
     width: 100%;
 }
@@ -276,10 +288,11 @@ input[type="checkbox"].form-control:focus {
 }
 .multiselect-container > li > a {
     display: block;
-    color: inherit;
+    color: #808080;
 }
 .multiselect-container > li > a:hover {
-  background: #DBDCDE;
+  background: #5897fb;
+  color: white;
 }
 .multiselect-container .input-group {
     width: auto;
