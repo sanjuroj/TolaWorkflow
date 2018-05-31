@@ -157,7 +157,11 @@
   $(document).ready(function () {
     // console.log(`{{ report_start_date }}`, `{{ report_end_date }}`);
     const site_profile = $("#id_site");
+    const indicators_select = $("#id_indicators");
     const numRecentPeriods = $("#id_numrecentperiods");
+    const sector_select = $("#id_sector");
+    const indicatortype_select = $("#id_ind_type");
+    const level_select = $("#id_level");
 
     const start_date_id = `{{ form.start_date.auto_id }}`;
     const end_date_id = `{{ form.end_date.auto_id }}`;
@@ -239,6 +243,35 @@
         });
       });
 
+      $.getJSON(`/api/indicator/?program=${program_id}`, function (data) {
+        indicators_select.empty();
+        $.each(data, function (index, option) {
+          // console.log(`${index}, ${option.id}=${option.name}`);
+          indicators_select.append($("<option></option>").attr("value", option.id).text(option.name));
+        });
+      });
+
+      $.getJSON(`/api/sector/?program=${program_id}`, function (data) {
+        sector_select.empty();
+        $.each(data, function (index, option) {
+          sector_select.append($("<option></option>").attr("value", option.id).text(option.sector));
+        });
+      });
+
+      $.getJSON(`/api/indicatortype/?program=${program_id}`, function (data) {
+        indicatortype_select.empty();
+        $.each(data, function (index, option) {
+          indicatortype_select.append($("<option></option>").attr("value", option.id).text(option.indicator_type));
+        });
+      });
+
+      $.getJSON(`/api/level/?program=${program_id}`, function (data) {
+        level_select.empty();
+        $.each(data, function (index, option) {
+          level_select.append($("<option></option>").attr("value", option.id).text(option.name));
+        });
+      })
+
     });
 
 
@@ -260,34 +293,5 @@
       numRecentPeriods.val(null);
     });
 
-
-    $.getJSON(`/api/indicator/?program=${program_id}`, function(data) {
-     indicators_select.empty();		
-     $.each(data, function (index, option) {		
-       // console.log(`${index}, ${option.id}=${option.name}`);		
-       indicators_select.append($("<option></option>").attr("value", option.id).text(option.name));		
-     });		
-    });		
-
-    $.getJSON(`/api/sector/?program=${program_id}`, function( data ) {		
-     sector_select.empty();		
-     $.each(data, function(index, option){		
-       sector_select.append($("<option></option>").attr("value", option.id).text(option.sector));		
-     });		
-    });		
-
-    $.getJSON(`/api/indicatortype/?program=${program_id}`, function( data ){		
-     indicatortype_select.empty();		
-     $.each(data, function(index, option){		
-       indicatortype_select.append($("<option></option>").attr("value", option.id).text(option.indicator_type));		
-     });		
-    });		
-
-    $.getJSON(`/api/level/?program=${program_id}`, function(data) {		
-     level_select.empty();		
-     $.each(data, function(index, option){		
-       level_select.append($("<option></option>").attr("value", option.id).text(option.name));		
-     });		
-    })
   });
 </script>
