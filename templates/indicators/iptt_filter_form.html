@@ -1,7 +1,11 @@
 {% load static %}
 {% load widget_tweaks %}
 {% load i18n %}
-
+<script>
+  {# emulate the appearance of multiselects BEFORE jquery loads to prevent an HTML flash #}
+  {# I’m doing this by way of a scrpt for the sake of users w/JS disabled #}
+  document.write('<style type="text/css">.bs-multiselect { background: white; border: 1px solid #808080; color: #808080; height: 38px; }</style>');
+</script>
 
 <style type="text/css">
   .ui-datepicker-calendar {
