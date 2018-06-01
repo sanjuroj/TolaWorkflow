@@ -162,6 +162,26 @@
     const indicatortype_select = $("#id_ind_type");
     const level_select = $("#id_level");
 
+    var multiselectOptions = {
+      includeSelectAllOption: true,
+      enableFiltering: true,
+      enableCaseInsensitiveFiltering: true,
+      maxHeight: 320,
+      buttonClass: 'btn form-control',
+      templates: {
+        filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
+        filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
+      }
+    }
+
+    level_select.multiselect(multiselectOptions);
+    indicatortype_select.multiselect(multiselectOptions);
+    sector_select.multiselect(multiselectOptions);
+    site_profile.multiselect(multiselectOptions);
+    indicators_select.multiselect(multiselectOptions);
+
+
+
     const start_date_id = `{{ form.start_date.auto_id }}`;
     const end_date_id = `{{ form.end_date.auto_id }}`;
     $(`#${start_date_id}`).val(formatDate($(`#${start_date_id}`).val()));
@@ -227,6 +247,7 @@
           // console.log(`${index}, ${option.id}=${option.name}`);
           site_profile.append($("<option></option>").attr("value", option.id).text(option.name));
         });
+        site_profile.multiselect('rebuild');
       });
 
       $.getJSON(`/api/indicator/?program=${program_id}`, function(data) {
@@ -235,6 +256,7 @@
          // console.log(`${index}, ${option.id}=${option.name}`);		
          indicators_select.append($("<option></option>").attr("value", option.id).text(option.name));		
        });		
+       indicators_select.multiselect('rebuild');
       });		
 
       $.getJSON(`/api/sector/?program=${program_id}`, function( data ) {		
@@ -242,6 +264,7 @@
        $.each(data, function(index, option){		
          sector_select.append($("<option></option>").attr("value", option.id).text(option.sector));		
        });		
+        sector_select.multiselect('rebuild');
       });		
 
       $.getJSON(`/api/indicatortype/?program=${program_id}`, function( data ){		
@@ -249,6 +272,7 @@
        $.each(data, function(index, option){		
          indicatortype_select.append($("<option></option>").attr("value", option.id).text(option.indicator_type));		
        });		
+       indicatortype_select.multiselect('rebuild');
       });		
 
       $.getJSON(`/api/level/?program=${program_id}`, function(data) {		
@@ -256,6 +280,7 @@
        $.each(data, function(index, option){		
          level_select.append($("<option></option>").attr("value", option.id).text(option.name));		
        });		
+       level_select.multiselect('rebuild');
       })
 
     });
@@ -275,21 +300,6 @@
       $("input[type=radio][name='timeframe']").prop("checked", false);
       numRecentPeriods.val(null);
     });
-
-    /*
-    $('.bs-multiselect').multiselect({
-      includeSelectAllOption: true,
-      enableFiltering: true,
-      enableCaseInsensitiveFiltering: true,
-      maxHeight: 320,
-      buttonClass: 'btn form-control',
-      templates: {
-        filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
-        filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
-      }
-    });
-    */
-
 
   });
 </script>
