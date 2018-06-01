@@ -606,7 +606,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 #filter-top {
-    background-color: #808080!important;
+    background-color: #54585A!important;
     color:#fff;
     /* margin-bottom: -20px; */
 }
@@ -632,6 +632,10 @@ input[type=number]::-webkit-outer-spin-button {
     font-size: .875rem;
     min-width: 330px;
     max-width: 330px;
+}
+#id_form_indicator_filter .col-form-label {
+  display: block;
+  padding-bottom: calc(.1875rem + 1px); /* TODO: this should be applied universally but regressions */
 }
 
 .filter-form-padding-10 {
