@@ -242,11 +242,10 @@ class IPTTReportFilterForm(ReportFormCommon):
     site = forms.ModelMultipleChoiceField(queryset=SiteProfile.objects.none(), required=False, label=_('SITE'))
     indicators = forms.ModelMultipleChoiceField(
         queryset=Indicator.objects.none(), required=False, label=_('SELECT INDICATORS'))
-    start_date = forms.DateField(label=_('START'))
-    end_date = forms.DateField(label=_('END'))
 
     def __init__(self, *args, **kwargs):
         program = kwargs.pop('program')
+        start_date_ranges = kwargs.get('initial').get('period_choices')
         super(IPTTReportFilterForm, self).__init__(*args, **kwargs)
         del self.fields['formprefix']
         level_ids = Indicator.objects.filter(program__in=[program.id]).values(
@@ -261,3 +260,7 @@ class IPTTReportFilterForm(ReportFormCommon):
         self.fields['ind_type'].queryset = IndicatorType.objects.filter(id__in=ind_type_ids).distinct()
         self.fields['site'].queryset = program.get_sites()
         self.fields['indicators'].queryset = Indicator.objects.filter(program=program)
+
+        # Start and end periods dropdowns are updated dynamically
+        self.fields['start_period'] = forms.ChoiceField(choices=start_date_ranges, label=_("START"))
+        self.fields['end_period'] = forms.ChoiceField(choices=start_date_ranges, label=_("END"))

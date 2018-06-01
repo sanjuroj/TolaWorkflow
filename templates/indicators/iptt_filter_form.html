@@ -55,42 +55,19 @@
           {% render_field form.numrecentperiods placeholder="" disabled="true" class+="form-control" %}
         </div>
       </div>
-      <div class="form-row mb-3">
-        <div class="col">
-          <label for="{{ form.start_date.auto_id }}" class="col-form-label">
-            {{ form.start_date.label }}
-          </label>
-          <div class="input-group input-group-sm">
-            <input type="text"
-                   name="{{ form.start_date.name }}"
-                   class="form-control"
-                   value="{{ form.start_date.value }}"
-                   id="{{ form.start_date.auto_id }}">
-            <div class="input-group-append">
-              <span class="input-group-text" id="id_span_start_date_calendar">
-                <i class="fas fa-calendar-alt"></i>
-              </span>
-            </div>
-          </div>
-        </div>
 
-        <div class="col">
-          <label for="{{ form.end_date.auto_id }}" class="col-form-label">
-            {{ form.end_date.label }}
-          </label>
-          <div class="input-group input-group-sm">
-            <input type="text"
-                 name="{{ form.end_date.name }}"
-                 class="form-control"
-                 value="{{ form.end_date.value }}"
-                 id="{{ form.end_date.auto_id }}">
-            <div class="input-group-append">
-              <span class="input-group-text" id="id_span_end_date_calendar">
-                <i class="fas fa-calendar-alt"></i>
-              </span>
-            </div>
-          </div>
-        </div>
+      <div class="form-row mb-3" id="id_div_program">
+        <label for="{{ form.start_period.auto_id }}" class="col-form-label">
+          {{ form.start_period.label }}
+        </label>
+        {% render_field form.start_period class+="form-control" %}
+      </div>
+
+      <div class="form-row mb-3" id="id_div_program">
+        <label for="{{ form.end_period.auto_id }}" class="col-form-label">
+          {{ form.end_period.label }}
+        </label>
+        {% render_field form.end_period class+="form-control" %}
       </div>
     </div>
 
@@ -163,10 +140,10 @@
     const indicatortype_select = $("#id_ind_type");
     const level_select = $("#id_level");
 
-    const start_date_id = `{{ form.start_date.auto_id }}`;
-    const end_date_id = `{{ form.end_date.auto_id }}`;
-    $(`#${start_date_id}`).val(formatDate($(`#${start_date_id}`).val()));
-    $(`#${end_date_id}`).val(formatDate($(`#${end_date_id}`).val()));
+    const start_period_id = `{{ form.start_period.auto_id }}`;
+    const end_period_id = `{{ form.end_period.auto_id }}`;
+    $(`#${start_period_id}`).val(formatDate($(`#${start_period_id}`).val()));
+    $(`#${end_period_id}`).val(formatDate($(`#${end_period_id}`).val()));
 
     $('.bs-multiselect').multiselect({
       includeSelectAllOption: true,
@@ -179,58 +156,6 @@
         filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
       }
     });
-
-    $(`#${start_date_id}, #${end_date_id}`).datepicker({
-      changeMonth: true,
-      changeYear: true,
-      showButtonPanel: true,
-      dateFormat: 'M d, yy',
-      onClose: function (dateText, inst) {
-        const month = inst.selectedMonth;
-        const year = inst.selectedYear;
-        const existingDate = $(this).val();
-        let newDate;
-        if (this.id == start_date_id) {
-          newDate = formatDate(new Date(year, month, 1));
-        } else {
-          newDate = formatDate(new Date(year, month + 1, 0));
-        }
-        if (existingDate != newDate) {
-          $(this).change();
-        }
-        $(this).datepicker('setDate', newDate);
-
-      },
-      beforeShow: function (input, inst) {
-        if ((datestr = $(this).val()).length > 0) {
-          year = datestr.substring(datestr.length - 4, datestr.length);
-          month = jQuery.inArray(datestr.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
-          let newDate;
-          if (this.id == start_date_id) {
-            newDate = new Date(year, month, 1);
-          } else {
-            newDate = new Date(year, month + 1, 0);
-          }
-          $(this).datepicker('option', 'defaultDate', newDate);
-          $(this).datepicker('setDate', newDate);
-        }
-        const other = this.id == start_date_id ? `#${end_date_id}` : `#${start_date_id}`;
-        const option = this.id == start_date_id ? "maxDate" : "minDate";
-        $(`#${start_date_id}`).datepicker("option", "minDate", new Date(`{{report_start_date}}`));
-        $(`#${end_date_id}`).datepicker("option", "maxDate", new Date(`{{report_end_date}}`));
-        if ((selectedDate = $(other).val()).length > 0) {
-          year = selectedDate.substring(selectedDate.length - 4, selectedDate.length);
-          month = jQuery.inArray(selectedDate.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
-          // $(this).datepicker("option", option, new Date(year, month, 1));
-          if (this.id == start_date_id) {
-            $(this).datepicker("option", option, new Date(year, month, 1));
-          } else {
-            $(this).datepicker("option", option, new Date(year, month + 1, 0));
-          }
-        }
-      },
-    });
-
 
     $("#id_form_indicator_filter").on("input", "#id_program", function (e) {
       const program_id = $(this).val();
