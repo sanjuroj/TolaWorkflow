@@ -4,7 +4,7 @@ from dateutil import rrule, parser
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
-from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max
+from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Min, Max
 from django.views.generic import TemplateView, FormView
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect
@@ -106,8 +106,8 @@ class IPTT_ReportView(TemplateView):
     MONTHS_PER_YEAR = 12
 
     def __init__(self, **kwars):
-        self.program = None
         self.annotations = {}
+        self.reporttype = None
         self.filter_form_initial_data = {}
 
     @staticmethod
@@ -143,7 +143,6 @@ class IPTT_ReportView(TemplateView):
             return 0
 
     def _get_first_period(self, start_date, num_months_in_period):
-        # TODO: Delete it
         if start_date is None:
             num_months_in_period = 0
 
@@ -361,6 +360,7 @@ class IPTT_ReportView(TemplateView):
         return num_periods
 
     def _generate_targetperiods(self, program, period, num_recents):
+        date_ranges = []
         targetperiods = OrderedDict()
         today = datetime.today().date()
         # today = datetime.strptime('2020-02-23', '%Y-%m-%d').date()
@@ -372,6 +372,9 @@ class IPTT_ReportView(TemplateView):
         ind = Indicator.objects.filter(program__in=[program.id], target_frequency=period).first()
         periodic_targets = PeriodicTarget.objects.filter(indicator=ind)\
             .values("id", "period", "target", "start_date", "end_date")
+
+        date_ranges.append(program.reporting_period_start)
+        date_ranges.append(program.reporting_period_end)
 
         try:
             start_date = parser.parse(self.filter_form_initial_data['start_date']).date()
@@ -396,65 +399,68 @@ class IPTT_ReportView(TemplateView):
 
             # convert to oredered dictionary to preserve order (IMPORTANT!)
             targetperiods = OrderedDict((k, v) for k, v in most_recent_targetperiods)
-        return targetperiods
+        return (date_ranges, targetperiods)
 
-    def _generate_timeperiods(self, filter_start_date, filter_end_date, frequency, show_all, num_recents):
+    def _generate_timeperiods(self, period_start_date, period, num_periods, num_recents):
+        """
+        Create date ranges for time-periods.
+        """
         timeperiods = OrderedDict()
         today_date = datetime.today().date()
         # today_date = datetime.strptime('2020-02-23', '%Y-%m-%d').date()
+        if period_start_date is None:
+            return timeperiods
 
-        period_name = self._get_period_name(frequency)
-        num_months_in_period = self._get_num_months(frequency)
+        period_name = self._get_period_name(period)
+        num_months_in_period = self._get_num_months(period)
 
         # Get the first day of the period that encomposses today's date
-        current_period_start = today_date.replace(month=self.program.reporting_period_start.month, day=1)
+        today = self._get_first_period(today_date, num_months_in_period)
 
         # Now calculate the last day of the current period that encompasses today's date
-        current_period_end = current_period_start + relativedelta(months=+num_months_in_period)
-
-        num_periods = self._get_num_periods(self.program.reporting_period_start,
-                                            self.program.reporting_period_end, frequency)
-
-        start_date = self.program.reporting_period_start
+        today = today + relativedelta(months=+num_months_in_period)
 
         # bump up num_periods by 1 because the loop starts from 1 instead of 0
         num_periods += 1
+
+        # calculate each period's start and end date
         for i in range(1, num_periods):
             if i > 1:
                 # if it is not the first period then advance the
-                # start_date by the correct number of months.
-                start_date = start_date + relativedelta(months=+num_months_in_period)
+                # period_start_date by the correct number of months.
+                period_start_date = period_start_date + relativedelta(months=+num_months_in_period)
 
-            end_date = start_date + relativedelta(months=+num_months_in_period) + relativedelta(days=-1)
-            # print('start_date={}, end_date={}'.format(start_date, end_date))
-            timeperiods["{} {}".format(period_name, i)] = [start_date, end_date]
+            period_end_date = period_start_date + \
+                relativedelta(months=+num_months_in_period) + relativedelta(days=-1)
 
-        # Update the report_end_date with the last reporting_period's end_date
-        try:
-            report_end_date = timeperiods[timeperiods.keys()[-1]][1]
-        except TypeError:
-            report_end_date = self.program.reporting_period_end
+            timeperiods["{} {}".format(period_name, i)] = [period_start_date, period_end_date]
 
-        if num_recents is not None and num_recents > 0:
+        if (num_recents is not None and num_recents > 0):
             # filter out those timeperiods whose end_dates are larger than today's date
-            timeperiods_less_than_today = filter(lambda v: v[1][1] < current_period_end, timeperiods.items())
+            timeperiods_less_than_today = filter(lambda v: v[1][1] < today, timeperiods.items())
 
             # filter out dates that are outside of the most_recent index specified by user
             most_recent_timeperiods = timeperiods_less_than_today[(len(timeperiods_less_than_today)-num_recents):]
 
             # convert to oredered dictionary to preserve order (IMPORTANT!)
             timeperiods = OrderedDict((k, v) for k, v in most_recent_timeperiods)
-        elif show_all == 0 and filter_start_date is not None and filter_end_date is not None:
-            filtered_timeperiods = OrderedDict()
-            for k, v in timeperiods.items():
-                start_date = v[0]
-                end_date = v[1]
-                # print("start_date:{}, filter_start_date:{}, filter_end_date:{}, end_date:{}".format(start_date, filter_start_date, filter_end_date, end_date))
-                if start_date >= filter_start_date and filter_end_date >= end_date:
-                    filtered_timeperiods[k] = [start_date, end_date]
-            return (report_end_date, filtered_timeperiods)
+        return timeperiods
 
-        return (report_end_date, timeperiods)
+    def _get_date_range_n_numperiods(self, reporttype, program, period):
+        if period == Indicator.LOP or period == Indicator.MID_END:
+            return (None, None, None)
+
+        # indicators = Indicator.objects.filter(program__in=[program_id]).values('id')
+        if reporttype == self.REPORT_TYPE_TIMEPERIODS:
+            start_date = program.reporting_period_start
+            end_date = program.reporting_period_end
+
+            # get the number of periods in this date range
+            num_periods = self._get_num_periods(start_date, end_date, period)
+        else:
+            start_date, end_date, num_periods = (None, None, 0)
+
+        return (start_date, end_date, num_periods)
 
     def _update_filter_form_initial(self, formdata):
         self.filter_form_initial_data = {}
@@ -646,7 +652,7 @@ class IPTT_ReportView(TemplateView):
         program_id = kwargs.get('program_id')
 
         try:
-            self.program = Program.objects.get(pk=program_id)
+            program = Program.objects.get(pk=program_id)
         except Program.DoesNotExist:
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid program."))
@@ -665,11 +671,6 @@ class IPTT_ReportView(TemplateView):
         except KeyError:
             num_recents = 0
 
-        try:
-            show_all = self.filter_form_initial_data['timeframe']
-        except KeyError:
-            show_all = 0
-
         # calculate aggregated actuals (sum, avg, last) per reporting period
         # (monthly, quarterly, tri-annually, seminu-annualy, and yearly) for each indicator
         lastlevel = Level.objects.filter(indicator__id=OuterRef('pk')).order_by('-id')
@@ -685,37 +686,19 @@ class IPTT_ReportView(TemplateView):
                 'direction_of_change', 'unit_of_measure_type', 'is_cumulative', 'baseline', 'baseline_na',
                 'lop_target', 'actualsum', 'actualavg', 'lastdata', 'lastlevelcustomsort')
 
-        report_start_date = self.program.reporting_period_start
-        report_end_date = self.program.reporting_period_end
-
-        try:
-            start_date = datetime.strptime(
-                self.filter_form_initial_data.get('start_date'), "%b %d, %Y").date()
-            start_date = start_date.replace(month=report_start_date.month, day=1)
-        except TypeError:
-            # there is no start date specified so use the program start date
-            start_date = report_start_date
-
-        try:
-            end_date = datetime.strptime(
-                self.filter_form_initial_data.get('end_date'), "%b %d, %Y").date()
-            end_date = end_date.replace(month=report_end_date.month)
-        except TypeError:
-            # end_date is not specified in the filter form
-            end_date = report_end_date
-
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            # Update the report_end_date to make sure it ends with the last period's end_date
-            # Also, get the all of the periodic date ranges based on the selected period
-            report_end_date, periods_date_ranges = self._generate_timeperiods(
-                start_date, end_date, period, show_all, num_recents)
-            # Get the last period's end_date
-            last_filtered_period_date = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
-            # update the end_date with the last period's end_date to show in the tile and filter from
-            end_date = end_date.replace(month=last_filtered_period_date.month, day=last_filtered_period_date.day)
-            self.filter_form_initial_data['end_date'] = end_date
+            report_start_date, report_end_date, num_periods = self._get_date_range_n_numperiods(
+                reporttype, program, period)
+            periods_date_ranges = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
+            try:
+                report_end_date = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
+            except IndexError:
+                report_end_date = None
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
-            periods_date_ranges = self._generate_targetperiods(self.program, period, num_recents)
+            date_ranges, periods_date_ranges = self._generate_targetperiods(program, period, num_recents)
+            report_start_date = date_ranges[0]
+            report_end_date = date_ranges[1]
+
             indicators = indicators.filter(target_frequency=period)
         else:
             context['redirect'] = reverse_lazy('iptt_quickstart')
@@ -725,19 +708,16 @@ class IPTT_ReportView(TemplateView):
         self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
         # update the queryset with annotations for timeperiods
         indicators = indicators.annotate(**self.annotations).order_by('lastlevelcustomsort', 'number', 'name')
+
         indicators = self.prepare_indicators(reporttype, period, periods_date_ranges, indicators)
 
-        # Update the filter form's start_date and end_date values.
-        self.filter_form_initial_data['start_date'] = start_date
-        self.filter_form_initial_data['end_date'] = end_date
-
-        context['start_date'] = start_date.strftime("%b %d, %Y")
-        context['end_date'] = end_date.strftime("%b %d, %Y")
+        context['start_date'] = report_start_date
+        context['end_date'] = report_end_date
         context['report_start_date'] = report_start_date
         context['report_end_date'] = report_end_date
         context['report_date_ranges'] = periods_date_ranges
         context['indicators'] = indicators
-        context['program'] = self.program
+        context['program'] = program
         context['reporttype'] = reporttype
         return context
 
@@ -747,11 +727,11 @@ class IPTT_ReportView(TemplateView):
         # shows the program reporting start_date
         if 'start_date' not in self.filter_form_initial_data \
                 or self.filter_form_initial_data['start_date'] in ['None', None, '']:
-            self.filter_form_initial_data['start_date'] = context['report_start_date']
+            self.filter_form_initial_data['start_date'] = context['start_date']
 
         if 'end_date' not in self.filter_form_initial_data \
                 or self.filter_form_initial_data['end_date'] in ['None', None, '']:
-            self.filter_form_initial_data['end_date'] = context['report_end_date']
+            self.filter_form_initial_data['end_date'] = context['end_date']
 
         form_kwargs = {'request': request, 'program': context['program']}
         context['form'] = IPTTReportFilterForm(initial=self.filter_form_initial_data, **form_kwargs)

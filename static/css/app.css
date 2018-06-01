@@ -60,10 +60,6 @@ body {
     padding-right: 1.75rem;
 }
 
-.paddingleft-125 {
-    padding-left: 1.25rem;
-}
-
 .marginbottom-225 {
     margin-bottom: 2.25rem;
 }
@@ -577,31 +573,10 @@ input[type=number]::-webkit-outer-spin-button {
 /* BEGIN datepicker styling */
 
 .month-only .ui-datepicker-calendar {
-    display: none;
+  display: none;
 }
 
 /* END datepicker styling */
-
-
-/* BEGIN reporting date modal styling */
-
-#div_reporting_dates .div-rpt-date-input {
-    display: inline-block;
-}
-
-#div_reporting_dates .div-rpt-date-input .input-group-text{
-    border-color: #B8BABD;
-}
-
-#div_reporting_dates .div-rpt-date-input input{
-    width: 10rem;
-}
-
-/* END reporting date modal styling */
-
-
-
-
 
 .blink {
     animation: blink 2s linear infinite;
@@ -821,7 +796,7 @@ input[type=number]::-webkit-outer-spin-button {
     width: 40px;
 }
 .sidebar-toggle a {
-    background-color:#00A49F;
+    background-color:#00A49F; 
     color: white;
     display: block;
     font-size: 1.25rem;
