@@ -277,7 +277,7 @@ input[type="checkbox"].form-control:focus {
 }
 .multiselect.btn {
     align-items: center;
-    color: #808080;
+    color: #444;
     display: flex;
     justify-content: space-between;
     text-align: left;
@@ -288,7 +288,7 @@ input[type="checkbox"].form-control:focus {
 }
 .multiselect-container > li > a {
     display: block;
-    color: #808080;
+    color: #444;
 }
 .multiselect-container > li > a:hover {
   background: #5897fb;
@@ -312,4 +312,15 @@ input[type="checkbox"].form-control:focus {
     padding-right: 0.75rem;
 }
 
-/* Form labels */
+/* Select 2 overloads */
+.select2-container--default .select2-selection--single {
+  border-radius: 0px !important;
+  height: 38px !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 38px !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 38px !important;
+}
+
