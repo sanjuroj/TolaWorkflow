@@ -299,6 +299,7 @@ input[type="checkbox"].form-control:focus {
 }
 .multiselect-container > li > a > label {
     text-indent: -20px;
+    display: block;
 }
 .multiselect-container > li > a > label.radio {
   text-indent: 0;
