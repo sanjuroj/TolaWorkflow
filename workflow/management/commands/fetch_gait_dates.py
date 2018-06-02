@@ -117,7 +117,7 @@ class Command(BaseCommand):
                     else:
                         multi_date_programs.append(prog_string)
 
-                    program.reporting_period_start = unique_start_dates[0]
+                    program.reporting_period_start = sorted(unique_start_dates)[0]
 
                     if program.end_date is not None:
                         next_month = program.end_date.replace(day=28) + datetime.timedelta(days=4)
