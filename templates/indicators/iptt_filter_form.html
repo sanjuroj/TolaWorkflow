@@ -2,8 +2,8 @@
 {% load widget_tweaks %}
 {% load i18n %}
 <script>
-  {# emulate the appearance of multiselects BEFORE jquery loads to prevent an HTML flash #}
-  {# I’m doing this by way of a scrpt for the sake of users w/JS disabled #}
+  // emulate the appearance of multiselects BEFORE jquery loads to prevent an HTML flash #}
+  // I’m doing this by way of a scrpt for the sake of users w/JS disabled #}
   document.write('<style type="text/css">.bs-multiselect { background: white; border: 1px solid #808080; color: #808080; height: 38px; }</style>');
 </script>
 
@@ -147,7 +147,7 @@
     const end_period_id = `{{ form.end_period.auto_id }}`;
     $(`#${start_period_id}`).val(formatDate($(`#${start_period_id}`).val()));
     $(`#${end_period_id}`).val(formatDate($(`#${end_period_id}`).val()));
-    
+
     var multiselectOptions = {
       includeSelectAllOption: true,
       enableFiltering: true,
@@ -186,35 +186,35 @@
       });
 
       $.getJSON(`/api/indicator/?program=${program_id}`, function(data) {
-       indicators_select.empty();		
-       $.each(data, function (index, option) {		
-         // console.log(`${index}, ${option.id}=${option.name}`);		
-         indicators_select.append($("<option></option>").attr("value", option.id).text(option.name));		
-       });		
+       indicators_select.empty();
+       $.each(data, function (index, option) {
+         // console.log(`${index}, ${option.id}=${option.name}`);
+         indicators_select.append($("<option></option>").attr("value", option.id).text(option.name));
+       });
        indicators_select.multiselect('rebuild');
-      });		
+      });
 
-      $.getJSON(`/api/sector/?program=${program_id}`, function( data ) {		
-       sector_select.empty();		
-       $.each(data, function(index, option){		
-         sector_select.append($("<option></option>").attr("value", option.id).text(option.sector));		
-       });		
+      $.getJSON(`/api/sector/?program=${program_id}`, function( data ) {
+       sector_select.empty();
+       $.each(data, function(index, option){
+         sector_select.append($("<option></option>").attr("value", option.id).text(option.sector));
+       });
         sector_select.multiselect('rebuild');
-      });		
+      });
 
-      $.getJSON(`/api/indicatortype/?program=${program_id}`, function( data ){		
-       indicatortype_select.empty();		
-       $.each(data, function(index, option){		
-         indicatortype_select.append($("<option></option>").attr("value", option.id).text(option.indicator_type));		
-       });		
+      $.getJSON(`/api/indicatortype/?program=${program_id}`, function( data ){
+       indicatortype_select.empty();
+       $.each(data, function(index, option){
+         indicatortype_select.append($("<option></option>").attr("value", option.id).text(option.indicator_type));
+       });
        indicatortype_select.multiselect('rebuild');
-      });		
+      });
 
-      $.getJSON(`/api/level/?program=${program_id}`, function(data) {		
-       level_select.empty();		
-       $.each(data, function(index, option){		
-         level_select.append($("<option></option>").attr("value", option.id).text(option.name));		
-       });		
+      $.getJSON(`/api/level/?program=${program_id}`, function(data) {
+       level_select.empty();
+       $.each(data, function(index, option){
+         level_select.append($("<option></option>").attr("value", option.id).text(option.name));
+       });
        level_select.multiselect('rebuild');
       })
 
@@ -223,11 +223,14 @@
 
     // everytime the radio buttons value changes, lock or unlock
     $("#id_form_indicator_filter").on("change", "input[type=radio][name='timeframe']", function (e) {
-      if ($(e.target).val() == 2) {
+      const timeframe = $(e.target).val();
+      if (timeframe == 2) {
         numRecentPeriods.attr("disabled", false);
-      } else {
+      } else if (timeframe == 1) {
         numRecentPeriods.val(null);
         numRecentPeriods.attr("disabled", true);
+        $(`#${start_date_id}`).val(formatDate(`{{ report_start_date }}`));
+        $(`#${end_date_id}`).val(formatDate(`{{ report_end_date }}`));
       }
     });
 

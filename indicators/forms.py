@@ -221,7 +221,6 @@ class ReportFormCommon(forms.Form):
         self.fields['numrecentperiods'].widget.attrs['placeholder'] = _("enter a number")
         self.fields['targetperiods'].label = _("TARGET PERIODS")
         self.fields['program'].queryset = Program.objects.filter(country__in=countries).exclude(indicator=None)
-        self.fields['timeframe'].initial = self.SHOW_ALL
 
 
 class IPTTReportQuickstartForm(ReportFormCommon):
@@ -233,6 +232,7 @@ class IPTTReportQuickstartForm(ReportFormCommon):
         self.prefix = prefix if prefix is not None else self.prefix
         super(IPTTReportQuickstartForm, self).__init__(*args, **kwargs)
         self.fields['formprefix'].initial = self.prefix
+        self.fields['timeframe'].initial = self.SHOW_ALL
 
 
 class IPTTReportFilterForm(ReportFormCommon):
