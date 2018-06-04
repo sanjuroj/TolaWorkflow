@@ -56,7 +56,7 @@
           {% endwith %}
         {% endfor %}
         <div class="col-sm-4">
-          {% render_field form.numrecentperiods placeholder="" disabled="true" class+="form-control" %}
+          {% render_field form.numrecentperiods placeholder="" class+="form-control" %}
         </div>
       </div>
 
@@ -139,6 +139,8 @@
     const site_profile = $("#id_site");
     const indicators_select = $("#id_indicators");
     const numRecentPeriods = $("#id_numrecentperiods");
+    const checkShowAllPeriods = $("#id_timeframe_0");
+    const checkFilterPeriods = $("#id_timeframe_1");
     const sector_select = $("#id_sector");
     const indicatortype_select = $("#id_ind_type");
     const level_select = $("#id_level");
@@ -216,17 +218,19 @@
     });
 
 
-    // everytime the radio buttons value changes, lock or unlock
-    $("#id_form_indicator_filter").on("change", "input[type=radio][name='timeframe']", function (e) {
-      const timeframe = $(e.target).val();
-      if (timeframe == 2) {
-        numRecentPeriods.attr("disabled", false);
-      } else if (timeframe == 1) {
-        numRecentPeriods.val(null);
-        numRecentPeriods.attr("disabled", true);
-        $(`#${start_date_id}`).val(formatDate(`{{ report_start_date }}`));
-        $(`#${end_date_id}`).val(formatDate(`{{ report_end_date }}`));
-      }
+
+    // Behaviors for "most recent" field
+    // Clicking on the text box selects the associated radio button
+    numRecentPeriods.on('focus', function(e){
+      checkFilterPeriods.prop('checked', true);
+    });
+    // clicking on "show all" zeroes the field
+    checkShowAllPeriods.on('change', function(e){
+      numRecentPeriods.val('');
+    });
+    // clicking on "most recent" focuses the field
+    checkFilterPeriods.on('change', function(e){
+      numRecentPeriods.focus();
     });
 
     $("#id_form_indicator_filter").on("change", "#id_start_date, #id_end_date", function(e){
