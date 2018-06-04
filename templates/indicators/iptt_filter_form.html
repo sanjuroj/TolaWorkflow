@@ -2,8 +2,8 @@
 {% load widget_tweaks %}
 {% load i18n %}
 <script>
-  // emulate the appearance of multiselects BEFORE jquery loads to prevent an HTML flash #}
-  // I’m doing this by way of a scrpt for the sake of users w/JS disabled #}
+  // emulate the appearance of multiselects BEFORE jquery loads to prevent an HTML flash
+  // I’m doing this by way of a scrpt for the sake of users w/JS disabled
   document.write('<style type="text/css">.bs-multiselect { background: white; border: 1px solid #808080; color: #808080; height: 38px; }</style>');
 </script>
 
@@ -167,11 +167,6 @@
     indicators_select.multiselect(multiselectOptions);
 
 
-
-    const start_date_id = `{{ form.start_date.auto_id }}`;
-    const end_date_id = `{{ form.end_date.auto_id }}`;
-    $(`#${start_date_id}`).val(formatDate($(`#${start_date_id}`).val()));
-    $(`#${end_date_id}`).val(formatDate($(`#${end_date_id}`).val()));
 
     $("#id_form_indicator_filter").on("input", "#id_program", function (e) {
       const program_id = $(this).val();
