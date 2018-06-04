@@ -107,8 +107,8 @@
 
                         <ul class="navbar-nav ml-auto">
                             {% if user.is_authenticated  %}
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarProfileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <li class="nav-item">
+                                  <a class="nav-link" href="{% url 'profile' %}">
                                         {% if "demo" in request.build_absolute_uri %}
                                             <span class="badge badge-danger">DEMO SERVER</span>
                                         {% elif  "127." in request.build_absolute_uri %}
@@ -122,17 +122,14 @@
                                         {% endif %}
                                         {{ user.tola_user.name }}
                                     </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarProfileDropdown">
-                                        <a class="dropdown-item" id="id_profile_link" href="{% url 'profile' %}">{% trans Profile %}</a>
-                                        <a class="dropdown-item" id="id_profile_link2" href="{% url 'profile' %}">{{ user.tola_user.countries_list }}</a>
-                                    </div>
                                 </li>
                             {% else %}
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="nvarbarLoginDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      Log in
                                     </a>
-                                    <div class="dropdown-menu" aria-labelledby="nvarbarLoginDropdown">
-                                        {% if report_server == True or non_ldap == True%}
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="nvarbarLoginDropdown">
+                                        {% if report_server == True or non_ldap == True %}
                                             <div class="social-buttons">
                                                 <a class="dropdown-item" id="id_socialloginLink" href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-go"><i class="fa fa-google"></i> Google</a>
                                             </div>
