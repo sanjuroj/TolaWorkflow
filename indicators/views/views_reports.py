@@ -370,7 +370,7 @@ class IPTT_ReportView(TemplateView):
         # get the first indicator that is within this program and have the same target_frequency(period)
         # and fetch the related set of periodic_targets
         ind = Indicator.objects.filter(program__in=[program.id], target_frequency=period).first()
-        periodic_targets = PeriodicTarget.objects.filter(indicator=ind)\
+        periodic_targets = PeriodicTarget.objects.filter(indicator=ind) \
             .values("id", "period", "target", "start_date", "end_date")
 
         date_ranges.append(program.reporting_period_start)
@@ -686,14 +686,51 @@ class IPTT_ReportView(TemplateView):
                 'direction_of_change', 'unit_of_measure_type', 'is_cumulative', 'baseline', 'baseline_na',
                 'lop_target', 'actualsum', 'actualavg', 'lastdata', 'lastlevelcustomsort')
 
+
+        report_start_date = self.program.reporting_period_start
+        report_end_date = self.program.reporting_period_end
+
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            report_start_date, report_end_date, num_periods = self._get_date_range_n_numperiods(
-                reporttype, program, period)
-            periods_date_ranges = self._generate_timeperiods(report_start_date, period, num_periods, num_recents)
-            try:
-                report_end_date = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
-            except IndexError:
-                report_end_date = None
+            # Update the report_end_date to make sure it ends with the last period's end_date
+            # Also, get the all of the periodic date ranges based on the selected period
+            report_end_date, periods_date_ranges = self._generate_timeperiods(
+                report_start_date, report_end_date, period, show_all, num_recents)
+            # Get the last period's end_date
+            # last_filtered_period_date = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
+
+            # update the end_date with the last period's end_date to show in the tile and filter from
+            # end_date = end_date.replace(month=last_filtered_period_date.month, day=last_filtered_period_date.day)
+
+            start_date_choices = []
+            choices = []
+            for i, name in enumerate(periods_date_ranges):
+                start = periods_date_ranges[name][0]
+                if i == 0:
+                    prev_start = start
+
+                if period != Indicator.ANNUAL and start.year != prev_start.year:
+                    start_date_choices.append((prev_start.year, tuple(choices)))
+                    prev_start = start
+                    choices = []
+
+                key = "{}_{}".format(periods_date_ranges[name][0], periods_date_ranges[name][1])
+                if period == Indicator.MONTHLY:
+                    value = "{}".format(
+                        datetime.strftime(periods_date_ranges[name][0], "%b %Y")
+                    )
+                else:
+                    value = "{} ({}-{})".format(
+                        name,
+                        datetime.strftime(periods_date_ranges[name][0], "%b %d, %Y"),
+                        datetime.strftime(periods_date_ranges[name][1], "%b %d, %Y")
+                    )
+                choices.append((key, value))
+
+            if period == Indicator.ANNUAL:
+                start_date_choices = choices
+
+            self.filter_form_initial_data['period_choices'] = tuple(start_date_choices)
+
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
             date_ranges, periods_date_ranges = self._generate_targetperiods(program, period, num_recents)
             report_start_date = date_ranges[0]
@@ -708,11 +745,10 @@ class IPTT_ReportView(TemplateView):
         self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
         # update the queryset with annotations for timeperiods
         indicators = indicators.annotate(**self.annotations).order_by('lastlevelcustomsort', 'number', 'name')
-
         indicators = self.prepare_indicators(reporttype, period, periods_date_ranges, indicators)
 
-        context['start_date'] = report_start_date
-        context['end_date'] = report_end_date
+        context['start_date'] = ''
+        context['end_date'] = ''
         context['report_start_date'] = report_start_date
         context['report_end_date'] = report_end_date
         context['report_date_ranges'] = periods_date_ranges
@@ -723,15 +759,6 @@ class IPTT_ReportView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        # if user has not specified a start_date/enddates already then set it so the filter form
-        # shows the program reporting start_date
-        if 'start_date' not in self.filter_form_initial_data \
-                or self.filter_form_initial_data['start_date'] in ['None', None, '']:
-            self.filter_form_initial_data['start_date'] = context['start_date']
-
-        if 'end_date' not in self.filter_form_initial_data \
-                or self.filter_form_initial_data['end_date'] in ['None', None, '']:
-            self.filter_form_initial_data['end_date'] = context['end_date']
 
         form_kwargs = {'request': request, 'program': context['program']}
         context['form'] = IPTTReportFilterForm(initial=self.filter_form_initial_data, **form_kwargs)
