@@ -342,7 +342,7 @@ class PeriodicTargetView(View):
 
         if request.GET.get('existingTargetsOnly'):
             pts = FlatJsonSerializer().serialize(
-                indicator.periodictarget_set.all()
+                indicator.periodictargets.all()
                 .order_by('customsort', 'create_date', 'period'))
 
             return HttpResponse(pts)
@@ -440,7 +440,7 @@ class IndicatorUpdate(UpdateView):
             indicator = self.get_object()
             if indicator.target_frequency and \
                     indicator.target_frequency != 1 and \
-                    not indicator.periodictarget_set.count():
+                    not indicator.periodictargets.count():
                 indicator.target_frequency = None
                 indicator.target_frequency_start = None
                 indicator.target_frequency_num_periods = 1
@@ -667,7 +667,7 @@ class PeriodicTargetDeleteView(DeleteView):
         # super(PeriodicTargetDeleteView).delete(request, args, kwargs)
         indicator = self.get_object().indicator
         self.get_object().delete()
-        if indicator.periodictarget_set.count() == 0:
+        if indicator.periodictargets.count() == 0:
             indicator.target_frequency = None
             indicator.target_frequency_num_periods = 1
             indicator.target_frequency_start = None
@@ -1132,7 +1132,7 @@ def program_indicators_json(request, program, indicator, type):
     indicators = Indicator.objects \
         .select_related('sector') \
         .prefetch_related('collecteddata_set', 'indicator_type', 'level',
-                          'periodictarget_set') \
+                          'periodictargets') \
         .filter(**q) \
         .annotate(data_count=Count('collecteddata'),
                   levelmin=Min('level__customsort')) \
