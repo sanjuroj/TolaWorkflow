@@ -1,8 +1,9 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% block bread_crumb %}
 <div>
 <ol class="breadcrumb">
-  <li><a href="/workflow/dashboard/0/">Program Index</a></li>
+  <li><a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a></li>
   <li class="active">Project Dashboard</li>
 </ol>
 </div>

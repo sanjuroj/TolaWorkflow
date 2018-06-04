@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load group_tag %}
 {% block bread_crumb %}
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item">
-            <a href="/workflow/dashboard/0/">Program Index</a>
+            <a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a>
         </li>
         {%  if project_agreement_id != 0 %}
             <li class="breadcrumb-item"><a href="/workflow/dashboard/project/{{ project_agreement_id }}/">Project Dashboards</a></li>
