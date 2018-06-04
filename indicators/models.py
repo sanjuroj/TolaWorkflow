@@ -652,7 +652,7 @@ class PeriodicTarget(models.Model):
     ENDLINE = _('Endline')
 
     indicator = models.ForeignKey(
-        Indicator, null=False, blank=False, verbose_name=_("Indicator")
+        Indicator, null=False, blank=False, verbose_name=_("Indicator"), related_name="periodictargets"
     )
 
     period = models.CharField(
