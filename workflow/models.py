@@ -10,6 +10,7 @@ import uuid
 from django.utils.translation import ugettext_lazy as _
 
 from django.conf import settings
+from django.db.models import Count
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
@@ -370,6 +371,9 @@ class Program(models.Model):
         collecteddata = CollectedData.objects.filter(indicator__id__in=indicator_ids)
         return SiteProfile.objects.filter(collecteddata__id__in=collecteddata).distinct()
 
+    @property
+    def collected_record_count(self):
+        return Program.objects.filter(pk=self.pk).annotate(num_data=Count('indicator__collecteddata')).values('id', 'num_data')[0]['num_data']
 
 class ApprovalAuthority(models.Model):
     approval_user = models.ForeignKey(TolaUser,help_text=_('User with Approval Authority'), blank=True, null=True, related_name="auth_approving", verbose_name=_("Tola User"))
