@@ -25,7 +25,7 @@ class TestFilterForm(TestCase):
         collected_data.site.add(expected2)
         collected_data.site.add(expected)
         SiteProfileFactory.create_batch(3)
-        kwargs = {'program': program, 'request': request}
+        kwargs = {'program': program, 'request': request, 'initial': {'period_choices': []}}
         form = IPTTReportFilterForm(**kwargs)
 
         stuff = str(form)
