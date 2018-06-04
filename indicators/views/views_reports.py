@@ -4,7 +4,7 @@ from dateutil import rrule, parser
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
-from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Min, Max
+from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max
 from django.views.generic import TemplateView, FormView
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect
@@ -106,8 +106,8 @@ class IPTT_ReportView(TemplateView):
     MONTHS_PER_YEAR = 12
 
     def __init__(self, **kwars):
+        self.program = None
         self.annotations = {}
-        self.reporttype = None
         self.filter_form_initial_data = {}
 
     @staticmethod
@@ -396,7 +396,7 @@ class IPTT_ReportView(TemplateView):
 
             # convert to oredered dictionary to preserve order (IMPORTANT!)
             targetperiods = OrderedDict((k, v) for k, v in most_recent_targetperiods)
-        return (date_ranges, targetperiods)
+        return targetperiods
 
     def _generate_timeperiods(self, filter_start_date, filter_end_date, frequency, show_all, num_recents):
         timeperiods = OrderedDict()
@@ -748,7 +748,7 @@ class IPTT_ReportView(TemplateView):
         context['report_end_date'] = report_end_date
         context['report_date_ranges'] = periods_date_ranges
         context['indicators'] = indicators
-        context['program'] = program
+        context['program'] = self.program
         context['reporttype'] = reporttype
         return context
 

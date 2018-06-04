@@ -12,20 +12,13 @@
             <div class='card-header d-flex justify-content-between align-items-center'>
                 <span class="program-name fontsize-130">{{ program.name|truncatechars:140 }}</span>
                 <span>
-                    <a href="/indicators/indicator_create/{{ program.id }}/" roll="button" class="fontsize-130 btn btn-link btn-white"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
+                    <a href="{% url 'indicator_create' program.id %}" role="button" class="fontsize-130 btn btn-link btn-white"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
                 </span>
             </div>
-            {% if not program.indicator_set.all %}
-                <div class='card-body'>
-                    <div class="card-title">{% trans "No Indicators have been entered for this program" %}</div>
-                    <p class="card-text">
-                        {% trans "Add a new indicator via the" %}
-                        <a href="/indicators/indicator_create/{{ program.id }}/">{% trans 'Add indicator' %}</a>
-                        {% trans 'button above' %}.
-                    </p>
-                </div>
-            {% else %}
-                <div class='card-body d-flex justify-content-between align-items-center'>
+            <div class='card-body d-flex justify-content-between align-items-center'>
+                {% if not program.indicator_set.all %}
+                    <div class="card-title paddingleft-125 m-0 fontsize-130">{% trans "No Indicators have been entered for this program" %}</div>
+                {% else %}
                     <a
                         id="id_btnOpenindicatorsForProgramId_{{ program.id }}"
                         href="#"
@@ -42,31 +35,34 @@
                                 {% trans "program indicators" %}
                             {% endif %}
                     </a>
-                    <span class="d-flex align-items-center">
-                        <strong>
-                            <a class="pr-1" href="/indicators/program_report/{{ program.id }}/">{% trans 'Indicator plan' %}</a>
-                        </strong>
-                        |
-                        <strong>
-                            <a
-                                class="pl-1"
-                                href="#"
-                                data-toggle="modal"
-                                data-program="{{ program.id }}"
-                                data-progstart="{{ program.start_date }}"
-                                data-progend="{{ program.end_date }}"
-                                data-rptstart="{{ program.reporting_period_start }}"
-                                data-rptend="{{ program.reporting_period_end }}"
-                                data-target="#id_reporting_period_modal">
-                                    {% trans 'Reporting period' %}
-                            </a>
-                        </strong>
-                    </span>
-                </div>
+                {% endif %}
+                <span class="d-flex align-items-center">
+                    <strong>
+                        <a class="pr-1" href="{% url 'programIndicatorReport' program.id %}">{% trans 'Indicator plan' %}</a>
+                    </strong>
+                    |
+                    <strong>
+                        <a
+                            class="pl-1"
+                            href="#"
+                            data-toggle="modal"
+                            data-program="{{ program.id }}"
+                            data-progstart="{{ program.start_date }}"
+                            data-progend="{{ program.end_date }}"
+                            data-rptstart="{{ program.reporting_period_start }}"
+                            data-rptend="{{ program.reporting_period_end }}"
+                            data-target="#id_reporting_period_modal">
+                                {% trans 'Reporting period' %}
+                        </a>
+                    </strong>
+                </span>
+            </div>
+            {% if program.indicator_set.all %}
                 <div id="hidden-{{ program.id }}" class="collapse">
                     {% include "indicators/program_indicators_table.html" %}
                 </div>
             {% endif %}
+
         </div>
         <br>
     {% empty %}
