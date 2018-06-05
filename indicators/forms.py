@@ -247,6 +247,7 @@ class IPTTReportFilterForm(ReportFormCommon):
         # print(kwargs)
         program = kwargs.pop('program')
         periods_choices = kwargs.get('initial').get('period_choices')
+        print(periods_choices)
         # timeframe = kwargs.get('initial').get('timeframe')
         timeperiod = kwargs.get('initial').get('timeperiods')
         if timeperiod == Indicator.ANNUAL:
