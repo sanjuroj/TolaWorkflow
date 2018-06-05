@@ -673,9 +673,9 @@ class IPTT_ReportView(TemplateView):
 
         if period == Indicator.ANNUAL:
             start_date_choices = choices
-
-        # now add the last set of choices from the last iteration
-        start_date_choices.append((start.year, tuple(choices)))
+        else:
+            # now add the last set of choices from the last iteration
+            start_date_choices.append((start.year, tuple(choices)))
         return start_date_choices
 
     def get_context_data(self, **kwargs):
