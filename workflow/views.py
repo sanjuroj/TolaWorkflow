@@ -10,6 +10,7 @@ from .models import Program, Country, Province, AdminLevelThree, District, Proje
 from formlibrary.models import TrainingAttendance, Distribution
 from indicators.models import CollectedData, ExternalService
 from django.utils import timezone
+from django.utils.datastructures import MultiValueDictKeyError
 
 
 from .forms import ProjectAgreementForm, ProjectAgreementSimpleForm, ProjectAgreementCreateForm, ProjectCompleteForm, ProjectCompleteSimpleForm, ProjectCompleteCreateForm, DocumentationForm, \
@@ -2473,13 +2474,15 @@ class DocumentationListObjects(View, AjaxableResponseMixin):
 
 def reportingperiod_update(request, pk):
     program = Program.objects.get(pk=pk)
-    print 'requesteddd', request.POST
     dated = parser.parse(request.POST['reporting_period_end'])
-    print 'datedd', dated
-    program.reporting_period_start = parser.parse(request.POST['reporting_period_start'])
+
+    # In some cases the start date input will be disabled and won't come through POST
+    try:
+        program.reporting_period_start = parser.parse(request.POST['reporting_period_start'])
+    except MultiValueDictKeyError as e:
+        pass
     program.reporting_period_end = parser.parse(request.POST['reporting_period_end'])
     program.save()
-    print 'got to reportingperiodupdate'
     return JsonResponse({
         'msg': 'success',
         'program_id': pk,

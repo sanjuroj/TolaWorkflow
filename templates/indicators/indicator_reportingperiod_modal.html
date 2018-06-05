@@ -28,7 +28,7 @@
                         </button>
                     </div>
                     <div id="div-gait-dates" class="mb-3">
-                        <div id="div_gait_dates_title" class="mb-3">
+                        <div id="div_gait_dates_title">
                             <h3>{% trans 'GAIT program dates' %}</h3>
                         </div>
                         <div id="div_gait_dates">
@@ -48,13 +48,13 @@
                         </div>
                     </div>
                     <div class="card inputs-in-a-box" id="div-card-user-dates" style="width: 90%">
-                        <div class="card-body p-4">
-                            <div id="div_reporting_dates_title">
+                        <div class="card-body px-4 py-3">
+                            <div id="div_reporting_dates_title" class="mb-3">
                                 <h3>{% trans 'Reporting start and end dates' %}</h3>
                             </div>
-                            <div id="div_reporting_dates">
-                                <div id="div_id_reporting_start_date" class="mr-5 div-rpt-date-input">
-                                    <div class="mb-0 text-uppercase"><h4>{% trans 'Start date' %}</h4></div>
+                            <div id="div_reporting_dates" class="d-flex mb-3">
+                                <div id="div_id_reporting_start_date" class="mr-3 div-rpt-date-input">
+                                    <div class="text-uppercase"><h4 class="mb-1">{% trans 'Start date' %}</h4></div>
                                     <div class="input-group">
                                         <h4>
                                             <input type="text"
@@ -71,7 +71,7 @@
                                     </div>
                                 </div>
                                 <div id="div_reporting_end_date" class="div-rpt-date-input">
-                                    <div class="text-uppercase"><h4 class="mb-0">{% trans 'End date' %}</h4></div>
+                                    <div class="text-uppercase"><h4 class="mb-1">{% trans 'End date' %}</h4></div>
                                     <div class="input-group">
                                         <h4>
                                             <input type="text"
@@ -88,8 +88,19 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="div_reporting_dates_description">
-                                {% trans 'While a program may begin and end any day of the month, reporting periods must begin on the first day of the month and end on the last day of the month. Please note that the reporting start month can only be adjusted ' %}<span class="color-red">{% trans 'before targets are set up and a program begins submitting performance results. ' %}</span>{% trans 'The reporting end month can still be extended.' %}
+                            <div id="div_reporting_dates_description_unlocked">
+                                {% trans 'While a program may begin and end any day of the month, reporting periods must begin on the first day of the month and end on the last day of the month. Please note that the reporting start date can only be adjusted ' %}
+                                <span class="color-red">
+                                    {% trans 'before periodic targets are set up and a program begins submitting performance results. ' %}
+                                </span>
+                                {% trans "The reporting end date can be moved later at any time, but can't be moved earlier once periodic targets are set up." %}
+                            </div>
+                            <div id="div_reporting_dates_description_locked">
+                                {% trans 'While a program may begin and end any day of the month, reporting periods must begin on the first day of the month and end on the last day of the month. Please note that the reporting start date can only be adjusted ' %}
+                                <span class="color-red">
+                                    {% trans 'before targets are set up and a program begins submitting performance results. ' %}
+                                </span>
+                                {% trans "Because this program already has periodic targets set up, only the reporting end date can be moved later." %}
                             </div>
                         </div>
                     </div>
@@ -109,10 +120,12 @@
 <script type="text/javascript">
     var origRptStart = "";
     var origRptEnd = "";
+    var dated_target_count = 0;
 
     function setupMonthPickers() {
         const start_date_id = "id_reporting_start_date";
         const end_date_id = "id_reporting_end_date";
+
         $('.rptMonthPicker').datepicker({
             changeMonth: true,
             changeYear: true,
@@ -151,17 +164,26 @@
                 }
                 var other = this.id == start_date_id ? `#${end_date_id}` : `#${start_date_id}`;
                 var option = this.id == start_date_id ? "maxDate" : "minDate";
-                if ((selectedDate = $(other).val()).length > 0) {
+                if (this.id == start_date_id && (selectedDate = $(other).val()).length > 0) {
                     year = selectedDate.substring(selectedDate.length - 4, selectedDate.length);
                     month = jQuery.inArray(selectedDate.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
-                    if (this.id == start_date_id){
-                        $(this).datepicker("option", option, new Date(year, month, 1));
+                    $(this).datepicker("option", option, new Date(year, month, 1));
+                }
+
+                else if (this.id == end_date_id){
+                    // Date value defaults to locked.
+                    // Use the other input's date as a min only if there are no dated periodic targets.
+                    var selectedDate=$(this).val();
+                    if (dated_target_count < 1){
+                        selectedDate = $(other).val()
                     }
-                    else {
+                    if (selectedDate.length > 0) {
+                        year = selectedDate.substring(selectedDate.length - 4, selectedDate.length);
+                        month = jQuery.inArray(selectedDate.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
                         $(this).datepicker("option", option, new Date(year, month+1, 0));
                     }
-
                 }
+
             },
         })
     }
@@ -178,9 +200,6 @@
         if ((testDate = new Date($(event.relatedTarget).data('progstart'))) == "Invalid Date"){
             $("#id_gait_start_date").html("Unavailable");
             $("#id_gait_start_date").addClass("color-red");
-            $("#id_reporting_start_date").attr("disabled", true);
-            $("#id_reporting_end_date").attr("disabled", true);
-            $("#submit-id-submit").attr("disabled", true);
         }
         else {
             $("#id_gait_start_date").html(formatDate(testDate));
@@ -188,9 +207,6 @@
         if ((testDate = new Date($(event.relatedTarget).data('progend'))) == "Invalid Date"){
             $("#id_gait_end_date").html("Unavailable");
             $("#id_gait_end_date").addClass("color-red");
-            $("#id_reporting_start_date").attr("disabled", true);
-            $("#id_reporting_end_date").attr("disabled", true);
-            $("#submit-id-submit").attr("disabled", true);
         }
         else {
             $("#id_gait_end_date").html(formatDate(testDate));
@@ -210,13 +226,20 @@
             origRptEnd = $(event.relatedTarget).data('rptend');
         }
 
-        if ($(event.relatedTarget).data('recordcount') > 0) {
+        // Save dated_target_count for use in datepicker
+        dated_target_count = $(event.relatedTarget).data('targetcount');
+        if (dated_target_count > 0) {
             $("#id_reporting_start_date").attr("disabled", true);
-            $("#id_reporting_end_date").attr("disabled", true);
-            $("#submit-id-submit").attr("disabled", true);
+            $("#div_reporting_dates_description_locked").show();
+            $("#div_reporting_dates_description_unlocked").hide();
         }
-
+        else {
+            $("#div_reporting_dates_description_unlocked").show();
+            $("#div_reporting_dates_description_locked").hide();
+        }
         setupMonthPickers();
+
+
     });
 
     $('#id_reporting_period_modal').on('hide.bs.modal', function (event) {
@@ -232,7 +255,6 @@
 
     $("#reportingperiod_update_form").on('submit', function(e) {
         e.preventDefault();
-
         $.post($(this).attr('action'), $(this).serialize(), function(data){
             var program_id = data.program_id;
             var modalLink = $(`a[data-program="${program_id}"]`);
@@ -250,7 +272,6 @@
               "{% trans 'There was a problem saving your changes.' %}",
               false,
               "#div-id-reportingperiod-alert")
-
         });
     });
 

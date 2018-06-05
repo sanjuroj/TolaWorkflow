@@ -373,7 +373,14 @@ class Program(models.Model):
 
     @property
     def collected_record_count(self):
-        return Program.objects.filter(pk=self.pk).annotate(num_data=Count('indicator__collecteddata')).values('id', 'num_data')[0]['num_data']
+        return Program.objects.filter(pk=self.pk).annotate(num_data=Count('indicator__collecteddata')) \
+                    .values('id', 'num_data')[0]['num_data']
+
+    @property
+    def dated_target_count(self):
+        return Program.objects.filter(pk=self.pk).annotate(num_data=Count('indicator__periodictargets__start_date')) \
+                    .values('id', 'num_data')[0]['num_data']
+
 
 class ApprovalAuthority(models.Model):
     approval_user = models.ForeignKey(TolaUser,help_text=_('User with Approval Authority'), blank=True, null=True, related_name="auth_approving", verbose_name=_("Tola User"))
