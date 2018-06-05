@@ -449,6 +449,8 @@ class IPTT_ReportView(TemplateView):
             timeperiods = OrderedDict((k, v) for k, v in most_recent_timeperiods)
         elif show_all == 0 and filter_start_date is not None and filter_end_date is not None:
             filtered_timeperiods = OrderedDict()
+            filter_start_date = datetime.strptime(filter_start_date, "%Y-%m-%d").date()
+            filter_end_date = datetime.strptime(filter_end_date, "%Y-%m-%d").date()
             for k, v in timeperiods.items():
                 start_date = v[0]
                 end_date = v[1]
@@ -720,6 +722,9 @@ class IPTT_ReportView(TemplateView):
         except KeyError:
             show_all = 0
 
+        start_period = self.request.GET.get('start_period')
+        end_period = self.request.GET.get('end_period')
+
         # calculate aggregated actuals (sum, avg, last) per reporting period
         # (monthly, quarterly, tri-annually, seminu-annualy, and yearly) for each indicator
         lastlevel = Level.objects.filter(indicator__id=OuterRef('pk')).order_by('-id')
@@ -742,7 +747,7 @@ class IPTT_ReportView(TemplateView):
             # Update the report_end_date to make sure it ends with the last period's end_date
             # Also, get the all of the periodic date ranges based on the selected period
             report_end_date, periods_date_ranges = self._generate_timeperiods(
-                report_start_date, report_end_date, period, show_all, num_recents)
+                start_period, end_period, period, show_all, num_recents)
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
             periods_date_ranges = self._generate_targetperiods(self.program, period, num_recents)
             indicators = indicators.filter(target_frequency=period)
