@@ -244,23 +244,23 @@ class IPTTReportFilterForm(ReportFormCommon):
         queryset=Indicator.objects.none(), required=False, label=_('SELECT INDICATORS'))
 
     def __init__(self, *args, **kwargs):
-        # print(kwargs)
         program = kwargs.pop('program')
-        periods_choices = kwargs.get('initial').get('period_choices')
-        print(periods_choices)
+        periods_choices_start = kwargs.get('initial').get('period_choices_start')
+        periods_choices_end = kwargs.get('initial').get('period_choices_end')
+
         # timeframe = kwargs.get('initial').get('timeframe')
         timeperiod = kwargs.get('initial').get('timeperiods')
         if timeperiod == Indicator.ANNUAL:
-            first_year_first_daterange_key = periods_choices[0][0]
-            last_year_last_daterange_key = periods_choices[len(periods_choices)-1][0]
+            first_year_first_daterange_key = periods_choices_start[0][0]
+            last_year_last_daterange_key = periods_choices_end[len(periods_choices_end)-1][0]
         else:
-            first_option_group = periods_choices[0]
+            first_option_group = periods_choices_start[0]
             # first_year = periods_choices[0][0]
             first_year_dateranges = first_option_group[1]
             first_year_first_daterange = first_year_dateranges[0]
             first_year_first_daterange_key = first_year_first_daterange[0]
 
-            last_option_group = periods_choices[len(periods_choices)-1]
+            last_option_group = periods_choices_end[len(periods_choices_end)-1]
             last_year_dateranges = last_option_group[1]
             last_year_last_daterange_key = last_year_dateranges[len(last_year_dateranges)-1][0]
 
@@ -280,8 +280,8 @@ class IPTTReportFilterForm(ReportFormCommon):
         self.fields['indicators'].queryset = Indicator.objects.filter(program=program)
 
         # Start and end periods dropdowns are updated dynamically
-        self.fields['start_period'] = forms.ChoiceField(choices=periods_choices, label=_("START"))
-        self.fields['end_period'] = forms.ChoiceField(choices=periods_choices, label=_("END"))
+        self.fields['start_period'] = forms.ChoiceField(choices=periods_choices_start, label=_("START"))
+        self.fields['end_period'] = forms.ChoiceField(choices=periods_choices_end, label=_("END"))
 
         self.fields['start_period'].initial = str(first_year_first_daterange_key)
         self.fields['end_period'].initial = str(last_year_last_daterange_key)

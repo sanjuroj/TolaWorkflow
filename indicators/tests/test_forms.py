@@ -25,9 +25,15 @@ class TestFilterForm(TestCase):
         collected_data.site.add(expected2)
         collected_data.site.add(expected)
         SiteProfileFactory.create_batch(3)
-        period_choices = ((2018, (('2018-02-01_2018-04-30', 'Quarter 4 (Feb 01, 2018 - Apr 30, 2018)'),
-                                  ('2018-05-01_2018-07-31', 'Quarter 5 (May 01, 2018 - Jul 31, 2018)'))),)
-        kwargs = {'program': program, 'request': request, 'initial': {'period_choices': period_choices}}
+        period_choices_start = ((2018, (('2018-02-01', 'Quarter 4 (Feb 01, 2018 - Apr 30, 2018)'),
+                                        ('2018-05-01', 'Quarter 5 (May 01, 2018 - Jul 31, 2018)'))),)
+        period_choices_end = ((2018, (('2018-04-30', 'Quarter 4 (Feb 01, 2018 - Apr 30, 2018)'),
+                                      ('2018-07-31', 'Quarter 5 (May 01, 2018 - Jul 31, 2018)'))),)
+
+        kwargs = {
+            'program': program,
+            'request': request,
+            'initial': {'period_choices_start': period_choices_start, 'period_choices_end': period_choices_end}}
         form = IPTTReportFilterForm(**kwargs)
 
         stuff = str(form)

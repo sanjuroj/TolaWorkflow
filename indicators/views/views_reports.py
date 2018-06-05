@@ -105,6 +105,9 @@ class IPTT_ReportView(TemplateView):
     MONTHS_PER_SEMIANNUAL = 6
     MONTHS_PER_YEAR = 12
 
+    FROM = 'from'
+    TO = 'to'
+
     def __init__(self, **kwars):
         self.program = None
         self.annotations = {}
@@ -640,7 +643,7 @@ class IPTT_ReportView(TemplateView):
                             ind[percent_met] = ''
         return indicators
 
-    def prepare_iptt_period_dateranges(self, period, periods_date_ranges):
+    def prepare_iptt_period_dateranges(self, period, periods_date_ranges, from_or_to):
         """
         formats date_ranges with optgroup by year for all target_frequencies
         except ANNUAL.
@@ -668,7 +671,11 @@ class IPTT_ReportView(TemplateView):
                     datetime.strftime(periods_date_ranges[name][0], "%b %d, %Y"),
                     datetime.strftime(periods_date_ranges[name][1], "%b %d, %Y")
                 )
-            key = "{}_{}".format(periods_date_ranges[name][0], periods_date_ranges[name][1])
+            if from_or_to == self.FROM:
+                key = periods_date_ranges[name][0]
+            else:
+                key = periods_date_ranges[name][1]
+            # key = "{}_{}".format(periods_date_ranges[name][0], periods_date_ranges[name][1])
             choices.append((key, value))
 
         if period == Indicator.ANNUAL:
@@ -739,8 +746,10 @@ class IPTT_ReportView(TemplateView):
             messages.info(self.request, _("Please select a valid report type."))
             return context
 
-        periods_dateranges = self.prepare_iptt_period_dateranges(period, periods_date_ranges)
-        self.filter_form_initial_data['period_choices'] = tuple(periods_dateranges)
+        periods_start = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.FROM)
+        periods_end = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.TO)
+        self.filter_form_initial_data['period_choices_start'] = tuple(periods_start)
+        self.filter_form_initial_data['period_choices_end'] = tuple(periods_end)
 
         self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
         # update the queryset with annotations for timeperiods
