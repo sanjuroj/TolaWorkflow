@@ -219,6 +219,7 @@
       const selectedIndex = $(this).prop('selectedIndex');
       end_period.find(`option:lt(${selectedIndex})`).prop('disabled', true);
       end_period.find(`option:gt(${selectedIndex})`).prop('disabled', false);
+      end_period.find(`option:eq(${selectedIndex})`).prop('disabled', false);
       if (end_period.find('option:selected').prop('disabled') == true) {
         end_period.val($(`#${end_period_id} option:enabled`).eq(0).val());
       }
@@ -232,6 +233,7 @@
       const selectedIndex = $(this).prop('selectedIndex');
       start_period.find(`option:gt(${selectedIndex})`).prop('disabled', true);
       start_period.find(`option:lt(${selectedIndex})`).prop('disabled', false);
+      start_period.find(`option:eq(${selectedIndex})`).prop('disabled', false);
       if (start_period.find('option:selected').prop('disabled') == true) {
         start_period.val($(`#${start_period_id} option:enabled`).eq(0).val());
       }

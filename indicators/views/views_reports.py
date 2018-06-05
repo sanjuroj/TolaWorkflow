@@ -488,22 +488,27 @@ class IPTT_ReportView(TemplateView):
             filters['level__in'] = data['level']
         except KeyError:
             pass
+
         try:
             filters['sector__in'] = data['sector']
         except KeyError:
             pass
+
         try:
             filters['indicator_type__in'] = data['ind_type']
         except KeyError:
             pass
+
         try:
             filters['collecteddata__site__in'] = data['site']
         except KeyError:
             pass
+
         try:
             filters['id__in'] = data['indicators'] if isinstance(data['indicators'], list) else [data['indicators']]
         except KeyError:
             pass
+
         return filters
 
     def prepare_indicators(self, reporttype, period, periods_date_ranges, indicators):
