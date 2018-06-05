@@ -641,6 +641,10 @@ class IPTT_ReportView(TemplateView):
         return indicators
 
     def prepare_iptt_period_dateranges(self, period, periods_date_ranges):
+        """
+        formats date_ranges with optgroup by year for all target_frequencies
+        except ANNUAL.
+        """
         start_date_choices = []
         choices = []
         for i, name in enumerate(periods_date_ranges):
@@ -648,11 +652,13 @@ class IPTT_ReportView(TemplateView):
             if i == 0:
                 prev_start = start
 
+            # For annual period (frequency) do not create optgrp
             if period != Indicator.ANNUAL and start.year != prev_start.year:
                 start_date_choices.append((prev_start.year, tuple(choices)))
                 prev_start = start
                 choices = []
-            elif period == Indicator.MONTHLY:
+
+            if period == Indicator.MONTHLY:
                 value = "{}".format(
                     datetime.strftime(periods_date_ranges[name][0], "%b %Y")
                 )
@@ -667,6 +673,9 @@ class IPTT_ReportView(TemplateView):
 
         if period == Indicator.ANNUAL:
             start_date_choices = choices
+
+        # now add the last set of choices from the last iteration
+        start_date_choices.append((start.year, tuple(choices)))
         return start_date_choices
 
     def get_context_data(self, **kwargs):
@@ -722,7 +731,6 @@ class IPTT_ReportView(TemplateView):
             # Also, get the all of the periodic date ranges based on the selected period
             report_end_date, periods_date_ranges = self._generate_timeperiods(
                 report_start_date, report_end_date, period, show_all, num_recents)
-
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
             periods_date_ranges = self._generate_targetperiods(self.program, period, num_recents)
             indicators = indicators.filter(target_frequency=period)
@@ -731,16 +739,15 @@ class IPTT_ReportView(TemplateView):
             messages.info(self.request, _("Please select a valid report type."))
             return context
 
-        start_date_choices = self.prepare_iptt_period_dateranges(period, periods_date_ranges)
-        self.filter_form_initial_data['period_choices'] = tuple(start_date_choices)
+        periods_dateranges = self.prepare_iptt_period_dateranges(period, periods_date_ranges)
+        self.filter_form_initial_data['period_choices'] = tuple(periods_dateranges)
 
         self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
         # update the queryset with annotations for timeperiods
         indicators = indicators.annotate(**self.annotations).order_by('lastlevelcustomsort', 'number', 'name')
         indicators = self.prepare_indicators(reporttype, period, periods_date_ranges, indicators)
 
-        context['start_date'] = ''
-        context['end_date'] = ''
+        context['report_end_date_actual'] = report_end_date
         context['report_start_date'] = report_start_date
         context['report_end_date'] = report_end_date
         context['report_date_ranges'] = periods_date_ranges
