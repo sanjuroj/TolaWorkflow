@@ -146,9 +146,9 @@
     const level_select = $("#id_level");
 
     const start_period_id = `{{ form.start_period.auto_id }}`;
+    const start_period = $(`#${start_period_id}`);
     const end_period_id = `{{ form.end_period.auto_id }}`;
-    // $(`#${start_period_id}`).val(formatDate($(`#${start_period_id}`).val()));
-    // $(`#${end_period_id}`).val(formatDate($(`#${end_period_id}`).val()));
+    const end_period = $(`#${end_period_id}`);
 
     var multiselectOptions = {
       includeSelectAllOption: true,
@@ -215,8 +215,22 @@
 
     });
 
-    start_period_id.on('change', function(e){
-      console.log(this);
+    start_period.on('change', function(e){
+      const selectedIndex = $(this).prop('selectedIndex');
+      end_period.find(`option:lt(${selectedIndex})`).prop('disabled', true);
+      end_period.find(`option:gt(${selectedIndex})`).prop('disabled', false);
+      if (end_period.find('option:selected').prop('disabled') == true) {
+        end_period.val($(`#${end_period_id} option:enabled`).eq(0).val());
+      }
+    });
+
+    end_period.on('change', function (e) {
+      const selectedIndex = $(this).prop('selectedIndex');
+      start_period.find(`option:gt(${selectedIndex})`).prop('disabled', true);
+      start_period.find(`option:lt(${selectedIndex})`).prop('disabled', false);
+      if (start_period.find('option:selected').prop('disabled') == true) {
+        start_period.val($(`#${start_period_id} option:enabled`).eq(0).val());
+      }
     });
 
     // Behaviors for "most recent" field
