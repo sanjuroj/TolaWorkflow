@@ -106,12 +106,13 @@ class Command(BaseCommand):
                 # reporting end month.
                 else:
                     name_max_len = 40
-                    prog_string = "%s - [pk=%s] (gaitid=%s) %s - unique start dates:%s" % (
+                    prog_string = "%s - [pk=%s] (gaitid=%s) %s - unique starts:%s - unique ends:%s" % (
                         ", ".join(list(program.country.values_list('country', flat=True))),
                         program.pk,
                         program.gaitid,
                         unicode(program.name)[:name_max_len],
-                        [str(d) for d in unique_start_dates])
+                        [str(d) for d in unique_start_dates],
+                        [str(d) for d in unique_end_dates])
                     if len(unique_start_dates) == 1:
                         single_date_programs.append(prog_string)
                     else:
@@ -123,8 +124,7 @@ class Command(BaseCommand):
                         next_month = program.end_date.replace(day=28) + datetime.timedelta(days=4)
                         end_date = next_month - datetime.timedelta(days=next_month.day)
                         unique_end_dates.append(end_date)
-                    sorted_dates = sorted(unique_end_dates)
-                    program.reporting_period_end = sorted_dates[-1]
+                    program.reporting_period_end = sorted(unique_end_dates)[-1]
 
                 program.save()
                 if len(unique_start_dates) > 0:

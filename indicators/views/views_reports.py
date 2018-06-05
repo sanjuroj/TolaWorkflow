@@ -122,7 +122,7 @@ class IPTT_ReportView(TemplateView):
                 Indicator.TRI_ANNUAL: IPTT_ReportView.MONTHS_PER_TRIANNUAL,
                 Indicator.QUARTERLY: IPTT_ReportView.MONTHS_PER_QUARTER,
                 Indicator.MONTHLY: IPTT_ReportView.MONTHS_PER_MONTH
-                }[period]
+            }[period]
         except KeyError:
             return 0
 
@@ -640,6 +640,35 @@ class IPTT_ReportView(TemplateView):
                             ind[percent_met] = ''
         return indicators
 
+    def prepare_iptt_period_dateranges(self, period, periods_date_ranges):
+        start_date_choices = []
+        choices = []
+        for i, name in enumerate(periods_date_ranges):
+            start = periods_date_ranges[name][0]
+            if i == 0:
+                prev_start = start
+
+            if period != Indicator.ANNUAL and start.year != prev_start.year:
+                start_date_choices.append((prev_start.year, tuple(choices)))
+                prev_start = start
+                choices = []
+            elif period == Indicator.MONTHLY:
+                value = "{}".format(
+                    datetime.strftime(periods_date_ranges[name][0], "%b %Y")
+                )
+            else:
+                value = "{} ({} - {})".format(
+                    name,
+                    datetime.strftime(periods_date_ranges[name][0], "%b %d, %Y"),
+                    datetime.strftime(periods_date_ranges[name][1], "%b %d, %Y")
+                )
+            key = "{}_{}".format(periods_date_ranges[name][0], periods_date_ranges[name][1])
+            choices.append((key, value))
+
+        if period == Indicator.ANNUAL:
+            start_date_choices = choices
+        return start_date_choices
+
     def get_context_data(self, **kwargs):
         context = super(IPTT_ReportView, self).get_context_data(**kwargs)
         reporttype = kwargs.get('reporttype')
@@ -693,41 +722,6 @@ class IPTT_ReportView(TemplateView):
             # Also, get the all of the periodic date ranges based on the selected period
             report_end_date, periods_date_ranges = self._generate_timeperiods(
                 report_start_date, report_end_date, period, show_all, num_recents)
-            # Get the last period's end_date
-            # last_filtered_period_date = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
-
-            # update the end_date with the last period's end_date to show in the tile and filter from
-            # end_date = end_date.replace(month=last_filtered_period_date.month, day=last_filtered_period_date.day)
-
-            start_date_choices = []
-            choices = []
-            for i, name in enumerate(periods_date_ranges):
-                start = periods_date_ranges[name][0]
-                if i == 0:
-                    prev_start = start
-
-                if period != Indicator.ANNUAL and start.year != prev_start.year:
-                    start_date_choices.append((prev_start.year, tuple(choices)))
-                    prev_start = start
-                    choices = []
-
-                key = "{}_{}".format(periods_date_ranges[name][0], periods_date_ranges[name][1])
-                if period == Indicator.MONTHLY:
-                    value = "{}".format(
-                        datetime.strftime(periods_date_ranges[name][0], "%b %Y")
-                    )
-                else:
-                    value = "{} ({}-{})".format(
-                        name,
-                        datetime.strftime(periods_date_ranges[name][0], "%b %d, %Y"),
-                        datetime.strftime(periods_date_ranges[name][1], "%b %d, %Y")
-                    )
-                choices.append((key, value))
-
-            if period == Indicator.ANNUAL:
-                start_date_choices = choices
-
-            self.filter_form_initial_data['period_choices'] = tuple(start_date_choices)
 
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
             periods_date_ranges = self._generate_targetperiods(self.program, period, num_recents)
@@ -736,6 +730,9 @@ class IPTT_ReportView(TemplateView):
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid report type."))
             return context
+
+        start_date_choices = self.prepare_iptt_period_dateranges(period, periods_date_ranges)
+        self.filter_form_initial_data['period_choices'] = tuple(start_date_choices)
 
         self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
         # update the queryset with annotations for timeperiods
