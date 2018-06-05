@@ -215,6 +215,8 @@
 
     });
 
+    // changing the start_period triggers updating the end_period if necessary
+    // to make sure the start and end periods do not cross each other.
     start_period.on('change', function(e){
       const selectedIndex = $(this).prop('selectedIndex');
       end_period.find(`option:lt(${selectedIndex})`).prop('disabled', true);
@@ -222,8 +224,12 @@
       if (end_period.find('option:selected').prop('disabled') == true) {
         end_period.val($(`#${end_period_id} option:enabled`).eq(0).val());
       }
+      $("input[type=radio][name='timeframe']").prop("checked", false);
+      numRecentPeriods.val('');
     });
 
+    // changing the end_period triggers updating the start_period if necessary
+    // to make sure the start and end periods do not cross each other.
     end_period.on('change', function (e) {
       const selectedIndex = $(this).prop('selectedIndex');
       start_period.find(`option:gt(${selectedIndex})`).prop('disabled', true);
@@ -231,6 +237,8 @@
       if (start_period.find('option:selected').prop('disabled') == true) {
         start_period.val($(`#${start_period_id} option:enabled`).eq(0).val());
       }
+      $("input[type=radio][name='timeframe']").prop("checked", false);
+      numRecentPeriods.val('');
     });
 
     // Behaviors for "most recent" field
@@ -245,11 +253,6 @@
     // clicking on "most recent" focuses the field
     checkFilterPeriods.on('change', function(e){
       numRecentPeriods.focus();
-    });
-
-    $("#id_form_indicator_filter").on("change", "#id_start_date, #id_end_date", function(e){
-      $("input[type=radio][name='timeframe']").prop("checked", false);
-      numRecentPeriods.val(null);
     });
 
     $('button[type=reset]').on('click', function(e){
