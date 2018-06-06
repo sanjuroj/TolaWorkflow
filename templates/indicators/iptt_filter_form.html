@@ -246,9 +246,14 @@
     numRecentPeriods.on('focus', function(e){
       checkFilterPeriods.prop('checked', true);
     });
-    // clicking on "show all" zeroes the field
+    // clicking on "show all" zeroes the most_recent field and
+    // resets the start and end periods dropdowns
     checkShowAllPeriods.on('change', function(e){
       numRecentPeriods.val('');
+      start_period.find('option').prop('disabled', false);
+      start_period.val($(`#${start_period_id} option:first`).val());
+      end_period.find('option').prop('disabled', false);
+      end_period.val($(`#${end_period_id} option:last`).val());
     });
     // clicking on "most recent" focuses the field
     checkFilterPeriods.on('change', function(e){
