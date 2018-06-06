@@ -159,7 +159,7 @@ body > .container {
 .btn-link:focus,
 .btn-link.focus,
 .btn-link:hover {
-    color: #0645ad;
+    color: #4CAF50;
     font-weight: bold;
     text-decoration: none;
 }
