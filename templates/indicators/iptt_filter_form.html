@@ -18,7 +18,7 @@
     {% for hidden_field in form.hidden_fields %}
       {{ hidden_field }}
     {% endfor %}
-    <div id="filter-top" class="filter-form-padding-10 pb-1">
+    <div id="filter-top" class="p-3">
       <h3 class="filter-title">{% trans "Report Options" %}</h3>
       <div class="form-row mb-3" id="id_div_program">
         <label for="id_program" class="col-form-label">
@@ -75,7 +75,7 @@
       </div>
     </div>
 
-    <div id="filter-middle" class="filter-form-padding-10">
+    <div id="filter-middle" class="p-3">
       <div class="form-group mb-2" id="id_div_level">
         <label for="id_level" class="col-form-label">
           {{ form.level.label }}
@@ -123,13 +123,17 @@
 
     </div>
 
-    <div id="filter-bottom" class="filter-form-padding-10">
-      <button type="submit" id="id_submit_form_filter" class="btn btn-block btn-primary">
-        {% trans "Apply" %}
-      </button>
-      <button type="reset" class="btn btn-block btn-secondary">
-        {% trans "Reset" %}
-      </button>
+    <div id="filter-bottom" class=" d-flex justify-content-between no-gutters p-3">
+      <div class="col pr-2">
+        <button type="submit" id="id_submit_form_filter" class="btn btn-block btn-primary">
+          {% trans "Apply" %}
+        </button>
+      </div>
+      <div class="col pl-2">
+        <button type="reset" class="btn btn-block btn-secondary">
+          {% trans "Reset" %}
+        </button>
+      </div>
     </div>
   </form>
 </nav>
