@@ -722,9 +722,6 @@ class IPTT_ReportView(TemplateView):
         except KeyError:
             show_all = 0
 
-        start_period = self.request.GET.get('start_period')
-        end_period = self.request.GET.get('end_period')
-
         # calculate aggregated actuals (sum, avg, last) per reporting period
         # (monthly, quarterly, tri-annually, seminu-annualy, and yearly) for each indicator
         lastlevel = Level.objects.filter(indicator__id=OuterRef('pk')).order_by('-id')
@@ -740,8 +737,9 @@ class IPTT_ReportView(TemplateView):
                 'direction_of_change', 'unit_of_measure_type', 'is_cumulative', 'baseline', 'baseline_na',
                 'lop_target', 'actualsum', 'actualavg', 'lastdata', 'lastlevelcustomsort')
 
-        report_start_date = self.program.reporting_period_start
         report_end_date = self.program.reporting_period_end
+        start_period = self.request.GET.get('start_period')
+        end_period = self.request.GET.get('end_period')
 
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
             # Update the report_end_date to make sure it ends with the last period's end_date
@@ -767,7 +765,7 @@ class IPTT_ReportView(TemplateView):
         indicators = self.prepare_indicators(reporttype, period, periods_date_ranges, indicators)
 
         context['report_end_date_actual'] = report_end_date
-        context['report_start_date'] = report_start_date
+        context['report_start_date'] = self.program.reporting_period_start
         context['report_end_date'] = report_end_date
         context['report_date_ranges'] = periods_date_ranges
         context['indicators'] = indicators
@@ -796,6 +794,13 @@ class IPTT_ReportView(TemplateView):
         }
         # do not include it in the querystring because it is already part of the url kwargs
         del filterdata['program']
+
+        # if show_all or most_recent is specified then do not filter
+        # by period_start or period_end dates.
+        if filterdata.get('timeframe', None) is not None:
+            del(filterdata['start_period'])
+            del(filterdata['end_period'])
+
         redirect_url = "{}?{}".format(reverse_lazy('iptt_report', kwargs=url_kwargs),
                                       filterdata.urlencode())
         return HttpResponseRedirect(redirect_url)
