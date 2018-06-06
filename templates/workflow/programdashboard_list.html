@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% load mathfilters %}
+{% load i18n %}
 {% block page_title %}Program Index{% endblock %}
 
 {% block content %}
 
 <div class="dropdown">
     {% include "workflow/filter.html" %}
-    <a href="/workflow/dashboard/project/0/" class="btn btn-sm btn-success">Create a Project</a>
+    <a href="/workflow/dashboard/project/0/" class="btn btn-link p0"><i class="fas fa-plus-circle"></i> {% trans 'Add Project' %}</a>
 </div>
 <br/>
 <div>
