@@ -3,7 +3,7 @@ import json
 import dateutil
 import datetime
 from django.core.management.base import BaseCommand
-from django.db.models import Q, Min
+from django.db.models import Q, Min, Max
 from workflow.models import Program
 from indicators.models import Indicator
 
@@ -78,7 +78,7 @@ class Command(BaseCommand):
                     pstart=Min('periodictargets__start_date')).values_list('pstart', flat=True))
                 unique_start_dates = [date for date in unique_start_dates if date is not None]
                 unique_end_dates = set(Indicator.objects.filter(program=program).annotate(
-                    pend=Min('periodictargets__end_date')).values_list('pend', flat=True))
+                    pend=Max('periodictargets__end_date')).values_list('pend', flat=True))
                 unique_end_dates = [date for date in unique_end_dates if date is not None]
 
                 # Set the program start dates.  Catch the exception where retrieved values are None.
