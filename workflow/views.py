@@ -12,7 +12,6 @@ from indicators.models import CollectedData, ExternalService
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 
-
 from .forms import ProjectAgreementForm, ProjectAgreementSimpleForm, ProjectAgreementCreateForm, ProjectCompleteForm, ProjectCompleteSimpleForm, ProjectCompleteCreateForm, DocumentationForm, \
     SiteProfileForm, MonitorForm, BenchmarkForm, BudgetForm, FilterForm, \
     QuantitativeOutputsForm, ChecklistItemForm, StakeholderForm, ContactForm
@@ -44,6 +43,10 @@ from django.utils.decorators import method_decorator
 from tola.util import getCountry, emailGroup, group_excluded, group_required
 from mixins import AjaxableResponseMixin
 from export import ProjectAgreementResource, StakeholderResource
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 
 APPROVALS = (
     ('in_progress',('in progress')),
@@ -2488,3 +2491,9 @@ def reportingperiod_update(request, pk):
         'program_id': pk,
         'rptstart': program.reporting_period_start,
         'rptend': program.reporting_period_end, })
+
+
+@api_view(['GET'])
+def dated_target_count(request, pk):
+    return Response(Program.objects.filter(pk=pk).annotate(num_data=Count('indicator__periodictargets__start_date')) \
+                .values('id', 'num_data')[0]['num_data'])

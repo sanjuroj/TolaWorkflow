@@ -26,6 +26,7 @@ from tola import views as tolaviews
 from django.contrib import admin
 admin.autodiscover()
 admin.site.site_header = 'Tola Activity administration'
+from workflow.views import dated_target_count
 
 #REST FRAMEWORK
 router = routers.DefaultRouter()
@@ -69,13 +70,12 @@ router.register(r'organization', OrganizationViewSet)
 router.register(r'pindicators', PogramIndicatorReadOnlyViewSet, base_name='pindicators')
 router.register(r'periodictargets', PeriodicTargetReadOnlyViewSet, base_name='periodictargets')
 
-
 urlpatterns = [ # rest framework
                 url(r'^api/', include(router.urls)),
                 url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
                 url(r'^api-token-auth/', auth_views.obtain_auth_token),
                 url(r'^bootstrap/', TemplateView.as_view(template_name="bootstrap4.html")),
-
+                url(r'^datedtargetcount/(?P<pk>\w+)/$', dated_target_count, name='datedtargetcount'),
                 # internationalization
                 url(r'^i18n/', include('django.conf.urls.i18n')),
 
@@ -137,5 +137,3 @@ urlpatterns = [ # rest framework
                 #url(r'^oauth/', include('social_django.urls', namespace='social')),
 
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
