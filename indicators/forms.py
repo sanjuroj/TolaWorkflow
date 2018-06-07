@@ -248,6 +248,14 @@ class IPTTReportFilterForm(ReportFormCommon):
         periods_choices_start = kwargs.get('initial').get('period_choices_start')
         periods_choices_end = kwargs.get('initial').get('period_choices_end')
 
+        target_frequencies = Indicator.objects.filter(program__in=[program.id]).values(
+            'target_frequency').distinct().order_by('target_frequency')
+
+        target_frequency_choices = []
+        for tp in target_frequencies:
+            id = tp['target_frequency']
+            target_frequency_choices.append((id, Indicator.TARGET_FREQUENCIES[id][1]))
+
         # timeframe = kwargs.get('initial').get('timeframe')
         timeperiod = kwargs.get('initial').get('timeperiods')
         if timeperiod == Indicator.ANNUAL:
@@ -286,3 +294,5 @@ class IPTTReportFilterForm(ReportFormCommon):
 
         self.fields['start_period'].initial = str(first_year_first_daterange_key)
         self.fields['end_period'].initial = str(last_year_last_daterange_key)
+
+        self.fields['targetperiods'] = forms.ChoiceField(choices=target_frequency_choices, label=_("TARGET PERIODS"))
