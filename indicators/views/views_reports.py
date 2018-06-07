@@ -392,7 +392,6 @@ class IPTT_ReportView(TemplateView):
         # Update the report_end_date with the last reporting_period's end_date
         try:
             report_end_date = targetperiods[targetperiods.keys()[-1]][1]
-            print("report_end_date={}".format(report_end_date))
         except TypeError:
             report_end_date = self.program.reporting_period_end
 
@@ -400,9 +399,12 @@ class IPTT_ReportView(TemplateView):
             # filter out those timeperiods whose end_dates are larger than today's date
             targetperiods_less_than_today = filter(lambda v: v[1][0] <= today, targetperiods.items())
 
-            # filter out dates that are outside of the most_recent index specified by user
-            most_recent_targetperiods = targetperiods_less_than_today[(
-                len(targetperiods_less_than_today)-num_recents):]
+            if len(targetperiods_less_than_today) > num_recents:
+                # filter out dates that are outside of the most_recent index specified by user
+                most_recent_targetperiods = targetperiods_less_than_today[(
+                    len(targetperiods_less_than_today)-num_recents):]
+            else:
+                most_recent_targetperiods = targetperiods_less_than_today
 
             # convert to oredered dictionary to preserve order (IMPORTANT!)
             targetperiods = OrderedDict((k, v) for k, v in most_recent_targetperiods)
@@ -459,10 +461,11 @@ class IPTT_ReportView(TemplateView):
         if num_recents is not None and num_recents > 0:
             # filter out those timeperiods whose end_dates are larger than today's date
             timeperiods_less_than_today = filter(lambda v: v[1][1] < current_period_end, timeperiods.items())
-
-            # filter out dates that are outside of the most_recent index specified by user
-            most_recent_timeperiods = timeperiods_less_than_today[(len(timeperiods_less_than_today)-num_recents):]
-
+            if len(timeperiods_less_than_today) > num_recents:
+                # filter out dates that are outside of the most_recent index specified by user
+                most_recent_timeperiods = timeperiods_less_than_today[(len(timeperiods_less_than_today)-num_recents):]
+            else:
+                most_recent_timeperiods = timeperiods_less_than_today
             # convert to oredered dictionary to preserve order (IMPORTANT!)
             timeperiods = OrderedDict((k, v) for k, v in most_recent_timeperiods)
         elif show_all == 0 and filter_start_date is not None and filter_end_date is not None:
@@ -472,7 +475,6 @@ class IPTT_ReportView(TemplateView):
             for k, v in timeperiods.items():
                 start_date = v[0]
                 end_date = v[1]
-                # print("start_date:{}, filter_start_date:{}, filter_end_date:{}, end_date:{}".format(start_date, filter_start_date, filter_end_date, end_date))
                 if start_date >= filter_start_date and filter_end_date >= end_date:
                     filtered_timeperiods[k] = [start_date, end_date]
             return (report_end_date, filtered_timeperiods)
