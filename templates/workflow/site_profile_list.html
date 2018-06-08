@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load group_tag %}
+{% block title %}{% trans "Sites" %} | {% endblock %}
+{% block page_title %}{% trans "Sites" %}{% endblock %}
 {% block bread_crumb %}
-{% load i18n %}
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -18,7 +19,6 @@
 
 {% endblock %}
 
-{% block page_title %}{% trans 'Sites' %}{% endblock %}
 
 {% block content %}
 

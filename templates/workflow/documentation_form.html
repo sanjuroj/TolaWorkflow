@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 {% load widget_tweaks %}
 {% load i18n %}
-<div>
+
+{% block title %}{% trans "Document" %} | {% endblock %}
+{% block page_title %}{% trans "Document" %}{% endblock %}
+
+{% block bread_crumb %}
 <ol class="breadcrumb">
   <li><a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a></li>
   <li><a href="/workflow/documentation_list/{{ getProgram.id }}">Documentations</a></li>
   <li class="active">Document</li>
 </ol>
-</div>
-{% block page_title %}{% trans 'Document' %}{% endblock %}
-{% block title %}{% trans 'Document'%}{% endblock %}
+{% endblock %}
 
 {% block content %}
     <script>

@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% block title %}{% trans "Documents" %} | {% endblock %}
+{% block page_title %}{% trans "Documents" %}{% endblock %}
 {% block bread_crumb %}
-{% load i18n %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a></li>
@@ -14,7 +15,7 @@
     </ol>
 </nav>
 {% endblock %}
-{% block page_title %}{% trans 'Documents' %}{% endblock %}
+
 
 {% block content %}
 

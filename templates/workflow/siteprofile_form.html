@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% block title %}{% trans "Site" %} | {% endblock %}
+{% block page_title %}{% trans "Site" %}{% endblock %}
 {% block bread_crumb %}
 <div>
 <ol class="breadcrumb">
@@ -13,7 +15,6 @@
 </ol>
 </div>
 {% endblock %}
-{% block page_title %}{% trans 'Site' %}{% endblock %}
 
 {% block content %}
     {% include "form_guidance.html" %}

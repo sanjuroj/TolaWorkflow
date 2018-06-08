@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% block title %}{% trans "Stakeholders" %} | {% endblock %}
+{% block page_title %}{% trans "Stakeholders" %}{% endblock %}
 {% block bread_crumb %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -10,7 +12,6 @@
     </ol>
 </nav>
 {% endblock %}
-{% block page_title %}{% trans 'Stakeholders' %}{% endblock %}
 
 {% block content %}
 <div class="btn-group" role="group">
