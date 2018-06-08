@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load group_tag %}
 {% block bread_crumb %}
+{% load i18n %}
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -39,7 +40,7 @@
         {% endfor %}
     </div>
 </div>
-<a href="/workflow/siteprofile_add" class="btn btn-sm btn-success">New Site Profile</a>
+<a href="/workflow/siteprofile_add" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans 'Add site' %}</a>
 
 <br><br>
 <style>

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block bread_crumb %}
+{% load i18n %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a></li>
@@ -36,7 +37,7 @@
         {% endfor %}
     </div>
 </div>
-<a href="/workflow/documentation_add" class="btn btn-sm btn-success">New Document</a>
+<a href="/workflow/documentation_add" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans 'Add document' %}</a>
 <br/>
 
 <table
