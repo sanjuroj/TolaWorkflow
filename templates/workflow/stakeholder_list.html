@@ -35,8 +35,6 @@
 <a href="/workflow/stakeholder_add/0/" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add stakeholder</a>
 <br/>
 
-<h3>Stakeholder</h3>
-
 <a href="/workflow/export_stakeholders_list/{{ program_id }}/" class="btn btn-sm btn-primary float-right"><span class="glyphicon glyphicon-export"></span> Export to Excel</a>&nbsp;
 <br><br>
 
@@ -77,17 +75,17 @@
                 retrieve: true,
                 data: stakeholder_records,
                 columns: [
-                    { title: "Date Created", data: "create_date",
+                    { title: "Date created", data: "create_date",
                         "mRender": function (data, sector, row) {
                                 return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + formatDate(row.create_date) + '</a>';
                             },
                         "defaultContent": "<i>Not set</i>"},
-                    { title: "Stakeholder Name", data: "name",
+                    { title: "Stakeholder name", data: "name",
                         "mRender": function (data, name, row) {
                                 return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + row.name + '</a>';
                             },
                         "defaultContent": "<i>Not set</i>"},
-                    { title: "Stakeholder Type", data: "type__name",
+                    { title: "Stakeholder type", data: "type__name",
                         "mRender": function (data, type, row) {
                                 return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + row.type__name + '</a>';
                             },
