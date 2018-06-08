@@ -291,6 +291,11 @@
             form_data += "&periodic_targets=" + JSON.stringify(periodic_targets);
         }
 
+        // Set is_cumulative if it's not already set
+        if (form_data.indexOf('is_cumulative') == -1) {
+            form_data += "&is_cumulative=3"
+        }
+
         $("#modalmessages").html("<img src='{{ STATIC_URL }}/img/ajax-loader.gif'>  <span>{% trans 'Saving form... please wait.' %}</span>");
         $.ajax({
             method: 'POST',
