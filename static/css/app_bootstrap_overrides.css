@@ -262,6 +262,13 @@ input[type="checkbox"].form-control:focus {
     transition:         all .2s ease;
 }
 
+/* overload base colors */
+.navbar-dark .navbar-nav .nav-link {
+    color: #DBDCDE;
+}
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #ffffff;
+}
 /* overload dropdown menus */
 .dropdown-menu {
     border-radius: 0;
