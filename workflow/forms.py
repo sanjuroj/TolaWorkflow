@@ -64,7 +64,7 @@ class DatePicker(forms.DateInput):
     """
     template_name = 'datepicker.html'
 
-    DateInput = partial(forms.DateInput, {'class': 'datepicker'})
+    DateInput = partial(forms.DateInput, {'class': 'datepicker', 'autocomplete': 'off'})
 
 
 class BudgetForm(forms.ModelForm):

@@ -299,7 +299,7 @@
                     <div class="form-row mb-3" id="div_id_target_frequency_start">
                         <label for="id_target_frequency_start" class="col-sm-4 col-form-label" align="right">{{ form.target_frequency_start.label }} </label>
                         <div class=" col-sm-7 div-input-container">
-                            {% render_field form.target_frequency_start class+="form-control" %}
+                            {% render_field form.target_frequency_start class+="form-control" autocomplete="off"%}
                             <small class="form-text text-muted">{{ form.target_frequency_start.help_text }}</small>
                             <span id="validation_id_target_frequency_start" class="has-error"></span>
                         </div>
