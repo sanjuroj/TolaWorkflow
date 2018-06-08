@@ -257,6 +257,7 @@
             }
             if ((testDate = new Date($(event.relatedTarget).data('rptstart'))) == "Invalid Date"){
                 $("#id_reporting_start_date").val("");
+                origRptStart = "";
             }
             else {
                 $("#id_reporting_start_date").val(formatDate(testDate));
@@ -264,6 +265,7 @@
             }
             if ((testDate = new Date($(event.relatedTarget).data('rptend'))) == "Invalid Date"){
                 $("#id_reporting_end_date").val("");
+                origRptStart = "";
             }
             else {
                 $("#id_reporting_end_date").val(formatDate(testDate));
@@ -284,34 +286,62 @@
         $("#id_gait_start_date, #id_gait_end_date, #id_reporting_start_date, #id_reporting_end_date")
             .removeClass("color-red");
         $("#id_reporting_start_date, #id_reporting_end_date, #submit-id-submit").attr("disabled", false);
+
+        // Reload the page if the the original reporting dates were blank and they now have values.  Need to do
+        // this so the add button and reporting and indicator links appear with the program on the indicator list.
+        // Only need to check one because the form can only be saved if both have a value.
+        if (origRptEnd == "" && $("#id_reporting_end_date").val() != "") {
+            window.location.reload(true);
+        }
+
     });
+
 
     $("#reportingperiod_update_form").on('submit', function(e) {
         e.preventDefault();
-        $.post($(this).attr('action'), $(this).serialize(), function(data){
-            var program_id = data.program_id;
-            var modalLink = $(`a[data-program="${program_id}"]`);
-            modalLink.data("rptstart", data.rptstart);
-            modalLink.data("rptend", data.rptend);
-            createAlert(
-              "success",
-              "{% trans 'Success. Reporting period changes were saved.' %}",
-              true,
-              "#div-id-reportingperiod-alert");
+        if ($("#id_reporting_start_date").val() == "" || $("#id_reporting_end_date").val() == ""){
+          createAlert(
+            "danger",
+            "{% trans 'You must enter values for the reporting start and end dates before saving.' %}",
+            false,
+            "#div-id-reportingperiod-alert");
+        }
+        else{
+            $.post($(this).attr('action'), $(this).serialize(), function(data){
+                var program_id = data.program_id;
+                var modalLink = $(`a[data-program="${program_id}"]`);
+                modalLink.data("rptstart", data.rptstart);
+                modalLink.data("rptend", data.rptend);
+                createAlert(
+                  "success",
+                  "{% trans 'Success. Reporting period changes were saved.' %}",
+                  true,
+                  "#div-id-reportingperiod-alert");
 
-        }).fail(function(data) {
-            createAlert(
-              "danger",
-              "{% trans 'There was a problem saving your changes.' %}",
-              false,
-              "#div-id-reportingperiod-alert")
-        });
+            }).fail(function(data) {
+                createAlert(
+                  "danger",
+                  "{% trans 'There was a problem saving your changes.' %}",
+                  false,
+                  "#div-id-reportingperiod-alert");
+            });
+        }
     });
 
     $("#reportingperiod_update_form").on('reset', function(e) {
         e.preventDefault();
-        $("#id_reporting_start_date").val(formatDate(new Date(origRptStart)));
-        $("#id_reporting_end_date").val(formatDate(new Date(origRptEnd)));
+        if (origRptStart == "") {
+            $("#id_reporting_start_date").val("");
+        }
+        else {
+            $("#id_reporting_start_date").val(formatDate(new Date(origRptStart)));
+        }
+        if (origRptEnd == "") {
+            $("#id_reporting_end_date").val("");
+        }
+        else{
+            $("#id_reporting_end_date").val(formatDate(new Date(origRptEnd)));
+        }
 
     });
 
