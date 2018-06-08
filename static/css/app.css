@@ -808,3 +808,10 @@ input[type=number]::-webkit-outer-spin-button {
 .sidebar-toggle a[aria-expanded=false] svg {
   transform: rotate(-180deg); /* TODO: ideally do this via JS */
 }
+
+/* "add a thing" buttons */
+.btn-add {
+    color: #4CAF50;
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+}
