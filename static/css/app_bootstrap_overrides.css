@@ -263,9 +263,32 @@ input[type="checkbox"].form-control:focus {
     transition:         all .2s ease;
 }
 
+/* overload base colors */
+.navbar-dark .navbar-nav .nav-link {
+    color: #DBDCDE;
+}
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #ffffff;
+}
 /* overload dropdown menus */
 .dropdown-menu {
+    border-radius: 0;
     box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+}
+.navbar-dark .dropdown-menu {
+    background: #54585A;
+    border: none;
+    border-radius: 0;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+}
+.navbar-dark .dropdown-item {
+    color: #fff;
+}
+.navbar-dark .dropdown-item:focus, 
+.navbar-dark .dropdown-item:hover {
+    color: #fff;
+    text-decoration: none;
+    background-color: #808080;
 }
 
 /* overload bootstrap-multiselect */

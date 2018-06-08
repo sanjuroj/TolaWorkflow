@@ -1,9 +1,10 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% block bread_crumb %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item">
-            <a href="/workflow/dashboard/0/">Program Index</a>
+            <a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">Stakeholder List</li>
     </ol>

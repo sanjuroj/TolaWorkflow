@@ -63,7 +63,7 @@ body {
 .marginbottom-225 {
     margin-bottom: 2.25rem;
 }
-
+/* help links in footer */
 .help-link,
 .help-link:hover,
 .help-link:active,
@@ -566,6 +566,10 @@ input[type=number]::-webkit-outer-spin-button {
     line-height: 1.2;
 }
 
+.rptMonthPicker {
+    width: 10rem;
+}
+
 /* END Indicator list page css */
 
 /* BEGIN datepicker styling */
@@ -795,7 +799,7 @@ input[type=number]::-webkit-outer-spin-button {
     width: 40px;
 }
 .sidebar-toggle a {
-    background-color:#00A49F; 
+    background-color:#00A49F;
     color: white;
     display: block;
     font-size: 1.25rem;

@@ -264,6 +264,7 @@ class IPTTReportFilterForm(ReportFormCommon):
             last_year_dateranges = last_option_group[1]
             last_year_last_daterange_key = last_year_dateranges[len(last_year_dateranges)-1][0]
 
+        # print("{}-{}".format(first_year_first_daterange_key, last_year_last_daterange_key))
         super(IPTTReportFilterForm, self).__init__(*args, **kwargs)
         del self.fields['formprefix']
         level_ids = Indicator.objects.filter(program__in=[program.id]).values(

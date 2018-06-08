@@ -363,7 +363,7 @@ class IPTT_ReportView(TemplateView):
             num_periods = 0
         return num_periods
 
-    def _generate_targetperiods(self, program, period, num_recents):
+    def _generate_targetperiods(self, program, filter_start_date, filter_end_date, period, show_all, num_recents):
         targetperiods = OrderedDict()
         today = datetime.today().date()
         # today = datetime.strptime('2020-02-23', '%Y-%m-%d').date()
@@ -389,17 +389,37 @@ class IPTT_ReportView(TemplateView):
                 continue
             targetperiods[pt['period']] = [pt['start_date'], pt['end_date'], pt['target'], pt['id']]
 
+        # Update the report_end_date with the last reporting_period's end_date
+        try:
+            report_end_date = targetperiods[targetperiods.keys()[-1]][1]
+        except TypeError:
+            report_end_date = self.program.reporting_period_end
+
         if num_recents is not None and num_recents > 0 and period not in [Indicator.LOP, Indicator.MID_END]:
             # filter out those timeperiods whose end_dates are larger than today's date
             targetperiods_less_than_today = filter(lambda v: v[1][0] <= today, targetperiods.items())
 
-            # filter out dates that are outside of the most_recent index specified by user
-            most_recent_targetperiods = targetperiods_less_than_today[(
-                len(targetperiods_less_than_today)-num_recents):]
+            if len(targetperiods_less_than_today) > num_recents:
+                # filter out dates that are outside of the most_recent index specified by user
+                most_recent_targetperiods = targetperiods_less_than_today[(
+                    len(targetperiods_less_than_today)-num_recents):]
+            else:
+                most_recent_targetperiods = targetperiods_less_than_today
 
             # convert to oredered dictionary to preserve order (IMPORTANT!)
             targetperiods = OrderedDict((k, v) for k, v in most_recent_targetperiods)
-        return targetperiods
+        elif show_all == 0 and filter_start_date is not None and filter_end_date is not None:
+            filtered_targetperiods = OrderedDict()
+            filter_start_date = datetime.strptime(filter_start_date, "%Y-%m-%d").date()
+            filter_end_date = datetime.strptime(filter_end_date, "%Y-%m-%d").date()
+            for k, v in targetperiods.items():
+                start_date = v[0]
+                end_date = v[1]
+                # print("start_date:{}, filter_start_date:{}, filter_end_date:{}, end_date:{}".format(start_date, filter_start_date, filter_end_date, end_date))
+                if start_date >= filter_start_date and filter_end_date >= end_date:
+                    filtered_targetperiods[k] = [start_date, end_date]
+            return (report_end_date, filtered_targetperiods)
+        return (report_end_date, targetperiods)
 
     def _generate_timeperiods(self, filter_start_date, filter_end_date, frequency, show_all, num_recents):
         timeperiods = OrderedDict()
@@ -441,10 +461,11 @@ class IPTT_ReportView(TemplateView):
         if num_recents is not None and num_recents > 0:
             # filter out those timeperiods whose end_dates are larger than today's date
             timeperiods_less_than_today = filter(lambda v: v[1][1] < current_period_end, timeperiods.items())
-
-            # filter out dates that are outside of the most_recent index specified by user
-            most_recent_timeperiods = timeperiods_less_than_today[(len(timeperiods_less_than_today)-num_recents):]
-
+            if len(timeperiods_less_than_today) > num_recents:
+                # filter out dates that are outside of the most_recent index specified by user
+                most_recent_timeperiods = timeperiods_less_than_today[(len(timeperiods_less_than_today)-num_recents):]
+            else:
+                most_recent_timeperiods = timeperiods_less_than_today
             # convert to oredered dictionary to preserve order (IMPORTANT!)
             timeperiods = OrderedDict((k, v) for k, v in most_recent_timeperiods)
         elif show_all == 0 and filter_start_date is not None and filter_end_date is not None:
@@ -454,7 +475,6 @@ class IPTT_ReportView(TemplateView):
             for k, v in timeperiods.items():
                 start_date = v[0]
                 end_date = v[1]
-                # print("start_date:{}, filter_start_date:{}, filter_end_date:{}, end_date:{}".format(start_date, filter_start_date, filter_end_date, end_date))
                 if start_date >= filter_start_date and filter_end_date >= end_date:
                     filtered_timeperiods[k] = [start_date, end_date]
             return (report_end_date, filtered_timeperiods)
@@ -722,9 +742,6 @@ class IPTT_ReportView(TemplateView):
         except KeyError:
             show_all = 0
 
-        start_period = self.request.GET.get('start_period')
-        end_period = self.request.GET.get('end_period')
-
         # calculate aggregated actuals (sum, avg, last) per reporting period
         # (monthly, quarterly, tri-annually, seminu-annualy, and yearly) for each indicator
         lastlevel = Level.objects.filter(indicator__id=OuterRef('pk')).order_by('-id')
@@ -740,8 +757,8 @@ class IPTT_ReportView(TemplateView):
                 'direction_of_change', 'unit_of_measure_type', 'is_cumulative', 'baseline', 'baseline_na',
                 'lop_target', 'actualsum', 'actualavg', 'lastdata', 'lastlevelcustomsort')
 
-        report_start_date = self.program.reporting_period_start
-        report_end_date = self.program.reporting_period_end
+        start_period = self.request.GET.get('start_period')
+        end_period = self.request.GET.get('end_period')
 
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
             # Update the report_end_date to make sure it ends with the last period's end_date
@@ -749,7 +766,8 @@ class IPTT_ReportView(TemplateView):
             report_end_date, periods_date_ranges = self._generate_timeperiods(
                 start_period, end_period, period, show_all, num_recents)
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
-            periods_date_ranges = self._generate_targetperiods(self.program, period, num_recents)
+            report_end_date, periods_date_ranges = self._generate_targetperiods(
+                self.program, start_period, end_period, period, show_all, num_recents)
             indicators = indicators.filter(target_frequency=period)
         else:
             context['redirect'] = reverse_lazy('iptt_quickstart')
@@ -767,7 +785,7 @@ class IPTT_ReportView(TemplateView):
         indicators = self.prepare_indicators(reporttype, period, periods_date_ranges, indicators)
 
         context['report_end_date_actual'] = report_end_date
-        context['report_start_date'] = report_start_date
+        context['report_start_date'] = self.program.reporting_period_start
         context['report_end_date'] = report_end_date
         context['report_date_ranges'] = periods_date_ranges
         context['indicators'] = indicators
@@ -796,6 +814,13 @@ class IPTT_ReportView(TemplateView):
         }
         # do not include it in the querystring because it is already part of the url kwargs
         del filterdata['program']
+
+        # if show_all or most_recent is specified then do not filter
+        # by period_start or period_end dates.
+        if filterdata.get('timeframe', None) is not None:
+            del(filterdata['start_period'])
+            del(filterdata['end_period'])
+
         redirect_url = "{}?{}".format(reverse_lazy('iptt_report', kwargs=url_kwargs),
                                       filterdata.urlencode())
         return HttpResponseRedirect(redirect_url)

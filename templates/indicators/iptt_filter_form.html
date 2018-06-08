@@ -172,6 +172,16 @@
     site_profile.multiselect(multiselectOptions);
     indicators_select.multiselect(multiselectOptions);
 
+    // filter_form.on('submit', function(e) {
+    //   console.log(start_period.prop("disabled"));
+    //   if (start_period.prop("disabled") == false) {
+    //     e.preventDefault();
+    //   }
+    //   start_period.prop("disabled", true);
+    //   end_period.prop("disabled", true);
+    //   $(this).submit();
+    // });
+
     $("#id_form_indicator_filter").on("input", "#id_program", function (e) {
       const program_id = $(this).val();
 
