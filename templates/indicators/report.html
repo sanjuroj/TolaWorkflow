@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
+
+{% block title %}{% trans "Indicator report" %} | {% endblock %}
+{% block page_title %}{% trans "Indicator report" %}{% endblock %}
+
 {% block bread_crumb %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -12,7 +16,6 @@
 {% endblock bread_crumb %}
 {% load render_table from django_tables2 %}
 
-{% block page_title %}{% trans "Indicator Report" %}{% endblock %}
 
 {% block content %}
     {% include "indicators/filter.html"%}

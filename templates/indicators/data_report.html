@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
+
+{% block title %}{% trans "Indicator report" %} | {% endblock %}
+{% block page_title %}{% trans "Indicator report" %}{% endblock %}
+
 {% block bread_crumb %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -21,7 +25,6 @@
 
 {% endblock bread_crumb %}
 
-{% block page_title %}{% trans "Indicator Report" %}{% endblock %}
 
 {% block content %}
 

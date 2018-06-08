@@ -1,6 +1,11 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% block title %}{% trans "Project report" %} | {% endblock %}
+{% block page_title %}{% trans "Project report" %}{% endblock %}
+
 {% block bread_crumb %}
-<nav class="breadcrumb">
+<nav class="">
     <ol class="breadcrumb">
         <li class="breadcrumb-item">
             <a href="/workflow/dashboard/0/">Program Dashboards</a>
@@ -10,11 +15,9 @@
 </nav>
 {% endblock bread_crumb %}
 
-{% block page_title %}Project Report{% endblock %}
 
 {% block content %}
 
-{% load crispy_forms_tags %}
 {% crispy form form.helper %}
 <script type="text/javascript">
     var table;

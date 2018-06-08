@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load group_tag %}
+{% block title %}{% trans "Sites" %} | {% endblock %}
+{% block page_title %}{% trans "Sites" %}{% endblock %}
 {% block bread_crumb %}
-{% load i18n %}
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -18,7 +19,6 @@
 
 {% endblock %}
 
-{% block page_title %}Site Profile List{% endblock %}
 
 {% block content %}
 
@@ -83,10 +83,10 @@
  <!-- Display site profiles & projects -->
 <table class="table table-sm table-hover table-striped">
     <tr>
-        <th>Date Created</th>
-        <th>Profile Name</th>
+        <th>Date created</th>
+        <th>Site name</th>
         <th>Status</th>
-        <th>Profile Type</th>
+        <th>Site type</th>
         <th>Province</th>
         <th>District</th>
         <th style="width:110px;">&nbsp;</th>
