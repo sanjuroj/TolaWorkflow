@@ -276,7 +276,7 @@ class IPTTReportFilterForm(ReportFormCommon):
         except IndexError:
             first_year_first_daterange_key = None
             last_year_last_daterange_key = None
-        # print("{}-{}".format(first_year_first_daterange_key, last_year_last_daterange_key))
+
         super(IPTTReportFilterForm, self).__init__(*args, **kwargs)
         del self.fields['formprefix']
         level_ids = Indicator.objects.filter(program__in=[program.id]).values(
