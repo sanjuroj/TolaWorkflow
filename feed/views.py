@@ -8,7 +8,7 @@ from .serializers import (
     AdminLevelThreeSerializer, TolaTableSerializer, DisaggregationValueSerializer, VillageSerializer,
     ContactSerializer, DocumentationSerializer, CollectedDataSerializer, LoggedUserSerializer,
     ChecklistSerializer, OrganizationSerializer, SiteProfileLightSerializer, IndicatorIdAndNameSerializer,
-    SectorIdAndNameSerializer
+    SectorIdAndNameSerializer, ProgramTargetFrequenciesSerializer
 )
 
 from workflow.models import (
@@ -562,3 +562,14 @@ class ChecklistViewSet(APIDefaultsMixin, viewsets.ModelViewSet):
 class OrganizationViewSet(APIDefaultsMixin, viewsets.ModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
+
+
+class ProgramTargetFrequencies(viewsets.ViewSet):
+    def list(self, request):
+        program_id = request.query_params.get('program_id', None)
+        queryset = Indicator.objects.filter(program__in=[program_id]) \
+            .values('target_frequency') \
+            .distinct() \
+            .order_by('target_frequency')
+        serializer = ProgramTargetFrequenciesSerializer(queryset, many=True)
+        return Response(serializer.data)

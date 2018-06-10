@@ -248,22 +248,34 @@ class IPTTReportFilterForm(ReportFormCommon):
         periods_choices_start = kwargs.get('initial').get('period_choices_start')
         periods_choices_end = kwargs.get('initial').get('period_choices_end')
 
+        target_frequencies = Indicator.objects.filter(program__in=[program.id]).values(
+            'target_frequency').distinct().order_by('target_frequency')
+
+        target_frequency_choices = [(0, '')]
+        for tp in target_frequencies:
+            id = int(tp['target_frequency'])
+            target_frequency_choices.append((id, Indicator.TARGET_FREQUENCIES[id-1][1]))
+            # print("id={}, tf={}".format(id, Indicator.TARGET_FREQUENCIES[id]))
+
         # timeframe = kwargs.get('initial').get('timeframe')
         timeperiod = kwargs.get('initial').get('timeperiods')
-        if timeperiod == Indicator.ANNUAL:
-            first_year_first_daterange_key = periods_choices_start[0][0]
-            last_year_last_daterange_key = periods_choices_end[len(periods_choices_end)-1][0]
-        else:
-            first_option_group = periods_choices_start[0]
-            # first_year = periods_choices[0][0]
-            first_year_dateranges = first_option_group[1]
-            first_year_first_daterange = first_year_dateranges[0]
-            first_year_first_daterange_key = first_year_first_daterange[0]
+        try:
+            if timeperiod == Indicator.ANNUAL:
+                first_year_first_daterange_key = periods_choices_start[0][0]
+                last_year_last_daterange_key = periods_choices_end[len(periods_choices_end)-1][0]
+            else:
+                first_option_group = periods_choices_start[0]
+                # first_year = periods_choices[0][0]
+                first_year_dateranges = first_option_group[1]
+                first_year_first_daterange = first_year_dateranges[0]
+                first_year_first_daterange_key = first_year_first_daterange[0]
 
-            last_option_group = periods_choices_end[len(periods_choices_end)-1]
-            last_year_dateranges = last_option_group[1]
-            last_year_last_daterange_key = last_year_dateranges[len(last_year_dateranges)-1][0]
-
+                last_option_group = periods_choices_end[len(periods_choices_end)-1]
+                last_year_dateranges = last_option_group[1]
+                last_year_last_daterange_key = last_year_dateranges[len(last_year_dateranges)-1][0]
+        except IndexError:
+            first_year_first_daterange_key = None
+            last_year_last_daterange_key = None
         # print("{}-{}".format(first_year_first_daterange_key, last_year_last_daterange_key))
         super(IPTTReportFilterForm, self).__init__(*args, **kwargs)
         del self.fields['formprefix']
@@ -286,3 +298,5 @@ class IPTTReportFilterForm(ReportFormCommon):
 
         self.fields['start_period'].initial = str(first_year_first_daterange_key)
         self.fields['end_period'].initial = str(last_year_last_daterange_key)
+
+        self.fields['targetperiods'] = forms.ChoiceField(choices=target_frequency_choices, label=_("TARGET PERIODS"))

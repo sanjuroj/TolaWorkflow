@@ -455,7 +455,7 @@ class IPTT_ReportView(TemplateView):
         # Update the report_end_date with the last reporting_period's end_date
         try:
             report_end_date = timeperiods[timeperiods.keys()[-1]][1]
-        except TypeError:
+        except (TypeError, IndexError):
             report_end_date = self.program.reporting_period_end
 
         if num_recents is not None and num_recents > 0:
@@ -677,6 +677,7 @@ class IPTT_ReportView(TemplateView):
         """
         start_date_choices = []
         choices = []
+        start = None
         for i, name in enumerate(periods_date_ranges):
             start = periods_date_ranges[name][0]
             if i == 0:
@@ -708,8 +709,9 @@ class IPTT_ReportView(TemplateView):
         if period == Indicator.ANNUAL:
             start_date_choices = choices
         else:
-            # now add the last set of choices from the last iteration
-            start_date_choices.append((start.year, tuple(choices)))
+            if start:
+                # now add the last set of choices from the last iteration
+                start_date_choices.append((start.year, tuple(choices)))
         return start_date_choices
 
     def get_context_data(self, **kwargs):
@@ -761,14 +763,22 @@ class IPTT_ReportView(TemplateView):
         end_period = self.request.GET.get('end_period')
 
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
+            target_frequencies = Indicator.objects.filter(program__in=[program_id]).values_list(
+                'target_frequency').distinct().order_by('target_frequency')
+
+            if (period,) not in target_frequencies:
+                period = target_frequencies[0][0]
+
             # Update the report_end_date to make sure it ends with the last period's end_date
             # Also, get the all of the periodic date ranges based on the selected period
             report_end_date, periods_date_ranges = self._generate_timeperiods(
                 start_period, end_period, period, show_all, num_recents)
+
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
             report_end_date, periods_date_ranges = self._generate_targetperiods(
                 self.program, start_period, end_period, period, show_all, num_recents)
             indicators = indicators.filter(target_frequency=period)
+
         else:
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid report type."))
