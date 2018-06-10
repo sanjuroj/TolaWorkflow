@@ -185,10 +185,10 @@
       let reporttype = '';
 
       if (timeperiod) {
-        // frequency = timeperiod;
+        frequency = timeperiod;
         reporttype = 'timeperiods';
       } else {
-        // frequency = targetperiod;
+        frequency = targetperiod;
         reporttype = 'targetperiods';
       }
 
@@ -200,17 +200,14 @@
       let url = `{% url 'iptt_report' 0 reporttype %}`;
       url = url.replace(/0/, program_id);
 
-      if (numRecentPeriods.val()) {
-        url = `${url}?${reporttype}=${frequency}&numrecentperiods=${numrecentperiods}&timeframe=${timeframe}`;
-      }
+      url = `${url}?${reporttype}=${frequency}&numrecentperiods=${numrecentperiods}&timeframe=${timeframe}`;
       return url;
     }
 
     // on timeperiod or targetperiod dropdown change, reload the report with correct filtering options
     $("#id_form_indicator_filter").on("input", "#id_timeperiods, #id_targetperiods ", function (e) {
-
-      const url = get_reload_url($(this).val());
-      // window.location = url;
+      const url = get_reload_url();
+      window.location = url;
     });
 
     // upon program dropdown change, reload the report with correct filtering options

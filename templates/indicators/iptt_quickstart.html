@@ -223,6 +223,7 @@
                 $.each(data, function (index, option) {
                   targetperiods.append($("<option></option>").attr("value", option.target_frequency).text(option.frequency_name));
                 });
+                // targetperiods.multiselect('rebuild');
               });
             });
 
