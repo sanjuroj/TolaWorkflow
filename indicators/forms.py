@@ -269,6 +269,8 @@ class IPTTReportFilterForm(ReportFormCommon):
         # timeframe = kwargs.get('initial').get('timeframe')
         timeperiod = kwargs.get('initial').get('timeperiods')
         targetperiod = kwargs.get('initial').get('targetperiods')
+        psi = kwargs.get('initial').get('period_start_initial')
+        pei = kwargs.get('initial').get('period_end_initial')
         period = timeperiod if targetperiod is None else targetperiod
 
         try:

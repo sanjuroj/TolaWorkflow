@@ -466,6 +466,10 @@ class IPTT_ReportView(TemplateView):
             # print('start_date={}, end_date={}'.format(start_date, end_date))
             timeperiods["{} {}".format(period_name, i)] = [start_date, end_date]
 
+        # save the unfiltered targetperiods into the global variable so that
+        # it be used to populate the periods dropdown
+        self.all_date_ranges = timeperiods
+
         # Update the report_end_date with the last reporting_period's end_date
         try:
             report_end_date = timeperiods[timeperiods.keys()[-1]][1]
@@ -791,6 +795,7 @@ class IPTT_ReportView(TemplateView):
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
             report_end_date, periods_date_ranges = self._generate_targetperiods(
                 self.program, start_period, end_period, period, show_all, num_recents)
+            print(periods_date_ranges)
             indicators = indicators.filter(target_frequency=period)
         else:
             context['redirect'] = reverse_lazy('iptt_quickstart')
@@ -803,12 +808,18 @@ class IPTT_ReportView(TemplateView):
         else:
             periods_start = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.FROM)
             periods_end = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.TO)
+            print(periods_date_ranges)
+            period_start_initial = periods_date_ranges[periods_date_ranges.keys()[0]][0]
+            period_end_initial = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
+            # print(period_start_initial, last_period_key)
 
             all_periods_start = self.prepare_iptt_period_dateranges(period, self.all_date_ranges, self.TO)
             all_periods_end = self.prepare_iptt_period_dateranges(period, self.all_date_ranges, self.FROM)
 
         self.filter_form_initial_data['period_choices_start'] = tuple(periods_start)
         self.filter_form_initial_data['period_choices_end'] = tuple(periods_end)
+        self.filter_form_initial_data['period_start_initial'] = period_start_initial
+        self.filter_form_initial_data['period_end_initial'] = period_end_initial
 
         self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
         # update the queryset with annotations for timeperiods
