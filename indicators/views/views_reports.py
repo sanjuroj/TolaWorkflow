@@ -395,6 +395,10 @@ class IPTT_ReportView(TemplateView):
         except (TypeError, IndexError):
             report_end_date = self.program.reporting_period_end
 
+        # this check is necessary becasue mid/end line do not have start/end dates
+        if report_end_date is None:
+            report_end_date = self.program.reporting_period_end
+
         if num_recents is not None and num_recents > 0 and period not in [Indicator.LOP, Indicator.MID_END]:
             # filter out those timeperiods whose end_dates are larger than today's date
             targetperiods_less_than_today = filter(lambda v: v[1][0] <= today, targetperiods.items())

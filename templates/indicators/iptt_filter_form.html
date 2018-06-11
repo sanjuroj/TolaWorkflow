@@ -176,7 +176,7 @@
     site_profile.multiselect(multiselectOptions);
     indicators_select.multiselect(multiselectOptions);
 
-    if (targetperiod_select.val() & targetperiod_select.val() == 1 ) {
+    function disableFormElements() {
       numRecentPeriods.prop('readonly', true);
       checkFilterPeriods.prop('disabled', true);
       checkShowAllPeriods.prop('disabled', true);
@@ -184,6 +184,11 @@
       checkFilterPeriods.prop('checked', false);
       start_period.prop('readonly', true);
       end_period.prop('readonly', true);
+    }
+
+    // if targetperiods value is ANNUAL then disable certain elements on the filter form
+    if (targetperiod_select.val() == 1 ) {
+      disableFormElements();
     } else {
       checkFilterPeriods.prop('disabled', false);
       checkShowAllPeriods.prop('disabled', false);
@@ -192,8 +197,14 @@
       end_period.prop('readonly', false);
     }
 
-    // indicators/iptt_report/442/targetperiods/?numrecentperiods=3&timeframe=2&targetperiods=5
-    // indicators/iptt_report/442/targetperiods/?timeperiods=6&numrecentperiods=3&timeframe=2
+    // if the targetperiods value is MIDLINE/ENDLINE then disable certain elements on the filter form
+    if (targetperiod_select.val() == 2) {
+      console.log("hahah");
+      disableFormElements();
+    } else {
+
+    }
+
     // get the appropriate url params for the page reload
     function get_reload_url(frequency) {
       const program_id = program_select.val();
@@ -310,7 +321,7 @@
     // Behaviors for "most recent" field
     // Clicking on the text box selects the associated radio button
     numRecentPeriods.on('focus', function(e){
-      if (targetperiod_select.val() & targetperiod_select.val() == 1) {
+      if (targetperiod_select.val() == 1 | targetperiod_select.val() == 2) {
         return;
       }
       checkFilterPeriods.prop('checked', true);
