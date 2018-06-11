@@ -3,11 +3,13 @@
 {% block title %}{% trans "Project tracking form" %} | {% endblock %}
 {% block page_title %}{% trans "Project tracking form" %}{% endblock %}
 {% block bread_crumb %}
-<ol class="breadcrumb">
-  <li><a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a></li>
-  {% if id %}<li><a href="/workflow/dashboard/project/{{ project_id }}/">Project Dashboard</a></li>{% endif %}
-  <li class="active">Project Tracking Form </li>
-</ol>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a></li>
+        {% if id %}<li class="breadcrumb-item"><a href="/workflow/dashboard/project/{{ project_id }}/">Project Dashboard</a></li>{% endif %}
+        <li class="breadcrumb-item active">Project tracking form</li>
+    </ol>
+</nav>
 {%  endblock %}
 
 {% block extra_js_in_body %}

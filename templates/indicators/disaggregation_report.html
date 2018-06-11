@@ -1,16 +1,10 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %} {% trans "Indicator disaggregation report" %} | {% endblock %}
-{% block page_title %} {% trans "Indicator disaggregation report" %} {% endblock %}
+{% block title %} {% trans "Indicator Disaggregation Report" %} | {% endblock %}
+{% block page_title %} {% trans "Indicator Disaggregation Report" %} {% endblock %}
 
 {% block bread_crumb %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/indicators/home/{{ getPrograms.all.0.id|default:0 }}/0/0/">{% trans "Indicators" %}</a></li>
-        <li class="breadcrumb-item active">{% trans "Indicator Disaggregation Report" %}</li>
-    </ol>
-</nav>
 {% endblock %}
 
 
