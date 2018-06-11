@@ -823,3 +823,10 @@ input[type=number]::-webkit-outer-spin-button {
     margin-bottom: 1rem;
     margin-top: 1rem;
 }
+
+#indicator_collecteddata_content .modal-footer { /* overloads selectorin modals.scss */
+    background-color: #DBDCDE;
+    border-radius: 0 0 0.3rem 0.3rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+}
