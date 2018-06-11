@@ -254,9 +254,12 @@ class IPTTReportFilterForm(ReportFormCommon):
 
         target_frequency_choices = [(0, '')]
         for tp in target_frequencies:
-            id = int(tp['target_frequency'])
-            target_frequency_choices.append((id, Indicator.TARGET_FREQUENCIES[id-1][1]))
-            # print("id={}, tf={}".format(id, Indicator.TARGET_FREQUENCIES[id]))
+            try:
+                id = int(tp['target_frequency'])
+                target_frequency_choices.append((id, Indicator.TARGET_FREQUENCIES[id-1][1]))
+                # print("id={}, tf={}".format(id, Indicator.TARGET_FREQUENCIES[id]))
+            except TypeError:
+                pass
 
         # timeframe = kwargs.get('initial').get('timeframe')
         timeperiod = kwargs.get('initial').get('timeperiods')
