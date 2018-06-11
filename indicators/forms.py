@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.utils import formats
 from functools import partial
 from django.db.models import Q
 from django import forms
@@ -274,6 +275,13 @@ class IPTTReportFilterForm(ReportFormCommon):
                 last_year_dateranges = last_option_group[1]
                 last_year_last_daterange_key = last_year_dateranges[len(last_year_dateranges)-1][0]
         except IndexError:
+            first_year_first_daterange_key = None
+            last_year_last_daterange_key = None
+        except TypeError:
+            reporting_sdate = formats.date_format(program.reporting_period_start, format="DATE_FORMAT", use_l10n=True)
+            reporting_edate = formats.date_format(program.reporting_period_end, format="DATE_FORMAT", use_l10n=True)
+            periods_choices_start = ((program.reporting_period_start, reporting_sdate,),)
+            periods_choices_end = ((program.reporting_period_end, reporting_edate),)
             first_year_first_daterange_key = None
             last_year_last_daterange_key = None
 

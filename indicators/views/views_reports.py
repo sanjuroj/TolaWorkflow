@@ -392,7 +392,7 @@ class IPTT_ReportView(TemplateView):
         # Update the report_end_date with the last reporting_period's end_date
         try:
             report_end_date = targetperiods[targetperiods.keys()[-1]][1]
-        except TypeError:
+        except (TypeError, IndexError):
             report_end_date = self.program.reporting_period_end
 
         if num_recents is not None and num_recents > 0 and period not in [Indicator.LOP, Indicator.MID_END]:
@@ -784,8 +784,13 @@ class IPTT_ReportView(TemplateView):
             messages.info(self.request, _("Please select a valid report type."))
             return context
 
-        periods_start = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.FROM)
-        periods_end = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.TO)
+        if period == Indicator.MID_END:
+            periods_start = (self.program.reporting_period_start, )
+            periods_end = (self.program.reporting_period_end, )
+        else:
+            periods_start = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.FROM)
+            periods_end = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.TO)
+
         self.filter_form_initial_data['period_choices_start'] = tuple(periods_start)
         self.filter_form_initial_data['period_choices_end'] = tuple(periods_end)
 
@@ -828,8 +833,11 @@ class IPTT_ReportView(TemplateView):
         # if show_all or most_recent is specified then do not filter
         # by period_start or period_end dates.
         if filterdata.get('timeframe', None) is not None:
-            del(filterdata['start_period'])
-            del(filterdata['end_period'])
+            try:
+                del(filterdata['start_period'])
+                del(filterdata['end_period'])
+            except KeyError:
+                pass
 
         redirect_url = "{}?{}".format(reverse_lazy('iptt_report', kwargs=url_kwargs),
                                       filterdata.urlencode())
