@@ -1,6 +1,7 @@
 import bisect
 from collections import OrderedDict
 from dateutil import rrule, parser
+from django.utils import formats
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
@@ -112,7 +113,6 @@ class IPTT_ReportView(TemplateView):
         self.program = None
         self.annotations = {}
         self.filter_form_initial_data = {}
-        self.all_date_ranges = None
 
     @staticmethod
     def _get_num_months(period):
@@ -397,7 +397,7 @@ class IPTT_ReportView(TemplateView):
 
         # save the unfiltered targetperiods into the global variable so that
         # it be used to populate the periods dropdown
-        self.all_date_ranges = targetperiods
+        all_date_ranges = targetperiods
 
         # Update the report_end_date with the last reporting_period's end_date
         try:
@@ -432,8 +432,8 @@ class IPTT_ReportView(TemplateView):
                 # print("start_date:{}, filter_start_date:{}, filter_end_date:{}, end_date:{}".format(start_date, filter_start_date, filter_end_date, end_date))
                 if start_date >= filter_start_date and filter_end_date >= end_date:
                     filtered_targetperiods[k] = [start_date, end_date]
-            return (report_end_date, filtered_targetperiods)
-        return (report_end_date, targetperiods)
+            return (report_end_date, all_date_ranges, filtered_targetperiods)
+        return (report_end_date, all_date_ranges, targetperiods)
 
     def _generate_timeperiods(self, filter_start_date, filter_end_date, frequency, show_all, num_recents):
         timeperiods = OrderedDict()
@@ -468,7 +468,7 @@ class IPTT_ReportView(TemplateView):
 
         # save the unfiltered targetperiods into the global variable so that
         # it be used to populate the periods dropdown
-        self.all_date_ranges = timeperiods
+        all_date_ranges = timeperiods
 
         # Update the report_end_date with the last reporting_period's end_date
         try:
@@ -495,9 +495,9 @@ class IPTT_ReportView(TemplateView):
                 end_date = v[1]
                 if start_date >= filter_start_date and filter_end_date >= end_date:
                     filtered_timeperiods[k] = [start_date, end_date]
-            return (report_end_date, filtered_timeperiods)
+            return (report_end_date, all_date_ranges, filtered_timeperiods)
 
-        return (report_end_date, timeperiods)
+        return (report_end_date, all_date_ranges, timeperiods)
 
     def _update_filter_form_initial(self, formdata):
         self.filter_form_initial_data = {}
@@ -789,35 +789,41 @@ class IPTT_ReportView(TemplateView):
 
             # Update the report_end_date to make sure it ends with the last period's end_date
             # Also, get the all of the periodic date ranges based on the selected period
-            report_end_date, periods_date_ranges = self._generate_timeperiods(
+            report_end_date, all_date_ranges, periods_date_ranges = self._generate_timeperiods(
                 start_period, end_period, period, show_all, num_recents)
 
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
-            report_end_date, periods_date_ranges = self._generate_targetperiods(
+            report_end_date, all_date_ranges, periods_date_ranges = self._generate_targetperiods(
                 self.program, start_period, end_period, period, show_all, num_recents)
-            print(periods_date_ranges)
             indicators = indicators.filter(target_frequency=period)
         else:
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid report type."))
             return context
 
-        if period == Indicator.MID_END:
-            periods_start = (self.program.reporting_period_start, )
-            periods_end = (self.program.reporting_period_end, )
+        if period == Indicator.MID_END or period == Indicator.LOP:
+            reporting_sdate = formats.date_format(
+                self.program.reporting_period_start,
+                format="DATE_FORMAT",
+                use_l10n=True)
+            reporting_edate = formats.date_format(
+                self.program.reporting_period_end,
+                format="DATE_FORMAT",
+                use_l10n=True)
+            all_periods_start = ((self.program.reporting_period_start, reporting_sdate,),)
+            all_periods_end = ((self.program.reporting_period_end, reporting_edate),)
+
+            period_start_initial = None  # self.program.reporting_period_start
+            period_end_initial = None  # self.program.reporting_period_end
         else:
-            periods_start = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.FROM)
-            periods_end = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.TO)
-            print(periods_date_ranges)
             period_start_initial = periods_date_ranges[periods_date_ranges.keys()[0]][0]
             period_end_initial = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
-            # print(period_start_initial, last_period_key)
 
-            all_periods_start = self.prepare_iptt_period_dateranges(period, self.all_date_ranges, self.TO)
-            all_periods_end = self.prepare_iptt_period_dateranges(period, self.all_date_ranges, self.FROM)
+            all_periods_start = self.prepare_iptt_period_dateranges(period, all_date_ranges, self.FROM)
+            all_periods_end = self.prepare_iptt_period_dateranges(period, all_date_ranges, self.TO)
 
-        self.filter_form_initial_data['period_choices_start'] = tuple(periods_start)
-        self.filter_form_initial_data['period_choices_end'] = tuple(periods_end)
+        self.filter_form_initial_data['period_choices_start'] = tuple(all_periods_start)
+        self.filter_form_initial_data['period_choices_end'] = tuple(all_periods_end)
         self.filter_form_initial_data['period_start_initial'] = period_start_initial
         self.filter_form_initial_data['period_end_initial'] = period_end_initial
 
