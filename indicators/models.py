@@ -350,8 +350,8 @@ class Indicator(models.Model):
     DIRECTION_OF_CHANGE_NEGATIVE = 3
     DIRECTION_OF_CHANGE = (
         (DIRECTION_OF_CHANGE_NONE, _("Direction of change (not applicable)")),
-        (DIRECTION_OF_CHANGE_POSITIVE, _("Positive (+)")),
-        (DIRECTION_OF_CHANGE_NEGATIVE, _("Negative (-)"))
+        (DIRECTION_OF_CHANGE_POSITIVE, _("Increase (+)")),
+        (DIRECTION_OF_CHANGE_NEGATIVE, _("Decrease (-)"))
     )
 
     indicator_key = models.UUIDField(
