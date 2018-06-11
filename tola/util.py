@@ -131,3 +131,17 @@ def formatFloat(value):
     except ValueError:
         return value
     return ("%.2f" % value).rstrip('0').rstrip('.')
+
+
+# Get GAIT data from mcapi
+def get_GAIT_data(gait_ids):
+
+    cleaned_ids = []
+    for id in gait_ids:
+        try:
+            cleaned_ids.append(str(int(id)))
+        except ValueError:
+            pass
+    base_url = 'https://mcapi.mercycorps.org/gaitprogram/?gaitids='
+    response = requests.get(base_url + ','.join(cleaned_ids))
+    return json.loads(response.content)
