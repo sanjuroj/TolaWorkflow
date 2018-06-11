@@ -332,9 +332,12 @@ class IPTT_ReportView(TemplateView):
                     annotation_target = Max(
                         Case(
                             When(
-                                Q(collecteddata__date_collected__gte=start_date) &
-                                Q(collecteddata__date_collected__lte=end_date),
-                                then=Subquery(last_data_record.values('periodic_target__target')[:1])
+                                # Q(collecteddata__date_collected__gte=start_date) &
+                                # Q(collecteddata__date_collected__lte=end_date),
+                                # then=Subquery(last_data_record.values('periodic_target__target')[:1])
+                                Q(periodictargets__start_date__gte=start_date) &
+                                Q(periodictargets__end_date__lte=end_date),
+                                then=F('periodictargets__target')
                             )
                         )
                     )
@@ -392,6 +395,8 @@ class IPTT_ReportView(TemplateView):
                 continue
             targetperiods[pt['period']] = [pt['start_date'], pt['end_date'], pt['target'], pt['id']]
 
+        # save the unfiltered targetperiods into the global variable so that
+        # it be used to populate the periods dropdown
         self.all_date_ranges = targetperiods
 
         # Update the report_end_date with the last reporting_period's end_date
@@ -787,7 +792,6 @@ class IPTT_ReportView(TemplateView):
             report_end_date, periods_date_ranges = self._generate_targetperiods(
                 self.program, start_period, end_period, period, show_all, num_recents)
             indicators = indicators.filter(target_frequency=period)
-            print(periods_date_ranges)
         else:
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid report type."))
@@ -799,6 +803,9 @@ class IPTT_ReportView(TemplateView):
         else:
             periods_start = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.FROM)
             periods_end = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.TO)
+
+            all_periods_start = self.prepare_iptt_period_dateranges(period, self.all_date_ranges, self.TO)
+            all_periods_end = self.prepare_iptt_period_dateranges(period, self.all_date_ranges, self.FROM)
 
         self.filter_form_initial_data['period_choices_start'] = tuple(periods_start)
         self.filter_form_initial_data['period_choices_end'] = tuple(periods_end)
