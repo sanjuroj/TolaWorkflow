@@ -1,18 +1,10 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Collected indicator data" %} | {% endblock %}
-{% block page_title %}{% trans "Collected indicator data" %}{% endblock %}
+{% block title %}{% trans "Collected Indicator Data" %} | {% endblock %}
+{% block page_title %}{% trans "Collected Indicator Data" %}{% endblock %}
 
 {% block bread_crumb %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="/indicators/home/{{ program|default_if_none:0 }}/0/0/">{% trans "Indicators" %}</a>
-        </li>
-        <li class="breadcrumb-item active">{% trans "Collected Indicator Data Report" %}</li>
-    </ol>
-</nav>
 {% endblock %}
 
 

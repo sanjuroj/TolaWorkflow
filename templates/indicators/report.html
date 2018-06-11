@@ -1,19 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Indicator report" %} | {% endblock %}
-{% block page_title %}{% trans "Indicator report" %}{% endblock %}
+{% block title %}{% trans "Indicator Library" %} | {% endblock %}
+{% block page_title %}{% trans "Indicator Library" %}{% endblock %}
 
 {% block bread_crumb %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="/indicators/home/0/0/0/">{% trans "Indicators" %}</a>
-        </li>
-        <li class="breadcrumb-item active">{% trans "Reports" %}</li>
-    </ol>
-</nav>
 {% endblock bread_crumb %}
+
 {% load render_table from django_tables2 %}
 
 

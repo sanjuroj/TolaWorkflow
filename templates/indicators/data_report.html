@@ -1,32 +1,26 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Indicator report" %} | {% endblock %}
-{% block page_title %}{% trans "Indicator report" %}{% endblock %}
+{% block title %}{% trans "Indicator Report" %} | {% endblock %}
+{% block page_title %}{% trans "Indicator Report" %}{% endblock %}
 
-{% block bread_crumb %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/indicators/home/0/0/0/">{% trans "Indicators" %}</a></li>
-        <li class="breadcrumb-item active">{% trans "Reports" %}</li>
-    </ol>
-</nav>
-    {% include "indicators/filter.html"%}
-    <br>
-    <div class="row">
-        <div class="col-sm-12 clearfix">
-            <div class="btn-group" role="group">
-                <button class="btn btn-sm btn-secondary {% if 'table' in request.get_full_path %} active{%endif%}" onClick="location.href='/indicators/data/{{ id }}/{{ program }}/{{ type }}/table/'" name="table">{% trans "Table" %}</button>&nbsp;
-                <button class="btn btn-sm btn-secondary {% if 'map' in request.get_full_path %} active{%endif%}" onClick="location.href='/indicators/data/{{ id }}/{{ program }}/{{ type }}/map/'" name="map">{% trans "Map" %}</button>&nbsp;
-                <button class="btn btn-sm btn-secondary {% if 'graph' in request.get_full_path %} active{%endif%}" onClick="location.href='/indicators/data/{{ id }}/{{ program }}/{{ type }}/graph/'" name="graph">{% trans "Graph" %}</button>
-            </div>
-        </div>
-    </div>
-
-{% endblock bread_crumb %}
+{% block bread_crumb %}{% endblock bread_crumb %}
 
 
 {% block content %}
+
+{% include "indicators/filter.html"%}
+<br>
+<div class="row">
+    <div class="col-sm-12 clearfix">
+        <div class="btn-group" role="group">
+            <button class="btn btn-sm btn-secondary {% if 'table' in request.get_full_path %} active{%endif%}" onClick="location.href='/indicators/data/{{ id }}/{{ program }}/{{ type }}/table/'" name="table">{% trans "Table" %}</button>&nbsp;
+            <button class="btn btn-sm btn-secondary {% if 'map' in request.get_full_path %} active{%endif%}" onClick="location.href='/indicators/data/{{ id }}/{{ program }}/{{ type }}/map/'" name="map">{% trans "Map" %}</button>&nbsp;
+            <button class="btn btn-sm btn-secondary {% if 'graph' in request.get_full_path %} active{%endif%}" onClick="location.href='/indicators/data/{{ id }}/{{ program }}/{{ type }}/graph/'" name="graph">{% trans "Graph" %}</button>
+        </div>
+    </div>
+</div>
+
 
 {% if "map" in request.get_full_path %}
     <style>

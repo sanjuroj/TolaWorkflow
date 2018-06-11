@@ -1,18 +1,10 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Indicator targets vs actuals report" %} | {% endblock %}
-{% block page_title %}{% trans "Indicator targets vs actuals report" %}{% endblock %}
+{% block title %}{% trans "Indicator Targets vs Actuals Report" %} | {% endblock %}
+{% block page_title %}{% trans "Indicator Targets vs Actuals Report" %}{% endblock %}
 
 {% block bread_crumb %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="/indicators/home/{{ getPrograms.all.0.id|default:0 }}/0/0/">{% trans "Indicators" %}</a>
-        </li>
-        <li class="breadcrumb-item active">{% trans "TvA Report" %}</li>
-    </ol>
-</nav>
 {% endblock %}
 
 
