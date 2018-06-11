@@ -112,6 +112,7 @@ class IPTT_ReportView(TemplateView):
         self.program = None
         self.annotations = {}
         self.filter_form_initial_data = {}
+        self.all_date_ranges = None
 
     @staticmethod
     def _get_num_months(period):
@@ -222,8 +223,8 @@ class IPTT_ReportView(TemplateView):
             midline_target = Max(
                 Case(
                     When(
-                        Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
-                        then=Subquery(last_data_record.values('periodic_target__target')[:1])
+                        Q(periodictargets__period=PeriodicTarget.MIDLINE),
+                        then=F('periodictargets__target')
                     )
                 )
             )
@@ -266,8 +267,10 @@ class IPTT_ReportView(TemplateView):
             endline_target = Max(
                 Case(
                     When(
-                        Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
-                        then=Subquery(last_data_record.values('periodic_target__target')[:1])
+                        # Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
+                        # then=Subquery(last_data_record.values('periodic_target__target')[:1])
+                        Q(periodictargets__period=PeriodicTarget.ENDLINE),
+                        then=F('periodictargets__target')
                     )
                 )
             )
@@ -388,6 +391,8 @@ class IPTT_ReportView(TemplateView):
             if pt['period'] == Indicator.TARGET_FREQUENCIES[0][1]:
                 continue
             targetperiods[pt['period']] = [pt['start_date'], pt['end_date'], pt['target'], pt['id']]
+
+        self.all_date_ranges = targetperiods
 
         # Update the report_end_date with the last reporting_period's end_date
         try:
@@ -782,7 +787,7 @@ class IPTT_ReportView(TemplateView):
             report_end_date, periods_date_ranges = self._generate_targetperiods(
                 self.program, start_period, end_period, period, show_all, num_recents)
             indicators = indicators.filter(target_frequency=period)
-
+            print(periods_date_ranges)
         else:
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid report type."))

@@ -179,8 +179,8 @@
     function disableFormElements() {
       numRecentPeriods.prop('readonly', true);
       checkFilterPeriods.prop('disabled', true);
-      checkShowAllPeriods.prop('disabled', true);
-      checkShowAllPeriods.prop('checked', false);
+      // checkShowAllPeriods.prop('disabled', true);
+      checkShowAllPeriods.prop('checked', true);
       checkFilterPeriods.prop('checked', false);
       start_period.prop('readonly', true);
       end_period.prop('readonly', true);
@@ -199,10 +199,7 @@
 
     // if the targetperiods value is MIDLINE/ENDLINE then disable certain elements on the filter form
     if (targetperiod_select.val() == 2) {
-      console.log("hahah");
       disableFormElements();
-    } else {
-
     }
 
     // get the appropriate url params for the page reload
