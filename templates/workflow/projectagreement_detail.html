@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% load i18n %}
+
+{% block page_title %}{% trans "Project Report" %}{% endblock %}
+
+{% block title %}{% trans "Project Report" %} | {% endblock %}
+
 {% block bread_crumb %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -11,8 +16,6 @@
 
 {% endblock bread_crumb %}
 {% load render_table from django_tables2 %}
-
-{% block page_title %}Project Report{% endblock %}
 
 {% block content %}
 <ul class="nav nav-tabs">
