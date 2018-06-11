@@ -209,7 +209,7 @@ class ReportFormCommon(forms.Form):
     program = forms.ModelChoiceField(queryset=Program.objects.none())
     timeperiods = forms.ChoiceField(choices=TIMEPERIODS_CHOICES, required=False)
     targetperiods = forms.ChoiceField(choices=TARGETPERIODS_CHOICES, required=False)
-    timeframe = forms.ChoiceField(choices=TIMEFRAME_CHOCIES, widget=forms.RadioSelect())
+    timeframe = forms.ChoiceField(choices=TIMEFRAME_CHOCIES, widget=forms.RadioSelect(), required=False)
     numrecentperiods = forms.IntegerField(required=False)
     formprefix = forms.CharField(widget=forms.HiddenInput(), required=False)
 
@@ -234,6 +234,8 @@ class IPTTReportQuickstartForm(ReportFormCommon):
         super(IPTTReportQuickstartForm, self).__init__(*args, **kwargs)
         self.fields['formprefix'].initial = self.prefix
         self.fields['timeframe'].initial = self.SHOW_ALL
+        # self.fields['timeperiods'].widget = forms.HiddenInput()
+        self.fields['timeperiods'].initial = Indicator.MONTHLY
 
 
 class IPTTReportFilterForm(ReportFormCommon):
