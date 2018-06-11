@@ -3,13 +3,15 @@
 {% block title %}{% trans "Project initiation form" %} | {% endblock %}
 {% block page_title %}{% trans "Project initiation form" %}{% endblock %}
 {% block bread_crumb %}
-<ol class="breadcrumb">
-  <li><a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a></li>
-  {% if pk %}
-    <li><a href="/workflow/dashboard/project/{{ pk }}/">Project Dashboard</a></li>
-  {% endif %}
-  <li class="active">Project Initiation Form</li>
-</ol>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a></li>
+        {% if pk %}
+        <li class="breadcrumb-item"><a href="/workflow/dashboard/project/{{ pk }}/">Project Dashboard</a></li>
+        {% endif %}
+        <li class="breadcrumb-item active">Project Initiation Form</li>
+    </ol>
+</nav>
 {% endblock %}
 
 {% block extra_js_in_body %}
