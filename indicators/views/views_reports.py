@@ -392,7 +392,7 @@ class IPTT_ReportView(TemplateView):
         # Update the report_end_date with the last reporting_period's end_date
         try:
             report_end_date = targetperiods[targetperiods.keys()[-1]][1]
-        except TypeError:
+        except (TypeError, IndexError):
             report_end_date = self.program.reporting_period_end
 
         if num_recents is not None and num_recents > 0 and period not in [Indicator.LOP, Indicator.MID_END]:
@@ -455,7 +455,7 @@ class IPTT_ReportView(TemplateView):
         # Update the report_end_date with the last reporting_period's end_date
         try:
             report_end_date = timeperiods[timeperiods.keys()[-1]][1]
-        except TypeError:
+        except (TypeError, IndexError):
             report_end_date = self.program.reporting_period_end
 
         if num_recents is not None and num_recents > 0:
@@ -677,6 +677,7 @@ class IPTT_ReportView(TemplateView):
         """
         start_date_choices = []
         choices = []
+        start = None
         for i, name in enumerate(periods_date_ranges):
             start = periods_date_ranges[name][0]
             if i == 0:
@@ -708,8 +709,9 @@ class IPTT_ReportView(TemplateView):
         if period == Indicator.ANNUAL:
             start_date_choices = choices
         else:
-            # now add the last set of choices from the last iteration
-            start_date_choices.append((start.year, tuple(choices)))
+            if start:
+                # now add the last set of choices from the last iteration
+                start_date_choices.append((start.year, tuple(choices)))
         return start_date_choices
 
     def get_context_data(self, **kwargs):
@@ -761,21 +763,34 @@ class IPTT_ReportView(TemplateView):
         end_period = self.request.GET.get('end_period')
 
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
+            target_frequencies = Indicator.objects.filter(program__in=[program_id]).values_list(
+                'target_frequency').distinct().order_by('target_frequency')
+
+            if (period,) not in target_frequencies:
+                period = target_frequencies[0][0]
+
             # Update the report_end_date to make sure it ends with the last period's end_date
             # Also, get the all of the periodic date ranges based on the selected period
             report_end_date, periods_date_ranges = self._generate_timeperiods(
                 start_period, end_period, period, show_all, num_recents)
+
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
             report_end_date, periods_date_ranges = self._generate_targetperiods(
                 self.program, start_period, end_period, period, show_all, num_recents)
             indicators = indicators.filter(target_frequency=period)
+
         else:
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid report type."))
             return context
 
-        periods_start = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.FROM)
-        periods_end = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.TO)
+        if period == Indicator.MID_END:
+            periods_start = (self.program.reporting_period_start, )
+            periods_end = (self.program.reporting_period_end, )
+        else:
+            periods_start = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.FROM)
+            periods_end = self.prepare_iptt_period_dateranges(period, periods_date_ranges, self.TO)
+
         self.filter_form_initial_data['period_choices_start'] = tuple(periods_start)
         self.filter_form_initial_data['period_choices_end'] = tuple(periods_end)
 
@@ -818,8 +833,11 @@ class IPTT_ReportView(TemplateView):
         # if show_all or most_recent is specified then do not filter
         # by period_start or period_end dates.
         if filterdata.get('timeframe', None) is not None:
-            del(filterdata['start_period'])
-            del(filterdata['end_period'])
+            try:
+                del(filterdata['start_period'])
+                del(filterdata['end_period'])
+            except KeyError:
+                pass
 
         redirect_url = "{}?{}".format(reverse_lazy('iptt_report', kwargs=url_kwargs),
                                       filterdata.urlencode())

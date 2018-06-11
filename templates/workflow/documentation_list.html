@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% block title %}{% trans "Documents" %} | {% endblock %}
+{% block page_title %}{% trans "Documents" %}{% endblock %}
 {% block bread_crumb %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -13,7 +15,7 @@
     </ol>
 </nav>
 {% endblock %}
-{% block page_title %}Document List{% endblock %}
+
 
 {% block content %}
 
@@ -36,7 +38,7 @@
         {% endfor %}
     </div>
 </div>
-<a href="/workflow/documentation_add" class="btn btn-sm btn-success">New Document</a>
+<a href="/workflow/documentation_add" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans 'Add document' %}</a>
 <br/>
 
 <table

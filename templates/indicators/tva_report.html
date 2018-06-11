@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block title %}{% trans "Indicator targets vs actuals report" %} | {% endblock %}
+{% block page_title %}{% trans "Indicator targets vs actuals report" %}{% endblock %}
+
 {% block bread_crumb %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -12,7 +15,6 @@
 </nav>
 {% endblock %}
 
-{% block page_title %}{% trans "Indicator Targets vs Actuals Report" %}{% endblock %}
 
 {% block content %}
     {% include "indicators/filter.html"%}

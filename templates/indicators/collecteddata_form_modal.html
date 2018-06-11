@@ -115,7 +115,7 @@
                     {{ form.date_collected.label }}*
                 </label>
                 <div class="col-sm-7">
-                    {% render_field form.date_collected class+="form-control" %}
+                    {% render_field form.date_collected class+="form-control" autocomplete="off" %}
                     <small class="form-text text-muted">{{ form.date_collected.help_text }}</small>
                 </div>
             </div>

@@ -64,7 +64,7 @@ class DatePicker(forms.DateInput):
     """
     template_name = 'datepicker.html'
 
-    DateInput = partial(forms.DateInput, {'class': 'datepicker'})
+    DateInput = partial(forms.DateInput, {'class': 'datepicker', 'autocomplete': 'off'})
 
 
 class BudgetForm(forms.ModelForm):
@@ -393,7 +393,7 @@ class ProjectAgreementForm(forms.ModelForm):
                                   </table>
                               {% endif %}
                               <div class="panel-footer">
-                                <a onclick="newPopup('/workflow/documentation_list/0/{{ pk }}','Add New Documentation'); return false;" href="#" class="btn btn-sm btn-info">Add New Documentation</a>
+                                <a onclick="newPopup('/workflow/documentation_list/0/{{ pk }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
                               </div>
                             </div>
                              """),
@@ -646,7 +646,7 @@ class ProjectAgreementSimpleForm(forms.ModelForm):
                                   </table>
                               {% endif %}
                               <div class="panel-footer">
-                                <a onclick="newPopup('/workflow/documentation_list/0/{{ pk }}','Add New Documentation'); return false;" href="#" class="btn btn-sm btn-info">Add New Documentation</a>
+                                <a onclick="newPopup('/workflow/documentation_list/0/{{ pk }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
                               </div>
                             </div>
                              """),
@@ -982,7 +982,7 @@ class ProjectCompleteForm(forms.ModelForm):
                               </table>
                           {% endif %}
                           <div class="panel-footer">
-                            <a onclick="newPopup('/workflow/documentation_list/0/{{ id }}','Add New Documentation'); return false;" href="#" class="btn btn-sm btn-info">Add New Documentation</a>
+                            <a onclick="newPopup('/workflow/documentation_list/0/{{ id }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
                           </div>
                         </div>
                          """),
@@ -1223,7 +1223,7 @@ class ProjectCompleteSimpleForm(forms.ModelForm):
                                 </table>
                             {% endif %}
                             <div class="panel-footer">
-                                <a onclick="newPopup('/workflow/documentation_list/0/{{ id }}','Add New Documentation'); return false;" href="#" class="btn btn-sm btn-info">Add New Documentation</a>
+                                <a onclick="newPopup('/workflow/documentation_list/0/{{ id }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
                             </div>
                         </div>
                     """),

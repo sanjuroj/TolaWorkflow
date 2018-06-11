@@ -160,6 +160,7 @@ body > .container {
 .btn-link.focus,
 .btn-link:hover {
     color: #0645ad;
+    font-weight: bold;
     text-decoration: none;
 }
 
@@ -262,6 +263,13 @@ input[type="checkbox"].form-control:focus {
     transition:         all .2s ease;
 }
 
+/* overload base colors */
+.navbar-dark .navbar-nav .nav-link {
+    color: #DBDCDE;
+}
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #ffffff;
+}
 /* overload dropdown menus */
 .dropdown-menu {
     border-radius: 0;
@@ -343,4 +351,32 @@ input[type="checkbox"].form-control:focus {
 .select2-container--default .select2-results>.select2-results__options {
   /* same dropshadow as multiselect */
   box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+}
+
+/* Crispy forms does not apply the appropriate classes to its tabs so we have to fake it */
+.nav-tabs .tab-pane {
+    /* same as .nav-tabs .nav-item */
+    margin-bottom: -1px;
+}
+.nav-tabs .tab-pane a {
+    /* same as .nav-tabs .nav-link */
+    border: 1px solid transparent;
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+    display: block;
+    padding: .5rem 1rem;
+}
+.nav-tabs .tab-pane a:hover {
+    border-color: #e9ecef #e9ecef #dee2e6;
+}
+.nav-tabs .tab-pane a.active.show {
+/* same as  .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active */
+    color: #495057;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
+.tab-content.panel-body {
+    /* TODO: check for regressions! */
+    /* background: #ffffff; */
+    margin-top: 1rem;
 }

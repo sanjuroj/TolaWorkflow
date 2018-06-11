@@ -9,7 +9,7 @@ from feed.views import (
     DistrictViewSet, AdminLevelThreeViewSet, VillageViewSet, ContactViewSet, DocumentationViewSet,
     CollectedDataViewSet, TolaTableViewSet, DisaggregationValueViewSet, ProjectAgreementViewSet,
     LoggedUserViewSet, ChecklistViewSet, OrganizationViewSet, PogramIndicatorReadOnlyViewSet,
-    PeriodicTargetReadOnlyViewSet
+    PeriodicTargetReadOnlyViewSet, ProgramTargetFrequencies
 )
 from django.conf.urls import include, url
 # Import i18n_patterns
@@ -69,6 +69,7 @@ router.register(r'checklist', ChecklistViewSet)
 router.register(r'organization', OrganizationViewSet)
 router.register(r'pindicators', PogramIndicatorReadOnlyViewSet, base_name='pindicators')
 router.register(r'periodictargets', PeriodicTargetReadOnlyViewSet, base_name='periodictargets')
+router.register(r'programtargetfrequencies', ProgramTargetFrequencies, base_name='programtargetfrequencies')
 
 urlpatterns = [ # rest framework
                 url(r'^api/', include(router.urls)),

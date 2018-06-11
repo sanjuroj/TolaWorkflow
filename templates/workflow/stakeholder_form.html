@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% block title %}{% trans 'Stakeholder' %} | {% endblock %}
+{% block page_title %}{% trans 'Stakeholder' %}{% endblock %}
 {% block bread_crumb %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -14,7 +16,6 @@
 </nav>
 
 {% endblock %}
-{% block page_title %}Stakeholder Form{% endblock %}
 
 {% block content %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/select2.min.js"></script>
