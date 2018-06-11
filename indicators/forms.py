@@ -266,36 +266,8 @@ class IPTTReportFilterForm(ReportFormCommon):
             except TypeError:
                 pass
 
-        # timeframe = kwargs.get('initial').get('timeframe')
-        timeperiod = kwargs.get('initial').get('timeperiods')
-        targetperiod = kwargs.get('initial').get('targetperiods')
-        psi = kwargs.get('initial').get('period_start_initial')
-        pei = kwargs.get('initial').get('period_end_initial')
-        period = timeperiod if targetperiod is None else targetperiod
-
-        try:
-            if period == Indicator.ANNUAL:
-                first_year_first_daterange_key = periods_choices_start[0][0]
-                last_year_last_daterange_key = periods_choices_end[len(periods_choices_end)-1][0]
-            else:
-                first_option_group = periods_choices_start[0]
-                # first_year = periods_choices[0][0]
-                first_year_dateranges = first_option_group[1]
-                first_year_first_daterange = first_year_dateranges[0]
-                first_year_first_daterange_key = first_year_first_daterange[0]
-
-                last_option_group = periods_choices_end[len(periods_choices_end)-1]
-                last_year_dateranges = last_option_group[1]
-                last_year_last_daterange_key = last_year_dateranges[len(last_year_dateranges)-1][0]
-        except (IndexError, TypeError):
-            # IndexError is when LOP is selected
-            # TypeError is when MID/END line is selected
-            reporting_sdate = formats.date_format(program.reporting_period_start, format="DATE_FORMAT", use_l10n=True)
-            reporting_edate = formats.date_format(program.reporting_period_end, format="DATE_FORMAT", use_l10n=True)
-            periods_choices_start = ((program.reporting_period_start, reporting_sdate,),)
-            periods_choices_end = ((program.reporting_period_end, reporting_edate),)
-            first_year_first_daterange_key = None
-            last_year_last_daterange_key = None
+        first_year_first_daterange_key = kwargs.get('initial').get('period_start_initial')
+        last_year_last_daterange_key = kwargs.get('initial').get('period_end_initial')
 
         super(IPTTReportFilterForm, self).__init__(*args, **kwargs)
         del self.fields['formprefix']
