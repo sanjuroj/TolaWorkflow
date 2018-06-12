@@ -1,5 +1,4 @@
 from datetime import datetime
-from django.utils import formats
 from functools import partial
 from django.db.models import Q
 from django import forms
@@ -223,7 +222,7 @@ class ReportFormCommon(forms.Form):
         self.fields['targetperiods'].label = _("TARGET PERIODS")
         self.fields['program'].queryset = Program.objects.filter(country__in=countries) \
             .exclude(indicator=None) \
-            .exclude(indicator__periodictargets__isnull=True)
+            .exclude(indicator__periodictargets__isnull=True, indicator__target_frequency__gt=Indicator.LOP)
 
 
 class IPTTReportQuickstartForm(ReportFormCommon):
