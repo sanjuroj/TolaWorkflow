@@ -540,7 +540,7 @@ class IPTT_ReportView(TemplateView):
             pass
 
         try:
-            filters['collecteddata__site__in'] = data['site']
+            filters['collecteddata__site__in'] = data['site'] if isinstance(data['site'], list) else [data['site']]
         except KeyError:
             pass
 
