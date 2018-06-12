@@ -513,19 +513,26 @@ class IndicatorUpdate(UpdateView):
         existing_target_frequency = indicatr.target_frequency
         new_target_frequency = form.cleaned_data.get('target_frequency', None)
         lop = form.cleaned_data.get('lop_target', None)
+        program = Program.objects.get(pk=form.cleaned_data.get('program'))
 
         if periodic_targets == 'generateTargets':
             # handle (delete) association of colelctedData records if necessary
-            handleDataCollectedRecords(
-                indicatr, lop, existing_target_frequency, new_target_frequency)
-
-            target_frequency_num_periods = form.cleaned_data.get(
-                'target_frequency_num_periods', 0)
-            if target_frequency_num_periods is None:
-                target_frequency_num_periods = 1
+            handleDataCollectedRecords(indicatr, lop, existing_target_frequency, new_target_frequency)
 
             event_name = form.cleaned_data.get('target_frequency_custom', '')
-            start_date = form.cleaned_data.get('target_frequency_start', None)
+            start_date = ''
+            target_frequency_num_periods = 1
+            target_frequency_type = form.cleaned_data.get('target_frequency', 1)
+
+            if target_frequency_type in [3 , 4, 5, 6, 7]:
+                frequency_month_map = {3: 12, 4: 6, 5: 4, 6: 3, 7: 1}
+                start_date = program.reporting_period_start
+                delta = relativedelta(program.reporting_period_end, start_date)
+                target_frequency_num_periods = \
+                    ((delta.years*12 + delta.months) / frequency_month_map[target_frequency_type]) + 1
+            elif target_frequency_type == 8: #Events
+                # This is only case in which target fequency comes from the form
+                target_frequency_num_periods = form.cleaned_data.get('target_frequency_num_periods', 1)
 
             generatedTargets = generate_periodic_targets(
                 new_target_frequency, start_date, target_frequency_num_periods,
