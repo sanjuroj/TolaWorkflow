@@ -239,12 +239,12 @@ class IPTTReportQuickstartForm(ReportFormCommon):
 
 
 class IPTTReportFilterForm(ReportFormCommon):
-    level = forms.ModelMultipleChoiceField(queryset=Level.objects.none(), required=False, label=_('LEVEL'))
-    ind_type = forms.ModelMultipleChoiceField(queryset=IndicatorType.objects.none(), required=False, label=_('TYPE'))
-    sector = forms.ModelMultipleChoiceField(queryset=Sector.objects.none(), required=False, label=_('SECTOR'))
-    site = forms.ModelMultipleChoiceField(queryset=SiteProfile.objects.none(), required=False, label=_('SITE'))
+    level = forms.ModelMultipleChoiceField(queryset=Level.objects.none(), required=False, label=_('Levels'))
+    ind_type = forms.ModelMultipleChoiceField(queryset=IndicatorType.objects.none(), required=False, label=_('Types'))
+    sector = forms.ModelMultipleChoiceField(queryset=Sector.objects.none(), required=False, label=_('Sectors'))
+    site = forms.ModelMultipleChoiceField(queryset=SiteProfile.objects.none(), required=False, label=_('Sites'))
     indicators = forms.ModelMultipleChoiceField(
-        queryset=Indicator.objects.none(), required=False, label=_('SELECT INDICATORS'))
+        queryset=Indicator.objects.none(), required=False, label=_('Indicators'))
 
     def __init__(self, *args, **kwargs):
         program = kwargs.pop('program')
