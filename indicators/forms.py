@@ -1,4 +1,5 @@
 from datetime import datetime
+from collections import OrderedDict
 from functools import partial
 from django.db.models import Q
 from django import forms
@@ -213,6 +214,7 @@ class ReportFormCommon(forms.Form):
     formprefix = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
+        programs = OrderedDict()
         self.request = kwargs.pop('request')
         countries = getCountry(self.request.user)
         super(ReportFormCommon, self).__init__(*args, **kwargs)
@@ -220,9 +222,17 @@ class ReportFormCommon(forms.Form):
         self.fields['timeperiods'].label = _("TIME PERIODS")
         self.fields['numrecentperiods'].widget.attrs['placeholder'] = _("enter a number")
         self.fields['targetperiods'].label = _("TARGET PERIODS")
-        self.fields['program'].queryset = Program.objects.filter(country__in=countries, funding_status="Funded") \
-            .exclude(Q(indicator=None) | Q(indicator__target_frequency=Indicator.EVENT)) \
-            .exclude(indicator__periodictargets__isnull=True, indicator__target_frequency__gt=Indicator.LOP)
+
+        program_qs = Program.objects.filter(country__in=countries, funding_status="Funded") \
+            .exclude(indicator__isnull=True)
+        # for p in program_qs:
+        #     if p.indicator__periodictargets.all().count() > 0 or p.indicator__target_frequency == Indicator.LOP:
+        #         p['id'] = p['name']
+        self.fields['program'].queryset = program_qs
+        # self.fields['program'].queryset = Program.objects.filter(country__in=countries, funding_status="Funded") \
+        #     .exclude(indicator__isnull=True) \
+        #     # .exclude(indicator__target_frequency__gt=Indicator.LOP, indicator__periodictargets__isnull=True) \
+        #     # .values('id', 'name')
 
 
 class IPTTReportQuickstartForm(ReportFormCommon):
