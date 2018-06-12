@@ -684,7 +684,7 @@ class IPTT_ReportView(TemplateView):
                             elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
                                 percent_met_val = formatFloat(float(ind["{}_last".format(k)]) / target * 100)
                                 ind[percent_met] = "{}%".format(percent_met_val)
-                        except TypeError:
+                        except (TypeError, KeyError):
                             ind[percent_met] = ''
         return indicators
 
