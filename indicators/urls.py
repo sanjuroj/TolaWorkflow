@@ -2,7 +2,6 @@ from django.conf.urls import url
 
 from .views.views_indicators import (
     indicator_create,
-    CollectedDataList,
     CollectedDataCreate,
     CollectedDataUpdate,
     CollectedDataDelete,
@@ -58,9 +57,6 @@ urlpatterns = [
     url(r'^periodic_target_deleteall/(?P<indicator>\d+)/(?P<deleteall>\w+)/$',
         PeriodicTargetView.as_view(), name='pt_deleteall'),
 
-    url(r'^collecteddata/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$',
-        CollectedDataList.as_view(), name='collecteddata_list'),
-
     url(r'^collecteddata_add/(?P<program>\d+)/(?P<indicator>\d+)/$',
         CollectedDataCreate.as_view(), name='collecteddata_add'),
 
@@ -72,9 +68,6 @@ urlpatterns = [
 
     url(r'^collecteddata_delete/(?P<pk>\d+)/$', CollectedDataDelete.as_view(),
         name='collecteddata_delete'),
-
-    url(r'^collecteddata_export/(?P<program>\d+)/(?P<indicator>\d+)/$',
-        CollectedDataList.as_view(), name='collecteddata_list'),
 
     url(r'^report/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$',
         indicator_report, name='indicator_report'),
