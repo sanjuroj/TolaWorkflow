@@ -220,8 +220,8 @@ class ReportFormCommon(forms.Form):
         self.fields['timeperiods'].label = _("TIME PERIODS")
         self.fields['numrecentperiods'].widget.attrs['placeholder'] = _("enter a number")
         self.fields['targetperiods'].label = _("TARGET PERIODS")
-        self.fields['program'].queryset = Program.objects.filter(country__in=countries) \
-            .exclude(indicator=None) \
+        self.fields['program'].queryset = Program.objects.filter(country__in=countries, funding_status="Funded") \
+            .exclude(Q(indicator=None) | Q(indicator__target_frequency=Indicator.EVENT)) \
             .exclude(indicator__periodictargets__isnull=True, indicator__target_frequency__gt=Indicator.LOP)
 
 
