@@ -1,4 +1,17 @@
 {% load i18n %}
+<script type="text/javascript">
+$(document).ready(function() {
+    // rotate toggle
+    $('.indicator_results_toggle').on('click', function(e) {
+        let icon = $(this).find("svg");
+        if (icon.hasClass('fa-caret-right')) {
+            icon.attr('class', 'fa-caret-down');
+        } else {
+            icon.attr('class', 'fa-caret-right');
+        }
+    });
+});
+</script>
 
 <table class="table hiddenTable">
     <tr>
@@ -18,9 +31,10 @@
                 id="id_indicator_data_count_btn_{{ indicator.id }}"
                 href="#"
                 onclick="loadCollected({{ indicator.id }}, {{ program_id }})"
-                class=""
+                class="indicator_results_toggle"
                 data-toggle="collapse"
                 data-target="#hidden-indicator-{{ indicator.id }}">
+                <i class="fas fa-caret-right"></i>
                 {{ indicator.name}}{#{% if indicator.data_count > 0 %}({{ indicator.data_count }} results){% endif %}#}
             </a>
             {% if indicator.key_performance_indicator %}
