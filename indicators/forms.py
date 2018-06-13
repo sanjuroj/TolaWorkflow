@@ -257,13 +257,13 @@ class IPTTReportFilterForm(ReportFormCommon):
         periods_choices_start = kwargs.get('initial').get('period_choices_start')
         periods_choices_end = kwargs.get('initial').get('period_choices_end')
 
-        target_frequencies = Indicator.objects.filter(program__in=[program.id]) \
+        target_frequencies = Indicator.objects.filter(program__in=[program.id], target_frequency__isnull=False) \
             .exclude(target_frequency=Indicator.EVENT) \
             .values('target_frequency') \
             .distinct() \
             .order_by('target_frequency')
 
-        target_frequency_choices = [(0, '')]
+        target_frequency_choices = []
         for tp in target_frequencies:
             try:
                 id = int(tp['target_frequency'])

@@ -787,13 +787,15 @@ class IPTT_ReportView(TemplateView):
                 start_period, end_period, period, show_all, num_recents)
 
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
-            # now that we only show target_frequencies (periods) that are available in the program,
-            # this code does not need to be there. TODO: Delete it in post winterhawks release; keeping it
-            # just in case things change for now.
-            # target_frequencies = Indicator.objects.filter(program__in=[program_id]).values_list(
-            #     'target_frequency').distinct().order_by('target_frequency')
-            # if (period,) not in target_frequencies:
-            #     period = target_frequencies[0][0]
+            target_frequencies = Indicator.objects \
+                .filter(program__in=[program_id], target_frequency__isnull=False) \
+                .exclude(target_frequency=Indicator.EVENT) \
+                .values_list('target_frequency') \
+                .distinct() \
+                .order_by('target_frequency')
+
+            if (period,) not in target_frequencies:
+                period = target_frequencies[0][0]
 
             report_end_date, all_date_ranges, periods_date_ranges = self._generate_targetperiods(
                 self.program, start_period, end_period, period, show_all, num_recents)
@@ -818,9 +820,12 @@ class IPTT_ReportView(TemplateView):
             period_start_initial = None  # self.program.reporting_period_start
             period_end_initial = None  # self.program.reporting_period_end
         else:
-            period_start_initial = periods_date_ranges[periods_date_ranges.keys()[0]][0]
-            period_end_initial = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
-
+            try:
+                period_start_initial = periods_date_ranges[periods_date_ranges.keys()[0]][0]
+                period_end_initial = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
+            except IndexError:
+                period_start_initial = None
+                period_end_initial = None
             all_periods_start = self.prepare_iptt_period_dateranges(period, all_date_ranges, self.FROM)
             all_periods_end = self.prepare_iptt_period_dateranges(period, all_date_ranges, self.TO)
 
