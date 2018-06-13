@@ -2,40 +2,45 @@
 
 <table class="table hiddenTable">
     <tr>
-        <th id="id_indicator_number_col_header">{% trans "No." %}</th>
-        <th id="id_indicator_name_col_header">{% trans "Indicator" %}</th>
-        <th id="id_indicator_level_col_header">{% trans "Level" %}</th>
-        <th id="id_indicator_buttons_col_header">&nbsp;</th>
+        <th class="text-uppercase text-nowrap" id="id_indicator_number_col_header">{% trans "No." %}</th>
+        <th class="text-uppercase text-nowrap" id="id_indicator_name_col_header">{% trans "Indicator" %}</th>
+        <th class="text-uppercase text-nowrap" id="id_indicator_buttons_col_header">&nbsp;</th>
+        <th class="text-uppercase text-nowrap" id="id_indicator_level_col_header">{% trans "Level" %}</th>
+        <th class="text-uppercase text-nowrap" id="id_indicator_unit_col_header">{% trans "Unit of measure" %}</th>
+        <th class="text-uppercase text-nowrap" id="id_indicator_baseline_col_header">{% trans "Baseline" %}</th>
+        <th class="text-uppercase text-nowrap" id="id_indicator_target_col_header">{% trans "Target" %}</th>
+        <th class="text-uppercase text-nowrap" id="id_indicator_actual_col_header">{% trans "Actual" %}</th>
+        <th class="text-uppercase text-nowrap" id="id_indicator_met_col_header">{% trans "% Met" %}</th>
     </tr>
     {% for indicator in indicators %}
     <tr id = "id_indicator_{{ indicator.id }}" {% if indicator.just_created %} style="background-color: lightyellow;" {% endif %} >
         <td id="id_indicator_number_{{ indicator.id }}">{{ indicator.number|default_if_none:''}}</td>
         <td id="id_indicator_name_{{ indicator.id }}">
-            <a href="/indicators/indicator_update/{{ indicator.id }}" class="indicator-link"> {{ indicator.name}} </a>
+            <a
+                id="id_indicator_data_count_btn_{{ indicator.id }}"
+                href="#"
+                onclick="loadCollected({{ indicator.id }}, {{ program_id }})"
+                class=""
+                data-toggle="collapse"
+                data-target="#hidden-indicator-{{ indicator.id }}">
+                {{ indicator.name}}{#{% if indicator.data_count > 0 %}({{ indicator.data_count }} results){% endif %}#}
+            </a>
             {% if indicator.key_performance_indicator %}
                 <span class="badge">KPI</span>
             {% endif %}
         </td>
-        <td id="id_indicator_level_{{ indicator.id }}">{{ indicator.levels }}</td>
         <td id="id_indicator_buttons_{{ indicator.id }}"width="150">
-            <span class="btn-group" role="group">
-                <a
-                    id="id_indicator_data_count_btn_{{ indicator.id }}"
-                    href="#"
-                    onclick="loadCollected({{ indicator.id }}, {{ program_id }})"
-                    class="btn btn-primary"
-                    data-toggle="collapse"
-                    data-target="#hidden-indicator-{{ indicator.id }}">
-                        <span id="id_indicator_data_span_count_{{ indicator.id }}">
-                            {% trans 'Results' %} ({{ indicator.data_count }})
-                        </span>
-                </a>
-
-            </span>
+            <a href="/indicators/indicator_update/{{ indicator.id }}" class="indicator-link"><i class="fas fa-cog"></i></a>
         </td>
+        <td id="id_indicator_level_{{ indicator.id }}">{{ indicator.levels }}</td>
+        <td id="id_indicator_unit_{{ indicator.id }}">{{ indicator.unit }}</td>
+        <td id="id_indicator_baseline_{{ indicator.id }}">{{ indicator.baseline }}</td>
+        <td id="id_indicator_target_{{ indicator.id }}">{{ indicator.target }}</td>
+        <td id="id_indicator_actual_{{ indicator.id }}">{{ indicator.actual }}</td>
+        <td id="id_indicator_met_{{ indicator.id }}">{{ indicator.met }}</td>
     </tr>
     <tr class="hiddenRow">
-        <td colspan="6">
+        <td colspan="9">
             <div id="hidden-indicator-{{ indicator.id }}" class="collapse">
                 <!-- Table -->
                 {% include "indicators/collected_data_table.html" %}
