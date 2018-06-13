@@ -200,21 +200,20 @@
                     {{ form.tola_table.label }}
                 </label>
                 <div class="col-sm-7">
-                    <a class="output" data-toggle="modal" data-target="#tolatablemodal" href="/indicators/collecteddata_import/">{% trans 'Import evidence from TolaTables' %}</a>
                     {% render_field form.tola_table class+="form-control" %}
                     <small id="hint_id_tola_table" class="form-text text-muted">
                         {{ form.tola_table.help_text }}
                     </small>
+                    <div class="pt-2">
+                        <a class="output" data-toggle="modal" data-target="#tolatablemodal" href="/indicators/collecteddata_import/">{% trans 'Import evidence from TolaTables' %}</a>
+                    </div>
+                    <div class="d-flex pt-2">
+                        <div class="">{{ form.update_count_tola_table }}</div>
+                        <label for="id_update_count_tola_table" class="d-block pl-2">{{ form.update_count_tola_table.label}}</label>
+                    </div>
                 </div>
             </div>
 
-            <div class="form-row mb-2" id="div_id_tola_table">
-                <label for="id_update_count_tola_table" class="col-sm-2 col-form-label">
-                </label>
-                <div class="col-sm-9">
-                    {{ form.update_count_tola_table }} <label for="id_update_count_tola_table" class="col-form-label">{{ form.update_count_tola_table.label}}</label>
-                </div>
-            </div>
         </fieldset>
 
         <fieldset class="border p-2">
