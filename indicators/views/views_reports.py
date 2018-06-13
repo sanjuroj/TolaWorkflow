@@ -781,18 +781,20 @@ class IPTT_ReportView(TemplateView):
         end_period = self.request.GET.get('end_period')
 
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            target_frequencies = Indicator.objects.filter(program__in=[program_id]).values_list(
-                'target_frequency').distinct().order_by('target_frequency')
-
-            if (period,) not in target_frequencies:
-                period = target_frequencies[0][0]
-
             # Update the report_end_date to make sure it ends with the last period's end_date
             # Also, get the all of the periodic date ranges based on the selected period
             report_end_date, all_date_ranges, periods_date_ranges = self._generate_timeperiods(
                 start_period, end_period, period, show_all, num_recents)
 
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
+            # now that we only show target_frequencies (periods) that are available in the program,
+            # this code does not need to be there. TODO: Delete it in post winterhawks release; keeping it
+            # just in case things change for now.
+            # target_frequencies = Indicator.objects.filter(program__in=[program_id]).values_list(
+            #     'target_frequency').distinct().order_by('target_frequency')
+            # if (period,) not in target_frequencies:
+            #     period = target_frequencies[0][0]
+
             report_end_date, all_date_ranges, periods_date_ranges = self._generate_targetperiods(
                 self.program, start_period, end_period, period, show_all, num_recents)
             indicators = indicators.filter(target_frequency=period)

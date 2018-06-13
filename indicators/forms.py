@@ -221,7 +221,11 @@ class ReportFormCommon(forms.Form):
         self.fields['numrecentperiods'].widget.attrs['placeholder'] = _("enter a number")
         self.fields['targetperiods'].label = _("TARGET PERIODS")
         self.fields['program'].queryset = Program.objects \
-            .filter(country__in=countries, funding_status="Funded", indicator__target_frequency__isnull=False) \
+            .filter(country__in=countries,
+                    funding_status="Funded",
+                    reporting_period_start__isnull=False,
+                    reporting_period_end__isnull=False,
+                    indicator__target_frequency__isnull=False,) \
             .exclude(indicator__isnull=True) \
             .distinct()
 
