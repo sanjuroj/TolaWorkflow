@@ -7,10 +7,8 @@
         <th class="text-uppercase text-nowrap" id="id_indicator_buttons_col_header">&nbsp;</th>
         <th class="text-uppercase text-nowrap" id="id_indicator_level_col_header">{% trans "Level" %}</th>
         <th class="text-uppercase text-nowrap" id="id_indicator_unit_col_header">{% trans "Unit of measure" %}</th>
-        <th class="text-uppercase text-nowrap" id="id_indicator_baseline_col_header">{% trans "Baseline" %}</th>
-        <th class="text-uppercase text-nowrap" id="id_indicator_target_col_header">{% trans "Target" %}</th>
-        <th class="text-uppercase text-nowrap" id="id_indicator_actual_col_header">{% trans "Actual" %}</th>
-        <th class="text-uppercase text-nowrap" id="id_indicator_met_col_header">{% trans "% Met" %}</th>
+        <th class="text-uppercase text-right text-nowrap" id="id_indicator_baseline_col_header">{% trans "Baseline" %}</th>
+        <th class="text-uppercase ttext-right ext-nowrap" id="id_indicator_target_col_header">{% trans "Target" %}</th>
     </tr>
     {% for indicator in indicators %}
     <tr id = "id_indicator_{{ indicator.id }}" {% if indicator.just_created %} style="background-color: lightyellow;" {% endif %} >
@@ -33,11 +31,9 @@
             <a href="/indicators/indicator_update/{{ indicator.id }}" class="indicator-link"><i class="fas fa-cog"></i></a>
         </td>
         <td id="id_indicator_level_{{ indicator.id }}">{{ indicator.levels }}</td>
-        <td id="id_indicator_unit_{{ indicator.id }}">{{ indicator.unit }}</td>
-        <td id="id_indicator_baseline_{{ indicator.id }}">{{ indicator.baseline }}</td>
-        <td id="id_indicator_target_{{ indicator.id }}">{{ indicator.target }}</td>
-        <td id="id_indicator_actual_{{ indicator.id }}">{{ indicator.actual }}</td>
-        <td id="id_indicator_met_{{ indicator.id }}">{{ indicator.met }}</td>
+        <td id="id_indicator_unit_{{ indicator.id }}">{{ indicator.unit_of_measure }}</td>
+        <td class="text-right" id="id_indicator_baseline_{{ indicator.id }}">{{ indicator.baseline }}</td>
+        <td class="text-right" id="id_indicator_target_{{ indicator.id }}">{{ indicator.lop_target }}</td>
     </tr>
     <tr class="hiddenRow">
         <td colspan="9">
