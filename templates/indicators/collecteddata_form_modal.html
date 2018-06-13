@@ -16,6 +16,17 @@
                             .text(sel.text()));
             });
 
+            // rotate disaggregation toggle
+            // TODO: this is overly specific
+            $('#disagg_toggle').on('click', function(e) {
+                let icon = $(this).find("svg");
+                if (icon.hasClass('fa-caret-right')) {
+                    icon.attr('class', 'fa-caret-down');
+                } else {
+                    icon.attr('class', 'fa-caret-right');
+                }
+            });
+
             var achieved_formatted_value = parseFloat($("#id_achieved").val()).toFixed(2).replace(/[.,]00$/, "");
             $("#id_achieved").val(achieved_formatted_value);
 
@@ -206,17 +217,20 @@
             </div>
         </fieldset>
 
-        <fieldset>
+        <fieldset class="border p-2">
             {% if getDisaggregationLabelStandard and not getDisaggregationValueStandard %}
-                <div class="card">
-                    <div class="card-header"
+                    <div
+                            id="disagg_toggle"
+                            class="fontsize-130 btn btn-link"
                             data-toggle="collapse"
                             data-target="#standardDisagg"
                             aria-expanded="false"
                             aria-controls="standardDisagg">
+                            <!-- Need the div to make ensure rotating symbol doesn't push text to the right -->
+                            <div class="div-expand-symbol"><i class="fas fa-caret-right"></i></div>
                         {% trans "Standard disaggregations" %}
                     </div>
-                    <div class="card-body collapse" id="standardDisagg">
+                    <div class="collapse" id="standardDisagg">
                         <table class="table table-sm table-hover table-striped">
                             <tr>
                                 <th>{% trans "Disaggregation level" %}</th>
