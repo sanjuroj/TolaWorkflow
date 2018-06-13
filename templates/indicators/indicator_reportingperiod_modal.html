@@ -131,19 +131,8 @@
             showButtonPanel: true,
             dateFormat: 'M d, yy',
             onClose: function (dateText, inst) {
-                const month = inst.selectedMonth;
-                const year = inst.selectedYear;
-                const existingDate = $(this).val();
-                var newDate = "";
-                if (this.id == start_date_id)
-                    newDate = formatDate(new Date(year, month, 1));
-                else {
-                    newDate = formatDate(new Date(year, month+1, 0));
-                }
-                if (existingDate != newDate) {
-                    $(this).change();
-                }
-                $(this).datepicker('setDate', newDate);
+                // Without blurring, when the Done button is pressed, the cursor stays in the date input field
+                // and the user can put whatever they want, without the controls implemented by the datepicker.
                 $(this).blur();
             },
         };
@@ -174,7 +163,27 @@
                     }
                 },
             })
-        );
+        ).focus(function(){
+            const field = $(this);
+            // hide the days part of the calendar
+            $(".ui-datepicker-calendar").hide();
+            // hide the "Today" button
+            $("#ui-datepicker-div button.ui-datepicker-current").hide();
+            $("#ui-datepicker-div").position({
+                my: "left top",
+                at: "left bottom",
+                of: $(this)
+            });
+            // detach it from the field so that onclose the field is not populated automatically
+            $('.ui-datepicker-calendar').detach();
+            $('.ui-datepicker-close').click(function() {
+                // this is only called when the done button is clicked.
+                const month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                const year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                field.datepicker('setDate', new Date(year, month, 1));
+                field.trigger('change');
+            });
+        });
 
         $(`#${end_date_id}`).datepicker(
             $.extend(true, commonOpts, {
@@ -194,16 +203,37 @@
                         $(this).datepicker('option', 'defaultDate', new Date());
                     }
 
-                    // The minDate option in the datepicker is already set to the current inupt field value.
-                    // We can reset the minValue to the start date if a start date exists
-                    if ((selectedDate = $(`#${start_date_id}`).val()).length > 0) {
+                    if ($(`#${start_date_id}`).prop('disabled')){
+                        $(this).datepicker("option", "minDate", $(this).val());
+                    }
+                    else if ((selectedDate = $(`#${start_date_id}`).val()).length > 0) {
                         year = selectedDate.substring(selectedDate.length - 4, selectedDate.length);
                         month = jQuery.inArray(selectedDate.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
-                        $(this).datepicker("option", "minDate", new Date(year, month+1, 0));
+                        $(this).datepicker("option", "minDate", new Date(year, parseInt(month)+1, 0));
                     }
                 },
             })
-        );
+        ).focus(function(){
+            const field = $(this);
+            // hide the days part of the calendar
+            $(".ui-datepicker-calendar").hide();
+            // hide the "Today" button
+            $("#ui-datepicker-div button.ui-datepicker-current").hide();
+            $("#ui-datepicker-div").position({
+                my: "left top",
+                at: "left bottom",
+                of: $(this)
+            });
+            // detach it from the field so that onclose the field is not populated automatically
+            $('.ui-datepicker-calendar').detach();
+            $('.ui-datepicker-close').click(function() {
+                // this is only called when the done button is clicked.
+                const month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                const year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                field.datepicker('setDate', new Date(year, parseInt(month)+1, 0));
+                field.trigger('change');
+            });
+        });
     };
 
     /*
