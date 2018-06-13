@@ -78,7 +78,10 @@
         {% endfor %}
 
         <h2>{%  trans 'Results' %}</legend>
-        <h3>{{ object.indicator.levels }}: {{ object.indicator }}</h3>
+        <h3>
+          {% if object.indicator.levels %}{{ object.indicator.levels }}: {% endif %}
+          {{ object.indicator.name|truncatechars:300 }}
+        </h3>
 
         <fieldset>
             <div class="form-row mb-2" id="div_id_program2">
