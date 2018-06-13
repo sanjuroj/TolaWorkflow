@@ -445,7 +445,6 @@ applied.  This keeps the inputs from getting taller when there is an error. */
 #div_id_name,
 #div_id_target_frequency,
 #div_id_target_frequency .div-input-container,
-#div_id_target_frequency_start,
 #id_baseline,
 #div_id_target_frequency_custom {
     height: 2.25rem;
