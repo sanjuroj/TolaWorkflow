@@ -617,7 +617,7 @@ class IPTT_ReportView(TemplateView):
             # process lop_percent_met
             try:
                 ind['lop_percent_met'] = "{}%".format(formatFloat(lop_actual / lop_target * 100))
-            except TypeError:
+            except (TypeError, ZeroDivisionError):
                 # print('actual={}, lop={}'.format(lop_actual, lop_target))
                 ind['lop_percent_met'] = ''
 
