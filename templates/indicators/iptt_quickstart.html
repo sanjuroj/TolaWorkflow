@@ -209,6 +209,7 @@
               const program_id = $(this).val();
               $.getJSON(`/api/programtargetfrequencies/?program_id=${program_id}`, function (data) {
                 targetperiods.empty();
+                targetperiods.append($("<option></option>").attr("value", 0).text('---------'));
                 $.each(data, function (index, option) {
                   targetperiods.append($("<option></option>").attr("value", option.target_frequency).text(option.frequency_name));
                 });

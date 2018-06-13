@@ -1,5 +1,4 @@
 from datetime import datetime
-from django.utils import formats
 from functools import partial
 from django.db.models import Q
 from django import forms
@@ -221,7 +220,14 @@ class ReportFormCommon(forms.Form):
         self.fields['timeperiods'].label = _("TIME PERIODS")
         self.fields['numrecentperiods'].widget.attrs['placeholder'] = _("enter a number")
         self.fields['targetperiods'].label = _("TARGET PERIODS")
-        self.fields['program'].queryset = Program.objects.filter(country__in=countries).exclude(indicator=None)
+        self.fields['program'].queryset = Program.objects \
+            .filter(country__in=countries,
+                    funding_status="Funded",
+                    reporting_period_start__isnull=False,
+                    reporting_period_end__isnull=False,
+                    indicator__target_frequency__isnull=False,) \
+            .exclude(indicator__isnull=True) \
+            .distinct()
 
 
 class IPTTReportQuickstartForm(ReportFormCommon):
@@ -239,25 +245,25 @@ class IPTTReportQuickstartForm(ReportFormCommon):
 
 
 class IPTTReportFilterForm(ReportFormCommon):
-    level = forms.ModelMultipleChoiceField(queryset=Level.objects.none(), required=False, label=_('LEVEL'))
-    ind_type = forms.ModelMultipleChoiceField(queryset=IndicatorType.objects.none(), required=False, label=_('TYPE'))
-    sector = forms.ModelMultipleChoiceField(queryset=Sector.objects.none(), required=False, label=_('SECTOR'))
-    site = forms.ModelMultipleChoiceField(queryset=SiteProfile.objects.none(), required=False, label=_('SITE'))
+    level = forms.ModelMultipleChoiceField(queryset=Level.objects.none(), required=False, label=_('Levels'))
+    ind_type = forms.ModelMultipleChoiceField(queryset=IndicatorType.objects.none(), required=False, label=_('Types'))
+    sector = forms.ModelMultipleChoiceField(queryset=Sector.objects.none(), required=False, label=_('Sectors'))
+    site = forms.ModelMultipleChoiceField(queryset=SiteProfile.objects.none(), required=False, label=_('Sites'))
     indicators = forms.ModelMultipleChoiceField(
-        queryset=Indicator.objects.none(), required=False, label=_('SELECT INDICATORS'))
+        queryset=Indicator.objects.none(), required=False, label=_('Indicators'))
 
     def __init__(self, *args, **kwargs):
         program = kwargs.pop('program')
         periods_choices_start = kwargs.get('initial').get('period_choices_start')
         periods_choices_end = kwargs.get('initial').get('period_choices_end')
 
-        target_frequencies = Indicator.objects.filter(program__in=[program.id]) \
+        target_frequencies = Indicator.objects.filter(program__in=[program.id], target_frequency__isnull=False) \
             .exclude(target_frequency=Indicator.EVENT) \
             .values('target_frequency') \
             .distinct() \
             .order_by('target_frequency')
 
-        target_frequency_choices = [(0, '')]
+        target_frequency_choices = []
         for tp in target_frequencies:
             try:
                 id = int(tp['target_frequency'])

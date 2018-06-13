@@ -540,7 +540,7 @@ class IPTT_ReportView(TemplateView):
             pass
 
         try:
-            filters['collecteddata__site__in'] = data['site']
+            filters['collecteddata__site__in'] = data['site'] if isinstance(data['site'], list) else [data['site']]
         except KeyError:
             pass
 
@@ -617,7 +617,7 @@ class IPTT_ReportView(TemplateView):
             # process lop_percent_met
             try:
                 ind['lop_percent_met'] = "{}%".format(formatFloat(lop_actual / lop_target * 100))
-            except TypeError:
+            except (TypeError, ZeroDivisionError):
                 # print('actual={}, lop={}'.format(lop_actual, lop_target))
                 ind['lop_percent_met'] = ''
 
@@ -684,7 +684,7 @@ class IPTT_ReportView(TemplateView):
                             elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
                                 percent_met_val = formatFloat(float(ind["{}_last".format(k)]) / target * 100)
                                 ind[percent_met] = "{}%".format(percent_met_val)
-                        except TypeError:
+                        except (TypeError, KeyError):
                             ind[percent_met] = ''
         return indicators
 
@@ -781,18 +781,22 @@ class IPTT_ReportView(TemplateView):
         end_period = self.request.GET.get('end_period')
 
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            target_frequencies = Indicator.objects.filter(program__in=[program_id]).values_list(
-                'target_frequency').distinct().order_by('target_frequency')
-
-            if (period,) not in target_frequencies:
-                period = target_frequencies[0][0]
-
             # Update the report_end_date to make sure it ends with the last period's end_date
             # Also, get the all of the periodic date ranges based on the selected period
             report_end_date, all_date_ranges, periods_date_ranges = self._generate_timeperiods(
                 start_period, end_period, period, show_all, num_recents)
 
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
+            target_frequencies = Indicator.objects \
+                .filter(program__in=[program_id], target_frequency__isnull=False) \
+                .exclude(target_frequency=Indicator.EVENT) \
+                .values_list('target_frequency') \
+                .distinct() \
+                .order_by('target_frequency')
+
+            if (period,) not in target_frequencies:
+                period = target_frequencies[0][0]
+
             report_end_date, all_date_ranges, periods_date_ranges = self._generate_targetperiods(
                 self.program, start_period, end_period, period, show_all, num_recents)
             indicators = indicators.filter(target_frequency=period)
@@ -816,9 +820,12 @@ class IPTT_ReportView(TemplateView):
             period_start_initial = None  # self.program.reporting_period_start
             period_end_initial = None  # self.program.reporting_period_end
         else:
-            period_start_initial = periods_date_ranges[periods_date_ranges.keys()[0]][0]
-            period_end_initial = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
-
+            try:
+                period_start_initial = periods_date_ranges[periods_date_ranges.keys()[0]][0]
+                period_end_initial = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
+            except IndexError:
+                period_start_initial = None
+                period_end_initial = None
             all_periods_start = self.prepare_iptt_period_dateranges(period, all_date_ranges, self.FROM)
             all_periods_end = self.prepare_iptt_period_dateranges(period, all_date_ranges, self.TO)
 

@@ -4,31 +4,13 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a></li>
-        {% if project_id == 0 %}
-          <li class="breadcrumb-item active">{% trans "Add project" %}</li>
-        {% else %}
-          <li class="breadcrumb-item active">{% trans "Project dashboard" %}</li>
-        {% endif %}
+        <li class="breadcrumb-item active">Project</li>
     </ol>
 </nav>
 {% endblock %}
 
-{% block page_title %}
-  {% if project_id == 0 %}
-    {% trans "Add project" %}
-  {% else %}
-    {% trans "Project dashboard" %}
-  {% endif %}
-{% endblock %}
-
-{% block title %}
-  {% if project_id == 0 %}
-    {% trans "Add project" %}
-  {% else %}
-    {% trans "Project dashboard" %}
-  {% endif %}
-  |
-{% endblock %}
+{% block title %}{% trans "Project" %} | {% endblock %}
+{% block page_title %}{% trans "Project" %}{% endblock %}
 
 {% block content %}
 {% if project_id == 0 %}

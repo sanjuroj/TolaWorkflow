@@ -2,7 +2,6 @@ from django.conf.urls import url
 
 from .views.views_indicators import (
     indicator_create,
-    CollectedDataList,
     CollectedDataCreate,
     CollectedDataUpdate,
     CollectedDataDelete,
@@ -20,7 +19,6 @@ from .views.views_indicators import (
     collected_data_view,
     program_indicators_json,
     programIndicatorReport,
-    indicator_data_report,
     indicator_report,
     IndicatorReport,
     IndicatorDataExport,
@@ -58,9 +56,6 @@ urlpatterns = [
     url(r'^periodic_target_deleteall/(?P<indicator>\d+)/(?P<deleteall>\w+)/$',
         PeriodicTargetView.as_view(), name='pt_deleteall'),
 
-    url(r'^collecteddata/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$',
-        CollectedDataList.as_view(), name='collecteddata_list'),
-
     url(r'^collecteddata_add/(?P<program>\d+)/(?P<indicator>\d+)/$',
         CollectedDataCreate.as_view(), name='collecteddata_add'),
 
@@ -72,9 +67,6 @@ urlpatterns = [
 
     url(r'^collecteddata_delete/(?P<pk>\d+)/$', CollectedDataDelete.as_view(),
         name='collecteddata_delete'),
-
-    url(r'^collecteddata_export/(?P<program>\d+)/(?P<indicator>\d+)/$',
-        CollectedDataList.as_view(), name='collecteddata_list'),
 
     url(r'^report/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$',
         indicator_report, name='indicator_report'),
@@ -95,23 +87,6 @@ urlpatterns = [
     url(r'^program_report/(?P<program>\d+)/$', programIndicatorReport,
         name='programIndicatorReport'),
 
-    url(r'^data/(?P<id>\d+)/(?P<program>\d+)/(?P<type>\d+)/$',
-        indicator_data_report, name='indicator_data_report'),
-
-    url(r'^data/(?P<id>\d+)/(?P<program>\d+)/(?P<type>\d+)/map/$',
-        indicator_data_report, name='indicator_data_report_map'),
-
-    url(r'^data/(?P<id>\d+)/(?P<program>\d+)/(?P<type>\d+)/graph/$',
-        indicator_data_report, name='indicator_data_report_graph'),
-
-    url(r'^data/(?P<id>\d+)/(?P<program>\d+)/(?P<type>\d+)/table/$',
-        indicator_data_report, name='indicator_data_report_table'),
-
-    # url(r'^data/(?P<id>\d+)/(?P<program>\d+)/$', indicator_data_report,
-    #     name='indicator_data_report'),
-
-    url(r'^data/(?P<id>\d+)/$', indicator_data_report,
-        name='indicator_data_report'),
 
     url(r'^export/(?P<id>\d+)/(?P<program>\d+)/(?P<indicator_type>\d+)/$',
         IndicatorExport.as_view(), name='indicator_export'),

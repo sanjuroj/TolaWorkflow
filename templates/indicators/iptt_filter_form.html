@@ -77,7 +77,7 @@
 
     <div id="filter-middle" class="p-3">
       <div class="form-group mb-2" id="id_div_level">
-        <label for="id_level" class="col-form-label">
+        <label for="id_level" class="col-form-label text-uppercase">
           {{ form.level.label }}
         </label>
         <div class="form-group-row">
@@ -86,7 +86,7 @@
       </div>
 
       <div class="form-group mb-2" id="id_div_type">
-        <label for="id_type" class="col-form-label">
+        <label for="id_type" class="col-form-label text-uppercase">
           {{ form.ind_type.label }}
         </label>
         <div class="form-group-row">
@@ -95,7 +95,7 @@
       </div>
 
       <div class="form-group mb-2" id="id_div_sector">
-        <label for="id_sector" class="col-form-label">
+        <label for="id_sector" class="col-form-label text-uppercase">
           {{ form.sector.label }}
         </label>
         <div class="form-group-row">
@@ -104,7 +104,7 @@
       </div>
 
       <div class="form-group mb-2" id="id_div_site">
-        <label for="id_site" class="col-form-label">
+        <label for="id_site" class="col-form-label text-uppercase">
           {{ form.site.label }}
         </label>
         <div class="form-group-row">
@@ -113,7 +113,7 @@
       </div>
 
       <div class="form-group mb-2" id="id_div_indicators">
-        <label for="id_indicators" class="col-form-label">
+        <label for="id_indicators" class="col-form-label text-uppercase">
           {{ form.indicators.label }}
         </label>
         <div class="form-group-row">
@@ -180,14 +180,15 @@
       numRecentPeriods.prop('readonly', true);
       checkFilterPeriods.prop('disabled', true);
       // checkShowAllPeriods.prop('disabled', true);
+      numRecentPeriods.val('');
       checkShowAllPeriods.prop('checked', true);
       checkFilterPeriods.prop('checked', false);
       start_period.prop('readonly', true);
       end_period.prop('readonly', true);
     }
 
-    // if targetperiods value is ANNUAL then disable certain elements on the filter form
-    if (targetperiod_select.val() == 1 ) {
+    // if targetperiods value is LOP then disable certain elements on the filter form
+    if (targetperiod_select.val() == 1 || targetperiod_select.val() == 2 ) {
       disableFormElements();
     } else {
       checkFilterPeriods.prop('disabled', false);
@@ -195,11 +196,6 @@
       numRecentPeriods.prop('readonly', false);
       start_period.prop('readonly', false);
       end_period.prop('readonly', false);
-    }
-
-    // if the targetperiods value is MIDLINE/ENDLINE then disable certain elements on the filter form
-    if (targetperiod_select.val() == 2) {
-      disableFormElements();
     }
 
     // get the appropriate url params for the page reload
@@ -232,8 +228,17 @@
       return url;
     }
 
-    // on timeperiod or targetperiod dropdown change, reload the report with correct filtering options
-    $("#id_form_indicator_filter").on("input", "#id_timeperiods, #id_targetperiods", function (e) {
+    // on timeperiod dropdown change, reload the report with correct filtering options
+    $("#id_form_indicator_filter").on("input", "#id_timeperiods", function (e) {
+      const url = get_reload_url();
+      window.location = url;
+    });
+
+    // on targetperiod dropdown change, reload the report with correct filtering options
+    $("#id_form_indicator_filter").on("input", "#id_targetperiods", function (e) {
+      if (this.value == 1 || this.value == 2) {
+        disableFormElements();
+      }
       const url = get_reload_url();
       window.location = url;
     });

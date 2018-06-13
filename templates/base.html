@@ -21,7 +21,7 @@
         <!-- Bootstrap -->
         <!-- <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css"> -->
 
-        <!-- select2 --> 
+        <!-- select2 -->
         <link rel="stylesheet" href="{% static 'css/select2.min.css' %} ">
 
         <link
@@ -93,14 +93,16 @@
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarReportsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Reports" %}</a>
                                 <div class="dropdown-menu" aria-labelledby="navbarReportsDropdown">
                                     <a class="dropdown-item" href="{% url 'iptt_quickstart' %}">{% trans "Indicator Performance Tracking Table" %}</a>
-                                    <a class="dropdown-item" href="/reports/report/">{% trans "Program Report" %}</a>
-                                    <a class="dropdown-item" href="/customdashboard/program_list/0/">{% trans "Public Dashboards" %}</a>
-                                    <a class="dropdown-item" href="/workflow/report/0/none">{% trans "Project Report" %}</a>
-                                    <a class="dropdown-item" href="{% url 'collecteddata_list' 0 0 0 %}">{% trans "Collected Indicator Data" %}</a>
-                                    <a class="dropdown-item" href="{% url 'indicator_data_report' 0 0 0 %}">{% trans "Indicator Report" %}</a>
-                                    <a class="dropdown-item" href="{% url 'indicator_report' 0 0 0 %}">{% trans "Indicator Library" %}</a>
-                                    <a class="dropdown-item" href="{% url 'tvareport' %}">{% trans "Indicator Targets vs Actual Report" %}</a>
                                     <a class="dropdown-item" href="{% url 'disrep' 0 %}">{% trans "Indicator Disaggregation Report" %}</a>
+                                    <a class="dropdown-item" href="/workflow/report/0/none">{% trans "Project Report" %}</a>
+                                    {% comment %}
+                                      <!-- the code behind these reports to be deleted in the next relase to make sure we don't need it-->
+                                      <!-- <a class="dropdown-item" href="/reports/report/">{% trans "Program Report" %}</a> -->
+                                      <!-- <a class="dropdown-item" href="/customdashboard/program_list/0/">{% trans "Public Dashboards" %}</a> -->
+
+                                      <!-- <a class="dropdown-item" href="{% url 'indicator_report' 0 0 0 %}">{% trans "Indicator Library" %}</a> -->
+                                      <!-- <a class="dropdown-item" href="{% url 'tvareport' %}">{% trans "Indicator Targets vs Actual Report" %}</a> -->
+                                     {% endcomment %}
                                 </div>
                             </li>
                         </ul>
