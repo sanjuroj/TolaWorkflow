@@ -276,7 +276,7 @@
               <td align="right">
                   <span class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
                       <a href="{% url 'collecteddata_add' program_id indicator.id %}"
-                              class="btn btn-link btn-add ">
+                              class="btn btn-link btn-add collecteddata-link">
                           <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
                       </a>
                   </span>
