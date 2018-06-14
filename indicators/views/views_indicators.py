@@ -42,6 +42,7 @@ from ..models import (
     CollectedData, IndicatorType, Level, ExternalServiceRecord,
     ExternalService, TolaTable
 )
+from .views_reports import IPTT_ReportView
 
 
 def generate_periodic_target_single(tf, start_date, nthTargetPeriod,
@@ -524,13 +525,14 @@ class IndicatorUpdate(UpdateView):
             target_frequency_num_periods = 1
             target_frequency_type = form.cleaned_data.get('target_frequency', 1)
 
-            if target_frequency_type in [3 , 4, 5, 6, 7]:
-                frequency_month_map = {3: 12, 4: 6, 5: 4, 6: 3, 7: 1}
+            if target_frequency_type in [
+                    Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL,
+                    Indicator.QUARTERLY, Indicator.MONTHLY]:
                 start_date = program.reporting_period_start
-                delta = relativedelta(program.reporting_period_end, start_date)
-                target_frequency_num_periods = \
-                    ((delta.years*12 + delta.months) / frequency_month_map[target_frequency_type]) + 1
-            elif target_frequency_type == 8: #Events
+                Converter = IPTT_ReportView()
+                target_frequency_num_periods = Converter._get_num_periods(
+                    start_date, program.reporting_period_end, target_frequency_type)
+            elif target_frequency_type == Indicator.EVENT:
                 # This is only case in which target fequency comes from the form
                 target_frequency_num_periods = form.cleaned_data.get('target_frequency_num_periods', 1)
 
