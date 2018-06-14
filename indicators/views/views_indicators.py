@@ -42,6 +42,7 @@ from ..models import (
     CollectedData, IndicatorType, Level, ExternalServiceRecord,
     ExternalService, TolaTable
 )
+from .views_reports import IPTT_ReportView
 
 
 def generate_periodic_target_single(tf, start_date, nthTargetPeriod,
@@ -513,19 +514,27 @@ class IndicatorUpdate(UpdateView):
         existing_target_frequency = indicatr.target_frequency
         new_target_frequency = form.cleaned_data.get('target_frequency', None)
         lop = form.cleaned_data.get('lop_target', None)
+        program = Program.objects.get(pk=form.cleaned_data.get('program'))
 
         if periodic_targets == 'generateTargets':
             # handle (delete) association of colelctedData records if necessary
-            handleDataCollectedRecords(
-                indicatr, lop, existing_target_frequency, new_target_frequency)
-
-            target_frequency_num_periods = form.cleaned_data.get(
-                'target_frequency_num_periods', 0)
-            if target_frequency_num_periods is None:
-                target_frequency_num_periods = 1
+            handleDataCollectedRecords(indicatr, lop, existing_target_frequency, new_target_frequency)
 
             event_name = form.cleaned_data.get('target_frequency_custom', '')
-            start_date = form.cleaned_data.get('target_frequency_start', None)
+            start_date = ''
+            target_frequency_num_periods = 1
+            target_frequency_type = form.cleaned_data.get('target_frequency', 1)
+
+            if target_frequency_type in [
+                    Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL,
+                    Indicator.QUARTERLY, Indicator.MONTHLY]:
+                start_date = program.reporting_period_start
+                Converter = IPTT_ReportView()
+                target_frequency_num_periods = Converter._get_num_periods(
+                    start_date, program.reporting_period_end, target_frequency_type)
+            elif target_frequency_type == Indicator.EVENT:
+                # This is only case in which target fequency comes from the form
+                target_frequency_num_periods = form.cleaned_data.get('target_frequency_num_periods', 1)
 
             generatedTargets = generate_periodic_targets(
                 new_target_frequency, start_date, target_frequency_num_periods,
