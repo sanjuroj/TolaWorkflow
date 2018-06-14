@@ -127,6 +127,11 @@ body {
 table.table-hover tbody tr:hover {
     background-color: #CCEFEE !important;
 }
+#id_missing_targets_msg {
+    padding-left: 3.5rem;
+    margin-top: -0.875rem;
+    margin-bottom: 1rem;
+}
 
 #iptt_table {
     background-color: white;

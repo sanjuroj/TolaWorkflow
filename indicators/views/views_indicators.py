@@ -12,7 +12,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse_lazy
 from django.db import connection
 from django.db.models import (
-    Count, Min, Q, Sum, Avg, DecimalField, OuterRef, Subquery
+    Count, Min, Q, Sum, Avg, Max, DecimalField, OuterRef, Subquery
 )
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, render_to_response
@@ -24,7 +24,6 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from django_tables2 import RequestConfig
 from weasyprint import HTML, CSS
 
 from feed.serializers import FlatJsonSerializer
@@ -32,11 +31,10 @@ from util import getCountry, group_excluded, get_table
 from workflow.forms import FilterForm
 from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
-    Program, SiteProfile, Country, Sector, TolaSites, FormGuidance
+    Program, Country, Sector, TolaSites, FormGuidance
 )
 from ..export import IndicatorResource, CollectedDataResource
 from ..forms import IndicatorForm, CollectedDataForm
-from ..tables import IndicatorDataTable
 from ..models import (
     Indicator, PeriodicTarget, DisaggregationLabel, DisaggregationValue,
     CollectedData, IndicatorType, Level, ExternalServiceRecord,
@@ -135,12 +133,8 @@ class IndicatorList(ListView):
 
     def get(self, request, *args, **kwargs):
         countries = request.user.tola_user.countries.all()
-        get_programs = Program.objects.filter(
-            funding_status="Funded", country__in=countries).distinct()
-
-        get_indicators = Indicator.objects.filter(
-            program__country__in=countries)
-
+        get_programs = Program.objects.filter(funding_status="Funded", country__in=countries).distinct()
+        get_indicators = Indicator.objects.filter(program__country__in=countries)
         get_indicator_types = IndicatorType.objects.all()
 
         program_id = int(self.kwargs['program'])
@@ -165,7 +159,10 @@ class IndicatorList(ListView):
         programs = Program.objects.prefetch_related('indicator_set') \
             .filter(funding_status="Funded", country__in=countries) \
             .filter(**filters).order_by('name') \
-            .annotate(indicator_count=Count('indicator'))
+            .annotate(
+                indicator_count=Count('indicator'),
+                target_period_last_end_date=Max('indicator__periodictargets__end_date')
+            )
 
         c_data = {
             'getPrograms': get_programs,
