@@ -173,7 +173,18 @@
                     </td>
 
                     <td class="align-middle" align="right" width="150px">
-                        <input type="number" id="pt-${pt.id}" value="${parseFloat(pt.target).toFixed(2).replace(/[.,]00$/, "")}" data-start-date="${formatDate(pt.start_date)}" data-end-date="${formatDate(pt.end_date)}" name="${pt.period}" placeholder="{% trans 'Enter target' %}" class="form-control input-value">
+                        <span class=${ $("#id_unit_of_measure_type_1").is(":checked")?"input-symbol-percent":""}>
+                            <input
+                                type="number"
+                                id="pt-${pt.id}"
+                                value="${parseFloat(pt.target).toFixed(2).replace(/[.,]00$/, "")}"
+                                data-start-date="${formatDate(pt.start_date)}"
+                                data-end-date="${formatDate(pt.end_date)}"
+                                data-periodictarget="pt"
+                                name="${pt.period}"
+                                placeholder="{% trans 'Enter target' %}"
+                                class="form-control input-value">
+                        </span>
                             <span id="hint_id_pt_${pt.period}" style="margin:0px;" class="help-block"> </span>
                     </td>
                 </tr>
@@ -223,10 +234,6 @@
             var isLastIteration = true;
             var target_frequency = $("#id_target_frequency").val();
             var markup = createPeriodicTargetRow(pt, target_frequency, isLastIteration);
-            // if target_frequency is not "EVENT" then hide the delete button
-            if (target_frequency != 8) {
-                $("#periodic_targets_table tbody tr:nth-last-child(3)").find("a").hide();
-            }
             $("#periodic_targets_table tbody tr:nth-last-child(2)").before(markup);
         });
 
