@@ -208,8 +208,9 @@
                     // start value of all periodic target periods.  Otherwise, if the start date field has a value,
                     // set the minDate to that value.
                     if (max_target_start) {
-                        year = parseInt(max_target_start.substring(0,4))
-                        month = parseInt(max_target_start.substring(6,7))
+                        dateParts = max_target_start.split('-')
+                        year = parseInt(dateParts[0])
+                        month = parseInt(dateParts[1])
                         $(this).datepicker('option', 'minDate', new Date(year, month, 0));
                     }
                     else if ((selectedDate = $(`#${start_date_id}`).val()).length > 0) {
@@ -371,16 +372,23 @@
         }
         else {
             $("#id_reporting_start_date").val(formatDate(new Date(origRptStart)));
-            $("#id_reporting_start_date").datepicker("setDate", new Date(origRptStart));
+            try{
+                // Need to do this so datepicker doesn't use an old value that it has stored from a prior interaction
+                $("#id_reporting_start_date").datepicker("setDate", new Date(origRptStart));
+            }
+            catch(error){}
         }
         if (origRptEnd == "") {
             $("#id_reporting_end_date").val("");
         }
         else{
             $("#id_reporting_end_date").val(formatDate(new Date(origRptEnd)));
-            $("#id_reporting_end_date").datepicker("setDaten", new Date(origRptEnd));
+            try {
+                // Need to do this so datepicker doesn't use an old value that it has stored from a prior interaction
+                $("#id_reporting_end_date").datepicker("setDate", new Date(origRptEnd));
+            }
+            catch(error){}
         }
-
     });
 
     $("#start-cal-icon").on('click', function(e) {
