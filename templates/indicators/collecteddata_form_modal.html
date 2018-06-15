@@ -284,14 +284,6 @@
                         {% endfor %}
                       </table>
                 </div>
-            {% else %}
-                {% if not getDisaggregationValue %}
-                    <h4>{% trans "Disaggregation levels not entered for this indicator" %}</h4>
-                    <a href="/indicators/indicator_update/{{ indicator_id }}" class="btn btn-link btn-add">
-                        <i class="fas fa-plus-circle"></i>
-                        {% trans "Add a disaggregation" %}
-                    </a>
-                {% endif %}
             {% endif %}
 
             <br>
