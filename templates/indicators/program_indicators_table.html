@@ -15,7 +15,6 @@ $(document).ready(function() {
 
 <table class="table hiddenTable">
     <tr>
-        <th class="text-uppercase text-nowrap" id="id_indicator_number_col_header">{% trans "No." %}</th>
         <th class="text-uppercase text-nowrap" id="id_indicator_name_col_header">{% trans "Indicator" %}</th>
         <th class="text-uppercase text-nowrap" id="id_indicator_buttons_col_header">&nbsp;</th>
         <th class="text-uppercase text-nowrap" id="id_indicator_level_col_header">{% trans "Level" %}</th>
@@ -25,7 +24,6 @@ $(document).ready(function() {
     </tr>
     {% for indicator in indicators %}
     <tr id = "id_indicator_{{ indicator.id }}" {% if indicator.just_created %} style="background-color: lightyellow;" {% endif %} >
-        <td id="id_indicator_number_{{ indicator.id }}">{{ indicator.number|default_if_none:''}}</td>
         <td id="id_indicator_name_{{ indicator.id }}">
             <a
                 id="id_indicator_data_count_btn_{{ indicator.id }}"
@@ -35,6 +33,7 @@ $(document).ready(function() {
                 data-toggle="collapse"
                 data-target="#hidden-indicator-{{ indicator.id }}">
                 <i class="fas fa-caret-right"></i>
+                <strong>{{ indicator.number|default_if_none:''}}</strong>
                 {{ indicator.name}}{#{% if indicator.data_count > 0 %}({{ indicator.data_count }} results){% endif %}#}
             </a>
             {% if indicator.key_performance_indicator %}
