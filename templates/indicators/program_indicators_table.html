@@ -1,45 +1,55 @@
 {% load i18n %}
+<script type="text/javascript">
+$(document).ready(function() {
+    // rotate toggle
+    $('.indicator_results_toggle').on('click', function(e) {
+        let icon = $(this).find("svg");
+        if (icon.hasClass('fa-caret-right')) {
+            icon.attr('class', 'fa-caret-down');
+        } else {
+            icon.attr('class', 'fa-caret-right');
+        }
+    });
+});
+</script>
 
 <table class="table hiddenTable">
     <tr>
-        <th id="id_indicator_type_col_header">{% trans "Indicator Type" %}</th>
-        <th id="id_indicator_level_col_header">{% trans "Indicator Level" %}</th>
-        <th id="id_indicator_name_col_header">{% trans "Indicator Name" %}</th>
-        <th id="id_indicator_number_col_header">{% trans "Indicator Number" %}</th>
-        <th id="id_indicator_sector_col_header">{% trans "Sector" %}</th>
-        <th id="id_indicator_buttons_col_header">&nbsp;</th>
+        <th class="text-uppercase text-nowrap" id="id_indicator_name_col_header">{% trans "Indicator" %}</th>
+        <th class="text-uppercase text-nowrap" id="id_indicator_buttons_col_header">&nbsp;</th>
+        <th class="text-uppercase text-nowrap" id="id_indicator_level_col_header">{% trans "Level" %}</th>
+        <th class="text-uppercase text-nowrap" id="id_indicator_unit_col_header">{% trans "Unit of measure" %}</th>
+        <th class="text-uppercase text-right text-nowrap" id="id_indicator_baseline_col_header">{% trans "Baseline" %}</th>
+        <th class="text-uppercase ttext-right ext-nowrap" id="id_indicator_target_col_header">{% trans "Target" %}</th>
     </tr>
     {% for indicator in indicators %}
     <tr id = "id_indicator_{{ indicator.id }}" {% if indicator.just_created %} style="background-color: lightyellow;" {% endif %} >
-        <td id="id_indicator_type_{{ indicator.id }}">{{ indicator.indicator_types}}</td>
-        <td id="id_indicator_level_{{ indicator.id }}">{{ indicator.levels }}</td>
         <td id="id_indicator_name_{{ indicator.id }}">
-            <a href="/indicators/indicator_update/{{ indicator.id }}" class="indicator-link"> {{ indicator.name}} </a>
+            <a
+                id="id_indicator_data_count_btn_{{ indicator.id }}"
+                href="#"
+                onclick="loadCollected({{ indicator.id }}, {{ program_id }})"
+                class="indicator_results_toggle"
+                data-toggle="collapse"
+                data-target="#hidden-indicator-{{ indicator.id }}">
+                <i class="fas fa-caret-right"></i>
+                <strong>{{ indicator.number|default_if_none:''}}</strong>
+                {{ indicator.name}}{#{% if indicator.data_count > 0 %}({{ indicator.data_count }} results){% endif %}#}
+            </a>
             {% if indicator.key_performance_indicator %}
                 <span class="badge">KPI</span>
             {% endif %}
         </td>
-        <td id="id_indicator_number_{{ indicator.id }}">{{ indicator.number|default_if_none:''}}</td>
-        <td id="id_indicator_sector_{{ indicator.id }}">{{ indicator.sector|default_if_none:''}}</td>
         <td id="id_indicator_buttons_{{ indicator.id }}"width="150">
-            <span class="btn-group" role="group">
-                <a
-                    id="id_indicator_data_count_btn_{{ indicator.id }}"
-                    href="#"
-                    onclick="loadCollected({{ indicator.id }}, {{ program_id }})"
-                    class="btn btn-primary"
-                    data-toggle="collapse"
-                    data-target="#hidden-indicator-{{ indicator.id }}">
-                        <span id="id_indicator_data_span_count_{{ indicator.id }}">
-                            {% trans 'Results' %} ({{ indicator.data_count }})
-                        </span>
-                </a>
-
-            </span>
+            <a href="/indicators/indicator_update/{{ indicator.id }}" class="indicator-link"><i class="fas fa-cog"></i></a>
         </td>
+        <td id="id_indicator_level_{{ indicator.id }}">{{ indicator.levels }}</td>
+        <td id="id_indicator_unit_{{ indicator.id }}">{{ indicator.unit_of_measure }}</td>
+        <td class="text-right" id="id_indicator_baseline_{{ indicator.id }}">{{ indicator.baseline }}</td>
+        <td class="text-right" id="id_indicator_target_{{ indicator.id }}">{{ indicator.lop_target }}</td>
     </tr>
     <tr class="hiddenRow">
-        <td colspan="6">
+        <td colspan="9" class="py-0">
             <div id="hidden-indicator-{{ indicator.id }}" class="collapse">
                 <!-- Table -->
                 {% include "indicators/collected_data_table.html" %}
