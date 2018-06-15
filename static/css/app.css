@@ -127,6 +127,11 @@ body {
 table.table-hover tbody tr:hover {
     background-color: #CCEFEE !important;
 }
+#id_missing_targets_msg {
+    padding-left: 3.5rem;
+    margin-top: -0.875rem;
+    margin-bottom: 1rem;
+}
 
 #iptt_table {
     background-color: white;
@@ -445,7 +450,6 @@ applied.  This keeps the inputs from getting taller when there is an error. */
 #div_id_name,
 #div_id_target_frequency,
 #div_id_target_frequency .div-input-container,
-#div_id_target_frequency_start,
 #id_baseline,
 #div_id_target_frequency_custom {
     height: 2.25rem;

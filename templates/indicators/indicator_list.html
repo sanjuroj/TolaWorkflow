@@ -78,6 +78,13 @@
                     </span>
                 {% endif %}
             </div>
+            {% if program.reporting_period_end > program.target_period_last_end_date %}
+                <span id="id_missing_targets_msg" class="color-red fontsize-85">
+                    <i class="fas fa-bullseye"></i>&nbsp;
+                    {% trans 'Some indicators have missing targets. To enter these targets, click the target icon next to the indicator.' %}
+                </span>
+            {% endif %}
+
             {% if program.indicator_set.all %}
                 <div id="hidden-{{ program.id }}" class="collapse">
                     {% include "indicators/program_indicators_table.html" %}
