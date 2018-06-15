@@ -161,8 +161,8 @@ class IndicatorList(ListView):
             .filter(funding_status="Funded", country__in=countries) \
             .filter(**filters).order_by('name') \
             .annotate(
-                indicator_count=Count('indicator'),
-                target_period_last_end_date=Max('indicator__periodictargets__end_date')
+                indicator_count=Count('indicator', distinct=True),
+                target_period_last_end_date=Max('indicator__periodictargets__end_date', distinct=True)
             )
 
         c_data = {
