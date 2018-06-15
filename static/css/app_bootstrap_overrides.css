@@ -86,6 +86,9 @@ body > .container {
 .bg-dark {
     background-color: #54585A!important;
 }
+.bg-light {
+    background-color: #F5F5F5 !important;
+}
 
 #footer > .container-fluid {
     padding: 15px;
@@ -379,4 +382,9 @@ input[type="checkbox"].form-control:focus {
     /* TODO: check for regressions! */
     /* background: #ffffff; */
     margin-top: 1rem;
+}
+
+/* Overrides for Indicator tables */
+.hiddenRow > td {
+    background: #f5f5f5;
 }

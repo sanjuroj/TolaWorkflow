@@ -834,3 +834,11 @@ input[type=number]::-webkit-outer-spin-button {
     margin-left: -1rem;
     margin-right: -1rem;
 }
+.indicator_results_toggle {
+    display: block;
+    text-indent: -15px;
+    margin-left: 15px;
+}
+.indicator_results_toggle .svg-inline--fa {
+    margin-right: 5px;
+}
