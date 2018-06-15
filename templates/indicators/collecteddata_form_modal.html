@@ -216,7 +216,7 @@
 
         </fieldset>
 
-        <fieldset class="border p-2">
+        <fieldset class="border p-1">
             {% if getDisaggregationLabelStandard and not getDisaggregationValueStandard %}
                     <div
                             id="disagg_toggle"
@@ -255,9 +255,8 @@
                     <p>{% trans "Standard disaggregations are entered by the administrator for the entire organizations.  If you are not seeing any here, please contact your system administrator." %}</p>
                 {% endif %}
             {% endif %}
-            <br>
             {% if getDisaggregationLabel and not getDisaggregationValue %}
-                <div class="card">
+                <div class="card mt-1">
                     <div class="card-header"
                             data-toggle="collapse"
                             data-target="#newDisagg"
@@ -285,10 +284,8 @@
                       </table>
                 </div>
             {% endif %}
-
-            <br>
             {% if getDisaggregationValue %}
-                <div class="card">
+                <div class="card mt-1">
                     <div class="card-header"
                             data-toggle="collapse"
                             data-target="#existingDisagg"
