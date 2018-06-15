@@ -358,8 +358,15 @@
         </fieldset>
         <fieldset class="pb-2 pt-2">
             <strong>
-                <a href="#" class="text-danger float-right">
-                    <i class="fas fa-trash-alt"></i> {% trans "Delete this result" %}
+
+                <a
+                    {% if id %}
+                        href="{% url 'collecteddata_delete' id %}"
+                    {% else %}
+                        href="#" data-dismiss="modal"
+                    {% endif %}
+                    class="text-danger float-right">
+                    <i class="fas fa-trash-alt"></i> {% trans "Delete results" %}
                 </a>
             </strong>
         </fieldset>
