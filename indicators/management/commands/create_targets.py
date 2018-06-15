@@ -23,6 +23,11 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
+        # ***********
+        # IMPORTANT NOTE:  Since this script was used, the target_frequency_start field has been deprecated
+        # in favor of the 'Program.reporting_period_start' field.  Ajdustments to this script will be necessary
+        # if the need to run it again arises.
+        # ***********
         file = options['filepath']
         generated_pt_ids = []
         self.stdout.write(self.style.WARNING('creating targetes for indicators from = "%s"' % file))
@@ -152,4 +157,3 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.SUCCESS('%s, processed successfully.' % indicator.id))
                 except Exception as e:
                     self.stdout.write(self.style.ERROR('%s, failed to save indicator: %s' % (indicator.id, e) ))
-

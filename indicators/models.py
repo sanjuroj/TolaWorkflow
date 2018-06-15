@@ -782,7 +782,7 @@ class CollectedData(models.Model):
         related_name="approving_data", help_text=" ")
 
     tola_table = models.ForeignKey(
-        TolaTable, blank=True, null=True, help_text=" ")
+        TolaTable, blank=True, null=True, verbose_name=_("TolaTable"), help_text=" ")
 
     update_count_tola_table = models.BooleanField(
         verbose_name=_("Would you like to update the achieved total with the \

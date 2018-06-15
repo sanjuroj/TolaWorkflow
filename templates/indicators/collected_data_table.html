@@ -135,9 +135,11 @@
                     </td>
                     {% if is_editable is not False %}
                       <td align="right">
+                        {% comment %}
                           <a href="{% url 'collecteddata_delete' cdata.id %}" style="color:red; vertical-align: middle;">
-                              <i class="fas fa-trash-alt"></i>
+                              <i class="fas fa-trash-alt"></i>Delete
                           </a>
+                        {% endcomment %}
                           <a href="{% url 'collecteddata_update' cdata.id %}" class="collecteddata-link" style="padding-left: 30px; vertical-align: middle">
                               <i class="fas fa-edit"></i>
                           </a>
@@ -203,9 +205,6 @@
                     {% endif %}
                 </td>
                 <td align="right">
-                    <a href="{% url 'collecteddata_delete' coldata.id %}" style="color:red; vertical-align: middle;">
-                        <i class="fas fa-trash-alt"></i>
-                    </a>
                     <a href="{% url 'collecteddata_update' coldata.id %}" class="collecteddata-link" style="padding-left: 30px; vertical-align: middle">
                         <i class="fas fa-edit"></i>
                     </a>
@@ -277,7 +276,7 @@
               <td align="right">
                   <span class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
                       <a href="{% url 'collecteddata_add' program_id indicator.id %}"
-                              class="btn btn-link collecteddata-link pl-1 pr-1 fontsize-130">
+                              class="btn btn-link btn-add collecteddata-link">
                           <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
                       </a>
                   </span>

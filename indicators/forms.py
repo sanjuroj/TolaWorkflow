@@ -186,7 +186,6 @@ class ReportFormCommon(forms.Form):
     QUARTERS = Indicator.QUARTERLY
     MONTHS = Indicator.MONTHLY
     TIMEPERIODS_CHOICES = (
-        (EMPTY, "---------"),
         (YEARS, _("Years")),
         (SEMIANNUAL, _("Semi-annual periods")),
         (TRIANNUAL, _("Tri-annual periods")),
@@ -221,7 +220,11 @@ class ReportFormCommon(forms.Form):
         self.fields['numrecentperiods'].widget.attrs['placeholder'] = _("enter a number")
         self.fields['targetperiods'].label = _("TARGET PERIODS")
         self.fields['program'].queryset = Program.objects \
-            .filter(country__in=countries, funding_status="Funded", indicator__target_frequency__isnull=False) \
+            .filter(country__in=countries,
+                    funding_status="Funded",
+                    reporting_period_start__isnull=False,
+                    reporting_period_end__isnull=False,
+                    indicator__target_frequency__isnull=False,) \
             .exclude(indicator__isnull=True) \
             .distinct()
 
@@ -253,13 +256,13 @@ class IPTTReportFilterForm(ReportFormCommon):
         periods_choices_start = kwargs.get('initial').get('period_choices_start')
         periods_choices_end = kwargs.get('initial').get('period_choices_end')
 
-        target_frequencies = Indicator.objects.filter(program__in=[program.id]) \
+        target_frequencies = Indicator.objects.filter(program__in=[program.id], target_frequency__isnull=False) \
             .exclude(target_frequency=Indicator.EVENT) \
             .values('target_frequency') \
             .distinct() \
             .order_by('target_frequency')
 
-        target_frequency_choices = [(0, '')]
+        target_frequency_choices = []
         for tp in target_frequencies:
             try:
                 id = int(tp['target_frequency'])
