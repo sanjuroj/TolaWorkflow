@@ -9,7 +9,7 @@
 <br>
 <div id="div-id-indicator-list">
     {% for program in programs %}
-        <div class='card'>
+        <div class='card border-0'>
             <div class='card-header d-flex justify-content-between align-items-center'>
                 <span class="program-name fontsize-130">{{ program.name|truncatechars:140 }}</span>
                 {% if program.reporting_period_start and program.reporting_period_end %}
