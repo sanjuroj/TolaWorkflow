@@ -21,8 +21,7 @@ import pytz
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.db.models import Count
-from django.db.models import Q
+from django.db.models import Count, Q, Max
 from tables import ProjectAgreementTable
 from filters import ProjectAgreementFilter
 import json
@@ -2494,6 +2493,7 @@ def reportingperiod_update(request, pk):
 
 
 @api_view(['GET'])
-def dated_target_count(request, pk):
-    return Response(Program.objects.filter(pk=pk).annotate(num_data=Count('indicator__periodictargets__start_date')) \
-                .values('id', 'num_data')[0]['num_data'])
+def dated_target_info(request, pk):
+    return Response({
+        'max_start_date': Program.objects.filter(id=pk).annotate(
+            ptd=Max('indicator__periodictargets__start_date')).values_list('ptd', flat=True)[0]})

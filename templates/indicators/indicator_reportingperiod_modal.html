@@ -120,7 +120,7 @@
 <script type="text/javascript">
     var origRptStart = "";
     var origRptEnd = "";
-    var dated_target_count = 0;
+    var max_target_start = 0;
 
     function setupMonthPickers() {
         const start_date_id = "id_reporting_start_date";
@@ -156,10 +156,11 @@
                     }
 
                     // Don't need to set a maxDate if the field is disabled (i.e. there are dated periodic targets)
-                    if ((selectedDate = $(`#${end_date_id}`).val()).length > 0  && dated_target_count < 1) {
+                    if ((selectedDate = $(`#${end_date_id}`).val()).length > 0  && !max_target_start) {
                         year = selectedDate.substring(selectedDate.length - 4, selectedDate.length);
                         month = jQuery.inArray(selectedDate.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
                         $(this).datepicker("option", "maxDate", new Date(year, month, 1));
+
                     }
                 },
             })
@@ -203,8 +204,13 @@
                         $(this).datepicker('option', 'defaultDate', new Date());
                     }
 
-                    if ($(`#${start_date_id}`).prop('disabled')){
-                        $(this).datepicker("option", "minDate", $(this).val());
+                    // If there are dated periodic targets associated with the program, set the minDate to the maximum
+                    // start value of all periodic target periods.  Otherwise, if the start date field has a value,
+                    // set the minDate to that value.
+                    if (max_target_start) {
+                        year = parseInt(max_target_start.substring(0,4))
+                        month = parseInt(max_target_start.substring(6,7))
+                        $(this).datepicker('option', 'minDate', new Date(year, month, 0));
                     }
                     else if ((selectedDate = $(`#${start_date_id}`).val()).length > 0) {
                         year = selectedDate.substring(selectedDate.length - 4, selectedDate.length);
@@ -243,10 +249,10 @@
         // All of the setup work for the modal is put into this AJAX request to avoid a race condition between
         // the API call and the rest of the code that precedes the datepicker setup.  The datepicker has the potential
         // to depend on the results of all of the intervening code.
-        var api_url = "{% url 'datedtargetcount' 0 %}";
+        var api_url = "{% url 'datedtargetinfo' 0 %}";
         api_url = api_url.replace(/0\//, $(event.relatedTarget).data('program')) + '/?format=json';
         $.get(api_url, function(data){
-            dated_target_count = data;
+            max_target_start = data['max_start_date'];
             modalSetup(data);
         }).fail(function(data){
           createAlert(
@@ -257,7 +263,7 @@
         });
 
         function modalSetup(data){
-            if (data > 0) {
+            if (data['max_start_date']) {
                 $("#id_reporting_start_date").attr("disabled", true);
                 $("#div_reporting_dates_description_locked").show();
                 $("#div_reporting_dates_description_unlocked").hide();
@@ -319,7 +325,7 @@
 
         // Reload the page if the the original reporting dates were blank and they now have values.  Need to do
         // this so the add button and reporting and indicator links appear with the program on the indicator list.
-        // Only need to check one because the form can only be saved if both have a value.
+        // Only need to check one date because the form can only be saved if both have a value.
         if (origRptEnd == "" && $("#id_reporting_end_date").val() != "") {
             window.location.reload(true);
         }
@@ -365,12 +371,14 @@
         }
         else {
             $("#id_reporting_start_date").val(formatDate(new Date(origRptStart)));
+            $("#id_reporting_start_date").datepicker("setDate", new Date(origRptStart));
         }
         if (origRptEnd == "") {
             $("#id_reporting_end_date").val("");
         }
         else{
             $("#id_reporting_end_date").val(formatDate(new Date(origRptEnd)));
+            $("#id_reporting_end_date").datepicker("setDaten", new Date(origRptEnd));
         }
 
     });
