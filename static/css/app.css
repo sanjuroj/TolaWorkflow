@@ -13,8 +13,10 @@ body {
 }
 
 .has-error {
-  color: #DD0000;
-  font-size: 80%;
+  color: #DD0000 !important;
+}
+.has-error .text-muted {
+    color: inherit !important;
 }
 
 .hide {
@@ -415,7 +417,6 @@ select.listoption_filters
 
 #indicator_modal_body .form-row > label{
     font-weight: bold;
-    color: #54585A;
 }
 
 @media (max-width: 575px) {
