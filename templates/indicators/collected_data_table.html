@@ -33,7 +33,7 @@
             <tr>
                 {% ifchanged item %}
                     {% with dataCount=item.collecteddata_set.count %}
-                        <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} min-width="190">
+                        <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-nowrap">
                             <strong>{{ item.period }}</strong><br>
                             <small>
                                 {{ item.start_date_formatted|default_if_none:"" }}

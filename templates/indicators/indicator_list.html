@@ -14,7 +14,7 @@
                 <span class="program-name fontsize-130">{{ program.name|truncatechars:140 }}</span>
                 {% if program.reporting_period_start and program.reporting_period_end %}
                     <span>
-                        <a href="{% url 'indicator_create' program.id %}" role="button" class="fontsize-130 btn btn-link btn-white"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
+                        <a href="{% url 'indicator_create' program.id %}" role="button" class="btn btn-link btn-white"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
                     </span>
                 {% endif %}
             </div>
@@ -42,7 +42,7 @@
                         id="id_btnOpenindicatorsForProgramId_{{ program.id }}"
                         href="#"
                         onclick="loadIndicators({{ program.id }}, {{ indicator_id }}, {{ type_id }})"
-                        class="fontsize-130 btn btn-link p-0"
+                        class="fontsize-130 btn btn-link p-0 font-weight-normal"
                         data-toggle="collapse"
                         data-target="#hidden-{{ program.id }}">
                             <!-- Need the div to make ensure rotating symbol doesn't push text to the right -->
@@ -57,24 +57,20 @@
                 {% endif %}
                 {% if program.reporting_period_start and program.reporting_period_end %}
                     <span class="d-flex align-items-center">
-                        <strong>
-                            <a class="pr-1" href="{% url 'programIndicatorReport' program.id %}">{% trans 'Indicator plan' %}</a>
-                        </strong>
+                        <a class="pr-1" href="{% url 'programIndicatorReport' program.id %}">{% trans 'Indicator plan' %}</a>
                         |
-                        <strong>
-                            <a
-                                class="pl-1"
-                                href="#"
-                                data-toggle="modal"
-                                data-program="{{ program.id }}"
-                                data-progstart="{{ program.start_date }}"
-                                data-progend="{{ program.end_date }}"
-                                data-rptstart="{{ program.reporting_period_start }}"
-                                data-rptend="{{ program.reporting_period_end }}"
-                                data-target="#id_reporting_period_modal">
-                                    {% trans 'Reporting period' %}
-                            </a>
-                        </strong>
+                        <a
+                            class="pl-1"
+                            href="#"
+                            data-toggle="modal"
+                            data-program="{{ program.id }}"
+                            data-progstart="{{ program.start_date }}"
+                            data-progend="{{ program.end_date }}"
+                            data-rptstart="{{ program.reporting_period_start }}"
+                            data-rptend="{{ program.reporting_period_end }}"
+                            data-target="#id_reporting_period_modal">
+                                {% trans 'Reporting period' %}
+                        </a>
                     </span>
                 {% endif %}
             </div>
