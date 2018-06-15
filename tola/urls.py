@@ -26,7 +26,7 @@ from tola import views as tolaviews
 from django.contrib import admin
 admin.autodiscover()
 admin.site.site_header = 'Tola Activity administration'
-from workflow.views import dated_target_count
+from workflow.views import dated_target_info
 
 #REST FRAMEWORK
 router = routers.DefaultRouter()
@@ -76,7 +76,7 @@ urlpatterns = [ # rest framework
                 url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
                 url(r'^api-token-auth/', auth_views.obtain_auth_token),
                 url(r'^bootstrap/', TemplateView.as_view(template_name="bootstrap4.html")),
-                url(r'^datedtargetcount/(?P<pk>\w+)/$', dated_target_count, name='datedtargetcount'),
+                url(r'^datedtargetinfo/(?P<pk>\w+)/$', dated_target_info, name='datedtargetinfo'),
                 # internationalization
                 url(r'^i18n/', include('django.conf.urls.i18n')),
 
