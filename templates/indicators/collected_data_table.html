@@ -305,14 +305,7 @@
         {% endif %}
     </table>
 {% else %}
-    <table border='0' vertical-align="top" align="center" height="130">
-        <tr>
-            <td valign="top" style="padding:2px;">
-                <img src="/static/img/target.png" class="img-responsive center-block" height="85" width="85">
-            </td>
-            <td valign="top" style="padding-left:10px; padding-top: 38px; font-size: 1.375rem; color: #54585A;">
-                {% trans "Organize your data for this indicator." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link">{% trans "Set a target frequency." %}</a>
-            </td>
-        </tr>
-    </table>
+    <div class="my-3 color-red">
+        <i class="fas fa-bullseye"></i>&nbsp;{% trans "Organize your data for this indicator." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link btn btn-link btn-add"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add a target" %}</a>
+    </div>
 {% endif %}
