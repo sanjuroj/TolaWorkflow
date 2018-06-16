@@ -1,11 +1,6 @@
 {% load i18n %}
 <script type="text/javascript">
 $(document).ready(function() {
-    // enable popover
-    $(function () {
-        $('[data-toggle="popover"]').popover({'html': true});
-    });
-
     // rotate toggle
     $('.indicator_results_toggle').on('click', function(e) {
         let icon = $(this).find("svg");
@@ -48,11 +43,7 @@ $(document).ready(function() {
                 <a href="/indicators/indicator_update/{{ indicator.id }}"
                     id="id_missing_target_periods_for_indicator_id_{{indicator.id}}"
                     class="indicator-link color-red missing_targets"
-                    data-tab="targets"
-                    data-container="body"
-                    data-toggle="popover"
-                    data-placement="right"
-                    data-content="Program Report End Date:{{ program.reporting_period_end }}<br>Last TargetPeriod End Date: {{ indicator.target_period_last_end_date}}.">
+                    data-tab="targets">
                     <i class="fas fa-bullseye"></i> Missing targets
                 </a>
             {% endif %}
