@@ -191,11 +191,6 @@
                         <a href="{{ coldata.tola_table.detail_url }}" target="_blank">{{ coldata.tola_table }}</a>
                     {% endif %}
                 </td>
-                <td align="right">
-                    <a href="{% url 'collecteddata_update' coldata.id %}" class="collecteddata-link" style="padding-left: 30px; vertical-align: middle">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                </td>
             </tr>
         {% endfor %}
 
@@ -270,8 +265,8 @@
         </tr>
 
         {% if err %}
-            <tr style="background-color: #f9f9f9;">
-                <td colspan="8" style="color:red; border-color: #f9f9f9; border-left: 0px solid; border-right: 0px solid; border-bottom: 0px solid;">
+            <tr style="" class="bg-light">
+                <td colspan="8" class="color-red border-top" style="">
                     <small>
                         {% ifequal err 'Error_1' %}
                             {% trans "Targets are not set up for this indicator." %} <strong><a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link"> {% trans "Start by selecting a target frequency." %}</a></strong>
