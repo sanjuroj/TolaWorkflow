@@ -758,12 +758,15 @@
 
     // Allow users to click an IPTT table row to highlight it
     $("#iptt_table tbody tr").on("click", function(e){
-        if ($(this).hasClass('row-highlight')){
-            $("#iptt_table tbody tr").removeClass('row-highlight');
-        }
-        else{
-            $("#iptt_table tbody tr").removeClass('row-highlight');
-            $(this).addClass('row-highlight');
+        // Don't highlight the row if the user is clicking on the popup or gear icons
+        if(!['BUTTON', 'path', 'svg', 'a'].includes(e.target.tagName)) {
+            if ($(this).hasClass('row-highlight')){
+                $("#iptt_table tbody tr").removeClass('row-highlight');
+            }
+            else{
+                $("#iptt_table tbody tr").removeClass('row-highlight');
+                $(this).addClass('row-highlight');
+            }
         }
     })
 
