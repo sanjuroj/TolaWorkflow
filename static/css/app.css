@@ -131,11 +131,11 @@ table.table-hover tbody tr:hover {
 }
 
 table.table-hover tbody tr:active {
-    background-color: #99DFDD !important;
+    background-color: #99DFDD;
 }
 
 .row-highlight {
-    background-color: #CCEFEE !important;
+    background-color: #CCEFEE;
 }
 
 .missing_targets_msg {
