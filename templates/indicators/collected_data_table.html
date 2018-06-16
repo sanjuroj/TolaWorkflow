@@ -21,7 +21,7 @@
                 <th class="text-uppercase border-top-0  " style="">{% trans "Target period" %}</th>
                 <th class="text-uppercase border-top-0  text-right" style="">{% trans "Target" %}</th>
                 <th class="text-uppercase border-top-0  text-right" style="">{% trans "Actual" %}</th>
-                <th class="text-uppercase border-top-0  text-nowrap text-right" style="">{% trans "% Met" %}</th>
+                <th class="text-uppercase border-top-0 pr-4  text-nowrap text-right" style="">{% trans "% Met" %}</th>
                 <th class="text-uppercase border-top-0  " style="">{% trans "Results" %}</th>
                 <th class="text-uppercase border-top-0 w-100" style="">{% trans "Evidence" %}</th>
             </tr>
@@ -60,7 +60,7 @@
                                 {% endif %}
                             {% endif %}
                         </td>
-                        <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} align="right">
+                        <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} align="right" class="pr-4">
                             {% if indicator.unit_of_measure_type == 1 %}
                                 {% if indicator.is_cumulative == True %}
                                     {% widthratio item.cumulative_sum item.target 100 as percent_met %}
@@ -254,7 +254,7 @@
                     {% endif %}
                   {% endif %}
                 </div>
-                <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %} text-right py-2">
+                <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %} text-right p-2">
                     <a href="{% url 'collecteddata_add' program_id indicator.id %}"
                             class="btn btn-link btn-add collecteddata-link p-0">
                         <i class="fas fa-plus-circle"></i> {% trans "Add results" %}

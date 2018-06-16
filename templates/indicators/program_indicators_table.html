@@ -49,7 +49,7 @@ $(document).ready(function() {
         <td class="text-right" id="id_indicator_target_{{ indicator.id }}">{{ indicator.lop_target }}</td>
     </tr>
     <tr class="hiddenRow">
-        <td colspan="9" class="py-0">
+        <td colspan="9" class="py-0" style="background: #DBDCDE">
             <div id="hidden-indicator-{{ indicator.id }}" class="collapse">
                 <!-- Table -->
                 {% include "indicators/collected_data_table.html" %}

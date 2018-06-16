@@ -843,6 +843,9 @@ input[type=number]::-webkit-outer-spin-button {
 .indicator_results_toggle .svg-inline--fa {
     margin-right: 5px;
 }
+.indicator_results_toggle[aria-expanded="true"] {
+    font-weight: bold;
+}
 
 /* Bootstrap could really use these border utilities */
 .border-2 {
