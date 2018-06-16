@@ -210,14 +210,25 @@
     // open the modal to that tab.
     $('#indicator_modal_div').on('shown.bs.modal', function (e) {
         // button that triggered the modal
-        let button = $(e.relatedTarget);
-
-        // modal
+        const button = $(e.relatedTarget);
         let modal = $(this);
+        const tab = button.data('tab');
 
-        if (button.data("tab")) {
-            modal.find('[href="' + button.data("tab") + '"]').tab('show');
+        if (tab) {
+            $(`#indicatorTabs a[href="#${tab}"][data-toggle="tab"]`).tab('show');
+            const target_periods_section_offset = $("#id_div_periodic_tables_placeholder").offset();
+            modal.animate({ scrollTop: target_periods_section_offset.top }, 'slow');
         }
+    });
+
+    // upon opening the modal, fetch its content from the server
+    $('#indicator_modal_div').on('show.bs.modal', function (e) {
+        const button = $(e.relatedTarget);
+        let url = button.attr("href") + '?modal=1';
+        const modal = $(this);
+        $.get(url, function(data){
+            modal.find("#indicator_modal_content").html(data);
+        })
     });
 
     $('#indicator_modal_div').on('hide.bs.modal', function (e) {
