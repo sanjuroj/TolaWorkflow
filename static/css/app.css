@@ -131,7 +131,7 @@ table.table-hover tbody tr:hover {
 }
 
 table.table-hover tbody tr:active {
-    background-color: #99DFDD;
+    background-color: #99DFDD !important;
 }
 
 .row-highlight {
