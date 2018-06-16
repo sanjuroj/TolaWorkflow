@@ -66,7 +66,7 @@
         alert('Not implemented yet!');
     });
 
-    $("#indicator_modal_content, #indicator_form").on("click", "a.detelebtn", function(e){
+    $("#indicator_modal_content, #indicator_form").on("click", "a.deletebtn", function(e){
         e.preventDefault();
          // $(e.target).closest("tr").prev("tr").find("a").show(); //.css("display", "block");
         var url = $(this).attr('href');
@@ -87,6 +87,7 @@
                 $("#id_div_periodic_tables_placeholder").empty();
                 reset_frequency_fields();
             }
+            updateAggregateRowValueAndLabel()
             prevDeleteBtn.show();
             return;
         }
@@ -97,10 +98,7 @@
                     currentRow.remove();
                     prevDeleteBtn.show();
                     $("#indicator_update_form").data('indicatorchanged', true);
-                    var targets_sum = data['targets_sum'];
-                    if (targets_sum != 0 && targets_sum != "None" && targets_sum != '' && targets_sum != 'undefined') {
-                        $("#id_span_targets_sum").text(parseFloat(targets_sum).toFixed(2).replace(/[.,]00$/, ""));
-                    }
+                    updateAggregateRowValueAndLabel()
                     if ($('#periodic_targets_table tbody tr.periodic-target').length == 0) {
                         $("#id_div_periodic_tables_placeholder").empty();
                         reset_frequency_fields();
@@ -157,7 +155,7 @@
         var markup = `
                 <tr class="periodic-target">
                     <td class="align-middle pr-0" style="width: 50px; text-align: center;">
-                        <a href="/indicators/periodic_target_delete/${pt.id}/" class="detelebtn" style="text-align: center; color:red; display: ${(isLastIteration && target_frequency != 2 || target_frequency == 8) ? 'block' : 'none'}">
+                        <a href="/indicators/periodic_target_delete/${pt.id}/" class="deletebtn" style="text-align: center; color:red; display: ${(isLastIteration && target_frequency != 2 || target_frequency == 8) ? 'block' : 'none'}">
                             <i class="fas fa-times"></i>
                         </a>
                     </td>
