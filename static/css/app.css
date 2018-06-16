@@ -129,6 +129,11 @@ body {
 table.table-hover tbody tr:hover {
     background-color: #CCEFEE !important;
 }
+
+.row-highlight {
+    background-color: #CCEFEE !important;
+}
+
 #id_missing_targets_msg {
     padding-left: 3.5rem;
     margin-top: -0.875rem;

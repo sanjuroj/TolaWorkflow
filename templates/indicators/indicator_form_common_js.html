@@ -756,5 +756,15 @@
         }
     });
 
+    // Allow users to click an IPTT table row to highlight it
+    $("#iptt_table tbody tr").on("click", function(e){
+        if ($(this).hasClass('row-highlight')){
+            $("#iptt_table tbody tr").removeClass('row-highlight');
+        }
+        else{
+            $("#iptt_table tbody tr").removeClass('row-highlight');
+            $(this).addClass('row-highlight');
+        }
+    })
 
 </script>
