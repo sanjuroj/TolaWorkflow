@@ -83,7 +83,8 @@
                         <tr>
                     {% endif %}
                     <td {% if cdata.periodic_target == None %}
-                            style="border: 3px solid red;"
+                            style=""
+                            class="bg-danger-lighter"
                         {% endif %}>
                         {% if is_editable is False %}
                           {{ cdata.date_collected_formatted|default_if_none:"" }}
@@ -156,7 +157,7 @@
                     {% endif %}
                 </td>
                 <td align="right"></td>
-                <td style="border: 3px solid red;">
+                <td style="" class="bg-danger-lighter">
                     {% if is_editable is False %}
                       {{ coldata.date_collected_formatted|default_if_none:"" }}
                     {% else %}
