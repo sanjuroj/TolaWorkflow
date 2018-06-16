@@ -134,6 +134,9 @@ table.table-hover tbody tr:hover {
     margin-top: -0.875rem;
     margin-bottom: 1rem;
 }
+.missing_targets {
+    padding-left: 1rem;
+}
 
 #iptt_table {
     background-color: white;
