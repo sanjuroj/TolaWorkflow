@@ -228,7 +228,8 @@
                 var indicator_sector = form.find("#id_sector option:selected").text();
                 $("#id_indicator_type_" + indicator_id).text(indicator_type);
                 $("#id_indicator_level_" + indicator_id).text(indicator_level.trim().slice(0, -1));
-                $("#id_indicator_name_" + indicator_id + " a").text(indicator_name);
+                $("#id_indicator_name_" + indicator_id + " a .indicator_name").text(indicator_name);
+                // TODO: this overwrites the name of the indicator (see ticket #284)
                 $("#id_indicator_number_" + indicator_id).text(indicator_number);
                 $("#id_indicator_sector_" + indicator_id).text(indicator_sector);
             }

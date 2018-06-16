@@ -24,9 +24,6 @@
                 <th class="text-uppercase border-top-0  text-nowrap text-right" style="">{% trans "% Met" %}</th>
                 <th class="text-uppercase border-top-0  " style="">{% trans "Results" %}</th>
                 <th class="text-uppercase border-top-0 " style="">{% trans "Evidence" %}</th>
-                {% if is_editable is not False %}
-                  <th class="text-uppercase border-top-0 bg-light" style=""></th>
-                {% endif %}
             </tr>
         </thead>
         {% for item in periodictargets %}
@@ -34,7 +31,7 @@
                 {% ifchanged item %}
                     {% with dataCount=item.collecteddata_set.count %}
                         <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-nowrap">
-                            <strong>{{ item.period }}</strong><br>
+                            <strong class="text-uppercase">{{ item.period }}</strong><br>
                             <small>
                                 {{ item.start_date_formatted|default_if_none:"" }}
                                 {% if item.start_date %} - {% endif %}
@@ -109,42 +106,32 @@
                     </td>
                     <td>
                         {% if cdata.evidence %}
-                            {% if cdata.evidence.url %}
-                                <a href="{{cdata.evidence.url}}" target="_blank">
-                            {% endif %}
-                            {{ cdata.evidence|default_if_none:"" }}
-                            {% if cdata.evidence.url %}
-                                </a>
-                            {% endif %}
+                            <div>
+                                {% if cdata.evidence.url %}
+                                    <a href="{{cdata.evidence.url}}" target="_blank">
+                                {% endif %}
+                                {{ cdata.evidence|default_if_none:"" }}
+                                {% if cdata.evidence.url %}
+                                    </a>
+                                {% endif %}
+                            </div>
                         {%endif%}
-                        <span class="float-right">
+                        <div class="">
                             {% if cdata.complete %}
                                 <a href="{% url 'projectcomplete_update' cdata.complete.id %}"
                                    target="_blank"
-                                   class="btn btn-sm btn-link">{% trans "View Project" %}</a>
+                                   class="fontsize-85 text-uppercase"><i class="fas fa-clipboard"></i> {% trans "View project" %}</a>
                             {% elif cdata.agreement %}
                                 <a href="{% url 'projectagreement_update' cdata.agreement.id %}"
                                    target="_blank"
-                                   class="btn btn-sm btn-link">{% trans "View Project" %}</a>
+                                   class="fontsize-85 text-uppercase"><i class="fas fa-clipboard"></i> {% trans "View project" %}</a>
                             {% endif %}
                             {% comment {{ cdata.complete|default_if_none:cdata.agreement|default_if_none:'' }} %} {% endcomment %}
-                        </span>
+                        </div>
                         {% if cdata.tola_table %}
                             <a href="{{ cdata.tola_table.detail_url }}" target="_blank">{{ cdata.tola_table }}</a>
                         {% endif %}
                     </td>
-                    {% if is_editable is not False %}
-                      <td align="right">
-                        {% comment %}
-                          <a href="{% url 'collecteddata_delete' cdata.id %}" style="color:red; vertical-align: middle;">
-                              <i class="fas fa-trash-alt"></i>Delete
-                          </a>
-                        {% endcomment %}
-                          <a href="{% url 'collecteddata_update' cdata.id %}" class="collecteddata-link" style="padding-left: 30px; vertical-align: middle">
-                              <i class="fas fa-edit"></i>
-                          </a>
-                      </td>
-                    {% endif %}
                     {% empty %}
                         <td style="white-space: nowrap; overflow: visible; max-width: 125px; border-right: 0px solid;">
                             {% trans "No data collected" %}
@@ -253,35 +240,33 @@
                     {% endif %}
                 </strong>
             </td>
-            <td colspan="2" align="right">
-              <p class="small text-left font-italic font-weight-light">
-                {% if indicator.target_frequency is not None %}
-                  {% if indicator.unit_of_measure_type == 1 %}
-                    {% if indicator.is_cumulative == True %}
-                      {% trans "*Results are cumulative. The Life of Program result mirrors the latest period result." %}
-                    {% elif indicator.is_cumulative == False %}
-                      {% trans "*Results are non-cumulative. The Life of Program result is the sum of target periods results." %}
-                    {% endif %}
-                  {% elif indicator.unit_of_measure_type == 2 %}
-                    {% if indicator.is_cumulative == True %}
-                      {% trans "*Results are cumulative. The Life of Program result mirrors the latest period result." %}
-                    {% elif indicator.is_cumulative == False %}
-                      {% trans "*Results are non-cumulative. Target period and Life of Program results are calculated from the average of collected data." %}
+            <td colspan="2" class="">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="small text-left font-italic font-weight-light">
+                  {% if indicator.target_frequency is not None %}
+                    {% if indicator.unit_of_measure_type == 1 %}
+                      {% if indicator.is_cumulative == True %}
+                        {% trans "*Results are cumulative. The Life of Program result mirrors the latest period result." %}
+                      {% elif indicator.is_cumulative == False %}
+                        {% trans "*Results are non-cumulative. The Life of Program result is the sum of target periods results." %}
+                      {% endif %}
+                    {% elif indicator.unit_of_measure_type == 2 %}
+                      {% if indicator.is_cumulative == True %}
+                        {% trans "*Results are cumulative. The Life of Program result mirrors the latest period result." %}
+                      {% elif indicator.is_cumulative == False %}
+                        {% trans "*Results are non-cumulative. Target period and Life of Program results are calculated from the average of collected data." %}
+                      {% endif %}
                     {% endif %}
                   {% endif %}
-                {% endif %}
-              </p>
+                </div>
+                <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
+                    <a href="{% url 'collecteddata_add' program_id indicator.id %}"
+                            class="btn btn-link btn-add collecteddata-link p-0">
+                        <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
+                    </a>
+                </div>
+              </div>
             </td>
-            {% if is_editable is not False %}
-              <td align="right">
-                  <span class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
-                      <a href="{% url 'collecteddata_add' program_id indicator.id %}"
-                              class="btn btn-link btn-add collecteddata-link">
-                          <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
-                      </a>
-                  </span>
-              </td>
-            {% endif %}
         </tr>
 
         {% if err %}
@@ -306,6 +291,6 @@
     </table>
 {% else %}
     <div class="my-3 color-red">
-        <i class="fas fa-bullseye"></i>&nbsp;{% trans "Organize your data for this indicator." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link btn btn-link btn-add"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add a target" %}</a>
+        <i class="fas fa-bullseye"></i>&nbsp;{% trans "Organize your data for this indicator." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link btn btn-link btn-add"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add targets" %}</a>
     </div>
 {% endif %}
