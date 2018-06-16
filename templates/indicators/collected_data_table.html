@@ -109,37 +109,34 @@
                     </td>
                     <td>
                         {% if cdata.evidence %}
-                            {% if cdata.evidence.url %}
-                                <a href="{{cdata.evidence.url}}" target="_blank">
-                            {% endif %}
-                            {{ cdata.evidence|default_if_none:"" }}
-                            {% if cdata.evidence.url %}
-                                </a>
-                            {% endif %}
+                            <div>
+                                {% if cdata.evidence.url %}
+                                    <a href="{{cdata.evidence.url}}" target="_blank">
+                                {% endif %}
+                                {{ cdata.evidence|default_if_none:"" }}
+                                {% if cdata.evidence.url %}
+                                    </a>
+                                {% endif %}
+                            </div>
                         {%endif%}
-                        <span class="float-right">
+                        <div class="">
                             {% if cdata.complete %}
                                 <a href="{% url 'projectcomplete_update' cdata.complete.id %}"
                                    target="_blank"
-                                   class="btn btn-sm btn-link">{% trans "View Project" %}</a>
+                                   class="fontsize-85">{% trans "View Project" %}</a>
                             {% elif cdata.agreement %}
                                 <a href="{% url 'projectagreement_update' cdata.agreement.id %}"
                                    target="_blank"
-                                   class="btn btn-sm btn-link">{% trans "View Project" %}</a>
+                                   class="fontsize-85">{% trans "View Project" %}</a>
                             {% endif %}
                             {% comment {{ cdata.complete|default_if_none:cdata.agreement|default_if_none:'' }} %} {% endcomment %}
-                        </span>
+                        </div>
                         {% if cdata.tola_table %}
                             <a href="{{ cdata.tola_table.detail_url }}" target="_blank">{{ cdata.tola_table }}</a>
                         {% endif %}
                     </td>
                     {% if is_editable is not False %}
                       <td align="right">
-                        {% comment %}
-                          <a href="{% url 'collecteddata_delete' cdata.id %}" style="color:red; vertical-align: middle;">
-                              <i class="fas fa-trash-alt"></i>Delete
-                          </a>
-                        {% endcomment %}
                           <a href="{% url 'collecteddata_update' cdata.id %}" class="collecteddata-link" style="padding-left: 30px; vertical-align: middle">
                               <i class="fas fa-edit"></i>
                           </a>
