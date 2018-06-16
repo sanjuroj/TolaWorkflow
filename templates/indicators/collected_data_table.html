@@ -237,7 +237,7 @@
                 </strong>
             </td>
             <td colspan="2" class="">
-              <div class="d-flex justify-content-between align-items-center">
+              <div class="">
                 <div class="small text-left font-italic font-weight-light">
                   {% if indicator.target_frequency is not None %}
                     {% if indicator.unit_of_measure_type == 1 %}
@@ -255,7 +255,7 @@
                     {% endif %}
                   {% endif %}
                 </div>
-                <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
+                <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %} text-right py-2">
                     <a href="{% url 'collecteddata_add' program_id indicator.id %}"
                             class="btn btn-link btn-add collecteddata-link p-0">
                         <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
