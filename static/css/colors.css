@@ -13,6 +13,7 @@
     --gray-medium: #808080;
     --gray-light: #B8BABD;
     --gray-lighter: #DBDCDE;
+    --gray-lighter-alt: #E6E7E8; /* used with .bg-gray-lighter on indicator table */
     --gray-lightest: #F5F5F5;
     --green-light: #74D378;
     --green-medium: #4CAF50;

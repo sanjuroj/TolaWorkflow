@@ -17,8 +17,8 @@
 {% if indicator.collecteddata_set.count > 0 or indicator.target_frequency %}
     <table class="table table-sm my-2">
         <thead>
-            <tr class="bg-light">
-                <th class="text-uppercase border-top-0  " style="">{% trans "Target period" %}</th>
+            <tr class="bg-gray-lighter-alt">
+                <th class="text-uppercase border-top-0  text-nowrap" style="">{% trans "Target period" %}</th>
                 <th class="text-uppercase border-top-0  text-right" style="">{% trans "Target" %}</th>
                 <th class="text-uppercase border-top-0  text-right" style="">{% trans "Actual" %}</th>
                 <th class="text-uppercase border-top-0 pr-4  text-nowrap text-right" style="">{% trans "% Met" %}</th>
@@ -85,12 +85,12 @@
                     <td class="d-flex justify-content-between text-nowrap {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
                         <div>
                           {% if is_editable is False %}
-                            {{ cdata.date_collected_formatted|default_if_none:"" }}
+                            {{ cdata.date_collected_formatted|default_if_none:"" }}:
                           {% else %}
                           <a href="{% url 'collecteddata_update' cdata.id %}"
                              class="collecteddata-link"
                              id="collected-{{cdata.id}}">
-                                  {{ cdata.date_collected_formatted|default_if_none:"" }}
+                                  {{ cdata.date_collected_formatted|default_if_none:"" }}:
                           </a>
                           {% endif %}
                         </div>
@@ -158,10 +158,10 @@
                 <td align="right"></td>
                 <td style="" class="d-flex justify-content-between text-nowrap bg-danger-lighter">
                     {% if is_editable is False %}
-                      {{ coldata.date_collected_formatted|default_if_none:"" }}
+                      {{ coldata.date_collected_formatted|default_if_none:"" }}:
                     {% else %}
                       <a href="{% url 'collecteddata_update' coldata.id %}" class="collecteddata-link" id="collected-{{coldata.id}}">
-                          {{ coldata.date_collected_formatted|default_if_none:"" }}
+                          {{ coldata.date_collected_formatted|default_if_none:"" }}:
                       </a>
                     {% endif %}
                 </td>
@@ -204,7 +204,7 @@
             {% endif %}
         {% endif %}
 
-        <tr class="bg-light">
+        <tr class="bg-gray-lighter-alt">
             <td><strong>{% trans "Life of Program" %}</strong></td>
             <td align="right">
                 <strong>
@@ -226,7 +226,7 @@
                     {% endif %}
                 </strong>
             </td>
-            <td align="right">
+            <td align="right" class="pr-4">
                 <strong>
                     {% if indicator.unit_of_measure_type == 1 %}
                         {% widthratio grand_achieved_sum indicator.lop_target 100 %}%
@@ -265,7 +265,7 @@
         </tr>
 
         {% if err %}
-            <tr style="" class="bg-light">
+            <tr style="" class="bg-gray-lighter-alt">
                 <td colspan="8" class="color-red border-top" style="">
                     <small>
                         {% ifequal err 'Error_1' %}
