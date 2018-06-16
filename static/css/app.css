@@ -130,6 +130,10 @@ table.table-hover tbody tr:hover {
     background-color: #CCEFEE !important;
 }
 
+table.table-hover tbody tr:active {
+    background-color: #99DFDD !important;
+}
+
 .row-highlight {
     background-color: #CCEFEE !important;
 }
