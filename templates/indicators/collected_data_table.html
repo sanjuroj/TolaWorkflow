@@ -24,9 +24,6 @@
                 <th class="text-uppercase border-top-0  text-nowrap text-right" style="">{% trans "% Met" %}</th>
                 <th class="text-uppercase border-top-0  " style="">{% trans "Results" %}</th>
                 <th class="text-uppercase border-top-0 " style="">{% trans "Evidence" %}</th>
-                {% if is_editable is not False %}
-                  <th class="text-uppercase border-top-0 bg-light" style=""></th>
-                {% endif %}
             </tr>
         </thead>
         {% for item in periodictargets %}
@@ -135,10 +132,6 @@
                             <a href="{{ cdata.tola_table.detail_url }}" target="_blank">{{ cdata.tola_table }}</a>
                         {% endif %}
                     </td>
-                    {% if is_editable is not False %}
-                      <td align="right">
-                      </td>
-                    {% endif %}
                     {% empty %}
                         <td style="white-space: nowrap; overflow: visible; max-width: 125px; border-right: 0px solid;">
                             {% trans "No data collected" %}
@@ -248,6 +241,12 @@
                 </strong>
             </td>
             <td colspan="2" align="right">
+              <div class=" float-right {% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
+                  <a href="{% url 'collecteddata_add' program_id indicator.id %}"
+                          class="btn btn-link btn-add collecteddata-link">
+                      <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
+                  </a>
+              </div>
               <p class="small text-left font-italic font-weight-light">
                 {% if indicator.target_frequency is not None %}
                   {% if indicator.unit_of_measure_type == 1 %}
@@ -266,16 +265,6 @@
                 {% endif %}
               </p>
             </td>
-            <td align="right">
-              {% if is_editable is not False %}
-                  <span class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
-                      <a href="{% url 'collecteddata_add' program_id indicator.id %}"
-                              class="btn btn-link btn-add collecteddata-link">
-                          <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
-                      </a>
-                  </span>
-              {% endif %}
-             </td>
         </tr>
 
         {% if err %}
