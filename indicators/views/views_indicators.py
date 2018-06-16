@@ -1125,9 +1125,8 @@ def collected_data_view(request, indicator, program):
 def program_indicators_json(request, program, indicator, type):
     template_name = 'indicators/program_indicators_table.html'
 
-    q = {'program__id__isnull': False}
-    if int(program) != 0:
-        q['program__id'] = program
+    program_obj = Program.objects.get(pk=program)
+    q = {'program__id__isnull': False, 'program__id': program_obj.pk}
 
     if int(type) != 0:
         q['indicator_type__id'] = type
@@ -1141,12 +1140,13 @@ def program_indicators_json(request, program, indicator, type):
                           'periodictargets') \
         .filter(**q) \
         .annotate(data_count=Count('collecteddata'),
-                  levelmin=Min('level__customsort')) \
+                  levelmin=Min('level__customsort'),
+                  target_period_last_end_date=Max('periodictargets__end_date')) \
         .order_by('levelmin', 'number', 'name')
 
     return render_to_response(
         template_name,
-        {'indicators': indicators, 'program_id': program}
+        {'indicators': indicators, 'program': program_obj}
     )
 
 

@@ -10,19 +10,17 @@ import uuid
 from django.utils.translation import ugettext_lazy as _
 
 from django.conf import settings
-from django.db.models import Count
+from django.db.models import Count, Min, Subquery, OuterRef, Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from simple_history.models import HistoricalRecords
 from django.contrib.sessions.models import Session
 
-
 try:
     from django.utils import timezone
 except ImportError:
     from datetime import datetime as timezone
-from django.db.models import Q
 
 
 # New user created generate a token
@@ -150,7 +148,7 @@ class TolaUser(models.Model):
     edit_date = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        verbose_name=_("Tola User")
+        verbose_name = _("Tola User")
         ordering = ('name',)
 
     def __unicode__(self):
@@ -351,9 +349,9 @@ class Program(models.Model):
 
     # on save add create date or update edit date
     def save(self, *args, **kwargs):
-        if not 'force_insert' in kwargs:
+        if 'force_insert' not in kwargs:
             kwargs['force_insert'] = False
-        if self.create_date == None:
+        if self.create_date is None:
             self.create_date = timezone.now()
         self.edit_date = timezone.now()
         super(Program, self).save()
@@ -375,6 +373,17 @@ class Program(models.Model):
     def collected_record_count(self):
         return Program.objects.filter(pk=self.pk).annotate(num_data=Count('indicator__collecteddata')) \
                     .values('id', 'num_data')[0]['num_data']
+
+    @property
+    def does_it_need_additional_target_periods(self):
+        newest_targetperiod = PeriodicTarget.objects.filter(indicator=OuterRef('pk')).order_by('-end_date')
+        min_end_date_across_all_indicators = Indicator.objects.filter(program__in=[self.pk]).annotate(
+            newest_end_date=Subquery(newest_targetperiod.values('end_date')[:1])).aggregate(Min('newest_end_date'))
+        if self.reporting_period_end is None:
+            return False
+        if self.reporting_period_end > min_end_date_across_all_indicators['newest_end_date__min']:
+            return True
+        return False
 
 
 class ApprovalAuthority(models.Model):
@@ -1411,7 +1420,7 @@ class LoggedUser(models.Model):
 
 
     def logout_user(sender, request, user, **kwargs):
-        print("logout_user...........%s............................" % user )
+        # print("logout_user...........%s............................" % user )
         try:
             user = LoggedUser.objects.get(pk=user.username)
             user.delete()
@@ -1436,6 +1445,5 @@ def get_user_country(request):
         response = "undefined"
         return response
 
-
-## Avoiding circular import
-from indicators.models import Indicator, CollectedData
+# importing at the bottom of the file so that there is not circular imports
+from indicators.models import Indicator, PeriodicTarget, CollectedData
