@@ -23,7 +23,7 @@
                 <th class="text-uppercase border-top-0  text-right" style="">{% trans "Actual" %}</th>
                 <th class="text-uppercase border-top-0  text-nowrap text-right" style="">{% trans "% Met" %}</th>
                 <th class="text-uppercase border-top-0  " style="">{% trans "Results" %}</th>
-                <th class="text-uppercase border-top-0 " style="">{% trans "Evidence" %}</th>
+                <th class="text-uppercase border-top-0 w-100" style="">{% trans "Evidence" %}</th>
             </tr>
         </thead>
         {% for item in periodictargets %}
@@ -82,20 +82,19 @@
                     {% if not forloop.first %}
                         <tr>
                     {% endif %}
-                    <td {% if cdata.periodic_target == None %}
-                            style=""
-                            class="bg-danger-lighter"
-                        {% endif %}>
-                        {% if is_editable is False %}
-                          {{ cdata.date_collected_formatted|default_if_none:"" }}
-                        {% else %}
-                        <a href="{% url 'collecteddata_update' cdata.id %}"
-                           class="collecteddata-link"
-                           id="collected-{{cdata.id}}">
-                                {{ cdata.date_collected_formatted|default_if_none:"" }}
-                        </a>
-                        {% endif %}
-                        <span class="float-right">
+                    <td class="d-flex justify-content-between text-nowrap {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
+                        <div>
+                          {% if is_editable is False %}
+                            {{ cdata.date_collected_formatted|default_if_none:"" }}
+                          {% else %}
+                          <a href="{% url 'collecteddata_update' cdata.id %}"
+                             class="collecteddata-link"
+                             id="collected-{{cdata.id}}">
+                                  {{ cdata.date_collected_formatted|default_if_none:"" }}
+                          </a>
+                          {% endif %}
+                        </div>
+                        <div class="pl-2">
                             {% with achieved=cdata.achieved|floatformat:"-2" %}
                                 {% if indicator.unit_of_measure_type == 2 %}
                                     {{ achieved }}%
@@ -103,7 +102,7 @@
                                     {{ achieved }}
                                 {% endif %}
                             {% endwith %}
-                        </span>
+                        </div>
                     </td>
                     <td>
                         {% if cdata.evidence %}
@@ -157,7 +156,7 @@
                     {% endif %}
                 </td>
                 <td align="right"></td>
-                <td style="" class="bg-danger-lighter">
+                <td style="" class="d-flex justify-content-between text-nowrap bg-danger-lighter">
                     {% if is_editable is False %}
                       {{ coldata.date_collected_formatted|default_if_none:"" }}
                     {% else %}
@@ -176,7 +175,7 @@
                             </a>
                         {% endif %}
                     {%endif%}
-                    <span class="float-right">
+                    <div class="float-right">
                         {% if coldata.complete %}
                             <a href="{% url 'projectcomplete_update' coldata.complete.id %}"
                                target="_blank"
@@ -187,7 +186,7 @@
                                class="btn btn-sm btn-link">{% trans "View Project" %}</a>
                         {% endif %}
                         {% comment {{ coldata.complete|default_if_none:coldata.agreement|default_if_none:'' }} %} {% endcomment %}
-                    </span>
+                    </div>
                     {% if coldata.tola_table %}
                         <a href="{{ coldata.tola_table.detail_url }}" target="_blank">{{ coldata.tola_table }}</a>
                     {% endif %}
