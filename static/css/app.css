@@ -859,9 +859,9 @@ input[type=number]::-webkit-outer-spin-button {
 .bg-danger-lighter {
     background-color: #FFE2E2 !important;
 }
-.bg-gray-lighter {
-    background-color: #DBDCDE !important;
-}
-.bg-gray-lighter-alt {
+.bg-gray-lighter { /* note: these do not match colors in colors.css */
     background-color: #E6E7E8 !important;
+}
+.bg-gray-lighter-alt { /* note: these do not match colors in colors.css */
+    background-color: #EDEDED !important;
 }
