@@ -137,9 +137,6 @@
                     </td>
                     {% if is_editable is not False %}
                       <td align="right">
-                          <a href="{% url 'collecteddata_update' cdata.id %}" class="collecteddata-link" style="padding-left: 30px; vertical-align: middle">
-                              <i class="fas fa-edit"></i>
-                          </a>
                       </td>
                     {% endif %}
                     {% empty %}
@@ -269,16 +266,16 @@
                 {% endif %}
               </p>
             </td>
-            {% if is_editable is not False %}
-              <td align="right">
+            <td align="right">
+              {% if is_editable is not False %}
                   <span class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
                       <a href="{% url 'collecteddata_add' program_id indicator.id %}"
                               class="btn btn-link btn-add collecteddata-link">
                           <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
                       </a>
                   </span>
-              </td>
-            {% endif %}
+              {% endif %}
+             </td>
         </tr>
 
         {% if err %}
