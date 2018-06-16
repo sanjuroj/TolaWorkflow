@@ -1,6 +1,11 @@
 {% load i18n %}
 <script type="text/javascript">
 $(document).ready(function() {
+    // enable popover
+    $(function () {
+        $('[data-toggle="popover"]').popover({'html': true});
+    });
+
     // rotate toggle
     $('.indicator_results_toggle').on('click', function(e) {
         let icon = $(this).find("svg");
@@ -25,10 +30,21 @@ $(document).ready(function() {
     {% for indicator in indicators %}
     <tr id = "id_indicator_{{ indicator.id }}" {% if indicator.just_created %} style="background-color: lightyellow;" {% endif %} >
         <td id="id_indicator_name_{{ indicator.id }}">
+            {% if program.reporting_period_end > indicator.target_period_last_end_date %}
+                <span
+                    id="id_missing_target_periods_for_indicator_id_{{indicator.id}}"
+                    class="color-red"
+                     data-container="body"
+                     data-toggle="popover"
+                     data-placement="right"
+                     data-content="Program Report End Date:{{ program.reporting_period_end }}<br>Last TargetPeriod End Date: {{ indicator.target_period_last_end_date}}.">
+                    <i class="fas fa-bullseye"></i>
+                </span>
+            {% endif %}
             <a
                 id="id_indicator_data_count_btn_{{ indicator.id }}"
                 href="#"
-                onclick="loadCollected({{ indicator.id }}, {{ program_id }})"
+                onclick="loadCollected({{ indicator.id }}, {{ program.id }})"
                 class="indicator_results_toggle"
                 data-toggle="collapse"
                 data-target="#hidden-indicator-{{ indicator.id }}">
