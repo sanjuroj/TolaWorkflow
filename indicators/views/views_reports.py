@@ -354,11 +354,12 @@ class IPTT_ReportView(TemplateView):
                 self.annotations["{}_last".format(k)] = annotation_last
         return self.annotations
 
-    def _get_num_periods(self, start_date, end_date, period):
+    @staticmethod
+    def _get_num_periods(start_date, end_date, period):
         """
         Returns the number of periods depending on the period is in terms of months
         """
-        num_months_in_period = self._get_num_months(period)
+        num_months_in_period = IPTT_ReportView._get_num_months(period)
         total_num_months = len(list(rrule.rrule(rrule.MONTHLY, dtstart=start_date, until=end_date)))
         try:
             num_periods = total_num_months / num_months_in_period
@@ -449,8 +450,8 @@ class IPTT_ReportView(TemplateView):
         # Now calculate the last day of the current period that encompasses today's date
         current_period_end = current_period_start + relativedelta(months=+num_months_in_period)
 
-        num_periods = self._get_num_periods(self.program.reporting_period_start,
-                                            self.program.reporting_period_end, frequency)
+        num_periods = IPTT_ReportView._get_num_periods(self.program.reporting_period_start,
+                                                       self.program.reporting_period_end, frequency)
 
         start_date = self.program.reporting_period_start
 

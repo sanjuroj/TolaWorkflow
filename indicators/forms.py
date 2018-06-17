@@ -63,8 +63,7 @@ class IndicatorForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         indicator = kwargs.get('instance', None)
         if not indicator.unit_of_measure_type:
-            kwargs['initial']['unit_of_measure_type'] = \
-                Indicator.UNIT_OF_MEASURE_TYPES[0][0]
+            kwargs['initial']['unit_of_measure_type'] = Indicator.UNIT_OF_MEASURE_TYPES[0][0]
         self.request = kwargs.pop('request')
         self.programval = kwargs.pop('program')
 
@@ -76,14 +75,10 @@ class IndicatorForm(forms.ModelForm):
         countries = getCountry(self.request.user)
         self.fields['disaggregation'].queryset = DisaggregationType.objects\
             .filter(country__in=countries, standard=True)
-        self.fields['objectives'].queryset = Objective.objects.filter(
-            program__id__in=[self.programval.id])
-        self.fields['strategic_objectives'].queryset = StrategicObjective\
-            .objects.filter(country__in=countries)
-        self.fields['approved_by'].queryset = TolaUser.objects.filter(
-            country__in=countries).distinct()
-        self.fields['approval_submitted_by'].queryset = TolaUser.objects\
-            .filter(country__in=countries).distinct()
+        self.fields['objectives'].queryset = Objective.objects.filter(program__id__in=[self.programval.id])
+        self.fields['strategic_objectives'].queryset = StrategicObjective.objects.filter(country__in=countries)
+        self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
+        self.fields['approval_submitted_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
         self.fields['name'].label = _('Indicator Name')
         self.fields['name'].required = True
         self.fields['unit_of_measure'].required = True

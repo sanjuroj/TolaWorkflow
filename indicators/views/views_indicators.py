@@ -112,8 +112,7 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod,
     return target_period
 
 
-def generate_periodic_targets(tf, start_date, numTargets,
-                              target_frequency_custom=''):
+def generate_periodic_targets(tf, start_date, numTargets, target_frequency_custom=''):
     gentargets = []
 
     if tf == Indicator.LOP or tf == Indicator.MID_END:
@@ -124,6 +123,7 @@ def generate_periodic_targets(tf, start_date, numTargets,
     for i in range(numTargets):
         target_period = generate_periodic_target_single(
             tf, start_date, i, target_frequency_custom)
+        print("tf={}, start_date={}, numTargets={}".format(tf, start_date, numTargets))
         gentargets.append(target_period)
     return gentargets
 
@@ -436,13 +436,32 @@ class IndicatorUpdate(UpdateView):
             # If target_frequency is set but not targets are saved then
             # unset target_frequency too.
             indicator = self.get_object()
-            if indicator.target_frequency and \
-                    indicator.target_frequency != 1 and \
+            if indicator.target_frequency and indicator.target_frequency != 1 and \
                     not indicator.periodictargets.count():
                 indicator.target_frequency = None
                 indicator.target_frequency_start = None
                 indicator.target_frequency_num_periods = 1
                 indicator.save()
+
+            if indicator.target_frequency in [
+                    Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL,
+                    Indicator.QUARTERLY, Indicator.MONTHLY, None]:
+
+                program = indicator.program.all()[0]
+                latest_pt_end_date = indicator.periodictargets.aggregate(lastpt=Max('end_date'))['lastpt']
+                if latest_pt_end_date is None or latest_pt_end_date == 'None':
+                    latest_pt_end_date = program.reporting_period_start
+
+                print(program.reporting_period_end, latest_pt_end_date)
+
+                target_frequency_num_periods = IPTT_ReportView._get_num_periods(
+                    latest_pt_end_date, program.reporting_period_end, Indicator.ANNUAL)
+
+                print('target_frequency_num_periods: {}'.format(target_frequency_num_periods))
+
+                generatedTargets = generate_periodic_targets(
+                    Indicator.ANNUAL, latest_pt_end_date, target_frequency_num_periods)
+                print(generatedTargets)
 
         try:
             self.guidance = FormGuidance.objects.get(form="Indicator")
@@ -457,16 +476,12 @@ class IndicatorUpdate(UpdateView):
 
         context.update({'i_name': getIndicator.name})
         context['programId'] = getIndicator.program.all()[0].id
-        context['periodic_targets'] = PeriodicTarget.objects.filter(
-            indicator=getIndicator) \
-            .annotate(num_data=Count('collecteddata')) \
-            .order_by('customsort', 'create_date', 'period')
+        context['periodic_targets'] = PeriodicTarget.objects.filter(indicator=getIndicator) \
+            .annotate(num_data=Count('collecteddata')).order_by('customsort', 'create_date', 'period')
         context['targets_sum'] = PeriodicTarget.objects \
-            .filter(indicator=getIndicator) \
-            .aggregate(Sum('target'))['target__sum']
+            .filter(indicator=getIndicator).aggregate(Sum('target'))['target__sum']
         context['targets_avg'] = PeriodicTarget.objects \
-            .filter(indicator=getIndicator) \
-            .aggregate(Avg('target'))['target__avg']
+            .filter(indicator=getIndicator).aggregate(Avg('target'))['target__avg']
 
         # get external service data if any
         try:
@@ -474,6 +489,7 @@ class IndicatorUpdate(UpdateView):
                 .filter(indicator__id=self.kwargs['pk'])
         except ExternalServiceRecord.DoesNotExist:
             getExternalServiceRecord = None
+
         context.update({'getExternalServiceRecord': getExternalServiceRecord})
         if self.request.GET.get('targetsonly') == 'true':
             context['targetsonly'] = True
@@ -482,10 +498,10 @@ class IndicatorUpdate(UpdateView):
         return context
 
     def get_initial(self):
-        target_frequency_num_periods = self.get_object() \
-            .target_frequency_num_periods
+        target_frequency_num_periods = self.get_object().target_frequency_num_periods
         if not target_frequency_num_periods:
             target_frequency_num_periods = 1
+
         initial = {
             'target_frequency_num_periods': target_frequency_num_periods
         }
@@ -526,8 +542,7 @@ class IndicatorUpdate(UpdateView):
                     Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL,
                     Indicator.QUARTERLY, Indicator.MONTHLY]:
                 start_date = program.reporting_period_start
-                Converter = IPTT_ReportView()
-                target_frequency_num_periods = Converter._get_num_periods(
+                target_frequency_num_periods = IPTT_ReportView._get_num_periods(
                     start_date, program.reporting_period_end, target_frequency_type)
             elif target_frequency_type == Indicator.EVENT:
                 # This is only case in which target fequency comes from the form
