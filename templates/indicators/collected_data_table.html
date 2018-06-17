@@ -267,7 +267,8 @@
         {% if err %}
             <tr style="" class="bg-gray-lighter-alt">
                 <td colspan="8" class="color-red border-top" style="">
-                    <small>
+                    <span id="id_span_date_collected_error_msg">
+                        <small>
                         {% ifequal err 'Error_1' %}
                             {% trans "Targets are not set up for this indicator." %} <strong><a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link"> {% trans "Start by selecting a target frequency." %}</a></strong>
                         {% endifequal %}
@@ -277,9 +278,10 @@
                         {% endifequal %}
 
                         {% ifequal err 'Error_3' %}
-                            {% trans "This date falls outside the range of your target periods. You can change the date or" %} <strong><a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link">{% trans "create additional target periods." %}</a></strong>
+                            {% trans 'This date falls outside the range of your target periods. Please select a date between ' %} {{ program.reporting_period_start|date:"M d, Y" }} {% trans 'and ' %} {{ program.reporting_period_end|date:"M d, Y" }}.
                         {% endifequal %}
-                    </small>
+                        </small>
+                    </span>
                 </td>
             </tr>
         {% endif %}

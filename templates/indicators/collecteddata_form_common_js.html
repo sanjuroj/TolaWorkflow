@@ -66,7 +66,7 @@
                 if ($("#id_date_collected").val().length > 0){
                 // TODO: delete the corresponding logic behind this link
                 // $("#hint_id_periodic_target").html("<small>{% trans 'This date falls outside the range of your target periods. You can change the date or' %} <a id='targetsTabLink' href='/indicators/indicator_update/" + $("#id_indicator").val() + "/'><strong>create additional target periods.</strong></a></small>");
-                $("#hint_id_periodic_target").html("<small>{% trans 'This date falls outside the range of your target periods. Please select a date between {{ program.reporting_period_start }} and {{ program.reporting_period_end }}.'")
+                $("#hint_id_periodic_target").html($("#id_span_date_collected_error_msg").html());
                 }
             }
 
