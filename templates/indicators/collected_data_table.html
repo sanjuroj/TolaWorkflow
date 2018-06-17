@@ -17,13 +17,13 @@
 {% if indicator.collecteddata_set.count > 0 or indicator.target_frequency %}
     <table class="table table-sm my-2">
         <thead>
-            <tr class="bg-light">
-                <th class="text-uppercase border-top-0  " style="">{% trans "Target period" %}</th>
+            <tr class="bg-gray-lighter-alt">
+                <th class="text-uppercase border-top-0  text-nowrap" style="">{% trans "Target period" %}</th>
                 <th class="text-uppercase border-top-0  text-right" style="">{% trans "Target" %}</th>
                 <th class="text-uppercase border-top-0  text-right" style="">{% trans "Actual" %}</th>
-                <th class="text-uppercase border-top-0  text-nowrap text-right" style="">{% trans "% Met" %}</th>
+                <th class="text-uppercase border-top-0 pr-4  text-nowrap text-right" style="">{% trans "% Met" %}</th>
                 <th class="text-uppercase border-top-0  " style="">{% trans "Results" %}</th>
-                <th class="text-uppercase border-top-0 " style="">{% trans "Evidence" %}</th>
+                <th class="text-uppercase border-top-0 w-100" style="">{% trans "Evidence" %}</th>
             </tr>
         </thead>
         {% for item in periodictargets %}
@@ -60,7 +60,7 @@
                                 {% endif %}
                             {% endif %}
                         </td>
-                        <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} align="right">
+                        <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} align="right" class="pr-4">
                             {% if indicator.unit_of_measure_type == 1 %}
                                 {% if indicator.is_cumulative == True %}
                                     {% widthratio item.cumulative_sum item.target 100 as percent_met %}
@@ -82,19 +82,19 @@
                     {% if not forloop.first %}
                         <tr>
                     {% endif %}
-                    <td {% if cdata.periodic_target == None %}
-                            style="border: 3px solid red;"
-                        {% endif %}>
-                        {% if is_editable is False %}
-                          {{ cdata.date_collected_formatted|default_if_none:"" }}
-                        {% else %}
-                        <a href="{% url 'collecteddata_update' cdata.id %}"
-                           class="collecteddata-link"
-                           id="collected-{{cdata.id}}">
-                                {{ cdata.date_collected_formatted|default_if_none:"" }}
-                        </a>
-                        {% endif %}
-                        <span class="float-right">
+                    <td class="d-flex justify-content-between text-nowrap {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
+                        <div>
+                          {% if is_editable is False %}
+                            {{ cdata.date_collected_formatted|default_if_none:"" }}:
+                          {% else %}
+                          <a href="{% url 'collecteddata_update' cdata.id %}"
+                             class="collecteddata-link"
+                             id="collected-{{cdata.id}}">
+                                  {{ cdata.date_collected_formatted|default_if_none:"" }}:
+                          </a>
+                          {% endif %}
+                        </div>
+                        <div class="pl-2">
                             {% with achieved=cdata.achieved|floatformat:"-2" %}
                                 {% if indicator.unit_of_measure_type == 2 %}
                                     {{ achieved }}%
@@ -102,7 +102,7 @@
                                     {{ achieved }}
                                 {% endif %}
                             {% endwith %}
-                        </span>
+                        </div>
                     </td>
                     <td>
                         {% if cdata.evidence %}
@@ -156,12 +156,12 @@
                     {% endif %}
                 </td>
                 <td align="right"></td>
-                <td style="border: 3px solid red;">
+                <td style="" class="d-flex justify-content-between text-nowrap bg-danger-lighter">
                     {% if is_editable is False %}
-                      {{ coldata.date_collected_formatted|default_if_none:"" }}
+                      {{ coldata.date_collected_formatted|default_if_none:"" }}:
                     {% else %}
                       <a href="{% url 'collecteddata_update' coldata.id %}" class="collecteddata-link" id="collected-{{coldata.id}}">
-                          {{ coldata.date_collected_formatted|default_if_none:"" }}
+                          {{ coldata.date_collected_formatted|default_if_none:"" }}:
                       </a>
                     {% endif %}
                 </td>
@@ -175,7 +175,7 @@
                             </a>
                         {% endif %}
                     {%endif%}
-                    <span class="float-right">
+                    <div class="float-right">
                         {% if coldata.complete %}
                             <a href="{% url 'projectcomplete_update' coldata.complete.id %}"
                                target="_blank"
@@ -186,15 +186,10 @@
                                class="btn btn-sm btn-link">{% trans "View Project" %}</a>
                         {% endif %}
                         {% comment {{ coldata.complete|default_if_none:coldata.agreement|default_if_none:'' }} %} {% endcomment %}
-                    </span>
+                    </div>
                     {% if coldata.tola_table %}
                         <a href="{{ coldata.tola_table.detail_url }}" target="_blank">{{ coldata.tola_table }}</a>
                     {% endif %}
-                </td>
-                <td align="right">
-                    <a href="{% url 'collecteddata_update' coldata.id %}" class="collecteddata-link" style="padding-left: 30px; vertical-align: middle">
-                        <i class="fas fa-edit"></i>
-                    </a>
                 </td>
             </tr>
         {% endfor %}
@@ -209,7 +204,7 @@
             {% endif %}
         {% endif %}
 
-        <tr class="bg-light">
+        <tr class="bg-gray-lighter-alt">
             <td><strong>{% trans "Life of Program" %}</strong></td>
             <td align="right">
                 <strong>
@@ -231,7 +226,7 @@
                     {% endif %}
                 </strong>
             </td>
-            <td align="right">
+            <td align="right" class="pr-4">
                 <strong>
                     {% if indicator.unit_of_measure_type == 1 %}
                         {% widthratio grand_achieved_sum indicator.lop_target 100 %}%
@@ -241,7 +236,7 @@
                 </strong>
             </td>
             <td colspan="2" class="">
-              <div class="d-flex justify-content-between align-items-center">
+              <div class="">
                 <div class="small text-left font-italic font-weight-light">
                   {% if indicator.target_frequency is not None %}
                     {% if indicator.unit_of_measure_type == 1 %}
@@ -259,7 +254,7 @@
                     {% endif %}
                   {% endif %}
                 </div>
-                <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
+                <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %} text-right p-2">
                     <a href="{% url 'collecteddata_add' program_id indicator.id %}"
                             class="btn btn-link btn-add collecteddata-link p-0">
                         <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
@@ -270,8 +265,8 @@
         </tr>
 
         {% if err %}
-            <tr style="background-color: #f9f9f9;">
-                <td colspan="8" style="color:red; border-color: #f9f9f9; border-left: 0px solid; border-right: 0px solid; border-bottom: 0px solid;">
+            <tr style="" class="bg-gray-lighter-alt">
+                <td colspan="8" class="color-red border-top" style="">
                     <small>
                         {% ifequal err 'Error_1' %}
                             {% trans "Targets are not set up for this indicator." %} <strong><a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link"> {% trans "Start by selecting a target frequency." %}</a></strong>

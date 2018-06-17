@@ -129,6 +129,15 @@ body {
 table.table-hover tbody tr:hover {
     background-color: #CCEFEE !important;
 }
+
+table.table-hover tbody tr:active {
+    background-color: #99DFDD !important;
+}
+
+.row-highlight {
+    background-color: #CCEFEE;
+}
+
 .missing_targets_msg {
     padding-left: 2.3rem;
     margin-top: -0.875rem;
@@ -845,4 +854,26 @@ input[type=number]::-webkit-outer-spin-button {
 }
 .indicator_results_toggle .svg-inline--fa {
     margin-right: 5px;
+}
+
+/* Bootstrap could really use these border utilities */
+.border-2 {
+    border-width: 2px !important;
+}
+.border-3 {
+    border-width: 3px !important;
+}
+.border-4 {
+    border-width: 4px !important;
+}
+
+/* Extra colors */
+.bg-danger-lighter {
+    background-color: #FFE2E2 !important;
+}
+.bg-gray-lighter { /* note: these do not match colors in colors.css */
+    background-color: #E6E7E8 !important;
+}
+.bg-gray-lighter-alt { /* note: these do not match colors in colors.css */
+    background-color: #EDEDED !important;
 }
