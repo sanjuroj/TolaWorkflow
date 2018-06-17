@@ -227,6 +227,7 @@
         let url = button.attr("href") + '?modal=1';
         const modal = $(this);
         const tab = button.data('tab');
+
         if (tab != undefined & tab != 'undefined') {
             $.get(url, function (data) {
                 modal.find("#indicator_modal_content").html(data);

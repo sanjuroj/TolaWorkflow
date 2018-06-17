@@ -43,9 +43,13 @@ from ..models import (
 from .views_reports import IPTT_ReportView
 
 
-def generate_periodic_target_single(tf, start_date, nthTargetPeriod, target_frequency_custom=''):
+def generate_periodic_target_single(tf, start_date, nthTargetPeriod, target_frequency_custom='',
+                                    num_existing_targets=0):
     i = nthTargetPeriod
-    j = i + 1
+    if num_existing_targets > 0:
+        j = num_existing_targets + 1
+    else:
+        j = i + 1
     target_period = ''
 
     if tf == Indicator.LOP:
@@ -94,13 +98,13 @@ def generate_periodic_targets(tf, start_date, numTargets, target_frequency_custo
     gentargets = []
 
     if tf == Indicator.LOP or tf == Indicator.MID_END:
-        target_period = generate_periodic_target_single(tf, start_date,
-                                                        numTargets)
+        target_period = generate_periodic_target_single(tf, start_date, numTargets)
         return target_period
 
     for i in range(numTargets):
-        num_existing_targets += i
-        target_period = generate_periodic_target_single(tf, start_date, num_existing_targets, target_frequency_custom)
+        target_period = generate_periodic_target_single(
+            tf, start_date, i, target_frequency_custom, num_existing_targets)
+        num_existing_targets += 1
         gentargets.append(target_period)
     return gentargets
 
@@ -426,7 +430,6 @@ class IndicatorUpdate(UpdateView):
         return super(IndicatorUpdate, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        print(self.request.method)
         context = super(IndicatorUpdate, self).get_context_data(**kwargs)
         context.update({'id': self.kwargs['pk']})
         getIndicator = Indicator.objects.get(id=self.kwargs['pk'])
@@ -465,9 +468,12 @@ class IndicatorUpdate(UpdateView):
                 latest_pt_end_date, program.reporting_period_end, getIndicator.target_frequency)
 
             num_existing_targets = pts.count()
+            event_name = ''
             generatedTargets = generate_periodic_targets(
-                getIndicator.target_frequency, latest_pt_end_date, target_frequency_num_periods, num_existing_targets)
+                getIndicator.target_frequency, latest_pt_end_date, target_frequency_num_periods, event_name,
+                num_existing_targets)
 
+            # combine the list of existing periodic_targets with the newly generated placeholder for missing targets
             ptargets += generatedTargets
 
         context['periodic_targets'] = ptargets
@@ -543,9 +549,7 @@ class IndicatorUpdate(UpdateView):
                 target_frequency_num_periods = form.cleaned_data.get('target_frequency_num_periods', 1)
 
             generatedTargets = generate_periodic_targets(
-                new_target_frequency, start_date, target_frequency_num_periods,
-                event_name
-            )
+                new_target_frequency, start_date, target_frequency_num_periods, event_name)
 
         if periodic_targets and periodic_targets != 'generateTargets':
             # now create/update periodic targets
