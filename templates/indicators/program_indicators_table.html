@@ -43,9 +43,9 @@ $(document).ready(function() {
             {% if program.reporting_period_end > indicator.target_period_last_end_date %}
                 <a href="/indicators/indicator_update/{{ indicator.id }}/"
                     id="id_missing_target_periods_for_indicator_id_{{indicator.id}}"
-                    class="color-red missing_targets"
+                    class="indicator-link color-red missing_targets"
                     data-toggle="modal" data-target="#indicator_modal_div"
-                    data-tab="targetsTab">
+                    data-tab="targets">
                     <i class="fas fa-bullseye"></i> Missing targets
                 </a>
             {% endif %}

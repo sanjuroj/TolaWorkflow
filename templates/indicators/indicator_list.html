@@ -208,32 +208,39 @@
 
     // when opening the modal, check for the button's data attribute of tab. if present then
     // open the modal to that tab.
-    $('#indicator_modal_div').on('shown.bs.modal', function (e) {
-        // button that triggered the modal
-        const button = $(e.relatedTarget);
-        let modal = $(this);
-        const tab = button.data('tab');
+    // $('#indicator_modal_div').on('shown.bs.modal', function (e) {
+    //     // button that triggered the modal
+    //     const button = $(e.relatedTarget);
+    //     let modal = $(this);
+    //     const tab = button.data('tab');
 
-        if (tab != undefined & tab != 'undefined') {
-            $(`#indicatorTabs a[href="#${tab}"][data-toggle="tab"]`).tab('show');
-            const target_periods_section_offset = $("#id_div_periodic_tables_placeholder").offset();
-            modal.animate({ scrollTop: target_periods_section_offset.top }, 'slow');
-        }
-    });
+    //     if (tab != undefined & tab != 'undefined') {
+    //         $(`#indicatorTabs a[href="#${tab}"][data-toggle="tab"]`).tab('show');
+    //     }
+    // });
 
-    // upon opening the modal, fetch its content from the server
-    $('#indicator_modal_div').on('show.bs.modal', function (e) {
-        const button = $(e.relatedTarget);
-        let url = button.attr("href") + '?modal=1';
-        const modal = $(this);
-        const tab = button.data('tab');
+    // $('#indicator_modal_div').on('shown.bs.tab', function (e) {
+    //     console.log('targetsTab show? = ', $(e.target).attr('href') );
+    //     if ($(e.target).attr('href') == '#targetsTab') {
+    //         const target_periods_section_offset = $("#id_div_periodic_tables_placeholder input:empty:first").offset();
+    //         console.log(target_periods_section_offset);
+    //         $("#indicator_modal_div").animate({ scrollTo: target_periods_section_offset.top }, 'slow');
+    //     }
+    // });
 
-        if (tab != undefined & tab != 'undefined') {
-            $.get(url, function (data) {
-                modal.find("#indicator_modal_content").html(data);
-            });
-        }
-    });
+    // // upon opening the modal, fetch its content from the server
+    // $('#indicator_modal_div').on('show.bs.modal', function (e) {
+    //     const button = $(e.relatedTarget);
+    //     let url = button.attr("href") + '?modal=1';
+    //     const modal = $(this);
+    //     const tab = button.data('tab');
+
+    //     if (tab != undefined & tab != 'undefined') {
+    //         $.get(url, function (data) {
+    //             modal.find("#indicator_modal_content").html(data);
+    //         });
+    //     }
+    // });
 
     $('#indicator_modal_div').on('hide.bs.modal', function (e) {
         try {

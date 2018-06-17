@@ -26,6 +26,8 @@
         if (targetsactive == 'True') {
             $('#indicatorTabs a[href="#targetsTab"][data-toggle="tab"]').tab('show');
             $("#indicator_modal_body").data("targetsactive", "true");
+            const target_periods_section_offset = $(window).scrollTop() - $("#id_div_periodic_tables_placeholder").position().top ;
+            $("#indicator_modal_div").animate({ scrollTop: target_periods_section_offset }, 'slow');
         }
 
         if ( $('#id_div_periodic_tables_placeholder').children().length > 0 ) {
