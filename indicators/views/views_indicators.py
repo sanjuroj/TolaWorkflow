@@ -850,24 +850,18 @@ class CollectedDataUpdate(UpdateView):
         try:
             getDisaggregationValue = DisaggregationValue.objects \
                 .filter(collecteddata=self.kwargs['pk']) \
-                .exclude(
-                    disaggregation_label__disaggregation_type__standard=True)
+                .exclude(disaggregation_label__disaggregation_type__standard=True)
 
             getDisaggregationValueStandard = DisaggregationValue.objects \
                 .filter(collecteddata=self.kwargs['pk']) \
-                .filter(
-                    disaggregation_label__disaggregation_type__standard=True)
+                .filter(disaggregation_label__disaggregation_type__standard=True)
 
         except DisaggregationLabel.DoesNotExist:
             getDisaggregationValue = None
             getDisaggregationValueStandard = None
 
-        context.update({'getDisaggregationLabelStandard':
-                        getDisaggregationLabelStandard})
-
-        context.update({'getDisaggregationValueStandard':
-                        getDisaggregationValueStandard})
-
+        context.update({'getDisaggregationLabelStandard': getDisaggregationLabelStandard})
+        context.update({'getDisaggregationValueStandard': getDisaggregationValueStandard})
         context.update({'getDisaggregationValue': getDisaggregationValue})
         context.update({'getDisaggregationLabel': getDisaggregationLabel})
         context.update({'id': self.kwargs['pk']})

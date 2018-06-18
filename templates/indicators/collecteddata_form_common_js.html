@@ -58,6 +58,10 @@
 
 
     function validatePeriodicTarget(onlyPeriodic = false) {
+        const programId = $("#id_program").val();
+        const program_reporting_start = formatDate($(`#id_link_reporting_period_${programId}`).data("rptstart"));
+        const program_reporting_end = formatDate($(`#id_link_reporting_period_${programId}`).data("rptend"));
+
         if (setPeriodicTargetValue() == false) {
             // $("#id_periodic_target").val('');
             if ($("#id_periodic_target option").length <= 1) {
@@ -66,7 +70,8 @@
                 if ($("#id_date_collected").val().length > 0){
                 // TODO: delete the corresponding logic behind this link
                 // $("#hint_id_periodic_target").html("<small>{% trans 'This date falls outside the range of your target periods. You can change the date or' %} <a id='targetsTabLink' href='/indicators/indicator_update/" + $("#id_indicator").val() + "/'><strong>create additional target periods.</strong></a></small>");
-                $("#hint_id_periodic_target").html($("#id_span_date_collected_error_msg").html());
+                $("#hint_id_periodic_target").html(`<small>{% trans 'This date falls outside the range of your target periods. Please select a date between ' %} ${ program_reporting_start } and ${ program_reporting_end } </small>`);
+                // $("#hint_id_periodic_target").html($("#id_span_date_collected_error_msg").html());
                 }
             }
 
