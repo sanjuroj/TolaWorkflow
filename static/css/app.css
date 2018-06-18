@@ -18,6 +18,17 @@ body {
 .has-error .text-muted {
     color: inherit !important;
 }
+.has-error-with-msg {
+    color: #DD0000 !important;
+}
+.has-error-with-msg .error-msg {
+    display: block;
+}
+.error-msg {
+    color: #DD0000 !important;
+    display: none;
+    font-size: .875rem;
+}
 
 .hide {
   display: none;
