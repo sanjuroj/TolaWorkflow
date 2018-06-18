@@ -18,6 +18,11 @@ body {
 .has-error .text-muted {
     color: inherit !important;
 }
+/* this might introduce regressions
+.has-error input {
+    border-color: #DD0000;
+}
+*/
 
 .hide {
   display: none;
