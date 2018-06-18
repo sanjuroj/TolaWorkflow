@@ -245,7 +245,7 @@
     $('#indicator_modal_div').on('hide.bs.modal', function (e) {
         try {
             var form = $(this).find('form');
-            var program_id = parseInt($(this).find('form #id_program').val()[0]);
+            var program_id = parseInt($(this).find('form #id_program').val());
             var form_action = form.attr('action').split('/');
             var indicator_id = parseInt(form_action[form_action.length -2]);
 
