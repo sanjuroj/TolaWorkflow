@@ -155,6 +155,9 @@ table.table-hover tbody tr.row-highlight:hover { /* whoa check out this specific
     padding-left: 1rem;
 }
 
+
+/* IPTT Table */
+
 #iptt_table {
     background-color: white;
 }
@@ -191,6 +194,8 @@ body.page_iptt_table { /* body element for extra specificity */
 #id_div_top_iptt_report {
     color: #545858; /* why is this not #54585A ? */
 }
+
+/* IPTT quickstart */
 
 /* Start by setting display:none to make this hidden.
    Then we position it in relation to the viewport window
