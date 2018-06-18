@@ -254,37 +254,40 @@
                     {% endif %}
                   {% endif %}
                 </div>
-                <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %} text-right p-2">
-                    <a href="{% url 'collecteddata_add' program_id indicator.id %}"
-                            class="btn btn-link btn-add collecteddata-link p-0">
-                        <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
-                    </a>
-                </div>
               </div>
             </td>
         </tr>
+        <tr class="bg-gray-lighter-alt">
+            <td colspan="6">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                    {% if err %}
+                        <span id="id_span_date_collected_error_msg text-danger">
+                            <small>
+                            {% ifequal err 'Error_1' %}
+                                {% trans "Targets are not set up for this indicator." %} <strong><a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link"> {% trans "Start by selecting a target frequency." %}</a></strong>
+                            {% endifequal %}
 
-        {% if err %}
-            <tr style="" class="bg-gray-lighter-alt">
-                <td colspan="8" class="color-red border-top" style="">
-                    <span id="id_span_date_collected_error_msg">
-                        <small>
-                        {% ifequal err 'Error_1' %}
-                            {% trans "Targets are not set up for this indicator." %} <strong><a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link"> {% trans "Start by selecting a target frequency." %}</a></strong>
-                        {% endifequal %}
+                            {% ifequal err 'Error_2' %}
+                                    {% trans 'This record is not associated with a target. Open the data record and select an option from the "Measure against target" menu.' %}
+                            {% endifequal %}
 
-                        {% ifequal err 'Error_2' %}
-                                {% trans 'This record is not associated with a target. Open the data record and select an option from the "Measure against target" menu.' %}
-                        {% endifequal %}
-
-                        {% ifequal err 'Error_3' %}
-                            {% trans 'This date falls outside the range of your target periods. Please select a date between ' %} {{ program.reporting_period_start|date:"M d, Y" }} {% trans 'and ' %} {{ program.reporting_period_end|date:"M d, Y" }}.
-                        {% endifequal %}
-                        </small>
-                    </span>
-                </td>
-            </tr>
-        {% endif %}
+                            {% ifequal err 'Error_3' %}
+                                {% trans 'This date falls outside the range of your target periods. Please select a date between ' %} {{ program.reporting_period_start|date:"M d, Y" }} {% trans 'and ' %} {{ program.reporting_period_end|date:"M d, Y" }}.
+                            {% endifequal %}
+                            </small>
+                        </span>
+                    {% endif %}
+                    </div>
+                    <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %} p-2">
+                        <a href="{% url 'collecteddata_add' program_id indicator.id %}"
+                                class="btn btn-link btn-add collecteddata-link p-0">
+                            <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
+                        </a>
+                    </div>
+                </div>
+            </td>
+        </tr>
     </table>
 {% else %}
     <div class="my-3 color-red">
