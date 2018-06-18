@@ -196,6 +196,10 @@ body.page_iptt_table { /* body element for extra specificity */
 }
 
 /* IPTT quickstart */
+/* this mimics a standard BS behavior in _forms.scss */
+.form-check-inline--is-disabled {
+    color: #aaa;
+}
 
 /* Start by setting display:none to make this hidden.
    Then we position it in relation to the viewport window

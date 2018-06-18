@@ -168,7 +168,10 @@
             const submitBtnTargets = $("#id_submit_targetperiods_button");
             const programTargets = $("#id_targetperiods-program");
             const targetperiods = $("#id_targetperiods-targetperiods");
+            const allTargets = $("#id_targetperiods-timeframe_0");
+            const allTargetsDiv = $('#div_id_targetperiods-timeframe_0');
             const mostRecentTargets = $("#id_targetperiods-timeframe_1");
+            const mostRecentTargetsDiv = $('#div_id_targetperiods-timeframe_1');
             const numRecentPeriodsTargets = $("#id_targetperiods-numrecentperiods");
             programTargets.select2();
 
@@ -181,17 +184,26 @@
 
             // when first loaded disable the dependent controls on the form
             submitBtnTargets.attr("disabled", true);
+            allTargets.attr("disabled", true);
+            allTargetsDiv.addClass('form-check-inline--is-disabled');
             mostRecentTargets.attr("disabled", true);
+            mostRecentTargetsDiv.addClass('form-check-inline--is-disabled');
             setNumRecentPeriodsTargets(true);
 
             // every time a select input changes, lock / unlock fields
             $("#id_form_program_target_overview").on("change", "select", function(e) {
                 if (programTargets.val() > 0 && targetperiods.val() > 0) {
                     submitBtnTargets.attr("disabled", false);
+                    allTargets.attr("disabled", false);
+                    allTargetsDiv.removeClass('form-check-inline--is-disabled');
                     mostRecentTargets.attr("disabled", false);
+                    mostRecentTargetsDiv.removeClass('form-check-inline--is-disabled');
                 } else {
                     submitBtnTargets.attr("disabled", true);
+                    allTargets.attr("disabled", true);
+                    allTargetsDiv.addClass('form-check-inline--is-disabled');
                     mostRecentTargets.attr("disabled", true);
+                    mostRecentTargetsDiv.addClass('form-check-inline--is-disabled');
                     setNumRecentPeriodsTargets(true);
                 }
             });
