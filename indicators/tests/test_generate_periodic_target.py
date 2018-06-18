@@ -12,7 +12,7 @@ class GeneratePeriodicTargetTests(TestCase):
     def setUp(self):
         self.start_date = datetime.datetime(2018, 10, 5, 18, 00)
         self.nth_target_period = 10
-        self.target_frequency_custom = 5
+        self.event_name = 5
 
     def test_lop_generate_periodic_target_single(self):
         """Do we get back the expected result when we have an LOP?"""
@@ -20,7 +20,7 @@ class GeneratePeriodicTargetTests(TestCase):
         expected = {'period': "Life of Program (LoP) only"}
         result = generate_periodic_target_single(tf, self.start_date,
                                                  self.nth_target_period,
-                                                 target_frequency_custom=self.target_frequency_custom)
+                                                 event_name=self.event_name)
         self.assertDictEqual(expected, result)
 
     def test_mid_generate_periodic_target_single(self):
@@ -29,16 +29,16 @@ class GeneratePeriodicTargetTests(TestCase):
         expected = [{'period': 'Midline'}, {'period': 'Endline'}]
         result = generate_periodic_target_single(tf, self.start_date,
                                                  self.nth_target_period,
-                                                 target_frequency_custom=self.target_frequency_custom)
+                                                 event_name=self.event_name)
         self.assertEqual(expected, result)
 
     def test_event_generate_periodic_target_single(self):
         """Do we get back the expected result when we have an EVENT?"""
         tf = Indicator.EVENT
-        expected = {'period': self.target_frequency_custom}
+        expected = {'period': self.event_name}
         result = generate_periodic_target_single(tf, self.start_date,
                                                  0,
-                                                 target_frequency_custom=self.target_frequency_custom)
+                                                 event_name=self.event_name)
         self.assertEqual(expected, result)
 
     def test_annual(self):
@@ -51,7 +51,7 @@ class GeneratePeriodicTargetTests(TestCase):
 
         result = generate_periodic_target_single(tf, self.start_date,
                                                  self.nth_target_period,
-                                                 target_frequency_custom='')
+                                                 event_name='')
         self.assertDictEqual(expected, result)
 
     def test_semi_annual(self):
@@ -64,7 +64,7 @@ class GeneratePeriodicTargetTests(TestCase):
 
         result = generate_periodic_target_single(tf, self.start_date,
                                                  self.nth_target_period,
-                                                 target_frequency_custom='')
+                                                 event_name='')
         self.assertDictEqual(expected, result)
 
     def test_tri_annual(self):
@@ -76,7 +76,7 @@ class GeneratePeriodicTargetTests(TestCase):
 
         result = generate_periodic_target_single(tf, self.start_date,
                                                  self.nth_target_period,
-                                                 target_frequency_custom='')
+                                                 event_name='')
         self.assertDictEqual(expected, result)
 
     def test_quarterly(self):
@@ -89,7 +89,7 @@ class GeneratePeriodicTargetTests(TestCase):
 
         result = generate_periodic_target_single(tf, self.start_date,
                                                  self.nth_target_period,
-                                                 target_frequency_custom='')
+                                                 event_name='')
         self.assertDictEqual(expected, result)
 
     def test_monthly(self):
@@ -102,7 +102,7 @@ class GeneratePeriodicTargetTests(TestCase):
 
         result = generate_periodic_target_single(tf, self.start_date,
                                                  self.nth_target_period,
-                                                 target_frequency_custom='')
+                                                 event_name='')
         self.assertDictEqual(expected, result)
 
 
@@ -111,14 +111,14 @@ class GenerateTargetsTests(TestCase):
     def setUp(self):
         self.start_date = datetime.datetime(2018, 10, 5, 18, 00)
         self.total_targets = 10
-        self.target_frequency_custom = ''
+        self.event_name = ''
 
     def test_generate(self):
         """Can we bulk generate periodic targets?"""
 
         tf = Indicator.MONTHLY
         result = generate_periodic_targets(tf, self.start_date, self.total_targets,
-                                           self.target_frequency_custom)
+                                           self.event_name)
 
         self.assertTrue(len(result) == 10)
 
@@ -130,7 +130,7 @@ class GenerateTargetsTests(TestCase):
         expected = {'period': u'Life of Program (LoP) only'}
         result = generate_periodic_targets(tf, self.start_date,
                                            self.total_targets,
-                                           self.target_frequency_custom)
+                                           self.event_name)
         self.assertDictEqual(expected, result)
 
     def test_mid(self):
@@ -140,6 +140,6 @@ class GenerateTargetsTests(TestCase):
         expected = [{'period': 'Midline'}, {'period': 'Endline'}]
         result = generate_periodic_targets(tf, self.start_date,
                                            self.total_targets,
-                                           self.target_frequency_custom)
+                                           self.event_name)
 
         self.assertEqual(expected, result)
