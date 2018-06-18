@@ -262,7 +262,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                     {% if err %}
-                        <span id="id_span_date_collected_error_msg text-danger">
+                        <span id="id_span_date_collected_error_msg text-danger" class="color-red">
                             <small>
                             {% ifequal err 'Error_1' %}
                                 {% trans "Targets are not set up for this indicator." %} <strong><a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link"> {% trans "Start by selecting a target frequency." %}</a></strong>
