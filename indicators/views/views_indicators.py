@@ -43,14 +43,11 @@ from ..models import (
 from .views_reports import IPTT_ReportView
 
 
-def generate_periodic_target_single(tf, start_date, nthTargetPeriod, target_frequency_custom='',
-                                    num_existing_targets=0):
+def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name='', num_existing_targets=0):
     i = nthTargetPeriod
-    if num_existing_targets > 0:
-        j = num_existing_targets + 1
-    else:
-        j = i + 1
+    j = i + 1
     target_period = ''
+    period_num = j + num_existing_targets
 
     if tf == Indicator.LOP:
         lop_target = Indicator.TARGET_FREQUENCIES[Indicator.LOP - 1][1]
@@ -59,29 +56,29 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod, target_freq
         return [{'period': PeriodicTarget.MIDLINE}, {'period': PeriodicTarget.ENDLINE}]
     elif tf == Indicator.EVENT:
         if i == 0:
-            return {'period': target_frequency_custom}
+            return {'period': event_name}
         else:
             return {'period': ''}
 
     if tf == Indicator.ANNUAL:
         start = ((start_date + relativedelta(years=+i)).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(years=+j)) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': 'Year %s' % j, 'start_date': start, 'end_date': end}
+        target_period = {'period': 'Year %s' % period_num, 'start_date': start, 'end_date': end}
 
     elif tf == Indicator.SEMI_ANNUAL:
         start = ((start_date + relativedelta(months=+(i * 6))).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(months=+(j * 6))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': 'Semi-annual period %s' % j, 'start_date': start, 'end_date': end}
+        target_period = {'period': 'Semi-annual period %s' % period_num, 'start_date': start, 'end_date': end}
 
     elif tf == Indicator.TRI_ANNUAL:
         start = ((start_date + relativedelta(months=+(i * 4))).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(months=+(j * 4))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': 'Tri-annual period %s' % j, 'start_date': start, 'end_date': end}
+        target_period = {'period': 'Tri-annual period %s' % period_num, 'start_date': start, 'end_date': end}
 
     elif tf == Indicator.QUARTERLY:
         start = ((start_date + relativedelta(months=+(i * 3))).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(months=+(j * 3))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': 'Quarter %s' % j, 'start_date': start, 'end_date': end}
+        target_period = {'period': 'Quarter %s' % period_num, 'start_date': start, 'end_date': end}
 
     elif tf == Indicator.MONTHLY:
         month = (start_date + relativedelta(months=+i)).strftime("%B")
@@ -94,7 +91,7 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod, target_freq
     return target_period
 
 
-def generate_periodic_targets(tf, start_date, numTargets, target_frequency_custom='', num_existing_targets=0):
+def generate_periodic_targets(tf, start_date, numTargets, event_name='', num_existing_targets=0):
     gentargets = []
 
     if tf == Indicator.LOP or tf == Indicator.MID_END:
@@ -102,8 +99,8 @@ def generate_periodic_targets(tf, start_date, numTargets, target_frequency_custo
         return target_period
 
     for i in range(numTargets):
-        target_period = generate_periodic_target_single(
-            tf, start_date, i, target_frequency_custom, num_existing_targets)
+        target_period = generate_periodic_target_single(tf, start_date, i, event_name, num_existing_targets)
+
         num_existing_targets += 1
         gentargets.append(target_period)
     return gentargets
@@ -469,6 +466,7 @@ class IndicatorUpdate(UpdateView):
 
             num_existing_targets = pts.count()
             event_name = ''
+
             generatedTargets = generate_periodic_targets(
                 getIndicator.target_frequency, latest_pt_end_date, target_frequency_num_periods, event_name,
                 num_existing_targets)
