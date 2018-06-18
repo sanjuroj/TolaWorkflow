@@ -860,6 +860,12 @@ class CollectedDataUpdate(UpdateView):
             getDisaggregationValue = None
             getDisaggregationValueStandard = None
 
+        target_period_last_end_date = getIndicator.indicator.periodictargets.aggregate(lastpt=Max('end_date'))['lastpt']
+        if self.get_object().program.reporting_period_end > target_period_last_end_date:
+            context['removing_missingtargets_link'] = "True"
+        else:
+            context['removing_missingtargets_link'] = "False"
+
         context.update({'getDisaggregationLabelStandard': getDisaggregationLabelStandard})
         context.update({'getDisaggregationValueStandard': getDisaggregationValueStandard})
         context.update({'getDisaggregationValue': getDisaggregationValue})
@@ -926,8 +932,9 @@ class CollectedDataUpdate(UpdateView):
                     getCollectedData.disaggregation_value.add(save.id)
 
         if self.request.is_ajax():
-            data = serializers.serialize('json', [self.object])
-            return HttpResponse(data)
+            removing_missingtargets_link = self.get_context_data()["removing_missingtargets_link"]
+            # data = serializers.serialize('json', [self.object])
+            return HttpResponse(removing_missingtargets_link)
 
         messages.success(self.request, _('Success, Data Updated!'))
         redirect_url = '/indicators/home/0/0/0/#hidden-%s' \
