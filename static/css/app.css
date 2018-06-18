@@ -137,6 +137,9 @@ table.table-hover tbody tr:active {
 .row-highlight {
     background-color: #CCEFEE;
 }
+table.table-hover tbody tr.row-highlight:hover { /* whoa check out this specificity */
+    background-color: #B5E0DF !important;
+}
 
 .missing_targets_msg {
     padding-left: 2.3rem;
