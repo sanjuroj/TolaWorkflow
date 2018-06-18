@@ -63,11 +63,6 @@
                                                    autocomplete="off"
                                                    id="id_reporting_start_date">
                                         </h4>
-                                        <div class="input-group-append">
-                                            <span id="start-cal-icon" class="input-group-text mb-2">
-                                                <i class="fas fa-calendar-alt"></i>
-                                            </span>
-                                        </div>
                                     </div>
                                 </div>
                                 <div id="div_reporting_end_date" class="div-rpt-date-input">
@@ -80,11 +75,6 @@
                                                 autocomplete="off"
                                                 id="id_reporting_end_date">
                                         </h4>
-                                        <div class="input-group-append">
-                                            <span id="end-cal-icon" class="input-group-text mb-2">
-                                                <i class="fas fa-calendar-alt"></i>
-                                            </span>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -391,14 +381,5 @@
         }
     });
 
-    $("#start-cal-icon").on('click', function(e) {
-        if (!$("#id_reporting_start_date").attr("disabled")) {
-            $("#id_reporting_start_date").datepicker("show");
-        }
-    });
-
-    $("#end-cal-icon").on('click', function(e) {
-        $("#id_reporting_end_date").datepicker("show");
-    });
 
 </script>
