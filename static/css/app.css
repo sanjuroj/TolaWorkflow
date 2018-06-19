@@ -18,6 +18,11 @@ body {
 .has-error .text-muted {
     color: inherit !important;
 }
+/* this might introduce regressions
+.has-error input {
+    border-color: #DD0000;
+}
+*/
 
 .hide {
   display: none;
@@ -453,6 +458,7 @@ select.listoption_filters
 
 /* This helps with the predictability of spacing between
 inputs on the indicator setup page/modal */
+/* TODO: this is crazy brittle */
 #indicator_modal_body .div-input-container > textarea,
 #indicator_modal_body .div-input-container > input,
 #indicator_modal_body .div-input-container > select,
@@ -467,7 +473,8 @@ applied.  This keeps the inputs from getting taller when there is an error. */
 #div_id_target_frequency,
 #div_id_target_frequency .div-input-container,
 #id_baseline,
-#div_id_target_frequency_custom {
+#div_id_target_frequency_custom,
+#div_id_target_frequency_num_periods {
     height: 2.25rem;
 }
 

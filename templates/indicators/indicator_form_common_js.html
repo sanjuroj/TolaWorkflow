@@ -538,6 +538,8 @@
 
             if (errMsg) {
                 numPeriodsField.addClass('is-invalid');
+                $("#div_id_target_frequency_num_periods").removeClass('mb-3');
+                $("#div_id_target_frequency_num_periods").addClass('mb-5');
                 $("#validation_" + fieldId).text(errMsg);
                 return false;
             } else {

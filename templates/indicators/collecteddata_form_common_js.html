@@ -81,12 +81,14 @@
             $("#div_id_periodic_target").addClass('has-error');
         } else if ($("#id_periodic_target").val() == '' && onlyPeriodic == false) {
 
-            $("#hint_id_periodic_target").html("<small>Pleae select a target.</small>");
+            $("#hint_id_periodic_target").html("<small>Please select a target.</small>");
             $("#div_id_periodic_target").addClass('has-error');
+            $("#id_periodic_target").addClass('is-invalid');
             return false;
         } else {
             $("#hint_id_periodic_target").html("");
             $("#div_id_periodic_target").removeClass('has-error');
+            $("#id_periodic_target").removeClass('is-invalid');
             return true;
         }
     }
@@ -96,6 +98,7 @@
         var actual = $("#id_achieved");
         if (!actual.val() || !$.isNumeric(actual.val()) || actual.val() < 0) {
             $("#div_id_achieved").addClass('has-error');
+            $("#id_achieved").addClass('is-invalid');
             $("#hint_id_achieved").text("{% trans 'Please enter a number with no letters or symbols.' %}");
             return false;
         } else {
@@ -109,6 +112,7 @@
         var field = $("#id_date_collected").val();
         if ($.isEmptyObject(field)) {
             $("#div_id_date_collected").addClass('has-error');
+            $("#id_date_collected").addClass('is-invalid');
             $("#hint_id_date_collected").html("<small>{% trans 'Please complete this field.' %}</small>");
         }else if (!isDate(field)) {
             $("#div_id_date_collected").addClass('has-error');
