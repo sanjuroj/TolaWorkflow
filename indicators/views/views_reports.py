@@ -430,7 +430,6 @@ class IPTT_ReportView(TemplateView):
             for k, v in targetperiods.items():
                 start_date = v[0]
                 end_date = v[1]
-                # print("start_date:{}, filter_start_date:{}, filter_end_date:{}, end_date:{}".format(start_date, filter_start_date, filter_end_date, end_date))
                 if start_date >= filter_start_date and filter_end_date >= end_date:
                     filtered_targetperiods[k] = [start_date, end_date]
             return (report_end_date, all_date_ranges, filtered_targetperiods)
