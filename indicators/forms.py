@@ -210,10 +210,10 @@ class ReportFormCommon(forms.Form):
         self.request = kwargs.pop('request')
         countries = getCountry(self.request.user)
         super(ReportFormCommon, self).__init__(*args, **kwargs)
-        self.fields['program'].label = _("PROGRAM")
-        self.fields['timeperiods'].label = _("TIME PERIODS")
+        self.fields['program'].label = _("Program")
+        self.fields['timeperiods'].label = _("Time periods")
         self.fields['numrecentperiods'].widget.attrs['placeholder'] = _("enter a number")
-        self.fields['targetperiods'].label = _("TARGET PERIODS")
+        self.fields['targetperiods'].label = _("Target periods")
         self.fields['program'].queryset = Program.objects \
             .filter(country__in=countries,
                     funding_status="Funded",

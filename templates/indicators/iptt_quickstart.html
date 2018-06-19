@@ -23,14 +23,14 @@
                             {% endfor %}
 
                             <div class="form-group" id="div_id_targets_program">
-                                <label for="{{ form2.program.id_for_label }}" class="col-form-label">
+                                <label for="{{ form2.program.id_for_label }}" class="col-form-label text-uppercase">
                                     {{ form2.program.label }}
                                 </label>
                                 {% render_field form2.program class+="form-control" %}
                             </div>
 
                             <div class="form-group" id="div_id_targetperiods">
-                                <label for="{{ form2.targetperiods.id_for_label }}" class="col-form-label">
+                                <label for="{{ form2.targetperiods.id_for_label }}" class="col-form-label text-uppercase">
                                     {{ form2.targetperiods.label }}
                                 </label>
                                 {% render_field form2.targetperiods class+="form-control" %}
@@ -87,7 +87,7 @@
                                 {{ hidden_field }}
                             {% endfor %}
                             <div class="form-group" id="divid_timeperiods_program">
-                                <label for="id_program" class="col-form-label">
+                                <label for="id_program" class="col-form-label text-uppercase">
                                     {{ form.program.label }}
                                 </label>
                                 {% render_field form.program class+="form-control" %}
