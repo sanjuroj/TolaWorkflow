@@ -29,14 +29,14 @@
                                 {% render_field form2.program class+="form-control" %}
                             </div>
 
-                            <div class="form-group" id="div_id_targetperiods">
+                            <div class="form-group pt-4" id="div_id_targetperiods">
                                 <label for="{{ form2.targetperiods.id_for_label }}" class="col-form-label text-uppercase">
                                     {{ form2.targetperiods.label }}
                                 </label>
                                 {% render_field form2.targetperiods class+="form-control" %}
                             </div>
 
-                            <div class="form-group d-flex">
+                            <div class="form-group d-flex pb-4">
                                 {% for item in form2.timeframe %}
                                     {% with id=form2.timeframe.auto_id %}
                                         <div class="form-check form-check-inline pt-1
