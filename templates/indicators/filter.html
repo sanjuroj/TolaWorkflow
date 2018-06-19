@@ -69,6 +69,7 @@
           enableFiltering: true,
           enableCaseInsensitiveFiltering: true,
           maxHeight: 320,
+          numberDisplayed: 1,
           buttonClass: 'btn form-control',
           onDropdownShown : function(event) {
             this.$select.parent().find("button.multiselect-clear-filter").click();
@@ -82,7 +83,7 @@
 
     $(document).ready(function() {
         var programDropdown = $("#id_programs_filter_dropdown");
-        programDropdown.prop("selectedIndex", -1); //? 
+        programDropdown.prop("selectedIndex", -1); //?
         programDropdown.multiselect(Object.assign({}, multiselectOptions, { nonSelectedText: programName }));
 
         if (parseInt(programId) > 0 ) {

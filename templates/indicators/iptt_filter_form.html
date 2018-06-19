@@ -99,7 +99,7 @@
           {{ form.sector.label }}
         </label>
         <div class="form-group-row">
-          {% render_field form.sector class+="form-control bs-multiselect" multiple="multiple"  %}
+          {% render_field form.sector class+="form-control bs-multiselect" multiple="multiple" %}
         </div>
       </div>
 
@@ -162,6 +162,7 @@
       includeSelectAllOption: true,
       enableFiltering: true,
       enableCaseInsensitiveFiltering: true,
+      numberDisplayed: 1,
       maxHeight: 320,
       buttonClass: 'btn form-control',
       templates: {

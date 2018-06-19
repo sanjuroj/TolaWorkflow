@@ -343,6 +343,9 @@ input[type="checkbox"].form-control:focus {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
 }
+.multiselect-selected-text {
+    overflow: hidden;
+}
 
 /* Select 2 overloads */
 .select2-container--default .select2-selection--single {
