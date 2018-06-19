@@ -188,7 +188,7 @@
             allTargetsDiv.addClass('form-check-inline--is-disabled');
             mostRecentTargets.attr("disabled", true);
             mostRecentTargetsDiv.addClass('form-check-inline--is-disabled');
-            setNumRecentPeriodsTargets(true);
+            numRecentPeriodsTargets.attr("disabled", true);
 
             // every time a select input changes, lock / unlock fields
             $("#id_form_program_target_overview").on("change", "select", function(e) {
@@ -198,24 +198,27 @@
                     allTargetsDiv.removeClass('form-check-inline--is-disabled');
                     mostRecentTargets.attr("disabled", false);
                     mostRecentTargetsDiv.removeClass('form-check-inline--is-disabled');
+                    numRecentPeriodsTargets.attr("disabled", false);
                 } else {
                     submitBtnTargets.attr("disabled", true);
                     allTargets.attr("disabled", true);
                     allTargetsDiv.addClass('form-check-inline--is-disabled');
                     mostRecentTargets.attr("disabled", true);
                     mostRecentTargetsDiv.addClass('form-check-inline--is-disabled');
-                    setNumRecentPeriodsTargets(true);
+                    numRecentPeriodsTargets.attr("disabled", true);
                 }
             });
 
             // everytime the radio buttons value changes, lock or unlock
             $("#id_form_program_target_overview").on("change", "input[type=radio][name='targetperiods-timeframe']", function(e) {
-                if ($(e.target).val() == 2 ) {
-                    numRecentPeriodsTargets.attr("disabled", false);
-                } else {
+                if ($(e.target).val() == 1 ) {
                     numRecentPeriodsTargets.val(undefined);
-                    numRecentPeriodsTargets.attr("disabled", true);
                 }
+            });
+
+            // Clicking on the text box selects the associated radio button
+            numRecentPeriodsTargets.on('focus', function(e){
+
             });
 
             // when the program dropdwon in the TvA form changes, update its periods options
