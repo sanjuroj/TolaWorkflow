@@ -47,7 +47,7 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name=
     i = nthTargetPeriod
     j = i + 1
     target_period = ''
-    period_num = j + num_existing_targets
+    period_num = num_existing_targets
 
     if tf == Indicator.LOP:
         lop_target = Indicator.TARGET_FREQUENCIES[Indicator.LOP - 1][1]
@@ -99,9 +99,9 @@ def generate_periodic_targets(tf, start_date, numTargets, event_name='', num_exi
         return target_period
 
     for i in range(numTargets):
+        num_existing_targets += 1
         target_period = generate_periodic_target_single(tf, start_date, i, event_name, num_existing_targets)
 
-        num_existing_targets += 1
         gentargets.append(target_period)
     return gentargets
 
@@ -612,18 +612,22 @@ class IndicatorUpdate(UpdateView):
             indicatorjson = serializers.serialize('json', [self.object])
             # pts = FlatJsonSerializer().serialize(periodic_targets)
 
+            try:
+                last_targetperiod_enddate = indicatr.periodictargets.aggregate(lastpt=Max('end_date'))['lastpt']
+                print("program.reporting_period_end={}, last_targetperiod_enddate={}".format(program.reporting_period_end, last_targetperiod_enddate))
+                if program.reporting_period_end > last_targetperiod_enddate:
+                    remove_missing_targts_link = False
+                else:
+                    remove_missing_targts_link = True
+            except TypeError:
+                remove_missing_targts_link = True
+
             if generatedTargets:
-                params = {'indicator': self.object,
-                          'periodic_targets': generatedTargets}
-
-                content = render_to_string(
-                    'indicators/indicatortargets.html', params)
+                params = {'indicator': self.object, 'periodic_targets': generatedTargets}
+                content = render_to_string('indicators/indicatortargets.html', params)
             else:
-                params = {'indicator': self.object,
-                          'periodic_targets': periodic_targets}
-
-                content = render_to_string(
-                    'indicators/indicatortargets.html', params)
+                params = {'indicator': self.object, 'periodic_targets': periodic_targets}
+                content = render_to_string('indicators/indicatortargets.html', params)
 
             targets_sum = self.get_context_data().get('targets_sum')
             if targets_sum is None:
@@ -638,8 +642,10 @@ class IndicatorUpdate(UpdateView):
                 "targets_sum": str(targets_sum),
                 "targets_avg": str(targets_avg),
                 "update_indicator_row": str(update_indicator_row),
-                "content": content
+                "content": content,
+                "remove_missing_targts_link": remove_missing_targts_link
             }
+            print("remove_missing_targts_link={}".format(remove_missing_targts_link))
             return HttpResponse(json.dumps(data))
         else:
             messages.success(self.request, _('Success, Indicator Updated!'))
@@ -860,17 +866,6 @@ class CollectedDataUpdate(UpdateView):
             getDisaggregationValue = None
             getDisaggregationValueStandard = None
 
-        try:
-            target_period_last_end_date = getIndicator.indicator.periodictargets.aggregate(
-                lastpt=Max('end_date'))['lastpt']
-
-            if getIndicator.indicator.program.all()[0].reporting_period_end > target_period_last_end_date:
-                context['removing_missingtargets_link'] = "True"
-            else:
-                context['removing_missingtargets_link'] = "False"
-        except TypeError:
-            context['removing_missingtargets_link'] = "False"
-
         context.update({'getDisaggregationLabelStandard': getDisaggregationLabelStandard})
         context.update({'getDisaggregationValueStandard': getDisaggregationValueStandard})
         context.update({'getDisaggregationValue': getDisaggregationValue})
@@ -937,9 +932,8 @@ class CollectedDataUpdate(UpdateView):
                     getCollectedData.disaggregation_value.add(save.id)
 
         if self.request.is_ajax():
-            removing_missingtargets_link = self.get_context_data()["removing_missingtargets_link"]
-            # data = serializers.serialize('json', [self.object])
-            return HttpResponse(removing_missingtargets_link)
+            data = serializers.serialize('json', [self.object])
+            return HttpResponse(data)
 
         messages.success(self.request, _('Success, Data Updated!'))
         redirect_url = '/indicators/home/0/0/0/#hidden-%s' \

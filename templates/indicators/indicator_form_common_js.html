@@ -326,6 +326,7 @@
             var targets_avg = jsondata["targets_avg"];
             var update_indicator_row = jsondata["update_indicator_row"];
             var content = jsondata["content"];
+            var remove_missing_targts_link = jsondata["remove_missing_targts_link"];
             $(form).data('update_indicator_row', parseInt(update_indicator_row));
 
             $("#initialTargetFrequencyValue").text(indicator.fields.target_frequency);
@@ -354,6 +355,10 @@
             }
             else {
                 show_hide_cummulative_inputs('number')
+            }
+
+            if (remove_missing_targts_link == true) {
+                $(`#id_missing_target_periods_for_indicator_id_${indicator.pk}`).html('');
             }
         });
     }

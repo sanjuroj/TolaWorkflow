@@ -30,9 +30,6 @@
         $(this).data('recordchanged', true);
         $.post(form_url, form_data,
                function(response, status, jqXHR) { // success callback
-                    if (response == "True") {
-                        $(`#id_missing_target_periods_for_indicator_id_${$("#id_indicator").val()}`).html('');
-                    }
                     $("#modalmessages").empty();
                     createAlert("success", "{% trans 'Success, form data saved.' %}", true, "#modalmessages");
                 })
