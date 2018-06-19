@@ -363,7 +363,7 @@
             $("#id_reporting_start_date").val("");
         }
         else {
-            $("#id_reporting_start_date").val(formatDate(new Date(origRptStart)));
+            $("#id_reporting_start_date").val(formatDate(origRptStart));
             try{
                 // Need to do this so datepicker doesn't use an old value that it has stored from a prior interaction
                 $("#id_reporting_start_date").datepicker("setDate", new Date(origRptStart));
@@ -374,7 +374,7 @@
             $("#id_reporting_end_date").val("");
         }
         else{
-            $("#id_reporting_end_date").val(formatDate(new Date(origRptEnd)));
+            $("#id_reporting_end_date").val(formatDate(origRptEnd));
             try {
                 // Need to do this so datepicker doesn't use an old value that it has stored from a prior interaction
                 $("#id_reporting_end_date").datepicker("setDate", new Date(origRptEnd));
