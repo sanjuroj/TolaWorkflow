@@ -212,6 +212,10 @@ body > .container {
     background-color: #FFFFFF;
 }
 
+.col-form-label { /* too much vertical space in block labels */
+    padding-bottom: calc(0.1rem + 1px);
+}
+
 /* do not change border color to green when form is validated */
 .was-validated .form-control:valid {
   border:1px solid #B8BABD;
