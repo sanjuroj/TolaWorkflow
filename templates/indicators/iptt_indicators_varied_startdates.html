@@ -14,6 +14,13 @@
                 <strong>{{ program.reporting_period_start|date:"M d, Y" }} - {{ program.reporting_period_end|date:"M d, Y" }}</strong>
                 <h5>{{ program.name|wordwrap:100|linebreaks }}</h5>
             </span>
+            <h3>
+                <span class="color-red">
+                {% blocktrans with start=program.reporting_period_start|date:"M d, Y" end=program.reporting_period_end|date:"M d, Y" %}
+                    To see program results, please update your periodic targets to match your reporting start and end dates:
+                {{ start }} - {{ end }} {% endblocktrans %}
+                </span>
+            </h3>
             <table id="iptt_redirect_table" class="table table-sm table-bordered table-hover">
                 <caption>Indicator Performance Tracking Table</caption>
                 <thead class="thead-light">
