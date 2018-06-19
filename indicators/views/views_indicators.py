@@ -48,6 +48,8 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name=
     j = i + 1
     target_period = ''
     period_num = num_existing_targets
+    if period_num == 0:
+        period_num = j
 
     if tf == Indicator.LOP:
         lop_target = Indicator.TARGET_FREQUENCIES[Indicator.LOP - 1][1]
