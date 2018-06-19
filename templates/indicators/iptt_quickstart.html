@@ -213,14 +213,15 @@
             $("#id_form_program_target_overview").on("change", "input[type=radio][name='targetperiods-timeframe']", function(e) {
                 if ($(e.target).val() == 1 ) {
                     numRecentPeriodsTargets.val(undefined);
+                    $("#id_validation_numrecent_targets").text(""); // click on "show all" resets any error message on number of recent target periods text box
                 }
             });
 
             // Clicking on the text box selects the associated radio button
             numRecentPeriodsTargets.on('focus', function(e){
                 mostRecentTargets.attr('checked', true);
-
             });
+
 
             // when the program dropdwon in the TvA form changes, update its periods options
             $("#id_div_top_quickstart_iptt").on("change", "#id_targetperiods-program", function(e) {
