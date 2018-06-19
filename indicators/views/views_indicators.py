@@ -860,10 +860,15 @@ class CollectedDataUpdate(UpdateView):
             getDisaggregationValue = None
             getDisaggregationValueStandard = None
 
-        target_period_last_end_date = getIndicator.indicator.periodictargets.aggregate(lastpt=Max('end_date'))['lastpt']
-        if self.get_object().program.reporting_period_end > target_period_last_end_date:
-            context['removing_missingtargets_link'] = "True"
-        else:
+        try:
+            target_period_last_end_date = getIndicator.indicator.periodictargets.aggregate(
+                lastpt=Max('end_date'))['lastpt']
+
+            if getIndicator.indicator.program.all()[0].reporting_period_end > target_period_last_end_date:
+                context['removing_missingtargets_link'] = "True"
+            else:
+                context['removing_missingtargets_link'] = "False"
+        except TypeError:
             context['removing_missingtargets_link'] = "False"
 
         context.update({'getDisaggregationLabelStandard': getDisaggregationLabelStandard})
