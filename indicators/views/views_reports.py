@@ -332,12 +332,12 @@ class IPTT_ReportView(TemplateView):
                     annotation_target = Max(
                         Case(
                             When(
-                                # Q(collecteddata__date_collected__gte=start_date) &
-                                # Q(collecteddata__date_collected__lte=end_date),
-                                # then=Subquery(last_data_record.values('periodic_target__target')[:1])
-                                Q(periodictargets__start_date__gte=start_date) &
-                                Q(periodictargets__end_date__lte=end_date),
-                                then=F('periodictargets__target')
+                                Q(collecteddata__date_collected__gte=start_date) &
+                                Q(collecteddata__date_collected__lte=end_date),
+                                then=Subquery(last_data_record.values('periodic_target__target')[:1])
+                                # Q(periodictargets__start_date__gte=start_date) &
+                                # Q(periodictargets__end_date__lte=end_date),
+                                # then=F('periodictargets__target')
                             )
                         )
                     )
