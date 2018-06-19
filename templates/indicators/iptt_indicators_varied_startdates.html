@@ -18,9 +18,9 @@
                 <caption>Indicator Performance Tracking Table</caption>
                 <thead class="thead-light">
                     <tr>
-                        <th>{% trans 'NO.' %}</th>
-                        <th>{% trans 'INDICATOR' %}</th>
-                        <th style="min-width:130px">{% trans 'START MONTH' %}</th>
+                        <th class="text-uppercase">{% trans 'No.' %}</th>
+                        <th class="text-uppercase">{% trans 'Indicator' %}</th>
+                        <th class="text-uppercase" style="min-width:130px">{% trans 'Start month' %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,7 +28,11 @@
                         <tr>
                             <td>{{ indicator.number }}</td>
                             <td>{{ indicator.name }}</td>
-                            <td>{{ indicator.target_frequency_start|date:"M d, Y" }} </td>
+                            <td>
+                                <a href="{% url 'indicator_update' indicator.pk %}" class="indicator-link">
+                                    {{ indicator.target_frequency_start|date:"M d, Y" }}
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
