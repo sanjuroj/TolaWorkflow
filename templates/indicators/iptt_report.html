@@ -30,10 +30,8 @@
           <colgroup scope="col" span="{{ report_date_ranges|length }}"></colgroup>
           <thead class="thead-light">
           <tr>
-            <td colspan="9" id="id_td_iptt_program_name" class="lopCols">
-              <h5>
-                  {{ program.name|wordwrap:100|linebreaks }}
-              </h5>
+            <td colspan="9" id="id_td_iptt_program_name" class="lopCols align-bottom pt-2">
+              <h5 class="m-0"><strong>{{ program.name|wordwrap:100 }}</strong></h5>
             </td>
             <td scope="colgroup" colspan="3" class="text-center align-bottom text-uppercase">
               {% trans "Life of program" %}
