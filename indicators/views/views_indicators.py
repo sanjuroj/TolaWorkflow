@@ -1073,6 +1073,7 @@ def service_json(request, service):
 def collected_data_view(request, indicator, program):
     ind = Indicator.objects.get(pk=indicator)
     template_name = 'indicators/collected_data_table.html'
+    program = ind.program.all()[0].id
     program_obj = Program.objects.get(pk=program)
     last_data_record = CollectedData.objects.filter(periodic_target=OuterRef('pk')).order_by('-date_collected')
     periodictargets = PeriodicTarget.objects \
