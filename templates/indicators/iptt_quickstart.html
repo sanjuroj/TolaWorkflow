@@ -218,6 +218,7 @@
 
             // Clicking on the text box selects the associated radio button
             numRecentPeriodsTargets.on('focus', function(e){
+                mostRecentTargets.attr('checked', true);
 
             });
 
@@ -236,7 +237,7 @@
 
             $("#id_div_top_quickstart_iptt").on("submit", "#id_form_program_indicator_overview, #id_form_program_target_overview", function(e){
                 if (this.id == 'id_form_program_target_overview') {
-                    if (numRecentPeriodsTargets.attr('disabled') == null && !numRecentPeriodsTargets.val()){
+                    if (mostRecentTargets.prop('checked') == true && numRecentPeriodsTargets.val() == ''){
                         e.preventDefault();
                         $("#id_validation_numrecent_targets").text("Please complete this field.");
                         return;
