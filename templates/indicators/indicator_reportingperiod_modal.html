@@ -314,10 +314,12 @@
             .removeClass("color-red");
         $("#id_reporting_start_date, #id_reporting_end_date, #submit-id-submit").attr("disabled", false);
 
-        // Reload the page if the the original reporting dates were blank and they now have values.  Need to do
-        // this so the add button and reporting and indicator links appear with the program on the indicator list.
-        // Only need to check one date because the form can only be saved if both have a value.
-        if (origRptEnd == "" && $("#id_reporting_end_date").val() != "") {
+        // Reload the page if either of the dates has changed from what they were when the modal was opened.
+        // TODO: Find ways to avoid reloading the whole page when one of these dates is changed.
+        const finalStartStr = $("#id_reporting_start_date").datepicker("getDate").toISOString()
+        const finalEndStr = $("#id_reporting_end_date").datepicker("getDate").toISOString()
+        if (new Date(origRptStart).toISOString() != finalStartStr ||
+                new Date(origRptEnd).toISOString() != finalEndStr) {
             window.location.reload(true);
         }
 
