@@ -23,23 +23,25 @@
                             {% endfor %}
 
                             <div class="form-group" id="div_id_targets_program">
-                                <label for="{{ form2.program.id_for_label }}" class="col-form-label">
+                                <label for="{{ form2.program.id_for_label }}" class="col-form-label text-uppercase">
                                     {{ form2.program.label }}
                                 </label>
                                 {% render_field form2.program class+="form-control" %}
                             </div>
 
-                            <div class="form-group" id="div_id_targetperiodss">
-                                <label for="{{ form2.targetperiods.id_for_label }}" class="col-form-label">
+                            <div class="form-group pt-4" id="div_id_targetperiods">
+                                <label for="{{ form2.targetperiods.id_for_label }}" class="col-form-label text-uppercase">
                                     {{ form2.targetperiods.label }}
                                 </label>
                                 {% render_field form2.targetperiods class+="form-control" %}
                             </div>
 
-                            <div class="form-group d-flex">
+                            <div class="form-group d-flex pb-4">
                                 {% for item in form2.timeframe %}
                                     {% with id=form2.timeframe.auto_id %}
-                                        <div class="form-check form-check-inline pt-1"
+                                        <div class="form-check form-check-inline pt-1
+                                            {% if forloop.counter0 == 0 %}pr-3{% endif %}
+                                            "
                                              id="div_{{ id }}_{{ forloop.counter0 }}">
                                             <span class="form-check-input ">
                                                 {{ item.tag }}
@@ -85,7 +87,7 @@
                                 {{ hidden_field }}
                             {% endfor %}
                             <div class="form-group" id="divid_timeperiods_program">
-                                <label for="id_program" class="col-form-label">
+                                <label for="id_program" class="col-form-label text-uppercase">
                                     {{ form.program.label }}
                                 </label>
                                 {% render_field form.program class+="form-control" %}
@@ -166,7 +168,10 @@
             const submitBtnTargets = $("#id_submit_targetperiods_button");
             const programTargets = $("#id_targetperiods-program");
             const targetperiods = $("#id_targetperiods-targetperiods");
+            const allTargets = $("#id_targetperiods-timeframe_0");
+            const allTargetsDiv = $('#div_id_targetperiods-timeframe_0');
             const mostRecentTargets = $("#id_targetperiods-timeframe_1");
+            const mostRecentTargetsDiv = $('#div_id_targetperiods-timeframe_1');
             const numRecentPeriodsTargets = $("#id_targetperiods-numrecentperiods");
             programTargets.select2();
 
@@ -179,29 +184,42 @@
 
             // when first loaded disable the dependent controls on the form
             submitBtnTargets.attr("disabled", true);
+            allTargets.attr("disabled", true);
+            allTargetsDiv.addClass('form-check-inline--is-disabled');
             mostRecentTargets.attr("disabled", true);
-            setNumRecentPeriodsTargets(true);
+            mostRecentTargetsDiv.addClass('form-check-inline--is-disabled');
+            numRecentPeriodsTargets.attr("disabled", true);
 
             // every time a select input changes, lock / unlock fields
             $("#id_form_program_target_overview").on("change", "select", function(e) {
                 if (programTargets.val() > 0 && targetperiods.val() > 0) {
                     submitBtnTargets.attr("disabled", false);
+                    allTargets.attr("disabled", false);
+                    allTargetsDiv.removeClass('form-check-inline--is-disabled');
                     mostRecentTargets.attr("disabled", false);
+                    mostRecentTargetsDiv.removeClass('form-check-inline--is-disabled');
+                    numRecentPeriodsTargets.attr("disabled", false);
                 } else {
                     submitBtnTargets.attr("disabled", true);
+                    allTargets.attr("disabled", true);
+                    allTargetsDiv.addClass('form-check-inline--is-disabled');
                     mostRecentTargets.attr("disabled", true);
-                    setNumRecentPeriodsTargets(true);
+                    mostRecentTargetsDiv.addClass('form-check-inline--is-disabled');
+                    numRecentPeriodsTargets.attr("disabled", true);
                 }
             });
 
+            // Clicking on the text box selects the associated radio button
+            // TODO: this only works once
+            numRecentPeriodsTargets.on('focus', function(e){
+                mostRecentTargets.prop('checked', true);
+                $("#id_validation_numrecent_targets").text("");
+            });
+
             // everytime the radio buttons value changes, lock or unlock
-            $("#id_form_program_target_overview").on("change", "input[type=radio][name='targetperiods-timeframe']", function(e) {
-                if ($(e.target).val() == 2 ) {
-                    numRecentPeriodsTargets.attr("disabled", false);
-                } else {
-                    numRecentPeriodsTargets.val(undefined);
-                    numRecentPeriodsTargets.attr("disabled", true);
-                }
+            allTargets.on("click", function(e) {
+                numRecentPeriodsTargets.val('');
+                $("#id_validation_numrecent_targets").text(""); // click on "show all" resets any error message on number of recent target periods text box
             });
 
             // when the program dropdwon in the TvA form changes, update its periods options
@@ -219,7 +237,7 @@
 
             $("#id_div_top_quickstart_iptt").on("submit", "#id_form_program_indicator_overview, #id_form_program_target_overview", function(e){
                 if (this.id == 'id_form_program_target_overview') {
-                    if (numRecentPeriodsTargets.attr('disabled') == null && !numRecentPeriodsTargets.val()){
+                    if (mostRecentTargets.prop('checked') == true && numRecentPeriodsTargets.val() == ''){
                         e.preventDefault();
                         $("#id_validation_numrecent_targets").text("Please complete this field.");
                         return;
