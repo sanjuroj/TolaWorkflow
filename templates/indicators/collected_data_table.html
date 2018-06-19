@@ -15,14 +15,14 @@
 </script>
 
 {% if indicator.collecteddata_set.count > 0 or indicator.target_frequency %}
-    <table class="table table-sm my-2">
+    <table class="table table-sm my-2 collected-data-table">
         <thead>
             <tr class="bg-gray-lighter-alt">
                 <th class="text-uppercase border-top-0  text-nowrap" style="">{% trans "Target period" %}</th>
                 <th class="text-uppercase border-top-0  text-right" style="">{% trans "Target" %}</th>
                 <th class="text-uppercase border-top-0  text-right" style="">{% trans "Actual" %}</th>
                 <th class="text-uppercase border-top-0 pr-4  text-nowrap text-right" style="">{% trans "% Met" %}</th>
-                <th class="text-uppercase border-top-0  " style="">{% trans "Results" %}</th>
+                <th class="text-uppercase border-top-0" style="">{% trans "Results" %}</th>
                 <th class="text-uppercase border-top-0 w-100" style="">{% trans "Evidence" %}</th>
             </tr>
         </thead>
