@@ -31,7 +31,8 @@ from .views.views_indicators import (
 from .views.views_reports import (
     IPTTReportQuickstartView,
     IPTT_ReportView,
-    IPTT_ReportIndicatorsWithVariedStartDate
+    IPTT_ReportIndicatorsWithVariedStartDate,
+    IPTT_ExcelExport
 )
 
 urlpatterns = [
@@ -126,4 +127,5 @@ urlpatterns = [
     url(r'^iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ReportView.as_view(), name='iptt_report'),
     url(r'^iptt_redirect/(?P<program_id>\d+)/$', IPTT_ReportIndicatorsWithVariedStartDate.as_view(),
         name='iptt_redirect'),
+    url(r'^iptt_excel/(?P<program_id>\d+)$/', IPTT_ExcelExport.as_view(), name='iptt_excel'),
 ]

@@ -6,15 +6,29 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView, FormView, View
 from django.utils.translation import ugettext_lazy as _
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
+from openpyxl import Workbook
 from tola.util import formatFloat
 from workflow.models import Program
 from ..models import Indicator, CollectedData, Level, PeriodicTarget
 from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm
 from ..templatetags.mytags import symbolize_change, symbolize_measuretype
+
+
+class IPTT_ExcelExport(View):
+
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="iptt.xlsx"'
+
+        wb = Workbook(encoding='utf-8')
+        ws = wb.active
+        ws.title = "IPTT"
+
+        return response
 
 
 class IPTT_ReportIndicatorsWithVariedStartDate(TemplateView):
@@ -325,7 +339,7 @@ class IPTT_ReportView(TemplateView):
                     indicator=OuterRef('pk'),
                     date_collected__gte=start_date,
                     date_collected__lte=end_date)\
-                    .order_by('-pk')
+                    .order_by('-date_collected', '-pk')
 
                 annotation_sum = Sum(
                     Case(

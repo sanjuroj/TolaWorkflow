@@ -1071,7 +1071,7 @@ def collected_data_view(request, indicator, program):
     template_name = 'indicators/collected_data_table.html'
     program = ind.program.all()[0].id
     program_obj = Program.objects.get(pk=program)
-    last_data_record = CollectedData.objects.filter(periodic_target=OuterRef('pk')).order_by('-date_collected')
+    last_data_record = CollectedData.objects.filter(periodic_target=OuterRef('pk')).order_by('-date_collected', '-pk')
     periodictargets = PeriodicTarget.objects \
         .filter(indicator=indicator) \
         .prefetch_related('collecteddata_set') \
