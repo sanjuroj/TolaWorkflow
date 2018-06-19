@@ -430,7 +430,6 @@ class IPTT_ReportView(TemplateView):
             for k, v in targetperiods.items():
                 start_date = v[0]
                 end_date = v[1]
-                # print("start_date:{}, filter_start_date:{}, filter_end_date:{}, end_date:{}".format(start_date, filter_start_date, filter_end_date, end_date))
                 if start_date >= filter_start_date and filter_end_date >= end_date:
                     filtered_targetperiods[k] = [start_date, end_date]
             return (report_end_date, all_date_ranges, filtered_targetperiods)
@@ -617,9 +616,8 @@ class IPTT_ReportView(TemplateView):
 
             # process lop_percent_met
             try:
-                ind['lop_percent_met'] = "{}%".format(formatFloat(lop_actual / lop_target * 100))
+                ind['lop_percent_met'] = "{}%".format(formatFloat(round(lop_actual / lop_target * 100)))
             except (TypeError, ZeroDivisionError):
-                # print('actual={}, lop={}'.format(lop_actual, lop_target))
                 ind['lop_percent_met'] = ''
 
             if period in [Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL, Indicator.QUARTERLY,
@@ -679,11 +677,12 @@ class IPTT_ReportView(TemplateView):
                             if ind['unit_of_measure_type'] == Indicator.NUMBER:
                                 if ind['is_cumulative'] is True:
                                     rsum = float(ind["{}_rsum".format(k)])
-                                    ind[percent_met] = formatFloat(rsum / target * 100)
+                                    percent_met_val = formatFloat(round(rsum / target * 100))
                                 else:
-                                    ind[percent_met] = formatFloat(float(ind["{}_sum".format(k)]) / target * 100)
+                                    percent_met_val = formatFloat(round(float(ind["{}_sum".format(k)]) / target * 100))
+                                ind[percent_met] = "{}%".format(percent_met_val)
                             elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
-                                percent_met_val = formatFloat(float(ind["{}_last".format(k)]) / target * 100)
+                                percent_met_val = formatFloat(round(float(ind["{}_last".format(k)]) / target * 100))
                                 ind[percent_met] = "{}%".format(percent_met_val)
                         except (TypeError, KeyError):
                             ind[percent_met] = ''
