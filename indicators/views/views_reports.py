@@ -31,7 +31,10 @@ class IPTT_ReportIndicatorsWithVariedStartDate(TemplateView):
             messages.info(self.request, _("Please select a valid program."))
             return context
 
-        indicators = Indicator.objects.filter(program__in=[program_id])
+        indicators = Indicator.objects.filter(program__in=[program_id]) \
+            .exclude(Q(target_frequency__in=[Indicator.LOP, Indicator.MID_END, Indicator.EVENT]) |
+                     Q(target_frequency_start__isnull=True))
+
         context['program'] = program
         context['indicators'] = indicators
         return context

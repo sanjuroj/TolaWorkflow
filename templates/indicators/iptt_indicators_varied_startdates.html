@@ -7,32 +7,33 @@
 {% block bodyclasses %}page_iptt_table{% endblock %}
 
 {% block content %}
-<main class="iptt_table_wrapper">
-    <div id="id_div_top_iptt_report">
-        <span id="id_span_iptt_date_range">
-            <h2>Indicator Performance Tracking Table</h2>
-            <strong>{{ program.reporting_period_start|date:"M d, Y" }} - {{ program.reporting_period_end|date:"M d, Y" }}</strong>
-        </span>
-        <table id="iptt_table" class="table table-sm table-bordered table-hover">
-            <caption>Indicator Performance Tracking Table</caption>
-            <thead class="thead-light">
-                <tr>
-                    <th>{% trans 'NO.' %}</th>
-                    <th>{% trans 'INDICATOR' %}</th>
-                    <th>{% trans 'START MONTH' %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for indicator in indicators %}
+    <main class="iptt_table_wrapper">
+        <div id="id_div_top_iptt_report">
+            <span id="id_span_iptt_date_range">
+                <h2>Indicator Performance Tracking Table</h2>
+                <strong>{{ program.reporting_period_start|date:"M d, Y" }} - {{ program.reporting_period_end|date:"M d, Y" }}</strong>
+                <h5>{{ program.name|wordwrap:100|linebreaks }}</h5>
+            </span>
+            <table id="iptt_table" class="table table-sm table-bordered table-hover">
+                <caption>Indicator Performance Tracking Table</caption>
+                <thead class="thead-light">
                     <tr>
-                        <td>{{ indicator.number }}</td>
-                        <td>{{ indicator.name }}</td>
-                        <td>{{ indicator.target_frequency_start }} </td>
+                        <th>{% trans 'NO.' %}</th>
+                        <th>{% trans 'INDICATOR' %}</th>
+                        <th style="min-width:130px">{% trans 'START MONTH' %}</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</main>
+                </thead>
+                <tbody>
+                    {% for indicator in indicators %}
+                        <tr>
+                            <td>{{ indicator.number }}</td>
+                            <td>{{ indicator.name }}</td>
+                            <td>{{ indicator.target_frequency_start|date:"M d, Y" }} </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
 {% endblock content %}
 
