@@ -17,6 +17,30 @@ from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm
 from ..templatetags.mytags import symbolize_change, symbolize_measuretype
 
 
+class IPTT_ReportIndicatorsWithVariedStartDate(TemplateView):
+    template_name = "indicators/iptt_indicators_varied_startdates.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(IPTT_ReportIndicatorsWithVariedStartDate, self).get_context_data(**kwargs)
+        program_id = kwargs.get('program_id')
+
+        try:
+            program = Program.objects.get(pk=program_id)
+        except Program.DoesNotExist:
+            context['redirect'] = reverse_lazy('iptt_quickstart')
+            messages.info(self.request, _("Please select a valid program."))
+            return context
+
+        indicators = Indicator.objects.filter(program__in=[program_id])
+        context['program'] = program
+        context['indicators'] = indicators
+        return context
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
+
+
 class IPTTReportQuickstartView(FormView):
     template_name = 'indicators/iptt_quickstart.html'
     form_class = IPTTReportQuickstartForm
@@ -41,6 +65,13 @@ class IPTTReportQuickstartView(FormView):
     def post(self, request, *args, **kwargs):
         targetprefix = request.POST.get('%s-formprefix' % self.FORM_PREFIX_TARGET)
         timeprefix = request.POST.get('%s-formprefix' % self.FORM_PREFIX_TIME)
+        program_id = request.POST.get('targetperiods-program', None)
+        if program_id:
+            indicators_count = Indicator.objects.filter(
+                program__in=[program_id],
+                target_frequency_start__isnull=False).count()
+            if indicators_count > 0:
+                return HttpResponseRedirect(reverse_lazy('iptt_redirect', kwargs={'program_id': program_id}))
 
         # set prefix to the current form
         if targetprefix is not None:
