@@ -48,6 +48,20 @@ def symbolize_change(value):
 
     return _("N/A")
 
+
+@register.filter('target_frequency_label')
+def target_frequency_label(value):
+    """
+    Returns corresponding math symbol for Direction of change
+    Usage:
+    {{ indicator.target_frequency|target_frequency_label}}
+    """
+    try:
+        return Indicator.TARGET_FREQUENCIES[value][1]
+    except IndexError:
+        return value
+
+
 @register.filter('symbolize_measuretype')
 def symbolize_measuretype(value):
     """

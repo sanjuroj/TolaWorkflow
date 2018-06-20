@@ -33,7 +33,8 @@
                     <tr>
                         <th class="text-uppercase">{% trans 'No.' %}</th>
                         <th class="text-uppercase">{% trans 'Indicator' %}</th>
-                        <th class="text-uppercase" style="min-width:130px">{% trans 'Start month' %}</th>
+                        <th class="text-uppercase">{% trans 'Target frequency' %}</th>
+                        <th class="text-uppercase" style="min-width:130px">{% trans 'Start date' %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,6 +42,7 @@
                         <tr>
                             <td>{{ indicator.number }}</td>
                             <td>{{ indicator.name }}</td>
+                            <td>{{ indicator.target_frequency|target_frequency_label }}</td>
                             <td>
                                 <a href="{% url 'indicator_update' indicator.pk %}"
                                    class="indicator-link"
