@@ -639,7 +639,7 @@ class IPTT_Mixin(object):
                             elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
                                 percent_met_val = formatFloat(round(float(ind["{}_last".format(k)]) / target * 100))
                                 ind[percent_met] = "{}%".format(percent_met_val)
-                        except (TypeError, KeyError):
+                        except (TypeError, KeyError, ZeroDivisionError):
                             ind[percent_met] = ''
         return indicators
 
