@@ -108,6 +108,7 @@ class IPTT_Mixin(object):
         Generates queryset annotation(sum, avg, last data record). All three annotations are calculated
         because one of these three values will be used depending on how an indicator is configured.
         """
+        i = 0
         if period == Indicator.LOP:
             self.annotations = {}
         elif period == Indicator.MID_END:
@@ -219,17 +220,35 @@ class IPTT_Mixin(object):
                     date_collected__lte=end_date)\
                     .order_by('-date_collected', '-pk')
 
-                annotation_sum = Sum(
-                    Case(
-                        When(
-                            Q(unit_of_measure_type=Indicator.NUMBER) &
-                            Q(collecteddata__date_collected__gte=start_date) &
-                            Q(collecteddata__date_collected__lte=end_date),
-                            then=F('collecteddata__achieved')
+                if i == 0:
+                    annotation_sum = Sum(
+                        Case(
+                            When(
+                                Q(unit_of_measure_type=Indicator.NUMBER) &
+                                Q(is_cumulative=True) &
+                                Q(collecteddata__date_collected__lte=end_date),
+                                then=F('collecteddata__achieved')
+                            ),
+                            When(
+                                Q(unit_of_measure_type=Indicator.NUMBER) &
+                                Q(collecteddata__date_collected__gte=start_date) &
+                                Q(collecteddata__date_collected__lte=end_date),
+                                then=F('collecteddata__achieved')
+                            )
                         )
                     )
-                )
-
+                else:
+                    annotation_sum = Sum(
+                        Case(
+                            When(
+                                Q(unit_of_measure_type=Indicator.NUMBER) &
+                                Q(collecteddata__date_collected__gte=start_date) &
+                                Q(collecteddata__date_collected__lte=end_date),
+                                then=F('collecteddata__achieved')
+                            )
+                        )
+                    )
+                i += 1
                 # annotation_avg = Avg(
                 #     Case(
                 #         When(
