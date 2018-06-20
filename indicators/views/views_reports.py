@@ -398,12 +398,6 @@ class IPTT_Mixin(object):
         period_name = self._get_period_name(frequency)
         num_months_in_period = self._get_num_months(frequency)
 
-        # Get the first day of the period that encomposses today's date
-        current_period_start = today_date.replace(month=self.program.reporting_period_start.month, day=1)
-
-        # Now calculate the last day of the current period that encompasses today's date
-        current_period_end = current_period_start + relativedelta(months=+num_months_in_period)
-
         num_periods = IPTT_ReportView._get_num_periods(self.program.reporting_period_start,
                                                        self.program.reporting_period_end, frequency)
 
@@ -804,13 +798,20 @@ class IPTT_Mixin(object):
         return context
 
 
-class IPTT_ExcelExport(IPTT_Mixin, View):
+class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
+    # template_name = 'indicators/iptt_indicators_varied_startdates.html'
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(IPTT_ExcelExport, self).get_context_data(**kwargs)
+    #     return context
 
     def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        print(context['program'])
         response = HttpResponse(content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; filename="iptt.xlsx"'
-
-        wb = Workbook(encoding='utf-8')
+        # print(context['program'])
+        wb = Workbook()
         ws = wb.active
         ws.title = "IPTT"
 
@@ -941,6 +942,7 @@ class IPTTReportQuickstartView(FormView):
 class IPTT_ReportView(IPTT_Mixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
+        print(kwargs)
         context = self.get_context_data(**kwargs)
 
         form_kwargs = {'request': request, 'program': context['program']}
