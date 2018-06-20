@@ -287,6 +287,6 @@
     </div>
 {% else %}
     <div class="my-3 color-red">
-        <i class="fas fa-bullseye"></i>&nbsp;{% trans "Organize your data for this indicator." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link btn btn-link btn-add"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add targets" %}</a>
+        <i class="fas fa-bullseye"></i>&nbsp;{% trans "This indicator has no targets." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link btn btn-link btn-add"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add targets" %}</a>
     </div>
 {% endif %}
