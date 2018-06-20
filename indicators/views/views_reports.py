@@ -1,5 +1,4 @@
 import bisect
-from StringIO import StringIO
 from collections import OrderedDict
 from dateutil import rrule, parser
 from django.utils import formats
@@ -12,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from openpyxl import Workbook
+from openpyxl.styles import Font, Color, colors, PatternFill
 from tola.util import formatFloat
 from workflow.models import Program
 from ..models import Indicator, CollectedData, Level, PeriodicTarget
@@ -808,12 +808,69 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         filename = 'IPTT {} report {}.xlsx'.format(report, datetime.now().strftime('%b %d, %Y'))
         return filename
 
+    def style_range(self, ws, cell_range, font, fill):
+        # first_cell = ws[cell_range.split(":")[0]]
+
+        rows = ws[cell_range]
+        for row in rows:
+            for cell in row:
+                if fill:
+                    cell.fill = fill
+                if font:
+                    cell.font = font
+
     def add_headers(self, ws, data):
+        headers_font = Font(size=18)
+        bgcolor = PatternFill('solid', "EEEEEE")
         ws['A1'] = "Indicator Performance Tracking Report"
+        ws['A1'].font = headers_font
         ws.merge_cells('A1:H1')
 
-        ws['A2'] = data['program'].name
+        ws['A2'] = "{0} - {1}".format(datetime.strftime(data['report_start_date'], "%b %d, %Y"),
+                                      datetime.strftime(data['report_end_date'], "%b %d, %Y"))
+        ws['A2'].font = headers_font
         ws.merge_cells('A2:H2')
+
+        ws['A3'] = data['program'].name
+        ws['A3'].font = headers_font
+        ws.merge_cells('A3:H3')
+
+        ws['A4'] = 'No.'
+        ws['B4'] = 'Indicator'
+        ws['C4'] = 'Level'
+        ws['D4'] = 'Unit of measure'
+        ws['E4'] = 'Change'
+        ws['F4'] = 'C / NC'
+        ws['G4'] = '# / %'
+        ws['H4'] = 'Baseline'
+
+        ws.merge_cells(start_row=3, start_column=9, end_row=3, end_column=11)
+        ws.cell(row=3, column=9).value = 'Life of Program'
+        ws['I4'] = 'Target'
+        ws['J4'] = 'Actual'
+        ws['K4'] = '% Met'
+        periods = data['report_date_ranges']
+        col_offset = 0
+        col = 0
+        if data['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
+            for name, period in periods.items():
+                col = 12 + col_offset
+                # process period name
+                ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col+2)
+                ws.cell(row=2, column=col).value = name
+
+                # processs period date ranges
+                start_date = datetime.strftime(period[0], '%b %d, %Y')
+                end_date = datetime.strftime(period[1], '%b %d, %Y')
+                ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col+2)
+                ws.cell(row=3, column=col).value = "{} - {}".format(start_date, end_date)
+                ws.cell(row=4, column=col).value = 'Target'
+                ws.cell(row=4, column=col+1).value = 'Actual'
+                ws.cell(row=4, column=col+2).value = '% Met'
+                col_offset += 3
+
+        # format header row
+        self.style_range(ws, 'A4:H4', headers_font, bgcolor)
         return ws
 
     def get(self, request, *args, **kwargs):
