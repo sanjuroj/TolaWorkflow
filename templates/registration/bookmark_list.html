@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block bread_crumb %}
-<ol class="breadcrumb">
-  <li><a href="accounts/profile/">Profile</a></li>
-  <li class="active">Bookmark List</li>
-</ol>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="accounts/profile/">Profile</a></li>
+      <li class="breadcrumb-item active">Bookmark List</li>
+    </ol>
+</nav>
 {% endblock %}
 {% block page_title %}Your Bookmarks List{% endblock %}
 
