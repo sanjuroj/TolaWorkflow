@@ -190,7 +190,7 @@
 
     <form
         id="document_form"
-        class="form-horizontal"
+        class=""
         method="post"
         novalidate>
         {% csrf_token %}
@@ -200,70 +200,70 @@
         {% endfor %}
 
         <fieldset>
-            <div class="form-row mb-2" id="div_id_name">
-                <label for="id_name" class="col-sm-4 col-form-label" align="right">
+            <div class="form-group" id="div_id_name" style="height: auto;"{# TODO: this covers a regression from an overload elsewhere(?) #}>
+                <label for="id_name" class="">
                     {{ form.name.label }}*
                 </label>
-                <div class="col-sm-7">
+                <div class="">
                     {% render_field form.name class+="form-control" %}
                     <small class="form-text text-muted">{{ form.name.help_text }}</small>
                     <span id="validation_id_name" class="has-error"></span>
                 </div>
             </div>
 
-            <div class="form-row mb-2" id="div_id_url">
-                <label for="id_url" class="col-sm-4 col-form-label" align="right">
+            <div class="form-group" id="div_id_url">
+                <label for="id_url" class="">
                     {{ form.url.label }}*
                 </label>
-                <div class="col-sm-6">
+                <div class="">
                     {% render_field form.url class+="form-control" %}
                     <small class="form-text text-muted">{{ form.url.help_text }}</small>
                     <span id="validation_id_url" class="has-error"></span>
                 </div>
-                <button type="button" style="height: 38px;" class="col-sm-1 btn btn-sm btn-secondary" onclick="onApiLoad();">gdrive</button>
+                <button type="button" style="" class="btn btn-sm btn-secondary" onclick="onApiLoad();">gdrive</button>
             </div>
 
-            <div class="form-row mb-2" id="div_id_description">
-                <label for="id_description" class="col-sm-4 col-form-label" align="right">
+            <div class="form-group" id="div_id_description">
+                <label for="id_description" class="" >
                     {{ form.description.label }}
                 </label>
-                <div class="col-sm-7">
+                <div class="">
                     {% render_field form.description class+="form-control" %}
                     <small class="form-text text-muted">{{ form.description.help_text }}</small>
                 </div>
             </div>
 
-            <div class="form-row mb-2" id="div_id_project">
-                <label for="id_project" class="col-sm-4 col-form-label" align="right">
+            <div class="form-group" id="div_id_project">
+                <label for="id_project" class="" >
                     {{ form.project.label }}
                 </label>
-                <div class="col-sm-7">
+                <div class="">
                     {% render_field form.project class+="form-control" %}
                     <small class="form-text text-muted">{{ form.project.help_text }}</small>
                 </div>
             </div>
 
-            <div class="form-row mb-2" id="div_id_program">
-                <label for="id_program" class="col-sm-4 col-form-label" align="right">
+            <div class="form-group" id="div_id_program">
+                <label for="id_program" class="" >
                     {{ form.program.label }}*
                 </label>
-                <div class="col-sm-7">
+                <div class="">
                     {% render_field form.program class+="form-control" %}
                     <small class="form-text text-muted">{{ form.program.help_text }}</small>
                     <span id="validation_id_program" class="has-error"></span>
                 </div>
             </div>
         </fieldset>
-
-        <input type="reset"
-                class="btn btn-secondary btn-sm mb-5"
-                value="Reset">
-
-        <input type="submit"
-                name="submit"
-                value="Save changes"
-                class="btn btn-primary btn-sm mb-5"
-                id="id-submit">
+        <div class="form-actions bg-gray-lighter p-4 justify-content-between">
+            <input type="submit"
+                    name="submit"
+                    value="{% trans "Save changes" %}"
+                    class="btn btn-primary"
+                    id="id-submit">
+            <input type="reset"
+                    class="btn btn-secondary"
+                    value="{% trans "Reset" %}">
+        </div>
     </form>
 
 {% endblock content %}
