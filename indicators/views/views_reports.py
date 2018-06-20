@@ -1,4 +1,5 @@
 import bisect
+from StringIO import StringIO
 from collections import OrderedDict
 from dateutil import rrule, parser
 from django.utils import formats
@@ -6,7 +7,7 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max
-from django.views.generic import TemplateView, FormView, View
+from django.views.generic import TemplateView, FormView
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
@@ -397,12 +398,6 @@ class IPTT_Mixin(object):
 
         period_name = self._get_period_name(frequency)
         num_months_in_period = self._get_num_months(frequency)
-
-        # Get the first day of the period that encomposses today's date
-        current_period_start = today_date.replace(month=self.program.reporting_period_start.month, day=1)
-
-        # Now calculate the last day of the current period that encompasses today's date
-        current_period_end = current_period_start + relativedelta(months=+num_months_in_period)
 
         num_periods = IPTT_ReportView._get_num_periods(self.program.reporting_period_start,
                                                        self.program.reporting_period_end, frequency)
@@ -804,16 +799,34 @@ class IPTT_Mixin(object):
         return context
 
 
-class IPTT_ExcelExport(IPTT_Mixin, View):
+class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
+
+    def get_filename(self, reporttype):
+        report = 'TvA'
+        if reporttype == self.REPORT_TYPE_TIMEPERIODS:
+            report = "Actuals only"
+        filename = 'IPTT {} report {}.xlsx'.format(report, datetime.now().strftime('%b %d, %Y'))
+        return filename
+
+    def add_headers(self, ws, data):
+        ws['A1'] = "Indicator Performance Tracking Report"
+        ws.merge_cells('A1:H1')
+
+        ws['A2'] = data['program'].name
+        ws.merge_cells('A2:H2')
+        return ws
 
     def get(self, request, *args, **kwargs):
-        response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="iptt.xlsx"'
+        context = self.get_context_data(**kwargs)
 
-        wb = Workbook(encoding='utf-8')
+        wb = Workbook()
         ws = wb.active
+        ws = self.add_headers(ws, context)
         ws.title = "IPTT"
 
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(self.get_filename(context['reporttype']))
+        wb.save(response)
         return response
 
 

@@ -22,7 +22,7 @@
         <span id="id_span_iptt_date_range">
           <h2 class="pt-3">Indicator Performance Tracking Table</h2>
           <h4 class="pb-3">{{ report_start_date|date:"M d, Y" }} - {{ report_end_date_actual|date:"M d, Y" }}</h4>
-          <!-- <a href="{% url 'iptt_excel' program.id %}" class="btn btn-primary">Download Excel</a> -->
+          <a href="{% url 'iptt_excel' program.id reporttype %}?{{ request.GET.urlencode }}" class="btn btn-primary">Do not click me!</a>
         </span>
         <table id="iptt_table" class="table table-sm table-bordered table-hover">
           <colgroup scope="col" span="9"></colgroup>
