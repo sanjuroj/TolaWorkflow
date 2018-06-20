@@ -79,6 +79,10 @@
                 $("#indicator_modal_div").modal('show');
 
             });
+
+            $('#indicator_modal_div').on('hidden.bs.modal', function (e) {
+                location.reload();
+            });
         </script>
         {% include 'indicators/indicator_form_common_js.html' %}
     </main>

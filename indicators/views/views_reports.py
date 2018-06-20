@@ -18,132 +18,10 @@ from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm
 from ..templatetags.mytags import symbolize_change, symbolize_measuretype
 
 
-class IPTT_ExcelExport(View):
-
-    def get(self, request, *args, **kwargs):
-        response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="iptt.xlsx"'
-
-        wb = Workbook(encoding='utf-8')
-        ws = wb.active
-        ws.title = "IPTT"
-
-        return response
-
-
-class IPTT_ReportIndicatorsWithVariedStartDate(TemplateView):
-    template_name = "indicators/iptt_indicators_varied_startdates.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(IPTT_ReportIndicatorsWithVariedStartDate, self).get_context_data(**kwargs)
-        program_id = kwargs.get('program_id')
-
-        try:
-            program = Program.objects.get(pk=program_id)
-        except Program.DoesNotExist:
-            context['redirect'] = reverse_lazy('iptt_quickstart')
-            messages.info(self.request, _("Please select a valid program."))
-            return context
-
-        indicators = Indicator.objects.filter(program__in=[program_id]) \
-            .exclude(Q(target_frequency__in=[Indicator.LOP, Indicator.MID_END, Indicator.EVENT]) |
-                     Q(target_frequency_start__isnull=True))
-
-        context['program'] = program
-        context['indicators'] = indicators
-        return context
-
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        return self.render_to_response(context)
-
-
-class IPTTReportQuickstartView(FormView):
-    template_name = 'indicators/iptt_quickstart.html'
-    form_class = IPTTReportQuickstartForm
-    FORM_PREFIX_TIME = 'timeperiods'
-    FORM_PREFIX_TARGET = 'targetperiods'
-
-    def get_context_data(self, **kwargs):
-        context = super(IPTTReportQuickstartView, self).get_context_data(**kwargs)
-
-        # Add two instances of the same form to context if they're not present
-        if 'form' not in context:
-            context['form'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TIME)
-        if 'form2' not in context:
-            context['form2'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TARGET)
-        return context
-
-    def get_form_kwargs(self):
-        kwargs = super(IPTTReportQuickstartView, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        return kwargs
-
-    def post(self, request, *args, **kwargs):
-        targetprefix = request.POST.get('%s-formprefix' % self.FORM_PREFIX_TARGET)
-        timeprefix = request.POST.get('%s-formprefix' % self.FORM_PREFIX_TIME)
-        program_id = request.POST.get('targetperiods-program', None)
-        if program_id:
-            indicators_count = Indicator.objects.filter(
-                program__in=[program_id],
-                target_frequency_start__isnull=False).count()
-            if indicators_count > 0:
-                return HttpResponseRedirect(reverse_lazy('iptt_redirect', kwargs={'program_id': program_id}))
-
-        # set prefix to the current form
-        if targetprefix is not None:
-            prefix = targetprefix
-        else:
-            prefix = timeprefix
-
-        form = IPTTReportQuickstartForm(self.request.POST, prefix=prefix, request=self.request)
-
-        # call the form_valid/invalid with the correct prefix and form
-        if form.is_valid():
-            return self.form_valid(**{'form': form, 'prefix': prefix})
-        else:
-            return self.form_invalid(**{'form': form, 'prefix': prefix})
-
-    def form_valid(self, **kwargs):
-        context = self.get_context_data()
-        form = kwargs.get('form')
-        prefix = kwargs.get('prefix')
-
-        if prefix == self.FORM_PREFIX_TARGET:
-            period = form.cleaned_data.get('targetperiods')
-            context['form2'] = form
-            context['form'] = self.form_class(request=self.request,
-                                              prefix=self.FORM_PREFIX_TIME)
-        else:
-            prefix = self.FORM_PREFIX_TIME
-            period = form.cleaned_data.get('timeperiods')
-            context['form'] = form
-            context['form2'] = self.form_class(request=self.request,
-                                               prefix=self.FORM_PREFIX_TARGET)
-
-        program = form.cleaned_data.get('program')
-        num_recents = form.cleaned_data.get('numrecentperiods')
-        timeframe = form.cleaned_data.get('timeframe')
-        redirect_url = reverse_lazy('iptt_report', kwargs={'program_id': program.id, 'reporttype': prefix})
-
-        redirect_url = "{}?{}={}&timeframe={}".format(redirect_url, prefix, period, timeframe)
-        if num_recents:
-            redirect_url = "{}&numrecentperiods={}".format(redirect_url, num_recents)
-        return HttpResponseRedirect(redirect_url)
-
-    def form_invalid(self, form, **kwargs):
-        context = self.get_context_data()
-        form = kwargs.get('form')
-        if kwargs.get('prefix') == self.FORM_PREFIX_TARGET:
-            context['form2'] = form
-            context['form'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TIME)
-        else:
-            context['form'] = form
-            context['form2'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TARGET)
-        return self.render_to_response(context)
-
-
-class IPTT_ReportView(TemplateView):
+class IPTT_Mixin(object):
+    """
+    A mixin that abstracts all of the comman functionality for IPTT reports
+    """
     template_name = 'indicators/iptt_report.html'
     REPORT_TYPE_TIMEPERIODS = 'timeperiods'
     REPORT_TYPE_TARGETPERIODS = 'targetperiods'
@@ -781,7 +659,7 @@ class IPTT_ReportView(TemplateView):
         return start_date_choices
 
     def get_context_data(self, **kwargs):
-        context = super(IPTT_ReportView, self).get_context_data(**kwargs)
+        context = super(IPTT_Mixin, self).get_context_data(**kwargs)
         reporttype = kwargs.get('reporttype')
         program_id = kwargs.get('program_id')
 
@@ -895,6 +773,141 @@ class IPTT_ReportView(TemplateView):
         context['program'] = self.program
         context['reporttype'] = reporttype
         return context
+
+
+class IPTT_ExcelExport(IPTT_Mixin, View):
+
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="iptt.xlsx"'
+
+        wb = Workbook(encoding='utf-8')
+        ws = wb.active
+        ws.title = "IPTT"
+
+        return response
+
+
+class IPTT_ReportIndicatorsWithVariedStartDate(TemplateView):
+    template_name = "indicators/iptt_indicators_varied_startdates.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(IPTT_ReportIndicatorsWithVariedStartDate, self).get_context_data(**kwargs)
+        program_id = kwargs.get('program_id')
+
+        try:
+            program = Program.objects.get(pk=program_id)
+        except Program.DoesNotExist:
+            context['redirect'] = reverse_lazy('iptt_quickstart')
+            messages.info(self.request, _("Please select a valid program."))
+            return context
+
+        indicators = Indicator.objects.filter(program__in=[program_id]) \
+            .exclude(Q(target_frequency__in=[Indicator.LOP, Indicator.MID_END, Indicator.EVENT]) |
+                     Q(target_frequency_start__isnull=True))
+
+        if indicators.count() == 0:
+            context['redirect'] = reverse_lazy('iptt_quickstart')
+        context['program'] = program
+        context['indicators'] = indicators
+        return context
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        try:
+            redirect_url = context['redirect']
+            return HttpResponseRedirect(redirect_url)
+        except KeyError:
+            pass
+        return self.render_to_response(context)
+
+
+class IPTTReportQuickstartView(FormView):
+    template_name = 'indicators/iptt_quickstart.html'
+    form_class = IPTTReportQuickstartForm
+    FORM_PREFIX_TIME = 'timeperiods'
+    FORM_PREFIX_TARGET = 'targetperiods'
+
+    def get_context_data(self, **kwargs):
+        context = super(IPTTReportQuickstartView, self).get_context_data(**kwargs)
+
+        # Add two instances of the same form to context if they're not present
+        if 'form' not in context:
+            context['form'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TIME)
+        if 'form2' not in context:
+            context['form2'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TARGET)
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(IPTTReportQuickstartView, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        targetprefix = request.POST.get('%s-formprefix' % self.FORM_PREFIX_TARGET)
+        timeprefix = request.POST.get('%s-formprefix' % self.FORM_PREFIX_TIME)
+        program_id = request.POST.get('targetperiods-program', None)
+        if program_id:
+            indicators_count = Indicator.objects.filter(
+                program__in=[program_id],
+                target_frequency_start__isnull=False).count()
+            if indicators_count > 0:
+                return HttpResponseRedirect(reverse_lazy('iptt_redirect', kwargs={'program_id': program_id}))
+
+        # set prefix to the current form
+        if targetprefix is not None:
+            prefix = targetprefix
+        else:
+            prefix = timeprefix
+
+        form = IPTTReportQuickstartForm(self.request.POST, prefix=prefix, request=self.request)
+
+        # call the form_valid/invalid with the correct prefix and form
+        if form.is_valid():
+            return self.form_valid(**{'form': form, 'prefix': prefix})
+        else:
+            return self.form_invalid(**{'form': form, 'prefix': prefix})
+
+    def form_valid(self, **kwargs):
+        context = self.get_context_data()
+        form = kwargs.get('form')
+        prefix = kwargs.get('prefix')
+
+        if prefix == self.FORM_PREFIX_TARGET:
+            period = form.cleaned_data.get('targetperiods')
+            context['form2'] = form
+            context['form'] = self.form_class(request=self.request,
+                                              prefix=self.FORM_PREFIX_TIME)
+        else:
+            prefix = self.FORM_PREFIX_TIME
+            period = form.cleaned_data.get('timeperiods')
+            context['form'] = form
+            context['form2'] = self.form_class(request=self.request,
+                                               prefix=self.FORM_PREFIX_TARGET)
+
+        program = form.cleaned_data.get('program')
+        num_recents = form.cleaned_data.get('numrecentperiods')
+        timeframe = form.cleaned_data.get('timeframe')
+        redirect_url = reverse_lazy('iptt_report', kwargs={'program_id': program.id, 'reporttype': prefix})
+
+        redirect_url = "{}?{}={}&timeframe={}".format(redirect_url, prefix, period, timeframe)
+        if num_recents:
+            redirect_url = "{}&numrecentperiods={}".format(redirect_url, num_recents)
+        return HttpResponseRedirect(redirect_url)
+
+    def form_invalid(self, form, **kwargs):
+        context = self.get_context_data()
+        form = kwargs.get('form')
+        if kwargs.get('prefix') == self.FORM_PREFIX_TARGET:
+            context['form2'] = form
+            context['form'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TIME)
+        else:
+            context['form'] = form
+            context['form2'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TARGET)
+        return self.render_to_response(context)
+
+
+class IPTT_ReportView(IPTT_Mixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
