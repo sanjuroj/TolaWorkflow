@@ -364,7 +364,6 @@ class ProjectAgreementForm(forms.ModelForm):
                 ),
 
 
-            HTML("""<br/>"""),
 
             Fieldset(
                 '',
@@ -401,7 +400,7 @@ class ProjectAgreementForm(forms.ModelForm):
                             </div>
                              """),
                 ),
-                css_class='card',
+                css_class='card mt-3',
             ),
 
         )
@@ -622,7 +621,6 @@ class ProjectAgreementSimpleForm(forms.ModelForm):
                     css_class='form-actions bg-gray-lighter p-4 justify-content-between',
                 ),
 
-            HTML("""<br/>"""),
 
             Fieldset(
                 '',
@@ -659,7 +657,7 @@ class ProjectAgreementSimpleForm(forms.ModelForm):
                             </div>
                              """),
                 ),
-                css_class="card",
+                css_class="card mt-3",
             ),
 
         )
@@ -1075,9 +1073,9 @@ class ProjectCompleteSimpleForm(forms.ModelForm):
         self.request = kwargs.pop('request')
         self.helper = FormHelper()
         self.helper.form_method = 'post'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-sm-2'
-        self.helper.field_class = 'col-sm-6'
+        self.helper.form_class = ''
+        self.helper.label_class = ''
+        self.helper.field_class = ''
         self.helper.form_error_title = 'Form Errors'
         self.helper.error_text_inline = True
         self.helper.help_text_inline = True
@@ -1091,7 +1089,7 @@ class ProjectCompleteSimpleForm(forms.ModelForm):
                     ),
                     Fieldset('Dates',
                         'expected_start_date','expected_end_date', 'actual_start_date', 'actual_end_date',
-                        PrependedText('on_time', ''), 'no_explanation',
+                        'on_time', 'no_explanation',
                     ),
                 ),
                 Tab('Components',
@@ -1129,7 +1127,7 @@ class ProjectCompleteSimpleForm(forms.ModelForm):
                                     </table>
                                 {% endif %}
                                 <div class="panel-footer">
-                                    <a class="benchmarks" data-toggle="modal" data-target="#myModal" href="/workflow/benchmark_complete_add/{{ id }}/?is_it_project_complete_form=true" id="btn_bench">Add Component</a>
+                                    <a class="benchmarks btn btn-link btn-add" data-toggle="modal" data-target="#myModal" href="/workflow/benchmark_complete_add/{{ id }}/?is_it_project_complete_form=true" id="btn_bench"><i class="fas fa-plus-circle"></i> Add Component</a>
                                 </div>
                             </div>
                         """),
@@ -1165,7 +1163,7 @@ class ProjectCompleteSimpleForm(forms.ModelForm):
                                         </tbody>
                                     </table>
                                     <div class="panel-footer">
-                                        <a class="output" data-toggle="modal" data-target="#myModal" href="/workflow/budget_add/{{ pk }}/?is_it_project_complete_form=true">Add Budget Contribution</a>
+                                        <a class="output btn btn-link btn-add" data-toggle="modal" data-target="#myModal" href="/workflow/budget_add/{{ pk }}/?is_it_project_complete_form=true"><i class="fas fa-plus-circle"></i> Add Budget Contribution</a>
                                     </div>
                                 </div>
                             """),
@@ -1177,7 +1175,7 @@ class ProjectCompleteSimpleForm(forms.ModelForm):
                         Div(
                              HTML("""
                                 <div class='panel panel-default'>
-                                    <div class='panel-heading'>Related indicators</div>
+                                    <h3>Related indicators</h3>
                                     {% if getQuantitative %}
                                         <table class="table">
                                             {% for item in getQuantitative %}
@@ -1203,16 +1201,23 @@ class ProjectCompleteSimpleForm(forms.ModelForm):
                     ),
                 ),
             ),
-            FormActions(
-                Submit('submit', 'Save', css_class='btn-default'),
-                Reset('reset', 'Reset', css_class='btn-warning')
+            Div(
+                FormActions(
+                    Submit('submit', 'Save changes', css_class=''),
+                    Reset('reset', 'Reset', css_class='')
+                ),
+                css_class='form-actions bg-gray-lighter p-4 justify-content-between',
             ),
-            HTML("""<br/>"""),
-            Fieldset('Project Files',
+            Fieldset(
+                '',
                 Div(
+                    '',
                     HTML("""
-                        <div class='panel panel-default'>
-                            <div class='panel-heading'>Documentation</div>
+                            <div class='card-header'><strong>Project Files</strong></div>
+
+                            <div class='card-body'>
+                              <!-- Default panel contents -->
+                              <h4>Documentation</h4>
                             {% if getDocuments %}
                                 <table class="table">
                                     <tr>
@@ -1237,6 +1242,7 @@ class ProjectCompleteSimpleForm(forms.ModelForm):
                         </div>
                     """),
                 ),
+                css_class='card mt-3',
             ),
         )
         super(ProjectCompleteSimpleForm, self).__init__(*args, **kwargs)
