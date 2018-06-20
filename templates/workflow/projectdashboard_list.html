@@ -10,17 +10,23 @@
 {% endblock %}
 
 {% block title %}{% trans "Project" %} | {% endblock %}
-{% block page_title %}{% trans "Project" %}{% endblock %}
+{% block page_title %}
+    {% if project_id == 0 %}
+        {% trans "Add a project" %}
+    {% else %}
+        {% trans "Project" %}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 {% if project_id == 0 %}
 
-    <div class="jumbotron">
-        <p>Name your new Project and associate it with a Program</p>
-        <form role="form" class="form-inline" action="/workflow/projectagreement_add/" method="post">
+    <div class="">
+        <p>{% trans "Name your new project and associate it with a program" %}.</p>
+        <form role="form" class="" action="/workflow/projectagreement_add/" method="post">
             {% csrf_token %}
             <div class="form-group">
-                <label for="program">Program:</label>
+                <label for="program">{% trans "Program" %}:</label>
                 <select class="form-control" id="program" name="program" required="">
                     {% for item in getPrograms %}
                         <option value="{{ item.id }} ">{{ item.name|truncatechars:50 }}</option>
@@ -29,17 +35,17 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="project_name">Project Name:</label>
+                <label for="project_name">{% trans "Project name" %}:</label>
                 <input type="text" name="project_name" required="" id="id_project_name" class="textinput textInput form-control" maxlength="255">
             </div>
-            <div class="form-group">
-                <label for="detailed">Short Form (recommended):</label>
-                <input type="checkbox" name="short" id="id_short" checked="checked" onchange="confirmshort();"> Yes
+            <div class="form-check form-group">
+                <input type="checkbox" name="short" id="id_short" checked="checked" onchange="confirmshort();">
+                <label for="detailed">{% trans "Use short form?" %} ({% trans "recommended" %})</label>
             </div>
-            <br/>
-            <br/>
-            <div class="form-group">
-              <button type="submit" class="btn btn-default">Submit</button>
+            <div class="bg-gray-lighter p-4 justify-content-between">
+                <div class="">
+                    <button type="submit" class="btn btn-primary">{% trans "Submit" %}</button>
+                </div>
             </div>
         </form>
     </div>
