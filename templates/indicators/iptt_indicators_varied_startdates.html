@@ -7,21 +7,27 @@
 {% block bodyclasses %}page_iptt_table{% endblock %}
 
 {% block content %}
-    <main class="iptt_table_wrapper_redirect">
-        <div id="id_div_top_iptt_report_redirect">
+    {% include 'indicators/indicator_reportingperiod_modal.html'%}
+    <main class="iptt_table_wrapper">
+        <div id="id_div_top_iptt_report">
             <span id="id_span_iptt_date_range">
                 <h2>Indicator Performance Tracking Table</h2>
-                <strong>{{ program.reporting_period_start|date:"M d, Y" }} - {{ program.reporting_period_end|date:"M d, Y" }}</strong>
                 <h5>{{ program.name|wordwrap:100|linebreaks }}</h5>
             </span>
             <h3>
                 <span class="color-red">
-                {% blocktrans with start=program.reporting_period_start|date:"M d, Y" end=program.reporting_period_end|date:"M d, Y" %}
-                    To see program results, please update your periodic targets to match your reporting start and end dates:
-                {{ start }} - {{ end }} {% endblocktrans %}
+                    {% blocktrans with program_id=program.id startdate=program.reporting_period_start enddate=program.reporting_period_end start=program.reporting_period_start|date:"M d, Y" end=program.reporting_period_end|date:"M d, Y" %}
+                        To see program results, please update your periodic targets to match your reporting start and end dates:
+                        <a href="#"
+                            data-toggle="modal"
+                            data-program="{{ program_id }}"
+                            data-target="#id_reporting_period_modal"
+                            data-rptstart="{{ startdate }}"
+                            data-rptend="{{ enddate }}"><i>{{ start }} - {{ end }}</i></a>
+                    {% endblocktrans %}
                 </span>
             </h3>
-            <table id="iptt_redirect_table" class="table table-sm table-bordered table-hover">
+            <table id="iptt_table" class="table table-sm table-bordered table-hover">
                 <caption>Indicator Performance Tracking Table</caption>
                 <thead class="thead-light">
                     <tr>
@@ -58,7 +64,7 @@
         </div>
         <script>
             // Open the IndicatorUpdate Form in a modal
-            $("#id_div_top_iptt_report_redirect").on("click", ".indicator-link", function (e) {
+            $("#id_div_top_iptt_report").on("click", ".indicator-link", function (e) {
                 e.preventDefault();
                 var url = $(this).attr("href");
                 url += "?modal=1";
