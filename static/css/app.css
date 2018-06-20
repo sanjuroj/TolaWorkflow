@@ -897,6 +897,13 @@ input[type=number]::-webkit-outer-spin-button {
     background-color: #EDEDED !important;
 }
 
+/* restyle the Results table on the IPTT */
 .page_iptt_table .popover {
     max-width: 50%;
+}
+.page_iptt_table .popover .btn-add {
+    display: none;
+}
+.page_iptt_table .popover .collecteddata-table--actions {
+    background: transparent;
 }

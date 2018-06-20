@@ -257,40 +257,36 @@
               </div>
             </td>
         </tr>
-        <tr class="bg-gray-lighter-alt">
-            <td colspan="6">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                    {% if err %}
-                        <span id="id_span_date_collected_error_msg text-danger" class="color-red">
-                            <small>
-                            {% ifequal err 'Error_1' %}
-                                {% trans "Targets are not set up for this indicator." %} <strong><a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link"> {% trans "Start by selecting a target frequency." %}</a></strong>
-                            {% endifequal %}
-
-                            {% ifequal err 'Error_2' %}
-                                    {% trans 'This record is not associated with a target. Open the data record and select an option from the "Measure against target" menu.' %}
-                            {% endifequal %}
-
-                            {% ifequal err 'Error_3' %}
-                                {% trans 'This date falls outside the range of your target periods. Please select a date between ' %} {{ program.reporting_period_start|date:"M d, Y" }} {% trans 'and ' %} {{ program.reporting_period_end|date:"M d, Y" }}.
-                            {% endifequal %}
-                            </small>
-                        </span>
-                    {% endif %}
-                    </div>
-                    <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %} p-2">
-                        <a href="{% url 'collecteddata_add' program_id indicator.id %}"
-                                class="btn btn-link btn-add collecteddata-link p-0">
-                            <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
-                        </a>
-                    </div>
-                </div>
-            </td>
-        </tr>
     </table>
+    <div class="d-flex justify-content-between align-items-center collecteddata-table--actions">
+        <div>
+        {% if err %}
+            <span id="id_span_date_collected_error_msg text-danger" class="color-red">
+                <small>
+                {% ifequal err 'Error_1' %}
+                    {% trans "Targets are not set up for this indicator." %} <strong><a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link"> {% trans "Start by selecting a target frequency." %}</a></strong>
+                {% endifequal %}
+
+                {% ifequal err 'Error_2' %}
+                        {% trans 'This record is not associated with a target. Open the data record and select an option from the "Measure against target" menu.' %}
+                {% endifequal %}
+
+                {% ifequal err 'Error_3' %}
+                    {% trans 'This date falls outside the range of your target periods. Please select a date between ' %} {{ program.reporting_period_start|date:"M d, Y" }} {% trans 'and ' %} {{ program.reporting_period_end|date:"M d, Y" }}.
+                {% endifequal %}
+                </small>
+            </span>
+        {% endif %}
+        </div>
+        <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
+            <a href="{% url 'collecteddata_add' program_id indicator.id %}"
+                    class="btn btn-link btn-add collecteddata-link pb-4">
+                <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
+            </a>
+        </div>
+    </div>
 {% else %}
     <div class="my-3 color-red">
-        <i class="fas fa-bullseye"></i>&nbsp;{% trans "Organize your data for this indicator." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link btn btn-link btn-add"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add targets" %}</a>
+        <i class="fas fa-bullseye"></i>&nbsp;{% trans "This indicator has no targets." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link btn btn-link btn-add"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add targets" %}</a>
     </div>
 {% endif %}
