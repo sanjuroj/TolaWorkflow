@@ -367,14 +367,15 @@ class ProjectAgreementForm(forms.ModelForm):
             HTML("""<br/>"""),
 
             Fieldset(
-                'Project Files',
+                '',
                 Div(
                     '',
                     HTML("""
+                            <div class='card-header'><strong>Project Files</strong></div>
 
-                            <div class='panel panel-default'>
+                            <div class='card-body'>
                               <!-- Default panel contents -->
-                              <div class='panel-heading'>Documentation</div>
+                              <h4>Documentation</h4>
                               {% if getDocuments %}
                                   <!-- Table -->
                                   <table class="table">
@@ -400,6 +401,7 @@ class ProjectAgreementForm(forms.ModelForm):
                             </div>
                              """),
                 ),
+                css_class='card',
             ),
 
         )
@@ -623,14 +625,15 @@ class ProjectAgreementSimpleForm(forms.ModelForm):
             HTML("""<br/>"""),
 
             Fieldset(
-                'Project Files',
+                '',
                 Div(
                     '',
                     HTML("""
+                            <div class='card-header'><strong>Project Files</strong></div>
 
-                            <div class='panel panel-default'>
+                            <div class='card-body'>
                               <!-- Default panel contents -->
-                              <div class='panel-heading'>Documentation</div>
+                              <h4>Documentation</h4>
                               {% if getDocuments %}
                                   <!-- Table -->
                                   <table class="table">
@@ -656,6 +659,7 @@ class ProjectAgreementSimpleForm(forms.ModelForm):
                             </div>
                              """),
                 ),
+                css_class="card",
             ),
 
         )
