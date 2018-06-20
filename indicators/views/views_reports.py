@@ -805,7 +805,8 @@ class IPTT_ReportIndicatorsWithVariedStartDate(TemplateView):
         indicators = Indicator.objects.filter(program__in=[program_id]) \
             .exclude(Q(target_frequency__in=[Indicator.LOP, Indicator.MID_END, Indicator.EVENT]) |
                      Q(target_frequency_start__isnull=True)) \
-            .values('pk', 'number', 'name', 'target_frequency', 'target_frequency_start')
+            .values('pk', 'number', 'name', 'target_frequency', 'target_frequency_start') \
+            .order_by('number', 'target_frequency')
 
         if indicators.count() == 0:
             context['redirect'] = reverse_lazy('iptt_quickstart')

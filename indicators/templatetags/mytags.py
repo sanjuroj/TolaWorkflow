@@ -57,8 +57,9 @@ def target_frequency_label(value):
     {{ indicator.target_frequency|target_frequency_label}}
     """
     try:
+        value = value - 1
         return Indicator.TARGET_FREQUENCIES[value][1]
-    except IndexError:
+    except Exception:
         return value
 
 
