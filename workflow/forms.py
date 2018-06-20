@@ -1646,22 +1646,20 @@ class StakeholderForm(forms.ModelForm):
         self.helper = FormHelper()
         self.request = kwargs.pop('request')
         self.helper.form_method = 'post'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-sm-2'
-        self.helper.field_class = 'col-sm-6'
+        self.helper.form_class = ''
+        self.helper.label_class = ''
+        self.helper.field_class = ''
         self.helper.form_error_title = 'Form Errors'
         self.helper.error_text_inline = True
         self.helper.help_text_inline = True
         self.helper.html5_required = True
-        self.helper.add_input(Submit('submit', 'Save'))
+        #self.helper.add_input(Submit('submit', 'Save'))
         pkval = kwargs['instance'].pk if kwargs['instance'] else 0
         self.helper.layout = Layout(
-
-            HTML("""<br/>"""),
             TabHolder(
                 Tab('Details',
                     Fieldset('Details',
-                        'name', 'type', 'contact', HTML("""<a onclick="window.open('/workflow/contact_add/%s/0/').focus();">Add New Contact</a>""" % pkval ), 'country', 'sectors', PrependedText('stakeholder_register',''), 'formal_relationship_document', 'vetting_document', 'notes',
+                        'name', 'type', 'contact', HTML("""<a class="btn btn-link btn-add" onclick="window.open('/workflow/contact_add/%s/0/').focus();"><i class="fas fa-plus-circle"></i> Add New Contact</a>""" % pkval ), 'country', 'sectors', 'stakeholder_register', 'formal_relationship_document', 'vetting_document', 'notes',
                     ),
                 ),
 
@@ -1670,6 +1668,13 @@ class StakeholderForm(forms.ModelForm):
                         'approval','approved_by','filled_by',
                     ),
                 ),
+            ),
+            Div(
+                FormActions(
+                    Submit('submit', 'Save changes', css_class=''),
+                    Reset('reset', 'Reset', css_class='')
+                ),
+                css_class='form-actions bg-gray-lighter p-4 justify-content-between',
             ),
         )
         super(StakeholderForm, self).__init__(*args, **kwargs)
