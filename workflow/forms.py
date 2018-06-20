@@ -172,9 +172,9 @@ class ProjectAgreementForm(forms.ModelForm):
         self.request = kwargs.pop('request')
         self.helper = FormHelper()
         self.helper.form_method = 'post'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-sm-2'
-        self.helper.field_class = 'col-sm-6'
+        self.helper.form_class = ''
+        self.helper.label_class = ''
+        self.helper.field_class = ''
         self.helper.form_error_title = 'Form Errors'
         self.helper.error_text_inline = True
         self.helper.help_text_inline = True
@@ -183,7 +183,6 @@ class ProjectAgreementForm(forms.ModelForm):
         self.helper.form_id = "agreement"
         self.helper.layout = Layout(
 
-            HTML("""<br/>"""),
             TabHolder(
                 Tab('Executive Summary',
                     Fieldset('Project Details', 'program', 'program2', 'activity_code','account_code','lin_code','office', 'sector', 'project_name', 'project_activity',
@@ -221,7 +220,7 @@ class ProjectAgreementForm(forms.ModelForm):
                                   </table>
                               {% endif %}
                               <div class="panel-footer">
-                                <a class="benchmarks" data-toggle="modal" data-target="#myModal" href="/workflow/benchmark_add/{{ pk }}">Add Component</a>
+                                <a class="benchmarks btn btn-link btn-add" data-toggle="modal" data-target="#myModal" href="/workflow/benchmark_add/{{ pk }}"><i class="fas fa-plus-circle"></i> Add Component</a>
                               </div>
                             </div>
 
@@ -265,7 +264,7 @@ class ProjectAgreementForm(forms.ModelForm):
                                   </tbody>
                                   </table>
                                   <div class="panel-footer">
-                                    <a class="output" data-toggle="modal" data-target="#myModal" href="/workflow/budget_add/{{ pk }}">Add Budget Contribution</a>
+                                    <a class="output btn btn-link btn-add" data-toggle="modal" data-target="#myModal" href="/workflow/budget_add/{{ pk }}"><i class="fas fa-plus-circle"></i> Add Budget Contribution</a>
                                   </div>
                                 </div>
                                  """),
@@ -337,7 +336,7 @@ class ProjectAgreementForm(forms.ModelForm):
                                           </table>
                                       {% endif %}
                                       <div class="panel-footer">
-                                        <a class="monitoring" data-toggle="modal" data-target="#myModal" href="/workflow/monitor_add/{{ pk }}">Add Monitoring Data</a>
+                                        <a class="monitoring btn btn-link btn-add" data-toggle="modal" data-target="#myModal" href="/workflow/monitor_add/{{ pk }}"><i class="fas fa-plus-circle"></i> Add Monitoring Data</a>
                                       </div>
                                     </div>
                                      """),
@@ -356,10 +355,13 @@ class ProjectAgreementForm(forms.ModelForm):
                     ),
                 ),
 
-            FormActions(
-                Submit('submit', 'Save', css_class='btn-default'),
-                Reset('reset', 'Reset', css_class='btn-warning')
-            ),
+                Div(
+                    FormActions(
+                        Submit('submit', 'Save changes', css_class=''),
+                        Reset('reset', 'Reset', css_class='')
+                    ),
+                    css_class='form-actions bg-gray-lighter p-4 justify-content-between',
+                ),
 
 
             HTML("""<br/>"""),
@@ -486,9 +488,9 @@ class ProjectAgreementSimpleForm(forms.ModelForm):
         self.request = kwargs.pop('request')
         self.helper = FormHelper()
         self.helper.form_method = 'post'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-sm-2'
-        self.helper.field_class = 'col-sm-6'
+        self.helper.form_class = ''
+        self.helper.label_class = ''
+        self.helper.field_class = ''
         self.helper.form_error_title = 'Form Errors'
         self.helper.error_text_inline = True
         self.helper.help_text_inline = True
@@ -536,7 +538,7 @@ class ProjectAgreementSimpleForm(forms.ModelForm):
                                   </table>
                               {% endif %}
                               <div class="panel-footer">
-                                <a class="benchmarks" data-toggle="modal" data-target="#myModal" href="/workflow/benchmark_add/{{ pk }}">Add Component</a>
+                                <a class="benchmarks btn btn-link btn-add" data-toggle="modal" data-target="#myModal" href="/workflow/benchmark_add/{{ pk }}"><i class="fas fa-plus-circle"></i> Add Component</a>
                               </div>
                             </div>
 
@@ -579,7 +581,7 @@ class ProjectAgreementSimpleForm(forms.ModelForm):
                                     </tbody>
                                   </table>
                                   <div class="panel-footer">
-                                    <a class="output" data-toggle="modal" data-target="#myModal" href="/workflow/budget_add/{{ pk }}">Add Budget Contribution</a>
+                                    <a class="output btn btn-link btn-add" data-toggle="modal" data-target="#myModal" href="/workflow/budget_add/{{ pk }}"><i class="fas fa-plus-circle"></i> Add Budget Contribution</a>
                                   </div>
                                 </div>
                                  """),
@@ -610,9 +612,12 @@ class ProjectAgreementSimpleForm(forms.ModelForm):
                     ),
                 ),
 
-                FormActions(
-                    Submit('submit', 'Save', css_class='btn-default'),
-                    Reset('reset', 'Reset', css_class='btn-warning')
+                Div(
+                    FormActions(
+                        Submit('submit', 'Save changes', css_class=''),
+                        Reset('reset', 'Reset', css_class='')
+                    ),
+                    css_class='form-actions bg-gray-lighter p-4 justify-content-between',
                 ),
 
             HTML("""<br/>"""),

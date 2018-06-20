@@ -907,3 +907,29 @@ input[type=number]::-webkit-outer-spin-button {
 .page_iptt_table .popover .collecteddata-table--actions {
     background: transparent;
 }
+
+/* forms */
+.help-block { /* emulates .form-text.text-muted */
+    color: #6c757d!important;
+    display: block;
+    margin-top: .25rem;
+}
+.form-actions .form-group {
+    margin-bottom: 0;
+}
+.has-crispy-form .tab-content.panel-body {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-top-width: 0;
+    margin-top: 0;
+    padding: 1rem;
+}
+.has-crispy-form .nav-tabs {
+    width: 100%;
+}
+.has-crispy-form .input-group {
+    align-items: center;
+}
+.input-group-addon {
+    margin: 0 0.5rem;
+}

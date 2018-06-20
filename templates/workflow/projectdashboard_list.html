@@ -18,6 +18,7 @@
     {% endif %}
 {% endblock %}
 
+
 {% block content %}
 {% if project_id == 0 %}
 
@@ -43,7 +44,7 @@
                 <label for="detailed">{% trans "Use short form?" %} ({% trans "recommended" %})</label>
             </div>
             <div class="bg-gray-lighter p-4 justify-content-between">
-                <div class="">
+                <div class="form-group">
                     <button type="submit" class="btn btn-primary">{% trans "Submit" %}</button>
                 </div>
             </div>
