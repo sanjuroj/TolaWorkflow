@@ -292,7 +292,7 @@
             }
             if ((testDate = new Date($(event.relatedTarget).data('rptend'))) == "Invalid Date"){
                 $("#id_reporting_end_date").val("");
-                origRptStart = "";
+                origRptEnd = "";
             }
             else {
                 $("#id_reporting_end_date").val(formatDate(testDate));
@@ -315,11 +315,42 @@
         $("#id_reporting_start_date, #id_reporting_end_date, #submit-id-submit").attr("disabled", false);
 
         // Reload the page if either of the dates has changed from what they were when the modal was opened.
+        // Using try/catch blocks to ensure errors can't prevent modal from closing.
         // TODO: Find ways to avoid reloading the whole page when one of these dates is changed.
-        const finalStartStr = $("#id_reporting_start_date").datepicker("getDate").toISOString()
-        const finalEndStr = $("#id_reporting_end_date").datepicker("getDate").toISOString()
-        if (new Date(origRptStart).toISOString() != finalStartStr ||
-                new Date(origRptEnd).toISOString() != finalEndStr) {
+        var finalStartStr;
+        var finalEndStr;
+        var origStart;
+        var origEnd;
+        try{
+            const d = $("#id_reporting_start_date").datepicker("getDate")
+            finalStartStr = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate()
+        }
+        catch(e){
+            finalStartStr = "";
+        }
+        try{
+            const d = $("#id_reporting_end_date").datepicker("getDate")
+            finalEndStr = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate()
+        }
+        catch(e){
+            finalEndStr = "";
+        }
+        if (origRptStart != ""){
+            d = origRptStart.split("-")
+            origStart = parseInt(d[0]) + "-" + (parseInt(d[1])-1) + "-" + parseInt(d[2])
+        }
+        else{
+            origStart = "";
+        }
+        if(origRptEnd != ""){
+            d = origRptEnd.split("-")
+            console.log('d', d)
+            origEnd = parseInt(d[0]) + "-" + (parseInt(d[1])-1) + "-" + parseInt(d[2])
+        }
+        else{
+            origEnd = "";
+        }
+        if (origStart != finalStartStr || origEnd != finalEndStr) {
             window.location.reload(true);
         }
 
@@ -337,15 +368,17 @@
         }
         else{
             $.post($(this).attr('action'), $(this).serialize(), function(data){
-                var program_id = data.program_id;
-                var modalLink = $(`a[data-program="${program_id}"]`);
-                modalLink.data("rptstart", data.rptstart);
-                modalLink.data("rptend", data.rptend);
-                createAlert(
-                  "success",
-                  "{% trans 'Success. Reporting period changes were saved.' %}",
-                  true,
-                  "#div-id-reportingperiod-alert");
+
+                $('#id_reporting_period_modal').modal("hide")
+                // var program_id = data.program_id;
+                // var modalLink = $(`a[data-program="${program_id}"]`);
+                // modalLink.data("rptstart", data.rptstart);
+                // modalLink.data("rptend", data.rptend);
+                // createAlert(
+                //   "success",
+                //   "{% trans 'Success. Reporting period changes were saved.' %}",
+                //   true,
+                //   "#div-id-reportingperiod-alert");
 
             }).fail(function(data) {
                 createAlert(
