@@ -66,6 +66,15 @@
             }
         });
 
+        /*
+        *  Open the TolaTables import modal when a user clicks "Import evidence from TolaTables"
+        */
+        $("#tolaTablesLink").on("click", function(e){
+            e.preventDefault();
+            $("#tolatablemodal .modal-content").load('/indicators/collecteddata_import/');
+            $("#tolatablemodal").modal("show");
+        });
+
         $(document).on('hidden.bs.modal', '.modal', function () {
             $('.modal:visible').length && $(document.body).addClass('modal-open');
         });
@@ -205,7 +214,7 @@
                         {{ form.tola_table.help_text }}
                     </small>
                     <div class="pt-2">
-                        <a class="output" data-toggle="modal" data-target="#tolatablemodal" href="/indicators/collecteddata_import/">{% trans 'Import evidence from TolaTables' %}</a>
+                        <a id="tolaTablesLink" class="output" href="#">{% trans 'Import evidence from TolaTables' %}</a>
                     </div>
                     <div class="d-flex pt-2">
                         <div class="">{{ form.update_count_tola_table }}</div>
