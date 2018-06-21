@@ -929,7 +929,11 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
             ws.cell(row=row, column=4).alignment = alignment
             ws.cell(row=row, column=5).value = indicator['direction_of_change'].encode('UTF-8')
 
-            ws.cell(row=row, column=6).value = indicator['cumulative'].encode('UTF-8')
+            try:
+                ws.cell(row=row, column=6).value = indicator['cumulative'].encode('UTF-8')
+            except KeyError:
+                ws.cell(row=row, column=6).value = ''
+
             ws.cell(row=row, column=7).value = indicator['unittype'].encode('UTF-8')
             wb.guess_types = True
             ws.cell(row=row, column=8).value = indicator['baseline'].encode('UTF-8')
