@@ -202,22 +202,13 @@ def indicator_create(request, id=0):
         definition = None
         external_service_record = None
 
-        # import recursive library for substitution
-        import re
-
         # checkfor service indicator and update based on values
-        if node_id is None and int(node_id) != 0:
+        if node_id is not None and int(node_id) != 0:
             get_imported_indicators = import_indicator(service)
             for item in get_imported_indicators:
                 if item['nid'] == node_id:
-                    getSector, created = Sector.objects.get_or_create(
-                        sector=item['sector'])
-
-                    sector = getSector
-                    getLevel, created = Level.objects.get_or_create(
-                        name=item['level'].title())
-
-                    level = getLevel
+                    sector, created = Sector.objects.get_or_create(sector=item['sector'])
+                    level, created = Level.objects.get_or_create(name=item['level'].title())
                     name = item['title']
                     source = item['source']
                     definition = item['definition']
@@ -226,13 +217,10 @@ def indicator_create(request, id=0):
                     getService = ExternalService.objects.get(id=service)
                     full_url = getService.url + "/" + item['nid']
                     external_service_record = ExternalServiceRecord(
-                        record_id=item['nid'], external_service=getService,
-                        full_url=full_url
+                        record_id=item['nid'], external_service=getService, full_url=full_url
                     )
                     external_service_record.save()
-                    getType, created = IndicatorType.objects.get_or_create(
-                        indicator_type=item['type'].title())
-                    indicator_type = getType
+                    indicator_type, created = IndicatorType.objects.get_or_create(indicator_type=item['type'].title())
         # save form
         new_indicator = Indicator(
             sector=sector, name=name, source=source, definition=definition,
