@@ -2,6 +2,7 @@
 {% load i18n %}
 {% block title %}{% trans 'Stakeholder' %} | {% endblock %}
 {% block page_title %}{% trans 'Stakeholder' %}{% endblock %}
+{% block bodyclasses %}has-crispy-form{% endblock %}
 {% block bread_crumb %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -29,7 +30,7 @@
 
     </script>
 
-    <span style="float: right;"><a onclick="newPopup('https://docs.google.com/document/d/1fX8hC-UxEd1YcXbf7gIkh5WH_ZPQYuhMB9q4uJNmMec/','Form Help/Guidance'); return false;" href="#" class="btn btn-sm btn-info">Form Help/Guidance</a></span>
+    <span style="float: right;"><a onclick="newPopup('https://docs.google.com/document/d/1fX8hC-UxEd1YcXbf7gIkh5WH_ZPQYuhMB9q4uJNmMec/','Form Help/Guidance'); return false;" href="#" class="btn btn-link help-link px-1">Help</a></span>
     {% if form.errors %}
         {% include "form_guidance.html" %}
         <div class="help-block">

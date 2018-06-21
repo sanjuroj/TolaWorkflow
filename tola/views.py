@@ -251,7 +251,8 @@ def profile(request):
         if request.method == 'POST':
             if form.is_valid():
                 form.save()
-                messages.error(request, 'Your profile has been updated.', fail_silently=False)
+                messages.error(request, 'Your profile has been updated.', fail_silently=False,
+                               extra_tags='success')
 
         return render(request, "registration/profile.html", {
             'form': form, 'helper': RegistrationForm.helper

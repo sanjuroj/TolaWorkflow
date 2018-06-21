@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block bread_crumb %}
-<ol class="breadcrumb">
-  <li><a href="accounts/profile/">Profile</a></li>
-  <li class="active">Bookmark List</li>
-</ol>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url "profile" %}">Profile</a></li>
+      <li class="breadcrumb-item active">Bookmark List</li>
+    </ol>
+</nav>
 {% endblock %}
 {% block page_title %}Your Bookmarks List{% endblock %}
 
@@ -16,7 +18,7 @@
 <ul class="list-group">
 {% for item in getBookmarks %}
 
-    	<li class="list-group-item"><b>{{ item.create_date|date }} &nbsp;<a href="/bookmark_update/{{ item.id }}">{{ item.name }}</a></b> &nbsp;<a href="/bookmark_delete/{{ item.id }}/" class="btn-xs btn-danger">Delete Bookmark</a></li>
+  <li class="list-group-item"><b>{{ item.create_date|date }} &nbsp;<a href="{% url "bookmark_update" item.id %}">{{ item.name }}</a></b> &nbsp;<a href="{% url "bookmark_delete" item.id %}/" class="btn-xs btn-danger">Delete Bookmark</a></li>
 
 {% empty %}
     <li class="list-group-item">No bookmarks yet.</li>
