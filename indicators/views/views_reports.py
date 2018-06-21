@@ -120,7 +120,7 @@ class IPTT_Mixin(object):
             last_data_record = CollectedData.objects.filter(
                 indicator=OuterRef('pk'),
                 periodic_target__period=PeriodicTarget.MIDLINE)\
-                .order_by('-id')
+                .order_by('-date_collected', '-pk')
             midline_sum = Sum(
                 Case(
                     When(
@@ -166,7 +166,7 @@ class IPTT_Mixin(object):
             last_data_record = CollectedData.objects.filter(
                 indicator=OuterRef('pk'),
                 periodic_target__period=PeriodicTarget.ENDLINE)\
-                .order_by('-id')
+                .order_by('-date_collected', '-pk')
             endline_sum = Sum(
                 Case(
                     When(
