@@ -5,9 +5,9 @@
 {% block bread_crumb %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url "dashboard" 0 %}">{% trans 'Projects' %}</a></li>
         {% if pk %}
-        <li class="breadcrumb-item"><a href="/workflow/dashboard/project/{{ pk }}/">{% trans "Project Dashboard" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url "project_dashboard" pk %}">{% trans "Project Dashboard" %}</a></li>
         {% endif %}
         <li class="breadcrumb-item active">{% trans "Project Initiation Form" %}</li>
     </ol>
