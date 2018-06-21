@@ -27,8 +27,8 @@ class DashboardTheme(models.Model):
     # on save add create date or update edit date
     def save(self, *args, **kwargs):
         if self.create_date == None:
-            self.create_date = datetime.now()
-        self.edit_date = datetime.now()
+            self.create_date = timezone.now()
+        self.edit_date = timezone.now()
         super(DashboardTheme, self).save()
 
     # displayed in admin templates
@@ -56,8 +56,8 @@ class ComponentDataSource(models.Model):
     # on save add create date or update edit date
     def save(self, *args, **kwargs):
         if self.create_date == None:
-            self.create_date = datetime.now()
-        self.edit_date = datetime.now()
+            self.create_date = timezone.now()
+        self.edit_date = timezone.now()
         super(ComponentDataSource, self).save()
 
     # displayed in admin templates
@@ -87,8 +87,8 @@ class DashboardComponent(models.Model):
     # on save add create date or update edit date
     def save(self, *args, **kwargs):
         if self.create_date == None:
-            self.create_date = datetime.now()
-        self.edit_date = datetime.now()
+            self.create_date = timezone.now()
+        self.edit_date = timezone.now()
         super(DashboardComponent, self).save()
 
     # displayed in admin templates
@@ -120,8 +120,8 @@ class CustomDashboard(models.Model):
     # on save add create date or update edit date
     def save(self, *args, **kwargs):
         if self.create_date == None:
-            self.create_date = datetime.now()
-        self.edit_date = datetime.now()
+            self.create_date = timezone.now()
+        self.edit_date = timezone.now()
         super(CustomDashboard, self).save()
 
     # displayed in admin templates
@@ -132,3 +132,4 @@ class CustomDashboard(models.Model):
 class CustomDashboardAdmin(admin.ModelAdmin):
     list_display = ('dashboard_name', 'dashboard_description', 'is_public', 'theme', 'color_palette','create_date', 'edit_date')
     display = 'Custom Dashboard'
+

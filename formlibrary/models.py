@@ -43,8 +43,8 @@ class TrainingAttendance(models.Model):
     # on save add create date or update edit date
     def save(self, *args, **kwargs):
         if self.create_date == None:
-            self.create_date = datetime.now()
-        self.edit_date = datetime.now()
+            self.create_date = timezone.now()
+        self.edit_date = timezone.now()
         super(TrainingAttendance, self).save()
 
     # displayed in admin templates
@@ -99,8 +99,8 @@ class Distribution(models.Model):
 
     def save(self, *args, **kwargs):
         if self.create_date == None:
-            self.create_date = datetime.now()
-        self.edit_date = datetime.now()
+            self.create_date = timezone.now()
+        self.edit_date = timezone.now()
         super(Distribution, self).save()
 
     # displayed in admin templates
@@ -133,8 +133,8 @@ class Beneficiary(models.Model):
     # on save add create date or update edit date
     def save(self, *args, **kwargs):
         if self.create_date == None:
-            self.create_date = datetime.now()
-        self.edit_date = datetime.now()
+            self.create_date = timezone.now()
+        self.edit_date = timezone.now()
         super(Beneficiary, self).save()
 
     # displayed in admin templates
