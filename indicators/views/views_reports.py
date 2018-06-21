@@ -11,7 +11,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from openpyxl import Workbook
-from openpyxl.styles import Font, Color, colors, PatternFill
+from openpyxl.utils import get_column_letter
+from openpyxl.styles import Font, PatternFill, Alignment
+from openpyxl.worksheet.cell_range import CellRange
+
 from tola.util import formatFloat
 from workflow.models import Program
 from ..models import Indicator, CollectedData, Level, PeriodicTarget
@@ -151,8 +154,10 @@ class IPTT_Mixin(object):
             midline_target = Max(
                 Case(
                     When(
-                        Q(periodictargets__period=PeriodicTarget.MIDLINE),
-                        then=F('periodictargets__target')
+                        Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
+                        then=Subquery(last_data_record.values('periodic_target__target')[:1])
+                        # Q(periodictargets__period=PeriodicTarget.MIDLINE),
+                        # then=F('periodictargets__target')
                     )
                 )
             )
@@ -195,10 +200,10 @@ class IPTT_Mixin(object):
             endline_target = Max(
                 Case(
                     When(
-                        # Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
-                        # then=Subquery(last_data_record.values('periodic_target__target')[:1])
-                        Q(periodictargets__period=PeriodicTarget.ENDLINE),
-                        then=F('periodictargets__target')
+                        Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
+                        then=Subquery(last_data_record.values('periodic_target__target')[:1])
+                        # Q(periodictargets__period=PeriodicTarget.ENDLINE),
+                        # then=F('periodictargets__target')
                     )
                 )
             )
@@ -820,19 +825,29 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                     cell.font = font
 
     def add_headers(self, ws, data):
-        headers_font = Font(size=18)
+        report_header_font = Font(size=18)
+        headers_font = Font(bold=True)
+
+        alignment = Alignment(horizontal='center',
+                              vertical='bottom',
+                              text_rotation=0,
+                              wrap_text=False,
+                              shrink_to_fit=False,
+                              indent=0)
+        alignment_right = Alignment(horizontal='right')
+
         bgcolor = PatternFill('solid', "EEEEEE")
         ws['A1'] = "Indicator Performance Tracking Report"
-        ws['A1'].font = headers_font
+        ws['A1'].font = report_header_font
         ws.merge_cells('A1:H1')
 
         ws['A2'] = "{0} - {1}".format(datetime.strftime(data['report_start_date'], "%b %d, %Y"),
                                       datetime.strftime(data['report_end_date'], "%b %d, %Y"))
-        ws['A2'].font = headers_font
+        ws['A2'].font = report_header_font
         ws.merge_cells('A2:H2')
 
         ws['A3'] = data['program'].name
-        ws['A3'].font = headers_font
+        ws['A3'].font = report_header_font
         ws.merge_cells('A3:H3')
 
         ws['A4'] = 'No.'
@@ -846,6 +861,9 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
 
         ws.merge_cells(start_row=3, start_column=9, end_row=3, end_column=11)
         ws.cell(row=3, column=9).value = 'Life of Program'
+        ws.cell(row=3, column=9).alignment = alignment
+        ws.cell(row=3, column=9).font = headers_font
+
         ws['I4'] = 'Target'
         ws['J4'] = 'Actual'
         ws['K4'] = '% Met'
@@ -858,28 +876,106 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                 # process period name
                 ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col+2)
                 ws.cell(row=2, column=col).value = name
+                ws.cell(row=2, column=col).alignment = alignment
+                ws.cell(row=2, column=col).font = headers_font
 
                 # processs period date ranges
                 start_date = datetime.strftime(period[0], '%b %d, %Y')
                 end_date = datetime.strftime(period[1], '%b %d, %Y')
                 ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col+2)
                 ws.cell(row=3, column=col).value = "{} - {}".format(start_date, end_date)
+                ws.cell(row=3, column=col).alignment = alignment
+                ws.cell(row=3, column=col).font = headers_font
+
                 ws.cell(row=4, column=col).value = 'Target'
                 ws.cell(row=4, column=col+1).value = 'Actual'
                 ws.cell(row=4, column=col+2).value = '% Met'
                 col_offset += 3
+            col += 2
+        elif data['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
+            for name, period in periods.items():
+                col = 12 + col_offset
+                ws.cell(row=2, column=col).value = name
+                ws.cell(row=2, column=col).alignment = alignment
+                ws.cell(row=2, column=col).font = headers_font
+                ws.column_dimensions[get_column_letter(col)].width = 30
 
-        # format header row
-        self.style_range(ws, 'A4:H4', headers_font, bgcolor)
+                start_date = datetime.strftime(period[0], '%b %d, %Y')
+                end_date = datetime.strftime(period[1], '%b %d, %Y')
+                ws.cell(row=3, column=col).value = "{} - {}".format(start_date, end_date)
+                ws.cell(row=3, column=col).alignment = alignment
+                ws.cell(row=3, column=col).font = headers_font
+
+                ws.cell(row=4, column=col).value = "Actual"
+                ws.cell(row=4, column=col).alignment = alignment_right
+                col_offset += 1
+
+        header_range = CellRange(min_col=1, min_row=4, max_col=col, max_row=4).coord
+        self.style_range(ws, header_range, headers_font, bgcolor)
         return ws
+
+    def add_data(self, wb, ws, context):
+        alignment = Alignment(wrap_text=True)
+        indicators = context['indicators']
+        periods = context['report_date_ranges']
+        row = 5
+        for indicator in indicators:
+            wb.guess_types = False
+            ws.cell(row=row, column=1).value = indicator['number'].encode('UTF-8')
+            ws.cell(row=row, column=2).value = indicator['name'].encode('UTF-8')
+            ws.cell(row=row, column=2).alignment = alignment
+            ws.cell(row=row, column=3).value = indicator['lastlevel'].encode('UTF-8')
+            ws.cell(row=row, column=4).value = indicator['unit_of_measure'].encode('UTF-8')
+            ws.cell(row=row, column=4).alignment = alignment
+            ws.cell(row=row, column=5).value = indicator['direction_of_change'].encode('UTF-8')
+
+            ws.cell(row=row, column=6).value = indicator['cumulative'].encode('UTF-8')
+            ws.cell(row=row, column=7).value = indicator['unittype'].encode('UTF-8')
+            wb.guess_types = True
+            ws.cell(row=row, column=8).value = indicator['baseline'].encode('UTF-8')
+            ws.cell(row=row, column=9).value = indicator['lop_target'].encode('UTF-8')
+            ws.cell(row=row, column=10).value = indicator['lop_actual'].encode('UTF-8')
+            ws.cell(row=row, column=11).value = indicator['lop_percent_met'].encode('UTF-8')
+
+            # ws.cell(row=row, column=11).number_format = "$"
+            col_offset = 0
+            col = 0
+            if context['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
+                for k, v in periods.items():
+                    col = 12 + col_offset
+                    target = "{}_period_target".format(k)
+                    ws.cell(row=row, column=col).value = indicator[target]
+
+                    actual = "{}_actual".format(k)
+                    ws.cell(row=row, column=col+1).value = indicator[actual]
+
+                    percent_met = "{}_percent_met".format(k)
+                    ws.cell(row=row, column=col+2).value = indicator[percent_met]
+
+                    col_offset += 3
+            elif context['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
+                for k, v in periods.items():
+                    col = 12 + col_offset
+                    actual = "{}_actual".format(k)
+                    ws.cell(row, col).value = indicator[actual]
+                    col_offset += 1
+            row += 1
+        return ws
+
+    def set_column_widths(self, ws):
+        widths = [10, 100, 12, 40, 8, 12]
+        for i, w in enumerate(widths):
+            ws.column_dimensions[get_column_letter(i+1)].width = w
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-
         wb = Workbook()
+        # wb.guess_types = True
         ws = wb.active
+
         ws = self.add_headers(ws, context)
-        ws.title = "IPTT"
+        ws = self.add_data(wb, ws, context)
+        self.set_column_widths(ws)
 
         response = HttpResponse(content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(self.get_filename(context['reporttype']))
