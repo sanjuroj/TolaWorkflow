@@ -832,6 +832,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                               wrap_text=False,
                               shrink_to_fit=False,
                               indent=0)
+        alignment_right = Alignment(horizontal='right')
 
         bgcolor = PatternFill('solid', "EEEEEE")
         ws['A1'] = "Indicator Performance Tracking Report"
@@ -889,6 +890,24 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                 ws.cell(row=4, column=col+2).value = '% Met'
                 col_offset += 3
             col += 2
+        elif data['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
+            for name, period in periods.items():
+                col = 12 + col_offset
+                ws.cell(row=2, column=col).value = name
+                ws.cell(row=2, column=col).alignment = alignment
+                ws.cell(row=2, column=col).font = headers_font
+                ws.column_dimensions[get_column_letter(col)].width = 30
+
+                start_date = datetime.strftime(period[0], '%b %d, %Y')
+                end_date = datetime.strftime(period[1], '%b %d, %Y')
+                ws.cell(row=3, column=col).value = "{} - {}".format(start_date, end_date)
+                ws.cell(row=3, column=col).alignment = alignment
+                ws.cell(row=3, column=col).font = headers_font
+
+                ws.cell(row=4, column=col).value = "Actual"
+                ws.cell(row=4, column=col).alignment = alignment_right
+                col_offset += 1
+
         header_range = CellRange(min_col=1, min_row=4, max_col=col, max_row=4).coord
         self.style_range(ws, header_range, headers_font, bgcolor)
         return ws
@@ -929,9 +948,15 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                     ws.cell(row=row, column=col+1).value = indicator[actual]
 
                     percent_met = "{}_percent_met".format(k)
-                    ws.cell(row=row, column=col+1).value = indicator[percent_met]
+                    ws.cell(row=row, column=col+2).value = indicator[percent_met]
 
                     col_offset += 3
+            elif context['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
+                for k, v in periods.items():
+                    col = 12 + col_offset
+                    actual = "{}_actual".format(k)
+                    ws.cell(row, col).value = indicator[actual]
+                    col_offset += 1
             row += 1
         return ws
 
