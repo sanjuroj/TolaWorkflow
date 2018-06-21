@@ -865,8 +865,11 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         ws.cell(row=3, column=9).font = headers_font
 
         ws['I4'] = 'Target'
+        ws['I4'].alignment = alignment_right
         ws['J4'] = 'Actual'
+        ws['J4'].alignment = alignment_right
         ws['K4'] = '% Met'
+        ws['K4'].alignment = alignment_right
         periods = data['report_date_ranges']
         col_offset = 0
         col = 0
@@ -888,8 +891,11 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                 ws.cell(row=3, column=col).font = headers_font
 
                 ws.cell(row=4, column=col).value = 'Target'
+                ws.cell(row=4, column=col).alignment = alignment_right
                 ws.cell(row=4, column=col+1).value = 'Actual'
+                ws.cell(row=4, column=col+1).alignment = alignment_right
                 ws.cell(row=4, column=col+2).value = '% Met'
+                ws.cell(row=4, column=col+2).alignment = alignment_right
                 col_offset += 3
             col += 2
         elif data['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
