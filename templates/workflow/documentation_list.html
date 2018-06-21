@@ -75,9 +75,9 @@
                         }},
                 { title: "Project", data: "project__project_name",
                     "defaultContent": "<i>Not set</i>"},
-                { title: "Edit/Delete",
+                { title: "Actions",
                     "mRender": function (data, record, row) {
-                        return '<a href="/workflow/documentation_update/'+row.id+'" class="btn btn-sm btn-info"><i class="fas fa-edit"></i></a><a href="/workflow/documentation_delete/'+row.id+'" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></a>';
+                        return '<div class="text-nowrap"><a href="/workflow/documentation_delete/'+row.id+'" class="btn p-0 pr-4 btn-sm btn-text text-danger"><i class="fas fa-trash-alt"></i>&nbsp;Delete</a><a href="/workflow/documentation_update/'+row.id+'" class="btn p-0 btn-sm btn-text"><i class="fas fa-edit"></i>&nbsp;Edit</a></div>';
                         }
                 }
             ]

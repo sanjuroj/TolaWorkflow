@@ -88,17 +88,17 @@
                             },
                             "defaultContent": "<i>Not set</i>"
                         },
-                    { title: "Contacts",
+                    { title: "",
                         "defaultContent": "<i>Not set</i>",
                         "mRender": function (data, sector, row) {
-                                return '<a href="/workflow/contact_list/'+row.id+'" class="btn btn-sm btn-info">Contacts</a>';
-                            },},
-                    { title: "Delete",
-                        "defaultContent": "<i>Not set</i>",
-                        "mRender": function (data, sector, row) {
-                                return '<a href="/workflow/stakeholder_delete/'+row.id+'" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></a>';
+                                return '<a href="/workflow/stakeholder_delete/'+row.id+'" class="btn btn-sm btn-text text-danger p-0"><i class="fas fa-trash-alt"></i>&nbsp;Delete Stakeholder</a>';
                             },
-                        }
+                        },
+                    { title: "",
+                        "defaultContent": "<i>Not set</i>",
+                        "mRender": function (data, sector, row) {
+                                return '<a href="/workflow/contact_list/'+row.id+'" class="btn btn-sm btn-text p-0"><i class="fas fa-users"></i>&nbsp;Contacts</a>';
+                            },}
                     ]
             } );
 

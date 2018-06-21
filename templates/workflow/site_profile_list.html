@@ -97,15 +97,15 @@
                 <td><a href="/workflow/siteprofile_update/{{ item.id }}">{{ item.type }}</a></td>
                 <td>{{ item.province }}</td>
                 <td>{{ item.district }}</td>
-                <td>
+                <td class="text-nowrap">
                     <a href="/workflow/siteprofile_delete/{{ item.id }}"
-                        class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i>
+                        class="btn btn-sm btn-text p-0 pr-2 text-danger"><i class="fas fa-trash-alt"></i>&nbsp;Delete site
                     </a>
                     <a href="/workflow/site_indicatordata/{{item.id}}/"
-                        class="btn btn-sm btn-info"><i class="fas fa-database"></i>
+                        class="btn btn-sm p-0 pr-2 btn-text"><i class="fas fa-table"></i>&nbsp;Indicator data
                     </a>
                     <a href="/workflow/site_projectscomplete/{{item.id}}/"
-                        class="btn btn-sm btn-dark"><i class="fas fa-tasks"></i>
+                        class="btn btn-sm p-0 btn-text"><i class="fas fa-tasks"></i>&nbsp;Project data
                     </a>
                 </td>
             </tr>
