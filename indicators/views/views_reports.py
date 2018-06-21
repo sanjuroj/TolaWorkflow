@@ -1,7 +1,7 @@
 import bisect
 from collections import OrderedDict
 from dateutil import rrule, parser
-from django.utils import formats
+from django.utils import formats, timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
@@ -805,7 +805,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         report = 'TvA'
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
             report = "Actuals only"
-        filename = 'IPTT {} report {}.xlsx'.format(report, datetime.now().strftime('%b %d, %Y'))
+        filename = 'IPTT {} report {}.xlsx'.format(report, timezone.now().strftime('%b %d, %Y'))
         return filename
 
     def style_range(self, ws, cell_range, font, fill):
