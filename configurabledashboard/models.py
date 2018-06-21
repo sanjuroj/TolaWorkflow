@@ -132,4 +132,3 @@ class CustomDashboard(models.Model):
 class CustomDashboardAdmin(admin.ModelAdmin):
     list_display = ('dashboard_name', 'dashboard_description', 'is_public', 'theme', 'color_palette','create_date', 'edit_date')
     display = 'Custom Dashboard'
-
