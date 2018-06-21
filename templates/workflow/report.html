@@ -63,11 +63,11 @@
                         'orderable':false,
                         'className': 'dt-body-center',
                         'render': function (data, type, row){
-                            return '<div class="btn-group" role="group" aria-label="Edit and delete buttons"><a class="btn btn-sm btn-secondary" href="/workflow/dashboard/project/'+row.id+'"><i class="fas fa-edit"></i></a><a class="btn btn-sm btn-secondary" href="/workflow/projectagreement_detail/'+row.id+'"><i class="fas fa-eye"></li></a></div>';
+                            return '<div class="btn-group" role="group" aria-label="Edit and delete buttons"><a class="btn btn-sm btn-text p-0 pr-2" href="/workflow/dashboard/project/'+row.id+'"><i class="fas fa-edit"></i>&nbsp;Edit</a><a class="btn btn-sm btn-text p-0" href="/workflow/projectagreement_detail/'+row.id+'"><i class="fas fa-eye"></i>&nbsp;View</a></div>';
                     }
                 }],
                 columns: [
-                    { title: "Edit", class: "noExport"},
+                    { title: "", class: "noExport"},
                     { title: "PID", class: "noExport", data: "program__id" },
                     { title: "SID", class: "noExport", data: "approval"},
                     { title: "Program", data: "program__name",
