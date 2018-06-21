@@ -16,7 +16,7 @@ from .forms import ProjectAgreementForm, ProjectAgreementSimpleForm, ProjectAgre
     SiteProfileForm, MonitorForm, BenchmarkForm, BudgetForm, FilterForm, \
     QuantitativeOutputsForm, ChecklistItemForm, StakeholderForm, ContactForm
 
-import pytz
+import pytz # TODO: not used, keeping this import for potential regressions
 
 from django.shortcuts import render
 from django.contrib import messages
@@ -1098,7 +1098,7 @@ class SiteProfileList(ListView):
         getPrograms = Program.objects.filter(funding_status="Funded", country__in=countries)
 
         #this date, 3 months ago, a site is considered inactive
-        inactiveSite = pytz.UTC.localize(timezone.now()) - relativedelta(months=3)
+        inactiveSite = timezone.now() - relativedelta(months=3)
 
         #Filter SiteProfile list and map by activity or program
         if activity_id != 0:
