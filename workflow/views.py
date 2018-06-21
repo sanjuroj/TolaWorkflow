@@ -1098,7 +1098,7 @@ class SiteProfileList(ListView):
         getPrograms = Program.objects.filter(funding_status="Funded", country__in=countries)
 
         #this date, 3 months ago, a site is considered inactive
-        inactiveSite = pytz.UTC.localize(datetime.now()) - relativedelta(months=3)
+        inactiveSite = pytz.UTC.localize(timezone.now()) - relativedelta(months=3)
 
         #Filter SiteProfile list and map by activity or program
         if activity_id != 0:
