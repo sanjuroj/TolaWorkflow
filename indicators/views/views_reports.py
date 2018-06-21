@@ -154,8 +154,10 @@ class IPTT_Mixin(object):
             midline_target = Max(
                 Case(
                     When(
-                        Q(periodictargets__period=PeriodicTarget.MIDLINE),
-                        then=F('periodictargets__target')
+                        Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
+                        then=Subquery(last_data_record.values('periodic_target__target')[:1])
+                        # Q(periodictargets__period=PeriodicTarget.MIDLINE),
+                        # then=F('periodictargets__target')
                     )
                 )
             )
@@ -198,10 +200,10 @@ class IPTT_Mixin(object):
             endline_target = Max(
                 Case(
                     When(
-                        # Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
-                        # then=Subquery(last_data_record.values('periodic_target__target')[:1])
-                        Q(periodictargets__period=PeriodicTarget.ENDLINE),
-                        then=F('periodictargets__target')
+                        Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
+                        then=Subquery(last_data_record.values('periodic_target__target')[:1])
+                        # Q(periodictargets__period=PeriodicTarget.ENDLINE),
+                        # then=F('periodictargets__target')
                     )
                 )
             )
