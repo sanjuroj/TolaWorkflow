@@ -26,10 +26,12 @@ body {
 }*/
 
 #nonfooter {
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
 }
 .report-wide {
-    margin-top: -16px;
+    /* margin-top: -16px; */  /* regressions? */
 }
 
 #footer {

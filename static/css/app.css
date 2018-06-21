@@ -176,12 +176,18 @@ body.page_iptt_table { /* body element for extra specificity */
 }
 .page_iptt_table #id_div_content {
     display: flex;
+    flex-grow: 1;
+    height: 100%;
 }
 .page_iptt_table .popover {
     max-width: 100%; /* Max Width of the popover (depending on the container) */
 }
 .page_iptt_table #footer {
     position: relative;
+}
+.page_iptt_table #id_div_breadcrumb,
+.page_iptt_table .page-title {
+    display: none;
 }
 .iptt_table_wrapper {
     width: 100%;
