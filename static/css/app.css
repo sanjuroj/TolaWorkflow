@@ -578,7 +578,7 @@ input[type=number]::-webkit-outer-spin-button {
 /* START Indicator list page css */
 
 #div-id-indicator-list .card-header {
-    background-color: #54585A;
+    background-color: #54585A !important;
     color: #FFFFFF;
 }
 
