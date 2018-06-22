@@ -36,27 +36,19 @@ from .views.views_reports import (
 )
 
 urlpatterns = [
-    url(r'^home/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$',
-        IndicatorList.as_view(), name='indicator_list'),
+    url(r'^home/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$', IndicatorList.as_view(), name='indicator_list'),
 
-    # where "id" is the primary key of an existing program
-    url(r'^indicator_create/(?P<id>\d+)/$', indicator_create,
-        name='indicator_create'),
+    url(r'^indicator_create/(?P<id>\d+)/$', indicator_create,  name='indicator_create'),
 
-    url(r'^indicator_add/(?P<id>\d+)/$', IndicatorCreate.as_view(),
-        name='indicator_add'),
+    url(r'^indicator_add/(?P<id>\d+)/$', IndicatorCreate.as_view(), name='indicator_add'),
 
-    url(r'^indicator_update/(?P<pk>\d+)/$', IndicatorUpdate.as_view(),
-        name='indicator_update'),
+    url(r'^indicator_update/(?P<pk>\d+)/$', IndicatorUpdate.as_view(),  name='indicator_update'),
 
-    url(r'^indicator_delete/(?P<pk>\d+)/$', IndicatorDelete.as_view(),
-        name='indicator_delete'),
+    url(r'^indicator_delete/(?P<pk>\d+)/$', IndicatorDelete.as_view(), name='indicator_delete'),
 
-    url(r'^periodic_target_delete/(?P<pk>\d+)/$',
-        PeriodicTargetDeleteView.as_view(), name='pt_delete'),
+    url(r'^periodic_target_delete/(?P<pk>\d+)/$', PeriodicTargetDeleteView.as_view(), name='pt_delete'),
 
-    url(r'^periodic_target_generate/(?P<indicator>\d+)/$',
-        PeriodicTargetView.as_view(), name='pt_generate'),
+    url(r'^periodic_target_generate/(?P<indicator>\d+)/$', PeriodicTargetView.as_view(), name='pt_generate'),
 
     url(r'^periodic_target_deleteall/(?P<indicator>\d+)/(?P<deleteall>\w+)/$',
         PeriodicTargetView.as_view(), name='pt_deleteall'),
@@ -64,40 +56,32 @@ urlpatterns = [
     url(r'^collecteddata_add/(?P<program>\d+)/(?P<indicator>\d+)/$',
         CollectedDataCreate.as_view(), name='collecteddata_add'),
 
-    url(r'^collecteddata_import/$', collecteddata_import,
-        name='collecteddata_import'),
+    url(r'^collecteddata_import/$', collecteddata_import,  name='collecteddata_import'),
 
-    url(r'^collecteddata_update/(?P<pk>\d+)/$', CollectedDataUpdate.as_view(),
-        name='collecteddata_update'),
+    url(r'^collecteddata_update/(?P<pk>\d+)/$', CollectedDataUpdate.as_view(), name='collecteddata_update'),
 
-    url(r'^collecteddata_delete/(?P<pk>\d+)/$', CollectedDataDelete.as_view(),
-        name='collecteddata_delete'),
+    url(r'^collecteddata_delete/(?P<pk>\d+)/$', CollectedDataDelete.as_view(), name='collecteddata_delete'),
 
-    url(r'^report/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$',
-        indicator_report, name='indicator_report'),
+    url(r'^report/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$', indicator_report, name='indicator_report'),
 
     url(r'^tvareport/$', TVAReport.as_view(), name='tvareport'),
 
     url(r'^tvaprint/(?P<program>\d+)/$', TVAPrint.as_view(), name='tvaprint'),
 
-    url(r'^disrep/(?P<program>\d+)/$', DisaggregationReport.as_view(),
-        name='disrep'),
+    url(r'^disrep/(?P<program>\d+)/$', DisaggregationReport.as_view(), name='disrep'),
 
-    url(r'^disrepprint/(?P<program>\d+)/$', DisaggregationPrint.as_view(),
-        name='disrepprint'),
+    url(r'^disrepprint/(?P<program>\d+)/$', DisaggregationPrint.as_view(), name='disrepprint'),
 
     url(r'^report_table/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$',
         IndicatorReport.as_view(), name='indicator_table'),
 
-    url(r'^program_report/(?P<program>\d+)/$', programIndicatorReport,
-        name='programIndicatorReport'),
+    url(r'^program_report/(?P<program>\d+)/$', programIndicatorReport,  name='programIndicatorReport'),
 
 
     url(r'^export/(?P<id>\d+)/(?P<program>\d+)/(?P<indicator_type>\d+)/$',
         IndicatorExport.as_view(), name='indicator_export'),
 
-    url(r'^service/(?P<service>[-\w]+)/service_json/', service_json,
-        name='service_json'),
+    url(r'^service/(?P<service>[-\w]+)/service_json/', service_json, name='service_json'),
 
     url(r'^collected_data_table/(?P<indicator>\d+)/(?P<program>\d+)/',
         collected_data_view, name='collected_data_view'),
@@ -124,8 +108,11 @@ urlpatterns = [
         name='collecteddata_report_data_export'),
 
     url(r'^iptt_quickstart/', IPTTReportQuickstartView.as_view(), name='iptt_quickstart'),
+
     url(r'^iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ReportView.as_view(), name='iptt_report'),
+
     url(r'^iptt_redirect/(?P<program_id>\d+)/$', IPTT_ReportIndicatorsWithVariedStartDate.as_view(),
         name='iptt_redirect'),
+
     url(r'^iptt_excel/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ExcelExport.as_view(), name='iptt_excel'),
 ]
