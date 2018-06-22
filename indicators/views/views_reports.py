@@ -880,19 +880,32 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         if data['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
             for name, period in periods.items():
                 col = 12 + col_offset
-                # process period name
-                ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col+2)
-                ws.cell(row=2, column=col).value = name
-                ws.cell(row=2, column=col).alignment = alignment
-                ws.cell(row=2, column=col).font = headers_font
 
                 # processs period date ranges
-                start_date = datetime.strftime(period[0], '%b %d, %Y')
-                end_date = datetime.strftime(period[1], '%b %d, %Y')
-                ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col+2)
-                ws.cell(row=3, column=col).value = "{} - {}".format(start_date, end_date)
-                ws.cell(row=3, column=col).alignment = alignment
-                ws.cell(row=3, column=col).font = headers_font
+                try:
+                    start_date = datetime.strftime(period[0], '%b %d, %Y')
+                    end_date = datetime.strftime(period[1], '%b %d, %Y')
+
+                    # process period name
+                    ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col+2)
+                    ws.cell(row=2, column=col).value = name
+                    ws.cell(row=2, column=col).alignment = alignment
+                    ws.cell(row=2, column=col).font = headers_font
+
+                    ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col+2)
+                    ws.cell(row=3, column=col).value = "{} - {}".format(start_date, end_date)
+                    ws.cell(row=3, column=col).alignment = alignment
+                    ws.cell(row=3, column=col).font = headers_font
+
+                except TypeError:
+                    start_date = ''
+                    end_date = ''
+                    ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col+2)
+                    ws.cell(row=3, column=col).value = name
+                    ws.cell(row=3, column=col).alignment = alignment
+                    ws.cell(row=3, column=col).font = headers_font
+
+
 
                 ws.cell(row=4, column=col).value = 'Target'
                 ws.cell(row=4, column=col).alignment = alignment_right
