@@ -419,7 +419,11 @@ class IPTT_Mixin(object):
 
             end_date = start_date + relativedelta(months=+num_months_in_period) + relativedelta(days=-1)
             # print('start_date={}, end_date={}'.format(start_date, end_date))
-            timeperiods["{} {}".format(period_name, i)] = [start_date, end_date]
+            if frequency == Indicator.MONTHLY:
+                period_name = datetime.strftime(start_date, "%b %Y")
+                timeperiods["{}".format(period_name)] = [start_date, end_date]
+            else:
+                timeperiods["{} {}".format(period_name, i)] = [start_date, end_date]
 
         # save the unfiltered targetperiods into the global variable so that
         # it be used to populate the periods dropdown
