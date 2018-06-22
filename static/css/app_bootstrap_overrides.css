@@ -397,3 +397,8 @@ input[type="checkbox"].form-control:focus {
 .hiddenRow > td {
     background: #f5f5f5;
 }
+
+/* Overrides for cards */
+.card-header {
+    background: rgba(0,0,0,0.1) !important;
+}
