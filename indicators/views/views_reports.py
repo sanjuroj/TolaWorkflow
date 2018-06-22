@@ -576,7 +576,9 @@ class IPTT_Mixin(object):
             # process lop_percent_met
             try:
                 ind['lop_percent_met'] = "{}%".format(formatFloat(round(lop_actual / lop_target * 100)))
-            except (TypeError, ZeroDivisionError):
+            except TypeError:
+                ind['lop_percent_met'] = ''
+            except ZeroDivisionError:
                 ind['lop_percent_met'] = _('N/A')
 
             if period in [Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL, Indicator.QUARTERLY,
@@ -643,8 +645,10 @@ class IPTT_Mixin(object):
                             elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
                                 percent_met_val = formatFloat(round(float(ind["{}_last".format(k)]) / target * 100))
                                 ind[percent_met] = "{}%".format(percent_met_val)
-                        except (TypeError, KeyError, ZeroDivisionError):
+                        except (TypeError, KeyError):
                             ind[percent_met] = ''
+                        except ZeroDivisionError:
+                            ind[percent_met] = _("N/A")
         return indicators
 
     def prepare_iptt_period_dateranges(self, period, periods_date_ranges, from_or_to):
