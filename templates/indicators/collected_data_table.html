@@ -14,6 +14,18 @@
     $("#id_indicator_data_span_count_" + `{{indicator.id}}`).text("{% trans 'Results' %} ({{ indicator.collecteddata_set.count|default:0 }})" );
 </script>
 
+<div class="p-3">
+    <h3 class="is-shown-in-modals">
+        {{ indicator.name }}
+        <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close">
+              <!-- <span aria-hidden="true" style="font-weight: 100; font-size: 2rem;">&times;</span> -->
+              <span aria-hidden="true" class="x-modal">&times;</span>
+        </button>
+    </h3>
 {% if indicator.collecteddata_set.count > 0 or indicator.target_frequency %}
     <table class="table table-sm my-2 collected-data-table">
         <thead>
@@ -293,3 +305,4 @@
         <i class="fas fa-bullseye"></i>&nbsp;{% trans "This indicator has no targets." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link btn btn-success"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add targets" %}</a>
     </div>
 {% endif %}
+</div>

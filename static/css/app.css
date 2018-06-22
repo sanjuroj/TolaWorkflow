@@ -904,13 +904,10 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 /* restyle the Results table on the IPTT */
-.page_iptt_table .popover {
-    max-width: 50%;
-}
-.page_iptt_table .popover .btn-add {
+.page_iptt_table .modal-dialog .collecteddata-link {
     display: none;
 }
-.page_iptt_table .popover .collecteddata-table--actions {
+.page_iptt_table .modal-dialog .collecteddata-table--actions {
     background: transparent;
 }
 
@@ -941,4 +938,15 @@ input[type=number]::-webkit-outer-spin-button {
 }
 .input-group-addon {
     margin: 0 0.5rem;
+}
+
+/* conditional styling to hide modal titles in nonmodal contexts.
+used on collected data table in IPTT */
+.is-shown-in-modals {
+    display: none;
+}
+.modal-dialog .is-shown-in-modals {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
 }

@@ -163,19 +163,6 @@
     </div>
 
     <script>
-        // initialize popovers
-        $(function () {
-          $('button.indicator-ajax-popup').popover({ // [data-toggle="popover"]
-            html: true,
-            container: 'body',
-            "content": function () {
-              const indicatorId = $(this).data('indicatorid');
-              const url = `/indicators/collected_data_table/${indicatorId}/0/?edit=false`;
-              const serverResponse = $.ajax({ url: url, dataType: 'html', async: false }).responseText;
-              return serverResponse;
-            }
-          })
-        })
 
         // Open the IndicatorUpdate Form in a modal
         $("#id_div_top_iptt_report").on("click", ".indicator-link", function (e) {
@@ -190,7 +177,21 @@
           $("#indicator_modal_content").load(url);
           $("#indicator_modal_div").modal('show');
 
+
         });
+
+        // Open the Collected Data Records in a modal
+        $("#id_div_top_iptt_report").on("click", ".indicator-ajax-popup", function (e) {
+          e.preventDefault();
+          const indicatorId = $(this).data('indicatorid');
+          const url = `/indicators/collected_data_table/${indicatorId}/0/?edit=false`;
+          $("#indicator_modal_content").empty();
+          $("#modalmessages").empty();
+          $("#indicator_modal_content").load(url);
+          $("#indicator_modal_div").modal('show');
+
+        });
+
       </script>
 
     {% include 'indicators/indicator_form_common_js.html' %}
