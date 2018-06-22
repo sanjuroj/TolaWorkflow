@@ -6,18 +6,24 @@
 
 {% block content %}
 
-<div class="dropdown">
-    {% include "workflow/filter.html" %}
+<div class="text-right">
     <a href="/workflow/dashboard/project/0/" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans 'Add project' %}</a>
 </div>
+
+{% include "workflow/filter.html" %}
+
 <div>
 {% if getDashboard %}
   {% ifnotequal status 'none' %}
-    <p>Filtered by (Status): {{ status|default_if_none:'' }}</p>
+  <div class="my-4 text-muted">
+      <p><em>Filtered by <b>(Status): {{ status|default_if_none:'' }}</b></em></p>
+  </div>
   {% endifnotequal %}
 
   {% if filtered_program %}
-    <p>Filtered by (Program): {{filtered_program|default_if_none:''}}</p>
+  <div class="my-4 text-muted">
+      <p><em>Filtered by <b>(Program): {{filtered_program|default_if_none:''}}</b></em></p>
+  </div>
   {% endif %}
     {% for program in getDashboard %}
         {% if program.agreement.all %}
