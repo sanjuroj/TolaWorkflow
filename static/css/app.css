@@ -942,3 +942,14 @@ input[type=number]::-webkit-outer-spin-button {
 .input-group-addon {
     margin: 0 0.5rem;
 }
+
+/* conditional styling to hide modal titles in nonmodal contexts.
+used on collected data table in IPTT */
+.is-shown-in-modals {
+    display: none;
+}
+.modal-dialog .is-shown-in-modals {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+}
