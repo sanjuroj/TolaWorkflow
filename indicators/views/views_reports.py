@@ -577,7 +577,7 @@ class IPTT_Mixin(object):
             try:
                 ind['lop_percent_met'] = "{}%".format(formatFloat(round(lop_actual / lop_target * 100)))
             except (TypeError, ZeroDivisionError):
-                ind['lop_percent_met'] = ''
+                ind['lop_percent_met'] = _('N/A')
 
             if period in [Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL, Indicator.QUARTERLY,
                           Indicator.MONTHLY, Indicator.MID_END]:

@@ -61,19 +61,22 @@
                             {% endif %}
                         </td>
                         <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} align="right" class="pr-4">
-                            {% if indicator.unit_of_measure_type == 1 %}
-                                {% if indicator.is_cumulative == True %}
-                                    {% widthratio item.cumulative_sum item.target 100 as percent_met %}
-                                    {% if percent_met %} {{ percent_met }}% {% endif %}
+                            {% if item.target %}
+                                {% if indicator.unit_of_measure_type == 1 %}
+                                    {% if indicator.is_cumulative == True %}
+                                        {% widthratio item.cumulative_sum item.target 100 as percent_met %}
+                                        {% if percent_met %} {{ percent_met }}% {% endif %}
+                                    {% else %}
+                                        {% widthratio item.achieved_sum item.target 100 as percent_met %}
+                                        {% if percent_met %} {{ percent_met }}% {% endif %}
+                                    {% endif %}
                                 {% else %}
-                                    {% widthratio item.achieved_sum item.target 100 as percent_met %}
+                                    {% widthratio item.last_data_row item.target 100 as percent_met %}
                                     {% if percent_met %} {{ percent_met }}% {% endif %}
                                 {% endif %}
                             {% else %}
-                                {% widthratio item.last_data_row item.target 100 as percent_met %}
-                                {% if percent_met %} {{ percent_met }}% {% endif %}
+                                {% trans 'N/A' %}
                             {% endif %}
-
                         </td>
                     {% endwith %}
                 {% endifchanged %}
