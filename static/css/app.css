@@ -904,13 +904,10 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 /* restyle the Results table on the IPTT */
-.page_iptt_table .popover {
-    max-width: 50%;
-}
-.page_iptt_table .popover .btn-add {
+.page_iptt_table .modal-dialog .collecteddata-link {
     display: none;
 }
-.page_iptt_table .popover .collecteddata-table--actions {
+.page_iptt_table .modal-dialog .collecteddata-table--actions {
     background: transparent;
 }
 
