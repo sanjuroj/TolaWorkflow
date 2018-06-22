@@ -1497,6 +1497,7 @@ class DisaggregationReportMixin(object):
         context['getPrograms'] = programs
         context['getIndicators'] = indicators
         context['program_selected'] = program_selected
+        context['program_name'] = program_selected.name
         return context
 
 
