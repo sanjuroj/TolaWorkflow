@@ -484,17 +484,17 @@ class IPTT_Mixin(object):
     def _get_filters(self, data):
         filters = {}
         try:
-            filters['level__in'] = data['level']
+            filters['level__in'] = data['level'] if isinstance(data['level'], list) else [data['level']]
         except KeyError:
             pass
 
         try:
-            filters['sector__in'] = data['sector']
+            filters['sector__in'] = data['sector'] if isinstance(data['sector'], list) else [data['sector']]
         except KeyError:
             pass
 
         try:
-            filters['indicator_type__in'] = data['ind_type']
+            filters['indicator_type__in'] = data['ind_type'] if isinstance(data['ind_type'], list) else [data['ind_typ']]
         except KeyError:
             pass
 
