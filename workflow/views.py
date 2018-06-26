@@ -10,19 +10,18 @@ from .models import Program, Country, Province, AdminLevelThree, District, Proje
 from formlibrary.models import TrainingAttendance, Distribution
 from indicators.models import CollectedData, ExternalService
 from django.utils import timezone
-
+from django.utils.datastructures import MultiValueDictKeyError
 
 from .forms import ProjectAgreementForm, ProjectAgreementSimpleForm, ProjectAgreementCreateForm, ProjectCompleteForm, ProjectCompleteSimpleForm, ProjectCompleteCreateForm, DocumentationForm, \
     SiteProfileForm, MonitorForm, BenchmarkForm, BudgetForm, FilterForm, \
     QuantitativeOutputsForm, ChecklistItemForm, StakeholderForm, ContactForm
 
-import pytz
+import pytz # TODO: not used, keeping this import for potential regressions
 
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.db.models import Count
-from django.db.models import Q
+from django.db.models import Count, Q, Max
 from tables import ProjectAgreementTable
 from filters import ProjectAgreementFilter
 import json
@@ -44,6 +43,10 @@ from tola.util import getCountry, emailGroup, group_excluded, group_required
 from mixins import AjaxableResponseMixin
 from export import ProjectAgreementResource, StakeholderResource
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+
 APPROVALS = (
     ('in_progress',('in progress')),
     ('awaiting_approval', 'awaiting approval'),
@@ -53,6 +56,7 @@ APPROVALS = (
 
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from dateutil import parser
 from django.core.serializers.json import DjangoJSONEncoder
 
 
@@ -1083,8 +1087,7 @@ class SiteProfileList(ListView):
     def dispatch(self, request, *args, **kwargs):
         if request.GET.has_key('report'):
             template_name = 'workflow/site_profile_report.html'
-        else:
-            template_name = 'workflow/site_profile_list.html'
+
         return super(SiteProfileList, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -1092,27 +1095,43 @@ class SiteProfileList(ListView):
         program_id = int(self.kwargs['program_id'])
 
         countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries)
+        getPrograms = Program.objects.filter(funding_status="Funded", country__in=countries)
 
         #this date, 3 months ago, a site is considered inactive
-        inactiveSite = pytz.UTC.localize(datetime.now()) - relativedelta(months=3)
+        inactiveSite = timezone.now() - relativedelta(months=3)
 
         #Filter SiteProfile list and map by activity or program
         if activity_id != 0:
-            getSiteProfile = SiteProfile.objects.all().prefetch_related('country','district','province').filter(projectagreement__id=activity_id).distinct()
+            getSiteProfile = SiteProfile.objects.prefetch_related(\
+                    'country','district','province')\
+                .filter(projectagreement__id=activity_id)\
+                .distinct()
         elif program_id != 0:
-            getSiteProfile = SiteProfile.objects.all().prefetch_related('country','district','province').filter(Q(projectagreement__program__id=program_id) | Q(collecteddata__program__id=program_id)).distinct()
+            getSiteProfile = SiteProfile.objects.prefetch_related(\
+                    'country','district','province')\
+                .filter(Q(projectagreement__program__id=program_id)\
+                        | Q(collecteddata__program__id=program_id))\
+                .distinct()
         else:
-            getSiteProfile = SiteProfile.objects.all().prefetch_related('country','district','province').filter(country__in=countries).distinct()
+            getSiteProfile = SiteProfile.objects.prefetch_related(\
+                    'country','district','province')\
+                .filter(country__in=countries)\
+                .distinct()
         if request.method == "GET" and "search" in request.GET:
-            """
-             fields = ('name', 'office')
-            """
-            getSiteProfile = SiteProfile.objects.all().filter(Q(country__in=countries), Q(name__contains=request.GET["search"]) | Q(office__name__contains=request.GET["search"]) | Q(type__profile__contains=request.GET['search']) |
-                                                            Q(province__name__contains=request.GET["search"]) | Q(district__name__contains=request.GET["search"]) | Q(village__contains=request.GET['search']) |
-                                                             Q(projectagreement__project_name__contains=request.GET["search"]) | Q(projectcomplete__project_name__contains=request.GET['search'])).select_related().distinct()
-        #paginate site profile list
+            getSiteProfile = SiteProfile.objects.filter(\
+                    Q(country__in=countries),\
+                    Q(name__contains=request.GET["search"])\
+                    | Q(office__name__contains=request.GET["search"])\
+                    | Q(type__profile__contains=request.GET['search'])\
+                    | Q(province__name__contains=request.GET["search"])\
+                    | Q(district__name__contains=request.GET["search"])\
+                    | Q(village__contains=request.GET['search'])
+                    | Q(projectagreement__project_name__contains=request.GET["search"])\
+                    | Q(projectcomplete__project_name__contains=request.GET['search']))\
+                .select_related()\
+                .distinct()
 
+        #paginate site profile list
         default_list = 10 # default number of site profiles per page
         user_list = request.GET.get('user_list') # user defined number of site profiles per page, 10, 20, 30
 
@@ -1120,17 +1139,23 @@ class SiteProfileList(ListView):
             default_list = int(user_list)
 
         paginator = Paginator(getSiteProfile, default_list)
-
         page = request.GET.get('page')
-
         try:
             getSiteProfile = paginator.page(page)
         except PageNotAnInteger:
             getSiteProfile = paginator.page(1)
         except EmptyPage:
             getSiteProfile = paginator.page(paginator.num_pages)
-
-        return render(request, self.template_name, {'inactiveSite':inactiveSite,'default_list':default_list,'getSiteProfile':getSiteProfile,'project_agreement_id': activity_id,'country': countries,'getPrograms':getPrograms, 'form': FilterForm(), 'helper': FilterForm.helper})
+        return render(request, self.template_name, {
+                'inactiveSite': inactiveSite,
+                'default_list': default_list,
+                'getSiteProfile':getSiteProfile,
+                'project_agreement_id': activity_id,
+                'country': countries,
+                'getPrograms':getPrograms,
+                'form': FilterForm(),
+                'helper': FilterForm.helper,
+                'user_list': user_list})
 
 
 class SiteProfileReport(ListView):
@@ -1503,9 +1528,6 @@ class BenchmarkDelete(AjaxableResponseMixin, DeleteView):
 
 
 class ContactList(ListView):
-    """
-    Get Contacts
-    """
     model = Contact
     template_name = 'workflow/contact_list.html'
 
@@ -2238,33 +2260,24 @@ class Report(View, AjaxableResponseMixin):
     project agreement list report
     """
     def get(self, request, *args, **kwargs):
-
         countries=getCountry(request.user)
-
         if int(self.kwargs['pk']) != 0:
-            getAgreements = ProjectAgreement.objects.all().filter(program__id=self.kwargs['pk'])
+            getAgreements = ProjectAgreement.objects.filter(program__id=self.kwargs['pk'])
 
         elif self.kwargs['status'] != 'none':
-            getAgreements = ProjectAgreement.objects.all().filter(approval=self.kwargs['status'])
+            getAgreements = ProjectAgreement.objects.filter(approval=self.kwargs['status'])
         else:
             getAgreements = ProjectAgreement.objects.select_related().filter(program__country__in=countries)
 
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries).distinct()
-
+        getPrograms = Program.objects.filter(funding_status="Funded", country__in=countries).distinct()
         filtered = ProjectAgreementFilter(request.GET, queryset=getAgreements)
         table = ProjectAgreementTable(filtered.queryset)
         table.paginate(page=request.GET.get('page', 1), per_page=20)
 
         if request.method == "GET" and "search" in request.GET:
-            #list1 = list()
-            #for obj in filtered:
-            #    list1.append(obj)
-            """
-             fields = 'program','community'
-            """
-            getAgreements = ProjectAgreement.objects.filter(
-                                               Q(project_name__contains=request.GET["search"]) |
-                                               Q(activity_code__contains=request.GET["search"]))
+            getAgreements = ProjectAgreement.objects.filter(\
+                      Q(project_name__contains=request.GET["search"])\
+                    | Q(activity_code__contains=request.GET["search"]))
 
 
         if request.GET.get('export'):
@@ -2275,7 +2288,13 @@ class Report(View, AjaxableResponseMixin):
 
 
         # send the keys and vars
-        return render(request, "workflow/report.html", {'country': countries, 'form': FilterForm(), 'filter': filtered, 'helper': FilterForm.helper, 'APPROVALS': APPROVALS, 'getPrograms': getPrograms})
+        return render(request, "workflow/report.html", {
+                      'country': countries,
+                      'form': FilterForm(),
+                      'filter': filtered,
+                      'helper': FilterForm.helper,
+                      'APPROVALS': APPROVALS,
+                      'getPrograms': getPrograms})
 
 
 class ReportData(View, AjaxableResponseMixin):
@@ -2455,4 +2474,26 @@ class DocumentationListObjects(View, AjaxableResponseMixin):
 
         return JsonResponse(final_dict, safe=False)
 
+def reportingperiod_update(request, pk):
+    program = Program.objects.get(pk=pk)
+    dated = parser.parse(request.POST['reporting_period_end'])
 
+    # In some cases the start date input will be disabled and won't come through POST
+    try:
+        program.reporting_period_start = parser.parse(request.POST['reporting_period_start'])
+    except MultiValueDictKeyError as e:
+        pass
+    program.reporting_period_end = parser.parse(request.POST['reporting_period_end'])
+    program.save()
+    return JsonResponse({
+        'msg': 'success',
+        'program_id': pk,
+        'rptstart': program.reporting_period_start,
+        'rptend': program.reporting_period_end, })
+
+
+@api_view(['GET'])
+def dated_target_info(request, pk):
+    return Response({
+        'max_start_date': Program.objects.filter(id=pk).annotate(
+            ptd=Max('indicator__periodictargets__start_date')).values_list('ptd', flat=True)[0]})

@@ -1,9 +1,12 @@
 from .models import *
+import dateutil
+import datetime
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from import_export.admin import ImportExportModelAdmin, ExportMixin
-from tola.util import getCountry
+from tola.util import getCountry, get_GAIT_data
 from admin_report.mixins import ChartReportAdmin
+
 
 
 # Resource for CSV export
@@ -138,6 +141,36 @@ class ProgramAdmin(admin.ModelAdmin):
     search_fields = ('name','gaitid')
     list_filter = ('funding_status','country','budget_check','funding_status')
     display = 'Program'
+    readonly_fields = ('start_date', 'end_date', 'reporting_period_start', 'reporting_period_end', )
+
+    # Non-destructively save the GAIT start and end dates based on the value entered in the ID field.
+    # Non-destructively populate the reporting start and end dates based on the GAIT dates.
+    def save_model(self, request, obj, form, change):
+        gait_data = get_GAIT_data([obj.gaitid])
+        if len(gait_data) == 1:
+            if not obj.start_date:
+                try:
+                    obj.start_date = dateutil.parser.parse(gait_data[0]['start_date']).date()
+                except TypeError:
+                    program.start_date = None
+
+            if not obj.end_date:
+                try:
+                    obj.end_date = dateutil.parser.parse(gait_data[0]['end_date']).date()
+                except TypeError:
+                    program.end_date = None
+
+            if not obj.reporting_period_start:
+                obj.reporting_period_start = obj.start_date
+
+            if not obj.reporting_period_end:
+                if obj.end_date is None:
+                    obj.reporting_end_date = None
+                else:
+                    next_month = obj.end_date.replace(day=28) + datetime.timedelta(days=4)
+                    obj.reporting_period_end = obj.end_date - datetime.timedelta(days=next_month.day)
+
+        super(ProgramAdmin, self).save_model(request, obj, form, change)
 
 
 class ApprovalAuthorityAdmin(admin.ModelAdmin):

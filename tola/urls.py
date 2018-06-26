@@ -1,7 +1,18 @@
 from tola import views
 from tola.views import *
-from feed.views import *
+from feed.views import (
+    UserViewSet, ProgramViewSet, SectorViewSet, ProjectTypeViewSet, SiteProfileViewSet, OfficeViewSet,
+    CountryViewSet, AgreementViewSet, CompleteViewSet, IndicatorViewSet, ReportingFrequencyViewSet,
+    TolaUserViewSet, IndicatorTypeViewSet, ObjectiveViewSet, DisaggregationTypeViewSet, LevelViewSet,
+    ExternalServiceViewSet, ExternalServiceRecordViewSet, StrategicObjectiveViewSet, StakeholderViewSet,
+    StakeholderTypeViewSet, CapacityViewSet, EvaluateViewSet, ProfileTypeViewSet, ProvinceViewSet,
+    DistrictViewSet, AdminLevelThreeViewSet, VillageViewSet, ContactViewSet, DocumentationViewSet,
+    CollectedDataViewSet, TolaTableViewSet, DisaggregationValueViewSet, ProjectAgreementViewSet,
+    LoggedUserViewSet, ChecklistViewSet, OrganizationViewSet, PogramIndicatorReadOnlyViewSet,
+    PeriodicTargetReadOnlyViewSet, ProgramTargetFrequencies
+)
 from django.conf.urls import include, url
+# Import i18n_patterns
 from django.views.generic import TemplateView
 from rest_framework import routers
 from django.conf import settings
@@ -15,12 +26,13 @@ from tola import views as tolaviews
 from django.contrib import admin
 admin.autodiscover()
 admin.site.site_header = 'Tola Activity administration'
+from workflow.views import dated_target_info
 
 #REST FRAMEWORK
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'programs', ProgramViewSet)
-router.register(r'sector', SectorViewSet)
+router.register(r'sector', SectorViewSet, base_name='sectors')
 router.register(r'projecttype', ProjectTypeViewSet)
 router.register(r'office', OfficeViewSet)
 router.register(r'siteprofile', SiteProfileViewSet)
@@ -57,18 +69,23 @@ router.register(r'checklist', ChecklistViewSet)
 router.register(r'organization', OrganizationViewSet)
 router.register(r'pindicators', PogramIndicatorReadOnlyViewSet, base_name='pindicators')
 router.register(r'periodictargets', PeriodicTargetReadOnlyViewSet, base_name='periodictargets')
-
+router.register(r'programtargetfrequencies', ProgramTargetFrequencies, base_name='programtargetfrequencies')
 
 urlpatterns = [ # rest framework
                 url(r'^api/', include(router.urls)),
                 url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
                 url(r'^api-token-auth/', auth_views.obtain_auth_token),
+                url(r'^bootstrap/', TemplateView.as_view(template_name="bootstrap4.html")),
+                url(r'^datedtargetinfo/(?P<pk>\w+)/$', dated_target_info, name='datedtargetinfo'),
+                # internationalization
+                url(r'^i18n/', include('django.conf.urls.i18n')),
 
                 # index
                 url(r'^$', views.index, name='index'),
                 # enable the admin:
                 url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
                 url(r'^admin/', include(admin.site.urls)),
+
                 url(r'^(?P<selected_countries>\w+)/$', views.index, name='index'),
 
                 # index
@@ -113,6 +130,7 @@ urlpatterns = [ # rest framework
                 url(r'^bookmark_update/(?P<pk>\w+)/$', BookmarkUpdate.as_view(), name='bookmark_update'),
                 url(r'^bookmark_delete/(?P<pk>\w+)/$', BookmarkDelete.as_view(), name='bookmark_delete'),
 
+
                 # Auth backend URL's
                 url('', include('django.contrib.auth.urls', namespace='auth')),
                 #url('', include('social.apps.django_app.urls', namespace='social')),
@@ -120,4 +138,3 @@ urlpatterns = [ # rest framework
                 #url(r'^oauth/', include('social_django.urls', namespace='social')),
 
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

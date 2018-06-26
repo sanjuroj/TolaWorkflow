@@ -28,7 +28,7 @@ class Command(BaseCommand):
         for ind in indicators:
             collecteddata_count = ind.collecteddata_set.all().count()
             if collecteddata_count == 0:
-                ind.periodictarget_set.all().delete()
+                ind.periodictargets.all().delete()
                 self.stdout.write(self.style.SUCCESS("%s, only deleted periodic_targets because data count is %s" % (ind.id, collecteddata_count)))
             else:
                 try:
@@ -36,7 +36,7 @@ class Command(BaseCommand):
                     ind.collecteddata_set.update(periodic_target=None)
 
                     # remove all existing periodic targets
-                    ind.periodictarget_set.all().delete()
+                    ind.periodictargets.all().delete()
 
                     # just checking to see if lop_target is a numeric value; if it is not then exception will be raised.
                     lop = float(ind.lop_target)
@@ -60,4 +60,3 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR('%s, LOP [%s] is missing or not numeric.' % (ind.id, ind.lop_target)))
                 except Exception as e:
                     self.stdout.write(self.style.ERROR("%s, Error occured: %s" % (ind.id, e)))
-

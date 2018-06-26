@@ -1,97 +1,112 @@
 {% extends "base.html" %}
-{% block page_title %}Program Indicators{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Program indicators" %} | {% endblock %}
+{% block page_title %}{% trans "Program indicators" %}{% endblock %}
 
 {% block content %}
-<style>
-#div_id_baseline_na {
-    padding-top: 0;
-    margin-top: 10px;
-}
-</style>
-<script>
-/*
-*  Load the collected data for an indicator on the results page
-*/
-function loadCollected(indicator,program){
-    var url = '/indicators/collected_data_table/' + indicator + '/' + program + '/';
-    var div_name = '#hidden-indicator-' + indicator;
-    $(div_name).empty();
-    $.get(url, function(data){
-        $(div_name).html(data);
-        $("body").removeClass("modal-open");
-    });
-};
 
-/*
-*  Load the collected data for an indicator on the results page
-*/
-function loadIndicators(program, indicator, type){
-    var program;
-    $.get('/indicators/program_indicators/' + program + '/' + indicator + '/' + type + '/', function(data){
-        $('#hidden-' + program).html(data);
-        $("body").removeClass("modal-open");
-      });
-    $('#hidden-' + program).on('shown', function () {
-       $(".icon-chevron-down").removeClass("icon-chevron-down").addClass("icon-chevron-up");
-    });
-
-    $('#hidden-' + program).on('hidden', function () {
-       $(".icon-chevron-up").removeClass("icon-chevron-up").addClass("icon-chevron-down");
-    });
-};
-</script>
-
-{% include "indicators/filter.html"%}
+{% include "indicators/filter.html" %}
 <br>
-<div id="toplevel_div">
-<!-- Default panel contents -->
+<div id="div-id-indicator-list">
     {% for program in programs %}
-        <div class='panel panel-default'>
-            <div class='panel-heading'>
-                <h4>{{ program.name|truncatechars:85 }}
-                    <span style="float: right;" class="btn-group" role="group">
-                        <a href="/indicators/indicator_create/{{ program.id }}/" class="btn btn-xs btn-success">New Indicator</a>
-                        <a href="/indicators/program_report/{{ program.id }}/" class="btn btn-xs btn-info">Grid/Print Report</a>
+        <div class='card border-0'>
+            <div class='card-header d-flex justify-content-between align-items-center'>
+                <span class="program-name fontsize-130">{{ program.name|truncatechars:140 }}</span>
+                {% if program.reporting_period_start and program.reporting_period_end %}
+                    <span>
+                        <a href="{% url 'indicator_create' program.id %}" role="button" class="btn btn-link btn-white"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
                     </span>
-                </h4>
+                {% endif %}
             </div>
-            {% if not program.indicator_set.all %}
-                <div class='panel-body'>
-                    <h4>No Indicators have been entered for this program</h4>
-                    <p>Add a new indicator via the "<a href="/indicators/indicator_create/{{ program.id }}/">New Indicator</a>" button above.</p>
-                </div>
-            {% else %}
-                <div class='panel-body'>
-                    <a id="id_btnOpenindicatorsForProgramId_{{ program.id}}" onclick="loadIndicators({{ program.id }}, {{ indicator_id }}, {{ type_id }})" class="btn btn-sm btn-success" data-toggle="collapse" data-target="#hidden-{{ program.id }}">{{ program.indicator_count }} Indicators </a>
-                </div>
-                <div id="hidden-{{ program.id }}" class="accordian-body collapse">
+            <div class='card-body d-flex justify-content-between align-items-center'>
+                {% if not program.reporting_period_start or not program.reporting_period_end %}
+                    <div class="card-title paddingleft-125 m-0 fontsize-130">
+                        {% trans "Before adding indicators and performance results, we need to know your program's " %}
+                        <a
+                            class="pl-1"
+                            href="#"
+                            data-toggle="modal"
+                            data-program="{{ program.id }}"
+                            data-progstart="{{ program.start_date }}"
+                            data-progend="{{ program.end_date }}"
+                            data-rptstart="{{ program.reporting_period_start }}"
+                            data-rptend="{{ program.reporting_period_end }}"
+                            data-target="#id_reporting_period_modal">
+                                {% trans "reporting start and end dates." %}
+                        </a>
+                    </div>
+                {% elif not program.indicator_set.all %}
+                    <div class="card-title paddingleft-125 m-0 fontsize-130">{% trans "No Indicators have been entered for this program" %}</div>
+                {% else %}
+                    <a
+                        id="id_btnOpenindicatorsForProgramId_{{ program.id }}"
+                        href="#"
+                        onclick="loadIndicators({{ program.id }}, {{ indicator_id }}, {{ type_id }})"
+                        class="fontsize-130 btn btn-link p-0 font-weight-normal"
+                        data-toggle="collapse"
+                        data-target="#hidden-{{ program.id }}">
+                            <!-- Need the div to make ensure rotating symbol doesn't push text to the right -->
+                            <div class="div-expand-symbol"><i class="fas fa-caret-right"></i></div>
+                            {{ program.indicator_count }}
+                            {% if program.indicator_count == 1 %}
+                                {% trans "program indicator" %}
+                            {% else %}
+                                {% trans "program indicators" %}
+                            {% endif %}
+                    </a>
+                {% endif %}
+                {% if program.reporting_period_start and program.reporting_period_end %}
+                    <span class="d-flex align-items-center">
+                        <a class="pr-1" href="{% url 'programIndicatorReport' program.id %}">{% trans 'Indicator plan' %}</a>
+                        |
+                        <a
+                            id="id_link_reporting_period_{{program.id}}"
+                            class="pl-1"
+                            href="#"
+                            data-toggle="modal"
+                            data-program="{{ program.id }}"
+                            data-progstart="{{ program.start_date }}"
+                            data-progend="{{ program.end_date }}"
+                            data-rptstart="{{ program.reporting_period_start }}"
+                            data-rptend="{{ program.reporting_period_end }}"
+                            data-target="#id_reporting_period_modal">
+                                {% trans 'Reporting period' %}
+                        </a>
+                    </span>
+                {% endif %}
+            </div>
+            {% if program.does_it_need_additional_target_periods is True %}
+                <span id="id_missing_targets_msg" class="color-red fontsize-85 missing_targets_msg">
+                    <i class="fas fa-bullseye"></i>&nbsp;
+                    {% trans 'Some indicators have missing targets. To enter these values, click the target icon near the indicator name.' %}
+                </span>
+            {% endif %}
+            {% if program.indicator_set.all %}
+                <div id="hidden-{{ program.id }}" class="collapse">
                     {% include "indicators/program_indicators_table.html" %}
                 </div>
             {% endif %}
-        </div>
 
+        </div>
+        <br>
     {% empty %}
-        <p>No Programs</p>
+        <p>{% trans "No Programs" %}</p>
     {% endfor %}
 </div>
-
-<!--
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#indicator_modal_div">Large modal</button>
--->
 
 <div class="modal fade" role="dialog" id="conform_modal_div" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Warning</h4>
+                <h4 class="modal-title" id="myModalLabel">{% trans "Warning" %}</h4>
             </div>
             <div class="modal-body" id="confirm_modal_body">
-                Are you sure?
+                {% trans "Are you sure?" %}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" id="modal-btn-yes">Yes</button>
-                <button type="button" class="btn btn-primary" id="modal-btn-no">No</button>
+                <button type="button" class="btn btn-default" id="modal-btn-yes">{% trans "Yes" %}</button>
+                <button type="button" class="btn btn-primary" id="modal-btn-no">{% trans "No" %}</button>
             </div>
         </div>
     </div>
@@ -128,7 +143,40 @@ function loadIndicators(program, indicator, type){
     </div> <!-- /.modal-dialog -->
 </div> <!-- /.modal -->
 
+{% include 'indicators/indicator_reportingperiod_modal.html'%}
+
 <script type="text/javascript">
+    /*
+    *  Load the collected data for an indicator on the results page
+    */
+    function loadCollected(indicator,program){
+        var url = '/indicators/collected_data_table/' + indicator + '/' + program + '/';
+        var div_name = '#hidden-indicator-' + indicator;
+        $(div_name).empty();
+        $.get(url, function(data){
+            $(div_name).html(data);
+            $("body").removeClass("modal-open");
+        });
+        $("#id_indicator_data_count_btn_"+indicator).blur();
+    };
+
+    /*
+    *  Load the collected data for an indicator on the results page
+    */
+    function loadIndicators(program, indicator, type){
+        $.get('/indicators/program_indicators/' + program + '/' + indicator + '/' + type + '/', function(data){
+            $('#hidden-' + program).html(data);
+            $("body").removeClass("modal-open");
+          });
+
+        let icon = $(`#id_btnOpenindicatorsForProgramId_${program}`).find("svg");
+        if (icon.hasClass('fa-caret-right')) {
+          icon.attr('class', 'fa-caret-down');
+        } else {
+          icon.attr('class', 'fa-caret-right');
+        }
+    };
+
     $("#indicator_collecteddata_div").on("click", "#targetsTabLink", function(e){
         e.preventDefault();
         $("#indicator_modal_content").empty();
@@ -145,7 +193,7 @@ function loadIndicators(program, indicator, type){
         $("#indicator_modal_content").empty();
         $("#modalmessages").empty();
         $("#indicator_collecteddata_div").modal('show');
-        // var url = '/indicators/periodic_target_generate/2470/?existingTargetsOnly=true';
+
         var url = $(e.target).attr('href') + '?existingTargetsOnly=true';
         $.getJSON(url, function( data ) {
             $("#id_periodic_target").children('option:not(:first)').remove();
@@ -159,18 +207,51 @@ function loadIndicators(program, indicator, type){
         });
     });
 
+    // when opening the modal, check for the button's data attribute of tab. if present then
+    // open the modal to that tab.
+    // $('#indicator_modal_div').on('shown.bs.modal', function (e) {
+    //     // button that triggered the modal
+    //     const button = $(e.relatedTarget);
+    //     let modal = $(this);
+    //     const tab = button.data('tab');
+
+    //     if (tab != undefined & tab != 'undefined') {
+    //         $(`#indicatorTabs a[href="#${tab}"][data-toggle="tab"]`).tab('show');
+    //     }
+    // });
+
+    // $('#indicator_modal_div').on('shown.bs.tab', function (e) {
+    //     console.log('targetsTab show? = ', $(e.target).attr('href') );
+    //     if ($(e.target).attr('href') == '#targetsTab') {
+    //         const target_periods_section_offset = $("#id_div_periodic_tables_placeholder input:empty:first").offset();
+    //         console.log(target_periods_section_offset);
+    //         $("#indicator_modal_div").animate({ scrollTo: target_periods_section_offset.top }, 'slow');
+    //     }
+    // });
+
+    // // upon opening the modal, fetch its content from the server
+    // $('#indicator_modal_div').on('show.bs.modal', function (e) {
+    //     const button = $(e.relatedTarget);
+    //     let url = button.attr("href") + '?modal=1';
+    //     const modal = $(this);
+    //     const tab = button.data('tab');
+
+    //     if (tab != undefined & tab != 'undefined') {
+    //         $.get(url, function (data) {
+    //             modal.find("#indicator_modal_content").html(data);
+    //         });
+    //     }
+    // });
 
     $('#indicator_modal_div').on('hide.bs.modal', function (e) {
         try {
             var form = $(this).find('form');
-            var program_id = parseInt($(this).find('form #id_program').val()[0]);
+            var program_id = parseInt($(this).find('form #id_program').val());
             var form_action = form.attr('action').split('/');
             var indicator_id = parseInt(form_action[form_action.length -2]);
 
             var targetsactive = $(this).find("#indicator_modal_body").data("targetsactive");
             var indicatorchanged = form.data('indicatorchanged');
-
-
 
             if (form.data('update_indicator_row') == 1) {
                 var indicator_type = form.find("#id_indicator_type option:selected").text();
@@ -183,7 +264,8 @@ function loadIndicators(program, indicator, type){
                 var indicator_sector = form.find("#id_sector option:selected").text();
                 $("#id_indicator_type_" + indicator_id).text(indicator_type);
                 $("#id_indicator_level_" + indicator_id).text(indicator_level.trim().slice(0, -1));
-                $("#id_indicator_name_" + indicator_id + " a").text(indicator_name);
+                $("#id_indicator_name_" + indicator_id + " a .indicator_name").text(indicator_name);
+                // TODO: this overwrites the name of the indicator (see ticket #284)
                 $("#id_indicator_number_" + indicator_id).text(indicator_number);
                 $("#id_indicator_sector_" + indicator_id).text(indicator_sector);
             }
@@ -208,7 +290,7 @@ function loadIndicators(program, indicator, type){
     })
 
     // Open the CollectDataUpdate form in a modal
-    $("#toplevel_div").on("click", ".collecteddata-link", function(e) {
+    $("#div-id-indicator-list").on("click", ".collecteddata-link", function(e) {
         e.preventDefault();
         var url = $(this).attr("href");
         url += "?modal=1";
@@ -221,7 +303,7 @@ function loadIndicators(program, indicator, type){
 
 
     // Open the IndicatorUpdate Form in a modal
-    $("#toplevel_div").on("click", ".indicator-link", function(e) {
+    $("#div-id-indicator-list").on("click", ".indicator-link", function(e) {
         e.preventDefault();
         var url = $(this).attr("href");
         url += "?modal=1";
@@ -236,7 +318,6 @@ function loadIndicators(program, indicator, type){
         $("#indicator_modal_div").modal('show');
 
     });
-
 
     function getUrl() {
         var programId = $("#program_filter_value").data('programid');

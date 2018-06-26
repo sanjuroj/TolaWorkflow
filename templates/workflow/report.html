@@ -1,17 +1,15 @@
 {% extends "base.html" %}
-{% block bread_crumb %}
-<ol class="breadcrumb">
-  <li><a href="/workflow/dashboard/0/">Program Dashboards</a></li>
-  <li class="active">Reports</li>
-</ol>
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% block title %}{% trans "Project Report" %} | {% endblock %}
+{% block page_title %}{% trans "Project Report" %}{% endblock %}
 
+{% block bread_crumb %}
 {% endblock bread_crumb %}
 
-{% block page_title %}Project Report{% endblock %}
 
 {% block content %}
 
-{% load crispy_forms_tags %}
 {% crispy form form.helper %}
 <script type="text/javascript">
     var table;
@@ -65,11 +63,11 @@
                         'orderable':false,
                         'className': 'dt-body-center',
                         'render': function (data, type, row){
-                            return '<div class="btn-group btn-group-xs"><a type="button" class="btn btn-warning" href="/workflow/dashboard/project/'+row.id+'">Edit</a><br><a type="button" class="btn btn-default" href="/workflow/projectagreement_detail/'+row.id+'">View</a></div>';
+                            return '<div class="btn-group" role="group" aria-label="Edit and delete buttons"><a class="btn btn-sm btn-text p-0 pr-2" href="/workflow/dashboard/project/'+row.id+'"><i class="fas fa-edit"></i>&nbsp;Edit</a><a class="btn btn-sm btn-text p-0" href="/workflow/projectagreement_detail/'+row.id+'"><i class="fas fa-eye"></i>&nbsp;View</a></div>';
                     }
                 }],
                 columns: [
-                    { title: "Edit", class: "noExport"},
+                    { title: "", class: "noExport"},
                     { title: "PID", class: "noExport", data: "program__id" },
                     { title: "SID", class: "noExport", data: "approval"},
                     { title: "Program", data: "program__name",
@@ -143,23 +141,22 @@
 <div class="dropdown">
 	{% include "workflow/filter.html" %}
 </div>
+
 <div style="display: none;">
     <span class="filter" id="status_filter_value"></span>
     <span class="filter" id="program_filter_value"></span>
 </div>
 
-
 <br>
-        <div class="col-md-12 table-responsive row">
-            <table class="table table-bordered " id="data_table" class="display" cellspacing="0" width="100%">
-            </table>
-        </div>
-        <!--
-       <div class="row" >
-    		<button type="submit" class="btn btn-success" style="margin-top:10px" onClick="location.href='/workflow/report/0/none/?export=true&{{ request.GET.urlencode }}'">Export All</button>
-       </div>
-       -->
-
-<br/>
+<br>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover" id="data_table" cellspacing="0">
+    </table>
+</div>
+<!--
+<div class="row" >
+	<button type="submit" class="btn btn-success" style="margin-top:10px" onClick="location.href='/workflow/report/0/none/?export=true&{{ request.GET.urlencode }}'">Export All</button>
+</div>
+-->
 
 {% endblock content %}

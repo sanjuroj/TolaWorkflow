@@ -1,0 +1,351 @@
+{% load static %}
+{% load widget_tweaks %}
+{% load i18n %}
+<script>
+  // emulate the appearance of multiselects BEFORE jquery loads to prevent an HTML flash
+  // I’m doing this by way of a scrpt for the sake of users w/JS disabled
+  document.write('<style type="text/css">.bs-multiselect { background: white; border: 1px solid #808080; color: #808080; height: 38px; }</style>');
+</script>
+
+<style type="text/css">
+  .ui-datepicker-calendar {
+    display: none;
+  }
+</style>
+<nav id="id_iptt_report_filter">
+  <form id="id_form_indicator_filter" method="POST" novalidate>
+    {% csrf_token %}
+    {% for hidden_field in form.hidden_fields %}
+      {{ hidden_field }}
+    {% endfor %}
+    <div id="filter-top" class="p-3">
+      <h3 class="filter-title">{% trans "Report Options" %}</h3>
+      <div class="form-row mb-3" id="id_div_program">
+        <label for="id_program" class="col-form-label">
+          {{ form.program.label }}
+        </label>
+        {% render_field form.program class+="form-control" %}
+      </div>
+
+      <div class="form-row mb-3" id="id_div_{{ reporttype }}">
+        <label for="id_{{ reporttype }}" class="col-form-label">
+          {% if reporttype == 'timeperiods' %}
+            {{ form.timeperiods.label }}
+            </label>
+            {% render_field form.timeperiods class+="form-control" %}
+          {% else %}
+            {{ form.targetperiods.label }}
+            </label>
+            {% render_field form.targetperiods class+="form-control" %}
+          {% endif %}
+      </div>
+
+      <div class="form-row mb-3">
+        {% for item in form.timeframe %}
+          {% with id=form.timeframe.auto_id %}
+            <div class="{% if forloop.counter0 == 0 %}col-sm-4 {% else %} col-sm-4 p-0 {% endif %}">
+              <div class="form-check form-check-inline pt-1" id="div_{{ id }}_{{ forloop.counter0 }}">
+                <span class="form-check-input ">
+                    {{ item.tag }}
+                </span>
+                <label class="form-check-label" for="{{ item.id_for_label }}">
+                  {{ item.choice_label }}
+                </label>
+              </div>
+            </div>
+          {% endwith %}
+        {% endfor %}
+        <div class="col-sm-4">
+          {% render_field form.numrecentperiods placeholder="" class+="form-control" %}
+        </div>
+      </div>
+
+      <div class="form-row mb-3" id="id_div_program">
+        <label for="{{ form.start_period.auto_id }}" class="col-form-label">
+          {{ form.start_period.label }}
+        </label>
+        {% render_field form.start_period class+="form-control" %}
+      </div>
+
+      <div class="form-row mb-3" id="id_div_program">
+        <label for="{{ form.end_period.auto_id }}" class="col-form-label">
+          {{ form.end_period.label }}
+        </label>
+        {% render_field form.end_period class+="form-control" %}
+      </div>
+    </div>
+
+    <div id="filter-middle" class="p-3">
+      <div class="form-group mb-2" id="id_div_level">
+        <label for="id_level" class="col-form-label text-uppercase">
+          {{ form.level.label }}
+        </label>
+        <div class="form-group-row">
+          {% render_field form.level class+="form-control bs-multiselect" multiple="multiple" %}
+        </div>
+      </div>
+
+      <div class="form-group mb-2" id="id_div_type">
+        <label for="id_type" class="col-form-label text-uppercase">
+          {{ form.ind_type.label }}
+        </label>
+        <div class="form-group-row">
+          {% render_field form.ind_type class+="form-control bs-multiselect" multiple="multiple" %}
+        </div>
+      </div>
+
+      <div class="form-group mb-2" id="id_div_sector">
+        <label for="id_sector" class="col-form-label text-uppercase">
+          {{ form.sector.label }}
+        </label>
+        <div class="form-group-row">
+          {% render_field form.sector class+="form-control bs-multiselect" multiple="multiple" %}
+        </div>
+      </div>
+
+      <div class="form-group mb-2" id="id_div_site">
+        <label for="id_site" class="col-form-label text-uppercase">
+          {{ form.site.label }}
+        </label>
+        <div class="form-group-row">
+          {% render_field form.site class+="form-control bs-multiselect" multiple="multiple" %}
+        </div>
+      </div>
+
+      <div class="form-group mb-2" id="id_div_indicators">
+        <label for="id_indicators" class="col-form-label text-uppercase">
+          {{ form.indicators.label }}
+        </label>
+        <div class="form-group-row">
+          {% render_field form.indicators class+="form-control bs-multiselect" multiple="multiple" %}
+        </div>
+      </div>
+
+    </div>
+
+    <div id="filter-bottom" class=" d-flex justify-content-between no-gutters p-3">
+      <div class="col pr-2">
+        <button type="submit" id="id_submit_form_filter" class="btn btn-block btn-primary">
+          {% trans "Apply" %}
+        </button>
+      </div>
+      <div class="col pl-2">
+        <button type="reset" class="btn btn-block btn-secondary">
+          {% trans "Reset" %}
+        </button>
+      </div>
+    </div>
+  </form>
+</nav>
+
+<script>
+  $(document).ready(function () {
+    const site_profile = $("#id_site");
+    const indicators_select = $("#id_indicators");
+    const numRecentPeriods = $("#id_numrecentperiods");
+    const checkShowAllPeriods = $("#id_timeframe_0");
+    const checkFilterPeriods = $("#id_timeframe_1");
+    const sector_select = $("#id_sector");
+    const indicatortype_select = $("#id_ind_type");
+    const level_select = $("#id_level");
+
+    const program_select = $("#id_program");
+    const timeperiod_select = $("#id_timeperiods");
+    const targetperiod_select = $("#id_targetperiods");
+
+    const start_period_id = `{{ form.start_period.auto_id }}`;
+    const start_period = $(`#${start_period_id}`);
+    const end_period_id = `{{ form.end_period.auto_id }}`;
+    const end_period = $(`#${end_period_id}`);
+
+    var multiselectOptions = {
+      includeSelectAllOption: true,
+      enableFiltering: true,
+      enableCaseInsensitiveFiltering: true,
+      numberDisplayed: 1,
+      maxHeight: 320,
+      buttonClass: 'btn form-control',
+      templates: {
+        filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
+        filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
+      }
+    }
+
+    level_select.multiselect(multiselectOptions);
+    indicatortype_select.multiselect(multiselectOptions);
+    sector_select.multiselect(multiselectOptions);
+    site_profile.multiselect(multiselectOptions);
+    indicators_select.multiselect(multiselectOptions);
+
+    function disableFormElements() {
+      numRecentPeriods.prop('readonly', true);
+      checkFilterPeriods.prop('disabled', true);
+      // checkShowAllPeriods.prop('disabled', true);
+      numRecentPeriods.val('');
+      checkShowAllPeriods.prop('checked', true);
+      checkFilterPeriods.prop('checked', false);
+      start_period.prop('readonly', true);
+      end_period.prop('readonly', true);
+    }
+
+    // if targetperiods value is LOP then disable certain elements on the filter form
+    if (targetperiod_select.val() == 1 || targetperiod_select.val() == 2 ) {
+      disableFormElements();
+    } else {
+      checkFilterPeriods.prop('disabled', false);
+      checkShowAllPeriods.prop('disabled', false);
+      numRecentPeriods.prop('readonly', false);
+      start_period.prop('readonly', false);
+      end_period.prop('readonly', false);
+    }
+
+    // get the appropriate url params for the page reload
+    function get_reload_url(frequency) {
+      const program_id = program_select.val();
+      const timeperiod = timeperiod_select.val();
+      const targetperiod = targetperiod_select.val();
+      const numrecentperiods = numRecentPeriods.val();
+      let timeframe = '';
+      // let frequency = '';
+      let reporttype = '';
+
+      if (timeperiod) {
+        frequency = timeperiod;
+        reporttype = 'timeperiods';
+      } else {
+        frequency = targetperiod;
+        reporttype = 'targetperiods';
+      }
+
+      if (numrecentperiods) {
+        timeframe = 2;
+      } else {
+        timeframe = 1;
+      }
+      let url = `{% url 'iptt_report' 0 reporttype %}`;
+      url = url.replace(/0/, program_id);
+
+      url = `${url}?${reporttype}=${frequency}&numrecentperiods=${numrecentperiods}&timeframe=${timeframe}`;
+      return url;
+    }
+
+    // on timeperiod dropdown change, reload the report with correct filtering options
+    $("#id_form_indicator_filter").on("input", "#id_timeperiods", function (e) {
+      const url = get_reload_url();
+      window.location = url;
+    });
+
+    // on targetperiod dropdown change, reload the report with correct filtering options
+    $("#id_form_indicator_filter").on("input", "#id_targetperiods", function (e) {
+      if (this.value == 1 || this.value == 2) {
+        disableFormElements();
+      }
+      const url = get_reload_url();
+      window.location = url;
+    });
+
+    // upon program dropdown change, reload the report with correct filtering options
+    $("#id_form_indicator_filter").on("input", "#id_program", function (e) {
+      const url = get_reload_url();
+      window.location = url;
+
+      /*
+      $.getJSON(`/api/siteprofile/?program=${program_id}`, function( data ){
+        site_profile.empty();
+        $.each(data, function(index, option){
+          site_profile.append($("<option></option>").attr("value", option.id).text(option.name));
+        });
+        site_profile.multiselect('rebuild');
+      });
+
+      $.getJSON(`/api/indicator/?program=${program_id}`, function(data) {
+       indicators_select.empty();
+       $.each(data, function (index, option) {
+         indicators_select.append($("<option></option>").attr("value", option.id).text(option.name));
+       });
+       indicators_select.multiselect('rebuild');
+      });
+
+      $.getJSON(`/api/sector/?program=${program_id}`, function( data ) {
+       sector_select.empty();
+       $.each(data, function(index, option){
+         sector_select.append($("<option></option>").attr("value", option.id).text(option.sector));
+       });
+        sector_select.multiselect('rebuild');
+      });
+
+      $.getJSON(`/api/indicatortype/?program=${program_id}`, function( data ){
+       indicatortype_select.empty();
+       $.each(data, function(index, option){
+         indicatortype_select.append($("<option></option>").attr("value", option.id).text(option.indicator_type));
+       });
+       indicatortype_select.multiselect('rebuild');
+      });
+
+      $.getJSON(`/api/level/?program=${program_id}`, function(data) {
+       level_select.empty();
+       $.each(data, function(index, option){
+         level_select.append($("<option></option>").attr("value", option.id).text(option.name));
+       });
+       level_select.multiselect('rebuild');
+      })
+      */
+
+    });
+
+    // changing the start_period triggers updating the end_period if necessary
+    // to make sure the start and end periods do not cross each other.
+    start_period.on('change', function(e){
+      const selectedIndex = $(this).prop('selectedIndex');
+      end_period.find(`option:lt(${selectedIndex})`).prop('disabled', true);
+      end_period.find(`option:gt(${selectedIndex})`).prop('disabled', false);
+      end_period.find(`option:eq(${selectedIndex})`).prop('disabled', false);
+      if (end_period.find('option:selected').prop('disabled') == true) {
+        end_period.val($(`#${end_period_id} option:enabled`).eq(0).val());
+      }
+      $("input[type=radio][name='timeframe']").prop("checked", false);
+      numRecentPeriods.val('');
+    });
+
+    // changing the end_period triggers updating the start_period if necessary
+    // to make sure the start and end periods do not cross each other.
+    end_period.on('change', function (e) {
+      const selectedIndex = $(this).prop('selectedIndex');
+      start_period.find(`option:gt(${selectedIndex})`).prop('disabled', true);
+      start_period.find(`option:lt(${selectedIndex})`).prop('disabled', false);
+      start_period.find(`option:eq(${selectedIndex})`).prop('disabled', false);
+      if (start_period.find('option:selected').prop('disabled') == true) {
+        start_period.val($(`#${start_period_id} option:enabled`).eq(0).val());
+      }
+      $("input[type=radio][name='timeframe']").prop("checked", false);
+      numRecentPeriods.val('');
+    });
+
+    // Behaviors for "most recent" field
+    // Clicking on the text box selects the associated radio button
+    numRecentPeriods.on('focus', function(e){
+      if (targetperiod_select.val() == 1 | targetperiod_select.val() == 2) {
+        return;
+      }
+      checkFilterPeriods.prop('checked', true);
+    });
+    // clicking on "show all" zeroes the most_recent field and
+    // resets the start and end periods dropdowns
+    checkShowAllPeriods.on('change', function(e){
+      numRecentPeriods.val('');
+      start_period.find('option').prop('disabled', false);
+      start_period.val($(`#${start_period_id} option:first`).val());
+      end_period.find('option').prop('disabled', false);
+      end_period.val($(`#${end_period_id} option:last`).val());
+    });
+    // clicking on "most recent" focuses the field
+    checkFilterPeriods.on('change', function(e){
+      numRecentPeriods.focus();
+    });
+
+    $('button[type=reset]').on('click', function(e){
+      window.location.reload();
+    });
+
+  });
+</script>

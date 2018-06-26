@@ -8,7 +8,6 @@ from django.shortcuts import render
 from workflow.models import ProjectAgreement, ProjectComplete, Program, SiteProfile, Sector,Country, TolaUser,TolaSites, TolaBookmarks, FormGuidance
 from indicators.models import CollectedData, Indicator
 
-from tola.tables import IndicatorDataTable
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Q, Count
 from tola.util import getCountry
@@ -137,8 +136,6 @@ def index(request, selected_countries=None, id=0, sector=0):
                         indicators=Count('indicator__pk', distinct=True),\
                         targets=Sum('periodic_target__target'), actuals=Sum('achieved'))
     # print(".............................%s............................" % getObjectives.query )
-    table = IndicatorDataTable(getQuantitativeDataSums)
-    table.paginate(page=request.GET.get('page', 1), per_page=20)
 
     count_program = Program.objects.all().filter(country__in=selected_countries, funding_status='Funded').count()
 
@@ -196,7 +193,7 @@ def index(request, selected_countries=None, id=0, sector=0):
                                           'programs':getPrograms,'getSiteProfile':getSiteProfile,\
                                           'countries': user_countries,'selected_countries':selected_countries,\
                                           'getFilteredName':getFilteredName,'getSectors':getSectors,\
-                                          'sector': sector, 'table': table, 'getQuantitativeDataSums':getQuantitativeDataSums,\
+                                          'sector': sector, 'getQuantitativeDataSums':getQuantitativeDataSums,\
                                           'count_evidence':count_evidence,
                                           'getObjectives':getObjectives,
                                           'selected_countries_list': selected_countries_list,
@@ -254,7 +251,8 @@ def profile(request):
         if request.method == 'POST':
             if form.is_valid():
                 form.save()
-                messages.error(request, 'Your profile has been updated.', fail_silently=False)
+                messages.error(request, 'Your profile has been updated.', fail_silently=False,
+                               extra_tags='success')
 
         return render(request, "registration/profile.html", {
             'form': form, 'helper': RegistrationForm.helper

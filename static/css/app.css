@@ -1,94 +1,86 @@
-#App Specific CSS
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-    position: relative;
-    min-height: 100%;
-}
-body {
-    /* Margin bottom by footer height */
-    height: 100%;
-    margin-bottom: 60px;
-}
-#footer {
-    position: fixed;
-    bottom: 0px;
-    width: 100%;
-    /* Set the fixed height of the footer here */
-    height: 40px;
-    border-top: 1px solid #f5f5f5;
-    background-color: rgb(215, 215, 215);
-    vertical-align: top;
-    color: rgb(50, 50, 50);
-}
 
-
-/* Bootstrap Overrides */
 @media print {
   a[href]:after {
     content: none;
   }
 }
-
-*,
-*:focus,
-*:target,
-a:focus,
-input:focus,
-button:focus,
-.btn:focus,
-.btn:active:focus,
-.btn.active:focus {
-  outline: none;
+body {
+    background-color: #F5F5F5;
+}
+.dataTables_wrapper.container-fluid {
+  padding-right: 0px !important;
+  padding-left: 0px !important;
 }
 
-.breadcrumb {
-  margin-top: 10px;
+.has-error {
+  color: #DD0000 !important;
+}
+.has-error .text-muted {
+    color: inherit !important;
+}
+/* this might introduce regressions
+.has-error input {
+    border-color: #DD0000;
+}
+*/
+
+.hide {
+  display: none;
 }
 
-.navbar-tola {
-  /* TolaActivity Brand Color: */
-  background-color: rgb(232, 148, 36);
-  border: none;
+.show {
+  display: block;
 }
 
-.navbar-tola .navbar-nav > li > a {
-  color: #fff;
+.td-no-side-borders {
+  border-left: 0px !important;
+  border-right: 0px !important;
 }
-
-.navbar-tola .navbar-nav > li > a:hover,
-.navbar-tola .navbar-nav > li > a:focus,
-.navbar-tola .navbar-nav > li.active > a,
-.navbar-tola .navbar-nav > li.active > a:hover,
-.navbar-tola .navbar-nav > li.active > a:focus,
-.navbar-tola .navbar-nav .dropdown.open a.dropdown-toggle {
-  color: #fff;
-  background-color: rgba(0, 0, 0, .15);
-}
-
-.navbar-tola .navbar-nav .navbar-collapse {
-    clear: both;
-    float: none;
-}
-/* - End Bootstrap Overrides */
 
 /* Custom page CSS
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
 
-
-body > .container {
-    height: 100%;
-    margin-top: 40px;
+/* ~14pt from a 16pt reference*/
+.fontsize-85 {
+    font-size: .85rem;
 }
 
-.alert{
-    margin-top: 40px;
-    margin-bottom: -20px;
+/* ~20pt from a 16pt reference*/
+.fontsize-125 {
+    font-size: 1.25rem;
 }
 
-#footer > .container {
-    padding: 10px;
+.fontsize-130 {
+    font-size: 1.3rem;
+}
+
+.color-red {
+    color: #DD0000;
+}
+
+.paddingright-80 {
+    padding-right: .80rem;
+}
+
+.paddingright-175 {
+    padding-right: 1.75rem;
+}
+
+.marginbottom-225 {
+    margin-bottom: 2.25rem;
+}
+/* help links in footer */
+.help-link,
+.help-link:hover,
+.help-link:active,
+.help-link:focus {
+    color: #54585A;
+    font-size: .875rem;
+}
+
+.help-link:hover {
+    text-decoration: underline;
 }
 
 .filter {
@@ -103,6 +95,11 @@ body > .container {
     color: #fff;
     background-color: #808080;
     border-color: #808080;
+}
+
+.x-modal {
+    font-weight: 100;
+    font-size: 2rem;
 }
 
 .date-badge {
@@ -130,6 +127,85 @@ body > .container {
     float: right;
 }
 
+.lopCols {
+	background-color:#F5F5F5 !important;
+}
+
+table.table-hover tbody tr:hover {
+    background-color: #CCEFEE !important;
+}
+
+table.table-hover tbody tr:active {
+    background-color: #99DFDD !important;
+}
+
+.row-highlight {
+    background-color: #CCEFEE;
+}
+table.table-hover tbody tr.row-highlight:hover { /* whoa check out this specificity */
+    background-color: #B5E0DF !important;
+}
+
+.missing_targets_msg {
+    padding-left: 2.3rem;
+    margin-top: -0.875rem;
+    margin-bottom: 1rem;
+}
+.missing_targets {
+    padding-left: 1rem;
+}
+
+
+/* IPTT Table */
+
+#iptt_table {
+    background-color: white;
+}
+#id_td_iptt_program_name {
+    padding-left: 0; /* overloads .table-sm td */
+    padding-right: 0; /* overloads .table-sm td */
+}
+#iptt_table, #iptt_table thead tr td{
+    border: 0px !important;
+}
+#iptt_table tr th {
+    background-color:#F5F5F5 !important;
+}
+body.page_iptt_table { /* body element for extra specificity */
+    margin-bottom: 0;
+}
+.page_iptt_table #id_div_content {
+    display: flex;
+    flex-grow: 1;
+    height: 100%;
+}
+.page_iptt_table .popover {
+    max-width: 100%; /* Max Width of the popover (depending on the container) */
+}
+.page_iptt_table #footer {
+    position: relative;
+}
+.page_iptt_table #id_div_breadcrumb,
+.page_iptt_table .page-title {
+    display: none;
+}
+.iptt_table_wrapper {
+    width: 100%;
+    overflow-x: auto;
+    padding-left: 10px;
+}
+/* #iptt_table tbody{
+    background-color:#ffffff !important;
+} */
+#id_div_top_iptt_report {
+    color: #545858; /* why is this not #54585A ? */
+}
+
+/* IPTT quickstart */
+/* this mimics a standard BS behavior in _forms.scss */
+.form-check-inline--is-disabled {
+    color: #aaa;
+}
 
 /* Start by setting display:none to make this hidden.
    Then we position it in relation to the viewport window
@@ -227,7 +303,7 @@ body.loading .ajax_loading {
   transition: background-color 200ms ease-in-out;
 }
 .chart-legend li:hover {
-  background-color: #fafafa;
+  background-color: #fafafa; /* should probably be #F5F5F5 */
 }
 .chart-legend li span {
   display: block;
@@ -289,7 +365,7 @@ ul.paginate li a.active {
     border: 1px solid #4CAF50;
 }
 
-ul.paginate li a:hover:not(.active) {background-color: #ddd;}
+ul.paginate li a:hover:not(.active) {background-color: #ddd;} /* should probably be #DBDCDE */
 
 .per_page
 {
@@ -314,7 +390,7 @@ select.listoption_filters
 {
   height:36px;
   width:150px;
-  border: 2px solid#ddd;
+  border: 2px solid#ddd; /* should probably be #DBDCDE */
   background: none;
   -webkit-appearance: none;
   -webkit-border-radius: 0;
@@ -333,12 +409,26 @@ select.listoption_filters
   padding-bottom: 0px;
 }
 
-#periodic-targets-tablediv {
-  padding-left: 0px;
-  padding-right: 0px;
-  margin-bottom: 0px;
-  margin-top: 1px
-  background-color: #F5F5F5;
+.input-symbol-percent {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+.input-symbol-percent input {
+    padding-right: 15px;
+    width: 100%;
+}
+.input-symbol-percent:after {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: auto;
+    content:"%";
+    right: 20px;
+}
+.inputs-in-a-box {
+    background-color: #F5F5F5;
+    border: 0px;
 }
 
 .periodic-target, #pt_sum_targets {
@@ -353,6 +443,69 @@ select.listoption_filters
   border: none;
 }
 
+#indicator_modal_body {
+}
+
+#indicator_modal_body .tab-content {
+    background-color: #FFFFFF;
+}
+
+#indicator_modal_body .form-row > label{
+    font-weight: bold;
+}
+
+@media (max-width: 575px) {
+    #indicator_modal_body .form-row > label{
+        text-align: left;
+    }
+}
+
+#indicator_modal_body .select2-selection {
+    border-radius: 0px;
+    border-color: #B8BABD;
+}
+
+#indicator_modal_body .select2-container--focus .select2-selection{
+  border-color: #3366cc;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
+}
+
+/* This helps with the predictability of spacing between
+inputs on the indicator setup page/modal */
+/* TODO: this is crazy brittle */
+#indicator_modal_body .div-input-container > textarea,
+#indicator_modal_body .div-input-container > input,
+#indicator_modal_body .div-input-container > select,
+#indicator_modal_body .div-input-container > .inputs-in-a-box,
+#indicator_modal_body .div-input-container .select2 {
+    height: 100%
+}
+
+/* In each case, the hieght of these divs changes when the has-error class is
+applied.  This keeps the inputs from getting taller when there is an error. */
+#div_id_name,
+#div_id_target_frequency,
+#div_id_target_frequency .div-input-container,
+#id_baseline,
+#div_id_target_frequency_custom,
+#div_id_target_frequency_num_periods {
+    height: 2.25rem;
+}
+
+#div_id_unit_of_measure_type_0 {
+    margin-left: 2px;
+}
+
+#id_delete_indicator_btn {
+    font-size: 1rem;
+}
+
+#indicatorTabs .nav-link.active {
+    font-size: 1rem;
+    color: #54585A;
+    font-weight: bold;
+}
 /* Don't define border property here.  Assigning here prevents red border
 from being applied when there is no value */
 .periodic-target .input-value {
@@ -360,9 +513,11 @@ from being applied when there is no value */
   padding-right: 10px;
   text-align: right;
   width: 150px;
-  box-shadow: none;
   display: table-cell;
+}
 
+.input-symbol-percent .input-value {
+    padding-right: 1.60rem;
 }
 
 /* Don't define border property here.  Assigning here prevents red border
@@ -404,4 +559,394 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+#id_div_is_cumulative .card-body {
+    border: 1px solid #B8BABD;
+    border-radius: .25rem;
+}
+
+#id_div_is_cumulative_section1,
+#id_div_is_cumulative_section2,
+#id_div_is_cumulative_section3 {
+    display: none;
+}
+
+/* END Indicator periodic target creation */
+
+
+/* START Indicator list page css */
+
+#div-id-indicator-list .card-header {
+    background-color: #54585A !important;
+    color: #FFFFFF;
+}
+
+
+#div-id-indicator-list .card-body {
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+}
+
+#div-id-indicator-list .card-header .program-name {
+    width: 78%;
+}
+
+.btn-white,
+.btn-white:hover,
+.btn-white:active,
+.btn-white:focus {
+    color: #FFFFFF;
+}
+
+.div-expand-symbol {
+    width: .7rem;
+    display: inline-block;
+}
+
+#id_reporting_period_modal {
+    line-height: 1.2;
+}
+
+.rptMonthPicker {
+    width: 10rem;
+}
+
+/* END Indicator list page css */
+
+/* BEGIN datepicker styling */
+
+.month-only .ui-datepicker-calendar {
+  display: none;
+}
+
+/* END datepicker styling */
+
+.blink {
+    animation: blink 2s linear infinite;
+}
+
+@keyframes blink { /* where is this used? */
+0% {
+    opacity: .2;
+    color: blue;
+}
+50% {
+    opacity: .7;
+    color: red;
+}
+80% {
+    opacity: .8;
+}
+100% {
+    opacity: 1;
+}
+}
+/* Hidable side bar filter */
+
+.filter-wrapper {
+    display: flex;
+}
+
+
+#filter-top {
+    background-color: #54585A!important;
+    color:#fff;
+    /* margin-bottom: -20px; */
+}
+
+#filter-middle {
+    background-color: #DBDCDE;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    padding-bottom: 4px;
+}
+
+#filter-bottom {
+    background-color: #808080!important;
+    color:#fff;
+    font-size: smaller;
+    padding-top: 10px;
+}
+
+#id_iptt_report_filter {
+    font-size: .875rem;
+    min-width: 330px;
+    max-width: 330px;
+}
+#id_form_indicator_filter .col-form-label {
+  display: block;
+  padding-bottom: calc(.1875rem + 1px); /* TODO: this should be applied universally but regressions */
+}
+
+.filter-form-padding-10 {
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.filter-title {
+    color: #ddd;
+    line-height: 42px;
+}
+
+
+#sidebar {
+    flex-basis: 1;
+    overflow: hidden;
+    z-index: 3;
+}
+#sidebar .list-group {
+    min-width: 400px;
+    background-color: #333;/* should probably be #323232 */
+    min-height: 100vh;
+}
+#sidebar i {
+    margin-right: 6px;
+}
+
+#sidebar .list-group-item {
+    border-radius: 0;
+    background-color: #333;/* should probably be #323232 */
+    color: #ccc;
+    border-left: 0;
+    border-right: 0;
+    border-color: #2c2c2c; /* ??? */
+    white-space: nowrap;
+}
+
+/* highlight active menu */
+#sidebar .list-group-item:not(.collapsed) {
+    background-color: #222; /* should probably be #2c2c2c ? */
+}
+
+/* closed state */
+#sidebar .list-group .list-group-item[aria-expanded="false"]::after {
+  content: " \f0d7";
+  font-family: FontAwesome;
+  display: inline;
+  text-align: right;
+  padding-left: 5px;
+}
+
+/* open state */
+#sidebar .list-group .list-group-item[aria-expanded="true"] {
+  background-color: #222; /* should probably be #2c2c2c ? */
+}
+#sidebar .list-group .list-group-item[aria-expanded="true"]::after {
+  content: " \f0da";
+  font-family: FontAwesome;
+  display: inline;
+  text-align: right;
+  padding-left: 5px;
+}
+
+/* level 1*/
+#sidebar .list-group .collapse .list-group-item,
+#sidebar .list-group .collapsing .list-group-item  {
+  padding-left: 20px;
+}
+
+/* level 2*/
+#sidebar .list-group .collapse > .collapse .list-group-item,
+#sidebar .list-group .collapse > .collapsing .list-group-item {
+  padding-left: 30px;
+}
+
+/* level 3*/
+#sidebar .list-group .collapse > .collapse > .collapse .list-group-item {
+  padding-left: 40px;
+}
+
+@media (max-width:768px) {
+    .iptt_table_wrapper {
+        padding-left: 0;
+    }
+    #id_span_iptt_date_range {
+        display: block;
+        padding-left: 45px;
+    }
+    .sidebar_wrapper {
+        padding-right: 40px;
+        position: fixed;
+    }
+    .sidebar-toggle {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    #sidebar {
+        width: 330px;
+        overflow-y: auto;
+        overflow-x: visible;
+        transition: all .2 ease;
+        transform: translateX(40);
+    }
+
+    #sidebar.show {
+        transform: translateX(0);
+    }
+
+    #sidebar::-webkit-scrollbar{ width: 0px; }
+
+    #sidebar, #sidebar .list-group {
+        min-width: 35px;
+        overflow: visible;
+    }
+    /* overlay sub levels on small screens */
+    #sidebar .list-group .collapse.show, #sidebar .list-group .collapsing {
+        position: relative;
+        z-index: 1;
+        width: 190px;
+        top: 0;
+    }
+    #sidebar .list-group > .list-group-item {
+        text-align: center;
+        padding: .75rem .5rem;
+    }
+    /* hide caret icons of top level when collapsed */
+    #sidebar .list-group > .list-group-item[aria-expanded="true"]::after,
+    #sidebar .list-group > .list-group-item[aria-expanded="false"]::after {
+        display:none;
+    }
+}
+
+.collapse.show {
+  visibility: visible;
+}
+.collapsing {
+  visibility: visible;
+  height: 0;
+  -webkit-transition-property: height, visibility;
+  transition-property: height, visibility;
+  -webkit-transition-timing-function: ease;
+  transition-timing-function: ease;
+}
+.collapsing.width {
+  -webkit-transition-property: width, visibility;
+  transition-property: width, visibility;
+  width: 0;
+  height: 100%;
+  -webkit-transition-timing-function: ease;
+  transition-timing-function: ease;
+}
+
+/* Sidebar toggle */
+.sidebar_wrapper {
+    display: flex;
+}
+.sidebar-toggle {
+    display: block;
+    height: 42px;
+    text-align: center;
+    width: 40px;
+}
+.sidebar-toggle a {
+    background-color:#00A49F;
+    color: white;
+    display: block;
+    font-size: 1.25rem;
+    padding: 0.3em 0.5em; /* TODO: what is the usual visual rhythm? */
+}
+.sidebar-toggle a[aria-expanded=false] svg {
+  transform: rotate(-180deg); /* TODO: ideally do this via JS */
+}
+
+/* "add a thing" buttons */
+.btn-add {
+    color: #4CAF50 !important;
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+}
+.btn-add:hover {
+    color: #2A7C2D;
+}
+
+.page-title {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+#indicator_collecteddata_content .modal-footer { /* overloads selectorin modals.scss */
+    background-color: #DBDCDE;
+    border-radius: 0 0 0.3rem 0.3rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+}
+.indicator_results_toggle {
+    display: block;
+    text-indent: -15px;
+    margin-left: 15px;
+}
+.indicator_results_toggle .svg-inline--fa {
+    margin-right: 5px;
+}
+
+/* Bootstrap could really use these border utilities */
+.border-2 {
+    border-width: 2px !important;
+}
+.border-3 {
+    border-width: 3px !important;
+}
+.border-4 {
+    border-width: 4px !important;
+}
+
+/* Extra colors */
+.bg-danger-lighter {
+    background-color: #FFE2E2 !important;
+}
+.bg-gray-lighter { /* note: these do not match colors in colors.css */
+    background-color: #E6E7E8 !important;
+}
+.bg-gray-lighter-alt { /* note: these do not match colors in colors.css */
+    background-color: #EDEDED !important;
+}
+
+/* restyle the Results table on the IPTT */
+.page_iptt_table .modal-dialog .collecteddata-link {
+    display: none;
+}
+.page_iptt_table .modal-dialog .collecteddata-table--actions {
+    background: transparent;
+}
+
+/* forms */
+.help-block { /* emulates .form-text.text-muted */
+    color: #6c757d!important;
+    display: block;
+    margin-top: .25rem;
+}
+.form-actions .form-group {
+    margin-bottom: 0;
+}
+.has-crispy-form .tab-content.panel-body {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-top-width: 0;
+    margin-top: 0;
+    padding: 1rem;
+}
+.has-crispy-form .nav-tabs {
+    width: 100%;
+}
+.has-crispy-form .input-group {
+    align-items: center;
+}
+.has-crispy-form #div_id_name { /* overloads jankety overload for select2, see line 481 this file */
+    height: auto;
+}
+.input-group-addon {
+    margin: 0 0.5rem;
+}
+
+/* conditional styling to hide modal titles in nonmodal contexts.
+used on collected data table in IPTT */
+.is-shown-in-modals {
+    display: none;
+}
+.modal-dialog .is-shown-in-modals {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
 }

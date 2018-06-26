@@ -1,30 +1,29 @@
 {% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Indicator Targets vs Actuals Report" %} | {% endblock %}
+{% block page_title %}{% trans "Indicator Targets vs Actuals Report" %}{% endblock %}
 
 {% block bread_crumb %}
-<ol class="breadcrumb">
-  <li><a href="/indicators/home/{{ getPrograms.all.0.id|default:0 }}/0/0/">Indicators</a></li>
-  <li class="active">TvA Report</li>
-</ol>
 {% endblock %}
 
-{% block page_title %}Indicator Targets vs Actuals Report{% endblock %}
 
 {% block content %}
     {% include "indicators/filter.html"%}
-
+    <br>
     <div id="tva_table_div" class="table-responsive">
-        <table id="tva_table" class="table table-hover table-striped table-bordered">
+        <table id="tva_table" class="table table-hover table-bordered" cellspacing="0">
             <thead>
-                <th class="noExport" style="display:none;">PID</th>
-                <th class="noExport" style="display:none;">IID</th>
-                <th class="noExport" style="display:none;">ITID</th>
-                <th>No</th>
-                <th>Indicator</th>
-                <th>Type</th>
-                <th>Level</th>
-                <th>Sector</th>
-                <th>LOP Target</th>
-                <th>Actuals</th>
+                <th class="noExport" style="display:none;">{% trans "PID" %}</th>
+                <th class="noExport" style="display:none;">{% trans "IID" %}</th>
+                <th class="noExport" style="display:none;">{% trans "ITID" %}</th>
+                <th>{% trans "No" %}</th>
+                <th>{% trans "Indicator" %}</th>
+                <th>{% trans "Type" %}</th>
+                <th>{% trans "Level" %}</th>
+                <th>{% trans "Sector" %}</th>
+                <th>{% trans "LOP Target" %}</th>
+                <th>{% trans "Actuals" %}</th>
             </thead>
             {% for row in data %}
                 <tr>
@@ -83,8 +82,8 @@
                 buttons: [
                     {
                         extend: 'csv',
-                        title: 'Target vs Actuals Report',
-                        text: 'Export to CSV',
+                        title: '{% trans "Target vs Actuals Report" %}',
+                        text: '{% trans "Export to CSV" %}',
                         exportOptions: { columns: "thead th:not(.noExport)" }
                     }
                 ]
@@ -110,7 +109,7 @@
             if (programId != undefined && programId > 0) {
                 window.location.href = "/indicators/tvaprint/" + programId + "/";
             } else {
-                alert("Select a program before exporting it to PDF");
+                alert("{% trans 'Select a program before exporting it to PDF' %}");
             }
         }
 

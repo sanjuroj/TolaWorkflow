@@ -1,88 +1,96 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load mathfilters %}
-{% block page_title %}Program Index{% endblock %}
+{% block title %}{% trans 'Projects' %} | {% endblock %}
+{% block page_title %}{% trans 'Projects' %}{% endblock %}
 
 {% block content %}
 
-<div class="dropdown">
-    {% include "workflow/filter.html" %}
-    <a href="/workflow/dashboard/project/0/" class="btn btn-sm btn-success">Create a Project</a>
+<div class="text-right">
+    <a href="/workflow/dashboard/project/0/" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans 'Add project' %}</a>
 </div>
-<br/>
+
+{% include "workflow/filter.html" %}
+
 <div>
 {% if getDashboard %}
   {% ifnotequal status 'none' %}
-    <p>Filtered by (Status): {{ status }}</p>
+  <div class="my-4 text-muted">
+      <p><em>Filtered by <b>(Status): {{ status|default_if_none:'' }}</b></em></p>
+  </div>
   {% endifnotequal %}
 
   {% if filtered_program %}
-    <p>Filtered by (Program): {{filtered_program}}</p>
+  <div class="my-4 text-muted">
+      <p><em>Filtered by <b>(Program): {{filtered_program|default_if_none:''}}</b></em></p>
+  </div>
   {% endif %}
     {% for program in getDashboard %}
         {% if program.agreement.all %}
-            <div class='panel panel-default'>
-                <div class='panel-heading'>
-                    <h4>
-                       {{ program.name|truncatechars:80 }}
+            <div class='card mb-4'>
+                <div class='card-header d-flex justify-content-between'>
+                    <h3>
+                       {{ program.name|truncatechars:100 }}
+                   </h3>
+                   <div>
+                       <a href="{% url "default_custom_dashboard" program.id %}" class="btn btn-text p-0 btn-small"><i class="fas fa-tachometer-alt"></i>&nbsp;Program Dashboard</a>
+                   </div>
+                </div><!-- /.card-header -->
+                <div class="card-body p-0">
+                    <!-- Table -->
+                    <table class="table table-sm table-hover table-striped">
+                        <tr>
+                            <th>Date Created</th>
+                            <th>Project Name</th>
+                            <th>Project Code</th>
+                            <th>Office Code</th>
+                            <th>Form Version</th>
+                            <th>Approval Status</th>
+                            <th>&nbsp;</th>
+                        </tr>
 
-                       <span class="float: right">
-                           <a href="/customdashboard/{{program.id }}/" class="btn btn-xs btn-info" style="float:right;">Dashboard Visualization</a>
-                       </span>
-                   </h4>
-                </div>
-                <!-- Table -->
-                <table class="table table-striped">
-                    <tr>
-                        <th>Date Created</th>
-                        <th>Project Name</th>
-                        <th>Project Code</th>
-                        <th>Office Code</th>
-                        <th>Form Version</th>
-                        <th>Approval Status</th>
-                        <th>&nbsp;</th>
-                    </tr>
-
-                    {% if status == "in_progress" %}
-                      {% for item in program.agreement.get_inprogress %}
-                          {% include "workflow/program_projects_table.html" %}
-                      {% empty %}
-                          <li class="list-group-item">No in progress projects.</li>
-                      {% endfor %}
-                    {% elif status == "approved" %}
-                      {% for item in program.agreement.get_approved %}
-                        {% include "workflow/program_projects_table.html" %}
-                      {% empty %}
-                          <li class="list-group-item">No approved projects yet.</li>
-                      {% endfor %}
-                    {% elif status == "awaiting_approval" %}
-                      {% for item in program.agreement.get_awaiting_approval %}
-                        {% include "workflow/program_projects_table.html" %}
-                      {% empty %}
-                          <li class="list-group-item">No projects awaiting approval.</li>
-                      {% endfor %}
-                    {% elif status == "rejected" %}
-                      {% for item in program.agreement.get_rejected %}
-                        {% include "workflow/program_projects_table.html" %}
-                      {% empty %}
-                          <li class="list-group-item">No rejected projects.</li>
-                      {% endfor %}
-                    {% elif status == "new" %}
-                      {% for item in program.agreement.get_new %}
-                        {% include "workflow/program_projects_table.html" %}
-                      {% empty %}
-                          <li class="list-group-item">No New projects.</li>
-                      {% endfor %}
-                    {% else %}
-                      {% for item in program.agreement.all %}
-                        {% include "workflow/program_projects_table.html" %}
-                      {% empty %}
-                          <li class="list-group-item">No projects yet.</li>
-                      {% endfor %}
-                    {% endif %}
+                        {% if status == "in_progress" %}
+                          {% for item in program.agreement.get_inprogress %}
+                              {% include "workflow/program_projects_table.html" %}
+                          {% empty %}
+                              <li class="list-group-item">No in progress projects.</li>
+                          {% endfor %}
+                        {% elif status == "approved" %}
+                          {% for item in program.agreement.get_approved %}
+                            {% include "workflow/program_projects_table.html" %}
+                          {% empty %}
+                              <li class="list-group-item">No approved projects yet.</li>
+                          {% endfor %}
+                        {% elif status == "awaiting_approval" %}
+                          {% for item in program.agreement.get_awaiting_approval %}
+                            {% include "workflow/program_projects_table.html" %}
+                          {% empty %}
+                              <li class="list-group-item">No projects awaiting approval.</li>
+                          {% endfor %}
+                        {% elif status == "rejected" %}
+                          {% for item in program.agreement.get_rejected %}
+                            {% include "workflow/program_projects_table.html" %}
+                          {% empty %}
+                              <li class="list-group-item">No rejected projects.</li>
+                          {% endfor %}
+                        {% elif status == "new" %}
+                          {% for item in program.agreement.get_new %}
+                            {% include "workflow/program_projects_table.html" %}
+                          {% empty %}
+                              <li class="list-group-item">No New projects.</li>
+                          {% endfor %}
+                        {% else %}
+                          {% for item in program.agreement.all %}
+                            {% include "workflow/program_projects_table.html" %}
+                          {% empty %}
+                              <li class="list-group-item">No projects yet.</li>
+                          {% endfor %}
+                        {% endif %}
 
 
-                </table>
-            </div>
+                    </table>
+                </div><!-- /.card-body -->
+            </div><!-- /.card -->
         {% endif %}
     {% endfor %}
 {% else %}

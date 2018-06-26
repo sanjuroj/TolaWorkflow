@@ -60,6 +60,7 @@ function formatDate(dateString, day=0) {
     months[11] = "Nov";
     months[12] = "Dec";
 
+
     if (dateString == null || dateString == undefined || dateString.length == 0 || dateString == 'undefined' || dateString == 'null' ) {
         return '';
     }
@@ -92,7 +93,7 @@ $(function() {
      // Javascript to enable link to tab
     var hash = document.location.hash;
     if (hash) {
-    $('.nav-tabs a[href='+hash+']').tab('show');
+        $('.nav-tabs a[href="'+hash+'"]').tab('show');
     }
 
     // Change hash for page-reload
@@ -100,6 +101,7 @@ $(function() {
     window.location.hash = e.target.hash;
     });
 });
+
 
 //
 function submitClose(){
@@ -402,10 +404,6 @@ $(document).ready(function() {
     $(document).on("change, keyup", "#id_cfw_estimate_male", updateCFW);
     $(document).on("change, keyup", "#id_cfw_estimate_female", updateCFW);
 
-    $('.dropdown-menu a').on('click', function(){
-        $(this).parent().parent().prev().html($(this).html() + '<span class="caret"></span>');
-    })
-
     /*
     * Expand accordion down to location hash and then load collected data
     */
@@ -413,7 +411,6 @@ $(document).ready(function() {
         $('.collapse').removeClass('in');
         $(location.hash + '.collapse').collapse('show');
         indicator_id = location.hash.split('-')
-        console.log(indicator_id)
         //loadIndicators(indicator_id[1])
     }
 });

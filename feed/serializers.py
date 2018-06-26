@@ -1,12 +1,15 @@
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import serializers
-from workflow.models import Program, Sector, ProjectType, Office, SiteProfile, Country, ProjectComplete, \
-    ProjectAgreement, Stakeholder, Capacity, Evaluate, ProfileType, \
-    Province, District, AdminLevelThree, Village, StakeholderType, Contact, Documentation, LoggedUser, Checklist, Organization
-from indicators.models import Indicator, ReportingFrequency, TolaUser, IndicatorType, Objective, DisaggregationType, \
-    Level, ExternalService, ExternalServiceRecord, StrategicObjective, CollectedData, TolaTable, DisaggregationValue,\
-    PeriodicTarget
+from workflow.models import (
+    Program, Sector, ProjectType, Office, SiteProfile, Country, ProjectComplete, ProjectAgreement,
+    Stakeholder, Capacity, Evaluate, ProfileType, Province, District, AdminLevelThree, Village,
+    StakeholderType, Contact, Documentation, LoggedUser, Checklist, Organization
+)
+from indicators.models import (
+    Indicator, ReportingFrequency, TolaUser, IndicatorType, Objective, DisaggregationType, Level, ExternalService,
+    ExternalServiceRecord, StrategicObjective, CollectedData, TolaTable, DisaggregationValue, PeriodicTarget
+)
 from django.contrib.auth.models import User
 from django.core.serializers.python import Serializer as PythonSerializer
 
@@ -48,6 +51,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ('url', 'username', 'email', 'is_staff')
 
+
 class PeriodicTargetSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -62,11 +66,17 @@ class ProgramSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class SectorSerializer(serializers.HyperlinkedModelSerializer):
+class SectorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sector
         fields = '__all__'
+
+
+class SectorIdAndNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sector
+        fields = ('id', 'sector')
 
 
 class ProjectTypeSerializer(serializers.HyperlinkedModelSerializer):
@@ -90,6 +100,12 @@ class SiteProfileSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
+class SiteProfileLightSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = SiteProfile
+        fields = ('id', 'name')
+
+
 class CompleteSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
@@ -101,7 +117,7 @@ class AgreementSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ProjectAgreement
-        fields=(
+        fields = (
                 'id',
                 'program',
                 'date_of_request',
@@ -167,6 +183,14 @@ class IndicatorSerializer(serializers.HyperlinkedModelSerializer):
         model = Indicator
         fields = '__all__'
 
+
+class IndicatorIdAndNameSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Indicator
+        fields = ('id', 'name')
+
+
 class IndicatorTypeLightSerializer(serializers.ModelSerializer):
     class Meta:
         model = IndicatorType
@@ -177,6 +201,7 @@ class IndicatorLevelLightSerializer(serializers.ModelSerializer):
     class Meta:
         model = Level
         fields = ('id', 'name')
+
 
 class IndicatorLightSerializer(serializers.ModelSerializer):
     sector = serializers.SerializerMethodField()
@@ -197,6 +222,7 @@ class IndicatorLightSerializer(serializers.ModelSerializer):
         model = Indicator
         fields = ('name', 'number', 'lop_target', 'indicator_type', 'level', 'sector', 'datacount')
 
+
 class ProgramIndicatorSerializer(serializers.ModelSerializer):
     indicator_set = IndicatorLightSerializer(many=True, read_only=True)
     indicators_count = serializers.SerializerMethodField()
@@ -205,7 +231,7 @@ class ProgramIndicatorSerializer(serializers.ModelSerializer):
         return obj.indicator_set.count()
 
     class Meta:
-        model =  Program
+        model = Program
         fields = ('id', 'name', 'indicators_count', 'indicator_set')
 
 
@@ -222,7 +248,8 @@ class TolaUserSerializer(serializers.HyperlinkedModelSerializer):
         model = TolaUser
         fields = '__all__'
 
-class IndicatorTypeSerializer(serializers.HyperlinkedModelSerializer):
+
+class IndicatorTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IndicatorType
@@ -243,7 +270,7 @@ class DisaggregationTypeSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class LevelSerializer(serializers.HyperlinkedModelSerializer):
+class LevelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Level
@@ -276,6 +303,7 @@ class StrategicObjectiveSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = StrategicObjective
         fields = '__all__'
+
 
 class StakeholderTypeSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -360,24 +388,44 @@ class TolaTableSerializer(serializers.HyperlinkedModelSerializer):
         model = TolaTable
         # HyperlinkedModelSerializer does not include id field by default so manually setting it
         fields = ('id', 'name', 'table_id', 'owner', 'remote_owner', 'country', 'url', 'unique_count', 'create_date', 'edit_date')
-        #fields = '__all__'
+
 
 class DisaggregationValueSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = DisaggregationValue
 
+
 class LoggedUserSerializer(serializers.HyperlinkedModelSerializer):
-	class Meta:
-		model = LoggedUser
-		fields = ('username', 'country', 'email')
+    class Meta:
+        model = LoggedUser
+        fields = ('username', 'country', 'email')
+
 
 class ChecklistSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Checklist
         fields = '__all__'
 
+
 class OrganizationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Organization
         fields = '__all__'
+
+
+class ProgramTargetFrequenciesSerializer(serializers.Serializer):
+    frequency_name = serializers.SerializerMethodField()
+    target_frequency = serializers.IntegerField()
+
+    def get_frequency_name(self, obj):
+        try:
+            tfid = int(obj['target_frequency']) - 1
+        except TypeError:
+            return None
+        # print(Indicator.TARGET_FREQUENCIES[obj['target_frequency']])
+        return Indicator.TARGET_FREQUENCIES[tfid][1]
+
+    class Meta:
+        fields = ('target_frequency', 'frequency_name')
+

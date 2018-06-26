@@ -21,17 +21,23 @@ build
 *.log
 
 # Testing noise
+package-lock.json
+node_modules/
 test/js/*.jar
 test/js/chromedriver
 test/js/config.json
+test/js/doc
+test/js/drivers
 test/js/errorShots
 test/js/geckodriver
+test/js/logs
 test/js/package-lock.json
-test/js/node_modules/
-test/js/doc/
-test/js/logs/
+test/js/node_modules
+test/js/allure-results/
+test/js/allure-report/
 
 #allvritualenv
+.env/
 venv/
 venv-ta/
 
@@ -40,6 +46,7 @@ conf/awstats.conf
 
 #Misc.
 .idea/
+.vscode/
 .DS_Store
 media/
 client_secrets.json
@@ -48,7 +55,10 @@ tola/settings/local_secret.py
 *.key
 error.log
 *.secret
-*.secret.yml
+settings.secret.yml
 assets/
-local.py
+tola/locale/*
 templates/links.html
+coverage_html
+.coverage
+tola/settings/test_local.py

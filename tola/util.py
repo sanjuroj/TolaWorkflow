@@ -109,7 +109,6 @@ def group_excluded(*group_names, **url):
                 return True
             raise PermissionDenied
         return False
-
     return user_passes_test(in_groups)
 
 
@@ -122,3 +121,27 @@ def group_required(*group_names, **url):
             raise PermissionDenied
         return False
     return user_passes_test(in_groups)
+
+
+def formatFloat(value):
+    if value is None:
+        return None
+    try:
+        value = float(value)
+    except ValueError:
+        return value
+    return ("%.2f" % value).rstrip('0').rstrip('.')
+
+
+# Get GAIT data from mcapi
+def get_GAIT_data(gait_ids):
+
+    cleaned_ids = []
+    for id in gait_ids:
+        try:
+            cleaned_ids.append(str(int(id)))
+        except ValueError:
+            pass
+    base_url = 'https://mcapi.mercycorps.org/gaitprogram/?gaitids='
+    response = requests.get(base_url + ','.join(cleaned_ids))
+    return json.loads(response.content)

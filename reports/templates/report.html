@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load i18n %}
 {% load crispy_forms_tags %}
+
+{% block title %}{% trans "Program Reports" %} | {% endblock %}
 
 {% block content %}
     <h3 id="report_type"></h3>
@@ -419,7 +422,7 @@
         </div>
         <div class="col-sm-9">
             <div id='welcome-panel' class="panel panel-success">
-                <div class="panel-heading"> Program Filter Reports</div>
+                <div class="panel-heading"><h1 class="page-title">{% trans "Filter program reports" %}</h1></div>
                 <div class="panel-body" id="welcome" style="padding:5px;"> Filter your search in the panel on the left to see results.</div>
             </div>
             <div id='data-panel' class="panel panel-primary" style="display: none;">
