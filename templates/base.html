@@ -117,8 +117,6 @@
                                             <span class="badge badge-danger">LOCAL SERVER</span>
                                         {% elif "dev" in request.build_absolute_uri %}
                                             <span class="badge badge-danger">DEV SERVER</span>
-                                        {% elif "report" in request.build_absolute_uri %}
-                                            <span class="badge badge-danger">REPORT SERVER</span>
                                         {% elif "local" in request.build_absolute_uri %}
                                             <span class="badge badge-danger">LOCAL</span>
                                         {% endif %}
