@@ -40,6 +40,13 @@
             $("#myModalContent").load(url);
             $("#myModal").modal('show');
         });
+
+        $(".modal-toggle").on("click", function(e){
+            e.preventDefault();
+            $("#myModalContent").load($(this).attr('href'));
+            $("#myModal").modal("show");
+        });
+
     </script>
 
 {% endblock %}
