@@ -74,7 +74,7 @@ class IndicatorForm(forms.ModelForm):
 
         countries = getCountry(self.request.user)
         self.fields['disaggregation'].queryset = DisaggregationType.objects\
-            .filter(country__in=countries, standard=True)
+            .filter(country__in=countries, standard=False)
         self.fields['objectives'].queryset = Objective.objects.filter(program__id__in=[self.programval.id])
         self.fields['strategic_objectives'].queryset = StrategicObjective.objects.filter(country__in=countries)
         self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
