@@ -379,11 +379,36 @@ class Program(models.Model):
         newest_targetperiod = PeriodicTarget.objects.filter(indicator=OuterRef('pk')).order_by('-end_date')
         min_end_date_across_all_indicators = Indicator.objects.filter(program__in=[self.pk]).annotate(
             newest_end_date=Subquery(newest_targetperiod.values('end_date')[:1])).aggregate(Min('newest_end_date'))
-        if self.reporting_period_end is None:
+        # print("min_end_date_across_all_indicators={}".format(min_end_date_across_all_indicators))
+        if self.reporting_period_end is None or min_end_date_across_all_indicators['newest_end_date__min'] is None:
             return False
+
         if self.reporting_period_end > min_end_date_across_all_indicators['newest_end_date__min']:
             return True
         return False
+
+    @property
+    def do_periodictargets_match_reporting_date(self):
+        min_starts = Indicator.objects.filter(program__in=[self.pk]) \
+                .annotate(minstarts=Min('periodictargets__start_date')) \
+                .values_list('minstarts', flat=True).distinct().exclude(minstarts=None).order_by('minstarts')
+        # print("min_starts.count()={}, min_starts[0]={}, self.reporting_period_start={}, self.does_it_need_additional_target_periods={}".format(min_starts.count(), min_starts.first(), self.reporting_period_start, self.does_it_need_additional_target_periods))
+        if min_starts and (
+                min_starts.count() > 1 or
+                min_starts.first() != self.reporting_period_start):
+            return False
+        return True
+
+    @property
+    def get_indicators_in_need_of_targetperiods_fixing(self):
+        indicators = Indicator.objects.filter(program__in=[self.pk]) \
+            .annotate(minstarts=Min('periodictargets__start_date')) \
+            .exclude(minstarts=self.reporting_period_start) \
+            .distinct() \
+            .values('pk', 'number', 'name', 'target_frequency', 'minstarts') \
+            .order_by('number', 'target_frequency')
+
+        return indicators
 
 
 class ApprovalAuthority(models.Model):

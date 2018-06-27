@@ -31,8 +31,8 @@
             crossorigin="anonymous">
 
         <!-- Custom CSS -->
-        <link href="{% static 'css/app_bootstrap_overrides.css?v=w' %}" rel="stylesheet" type="text/css">
-        <link href="{% static 'css/app.css?v=w' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'css/app_bootstrap_overrides.css' %}?v=w" rel="stylesheet" type="text/css">
+        <link href="{% static 'css/app.css' %}?v=w" rel="stylesheet" type="text/css">
 
         <!--- Django Tables2 css -->
         <link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}">
@@ -40,7 +40,7 @@
         <!-- Hosted Leaflet CSS -->
         <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
 
-        <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css?v=w' %}">
+        <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}?v=w">
 
         <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
 
@@ -48,7 +48,7 @@
         {# TODO: this should be in at least two separate blocks #}
 
         <!-- App specific Javascript -->
-        <script type="text/javascript" src="{% static 'js/app.js?v=w' %}"></script>
+        <script type="text/javascript" src="{% static 'js/app.js' %}?v=w"></script>
 
         <!-- Hosted Leaflet -->
         <script src="{% static 'js/leaflet.js' %}"></script>
@@ -239,8 +239,8 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/select2.min.js"></script>
 
         <!-- bootstrap multiselect -->
-        <script type="text/javascript" src="{% static 'js/bootstrap-multiselect.js' %}"></script>
-        <link href="{% static 'css/bootstrap-multiselect.css' %}" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="{% static 'js/bootstrap-multiselect.js' %}?v=w"></script>
+        <link href="{% static 'css/bootstrap-multiselect.css' %}?v=w" rel="stylesheet" type="text/css">
 
 
         {% if GOOGLE_ANALYTICS_PROPERTY_ID %}

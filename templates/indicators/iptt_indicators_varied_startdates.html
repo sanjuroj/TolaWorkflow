@@ -40,14 +40,14 @@
                 <tbody>
                     {% for indicator in indicators %}
                         <tr>
-                            <td>{{ indicator.number }}</td>
+                            <td>{{ indicator.number|default_if_none:'' }}</td>
                             <td>{{ indicator.name }}</td>
                             <td>{{ indicator.target_frequency|target_frequency_label }}</td>
                             <td>
                                 <a href="{% url 'indicator_update' indicator.pk %}"
                                    class="indicator-link"
                                    data-tab="targets">
-                                    {{ indicator.target_frequency_start|date:"M d, Y" }}
+                                    {{ indicator.minstarts|date:"M d, Y" }}
                                 </a>
                             </td>
                         </tr>
