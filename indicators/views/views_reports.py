@@ -5,7 +5,7 @@ from django.utils import formats, timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
-from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max
+from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max, Min
 from django.views.generic import TemplateView, FormView
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect, HttpResponse
@@ -1058,7 +1058,6 @@ class IPTTReportQuickstartView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(IPTTReportQuickstartView, self).get_context_data(**kwargs)
-
         # Add two instances of the same form to context if they're not present
         if 'form' not in context:
             context['form'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TIME)
@@ -1076,10 +1075,13 @@ class IPTTReportQuickstartView(FormView):
         timeprefix = request.POST.get('%s-formprefix' % self.FORM_PREFIX_TIME)
         program_id = request.POST.get('targetperiods-program', None)
         if program_id:
-            indicators_count = Indicator.objects.filter(
-                program__in=[program_id],
-                target_frequency_start__isnull=False).count()
-            if indicators_count > 0:
+            program = Program.objects.get(pk=program_id)
+            min_starts = Indicator.objects.filter(program__in=[program_id]) \
+                .annotate(minstarts=Min('periodictargets__start_date')) \
+                .values_list('minstarts', flat=True)
+            if min_starts.distinct().count() > 1 or \
+                    min_starts[0] != program.reporting_period_start or \
+                    program.does_it_need_additional_target_periods:
                 return HttpResponseRedirect(reverse_lazy('iptt_redirect', kwargs={'program_id': program_id}))
 
         # set prefix to the current form
