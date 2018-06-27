@@ -1028,16 +1028,10 @@ class IPTT_ReportIndicatorsWithVariedStartDate(TemplateView):
             messages.info(self.request, _("Please select a valid program."))
             return context
 
-        indicators = Indicator.objects.filter(program__in=[program_id]) \
-            .exclude(Q(target_frequency__in=[Indicator.LOP, Indicator.MID_END, Indicator.EVENT]) |
-                     Q(target_frequency_start__isnull=True)) \
-            .values('pk', 'number', 'name', 'target_frequency', 'target_frequency_start') \
-            .order_by('number', 'target_frequency')
-
-        if indicators.count() == 0:
+        if program.do_periodictargets_match_reporting_date is True:
             context['redirect'] = reverse_lazy('iptt_quickstart')
         context['program'] = program
-        context['indicators'] = indicators
+        context['indicators'] = program.get_indicators_in_need_of_targetperiods_fixing
         return context
 
     def get(self, request, *args, **kwargs):
@@ -1076,12 +1070,7 @@ class IPTTReportQuickstartView(FormView):
         program_id = request.POST.get('targetperiods-program', None)
         if program_id:
             program = Program.objects.get(pk=program_id)
-            min_starts = Indicator.objects.filter(program__in=[program_id]) \
-                .annotate(minstarts=Min('periodictargets__start_date')) \
-                .values_list('minstarts', flat=True)
-            if min_starts.distinct().count() > 1 or \
-                    min_starts[0] != program.reporting_period_start or \
-                    program.does_it_need_additional_target_periods:
+            if program.do_periodictargets_match_reporting_date is False:
                 return HttpResponseRedirect(reverse_lazy('iptt_redirect', kwargs={'program_id': program_id}))
 
         # set prefix to the current form
