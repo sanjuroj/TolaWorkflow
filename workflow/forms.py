@@ -1419,9 +1419,9 @@ class DocumentationForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.request = kwargs.pop('request')
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-sm-2'
-        self.helper.field_class = 'col-sm-6'
+        self.helper.form_class = ''
+        self.helper.label_class = ''
+        self.helper.field_class = ''
         self.helper.form_error_title = 'Form Errors'
         self.helper.error_text_inline = True
         self.helper.help_text_inline = True
@@ -1437,7 +1437,7 @@ class DocumentationForm(forms.ModelForm):
 
             FormActions(
                 Submit('submit', 'Save', css_class='btn-default'),
-                Reset('reset', 'Reset', css_class='btn-warning')
+                Reset('reset', 'Reset', css_class='btn-inverse')
             )
         )
 
