@@ -950,3 +950,8 @@ used on collected data table in IPTT */
     display: flex;
     justify-content: space-between;
 }
+
+/* unsorted */
+.break-word {
+    word-break: break-word; /* wraps text in the middle of words */
+}

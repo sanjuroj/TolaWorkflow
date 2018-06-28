@@ -380,14 +380,14 @@ class ProjectAgreementForm(forms.ModelForm):
                                   <table class="table">
                                     <tr>
                                     <th>Name</th>
-                                    <th>Link(URL)</th>
+                                    <th>Link (URL)</th>
                                     <th>Description</th>
                                     <th>&nbsp;</th>
                                     </tr>
                                     {% for item in getDocuments %}
                                     <tr>
-                                        <td>{{ item.name}}</td>
-                                        <td><a href="{{ item.url}}" target="_new">{{ item.url}}</a></td>
+                                        <td>{{ item.name }}</td>
+                                        <td class="break-word"><a href="{{ item.url}}" target="_new">{{ item.url }}</a></td>
                                         <td>{{ item.description}}</td>
                                         <td><a class="monitoring" data-toggle="modal" data-target="#myModal" href='/workflow/documentation_agreement_update/{{ item.id }}/{{ pk }}/'>Edit</a> | <a class="monitoring" href='/workflow/documentation_agreement_delete/{{ item.id }}/' data-toggle="modal" data-target="#myModal">Delete</a>
                                     </tr>
