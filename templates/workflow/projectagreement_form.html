@@ -29,11 +29,11 @@
 
             $("#myModal").on('hidden.bs.modal', function () {
                 // destroy the modal content so that it is not cached and
-                $(this).data('bs.modal', null);
+                $(this).find(".modal-content").html("");
             });
         });
 
-        $("#budget_contributions_table").on("click", ".output", function(e){
+        $(".output, .monitoring").on("click", function(e){
             e.preventDefault();
             var url = $(this).attr("href");
             $("#myModalContent").empty();
@@ -41,7 +41,7 @@
             $("#myModal").modal('show');
         });
 
-        $(".modal-toggle").on("click", function(e){
+        $(".benchmarks").on("click", function(e){
             e.preventDefault();
             $("#myModalContent").load($(this).attr('href'));
             $("#myModal").modal("show");
