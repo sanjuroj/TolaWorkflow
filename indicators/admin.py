@@ -1,6 +1,17 @@
 from django.contrib import admin
-from .models import *
-from workflow.models import Sector, Country, Program
+from .models import (
+    Indicator, IndicatorType, CollectedData, StrategicObjective, Objective, Level,
+    TolaTable, ExternalService, ExternalServiceRecord, DataCollectionFrequency,
+    DisaggregationType, PeriodicTarget, DisaggregationLabel, ReportingFrequency,
+    DisaggregationTypeAdmin,
+    DisaggregationLabelAdmin,
+    ObjectiveAdmin,
+    StrategicObjectiveAdmin,
+    ExternalServiceAdmin,
+    ExternalServiceRecordAdmin,
+    PeriodicTargetAdmin,
+)
+from workflow.models import Sector, Program
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget, ManyToManyWidget
 from import_export.admin import ImportExportModelAdmin
@@ -19,28 +30,54 @@ class IndicatorResource(resources.ModelResource):
 
     class Meta:
         model = Indicator
-        fields = ('id','indicator_type','level','objective','strategic_objective','name','number',\
-                  'source','definition', 'justification', 'unit_of_measure', 'baseline','lop_target', 'rationale_for_target', 'means_of_verification','data_collection_method', 'data_collection_frequency', 'data_points', 'responsible_person',\
-                  'method_of_analysis','information_use','reporting_frequency', 'quality_assurance', 'data_issues', 'indicator_changes', 'comments','disaggregation','sector',\
-                  'program','key_performance_indicator')
-        #import_id_fields = ['id']
+        fields = ('id', 'indicator_type', 'level', 'objective', 'strategic_objective', 'name', 'number',
+                  'source', 'definition', 'justification', 'unit_of_measure', 'baseline', 'lop_target',
+                  'rationale_for_target', 'means_of_verification', 'data_collection_method',
+                  'data_collection_frequency', 'data_points', 'responsible_person',
+                  'method_of_analysis', 'information_use', 'reporting_frequency', 'quality_assurance',
+                  'data_issues', 'indicator_changes', 'comments', 'disaggregation', 'sector',
+                  'program', 'key_performance_indicator')
 
 
-class IndicatorAdmin(ImportExportModelAdmin,SimpleHistoryAdmin):
+class IndicatorListFilter(admin.SimpleListFilter):
+    title = "filters for indicators"
+    parameter_name = 'program'
+
+    def lookups(self, request, model_admin):
+        user_country = request.user.tola_user.country
+        programs = Program.objects.filter(country__in=[user_country]).values('id', 'name')
+        programs_tuple = ()
+        for p in programs:
+            programs_tuple = [(p['id'], p['name']) for p in programs]
+        return programs_tuple
+
+    def queryset(self, request, queryset):
+        return queryset
+
+
+class IndicatorAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
     resource_class = IndicatorResource
-    list_display = ('indicator_types','name','sector','key_performance_indicator')
-    search_fields = ('name','number','program__name')
-    list_filter = ('program','key_performance_indicator','sector')
+    list_display = ('indicator_types', 'name', 'sector', 'key_performance_indicator')
+    search_fields = ('name', 'number', 'program__name')
+    # ('program', 'key_performance_indicator', 'sector')
+    list_filter = (IndicatorListFilter, 'key_performance_indicator', 'sector')
     display = 'Indicators'
-    filter_horizontal = ('program','objectives','strategic_objectives','disaggregation','program')
-    pass
+    filter_horizontal = ('program', 'objectives', 'strategic_objectives', 'disaggregation', 'program')
+
+    def get_queryset(self, request):
+        queryset = super(IndicatorAdmin, self).get_queryset(request)
+        if request.user.is_superuser is False:
+            user_country = request.user.tola_user.country
+            programs = Program.objects.filter(country__in=[user_country])
+            qs = queryset.filter(program__in=programs)
+        return qs
 
 
 class TolaTableResource(resources.ModelResource):
 
     class Meta:
         model = TolaTable
-        fields = ('id','name','table_id','owner','remote_owner','url')
+        fields = ('id', 'name', 'table_id', 'owner', 'remote_owner', 'url')
         #import_id_fields = ['id']
 
 
@@ -58,7 +95,7 @@ class CollectedDataResource(resources.ModelResource):
         #import_id_fields = ['id']
 
 
-class CollectedDataAdmin(ImportExportModelAdmin,SimpleHistoryAdmin):
+class CollectedDataAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
     resource_class = CollectedDataResource
     list_display = ('indicator','program','agreement')
     search_fields = ('indicator','agreement','program','owner__username')
@@ -68,17 +105,17 @@ class CollectedDataAdmin(ImportExportModelAdmin,SimpleHistoryAdmin):
 
 
 class ReportingFrequencyAdmin(admin.ModelAdmin):
-    list_display = ('frequency','description','create_date','edit_date')
+    list_display = ('frequency', 'description', 'create_date', 'edit_date')
     display = 'Reporting Frequency'
 
 
 admin.site.register(IndicatorType)
-admin.site.register(Indicator,IndicatorAdmin)
+admin.site.register(Indicator, IndicatorAdmin)
 admin.site.register(ReportingFrequency)
 admin.site.register(DisaggregationType, DisaggregationTypeAdmin)
 admin.site.register(DisaggregationLabel, DisaggregationLabelAdmin)
 admin.site.register(CollectedData, CollectedDataAdmin)
-admin.site.register(Objective,ObjectiveAdmin)
+admin.site.register(Objective, ObjectiveAdmin)
 admin.site.register(StrategicObjective, StrategicObjectiveAdmin)
 admin.site.register(Level)
 admin.site.register(ExternalService, ExternalServiceAdmin)
