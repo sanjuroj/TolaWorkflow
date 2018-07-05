@@ -1,12 +1,27 @@
-from .models import *
+
 import dateutil
 import datetime
+
+from admin_report.mixins import ChartReportAdmin
+from django.contrib import admin
+from django.contrib.auth.models import User
+
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from import_export.admin import ImportExportModelAdmin, ExportMixin
-from tola.util import getCountry, get_GAIT_data
-from admin_report.mixins import ChartReportAdmin
 
+from tola.util import getCountry, get_GAIT_data
+from .models import (
+    Documentation, ProjectAgreement, ProjectComplete, ProjectType, Country, SiteProfile,
+    Office, Program, TolaUser, District, Province, ProfileType, AdminLevelThree, TolaUserProxy,
+    Organization, Village, Sector, Capacity, Evaluate, Benchmarks, Budget, Template, Monitor,
+    ApprovalAuthority, Checklist, ChecklistItem, Stakeholder, Contact, StakeholderType, TolaSites, FormGuidance,
+    TolaBookmarks,
+    OrganizationAdmin, OfficeAdmin, ProvinceAdmin, AdminLevelThreeAdmin,
+    DistrictAdmin, SiteProfileAdmin, ProjectTypeAdmin,
+    ChecklistAdmin, StakeholderAdmin, ContactAdmin,
+    ChecklistItemAdmin, TolaUserAdmin, TolaSitesAdmin, FormGuidanceAdmin, TolaBookmarksAdmin
+)
 
 
 # Resource for CSV export
@@ -26,9 +41,8 @@ class DocumentationResource(resources.ModelResource):
 
 class DocumentationAdmin(ImportExportModelAdmin):
     resource_class = DocumentationResource
-    list_display = ('program','project')
+    list_display = ('program', 'project')
     list_filter = ('program__country',)
-    pass
 
 
 # Resource for CSV export
@@ -46,9 +60,9 @@ class ProjectAgreementResource(resources.ModelResource):
 
 class ProjectAgreementAdmin(ImportExportModelAdmin):
     resource_class = ProjectAgreementResource
-    list_display = ('program','project_name','short','create_date')
-    list_filter = ('program__country','short')
-    filter_horizontal = ('capacity','evaluate','site','stakeholder')
+    list_display = ('program', 'project_name', 'short', 'create_date')
+    list_filter = ('program__country', 'short')
+    filter_horizontal = ('capacity', 'evaluate', 'site', 'stakeholder')
 
     def queryset(self, request, queryset):
         """
@@ -58,7 +72,7 @@ class ProjectAgreementAdmin(ImportExportModelAdmin):
         """
         # Filter by logged in users allowable countries
         user_countries = getCountry(request.user)
-        #if not request.user.user.is_superuser:
+        # if not request.user.user.is_superuser:
         return queryset.filter(country__in=user_countries)
 
     pass
@@ -93,10 +107,8 @@ class ProjectCompleteAdmin(ImportExportModelAdmin):
         """
         # Filter by logged in users allowable countries
         user_countries = getCountry(request.user)
-        #if not request.user.user.is_superuser:
+        # if not request.user.user.is_superuser:
         return queryset.filter(country__in=user_countries)
-
-    pass
 
 
 # Resource for CSV export
@@ -117,29 +129,31 @@ class SiteProfileResource(resources.ModelResource):
     country = fields.Field(column_name='country', attribute='country', widget=ForeignKeyWidget(Country, 'country'))
     type = fields.Field(column_name='type', attribute='type', widget=ForeignKeyWidget(ProfileType, 'profile'))
     office = fields.Field(column_name='office', attribute='office', widget=ForeignKeyWidget(Office, 'code'))
-    district = fields.Field(column_name='admin level 2', attribute='district', widget=ForeignKeyWidget(District, 'name'))
-    province = fields.Field(column_name='admin level 1', attribute='province', widget=ForeignKeyWidget(Province, 'name'))
-    admin_level_three = fields.Field(column_name='admin level 3', attribute='admin_level_three', widget=ForeignKeyWidget(AdminLevelThree, 'name'))
+    district = fields.Field(column_name='admin level 2', attribute='district',
+                            widget=ForeignKeyWidget(District, 'name'))
+    province = fields.Field(column_name='admin level 1', attribute='province',
+                            widget=ForeignKeyWidget(Province, 'name'))
+    admin_level_three = fields.Field(column_name='admin level 3', attribute='admin_level_three',
+                                     widget=ForeignKeyWidget(AdminLevelThree, 'name'))
 
     class Meta:
         model = SiteProfile
         skip_unchanged = True
         report_skipped = False
-        #import_id_fields = ['id']
+        # import_id_fields = ['id']
 
 
 class SiteProfileAdmin(ImportExportModelAdmin):
     resource_class = SiteProfileResource
-    list_display = ('name','office', 'country', 'province','district','admin_level_three','village')
+    list_display = ('name', 'office', 'country', 'province', 'district', 'admin_level_three', 'village')
     list_filter = ('country__country',)
-    search_fields = ('office__code','country__country')
-    pass
+    search_fields = ('office__code', 'country__country')
 
 
 class ProgramAdmin(admin.ModelAdmin):
-    list_display = ('countries','name','gaitid', 'description','budget_check','funding_status')
-    search_fields = ('name','gaitid')
-    list_filter = ('funding_status','country','budget_check','funding_status')
+    list_display = ('countries', 'name', 'gaitid', 'description', 'budget_check', 'funding_status')
+    search_fields = ('name', 'gaitid')
+    list_filter = ('funding_status', 'country', 'budget_check', 'funding_status')
     display = 'Program'
     readonly_fields = ('start_date', 'end_date', 'reporting_period_start', 'reporting_period_end', )
 
@@ -152,13 +166,13 @@ class ProgramAdmin(admin.ModelAdmin):
                 try:
                     obj.start_date = dateutil.parser.parse(gait_data[0]['start_date']).date()
                 except TypeError:
-                    program.start_date = None
+                    obj.start_date = None
 
             if not obj.end_date:
                 try:
                     obj.end_date = dateutil.parser.parse(gait_data[0]['end_date']).date()
                 except TypeError:
-                    program.end_date = None
+                    obj.end_date = None
 
             if not obj.reporting_period_start:
                 obj.reporting_period_start = obj.start_date
@@ -179,10 +193,12 @@ class ApprovalAuthorityAdmin(admin.ModelAdmin):
     search_fields = ('approval_user__user__first_name', 'approval_user__user__last_name', 'country__country')
     list_filter = ('create_date','country')
 
+
 class StakeholderAdmin(ImportExportModelAdmin):
     list_display = ('name', 'type', 'country', 'approval', 'approved_by', 'filled_by', 'create_date')
     display = 'Stakeholder List'
     list_filter = ('country', 'type')
+
 
 class TolaUserProxyResource(resources.ModelResource):
     country = fields.Field(column_name='country', attribute='country', widget=ForeignKeyWidget(Country, 'country'))
@@ -194,20 +210,20 @@ class TolaUserProxyResource(resources.ModelResource):
 
     class Meta:
         model = TolaUserProxy
-        fields = ('title', 'name', 'user','country','create_date', 'email' )
-        export_order = ('title', 'name', 'user','country','email','create_date')
+        fields = ('title', 'name', 'user', 'country','create_date', 'email')
+        export_order = ('title', 'name', 'user', 'country', 'email', 'create_date')
 
 
-class ReportTolaUserProxyAdmin(ChartReportAdmin, ExportMixin, admin.ModelAdmin ):
+class ReportTolaUserProxyAdmin(ChartReportAdmin, ExportMixin, admin.ModelAdmin):
 
     resource_class = TolaUserProxyResource
 
     def get_queryset(self, request):
 
         qs = super(ReportTolaUserProxyAdmin, self).get_queryset(request)
-        return qs.filter(user__is_active= True)
+        return qs.filter(user__is_active=True)
 
-    list_display = ('title','name', 'user','email', 'country', 'create_date')
+    list_display = ('title', 'name', 'user', 'email', 'country', 'create_date')
     list_filter = ('country', 'create_date', 'user__is_staff')
 
     def email(self, data):
@@ -216,6 +232,7 @@ class ReportTolaUserProxyAdmin(ChartReportAdmin, ExportMixin, admin.ModelAdmin )
             if data.user == a_user:
                 email = a_user.email
         return email
+
 
 admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(Country, CountryAdmin)

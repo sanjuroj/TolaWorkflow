@@ -24,7 +24,8 @@ class IndicatorResource(resources.ModelResource):
     objective = ManyToManyWidget(Objective, separator=" | ", field="objective"),
     strategic_objective = ManyToManyWidget(StrategicObjective, separator=" | ", field="strategic_objective")
     level = ManyToManyWidget(Level, separator=" | ", field="level")
-    reporting_frequency = fields.Field(column_name='reporting_frequency', attribute='reporting_frequency', widget=ForeignKeyWidget(ReportingFrequency, 'frequency'))
+    reporting_frequency = fields.Field(column_name='reporting_frequency', attribute='reporting_frequency',
+                                       widget=ForeignKeyWidget(ReportingFrequency, 'frequency'))
     sector = fields.Field(column_name='sector', attribute='sector', widget=ForeignKeyWidget(Sector, 'sector'))
     program = ManyToManyWidget(Program, separator=" | ", field="name")
 
@@ -40,7 +41,7 @@ class IndicatorResource(resources.ModelResource):
 
 
 class IndicatorListFilter(admin.SimpleListFilter):
-    title = "filters for indicators"
+    title = "Program"
     parameter_name = 'program'
 
     def lookups(self, request, model_admin):
@@ -52,6 +53,8 @@ class IndicatorListFilter(admin.SimpleListFilter):
         return programs_tuple
 
     def queryset(self, request, queryset):
+        if self.value():
+            queryset = queryset.filter(program__in=[self.value()])
         return queryset
 
 
@@ -78,30 +81,28 @@ class TolaTableResource(resources.ModelResource):
     class Meta:
         model = TolaTable
         fields = ('id', 'name', 'table_id', 'owner', 'remote_owner', 'url')
-        #import_id_fields = ['id']
+        # import_id_fields = ['id']
 
 
 class TolaTableAdmin(ImportExportModelAdmin):
-    list_display = ('name','owner','url','create_date','edit_date')
-    search_fields = ('country__country','name')
+    list_display = ('name', 'owner', 'url', 'create_date', 'edit_date')
+    search_fields = ('country__country', 'name')
     list_filter = ('country__country',)
     display = 'Tola Table'
-    pass
+
 
 class CollectedDataResource(resources.ModelResource):
-
     class Meta:
         model = CollectedData
-        #import_id_fields = ['id']
+        # import_id_fields = ['id']
 
 
 class CollectedDataAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
     resource_class = CollectedDataResource
-    list_display = ('indicator','program','agreement')
-    search_fields = ('indicator','agreement','program','owner__username')
-    list_filter = ('indicator__program__country__country','program','approved_by')
+    list_display = ('indicator', 'program', 'agreement')
+    search_fields = ('indicator', 'agreement', 'program', 'owner__username')
+    list_filter = ('indicator__program__country__country', 'program', 'approved_by')
     display = 'Collected Data on Indicators'
-    pass
 
 
 class ReportingFrequencyAdmin(admin.ModelAdmin):
