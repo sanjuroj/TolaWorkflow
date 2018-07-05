@@ -179,6 +179,15 @@
                           {{ coldata.date_collected_formatted|default_if_none:"" }}:
                       </a>
                     {% endif %}
+                    <div class="pl-2">
+                        {% with achieved=coldata.achieved|floatformat:"-2" %}
+                            {% if indicator.unit_of_measure_type == 2 %}
+                                {{ achieved }}%
+                            {% else %}
+                                {{ achieved }}
+                            {% endif %}
+                        {% endwith %}
+                    </div>
                 </td>
                 <td>
                     {% if coldata.evidence %}
@@ -302,7 +311,7 @@
     </div>
 {% else %}
     <div class="my-3 color-red">
-        <i class="fas fa-bullseye"></i>&nbsp;{% trans "This indicator has no targets." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link collecteddata-link btn btn-success"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add targets" %}</a>
+        <i class="fas fa-bullseye"></i>&nbsp;{% trans "This indicator has no targets." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link btn btn-success"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add targets" %}</a>
     </div>
 {% endif %}
 </div>
