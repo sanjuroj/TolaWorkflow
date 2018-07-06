@@ -30,8 +30,9 @@ class IpttQuickstartTest(TestCase):
         self.assertLessEqual(_get_first_period, todays_date)
         print("First period:", _get_first_period)
 
-        start_date = datetime.strptime("2017-01-22", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        # The 2016 start date includes leap year in the range
+        start_date = datetime.strptime("2016-01-22", "%Y-%m-%d").date()
+        end_date = datetime.strptime("2018-12-31", "%Y-%m-%d").date()
 
         _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.ANNUAL)
         print("NumPeriods", _get_num_periods)
@@ -46,8 +47,8 @@ class IpttQuickstartTest(TestCase):
         _get_first_period = mixin._get_first_period(todays_date, _get_num_months)
         self.assertLessEqual(_get_first_period, todays_date)
 
-        start_date = datetime.strptime("2017-01-22", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        start_date = datetime.strptime("2016-01-22", "%Y-%m-%d").date()
+        end_date = datetime.strptime("2018-12-31", "%Y-%m-%d").date()
 
         _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.SEMI_ANNUAL)
         self.assertEqual(_get_num_periods, 6)
@@ -61,8 +62,8 @@ class IpttQuickstartTest(TestCase):
         _get_first_period = mixin._get_first_period(todays_date, _get_num_months)
         self.assertLessEqual(_get_first_period, todays_date)
 
-        start_date = datetime.strptime("2017-01-22", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        start_date = datetime.strptime("2016-01-22", "%Y-%m-%d").date()
+        end_date = datetime.strptime("2018-12-31", "%Y-%m-%d").date()
 
         _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.TRI_ANNUAL)
         self.assertEqual(_get_num_periods, 9)
@@ -76,8 +77,8 @@ class IpttQuickstartTest(TestCase):
         _get_first_period = mixin._get_first_period(todays_date, _get_num_months)
         self.assertLessEqual(_get_first_period, todays_date)
 
-        start_date = datetime.strptime("2017-01-22", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        start_date = datetime.strptime("2016-01-22", "%Y-%m-%d").date()
+        end_date = datetime.strptime("2018-12-31", "%Y-%m-%d").date()
 
         _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.QUARTERLY)
         self.assertEqual(_get_num_periods, 12)
@@ -91,8 +92,8 @@ class IpttQuickstartTest(TestCase):
         _get_first_period = mixin._get_first_period(todays_date, _get_num_months)
 
         self.assertLessEqual(_get_first_period, todays_date)
-        start_date = datetime.strptime("2017-01-22", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        start_date = datetime.strptime("2016-01-22", "%Y-%m-%d").date()
+        end_date = datetime.strptime("2018-12-31", "%Y-%m-%d").date()
 
         _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.MONTHLY)
         self.assertEqual(_get_num_periods, 36)
