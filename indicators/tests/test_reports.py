@@ -123,6 +123,3 @@ class IpttQuickstartTest(TestCase):
         self.assertEqual(IPTT_Mixin._get_period_name(Indicator.TRI_ANNUAL), "Tri-annual")
         self.assertEqual(IPTT_Mixin._get_period_name(Indicator.QUARTERLY), "Quarter")
         self.assertEqual(IPTT_Mixin._get_period_name(Indicator.MONTHLY), "Month")
-
-
-
