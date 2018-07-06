@@ -31,6 +31,9 @@ class TolaTable(models.Model):
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
+    class Meta:
+        app_label = 'indicators'
+
     def __unicode__(self):
         return self.name
 
