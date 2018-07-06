@@ -21,18 +21,12 @@ class TolaTable(models.Model):
     name = models.CharField(_("Name"), max_length=255, blank=True)
     table_id = models.IntegerField(_("Table id"), blank=True, null=True)
     owner = models.ForeignKey('auth.User', verbose_name=_("Owner"))
-    remote_owner = models.CharField(
-        _("Remote owner"), max_length=255, blank=True)
-    country = models.ManyToManyField(
-        Country, blank=True, verbose_name=_("Country"))
+    remote_owner = models.CharField(_("Remote owner"), max_length=255, blank=True)
+    country = models.ManyToManyField(Country, blank=True, verbose_name=_("Country"))
     url = models.CharField(_("Url"), max_length=255, blank=True)
-    unique_count = models.IntegerField(
-        _("Unique count"), blank=True, null=True)
+    unique_count = models.IntegerField(_("Unique count"), blank=True, null=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
-
-    class Meta:
-        app_label = 'indicators'
 
     def __unicode__(self):
         return self.name

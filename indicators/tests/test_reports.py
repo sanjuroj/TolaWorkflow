@@ -1,8 +1,8 @@
 from datetime import datetime
 from django.test import TestCase
 from django.test import Client
-from ..models import Indicator
-from ..views.views_reports import IPTT_Mixin
+from indicators.models import Indicator
+from indicators.views.views_reports import IPTT_Mixin
 
 
 class IpttQuickstartTest(TestCase):
@@ -10,8 +10,6 @@ class IpttQuickstartTest(TestCase):
     def setup(self):
         self.client = Client()
         self.mixin = IPTT_Mixin()
-        print("mixin instance created")
-        print(self.mixin)
 
     def test_page_load_returns_200(self):
         response = self.client.get('/indicators/iptt_quickstart/')
