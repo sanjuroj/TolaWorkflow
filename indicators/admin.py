@@ -3,8 +3,6 @@ from .models import (
     Indicator, IndicatorType, CollectedData, StrategicObjective, Objective, Level,
     TolaTable, ExternalService, ExternalServiceRecord, DataCollectionFrequency,
     DisaggregationType, PeriodicTarget, DisaggregationLabel, ReportingFrequency,
-    ObjectiveAdmin,
-    StrategicObjectiveAdmin,
     ExternalServiceAdmin,
     ExternalServiceRecordAdmin,
     PeriodicTargetAdmin,
@@ -88,7 +86,10 @@ class CountryFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value():
-            queryset = queryset.filter(country=self.value())
+            if queryset.model == Objective:
+                queryset = queryset.filter(program__country=self.value())
+            else:
+                queryset = queryset.filter(country=self.value())
         return queryset
 
 
@@ -138,6 +139,36 @@ class DisaggregationLabelAdmin(admin.ModelAdmin):
             disagg_types = DisaggregationType.objects.filter(country=user_country).values('id')
             disagg_types_ids = [dt['id'] for dt in disagg_types]
             queryset = queryset.filter(disaggregation_type__in=disagg_types_ids)
+        return queryset
+
+
+class ObjectiveAdmin(admin.ModelAdmin):
+    list_display = ('program', 'name')
+    search_fields = ('name', 'program__name')
+    list_filter = (CountryFilter,)   # ('program__country__country',)
+    display = 'Program Objectives'
+
+    def get_queryset(self, request):
+        queryset = super(ObjectiveAdmin, self).get_queryset(request)
+        if request.user.is_superuser is False:
+            user_country = request.user.tola_user.country
+            programs = Program.objects.filter(country__in=[user_country]).values('id')
+            program_ids = [p['id'] for p in programs]
+            queryset = queryset.filter(program__in=program_ids)
+        return queryset
+
+
+class StrategicObjectiveAdmin(admin.ModelAdmin):
+    list_display = ('country', 'name')
+    search_fields = ('country__country', 'name')
+    list_filter = (CountryFilter,)  # ('country__country',)
+    display = 'Country Strategic Objectives'
+
+    def get_queryset(self, request):
+        queryset = super(StrategicObjectiveAdmin, self).get_queryset(request)
+        if request.user.is_superuser is False:
+            user_country = request.user.tola_user.country
+            queryset = queryset.filter(country=user_country)
         return queryset
 
 
