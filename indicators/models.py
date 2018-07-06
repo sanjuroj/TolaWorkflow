@@ -69,7 +69,7 @@ class StrategicObjective(models.Model):
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
     class Meta:
-        verbose_name = _("Strategic Objectives")
+        verbose_name = _("Country Strategic Objectives")
         ordering = ('country', 'name')
 
     def __unicode__(self):
@@ -85,7 +85,7 @@ class StrategicObjectiveAdmin(admin.ModelAdmin):
     list_display = ('country', 'name')
     search_fields = ('country__country', 'name')
     list_filter = ('country__country',)
-    display = 'Strategic Objectives'
+    display = 'Country Strategic Objectives'
 
 
 class Objective(models.Model):
@@ -98,7 +98,7 @@ class Objective(models.Model):
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
     class Meta:
-        verbose_name = _("Objective")
+        verbose_name = _("Program Objective")
         ordering = ('program', 'name')
 
     def __unicode__(self):
@@ -114,7 +114,7 @@ class ObjectiveAdmin(admin.ModelAdmin):
     list_display = ('program', 'name')
     search_fields = ('name', 'program__name')
     list_filter = ('program__country__country',)
-    display = 'Objectives'
+    display = 'Program Objectives'
 
 
 class Level(models.Model):

@@ -38,8 +38,9 @@ class MyUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
-        # No permissions 'is_superuser',
-        (u'Permissions', {'fields': ('is_active', 'is_staff', 'groups', 'user_permissions')}),
+        # see ticket #459 to see why this is removed
+        # No permissions 'is_superuser', 'user_permissions'
+        (u'Permissions', {'fields': ('is_active', 'is_staff', 'groups')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         # (_('Groups'), {'fields': ('groups',)}),
     )
