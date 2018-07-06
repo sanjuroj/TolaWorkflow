@@ -144,16 +144,10 @@ class LevelAdmin(admin.ModelAdmin):
 
 
 class DisaggregationType(models.Model):
-    disaggregation_type = models.CharField(
-        _("Disaggregation type"), max_length=135, blank=True)
-    description = models.CharField(
-        _("Description"), max_length=765, blank=True)
-    country = models.ForeignKey(
-        Country, null=True, blank=True, verbose_name="Country")
-    standard = models.BooleanField(
-        default=False,
-        verbose_name=_("Standard (TolaData Admins Only)")
-    )
+    disaggregation_type = models.CharField(_("Disaggregation type"), max_length=135, blank=True)
+    description = models.CharField(_("Description"), max_length=765, blank=True)
+    country = models.ForeignKey(Country, null=True, blank=True, verbose_name="Country")
+    standard = models.BooleanField(default=False, verbose_name=_("Standard (TolaData Admins Only)"))
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
@@ -161,16 +155,8 @@ class DisaggregationType(models.Model):
         return self.disaggregation_type
 
 
-class DisaggregationTypeAdmin(admin.ModelAdmin):
-    list_display = ('disaggregation_type', 'country', 'standard',
-                    'description')
-    list_filter = ('country', 'standard', 'disaggregation_type')
-    display = 'Disaggregation Type'
-
-
 class DisaggregationLabel(models.Model):
-    disaggregation_type = models.ForeignKey(
-        DisaggregationType, verbose_name=_("Disaggregation type"))
+    disaggregation_type = models.ForeignKey(DisaggregationType, verbose_name=_("Disaggregation type"))
     label = models.CharField(_("Label"), max_length=765, blank=True)
     customsort = models.IntegerField(_("Customsort"), blank=True, null=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
@@ -178,12 +164,6 @@ class DisaggregationLabel(models.Model):
 
     def __unicode__(self):
         return self.label
-
-
-class DisaggregationLabelAdmin(admin.ModelAdmin):
-    list_display = ('disaggregation_type', 'customsort', 'label',)
-    display = 'Disaggregation Label'
-    list_filter = ('disaggregation_type__disaggregation_type',)
 
 
 class DisaggregationValue(models.Model):
