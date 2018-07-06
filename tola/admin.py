@@ -53,6 +53,13 @@ class MyUserAdmin(UserAdmin):
     form = MyUserChangeForm
     add_form = MyUserCreationForm
 
+    def get_queryset(self, request):
+        queryset = super(MyUserAdmin, self).get_queryset(request)
+        if request.user.is_superuser is False:
+            user_country = request.user.tola_user.country
+            queryset = queryset.filter(tola_user__country=user_country)
+        return queryset
+
 
 # Re-register UserAdmin with custom options
 admin.site.unregister(User)
