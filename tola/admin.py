@@ -38,10 +38,10 @@ class MyUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
-        # No permissions 'is_superuser', 'user_permissions'
-        (u'Permissions', {'fields': ('is_active', 'is_staff', 'groups')}),
+        # No permissions 'is_superuser',
+        (u'Permissions', {'fields': ('is_active', 'is_staff', 'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-        (_('Groups'), {'fields': ('groups',)}),
+        # (_('Groups'), {'fields': ('groups',)}),
     )
 
     actions = ['make_active', 'make_inactive']
