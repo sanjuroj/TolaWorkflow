@@ -39,7 +39,7 @@ class IPTT_Mixin(object):
     FROM = 'from'
     TO = 'to'
 
-    def __init__(self, **kwars):
+    def __init__(self, **kwargs):
         self.program = None
         self.annotations = {}
         self.filter_form_initial_data = {}
