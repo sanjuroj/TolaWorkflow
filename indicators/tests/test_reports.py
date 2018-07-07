@@ -30,68 +30,68 @@ class IpttQuickstartTest(TestCase):
         self.assertLessEqual(_get_first_period, todays_date)
 
         # The 2016 start date includes leap year in the range
-        start_date = datetime.strptime("2017-01-22", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        start_date = datetime.strptime("2016-01-22", "%Y-%m-%d").date()
+        end_date = datetime.strptime("2018-12-31", "%Y-%m-%d").date()
 
         _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.ANNUAL)
         self.assertEqual(_get_num_periods, 3)
 
     def test_get_num_months_semiannual(self):
         mixin = IPTT_Mixin()
-        _get_num_months = mixin._get_num_months(Indicator.SEMI_ANNUAL)
-        self.assertEqual(_get_num_months, 6)
+        num_months_in_period = mixin._get_num_months(Indicator.SEMI_ANNUAL)
+        self.assertEqual(num_months_in_period, 6)
 
         todays_date = datetime.today().date()
-        _get_first_period = mixin._get_first_period(todays_date, _get_num_months)
+        _get_first_period = mixin._get_first_period(todays_date, num_months_in_period)
         self.assertLessEqual(_get_first_period, todays_date)
 
-        start_date = datetime.strptime("2017-01-22", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        start_date = datetime.strptime("2016-01-22", "%Y-%m-%d").date()
+        end_date = datetime.strptime("2018-12-31", "%Y-%m-%d").date()
 
         _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.SEMI_ANNUAL)
         self.assertEqual(_get_num_periods, 6)
 
     def test_get_num_months_triannual(self):
         mixin = IPTT_Mixin()
-        _get_num_months = mixin._get_num_months(Indicator.TRI_ANNUAL)
-        self.assertEqual(_get_num_months, 4)
+        num_months_in_period = mixin._get_num_months(Indicator.TRI_ANNUAL)
+        self.assertEqual(num_months_in_period, 4)
 
         todays_date = datetime.today().date()
-        _get_first_period = mixin._get_first_period(todays_date, _get_num_months)
+        _get_first_period = mixin._get_first_period(todays_date, num_months_in_period)
         self.assertLessEqual(_get_first_period, todays_date)
 
-        start_date = datetime.strptime("2017-01-22", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        start_date = datetime.strptime("2016-01-22", "%Y-%m-%d").date()
+        end_date = datetime.strptime("2018-12-31", "%Y-%m-%d").date()
 
         _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.TRI_ANNUAL)
         self.assertEqual(_get_num_periods, 9)
 
     def test_get_num_months_quarterly(self):
         mixin = IPTT_Mixin()
-        _get_num_months = mixin._get_num_months(Indicator.QUARTERLY)
-        self.assertEqual(_get_num_months, 3)
+        num_months_in_period = mixin._get_num_months(Indicator.QUARTERLY)
+        self.assertEqual(num_months_in_period, 3)
 
         todays_date = datetime.today().date()
-        _get_first_period = mixin._get_first_period(todays_date, _get_num_months)
+        _get_first_period = mixin._get_first_period(todays_date, num_months_in_period)
         self.assertLessEqual(_get_first_period, todays_date)
 
-        start_date = datetime.strptime("2017-01-22", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        start_date = datetime.strptime("2016-01-22", "%Y-%m-%d").date()
+        end_date = datetime.strptime("2018-12-31", "%Y-%m-%d").date()
 
         _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.QUARTERLY)
         self.assertEqual(_get_num_periods, 12)
 
     def test_get_num_months_monthly(self):
         mixin = IPTT_Mixin()
-        _get_num_months = mixin._get_num_months(Indicator.MONTHLY)
-        self.assertEqual(_get_num_months, 1)
+        num_months_in_period = mixin._get_num_months(Indicator.MONTHLY)
+        self.assertEqual(num_months_in_period, 1)
 
         todays_date = datetime.today().date()
-        _get_first_period = mixin._get_first_period(todays_date, _get_num_months)
+        _get_first_period = mixin._get_first_period(todays_date, num_months_in_period)
 
         self.assertLessEqual(_get_first_period, todays_date)
-        start_date = datetime.strptime("2017-01-22", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        start_date = datetime.strptime("2016-01-22", "%Y-%m-%d").date()
+        end_date = datetime.strptime("2018-12-31", "%Y-%m-%d").date()
 
         _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.MONTHLY)
         self.assertEqual(_get_num_periods, 36)
@@ -99,23 +99,12 @@ class IpttQuickstartTest(TestCase):
     def test_get_num_periods_rejects_reversed_date_range(self):
         mixin = IPTT_Mixin()
 
-        start_date = datetime.strptime("2019-01-01", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2018-01-01", "%Y-%m-%d").date()
+        start_date = datetime.strptime("2016-01-01", "%Y-%m-%d").date()
+        end_date = datetime.strptime("2015-01-01", "%Y-%m-%d").date()
 
-        _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.ANNUAL)
-        self.assertEqual(_get_num_periods, 0)
-
-        _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.SEMI_ANNUAL)
-        self.assertEqual(_get_num_periods, 0)
-
-        _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.TRI_ANNUAL)
-        self.assertEqual(_get_num_periods, 0)
-
-        _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.QUARTERLY)
-        self.assertEqual(_get_num_periods, 0)
-
-        _get_num_periods = mixin._get_num_periods(start_date, end_date, Indicator.MONTHLY)
-        self.assertEqual(_get_num_periods, 0)
+        for period in Indicator.TARGET_FREQUENCIES:
+            _get_num_periods = mixin._get_num_periods(start_date, end_date, period)
+            self.assertEqual(_get_num_periods, 0, period)
 
     def test_get_period_names(self):
         self.assertEqual(IPTT_Mixin._get_period_name(Indicator.ANNUAL), "Year")
@@ -123,3 +112,80 @@ class IpttQuickstartTest(TestCase):
         self.assertEqual(IPTT_Mixin._get_period_name(Indicator.TRI_ANNUAL), "Tri-annual")
         self.assertEqual(IPTT_Mixin._get_period_name(Indicator.QUARTERLY), "Quarter")
         self.assertEqual(IPTT_Mixin._get_period_name(Indicator.MONTHLY), "Month")
+
+    def test_get_first_period_annual(self):
+        mixin = IPTT_Mixin()
+
+        real_start_date = datetime.strptime("2016-02-29", "%Y-%m-%d").date()
+        period_start_date = datetime.strptime("2016-01-01", "%Y-%m-%d").date()
+        ret = mixin._get_num_months(Indicator.ANNUAL)
+        _get_first_period = mixin._get_first_period(real_start_date, ret)
+        self.assertEqual(_get_first_period, period_start_date, "Annual")
+
+    def test_get_first_period_semiannual(self):
+        mixin = IPTT_Mixin()
+
+        real_start_date = datetime.strptime("2016-02-29", "%Y-%m-%d").date()
+        period_start_date = datetime.strptime("2016-01-01", "%Y-%m-%d").date()
+        ret = mixin._get_num_months(Indicator.SEMI_ANNUAL)
+        _get_first_period = mixin._get_first_period(real_start_date, ret)
+        self.assertEqual(_get_first_period, period_start_date, '')
+
+        real_start_date = datetime.strptime("2016-07-15", "%Y-%m-%d").date()
+        period_start_date = datetime.strptime("2016-07-01", "%Y-%m-%d").date()
+        _get_first_period = mixin._get_first_period(real_start_date, ret)
+        self.assertEqual(_get_first_period, period_start_date, "Semi-annual")
+
+
+    def test_get_first_period_triannual(self):
+        mixin = IPTT_Mixin()
+
+        real_start_date = datetime.strptime("2016-02-29", "%Y-%m-%d").date()
+        period_start_date = datetime.strptime("2016-01-01", "%Y-%m-%d").date()
+        ret = mixin._get_num_months(Indicator.TRI_ANNUAL)
+        _get_first_period = mixin._get_first_period(real_start_date, ret)
+        self.assertEqual(_get_first_period, period_start_date, "Tri-annual")
+
+        real_start_date = datetime.strptime("2016-05-31", "%Y-%m-%d").date()
+        period_start_date = datetime.strptime("2016-05-01", "%Y-%m-%d").date()
+        _get_first_period = mixin._get_first_period(real_start_date, ret)
+        self.assertEqual(_get_first_period, period_start_date, "Tri-annual")
+
+        real_start_date = datetime.strptime("2016-09-15", "%Y-%m-%d").date()
+        period_start_date = datetime.strptime("2016-09-01", "%Y-%m-%d").date()
+        _get_first_period = mixin._get_first_period(real_start_date, ret)
+        self.assertEqual(_get_first_period, period_start_date, "Tri-annual")
+
+    def test_get_first_period_quaterly(self):
+        mixin = IPTT_Mixin()
+
+        real_start_date = datetime.strptime("2016-02-29", "%Y-%m-%d").date()
+        period_start_date = datetime.strptime("2016-01-01", "%Y-%m-%d").date()
+        ret = mixin._get_num_months(Indicator.QUARTERLY)
+        _get_first_period = mixin._get_first_period(real_start_date, ret)
+        self.assertEqual(_get_first_period, period_start_date, "Quarterly")
+
+        real_start_date = datetime.strptime("2016-04-15", "%Y-%m-%d").date()
+        period_start_date = datetime.strptime("2016-04-01", "%Y-%m-%d").date()
+        _get_first_period = mixin._get_first_period(real_start_date, ret)
+        self.assertEqual(_get_first_period, period_start_date, "Quarterly")
+
+        real_start_date = datetime.strptime("2016-07-04", "%Y-%m-%d").date()
+        period_start_date = datetime.strptime("2016-07-01", "%Y-%m-%d").date()
+        _get_first_period = mixin._get_first_period(real_start_date, ret)
+        self.assertEqual(_get_first_period, period_start_date, "Quarterly")
+
+        real_start_date = datetime.strptime("2016-10-31", "%Y-%m-%d").date()
+        period_start_date = datetime.strptime("2016-10-01", "%Y-%m-%d").date()
+        _get_first_period = mixin._get_first_period(real_start_date, ret)
+        self.assertEqual(_get_first_period, period_start_date, "Quarterly")
+
+
+    def test_get_first_period_monthly(self):
+        mixin = IPTT_Mixin()
+
+        real_start_date = datetime.strptime("2016-02-29", "%Y-%m-%d").date()
+        period_start_date = datetime.strptime("2016-02-01", "%Y-%m-%d").date()
+        ret = mixin._get_num_months(Indicator.MONTHLY)
+        _get_first_period = mixin._get_first_period(real_start_date, ret)
+        self.assertEqual(_get_first_period, period_start_date, "Monthly")
