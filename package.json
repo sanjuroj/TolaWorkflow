@@ -1,0 +1,9 @@
+{
+    "name": "tolaActivity",
+    "version": "0.0.0",
+    "description": "Frontend framework for Mercy Corp’s TolaActivity web app",
+    "author": "Paul Souders <psouders@mercycorps.org>",
+    "devDependencies": {
+        "bootstrap": "4.0.0"
+    }
+}
