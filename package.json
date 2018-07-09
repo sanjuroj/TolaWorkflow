@@ -4,7 +4,8 @@
     "description": "Frontend framework for Mercy Corp’s TolaActivity web app",
     "author": "Paul Souders <psouders@mercycorps.org>",
     "scripts": {
-        "copy": "cpx node_modules/bootstrap/dist/css/bootstrap.min.css tola/static/css"
+        "copy-bootstrap-css": "cpx node_modules/bootstrap/dist/css/bootstrap.min.css tola/static/css",
+        "copy": "npm run copy-bootstrap-css"
     },
     "devDependencies": {
         "bootstrap": "4.0.0",
