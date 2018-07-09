@@ -4,8 +4,10 @@
     "description": "Frontend framework for Mercy Corp’s TolaActivity web app",
     "author": "Paul Souders <psouders@mercycorps.org>",
     "scripts": {
-        "copy-bootstrap-css": "cpx node_modules/bootstrap/dist/css/bootstrap.min.css tola/static/css",
-        "copy": "npm-run-all copy-bootstrap-css"
+        "copy-bootstrap-css": "cpx \"node_modules/bootstrap/dist/css/bootstrap.min.{css,css.map}\" tola/static/css",
+        "copy-jquery-js": "cpx node_modules/jquery/dist/jquery.min.js tola/static/js",
+        "copy-popper-js": "cpx node_modules/popper.js/dist/popper.min.js tola/static/js",
+        "copy": "npm-run-all copy-bootstrap-css copy-jquery-js copy-popper-js"
     },
     "devDependencies": {
         "bootstrap": "4.0.0",
