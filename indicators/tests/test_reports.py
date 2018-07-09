@@ -83,8 +83,8 @@ class IpttQuickstartTest(TestCase):
         self.assertEqual(IPTT_Mixin._get_num_periods(start_date, end_date, Indicator.MONTHLY), 12)
 
     def test_get_num_periods_rejects_reversed_date_range(self):
-        start_date = datetime.strptime("2016-12-31", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2016-01-01", "%Y-%m-%d").date()
+        start_date = datetime.strptime("2020-01-01", "%Y-%m-%d").date()
+        end_date = datetime.strptime("2019-01-01", "%Y-%m-%d").date()
 
         self.assertEqual(IPTT_Mixin._get_num_periods(start_date, end_date, Indicator.ANNUAL), 0)
         self.assertEqual(IPTT_Mixin._get_num_periods(start_date, end_date, Indicator.SEMI_ANNUAL), 0)
@@ -166,9 +166,42 @@ class IpttQuickstartTest(TestCase):
         self.assertEqual(_get_first_period, period_start_date)
 
     def test_get_first_period_monthly(self):
-        mixin = IPTT_Mixin()
+        self.mixin = IPTT_Mixin()
         real_start_date = datetime.strptime("2016-02-29", "%Y-%m-%d").date()
         period_start_date = datetime.strptime("2016-02-01", "%Y-%m-%d").date()
-        ret = mixin._get_num_months(Indicator.MONTHLY)
-        _get_first_period = mixin._get_first_period(real_start_date, ret)
+        ret = self.mixin._get_num_months(Indicator.MONTHLY)
+        _get_first_period = self.mixin._get_first_period(real_start_date, ret)
         self.assertEqual(_get_first_period, period_start_date)
+
+    def test_generate_annotations(self):
+        pass
+
+    def test_generate_targetperiods(self):
+        pass
+
+    def test_generate_timeperiods(self):
+        pass
+
+    def test_update_filter_form_initial(self):
+        pass
+
+    def test_get_filters(self):
+        pass
+
+    def test_prepare_indicators(self):
+        pass
+
+    def test_prepare_iptt_period_dateranges(self):
+        '''prepare_iptt_period_dateranges(self, period, periods_date_ranges, from_or_to):'''
+        self.mixin = IPTT_Mixin()
+        self.FROM = True
+        dates = []
+        start_date = datetime.strptime("2018-01-01", "%Y-%m-%d").date(),
+        end_date = datetime.strptime("2018-12-31", "%Y-%m-%d").date()
+        dates.append(start_date)
+        dates.append(end_date)
+        ranges = self.mixin.prepare_iptt_period_dateranges(Indicator.TRI_ANNUAL, dates, self.FROM)
+        print(ranges)
+
+    def test_get_context_data(self):
+        pass
