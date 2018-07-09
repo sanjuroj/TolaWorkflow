@@ -4,6 +4,7 @@
     "description": "Frontend framework for Mercy Corp’s TolaActivity web app",
     "author": "Paul Souders <psouders@mercycorps.org>",
     "devDependencies": {
-        "bootstrap": "4.0.0"
+        "bootstrap": "4.0.0",
+        "jquery": "3.3.1"
     }
 }
