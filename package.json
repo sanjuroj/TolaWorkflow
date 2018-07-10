@@ -21,6 +21,6 @@
         "jquery-ui-dist": "1.12.1",
         "cpx": "*",
         "npm-run-all": "*",
-        "bootstrap-multiselect": "^0.9.13-1"
+        "bootstrap-multiselect": "git+ssh://git@github.com/davidstutz/bootstrap-multiselect.git"
     }
 }
