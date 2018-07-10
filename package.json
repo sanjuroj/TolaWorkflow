@@ -12,7 +12,9 @@
         "copy-popper-js": "cpx \"node_modules/popper.js/dist/umd/popper.min.{js,js.map}\" tola/static/js",
         "copy-bootstrap-multiselect-js": "cpx node_modules/bootstrap-multiselect/dist/js/bootstrap-multiselect.js tola/static/js",
         "copy-bootstrap-multiselect-css": "cpx node_modules/bootstrap-multiselect/dist/css/bootstrap-multiselect.css tola/static/css",
-        "copy": "npm-run-all copy-bootstrap-css copy-bootstrap-js copy-jquery-js copy-jquery-ui-js copy-jquery-ui-css copy-popper-js copy-bootstrap-multiselect-js copy-bootstrap-multiselect-css"
+        "copy-select2-js": "cpx node_modules/select2/dist/js/select2.min.js tola/static/js",
+        "copy-select2-css": "cpx node_modules/select2/dist/css/select2.min.css tola/static/css",
+        "copy": "npm-run-all copy-bootstrap-css copy-bootstrap-js copy-jquery-js copy-jquery-ui-js copy-jquery-ui-css copy-popper-js copy-bootstrap-multiselect-js copy-bootstrap-multiselect-css copy-select2-js copy-select2-css"
     },
     "devDependencies": {
         "bootstrap": "4.0.0",
@@ -21,6 +23,7 @@
         "jquery-ui-dist": "1.12.1",
         "cpx": "*",
         "npm-run-all": "*",
+        "select2": "4.0.0",
         "bootstrap-multiselect": "git+ssh://git@github.com/davidstutz/bootstrap-multiselect.git"
     }
 }
