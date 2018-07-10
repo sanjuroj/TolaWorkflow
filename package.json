@@ -10,7 +10,9 @@
         "copy-jquery-ui-js": "cpx node_modules/jquery-ui-dist/jquery-ui.min.js tola/static/js",
         "copy-jquery-ui-css": "cpx node_modules/jquery-ui-dist/jquery-ui.min.css tola/static/css",
         "copy-popper-js": "cpx \"node_modules/popper.js/dist/umd/popper.min.{js,js.map}\" tola/static/js",
-        "copy": "npm-run-all copy-bootstrap-css copy-bootstrap-js copy-jquery-js copy-jquery-ui-js copy-jquery-ui-css copy-popper-js"
+        "copy-bootstrap-multiselect-js": "cpx node_modules/bootstrap-multiselect/dist/js/bootstrap-multiselect.js tola/static/js",
+        "copy-bootstrap-multiselect-css": "cpx node_modules/bootstrap-multiselect/dist/css/bootstrap-multiselect.css tola/static/css",
+        "copy": "npm-run-all copy-bootstrap-css copy-bootstrap-js copy-jquery-js copy-jquery-ui-js copy-jquery-ui-css copy-popper-js copy-bootstrap-multiselect-js copy-bootstrap-multiselect-css"
     },
     "devDependencies": {
         "bootstrap": "4.0.0",
@@ -18,6 +20,7 @@
         "popper.js": "1.12.9",
         "jquery-ui-dist": "1.12.1",
         "cpx": "*",
-        "npm-run-all": "*"
+        "npm-run-all": "*",
+        "bootstrap-multiselect": "^0.9.13-1"
     }
 }
