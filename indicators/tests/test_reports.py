@@ -7,7 +7,7 @@ from indicators.views.views_reports import IPTT_Mixin
 
 class IpttQuickstartTest(TestCase):
 
-    def setup(self):
+    def setUp(self):
         self.client = Client()
         self.mixin = IPTT_Mixin()
 
@@ -30,9 +30,8 @@ class IpttQuickstartTest(TestCase):
             Indicator.MONTHLY: 1,
         }
 
-        mixin = IPTT_Mixin()
         for freq in freqs:
-            num_months_in_period = mixin._get_num_months(freq)
+            num_months_in_period = self.mixin._get_num_months(freq)
             self.assertEqual(num_months_in_period, freqs[freq])
 
     def test_get_num_periods(self):
@@ -76,12 +75,10 @@ class IpttQuickstartTest(TestCase):
         }
         real_start_date = datetime.strptime("2016-07-15", "%Y-%m-%d").date()
 
-
-        mixin = IPTT_Mixin()
         for freq in freqs:
-            num_months = mixin._get_num_months(freq)
+            num_months = self.mixin._get_num_months(freq)
 
-            _get_first_period = mixin._get_first_period(real_start_date, num_months)
+            _get_first_period = self.mixin._get_first_period(real_start_date, num_months)
             if freq == Indicator.ANNUAL:
                 self.assertEqual(_get_first_period,
                                  datetime.strptime("2016-01-01", "%Y-%m-%d").date())
@@ -120,7 +117,6 @@ class IpttQuickstartTest(TestCase):
 
     # def test_prepare_iptt_period_dateranges(self):
     #     '''prepare_iptt_period_dateranges(self, period, periods_date_ranges, from_or_to):'''
-    #     self.mixin = IPTT_Mixin()
     #     self.FROM = True
     #     start_date = datetime.strptime("2018-01-01", "%Y-%m-%d").date(),
     #     end_date = datetime.strptime("2018-12-31", "%Y-%m-%d").date()
