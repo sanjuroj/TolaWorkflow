@@ -20,15 +20,15 @@
                     <h4>Project Status {% if getFilteredName %} for <a href="/workflow/dashboard/{{ getFilteredName.id }}">{{ getFilteredName }}{% endif %} </a></h4>
                     Number of Projects : <b>{{ getProjectsCount }}</b><br>
                     <!-- approved count-->
-                    <h4> <a href="/workflow/dashboard/{{ getFilteredName.id }}/approved/"><span class="label label-success">Approved &nbsp;<span class="badge">{{ getApprovedCount }}</span></span></a>
+                    <h4> <a href="/workflow/dashboard/{{ getFilteredName.id }}/approved/"><span class="badge badge-success">Approved &nbsp;<span class="badge">{{ getApprovedCount }}</span></span></a>
                     <!-- awaiting approval count-->
-                    <a href="/workflow/dashboard/{{ getFilteredName.id }}/awaiting_approval/"><span class="label label-success">Awaiting Approval &nbsp;<span class="badge">{{ getAwaitingApprovalCount }}</span></span></a>
+                    <a href="/workflow/dashboard/{{ getFilteredName.id }}/awaiting_approval/"><span class="badge badge-success">Awaiting Approval &nbsp;<span class="badge">{{ getAwaitingApprovalCount }}</span></span></a>
                     <!-- in progress count-->
-                    <a href="/workflow/dashboard/{{ getFilteredName.id }}/in_progress/"><span class="label label-success">In Progress &nbsp;<span class="badge">{{ getInProgressCount }}</span></span></a>
+                    <a href="/workflow/dashboard/{{ getFilteredName.id }}/in_progress/"><span class="badge badge-success">In Progress &nbsp;<span class="badge">{{ getInProgressCount }}</span></span></a>
                     <!-- in progress count-->
-                    <a href="/workflow/dashboard/{{ getFilteredName.id }}/new/"><span class="label label-success">New &nbsp;<span class="badge">{{ nostatus_count }}</span></span></a>
+                    <a href="/workflow/dashboard/{{ getFilteredName.id }}/new/"><span class="badge badge-success">New &nbsp;<span class="badge">{{ nostatus_count }}</span></span></a>
                     <!-- rejected count-->
-                    <a href="/workflow/dashboard/{{ getFilteredName.id }}/rejected/"><span class="label label-success">Rejected &nbsp;<span class="badge">{{ getRejectedCount }}</span></span></a></h4>
+                    <a href="/workflow/dashboard/{{ getFilteredName.id }}/rejected/"><span class="badge badge-success">Rejected &nbsp;<span class="badge">{{ getRejectedCount }}</span></span></a></h4>
 
                 </div>
 
