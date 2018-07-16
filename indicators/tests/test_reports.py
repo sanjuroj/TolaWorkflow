@@ -12,19 +12,19 @@ class IpttQuickstartTest(TestCase):
         self.mixin = IPTT_Mixin()
 
     def test_page_load_returns_200(self):
-        """Do we return 200?"""
+        '''Do we return 200?'''
         response = self.client.get('/indicators/iptt_quickstart/', follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.redirect_chain), 0)
 
     def test_page_loads_correct_template(self):
-        """Do we load the right template?"""
+        '''Do we load the right template?'''
         response = self.client.get('/indicators/iptt_quickstart/')
         self.assertTemplateUsed('indicators/iptt_quickstart.html')
         self.assertContains(response, 'Indicator Performance Tracking Table')
 
     def test_get_num_months(self):
-        """Do we return the right number of months per period?"""
+        '''Do we return the right number of months per period?'''
         freqs = {
             Indicator.ANNUAL: 12,
             Indicator.SEMI_ANNUAL: 6,
@@ -38,7 +38,7 @@ class IpttQuickstartTest(TestCase):
             self.assertEqual(num_months_in_period, freqs[freq])
 
     def test_get_num_periods(self):
-        """Do we return the correct number of periods"""
+        '''Do we return the correct number of periods'''
         _get_num_periods = IPTT_Mixin._get_num_periods
         start_date = datetime.strptime("2016-01-15", "%Y-%m-%d").date()
         end_date = datetime.strptime("2017-12-16", "%Y-%m-%d").date()
@@ -50,7 +50,7 @@ class IpttQuickstartTest(TestCase):
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.MONTHLY), 24)
 
     def test_get_num_periods_returns_0_for_reversed_date_range(self):
-        """Do we return 0 if end date is before start date?"""
+        '''Do we return 0 if end date is before start date?'''
         _get_num_periods = IPTT_Mixin._get_num_periods
         start_date = datetime.strptime("2020-01-01", "%Y-%m-%d").date()
         end_date = datetime.strptime("2019-01-01", "%Y-%m-%d").date()
@@ -62,7 +62,7 @@ class IpttQuickstartTest(TestCase):
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.MONTHLY), 0)
 
     def test_get_period_names(self):
-        """Do we return the correct period names?"""
+        '''Do we return the correct period names?'''
         _get_period_name = IPTT_Mixin._get_period_name
 
         self.assertEqual(_get_period_name(Indicator.ANNUAL), "Year")
@@ -72,7 +72,7 @@ class IpttQuickstartTest(TestCase):
         self.assertEqual(_get_period_name(Indicator.MONTHLY), "Month")
 
     def test_get_first_period(self):
-        """Do we calculate the first period of a date range correctly?"""
+        '''Do we calculate the first period of a date range correctly?'''
         freqs = {
             Indicator.ANNUAL: 12,
             Indicator.SEMI_ANNUAL: 6,
@@ -110,19 +110,19 @@ class IpttQuickstartTest(TestCase):
     def test_generate_targetperiods(self):
         pass
 
-    def test_generate_timeperiods(self):
-        """Can we generate time periods correctly?"""
-
-        filter_start_date = datetime.strptime("2018-01-01", "%Y-%m-%d").date()
-        filter_end_date =  datetime.strptime("2019-12-31", "%Y-%m-%d").date()
-        freq = Indicator.ANNUAL
-        num_recents = 0
-        show_all = True
-        self.mixin.program.reporting_period_start = filter_start_date
-        self.mixin.program.reporting_period_end = filter_end_date
-
-        report_end_date, all_date_ranges, periods_date_ranges =\
-            self.mixin._generate_timeperiods(filter_start_date, filter_end_date, freq, show_all, num_recents)
+    # def test_generate_timeperiods(self):
+    #     '''Can we generate time periods correctly?'''
+    #
+    #     filter_start_date = datetime.strptime("2018-01-01", "%Y-%m-%d").date()
+    #     filter_end_date =  datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+    #     freq = Indicator.ANNUAL
+    #     num_recents = 0
+    #     show_all = True
+    #     self.mixin.program.reporting_period_start = filter_start_date
+    #     self.mixin.program.reporting_period_end = filter_end_date
+    #
+    #     report_end_date, all_date_ranges, periods_date_ranges =\
+    #         self.mixin._generate_timeperiods(filter_start_date, filter_end_date, freq, show_all, num_recents)
 
     def test_update_filter_form_initial(self):
         pass
