@@ -1,6 +1,6 @@
 from unittest import skip
 
-from django.test import TestCase, RequestFactory
+from django.test import TestCase, RequestFactory, Client
 
 from factories import UserFactory
 from factories.indicators_models import (IndicatorTypeFactory)
@@ -31,10 +31,8 @@ class IndicatorCreateFunctionTests(TestCase):
         response = self.client.get('/indicators/indicator_create/%s/' % self.program.id)
         self.assertEqual(response.status_code, 200)
 
-    @skip("Need to use test client to enable table inspection")
     def test_page_loads_correct_template(self):
-        path = '/indicator_create/{0}'.format(self.program.id)
-        request = self.request_factory.get(path=path)
-        request.user = self.user
-        response = indicator_create(request)
-        self.assertTemplateUsed(response, 'indicators/indicator_create.html')
+        client = Client()
+        client.force_login(self.user)
+        client.get('/indicator_create/{0}'.format(self.program.id))
+        self.assertTemplateUsed('indicators/indicator_create.html')
