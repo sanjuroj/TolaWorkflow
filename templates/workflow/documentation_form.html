@@ -96,7 +96,9 @@
                 // console.log("name:" + doc['name']);
 
                 document.getElementById('id_url').value = url;
+                validateUrlField();
                 document.getElementById('id_name').value = doc['name'];
+                validateNameField();
             }
         }
 
