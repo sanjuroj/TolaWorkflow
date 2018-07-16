@@ -2,7 +2,7 @@ from unittest import skip
 
 from django.test import TestCase, RequestFactory
 
-from TolaActivity.factories import UserFactory
+from factories import UserFactory
 from factories.indicators_models import (IndicatorTypeFactory)
 from factories.workflow_models import (ProgramFactory, TolaUserFactory)
 from indicators.views.views_indicators import indicator_create
@@ -17,12 +17,24 @@ class IndicatorCreateFunctionTests(TestCase):
         self.country = self.tola_user.country
         self.program = ProgramFactory()
 
-    @skip("Skipping for now switching tasks")
     def test_get(self):
         """It should just return an empty form for us to fillout"""
         path = '/indicator_create/{0}'.format(self.program.id)
         request = self.request_factory.get(path=path)
         request.user = self.user
-        result = indicator_create(request, id=self.program.id)
+        response = indicator_create(request, id=self.program.id)
+        self.assertContains(response, 'Indicator Performance Tracking Table')
 
-        print result.content
+    @skip("Skipping")
+    def test_page_load_returns_200(self):
+        print 'progid', self.program
+        response = self.client.get('/indicators/indicator_create/%s/' % self.program.id)
+        self.assertEqual(response.status_code, 200)
+
+    @skip("Need to use test client to enable table inspection")
+    def test_page_loads_correct_template(self):
+        path = '/indicator_create/{0}'.format(self.program.id)
+        request = self.request_factory.get(path=path)
+        request.user = self.user
+        response = indicator_create(request)
+        self.assertTemplateUsed(response, 'indicators/indicator_create.html')

@@ -64,7 +64,10 @@ class TolaUserFactory(DjangoModelFactory):
     name = LazyAttribute(lambda o: o.user.first_name + " " + o.user.last_name)
     organization = SubFactory(OrganizationFactory)
     country = SubFactory(CountryFactory, country='United States', code='US')
-    countries = RelatedFactory(CountryFactory, country='United States', code='US')
+
+    @post_generation
+    def countries(self, create, extracted, **kwargs):
+        self.countries.add(CountryFactory(country='United States', code='US'))
 
 
 class ProgramFactory(DjangoModelFactory):
