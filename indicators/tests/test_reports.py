@@ -1,6 +1,7 @@
 from __future__ import print_function
 from datetime import datetime
 from django.test import TestCase, Client
+from django.core.urlresolvers import reverse_lazy
 from indicators.models import Indicator
 from indicators.views.views_reports import IPTT_Mixin
 from unittest import skip
@@ -14,7 +15,7 @@ class IpttQuickstartTest(TestCase):
 
     def test_page_load_returns_200(self):
         '''Do we return 200?'''
-        response = self.client.get('/indicators/iptt_quickstart/', follow=True)
+        response = self.client.get(reverse_lazy('iptt_quickstart/'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.redirect_chain), 0)
 
