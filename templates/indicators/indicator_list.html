@@ -207,48 +207,14 @@
         });
     });
 
-    // when opening the modal, check for the button's data attribute of tab. if present then
-    // open the modal to that tab.
-    // $('#indicator_modal_div').on('shown.bs.modal', function (e) {
-    //     // button that triggered the modal
-    //     const button = $(e.relatedTarget);
-    //     let modal = $(this);
-    //     const tab = button.data('tab');
-
-    //     if (tab != undefined & tab != 'undefined') {
-    //         $(`#indicatorTabs a[href="#${tab}"][data-toggle="tab"]`).tab('show');
-    //     }
-    // });
-
-    // $('#indicator_modal_div').on('shown.bs.tab', function (e) {
-    //     console.log('targetsTab show? = ', $(e.target).attr('href') );
-    //     if ($(e.target).attr('href') == '#targetsTab') {
-    //         const target_periods_section_offset = $("#id_div_periodic_tables_placeholder input:empty:first").offset();
-    //         console.log(target_periods_section_offset);
-    //         $("#indicator_modal_div").animate({ scrollTo: target_periods_section_offset.top }, 'slow');
-    //     }
-    // });
-
-    // // upon opening the modal, fetch its content from the server
-    // $('#indicator_modal_div').on('show.bs.modal', function (e) {
-    //     const button = $(e.relatedTarget);
-    //     let url = button.attr("href") + '?modal=1';
-    //     const modal = $(this);
-    //     const tab = button.data('tab');
-
-    //     if (tab != undefined & tab != 'undefined') {
-    //         $.get(url, function (data) {
-    //             modal.find("#indicator_modal_content").html(data);
-    //         });
-    //     }
-    // });
-
     $('#indicator_modal_div').on('hide.bs.modal', function (e) {
+        console.log("hiding indicator modal");
         try {
             var form = $(this).find('form');
             var program_id = parseInt($(this).find('form #id_program').val());
             var form_action = form.attr('action').split('/');
             var indicator_id = parseInt(form_action[form_action.length -2]);
+            var kpi = form.find("#id_key_performance_indicator").prop("checked");
 
             var targetsactive = $(this).find("#indicator_modal_body").data("targetsactive");
             var indicatorchanged = form.data('indicatorchanged');
@@ -259,15 +225,27 @@
                 form.find("#id_level option:selected").each(function() {
                     indicator_level += $(this).text() + ', ';
                 });
-                var indicator_name = form.find("#id_name").val();
+
                 var indicator_number = form.find("#id_number").val();
+                var indicator_name = `${indicator_number} ${form.find("#id_name").val()}`;
+
+                if (kpi) {
+                    if ($("#id_indicator_name_" + indicator_id + " span.badge").length == 0) {
+                        $("#id_indicator_name_" + indicator_id).append("<span class='badge'>KPI</span>");
+                    } else {
+                        $("#id_indicator_name_" + indicator_id + " span.badge").text("KPI");
+                    }
+                } else {
+                    $("#id_indicator_name_" + indicator_id + " span.badge").text("");
+                }
                 var indicator_sector = form.find("#id_sector option:selected").text();
                 $("#id_indicator_type_" + indicator_id).text(indicator_type);
                 $("#id_indicator_level_" + indicator_id).text(indicator_level.trim().slice(0, -1));
                 $("#id_indicator_name_" + indicator_id + " a .indicator_name").text(indicator_name);
-                // TODO: this overwrites the name of the indicator (see ticket #284)
-                $("#id_indicator_number_" + indicator_id).text(indicator_number);
                 $("#id_indicator_sector_" + indicator_id).text(indicator_sector);
+                $("#id_indicator_unit_" + indicator_id).text(form.find("#id_unit_of_measure").val());
+                $("#id_indicator_baseline_" + indicator_id).text(form.find("#id_baseline").val());
+                $("#id_indicator_target_" + indicator_id).text(form.find("#id_lop_target").val());
             }
 
             if (targetsactive == 'true' || indicatorchanged == true) {
