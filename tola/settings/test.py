@@ -2,9 +2,9 @@ from base import *
 import sys
 TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 if TESTING:
-    print('=========================')
+    print('===================================')
     print('In TEST Mode - Disabling Migrations')
-    print('=========================')
+    print('===================================')
 
     class DisableMigrations(object):
 
