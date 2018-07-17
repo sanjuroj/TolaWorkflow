@@ -9,6 +9,7 @@
 
 # Editor temp files:
 *.swp
+*.swo
 *~
 
 # Sphinx docs:
