@@ -3,20 +3,24 @@
     "version": "0.0.0",
     "description": "Frontend framework for Mercy Corp’s TolaActivity web app",
     "author": "Paul Souders <psouders@mercycorps.org>",
+    "config": {
+        "css": "tola/static/css",
+        "js": "tola/static/js"
+    },
     "scripts": {
-        "copy-bootstrap-css": "cpx \"node_modules/bootstrap/dist/css/bootstrap.min.{css,css.map}\" tola/static/css",
-        "copy-bootstrap-js": "cpx \"node_modules/bootstrap/dist/js/bootstrap.min.{js,js.map}\" tola/static/js",
-        "copy-jquery-js": "cpx node_modules/jquery/dist/jquery.min.js tola/static/js",
-        "copy-jquery-ui-js": "cpx node_modules/jquery-ui-dist/jquery-ui.min.js tola/static/js",
-        "copy-jquery-ui-css": "cpx node_modules/jquery-ui-dist/jquery-ui.min.css tola/static/css",
-        "copy-popper-js": "cpx \"node_modules/popper.js/dist/umd/popper.min.{js,js.map}\" tola/static/js",
-        "copy-bootstrap-multiselect-js": "cpx node_modules/bootstrap-multiselect/dist/js/bootstrap-multiselect.js tola/static/js",
-        "copy-bootstrap-multiselect-css": "cpx node_modules/bootstrap-multiselect/dist/css/bootstrap-multiselect.css tola/static/css",
-        "copy-select2-js": "cpx node_modules/select2/dist/js/select2.min.js tola/static/js",
-        "copy-select2-css": "cpx node_modules/select2/dist/css/select2.min.css tola/static/css",
-        "copy-leaflet-css": "cpx node_modules/leaflet/dist/leaflet.css tola/static/css",
-        "copy-leaflet-js": "cpx node_modules/leaflet/dist/leaflet.js tola/static/js",
-        "copy": "npm-run-all copy-bootstrap-css copy-bootstrap-js copy-jquery-js copy-jquery-ui-js copy-jquery-ui-css copy-popper-js copy-bootstrap-multiselect-js copy-bootstrap-multiselect-css copy-select2-js copy-select2-css copy-leaflet-css copy-leaflet-js"
+        "cpx-bootstrap-css": "cpx \"node_modules/bootstrap/dist/css/bootstrap.min.{css,css.map}\" $npm_package_config_css",
+        "cpx-bootstrap-js": "cpx \"node_modules/bootstrap/dist/js/bootstrap.min.{js,js.map}\" $npm_package_config_js",
+        "cpx-jquery-js": "cpx node_modules/jquery/dist/jquery.min.js $npm_package_config_js",
+        "cpx-jquery-ui-js": "cpx node_modules/jquery-ui-dist/jquery-ui.min.js $npm_package_config_js",
+        "cpx-jquery-ui-css": "cpx node_modules/jquery-ui-dist/jquery-ui.min.css $npm_package_config_css",
+        "cpx-popper-js": "cpx \"node_modules/popper.js/dist/umd/popper.min.{js,js.map}\" $npm_package_config_js",
+        "cpx-bootstrap-multiselect-js": "cpx node_modules/bootstrap-multiselect/dist/js/bootstrap-multiselect.js $npm_package_config_js",
+        "cpx-bootstrap-multiselect-css": "cpx node_modules/bootstrap-multiselect/dist/css/bootstrap-multiselect.css $npm_package_config_css",
+        "cpx-select2-js": "cpx node_modules/select2/dist/js/select2.min.js $npm_package_config_js",
+        "cpx-select2-css": "cpx node_modules/select2/dist/css/select2.min.css $npm_package_config_css",
+        "cpx-leaflet-css": "cpx node_modules/leaflet/dist/leaflet.css $npm_package_config_css",
+        "cpx-leaflet-js": "cpx node_modules/leaflet/dist/leaflet.js $npm_package_config_js",
+        "copy": "npm-run-all cpx-*"
     },
     "devDependencies": {
         "bootstrap": "4.0.0",
