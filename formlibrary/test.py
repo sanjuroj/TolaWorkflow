@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.utils import timezone
 from workflow.models import Program, Country, Province,ProjectAgreement, Sector, ProjectType, SiteProfile, Office
 from formlibrary.models import TrainingAttendance, Distribution, Beneficiary
 from datetime import datetime
@@ -80,8 +81,8 @@ class DistributionTestCase(TestCase):
                                                             input_type_distributed = "testinputtype",
                                                             distributor_name_and_affiliation = "testdistributorperson",
                                                             distributor_contact_number = "1-dis-tri-bute",
-                                                            start_date = datetime(2015, 8, 4, 12, 30, 45),
-                                                            end_date = datetime(2015, 9, 5, 12, 30, 45),
+                                                            start_date = timezone.make_aware(datetime(2015, 8, 4, 12, 30, 45)),
+                                                            end_date = timezone.make_aware(datetime(2015, 9, 5, 12, 30, 45)),
                                                             form_filled_by = "test_form_filler",
                                                             form_filled_by_position = "testdistributionmanager",
                                                             form_filled_by_contact_num = "1-888-dst-rbut",
