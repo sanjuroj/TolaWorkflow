@@ -8,7 +8,7 @@ from django.test import Client, TestCase
 from indicators.models import Indicator
 from indicators.views.views_reports import IPTT_Mixin
 
-from unittest import skip
+from workflow.models import Program
 
 
 class IpttQuickstartTest(TestCase):
@@ -116,20 +116,28 @@ class IpttQuickstartTest(TestCase):
     def test_generate_targetperiods(self):
         pass
 
-    @skip("Busted")
+    # @skip("Busted")
     def test_generate_timeperiods(self):
         '''Can we generate time periods correctly?'''
-
+        # filter_start_date, filter_end_date, frequency, show_all, num_recents
         filter_start_date = datetime.strptime("2018-01-01", "%Y-%m-%d").date()
         filter_end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
         freq = Indicator.ANNUAL
         num_recents = 0
         show_all = True
+        self.mixin.program = Program()
         self.mixin.program.reporting_period_start = filter_start_date
         self.mixin.program.reporting_period_end = filter_end_date
 
         report_end_date, all_date_ranges, periods_date_ranges = \
-            self.mixin._generate_timeperiods(filter_start_date, filter_end_date, freq, show_all, num_recents)
+            self.mixin._generate_timeperiods(filter_start_date,
+                                             filter_end_date,
+                                             freq,
+                                             show_all,
+                                             num_recents)
+        self.assertEqual(filter_end_date, report_end_date)
+        self.assertEqual(len(all_date_ranges), 2)
+        self.assertEqual(len(periods_date_ranges), 2)
 
     def test_update_filter_form_initial(self):
         pass
