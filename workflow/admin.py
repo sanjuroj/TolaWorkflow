@@ -17,11 +17,43 @@ from .models import (
     Organization, Village, Sector, Capacity, Evaluate, Benchmarks, Budget, Template, Monitor,
     ApprovalAuthority, Checklist, ChecklistItem, Stakeholder, Contact, StakeholderType, TolaSites, FormGuidance,
     TolaBookmarks,
-    OrganizationAdmin, OfficeAdmin, ProvinceAdmin, AdminLevelThreeAdmin,
+    OrganizationAdmin, ProvinceAdmin, AdminLevelThreeAdmin,
     DistrictAdmin, SiteProfileAdmin, ProjectTypeAdmin,
     ChecklistAdmin, StakeholderAdmin, ContactAdmin,
     ChecklistItemAdmin, TolaUserAdmin, TolaSitesAdmin, FormGuidanceAdmin, TolaBookmarksAdmin
 )
+
+
+class OfficeFilter(admin.SimpleListFilter):
+    title = "office"
+    parameter_name = 'office'
+
+    def lookups(self, request, model_admin):
+        user_country = request.user.tola_user.country
+        countries = Country.objects.filter(country=user_country).values('id', 'country')
+        countries_tuple = ()
+        for p in countries:
+            countries_tuple = [(c['id'], c['country']) for c in countries]
+        return countries_tuple
+
+    def queryset(self, request, queryset):
+        if self.value():
+            queryset = queryset.filter(province__country=self.value())
+        return queryset
+
+
+class OfficeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'code', 'province', 'create_date', 'edit_date')
+    search_fields = ('name', 'province__name', 'code')
+    list_filter = ('create_date', OfficeFilter,)  # ('province__country__country')
+    display = 'Office'
+
+    def get_queryset(self, request):
+        queryset = super(OfficeAdmin, self).get_queryset(request)
+        if request.user.is_superuser is False:
+            user_country = request.user.tola_user.country
+            queryset = queryset.filter(province__country=user_country)
+        return queryset
 
 
 # Resource for CSV export

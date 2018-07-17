@@ -38,8 +38,9 @@ class MyUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
-        # No permissions 'is_superuser',
-        (u'Permissions', {'fields': ('is_active', 'is_staff', 'groups', 'user_permissions')}),
+        # see ticket #459 to see why this is removed
+        # No permissions 'is_superuser', 'user_permissions'
+        (u'Permissions', {'fields': ('is_active', 'is_staff', 'groups')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         # (_('Groups'), {'fields': ('groups',)}),
     )
@@ -51,6 +52,13 @@ class MyUserAdmin(UserAdmin):
     # print(UserAdmin.fieldsets)
     form = MyUserChangeForm
     add_form = MyUserCreationForm
+
+    def get_queryset(self, request):
+        queryset = super(MyUserAdmin, self).get_queryset(request)
+        if request.user.is_superuser is False:
+            user_country = request.user.tola_user.country
+            queryset = queryset.filter(tola_user__country=user_country)
+        return queryset
 
 
 # Re-register UserAdmin with custom options

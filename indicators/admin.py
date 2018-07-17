@@ -3,15 +3,11 @@ from .models import (
     Indicator, IndicatorType, CollectedData, StrategicObjective, Objective, Level,
     TolaTable, ExternalService, ExternalServiceRecord, DataCollectionFrequency,
     DisaggregationType, PeriodicTarget, DisaggregationLabel, ReportingFrequency,
-    DisaggregationTypeAdmin,
-    DisaggregationLabelAdmin,
-    ObjectiveAdmin,
-    StrategicObjectiveAdmin,
     ExternalServiceAdmin,
     ExternalServiceRecordAdmin,
     PeriodicTargetAdmin,
 )
-from workflow.models import Sector, Program
+from workflow.models import Sector, Program, Country
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget, ManyToManyWidget
 from import_export.admin import ImportExportModelAdmin
@@ -74,6 +70,106 @@ class IndicatorAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             programs = Program.objects.filter(country__in=[user_country])
             qs = queryset.filter(program__in=programs)
         return qs
+
+
+class CountryFilter(admin.SimpleListFilter):
+    title = 'country'
+    parameter_name = 'country'
+
+    def lookups(self, request, model_admin):
+        countries = Country.objects.all().values('id', 'country')
+        if request.user.is_superuser is False:
+            user_country = request.user.tola_user.country
+            countries = countries.filter(pk=user_country.pk)
+        countries_tuple = [(c['id'], c['country']) for c in countries]
+        return countries_tuple
+
+    def queryset(self, request, queryset):
+        if self.value():
+            if queryset.model == Objective:
+                queryset = queryset.filter(program__country=self.value())
+            else:
+                queryset = queryset.filter(country=self.value())
+        return queryset
+
+
+class DisaggregationTypeFilter(admin.SimpleListFilter):
+    title = "disaggregation type"
+    parameter_name = 'disaggregationtype'
+
+    def lookups(self, request, model_admin):
+        user_country = request.user.tola_user.country
+        disagg_types = DisaggregationType.objects.filter(country=user_country).values('id', 'disaggregation_type')
+        disagg_types_tuple = ()
+        for p in disagg_types:
+            disagg_types_tuple = [(p['id'], p['disaggregation_type']) for p in disagg_types]
+        return disagg_types_tuple
+
+    def queryset(self, request, queryset):
+        if self.value():
+            if queryset.model == DisaggregationLabel:
+                queryset = queryset.filter(disaggregation_type=self.value())
+            elif queryset.model == DisaggregationType:
+                queryset = queryset.filter(country=self.value())
+        return queryset
+
+
+class DisaggregationTypeAdmin(admin.ModelAdmin):
+    list_display = ('disaggregation_type', 'country', 'standard', 'description')
+    list_filter = (DisaggregationTypeFilter, CountryFilter, 'standard')
+    display = 'Disaggregation Type'
+
+    def get_queryset(self, request):
+        queryset = super(DisaggregationTypeAdmin, self).get_queryset(request)
+        if request.user.is_superuser is False:
+            user_country = request.user.tola_user.country
+            queryset = DisaggregationType.objects.filter(country=user_country)
+        return queryset
+
+
+class DisaggregationLabelAdmin(admin.ModelAdmin):
+    list_display = ('disaggregation_type', 'customsort', 'label',)
+    display = 'Disaggregation Label'
+    list_filter = (DisaggregationTypeFilter, )  # ('disaggregation_type__disaggregation_type',)
+
+    def get_queryset(self, request):
+        queryset = super(DisaggregationLabelAdmin, self).get_queryset(request)
+        if request.user.is_superuser is False:
+            user_country = request.user.tola_user.country
+            disagg_types = DisaggregationType.objects.filter(country=user_country).values('id')
+            disagg_types_ids = [dt['id'] for dt in disagg_types]
+            queryset = queryset.filter(disaggregation_type__in=disagg_types_ids)
+        return queryset
+
+
+class ObjectiveAdmin(admin.ModelAdmin):
+    list_display = ('program', 'name')
+    search_fields = ('name', 'program__name')
+    list_filter = (CountryFilter,)   # ('program__country__country',)
+    display = 'Program Objectives'
+
+    def get_queryset(self, request):
+        queryset = super(ObjectiveAdmin, self).get_queryset(request)
+        if request.user.is_superuser is False:
+            user_country = request.user.tola_user.country
+            programs = Program.objects.filter(country__in=[user_country]).values('id')
+            program_ids = [p['id'] for p in programs]
+            queryset = queryset.filter(program__in=program_ids)
+        return queryset
+
+
+class StrategicObjectiveAdmin(admin.ModelAdmin):
+    list_display = ('country', 'name')
+    search_fields = ('country__country', 'name')
+    list_filter = (CountryFilter,)  # ('country__country',)
+    display = 'Country Strategic Objectives'
+
+    def get_queryset(self, request):
+        queryset = super(StrategicObjectiveAdmin, self).get_queryset(request)
+        if request.user.is_superuser is False:
+            user_country = request.user.tola_user.country
+            queryset = queryset.filter(country=user_country)
+        return queryset
 
 
 class TolaTableResource(resources.ModelResource):

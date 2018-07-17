@@ -61,15 +61,13 @@ class IndicatorTypeAdmin(admin.ModelAdmin):
 
 class StrategicObjective(models.Model):
     name = models.CharField(_("Name"), max_length=135, blank=True)
-    country = models.ForeignKey(
-        Country, null=True, blank=True, verbose_name=_("Country"))
-    description = models.TextField(
-        _("Description"), max_length=765, blank=True)
+    country = models.ForeignKey(Country, null=True, blank=True, verbose_name=_("Country"))
+    description = models.TextField(_("Description"), max_length=765, blank=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
     class Meta:
-        verbose_name = _("Strategic Objectives")
+        verbose_name = _("Country Strategic Objectives")
         ordering = ('country', 'name')
 
     def __unicode__(self):
@@ -81,24 +79,15 @@ class StrategicObjective(models.Model):
         super(StrategicObjective, self).save()
 
 
-class StrategicObjectiveAdmin(admin.ModelAdmin):
-    list_display = ('country', 'name')
-    search_fields = ('country__country', 'name')
-    list_filter = ('country__country',)
-    display = 'Strategic Objectives'
-
-
 class Objective(models.Model):
     name = models.CharField(_("Name"), max_length=135, blank=True)
-    program = models.ForeignKey(
-        Program, null=True, blank=True, verbose_name=_("Program"))
-    description = models.TextField(
-        _("Description"), max_length=765, blank=True)
+    program = models.ForeignKey(Program, null=True, blank=True, verbose_name=_("Program"))
+    description = models.TextField(_("Description"), max_length=765, blank=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
     class Meta:
-        verbose_name = _("Objective")
+        verbose_name = _("Program Objective")
         ordering = ('program', 'name')
 
     def __unicode__(self):
@@ -108,13 +97,6 @@ class Objective(models.Model):
         if self.create_date is None:
             self.create_date = timezone.now()
         super(Objective, self).save()
-
-
-class ObjectiveAdmin(admin.ModelAdmin):
-    list_display = ('program', 'name')
-    search_fields = ('name', 'program__name')
-    list_filter = ('program__country__country',)
-    display = 'Objectives'
 
 
 class Level(models.Model):
@@ -144,16 +126,10 @@ class LevelAdmin(admin.ModelAdmin):
 
 
 class DisaggregationType(models.Model):
-    disaggregation_type = models.CharField(
-        _("Disaggregation type"), max_length=135, blank=True)
-    description = models.CharField(
-        _("Description"), max_length=765, blank=True)
-    country = models.ForeignKey(
-        Country, null=True, blank=True, verbose_name="Country")
-    standard = models.BooleanField(
-        default=False,
-        verbose_name=_("Standard (TolaData Admins Only)")
-    )
+    disaggregation_type = models.CharField(_("Disaggregation type"), max_length=135, blank=True)
+    description = models.CharField(_("Description"), max_length=765, blank=True)
+    country = models.ForeignKey(Country, null=True, blank=True, verbose_name="Country")
+    standard = models.BooleanField(default=False, verbose_name=_("Standard (TolaData Admins Only)"))
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
@@ -161,16 +137,8 @@ class DisaggregationType(models.Model):
         return self.disaggregation_type
 
 
-class DisaggregationTypeAdmin(admin.ModelAdmin):
-    list_display = ('disaggregation_type', 'country', 'standard',
-                    'description')
-    list_filter = ('country', 'standard', 'disaggregation_type')
-    display = 'Disaggregation Type'
-
-
 class DisaggregationLabel(models.Model):
-    disaggregation_type = models.ForeignKey(
-        DisaggregationType, verbose_name=_("Disaggregation type"))
+    disaggregation_type = models.ForeignKey(DisaggregationType, verbose_name=_("Disaggregation type"))
     label = models.CharField(_("Label"), max_length=765, blank=True)
     customsort = models.IntegerField(_("Customsort"), blank=True, null=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
@@ -178,12 +146,6 @@ class DisaggregationLabel(models.Model):
 
     def __unicode__(self):
         return self.label
-
-
-class DisaggregationLabelAdmin(admin.ModelAdmin):
-    list_display = ('disaggregation_type', 'customsort', 'label',)
-    display = 'Disaggregation Label'
-    list_filter = ('disaggregation_type__disaggregation_type',)
 
 
 class DisaggregationValue(models.Model):
