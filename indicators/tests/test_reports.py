@@ -1,9 +1,13 @@
 from __future__ import print_function
+
 from datetime import datetime
-from django.test import TestCase, Client
+
 from django.core.urlresolvers import reverse_lazy
+from django.test import Client, TestCase
+
 from indicators.models import Indicator
 from indicators.views.views_reports import IPTT_Mixin
+
 from unittest import skip
 
 
@@ -15,13 +19,13 @@ class IpttQuickstartTest(TestCase):
 
     def test_page_load_returns_200(self):
         '''Do we return 200?'''
-        response = self.client.get(reverse_lazy('iptt_quickstart/'), follow=True)
+        response = self.client.get(reverse_lazy('iptt_quickstart'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.redirect_chain), 0)
 
     def test_page_loads_correct_template(self):
         '''Do we load the right template?'''
-        response = self.client.get('/indicators/iptt_quickstart/')
+        response = self.client.get(reverse_lazy('iptt_quickstart'))
         self.assertTemplateUsed('indicators/iptt_quickstart.html')
         self.assertContains(response, 'Indicator Performance Tracking Table')
 
@@ -117,14 +121,14 @@ class IpttQuickstartTest(TestCase):
         '''Can we generate time periods correctly?'''
 
         filter_start_date = datetime.strptime("2018-01-01", "%Y-%m-%d").date()
-        filter_end_date =  datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        filter_end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
         freq = Indicator.ANNUAL
         num_recents = 0
         show_all = True
         self.mixin.program.reporting_period_start = filter_start_date
         self.mixin.program.reporting_period_end = filter_end_date
 
-        report_end_date, all_date_ranges, periods_date_ranges =\
+        report_end_date, all_date_ranges, periods_date_ranges = \
             self.mixin._generate_timeperiods(filter_start_date, filter_end_date, freq, show_all, num_recents)
 
     def test_update_filter_form_initial(self):
