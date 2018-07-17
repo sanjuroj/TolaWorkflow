@@ -39,7 +39,7 @@ class IPTT_Mixin(object):
     FROM = 'from'
     TO = 'to'
 
-    def __init__(self, **kwars):
+    def __init__(self, **kwargs):
         self.program = None
         self.annotations = {}
         self.filter_form_initial_data = {}
@@ -318,7 +318,7 @@ class IPTT_Mixin(object):
     @staticmethod
     def _get_num_periods(start_date, end_date, period):
         """
-        Returns the number of periods depending on the period is in terms of months
+        Returns the number of periods, in months, depending on the period
         """
         num_months_in_period = IPTT_ReportView._get_num_months(period)
         total_num_months = len(list(rrule.rrule(rrule.MONTHLY, dtstart=start_date, until=end_date)))
