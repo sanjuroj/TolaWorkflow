@@ -38,6 +38,7 @@
 
         <script src="{% static "js/jquery.min.js" %}"></script>
 
+        {% block extra_css_in_header %}{% endblock %}
         {% block extra_js_in_header %}
         {# TODO: this should be in at least two separate blocks #}
 
