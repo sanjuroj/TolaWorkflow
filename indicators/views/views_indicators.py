@@ -604,7 +604,6 @@ class IndicatorUpdate(UpdateView):
 
             try:
                 last_targetperiod_enddate = indicatr.periodictargets.aggregate(lastpt=Max('end_date'))['lastpt']
-                print("program.reporting_period_end={}, last_targetperiod_enddate={}".format(program.reporting_period_end, last_targetperiod_enddate))
                 if program.reporting_period_end > last_targetperiod_enddate:
                     remove_missing_targts_link = False
                 else:
