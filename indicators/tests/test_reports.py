@@ -22,25 +22,30 @@ class IPTT_MixinTestCase(TestCase):
         self.client = Client()
         self.mixin = IPTT_Mixin()
 
+    # iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$',
+    # IPTT_ReportView.as_view(),
+    # name='iptt_report'
     def test_page_load_returns_200(self):
         """Do we return 200?"""
-        response = self.client.get(reverse_lazy('iptt_quickstart'), follow=True)
+        response = self.client.get(reverse_lazy('iptt_report'), follow=True)
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.redirect_chain), 0)
 
     def test_page_loads_correct_template(self):
         """Do we load the right template?"""
-        response = self.client.get(reverse_lazy('iptt_quickstart'), follow=True)
-        self.assertTemplateUsed(response, 'indicators/iptt_quickstart.html')
+        response = self.client.get(reverse_lazy('iptt_report'), follow=True)
+
+        self.assertTemplateUsed(response, 'indicators/iptt_report.html')
         self.assertContains(response, 'Indicator Performance Tracking Table')
 
-    def test_get_num_months(self):
+    def test__get_num_months(self):
         """Do we return the right number of months per period?"""
         for freq in IPTT_MixinTestCase.freqs:
             num_months_in_period = self.mixin._get_num_months(freq)
             self.assertEqual(num_months_in_period, IPTT_MixinTestCase.freqs[freq])
 
-    def test_get_num_periods(self):
+    def test__get_num_periods(self):
         """Do we return the correct number of periods"""
         _get_num_periods = IPTT_Mixin._get_num_periods
         start_date = datetime.strptime("2016-01-15", "%Y-%m-%d").date()
@@ -52,7 +57,7 @@ class IPTT_MixinTestCase(TestCase):
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.QUARTERLY), 8)
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.MONTHLY), 24)
 
-    def test_get_num_periods_returns_0_for_reversed_date_range(self):
+    def test__get_num_periods_returns_0_for_reversed_date_range(self):
         """Do we return 0 if end date is before start date?"""
         _get_num_periods = IPTT_Mixin._get_num_periods
         start_date = datetime.strptime("2020-01-01", "%Y-%m-%d").date()
@@ -64,7 +69,7 @@ class IPTT_MixinTestCase(TestCase):
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.QUARTERLY), 0)
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.MONTHLY), 0)
 
-    def test_get_period_names(self):
+    def test__get_period_names(self):
         """Do we return the correct period names?"""
         _get_period_name = IPTT_Mixin._get_period_name
 
@@ -74,7 +79,7 @@ class IPTT_MixinTestCase(TestCase):
         self.assertEqual(_get_period_name(Indicator.QUARTERLY), "Quarter")
         self.assertEqual(_get_period_name(Indicator.MONTHLY), "Month")
 
-    def test_get_first_period(self):
+    def test__get_first_period(self):
         """Do we calculate the first period of a date range correctly?"""
         real_start_date = datetime.strptime("2016-07-15", "%Y-%m-%d").date()
         for freq in IPTT_MixinTestCase.freqs:
@@ -99,7 +104,7 @@ class IPTT_MixinTestCase(TestCase):
             else:
                 self.assertEqual(1, 0, msg="Unexpected target frequency: " + freq)
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_generate_annotations(self):
         pass
 
@@ -146,95 +151,127 @@ class IPTT_MixinTestCase(TestCase):
         self.assertEqual(len(all_date_ranges), 2)
         self.assertEqual(len(periods_date_ranges), 2)
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_update_filter_form_initial(self):
         """Do we populate the initial filter form properly?"""
         # _update_filter_form_initial(self, formdata)
         # _update_filter_form_initial(self.request.GET)
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_get_filters(self):
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_prepare_indicators(self):
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_prepare_iptt_period_dateranges(self):
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_get_context_data(self):
         pass
 
 
 class IPTT_ExcelExportTestCase(TestCase):
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    def setUp(self):
+        self.client = Client()
+        self.mixin = IPTT_Mixin()
+        self.mixin.program = Program()
+
+    @skip('TODO: Implement this')
     def test_get_filename(self):
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_style_range(self):
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_add_headers(self):
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_add_data(self):
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_set_column_widths(self):
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_get(self):
         pass
 
 
 class IPTT_ReportIndicatorsWithVariedStartDateTestCase(TestCase):
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    def setUp(self):
+        self.client = Client()
+        self.mixin = IPTT_Mixin()
+        self.mixin.program = Program()
+
+    @skip('TODO: Implement this')
     def test_get_context_data(self):
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_get(self):
         pass
 
 
 class IPTTReportQuickstartViewTestCase(TestCase):
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    def setUp(self):
+        self.mixin = IPTT_Mixin()
+        self.client = Client()
+
+    def test_page_load_returns_200(self):
+        """Do we return 200?"""
+        response = self.client.get(reverse_lazy('iptt_quickstart'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.redirect_chain), 0)
+
+    def test_page_loads_correct_template(self):
+        """Do we load the right template?"""
+        response = self.client.get(reverse_lazy('iptt_quickstart'), follow=True)
+        self.assertTemplateUsed(response, 'indicators/iptt_quickstart.html')
+        self.assertContains(response, 'Indicator Performance Tracking Table')
+
+    @skip('TODO: Implement this')
     def test_get_context_data(self):
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_get_form_kwargs(self):
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_post(self):
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_form_valid(self):
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_form_invalid(self):
         pass
 
 
 class IPTT_ReportViewTestCase(TestCase):
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+
+    def setUp(self):
+        self.client = Client()
+        self.mixin = IPTT_Mixin()
+        self.mixin.program = Program()
+
+    @skip('TODO: Implement this')
     def test_get(self):
         pass
 
-    @skip('Patience, grasshopper. When you can snatch the pebble...')
+    @skip('TODO: Implement this')
     def test_post(self):
         pass
