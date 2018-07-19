@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.test import Client, TestCase
 
 from indicators.models import Indicator
-from indicators.views.views_reports import IPTT_Mixin
+from indicators.views.views_reports import IPTT_Mixin, IPTT_ReportView
 from workflow.models import Program
 
 
@@ -21,20 +21,20 @@ class IPTT_MixinTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.mixin = IPTT_Mixin()
+        self.mixin.program = Program()
 
-    # iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$',
-    # IPTT_ReportView.as_view(),
-    # name='iptt_report'
     def test_page_load_returns_200(self):
         """Do we return 200?"""
-        response = self.client.get(reverse_lazy('iptt_report'), follow=True)
+        args = {'reporttype': 'targetperiods', 'program_id': 512}
+        response = self.client.get(reverse_lazy('iptt_report', kwargs=args), follow=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.redirect_chain), 0)
 
     def test_page_loads_correct_template(self):
         """Do we load the right template?"""
-        response = self.client.get(reverse_lazy('iptt_report'), follow=True)
+        args = [265, IPTT_Mixin.REPORT_TYPE_TIMEPERIODS]
+        response = self.client.get(reverse_lazy('iptt_report', args=args), follow=True)
 
         self.assertTemplateUsed(response, 'indicators/iptt_report.html')
         self.assertContains(response, 'Indicator Performance Tracking Table')
