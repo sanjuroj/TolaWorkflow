@@ -4,8 +4,9 @@ from unittest import skip
 from django.core.urlresolvers import reverse_lazy
 from django.test import Client, TestCase
 
+from factories.workflow_models import ProgramFactory
 from indicators.models import Indicator
-from indicators.views.views_reports import IPTT_Mixin, IPTT_ReportView
+from indicators.views.views_reports import IPTT_Mixin
 from workflow.models import Program
 
 
@@ -21,15 +22,19 @@ class IPTT_MixinTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.mixin = IPTT_Mixin()
-        self.mixin.program = Program()
 
     def test_page_load_returns_200(self):
-        """Do we return 200?"""
-        args = {'reporttype': 'targetperiods', 'program_id': 512}
+        """Loading the page should return 200"""
+        program = ProgramFactory.create()
+
+        args = {'reporttype': IPTT_Mixin.REPORT_TYPE_TIMEPERIODS, 'program_id': program.id}
         response = self.client.get(reverse_lazy('iptt_report', kwargs=args), follow=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.redirect_chain), 0)
+
+    def test_page_load_raises_and_redirects_if_prog_not_exist(self):
+        pass
 
     def test_page_loads_correct_template(self):
         """Do we load the right template?"""
