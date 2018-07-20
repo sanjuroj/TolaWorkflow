@@ -4,6 +4,7 @@ from unittest import skip
 from django.core.urlresolvers import reverse_lazy
 from django.test import Client, TestCase
 
+from factories.indicators_models import IndicatorFactory
 from factories.workflow_models import ProgramFactory
 from indicators.models import Indicator
 from indicators.views.views_reports import IPTT_Mixin
@@ -23,23 +24,39 @@ class IPTT_MixinTestCase(TestCase):
         self.client = Client()
         self.mixin = IPTT_Mixin()
 
-    def test_page_load_returns_200(self):
+    @skip('WIP')
+    def test_page_returns_200(self):
         """Loading the page should return 200"""
-        program = ProgramFactory.create()
+        self.program = ProgramFactory()
+        self.indicators = IndicatorFactory.create_batch(5)
+        self.assertEqual(len(indicators), 5)
 
-        args = {'reporttype': IPTT_Mixin.REPORT_TYPE_TIMEPERIODS, 'program_id': program.id}
-        response = self.client.get(reverse_lazy('iptt_report', kwargs=args), follow=True)
+        # TODO: How to associate indicators with program?
+        # TODO: How to ensure it is written to the test database?
+        kwargs = {'reporttype': IPTT_Mixin.REPORT_TYPE_TARGETPERIODS,
+                  'program_id': self.program.id,}
+        path = reverse_lazy('iptt_report', kwargs=kwargs)
+        response = self.client.get(path, follow=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.redirect_chain), 0)
 
-    def test_page_load_raises_and_redirects_if_prog_not_exist(self):
+    @skip('Implement this')
+    def test_page_raises_DoesNotExist_if_program_not_exist(self):
         pass
 
-    def test_page_loads_correct_template(self):
+    @skip('Implement this')
+    def test_page_redirects_to_iptt_quickstart_if_program_not_exist(self):
+        pass
+
+    @skip('WIP')
+    def test_page_uses_correct_template(self):
         """Do we load the right template?"""
-        args = [265, IPTT_Mixin.REPORT_TYPE_TIMEPERIODS]
-        response = self.client.get(reverse_lazy('iptt_report', args=args), follow=True)
+        program = ProgramFactory()
+        kwargs = {'reporttype': IPTT_Mixin.REPORT_TYPE_TARGETPERIODS,
+                  'program_id': program.id,}
+        path = reverse_lazy('iptt_report', kwargs=kwargs)
+        response = self.client.get(path, follow=True)
 
         self.assertTemplateUsed(response, 'indicators/iptt_report.html')
         self.assertContains(response, 'Indicator Performance Tracking Table')
