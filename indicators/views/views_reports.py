@@ -5,7 +5,7 @@ from django.utils import formats, timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
-from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max, Min
+from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max
 from django.views.generic import TemplateView, FormView
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect, HttpResponse
@@ -494,7 +494,8 @@ class IPTT_Mixin(object):
             pass
 
         try:
-            filters['indicator_type__in'] = data['ind_type'] if isinstance(data['ind_type'], list) else [data['ind_typ']]
+            filters['indicator_type__in'] = data['ind_type'] \
+                if isinstance(data['ind_type'], list) else [data['ind_typ']]
         except KeyError:
             pass
 
@@ -909,8 +910,6 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                     ws.cell(row=3, column=col).alignment = alignment
                     ws.cell(row=3, column=col).font = headers_font
 
-
-
                 ws.cell(row=4, column=col).value = 'Target'
                 ws.cell(row=4, column=col).alignment = alignment_right
                 ws.cell(row=4, column=col+1).value = 'Actual'
@@ -981,7 +980,10 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                     ws.cell(row=row, column=col+1).value = indicator[actual]
 
                     percent_met = "{}_percent_met".format(k)
-                    ws.cell(row=row, column=col+2).value = indicator[percent_met]
+                    try:
+                        ws.cell(row=row, column=col+2).value = indicator[percent_met].encode('UTF-8')
+                    except ValueError:
+                        pass
 
                     col_offset += 3
             elif context['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
