@@ -1,38 +1,45 @@
 from unittest import skip
 
 from django.test import TestCase, RequestFactory, Client
+from django.urls import reverse_lazy
 
 from factories import UserFactory
 from factories.indicators_models import (IndicatorTypeFactory)
 from factories.workflow_models import (ProgramFactory, TolaUserFactory)
-from indicators.views.views_indicators import indicator_create
 
 
-class IndicatorCreateFunctionTests(TestCase):
+class TestBaseMixin(object):
+    fixtures = ['indicatortype.json', 'levels.json']
+
     def setUp(self):
-        self.user = UserFactory(first_name="Indicator", last_name="CreateTest")
+        self.user = UserFactory(first_name="Indicator", last_name="CreateTest", username="IC")
+        self.user.set_password('password')
+        self.user.save()
         self.tola_user = TolaUserFactory(user=self.user)
         self.request_factory = RequestFactory()
         self.indicator_type = IndicatorTypeFactory()
         self.country = self.tola_user.country
         self.program = ProgramFactory()
 
+        self.client = Client()
+        self.client.login(username="IC", password='password')
+
+
+class IndicatorCreateFunctionTests(TestBaseMixin, TestCase):
+
+    def setUp(self):
+        super(IndicatorCreateFunctionTests, self).setUp()
+
     def test_get(self):
-        """It should just return an empty form for us to fillout"""
-        path = '/indicator_create/{0}'.format(self.program.id)
-        request = self.request_factory.get(path=path)
-        request.user = self.user
-        response = indicator_create(request, id=self.program.id)
+        url = reverse_lazy('indicator_create', args=[self.program.id])
+        response = self.client.get(url)
+
         self.assertContains(response, 'Indicator Performance Tracking Table')
+        self.assertTemplateUsed(response, 'indicators/indicator_create.html')
 
-    @skip("Skipping")
-    def test_page_load_returns_200(self):
-        print 'progid', self.program
-        response = self.client.get('/indicators/indicator_create/%s/' % self.program.id)
-        self.assertEqual(response.status_code, 200)
+    def test_post(self):
+        request_content = {
+            'program': self.program.id, 'country': self.country.id, 'services': 0, 'service_indicator': 0}
+        response = self.client.post('/indicators/indicator_create/%s/' % self.program.id, request_content)
 
-    def test_page_loads_correct_template(self):
-        client = Client()
-        client.force_login(self.user)
-        client.get('/indicator_create/{0}'.format(self.program.id))
-        self.assertTemplateUsed('indicators/indicator_create.html')
+        self.assertEqual(response.status_code, 302)

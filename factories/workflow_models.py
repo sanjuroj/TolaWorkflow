@@ -73,6 +73,7 @@ class TolaUserFactory(DjangoModelFactory):
 class ProgramFactory(DjangoModelFactory):
     class Meta:
         model = ProgramM
+        django_get_or_create = ('gaitid',)
 
     name = 'Health and Survival for Syrians in Affected Regions'
     gaitid = Sequence(lambda n: "%0030d" % n)
