@@ -24,21 +24,19 @@ class IPTT_MixinTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.mixin = IPTT_Mixin()
+
+    @skip('WIP')
+    def test_page_returns_200(self):
         self.program = ProgramFactory()
         self.indicators = IndicatorFactory.create_batch(5, program=self.program,
-                                                        source='First 5 Indicators',
-                                                        target_frequency=3)
+                                                        source='First 5 Indicators')
         self.indicator = IndicatorFactory.create(program=self.program,
-                                                 source='Another Indicator',
-                                                 target_frequency=3)
-        self.user = User.objects.create_user('thedude', 'lebowski@example.com', 'lebowski')
-
-    # @skip('WIP')
-    def test_page_returns_200(self):
+                                                 source='Another Indicator')
         # TODO: How to ensure it is written to the test database?
-        kwargs = {'reporttype': IPTT_Mixin.REPORT_TYPE_TIMEPERIODS  ,
+        kwargs = {'reporttype': IPTT_Mixin.REPORT_TYPE_TARGETPERIODS,
                   'program_id': self.program.id, }
-        path = reverse_lazy('iptt_report', kwargs=kwargs)
+        path = reverse_lazy('iptt_report', kwargs=kwargs) + "?targetperiods=1&timeframe=1"
+        print("\n*** {0} ***\n".format(path))
         response = self.client.get(path, follow=True)
 
         self.assertEqual(response.status_code, 200)
