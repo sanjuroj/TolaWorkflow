@@ -253,8 +253,7 @@
                 $("#id_indicator_target_" + indicator_id).text(form.find("#id_lop_target").val());
             }
 
-            // if (targetsactive == 'true' || indicatorchanged == true) {
-            if (form.data('periodic_targets_exist') && (targetsactive == 'true' || indicatorchanged == true)) {
+            if (targetsactive == 'true' || indicatorchanged == true) {
                 loadCollected(indicator_id, program_id);
                 // $("#hidden-indicator-"+indicator_id).collapse('show');
             }
