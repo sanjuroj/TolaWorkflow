@@ -7,6 +7,7 @@ from django.test import Client, TestCase
 
 from factories.indicators_models import IndicatorFactory
 from factories.workflow_models import ProgramFactory
+from indicators.forms import IPTTReportQuickstartForm
 from indicators.models import Indicator
 from indicators.views.views_reports import IPTT_Mixin
 from workflow.models import Program
@@ -24,16 +25,24 @@ class IPTT_MixinTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.mixin = IPTT_Mixin()
-
-    @skip('WIP')
-    def test_page_returns_200(self):
         self.program = ProgramFactory()
+
+    #@skip('WIP')
+    def test_page_returns_200(self):
         self.indicators = IndicatorFactory.create_batch(5, program=self.program,
                                                         source='First 5 Indicators')
         self.indicator = IndicatorFactory.create(program=self.program,
                                                  source='Another Indicator')
+
+        self.form = IPTTReportQuickstartForm(prefix='timeperiods', request='request')
+        self.form.prefix = 'timeperiods'
+        self.form.fields['timeframe'] = 1
+        self.form.fields['timeperiods'] = Indicator.ANNUAL
+        self.form.fields['formprefix'] = 'timeperiods'
+        print("\n*** {0} ***\n".format(self.form))
+
         # TODO: How to ensure it is written to the test database?
-        kwargs = {'reporttype': IPTT_Mixin.REPORT_TYPE_TARGETPERIODS,
+        kwargs = {'reporttype': IPTT_Mixin.REPORT_TYPE_TIMEPERIODS,
                   'program_id': self.program.id, }
         path = reverse_lazy('iptt_report', kwargs=kwargs)
         response = self.client.get(path, follow=True)
