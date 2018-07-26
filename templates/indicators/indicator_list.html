@@ -212,7 +212,7 @@
         var url = form.attr("action");
         // make a get request to the server to unset the target_frequency if user
         // closed has not yet created periodic_targets.
-        $.get(url);
+        // $.get(url);
 
         try {
 
@@ -253,10 +253,9 @@
                 $("#id_indicator_target_" + indicator_id).text(form.find("#id_lop_target").val());
             }
 
-            if (targetsactive == 'true' || indicatorchanged == true) {
-                loadCollected(indicator_id, program_id);
-                // $("#hidden-indicator-"+indicator_id).collapse('show');
-            }
+            // update the results table
+            loadCollected(indicator_id, program_id);
+
         } catch (err){
             console.log(err);
         }
