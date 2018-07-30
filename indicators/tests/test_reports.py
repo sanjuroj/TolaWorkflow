@@ -3,13 +3,11 @@ from unittest import skip
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy
-from django.test import Client, TestCase
+from django.test import Client, RequestFactory, TestCase
 
-from factories.indicators_models import IndicatorFactory
 from factories.workflow_models import ProgramFactory
-from indicators.forms import IPTTReportQuickstartForm
 from indicators.models import Indicator
-from indicators.views.views_reports import IPTT_Mixin
+from indicators.views.views_reports import IPTTReportQuickstartView, IPTT_Mixin
 from workflow.models import Program
 
 
@@ -23,32 +21,40 @@ class IPTT_MixinTestCase(TestCase):
     }
 
     def setUp(self):
-        self.client = Client()
         self.mixin = IPTT_Mixin()
+        self.factory = RequestFactory()
         self.program = ProgramFactory()
+        self.user = User(username='tommy',
+                         email='tutone@mercycorps.org',
+                         password='8675309')
 
-    #@skip('WIP')
-    def test_page_returns_200(self):
-        self.indicators = IndicatorFactory.create_batch(5, program=self.program,
-                                                        source='First 5 Indicators')
-        self.indicator = IndicatorFactory.create(program=self.program,
-                                                 source='Another Indicator')
-
-        self.form = IPTTReportQuickstartForm(prefix='timeperiods', request='request')
-        self.form.prefix = 'timeperiods'
-        self.form.fields['timeframe'] = 1
-        self.form.fields['timeperiods'] = Indicator.ANNUAL
-        self.form.fields['formprefix'] = 'timeperiods'
-        print("\n*** {0} ***\n".format(self.form))
-
-        # TODO: How to ensure it is written to the test database?
-        kwargs = {'reporttype': IPTT_Mixin.REPORT_TYPE_TIMEPERIODS,
-                  'program_id': self.program.id, }
+    def test_view_returns_200(self):
+        args = {'targetperiods': 1, 'timeframe': 1, }
+        kwargs = {'program_id': self.program.id,
+                  'reporttype': IPTT_Mixin.REPORT_TYPE_TARGETPERIODS, }
         path = reverse_lazy('iptt_report', kwargs=kwargs)
-        response = self.client.get(path, follow=True)
+        request = self.factory.get(path, data=args)
+        request.user = self.user
+        response = IPTTReportQuickstartView.as_view()(request)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.redirect_chain), 0)
+
+    @skip("WIP: Won't someone please think of the build?!")
+    def test_view_uses_correct_template(self):
+        """Do we load the right template?"""
+        args = {'targetperiods': 1, 'timeframe': 1, }
+        kwargs = {'reporttype': IPTT_Mixin.REPORT_TYPE_TARGETPERIODS,
+                  'program_id': self.program.id, }
+        path = reverse_lazy('iptt_report', kwargs=kwargs)
+        request = self.client.get(path, data=args)
+        request.user = self.user
+        response = IPTTReportQuickstartView.as_view()(request)
+
+        print("\n*** response ***\n*** {0} ***\n".format(response.render()))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'indicators/iptt_report.html')
+        self.assertContains(response, 'Indicator Performance Tracking Table')
 
     @skip('Implement this')
     def test_page_raises_DoesNotExist_if_program_not_exist(self):
@@ -57,18 +63,6 @@ class IPTT_MixinTestCase(TestCase):
     @skip('Implement this')
     def test_page_redirects_to_iptt_quickstart_if_program_not_exist(self):
         pass
-
-    @skip('WIP')
-    def test_page_uses_correct_template(self):
-        """Do we load the right template?"""
-        program = ProgramFactory()
-        kwargs = {'reporttype': IPTT_Mixin.REPORT_TYPE_TARGETPERIODS,
-                  'program_id': program.id, }
-        path = reverse_lazy('iptt_report', kwargs=kwargs)
-        response = self.client.get(path, follow=True)
-
-        self.assertTemplateUsed(response, 'indicators/iptt_report.html')
-        self.assertContains(response, 'Indicator Performance Tracking Table')
 
     def test__get_num_months(self):
         """Do we return the right number of months per period?"""
