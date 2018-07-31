@@ -273,11 +273,11 @@ class IPTTReportQuickstartViewTestCase(TestCase):
     def test_get_context_data(self):
         pass
 
-    # @skip('WIP')
+    #@skip('WIP')
     def test_get_form_kwargs(self):
         pass
 
-    @skip('WIP')
+    #@skip('WIP')
     def test_post_with_valid_form(self):
         """Does POSTing to iptt_quickstart with valid form data return 302
         and redirect to /indicators/iptt_report/{program_id}/{reporttype}/"""
