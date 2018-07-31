@@ -1,11 +1,12 @@
 from datetime import datetime
+from pprint import pprint as pp
 from unittest import skip
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy
 from django.test import Client, RequestFactory, TestCase
 
-from factories.workflow_models import ProgramFactory
+from factories.workflow_models import ProgramFactory, UserFactory
 from indicators.models import Indicator
 from indicators.views.views_reports import IPTTReportQuickstartView, IPTT_Mixin
 from workflow.models import Program
@@ -24,9 +25,7 @@ class IPTT_MixinTestCase(TestCase):
         self.mixin = IPTT_Mixin()
         self.factory = RequestFactory()
         self.program = ProgramFactory()
-        self.user = User(username='tommy',
-                         email='tutone@mercycorps.org',
-                         password='8675309')
+        self.user = UserFactory()
 
     def test_view_returns_200(self):
         args = {'targetperiods': 1, 'timeframe': 1, }
@@ -250,13 +249,18 @@ class IPTT_ReportIndicatorsWithVariedStartDateTestCase(TestCase):
 class IPTTReportQuickstartViewTestCase(TestCase):
 
     def setUp(self):
-        self.mixin = IPTT_Mixin()
         self.client = Client()
+        self.program = ProgramFactory()
+        self.user = UserFactory()
 
     def test_page_load_returns_200(self):
         """Do we return 200?"""
-        response = self.client.get(reverse_lazy('iptt_quickstart'), follow=True)
+        response = self.client.get(reverse_lazy('iptt_quickstart'))
         self.assertEqual(response.status_code, 200)
+
+    def test_page_load_does_not_redirect(self):
+        """This page should not redirect"""
+        response = self.client.get(reverse_lazy('iptt_quickstart'), follow=True)
         self.assertEqual(len(response.redirect_chain), 0)
 
     def test_page_loads_correct_template(self):
@@ -269,12 +273,28 @@ class IPTTReportQuickstartViewTestCase(TestCase):
     def test_get_context_data(self):
         pass
 
-    @skip('TODO: Implement this')
+    # @skip('WIP')
     def test_get_form_kwargs(self):
         pass
 
+    @skip('WIP')
+    def test_post_with_valid_form(self):
+        """Does POSTing to iptt_quickstart with valid form data return 302
+        and redirect to /indicators/iptt_report/{program_id}/{reporttype}/"""
+        p = ProgramFactory()
+        args = {'csrfmiddlewaretoken': 'lolwut?',
+                'program': p.gaitid,
+                'formprefix': 'targetperiods',
+                'targetperiods': 1,
+                'timeframe': 1, }
+        path = reverse_lazy('iptt_quickstart')
+        response = self.client.post(path, data=args, follow=True)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(response.redirect_chain), 1)
+        self.assertTemplateUsed(response, 'indicators/iptt_quickstart.html')
+
     @skip('TODO: Implement this')
-    def test_post(self):
+    def test_post_with_invalid_form(self):
         pass
 
     @skip('TODO: Implement this')
