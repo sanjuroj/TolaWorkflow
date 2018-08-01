@@ -1,8 +1,6 @@
 from datetime import datetime
-from pprint import pprint as pp
 from unittest import skip
 
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy
 from django.test import Client, RequestFactory, TestCase
 
@@ -29,7 +27,7 @@ class IPTT_MixinTestCase(TestCase):
 
     def test_view_returns_200(self):
         args = {'targetperiods': 1, 'timeframe': 1, }
-        kwargs = {'program_id': self.program.gaitid,
+        kwargs = {'program_id': self.program.id,
                   'reporttype': IPTT_Mixin.REPORT_TYPE_TARGETPERIODS, }
         path = reverse_lazy('iptt_report', kwargs=kwargs)
         request = self.factory.get(path, data=args, follow=True)
@@ -41,7 +39,7 @@ class IPTT_MixinTestCase(TestCase):
     def test_view_uses_correct_template(self):
         """Do we load the right template?"""
         args = {'targetperiods': 1, 'timeframe': 1, }
-        kwargs = {'program_id': self.program.gaitid,
+        kwargs = {'program_id': self.program.id,
                   'reporttype': IPTT_Mixin.REPORT_TYPE_TARGETPERIODS, }
         path = reverse_lazy('iptt_report', kwargs=kwargs)
         request = self.factory.get(path, data=args, follow=True)
