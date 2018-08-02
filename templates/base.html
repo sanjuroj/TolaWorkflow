@@ -56,7 +56,7 @@
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark navbar-tola">
             <div class="container-fluid navbar-tola--container">
                 <button
-                    class="navbar-toggler"
+                    class="navbar-toggler m-1"
                     type="button"
                     data-toggle="collapse"
                     data-target="#navbarSupportedContent"
@@ -67,12 +67,14 @@
                 </button>
                 <div class="d-flex flex-column" style="flex-grow:1;">
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <div class="navbar-brand--mc">
-                            <img class="navbar-brand--mc-logo" src="{% static "img/mc_logo_bounded.svg" %}" />
+                        <div class="navbar-brand-wrapper">
+                            <div class="navbar-brand--mc">
+                                <img class="navbar-brand--mc-logo" src="{% static "img/mc_logo_bounded.svg" %}" />
+                            </div>
+                            <a class="navbar-brand--tola" href="{% url "index" %}">
+                                <img class="navbar-brand--tola-logo" src="{% static "img/tola_activity_white.svg" %}" />
+                            </a>
                         </div>
-                        <a class="navbar-brand--tola" href="{% url "index" %}">
-                            <img class="navbar-brand--tola-logo" src="{% static "img/tola_activity_white.svg" %}" />
-                        </a>
 
                         <ul class="navbar-nav">
                             <li class="nav-item pr-2 mr-3">
