@@ -1,106 +1,48 @@
-"""
-Requires module django-extensions
-Syntax: sudo py manage.py runscript import_adminlevels --script-args <country name> <csv filepath>
-"""
-
+from collections import OrderedDict
 import csv
 from workflow.models import Country, Province, District, AdminLevelThree, Village
 
+"""
+Import Countries and other admin levels from a csv file.  First column should be country, second
+should be province, etc...
+
+Requires module django-extensions
+
+Syntax: sudo py manage.py runscript import_adminlevels --script-args /path/to/file.csv
+"""
+
 
 def run(*args):
-    print "IMPORTING %s !!!!!!" % args[0]
-    getCountry, created = Country.objects.get_or_create(country=args[0])
-    file_name = args[1]
+    counts = OrderedDict([
+        ('countries', 0), ('provinces', 0), ('districts', 0), ('admin level 3s', 0),
+        ('villages', 0), ])
 
-    with open(file_name, 'rb') as csvfile:
-        country = csv.reader(csvfile, delimiter=',', quotechar='"')
-        print "PROVINCE (LEVEL 1) !!!!!!"
-        # check for province and add new ones
-        for row in country:
-            column_num = 0
-            for column in row:
-                if column_num == 1:
-                    print "Province="
-                    print column
-                    try:
-                        Province.objects.get(name=column, country=getCountry)
-                    except Province.DoesNotExist:
-                        new_prov = Province(name=column, country=getCountry)
-                        new_prov.save()
-                    print column
-                column_num = column_num + 1
+    with open(args[0], 'rb') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='"')
+        for row in reader:
+            try:
+                c, created = Country.objects.get_or_create(country=row[0])
+                if created:
+                    counts['countries'] += 1
 
-    with open(file_name, 'rb') as csvfile2:
-        country2 = csv.reader(csvfile2, delimiter=',', quotechar='"')
-        # check for distrcit and add new one
-        for row in country2:
-            print "DISTRICTS (LEVEL 2) !!!!!!"
-            column_num = 0
-            for column in row:
-                if column_num == 1:
-                    getProvince = Province.objects.get(name=column, country=getCountry)
+                p, created = Province.objects.get_or_create(name=row[1], country=c)
+                if created:
+                    counts['provinces'] += 1
 
-                if column_num == 2:
-                    print "District="
-                    print column
+                d, created = District.objects.get_or_create(name=row[2], province=p)
+                if created:
+                    counts['districts'] += 1
 
-                    try:
-                        District.objects.get(name=column, province=getProvince)
-                    except District.DoesNotExist:
-                        new_district = District(name=column, province=getProvince)
-                        new_district.save()
+                a3, created = AdminLevelThree.objects.get_or_create(name=row[3], district=d)
+                if created:
+                    counts['admin level 3s'] += 1
 
-                column_num = column_num + 1
+                v, created = Village.objects.get_or_create(name=row[4], admin_3=a3, district=d)
+                if created:
+                    counts['villages'] += 1
 
-    with open(file_name, 'rb') as csvfile2:
-        country2 = csv.reader(csvfile2, delimiter=',', quotechar='"')
-        # check for level3 and add new one
-        for row in country2:
-            print "LEVEL 3 !!!!!!"
-            column_num = 0
-            for column in row:
-                if column_num == 1:
-                    getProvince = Province.objects.get(name=column, country=getCountry)
+            except IndexError:
+                pass
 
-                if column_num == 2:
-                    getDistrict = District.objects.get(name=column, province=getProvince)
-
-                if column_num == 3:
-                    print "AdminLevelThree="
-                    print column
-
-                    try:
-                        AdminLevelThree.objects.get(name=column, district=getDistrict)
-                    except AdminLevelThree.DoesNotExist:
-                        new_level_3 = AdminLevelThree(name=column, district=getDistrict)
-                        new_level_3.save()
-
-                column_num = column_num + 1
-
-    with open(file_name, 'rb') as csvfile2:
-        country2 = csv.reader(csvfile2, delimiter=',', quotechar='"')
-        # check for village and add new one
-        for row in country2:
-            print "VILLAGE !!!!!"
-            column_num = 0
-            for column in row:
-                if column_num == 1:
-                    getProvince = Province.objects.get(name=column, country=getCountry)
-
-                if column_num == 2:
-                    getDistrict = District.objects.get(name=column, province=getProvince)
-
-                if column_num == 3:
-                    getAdminLevel3 = AdminLevelThree.objects.get(name=column, district=getDistrict)
-
-                if column_num == 4:
-                    print "Village="
-                    print column
-
-                    try:
-                        Village.objects.get(name=column, admin_3=getAdminLevel3)
-                    except Village.DoesNotExist:
-                        new_level_3 = Village(name=column, admin_3=getAdminLevel3)
-                        new_level_3.save()
-
-                column_num = column_num + 1
+    for key in counts:
+        print "Inserted %s %s" % (key, counts[key])
