@@ -955,3 +955,30 @@ used on collected data table in IPTT */
 .break-word {
     word-break: break-word; /* wraps text in the middle of words */
 }
+
+/* Branding */
+.navbar-tola {
+    padding: 0;
+}
+.navbar-tola--container {
+    padding-left: 0;
+}
+.navbar-brand--mc {
+    display: block;
+    background: #C8202F;
+    margin-right: 15px;
+}
+.navbar-brand--mc-logo {
+    display: block;
+    height: 60px;
+    width: auto;
+}
+.navbar-brand--tola {
+    display: block;
+    margin-right: 25px;
+}
+.navbar-brand--tola-logo {
+    display: block;
+    max-width: 120px;
+    height: auto;
+}
