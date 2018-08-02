@@ -25,13 +25,12 @@ class IPTT_MixinTestCase(TestCase):
         self.program = ProgramFactory()
         self.user = UserFactory()
 
-
     def test_view_returns_200(self):
         args = [1, 1]
         kwargs = {'program_id': self.program.id,
                   'reporttype': IPTT_Mixin.REPORT_TYPE_TARGETPERIODS, }
         path = reverse_lazy('iptt_report', kwargs=kwargs)
-        request = self.factory.get(path, args=args, follow=True)
+        request = self.factory.get(path, args=args)
         request.user = self.user
         response = IPTTReportQuickstartView.as_view()(request)
 
@@ -40,11 +39,11 @@ class IPTT_MixinTestCase(TestCase):
     @skip('WIP: Currently fails')
     def test_page_uses_correct_template(self):
         """Do we load the right template?"""
-        args = (('targetperiods', 1), ('timeframe', 1))
+        data = ('targetperiods',1), ('timeframe',1)
         kwargs = {'program_id': self.program.id,
                   'reporttype': IPTT_Mixin.REPORT_TYPE_TARGETPERIODS, }
         path = reverse_lazy('iptt_report', kwargs=kwargs)
-        request = self.client.get(path, data=args, follow=True)
+        request = self.client.get(path, data=data, follow=True)
         request.user = self.user
         response = IPTTReportQuickstartView.as_view()(request)
 
