@@ -1,27 +1,21 @@
 """
-import json data from API
-IMPORTANT!! you must turn off pagination for this to work from a URL and get all
-country records
-Install module django-extensions
-Runs twice via function calls at bottom once
-Syntax: sudo py manage.py runscript import_adminlevels
+Requires module django-extensions
+Syntax: sudo py manage.py runscript import_adminlevels --script-args <country name> <csv filepath>
 """
-from django.db import connection
 
-cursor = connection.cursor()
 import csv
 from workflow.models import Country, Province, District, AdminLevelThree, Village
 
-def run():
-    print "Uploading Country Admin data"
 
-
-def getAllData(getCountry,file_name):
+def run(*args):
+    print "IMPORTING %s !!!!!!" % args[0]
+    getCountry, created = Country.objects.get_or_create(country=args[0])
+    file_name = args[1]
 
     with open(file_name, 'rb') as csvfile:
         country = csv.reader(csvfile, delimiter=',', quotechar='"')
         print "PROVINCE (LEVEL 1) !!!!!!"
-        #check for province and add new ones
+        # check for province and add new ones
         for row in country:
             column_num = 0
             for column in row:
@@ -38,7 +32,7 @@ def getAllData(getCountry,file_name):
 
     with open(file_name, 'rb') as csvfile2:
         country2 = csv.reader(csvfile2, delimiter=',', quotechar='"')
-        #check for distrcit and add new one
+        # check for distrcit and add new one
         for row in country2:
             print "DISTRICTS (LEVEL 2) !!!!!!"
             column_num = 0
@@ -60,7 +54,7 @@ def getAllData(getCountry,file_name):
 
     with open(file_name, 'rb') as csvfile2:
         country2 = csv.reader(csvfile2, delimiter=',', quotechar='"')
-        #check for level3 and add new one
+        # check for level3 and add new one
         for row in country2:
             print "LEVEL 3 !!!!!!"
             column_num = 0
@@ -85,7 +79,7 @@ def getAllData(getCountry,file_name):
 
     with open(file_name, 'rb') as csvfile2:
         country2 = csv.reader(csvfile2, delimiter=',', quotechar='"')
-        #check for village and add new one
+        # check for village and add new one
         for row in country2:
             print "VILLAGE !!!!!"
             column_num = 0
@@ -110,18 +104,3 @@ def getAllData(getCountry,file_name):
                         new_level_3.save()
 
                 column_num = column_num + 1
-
-
-# UNCOMMENT AND UPDATE TO IMPORT
-print "IMPORTING South Sudan !!!!!!"
-getCountry, created = Country.objects.get_or_create(country="Liberia")
-file_name = "fixtures/Liberia_Admin.csv"
-getAllData(getCountry, file_name)
-
-"""
-print "IMPORTING Uganda !!!!!!"
-getCountry, created = Country.objects.get_or_create(country="Uganda")
-file_name = "fixtures/admin-uganda.csv"
-getAllData(getCountry, file_name)
-
-"""
