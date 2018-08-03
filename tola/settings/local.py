@@ -104,32 +104,4 @@ GOOGLE_ANALYTICS_DOMAIN = app_settings['GOOGLE_ANALYTICS_DOMAIN']
 
 SECRET_KEY = app_settings['SECRET_KEY']
 
-
-########## LOGGING CONFIGURATION
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'standard': {
-            'format': '%(asctime)s %(levelname)-8s %(name)-12s %(message)s',
-        }
-    },
-    'handlers': {
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': app_settings['LOGFILE'],
-            'formatter': 'standard'
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-    },
-}
-
-########## END LOGGING CONFIGURATION
+LOGGING['handlers']['file']['filename'] = app_settings['LOGFILE']

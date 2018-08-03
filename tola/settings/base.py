@@ -343,3 +343,29 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 GOOGLE_ANALYTICS_PROPERTY_ID = None # replaced in private settings file
 GOOGLE_ANALYTICS_DOMAIN = 'example.org' # replaced in private settings file
+
+########## LOGGING CONFIGURATION
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s %(levelname)-8s %(name)-12s %(message)s',
+        }
+    },
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'error.log',
+            'formatter': 'standard'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
