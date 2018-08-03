@@ -267,10 +267,8 @@ class IPTTReportQuickstartViewTestCase(TestCase):
 class IPTT_ReportViewTestCase(TestCase):
 
     def setUp(self):
-        self.client = Client()
-        self.mixin = IPTT_Mixin()
-        self.mixin.program = Program()
-
+        pass
+    
     @skip('TODO: Implement this')
     def test_get(self):
         pass
