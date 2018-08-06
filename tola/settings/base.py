@@ -357,7 +357,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': 'logs/error.log',
+            'filename': 'error.log',
             'formatter': 'standard'
         },
     },
