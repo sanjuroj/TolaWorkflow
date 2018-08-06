@@ -559,8 +559,11 @@ class ProjectCompleteCreate(CreateView):
     def get_context_data(self, **kwargs):
         context = super(ProjectCompleteCreate, self).get_context_data(**kwargs)
 
+        project_agreement = ProjectAgreement.objects.get(id=self.kwargs['pk'])
         pk = self.kwargs['pk']
         context.update({'pk': pk})
+        context.update({'p_name': self.get_initial()['project_name']})
+        context['p_agreement_pk'] = project_agreement.pk
 
         return context
 
@@ -633,6 +636,7 @@ class ProjectCompleteUpdate(UpdateView):
         pk = self.kwargs['pk']
         context.update({'pk': pk})
         context.update({'project_id':getComplete.project_agreement_id})
+        context['p_agreement_pk'] = getComplete.project_agreement_id
 
         # get budget data
         try:
