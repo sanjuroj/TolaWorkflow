@@ -64,12 +64,16 @@ class TolaUserFactory(DjangoModelFactory):
     name = LazyAttribute(lambda o: o.user.first_name + " " + o.user.last_name)
     organization = SubFactory(OrganizationFactory)
     country = SubFactory(CountryFactory, country='United States', code='US')
-    countries = RelatedFactory(CountryFactory, country='United States', code='US')
+
+    @post_generation
+    def countries(self, create, extracted, **kwargs):
+        self.countries.add(CountryFactory(country='United States', code='US'))
 
 
 class ProgramFactory(DjangoModelFactory):
     class Meta:
         model = ProgramM
+        django_get_or_create = ('gaitid',)
 
     name = 'Health and Survival for Syrians in Affected Regions'
     gaitid = Sequence(lambda n: "%0030d" % n)

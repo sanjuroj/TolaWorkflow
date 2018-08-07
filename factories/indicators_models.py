@@ -57,6 +57,7 @@ class RandomIndicatorFactory(DjangoModelFactory):
 class IndicatorFactory(DjangoModelFactory):
     class Meta:
         model = IndicatorM
+        django_get_or_create = ('name',)
 
     name = Sequence(lambda n: 'Indicator {0}'.format(n))
 

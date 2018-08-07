@@ -253,6 +253,9 @@ class IndicatorCreate(CreateView):
     the post reciever for creating an indicator.
     Then redirect back to edit view in IndicatorUpdate.
     """
+
+    # DELETE THIS CLASS?  UNUSED? #
+
     model = Indicator
     template_name = 'indicators/indicator_form.html'
     form_class = IndicatorForm
