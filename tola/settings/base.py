@@ -187,6 +187,7 @@ MIDDLEWARE = (
     # Default Django middleware.
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',  # Activate locale middleware
+    'tola.middleware.UserLanguageMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -195,7 +196,7 @@ MIDDLEWARE = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
-    'tola.middleware.TimingMiddleware'
+    'tola.middleware.TimingMiddleware',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 ########## END MIDDLEWARE CONFIGURATION
@@ -257,6 +258,7 @@ THIRD_PARTY_APPS = (
     'ckeditor_uploader',
     'simplejson',
     'simple_history',
+    #'user_language_middleware',
     'widget_tweaks',
 )
 

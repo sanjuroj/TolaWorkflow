@@ -1,4 +1,5 @@
 import time
+from django.utils import translation
 
 class TimingMiddleware(object):
     """
@@ -25,5 +26,32 @@ class TimingMiddleware(object):
         if start:
             length = time.clock() - start
             response[self.RESPONSE_HEADER] = "%i" % (length * 1000)
+
+        return response
+
+
+class UserLanguageMiddleware(object):
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        user = getattr(request, 'user', None)
+
+        if not user or user.is_authenticated is False:
+            return response
+
+        tola_user = getattr(user, 'tola_user', None)
+        user_language = getattr(tola_user, 'language', None)
+        if not user_language:
+            return response
+
+        # bypass django language pref discovery
+        # (see https://docs.djangoproject.com/en/1.11/topics/i18n/translation/#how-django-discovers-language-preference)
+        # current_language = translation.get_language()
+        current_language = user_language
+        translation.activate(user_language)
+        request.session[translation.LANGUAGE_SESSION_KEY] = user_language
 
         return response

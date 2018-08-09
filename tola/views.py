@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from workflow.models import ProjectAgreement, ProjectComplete, Program, SiteProfile, Sector,Country, TolaUser,TolaSites, TolaBookmarks, FormGuidance
 from indicators.models import CollectedData, Indicator
 
@@ -253,12 +254,14 @@ def profile(request):
                 form.save()
                 messages.error(request, 'Your profile has been updated.', fail_silently=False,
                                extra_tags='success')
+                # immediately redirect to user sees language change
+                return HttpResponseRedirect(reverse_lazy('profile'))
 
         return render(request, "registration/profile.html", {
             'form': form, 'helper': RegistrationForm.helper
         })
     else:
-        return HttpResponseRedirect("/accounts/register")
+        return HttpResponseRedirect(reverse_lazy('register'))
 
 
 class BookmarkList(ListView):
