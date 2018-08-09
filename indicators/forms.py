@@ -27,6 +27,18 @@ class DatePicker(forms.DateInput):
     DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 
 
+class LocaleDateField(DateField):
+    def to_python(self, value):
+        if value in self.empty_values:
+            return None
+        try:
+            return dateparser.parse(value).date()
+        except (AttributeError):
+            raise ValidationError(
+                self.error_messages['invalid'], code='invalid')
+
+
+
 class IndicatorForm(forms.ModelForm):
     program2 = forms.CharField(
         widget=forms.TextInput(
