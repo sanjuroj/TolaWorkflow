@@ -79,6 +79,26 @@ class ProgramFactory(DjangoModelFactory):
     gaitid = Sequence(lambda n: "%0030d" % n)
     country = RelatedFactory(CountryFactory, country='United States', code='US')
 
+    @post_generation
+    def indicators(self, create, extracted, **kwargs):
+        if not create:
+            # Simple build, do nothing.
+            return
+
+        if type(extracted) is list:
+            # Use the list of provided indicators
+            self.indicator_set.add(*extracted)
+
+    @post_generation
+    def countries(self, create, extracted, **kwargs):
+        if not create:
+            # Simple build, do nothing.
+            return
+
+        if type(extracted) is list:
+            # Use the list of provided countries
+            self.country.add(*extracted)
+
 
 class Documentation(DjangoModelFactory):
     class Meta:

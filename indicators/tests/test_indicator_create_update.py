@@ -1,29 +1,9 @@
 from unittest import skip
 
-from django.test import TestCase, RequestFactory, Client
+from django.test import RequestFactory
 from django.urls import reverse_lazy
 
-from factories import UserFactory
-from factories.indicators_models import (IndicatorFactory)
-from factories.workflow_models import (ProgramFactory, TolaUserFactory)
-
-
-class TestBase(TestCase):
-    fixtures = ['indicatortype.json', 'levels.json']
-
-    def setUp(self):
-        self.user = UserFactory(first_name="Indicator", last_name="CreateTest", username="IC")
-        self.user.set_password('password')
-        self.user.save()
-        self.tola_user = TolaUserFactory(user=self.user)
-        self.request_factory = RequestFactory()
-        self.country = self.tola_user.country
-        self.program = ProgramFactory()
-        self.indicator = IndicatorFactory(program=self.program)
-        print 'indicator', self.indicator
-
-        self.client = Client()
-        self.client.login(username="IC", password='password')
+from test.test_utils import TestBase
 
 
 class IndicatorCreateFunctionTests(TestBase):
