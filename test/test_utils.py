@@ -26,22 +26,27 @@ class TestBase(TestCase):
         self.client.login(username="IC", password='password')
 
 
-def generate_core_indicator_data(c_count=2, p_count=3, i_count=4):
+def generate_core_indicator_data(c_params=None, p_count=3, i_count=4):
     """
     Create up to 5 countries and an arbitrary number of related programs and indicators
     """
-    c_params = [
-        ('Colombia', 'CO'),
-        ('Tunisia', 'TN'),
-        ('Uganda', 'UG'),
-        ('Nepal', 'NP'),
-        ('Timor-Leste', 'TL')
-    ]
+    if c_params is None:
+        c_params = [
+            ('Colombia', 'CO'),
+            ('Tunisia', 'TN'),
+        ]
 
-    for i in range(max(5, c_count)):
+    all_programs = []
+    all_indicators = []
+    for i in range(len(c_params)):
         country = CountryFactory(country=c_params[i][0], code=c_params[i][1])
         programs = ProgramFactory.create_batch(
             p_count, countries=[country], name=Sequence(lambda n: 'Program %s %s' % (country.code, n)),
         )
+        all_programs.extend(programs)
         for p in programs:
-            p.indicator_set.add(*(IndicatorFactory.create_batch(i_count)))
+            indicators = IndicatorFactory.create_batch(i_count)
+            all_indicators.extend(indicators)
+            p.indicator_set.add(*indicators)
+
+    return all_programs, all_indicators
