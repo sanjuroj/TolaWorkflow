@@ -1,41 +1,54 @@
-from django.test import TestCase, RequestFactory
+# from unittest import skip
 
-from factories.indicators_models import IndicatorFactory, IndicatorTypeFactory
-from factories.django_models import UserFactory
-from factories.workflow_models import TolaUserFactory, ProgramFactory
-from indicators.views.views_indicators import IndicatorList
+from django.urls import reverse_lazy
+
+from factories.indicators_models import IndicatorTypeFactory
+from factories.workflow_models import ProgramFactory
+from workflow.models import Country
+from test.test_utils import TestBase, generate_core_indicator_data
 
 
-class IndicatorListTests(TestCase):
+class IndicatorListTests(TestBase):
 
     def setUp(self):
-        self.request_factory = RequestFactory()
-        self.user = UserFactory(first_name="Bobby",
-                                last_name="Indicator")
-        self.user.tola_user = TolaUserFactory(user=self.user)
+        super(IndicatorListTests, self).setUp()
+        self.base_url = 'indicator_list'
+        self.base_args = [0, 0, 0]
+        generate_core_indicator_data(c_count=3, p_count=3, i_count=5)
 
-    def test_get(self):
+    def test_simple_get(self):
 
-        program = ProgramFactory(funding_status="Funded")
-        program.country.add(self.user.tola_user.country)
-        program.save()
-        for country in program.country.all():
-            self.user.tola_user.countries.add(country)
-            self.user.tola_user.save()
-        self.user.tola_user.save()
         indicator_type = IndicatorTypeFactory()
-        indicator = IndicatorFactory(program=program)
-        indicator.indicator_type.add(indicator_type)
+        self.indicator.indicator_type.add(indicator_type)
+        self.indicator.save()
 
-        data = {'program': program.id, 'indicator': indicator.id,
-                'type': indicator_type.id}
-        path = "/indicator_list/{0}/{1}/{2}/".format(program.id, indicator.id,
-                                                     indicator_type.id)
-        request = self.request_factory.get(path=path, data=data)
-        request.user = self.user
+        url = reverse_lazy(self.base_url, args=self.base_args)
+        response = self.client.get(url)
+        self.assertContains(response, self.program.name)
 
-        view = IndicatorList.as_view()
+        kwargs = {
+            'program': self.program.id, 'indicator': self.indicator.id, 'type': indicator_type.id}
+        url = reverse_lazy(self.base_url, kwargs=kwargs)
+        response = self.client.get(url)
+        self.assertContains(response, self.program.name)
 
-        result = view(request, **data)
-        self.assertIn(program.name, result.content)
-        self.assertIn(indicator_type.indicator_type, result.content.decode('utf-8'))
+    def test_get_by_status(self):
+        prog_completed = ProgramFactory(name='This fund is completed', funding_status='Completed')
+        prog_closed = ProgramFactory(name='This fund is closed', funding_status='Completed')
+
+        url = reverse_lazy(self.base_url, args=self.base_args)
+        response = self.client.get(url)
+        self.assertNotContains(response, prog_completed.name)
+        self.assertNotContains(response, prog_closed.name)
+
+    def test_user_country_filter(self):
+        self.tola_user.countries.add(Country.objects.get(country='Colombia'))
+        url = reverse_lazy(self.base_url, args=[0, 0, 0])
+        response = self.client.get(url)
+
+        db_countries = set()
+        for i in response.context['getIndicators']:
+            for p in i.program.all():
+                db_countries.update(p.country.values_list('country', flat=True))
+        self.tola_user.countries.remove(Country.objects.get(country='Colombia'))
+        self.assertTrue(db_countries == set(['United States', 'Colombia']))
