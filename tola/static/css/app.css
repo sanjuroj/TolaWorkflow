@@ -956,6 +956,9 @@ used on collected data table in IPTT */
     word-break: break-word; /* wraps text in the middle of words */
 }
 
+/* language chooser */
+.select-language { }
+
 /* Branding */
 .navbar-brand-wrapper { /* BS has a navbar-brand class already :-( */
     display: flex;
