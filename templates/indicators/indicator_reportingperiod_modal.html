@@ -112,6 +112,8 @@
     var origRptEnd = "";
     var max_target_start = 0;
 
+    {% get_current_language as LANGUAGE_CODE %}
+
     function setupMonthPickers() {
         const start_date_id = "id_reporting_start_date";
         const end_date_id = "id_reporting_end_date";
@@ -119,7 +121,7 @@
             changeMonth: true,
             changeYear: true,
             showButtonPanel: true,
-            dateFormat: 'M d, yy',
+            dateFormat: 'yy-mm-dd', // ISO, TODO: this needs to be displayed in localized format
             onClose: function (dateText, inst) {
                 // Without blurring, when the Done button is pressed, the cursor stays in the date input field
                 // and the user can put whatever they want, without the controls implemented by the datepicker.
