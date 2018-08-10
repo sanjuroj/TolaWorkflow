@@ -263,8 +263,8 @@ class IPTTReportFilterForm(ReportFormCommon):
 
     def __init__(self, *args, **kwargs):
         program = kwargs.pop('program')
-        periods_choices_start = kwargs.get('initial').get('period_choices_start')
-        periods_choices_end = kwargs.get('initial').get('period_choices_end')
+        periods_choices_start = kwargs.get('initial').get('period_choices_start') # TODO: localize this date
+        periods_choices_end = kwargs.get('initial').get('period_choices_end') # TODO: localize this date
 
         target_frequencies = Indicator.objects.filter(program__in=[program.id], target_frequency__isnull=False) \
             .exclude(target_frequency=Indicator.EVENT) \
