@@ -377,7 +377,13 @@ ul.paginate li a:hover:not(.active) {background-color: #ddd;} /* should probably
   float: right;
 }
 /* Keep the picker on top of other elements */
-.ui-datepicker{z-index: 10000 !important};
+.ui-datepicker{
+    z-index: 10000 !important;
+}
+/* Inline datepicker on Collected Data form */
+#date_collected-wrapper .ui-datepicker-inline {
+    position: absolute;
+}
 
 /*Indicator line graph with slider*/
 .clear-fix
