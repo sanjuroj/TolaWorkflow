@@ -117,7 +117,9 @@ $(function () {
 
 //custom jquery to trigger date picker, info pop-over and print category text
 $(document).ready(function() {
-    $('.datepicker').datepicker({dateFormat: "yy-mm-dd"});
+    $('.datepicker').datepicker({
+        dateFormat: "yy-mm-dd",
+    });
 });
 
 
