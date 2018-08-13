@@ -89,7 +89,7 @@ LANGUAGES = [
     ('en', _('English')),
     ('fr', _('French')),
     ('es', _('Spanish')),
-    ('ar', _('Arabic')),
+    # ('ar', _('Arabic')),
 ]
 
 ########## END GENERAL CONFIGURATION

@@ -16,12 +16,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: indicators/forms.py:82
 msgid "Indicator Name"
-msgstr ""
+msgstr "Nombre del indicador"
 
 #: indicators/forms.py:108 indicators/forms.py:152 indicators/forms.py:213
 #: indicators/models.py:84 indicators/models.py:482 indicators/models.py:724
@@ -31,7 +30,7 @@ msgstr ""
 #: workflow/models.py:348 workflow/models.py:948 workflow/models.py:1104
 #: workflow/models.py:1210
 msgid "Program"
-msgstr ""
+msgstr "Programa"
 
 #: indicators/forms.py:113 indicators/forms.py:161 indicators/models.py:525
 #: indicators/models.py:612 indicators/models.py:709
@@ -43,78 +42,78 @@ msgstr ""
 #: templates/indicators/report.html:95 templates/indicators/tva_print.html:48
 #: templates/indicators/tva_report.html:21
 msgid "Indicator"
-msgstr ""
+msgstr "Indicador"
 
 #: indicators/forms.py:135 templates/workflow/projectdashboard_list.html:12
 #: templates/workflow/projectdashboard_list.html:17 workflow/models.py:1209
 msgid "Project"
-msgstr ""
+msgstr "Proyecto"
 
 #: indicators/forms.py:171
 msgid "Measure against target*"
-msgstr ""
+msgstr "Medida contra objetivo*"
 
 #: indicators/forms.py:172
 msgid "Actual value"
-msgstr ""
+msgstr "Valor actual"
 
 #: indicators/forms.py:184
 msgid "Years"
-msgstr ""
+msgstr "Años"
 
 #: indicators/forms.py:185
 msgid "Semi-annual periods"
-msgstr ""
+msgstr "Periodos semestrales"
 
 #: indicators/forms.py:186
 msgid "Tri-annual periods"
-msgstr ""
+msgstr "Períodos trienales"
 
 #: indicators/forms.py:187
 msgid "Quarters"
-msgstr ""
+msgstr "Trimestres"
 
 #: indicators/forms.py:188
 msgid "Months"
-msgstr ""
+msgstr "Meses"
 
 #: indicators/forms.py:194
 msgid "Show all"
-msgstr ""
+msgstr "Mostrar todo"
 
 #: indicators/forms.py:195
 msgid "Most recent"
-msgstr ""
+msgstr "Más reciente"
 
 #: indicators/forms.py:214
 msgid "Time periods"
-msgstr ""
+msgstr "Períodos de tiempo"
 
 #: indicators/forms.py:215
 msgid "enter a number"
-msgstr ""
+msgstr "ingrese un número"
 
 #: indicators/forms.py:216
 msgid "Target periods"
-msgstr ""
+msgstr "Periodos objetivo"
 
 #: indicators/forms.py:242
 msgid "Levels"
-msgstr ""
+msgstr "Niveles"
 
 #: indicators/forms.py:243
 msgid "Types"
-msgstr ""
+msgstr "Tipos"
 
 #: indicators/forms.py:244 workflow/models.py:874
 msgid "Sectors"
-msgstr ""
+msgstr "Sectores"
 
 #: indicators/forms.py:245 templates/base.html:88 templates/index.html:439
 #: templates/workflow/site_profile_list.html:4
 #: templates/workflow/site_profile_list.html:5
 msgid "Sites"
-msgstr ""
+msgstr "Sitios"
 
 #: indicators/forms.py:247 templates/base.html:81
 #: templates/indicators/collecteddata_form.html:5
@@ -122,19 +121,19 @@ msgstr ""
 #: templates/indicators/home.html:5 templates/indicators/home.html:27
 #: templates/indicators/indicator_create.html:9
 msgid "Indicators"
-msgstr ""
+msgstr "Indicadores"
 
 #: indicators/forms.py:288
 msgid "START"
-msgstr ""
+msgstr "COMIENZO"
 
 #: indicators/forms.py:289
 msgid "END"
-msgstr ""
+msgstr "FIN"
 
 #: indicators/forms.py:294
 msgid "TARGET PERIODS"
-msgstr ""
+msgstr "PERIODOS OBJETIVO"
 
 #: indicators/models.py:21 indicators/models.py:63 indicators/models.py:83
 #: indicators/models.py:103 indicators/models.py:231 indicators/models.py:336
@@ -142,19 +141,19 @@ msgstr ""
 #: workflow/models.py:34 workflow/models.py:172 workflow/models.py:268
 #: workflow/models.py:1344
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 #: indicators/models.py:22
 msgid "Table id"
-msgstr ""
+msgstr "Identificación de la tabla"
 
 #: indicators/models.py:23 workflow/models.py:1376
 msgid "Owner"
-msgstr ""
+msgstr "Propietario"
 
 #: indicators/models.py:24
 msgid "Remote owner"
-msgstr ""
+msgstr "Propietario remoto"
 
 #: indicators/models.py:25 indicators/models.py:64 templates/index.html:292
 #: templates/index.html:334 templates/index.html:356
@@ -163,15 +162,15 @@ msgstr ""
 #: workflow/models.py:441 workflow/models.py:684 workflow/models.py:872
 #: workflow/models.py:1346 workflow/models.py:1410
 msgid "Country"
-msgstr ""
+msgstr "País"
 
 #: indicators/models.py:26 indicators/models.py:232
 msgid "Url"
-msgstr ""
+msgstr "URL"
 
 #: indicators/models.py:27
 msgid "Unique count"
-msgstr ""
+msgstr "Recuento único"
 
 #: indicators/models.py:28 indicators/models.py:46 indicators/models.py:66
 #: indicators/models.py:86 indicators/models.py:107 indicators/models.py:133
@@ -180,7 +179,7 @@ msgstr ""
 #: indicators/models.py:510 indicators/models.py:634 workflow/models.py:76
 #: workflow/models.py:109 workflow/models.py:175
 msgid "Create date"
-msgstr ""
+msgstr "Fecha de creación"
 
 #: indicators/models.py:29 indicators/models.py:47 indicators/models.py:67
 #: indicators/models.py:87 indicators/models.py:108 indicators/models.py:134
@@ -189,35 +188,37 @@ msgstr ""
 #: indicators/models.py:514 indicators/models.py:635 workflow/models.py:77
 #: workflow/models.py:110 workflow/models.py:176
 msgid "Edit date"
-msgstr ""
+msgstr "Fecha de edición"
 
 #: indicators/models.py:44 indicators/models.py:319
 #: templates/indicators/grid_report.html:28
 msgid "Indicator type"
-msgstr ""
+msgstr "Tipo de indicador"
 
 #: indicators/models.py:45 indicators/models.py:65 indicators/models.py:85
 #: indicators/models.py:105 indicators/models.py:130 indicators/models.py:176
 #: indicators/models.py:191 workflow/models.py:811 workflow/models.py:838
 #: workflow/models.py:1206 workflow/models.py:1257
 msgid "Description"
-msgstr ""
+msgstr "Descripción"
 
 #: indicators/models.py:50 templates/indicators/home.html:37
 msgid "Indicator Type"
-msgstr ""
+msgstr "Tipo de indicador"
 
 #: indicators/models.py:70
+#, fuzzy
+#| msgid "Country Strategic Objective"
 msgid "Country Strategic Objectives"
-msgstr ""
+msgstr "Objetivo estratégico del país"
 
 #: indicators/models.py:90 indicators/models.py:327
 msgid "Program Objective"
-msgstr ""
+msgstr "Objetivo del programa"
 
 #: indicators/models.py:106 indicators/models.py:143 indicators/models.py:633
 msgid "Customsort"
-msgstr ""
+msgstr "Customsort"
 
 #: indicators/models.py:112 indicators/models.py:323
 #: templates/indicators/grid_report.html:29
@@ -226,310 +227,310 @@ msgstr ""
 #: templates/indicators/report.html:100 templates/indicators/tva_print.html:50
 #: templates/indicators/tva_report.html:23
 msgid "Level"
-msgstr ""
+msgstr "Nivel"
 
 #: indicators/models.py:129 indicators/models.py:141
 msgid "Disaggregation type"
-msgstr ""
+msgstr "Tipo de desagregación"
 
 #: indicators/models.py:132
 msgid "Standard (TolaData Admins Only)"
-msgstr ""
+msgstr "Estándar (solo administradores de TolaData)"
 
 #: indicators/models.py:142 templates/indicators/disaggregation_print.html:58
 #: templates/indicators/disaggregation_report.html:34
 msgid "Label"
-msgstr ""
+msgstr "Etiqueta"
 
 #: indicators/models.py:153
 msgid "Disaggregation label"
-msgstr ""
+msgstr "Etiqueta de desagregación"
 
 #: indicators/models.py:154 templates/indicators/disaggregation_print.html:59
 #: templates/indicators/disaggregation_report.html:35 workflow/models.py:1318
 msgid "Value"
-msgstr ""
+msgstr "Valor"
 
 #: indicators/models.py:174 indicators/models.py:189 indicators/models.py:213
 #: workflow/models.py:1287
 msgid "Frequency"
-msgstr ""
+msgstr "Frecuencia"
 
 #: indicators/models.py:181 templates/indicators/grid_report.html:45
 #: templates/indicators/report.html:106
 msgid "Reporting Frequency"
-msgstr ""
+msgstr "Frecuencia de informes"
 
 #: indicators/models.py:194
 msgid "Frequency in number of days"
-msgstr ""
+msgstr "Frecuencia en cantidad de días"
 
 #: indicators/models.py:200
 msgid "Data Collection Frequency"
-msgstr ""
+msgstr "Frecuencia de recopilación de datos"
 
 #: indicators/models.py:219
 msgid "Reporting Period"
-msgstr ""
+msgstr "Período de información"
 
 #: indicators/models.py:233
 msgid "Feed url"
-msgstr ""
+msgstr "URL de la fuente"
 
 #: indicators/models.py:238
 msgid "External Service"
-msgstr ""
+msgstr "Servicio externo"
 
 #: indicators/models.py:252
 msgid "External service"
-msgstr ""
+msgstr "Servicio externo"
 
 #: indicators/models.py:253
 msgid "Full URL"
-msgstr ""
+msgstr "URL completa"
 
 #: indicators/models.py:254
 msgid "Unique ID"
-msgstr ""
+msgstr "Identificación única"
 
 #: indicators/models.py:259
 msgid "External Service Record"
-msgstr ""
+msgstr "Registro de servicio externo"
 
 #: indicators/models.py:288
 msgid "Life of Program (LoP) only"
-msgstr ""
+msgstr "Vida del programa (LoP) solamente"
 
 #: indicators/models.py:289
 msgid "Midline and endline"
-msgstr ""
+msgstr "Línea media y línea final"
 
 #: indicators/models.py:290
 msgid "Annual"
-msgstr ""
+msgstr "Anual"
 
 #: indicators/models.py:291 indicators/views/views_reports.py:71
 msgid "Semi-annual"
-msgstr ""
+msgstr "Semestral"
 
 #: indicators/models.py:292 indicators/views/views_reports.py:72
 msgid "Tri-annual"
-msgstr ""
+msgstr "Trienal"
 
 #: indicators/models.py:293
 msgid "Quarterly"
-msgstr ""
+msgstr "Trimestral"
 
 #: indicators/models.py:294
 msgid "Monthly"
-msgstr ""
+msgstr "Mensual"
 
 #: indicators/models.py:295
 msgid "Event"
-msgstr ""
+msgstr "Evento"
 
 #: indicators/models.py:301
 msgid "Number (#)"
-msgstr ""
+msgstr "Número (#)"
 
 #: indicators/models.py:302
 msgid "Percentage (%)"
-msgstr ""
+msgstr "Porcentaje (%)"
 
 #: indicators/models.py:309
 msgid "Direction of change (not applicable)"
-msgstr ""
+msgstr "Dirección de cambio (no aplica)"
 
 #: indicators/models.py:310
 msgid "Increase (+)"
-msgstr ""
+msgstr "Aumentar (+)"
 
 #: indicators/models.py:311
 msgid "Decrease (-)"
-msgstr ""
+msgstr "Disminuir (-)"
 
 #: indicators/models.py:332
 msgid "Country Strategic Objective"
-msgstr ""
+msgstr "Objetivo estratégico del país"
 
 #: indicators/models.py:340 templates/indicators/disaggregation_report.html:26
 #: templates/indicators/grid_report.html:32 templates/indicators/home.html:39
 msgid "Number"
-msgstr ""
+msgstr "Número"
 
 #: indicators/models.py:344 templates/indicators/grid_report.html:35
 #: templates/indicators/home.html:40
 msgid "Source"
-msgstr ""
+msgstr "Fuente"
 
 #: indicators/models.py:348 templates/indicators/grid_report.html:36
 #: templates/indicators/home.html:41
 msgid "Definition"
-msgstr ""
+msgstr "Definición"
 
 #: indicators/models.py:353
 msgid "Rationale or Justification for Indicator"
-msgstr ""
+msgstr "Razonamiento o justificación del indicador"
 
 #: indicators/models.py:359
 msgid "Unit of measure*"
-msgstr ""
+msgstr "Unidad de medida*"
 
 #: indicators/models.py:366
 msgid "Unit Type"
-msgstr ""
+msgstr "Tipo de unidad"
 
 #: indicators/models.py:371 templates/indicators/disaggregation_print.html:54
 #: templates/indicators/disaggregation_report.html:30
 #: templates/indicators/grid_report.html:37
 #: templates/indicators/report.html:103
 msgid "Disaggregation"
-msgstr ""
+msgstr "Desagregación"
 
 #: indicators/models.py:374
 msgid "Baseline*"
-msgstr ""
+msgstr "Base*"
 
 #: indicators/models.py:379
 msgid "Not applicable"
-msgstr ""
+msgstr "No aplica"
 
 #: indicators/models.py:383
 msgid "Life of Program (LoP) target*"
-msgstr ""
+msgstr "Objetivo de vida del programa (LoP) *"
 
 #: indicators/models.py:390
 msgid "Direction of Change"
-msgstr ""
+msgstr "Dirección de cambio"
 
 #: indicators/models.py:394 templates/indicators/iptt_report.html:62
 msgid "C / NC"
-msgstr ""
+msgstr "C / NC"
 
 #: indicators/models.py:398
 msgid "Rationale for target"
-msgstr ""
+msgstr "Justificación del objetivo"
 
 #: indicators/models.py:404
 #: templates/indicators/iptt_indicators_varied_startdates.html:36
 msgid "Target frequency"
-msgstr ""
+msgstr "Frecuencia objetivo"
 
 #: indicators/models.py:409
 msgid "First event name*"
-msgstr ""
+msgstr "Nombre del primer evento*"
 
 #: indicators/models.py:414
 msgid "First target period begins*"
-msgstr ""
+msgstr "Comienza el primer período objetivo*"
 
 #: indicators/models.py:418
 msgid "Number of target periods*"
-msgstr ""
+msgstr "Número de períodos objetivo*"
 
 #: indicators/models.py:424
 msgid "Means of Verification / Data Source"
-msgstr ""
+msgstr "Medios de verificación / Fuente de datos"
 
 #: indicators/models.py:429 templates/indicators/grid_report.html:41
 msgid "Data Collection Method"
-msgstr ""
+msgstr "Método de recopilación de datos"
 
 #: indicators/models.py:434
 msgid "Frequency of Data Collection"
-msgstr ""
+msgstr "Frecuencia de recopilación de datos"
 
 #: indicators/models.py:438
 msgid "Data points"
-msgstr ""
+msgstr "Puntos de datos"
 
 #: indicators/models.py:444
 msgid "Responsible Person(s) and Team"
-msgstr ""
+msgstr "Persona(s) responsable(s) y equipo"
 
 #: indicators/models.py:449 templates/indicators/grid_report.html:43
 #: templates/indicators/report.html:104
 msgid "Method of Analysis"
-msgstr ""
+msgstr "Método de análisis"
 
 #: indicators/models.py:454 templates/indicators/grid_report.html:44
 msgid "Information Use"
-msgstr ""
+msgstr "Uso de información"
 
 #: indicators/models.py:459
 msgid "Frequency of Reporting"
-msgstr ""
+msgstr "Frecuencia de informes"
 
 #: indicators/models.py:464
 msgid "Quality Assurance Measures"
-msgstr ""
+msgstr "Medidas de aseguramiento de la calidad"
 
 #: indicators/models.py:468
 msgid "Data issues"
-msgstr ""
+msgstr "Problemas de datos"
 
 #: indicators/models.py:474
 msgid "Changes to Indicator"
-msgstr ""
+msgstr "Cambios en el indicador"
 
 #: indicators/models.py:478 templates/indicators/grid_report.html:46
 msgid "Comments"
-msgstr ""
+msgstr "Comentarios"
 
 #: indicators/models.py:486 templates/indicators/report.html:102
 #: templates/indicators/tva_report.html:24 workflow/models.py:247
 #: workflow/models.py:335 workflow/models.py:960 workflow/models.py:1112
 msgid "Sector"
-msgstr ""
+msgstr "Sector"
 
 #: indicators/models.py:490
 msgid "Key Performance Indicator for this program?"
-msgstr ""
+msgstr "¿Indicador clave de rendimiento para este programa?"
 
 #: indicators/models.py:496 workflow/models.py:693 workflow/models.py:879
 #: workflow/models.py:1161
 msgid "Approved by"
-msgstr ""
+msgstr "Aprobado por"
 
 #: indicators/models.py:501 workflow/models.py:1023 workflow/models.py:1162
 msgid "Approval submitted by"
-msgstr ""
+msgstr "Aprobación presentada por"
 
 #: indicators/models.py:505
 msgid "External Service ID"
-msgstr ""
+msgstr "Identificación de servicio externo"
 
 #: indicators/models.py:519 workflow/models.py:881
 msgid "Notes"
-msgstr ""
+msgstr "Notas"
 
 #: indicators/models.py:586 indicators/templatetags/mytags.py:74
 msgid "#"
-msgstr ""
+msgstr "#"
 
 #: indicators/models.py:588 indicators/templatetags/mytags.py:77
 msgid "%"
-msgstr ""
+msgstr "%"
 
 #: indicators/models.py:595 indicators/templatetags/mytags.py:44
 msgid "-"
-msgstr ""
+msgstr "-"
 
 #: indicators/models.py:597 indicators/templatetags/mytags.py:47
 msgid "+"
-msgstr ""
+msgstr "+"
 
 #: indicators/models.py:608
 msgid "Midline"
-msgstr ""
+msgstr "Línea media"
 
 #: indicators/models.py:609
 msgid "Endline"
-msgstr ""
+msgstr "Línea final"
 
 #: indicators/models.py:616
 msgid "Period"
-msgstr ""
+msgstr "Período"
 
 #: indicators/models.py:620 templates/index.html:248
 #: templates/indicators/collected_data_report_table.html:7
@@ -538,28 +539,28 @@ msgstr ""
 #: templates/indicators/iptt_report.html:70
 #: templates/indicators/program_indicators_table.html:24
 msgid "Target"
-msgstr ""
+msgstr "Objetivo"
 
 #: indicators/models.py:624
 #: templates/indicators/indicator_reportingperiod_modal.html:37
 #: templates/indicators/indicator_reportingperiod_modal.html:57
 #: templates/indicators/iptt_indicators_varied_startdates.html:37
 msgid "Start date"
-msgstr ""
+msgstr "Fecha de inicio"
 
 #: indicators/models.py:629
 #: templates/indicators/indicator_reportingperiod_modal.html:44
 #: templates/indicators/indicator_reportingperiod_modal.html:69
 msgid "End date"
-msgstr ""
+msgstr "Fecha final"
 
 #: indicators/models.py:639
 msgid "Periodic Target"
-msgstr ""
+msgstr "Objetivo periódico"
 
 #: indicators/models.py:689
 msgid "Periodic target"
-msgstr ""
+msgstr "Objetivo periódico"
 
 #: indicators/models.py:693
 #: templates/indicators/collected_data_report_table.html:8
@@ -568,136 +569,138 @@ msgstr ""
 #: templates/indicators/iptt_report.html:71
 #: templates/indicators/iptt_report.html:76
 msgid "Actual"
-msgstr ""
+msgstr "Real"
 
 #: indicators/models.py:702
 msgid "Disaggregation Value"
-msgstr ""
+msgstr "Valor de desagregación"
 
 #: indicators/models.py:706
 msgid "Remarks/comments"
-msgstr ""
+msgstr "Anotaciones/comentarios"
 
 #: indicators/models.py:714 templates/index.html:276 workflow/models.py:1040
 #: workflow/models.py:1105 workflow/models.py:1258 workflow/models.py:1289
 #: workflow/models.py:1319 workflow/models.py:1345
 msgid "Project Initiation"
-msgstr ""
+msgstr "Iniciación de proyecto"
 
 #: indicators/models.py:719
 msgid "Project Complete"
-msgstr ""
+msgstr "Proyecto completo"
 
 #: indicators/models.py:727
 msgid "Date collected"
-msgstr ""
+msgstr "Fecha de recoplicación"
 
 #: indicators/models.py:730
 msgid "Comment/Explanation"
-msgstr ""
+msgstr "Comentario/Explicación"
 
 #: indicators/models.py:735
 msgid "Evidence Document or Link"
-msgstr ""
+msgstr "Documento o enlace de evidencia"
 
 #: indicators/models.py:738
 msgid "Originated By"
-msgstr ""
+msgstr "Originado por"
 
 #: indicators/models.py:742
 msgid "TolaTable"
-msgstr ""
+msgstr "Tabla Tola"
 
 #: indicators/models.py:745
 msgid ""
 "Would you like to update the achieved total with the         row count from "
 "TolaTables?"
 msgstr ""
+"¿Desea actualizar el total alcanzado con el recuento de      filas de las "
+"tablas Tola?"
 
 #: indicators/templatetags/mytags.py:49 indicators/views/views_reports.py:536
 #: indicators/views/views_reports.py:547 indicators/views/views_reports.py:584
 #: indicators/views/views_reports.py:653
 #: templates/indicators/collected_data_table.html:90
 msgid "N/A"
-msgstr ""
+msgstr "N/A"
 
 #: indicators/views/views_indicators.py:200
 msgid "Temporary"
-msgstr ""
+msgstr "Temporal"
 
 #: indicators/views/views_indicators.py:237
 msgid "Success, Basic Indicator Created!"
-msgstr ""
+msgstr "¡Éxito, indicador básico creado!"
 
 #: indicators/views/views_indicators.py:297
 msgid "Success, Indicator Created!"
-msgstr ""
+msgstr "¡Éxito, indicador creado!"
 
 #: indicators/views/views_indicators.py:516
 #: indicators/views/views_indicators.py:765
 msgid "Invalid Form"
-msgstr ""
+msgstr "Forma inválida"
 
 #: indicators/views/views_indicators.py:649
 msgid "Success, Indicator Updated!"
-msgstr ""
+msgstr "¡Éxito, indicador actualizado!"
 
 #: indicators/views/views_indicators.py:669
 msgid "Success, Indicator Deleted!"
-msgstr ""
+msgstr "¡Éxito, indicador eliminado!"
 
 #: indicators/views/views_indicators.py:815
 msgid "Success, Data Created!"
-msgstr ""
+msgstr "¡Éxito, datos creados!"
 
 #: indicators/views/views_indicators.py:936
 msgid "Success, Data Updated!"
-msgstr ""
+msgstr "¡Éxito, datos actualizados!"
 
 #: indicators/views/views_reports.py:70
 msgid "Year"
-msgstr ""
+msgstr "Año"
 
 #: indicators/views/views_reports.py:73
 msgid "Quarter"
-msgstr ""
+msgstr "Trimestre"
 
 #: indicators/views/views_reports.py:74
 msgid "Month"
-msgstr ""
+msgstr "Mes"
 
 #: indicators/views/views_reports.py:538
 msgid "Cumulative"
-msgstr ""
+msgstr "Acumulativo"
 
 #: indicators/views/views_reports.py:540
 msgid "Non-cumulative"
-msgstr ""
+msgstr "No acumulativo"
 
 #: indicators/views/views_reports.py:709 indicators/views/views_reports.py:1031
 msgid "Please select a valid program."
-msgstr ""
+msgstr "Por favor seleccione un programa válido."
 
 #: indicators/views/views_reports.py:770
 msgid "Please select a valid report type."
-msgstr ""
+msgstr "Seleccione un tipo de informe válido."
 
 #: reports/templates/report.html:6
 msgid "Program Reports"
-msgstr ""
+msgstr "Informes del programa"
 
 #: reports/templates/report.html:425
 msgid "Filter program reports"
-msgstr ""
+msgstr "Filtrar informes del programa"
 
 #: templates/base.html:84
 msgid "Browse"
-msgstr ""
+msgstr "Explorar"
 
 #: templates/base.html:86 templates/workflow/documentation_list.html:3
 #: templates/workflow/documentation_list.html:4
 msgid "Documents"
-msgstr ""
+msgstr "Documentos"
 
 #: templates/base.html:87 templates/bootstrap4.html:74
 #: templates/formlibrary/beneficiary_form.html:5
@@ -722,116 +725,116 @@ msgstr ""
 #: templates/workflow/projectdashboard_list.html:6
 #: templates/workflow/site_profile_report.html:6
 msgid "Projects"
-msgstr ""
+msgstr "Proyectos"
 
 #: templates/base.html:89 templates/workflow/stakeholder_list.html:3
 #: templates/workflow/stakeholder_list.html:4 workflow/models.py:889
 #: workflow/models.py:967
 msgid "Stakeholders"
-msgstr ""
+msgstr "Partes interesadas"
 
 #: templates/base.html:93
 msgid "Reports"
-msgstr ""
+msgstr "Informes"
 
 #: templates/base.html:95 templates/indicators/iptt_quickstart.html:4
 #: templates/indicators/iptt_quickstart.html:5
 msgid "Indicator Performance Tracking Table"
-msgstr ""
+msgstr "Tabla de seguimiento del rendimiento del indicador"
 
 #: templates/base.html:96 templates/indicators/disaggregation_report.html:4
 #: templates/indicators/disaggregation_report.html:5
 #: templates/indicators/disaggregation_report.html:119
 msgid "Indicator Disaggregation Report"
-msgstr ""
+msgstr "Informe de desagregación"
 
 #: templates/base.html:97 templates/workflow/projectagreement_detail.html:4
 #: templates/workflow/projectagreement_detail.html:6
 #: templates/workflow/report.html:4 templates/workflow/report.html:5
 msgid "Project Report"
-msgstr ""
+msgstr "Informe del proyecto"
 
 #: templates/base.html:138
 msgid "Login with Tola account"
-msgstr ""
+msgstr "Iniciar sesión con la cuenta de Tola"
 
 #: templates/base.html:201 workflow/models.py:1230
 msgid "Documentation"
-msgstr ""
+msgstr "Documentación"
 
 #: templates/base.html:206
 msgid "FAQ"
-msgstr ""
+msgstr "Preguntas más frecuentes"
 
 #: templates/base.html:211
 msgid "Feedback"
-msgstr ""
+msgstr "Realimentación"
 
 #: templates/customdashboard/program_list.html:4
 #: templates/customdashboard/program_list.html:5
 msgid "Public Dashboards"
-msgstr ""
+msgstr "Tableros públicos"
 
 #: templates/form_guidance.html:4 templates/form_guidance.html:7
 #: templates/indicators/indicator_create.html:95
 msgid "Help"
-msgstr ""
+msgstr "Ayuda"
 
 #: templates/index.html:4 templates/index.html:5 templates/index.html:292
 #: templates/indicators/dashboard.html:3
 msgid "Dashboard"
-msgstr ""
+msgstr "Tablero"
 
 #: templates/index.html:19
 msgid "Program Projects by Status"
-msgstr ""
+msgstr "Proyectos de programa por estado"
 
 #: templates/index.html:19 templates/index.html:439
 msgid "for"
-msgstr ""
+msgstr "para"
 
 #: templates/index.html:22
 msgid "Initiation"
-msgstr ""
+msgstr "Iniciación"
 
 #: templates/index.html:22
 msgid "Tracking"
-msgstr ""
+msgstr "Rastreo"
 
 #: templates/index.html:27
 msgid "Number of Approved, Pending or Open Projects"
-msgstr ""
+msgstr "Número de proyectos aprobados, pendientes o abiertos"
 
 #: templates/index.html:48
 msgid "Approved"
-msgstr ""
+msgstr "Aprobado"
 
 #: templates/index.html:52
 msgid "Pending"
-msgstr ""
+msgstr "Pendiente"
 
 #: templates/index.html:56
 msgid "Awaiting Approval"
-msgstr ""
+msgstr "Esperando aprobación"
 
 #: templates/index.html:60
 msgid "Open"
-msgstr ""
+msgstr "Abierto"
 
 #: templates/index.html:77
 msgid "KPI Targets v. Actuals"
-msgstr ""
+msgstr "Objetivos de KPI frente a los datos reales"
 
 #: templates/index.html:85 templates/indicators/collected_data_table.html:14
 #: templates/indicators/collected_data_table.html:37
 #: templates/indicators/collecteddata_form_modal.html:100
 msgid "Results"
-msgstr ""
+msgstr "Resultados"
 
 #: templates/index.html:99 templates/indicators/indicator_form_helper.html:26
 #: templates/indicators/indicator_graphs.html:51
 msgid "Targets"
-msgstr ""
+msgstr "Objetivos"
 
 #: templates/index.html:102 templates/index.html:248
 #: templates/indicators/collecteddata_form_modal.html:245
@@ -842,142 +845,144 @@ msgstr ""
 #: templates/indicators/tva_print.html:53
 #: templates/indicators/tva_report.html:26
 msgid "Actuals"
-msgstr ""
+msgstr "Datos reales"
 
 #: templates/index.html:276
 msgid "is awaiting your"
-msgstr ""
+msgstr "está esperando su"
 
 #: templates/index.html:276
 msgid "approval"
-msgstr ""
+msgstr "aprobación"
 
 #: templates/index.html:300 templates/index.html:308
 msgid "All"
-msgstr ""
+msgstr "Todos"
 
 #: templates/index.html:305
 msgid "Filter by Program"
-msgstr ""
+msgstr "Filtrar por programa"
 
 #: templates/index.html:317 templates/workflow/programdashboard_list.html:10
 msgid "Add project"
-msgstr ""
+msgstr "Agregar proyecto"
 
 #: templates/index.html:329
 msgid "Indicator Evidence Leaderboard"
-msgstr ""
+msgstr "Leaderboard de evidencia de indicadores"
 
 #: templates/index.html:335 templates/index.html:357
 msgid "Indicator Data"
-msgstr ""
+msgstr "Datos del indicador"
 
 #: templates/index.html:336 templates/index.html:358
 msgid "W/Evidence"
-msgstr ""
+msgstr "Con evidencia"
 
 #: templates/index.html:351
 msgid "Indicator Evidence"
-msgstr ""
+msgstr "Evidencia del indicador"
 
 #: templates/index.html:377 templates/indicators/grid_report.html:31
 msgid "Strategic Objectives"
-msgstr ""
+msgstr "Objetivos estratégicos"
 
 #: templates/index.html:389
 msgid "# of Indicators"
-msgstr ""
+msgstr "# de indicadores"
 
 #: templates/index.html:390
 msgid "Target/Actuals"
-msgstr ""
+msgstr "Objetivo/Datos reales"
 
 #: templates/index.html:402
 msgid "No indicators currently aligned with country strategic objectives."
 msgstr ""
+"No hay indicadores actualmente alineados con los objetivos estratégicos del "
+"país."
 
 #: templates/index.html:415
 msgid "Milestones"
-msgstr ""
+msgstr "Hitos"
 
 #: templates/index.html:418
 msgid "Current Adoption Status"
-msgstr ""
+msgstr "Estado de adopción actual"
 
 #: templates/index.html:422
 msgid "Adoption of Workflow"
-msgstr ""
+msgstr "Adopción de Workflow"
 
 #: templates/index.html:423 templates/index.html:427
 msgid "Total Programs"
-msgstr ""
+msgstr "Programas totales"
 
 #: templates/index.html:423
 msgid "Using Workflow"
-msgstr ""
+msgstr "Usando Workflow"
 
 #: templates/index.html:426
 msgid "Adoption of Indicator"
-msgstr ""
+msgstr "Adopción del indicador"
 
 #: templates/index.html:427
 msgid "Using Indicator Plans"
-msgstr ""
+msgstr "Uso de planes de indicadores"
 
 #: templates/index.html:430
 msgid "Indicators w/ Evidence"
-msgstr ""
+msgstr "Indicadores con evidencia"
 
 #: templates/index.html:431
 msgid "Total Collected Data"
-msgstr ""
+msgstr "Total de datos recopilados"
 
 #: templates/index.html:446
 msgid "Offline (No map provided)"
-msgstr ""
+msgstr "Sin conexión (no se proporciona el mapa)"
 
 #: templates/indicators/collected_data_report_table.html:5
 msgid "Date Collected"
-msgstr ""
+msgstr "Fecha recopilado"
 
 #: templates/indicators/collected_data_report_table.html:6
 #: templates/indicators/collected_data_table.html:38
 #: templates/indicators/collecteddata_form_modal.html:192
 msgid "Evidence"
-msgstr ""
+msgstr "Evidencia"
 
 #: templates/indicators/collected_data_report_table.html:19
 msgid "Sum:"
-msgstr ""
+msgstr "Suma:"
 
 #: templates/indicators/collected_data_table.html:33
 msgid "Target period"
-msgstr ""
+msgstr "Período objetivo"
 
 #: templates/indicators/collected_data_table.html:36
 #: templates/indicators/iptt_report.html:67
 #: templates/indicators/iptt_report.html:72
 #, python-format
 msgid "%% Met"
-msgstr ""
+msgstr "%% cumplido"
 
 #: templates/indicators/collected_data_table.html:138
 #: templates/indicators/collected_data_table.html:142
 msgid "View project"
-msgstr ""
+msgstr "Ver proyecto"
 
 #: templates/indicators/collected_data_table.html:152
 msgid "No data collected"
-msgstr ""
+msgstr "Sin datos recopilados"
 
 #: templates/indicators/collected_data_table.html:206
 #: templates/indicators/collected_data_table.html:210
 msgid "View Project"
-msgstr ""
+msgstr "Ver proyecto"
 
 #: templates/indicators/collected_data_table.html:232
 msgid "Life of Program"
-msgstr ""
+msgstr "Vida del programa"
 
 #: templates/indicators/collected_data_table.html:268
 #: templates/indicators/collected_data_table.html:274
@@ -985,34 +990,43 @@ msgid ""
 "Results are cumulative. The Life of Program result mirrors the latest period "
 "result."
 msgstr ""
+"Los resultados son acumulativos. El resultado de la vida del programa "
+"refleja el último resultado del período."
 
 #: templates/indicators/collected_data_table.html:270
 msgid ""
 "Results are non-cumulative. The Life of Program result is the sum of target "
 "periods results."
 msgstr ""
+"Los resultados no son acumulativos. El resultado de la vida del programa es "
+"la suma de los resultados de los períodos objetivo."
 
 #: templates/indicators/collected_data_table.html:276
 msgid ""
 "Results are non-cumulative. Target period and Life of Program results are "
 "calculated from the average of collected data."
 msgstr ""
+"Los resultados no son acumulativos. Los resultados del período objetivo y de "
+"la vida del programa se calculan a partir del promedio de los datos "
+"recopilados."
 
 #: templates/indicators/collected_data_table.html:291
 #: templates/indicators/collecteddata_form_common_js.html:68
 msgid "Targets are not set up for this indicator."
-msgstr ""
+msgstr "Los objetivos no están configurados para este indicador."
 
 #: templates/indicators/collected_data_table.html:291
 #: templates/indicators/collecteddata_form_common_js.html:68
 msgid "Start by selecting a target frequency."
-msgstr ""
+msgstr "Comience seleccionando una frecuencia objetivo."
 
 #: templates/indicators/collected_data_table.html:295
 msgid ""
 "This record is not associated with a target. Open the data record and select "
 "an option from the \"Measure against target\" menu."
 msgstr ""
+"Este registro no está asociado con un objetivo. Abra el registro de datos y "
+"seleccione una opción del menú \"Medida contra el objetivo \"."
 
 #: templates/indicators/collected_data_table.html:299
 #: templates/indicators/collecteddata_form_common_js.html:73
@@ -1020,62 +1034,66 @@ msgid ""
 "This date falls outside the range of your target periods. Please select a "
 "date between "
 msgstr ""
+"Esta fecha queda fuera del rango de sus períodos objetivo. Por favor "
+"seleccione una fecha entre "
 
 #: templates/indicators/collected_data_table.html:299
 msgid "and "
-msgstr ""
+msgstr "y "
 
 #: templates/indicators/collected_data_table.html:308
 msgid "Add results"
-msgstr ""
+msgstr "Agregar resultados"
 
 #: templates/indicators/collected_data_table.html:314
 msgid "This indicator has no targets."
-msgstr ""
+msgstr "Este indicador no tiene objetivos."
 
 #: templates/indicators/collected_data_table.html:314
 msgid "Add targets"
-msgstr ""
+msgstr "Agregar objetivos"
 
 #: templates/indicators/collecteddata_confirm_delete.html:4
 msgid "Collected Indicator Data Confirm Delete"
-msgstr ""
+msgstr "Confirmar eliminación de los datos del indicador recopilados"
 
 #: templates/indicators/collecteddata_confirm_delete.html:9
 msgid "Are you sure you want to delete the collected data?"
-msgstr ""
+msgstr "¿Está seguro de que desea eliminar los datos recopilados?"
 
 #: templates/indicators/collecteddata_form.html:6
 msgid "Output Form"
-msgstr ""
+msgstr "Formulario de salida"
 
 #: templates/indicators/collecteddata_form.html:10
 msgid "Collected Indicator Data"
-msgstr ""
+msgstr "Datos del indicador recopilados"
 
 #: templates/indicators/collecteddata_form_common_js.html:17
 msgid "Please complete all required fields."
-msgstr ""
+msgstr "Por favor complete todos los campos requeridos."
 
 #: templates/indicators/collecteddata_form_common_js.html:34
 #: templates/indicators/indicator_form_common_js.html:321
 msgid "Success, form data saved."
-msgstr ""
+msgstr "Éxito, datos de formulario guardados."
 
 #: templates/indicators/collecteddata_form_common_js.html:37
 msgid "Could not save form."
-msgstr ""
+msgstr "No se pudo guardar el formulario."
 
 #: templates/indicators/collecteddata_form_common_js.html:72
 msgid ""
 "This date falls outside the range of your target periods. You can change the "
 "date or"
 msgstr ""
+"Esta fecha queda fuera del rango de sus períodos objetivo. Puede cambiar la "
+"fecha o"
 
 #: templates/indicators/collecteddata_form_common_js.html:100
 #: templates/indicators/collecteddata_form_common_js.html:106
 msgid "Please enter a number with no letters or symbols."
-msgstr ""
+msgstr "Por favor ingrese un número sin letras ni símbolos."
 
 #: templates/indicators/collecteddata_form_common_js.html:127
 #: templates/indicators/indicator_form_common_js.html:522
@@ -1083,34 +1101,34 @@ msgstr ""
 #: templates/workflow/documentation_form.html:119
 #: templates/workflow/documentation_form.html:148
 msgid "Please complete this field."
-msgstr ""
+msgstr "Por favor complete este campo."
 
 #: templates/indicators/collecteddata_form_common_js.html:130
 msgid "Please enter a valid date."
-msgstr ""
+msgstr "Por favor ingrese una fecha válida."
 
 #: templates/indicators/collecteddata_form_modal.html:102
 msgid "indicator"
-msgstr ""
+msgstr "indicador"
 
 #: templates/indicators/collecteddata_form_modal.html:217
 msgid "Import evidence from TolaTables"
-msgstr ""
+msgstr "Importar evidencia de tablas Tola"
 
 #: templates/indicators/collecteddata_form_modal.html:239
 msgid "Standard disaggregations"
-msgstr ""
+msgstr "Desagregaciones estándar"
 
 #: templates/indicators/collecteddata_form_modal.html:244
 #: templates/indicators/collecteddata_form_modal.html:279
 #: templates/indicators/collecteddata_form_modal.html:308
 #: templates/indicators/collecteddata_form_modal.html:339
 msgid "Disaggregation level"
-msgstr ""
+msgstr "Nivel de desagregación"
 
 #: templates/indicators/collecteddata_form_modal.html:263
 msgid "Standard disaggregation levels not entered"
-msgstr ""
+msgstr "Niveles de desagregación estándar no ingresados"
 
 #: templates/indicators/collecteddata_form_modal.html:264
 msgid ""
@@ -1118,89 +1136,94 @@ msgid ""
 "organizations.  If you are not seeing any here, please contact your system "
 "administrator."
 msgstr ""
+"El administrador introduce las desagregaciones estándar para todas las "
+"organizaciones. Si no ve ninguna aquí, contáctese con el administrador del "
+"sistema."
 
 #: templates/indicators/collecteddata_form_modal.html:274
 msgid "New disaggregations"
-msgstr ""
+msgstr "Nuevas desagregaciones"
 
 #: templates/indicators/collecteddata_form_modal.html:303
 msgid "Existing disaggregations"
-msgstr ""
+msgstr "Desagregaciones existentes"
 
 #: templates/indicators/collecteddata_form_modal.html:334
 msgid "Existing standard disaggregations"
-msgstr ""
+msgstr "Desagregaciones estándar existentes"
 
 #: templates/indicators/collecteddata_form_modal.html:367
 msgid "Delete results"
-msgstr ""
+msgstr "Eliminar resultados"
 
 #: templates/indicators/collecteddata_form_modal.html:373
 #: templates/indicators/indicator_create.html:92
 #: templates/indicators/indicator_reportingperiod_modal.html:100
 #: templates/workflow/documentation_form.html:263
 msgid "Save changes"
-msgstr ""
+msgstr "Guardar cambios"
 
 #: templates/indicators/collecteddata_form_modal.html:374
 #: templates/indicators/indicator_reportingperiod_modal.html:101
 #: templates/indicators/iptt_filter_form.html:134
 #: templates/workflow/documentation_form.html:268 tola/forms.py:130
 msgid "Reset"
-msgstr ""
+msgstr "Reiniciar"
 
 #: templates/indicators/collecteddata_import.html:7
 msgid "Import from Tola Tables"
-msgstr ""
+msgstr "Importar de tablas Tola"
 
 #: templates/indicators/collecteddata_import.html:34
 msgid "Something went wrong!"
-msgstr ""
+msgstr "¡Algo salió mal!"
 
 #: templates/indicators/collecteddata_import.html:58
 msgid "Import Indicator Evidence from"
-msgstr ""
+msgstr "Importar evidencia del indicador de"
 
 #: templates/indicators/collecteddata_import.html:58
 #: templates/indicators/collecteddata_import.html:64
 msgid "Tola Tables"
-msgstr ""
+msgstr "Tablas Tola"
 
 #: templates/indicators/collecteddata_import.html:59
 msgid ""
 "Link one of your Tola Tables or a Table shared with you as your indicator "
 "evidence."
 msgstr ""
+"Enlaza una de tus tablas Tola o una tabla compartida contigo como tu "
+"evidencia indicadora."
 
 #: templates/indicators/collecteddata_import.html:70
 msgid "Type the name of the Table in the box above to search."
-msgstr ""
+msgstr "Escriba el nombre de la tabla en el cuadro de arriba para buscar."
 
 #: templates/indicators/collecteddata_import.html:74
 msgid "save"
-msgstr ""
+msgstr "guardar"
 
 #: templates/indicators/dashboard.html:6
 msgid "Dashboard report on indicator status by Country and Program"
-msgstr ""
+msgstr "Informe del tablero sobre el estado del indicador por país y programa"
 
 #: templates/indicators/disaggregation_print.html:4
 #: templates/indicators/tva_print.html:3
 msgid "TvA Report"
-msgstr ""
+msgstr "Informe TvA"
 
 #: templates/indicators/disaggregation_print.html:43
 msgid "Indicator Disaggregation Report for"
-msgstr ""
+msgstr "Informe de desagregación de indicadores para"
 
 #: templates/indicators/disaggregation_print.html:51
 #: templates/indicators/disaggregation_report.html:25
 msgid "IndicatorID"
-msgstr ""
+msgstr "Identificación del indicador"
 
 #: templates/indicators/disaggregation_print.html:53
 msgid "Overall"
-msgstr ""
+msgstr "En general"
 
 #: templates/indicators/disaggregation_print.html:57
 #: templates/indicators/disaggregation_report.html:33
@@ -1208,128 +1231,128 @@ msgstr ""
 #: templates/indicators/tva_report.html:22 workflow/models.py:643
 #: workflow/models.py:870 workflow/models.py:1288
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 #: templates/indicators/disaggregation_report.html:24
 #: templates/indicators/report.html:91 templates/indicators/tva_report.html:17
 msgid "PID"
-msgstr ""
+msgstr "PID"
 
 #: templates/indicators/disaggregation_report.html:28
 #: templates/indicators/grid_report.html:39
 #: templates/indicators/report.html:108 templates/indicators/tva_print.html:52
 #: templates/indicators/tva_report.html:25
 msgid "LOP Target"
-msgstr ""
+msgstr "Objetivo LOP "
 
 #: templates/indicators/disaggregation_report.html:29
 msgid "Actual Total"
-msgstr ""
+msgstr "Total real"
 
 #: templates/indicators/disaggregation_report.html:60
 msgid "No Disaggregation"
-msgstr ""
+msgstr "Sin desagregación"
 
 #: templates/indicators/disaggregation_report.html:120
 #: templates/indicators/report.html:57 templates/indicators/tva_report.html:86
 msgid "Export to CSV"
-msgstr ""
+msgstr "Exportar a CSV"
 
 #: templates/indicators/disaggregation_report.html:144
 #: templates/indicators/tva_report.html:112
 msgid "Select a program before exporting it to PDF"
-msgstr ""
+msgstr "Seleccione un programa antes de exportarlo a PDF"
 
 #: templates/indicators/filter.html:13 templates/indicators/filter.html:24
 #: templates/indicators/filter.html:35 templates/indicators/home.html:18
 msgid "-- All --"
-msgstr ""
+msgstr "-- Todos --"
 
 #: templates/indicators/filter.html:48 templates/indicators/filter.html:54
 msgid "Export to PDF"
-msgstr ""
+msgstr "Exportar a PDF"
 
 #: templates/indicators/filter.html:61 templates/indicators/home.html:14
 msgid "Programs"
-msgstr ""
+msgstr "Programas"
 
 #: templates/indicators/grid_report.html:4
 #: templates/indicators/grid_report.html:9
 #: templates/indicators/grid_report.html:15
 msgid "Indicator Plan"
-msgstr ""
+msgstr "Plan Indicador"
 
 #: templates/indicators/grid_report.html:30
 msgid "Objectives"
-msgstr ""
+msgstr "Objetivos"
 
 #: templates/indicators/grid_report.html:34
 msgid "KPI"
-msgstr ""
+msgstr "KPI"
 
 #: templates/indicators/grid_report.html:38
 #: templates/indicators/iptt_report.html:64
 #: templates/indicators/program_indicators_table.html:23
 #: templates/indicators/report.html:107
 msgid "Baseline"
-msgstr ""
+msgstr "Base"
 
 #: templates/indicators/grid_report.html:40
 #: templates/indicators/report.html:116
 msgid "Means of Verification"
-msgstr ""
+msgstr "Medios de verificación"
 
 #: templates/indicators/grid_report.html:42
 msgid "Responsible Person"
-msgstr ""
+msgstr "Persona responsable"
 
 #: templates/indicators/grid_report.html:76
 msgid "Export All"
-msgstr ""
+msgstr "Exportar todo"
 
 #: templates/indicators/home.html:8
 msgid "Indicator Planning Tool"
-msgstr ""
+msgstr "Herramienta de planificación de indicadores"
 
 #: templates/indicators/home.html:23
 msgid "New Indicator"
-msgstr ""
+msgstr "Nuevo indicador"
 
 #: templates/indicators/home.html:36 workflow/models.py:1032
 #: workflow/models.py:1164
 msgid "Date Created"
-msgstr ""
+msgstr "Fecha de creacion"
 
 #: templates/indicators/home.html:51 templates/indicators/report.html:90
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 #: templates/indicators/home.html:51
 msgid "Delete"
-msgstr ""
+msgstr "Eliminar"
 
 #: templates/indicators/home.html:56
 msgid "No Indicators"
-msgstr ""
+msgstr "Sin indicadores"
 
 #: templates/indicators/indicator_confirm_delete.html:3
 msgid "Indicator Confirm Delete"
-msgstr ""
+msgstr "Confirmar eliminación del indicador"
 
 #: templates/indicators/indicator_confirm_delete.html:8
 msgid "Are you sure you want to delete?"
-msgstr ""
+msgstr "¿Está seguro que quiere eliminarlo?"
 
 #: templates/indicators/indicator_create.html:4
 #: templates/indicators/indicator_create.html:5
 #: templates/indicators/indicator_create.html:10
 #: templates/indicators/indicator_list.html:17
 msgid "Add indicator"
-msgstr ""
+msgstr "Agregar indicador"
 
 #: templates/indicators/indicator_create.html:50
 msgid "Create an Indicator from an External Template."
-msgstr ""
+msgstr "Cree un indicador a partir de una plantilla externa."
 
 #: templates/indicators/indicator_create.html:51
 msgid ""
@@ -1337,52 +1360,66 @@ msgid ""
 "donor required indicators from a web service.  Skip The service section if "
 "creating a 'custom' indicator."
 msgstr ""
+"Los indicadores de plantillas externas incluyen los indicadores de agencia "
+"estándar o los indicadores requeridos por los donantes de un servicio web. "
+"Omita la sección de servicio si está creando un indicador 'personalizado'."
 
 #: templates/indicators/indicator_create.html:55
 msgid "Indicator Service Templates (leave blank for custom indicators)"
 msgstr ""
+"Plantillas de servicios de indicadores (dejar en blanco para indicadores "
+"personalizados)"
 
 #: templates/indicators/indicator_create.html:57
 #: templates/indicators/indicator_create.html:68
 #: templates/indicators/indicator_create.html:75
 #: templates/indicators/indicator_create.html:84
 msgid "-- select --"
-msgstr ""
+msgstr "- seleccionar -"
 
 #: templates/indicators/indicator_create.html:62
 msgid "Select an indicator service to select a pre-defined indicator from."
 msgstr ""
+"Seleccione un servicio de indicadores para seleccionar un indicador "
+"predefinido."
 
 #: templates/indicators/indicator_create.html:66
 msgid "Service Indicator (leave blank for custom indicators)"
 msgstr ""
+"Indicador de servicio (dejar en blanco para indicadores personalizados)"
 
 #: templates/indicators/indicator_create.html:70
 msgid ""
 "Type the name of the Indicator in the box above to search, starting with "
 "type then level then title."
 msgstr ""
+"Escriba el nombre del indicador en el cuadro de arriba para buscar, "
+"comenzando con el tipo, luego el nivel y luego el título."
 
 #: templates/indicators/indicator_form.html:4
 #: templates/indicators/indicator_form.html:5
 #: templates/indicators/indicator_form_modal.html:49
 msgid "Indicator setup"
-msgstr ""
+msgstr "Configuración del indicador"
 
 #: templates/indicators/indicator_form_common_js.html:77
 msgid "Warning: This action cannot be undone. Removing this target means that"
 msgstr ""
+"Advertencia: esta acción no se puede deshacer. Eliminar este objetivo "
+"significa que"
 
 #: templates/indicators/indicator_form_common_js.html:77
 msgid ""
 "data record/s will no longer have targets associated with them. \\n"
 "\\nProceed anyway?"
 msgstr ""
+"los registros de datos ya no tendrán objetivos asociados. \\ n \\ n "
+"¿Proceder de todos modos?"
 
 #: templates/indicators/indicator_form_common_js.html:183
 #: templates/indicators/indicatortargets.html:46
 msgid "Enter target"
-msgstr ""
+msgstr "Ingrese el objetivo"
 
 #: templates/indicators/indicator_form_common_js.html:201
 msgid ""
@@ -1390,221 +1427,237 @@ msgid ""
 "will need to be reassigned.\\n\\n Are you sure you want to remove all "
 "targets?"
 msgstr ""
+"Advertencia: esta acción no se puede deshacer. Todos los registros de datos "
+"asignados a un objetivo deberán reasignarse. \\ n \\ n ¿Está seguro de que "
+"desea eliminar todos los objetivos?"
 
 #: templates/indicators/indicator_form_common_js.html:203
 msgid ""
 "Warning: This action cannot be undone. Are you sure you want to remove all "
 "targets?"
 msgstr ""
+"Advertencia: esta acción no se puede deshacer. ¿Está seguro de que desea "
+"eliminar todos los objetivos?"
 
 #: templates/indicators/indicator_form_common_js.html:244
 msgid "Warning: This action cannot be undone. If we make these changes,"
 msgstr ""
+"Advertencia: esta acción no se puede deshacer. Si hacemos estos cambios,"
 
 #: templates/indicators/indicator_form_common_js.html:244
 msgid ""
 "data record/s will no longer be associated with the Life of Program target, "
 "and will need to be reassigned to new targets. \\n\\nProceed anyway?"
 msgstr ""
+"los registros de datos ya no estarán asociados con el objetivo de vida del "
+"programa, y ​​deberán reasignarse a nuevos objetivos. \\ n \\ n ¿Proceder de "
+"todos modos?"
 
 #: templates/indicators/indicator_form_common_js.html:301
 msgid "Saving form... please wait."
-msgstr ""
+msgstr "Guardando formulario... por favor espere."
 
 #: templates/indicators/indicator_form_common_js.html:433
 msgid "Add a year"
-msgstr ""
+msgstr "Agregar un año"
 
 #: templates/indicators/indicator_form_common_js.html:435
 msgid "Add a semi-annual period"
-msgstr ""
+msgstr "Agregar un período semestral"
 
 #: templates/indicators/indicator_form_common_js.html:437
 msgid "Add a tri-annual period"
-msgstr ""
+msgstr "Agregar un período trienal"
 
 #: templates/indicators/indicator_form_common_js.html:439
 msgid "Add a quarter"
-msgstr ""
+msgstr "Agregar un trimestre"
 
 #: templates/indicators/indicator_form_common_js.html:441
 msgid "Add a month"
-msgstr ""
+msgstr "Agregar un mes"
 
 #: templates/indicators/indicator_form_common_js.html:443
 msgid "Add an event"
-msgstr ""
+msgstr "Agregar un evento"
 
 #: templates/indicators/indicator_form_common_js.html:445
 #: templates/indicators/indicatortargets.html:118
 msgid "Add a target"
-msgstr ""
+msgstr "Agregar un objetivo"
 
 #: templates/indicators/indicator_form_common_js.html:481
 #: templates/indicators/indicator_form_common_js.html:483
 msgid "Please complete this field. Your baseline can be zero."
-msgstr ""
+msgstr "Por favor complete este campo. Su línea de base puede ser cero."
 
 #: templates/indicators/indicator_form_common_js.html:501
 #: templates/indicators/indicator_form_common_js.html:541
 msgid "Please enter a number larger than zero."
-msgstr ""
+msgstr "Por favor ingrese un número mayor que cero."
 
 #: templates/indicators/indicator_form_common_js.html:503
 msgid ""
 "Please enter a number larger than zero with no letters or symbols. If your "
 "target is a percentage, describe it in the unit of measure field."
 msgstr ""
+"Por favor ingrese un número mayor que cero sin letras ni símbolos. Si su "
+"objetivo es un porcentaje, descríbalo en el campo de unidad de medida."
 
 #: templates/indicators/indicator_form_common_js.html:537
 msgid "You can start with up to 12 targets and add more later."
-msgstr ""
+msgstr "Puede comenzar con hasta 12 objetivos y agregar más en el futuro."
 
 #: templates/indicators/indicator_form_common_js.html:591
 msgid ""
 "Please enter a name and target number for every event. Your target value can "
 "be zero."
 msgstr ""
+"Por favor ingrese un nombre y un número objetivo para cada evento. Su valor "
+"objetivo puede ser cero."
 
 #: templates/indicators/indicator_form_common_js.html:594
 msgid "Please enter a target value. Your target value can be zero."
-msgstr ""
+msgstr "Por favor ingrese un valor objetivo. Su valor objetivo puede ser cero."
 
 #: templates/indicators/indicator_form_common_js.html:653
 msgid "Please complete all required fields in the Targets tab."
-msgstr ""
+msgstr "Complete todos los campos obligatorios en la pestaña Objetivos."
 
 #: templates/indicators/indicator_form_common_js.html:669
 msgid "Please complete all required fields in the Summary tab."
-msgstr ""
+msgstr "Complete todos los campos obligatorios en la pestaña Resumen."
 
 #: templates/indicators/indicator_form_helper.html:20
 msgid "Summary"
-msgstr ""
+msgstr "Resumen"
 
 #: templates/indicators/indicator_form_helper.html:23
 msgid "Performance"
-msgstr ""
+msgstr "Rendimiento"
 
 #: templates/indicators/indicator_form_helper.html:29
 msgid "Data Acquisition"
-msgstr ""
+msgstr "Adquisición de datos"
 
 #: templates/indicators/indicator_form_helper.html:32
 msgid "Analysis and Reporting"
-msgstr ""
+msgstr "Análisis e informes"
 
 #: templates/indicators/indicator_form_helper.html:35 workflow/models.py:692
 #: workflow/models.py:878
 msgid "Approval"
-msgstr ""
+msgstr "Aprobación"
 
 #: templates/indicators/indicator_form_helper.html:105
 msgid "Delete this indicator"
-msgstr ""
+msgstr "Eliminar este indicador"
 
 #: templates/indicators/indicator_form_helper.html:319
 msgid "CREATE TARGETS"
-msgstr ""
+msgstr "CREAR OBJETIVOS"
 
 #: templates/indicators/indicator_form_helper.html:320
 msgid "Remove all targets"
-msgstr ""
+msgstr "Eliminar todos los objetivos"
 
 #: templates/indicators/indicator_form_helper.html:486
 msgid "SAVE CHANGES"
-msgstr ""
+msgstr "GUARDAR CAMBIOS"
 
 #: templates/indicators/indicator_form_helper.html:487
 msgid "RESET"
-msgstr ""
+msgstr "REINICIAR"
 
 #: templates/indicators/indicator_form_helper.html:556
 #: templates/indicators/indicatortargets.html:131
 msgid "OPTIONS FOR NUMBER (#) INDICATORS"
-msgstr ""
+msgstr "OPCIONES PARA INDICADORES DE NÚMERO (#)"
 
 #: templates/indicators/indicator_form_helper.html:565
 #, python-format
 msgid "PERCENTAGE (%%) INDICATORS"
-msgstr ""
+msgstr "INDICADORES DE PORCENTAJE ( %% )"
 
 #: templates/indicators/indicator_form_helper.html:632
 #: templates/indicators/indicatortargets.html:67
 msgid "Sum of targets"
-msgstr ""
+msgstr "Suma de objetivos"
 
 #: templates/indicators/indicator_form_modal.html:53
 msgid "indicator:"
-msgstr ""
+msgstr "indicador:"
 
 #: templates/indicators/indicator_graphs.html:18
 msgid "Targets vs Actuals"
-msgstr ""
+msgstr "Objetivos frente a los datos reales"
 
 #: templates/indicators/indicator_list.html:3
 #: templates/indicators/indicator_list.html:4
 msgid "Program indicators"
-msgstr ""
+msgstr "Indicadores de programa"
 
 #: templates/indicators/indicator_list.html:24
 msgid ""
 "Before adding indicators and performance results, we need to know your "
 "program's "
 msgstr ""
+"Antes de agregar indicadores y resultados de rendimiento, necesitamos saber "
 
 #: templates/indicators/indicator_list.html:35
 msgid "reporting start and end dates."
-msgstr ""
+msgstr "las fechas de inicio y finalización de su programa."
 
 #: templates/indicators/indicator_list.html:39
 msgid "No Indicators have been entered for this program"
-msgstr ""
+msgstr "No se han ingresado indicadores para este programa"
 
 #: templates/indicators/indicator_list.html:52
 msgid "program indicator"
-msgstr ""
+msgstr "indicador de programa"
 
 #: templates/indicators/indicator_list.html:54
 msgid "program indicators"
-msgstr ""
+msgstr "indicadores de programa"
 
 #: templates/indicators/indicator_list.html:60
 msgid "Indicator plan"
-msgstr ""
+msgstr "Plan de indicadores"
 
 #: templates/indicators/indicator_list.html:73
 #: templates/indicators/indicator_reportingperiod_modal.html:16
 msgid "Reporting period"
-msgstr ""
+msgstr "Período de información"
 
 #: templates/indicators/indicator_list.html:81
 msgid ""
 "Some indicators have missing targets. To enter these values, click the "
 "target icon near the indicator name."
 msgstr ""
+"Algunos indicadores faltan objetivos. Para ingresar estos valores, haga clic "
+"en el ícono de objetivo cerca del nombre del indicador."
 
 #: templates/indicators/indicator_list.html:93
 msgid "No Programs"
-msgstr ""
+msgstr "Sin programas"
 
 #: templates/indicators/indicator_list.html:102
 msgid "Warning"
-msgstr ""
+msgstr "Advertencia"
 
 #: templates/indicators/indicator_list.html:105
 msgid "Are you sure?"
-msgstr ""
+msgstr "¿Está seguro?"
 
 #: templates/indicators/indicator_list.html:108
 msgid "Yes"
-msgstr ""
+msgstr "Sí"
 
 #: templates/indicators/indicator_list.html:109
 #: templates/indicators/tva_print.html:47
 #: templates/indicators/tva_report.html:20
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: templates/indicators/indicator_reportingperiod_modal.html:19
 msgid ""
@@ -1614,14 +1667,21 @@ msgid ""
 "as recorded in the Grant and Award Information Tracker (GAIT) system. The "
 "reporting period may be adjusted to align with the program’s indicator plan."
 msgstr ""
+"El período de informe del programa se usa en la configuración de objetivos "
+"periódicos y en tablas de seguimiento del rendimiento del indicador (IPTT). "
+"TolaActivity establece inicialmente el período de informe para incluir las "
+"fechas de inicio y finalización oficiales del programa, tal como se registra "
+"en el sistema de rastreo de información de concesiones y adjudicaciones "
+"(GAIT). El período del informe puede ajustarse para alinearse con el plan de "
+"indicadores del programa."
 
 #: templates/indicators/indicator_reportingperiod_modal.html:32
 msgid "GAIT program dates"
-msgstr ""
+msgstr "Fechas del programa GAIT"
 
 #: templates/indicators/indicator_reportingperiod_modal.html:53
 msgid "Reporting start and end dates"
-msgstr ""
+msgstr "Informes de fechas de inicio y finalización"
 
 #: templates/indicators/indicator_reportingperiod_modal.html:82
 #: templates/indicators/indicator_reportingperiod_modal.html:89
@@ -1630,57 +1690,74 @@ msgid ""
 "must begin on the first day of the month and end on the last day of the "
 "month. Please note that the reporting start date can only be adjusted "
 msgstr ""
+"Si bien un programa puede comenzar y finalizar en cualquier día del mes, los "
+"períodos de informe deben comenzar el primer día del mes y finalizar el "
+"último día del mes. Tenga en cuenta que la fecha de inicio de informe solo "
+"se puede ajustar "
 
 #: templates/indicators/indicator_reportingperiod_modal.html:84
 msgid ""
 "before periodic targets are set up and a program begins submitting "
 "performance results. "
 msgstr ""
+"antes de que se establezcan objetivos periódicos y un programa comience a "
+"enviar resultados de rendimiento. "
 
 #: templates/indicators/indicator_reportingperiod_modal.html:86
 msgid ""
 "The reporting end date can be moved later at any time, but can't be moved "
 "earlier once periodic targets are set up."
 msgstr ""
+"La fecha de finalización del informe se puede mover más adelante en "
+"cualquier momento, pero no se puede mover antes una vez que se configuran "
+"los objetivos periódicos."
 
 #: templates/indicators/indicator_reportingperiod_modal.html:91
 msgid ""
 "before targets are set up and a program begins submitting performance "
 "results. "
 msgstr ""
+"antes de que los objetivos estén configurados y un programa comience a "
+"enviar resultados de rendimiento. "
 
 #: templates/indicators/indicator_reportingperiod_modal.html:93
 msgid ""
 "Because this program already has periodic targets set up, only the reporting "
 "end date can be moved later."
 msgstr ""
+"Debido a que este programa ya tiene configurados objetivos periódicos, solo "
+"la fecha de finalización del informe se puede mover más tarde."
 
 #: templates/indicators/indicator_reportingperiod_modal.html:251
 msgid ""
 "Error. Could not retrieve data from server. Please report this to the Tola "
 "team."
 msgstr ""
+"Error. No se pudieron recuperar los datos del servidor. Por favor informe "
+"esto al equipo de Tola."
 
 #: templates/indicators/indicator_reportingperiod_modal.html:365
 msgid ""
 "You must enter values for the reporting start and end dates before saving."
 msgstr ""
+"Debe ingresar valores para las fechas de inicio y finalización del informe "
+"antes de guardar."
 
 #: templates/indicators/indicator_reportingperiod_modal.html:379
 msgid "Success. Reporting period changes were saved."
-msgstr ""
+msgstr "Éxito. Se guardaron los cambios del período de informes."
 
 #: templates/indicators/indicator_reportingperiod_modal.html:386
 msgid "There was a problem saving your changes."
-msgstr ""
+msgstr "Hubo un problema al guardar sus cambios."
 
 #: templates/indicators/indicatortargets.html:8
 msgid "targets"
-msgstr ""
+msgstr "objetivos"
 
 #: templates/indicators/indicatortargets.html:93
 msgid "Life of Program (LoP) target"
-msgstr ""
+msgstr "Objetivo de la vida del programa (LoP)"
 
 #: templates/indicators/indicatortargets.html:149
 msgid ""
@@ -1688,96 +1765,111 @@ msgid ""
 "data collected during the period. The Life of Program result is the sum of "
 "target period values."
 msgstr ""
+"NO ACUMULATIVO (NC): los resultados del período objetivo se calculan "
+"automáticamente a partir de los datos recopilados durante el período. El "
+"resultado de la vida del programa es la suma de los valores del período "
+"objetivo."
 
 #: templates/indicators/indicatortargets.html:165
 msgid ""
 "CUMULATIVE (C): Target period results automatically include data from "
 "previous periods. The Life of Program result mirrors the latest period value."
 msgstr ""
+"ACUMULATIVO (C): los resultados del período objetivo incluyen "
+"automáticamente datos de períodos anteriores. El resultado de vida del "
+"programa refleja el último valor del período."
 
 #: templates/indicators/indicatortargets.html:170
 msgid ""
 "CUMULATIVE (C): The Life of Program result mirrors the latest period result. "
 "No calculations are performed with collected data."
 msgstr ""
+"ACUMULATIVO (C): el resultado de la vida del programa refleja el último "
+"resultado del período. No se realizan cálculos con los datos recopilados."
 
 #: templates/indicators/iptt_filter_form.html:22
 msgid "Report Options"
-msgstr ""
+msgstr "Opciones de informe"
 
 #: templates/indicators/iptt_filter_form.html:129
 msgid "Apply"
-msgstr ""
+msgstr "Aplicar"
 
 #: templates/indicators/iptt_indicators_varied_startdates.html:19
 msgid ""
 "To see program results, please update your periodic targets to match your "
 "reporting start and end dates:"
 msgstr ""
+"Para ver los resultados del programa, actualice sus objetivos periódicos "
+"para que coincidan con las fechas de inicio y finalización de sus informes:"
 
 #: templates/indicators/iptt_indicators_varied_startdates.html:34
 #: templates/indicators/iptt_report.html:56
 msgid "No."
-msgstr ""
+msgstr "No."
 
 #: templates/indicators/iptt_quickstart.html:13
 msgid "Periodic targets vs. actuals"
-msgstr ""
+msgstr "Objetivos periódicos frente a datos reales"
 
 #: templates/indicators/iptt_quickstart.html:14
 msgid ""
 "View results organized by target period for indicators that share the same "
 "target frequency."
 msgstr ""
+"Ver los resultados organizados por período objetivo para los indicadores que "
+"comparten la misma frecuencia objetivo."
 
 #: templates/indicators/iptt_quickstart.html:67
 #: templates/indicators/iptt_quickstart.html:102
 msgid "View Report"
-msgstr ""
+msgstr "Ver informe"
 
 #: templates/indicators/iptt_quickstart.html:78
 msgid "Recent progress for all indicators"
-msgstr ""
+msgstr "Progreso reciente para todos los indicadores"
 
 #: templates/indicators/iptt_quickstart.html:79
 msgid ""
 "View the most recent two months of results. (You can customize your time "
 "periods.) This report does not include periodic targets."
 msgstr ""
+"Ver los últimos dos meses de resultados. (Puede personalizar sus períodos de "
+"tiempo). Este informe no incluye objetivos periódicos."
 
 #: templates/indicators/iptt_report.html:42
 msgid "Life of program"
-msgstr ""
+msgstr "Vida del programa"
 
 #: templates/indicators/iptt_report.html:60
 #: templates/indicators/program_indicators_table.html:22
 msgid "Unit of measure"
-msgstr ""
+msgstr "Unidad de medida"
 
 #: templates/indicators/iptt_report.html:61
 msgid "Change"
-msgstr ""
+msgstr "Cambio"
 
 #: templates/indicators/iptt_report.html:63
 #, python-format
 msgid "# / %%"
-msgstr ""
+msgstr "# / %%"
 
 #: templates/indicators/report.html:4 templates/indicators/report.html:5
 msgid "Indicator Library"
-msgstr ""
+msgstr "Biblioteca de indicadores"
 
 #: templates/indicators/report.html:58
 msgid "Indicator Library Report"
-msgstr ""
+msgstr "Informe de la biblioteca de indicadores"
 
 #: templates/indicators/report.html:92 templates/indicators/tva_report.html:18
 msgid "IID"
-msgstr ""
+msgstr "IID"
 
 #: templates/indicators/report.html:93 templates/indicators/tva_report.html:19
 msgid "ITID"
-msgstr ""
+msgstr "ITID"
 
 #: templates/indicators/report.html:94 templates/indicators/report.html:95
 #: templates/indicators/report.html:100 templates/indicators/report.html:102
@@ -1788,1246 +1880,1260 @@ msgstr ""
 #: templates/indicators/report.html:116 templates/indicators/report.html:117
 #: templates/indicators/report.html:118
 msgid "Not set"
-msgstr ""
+msgstr "No establecido"
 
 #: templates/indicators/report.html:105
 msgid "source"
-msgstr ""
+msgstr "fuente"
 
 #: templates/indicators/report.html:109
 msgid "External"
-msgstr ""
+msgstr "Externo"
 
 #: templates/indicators/report.html:110
 msgid "Supporting Data"
-msgstr ""
+msgstr "Datos de soporte"
 
 #: templates/indicators/report.html:115
 msgid "Key Performance Indicators"
-msgstr ""
+msgstr "Indicadores clave de rendimiento"
 
 #: templates/indicators/report.html:117
 msgid "Create Date"
-msgstr ""
+msgstr "Fecha de creación"
 
 #: templates/indicators/report.html:118
 msgid "Edit Date"
-msgstr ""
+msgstr "Fecha de edición"
 
 #: templates/indicators/site_profile_map.html:170
 msgid "Project Site"
-msgstr ""
+msgstr "Sitio del proyecto"
 
 #: templates/indicators/site_profile_map.html:170
 msgid "Province:"
-msgstr ""
+msgstr "Provincia:"
 
 #: templates/indicators/site_profile_map.html:170
 #: templates/indicators/site_profile_map.html:175
 msgid "Village:"
-msgstr ""
+msgstr "Pueblo:"
 
 #: templates/indicators/site_profile_map.html:175
 msgid "Collected Indicator Data Site"
-msgstr ""
+msgstr "Sitio de datos del indicador recopilados"
 
 #: templates/indicators/site_profile_map.html:175
 msgid "District:"
-msgstr ""
+msgstr "Distrito:"
 
 #: templates/indicators/tva_print.html:42
 msgid "Indicator Target vs Actual Report for "
-msgstr ""
+msgstr "Indicador objetivo frente al informe real para "
 
 #: templates/indicators/tva_report.html:4
 #: templates/indicators/tva_report.html:5
 msgid "Indicator Targets vs Actuals Report"
-msgstr ""
+msgstr "Indicadores objetivos frente a informes reales"
 
 #: templates/indicators/tva_report.html:85
 msgid "Target vs Actuals Report"
-msgstr ""
+msgstr "Informe objetivo frente a informes reales"
 
 #: templates/registration/profile.html:4 templates/registration/profile.html:5
 msgid "Profile"
-msgstr ""
+msgstr "Perfil"
 
 #: templates/workflow/documentation_form.html:5
 #: templates/workflow/documentation_form.html:6
 msgid "Document"
-msgstr ""
+msgstr "Documento"
 
 #: templates/workflow/documentation_form.html:134
 msgid "Please complete this field"
-msgstr ""
+msgstr "Por favor complete este campo"
 
 #: templates/workflow/documentation_form.html:153
 msgid "Please enter a valid URL."
-msgstr ""
+msgstr "Por favor ingrese un URL válido."
 
 #: templates/workflow/documentation_list.html:30
 msgid "Add document"
-msgstr ""
+msgstr "Agregar documento"
 
 #: templates/workflow/projectagreement_form.html:3
 #: templates/workflow/projectagreement_form.html:4
 msgid "Project initiation form"
-msgstr ""
+msgstr "Formulario de iniciación del proyecto"
 
 #: templates/workflow/projectagreement_form.html:10
 msgid "Project Dashboard"
-msgstr ""
+msgstr "Tablero del proyecto"
 
 #: templates/workflow/projectagreement_form.html:12
 msgid "Project Initiation Form"
-msgstr ""
+msgstr "Formulario de iniciación del proyecto"
 
 #: templates/workflow/projectcomplete_form.html:3
 #: templates/workflow/projectcomplete_form.html:4
 msgid "Project tracking form"
-msgstr ""
+msgstr "Formulario de seguimiento del proyecto"
 
 #: templates/workflow/projectdashboard_list.html:15
 msgid "Add a project"
-msgstr ""
+msgstr "Agregar un proyecto"
 
 #: templates/workflow/projectdashboard_list.html:27
 msgid "Name your new project and associate it with a program"
-msgstr ""
+msgstr "Nombre su nuevo proyecto y asócielo con un programa"
 
 #: templates/workflow/projectdashboard_list.html:40
 msgid "Project name"
-msgstr ""
+msgstr "Nombre del proyecto"
 
 #: templates/workflow/projectdashboard_list.html:45
 msgid "Use short form?"
-msgstr ""
+msgstr "¿Utilizar forma abreviada?"
 
 #: templates/workflow/projectdashboard_list.html:45
 msgid "recommended"
-msgstr ""
+msgstr "recomendado"
 
 #: templates/workflow/projectdashboard_list.html:49 tola/forms.py:129
 msgid "Submit"
-msgstr ""
+msgstr "Enviar"
 
 #: templates/workflow/site_profile_list.html:30
 msgid "Add site"
-msgstr ""
+msgstr "Agregar sitio"
 
 #: templates/workflow/siteprofile_form.html:3
 #: templates/workflow/siteprofile_form.html:4 workflow/models.py:41
 #: workflow/models.py:1156
 msgid "Site"
-msgstr ""
+msgstr "Sitio"
 
 #: templates/workflow/stakeholder_form.html:3
 #: templates/workflow/stakeholder_form.html:4 workflow/models.py:1120
 msgid "Stakeholder"
-msgstr ""
+msgstr "Parte interesada"
 
 #: tola/admin.py:40
 msgid "Personal info"
 msgstr ""
 
 #: tola/admin.py:44
+#, fuzzy
+#| msgid "GAIT program dates"
 msgid "Important dates"
-msgstr ""
+msgstr "Fechas del programa GAIT"
 
 #: tola/settings/base.py:89
 msgid "English"
-msgstr ""
+msgstr "Inglés"
 
 #: tola/settings/base.py:90
 msgid "French"
-msgstr ""
+msgstr "Francés"
 
 #: tola/settings/base.py:91
 msgid "Spanish"
-msgstr ""
+msgstr "Español"
 
 #: tola/settings/base.py:92
 msgid "Arabic"
-msgstr ""
+msgstr "Árabe"
 
 #: workflow/models.py:35
 msgid "Agency name"
-msgstr ""
+msgstr "Nombre de agencia"
 
 #: workflow/models.py:36
 msgid "Agency url"
-msgstr ""
+msgstr "URL de la agencia"
 
 #: workflow/models.py:37
 msgid "Tola report url"
-msgstr ""
+msgstr "URL del informe Tola"
 
 #: workflow/models.py:38
 msgid "Tola tables url"
-msgstr ""
+msgstr "URL de las tablas Tola"
 
 #: workflow/models.py:39
 msgid "Tola tables user"
-msgstr ""
+msgstr "Usuario de las tablas Tola"
 
 #: workflow/models.py:40
 msgid "Tola tables token"
-msgstr ""
+msgstr "Token de las tablas Tola"
 
 #: workflow/models.py:42
 msgid "Privacy disclaimer"
-msgstr ""
+msgstr "Exención de responsabilidad sobre la privacidad"
 
 #: workflow/models.py:43
 msgid "Created"
-msgstr ""
+msgstr "Creado"
 
 #: workflow/models.py:44
 msgid "Updated"
-msgstr ""
+msgstr "Actualizado"
 
 #: workflow/models.py:47
 msgid "Tola Sites"
-msgstr ""
+msgstr "Sitios de Tola"
 
 #: workflow/models.py:69
 msgid "Organization Name"
-msgstr ""
+msgstr "Nombre de la organización"
 
 #: workflow/models.py:70 workflow/models.py:105
 msgid "Description/Notes"
-msgstr ""
+msgstr "Descripción/Notas"
 
 #: workflow/models.py:71
 msgid "Organization url"
-msgstr ""
+msgstr "URL de la organización"
 
 #: workflow/models.py:72
 msgid "Project/Program Organization Level 1 label"
-msgstr ""
+msgstr "Etiqueta de nivel 1 de organización de proyecto/programa"
 
 #: workflow/models.py:73
 msgid "Project/Program Organization Level 2 label"
-msgstr ""
+msgstr "Etiqueta de nivel 2 de organización de proyecto/programa"
 
 #: workflow/models.py:74
 msgid "Project/Program Organization Level 3 label"
-msgstr ""
+msgstr "Etiqueta de nivel 3 de organización de proyecto/programa"
 
 #: workflow/models.py:75
 msgid "Project/Program Organization Level 4 label"
-msgstr ""
+msgstr "Etiqueta de nivel 4 de organización de proyecto/programa"
 
 #: workflow/models.py:81
 msgid "Organizations"
-msgstr ""
+msgstr "Organizaciones"
 
 #: workflow/models.py:102
 msgid "Country Name"
-msgstr ""
+msgstr "Nombre del país"
 
 #: workflow/models.py:103
 msgid "organization"
-msgstr ""
+msgstr "organización"
 
 #: workflow/models.py:104
 msgid "2 Letter Country Code"
-msgstr ""
+msgstr "Código de país de 2 letras"
 
 #: workflow/models.py:106
 msgid "Latitude"
-msgstr ""
+msgstr "Latitud"
 
 #: workflow/models.py:107
 msgid "Longitude"
-msgstr ""
+msgstr "Longitud"
 
 #: workflow/models.py:108
 msgid "Zoom"
-msgstr ""
+msgstr "Enfocar"
 
 #: workflow/models.py:114
 msgid "Countries"
-msgstr ""
+msgstr "Países"
 
 #: workflow/models.py:130
 msgid "mr"
-msgstr ""
+msgstr "señor"
 
 #: workflow/models.py:130
 msgid "Mr."
-msgstr ""
+msgstr "Señor"
 
 #: workflow/models.py:131
 msgid "mrs"
-msgstr ""
+msgstr "señora"
 
 #: workflow/models.py:131
 msgid "Mrs."
-msgstr ""
+msgstr "Señora"
 
 #: workflow/models.py:132
 msgid "ms"
-msgstr ""
+msgstr "Sra"
 
 #: workflow/models.py:132
 msgid "Ms."
-msgstr ""
+msgstr "Sra."
 
 #: workflow/models.py:137 workflow/models.py:269
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 #: workflow/models.py:138
 msgid "Given Name"
-msgstr ""
+msgstr "Nombre de pila"
 
 #: workflow/models.py:139
 msgid "Employee Number"
-msgstr ""
+msgstr "Número de empleado"
 
 #: workflow/models.py:140 workflow/models.py:171
 msgid "User"
-msgstr ""
+msgstr "Usuario"
 
 #: workflow/models.py:141
 msgid "Organization"
-msgstr ""
+msgstr "Organización"
 
 #: workflow/models.py:144
 msgid "Accessible Countries"
-msgstr ""
+msgstr "Países accesibles"
 
 #: workflow/models.py:152 workflow/models.py:416
 msgid "Tola User"
-msgstr ""
+msgstr "Usuario de Tola"
 
 #: workflow/models.py:173
 msgid "Bookmark url"
-msgstr ""
+msgstr "URL de marcador"
 
 #: workflow/models.py:179
 msgid "Tola Bookmarks"
-msgstr ""
+msgstr "Marcadores de Tola"
 
 #: workflow/models.py:218
 msgid "Form"
-msgstr ""
+msgstr "Formulario"
 
 #: workflow/models.py:220
 msgid "Guidance"
-msgstr ""
+msgstr "Orientación"
 
 #: workflow/models.py:224
 msgid "Form Guidance"
-msgstr ""
+msgstr "Formulario de orientación"
 
 #: workflow/models.py:242
 msgid "Sector Name"
-msgstr ""
+msgstr "Nombre del sector"
 
 #: workflow/models.py:270
 msgid "City/Town"
-msgstr ""
+msgstr "Ciudad/Pueblo"
 
 #: workflow/models.py:271
 msgid "Address"
-msgstr ""
+msgstr "Dirección"
 
 #: workflow/models.py:272 workflow/models.py:1411
 msgid "Email"
-msgstr ""
+msgstr "Correo electrónico"
 
 #: workflow/models.py:273
 msgid "Phone"
-msgstr ""
+msgstr "Teléfono"
 
 #: workflow/models.py:280 workflow/models.py:871
 msgid "Contact"
-msgstr ""
+msgstr "Contacto"
 
 #: workflow/models.py:303 workflow/models.py:308 workflow/models.py:332
 #: workflow/models.py:962 workflow/models.py:1122
 msgid "Fund Code"
-msgstr ""
+msgstr "Código del fondo"
 
 #: workflow/models.py:329
 msgid "ID"
-msgstr ""
+msgstr "Identificación"
 
 #: workflow/models.py:330
 msgid "Program Name"
-msgstr ""
+msgstr "Nombre del programa"
 
 #: workflow/models.py:331
 msgid "Funding Status"
-msgstr ""
+msgstr "Estado de financiamiento"
 
 #: workflow/models.py:333
 msgid "Fund code"
-msgstr ""
+msgstr "Código del fondo"
 
 #: workflow/models.py:334
 msgid "Program Description"
-msgstr ""
+msgstr "Descripción del programa"
 
 #: workflow/models.py:338
 msgid "Enable Approval Authority"
-msgstr ""
+msgstr "Habilitar autoridad de aprobación"
 
 #: workflow/models.py:341
 msgid "Enable Public Dashboard"
-msgstr ""
+msgstr "Habilitar tablero público"
 
 #: workflow/models.py:342
 msgid "Program Start Date"
-msgstr ""
+msgstr "Fecha de inicio del programa"
 
 #: workflow/models.py:343
 msgid "Program End Date"
-msgstr ""
+msgstr "Fecha de finalización del programa"
 
 #: workflow/models.py:344
 msgid "Reporting Period Start Date"
-msgstr ""
+msgstr "Fecha de inicio del período de informe"
 
 #: workflow/models.py:345
 msgid "Reporting Period End Date"
-msgstr ""
+msgstr "Fecha de finalización del período de informe"
 
 #: workflow/models.py:416
 msgid "User with Approval Authority"
-msgstr ""
+msgstr "Usuario con autoridad de aprobación"
 
 #: workflow/models.py:418
 msgid "Fund"
-msgstr ""
+msgstr "Fondo"
 
 #: workflow/models.py:425
 msgid "Tola Approval Authority"
-msgstr ""
+msgstr "Autoridad de aprobación de Tola"
 
 #: workflow/models.py:440 workflow/models.py:447 workflow/models.py:448
 #: workflow/models.py:471 workflow/models.py:561
 msgid "Admin Level 1"
-msgstr ""
+msgstr "Nivel de administración 1"
 
 #: workflow/models.py:470 workflow/models.py:477 workflow/models.py:478
 #: workflow/models.py:501
 msgid "Admin Level 2"
-msgstr ""
+msgstr "Nivel de administración 2"
 
 #: workflow/models.py:500 workflow/models.py:507 workflow/models.py:508
 #: workflow/models.py:532
 msgid "Admin Level 3"
-msgstr ""
+msgstr "Nivel de administración 3"
 
 #: workflow/models.py:530 workflow/models.py:538 workflow/models.py:539
 msgid "Admin Level 4"
-msgstr ""
+msgstr "Nivel de administración 4"
 
 #: workflow/models.py:531
 msgid "District"
-msgstr ""
+msgstr "Distrito"
 
 #: workflow/models.py:559
 msgid "Office Name"
-msgstr ""
+msgstr "Nombre de la oficina"
 
 #: workflow/models.py:560
 msgid "Office Code"
-msgstr ""
+msgstr "Código de oficina"
 
 #: workflow/models.py:566 workflow/models.py:644 workflow/models.py:958
 #: workflow/models.py:1111
 msgid "Office"
-msgstr ""
+msgstr "Oficina"
 
 #: workflow/models.py:583 workflow/models.py:588
 msgid "Profile Type"
-msgstr ""
+msgstr "Tipo de perfil"
 
 #: workflow/models.py:610
 msgid "Land Classification"
-msgstr ""
+msgstr "Clasificación de tierras"
 
 #: workflow/models.py:610
 msgid "Rural, Urban, Peri-Urban"
-msgstr ""
+msgstr "Rural, urbano, periurbano"
 
 #: workflow/models.py:615
 msgid "Land Type"
-msgstr ""
+msgstr "Tipo de tierra"
 
 #: workflow/models.py:642
 msgid "Site Name"
-msgstr ""
+msgstr "Nombre del sitio"
 
 #: workflow/models.py:645
 msgid "Contact Name"
-msgstr ""
+msgstr "Nombre de contacto"
 
 #: workflow/models.py:646
 msgid "Date of First Contact"
-msgstr ""
+msgstr "Fecha del primer contacto"
 
 #: workflow/models.py:647
 msgid "Contact Number"
-msgstr ""
+msgstr "Número de contacto"
 
 #: workflow/models.py:648
 msgid "Number of Members"
-msgstr ""
+msgstr "Número de miembros"
 
 #: workflow/models.py:649
 msgid "Data Source"
-msgstr ""
+msgstr "Fuente de datos"
 
 #: workflow/models.py:650
 msgid "Total # Households"
-msgstr ""
+msgstr "Número total de hogares"
 
 #: workflow/models.py:651 workflow/models.py:974 workflow/models.py:1139
 msgid "Average Household Size"
-msgstr ""
+msgstr "Tamaño promedio del hogar"
 
 #: workflow/models.py:652
 msgid "Male age 0-5"
-msgstr ""
+msgstr "Hombre de 0-5 años"
 
 #: workflow/models.py:653
 msgid "Female age 0-5"
-msgstr ""
+msgstr "Mujer de 0-5 años"
 
 #: workflow/models.py:654
 msgid "Male age 6-9"
-msgstr ""
+msgstr "Hombre de 6-9 años"
 
 #: workflow/models.py:655
 msgid "Female age 6-9"
-msgstr ""
+msgstr "Mujer de 6-9 años"
 
 #: workflow/models.py:656
 msgid "Male age 10-14"
-msgstr ""
+msgstr "Hombre de 10-14 años"
 
 #: workflow/models.py:657
 msgid "Female age 10-14"
-msgstr ""
+msgstr "Mujer de 10-14 años"
 
 #: workflow/models.py:658
 msgid "Male age 15-19"
-msgstr ""
+msgstr "Hombre de 15-19 años"
 
 #: workflow/models.py:659
 msgid "Female age 15-19"
-msgstr ""
+msgstr "Mujer de 15-19 años"
 
 #: workflow/models.py:660
 msgid "Male age 20-24"
-msgstr ""
+msgstr "Hombre de 20-24 años"
 
 #: workflow/models.py:661
 msgid "Female age 20-24"
-msgstr ""
+msgstr "Mujer de 20-24 años"
 
 #: workflow/models.py:662
 msgid "Male age 25-34"
-msgstr ""
+msgstr "Hombre de 25-34 años"
 
 #: workflow/models.py:663
 msgid "Female age 25-34"
-msgstr ""
+msgstr "Mujer de 25-34 años"
 
 #: workflow/models.py:664
 msgid "Male age 35-49"
-msgstr ""
+msgstr "Hombre de 35-49 años"
 
 #: workflow/models.py:665
 msgid "Female age 35-49"
-msgstr ""
+msgstr "Mujere de 35-49 años"
 
 #: workflow/models.py:666
 msgid "Male Over 50"
-msgstr ""
+msgstr "Hombre mayor de 50 años"
 
 #: workflow/models.py:667
 msgid "Female Over 50"
-msgstr ""
+msgstr "Mujer mayor de 50 años"
 
 #: workflow/models.py:668
 msgid "Total population"
-msgstr ""
+msgstr "Población total"
 
 #: workflow/models.py:669
 msgid "Total male"
-msgstr ""
+msgstr "Total masculino"
 
 #: workflow/models.py:670
 msgid "Total female"
-msgstr ""
+msgstr "Total femenino"
 
 #: workflow/models.py:671
 msgid "Classify land"
-msgstr ""
+msgstr "Clasificar la tierra"
 
 #: workflow/models.py:672
 msgid "Total Land"
-msgstr ""
+msgstr "Tierra total"
 
 #: workflow/models.py:673
 msgid "Total Agricultural Land"
-msgstr ""
+msgstr "Tierra agrícola total"
 
 #: workflow/models.py:674
 msgid "Total Rain-fed Land"
-msgstr ""
+msgstr "Tierra total alimentada por la lluvia"
 
 #: workflow/models.py:675
 msgid "Total Horticultural Land"
-msgstr ""
+msgstr "Tierra hortícola total"
 
 #: workflow/models.py:676
 msgid "Total Literate People"
-msgstr ""
+msgstr "Total de personas alfabetizadas"
 
 #: workflow/models.py:677
 #, python-format
 msgid "% of Literate Males"
-msgstr ""
+msgstr "% de hombres alfabetizados"
 
 #: workflow/models.py:678
 #, python-format
 msgid "% of Literate Females"
-msgstr ""
+msgstr "% de mujeres alfabetizadas"
 
 #: workflow/models.py:679
 msgid "Literacy Rate (%)"
-msgstr ""
+msgstr "Tasa de alfabetización (%)"
 
 #: workflow/models.py:680
 msgid "Households Owning Land"
-msgstr ""
+msgstr "Hogares que poseen tierras"
 
 #: workflow/models.py:681
 msgid "Average Landholding Size"
-msgstr ""
+msgstr "Tamaño promedio de propiedad"
 
 #: workflow/models.py:681
 msgid "In hectares/jeribs"
-msgstr ""
+msgstr "En hectáreas/jeribs"
 
 #: workflow/models.py:682
 msgid "Households Owning Livestock"
-msgstr ""
+msgstr "Hogares que son propietarios de ganado"
 
 #: workflow/models.py:683
 msgid "Animal Types"
-msgstr ""
+msgstr "Tipos de animales"
 
 #: workflow/models.py:683
 msgid "List Animal Types"
-msgstr ""
+msgstr "Lista de tipos de animales"
 
 #: workflow/models.py:685
 msgid "Administrative Level 1"
-msgstr ""
+msgstr "Nivel administrativo 1"
 
 #: workflow/models.py:686
 msgid "Administrative Level 2"
-msgstr ""
+msgstr "Nivel administrativo 2"
 
 #: workflow/models.py:687
 msgid "Administrative Level 3"
-msgstr ""
+msgstr "Nivel administrativo 3"
 
 #: workflow/models.py:688
 msgid "Administrative Level 4"
-msgstr ""
+msgstr "Nivel administrativo 4"
 
 #: workflow/models.py:689
 msgid "Latitude (Decimal Coordinates)"
-msgstr ""
+msgstr "Latitud (coordenadas decimales)"
 
 #: workflow/models.py:690
 msgid "Longitude (Decimal Coordinates)"
-msgstr ""
+msgstr "Longitud (coordenadas decimales)"
 
 #: workflow/models.py:691
 msgid "Site Active"
-msgstr ""
+msgstr "Sitio activo"
 
 #: workflow/models.py:692
 msgid "in progress"
-msgstr ""
+msgstr "en progreso"
 
 #: workflow/models.py:693
 msgid "This is the Provincial Line Manager"
-msgstr ""
+msgstr "Este es el gerente de línea provincial"
 
 #: workflow/models.py:694
 msgid "This is the originator"
-msgstr ""
+msgstr "Este es el creador"
 
 #: workflow/models.py:694 workflow/models.py:880
 msgid "Filled by"
-msgstr ""
+msgstr "Llenado por"
 
 #: workflow/models.py:695
 msgid "This should be GIS Manager"
-msgstr ""
+msgstr "Esto debería ser gerente de SIG"
 
 #: workflow/models.py:695
 msgid "Location verified by"
-msgstr ""
+msgstr "Ubicación verificada por"
 
 #: workflow/models.py:730 workflow/models.py:736
 msgid "Capacity"
-msgstr ""
+msgstr "Capacidad"
 
 #: workflow/models.py:756
 msgid "Stakeholder Type"
-msgstr ""
+msgstr "Tipo de partes interesadas"
 
 #: workflow/models.py:762
 msgid "Stakeholder Types"
-msgstr ""
+msgstr "Tipos de partes interesadas"
 
 #: workflow/models.py:784
 msgid "How will you evaluate the outcome or impact of the project?"
-msgstr ""
+msgstr "¿Cómo evaluará el resultado o el impacto del proyecto?"
 
 #: workflow/models.py:790 workflow/models.py:1019
 msgid "Evaluate"
-msgstr ""
+msgstr "Evaluar"
 
 #: workflow/models.py:810
 msgid "Type of Activity"
-msgstr ""
+msgstr "Tipo de actividad"
 
 #: workflow/models.py:826 workflow/models.py:952 workflow/models.py:1110
 msgid "Project Type"
-msgstr ""
+msgstr "Tipo de proyecto"
 
 #: workflow/models.py:836 workflow/models.py:1204
 msgid "Name of Document"
-msgstr ""
+msgstr "Nombre del documento"
 
 #: workflow/models.py:837
 msgid "Type (File or URL)"
-msgstr ""
+msgstr "Tipo (archivo o URL)"
 
 #: workflow/models.py:854 workflow/models.py:1207
 msgid "Template"
-msgstr ""
+msgstr "Modelo"
 
 #: workflow/models.py:869
 msgid "Stakeholder/Organization Name"
-msgstr ""
+msgstr "Nombre de parte interesada/organización"
 
 #: workflow/models.py:875
 msgid "Has this partner been added to stakeholder register?"
-msgstr ""
+msgstr "¿Este socio se ha agregado al registro de partes interesadas?"
 
 #: workflow/models.py:876
 msgid "Formal Written Description of Relationship"
-msgstr ""
+msgstr "Descripción escrita formal de la relación"
 
 #: workflow/models.py:877
 msgid "Vetting/ due diligence statement"
-msgstr ""
+msgstr "Declaración de escrutinio/diligencia debida"
 
 #: workflow/models.py:947
 msgid "Short Form (recommended)"
-msgstr ""
+msgstr "Formulario corto (recomendado)"
 
 #: workflow/models.py:949
 msgid "Date of Request"
-msgstr ""
+msgstr "Fecha de solicitud"
 
 #: workflow/models.py:951 workflow/models.py:1108
 msgid "Project Name"
-msgstr ""
+msgstr "Nombre del proyecto"
 
 #: workflow/models.py:951
 msgid ""
 "Please be specific in your name.  Consider that your Project Name includes "
 "WHO, WHAT, WHERE, HOW"
 msgstr ""
+"Por favor elija un nombre específico. Considere que su nombre de proyecto "
+"debe incluir QUIÉN, QUÉ, DÓNDE, CÓMO"
 
 #: workflow/models.py:953 workflow/models.py:1109
 msgid "Project Activity"
-msgstr ""
+msgstr "Actividad del proyecto"
 
 #: workflow/models.py:953
 msgid "This should come directly from the activities listed in the Logframe"
 msgstr ""
+"Esto debe provenir directamente de las actividades enumeradas en el Logframe"
 
 #: workflow/models.py:954
 msgid "Project Description"
-msgstr ""
+msgstr "Descripción del proyecto"
 
 #: workflow/models.py:956
 msgid "If Rejected: Rejection Letter Sent?"
-msgstr ""
+msgstr "Si se rechaza: ¿Carta de rechazo enviada?"
 
 #: workflow/models.py:956
 msgid "If yes attach copy"
-msgstr ""
+msgstr "Si es así, adjuntar copia"
 
 #: workflow/models.py:957 workflow/models.py:1107
 msgid "Project Code"
-msgstr ""
+msgstr "Código de proyecto"
 
 #: workflow/models.py:959
 msgid "Project COD #"
-msgstr ""
+msgstr "Número COD de proyecto"
 
 #: workflow/models.py:961
 msgid "Activity design for"
-msgstr ""
+msgstr "Diseño de actividad para"
 
 #: workflow/models.py:963 workflow/models.py:1123
 msgid "LIN Code"
-msgstr ""
+msgstr "Código LIN"
 
 #: workflow/models.py:964
 msgid "Staff Responsible"
-msgstr ""
+msgstr "Personal responsable"
 
 #: workflow/models.py:965
 msgid "Are there partners involved?"
-msgstr ""
+msgstr "¿Hay socios involucrados?"
 
 #: workflow/models.py:966
 msgid "Name of Partners"
-msgstr ""
+msgstr "Nombre de los socios"
 
 #: workflow/models.py:968
 msgid "What is the anticipated Outcome or Goal?"
-msgstr ""
+msgstr "¿Cuál es el resultado u objetivo previsto?"
 
 #: workflow/models.py:969
 msgid "Expected starting date"
-msgstr ""
+msgstr "Fecha de inicio prevista"
 
 #: workflow/models.py:970
 msgid "Expected ending date"
-msgstr ""
+msgstr "Fecha de finalización esperada"
 
 #: workflow/models.py:971
 msgid "Expected duration"
-msgstr ""
+msgstr "Duración esperada"
 
 #: workflow/models.py:971
 msgid "[MONTHS]/[DAYS]"
-msgstr ""
+msgstr "[MESES]/[DÍAS]"
 
 #: workflow/models.py:972 workflow/models.py:1138
 msgid "Type of direct beneficiaries"
-msgstr ""
+msgstr "Tipo de beneficiarios directos"
 
 #: workflow/models.py:972 workflow/models.py:1138
 msgid "i.e. Farmer, Association, Student, Govt, etc."
-msgstr ""
+msgstr "es decir, granjero, asociación, estudiante, gobierno, etc."
 
 #: workflow/models.py:973
 msgid "Estimated number of direct beneficiaries"
-msgstr ""
+msgstr "Número estimado de beneficiarios directos"
 
 #: workflow/models.py:973
 msgid ""
 "Please provide achievable estimates as we will use these as our 'Targets'"
 msgstr ""
+"Proporcione estimaciones alcanzables ya que las usaremos como nuestros "
+"'Objetivos'"
 
 #: workflow/models.py:974 workflow/models.py:1139
 msgid "Refer to Form 01 - Community Profile"
-msgstr ""
+msgstr "Consulte el formulario 01 - Perfil de la comunidad"
 
 #: workflow/models.py:975 workflow/models.py:1140
 msgid "Estimated Number of indirect beneficiaries"
-msgstr ""
+msgstr "Número estimado de beneficiarios indirectos"
 
 #: workflow/models.py:975 workflow/models.py:1140
 msgid ""
 "This is a calculation - multiply direct beneficiaries by average household "
 "size"
 msgstr ""
+"Este es un cálculo: multiplique los beneficiarios directos por el tamaño "
+"promedio del hogar"
 
 #: workflow/models.py:976
 msgid "Total Project Budget"
-msgstr ""
+msgstr "Presupuesto total del proyecto"
 
 #: workflow/models.py:976 workflow/models.py:977
 msgid "In USD"
-msgstr ""
+msgstr "En USD"
 
 #: workflow/models.py:977
 msgid "Organizations portion of Project Budget"
-msgstr ""
+msgstr "Porción de las organizaciones del presupuesto del proyecto"
 
 #: workflow/models.py:978
 msgid "Estimated Total in Local Currency"
-msgstr ""
+msgstr "Total estimado en moneda local"
 
 #: workflow/models.py:978
 msgid "In Local Currency"
-msgstr ""
+msgstr "En moneda local"
 
 #: workflow/models.py:979
 msgid "Estimated Organization Total in Local Currency"
-msgstr ""
+msgstr "Total estimado de la organización en moneda local"
 
 #: workflow/models.py:979
 msgid "Total portion of estimate for your agency"
-msgstr ""
+msgstr "Porción total de la estimación para su agencia"
 
 #: workflow/models.py:980 workflow/models.py:1133
 msgid "Local Currency exchange rate to USD"
-msgstr ""
+msgstr "Tasa de cambio de moneda local a USD"
 
 #: workflow/models.py:981 workflow/models.py:1134
 msgid "Date of exchange rate"
-msgstr ""
+msgstr "Fecha de tasa de cambio"
 
 #: workflow/models.py:985
 msgid "Community Representative"
-msgstr ""
+msgstr "Representante de la comunidad"
 
 #: workflow/models.py:986
 msgid "Community Representative Contact"
-msgstr ""
+msgstr "Contacto del representante de la comunidad"
 
 #: workflow/models.py:987
 msgid "Community Mobilizer"
-msgstr ""
+msgstr "Movilizador comunitario"
 
 #: workflow/models.py:988
 msgid "Community Mobilizer Contact Number"
-msgstr ""
+msgstr "Número de contacto del movilizador comunitario"
 
 #: workflow/models.py:989
 msgid "Community Proposal"
-msgstr ""
+msgstr "Propuesta comunitaria"
 
 #: workflow/models.py:990
 msgid "Estimated # of Male Trained"
-msgstr ""
+msgstr "Número estimado de hombres entrenados"
 
 #: workflow/models.py:991
 msgid "Estimated # of Female Trained"
-msgstr ""
+msgstr "Número estimado de mujeres entrenadas"
 
 #: workflow/models.py:992
 msgid "Estimated Total # Trained"
-msgstr ""
+msgstr "Número total estimado de personas entrenadas"
 
 #: workflow/models.py:993
 msgid "Estimated # of Trainings Conducted"
-msgstr ""
+msgstr "Número estimado de capacitaciones realizadas"
 
 #: workflow/models.py:994
 msgid "Type of Items Distributed"
-msgstr ""
+msgstr "Tipo de elementos distribuidos"
 
 #: workflow/models.py:995
 msgid "Unit of Measure"
-msgstr ""
+msgstr "Unidad de medida"
 
 #: workflow/models.py:996
 msgid "Estimated # of Items Distributed"
-msgstr ""
+msgstr "Cantidad estimada de elementos distribuidos"
 
 #: workflow/models.py:997
 msgid "Estimated # of Male Laborers"
-msgstr ""
+msgstr "Número estimado de hombres trabajadores"
 
 #: workflow/models.py:998
 msgid "Estimated # of Female Laborers"
-msgstr ""
+msgstr "Número estimado de mujeres trabajadoras"
 
 #: workflow/models.py:999
 msgid "Estimated Total # of Laborers"
-msgstr ""
+msgstr "Cantidad total estimada de trabajadores"
 
 #: workflow/models.py:1000
 msgid "Estimated # of Project Days"
-msgstr ""
+msgstr "Número estimado de días del proyecto"
 
 #: workflow/models.py:1001
 msgid "Estimated # of Person Days"
-msgstr ""
+msgstr "Número estimado de días de personas"
 
 #: workflow/models.py:1002
 msgid "Estimated Total Cost of Materials"
-msgstr ""
+msgstr "Costo total estimado de los materiales"
 
 #: workflow/models.py:1003
 msgid "Estimated Wages Budgeted"
-msgstr ""
+msgstr "Salarios estimados presupuestados"
 
 #: workflow/models.py:1007
 msgid "Estimation date"
-msgstr ""
+msgstr "Fecha de estimación"
 
 #: workflow/models.py:1010 workflow/models.py:1158
 msgid "Checked by"
-msgstr ""
+msgstr "Revisado por"
 
 #: workflow/models.py:1014
 msgid "Finance reviewed by"
-msgstr ""
+msgstr "Finanzas revisadas por"
 
 #: workflow/models.py:1015
 msgid "Date Reviewed by Finance"
-msgstr ""
+msgstr "Fecha revisada por Finanzas"
 
 #: workflow/models.py:1016
 msgid "M&E Reviewed by"
-msgstr ""
+msgstr "M & E revisado por"
 
 #: workflow/models.py:1017
 msgid "Date Reviewed by M&E"
-msgstr ""
+msgstr "Fecha revisada por M & E"
 
 #: workflow/models.py:1018
 msgid "Sustainability Plan"
-msgstr ""
+msgstr "Plan de sostenibilidad"
 
 #: workflow/models.py:1020 workflow/models.py:1160
 msgid "Approval Status"
-msgstr ""
+msgstr "Estado de aprobación"
 
 #: workflow/models.py:1022
 msgid "Date Approved"
-msgstr ""
+msgstr "Fecha aprobada"
 
 #: workflow/models.py:1024 workflow/models.py:1163
 msgid "Approval Remarks"
-msgstr ""
+msgstr "Observaciones de aprobación"
 
 #: workflow/models.py:1025
 msgid "General Background and Problem Statement"
-msgstr ""
+msgstr "Antecedentes generales y declaración del problema"
 
 #: workflow/models.py:1026
 msgid "Risks and Assumptions"
-msgstr ""
+msgstr "Riesgos y suposiciones"
 
 #: workflow/models.py:1027
 msgid "Description of Stakeholder Selection Criteria"
-msgstr ""
+msgstr "Descripción de los criterios de selección de las partes interesadas"
 
 #: workflow/models.py:1028
 msgid "Description of project activities"
-msgstr ""
+msgstr "Descripción de las actividades del proyecto"
 
 #: workflow/models.py:1029
 msgid "Description of government involvement"
-msgstr ""
+msgstr "Descripción de la participación del gobierno"
 
 #: workflow/models.py:1030
 msgid "Description of community involvement"
-msgstr ""
+msgstr "Descripción de la participación de la comunidad"
 
 #: workflow/models.py:1031
 msgid "Describe the project you would like the program to consider"
-msgstr ""
+msgstr "Describa el proyecto que desea que el programa considere"
 
 #: workflow/models.py:1033 workflow/models.py:1165
 msgid "Last Edit Date"
-msgstr ""
+msgstr "Última fecha de edición"
 
 #: workflow/models.py:1113
 msgid "Expected start date"
-msgstr ""
+msgstr "Fecha de inicio esperada"
 
 #: workflow/models.py:1113 workflow/models.py:1115 workflow/models.py:1116
 msgid "Imported from Project Initiation"
-msgstr ""
+msgstr "Importado desde el inicio del proyecto"
 
 #: workflow/models.py:1114
 msgid "Expected end date"
-msgstr ""
+msgstr "Fecha de finalización esperada"
 
 #: workflow/models.py:1114
 msgid "Imported Project Initiation"
-msgstr ""
+msgstr "Iniciación de proyectos importados"
 
 #: workflow/models.py:1115
 msgid "Expected Duration"
-msgstr ""
+msgstr "Duración esperada"
 
 #: workflow/models.py:1116 workflow/models.py:1252
 msgid "Actual start date"
-msgstr ""
+msgstr "Fecha de inicio real"
 
 #: workflow/models.py:1117 workflow/models.py:1253
 msgid "Actual end date"
-msgstr ""
+msgstr "Fecha de finalización real"
 
 #: workflow/models.py:1118
 msgid "Actual duaration"
-msgstr ""
+msgstr "Duración real"
 
 #: workflow/models.py:1121
 msgid "If not on time explain delay"
-msgstr ""
+msgstr "Si no está a tiempo, explique la demora"
 
 #: workflow/models.py:1124 workflow/models.py:1255
 msgid "Estimated Budget"
-msgstr ""
+msgstr "Presupuesto estimado"
 
 #: workflow/models.py:1125 workflow/models.py:1131 workflow/models.py:1256
 msgid "Actual Cost"
-msgstr ""
+msgstr "Costo real"
 
 #: workflow/models.py:1126
 msgid "Actual cost date"
-msgstr ""
+msgstr "Fecha de costo real"
 
 #: workflow/models.py:1127
 msgid "Budget versus Actual variance"
-msgstr ""
+msgstr "Presupuesto frente a la varianza real"
 
 #: workflow/models.py:1128
 msgid "Explanation of variance"
-msgstr ""
+msgstr "Explicación de la varianza"
 
 #: workflow/models.py:1129
 msgid "Estimated Budget for Organization"
-msgstr ""
+msgstr "Presupuesto estimado para la organización"
 
 #: workflow/models.py:1130 workflow/models.py:1132
 msgid "Actual Cost for Organization"
-msgstr ""
+msgstr "Costo real de la organización"
 
 #: workflow/models.py:1141
 msgid "Actual Direct Beneficiaries"
-msgstr ""
+msgstr "Beneficiarios directos reales"
 
 #: workflow/models.py:1142
 msgid "Number of Jobs Created"
-msgstr ""
+msgstr "Número de empleos creados"
 
 #: workflow/models.py:1143
 msgid "Part Time Jobs"
-msgstr ""
+msgstr "Trabajos de medio tiempo"
 
 #: workflow/models.py:1144
 msgid "Full Time Jobs"
-msgstr ""
+msgstr "Trabajos a tiempo completo"
 
 #: workflow/models.py:1145
 msgid "Progress against Targets (%)"
-msgstr ""
+msgstr "Progreso contra objetivos (%)"
 
 #: workflow/models.py:1146
 msgid "Government Involvement"
-msgstr ""
+msgstr "Participación del gobierno"
 
 #: workflow/models.py:1147
 msgid "Community Involvement"
-msgstr ""
+msgstr "Participación de la comunidad"
 
 #: workflow/models.py:1151
 msgid "CommunityHandover/Sustainability Maintenance Plan"
-msgstr ""
+msgstr "Plan de CommunityHandover/mantenimiento de la sostenibilidad"
 
 #: workflow/models.py:1151
 msgid "Check box if it was completed"
-msgstr ""
+msgstr "Marque la casilla si se completó"
 
 #: workflow/models.py:1152
 msgid "Describe how sustainability was ensured for this project?"
-msgstr ""
+msgstr "Describa cómo se aseguró la sostenibilidad para este proyecto."
 
 #: workflow/models.py:1153
 msgid "How was quality assured for this project"
-msgstr ""
+msgstr "Cómo se aseguró la calidad de este proyecto"
 
 #: workflow/models.py:1155
 msgid "Lessons learned"
-msgstr ""
+msgstr "Lecciones aprendidas"
 
 #: workflow/models.py:1157
 msgid "Estimated by"
-msgstr ""
+msgstr "Estimado por"
 
 #: workflow/models.py:1159
 msgid "Reviewed by"
-msgstr ""
+msgstr "Revisado por"
 
 #: workflow/models.py:1170
 msgid "Project Tracking"
-msgstr ""
+msgstr "Seguimiento de proyecto"
 
 #: workflow/models.py:1205
 msgid "URL (Link to document or document repository)"
-msgstr ""
+msgstr "URL (enlace al repositorio de documentos o documento)"
 
 #: workflow/models.py:1248
-#, python-format
+#, fuzzy, python-format
+#| msgid "%% complete"
 msgid "% complete"
-msgstr ""
+msgstr "%% completado"
 
 #: workflow/models.py:1249
-#, python-format
+#, fuzzy, python-format
+#| msgid "%% cumulative completion"
 msgid "% cumulative completion"
-msgstr ""
+msgstr "%% de compleción acumulativa"
 
 #: workflow/models.py:1250
 msgid "Est start date"
-msgstr ""
+msgstr "Fecha estimada de inicio"
 
 #: workflow/models.py:1251
 msgid "Est end date"
-msgstr ""
+msgstr "Fecha estimada de finalización"
 
 #: workflow/models.py:1254
 msgid "site"
-msgstr ""
+msgstr "sitio"
 
 #: workflow/models.py:1259 workflow/models.py:1320
 msgid "Complete"
-msgstr ""
+msgstr "Completar"
 
 #: workflow/models.py:1265
 msgid "Project Components"
-msgstr ""
+msgstr "Componentes del proyecto"
 
 #: workflow/models.py:1286
 msgid "Person Responsible"
-msgstr ""
+msgstr "Persona responsable"
 
 #: workflow/models.py:1290
 msgid "complete"
-msgstr ""
+msgstr "completar"
 
 #: workflow/models.py:1296
 msgid "Monitors"
-msgstr ""
+msgstr "Monitores"
 
 #: workflow/models.py:1316
 msgid "Contributor"
-msgstr ""
+msgstr "Contribuyente"
 
 #: workflow/models.py:1317
 msgid "Description of contribution"
-msgstr ""
+msgstr "Descripción de la contribución"
 
 #: workflow/models.py:1371
 msgid "Item"
-msgstr ""
+msgstr "Elemento"
 
 #: workflow/models.py:1372
 msgid "Checklist"
-msgstr ""
+msgstr "Lista de verificación"
 
 #: workflow/models.py:1381
 msgid "Checklist Item"
-msgstr ""
+msgstr "Elemento de la lista de verificación"
 
 #: workflow/models.py:1409
 msgid "Username"
-msgstr ""
+msgstr "Nombre de usuario"
+
+#~ msgid "Objective"
+#~ msgstr "Objetivo"
