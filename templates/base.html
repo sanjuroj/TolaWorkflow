@@ -242,6 +242,7 @@
         <script type="text/javascript">
             var userLang = "{{ LANGUAGE_CODE }}";
             $(document).ready(function() {
+                $('.datepicker').datepicker({ dateFormat: "yy-mm-dd" });
                 $.datepicker.setDefaults( $.datepicker.regional[ userLang ] );
             });
         </script>
