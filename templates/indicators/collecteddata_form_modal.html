@@ -30,7 +30,16 @@
             var achieved_formatted_value = parseFloat($("#id_achieved").val()).toFixed(2).replace(/[.,]00$/, "");
             $("#id_achieved").val(achieved_formatted_value);
 
-            $('.datepicker').datepicker({dateFormat: "yy-mm-dd"});
+            //var datepickerParent = $('.datepicker').parent('div');
+            $('#date_collected-wrapper').datepicker({
+                dateFormat: "yy-mm-dd",
+                inline: true,
+                altField: '#id_date_collected',
+            });
+            // update datepicker if field changes
+            $('#id_date_collected').change(function(){
+                $('#date_collected-wrapper').datepicker('setDate', $(this).val());
+            });
             var id_date_collected = $("#id_date_collected");
             if (id_date_collected.val() != '') {
                 id_date_collected.val(formatDate(id_date_collected.val()));
@@ -138,7 +147,7 @@
                 <label for="id_date_collected" class="col-sm-4 col-form-label" align="right">
                     {{ form.date_collected.label }}*
                 </label>
-                <div class="col-sm-7">
+                <div class="col-sm-7" id="date_collected-wrapper">
                     {% render_field form.date_collected class+="form-control" autocomplete="off" %}
                     <small class="form-text text-muted" id="hint_id_date_collected">{{ form.date_collected.help_text }}</small>
                 </div>
