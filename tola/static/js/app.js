@@ -115,6 +115,12 @@ $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
 
+//custom jquery to trigger date picker, info pop-over and print category text
+$(document).ready(function() {
+    $('.datepicker').datepicker({ dateFormat: "yy-mm-dd" });
+});
+
+
 /*
  * Create and show a Bootstrap alert.
  */
