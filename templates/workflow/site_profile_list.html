@@ -16,10 +16,10 @@
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false">
-        {% trans "Programs" %}
+        Programs
     </button>
     <div class="dropdown-menu" role="menu" aria-labelledby="programDropdown">
-        <a class="dropdown-item" href="/workflow/siteprofile_list/0/0">-- {% trans "All" %} --</a>
+        <a class="dropdown-item" href="/workflow/siteprofile_list/0/0">-- All --</a>
         {% for program in getPrograms %}
             <a class="dropdown-item"
                 href="/workflow/siteprofile_list/{{ program.id }}/0/">
@@ -35,10 +35,10 @@
 </style>
 {% load crispy_forms_tags %}
 {% crispy form form.helper %}
-<h4>{% trans "Site Profile Map and List" %}</h4>
+<h4>Site Profile Map and List</h4>
 
 {% if offline_mode %}
-<h2>{% trans "Offline (No map provided" %})</h2>
+    <h2>Offline (No map provided)</h2>
 {% else %}
     <div id="map"></div>
 
@@ -70,12 +70,12 @@
  <!-- Display site profiles & projects -->
 <table class="table table-sm table-hover table-striped">
     <tr>
-        <th>{% trans "Date created" %}</th>
-        <th>{% trans "Site name" %}</th>
-        <th>{% trans "Status" %}</th>
-        <th>{% trans "Site type" %}</th>
-        <th>{% trans "Province" %}</th>
-        <th>{% trans "District" %}</th>
+        <th>Date created</th>
+        <th>Site name</th>
+        <th>Status</th>
+        <th>Site type</th>
+        <th>Province</th>
+        <th>District</th>
         <th style="width:110px;">&nbsp;</th>
     </tr>
     {% if getSiteProfile %}
@@ -88,31 +88,31 @@
                 {% if item.status == 1 %}
                     <td>
                         <a href="/workflow/siteprofile_update/{{ item.id }}">
-                            <span class="badge badge-secondary">{% trans "Active" %}</span>
+                            <span class="badge badge-secondary">Active</span>
                         </a>
                     </td>
                 {%else%}
-                <td><a href="/workflow/siteprofile_update/{{ item.id }}"><span class="badge">{% trans "Inactive" %}</span></a></td>
+                <td><a href="/workflow/siteprofile_update/{{ item.id }}"><span class="badge">Inactive</span></a></td>
                 {%endif%}
                 <td><a href="/workflow/siteprofile_update/{{ item.id }}">{{ item.type }}</a></td>
                 <td>{{ item.province }}</td>
                 <td>{{ item.district }}</td>
                 <td class="text-nowrap">
                     <a href="/workflow/siteprofile_delete/{{ item.id }}"
-                       class="btn btn-sm btn-text p-0 pr-2 text-danger"><i class="fas fa-trash-alt"></i>&nbsp;{% trans "Delete site" %}
+                        class="btn btn-sm btn-text p-0 pr-2 text-danger"><i class="fas fa-trash-alt"></i>&nbsp;Delete site
                     </a>
                     <a href="/workflow/site_indicatordata/{{item.id}}/"
-                       class="btn btn-sm p-0 pr-2 btn-text"><i class="fas fa-table"></i>&nbsp;{% trans "Indicator data" %}
+                        class="btn btn-sm p-0 pr-2 btn-text"><i class="fas fa-table"></i>&nbsp;Indicator data
                     </a>
                     <a href="/workflow/site_projectscomplete/{{item.id}}/"
-                       class="btn btn-sm p-0 btn-text"><i class="fas fa-tasks"></i>&nbsp;{% trans "Project data" %}
+                        class="btn btn-sm p-0 btn-text"><i class="fas fa-tasks"></i>&nbsp;Project data
                     </a>
                 </td>
             </tr>
         {% endfor %}
     {% else %}
     <tr>
-        <td colspan="7">{% trans "No Site Profiles yet." %}</td>
+        <td colspan="7">No Site Profiles yet.</td>
     </tr>
     {% endif %}
 </table>
@@ -123,7 +123,7 @@
         <ul class="paginate">
             {% if getSiteProfile.has_previous %}
                 <li>
-                    <a href="?user_list={{user_list}}&page={{ getSiteProfile.previous_page_number }}">{% trans "Previous" %}</a>
+                    <a href="?user_list={{user_list}}&page={{ getSiteProfile.previous_page_number }}">Previous</a>
                 </li>
                 <li>
                     <a href="?user_list={{user_list}}&page={{ getSiteProfile.previous_page_number }}"> {{getSiteProfile.previous_page_number}}</a>
@@ -148,7 +148,7 @@
                     {% endwith %}
                 {% endifnotequal %}
                 <li>
-                    <a href="?user_list={{user_list}}&page={{ getSiteProfile.next_page_number }}">{% trans "Next" %}</a>
+                    <a href="?user_list={{user_list}}&page={{ getSiteProfile.next_page_number }}">Next</a>
                 </li>
             {% endif %}
         </ul>
@@ -170,7 +170,7 @@
                 <a class="{% if default_list == 30 %}active{% endif %}"
                     href="?user_list=30" >30</a>
             </li>
-            <li><a href="#">{% trans "per page" %}</a></li>
+            <li><a href="#">per page</a></li>
         </ul>
     </div>
 </div>

@@ -1,4 +1,3 @@
-{% load i18n %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,12 +35,12 @@
     </div>
     <div class="modal-body">
         <form action="/workflow/benchmark_delete/{{ id }}/" id="benchmarkForm" method="post">{% csrf_token %}
-            <p>{% blocktrans %}Are you sure you want to delete "{{ object }}"?{% endblocktrans %}</p>
-            <input type="{% trans "submit" %}" value="{% trans "Confirm" %}" />
+            <p>Are you sure you want to delete "{{ object }}"?</p>
+            <input type="submit" value="Confirm" />
         </form>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.location.href = '/workflow/projectagreement_update/{{ id }}/#project-plann';parent.location.reload();">{% trans "Close" %}</button>
+       <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.location.href = '/workflow/projectagreement_update/{{ id }}/#project-plann';parent.location.reload();">Close</button>
     </div>
 
 </body>

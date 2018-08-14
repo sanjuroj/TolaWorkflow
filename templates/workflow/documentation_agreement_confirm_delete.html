@@ -1,9 +1,8 @@
-{% load i18n %}
 <!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>{% trans "Delete Documentation" %}</title>
+  <title>Delete Documentation</title>
 </head>
 <body>
 
@@ -15,10 +14,10 @@
             url: frm.attr('action'),
             data: frm.serialize(),
             success: function (data) {
-                $("#alert-error").html("{% trans 'Success!'|escapejs %}");
+                $("#alert-error").html("Success! ");
             },
             error: function(data) {
-                $("#alert-error").html("{% trans 'Something went wrong!'|escapejs %}");
+                $("#alert-error").html("Something went wrong!");
             }
         });
         return false;
@@ -31,15 +30,15 @@
                 <strong>{{ error|escape }}</strong>
             </div>
 
-            <h4 class="modal-title">{% block page_title %}{% trans "Documentation Delete" %} {% endblock %}</h4>
+            <h4 class="modal-title">{% block page_title %}Documentation Delete {% endblock %}</h4>
         </div>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     </div>
     <div class="modal-body">
         <form action="/workflow/documentation_agreement_delete/{{ id }}/" method="post" id="monitorDelete">{% csrf_token %}
-            <p>{% trans "Are you sure you want to delete?" %}</p>
+            <p>Are you sure you want to delete?</p>
             <input type="submit" value="Delete" class="btn btn-danger" />
-            <button type="button" class="btn btn-inverse" data-dismiss="modal" aria-label="Close">{% trans "Cancel" %}</button>
+            <button type="button" class="btn btn-inverse" data-dismiss="modal" aria-label="Close">Cancel</button>
         </form>
     </div>
 

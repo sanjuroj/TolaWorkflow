@@ -1,9 +1,8 @@
-{% load i18n %}
 <!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>{% trans "Delete Budget Item" %}</title>
+  <title>Delete Budget Item</title>
 </head>
 <body>
 
@@ -31,17 +30,17 @@
         <strong>{{ error|escape }}</strong>
     </div>
 
-    <h4 class="modal-title">{% block page_title %}{% trans "Budget Delete" %}{% endblock %}</h4>
+    <h4 class="modal-title">{% block page_title %}Budget Delete {% endblock %}</h4>
 
     </div>
     <div class="modal-body">
 
     <form action="/workflow/budget_delete/{{ id }}/" method="post" id="budgetDelete">{% csrf_token %}
-        <p>{% trans "Are you sure you want to delete?" %}</p>
-        <input type="{% trans "submit" %}" value="{% trans "Confirm" %}" />
+        <p>Are you sure you want to delete?</p>
+        <input type="submit" value="Confirm" />
     </form>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.location.href = '/workflow/projectagreement_update/{{ id }}/#budget-other';parent.location.reload();">{% trans "Close" %}</button>
+       <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.location.href = '/workflow/projectagreement_update/{{ id }}/#budget-other';parent.location.reload();">Close</button>
     </div>
     </div>
 </body>

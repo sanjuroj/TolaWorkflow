@@ -63,49 +63,49 @@
                         'orderable':false,
                         'className': 'dt-body-center',
                         'render': function (data, type, row){
-                            return '<div class="btn-group" role="group" aria-label="{% trans "Edit and delete buttons"|escapejs %}"><a class="btn btn-sm btn-text p-0 pr-2" href="/workflow/dashboard/project/'+row.id+'"><i class="fas fa-edit"></i>&nbsp;{% trans "Edit"|escapejs %}</a><a class="btn btn-sm btn-text p-0" href="/workflow/projectagreement_detail/'+row.id+'"><i class="fas fa-eye"></i>&nbsp;{% trans "View"|escapejs %}</a></div>';
+                            return '<div class="btn-group" role="group" aria-label="Edit and delete buttons"><a class="btn btn-sm btn-text p-0 pr-2" href="/workflow/dashboard/project/'+row.id+'"><i class="fas fa-edit"></i>&nbsp;Edit</a><a class="btn btn-sm btn-text p-0" href="/workflow/projectagreement_detail/'+row.id+'"><i class="fas fa-eye"></i>&nbsp;View</a></div>';
                     }
                 }],
                 columns: [
                     { title: "", class: "noExport"},
-                    { title: "{% trans 'PID'|escapejs %}", class: "noExport", data: "program__id" },
-                    { title: "{% trans 'SID'|escapejs %}", class: "noExport", data: "approval"},
-                    { title: "{% trans 'Program'|escapejs %}", data: "program__name",
-                        "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
-                    { title: "{% trans 'Project Name'|escapejs %}", data: "project_name",},
-                    { title: "{% trans 'Sites'|escapejs %}", data: "site",
-                        "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
-                    { title: "{% trans 'Project Code'|escapejs %}", data: "activity_code",
-                		"defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
-                    /*{ title: "{% trans 'Office'|escapejs %}", data: "office__name",
-                		"defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},*/
-                    { title: "{% trans 'Project Activity'|escapejs %}", data: "project_activity",
-                		"defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
-                    { title: "{% trans 'Sector'|escapejs %}", data: "sector__sector",
-                	"defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
-                    { title: "{% trans 'Project Type'|escapejs %}", data: "project_type",
-                        "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
-                    /*{ title: "{% trans 'Account Code'|escapejs %}", data: "account_code",
-                        "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},*/
-                    /*{ title: "{% trans 'LIN Code'|escapejs %}", data: "lin_code",
-                    	"defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},*/
+                    { title: "PID", class: "noExport", data: "program__id" },
+                    { title: "SID", class: "noExport", data: "approval"},
+                    { title: "Program", data: "program__name",
+                		"defaultContent": "<i>Not set</i>"},
+                    { title: "Project Name", data: "project_name",},
+                    { title: "Sites", data: "site",
+                    	"defaultContent": "<i>Not set</i>"},
+                    { title: "Project Code", data: "activity_code",
+                		"defaultContent": "<i>Not set</i>"},
+                	/*{ title: "Office", data: "office__name",
+                		"defaultContent": "<i>Not set</i>"},*/
+                    { title: "Project Activity", data: "project_activity",
+                		"defaultContent": "<i>Not set</i>"},
+                    { title: "Sector", data: "sector__sector",
+                	"defaultContent": "<i>Not set</i>"},
+                    { title: "Project Type", data: "project_type",
+                        "defaultContent": "<i>Not set</i>"},
+                    /*{ title: "Account Code", data: "account_code",
+                        "defaultContent": "<i>Not set</i>"},*/
+                    /*{ title: "LIN Code", data: "lin_code",
+                    	"defaultContent": "<i>Not set</i>"},*/
 
-                    { title: "{% trans 'Est. By'|escapejs %}", data: "estimated_by__name",
-                    	"defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"
+                    { title: "Est. By", data: "estimated_by__name",
+                    	"defaultContent": "<i>Not set</i>"
                 	},
-                    { title: "{% trans 'Total Project Budget'|escapejs %}",data: "total_estimated_budget",
-                        "{% trans 'defaultContent'|escapejs %}": "<i>{% trans 'Not set'|escapejs %}</i>"},
-                    { title: "{% trans 'Organizations Portion of Project Budget'|escapejs %}",data: "mc_estimated_budget",
-                        "{% trans 'defaultContent'|escapejs %}": "<i>{% trans 'Not set'|escapejs %}</i>"},
-                    { title: "{% trans 'Total Cost'|escapejs %}",data: "total_cost",
-                    	"defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"}
+                    { title: "Total Project Budget",data: "total_estimated_budget",
+                    	"defaultContent": "<i>Not set</i>"},
+                    { title: "Organizations Portion of Project Budget",data: "mc_estimated_budget",
+                    	"defaultContent": "<i>Not set</i>"},
+                    { title: "Total Cost",data: "total_cost",
+                    	"defaultContent": "<i>Not set</i>"}
                 ],
                 dom: "<'row'<'col-sm-2'B><'col-sm-5'l><'col-sm-5'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
                 buttons: [
                     {
                         extend: 'csv',
-                        text: '{% trans "Export to CSV"|escapejs %}',
-                        title: '{% trans "Project Report"|escapejs %}',
+                        text: 'Export to CSV',
+                        title: 'Project Report',
                         exportOptions: { columns: "thead th:not(.noExport)" }
                     }
                 ]

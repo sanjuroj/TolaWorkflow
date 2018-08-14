@@ -2,43 +2,37 @@
 {% load i18n %}
 {% block bread_crumb %}
 <ol class="breadcrumb">
-  <li><a href="/workflow/dashboard/0/">{% trans "Projects" %}</a></li>
-  <li><a href="/workflow/report/0/0/">{% trans "Project Report" %}</a></li>
-  <li class="active">{% trans "Report" %}</li>
+  <li><a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a></li>
+  <li><a href="/workflow/report/0/0/">Project Report</a></li>
+  <li class="active">Report</li>
 </ol>
 
 {% endblock bread_crumb %}
 {% load render_table from django_tables2 %}
 
-{% block page_title %}{% trans "Project Report" %}{% endblock %}
+{% block page_title %}Project Report{% endblock %}
 
 {% block content %}
 <ul class="nav nav-tabs">
-    <li role="presentation"><a href="/workflow/projectagreement_detail/{{ id }}/">{% trans "Initiation" %}</a></li>
-    <li role="presentation" class="active"><a href="/workflow/projectcomplete_detail/{{ id }}/">{% trans "Tracking" %}</a></li>
-    <li role="presentation"><a href="/workflow/siteprofile_report/{{ id }}/">{% trans "Sites" %}</a></li>
+  <li role="presentation"><a href="/workflow/projectagreement_detail/{{ id }}/">Initiation</a></li>
+  <li role="presentation" class="active"><a href="/workflow/projectcomplete_detail/{{ id }}/">Tracking</a></li>
+  <li role="presentation"><a href="/workflow/siteprofile_report/{{ id }}/">Sites</a></li>
 </ul>
 {% if complete %}
     <h3>{{ complete.project_name }}</h3>
 {% else %}
-    <h3>{% trans "TRACKING NOT ENTERED" %}</h3>
+    <h3>TRACKING NOT ENTERED</h3>
 {% endif %}
-<p>
-    {% blocktrans %}
-        <b>Created:</b> {{ complete.create_date|date:"MEDIUM_DATE_FORMAT" }}
-        <b>Last Edited:</b> {{ complete.edit_date|date:"MEDIUM_DATE_FORMAT" }}
-        <span class="btn btn-xs btn-info">Status: <b>{{ complete.approval }}</b></span>
-    {% endblocktrans %}
-</p>
+<p><b>Created:</b> {{ complete.create_date|date:"MEDIUM_DATE_FORMAT" }} <b>Last Edited:</b> {{ complete.edit_date|date:"MEDIUM_DATE_FORMAT" }} <span class="btn btn-xs btn-info">Status: <b>{{ complete.approval }}</b></span></p>
 <div class="panel panel-info">
     <!-- Default panel contents -->
-    <div class="panel-heading">{% trans "Part I: Executive Summary" %}</div>
+    <div class="panel-heading">Part I: Executive Summary</div>
     <!-- Table -->
     <table class="table" border="1">
         <tr>
-            <th>{% trans "Program" %}</th>
-            <th>{% trans "Project Initiation" %}</th>
-            <th>{% trans "Project Tracking" %}</th>
+            <th>Program</th>
+            <th>Project Initiation</th>
+            <th>Project Tracking</th>
         </tr>
         <tr>
             <td>{{ complete.program }}</td>
@@ -49,9 +43,9 @@
     <br/>
     <table class="table" border="1">
         <tr>
-            <th>{% trans "Project Code" %}</th>
-            <th>{% trans "Office" %}</th>
-            <th>{% trans "Project Name" %}</th>
+            <th>Project Code</th>
+            <th>Office</th>
+            <th>Project Name</th>
         </tr>
         <tr>
             <td>{{ complete.activity_code }}</td>
@@ -62,9 +56,9 @@
     <br/>
     <table class="table" border="1">
         <tr>
-            <th>{% trans "Expected Start Date" %}</th>
-            <th>{% trans "Expected End Date" %}</th>
-            <th>{% trans "Duration" %}</th>
+            <th>Expected Start Date</th>
+            <th>Expected End Date</th>
+            <th>Duration</th>
         </tr>
         <tr>
             <td>{{ complete.expected_start_date|date:"MEDIUM_DATE_FORMAT"  }}</td>
@@ -76,9 +70,9 @@
      <br/>
     <table class="table" border="1">
         <tr>
-            <th>{% trans "Actual Start Date" %}</th>
-            <th>{% trans "Actual End Date" %}</th>
-            <th>{% trans "Actual Duration" %}</th>
+            <th>Actual Start Date</th>
+            <th>Actual End Date</th>
+            <th>Actual Duration</th>
         </tr>
         <tr>
             <td>{{ complete.actual_start_date|date:"MEDIUM_DATE_FORMAT"  }}</td>
@@ -89,8 +83,8 @@
     <br/>
     <table class="table" border="1">
         <tr>
-            <th>{% trans "On Time" %}</th>
-            <th>{% trans "If not explain" %}</th>
+            <th>On Time</th>
+            <th>If not explain</th>
         </tr>
         <tr>
             <td>{{ complete.on_time }}</td>
@@ -100,18 +94,18 @@
 </div>
 <div class="panel panel-info">
     <!-- Default panel contents -->
-    <div class="panel-heading">{% trans "Part II: Components" %}</div>
+    <div class="panel-heading">Part II: Components</div>
 
     <table class="table" border="1">
         <tr>
-            <th>{% trans "Description" %}</th>
-            <th>{% trans "Site" %}</th>
-            <th>{% trans "Est. Start Date" %}</th>
-            <th>{% trans "Est. End Date" %}</th>
-            <th>{% trans "Actual Start Date" %}</th>
-            <th>{% trans "Actual End Date" %}</th>
-            <th>{% trans "Budget" %}</th>
-            <th>{% trans "Cost" %}</th>
+            <th>Description</th>
+            <th>Site</th>
+            <th>Est. Start Date</th>
+            <th>Est. End Date</th>
+            <th>Actual Start Date</th>
+            <th>Actual End Date</th>
+            <th>Budget</th>
+            <th>Cost</th>
         </tr>
         {% for benchmark in getBenchmarks %}
         <tr>
@@ -129,13 +123,13 @@
 </div>
 <div class="panel panel-info">
     <!-- Default panel contents -->
-    <div class="panel-heading">{% trans "Part III: Budget" %}</div>
+    <div class="panel-heading">Part III: Budget</div>
     <!-- Table -->
     <table class="table" border="1">
         <tr>
-            <th>{% trans "Estimated Budget" %}</th>
-            <th>{% trans "Actual Budget" %}</th>
-            <th>{% trans "Budget Variance" %}</th>
+            <th>Estimated Budget</th>
+            <th>Actual Budget</th>
+            <th>Budget Variance</th>
         </tr>
         <tr>
             <td>{{ complete.estimated_budget }}</td>
@@ -146,19 +140,19 @@
     <br/>
     <table class="table" border="1">
         <tr>
-            <th>{% trans "Explanation of Budget Variance" %}</th>
+            <th>Explanation of Budget Variance</th>
         </tr>
         <tr>
             <td>{{ complete.budget_variance_explanation }}</td>
         </tr>
     </table>
     <br/>
-    <h4>{% trans "Other Budget Contributions" %}:</h4>
+    <h4>Other Budget Contributions:</h4>
     <table class="table" border="1">
         <tr>
-            <th>{% trans "Contributor" %}</th>
-            <th>{% trans "Description of Contribution" %}</th>
-            <th>{% trans "Processed Value of Contribution" %}</th>
+            <th>Contributor</th>
+            <th>Description of Contribution</th>
+            <th>Processed Value of Contribution</th>
         </tr>
         {% for budget in budgetContribs %}
         <tr>
@@ -172,15 +166,15 @@
 </div>
 <div class="panel panel-info">
     <!-- Default panel contents -->
-    <div class="panel-heading">{% trans "Part IV: Impact" %}</div>
+    <div class="panel-heading">Part IV: Impact</div>
     <!-- Table -->
-    <h4>{% trans "Expected Indicator Outputs" %}</h4>
+    <h4> Expected Indicator Outputs</h4>
     <table class="table" border="1">
         <tr>
-            <th>{% trans "Indicator Name" %}</th>
-            <th>{% trans "Targeted " %}#</th>
-            <th>{% trans "Achieved " %}#</th>
-            <th>{% trans "Is this Indicator in the Logframe" %}?</th>
+            <th>Indicator Name</th>
+            <th>Targeted #</th>
+            <th>Achieved #</th>
+            <th>Is this Indicator in the Logframe?</th>
         </tr>
         <tr>
             <td>{{ complete.indicator }}</td>
@@ -192,10 +186,10 @@
     <br/>
     <table class="table" border="1">
         <tr>
-            <th>{% trans "Progress Against Targets " %}</th>
-            <th>{% trans "Actual Contribution" %}</th>
-            <th>{% trans "Beneficiary Type" %}</th>
-            <th>{% trans "Direct Beneficiaries" %}</th>
+            <th>Progress Against Targets </th>
+            <th>Actual Contribution</th>
+            <th>Beneficiary Type</th>
+            <th>Direct Beneficiaries</th>
         </tr>
         <tr>
             <td>{{ complete.progress_against_targets }}</td>
@@ -207,10 +201,10 @@
     <br/>
     <table class="table" border="1">
         <tr>
-            <th>{% trans "Average Household Size" %}</th>
-            <th>{% trans "Indirect Beneficiaries" %}</th>
-            <th>{% trans "Capacity Built" %}</th>
-            <th>{% trans "Quality Assured" %}</th>
+            <th>Average Household Size</th>
+            <th>Indirect Beneficiaries</th>
+            <th>Capacity Built</th>
+            <th>Quality Assured</th>
         </tr>
         <tr>
             <td>{{ complete.average_household_size }}</td>
@@ -220,11 +214,11 @@
         </tr>
     </table>
     <br/>
-    <h4>{% trans "Issues" %}</h4>
+    <h4>Issues</h4>
     <table class="table" border="1">
         <tr>
-            <th>{% trans "List any issues or challenges faced(include reasons for dealys" %})</th>
-            <th>{% trans "Lessons learned" %}</th>
+            <th>List any issues or challenges faced(include reasons for dealys)</th>
+            <th>Lessons learned</th>
         </tr>
         <tr>
             <td>{{ complete.issues_and_challenges }}</td>
@@ -235,53 +229,53 @@
 </div>
 <div class="panel panel-warning">
     <!-- Default panel contents -->
-    <div class="panel-heading">{% trans "Part V: Project Approval" %}</div>
+    <div class="panel-heading">Part V: Project Approval</div>
     <!-- Table -->
     <table class="table" border="1">
         <tr>
-            <th>{% trans "Action" %}</th>
-            <th>{% trans "E-Signature" %}</th>
-            <th>{% trans "Date" %}</th>
+            <th>Action</th>
+            <th>E-Signature</th>
+            <th>Date</th>
         </tr>
         <tr>
-            <td>{% trans "Submitted By" %}</td>
+            <td>Submitted By</td>
             <td>{{ complete.approval_submitted_by }}</td>
             <td>{{ complete.approval_submitted_by_date|date:"MEDIUM_DATE_FORMAT" }}</td>
         </tr>
         <tr>
-            <td>{% trans "Estimated" %}</td>
+            <td>Estimated</td>
             <td>{{ complete.approved_by }}</td>
             <td>{{ complete.approved_date|date:"MEDIUM_DATE_FORMAT" }}</td>
         </tr>
         <tr>
-            <td>{% trans "Checked" %}</td>
+            <td>Checked</td>
             <td>{{ complete.estimated_by }}</td>
             <td>{{ complete.estimated_by_date|date:"MEDIUM_DATE_FORMAT" }}</td>
         </tr>
         <tr>
-            <td>{% trans "Reviewed by MEL" %}</td>
+            <td>Reviewed by MEL</td>
             <td>{{ complete.reviewed_by }}</td>
             <td>{{ complete.reviewed_by_date|date:"MEDIUM_DATE_FORMAT" }}</td>
         </tr>
         <tr>
-            <td>{% trans "Reviewed" %}</td>
+            <td>Reviewed</td>
             <td>{{ complete.reviewed_by }}</td>
             <td>{{ complete.reviewed_by_date|date:"MEDIUM_DATE_FORMAT" }}</td>
         </tr>
         <tr>
-            <td>{% trans "Approved" %}</td>
+            <td>Approved</td>
             <td>{{ complete.approved_by }}</td>
             <td>{{ complete.approved_date|date:"MEDIUM_DATE_FORMAT" }}</td>
         </tr>
         <tr>
-            <td>{% trans "Financial Review" %}</td>
+            <td>Financial Review</td>
             <td>{{ complete.approved_by }}</td>
             <td>{{ complete.approved_date|date:"MEDIUM_DATE_FORMAT" }}</td>
         </tr>
     </table>
     <table class="table" border="1">
         <tr>
-            <th>{% trans "Approval Remarks" %}</th>
+            <th>Approval Remarks</th>
         </tr>
         <tr>
             <td>{{ complete.approval_remarks }}</td>

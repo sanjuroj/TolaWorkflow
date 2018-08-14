@@ -3,8 +3,8 @@
 {% block bread_crumb %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url "dashboard" 0 %}">{% trans "Projects" %}</a></li>
-        <li class="breadcrumb-item active">{% trans "Project" %}</li>
+        <li class="breadcrumb-item"><a href="{% url "dashboard" 0 %}">{% trans 'Projects' %}</a></li>
+        <li class="breadcrumb-item active">Project</li>
     </ol>
 </nav>
 {% endblock %}
@@ -55,47 +55,47 @@
 {% else %}
     <br/>
     <ul class="list-group">
-        <h3>{{ getProgram.name|truncatechars:70 }}<span style="float: right;"><a href="{% url "projectagreement_detail" getAgreement.id %}" class="btn btn-sm btn-info">{% trans "Print" %} View</a></span></h3>
+        <h3>{{ getProgram.name|truncatechars:70 }}<span style="float: right;"><a href="{% url "projectagreement_detail" getAgreement.id %}" class="btn btn-sm btn-info">Print View</a></span></h3>
         {% if getAgreement %}
         <div class="jumbotron">
             <ul class="list-group">
                 <li class="list-group-item list-group-item-info">
-                    <h4>{% trans "Project Initiation" %}</h4>
+                    <h4>Project Initiation</h4>
                     <span></span>
                 </li>
 
-                <li class="list-group-item"><b>{% trans "Name" %}: </b>{{ getAgreement.project_name }}<br/>
-                    <b>{% trans "Project Code" %}: </b>{{ getAgreement.activity_code }}<br/>
-                    <b>{% trans "Created" %}:</b> <span class="date-badge">{{ getAgreement.create_date|date:"MEDIUM_DATE_FORMAT" }}</span> <b>{% trans "Edited" %}:</b> <span class="date-badge">{{ getAgreement.edit_date|date:"MEDIUM_DATE_FORMAT" }}</span>
+                <li class="list-group-item"><b>Name: </b>{{ getAgreement.project_name }}<br/>
+                    <b>Project Code: </b>{{ getAgreement.activity_code }}<br/>
+                    <b>Created:</b> <span class="date-badge">{{ getAgreement.create_date|date:"MEDIUM_DATE_FORMAT" }}</span> <b>Edited:</b> <span class="date-badge">{{ getAgreement.edit_date|date:"MEDIUM_DATE_FORMAT" }}</span>
                 </li>
                 <li class="list-group-item">
                     <div class="btn-group" role="group" aria-label="...">
                         {% if getAgreement.approval == "approved" %}
-                            <button data-toggle="tooltip" data-placement="top" title="{% trans "Initiation has been approved and can no longer be edited." %}" type="button" class="btn btn-sm btn-frozen" onclick="location.href='{% url "projectagreement_detail" getAgreement.id %}'">{% trans "View Initiation" %}</button>
-                            <button data-toggle="tooltip" data-placement="top" title="{% trans "Initiation has been approved and can no longer be deleted." %}" type="button" class="btn btn-sm btn-frozen">{% trans "Delete Initiation" %}</button>
+                            <button data-toggle="tooltip" data-placement="top" title="Initiation has been approved and can no longer be edited." type="button" class="btn btn-sm btn-frozen" onclick="location.href='{% url "projectagreement_detail" getAgreement.id %}'">View Initiation</button>
+                            <button data-toggle="tooltip" data-placement="top" title="Initiation has been approved and can no longer be deleted." type="button" class="btn btn-sm btn-frozen">Delete Initiation</button>
                             {% if getComplete%}
-                            <button data-toggle="tooltip" data-placement="top" title="{% trans "A completion form has already been created for the project" %}" type="button" class="btn btn-sm btn-frozen">{% trans "Project Initiation" %}</button>
+                                <button data-toggle="tooltip" data-placement="top" title="A completion form has already been created for the project" type="button" class="btn btn-sm btn-frozen">Project Initiation</button>
                             {% else %}
-                                <button type="button" class="btn btn-sm btn-info" onclick="location.href='{% url "projectcomplete_add" getAgreement.id %}'">{% trans "Start tracking your project" %}</button>
+                                <button type="button" class="btn btn-sm btn-info" onclick="location.href='{% url "projectcomplete_add" getAgreement.id %}'">Start tracking your project</button>
                             {% endif %}
                         {% else %}
-                            <button type="button" class="btn btn-sm btn-warning" onclick="location.href='{% url "projectagreement_update" getAgreement.id %}'">{% trans "Update Initiation" %}</button>
-                            <button type="button" class="btn btn-sm btn-danger" onclick="location.href='{% url "projectagreement_delete" getAgreement.id %}'">{% trans "Delete Initiation" %}</button>
-                            <button data-toggle="tooltip" data-placement="top" title="{% trans "Once Approved you will be able to click here and start tracking the project" %}" type="button" class="btn btn-sm btn-frozen">{% trans "Start tracking your project" %}</button>
+                            <button type="button" class="btn btn-sm btn-warning" onclick="location.href='{% url "projectagreement_update" getAgreement.id %}'">Update Initiation</button>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="location.href='{% url "projectagreement_delete" getAgreement.id %}'">Delete Initiation</button>
+                            <button data-toggle="tooltip" data-placement="top" title="Once Approved you will be able to click here and start tracking the project" type="button" class="btn btn-sm btn-frozen">Start tracking your project</button>
                         {% endif %}
                     </div>
                 </li>
                 <li class="list-group-item">
                     {% if getAgreement.approval == "approved" %}
                         <button class="btn btn-success" type="button">
-                            {% trans "Approved" %}
+                          Approved
                         </button>
                     {% else %}
                         <button class="btn btn-primary" type="button" onclick="location.href='{% url "projectagreement_update" getAgreement.id %}'">
                         {% if getAgreement.approval %}
                             {{ getAgreement.approval|title }}
                         {% else %}
-                            {% trans "Open" %}
+                            Open
                         {% endif %}
                         </button>
                     {% endif %}
@@ -105,29 +105,29 @@
         {% if getComplete %}
             <ul class="list-group">
                 <li class="list-group-item list-group-item-info">
-                    <h4>{% trans "Project Tracking" %}</h4>
+                    <h4>Project Tracking</h4>
                 </li>
-                <li class="list-group-item"><b>{% trans "Name" %}: </b>{{ getComplete.project_name }}<br/>
-                    <b>{% trans "Project Code" %}: </b>{{ getComplete.activity_code }}<br/>
-                    <b>{% trans "Created" %}:</b> <span class="date-badge">{{ getComplete.create_date|date:"MEDIUM_DATE_FORMAT" }}</span> <b>{% trans "Edited" %}:</b> <span class="date-badge">{{ getComplete.edit_date|date:"MEDIUM_DATE_FORMAT" }}</span>
+                <li class="list-group-item"><b>Name: </b>{{ getComplete.project_name }}<br/>
+                    <b>Project Code: </b>{{ getComplete.activity_code }}<br/>
+                    <b>Created:</b> <span class="date-badge">{{ getComplete.create_date|date:"MEDIUM_DATE_FORMAT" }}</span> <b>Edited:</b> <span class="date-badge">{{ getComplete.edit_date|date:"MEDIUM_DATE_FORMAT" }}</span>
                 </li>
                 <li class="list-group-item">
                     <div class="btn-group" role="group" aria-label="...">
-                        <button type="button" class="btn btn-sm btn-warning" onclick="location.href='{% url "projectcomplete_update" getComplete.id %}'">{% trans "Update Tracking" %}</button>
-                        <button type="button" class="btn btn-sm btn-danger" onclick="location.href='{% url "projectcomplete_delete" getComplete.id %}'">{% trans "Delete Tracking" %}</button>
+                        <button type="button" class="btn btn-sm btn-warning" onclick="location.href='{% url "projectcomplete_update" getComplete.id %}'">Update Tracking</button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="location.href='{% url "projectcomplete_delete" getComplete.id %}'">Delete Tracking</button>
                     </div>
                 </li>
                 <li class="list-group-item">
                     {% if getComplete.approval == "approved" %}
                         <button class="btn btn-success" type="button">
-                            {% trans "Approved" %}
+                          Approved
                         </button>
                     {% else %}
                         <button class="btn btn-primary" type="button" onclick="location.href='{% url "projectcomplete_update" getComplete.id %}'">
                           {% if getComplete.approval %}
                             {{ getComplete.approval|title }}
                           {% else %}
-                              {% trans "Open" %}
+                            Open
                           {% endif %}
                         </button>
                     {% endif %}
@@ -135,35 +135,35 @@
             </ul>
         {% endif %}
         <button class="btn btn-primary" type="button" onclick="location.href='{% url "documentation_list" 0 getAgreement.id %}'">
-            {% trans "Documents" %} <span class="badge">{{ getDocumentCount }}</span>
+            Documents <span class="badge">{{ getDocumentCount }}</span>
         </button>
         <button class="btn btn-primary" type="button" onclick="location.href='{% url "siteprofile_list" 0  getAgreement.id %}'">
-            {% trans "Sites" %} <span class="badge">{{ getCommunityCount }}</span>
+            Sites <span class="badge">{{ getCommunityCount }}</span>
         </button>
         <button class="btn btn-primary" type="button" onclick="location.href='{% url "training_list" getAgreement.id %}'">
-            {% trans "Training" %} <span class="badge">{{ getTrainingCount }}</span>
+            Training <span class="badge">{{ getTrainingCount }}</span>
         </button>
         <button class="btn btn-primary" type="button" onclick="location.href='{% url "distribution_list" getProgram.id %}'">
-            {% trans "Distributions" %} <span class="badge">{{ getDistributionCount }}</span>
+            Distributions <span class="badge">{{ getDistributionCount }}</span>
         </button>
         <button class="btn btn-primary" type="button" onclick="location.href='{% url "checklistitem_list" getAgreement.id %}'">
-            {% trans "Checklist" %} <span class="badge">{{ getChecklistCount }}</span>
+            Checklist <span class="badge">{{ getChecklistCount }}</span>
         </button>
         <button class="btn btn-primary" type="button" onclick="location.href='{% url "stakeholder_list" 0 getAgreement.id %}'">
-            {% trans "Stakeholders" %} <span class="badge">{{ getStakeholderCount }}</span>
+            Stakeholders <span class="badge">{{ getStakeholderCount }}</span>
         </button>
         </div>
     </ul>
 
     <div class="jumbotron">
         <h3>
-            {% trans "Project Checklist" %}
+            Project Checklist
         </h3>
         <table class="table table-striped">
             <tr>
-                <th>{% trans "Checklist Item" %}</th>
-                <th>{% trans "Is In the File" %}?</th>
-                <th>{% trans "Not Applicable" %}?</th>
+                <th>Checklist Item</th>
+                <th>Is In the File?</th>
+                <th>Not Applicable?</th>
             </tr>
 
             {% for item in getChecklist %}

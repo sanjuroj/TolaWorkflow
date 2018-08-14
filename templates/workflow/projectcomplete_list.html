@@ -3,19 +3,19 @@
 {% block bread_crumb %}
 <div>
 <ol class="breadcrumb">
-  <li><a href="/workflow/dashboard/0/">{% trans "Projects" %}</a></li>
-  <li class="active">{% trans "Project Tracking" %}</li>
+  <li><a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a></li>
+  <li class="active">Project Tracking</li>
 </ol>
 </div>
 {% endblock %}
-{% block page_title %}{% trans "Project Tracking List" %}{% endblock %}
+{% block page_title %}Project Tracking List{% endblock %}
 
 {% block content %}
 <div>
 <div class="dropdown">
   <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-      {% trans "Programs" %}
-      <span class="caret"></span>
+    Programs
+    <span class="caret"></span>
   </button>
   <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
     {% for program in getPrograms %}
@@ -32,10 +32,10 @@
  <!-- Table -->
 <table class="table">
     <tr>
-        <th>{% trans "Date Created" %}</th>
-        <th>{% trans "Project Name" %}</th>
-        <th>{% trans "Activity Code" %}</th>
-        <th>{% trans "Approval Status" %}</th>
+        <th>Date Created</th>
+        <th>Project Name</th>
+        <th>Activity Code</th>
+        <th>Approval Status</th>
         <th>&nbsp;</th>
     </tr>
     {% for item in getDashboard %}
@@ -43,14 +43,14 @@
         <td><a href="/workflow/projectcomplete_update/{{ item.id }}">{{ item.create_date}}</a></td>
         <td><a href="/workflow/projectcomplete_update/{{ item.id }}">{{ item.project_name}}</a></td>
         <td>{{ item.activity_code}}</td>
-        <td>{% if item.approval %} {{ item.approval}} {% else %} {% trans "Open" %} {% endif %}</td>
+        <td>{% if item.approval %} {{ item.approval}} {% else %} Open {% endif %}</td>
         <td>
-            <a href="/workflow/dashboard/project/{{ item.project_agreement.id }}" class="btn btn-xs btn-success">{% trans "Project Dashboard" %}</a>
-            <a href="/workflow/projectcomplete_delete/{{ item.id }}" class="btn btn-xs btn-danger">{% trans "Delete Project Complete" %}</a>
+            <a href="/workflow/dashboard/project/{{ item.project_agreement.id }}" class="btn btn-xs btn-success">Project Dashboard</a>
+            <a href="/workflow/projectcomplete_delete/{{ item.id }}" class="btn btn-xs btn-danger">Delete Project Complete</a>
         </td>
     </tr>
     {% empty %}
-        <li class="list-group-item">{% trans "No Completions yet." %}</li>
+        <li class="list-group-item">No Completions yet.</li>
     {% endfor %}
 </table>
 
