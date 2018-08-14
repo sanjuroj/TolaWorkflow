@@ -33,31 +33,48 @@
 
             // Date Collected Datepicker
 
-            var id_date_collected = $("#id_date_collected");
-
-            //var datepickerParent = $('.datepicker').parent('div');
-            // Inline bc the datepicker floats around in this modal
+            // Inline the datepicker bc otherwise it floats around in this modal
             $('#date_collected-wrapper').datepicker({
                 dateFormat: "yy-mm-dd",
                 inline: true,
                 altField: '#id_date_collected',
+                onSelect: function() {
+                    date_collected_picker.hide();
+                }
             });
 
             var date_collected_picker = $('#date_collected-wrapper .ui-datepicker-inline');
 
             date_collected_picker.hide();
 
-            id_date_collected.on('focus', function(e){
+            $('#id_date_collected').on('focus', function(e){
                 date_collected_picker.show();
             });
 
             // update datepicker if field changes
-            id_date_collected.change(function(){
+            $('#id_date_collected').change(function(){
                 $('#date_collected-wrapper').datepicker('setDate', $(this).val());
             });
 
-            if (id_date_collected.val() != '') {
-                id_date_collected.val(formatDate(id_date_collected.val()));
+            // ... or click outside datepicker to close
+            $(window).on('click', function(e){
+                e.stopPropagation();
+                if (e.target.id != 'id_date_collected') {
+                    date_collected_picker.hide();
+                }
+            });
+
+            // ... or when any other input gains focus
+            $('input').on('focus', function(e){
+                var input = $(this)[0];
+                if (input.id != 'id_date_collected') {
+                    date_collected_picker.hide();
+                }
+            });
+
+
+            if ($('#id_date_collected').val() != '') {
+                $('#id_date_collected').val(formatDate($('#id_date_collected').val()));
                 // validate upon loading modal
                 validatePeriodicTarget();
             }
