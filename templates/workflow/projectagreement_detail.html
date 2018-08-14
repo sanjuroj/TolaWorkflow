@@ -167,13 +167,13 @@
 
 <div class="panel panel-info">
     <!-- Default panel contents -->
-    <div class="panel-heading">Part III: Project Monitoring and Evaluation</div>
+    <div class="panel-heading">{% trans "Part III: Project Monitoring and Evaluation" %}</div>
     <!-- Table -->
-    <h4>Indicator Evidence</h4>
+    <h4>{% trans "Indicator Evidence" %}</h4>
     <table class="table" border="1">
         <tr>
-            <th>Targeted</th>
-            <th>Indicator</th>
+            <th>{% trans "Targeted" %}</th>
+            <th>{% trans "Indicator" %}</th>
         </tr>
         {% for output in getQuantitativeOutputs %}
         <tr>
@@ -182,14 +182,14 @@
         </tr>
         {% endfor %}
     </table>
-    <h4>Components</h4>
+    <h4>{% trans "Components" %}</h4>
     <table class="table" border="1">
         <tr>
-            <th>Description</th>
-            <th>Site</th>
-            <th>Est. Start Date</th>
-            <th>Est. End Date</th>
-            <th>Budget</th>
+            <th>{% trans "Description" %}</th>
+            <th>{% trans "Site" %}</th>
+            <th>{% trans "Est. Start Date" %}</th>
+            <th>{% trans "Est. End Date" %}</th>
+            <th>{% trans "Budget" %}</th>
         </tr>
         {% for benchmark in getBenchmarks %}
         <tr>
@@ -201,12 +201,12 @@
         </tr>
         {% endfor %}
     </table>
-    <h4>Monitoring</h4>
+    <h4>{% trans "Monitoring" %}</h4>
     <table class="table" border="1">
         <tr>
-            <th>Type</th>
-            <th>Responsible Person</th>
-            <th>Frequency</th>
+            <th>{% trans "Type" %}</th>
+            <th>{% trans "Responsible Person" %}</th>
+            <th>{% trans "Frequency" %}</th>
         </tr>
         {% for monitor in getMonitor %}
         <tr>
@@ -216,10 +216,10 @@
         </tr>
         {% endfor %}
     </table>
-    <h4>Evaluation</h4>
+    <h4>{% trans "Evaluation" %}</h4>
     <table class="table" border="1">
         <tr>
-            <th>How will you evaluate the outcome or impact of the project?</th>
+            <th>{% trans "How will you evaluate the outcome or impact of the project" %}?</th>
         </tr>
         <tr>
             <td>{{ agreement.evaluations }}</td>
@@ -228,41 +228,41 @@
 </div>
 <div class="panel panel-warning">
     <!-- Default panel contents -->
-    <div class="panel-heading">Part IV: Project Approval</div>
+    <div class="panel-heading">{% trans "Part IV: Project Approval" %}</div>
     <!-- Table -->
     <table class="table" border="1">
         <tr>
-            <th>Action</th>
-            <th>E-Signature</th>
-            <th>Date</th>
+            <th>{% trans "Action" %}</th>
+            <th>{% trans "E-Signature" %}</th>
+            <th>{% trans "Date" %}</th>
         </tr>
         <tr>
-            <td>Originated By</td>
+            <td>{% trans "Originated By" %}</td>
             <td>{{ agreement.estimated_by }}</td>
             <td>{{ agreement.estimated_by_date|date:"MEDIUM_DATE_FORMAT" }}</td>
         </tr>
         <tr>
-            <td>Checked By</td>
+            <td>{% trans "Checked By" %}</td>
             <td>{{ agreement.checked_by }}</td>
             <td>{{ agreement.checked_by_date|date:"MEDIUM_DATE_FORMAT" }}</td>
         </tr>
         <tr>
-            <td>Checked</td>
+            <td>{% trans "Checked" %}</td>
             <td>{{ agreement.estimated_by }}</td>
             <td>{{ agreement.estimated_by_date|date:"MEDIUM_DATE_FORMAT" }}</td>
         </tr>
         <tr>
-            <td>Field Verification By</td>
+            <td>{% trans "Field Verification By" %}</td>
             <td>{{ agreement.reviewed_by }}</td>
             <td>{{ agreement.reviewed_by_date|date:"MEDIUM_DATE_FORMAT" }}</td>
         </tr>
         <tr>
-            <td>Finance Reviewed By</td>
+            <td>{% trans "Finance Reviewed By" %}</td>
             <td>{{ agreement.finance_reviewed_by }}</td>
             <td>{{ agreement.finance_reviewed_by_date|date:"MEDIUM_DATE_FORMAT" }}</td>
         </tr>
         <tr>
-            <td>M&E Reviewed By</td>
+            <td>{% trans "M&E Reviewed By" %}</td>
             <td>{{ agreement.me_reviewed_by }}</td>
             <td>{{ agreement.me_reviewed_by_date|date:"MEDIUM_DATE_FORMAT" }}</td>
         </tr>
@@ -270,27 +270,27 @@
      <br/>
     <table class="table" border="1">
          <tr>
-            <th>Action</th>
-            <th>E-Signature</th>
-            <th>Date</th>
+             <th>{% trans "Action" %}</th>
+             <th>{% trans "E-Signature" %}</th>
+             <th>{% trans "Date" %}</th>
         </tr>
          <tr>
-            <td>Approved By</td>
+             <td>{% trans "Approved By" %}</td>
             <td>{{ agreement.approved_by }}</td>
             <td>{{ agreement.approved_by_date|date:"MEDIUM_DATE_FORMAT" }}</td>
         </tr>
         <tr>
-            <td>Approval Submitted By</td>
+            <td>{% trans "Approval Submitted By" %}</td>
             <td>{{ agreement.approval_submitted_by }}</td>
             <td>&nbsp;</td>
         </tr>
         <tr>
-            <td>Approval Status</td>
+            <td>{% trans "Approval Status" %}</td>
             <td>{{ agreement.approval }} </td>
             <td>&nbsp;</td>
         </tr>
         <tr>
-            <td>Approval Remarks</td>
+            <td>{% trans "Approval Remarks" %}</td>
             <td>{{ agreement.approval_remarks }}</td>
             <td>&nbsp;</td>
         </tr>
