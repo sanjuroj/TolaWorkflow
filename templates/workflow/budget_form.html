@@ -48,8 +48,8 @@
                 <strong>{{ error|escape }}</strong>
             </div>
 
-            <h4 class="modal-title">{% block page_title %}Other Budget Contributions Form {{ id }} {% endblock %}</h4>
-            <p>Describe and quantify in dollars:</p>
+            <h4 class="modal-title">{% block page_title %}{% blocktrans %}Other Budget Contributions Form {{ id }} {% endblocktrans %}{% endblock %}</h4>
+            <p>{% trans "Describe and quantify in dollars:" %}</p>
         </div>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     </div>
@@ -62,7 +62,7 @@
             {% load crispy_forms_tags %}
             {% csrf_token %}
             {% crispy form %}
-            <input type="submit" class="btn btn-primary" name="Save changes" value="Save changes"/>
+            <input type="submit" class="btn btn-primary" name="{% trans "Save changes" %}" value="{% trans "Save changes" %}" />
         </form>
     </div>
     <!--

@@ -8,16 +8,16 @@
             <a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="/workflow/stakeholder_list/0/0/">Stakeholder List</a>
+            <a href="/workflow/stakeholder_list/0/0/">{% trans "Stakeholder List" %}</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="/workflow/contact_list/{{stakeholder_id}}/">Contact List</a>
+            <a href="/workflow/contact_list/{{stakeholder_id}}/">{% trans "Contact List" %}</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page">Contact Form</li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Contact Form" %}</li>
     </ol>
 </nav>
 {% endblock %}
-{% block page_title %}Contact Form{% endblock %}
+{% block page_title %}{% trans "Contact Form" %}{% endblock %}
 
 
 {% block content %}

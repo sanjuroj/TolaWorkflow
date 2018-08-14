@@ -64,20 +64,20 @@
             data: documentation_records,
             columns: [
                 { title: "Date Created", data: "create_date",
-                    "defaultContent": "<i>Not set</i>",
+                    "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>",
                     "mRender": function (data, records, row) {
                         return '<a class="collecteddata" name=' + row.id + ' href="/workflow/documentation_update/'+row.id+'">' + formatDate(row.create_date) + '</a>'; // TODO: shouldn't use formatDate
                         }},
                 { title: "Document Name", data: "name",
-                    "defaultContent": "<i>Not set</i>",
+                    "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>",
                     "mRender": function (data, narecord, row) {
                         return '<a class="collecteddata" name=' + row.id + ' href="/workflow/documentation_update/'+row.id+'">' + row.name + '</a>';
                         }},
                 { title: "Project", data: "project__project_name",
-                    "defaultContent": "<i>Not set</i>"},
+                    "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
                 { title: "Actions",
                     "mRender": function (data, record, row) {
-                        return '<div class="text-nowrap"><a href="/workflow/documentation_delete/'+row.id+'" class="btn p-0 pr-4 btn-sm btn-text text-danger"><i class="fas fa-trash-alt"></i>&nbsp;Delete</a><a href="/workflow/documentation_update/'+row.id+'" class="btn p-0 btn-sm btn-text"><i class="fas fa-edit"></i>&nbsp;Edit</a></div>';
+                        return '<div class="text-nowrap"><a href="/workflow/documentation_delete/'+row.id+'" class="btn p-0 pr-4 btn-sm btn-text text-danger"><i class="fas fa-trash-alt"></i>&nbsp;{% trans "Delete"|escapejs %}</a><a href="/workflow/documentation_update/'+row.id+'" class="btn p-0 btn-sm btn-text"><i class="fas fa-edit"></i>&nbsp;{% trans "Edit" %}</a></div>';
                         }
                 }
             ]

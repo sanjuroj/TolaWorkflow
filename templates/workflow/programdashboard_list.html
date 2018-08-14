@@ -16,13 +16,13 @@
 {% if getDashboard %}
   {% ifnotequal status 'none' %}
   <div class="my-4 text-muted">
-      <p><em>Filtered by <b>(Status): {{ status|default_if_none:'' }}</b></em></p>
+      <p>{% blocktrans %}<em>Filtered by <b>(Status): {{ status|default_if_none:'' }}</b></em>{% endblocktrans %}</p>
   </div>
   {% endifnotequal %}
 
   {% if filtered_program %}
   <div class="my-4 text-muted">
-      <p><em>Filtered by <b>(Program): {{filtered_program|default_if_none:''}}</b></em></p>
+      <p>{% blocktrans %}<em>Filtered by <b>(Program): {{ filtered_program|default_if_none:'' }}</b></em>{% endblock %}</p>
   </div>
   {% endif %}
     {% for program in getDashboard %}
@@ -33,19 +33,19 @@
                        {{ program.name|truncatechars:100 }}
                    </h3>
                    <div>
-                       <a href="{% url "default_custom_dashboard" program.id %}" class="btn btn-text p-0 btn-small"><i class="fas fa-tachometer-alt"></i>&nbsp;Program Dashboard</a>
+                       <a href="{% url "default_custom_dashboard" program.id %}" class="btn btn-text p-0 btn-small"><i class="fas fa-tachometer-alt"></i>&nbsp;{% trans "Program Dashboard" %}</a>
                    </div>
                 </div><!-- /.card-header -->
                 <div class="card-body p-0">
                     <!-- Table -->
                     <table class="table table-sm table-hover table-striped">
                         <tr>
-                            <th>Date Created</th>
-                            <th>Project Name</th>
-                            <th>Project Code</th>
-                            <th>Office Code</th>
-                            <th>Form Version</th>
-                            <th>Approval Status</th>
+                            <th>{% trans "Date Created" %}</th>
+                            <th>{% trans "Project Name" %}</th>
+                            <th>{% trans "Project Code" %}</th>
+                            <th>{% trans "Office Code" %}</th>
+                            <th>{% trans "Form Version" %}</th>
+                            <th>{% trans "Approval Status" %}</th>
                             <th>&nbsp;</th>
                         </tr>
 
@@ -53,37 +53,37 @@
                           {% for item in program.agreement.get_inprogress %}
                               {% include "workflow/program_projects_table.html" %}
                           {% empty %}
-                              <li class="list-group-item">No in progress projects.</li>
+                              <li class="list-group-item">{% trans "No in progress projects." %}</li>
                           {% endfor %}
                         {% elif status == "approved" %}
                           {% for item in program.agreement.get_approved %}
                             {% include "workflow/program_projects_table.html" %}
                           {% empty %}
-                              <li class="list-group-item">No approved projects yet.</li>
+                              <li class="list-group-item">{% trans "No approved projects yet." %}</li>
                           {% endfor %}
                         {% elif status == "awaiting_approval" %}
                           {% for item in program.agreement.get_awaiting_approval %}
                             {% include "workflow/program_projects_table.html" %}
                           {% empty %}
-                              <li class="list-group-item">No projects awaiting approval.</li>
+                              <li class="list-group-item">{% trans "No projects awaiting approval." %}</li>
                           {% endfor %}
                         {% elif status == "rejected" %}
                           {% for item in program.agreement.get_rejected %}
                             {% include "workflow/program_projects_table.html" %}
                           {% empty %}
-                              <li class="list-group-item">No rejected projects.</li>
+                              <li class="list-group-item">{% trans "No rejected projects." %}</li>
                           {% endfor %}
                         {% elif status == "new" %}
                           {% for item in program.agreement.get_new %}
                             {% include "workflow/program_projects_table.html" %}
                           {% empty %}
-                              <li class="list-group-item">No New projects.</li>
+                              <li class="list-group-item">{% trans "No New projects." %}</li>
                           {% endfor %}
                         {% else %}
                           {% for item in program.agreement.all %}
                             {% include "workflow/program_projects_table.html" %}
                           {% empty %}
-                              <li class="list-group-item">No projects yet.</li>
+                              <li class="list-group-item">{% trans "No projects yet." %}</li>
                           {% endfor %}
                         {% endif %}
 
@@ -94,7 +94,7 @@
         {% endif %}
     {% endfor %}
 {% else %}
-    <p>No Programs</p>
+    <p>{% trans "No Programs" %}</p>
 {% endif %}
 </div>
 

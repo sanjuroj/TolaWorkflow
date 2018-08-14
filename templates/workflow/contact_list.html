@@ -8,23 +8,25 @@
             <a href="/workflow/dashboard/0/">{% trans 'Projects' %}</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="/workflow/stakeholder_list/0/0/">Stakeholder List</a>
+            <a href="/workflow/stakeholder_list/0/0/">{% trans "Stakeholder List" %}</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page">Contact List</li>
+        <li class="breadcrumb-item">
+            <a href="/workflow/contact_list/{{stakeholder_id}}/">{% trans "Contact List" %}</a>
+        </li>
     </ol>
 </nav>
 
 {% endblock %}
-{% block page_title %}Contact List{% endblock %}
+{% block page_title %}{% trans "Contact List" %}{% endblock %}
 
 {% block content %}
 <div>
-    <a href="/workflow/contact_add/{{getStakeholder.pk}}/0/" class="btn btn-sm btn-success">New Contact</a>
+    <a href="/workflow/contact_add/{{getStakeholder.pk}}/0/" class="btn btn-sm btn-success">{% trans "New Contact" %}</a>
 </div>
 <hr>
 
 {% if getStakeholder %}
-    <p>Filtered by Stakeholder: [{{ getStakeholder.name }}]</p>
+    <p>{% blocktrans %}Filtered by Stakeholder: [{{ getStakeholder.name }}]{% endblock %}</p>
 {% endif %}
 
 <ul class="list-group list-group-flush">
@@ -49,7 +51,7 @@
         </li>
     {% endif %}
 {% empty %}
-        <li class="list-group-item">No contacts yet.</li>
+    <li class="list-group-item">{% trans "No contacts yet." %}</li>
 {% endfor %}
 </ul>
 {% endblock content %}

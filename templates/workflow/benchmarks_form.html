@@ -8,10 +8,10 @@
             url: frm.attr('action'),
             data: frm.serialize(),
             success: function (data) {
-                $("#alert-error").html("Success! ");
+                $("#alert-error").html("{% trans 'Success!'|escapejs %}");
             },
             error: function(data) {
-                $("#alert-error").html("Something went wrong!");
+                $("#alert-error").html("{% trans 'Something went wrong!'|escapejs %}");
             }
         });
         return false;
@@ -24,8 +24,8 @@
                 <strong>{{ error|escape }}</strong>
             </div>
 
-            <h4 class="modal-title">{% block page_title %}Components Form {% endblock %}</h4>
-            <p>Describe and quantify in dollars:</p>
+            <h4 class="modal-title">{% block page_title %}{% trans "Components Form" %}{% endblock %}</h4>
+            <p>{% trans "Describe and quantify in dollars:" %}</p>
         </div>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     </div>

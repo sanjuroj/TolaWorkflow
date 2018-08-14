@@ -38,9 +38,6 @@
                 dateFormat: "yy-mm-dd",
                 inline: true,
                 altField: '#id_date_collected',
-                onSelect: function() {
-                    date_collected_picker.hide();
-                }
             });
 
             var date_collected_picker = $('#date_collected-wrapper .ui-datepicker-inline');
@@ -57,6 +54,7 @@
             });
 
             // ... or click outside datepicker to close
+            // TODO: catch montharrows in the datepicker
             $(window).on('click', function(e){
                 e.stopPropagation();
                 if (e.target.id != 'id_date_collected') {
