@@ -5,6 +5,6 @@
 {% block page_title %}Page Not found{% endblock page_title %}
 
 {% block content %}
-<p>This is not the page you were looking for, you may be lost.</p>
+<p>{% trans "This is not the page you were looking for, you may be lost."|escapejs %}</p>
 <img src="{{ STATIC_URL }}img/Portland-404.png" border="1">
 {% endblock content %}
