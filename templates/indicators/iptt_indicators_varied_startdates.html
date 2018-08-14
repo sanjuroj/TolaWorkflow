@@ -16,15 +16,15 @@
             </span>
             <h3>
                 <span class="color-red">
-                    {% blocktrans with program_id=program.id startdate=program.reporting_period_start enddate=program.reporting_period_end start=program.reporting_period_start|date:"MEDIUM_DATE_FORMAT" end=program.reporting_period_end|date:"MEDIUM_DATE_FORMAT" %}
-                        To see program results, please update your periodic targets to match your reporting start and end dates:
+                    {% trans 'To see program results, please update your periodic targets to match your reporting start and end dates:' %}
+                    {% with start=program.reporting_period_start end=program.reporting_period_end %}
                         <a href="#"
                             data-toggle="modal"
-                            data-program="{{ program_id }}"
+                            data-program="{{ program.id }}"
                             data-target="#id_reporting_period_modal"
-                            data-rptstart="{{ startdate }}"
-                            data-rptend="{{ enddate }}"><i>{{ start }} - {{ end }}</i></a>
-                    {% endblocktrans %}
+                            data-rptstart="{{ start }}"
+                            data-rptend="{{ end }}"><i>{{ start|date:"M d, Y" }} - {{ end|date:"M d, Y" }}</i></a>
+                    {% endwith %}
                 </span>
             </h3>
             <table id="iptt_table" class="table table-sm table-bordered table-hover">
@@ -89,4 +89,3 @@
         {% include 'indicators/indicator_form_common_js.html' %}
     </main>
 {% endblock content %}
-
