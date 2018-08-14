@@ -167,12 +167,12 @@
 
 
     {% for item in getSiteProfile %}
-        L.marker([{{ item.latitude }}, {{ item.longitude }}], {icon: projectIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>{% trans 'Project Site' %}<br><a href='/workflow/siteprofile_update/{{ item.id }}'>{{ item.name }}</a> <br/>{% trans 'Province:' %} {{ item.province }} <br/>District: {{ item.district }} <br/> {% trans 'Village:' %} {{ item.village }} <br/>");
+        L.marker([{{ item.latitude }}, {{ item.longitude }}], {icon: projectIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>{% trans 'Project Site'|escapejs %}<br><a href='/workflow/siteprofile_update/{{ item.id }}'>{{ item.name }}</a> <br/>{% trans 'Province:'|escapejs %} {{ item.province }} <br/>District: {{ item.district }} <br/> {% trans 'Village:'|escapejs %} {{ item.village }} <br/>");
     {%   endfor %}
 
     {% if getSiteProfileIndicator %}
         {% for item in getSiteProfileIndicator %}
-            L.marker([{{ item.latitude }}, {{ item.longitude }}], {icon: indicatorIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>{% trans 'Collected Indicator Data Site' %}<br> <a href='/workflow/siteprofile_update/{{ item.id }}'>{{ item.name }}</a> <br/>Province: {{ item.province }} <br/>{% trans 'District:' %} {{ item.district }} <br/> {% trans 'Village:' %} {{ item.village }} <br/>");
+            L.marker([{{ item.latitude }}, {{ item.longitude }}], {icon: indicatorIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>{% trans 'Collected Indicator Data Site'|escapejs %}<br> <a href='/workflow/siteprofile_update/{{ item.id }}'>{{ item.name }}</a> <br/>Province: {{ item.province }} <br/>{% trans 'District:'|escapejs %} {{ item.district }} <br/> {% trans 'Village:'|escapejs %} {{ item.village }} <br/>");
         {%   endfor %}
     {% endif %}
 

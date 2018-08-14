@@ -553,7 +553,7 @@
     function show_hide_cummulative_inputs(type) {
         //d-flex overrides display settings, so we need to apply and unapply depending on visibility
         if (type == 'number') {
-            $("#id_span_is_cumulative_header").text("{% trans 'OPTIONS FOR NUMBER (#) INDICATORS' %}");
+            $("#id_span_is_cumulative_header").text("{% trans 'OPTIONS FOR NUMBER (#) INDICATORS'|escapejs %}");
             $("#id_div_is_cumulative_section1").show();
             $("#id_div_is_cumulative_section1").addClass("d-flex");
             $("#id_div_is_cumulative_section2").show();
@@ -562,7 +562,7 @@
             $("#id_div_is_cumulative_section3").removeClass("d-flex");
         }
         else {
-            $("#id_span_is_cumulative_header").text("{% trans 'PERCENTAGE (%) INDICATORS' %}");
+            $("#id_span_is_cumulative_header").text("{% trans 'PERCENTAGE (%) INDICATORS'|escapejs %}");
             $("#id_div_is_cumulative_section3").show();
             $("#id_div_is_cumulative_section3").addClass("d-flex");
             $("#id_div_is_cumulative_section1").hide();
@@ -629,7 +629,7 @@
         var unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
         if (unit_of_measure_type == 1) { // if unit_type is Number (#)
             var targetsSum = getTargetsSumAndNum()[0];
-            $("#id_span_label_targets_sum").text("{% trans 'Sum of targets' %}");
+            $("#id_span_label_targets_sum").text("{% trans 'Sum of targets'|escapejs %}");
             $("#id_span_targets_sum").text(targetsSum);
             $("#id_span_targtsaggregate_percent_sign").text("");
             $("#id_span_loptarget_percent_sign").text("");

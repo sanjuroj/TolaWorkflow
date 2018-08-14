@@ -250,7 +250,7 @@
         }).fail(function(data){
           createAlert(
             "danger",
-            "{% trans 'Error. Could not retrieve data from server. Please report this to the Tola team.' %}",
+            "{% trans 'Error. Could not retrieve data from server. Please report this to the Tola team.'|escapejs %}",
             false,
             "#div-id-reportingperiod-alert");
         });
@@ -364,7 +364,7 @@
         if ($("#id_reporting_start_date").val() == "" || $("#id_reporting_end_date").val() == ""){
           createAlert(
             "danger",
-            "{% trans 'You must enter values for the reporting start and end dates before saving.' %}",
+            "{% trans 'You must enter values for the reporting start and end dates before saving.'|escapejs %}",
             false,
             "#div-id-reportingperiod-alert");
         }
@@ -378,14 +378,14 @@
                 // modalLink.data("rptend", data.rptend);
                 // createAlert(
                 //   "success",
-                //   "{% trans 'Success. Reporting period changes were saved.' %}",
+                //   "{% trans 'Success. Reporting period changes were saved.'|escapejs %}",
                 //   true,
                 //   "#div-id-reportingperiod-alert");
 
             }).fail(function(data) {
                 createAlert(
                   "danger",
-                  "{% trans 'There was a problem saving your changes.' %}",
+                  "{% trans 'There was a problem saving your changes.'|escapejs %}",
                   false,
                   "#div-id-reportingperiod-alert");
             });
