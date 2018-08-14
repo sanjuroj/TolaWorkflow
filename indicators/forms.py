@@ -1,7 +1,10 @@
+import dateparser
 from datetime import datetime
 from functools import partial
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django import forms
+from django.forms.fields import DateField
 from django.utils.translation import ugettext_lazy as _
 from workflow.models import (
     Program, SiteProfile, Documentation, ProjectComplete, TolaUser, Sector
@@ -22,6 +25,18 @@ class DatePicker(forms.DateInput):
     """
     template_name = 'datepicker.html'
     DateInput = partial(forms.DateInput, {'class': 'datepicker'})
+
+
+class LocaleDateField(DateField):
+    def to_python(self, value):
+        if value in self.empty_values:
+            return None
+        try:
+            return dateparser.parse(value).date()
+        except (AttributeError):
+            raise ValidationError(
+                self.error_messages['invalid'], code='invalid')
+
 
 
 class IndicatorForm(forms.ModelForm):
@@ -248,8 +263,8 @@ class IPTTReportFilterForm(ReportFormCommon):
 
     def __init__(self, *args, **kwargs):
         program = kwargs.pop('program')
-        periods_choices_start = kwargs.get('initial').get('period_choices_start')
-        periods_choices_end = kwargs.get('initial').get('period_choices_end')
+        periods_choices_start = kwargs.get('initial').get('period_choices_start') # TODO: localize this date
+        periods_choices_end = kwargs.get('initial').get('period_choices_end') # TODO: localize this date
 
         target_frequencies = Indicator.objects.filter(program__in=[program.id], target_frequency__isnull=False) \
             .exclude(target_frequency=Indicator.EVENT) \

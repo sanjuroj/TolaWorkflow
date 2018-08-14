@@ -112,6 +112,8 @@
     var origRptEnd = "";
     var max_target_start = 0;
 
+    {% get_current_language as LANGUAGE_CODE %}
+
     function setupMonthPickers() {
         const start_date_id = "id_reporting_start_date";
         const end_date_id = "id_reporting_end_date";
@@ -119,7 +121,7 @@
             changeMonth: true,
             changeYear: true,
             showButtonPanel: true,
-            dateFormat: 'M d, yy',
+            dateFormat: 'yy-mm-dd', // ISO, TODO: this needs to be displayed in localized format
             onClose: function (dateText, inst) {
                 // Without blurring, when the Done button is pressed, the cursor stays in the date input field
                 // and the user can put whatever they want, without the controls implemented by the datepicker.
@@ -273,21 +275,21 @@
                 $("#id_gait_start_date").addClass("color-red");
             }
             else {
-                $("#id_gait_start_date").html(formatDate(testDate));
+                $("#id_gait_start_date").html(formatDate(testDate)); // TODO: shouldn't use formatDate
             }
             if ((testDate = new Date($(event.relatedTarget).data('progend'))) == "Invalid Date"){
                 $("#id_gait_end_date").html("Unavailable");
                 $("#id_gait_end_date").addClass("color-red");
             }
             else {
-                $("#id_gait_end_date").html(formatDate(testDate));
+                $("#id_gait_end_date").html(formatDate(testDate)); // TODO: shouldn't use formatDate
             }
             if ((testDate = new Date($(event.relatedTarget).data('rptstart'))) == "Invalid Date"){
                 $("#id_reporting_start_date").val("");
                 origRptStart = "";
             }
             else {
-                $("#id_reporting_start_date").val(formatDate(testDate));
+                $("#id_reporting_start_date").val(formatDate(testDate)); // TODO: shouldn't use formatDate
                 origRptStart = $(event.relatedTarget).data('rptstart');
             }
             if ((testDate = new Date($(event.relatedTarget).data('rptend'))) == "Invalid Date"){
@@ -295,7 +297,7 @@
                 origRptEnd = "";
             }
             else {
-                $("#id_reporting_end_date").val(formatDate(testDate));
+                $("#id_reporting_end_date").val(formatDate(testDate)); // TODO: shouldn't use formatDate
                 origRptEnd = $(event.relatedTarget).data('rptend');
             }
 

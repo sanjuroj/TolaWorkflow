@@ -47,7 +47,7 @@
                                 <a href="{% url 'indicator_update' indicator.pk %}"
                                    class="indicator-link"
                                    data-tab="targets">
-                                    {{ indicator.minstarts|date:"M d, Y" }}
+                                    {{ indicator.minstarts|date:"MEDIUM_DATE_FORMAT" }}
                                 </a>
                             </td>
                         </tr>
