@@ -14,7 +14,7 @@
         //     return false;
         // }
         if ($("#collecteddata_update_form div").hasClass('has-error')) {
-            createAlert("danger", "{% trans 'Please complete all required fields.'%}", true, "#modalmessages");
+            createAlert("danger", "{% trans 'Please complete all required fields.|escapejs'%}", true, "#modalmessages");
             $('#indicator_collecteddata_div').animate({ scrollTop: 0 }, 'slow');
             return;
         }
@@ -31,10 +31,10 @@
         $.post(form_url, form_data,
             function(response, status, jqXHR) { // success callback
                 $("#modalmessages").empty();
-                createAlert("success", "{% trans 'Success, form data saved.' %}", true, "#modalmessages");
+                createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, "#modalmessages");
             })
         .fail(function(error){
-            createAlert("danger", "{% trans 'Could not save form.' %}"  + error, true, "#modalmessages");
+            createAlert("danger", "{% trans 'Could not save form.'|escapejs %}"  + error, true, "#modalmessages");
         });
         $('#indicator_collecteddata_div').animate({ scrollTop: 0 }, 'slow');
     });
@@ -65,12 +65,12 @@
         if (setPeriodicTargetValue() == false) {
             // $("#id_periodic_target").val('');
             if ($("#id_periodic_target option").length <= 1) {
-                $("#hint_id_periodic_target").html("<small>{% trans 'Targets are not set up for this indicator.' %} <a id='targetsTabLink' href='/indicators/indicator_update/" + $("#id_indicator").val() + "/'><strong>{% trans 'Start by selecting a target frequency.' %}</strong></a></small>");
+                $("#hint_id_periodic_target").html("<small>{% trans 'Targets are not set up for this indicator.'|escapejs %} <a id='targetsTabLink' href='/indicators/indicator_update/" + $("#id_indicator").val() + "/'><strong>{% trans 'Start by selecting a target frequency.'|escapejs %}</strong></a></small>");
             } else {
                 if ($("#id_date_collected").val().length > 0){
                 // TODO: delete the corresponding logic behind this link
-                // $("#hint_id_periodic_target").html("<small>{% trans 'This date falls outside the range of your target periods. You can change the date or' %} <a id='targetsTabLink' href='/indicators/indicator_update/" + $("#id_indicator").val() + "/'><strong>create additional target periods.</strong></a></small>");
-                $("#hint_id_periodic_target").html(`<small>{% trans 'This date falls outside the range of your target periods. Please select a date between ' %} ${ program_reporting_start } and ${ program_reporting_end } </small>`);
+                // $("#hint_id_periodic_target").html("<small>{% trans 'This date falls outside the range of your target periods. You can change the date or'|escapejs %} <a id='targetsTabLink' href='/indicators/indicator_update/" + $("#id_indicator").val() + "/'><strong>create additional target periods.</strong></a></small>");
+                $("#hint_id_periodic_target").html(`<small>{% trans 'This date falls outside the range of your target periods. Please select a date between '|escapejs %} ${ program_reporting_start } and ${ program_reporting_end } </small>`);
                 // $("#hint_id_periodic_target").html($("#id_span_date_collected_error_msg").html());
                 }
             }
@@ -97,13 +97,13 @@
         // if (regexTest.test(actual.val()) == false) {
         //     $("#div_id_achieved").addClass('has-error');
         //     $("#id_achieved").addClass('is-invalid');
-        //     $("#hint_id_achieved").text("{% trans 'Please enter a number with no letters or symbols.' %}");
+        //     $("#hint_id_achieved").text("{% trans 'Please enter a number with no letters or symbols.'|escapejs %}");
         //     return false;
         // }
         if (!actual.val() || !$.isNumeric(actual.val()) || actual.val() < 0) {
             $("#div_id_achieved").addClass('has-error');
             $("#id_achieved").addClass('is-invalid');
-            $("#hint_id_achieved").text("{% trans 'Please enter a number with no letters or symbols.' %}");
+            $("#hint_id_achieved").text("{% trans 'Please enter a number with no letters or symbols.'|escapejs %}");
             return false;
         } else {
             $("#div_id_achieved").removeClass('has-error');
@@ -124,10 +124,10 @@
         if ($.isEmptyObject(field)) {
             $("#div_id_date_collected").addClass('has-error');
             $("#id_date_collected").addClass('is-invalid');
-            $("#hint_id_date_collected").html("<small>{% trans 'Please complete this field.' %}</small>");
+            $("#hint_id_date_collected").html("<small>{% trans 'Please complete this field.'|escapejs %}</small>");
         }else if (!isDate(field)) {
             $("#div_id_date_collected").addClass('has-error');
-            $("#hint_id_date_collected").html("<small>{% trans 'Please enter a valid date.' %}</small>");
+            $("#hint_id_date_collected").html("<small>{% trans 'Please enter a valid date.'|escapejs %}</small>");
             return false;
         } else if (date_collected > end_date || date_collected < start_date ) {
             $("#div_id_date_collected").addClass('has-error');
