@@ -2,12 +2,12 @@
 {% block bread_crumb %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="/workflow/siteprofile_list/0/0/">Sites</a></li>
-      <li class="active breadcrumb-item">Site Data</li>
+        <li class="breadcrumb-item"><a href="/workflow/siteprofile_list/0/0/">{% trans "Sites" %}</a></li>
+        <li class="active breadcrumb-item">{% trans "Site Data" %}</li>
     </ol>
 </nav>
 {% endblock %}
-{% block page_title %}Indicator Data for <small>{{ site }}</small> {% endblock %}
+{% block page_title %}{% blocktrans %}Indicator Data for <small>{{ site }}</small>{% endblocktrans %}{% endblock %}
 
 {% block content %}
     {% regroup collecteddata by program as program_list %}
@@ -16,8 +16,8 @@
         <h3><a href="{% url "default_custom_dashboard" program.grouper.id %}">{{ program.grouper }}</a></h3>
         <table class="table mb-4">
             <tr class="">
-                <th>Achieved</th>
-                <th>Periodic Target</th>
+                <th>{% trans "Achieved" %}</th>
+                <th>{% trans "Periodic Target" %}</th>
             </tr>
             {% regroup program.list by indicator as indicator_list %}
             {% for indicator in indicator_list %}

@@ -7,11 +7,11 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         {%  if getProgram.id %}
-        <li class="breadcrumb-item"><a href="/workflow/siteprofile_list/{{ getProgram.id }}/">Sites</a></li>
+        <li class="breadcrumb-item"><a href="/workflow/siteprofile_list/{{ getProgram.id }}/">{% trans "Sites" %}</a></li>
         {% else %}
-        <li class="breadcrumb-item"><a href="/workflow/siteprofile_list/0/0/">Sites</a></li>
+        <li class="breadcrumb-item"><a href="/workflow/siteprofile_list/0/0/">{% trans "Sites" %}</a></li>
         {% endif %}
-        <li class="breadcrumb-item active">Site</li>
+        <li class="breadcrumb-item active">{% trans "Site" %}</li>
     </ol>
 </nav>
 {% endblock %}

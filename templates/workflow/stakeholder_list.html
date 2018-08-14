@@ -12,10 +12,10 @@
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false">
-        Programs
+        {% trans "Programs" %}
     </button>
     <div class="dropdown-menu" role="menu" aria-labelledby="programDropdown">
-        <a class="dropdown-item" href="#" onclick="program_filter(0)">-- All --</a>
+        <a class="dropdown-item" href="#" onclick="program_filter(0)">-- {% trans "All" %} --</a>
         {% for program in getPrograms %}
             <a class="dropdown-item"
                 href="#"
@@ -24,10 +24,10 @@
         {% endfor %}
     </div>
 </div>
-<a href="/workflow/stakeholder_add/0/" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add stakeholder</a>
+<a href="/workflow/stakeholder_add/0/" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add stakeholder" %}</a>
 <br/>
 
-<a href="/workflow/export_stakeholders_list/{{ program_id }}/" class="btn btn-sm btn-primary float-right"><span class="glyphicon glyphicon-export"></span> Export to Excel</a>&nbsp;
+<a href="/workflow/export_stakeholders_list/{{ program_id }}/" class="btn btn-sm btn-primary float-right"><span class="glyphicon glyphicon-export"></span> {% trans "Export to Excel" %}</a>&nbsp;
 <br><br>
 
 <table
@@ -67,35 +67,35 @@
                 retrieve: true,
                 data: stakeholder_records,
                 columns: [
-                    { title: "Date created", data: "create_date",
+                    { title: "{% trans 'Date created'|escapejs %}", data: "create_date",
                         "mRender": function (data, sector, row) {
                                 return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + formatDate(row.create_date) + '</a>';
                             },
-                        "defaultContent": "<i>Not set</i>"},
-                    { title: "Stakeholder name", data: "name",
+                        "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'Stakeholder name'|escapejs %}", data: "name",
                         "mRender": function (data, name, row) {
                                 return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + row.name + '</a>';
                             },
-                        "defaultContent": "<i>Not set</i>"},
-                    { title: "Stakeholder type", data: "type__name",
+                        "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'Stakeholder type'|escapejs %}", data: "type__name",
                         "mRender": function (data, type, row) {
                                 return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + row.type__name + '</a>';
                             },
-                        "defaultContent": "<i>Not set</i>"},
-                    { title: "Sector", data: "sector__sector",
+                        "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'Sector'|escapejs %}", data: "sector__sector",
                             "mRender": function (data, sector, row) {
                                 return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + row.sectors__sector + '</a>';
                             },
-                            "defaultContent": "<i>Not set</i>"
+                            "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"
                         },
                     { title: "",
-                        "defaultContent": "<i>Not set</i>",
+                        "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>",
                         "mRender": function (data, sector, row) {
                                 return '<a href="/workflow/stakeholder_delete/'+row.id+'" class="btn btn-sm btn-text text-danger p-0"><i class="fas fa-trash-alt"></i>&nbsp;Delete Stakeholder</a>';
                             },
                         },
                     { title: "",
-                        "defaultContent": "<i>Not set</i>",
+                        "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>",
                         "mRender": function (data, sector, row) {
                                 return '<a href="/workflow/contact_list/'+row.id+'" class="btn btn-sm btn-text p-0"><i class="fas fa-users"></i>&nbsp;Contacts</a>';
                             },}
