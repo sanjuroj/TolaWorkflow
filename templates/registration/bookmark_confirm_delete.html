@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block page_title %}Bookmark Confirm Delete{% endblock %}
+{% block page_title %}{% trans "Bookmark Confirm Delete" %}{% endblock %}
 
 {% block content %}
 
 <form action="" method="post">{% csrf_token %}
-    <p>Are you sure you want to delete "{{ object }}"?</p>
+    <p>{% trans "Are you sure you want to delete" %} "{{ object }}"?</p>
     <input type="submit" value="Confirm" />
 </form>
 

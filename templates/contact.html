@@ -11,7 +11,7 @@
 {% endif %}
 
 {% block content %}
-	<p>Let us know if you are having a problem or would like to see something change.</p>
+	<p>{% trans "Let us know if you are having a problem or would like to see something change." %}</p>
         {% csrf_token %}
     {% load crispy_forms_tags %}
     {% crispy form form.helper %}
