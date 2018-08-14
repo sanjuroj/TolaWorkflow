@@ -116,8 +116,8 @@
                 buttons: [
                     {
                         extend: 'csv',
-                        title: '{% trans "Indicator Disaggregation Report" %}',
-                        text: '{% trans "Export to CSV" %}',
+                        title: '{% trans "Indicator Disaggregation Report"|escapejs %}',
+                        text: '{% trans "Export to CSV"|escapejs %}',
                         exportOptions: { columns: "thead th:not(.noExport)" }
                     }
                 ]
@@ -141,7 +141,7 @@
             if (programId != undefined && programId > 0) {
                 window.location.href = "/indicators/disrepprint/" + programId + "/";
             } else {
-                alert("{% trans 'Select a program before exporting it to PDF' %}");
+                alert("{% trans 'Select a program before exporting it to PDF'|escapejs %}");
             }
         }
 

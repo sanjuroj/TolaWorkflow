@@ -11,7 +11,7 @@
   }
 </style>
 <script type="text/javascript">
-    $("#id_indicator_data_span_count_" + `{{indicator.id}}`).text("{% trans 'Results' %} ({{ indicator.collecteddata_set.count|default:0 }})" );
+    $("#id_indicator_data_span_count_" + `{{indicator.id}}`).text("{% trans 'Results'|escapejs %} ({{ indicator.collecteddata_set.count|default:0 }})" );
 </script>
 
 <div class="p-3">
