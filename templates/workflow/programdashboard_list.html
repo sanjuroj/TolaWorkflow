@@ -22,7 +22,7 @@
 
   {% if filtered_program %}
   <div class="my-4 text-muted">
-      <p>{% blocktrans %}<em>Filtered by <b>(Program): {{ filtered_program|default_if_none:'' }}</b></em>{% endblock %}</p>
+      <p>{% blocktrans %}<em>Filtered by <b>(Program): {{ filtered_program|default_if_none:'' }}</b></em>{% endblocktrans %}</p>
   </div>
   {% endif %}
     {% for program in getDashboard %}
