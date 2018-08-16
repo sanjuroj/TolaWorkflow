@@ -421,7 +421,7 @@ class IPTT_Mixin(object):
             end_date = start_date + relativedelta(months=+num_months_in_period) + relativedelta(days=-1)
             # print('start_date={}, end_date={}'.format(start_date, end_date))
             if frequency == Indicator.MONTHLY:
-                period_name = datetime.strftime(start_date, "%b %Y") # TODO: localize this date
+                period_name = datetime.strftime(start_date, "%b %Y") #
                 timeperiods["{}".format(period_name)] = [start_date, end_date]
             else:
                 timeperiods["{} {}".format(period_name, i)] = [start_date, end_date]
@@ -677,7 +677,9 @@ class IPTT_Mixin(object):
             # TODO: localize the following dates
             if period == Indicator.MONTHLY:
                 value = "{}".format(
-                    datetime.strftime(periods_date_ranges[name][0], "%b %Y")
+                    formats.date_format(periods_date_ranges[name][0], "MONTH_YEAR_FORMAT").encode('UTF-8')
+                    # this is the date printed to the IPTT
+                    # NOTE encoding
                 )
             else:
                 value = "{} ({} - {})".format(

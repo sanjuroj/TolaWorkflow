@@ -645,20 +645,20 @@ class PeriodicTarget(models.Model):
             return self.period
         if self.start_date and self.end_date:
             return "%s (%s - %s)" % (self.period,
-                                     self.start_date.strftime('%b %d, %Y'),
-                                     self.end_date.strftime('%b %d, %Y'))
+                                     self.start_date.strftime('%b %d, %Y'), # TODO: localize this date
+                                     self.end_date.strftime('%b %d, %Y')) # TODO: localize this date
         return self.period
 
     @property
     def start_date_formatted(self):
         if self.start_date:
-            return self.start_date.strftime('%b %d, %Y').replace(" 0", " ")
+            return self.start_date.strftime('%b %d, %Y').replace(" 0", " ") # TODO: localize this date
         return self.start_date
 
     @property
     def end_date_formatted(self):
         if self.end_date:
-            return self.end_date.strftime('%b %d, %Y').replace(" 0", " ")
+            return self.end_date.strftime('%b %d, %Y').replace(" 0", " ") # TODO: localize this date
         return self.end_date
 
     @property
@@ -785,7 +785,7 @@ class CollectedData(models.Model):
     @property
     def date_collected_formatted(self):
         if self.date_collected:
-            return self.date_collected.strftime('%b %d, %Y').replace(" 0", " ")
+            return self.date_collected.strftime('%b %d, %Y').replace(" 0", " ") # TODO: localize this date
         return self.date_collected
 
     @property
