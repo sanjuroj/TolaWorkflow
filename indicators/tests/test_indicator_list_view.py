@@ -1,12 +1,14 @@
-# from unittest import skip
+from unittest import skip
+import datetime
 
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+
 
 from factories.indicators_models import IndicatorTypeFactory
 from factories.workflow_models import ProgramFactory
 from workflow.models import Country, Program
 from indicators.models import Indicator
-from test.test_utils import TestBase, generate_core_indicator_data
+from tola.test.test_utils import TestBase, generate_core_indicator_data, create_collecteddata
 
 
 class IndicatorListTests(TestBase):
@@ -34,7 +36,7 @@ class IndicatorListTests(TestBase):
 
     def test_get_by_status(self):
         prog_completed = ProgramFactory(name='This fund is completed', funding_status='Completed')
-        prog_closed = ProgramFactory(name='This fund is closed', funding_status='Completed')
+        prog_closed = ProgramFactory(name='This fund is closed', funding_status='Closed')
 
         url = reverse_lazy(self.base_url, args=self.base_args)
         response = self.client.get(url)
@@ -70,11 +72,49 @@ class IndicatorListTests(TestBase):
         response = self.client.get(url)
         self.assertListEqual(sorted([i.id for i in response.context['getIndicators']]), sorted(target_indicators))
 
-        # Sorry about the mess
-        for c in c_params:
-            c_obj = Country.objects.get(country=c[0])
-            c_obj.delete()
-        for p in created_programs:
-            p.delete()
-        for i in created_indicators:
-            i.delete()
+
+class CollectedDataTest(TestBase):
+
+    def setUp(self):
+        super(CollectedDataTest, self).setUp()
+
+        data_values = [
+            [
+                {'target': 100, 'collected_data': (50, 25, 15)},
+                {'target': 100, 'collected_data': (0, 25, 50)},
+                {'target': 100, 'collected_data': (50, 25, 15)},
+                {'target': 100, 'collected_data': (50, 25, 15)},
+            ],
+            [
+                {'target': 200, 'collected_data': (10, 100, 15)},
+                {'target': 200, 'collected_data': (0, 50, 150)},
+                {'target': 200, 'collected_data': (60, 35, 15)},
+                {'target': 200, 'collected_data': (60, 35, 15)},
+            ]
+        ]
+
+        core_params = {'c_params': [('Country1', 'C1')], 'p_count': 1, 'i_count': 2}
+        self.program_ids, self.indicator_ids = generate_core_indicator_data(**core_params)
+        program = Program.objects.get(id=self.program_ids[0])
+        program.reporting_period_start = datetime.date(2016, 3, 1)
+        program.reporting_period_end = datetime.date(2019, 5, 31)
+        program.save()
+        create_collecteddata(self.indicator_ids, data_values)
+
+        self.base_url = 'collected_data_view'
+        self.base_args = [0, 0, 0]
+
+    def test_load_correct_indicator_data(self):
+        # for iid in self.indicator_ids:
+        #     indicator = Indicator.objects.get(pk=iid)
+        #     print "Indicator: ", indicator.name
+        #     for pt in indicator.periodictargets.all():
+        #         print 'pt name=', pt.period, "| pt target=", pt.target
+        #         for cd in pt.collecteddata_set.all():
+        #             print 'collected data', cd.achieved, "| date", cd.date_collected
+
+        program = Program.objects.get(id=self.program_ids[0])
+        indicator = Indicator.objects.get(id=self.indicator_ids[0])
+        url = reverse(self.base_url, args=[indicator.id, program.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)

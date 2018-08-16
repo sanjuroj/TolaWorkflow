@@ -99,6 +99,17 @@ class CollectedDataFactory(DjangoModelFactory):
     indicator = SubFactory(IndicatorFactory)
     achieved = 10
 
+    @post_generation
+    def sites(self, create, extracted, **kwargs):
+        if not create:
+            # Simple build, do nothing.
+            return
+
+        if type(extracted) is list:
+            # A list of program were passed in, use them
+            for site in extracted:
+                self.site.add(site)
+
 
 class IndicatorTypeFactory(DjangoModelFactory):
     class Meta:
