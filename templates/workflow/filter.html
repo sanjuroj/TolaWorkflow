@@ -1,6 +1,6 @@
 {% load i18n %}
 <nav class="navbar navbar-expand-sm bg-gray-lighter text-muted" style="position: relative;">
-    <div class="pr-3">Filter by:</div>
+    <div class="pr-3">{% trans "Filter by:" %}</div>
     <ul class="navbar-nav">
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle btn btn-small btn-secondary mr-2"
@@ -8,9 +8,9 @@
                 id="programDropdown"
                 data-toggle="dropdown"
                 aria-haspopup="true"
-                aria-expanded="false">Programs</a>
+                aria-expanded="false">{% trans "Programs" %}</a>
             <div class="dropdown-menu" role="menu" aria-labelledby="programDropdown">
-                <a class="dropdown-item" href="#" onclick="program_filter(0)">-- All --</a>
+                <a class="dropdown-item" href="#" onclick="program_filter(0)">-- {% trans "All" %} --</a>
                 {% for program in getPrograms %}
                     <a class="dropdown-item"
                         href="#"
@@ -24,9 +24,9 @@
                 id="projectDropdown"
                 data-toggle="dropdown"
                 aria-haspopup="true"
-                aria-expanded="false">Project Status</a>
+                aria-expanded="false">{% trans "Project Status" %}</a>
             <div class="dropdown-menu" role="menu" aria-labelledby="projectDropdown">
-                <a class="dropdown-item" href="/workflow/dashboard/0">-- All --</a>
+                <a class="dropdown-item" href="/workflow/dashboard/0">-- {% trans "All" %} --</a>
                 {% for status in APPROVALS %}
                     <a class="dropdown-item"
                         tabindex="-1"
