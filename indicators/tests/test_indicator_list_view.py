@@ -9,6 +9,7 @@ from factories.workflow_models import ProgramFactory
 from workflow.models import Country, Program
 from indicators.models import Indicator
 from tola.test.test_utils import TestBase, generate_core_indicator_data, create_collecteddata
+from tola.test.scenario_definitions import PTValues, IndicatorValues
 
 
 class IndicatorListTests(TestBase):
@@ -118,3 +119,33 @@ class CollectedDataTest(TestBase):
         url = reverse(self.base_url, args=[indicator.id, program.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    # #### Calculation scenarios will be important for these tests
+    # #### (e.g. cumulative vs. non-cumulative, % vs not, etc...)
+
+    # Does the actual column accumulate to the right number?
+
+    def test_actual_values_correct(self):
+
+        pts = [PTValues(target=100, collected_data=[1, 2, 3])]
+        pts.append(PTValues(target=100, collected_data=[4, 5, 6]))
+        i1 = IndicatorValues(name='i1', periodic_targets=pts)
+        pts = [PTValues(target=200, collected_data=[11, 22, 33])]
+        pts.append(PTValues(target=100, collected_data=[44, 55, 66]))
+        i2 = IndicatorValues(name='i2', periodic_targets=pts)
+        print i1, i1.collected_data_sum, i2, i2.collected_data_sum
+
+
+    @skip('')
+    # Is the % met calculation correct
+    def test_percent_met_value_correct():
+        pass
+
+
+"""
+Completeness checks, not as reliant on the right suite of scenarios
+- Do all of the periodic targets appear with the right dates, titles, and targets?
+- Are all of the results delivered to the front end.
+- Is all of the evidence delivered to the front end.
+- Does the LOP row contain the right target value
+"""

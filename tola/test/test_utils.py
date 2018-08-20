@@ -67,7 +67,7 @@ def generate_core_indicator_data(c_params=None, p_count=3, i_count=4):
 def create_collecteddata(indicator_ids, data_values):
     # TODO: enable wrapping of target creation to handle mismatch between target and indicator counts
     """
-    The data_values parameter should be an ordered iterable (OI) of an OI of dicts, as shown in the example below, and
+    The data_values parameter should be a specific structure, as outlined in tola.test.scenario_definitions an ordered iterable (OI) of an OI of dicts, as shown in the example below, and
     the dicts should have the structure provided in the example.  Each element of the second level OI represents
     an indicator's targets, and as such the number of second level OI's should be same as the count of indicators.
     Each dict represents a periodic target and its associated collected data records, so the count of dicts
