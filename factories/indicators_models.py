@@ -133,6 +133,10 @@ class StrategicObjective(DjangoModelFactory):
     name = Sequence(lambda n: 'Stratigic Objective {0}'.format(n))
 
 
-class PeriodicTarget(DjangoModelFactory):
+class PeriodicTargetFactory(DjangoModelFactory):
     class Meta:
         model = PeriodicTargetM
+
+    target = 0
+    period = lazy_attribute(
+        lambda pt: 'PeriodicTarget for %s: %s - %s' % (pt.indicator.name, pt.start_date, pt.end_date))

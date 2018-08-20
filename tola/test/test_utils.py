@@ -7,7 +7,7 @@ from django.test import TestCase, RequestFactory, Client
 from django.utils import timezone
 
 from factories import UserFactory
-from factories.indicators_models import IndicatorFactory
+from factories.indicators_models import IndicatorFactory, PeriodicTargetFactory
 from factories.workflow_models import ProgramFactory, TolaUserFactory, CountryFactory
 from indicators.models import Indicator, PeriodicTarget, CollectedData
 from indicators.views.views_reports import IPTT_ReportView
@@ -120,10 +120,8 @@ def make_targets(program, indicator):
     targets_json = generate_periodic_targets(
         tf=indicator.target_frequency, start_date=program.reporting_period_start, numTargets=num_periods)
     for i, pt in enumerate(targets_json):
-        PeriodicTarget.objects.create(
+        PeriodicTargetFactory(
             indicator=indicator,
-            period='%s pt %s-%s' % (indicator.name, pt['start_date'], pt['end_date']),
-            target=0,
             customsort=i,
             start_date=pt['start_date'],
             end_date=pt['end_date'],
