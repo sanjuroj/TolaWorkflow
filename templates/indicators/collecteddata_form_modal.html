@@ -54,10 +54,12 @@
             });
 
             // ... or click outside datepicker to close
-            // TODO: catch montharrows in the datepicker
             $(window).on('click', function(e){
                 e.stopPropagation();
-                if (e.target.id != 'id_date_collected') {
+                if (e.target.id == 'id_date_collected' || e.target.className.includes('ui-icon-circle-triangle')) {
+                    // className is not a robust target
+                    return;
+                } else {
                     date_collected_picker.hide();
                 }
             });
