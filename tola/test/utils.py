@@ -1,20 +1,21 @@
-import dateutil
+import json
 import datetime
 
 from factory import Sequence
 
 from django.test import TestCase, RequestFactory, Client
-from django.utils import timezone
+
+from django.urls import reverse_lazy
 
 from factories import UserFactory
 from factories.indicators_models import IndicatorFactory, PeriodicTargetFactory
 from factories.workflow_models import ProgramFactory, TolaUserFactory, CountryFactory
 from indicators.models import Indicator, PeriodicTarget, CollectedData
-from indicators.views.views_reports import IPTT_ReportView
-from indicators.views.views_indicators import generate_periodic_targets
+
+from tola.test.scenario_definitions import scenarios, instantiate_scenario, make_targets
 
 
-class TestBase(TestCase):
+class TestBase(object):
     fixtures = ['indicatortype.json', 'levels.json']
 
     def setUp(self):
@@ -36,6 +37,22 @@ class TestBase(TestCase):
         self.client.login(username="IC", password='password')
 
 
+class ScenarioBase(TestBase):
+
+    def setUp(self):
+        super(ScenarioBase, self).setUp()
+        self.indicator.delete()
+        instantiate_scenario(self.program.id, self.scenario)
+        self.indicators = Indicator.objects.all()
+        self.url = reverse_lazy(self.url_name, args=[self.indicators.first().id, self.program.id])
+        self.response = self.client.get(self.url)
+
+
+    def test_collected_data_sum_correct(self):
+        data = self.response.context.pop()
+        self.assertEqual(self.scenario[0].collected_data_sum, data['grand_achieved_sum'])
+
+
 def generate_core_indicator_data(c_params=None, p_count=3, i_count=4):
     """
     Create up to 5 countries and an arbitrary number of related programs and indicators
@@ -48,6 +65,7 @@ def generate_core_indicator_data(c_params=None, p_count=3, i_count=4):
 
     program_ids = []
     indicator_ids = []
+
     for i in range(len(c_params)):
         country = CountryFactory(country=c_params[i][0], code=c_params[i][1])
         programs = ProgramFactory.create_batch(
@@ -67,7 +85,7 @@ def generate_core_indicator_data(c_params=None, p_count=3, i_count=4):
 def create_collecteddata(indicator_ids, data_values):
     # TODO: enable wrapping of target creation to handle mismatch between target and indicator counts
     """
-    The data_values parameter should be a specific structure, as outlined in tola.test.scenario_definitions an ordered iterable (OI) of an OI of dicts, as shown in the example below, and
+    The data_values parameter should be a specific structure, as outlined in tola.util.scenario_definitions an ordered iterable (OI) of an OI of dicts, as shown in the example below, and
     the dicts should have the structure provided in the example.  Each element of the second level OI represents
     an indicator's targets, and as such the number of second level OI's should be same as the count of indicators.
     Each dict represents a periodic target and its associated collected data records, so the count of dicts
@@ -112,17 +130,3 @@ def create_collecteddata(indicator_ids, data_values):
             pt_index += 1
 
         indicator_index += 1
-
-
-def make_targets(program, indicator):
-    num_periods = IPTT_ReportView._get_num_periods(
-        program.reporting_period_start, program.reporting_period_end, indicator.target_frequency)
-    targets_json = generate_periodic_targets(
-        tf=indicator.target_frequency, start_date=program.reporting_period_start, numTargets=num_periods)
-    for i, pt in enumerate(targets_json):
-        PeriodicTargetFactory(
-            indicator=indicator,
-            customsort=i,
-            start_date=pt['start_date'],
-            end_date=pt['end_date'],
-            edit_date=timezone.now())

@@ -2,17 +2,17 @@ from unittest import skip
 import datetime
 
 from django.urls import reverse_lazy, reverse
-
+from django.test import TestCase
 
 from factories.indicators_models import IndicatorTypeFactory
 from factories.workflow_models import ProgramFactory
 from workflow.models import Country, Program
 from indicators.models import Indicator
-from tola.test.test_utils import TestBase, generate_core_indicator_data, create_collecteddata
-from tola.test.scenario_definitions import PTValues, IndicatorValues
+from tola.test.utils import TestBase, ScenarioBase, generate_core_indicator_data, create_collecteddata
+from tola.test.scenario_definitions import scenarios, instantiate_scenario
 
 
-class IndicatorListTests(TestBase):
+class IndicatorListTests(TestBase, TestCase):
 
     def setUp(self):
         super(IndicatorListTests, self).setUp()
@@ -74,7 +74,7 @@ class IndicatorListTests(TestBase):
         self.assertListEqual(sorted([i.id for i in response.context['getIndicators']]), sorted(target_indicators))
 
 
-class CollectedDataTest(TestBase):
+class CollectedDataTest(TestBase, TestCase):
 
     def setUp(self):
         super(CollectedDataTest, self).setUp()
@@ -105,6 +105,7 @@ class CollectedDataTest(TestBase):
         self.base_url = 'collected_data_view'
         self.base_args = [0, 0, 0]
 
+
     def test_load_correct_indicator_data(self):
         # for iid in self.indicator_ids:
         #     indicator = Indicator.objects.get(pk=iid)
@@ -123,23 +124,25 @@ class CollectedDataTest(TestBase):
     # #### Calculation scenarios will be important for these tests
     # #### (e.g. cumulative vs. non-cumulative, % vs not, etc...)
 
-    # Does the actual column accumulate to the right number?
 
-    def test_actual_values_correct(self):
+class ScenarioTest(ScenarioBase, TestCase):
 
-        pts = [PTValues(target=100, collected_data=[1, 2, 3])]
-        pts.append(PTValues(target=100, collected_data=[4, 5, 6]))
-        i1 = IndicatorValues(name='i1', periodic_targets=pts)
-        pts = [PTValues(target=200, collected_data=[11, 22, 33])]
-        pts.append(PTValues(target=100, collected_data=[44, 55, 66]))
-        i2 = IndicatorValues(name='i2', periodic_targets=pts)
-        print i1, i1.collected_data_sum, i2, i2.collected_data_sum
+    def setUp(self):
+        self.scenario = scenarios['vanilla']
+        self.url_name = 'collected_data_view'
+        super(ScenarioTest, self).setUp()
+
+    def test_first(self):
+        scenario = scenarios['vanilla']
 
 
-    @skip('')
-    # Is the % met calculation correct
-    def test_percent_met_value_correct():
-        pass
+
+    # def test_second(self):
+    #     instantiate_scenario(self.program, scenarios['vanilla'])
+    #     print 'after after count', Indicator.objects.count()
+    #     print 'intest count', Indicator.objects.count()
+
+
 
 
 """

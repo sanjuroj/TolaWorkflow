@@ -1,6 +1,6 @@
 from unittest import skip
 
-from tola.test.test_utils import TestBase
+from tola.test.utils import TestBase
 from factories.workflow_models import SiteProfileFactory
 from factories.indicators_models import IndicatorFactory, CollectedDataFactory
 from workflow.models import SiteProfile
