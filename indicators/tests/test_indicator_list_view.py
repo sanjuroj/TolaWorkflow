@@ -8,8 +8,9 @@ from factories.indicators_models import IndicatorTypeFactory
 from factories.workflow_models import ProgramFactory
 from workflow.models import Country, Program
 from indicators.models import Indicator
-from tola.test.utils import TestBase, ScenarioBase, generate_core_indicator_data, create_collecteddata
-from tola.test.scenario_definitions import scenarios, instantiate_scenario
+from tola.test.base_classes import TestBase, ScenarioBase
+from tola.test.scenario_definitions import indicator_scenarios
+from tola.test.utils import instantiate_scenario, generate_core_indicator_data
 
 
 class IndicatorListTests(TestBase, TestCase):
@@ -79,32 +80,17 @@ class CollectedDataTest(TestBase, TestCase):
     def setUp(self):
         super(CollectedDataTest, self).setUp()
 
-        data_values = [
-            [
-                {'target': 100, 'collected_data': (50, 25, 15)},
-                {'target': 100, 'collected_data': (0, 25, 50)},
-                {'target': 100, 'collected_data': (50, 25, 15)},
-                {'target': 100, 'collected_data': (50, 25, 15)},
-            ],
-            [
-                {'target': 200, 'collected_data': (10, 100, 15)},
-                {'target': 200, 'collected_data': (0, 50, 150)},
-                {'target': 200, 'collected_data': (60, 35, 15)},
-                {'target': 200, 'collected_data': (60, 35, 15)},
-            ]
-        ]
-
         core_params = {'c_params': [('Country1', 'C1')], 'p_count': 1, 'i_count': 2}
         self.program_ids, self.indicator_ids = generate_core_indicator_data(**core_params)
         program = Program.objects.get(id=self.program_ids[0])
         program.reporting_period_start = datetime.date(2016, 3, 1)
         program.reporting_period_end = datetime.date(2019, 5, 31)
         program.save()
-        create_collecteddata(self.indicator_ids, data_values)
+        # create_collecteddata(self.indicator_ids, data_values)
+        instantiate_scenario(program.id, indicator_scenarios['scenario_2i_5pt_default'], self.indicator_ids)
 
         self.base_url = 'collected_data_view'
         self.base_args = [0, 0, 0]
-
 
     def test_load_correct_indicator_data(self):
         # for iid in self.indicator_ids:
@@ -125,24 +111,12 @@ class CollectedDataTest(TestBase, TestCase):
     # #### (e.g. cumulative vs. non-cumulative, % vs not, etc...)
 
 
-class ScenarioTest(ScenarioBase, TestCase):
+class DefaultTest(ScenarioBase, TestCase):
 
     def setUp(self):
-        self.scenario = scenarios['vanilla']
+        self.scenario = indicator_scenarios['scenario_1i_5pt_default']
         self.url_name = 'collected_data_view'
-        super(ScenarioTest, self).setUp()
-
-    def test_first(self):
-        scenario = scenarios['vanilla']
-
-
-
-    # def test_second(self):
-    #     instantiate_scenario(self.program, scenarios['vanilla'])
-    #     print 'after after count', Indicator.objects.count()
-    #     print 'intest count', Indicator.objects.count()
-
-
+        super(DefaultTest, self).setUp()
 
 
 """

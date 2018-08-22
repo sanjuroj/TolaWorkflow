@@ -1,58 +1,89 @@
-import json
-import datetime
-
 from factory import Sequence
 
-from django.test import TestCase, RequestFactory, Client
+from django.utils import timezone
+from django.core.exceptions import ImproperlyConfigured
 
-from django.urls import reverse_lazy
-
-from factories import UserFactory
-from factories.indicators_models import IndicatorFactory, PeriodicTargetFactory
-from factories.workflow_models import ProgramFactory, TolaUserFactory, CountryFactory
-from indicators.models import Indicator, PeriodicTarget, CollectedData
-
-from tola.test.scenario_definitions import scenarios, instantiate_scenario, make_targets
-
-
-class TestBase(object):
-    fixtures = ['indicatortype.json', 'levels.json']
-
-    def setUp(self):
-        self.user = UserFactory(first_name="Indicator", last_name="CreateTest", username="IC")
-        self.user.set_password('password')
-        self.user.save()
-        self.tola_user = TolaUserFactory(user=self.user)
-        self.request_factory = RequestFactory()
-        self.country = self.tola_user.country
-        self.program = ProgramFactory(
-            funding_status='Funded', reporting_period_start='2016-03-01', reporting_period_end='2020-05-01')
-        self.program.country.add(self.country)
-        self.program.save()
-        self.indicator = IndicatorFactory(
-            program=self.program, unit_of_measure=Indicator.NUMBER, is_cumulative=False,
-            direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE, target_frequency=Indicator.ANNUAL)
-
-        self.client = Client()
-        self.client.login(username="IC", password='password')
+from factories.indicators_models import IndicatorFactory, PeriodicTargetFactory, CollectedDataFactory
+from factories.workflow_models import ProgramFactory, CountryFactory
+from indicators.views.views_reports import IPTT_ReportView
+from indicators.views.views_indicators import generate_periodic_targets
+from indicators.models import Indicator, PeriodicTarget
+from workflow.models import Program
 
 
-class ScenarioBase(TestBase):
+class PeriodicTargetValues(object):
 
-    def setUp(self):
-        super(ScenarioBase, self).setUp()
-        self.indicator.delete()
-        instantiate_scenario(self.program.id, self.scenario)
-        self.indicators = Indicator.objects.all()
-        self.url = reverse_lazy(self.url_name, args=[self.indicators.first().id, self.program.id])
-        self.response = self.client.get(self.url)
+    def __init__(self, target=0, collected_data=None):
+        self.target = target
+        self.collected_data = collected_data or []
 
-
-    def test_collected_data_sum_correct(self):
-        data = self.response.context.pop()
-        self.assertEqual(self.scenario[0].collected_data_sum, data['grand_achieved_sum'])
+    @property
+    def collected_data_sum(self):
+        return sum(self.collected_data)
 
 
+class IndicatorValues(object):
+
+    def __init__(
+            self, periodic_targets, unit_of_measure=Indicator.NUMBER, is_cumulative=False,
+            direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE, target_frequency=Indicator.ANNUAL):
+        self.periodic_targets = periodic_targets
+        self.is_cumulative = is_cumulative
+        self.direction_of_change = direction_of_change
+        self.target_frequency = target_frequency
+
+    @property
+    def target_sum(self):
+        return sum([pt.target for pt in self.periodic_targets])
+
+    @property
+    def collected_data_sum(self):
+        return sum([pt.collected_data_sum for pt in self.periodic_targets])
+
+    def __unicode__(self):
+
+        return '%s periodic targets' % (len(self.periodic_targets))
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
+
+# Generate database objects for the given scenario
+def instantiate_scenario(program_id, scenario, existing_indicator_ids=None):
+    if existing_indicator_ids and len(scenario) != len(existing_indicator_ids):
+        raise ImproperlyConfigured(
+            "Can't instatiate scenario, indicator count (%s) doesn't match scenario indcator count (%s)" %
+            (len(existing_indicator_ids), len(scenario)))
+
+    indicator_ids = []
+    program = Program.objects.get(id=program_id)
+    for n, indicator_value_set in enumerate(scenario):
+        if existing_indicator_ids:
+            indicator = Indicator.objects.get(id=existing_indicator_ids[n])
+        else:
+            indicator = IndicatorFactory(
+                program=program,
+                is_cumulative=indicator_value_set.is_cumulative,
+                direction_of_change=indicator_value_set.direction_of_change,
+                target_frequency=indicator_value_set.target_frequency)
+        indicator_ids.append(indicator.id)
+        make_targets(program, indicator)
+        periodic_targets = PeriodicTarget.objects.filter(indicator__id=indicator.id)
+        if len(periodic_targets) != len(indicator_value_set.periodic_targets):
+            raise ImproperlyConfigured(
+                "Scenario's periodic target count (%s) doesn't match program-based periodic target count (%s)." %
+                (len(indicator_value_set.periodic_targets), len(periodic_targets)))
+        for i, pt in enumerate(periodic_targets):
+            pt.target = indicator_value_set.periodic_targets[i].target
+            pt.save()
+            for cd_value in indicator_value_set.periodic_targets[i].collected_data:
+                CollectedDataFactory(
+                    periodic_target=pt, indicator=indicator, program=program, achieved=cd_value)
+
+    return indicator_ids
+
+
+# Generate anonymous indicators and programs
 def generate_core_indicator_data(c_params=None, p_count=3, i_count=4):
     """
     Create up to 5 countries and an arbitrary number of related programs and indicators
@@ -82,51 +113,15 @@ def generate_core_indicator_data(c_params=None, p_count=3, i_count=4):
     return program_ids, indicator_ids
 
 
-def create_collecteddata(indicator_ids, data_values):
-    # TODO: enable wrapping of target creation to handle mismatch between target and indicator counts
-    """
-    The data_values parameter should be a specific structure, as outlined in tola.util.scenario_definitions an ordered iterable (OI) of an OI of dicts, as shown in the example below, and
-    the dicts should have the structure provided in the example.  Each element of the second level OI represents
-    an indicator's targets, and as such the number of second level OI's should be same as the count of indicators.
-    Each dict represents a periodic target and its associated collected data records, so the count of dicts
-    for each second level OI should match the number of targets for its corresponding indicator.
-
-    Example data_values for 2 indicators:
-
-    data_values = [
-        [
-            {'target': 100, 'collected_data': (50, 25, 15)},
-            {'target': 100, 'collected_data': (0, 25, 50)},
-            {'target': 100, 'collected_data': (50, 25, 15)},
-            {'target': 100, 'collected_data': (50, 25, 15)},
-        ],
-        [
-            {'target': 200, 'collected_data': (10, 100, 15)},
-            {'target': 200, 'collected_data': (0, 50, 150)},
-            {'target': 200, 'collected_data': (60, 35, 15)},
-            {'target': 200, 'collected_data': (60, 35, 15)},
-        ]
-    ]
-    """
-
-    indicator_index = 0
-
-    for iid in indicator_ids:
-
-        indicator = Indicator.objects.get(pk=iid)
-        program = indicator.program.first()
-        make_targets(program, indicator)
-        periodic_targets = PeriodicTarget.objects.filter(indicator=indicator)
-
-        pt_index = 0
-        for pt in periodic_targets:
-            pt.target = data_values[indicator_index][pt_index]['target']
-            pt.save()
-
-            for i, cd in enumerate(data_values[indicator_index][pt_index]['collected_data']):
-                cd_date = pt.start_date + datetime.timedelta(days=2+i)
-                CollectedData.objects.create(
-                    periodic_target=pt, date_collected=cd_date, achieved=cd, indicator=indicator)
-            pt_index += 1
-
-        indicator_index += 1
+def make_targets(program, indicator):
+    num_periods = IPTT_ReportView._get_num_periods(
+        program.reporting_period_start, program.reporting_period_end, indicator.target_frequency)
+    targets_json = generate_periodic_targets(
+        tf=indicator.target_frequency, start_date=program.reporting_period_start, numTargets=num_periods)
+    for i, pt in enumerate(targets_json):
+        PeriodicTargetFactory(
+            indicator=indicator,
+            customsort=i,
+            start_date=pt['start_date'],
+            end_date=pt['end_date'],
+            edit_date=timezone.now())
