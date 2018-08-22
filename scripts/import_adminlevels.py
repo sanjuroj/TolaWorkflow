@@ -18,6 +18,7 @@ def run(*args):
         ('provinces', 0), ('districts', 0), ('admin level 3s', 0),
         ('villages', 0), ])
     skipped = {}
+    blank_values = 0
 
     with open(args[0], 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='"')
@@ -25,21 +26,33 @@ def run(*args):
             try:
                 c = Country.objects.get(country=row[0])
 
-                p, created = Province.objects.get_or_create(name=row[1], country=c)
-                if created:
-                    counts['provinces'] += 1
+                if row[1]:
+                    p, created = Province.objects.get_or_create(name=row[1], country=c)
+                    if created:
+                        counts['provinces'] += 1
+                else:
+                    blank_values += 1
 
-                d, created = District.objects.get_or_create(name=row[2], province=p)
-                if created:
-                    counts['districts'] += 1
+                if row[2]:
+                    d, created = District.objects.get_or_create(name=row[2], province=p)
+                    if created:
+                        counts['districts'] += 1
+                else:
+                    blank_values += 1
 
-                a3, created = AdminLevelThree.objects.get_or_create(name=row[3], district=d)
-                if created:
-                    counts['admin level 3s'] += 1
+                if row[3]:
+                    a3, created = AdminLevelThree.objects.get_or_create(name=row[3], district=d)
+                    if created:
+                        counts['admin level 3s'] += 1
+                else:
+                    blank_values += 1
 
-                v, created = Village.objects.get_or_create(name=row[4], admin_3=a3, district=d)
-                if created:
-                    counts['villages'] += 1
+                if row[4]:
+                    v, created = Village.objects.get_or_create(name=row[4], admin_3=a3, district=d)
+                    if created:
+                        counts['villages'] += 1
+                else:
+                    blank_values += 1
 
             except IndexError:
                 pass
@@ -56,3 +69,5 @@ def run(*args):
         for country in sorted(skipped.keys()):
             print "Couldn't find the country \"%s\" in the database. Skipped %s rows associated with %s." % (
                 country, skipped[country], country)
+    if blank_values > 0:
+        print "Skipped %s blank values" % blank_values
