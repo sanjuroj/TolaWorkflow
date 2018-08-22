@@ -498,7 +498,7 @@ class IPTT_Mixin(object):
 
         try:
             filters['indicator_type__in'] = data['ind_type'] if isinstance(data['ind_type'], list) else [
-                data['ind_typ']]
+                data['ind_type']]
         except KeyError:
             pass
 
