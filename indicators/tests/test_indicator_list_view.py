@@ -1,4 +1,3 @@
-from unittest import skip
 import datetime
 
 from django.urls import reverse_lazy, reverse
@@ -79,50 +78,29 @@ class CollectedDataTest(TestBase, TestCase):
 
     def setUp(self):
         super(CollectedDataTest, self).setUp()
-
         core_params = {'c_params': [('Country1', 'C1')], 'p_count': 1, 'i_count': 2}
         self.program_ids, self.indicator_ids = generate_core_indicator_data(**core_params)
         program = Program.objects.get(id=self.program_ids[0])
         program.reporting_period_start = datetime.date(2016, 3, 1)
         program.reporting_period_end = datetime.date(2019, 5, 31)
         program.save()
-        # create_collecteddata(self.indicator_ids, data_values)
-        instantiate_scenario(program.id, indicator_scenarios['scenario_2i_5pt_default'], self.indicator_ids)
+        instantiate_scenario(
+            program.id, indicator_scenarios['scenario_2i-default_4pt_3cd-default'], self.indicator_ids)
 
         self.base_url = 'collected_data_view'
         self.base_args = [0, 0, 0]
 
     def test_load_correct_indicator_data(self):
-        # for iid in self.indicator_ids:
-        #     indicator = Indicator.objects.get(pk=iid)
-        #     print "Indicator: ", indicator.name
-        #     for pt in indicator.periodictargets.all():
-        #         print 'pt name=', pt.period, "| pt target=", pt.target
-        #         for cd in pt.collecteddata_set.all():
-        #             print 'collected data', cd.achieved, "| date", cd.date_collected
-
         program = Program.objects.get(id=self.program_ids[0])
         indicator = Indicator.objects.get(id=self.indicator_ids[0])
         url = reverse(self.base_url, args=[indicator.id, program.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-    # #### Calculation scenarios will be important for these tests
-    # #### (e.g. cumulative vs. non-cumulative, % vs not, etc...)
 
-
-class DefaultTest(ScenarioBase, TestCase):
+class DefaultScenarioTest(ScenarioBase, TestCase):
 
     def setUp(self):
-        self.scenario = indicator_scenarios['scenario_1i_5pt_default']
+        self.scenario = indicator_scenarios['scenario_1i-default_5pt_3cd-default']
         self.url_name = 'collected_data_view'
-        super(DefaultTest, self).setUp()
-
-
-"""
-Completeness checks, not as reliant on the right suite of scenarios
-- Do all of the periodic targets appear with the right dates, titles, and targets?
-- Are all of the results delivered to the front end.
-- Is all of the evidence delivered to the front end.
-- Does the LOP row contain the right target value
-"""
+        super(DefaultScenarioTest, self).setUp()

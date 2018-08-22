@@ -41,14 +41,13 @@ class IndicatorValues(object):
         return sum([pt.collected_data_sum for pt in self.periodic_targets])
 
     def __unicode__(self):
-
-        return '%s periodic targets' % (len(self.periodic_targets))
+        return 'Indicator with %s periodic targets' % (len(self.periodic_targets))
 
     def __str__(self):
         return unicode(self).encode('utf-8')
 
 
-# Generate database objects for the given scenario
+# Load scenario values into the database
 def instantiate_scenario(program_id, scenario, existing_indicator_ids=None):
     if existing_indicator_ids and len(scenario) != len(existing_indicator_ids):
         raise ImproperlyConfigured(
