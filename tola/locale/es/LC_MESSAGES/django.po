@@ -725,29 +725,29 @@ msgstr "Filtrar informes del programa"
 
 #: templates/400.html:9 templates/404.html:9
 msgid "This is not the page you were looking for, you may be lost."
-msgstr ""
+msgstr "XXX"
 
 #: templates/403.html:4
 msgid "Addtional Permissions Required"
-msgstr ""
+msgstr "XXX"
 
 #: templates/403.html:6
 msgid "You don't appear to have the proper permissions to access this page."
-msgstr ""
+msgstr "XXX"
 
 #: templates/403.html:10
 msgid ""
 "Please check with your organization or country admin if you think you should "
 "have access to this section."
-msgstr ""
+msgstr "XXX"
 
 #: templates/404.html:4 templates/404.html:6
 msgid "Page Not found"
-msgstr ""
+msgstr "XXX"
 
 #: templates/500.html:86
 msgid "Whoops!"
-msgstr ""
+msgstr "XXX"
 
 #: templates/500.html:88
 #, fuzzy
@@ -759,7 +759,7 @@ msgstr "¡Algo salió mal!"
 msgid ""
 "There was a problem loading this page.  Please notify a systems "
 "administrator if you think you should not be seeing this page."
-msgstr ""
+msgstr "XXX"
 
 #: templates/base.html:84
 msgid "Browse"
@@ -845,7 +845,7 @@ msgstr "Realimentación"
 msgid ""
 "Let us know if you are having a problem or would like to see something "
 "change."
-msgstr ""
+msgstr "XXX"
 
 #: templates/customdashboard/program_list.html:4
 #: templates/customdashboard/program_list.html:5
@@ -2115,7 +2115,7 @@ msgstr "Documentación"
 #: templates/workflow/documentation_popup_form.html:11
 #: templates/workflow/documentation_popup_list.html:11
 msgid "Success!"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/documentation_agreement_confirm_delete.html:34
 #, fuzzy
@@ -2125,7 +2125,7 @@ msgstr "Documentación"
 
 #: templates/workflow/documentation_agreement_confirm_delete.html:42
 msgid "Cancel"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/documentation_confirm_delete.html:3
 #, fuzzy
@@ -2143,7 +2143,7 @@ msgstr "¿Está seguro que quiere eliminarlo?"
 #: templates/workflow/documentation_confirm_delete.html:9
 #: templates/workflow/siteprofile_confirm_delete.html:9
 msgid "Confirm"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/documentation_form.html:5
 #: templates/workflow/documentation_form.html:6
@@ -2172,12 +2172,12 @@ msgstr "Documentación"
 #: templates/workflow/documentation_popup_form.html:107
 #: templates/workflow/documentation_popup_list.html:62
 msgid "Close"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/documentation_popup_list.html:27
-#, python-format
+#, fuzzy, python-format
 msgid "Documentation List for %(program)s "
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/documentation_popup_list.html:46
 #, fuzzy
@@ -2225,12 +2225,12 @@ msgstr "Rastreo"
 
 #: templates/workflow/program_projects_table.html:15
 msgid "Print View"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/program_projects_table.html:19
 #: templates/workflow/site_projectcomplete.html:38
 msgid "Short"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/program_projects_table.html:19
 #: templates/workflow/site_projectcomplete.html:38
@@ -2245,14 +2245,14 @@ msgid "Project Dashboard"
 msgstr "Tablero del proyecto"
 
 #: templates/workflow/programdashboard_list.html:19
-#, python-format
+#, fuzzy, python-format
 msgid "Filtered by <b>(Status): %(status|default_if_none:'')s</b>"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/programdashboard_list.html:25
-#, python-format
+#, fuzzy, python-format
 msgid "Filtered by <b>(Program): %(filtered_program|default_if_none:'')s</b>"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/programdashboard_list.html:36
 #, fuzzy
@@ -2280,7 +2280,7 @@ msgstr "Código de oficina"
 #: templates/workflow/programdashboard_list.html:47
 #: templates/workflow/site_projectcomplete.html:29
 msgid "Form Version"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/programdashboard_list.html:48
 #: templates/workflow/site_projectcomplete.html:30 workflow/models.py:1020
@@ -2296,7 +2296,7 @@ msgstr "en progreso"
 
 #: templates/workflow/programdashboard_list.html:62
 msgid "No approved projects yet."
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/programdashboard_list.html:68
 #, fuzzy
@@ -2306,7 +2306,7 @@ msgstr "Esperando aprobación"
 
 #: templates/workflow/programdashboard_list.html:74
 msgid "No rejected projects."
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/programdashboard_list.html:80
 #, fuzzy
@@ -2365,13 +2365,13 @@ msgid "Site Data"
 msgstr "Nombre del sitio"
 
 #: templates/workflow/site_indicatordata.html:10
-#, python-format
+#, fuzzy, python-format
 msgid "Indicator Data for <small>%(site)s</small>"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/site_indicatordata.html:19
 msgid "Achieved"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/site_profile_list.html:30
 msgid "Add site"
@@ -2379,7 +2379,7 @@ msgstr "Agregar sitio"
 
 #: templates/workflow/site_profile_list.html:38
 msgid "Site Profile Map and List"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/site_profile_list.html:41
 #, fuzzy
@@ -2433,7 +2433,7 @@ msgstr "Sitio activo"
 
 #: templates/workflow/site_profile_list.html:95
 msgid "Inactive"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/site_profile_list.html:102
 #, fuzzy
@@ -2461,15 +2461,15 @@ msgstr "Tipo de perfil"
 
 #: templates/workflow/site_profile_list.html:126
 msgid "Previous"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/site_profile_list.html:151
 msgid "Next"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/site_profile_list.html:173
 msgid "per page"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/site_profile_map.html:185
 #: templates/workflow/site_profile_map.html:192
@@ -2492,7 +2492,7 @@ msgstr "Sitios de Tola"
 
 #: templates/workflow/site_profile_report.html:41
 msgid "No sites yet."
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/site_projectcomplete.html:7
 #, fuzzy
@@ -2501,9 +2501,9 @@ msgid "Site Projects"
 msgstr "Ver proyecto"
 
 #: templates/workflow/site_projectcomplete.html:11
-#, python-format
+#, fuzzy, python-format
 msgid "Project Data for <small>%(site)s</small>"
-msgstr ""
+msgstr "XXX"
 
 #: templates/workflow/siteprofile_confirm_delete.html:3
 #, fuzzy
@@ -2525,7 +2525,7 @@ msgstr "Parte interesada"
 
 #: tola/admin.py:40
 msgid "Personal info"
-msgstr ""
+msgstr "XXX"
 
 #: tola/admin.py:44
 #, fuzzy
