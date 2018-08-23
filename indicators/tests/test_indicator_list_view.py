@@ -85,7 +85,7 @@ class CollectedDataTest(TestBase, TestCase):
         program.reporting_period_end = datetime.date(2019, 5, 31)
         program.save()
         instantiate_scenario(
-            program.id, indicator_scenarios['scenario_2i-default_4pt_3cd-default'], self.indicator_ids)
+            program.id, indicator_scenarios['scenario_2i-default_4pt_3cd'], self.indicator_ids)
 
         self.base_url = 'collected_data_view'
         self.base_args = [0, 0, 0]
@@ -99,6 +99,13 @@ class CollectedDataTest(TestBase, TestCase):
 
 
 class DefaultScenarioTest(ScenarioBase, TestCase):
+
+    def setUp(self):
+        self.scenario = indicator_scenarios['scenario_1i-default_5pt_3cd']
+        self.url_name = 'collected_data_view'
+        super(DefaultScenarioTest, self).setUp()
+
+class CumulativeScenarioTest(ScenarioBase, TestCase):
 
     def setUp(self):
         self.scenario = indicator_scenarios['scenario_1i-default_5pt_3cd-default']

@@ -38,7 +38,10 @@ class IndicatorValues(object):
 
     @property
     def collected_data_sum(self):
-        return sum([pt.collected_data_sum for pt in self.periodic_targets])
+        if self.is_cumulative:
+            return self.periodic_targets[-1].collected_data_sum()
+        else:
+            return sum([pt.collected_data_sum for pt in self.periodic_targets])
 
     def __unicode__(self):
         return 'Indicator with %s periodic targets' % (len(self.periodic_targets))
