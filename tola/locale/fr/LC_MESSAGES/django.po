@@ -2135,7 +2135,6 @@ msgid "Cancel"
 msgstr "XXX"
 
 #: templates/workflow/documentation_confirm_delete.html:3
-#, fuzzy
 #| msgid "Indicator Confirm Delete"
 msgid "Document Confirm Delete"
 msgstr "Indicateur Confirmer Supprimer"
