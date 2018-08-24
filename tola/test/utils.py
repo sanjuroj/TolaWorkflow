@@ -38,10 +38,12 @@ class IndicatorValues(object):
 
     @property
     def collected_data_sum(self):
-        if self.is_cumulative:
-            return self.periodic_targets[-1].collected_data_sum()
-        else:
-            return sum([pt.collected_data_sum for pt in self.periodic_targets])
+        # For program total or program-to-date, calculation is same if indicator is cumulative or not.
+        return sum([pt.collected_data_sum for pt in self.periodic_targets])
+
+    @property
+    def periodic_target_targets(self):
+        return [pt.target for pt in self.periodic_targets]
 
     def __unicode__(self):
         return 'Indicator with %s periodic targets' % (len(self.periodic_targets))

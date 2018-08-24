@@ -99,15 +99,10 @@ class CollectedDataTest(TestBase, TestCase):
 
 
 class DefaultScenarioTest(ScenarioBase, TestCase):
+    scenario = indicator_scenarios['scenario_1i-default_5pt_3cd']
+    url_name = 'collected_data_view'
 
-    def setUp(self):
-        self.scenario = indicator_scenarios['scenario_1i-default_5pt_3cd']
-        self.url_name = 'collected_data_view'
-        super(DefaultScenarioTest, self).setUp()
 
 class CumulativeScenarioTest(ScenarioBase, TestCase):
-
-    def setUp(self):
-        self.scenario = indicator_scenarios['scenario_1i-default_5pt_3cd-default']
-        self.url_name = 'collected_data_view'
-        super(DefaultScenarioTest, self).setUp()
+    scenario = indicator_scenarios['scenario_1i-cumulative_5pt_3cd']
+    url_name = 'collected_data_view'

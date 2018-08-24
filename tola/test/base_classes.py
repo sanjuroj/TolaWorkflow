@@ -37,6 +37,14 @@ class TestBase(object):
 
 class ScenarioBase(TestBase):
 
+    @property
+    def scenario(self):
+        raise ImproperlyConfigured("A value for scenario hasn't been set")
+
+    @property
+    def url_name(self):
+        raise ImproperlyConfigured("A value for the url_name variable hasn't been set")
+
     def setUp(self):
         super(ScenarioBase, self).setUp()
         self.indicator.delete()
@@ -47,13 +55,15 @@ class ScenarioBase(TestBase):
         self.url = reverse_lazy(self.url_name, args=[self.indicators.first().id, self.program.id])
         self.response = self.client.get(self.url)
 
+
     def test_collected_data_sum_correct(self):
         data = self.response.context.pop()
         self.assertEqual(self.scenario[0].collected_data_sum, data['grand_achieved_sum'])
 
-    @skip('')
     def test_periodic_targets_have_correct_values(self):
-        pass
+        scenario_targets = self.scenario[0].periodic_target_targets
+        response_targets = [pt.target for pt in self.response.context['periodictargets']]
+        self.assertEqual(scenario_targets, response_targets)
 
     @skip('')
     def test_result_set_is_correct(self):
@@ -66,3 +76,5 @@ class ScenarioBase(TestBase):
     @skip('')
     def test_lop_row_has_correct_value(self):
         pass
+
+
