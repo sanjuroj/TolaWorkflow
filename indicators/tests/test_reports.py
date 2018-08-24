@@ -7,6 +7,7 @@ from django.test import Client, RequestFactory, TestCase
 from factories.workflow_models import ProgramFactory, UserFactory
 from indicators.models import Indicator
 from indicators.views.views_reports import IPTTReportQuickstartView, IPTT_Mixin
+from indicators.forms import IPTTReportQuickstartForm
 from workflow.models import Program
 
 
@@ -235,17 +236,21 @@ class IPTTReportQuickstartViewTestCase(TestCase):
         pass
 
     @skip('WIP: Currently fails')
+    # TODO: This fails because the form is not valid; unclear to me what
+    # TODO: invalidates the form; see indicators/views/views_reports.py:1088-1091
     def test_post_with_valid_form(self):
         """Does POSTing to iptt_quickstart with valid form data return 302
         and redirect to /indicators/iptt_report/{program_id}/{reporttype}/"""
         p = ProgramFactory()
-        data = {'csrfmiddlewaretoken': 'lolwut?',
-                'program': p.id,
+        data = {'program': p.id,
                 'formprefix': 'targetperiods',
+                'timeframe': 1,
                 'targetperiods': 1,
-                'timeframe': 1, }
+                'numrecentperiods': None,
+                'prefix': 'targetperiods', }
         path = reverse_lazy('iptt_quickstart')
-        response = self.client.post(path, data=data, follow=True)
+
+        response = self.client.post(path, data=data, kwargs=data, follow=True)
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(response.redirect_chain), 1)
