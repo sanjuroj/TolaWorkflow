@@ -69,9 +69,8 @@ class IndicatorTestCase(TestCase):
                  "start_date": "Apr 01, 2019", "end_date": "Mar 31, 2020"}
             ]
         }
-        is_loggedin = self.client.login(username='joe', password='mercy')
-        res = self.client.post(reverse('indicator_update',
-                                       kwargs={'pk': self.indicator.id}), data)
+        self.client.login(username='joe', password='mercy')
+        res = self.client.post(reverse('indicator_update', kwargs={'pk': self.indicator.id}), data)
         self.assertEqual(res.status_code, 200)
 
     def ztest_collected_exists(self):
