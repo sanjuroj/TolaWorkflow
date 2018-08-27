@@ -235,14 +235,15 @@ class IPTTReportQuickstartViewTestCase(TestCase):
         """Do we get the correct form kwargs?"""
         pass
 
-    @skip('WIP: Currently fails')
+    #@skip('WIP: Currently fails')
     # TODO: This fails because the form is not valid; unclear to me what
     # TODO: invalidates the form; see indicators/views/views_reports.py:1088-1091
     def test_post_with_valid_form(self):
         """Does POSTing to iptt_quickstart with valid form data return 302
         and redirect to /indicators/iptt_report/{program_id}/{reporttype}/"""
         p = ProgramFactory()
-        data = {'program': p.id,
+        data = {'csrfmiddlewaretoken': 'lolwut',
+                'program': p.id,
                 'formprefix': 'targetperiods',
                 'timeframe': 1,
                 'targetperiods': 1,
