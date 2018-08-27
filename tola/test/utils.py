@@ -27,8 +27,14 @@ class PeriodicTargetValues(object):
 class IndicatorValues(object):
 
     def __init__(
-            self, periodic_targets, is_cumulative=False, direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE,
-            target_frequency=Indicator.ANNUAL, lop_target=0, unit_of_measure_type=Indicator.NUMBER):
+            self,
+            periodic_targets,
+            is_cumulative=False,
+            direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE,
+            target_frequency=Indicator.ANNUAL,
+            lop_target=0,
+            unit_of_measure_type=Indicator.NUMBER):
+
         self.periodic_targets = periodic_targets
         self.is_cumulative = is_cumulative
         self.direction_of_change = direction_of_change

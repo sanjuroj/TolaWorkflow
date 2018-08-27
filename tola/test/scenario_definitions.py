@@ -8,10 +8,7 @@ indicator_values = []
 """
 Scenario names follow the general pattern of:
 <indicator count>i-<indicator config>_<periodic target count>pt_<collected data count>cd
-
-
 """
-
 
 # Create 2 indicators with default indicator settings.  Create 4 periodic targets per indicator.
 pts = [PeriodicTargetValues(target=100, collected_data=(50, 25, 15))]
