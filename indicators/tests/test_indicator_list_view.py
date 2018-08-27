@@ -103,6 +103,10 @@ class DefaultScenarioTest(ScenarioBase, TestCase):
     url_name = 'collected_data_view'
 
 
-class CumulativeScenarioTest(ScenarioBase, TestCase):
-    scenario = indicator_scenarios['scenario_1i-cumulative_5pt_3cd']
+class CumulativeNumberScenarioTest(ScenarioBase, TestCase):
+    scenario = indicator_scenarios['scenario_1i-cumulative_number_5pt_3cd']
     url_name = 'collected_data_view'
+
+# class PercentScenarioTest(ScenarioBase, TestCase):
+#     scenario = indicator_scenarios['scenario_1i-cumulative_percent_5pt_3cd']
+#     url_name = 'collected_data_view'

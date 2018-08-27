@@ -27,7 +27,7 @@ class TestBase(object):
         self.program.country.add(self.country)
         self.program.save()
         self.indicator = IndicatorFactory(
-            program=self.program, unit_of_measure=Indicator.NUMBER, is_cumulative=False,
+            program=self.program, unit_of_measure_type=Indicator.NUMBER, is_cumulative=False,
             direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE, target_frequency=Indicator.ANNUAL)
 
         self.request_factory = RequestFactory()
@@ -36,6 +36,12 @@ class TestBase(object):
 
 
 class ScenarioBase(TestBase):
+
+    """
+    Note: many of these test rely on the indicators and periodic targets being created and rendered to the context
+    variable in the correct order.  This is a short cut so the exact periods don't need to be calculated.
+    It is assumed that the periodic target generation function will be tested elsewhere.
+    """
 
     @property
     def scenario(self):
@@ -55,26 +61,50 @@ class ScenarioBase(TestBase):
         self.url = reverse_lazy(self.url_name, args=[self.indicators.first().id, self.program.id])
         self.response = self.client.get(self.url)
 
-
-    def test_collected_data_sum_correct(self):
-        data = self.response.context.pop()
-        self.assertEqual(self.scenario[0].collected_data_sum, data['grand_achieved_sum'])
-
-    def test_periodic_targets_have_correct_values(self):
+    def test_periodic_targets_have_correct_targets(self):
         scenario_targets = self.scenario[0].periodic_target_targets
         response_targets = [pt.target for pt in self.response.context['periodictargets']]
         self.assertEqual(scenario_targets, response_targets)
 
-    @skip('')
     def test_result_set_is_correct(self):
-        pass
+        scenario_collected_data = self.scenario[0].collected_data_sets
+        response_collected_data = []
+        for pt in self.response.context['periodictargets']:
+            response_collected_data.append(list(pt.getcollected_data.values_list('achieved', flat=True)))
+        self.assertEqual(scenario_collected_data, response_collected_data)
 
-    @skip('')
+    def test_each_periodic_target_result_sum_is_correct(self):
+        scenario_sums = self.scenario[0].collected_data_sum_by_periodic_target
+        response_sums = []
+        for pt in self.response.context['periodictargets']:
+            if self.scenario[0].unit_of_measure_type == Indicator.NUMBER:
+                if self.scenario[0].is_cumulative:
+                    response_sums.append(pt.cumulative_sum)
+                else:
+                    response_sums.append(pt.achieved_sum)
+            else:
+                response_sums.append(pt.last_data_row)
+
+        self.assertEqual(scenario_sums, response_sums)
+
+    def test_lop_row_target_value_correct(self):
+        response_lop_target = self.response.context['indicator'].lop_target
+        self.assertEqual(unicode(self.scenario[0].lop_target), response_lop_target)
+
+    def test_lop_row_actual_value_correct(self):
+        data = self.response.context.pop()
+        self.assertEqual(self.scenario[0].collected_data_sum, data['grand_achieved_sum'])
+
+    @skip('Not implemented yet')
     def test_evidence_set_is_correct(self):
         pass
 
-    @skip('')
-    def test_lop_row_has_correct_value(self):
+    @skip('Percent is calced in the template, it should be correct if targets and actuals are correct.')
+    def test_each_periodic_target_percent_is_correct(self):
+        pass
+
+    @skip('Percent is calced in the template, it should be correct if targets and actuals are correct.')
+    def test_lop_row_percent_value_correct(self):
         pass
 
 

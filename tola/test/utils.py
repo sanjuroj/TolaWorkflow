@@ -25,25 +25,44 @@ class PeriodicTargetValues(object):
 class IndicatorValues(object):
 
     def __init__(
-            self, periodic_targets, unit_of_measure=Indicator.NUMBER, is_cumulative=False,
-            direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE, target_frequency=Indicator.ANNUAL):
+            self, periodic_targets, is_cumulative=False, direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE,
+            target_frequency=Indicator.ANNUAL, lop_target=0, unit_of_measure_type=Indicator.NUMBER):
         self.periodic_targets = periodic_targets
         self.is_cumulative = is_cumulative
         self.direction_of_change = direction_of_change
         self.target_frequency = target_frequency
-
-    @property
-    def target_sum(self):
-        return sum([pt.target for pt in self.periodic_targets])
+        self.lop_target = lop_target
+        self.unit_of_measure_type = unit_of_measure_type
 
     @property
     def collected_data_sum(self):
         # For program total or program-to-date, calculation is same if indicator is cumulative or not.
-        return sum([pt.collected_data_sum for pt in self.periodic_targets])
+        return sum([pt_values.collected_data_sum for pt_values in self.periodic_targets])
+
+    @property
+    def collected_data_sets(self):
+        collected_data_values_sets = []
+        for pt_values in self.periodic_targets:
+            collected_data_values_sets.append([cd_value for cd_value in pt_values.collected_data])
+        return collected_data_values_sets
 
     @property
     def periodic_target_targets(self):
         return [pt.target for pt in self.periodic_targets]
+
+    @property
+    def collected_data_sum_by_periodic_target(self):
+        collected_sums = []
+        for i, pt_values in enumerate(self.periodic_targets):
+            if self.unit_of_measure_type == Indicator.NUMBER:
+                if self.is_cumulative:
+                    # Sum a list of lists.  These are lists of collected data "to-date".
+                    collected_sums.append(sum([sum(vals) for vals in self.collected_data_sets[:i+1]]))
+                else:
+                    collected_sums.append(sum(self.collected_data_sets[i]))
+            else:
+                collected_sums.append(self.collected_data_sets[-1][-1])
+        return collected_sums
 
     def __unicode__(self):
         return 'Indicator with %s periodic targets' % (len(self.periodic_targets))
@@ -69,7 +88,8 @@ def instantiate_scenario(program_id, scenario, existing_indicator_ids=None):
                 program=program,
                 is_cumulative=indicator_value_set.is_cumulative,
                 direction_of_change=indicator_value_set.direction_of_change,
-                target_frequency=indicator_value_set.target_frequency)
+                target_frequency=indicator_value_set.target_frequency,
+                lop_target=indicator_value_set.lop_target,)
         indicator_ids.append(indicator.id)
         make_targets(program, indicator)
         periodic_targets = PeriodicTarget.objects.filter(indicator__id=indicator.id)
@@ -109,7 +129,7 @@ def generate_core_indicator_data(c_params=None, p_count=3, i_count=4):
         for p in programs:
             program_ids.append(p.id)
             indicators = IndicatorFactory.create_batch(
-                i_count, program=p, unit_of_measure=Indicator.NUMBER, is_cumulative=False,
+                i_count, program=p, unit_of_measure_type=Indicator.NUMBER, is_cumulative=False,
                 direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE, target_frequency=Indicator.ANNUAL)
             indicator_ids = [i.id for i in indicators]
             p.indicator_set.add(*indicators)
