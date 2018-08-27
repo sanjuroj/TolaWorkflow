@@ -1,3 +1,5 @@
+from decimal import Decimal, ROUND_HALF_UP
+
 from factory import Sequence
 
 from django.utils import timezone
@@ -43,12 +45,12 @@ class IndicatorValues(object):
     def collected_data_sets(self):
         collected_data_values_sets = []
         for pt_values in self.periodic_targets:
-            collected_data_values_sets.append([cd_value for cd_value in pt_values.collected_data])
+            collected_data_values_sets.append([decimalize(cd_value) for cd_value in pt_values.collected_data])
         return collected_data_values_sets
 
     @property
     def periodic_target_targets(self):
-        return [pt.target for pt in self.periodic_targets]
+        return [decimalize(pt.target) for pt in self.periodic_targets]
 
     @property
     def collected_data_sum_by_periodic_target(self):
@@ -61,7 +63,7 @@ class IndicatorValues(object):
                 else:
                     collected_sums.append(sum(self.collected_data_sets[i]))
             else:
-                collected_sums.append(self.collected_data_sets[-1][-1])
+                collected_sums.append(self.collected_data_sets[i][-1])
         return collected_sums
 
     def __unicode__(self):
@@ -149,3 +151,7 @@ def make_targets(program, indicator):
             start_date=pt['start_date'],
             end_date=pt['end_date'],
             edit_date=timezone.now())
+
+
+def decimalize(number):
+    return Decimal(number).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)

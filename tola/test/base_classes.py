@@ -8,7 +8,7 @@ from factories.django_models import UserFactory
 from factories.indicators_models import IndicatorFactory
 from factories.workflow_models import ProgramFactory, TolaUserFactory
 from indicators.models import Indicator
-from tola.test.utils import instantiate_scenario
+from tola.test.utils import instantiate_scenario, decimalize
 
 
 class TestBase(object):
@@ -92,8 +92,9 @@ class ScenarioBase(TestBase):
         self.assertEqual(unicode(self.scenario[0].lop_target), response_lop_target)
 
     def test_lop_row_actual_value_correct(self):
-        data = self.response.context.pop()
-        self.assertEqual(self.scenario[0].collected_data_sum, data['grand_achieved_sum'])
+        response_value = self.response.context.pop()['grand_achieved_sum']
+        scenario_value = decimalize(self.scenario[0].collected_data_sum)
+        self.assertEqual(scenario_value, response_value)
 
     @skip('Not implemented yet')
     def test_evidence_set_is_correct(self):
@@ -106,5 +107,3 @@ class ScenarioBase(TestBase):
     @skip('Percent is calced in the template, it should be correct if targets and actuals are correct.')
     def test_lop_row_percent_value_correct(self):
         pass
-
-

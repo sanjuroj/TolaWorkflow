@@ -39,9 +39,9 @@ indicator_scenarios['scenario_1i-default_5pt_3cd'] = [IndicatorValues(
 # Create 1 indicator with default indicator settings.  Create 5 periodic targets.
 pts = [PeriodicTargetValues(target=100, collected_data=(50, 25, 15))]
 pts.append(PeriodicTargetValues(target=110, collected_data=(0, 25, 50)))
-pts.append(PeriodicTargetValues(target=120, collected_data=(50, 25, 16)))
-pts.append(PeriodicTargetValues(target=130, collected_data=(50, 25, 17)))
-pts.append(PeriodicTargetValues(target=140, collected_data=(50, 25, 18)))
+pts.append(PeriodicTargetValues(target=120.5, collected_data=(50, 25, 16)))
+pts.append(PeriodicTargetValues(target=130, collected_data=(50, 25, 17.93)))
+pts.append(PeriodicTargetValues(target=140, collected_data=(50.29, 25, 18)))
 indicator_scenarios['scenario_1i-cumulative_number_5pt_3cd'] = [IndicatorValues(
     lop_target=30,
     periodic_targets=pts,
