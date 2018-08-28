@@ -253,6 +253,9 @@ class IndicatorCreate(CreateView):
     the post reciever for creating an indicator.
     Then redirect back to edit view in IndicatorUpdate.
     """
+
+    # DELETE THIS CLASS?  UNUSED? #
+
     model = Indicator
     template_name = 'indicators/indicator_form.html'
     form_class = IndicatorForm
@@ -511,7 +514,6 @@ class IndicatorUpdate(UpdateView):
 
     def form_invalid(self, form):
         messages.error(self.request, _('Invalid Form'), fail_silently=False)
-        print("...............%s.........................." % form.errors)
         return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form, **kwargs):
