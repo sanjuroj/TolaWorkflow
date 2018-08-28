@@ -878,60 +878,41 @@ input[type=number]::-webkit-outer-spin-button {
   #sidebar .list-group {
     min-width: 400px;
     background-color: #333;
-    /* should probably be #323232 */
     min-height: 100vh; }
   #sidebar i {
     margin-right: 6px; }
-
-#sidebar .list-group-item {
-  border-radius: 0;
-  background-color: #333;
-  /* should probably be #323232 */
-  color: #ccc;
-  border-left: 0;
-  border-right: 0;
-  border-color: #2c2c2c;
-  /* ??? */
-  white-space: nowrap; }
-
-/* highlight active menu */
-#sidebar .list-group-item:not(.collapsed) {
-  background-color: #222;
-  /* should probably be #2c2c2c ? */ }
-
-/* closed state */
-#sidebar .list-group .list-group-item[aria-expanded="false"]::after {
-  content: " \f0d7";
-  font-family: FontAwesome;
-  display: inline;
-  text-align: right;
-  padding-left: 5px; }
-
-/* open state */
-#sidebar .list-group .list-group-item[aria-expanded="true"] {
-  background-color: #222;
-  /* should probably be #2c2c2c ? */ }
-
-#sidebar .list-group .list-group-item[aria-expanded="true"]::after {
-  content: " \f0da";
-  font-family: FontAwesome;
-  display: inline;
-  text-align: right;
-  padding-left: 5px; }
-
-/* level 1*/
-#sidebar .list-group .collapse .list-group-item,
-#sidebar .list-group .collapsing .list-group-item {
-  padding-left: 20px; }
-
-/* level 2*/
-#sidebar .list-group .collapse > .collapse .list-group-item,
-#sidebar .list-group .collapse > .collapsing .list-group-item {
-  padding-left: 30px; }
-
-/* level 3*/
-#sidebar .list-group .collapse > .collapse > .collapse .list-group-item {
-  padding-left: 40px; }
+  #sidebar .list-group-item {
+    border-radius: 0;
+    background-color: #333;
+    color: #ccc;
+    border-left: 0;
+    border-right: 0;
+    border-color: #2c2c2c;
+    white-space: nowrap; }
+    #sidebar .list-group-item:not(.collapsed) {
+      background-color: #222; }
+    #sidebar .list-group-item[aria-expanded="false"]::after {
+      content: " \f0d7";
+      font-family: FontAwesome;
+      display: inline;
+      text-align: right;
+      padding-left: 5px; }
+    #sidebar .list-group-item[aria-expanded="true"] {
+      background-color: #222; }
+      #sidebar .list-group-item[aria-expanded="true"]::after {
+        content: " \f0da";
+        font-family: FontAwesome;
+        display: inline;
+        text-align: right;
+        padding-left: 5px; }
+  #sidebar .list-group .collapse .list-group-item,
+  #sidebar .list-group .collapsing .list-group-item {
+    padding-left: 20px; }
+  #sidebar .list-group .collapse > .collapse .list-group-item,
+  #sidebar .list-group .collapse > .collapsing .list-group-item {
+    padding-left: 30px; }
+  #sidebar .list-group .collapse > .collapse > .collapse .list-group-item {
+    padding-left: 40px; }
 
 @media (max-width: 768px) {
   .iptt_table_wrapper {
@@ -952,26 +933,26 @@ input[type=number]::-webkit-outer-spin-button {
     overflow-x: visible;
     transition: all .2 ease;
     transform: translateX(40); }
-  #sidebar.show {
-    transform: translateX(0); }
-  #sidebar::-webkit-scrollbar {
-    width: 0px; }
-  #sidebar, #sidebar .list-group {
-    min-width: 35px;
-    overflow: visible; }
-  /* overlay sub levels on small screens */
-  #sidebar .list-group .collapse.show, #sidebar .list-group .collapsing {
-    position: relative;
-    z-index: 1;
-    width: 190px;
-    top: 0; }
-  #sidebar .list-group > .list-group-item {
-    text-align: center;
-    padding: .75rem .5rem; }
-  /* hide caret icons of top level when collapsed */
-  #sidebar .list-group > .list-group-item[aria-expanded="true"]::after,
-  #sidebar .list-group > .list-group-item[aria-expanded="false"]::after {
-    display: none; } }
+    #sidebar.show {
+      transform: translateX(0); }
+    #sidebar::-webkit-scrollbar {
+      width: 0px; }
+    #sidebar,
+    #sidebar .list-group {
+      min-width: 35px;
+      overflow: visible; }
+    #sidebar .list-group .collapse.show,
+    #sidebar .list-group .collapsing {
+      position: relative;
+      z-index: 1;
+      width: 190px;
+      top: 0; }
+    #sidebar .list-group > .list-group-item {
+      text-align: center;
+      padding: .75rem .5rem; }
+    #sidebar .list-group > .list-group-item[aria-expanded="true"]::after,
+    #sidebar .list-group > .list-group-item[aria-expanded="false"]::after {
+      display: none; } }
 
 .collapse.show {
   visibility: visible; }
@@ -983,16 +964,14 @@ input[type=number]::-webkit-outer-spin-button {
   transition-property: height, visibility;
   -webkit-transition-timing-function: ease;
   transition-timing-function: ease; }
+  .collapsing.width {
+    -webkit-transition-property: width, visibility;
+    transition-property: width, visibility;
+    width: 0;
+    height: 100%;
+    -webkit-transition-timing-function: ease;
+    transition-timing-function: ease; }
 
-.collapsing.width {
-  -webkit-transition-property: width, visibility;
-  transition-property: width, visibility;
-  width: 0;
-  height: 100%;
-  -webkit-transition-timing-function: ease;
-  transition-timing-function: ease; }
-
-/* Sidebar toggle */
 .sidebar_wrapper {
   display: flex; }
 
@@ -1001,18 +980,16 @@ input[type=number]::-webkit-outer-spin-button {
   height: 42px;
   text-align: center;
   width: 40px; }
-
-.sidebar-toggle a {
-  background-color: #00A49F;
-  color: white;
-  display: block;
-  font-size: 1.25rem;
-  padding: 0.3em 0.5em;
-  /* TODO: what is the usual visual rhythm? */ }
-
-.sidebar-toggle a[aria-expanded=false] svg {
-  transform: rotate(-180deg);
-  /* TODO: ideally do this via JS */ }
+  .sidebar-toggle a {
+    background-color: #00A49F;
+    color: white;
+    display: block;
+    font-size: 1.25rem;
+    padding: 0.3em 0.5em;
+    /* TODO: what is the usual visual rhythm? */ }
+    .sidebar-toggle a[aria-expanded=false] svg {
+      transform: rotate(-180deg);
+      /* TODO: ideally do this via JS */ }
 
 /* "add a thing" buttons */
 .btn-add {

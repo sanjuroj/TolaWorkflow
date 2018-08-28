@@ -176,6 +176,7 @@ body.page_iptt_table { // body element for extra specificity
     }
 }
 .iptt_table_wrapper {
+    // See breakpoint mixin below
     width: 100%;
     overflow-x: auto;
     padding-left: 10px;
@@ -635,76 +636,79 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 
+// SIDEBAR
+// TODO: clean this up, esp. indentation
 #sidebar {
     flex-basis: 1;
     overflow: hidden;
     z-index: 3;
-.list-group {
-    min-width: 400px;
-    background-color: #333;/* should probably be #323232 */
-    min-height: 100vh;
-}
-i {
-    margin-right: 6px;
-}
-.list-group-item {
-}
+    .list-group {
+        min-width: 400px;
+        background-color: #333; // should probably be #323232
+        min-height: 100vh;
+        // see also indentation, below
+    }
+    i {
+        margin-right: 6px;
+    }
+    .list-group-item {
+        border-radius: 0;
+        background-color: #333; // should probably be #323232
+        color: #ccc;
+        border-left: 0;
+        border-right: 0;
+        border-color: #2c2c2c; // ???
+        white-space: nowrap;
+        // highlight active menu
+        &:not(.collapsed) {
+            background-color: #222; // should probably be #2c2c2c ?
+        }
+        // closed state
+        &[aria-expanded="false"] {
+            &::after {
+                content: " \f0d7";
+                font-family: FontAwesome;
+                display: inline;
+                text-align: right;
+                padding-left: 5px;
+            }
+        }
+        // open state
+        &[aria-expanded="true"] {
+            background-color: #222; // should probably be #2c2c2c ?
+            &::after {
+                content: " \f0da";
+                font-family: FontAwesome;
+                display: inline;
+                text-align: right;
+                padding-left: 5px;
+            }
+        }
+    }
+    // indentation
+    .list-group {
+        // level 1
+        .collapse .list-group-item,
+        .collapsing .list-group-item  {
+            padding-left: 20px;
+        }
+
+        // level 2
+        .collapse > .collapse .list-group-item,
+        .collapse > .collapsing .list-group-item {
+            padding-left: 30px;
+        }
+
+        // level 3
+        .collapse > .collapse > .collapse .list-group-item {
+            padding-left: 40px;
+        }
+    }
 }
 
-#sidebar .list-group-item {
-    border-radius: 0;
-    background-color: #333;/* should probably be #323232 */
-    color: #ccc;
-    border-left: 0;
-    border-right: 0;
-    border-color: #2c2c2c; /* ??? */
-    white-space: nowrap;
-}
-
-/* highlight active menu */
-#sidebar .list-group-item:not(.collapsed) {
-    background-color: #222; /* should probably be #2c2c2c ? */
-}
-
-/* closed state */
-#sidebar .list-group .list-group-item[aria-expanded="false"]::after {
-  content: " \f0d7";
-  font-family: FontAwesome;
-  display: inline;
-  text-align: right;
-  padding-left: 5px;
-}
-
-/* open state */
-#sidebar .list-group .list-group-item[aria-expanded="true"] {
-  background-color: #222; /* should probably be #2c2c2c ? */
-}
-#sidebar .list-group .list-group-item[aria-expanded="true"]::after {
-  content: " \f0da";
-  font-family: FontAwesome;
-  display: inline;
-  text-align: right;
-  padding-left: 5px;
-}
-
-/* level 1*/
-#sidebar .list-group .collapse .list-group-item,
-#sidebar .list-group .collapsing .list-group-item  {
-  padding-left: 20px;
-}
-
-/* level 2*/
-#sidebar .list-group .collapse > .collapse .list-group-item,
-#sidebar .list-group .collapse > .collapsing .list-group-item {
-  padding-left: 30px;
-}
-
-/* level 3*/
-#sidebar .list-group .collapse > .collapse > .collapse .list-group-item {
-  padding-left: 40px;
-}
 
 @media (max-width:768px) {
+    // TODO: breakpoint
     .iptt_table_wrapper {
         padding-left: 0;
     }
@@ -727,58 +731,66 @@ i {
         overflow-x: visible;
         transition: all .2 ease;
         transform: translateX(40);
-    }
-
-    #sidebar.show {
-        transform: translateX(0);
-    }
-
-    #sidebar::-webkit-scrollbar{ width: 0px; }
-
-    #sidebar, #sidebar .list-group {
-        min-width: 35px;
-        overflow: visible;
-    }
-    /* overlay sub levels on small screens */
-    #sidebar .list-group .collapse.show, #sidebar .list-group .collapsing {
-        position: relative;
-        z-index: 1;
-        width: 190px;
-        top: 0;
-    }
-    #sidebar .list-group > .list-group-item {
-        text-align: center;
-        padding: .75rem .5rem;
-    }
-    /* hide caret icons of top level when collapsed */
-    #sidebar .list-group > .list-group-item[aria-expanded="true"]::after,
-    #sidebar .list-group > .list-group-item[aria-expanded="false"]::after {
-        display:none;
+        &.show {
+            transform: translateX(0);
+        }
+        &::-webkit-scrollbar{
+            width: 0px;
+        }
+        &,
+        & .list-group {
+            min-width: 35px;
+            overflow: visible;
+        }
+        .list-group {
+            // overlay sub levels on small screens
+            .collapse.show,
+            .collapsing {
+                position: relative;
+                z-index: 1;
+                width: 190px;
+                top: 0;
+            }
+            & > .list-group-item {
+                text-align: center;
+                padding: .75rem .5rem;
+            }
+            // hide caret icons of top level when collapsed
+            & > .list-group-item[aria-expanded="true"]::after,
+            & > .list-group-item[aria-expanded="false"]::after {
+                display: none;
+            }
+        }
     }
 }
 
+// Collapse/Collapsing states
 .collapse.show {
   visibility: visible;
 }
 .collapsing {
-  visibility: visible;
-  height: 0;
-  -webkit-transition-property: height, visibility;
-  transition-property: height, visibility;
-  -webkit-transition-timing-function: ease;
-  transition-timing-function: ease;
-}
-.collapsing.width {
-  -webkit-transition-property: width, visibility;
-  transition-property: width, visibility;
-  width: 0;
-  height: 100%;
-  -webkit-transition-timing-function: ease;
-  transition-timing-function: ease;
+    visibility: visible;
+    height: 0;
+    // TODO: transition mixins
+    -webkit-transition-property: height, visibility;
+    transition-property: height, visibility;
+    -webkit-transition-timing-function: ease;
+    transition-timing-function: ease;
+    &.width {
+        // TODO: transition mixins
+        -webkit-transition-property: width, visibility;
+        transition-property: width, visibility;
+        width: 0;
+        height: 100%;
+        -webkit-transition-timing-function: ease;
+        transition-timing-function: ease;
+    }
 }
 
-/* Sidebar toggle */
+// Sidebar toggle
+// See breakpoint element above
 .sidebar_wrapper {
+    // see breakpoint mixin above
     display: flex;
 }
 .sidebar-toggle {
@@ -786,16 +798,17 @@ i {
     height: 42px;
     text-align: center;
     width: 40px;
-}
-.sidebar-toggle a {
-    background-color:#00A49F;
-    color: white;
-    display: block;
-    font-size: 1.25rem;
-    padding: 0.3em 0.5em; /* TODO: what is the usual visual rhythm? */
-}
-.sidebar-toggle a[aria-expanded=false] svg {
-  transform: rotate(-180deg); /* TODO: ideally do this via JS */
+    a {
+        background-color:#00A49F;
+        color: white;
+        display: block;
+        font-size: 1.25rem;
+        padding: 0.3em 0.5em; /* TODO: what is the usual visual rhythm? */
+
+        &[aria-expanded=false] svg {
+            transform: rotate(-180deg); /* TODO: ideally do this via JS */
+        }
+    }
 }
 
 /* "add a thing" buttons */
