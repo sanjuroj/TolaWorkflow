@@ -991,21 +991,18 @@ input[type=number]::-webkit-outer-spin-button {
       transform: rotate(-180deg);
       /* TODO: ideally do this via JS */ }
 
-/* "add a thing" buttons */
 .btn-add {
   color: #4CAF50 !important;
   padding-left: 0.625rem;
   padding-right: 0.625rem; }
-
-.btn-add:hover {
-  color: #2A7C2D; }
+  .btn-add:hover {
+    color: #2A7C2D; }
 
 .page-title {
   margin-bottom: 1rem;
   margin-top: 1rem; }
 
 #indicator_collecteddata_content .modal-footer {
-  /* overloads selectorin modals.scss */
   background-color: #DBDCDE;
   border-radius: 0 0 0.3rem 0.3rem;
   margin-left: -1rem;
@@ -1015,11 +1012,9 @@ input[type=number]::-webkit-outer-spin-button {
   display: block;
   text-indent: -15px;
   margin-left: 15px; }
+  .indicator_results_toggle .svg-inline--fa {
+    margin-right: 5px; }
 
-.indicator_results_toggle .svg-inline--fa {
-  margin-right: 5px; }
-
-/* Bootstrap could really use these border utilities */
 .border-2 {
   border-width: 2px !important; }
 
@@ -1029,7 +1024,6 @@ input[type=number]::-webkit-outer-spin-button {
 .border-4 {
   border-width: 4px !important; }
 
-/* Extra colors */
 .bg-danger-lighter {
   background-color: #FFE2E2 !important; }
 
@@ -1041,16 +1035,13 @@ input[type=number]::-webkit-outer-spin-button {
   /* note: these do not match colors in colors.css */
   background-color: #EDEDED !important; }
 
-/* restyle the Results table on the IPTT */
 .page_iptt_table .modal-dialog .collecteddata-link {
   display: none; }
 
 .page_iptt_table .modal-dialog .collecteddata-table--actions {
   background: transparent; }
 
-/* forms */
 .help-block {
-  /* emulates .form-text.text-muted */
   color: #6c757d !important;
   display: block;
   margin-top: .25rem; }
@@ -1078,22 +1069,13 @@ input[type=number]::-webkit-outer-spin-button {
 .input-group-addon {
   margin: 0 0.5rem; }
 
-/* conditional styling to hide modal titles in nonmodal contexts.
-used on collected data table in IPTT */
 .is-shown-in-modals {
   display: none; }
+  .modal-dialog .is-shown-in-modals {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between; }
 
-.modal-dialog .is-shown-in-modals {
-  align-items: flex-start;
-  display: flex;
-  justify-content: space-between; }
-
-/* unsorted */
-.break-word {
-  word-break: break-word;
-  /* wraps text in the middle of words */ }
-
-/* Branding */
 .navbar-brand-wrapper {
   /* BS has a navbar-brand class already :-( */
   display: flex;
@@ -1124,3 +1106,7 @@ used on collected data table in IPTT */
   display: block;
   max-width: 120px;
   height: auto; }
+
+.break-word {
+  word-break: break-word;
+  /* wraps text in the middle of words */ }
