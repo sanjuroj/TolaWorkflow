@@ -1,4 +1,9 @@
-// @import '../node_modules/bootstrap/scss/mixins';
-@import 'variables';
-@import 'bootstrap_overrides';
-@import 'custom';
+// Bootstrap modules
+@import '../node_modules/bootstrap/scss/functions';
+@import '../node_modules/bootstrap/scss/variables';
+@import '../node_modules/bootstrap/scss/mixins';
+
+// MC Tola modules
+@import 'variables'; // MC variables
+@import 'bootstrap_overrides'; // overload BS selectors
+@import 'custom'; // misc. elements & unsorted selectors
