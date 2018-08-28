@@ -361,6 +361,36 @@ input[type="checkbox"].form-control:focus {
 .card-header {
   background: rgba(0, 0, 0, 0.1) !important; }
 
+.chart-legend {
+  list-style: none;
+  position: relative;
+  right: 8px;
+  top: 0; }
+  .chart-legend li {
+    display: block;
+    padding-left: 30px;
+    position: relative;
+    margin-bottom: 4px;
+    border-radius: 5px;
+    padding: 2px 8px 2px 28px;
+    font-size: 14px;
+    cursor: default;
+    transition: background-color 200ms ease-in-out; }
+    .chart-legend li:hover {
+      background-color: #FAFAFA; }
+    .chart-legend li span {
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 5px; }
+
+.chart-title {
+  display: block;
+  text-align: center; }
+
 .navbar-brand-wrapper {
   /* BS has a navbar-brand class already :-( */
   display: flex;
