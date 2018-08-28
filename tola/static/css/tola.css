@@ -374,15 +374,9 @@ body {
 
 .has-error {
   color: #DD0000 !important; }
+  .has-error .text-muted {
+    color: inherit !important; }
 
-.has-error .text-muted {
-  color: inherit !important; }
-
-/* this might introduce regressions
-.has-error input {
-    border-color: #DD0000;
-}
-*/
 .hide {
   display: none; }
 
@@ -393,14 +387,9 @@ body {
   border-left: 0px !important;
   border-right: 0px !important; }
 
-/* Custom page CSS
--------------------------------------------------- */
-/* Not required for template or sticky footer method. */
-/* ~14pt from a 16pt reference*/
 .fontsize-85 {
   font-size: .85rem; }
 
-/* ~20pt from a 16pt reference*/
 .fontsize-125 {
   font-size: 1.25rem; }
 
@@ -419,11 +408,7 @@ body {
 .marginbottom-225 {
   margin-bottom: 2.25rem; }
 
-/* help links in footer */
-.help-link,
-.help-link:hover,
-.help-link:active,
-.help-link:focus {
+.help-link, .help-link:hover, .help-link:active, .help-link:focus {
   color: #54585A;
   font-size: .875rem; }
 
@@ -492,24 +477,18 @@ table.table-hover tbody tr.row-highlight:hover {
 .missing_targets {
   padding-left: 1rem; }
 
-/* IPTT Table */
 #iptt_table {
   background-color: white; }
+  #iptt_table, #iptt_table thead tr td {
+    border: 0px !important; }
+  #iptt_table tr th {
+    background-color: #F5F5F5 !important; }
 
 #id_td_iptt_program_name {
   padding-left: 0;
-  /* overloads .table-sm td */
-  padding-right: 0;
-  /* overloads .table-sm td */ }
-
-#iptt_table, #iptt_table thead tr td {
-  border: 0px !important; }
-
-#iptt_table tr th {
-  background-color: #F5F5F5 !important; }
+  padding-right: 0; }
 
 body.page_iptt_table {
-  /* body element for extra specificity */
   margin-bottom: 0; }
 
 .page_iptt_table #id_div_content {
@@ -533,23 +512,12 @@ body.page_iptt_table {
   overflow-x: auto;
   padding-left: 10px; }
 
-/* #iptt_table tbody{
-    background-color:#ffffff !important;
-} */
 #id_div_top_iptt_report {
-  color: #545858;
-  /* why is this not #54585A ? */ }
+  color: #545858; }
 
-/* IPTT quickstart */
-/* this mimics a standard BS behavior in _forms.scss */
 .form-check-inline--is-disabled {
   color: #aaa; }
 
-/* Start by setting display:none to make this hidden.
-   Then we position it in relation to the viewport window
-   with position:fixed. Width, height, top and left speak
-   for themselves. Background we set to 80% white with
-   our animation centered, and no-repeating */
 .ajax_loading {
   display: none;
   position: fixed;
@@ -560,17 +528,11 @@ body.page_iptt_table {
   width: 100%;
   background: rgba(255, 255, 255, 0.8) url("../img/ajax-loader.gif") 50% 50% no-repeat; }
 
-/* When the body has the loading class, we turn
-   the scrollbar off with overflow:hidden */
 body.loading {
   overflow: hidden; }
+  body.loading .ajax_loading {
+    display: block; }
 
-/* Anytime the body has the loading class, our
-   modal element will be visible */
-body.loading .ajax_loading {
-  display: block; }
-
-/*General marker style*/
 .map-marker {
   width: 20px;
   height: 20px;
@@ -582,71 +544,64 @@ body.loading .ajax_loading {
   top: 50%;
   margin: -20px 0 0 -20px;
   box-shadow: 2px 1px 1px #888888; }
-
-.map-marker.indicator {
-  width: 20px;
-  height: 20px;
-  border-radius: 50% 50% 50% 0;
-  background: #00cae9;
-  position: absolute;
-  transform: rotate(-45deg);
-  left: 50%;
-  top: 50%;
-  margin: -20px 0 0 -20px;
-  box-shadow: 2px 1px 1px #888888; }
-
-.map-marker:after {
-  content: "";
-  width: 10px;
-  height: 10px;
-  margin: 5px 0 0 5px;
-  background: #e6e6e6;
-  position: absolute;
-  border-radius: 50%; }
+  .map-marker .indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50% 50% 50% 0;
+    background: #00cae9;
+    position: absolute;
+    transform: rotate(-45deg);
+    left: 50%;
+    top: 50%;
+    margin: -20px 0 0 -20px;
+    box-shadow: 2px 1px 1px #888888; }
+  .map-marker:after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    margin: 5px 0 0 5px;
+    background: #e6e6e6;
+    position: absolute;
+    border-radius: 50%; }
 
 .leaflet-div-icon {
   border: 0 !important;
   display: none; }
 
-/* Chart.js legends */
 .chart-legend {
   list-style: none;
   position: relative;
   right: 8px;
   top: 0; }
-
-.chart-legend li {
-  display: block;
-  padding-left: 30px;
-  position: relative;
-  margin-bottom: 4px;
-  border-radius: 5px;
-  padding: 2px 8px 2px 28px;
-  font-size: 14px;
-  cursor: default;
-  -webkit-transition: background-color 200ms ease-in-out;
-  -moz-transition: background-color 200ms ease-in-out;
-  -o-transition: background-color 200ms ease-in-out;
-  transition: background-color 200ms ease-in-out; }
-
-.chart-legend li:hover {
-  background-color: #fafafa;
-  /* should probably be #F5F5F5 */ }
-
-.chart-legend li span {
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 20px;
-  height: 20px;
-  border-radius: 5px; }
+  .chart-legend li {
+    display: block;
+    padding-left: 30px;
+    position: relative;
+    margin-bottom: 4px;
+    border-radius: 5px;
+    padding: 2px 8px 2px 28px;
+    font-size: 14px;
+    cursor: default;
+    -webkit-transition: background-color 200ms ease-in-out;
+    -moz-transition: background-color 200ms ease-in-out;
+    -o-transition: background-color 200ms ease-in-out;
+    transition: background-color 200ms ease-in-out; }
+    .chart-legend li:hover {
+      background-color: #fafafa;
+      /* should probably be #F5F5F5 */ }
+    .chart-legend li span {
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 5px; }
 
 .chart-title {
   display: block;
   text-align: center; }
 
-/* Login buttons for Social */
 .social-buttons {
   margin: 12px 0px 0px 0px; }
 
@@ -654,42 +609,35 @@ body.loading .ajax_loading {
   color: #fff;
   background-color: #55acee;
   margin: 12px 0px 12px 0px; }
-
-.btn-go:hover {
-  color: #fff;
-  background-color: #59b5fa; }
+  .btn-go:hover {
+    color: #fff;
+    background-color: #59b5fa; }
 
 #iframe {
   width: 400px;
   height: 100px;
   overflow: auto; }
 
-/* paginate */
 ul.paginate {
   display: inline-block;
   padding: 0;
   margin: 0; }
+  ul.paginate li {
+    display: inline; }
+    ul.paginate li a {
+      color: black;
+      float: left;
+      padding: 8px 16px;
+      text-decoration: none;
+      transition: background-color .3s;
+      border: 1px solid #ddd; }
+      ul.paginate li a.active {
+        background-color: #4CAF50;
+        color: white;
+        border: 1px solid #4CAF50; }
+      ul.paginate li a:hover:not(.active) {
+        background-color: #ddd; }
 
-ul.paginate li {
-  display: inline; }
-
-ul.paginate li a {
-  color: black;
-  float: left;
-  padding: 8px 16px;
-  text-decoration: none;
-  transition: background-color .3s;
-  border: 1px solid #ddd; }
-
-ul.paginate li a.active {
-  background-color: #4CAF50;
-  color: white;
-  border: 1px solid #4CAF50; }
-
-ul.paginate li a:hover:not(.active) {
-  background-color: #ddd; }
-
-/* should probably be #DBDCDE */
 .per_page {
   float: right;
   margin-right: 15px; }
@@ -697,11 +645,9 @@ ul.paginate li a:hover:not(.active) {
 .float-right {
   float: right; }
 
-/* Keep the picker on top of other elements */
 .ui-datepicker {
   z-index: 10000 !important; }
 
-/*Indicator line graph with slider*/
 .clear-fix {
   margin-top: 10px;
   min-height: 10px; }
@@ -710,7 +656,6 @@ select.listoption_filters {
   height: 36px;
   width: 150px;
   border: 2px solid #ddd;
-  /* should probably be #DBDCDE */
   background: none;
   -webkit-appearance: none;
   -webkit-border-radius: 0;
@@ -719,7 +664,6 @@ select.listoption_filters {
   padding-left: 5px;
   -moz-appearance: none; }
 
-/* Indicator periodic target creation */
 #indicator_form .tab-content.panel-body,
 #indicator_modal_body .tab-content.panel-body,
 #indicator_modal_body {
@@ -729,24 +673,25 @@ select.listoption_filters {
   position: relative;
   display: inline-block;
   width: 100%; }
-
-.input-symbol-percent input {
-  padding-right: 15px;
-  width: 100%; }
-
-.input-symbol-percent:after {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  margin: auto;
-  content: "%";
-  right: 20px; }
+  .input-symbol-percent input {
+    padding-right: 15px;
+    width: 100%; }
+  .input-symbol-percent:after {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: auto;
+    content: "%";
+    right: 20px; }
+  .input-symbol-percent .input-value {
+    padding-right: 1.60rem; }
 
 .inputs-in-a-box {
   background-color: #F5F5F5;
   border: 0px; }
 
-.periodic-target, #pt_sum_targets {
+.periodic-target,
+#pt_sum_targets {
   border-bottom: 1px solid #DBDCDE;
   border-top: 1px solid #DBDCDE;
   background-color: #FFFFFF; }
@@ -762,10 +707,6 @@ select.listoption_filters {
 #indicator_modal_body .form-row > label {
   font-weight: bold; }
 
-@media (max-width: 575px) {
-  #indicator_modal_body .form-row > label {
-    text-align: left; } }
-
 #indicator_modal_body .select2-selection {
   border-radius: 0px;
   border-color: #B8BABD; }
@@ -775,9 +716,6 @@ select.listoption_filters {
   outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, 0.4); }
 
-/* This helps with the predictability of spacing between
-inputs on the indicator setup page/modal */
-/* TODO: this is crazy brittle */
 #indicator_modal_body .div-input-container > textarea,
 #indicator_modal_body .div-input-container > input,
 #indicator_modal_body .div-input-container > select,
@@ -785,8 +723,10 @@ inputs on the indicator setup page/modal */
 #indicator_modal_body .div-input-container .select2 {
   height: 100%; }
 
-/* In each case, the hieght of these divs changes when the has-error class is
-applied.  This keeps the inputs from getting taller when there is an error. */
+@media (max-width: 575px) {
+  #indicator_modal_body .form-row > label {
+    text-align: left; } }
+
 #div_id_name,
 #div_id_target_frequency,
 #div_id_target_frequency .div-input-container,
@@ -806,28 +746,19 @@ applied.  This keeps the inputs from getting taller when there is an error. */
   color: #54585A;
   font-weight: bold; }
 
-/* Don't define border property here.  Assigning here prevents red border
-from being applied when there is no value */
 .periodic-target .input-value {
   margin: 10px 10px 10px 6px;
   padding-right: 10px;
   text-align: right;
   width: 150px;
   display: table-cell; }
-
-.input-symbol-percent .input-value {
-  padding-right: 1.60rem; }
-
-/* Don't define border property here.  Assigning here prevents red border
-from being applied when there is no value */
-.periodic-target .input-text {
-  padding-right: 2px;
-  text-align: left;
-  box-shadow: none;
-  display: table-cell; }
-
-.periodic-target .controls input::placeholder {
-  color: #b8babd; }
+  .periodic-target .input-value .input-text {
+    padding-right: 2px;
+    text-align: left;
+    box-shadow: none;
+    display: table-cell; }
+  .periodic-target .input-value .controls input::placeholder {
+    color: #b8babd; }
 
 .lop-display {
   padding: 0px 15px 10px 1px;
@@ -840,11 +771,9 @@ from being applied when there is no value */
   float: left;
   margin-right: 10px; }
 
-/* Used for turning red borders off for input fields with errors */
 .border-1px input {
   border: 1px solid #DBDCDE; }
 
-/* turn off arrows from input[type=number] */
 input[type=number] {
   -moz-appearance: textfield; }
 
@@ -862,23 +791,17 @@ input[type=number]::-webkit-outer-spin-button {
 #id_div_is_cumulative_section3 {
   display: none; }
 
-/* END Indicator periodic target creation */
-/* START Indicator list page css */
 #div-id-indicator-list .card-header {
   background-color: #54585A !important;
   color: #FFFFFF; }
+  #div-id-indicator-list .card-header .program-name {
+    width: 78%; }
 
 #div-id-indicator-list .card-body {
   padding-top: .5rem;
   padding-bottom: .5rem; }
 
-#div-id-indicator-list .card-header .program-name {
-  width: 78%; }
-
-.btn-white,
-.btn-white:hover,
-.btn-white:active,
-.btn-white:focus {
+.btn-white, .btn-white:hover, .btn-white:active, .btn-white:focus {
   color: #FFFFFF; }
 
 .div-expand-symbol {
@@ -891,17 +814,13 @@ input[type=number]::-webkit-outer-spin-button {
 .rptMonthPicker {
   width: 10rem; }
 
-/* END Indicator list page css */
-/* BEGIN datepicker styling */
 .month-only .ui-datepicker-calendar {
   display: none; }
 
-/* END datepicker styling */
 .blink {
   animation: blink 2s linear infinite; }
 
 @keyframes blink {
-  /* where is this used? */
   0% {
     opacity: .2;
     color: blue; }
@@ -913,7 +832,6 @@ input[type=number]::-webkit-outer-spin-button {
   100% {
     opacity: 1; } }
 
-/* Hidable side bar filter */
 .filter-wrapper {
   display: flex; }
 
@@ -957,15 +875,13 @@ input[type=number]::-webkit-outer-spin-button {
   flex-basis: 1;
   overflow: hidden;
   z-index: 3; }
-
-#sidebar .list-group {
-  min-width: 400px;
-  background-color: #333;
-  /* should probably be #323232 */
-  min-height: 100vh; }
-
-#sidebar i {
-  margin-right: 6px; }
+  #sidebar .list-group {
+    min-width: 400px;
+    background-color: #333;
+    /* should probably be #323232 */
+    min-height: 100vh; }
+  #sidebar i {
+    margin-right: 6px; }
 
 #sidebar .list-group-item {
   border-radius: 0;

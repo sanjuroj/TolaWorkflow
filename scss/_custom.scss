@@ -7,82 +7,73 @@
 body {
     background-color: #F5F5F5;
 }
-.dataTables_wrapper.container-fluid {
-  padding-right: 0px !important;
-  padding-left: 0px !important;
+.dataTables_wrapper {
+    &.container-fluid {
+      padding-right: 0px !important;
+      padding-left: 0px !important;
+  }
 }
-
 .has-error {
-  color: #DD0000 !important;
+    color: #DD0000 !important;
+    .text-muted {
+        color: inherit !important;
+    }
+    // this might introduce regressions
+    // input {
+        //border-color: #DD0000;
+    //}
 }
-.has-error .text-muted {
-    color: inherit !important;
-}
-/* this might introduce regressions
-.has-error input {
-    border-color: #DD0000;
-}
-*/
-
 .hide {
   display: none;
 }
-
 .show {
   display: block;
 }
-
 .td-no-side-borders {
   border-left: 0px !important;
   border-right: 0px !important;
 }
 
-/* Custom page CSS
--------------------------------------------------- */
-/* Not required for template or sticky footer method. */
+// Custom page CSS
+//--------------------------------------------------
+// Not required for template or sticky footer method.
 
-/* ~14pt from a 16pt reference*/
+// ~14pt from a 16pt reference
 .fontsize-85 {
     font-size: .85rem;
 }
-
-/* ~20pt from a 16pt reference*/
+// ~20pt from a 16pt reference
 .fontsize-125 {
     font-size: 1.25rem;
 }
-
 .fontsize-130 {
     font-size: 1.3rem;
 }
-
 .color-red {
     color: #DD0000;
 }
-
 .paddingright-80 {
     padding-right: .80rem;
 }
-
 .paddingright-175 {
     padding-right: 1.75rem;
 }
-
 .marginbottom-225 {
     margin-bottom: 2.25rem;
 }
-/* help links in footer */
-.help-link,
-.help-link:hover,
-.help-link:active,
-.help-link:focus {
-    color: #54585A;
-    font-size: .875rem;
+// help links in footer
+.help-link {
+    &,
+    &:hover,
+    &:active,
+    &:focus {
+        color: #54585A;
+        font-size: .875rem;
+    }
+    &:hover {
+        text-decoration: underline;
+    }
 }
-
-.help-link:hover {
-    text-decoration: underline;
-}
-
 .filter {
     padding: 3px;
     color: #000000;
@@ -90,18 +81,15 @@ body {
     border-color: #808080;
     border-radius: .5px
 }
-
 .btn-frozen {
     color: #fff;
     background-color: #808080;
     border-color: #808080;
 }
-
 .x-modal {
     font-weight: 100;
     font-size: 2rem;
 }
-
 .date-badge {
     display: inline-block;
     min-width: 10px;
@@ -116,36 +104,31 @@ body {
     background-color: lightgoldenrodyellow;
     border-radius: 5px
 }
-
 .jumbotron.dashboard {
     padding-top: 5px;
     padding-bottom: 16px;
     margin-bottom: 30px;
 }
-
 .btn-group.align-right {
     float: right;
 }
-
 .lopCols {
 	background-color:#F5F5F5 !important;
 }
-
-table.table-hover tbody tr:hover {
-    background-color: #CCEFEE !important;
+table.table-hover tbody tr {
+    &:hover {
+        background-color: #CCEFEE !important;
+    }
+    &:active {
+        background-color: #99DFDD !important;
+    }
 }
-
-table.table-hover tbody tr:active {
-    background-color: #99DFDD !important;
-}
-
 .row-highlight {
     background-color: #CCEFEE;
 }
 table.table-hover tbody tr.row-highlight:hover { /* whoa check out this specificity */
     background-color: #B5E0DF !important;
 }
-
 .missing_targets_msg {
     padding-left: 2.3rem;
     margin-top: -0.875rem;
@@ -155,63 +138,61 @@ table.table-hover tbody tr.row-highlight:hover { /* whoa check out this specific
     padding-left: 1rem;
 }
 
-
-/* IPTT Table */
-
+// IPTT Table
 #iptt_table {
     background-color: white;
+    &, & thead tr td {
+        border: 0px !important;
+    }
+    tr th {
+        background-color:#F5F5F5 !important;
+    }
+    // tbody{
+        //background-color:#ffffff !important;
+    //}
 }
 #id_td_iptt_program_name {
-    padding-left: 0; /* overloads .table-sm td */
-    padding-right: 0; /* overloads .table-sm td */
+    padding-left: 0; // overloads .table-sm td
+    padding-right: 0; // overloads .table-sm td
 }
-#iptt_table, #iptt_table thead tr td{
-    border: 0px !important;
-}
-#iptt_table tr th {
-    background-color:#F5F5F5 !important;
-}
-body.page_iptt_table { /* body element for extra specificity */
+body.page_iptt_table { // body element for extra specificity
     margin-bottom: 0;
 }
-.page_iptt_table #id_div_content {
-    display: flex;
-    flex-grow: 1;
-    height: 100%;
-}
-.page_iptt_table .popover {
-    max-width: 100%; /* Max Width of the popover (depending on the container) */
-}
-.page_iptt_table #footer {
-    position: relative;
-}
-.page_iptt_table #id_div_breadcrumb,
-.page_iptt_table .page-title {
-    display: none;
+.page_iptt_table {
+    #id_div_content {
+        display: flex;
+        flex-grow: 1;
+        height: 100%;
+    }
+    .popover {
+        max-width: 100%; /* Max Width of the popover (depending on the container) */
+    }
+    #footer {
+        position: relative;
+    }
+    #id_div_breadcrumb,
+    .page-title {
+        display: none;
+    }
 }
 .iptt_table_wrapper {
     width: 100%;
     overflow-x: auto;
     padding-left: 10px;
 }
-/* #iptt_table tbody{
-    background-color:#ffffff !important;
-} */
 #id_div_top_iptt_report {
-    color: #545858; /* why is this not #54585A ? */
+    color: #545858; // why is this not #54585A ?
 }
-
-/* IPTT quickstart */
-/* this mimics a standard BS behavior in _forms.scss */
+// IPTT quickstart
+// this mimics a standard BS behavior in _forms.scss
 .form-check-inline--is-disabled {
     color: #aaa;
 }
-
-/* Start by setting display:none to make this hidden.
-   Then we position it in relation to the viewport window
-   with position:fixed. Width, height, top and left speak
-   for themselves. Background we set to 80% white with
-   our animation centered, and no-repeating */
+// Start by setting display:none to make this hidden.
+// Then we position it in relation to the viewport window
+// with position:fixed. Width, height, top and left speak
+// for themselves. Background we set to 80% white with
+// our animation centered, and no-repeating
 .ajax_loading {
     display:    none;
     position:   fixed;
@@ -226,101 +207,96 @@ body.page_iptt_table { /* body element for extra specificity */
                 no-repeat;
 }
 
-/* When the body has the loading class, we turn
-   the scrollbar off with overflow:hidden */
+// When the body has the loading class, we turn
+// the scrollbar off with overflow:hidden
 body.loading {
     overflow: hidden;
+    // Anytime the body has the loading class, our
+    // modal element will be visible
+    .ajax_loading {
+        display: block;
+    }
 }
 
-/* Anytime the body has the loading class, our
-   modal element will be visible */
-body.loading .ajax_loading {
-    display: block;
-}
 
-/*General marker style*/
+// General marker style
 .map-marker {
-  width: 20px;
-  height: 20px;
-  border-radius: 50% 50% 50% 0;
-  background: rgb(232, 148, 36);
-  position: absolute;
-  transform: rotate(-45deg);
-  left: 50%;
-  top: 50%;
-  margin: -20px 0 0 -20px;
-  box-shadow: 2px 1px 1px #888888;
+    width: 20px;
+    height: 20px;
+    border-radius: 50% 50% 50% 0;
+    background: rgb(232, 148, 36);
+    position: absolute;
+    transform: rotate(-45deg);
+    left: 50%;
+    top: 50%;
+    margin: -20px 0 0 -20px;
+    box-shadow: 2px 1px 1px #888888;
+    .indicator {
+        width: 20px;
+        height: 20px;
+        border-radius: 50% 50% 50% 0;
+        background: #00cae9;
+        position: absolute;
+        transform: rotate(-45deg);
+        left: 50%;
+        top: 50%;
+        margin: -20px 0 0 -20px;
+        box-shadow: 2px 1px 1px #888888;
+    }
+    &:after {
+        content: "";
+        width: 10px;
+        height: 10px;
+        margin: 5px 0 0 5px;
+        background: #e6e6e6;
+        position: absolute;
+        border-radius: 50%;
+    }
 }
-
-.map-marker.indicator {
-  width: 20px;
-  height: 20px;
-  border-radius: 50% 50% 50% 0;
-  background: #00cae9;
-  position: absolute;
-  transform: rotate(-45deg);
-  left: 50%;
-  top: 50%;
-  margin: -20px 0 0 -20px;
-  box-shadow: 2px 1px 1px #888888;
-}
-
-.map-marker:after {
-  content: "";
-  width: 10px;
-  height: 10px;
-  margin: 5px 0 0 5px;
-  background: #e6e6e6;
-  position: absolute;
-  border-radius: 50%;
-}
-
 .leaflet-div-icon {
   border: 0!important;
   display: none;
 }
 
-/* Chart.js legends */
-
+// Chart.js legends
 .chart-legend {
-  list-style: none;
-  position: relative;
-  right: 8px;
-  top: 0;
+    list-style: none;
+    position: relative;
+    right: 8px;
+    top: 0;
+    li {
+        display: block;
+        padding-left: 30px;
+        position: relative;
+        margin-bottom: 4px;
+        border-radius: 5px;
+        padding: 2px 8px 2px 28px;
+        font-size: 14px;
+        cursor: default;
+        -webkit-transition: background-color 200ms ease-in-out;
+        -moz-transition: background-color 200ms ease-in-out;
+        -o-transition: background-color 200ms ease-in-out;
+        transition: background-color 200ms ease-in-out;
+        &:hover {
+            background-color: #fafafa; /* should probably be #F5F5F5 */
+        }
+        span {
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+        }
+    }
 }
-.chart-legend li {
-  display: block;
-  padding-left: 30px;
-  position: relative;
-  margin-bottom: 4px;
-  border-radius: 5px;
-  padding: 2px 8px 2px 28px;
-  font-size: 14px;
-  cursor: default;
-  -webkit-transition: background-color 200ms ease-in-out;
-  -moz-transition: background-color 200ms ease-in-out;
-  -o-transition: background-color 200ms ease-in-out;
-  transition: background-color 200ms ease-in-out;
-}
-.chart-legend li:hover {
-  background-color: #fafafa; /* should probably be #F5F5F5 */
-}
-.chart-legend li span {
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 20px;
-  height: 20px;
-  border-radius: 5px;
-}
-
 .chart-title {
   display: block;
   text-align: center;
 }
 
-/* Login buttons for Social */
+// Login buttons for Social
 .social-buttons{
     margin:12px 0px 0px 0px;
 }
@@ -328,10 +304,10 @@ body.loading .ajax_loading {
     color: #fff;
     background-color:#55acee;
     margin:12px 0px 12px 0px;
-}
-.btn-go:hover{
-    color: #fff;
-    background-color:#59b5fa;
+    &:hover{
+        color: #fff;
+        background-color:#59b5fa;
+    }
 }
 
 #iframe {
@@ -340,57 +316,53 @@ body.loading .ajax_loading {
     overflow: auto;
 }
 
-/* paginate */
-
+// paginate
 ul.paginate {
     display: inline-block;
     padding: 0;
     margin: 0;
+    li {
+        display: inline;
+        a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+            border: 1px solid #ddd;
+            &.active {
+                background-color: #4CAF50;
+                color: white;
+                border: 1px solid #4CAF50;
+            }
+            &:hover:not(.active) {
+                background-color: #ddd; // should probably be #DBDCDE
+            }
+        }
+    }
 }
-
-ul.paginate li {display: inline;}
-
-ul.paginate li a {
-    color: black;
-    float: left;
-    padding: 8px 16px;
-    text-decoration: none;
-    transition: background-color .3s;
-    border: 1px solid #ddd;
-}
-
-ul.paginate li a.active {
-    background-color: #4CAF50;
-    color: white;
-    border: 1px solid #4CAF50;
-}
-
-ul.paginate li a:hover:not(.active) {background-color: #ddd;} /* should probably be #DBDCDE */
-
-.per_page
-{
+.per_page {
     float: right;
     margin-right: 15px;
 }
-.float-right
-{
+
+.float-right {
   float: right;
 }
-/* Keep the picker on top of other elements */
-.ui-datepicker{z-index: 10000 !important};
+// Keep the picker on top of other elements
+.ui-datepicker{
+    z-index: 10000 !important
+};
 
-/*Indicator line graph with slider*/
-.clear-fix
-{
+// Indicator line graph with slider
+.clear-fix { // ??? really? this is crazy general
   margin-top: 10px;
   min-height: 10px;
 }
-
-select.listoption_filters
-{
+select.listoption_filters {
   height:36px;
   width:150px;
-  border: 2px solid#ddd; /* should probably be #DBDCDE */
+  border: 2px solid#ddd; // should probably be #DBDCDE
   background: none;
   -webkit-appearance: none;
   -webkit-border-radius: 0;
@@ -400,12 +372,10 @@ select.listoption_filters
   -moz-appearance: none;
 }
 
-/* Indicator periodic target creation */
-
+// Indicator periodic target creation
 #indicator_form .tab-content.panel-body,
 #indicator_modal_body .tab-content.panel-body,
-#indicator_modal_body
-{
+#indicator_modal_body {
   padding-bottom: 0px;
 }
 
@@ -413,25 +383,28 @@ select.listoption_filters
     position: relative;
     display: inline-block;
     width: 100%;
-}
-.input-symbol-percent input {
-    padding-right: 15px;
-    width: 100%;
-}
-.input-symbol-percent:after {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    margin: auto;
-    content:"%";
-    right: 20px;
+    input {
+        padding-right: 15px;
+        width: 100%;
+    }
+    &:after {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        margin: auto;
+        content:"%";
+        right: 20px;
+    }
+    .input-value {
+        padding-right: 1.60rem;
+    }
 }
 .inputs-in-a-box {
     background-color: #F5F5F5;
     border: 0px;
 }
-
-.periodic-target, #pt_sum_targets {
+.periodic-target,
+#pt_sum_targets {
   border-bottom: 1px solid #DBDCDE;
   border-top: 1px solid #DBDCDE;
   background-color: #FFFFFF;
@@ -444,46 +417,40 @@ select.listoption_filters
 }
 
 #indicator_modal_body {
+    .tab-content {
+        background-color: #FFFFFF;
+    }
+    .form-row > label{
+        font-weight: bold;
+    }
+    .select2-selection {
+        border-radius: 0px;
+        border-color: #B8BABD;
+    }
+    .select2-container--focus .select2-selection {
+        border-color: #3366cc;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
+    }
+    // This helps with the predictability of spacing between
+    // inputs on the indicator setup page/modal
+    // TODO: this is crazy brittle
+    .div-input-container > textarea,
+    .div-input-container > input,
+    .div-input-container > select,
+    .div-input-container > .inputs-in-a-box,
+    .div-input-container .select2 {
+        height: 100%
+    }
 }
-
-#indicator_modal_body .tab-content {
-    background-color: #FFFFFF;
-}
-
-#indicator_modal_body .form-row > label{
-    font-weight: bold;
-}
-
-@media (max-width: 575px) {
+@media (max-width: 575px) { // TODO: breakpoint !
     #indicator_modal_body .form-row > label{
         text-align: left;
     }
 }
 
-#indicator_modal_body .select2-selection {
-    border-radius: 0px;
-    border-color: #B8BABD;
-}
-
-#indicator_modal_body .select2-container--focus .select2-selection{
-  border-color: #3366cc;
-  outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
-}
-
-/* This helps with the predictability of spacing between
-inputs on the indicator setup page/modal */
-/* TODO: this is crazy brittle */
-#indicator_modal_body .div-input-container > textarea,
-#indicator_modal_body .div-input-container > input,
-#indicator_modal_body .div-input-container > select,
-#indicator_modal_body .div-input-container > .inputs-in-a-box,
-#indicator_modal_body .div-input-container .select2 {
-    height: 100%
-}
-
-/* In each case, the hieght of these divs changes when the has-error class is
-applied.  This keeps the inputs from getting taller when there is an error. */
+// In each case, the hieght of these divs changes when the has-error class is
+// applied.  This keeps the inputs from getting taller when there is an error.
 #div_id_name,
 #div_id_target_frequency,
 #div_id_target_frequency .div-input-container,
@@ -492,45 +459,34 @@ applied.  This keeps the inputs from getting taller when there is an error. */
 #div_id_target_frequency_num_periods {
     height: 2.25rem;
 }
-
 #div_id_unit_of_measure_type_0 {
     margin-left: 2px;
 }
-
 #id_delete_indicator_btn {
     font-size: 1rem;
 }
-
 #indicatorTabs .nav-link.active {
     font-size: 1rem;
     color: #54585A;
     font-weight: bold;
 }
-/* Don't define border property here.  Assigning here prevents red border
-from being applied when there is no value */
+// Don't define border property here.  Assigning here prevents red border from
+// being applied when there is no value
 .periodic-target .input-value {
-  margin: 10px 10px 10px 6px;
-  padding-right: 10px;
-  text-align: right;
-  width: 150px;
-  display: table-cell;
-}
-
-.input-symbol-percent .input-value {
-    padding-right: 1.60rem;
-}
-
-/* Don't define border property here.  Assigning here prevents red border
-from being applied when there is no value */
-.periodic-target .input-text {
-  padding-right: 2px;
-  text-align: left;
-  box-shadow: none;
-  display: table-cell;
-}
-
-.periodic-target .controls input::placeholder {
-  color: #b8babd;
+    margin: 10px 10px 10px 6px;
+    padding-right: 10px;
+    text-align: right;
+    width: 150px;
+    display: table-cell;
+    .input-text {
+        padding-right: 2px;
+        text-align: left;
+        box-shadow: none;
+        display: table-cell;
+    }
+    .controls input::placeholder {
+        color: #b8babd;
+    }
 }
 
 .lop-display {
@@ -546,12 +502,12 @@ from being applied when there is no value */
   margin-right: 10px;
 }
 
-/* Used for turning red borders off for input fields with errors */
-.border-1px input{
+// Used for turning red borders off for input fields with errors
+.border-1px input {
   border: 1px solid #DBDCDE;
 }
 
-/* turn off arrows from input[type=number] */
+// turn off arrows from input[type=number]
 input[type=number] {
    -moz-appearance: textfield;
 }
@@ -571,84 +527,74 @@ input[type=number]::-webkit-outer-spin-button {
 #id_div_is_cumulative_section3 {
     display: none;
 }
+// END Indicator periodic target creation
 
-/* END Indicator periodic target creation */
 
-
-/* START Indicator list page css */
-
-#div-id-indicator-list .card-header {
-    background-color: #54585A !important;
-    color: #FFFFFF;
+// START Indicator list page css
+#div-id-indicator-list {
+    .card-header {
+        background-color: #54585A !important;
+        color: #FFFFFF;
+        .program-name {
+            width: 78%;
+        }
+    }
+    .card-body {
+        padding-top: .5rem;
+        padding-bottom: .5rem;
+    }
 }
-
-
-#div-id-indicator-list .card-body {
-    padding-top: .5rem;
-    padding-bottom: .5rem;
+.btn-white {
+    &,
+    &:hover,
+    &:active,
+    &:focus {
+        color: #FFFFFF;
+    }
 }
-
-#div-id-indicator-list .card-header .program-name {
-    width: 78%;
-}
-
-.btn-white,
-.btn-white:hover,
-.btn-white:active,
-.btn-white:focus {
-    color: #FFFFFF;
-}
-
 .div-expand-symbol {
     width: .7rem;
     display: inline-block;
 }
-
 #id_reporting_period_modal {
     line-height: 1.2;
 }
-
 .rptMonthPicker {
     width: 10rem;
 }
+// END Indicator list page css
 
-/* END Indicator list page css */
-
-/* BEGIN datepicker styling */
-
+// BEGIN datepicker styling
 .month-only .ui-datepicker-calendar {
   display: none;
 }
-
-/* END datepicker styling */
+// END datepicker styling
 
 .blink {
     animation: blink 2s linear infinite;
 }
+// where is this used?
+@keyframes blink {
+    0% {
+        opacity: .2;
+        color: blue;
+    }
+    50% {
+        opacity: .7;
+        color: red;
+    }
+    80% {
+        opacity: .8;
+    }
+    100% {
+        opacity: 1;
+    }
+}
 
-@keyframes blink { /* where is this used? */
-0% {
-    opacity: .2;
-    color: blue;
-}
-50% {
-    opacity: .7;
-    color: red;
-}
-80% {
-    opacity: .8;
-}
-100% {
-    opacity: 1;
-}
-}
-/* Hidable side bar filter */
-
+// Hidable side bar filter
 .filter-wrapper {
     display: flex;
 }
-
-
 #filter-top {
     background-color: #54585A!important;
     color:#fff;
@@ -678,7 +624,6 @@ input[type=number]::-webkit-outer-spin-button {
   display: block;
   padding-bottom: calc(.1875rem + 1px); /* TODO: this should be applied universally but regressions */
 }
-
 .filter-form-padding-10 {
     width: 100%;
     padding-left: 10px;
@@ -694,14 +639,16 @@ input[type=number]::-webkit-outer-spin-button {
     flex-basis: 1;
     overflow: hidden;
     z-index: 3;
-}
-#sidebar .list-group {
+.list-group {
     min-width: 400px;
     background-color: #333;/* should probably be #323232 */
     min-height: 100vh;
 }
-#sidebar i {
+i {
     margin-right: 6px;
+}
+.list-group-item {
+}
 }
 
 #sidebar .list-group-item {
