@@ -219,51 +219,11 @@ body.loading {
     }
 }
 
-
-// General marker style
-.map-marker {
-    width: 20px;
-    height: 20px;
-    border-radius: 50% 50% 50% 0;
-    background: rgb(232, 148, 36);
-    position: absolute;
-    transform: rotate(-45deg);
-    left: 50%;
-    top: 50%;
-    margin: -20px 0 0 -20px;
-    box-shadow: 2px 1px 1px #888888;
-    .indicator {
-        width: 20px;
-        height: 20px;
-        border-radius: 50% 50% 50% 0;
-        background: #00cae9;
-        position: absolute;
-        transform: rotate(-45deg);
-        left: 50%;
-        top: 50%;
-        margin: -20px 0 0 -20px;
-        box-shadow: 2px 1px 1px #888888;
-    }
-    &:after {
-        content: "";
-        width: 10px;
-        height: 10px;
-        margin: 5px 0 0 5px;
-        background: #e6e6e6;
-        position: absolute;
-        border-radius: 50%;
-    }
-}
-.leaflet-div-icon {
-  border: 0!important;
-  display: none;
-}
-
 // Login buttons for Social
 .social-buttons{
     margin:12px 0px 0px 0px;
 }
-.btn-go{
+.btn-go {
     color: #fff;
     background-color:#55acee;
     margin:12px 0px 12px 0px;
