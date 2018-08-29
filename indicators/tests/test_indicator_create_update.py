@@ -1,9 +1,7 @@
-from unittest import skip
-
 from django.test import RequestFactory
 from django.urls import reverse_lazy
 
-from test.test_utils import TestBase
+from tola.test.base_classes import TestBase
 
 
 class IndicatorCreateFunctionTests(TestBase):

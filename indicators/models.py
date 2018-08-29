@@ -209,6 +209,8 @@ class DataCollectionFrequencyAdmin(admin.ModelAdmin):
     display = 'Data Collection Frequency'
 
 
+# TODO: Delete ReportingPeriod and ReportingPeriodAdmin? Not linked to other models and doesn't seem to be
+# utilized in views
 class ReportingPeriod(models.Model):
     frequency = models.ForeignKey(
         ReportingFrequency, verbose_name=_("Frequency")
