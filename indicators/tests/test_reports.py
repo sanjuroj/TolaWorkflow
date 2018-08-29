@@ -8,8 +8,6 @@ from factories.workflow_models import ProgramFactory, UserFactory
 from indicators.models import Indicator
 from indicators.views.views_reports import IPTT_Mixin, IPTTReportQuickstartView
 from tola.test.base_classes import TestBase, ScenarioBase
-from tola.test.scenario_definitions import indicator_scenarios
-from tola.test.utils import instantiate_scenario, generate_core_indicator_data
 
 from workflow.models import Program
 
@@ -238,20 +236,24 @@ class IPTTReportQuickstartViewTests(TestBase, TestCase):
 
     @skip('TODO: Implement this')
     def test_get_form_kwargs(self):
-        """Do we load the form arguments properly"""
-        # 1. Get form kwargs before-request
-        # 2. Create and submit a request
-        # 3. Get form kwargs after request
-        # 4. Assert the post-request kwargs == pre-request kwargs and
-        #    the artisanal request hand-crafted in step 2
-        # 5. Assert the request added in step 2 is the same as the one
-        #    we get back in step 3.
         pass
 
-    @skip('TODO: Implement this')
-    def test_post_with_valid_form(self):
+    @skip('TODO: WIP; currently fails to redirect')
+    def test_post_with_valid_form_redirects(self):
         """Does POSTing to iptt_quickstart with valid form data return 302
         and redirect to /indicators/iptt_report/{program_id}/{reporttype}/"""
+        data = {
+            'csrfmiddlewaretoken': 'lolwut',
+            'timeperiods-formprefix': IPTTReportQuickstartView.FORM_PREFIX_TIME,
+            'timeperiods-numrecentperiods': 2,
+            'timeperiods-program': self.program.id,
+            'timeperiods-timeframe': 2,
+            'timeperiods-timeperiods': 7,
+        }
+        path = reverse('iptt_quickstart')
+        response = self.client.post(path, data=data)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(response.redirect_chain), 1)
 
     @skip('TODO: Implement this')
     def test_post_with_invalid_form(self):
