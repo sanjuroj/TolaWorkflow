@@ -251,7 +251,7 @@ class IPTTReportQuickstartViewTests(TestBase, TestCase):
             'timeperiods-timeperiods': 7,
         }
         path = reverse('iptt_quickstart')
-        response = self.client.post(path, data=data)
+        response = self.client.post(path=path, data=data, follow=True)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(response.redirect_chain), 1)
 
