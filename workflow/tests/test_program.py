@@ -1,12 +1,14 @@
 from unittest import skip
 
+from django.test import TestCase
+
 from tola.test.base_classes import TestBase
 from factories.workflow_models import SiteProfileFactory
 from factories.indicators_models import IndicatorFactory, CollectedDataFactory
 from workflow.models import SiteProfile
 
 
-class TestProgramMethods(TestBase):
+class TestProgramMethods(TestBase, TestCase):
 
     def test_get_sites(self):
         """It should return all and only the sites for a given program"""
@@ -25,7 +27,7 @@ class TestProgramMethods(TestBase):
         self.assertEqual(len(SiteProfile.objects.all()), 5)
 
 
-class TestProgramList(TestBase):
+class TestProgramList(TestBase, TestCase):
 
     @skip('Test that the correct programs from a single country get loaded.')
     def test_single_country_load(self):
