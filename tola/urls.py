@@ -21,6 +21,7 @@ from rest_framework.authtoken import views as auth_views
 from django.contrib.auth import views as authviews
 
 from tola import views as tolaviews
+from indicators.views.views_indicators import ProgramPage
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -82,6 +83,11 @@ urlpatterns = [ # rest framework
 
                 # index
                 url(r'^$', views.index, name='index'),
+
+                # program page
+                url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<type_id>\d+)/$',
+                    ProgramPage.as_view(), name='program_page'),
+
                 # enable the admin:
                 url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
                 url(r'^admin/', include(admin.site.urls)),

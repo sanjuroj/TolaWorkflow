@@ -1428,6 +1428,49 @@ def dictfetchall(cursor):
     ]
 
 
+class ProgramPage(ListView):
+    model = Indicator
+    template_name = 'indicators/indicator_list2.html'
+
+    def get(self, request, *args, **kwargs):
+        countries = request.user.tola_user.countries.all()
+        program_id = int(self.kwargs['program_id'])
+        indicator_filters = {'program__id': program_id}
+        type_filter_id = None
+        indicator_filter_id = None
+        type_filter_name = None
+        indicator_filter_name = None
+
+        if int(self.kwargs['type_id']):
+            type_filter_id = self.kwargs['type_id']
+            type_filter_name = IndicatorType.objects.get(id=type_filter_id)
+            indicator_filters['indicator_type'] = type_filter_id
+
+        if int(self.kwargs['indicator_id']):
+            indicator_filter_id = self.kwargs['indicator_id']
+            indicator_filter_name = Indicator.objects.get(id=indicator_filter_id)
+            indicator_filters['id'] = indicator_filter_id
+
+        indicators = Indicator.objects.filter(**{'program__id': program_id, 'id':self.kwargs['indicator_id']})
+        program = Program.objects.get(id=program_id, funding_status="Funded", country__in=countries)
+        indicators = Indicator.objects.filter(**indicator_filters)
+        type_ids = set(indicators.values_list('indicator_type', flat=True))
+        indicator_types = IndicatorType.objects.filter(id__in=list(type_ids))
+        indicator_count = indicators.count()
+
+        c_data = {
+            'program': program,
+            'indicators': indicators,
+            'indicator_count': indicator_count,
+            'indicator_types': indicator_types,
+            'indicator_filter_id': indicator_filter_id,
+            'indicator_filter_name': indicator_filter_name,
+            'type_filter_id': type_filter_id,
+            'type_filter_name': type_filter_name,
+        }
+        return render(request, self.template_name, c_data)
+
+
 class DisaggregationReportMixin(object):
     def get_context_data(self, **kwargs):
         context = super(DisaggregationReportMixin, self) \
