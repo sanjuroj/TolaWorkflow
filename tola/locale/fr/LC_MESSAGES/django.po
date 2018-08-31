@@ -3,12 +3,12 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-31 11:25-0700\n"
+"POT-Creation-Date: 2018-08-31 11:21-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -213,7 +213,7 @@ msgid "Indicator Type"
 msgstr "Type d'indicateur"
 
 #: indicators/models.py:71
-#
+#, fuzzy
 #| msgid "Country Strategic Objective"
 msgid "Country Strategic Objectives"
 msgstr "Objectif stratégique du pays"
@@ -631,25 +631,25 @@ msgid "N/A"
 msgstr "S.O."
 
 #: indicators/views/views_indicators.py:68
-#, python-format
+#, fuzzy, python-format
 #| msgid "Years"
 msgid "Year %s"
 msgstr "Années"
 
 #: indicators/views/views_indicators.py:73
-#, python-format
+#, fuzzy, python-format
 #| msgid "Semi-annual periods"
 msgid "Semi-annual period %s"
 msgstr "Périodes semestrielles"
 
 #: indicators/views/views_indicators.py:78
-#, python-format
+#, fuzzy, python-format
 #| msgid "Tri-annual periods"
 msgid "Tri-annual period %s"
 msgstr "Périodes triannuelles"
 
 #: indicators/views/views_indicators.py:83
-#, python-format
+#, fuzzy, python-format
 #| msgid "Quarters"
 msgid "Quarter %s"
 msgstr "Quarters"
@@ -750,7 +750,7 @@ msgid "Whoops!"
 msgstr ""
 
 #: templates/500.html:88
-#
+#, fuzzy
 #| msgid "Something went wrong!"
 msgid "500 Error...Whoops something went wrong..."
 msgstr "Quelque chose s'est mal passé !"
@@ -1155,7 +1155,7 @@ msgid "Collected Indicator Data"
 msgstr "Données de l'indicateur collecté"
 
 #: templates/indicators/collecteddata_form_common_js.html:17
-#
+#, fuzzy
 #| msgid "Please complete all required fields."
 msgid "Please complete all required fields.|escapejs"
 msgstr "Veuillez complétez tous les champs requis."
@@ -1499,7 +1499,7 @@ msgstr ""
 "commençant par le type puis le niveau puis le titre."
 
 #: templates/indicators/indicator_create.html:95
-#
+#, fuzzy
 #| msgid "Form Guidance"
 msgid "Form Help/Guidance"
 msgstr "Guidage de formulaire"
@@ -2057,26 +2057,26 @@ msgid "Target vs Actuals Report"
 msgstr "Cible vs Rapport réel"
 
 #: templates/registration/bookmark_confirm_delete.html:3
-#
+#, fuzzy
 #| msgid "Indicator Confirm Delete"
 msgid "Bookmark Confirm Delete"
 msgstr "Indicateur Confirmer Supprimer"
 
 #: templates/registration/bookmark_confirm_delete.html:8
 #: templates/workflow/documentation_agreement_confirm_delete.html:40
-#
+#, fuzzy
 #| msgid "Are you sure you want to delete?"
 msgid "Are you sure you want to delete"
 msgstr "Etes-vous sûr que vous voulez supprimer ?"
 
 #: templates/registration/bookmark_list.html:11
-#
+#, fuzzy
 #| msgid "Tola Bookmarks"
 msgid "Your Bookmarks List"
 msgstr "Signets de Tola"
 
 #: templates/registration/login.html:18
-#
+#, fuzzy
 #| msgid "Login with Tola account"
 msgid "Register a new Tola Account"
 msgstr "Connectez-vous avec votre compte Tola"
@@ -2086,19 +2086,19 @@ msgid "Profile"
 msgstr "Profil"
 
 #: templates/tables/import.html:44
-#
+#, fuzzy
 #| msgid "Import from Tola Tables"
 msgid "Import A Tola Table"
 msgstr "Importer à partir des tables Tola"
 
 #: templates/tables/import.html:66
-#
+#, fuzzy
 #| msgid "Import Indicator Evidence from"
 msgid "Import a data table from"
 msgstr "Preuve d'indicateur d'importation à partir"
 
 #: templates/tables/import.html:67
-#
+#, fuzzy
 #| msgid ""
 #| "Link one of your Tola Tables or a Table shared with you as your indicator "
 #| "evidence."
@@ -2110,7 +2110,7 @@ msgstr ""
 "preuve d'indicateur."
 
 #: templates/workflow/documentation_agreement_confirm_delete.html:6
-#
+#, fuzzy
 #| msgid "Documentation"
 msgid "Delete Documentation"
 msgstr "Documentation"
@@ -2122,7 +2122,7 @@ msgid "Success!"
 msgstr ""
 
 #: templates/workflow/documentation_agreement_confirm_delete.html:34
-#
+#, fuzzy
 #| msgid "Documentation"
 msgid "Documentation Delete"
 msgstr "Documentation"
@@ -2132,14 +2132,15 @@ msgid "Cancel"
 msgstr ""
 
 #: templates/workflow/documentation_confirm_delete.html:3
-#
+#, fuzzy
 #| msgid "Indicator Confirm Delete"
 msgid "Document Confirm Delete"
 msgstr "Indicateur Confirmer Supprimer"
 
 #: templates/workflow/documentation_confirm_delete.html:8
 #: templates/workflow/siteprofile_confirm_delete.html:8
-#, python-format
+#, fuzzy, python-format
+#| msgid "Are you sure you want to delete?"
 msgid "Are you sure you want to delete \"%(object)s\"?"
 msgstr "Etes-vous sûr que vous voulez supprimer ?"
 
@@ -2167,7 +2168,7 @@ msgid "Add document"
 msgstr "Ajouter un document"
 
 #: templates/workflow/documentation_popup_form.html:105
-#, python-format
+#, fuzzy, python-format
 #| msgid "Documentation"
 msgid "Documentation for %(project)s"
 msgstr "Documentation"
@@ -2183,45 +2184,45 @@ msgid "Documentation List for %(program)s "
 msgstr ""
 
 #: templates/workflow/documentation_popup_list.html:46
-#
+#, fuzzy
 #| msgid "Document"
 msgid "Document Name"
 msgstr "Document"
 
 #: templates/workflow/documentation_popup_list.html:54
-#
+#, fuzzy
 #| msgid "Add a project"
 msgid "Add to Project"
 msgstr "Ajouter un projet"
 
 #: templates/workflow/documentation_popup_list.html:57
-#
+#, fuzzy
 #| msgid "Documents"
 msgid "No Documents."
 msgstr "Documents"
 
 #: templates/workflow/filter.html:3
-#
+#, fuzzy
 #| msgid "Filter by Program"
 msgid "Filter by:"
 msgstr "Filtrer par programme"
 
 #: templates/workflow/filter.html:27
-#
+#, fuzzy
 #| msgid "Project Site"
 msgid "Project Status"
 msgstr "Site du projet"
 
 #: templates/workflow/program_projects_table.html:6
 #: templates/workflow/program_projects_table.html:8
-#
+#, fuzzy
 #| msgid "Initiation"
 msgid "Initiation Form"
 msgstr "Initiation"
 
 #: templates/workflow/program_projects_table.html:11
 #: templates/workflow/program_projects_table.html:13
-#
+#, fuzzy
 #| msgid "Tracking"
 msgid "Tracking Form"
 msgstr "Suivi"
@@ -2237,7 +2238,7 @@ msgstr ""
 
 #: templates/workflow/program_projects_table.html:19
 #: templates/workflow/site_projectcomplete.html:38
-#
+#, fuzzy
 #| msgid "Longitude"
 msgid "Long"
 msgstr "Longitude"
@@ -2258,7 +2259,7 @@ msgid "Filtered by <b>(Program): %(filtered_program|default_if_none:'')s</b>"
 msgstr ""
 
 #: templates/workflow/programdashboard_list.html:36
-#
+#, fuzzy
 #| msgid "Project Dashboard"
 msgid "Program Dashboard"
 msgstr "Tableau de bord du projet"
@@ -2292,7 +2293,7 @@ msgid "Approval Status"
 msgstr "Statut approuvé"
 
 #: templates/workflow/programdashboard_list.html:56
-#
+#, fuzzy
 #| msgid "in progress"
 msgid "No in progress projects."
 msgstr "en cours"
@@ -2302,7 +2303,7 @@ msgid "No approved projects yet."
 msgstr ""
 
 #: templates/workflow/programdashboard_list.html:68
-#
+#, fuzzy
 #| msgid "Awaiting Approval"
 msgid "No projects awaiting approval."
 msgstr "En attente d'approbation"
@@ -2312,13 +2313,13 @@ msgid "No rejected projects."
 msgstr ""
 
 #: templates/workflow/programdashboard_list.html:80
-#
+#, fuzzy
 #| msgid "View project"
 msgid "No New projects."
 msgstr "Voir le projet"
 
 #: templates/workflow/programdashboard_list.html:86
-#
+#, fuzzy
 #| msgid "Project Type"
 msgid "No projects yet."
 msgstr "Type de projet"
@@ -2362,7 +2363,7 @@ msgid "Submit"
 msgstr "Soumettre"
 
 #: templates/workflow/site_indicatordata.html:6
-#
+#, fuzzy
 #| msgid "Site Name"
 msgid "Site Data"
 msgstr "Nom du site"
@@ -2385,31 +2386,31 @@ msgid "Site Profile Map and List"
 msgstr ""
 
 #: templates/workflow/site_profile_list.html:41
-#
+#, fuzzy
 #| msgid "Offline (No map provided)"
 msgid "Offline (No map provided"
 msgstr "Hors ligne (aucune carte fournie)"
 
 #: templates/workflow/site_profile_list.html:73
-#
+#, fuzzy
 #| msgid "Date Created"
 msgid "Date created"
 msgstr "Date créée"
 
 #: templates/workflow/site_profile_list.html:74
-#
+#, fuzzy
 #| msgid "Site Name"
 msgid "Site name"
 msgstr "Nom du site"
 
 #: templates/workflow/site_profile_list.html:75
-#
+#, fuzzy
 #| msgid "Funding Status"
 msgid "Status"
 msgstr "Statut de financement"
 
 #: templates/workflow/site_profile_list.html:76
-#
+#, fuzzy
 #| msgid "Site Active"
 msgid "Site type"
 msgstr "Site actif"
@@ -2417,7 +2418,7 @@ msgstr "Site actif"
 #: templates/workflow/site_profile_list.html:77
 #: templates/workflow/site_profile_map.html:185
 #: templates/workflow/site_profile_map.html:192
-#
+#, fuzzy
 #| msgid "Province:"
 msgid "Province"
 msgstr "Province :"
@@ -2429,7 +2430,7 @@ msgid "District"
 msgstr "District"
 
 #: templates/workflow/site_profile_list.html:91
-#
+#, fuzzy
 #| msgid "Site Active"
 msgid "Active"
 msgstr "Site actif"
@@ -2439,25 +2440,25 @@ msgid "Inactive"
 msgstr ""
 
 #: templates/workflow/site_profile_list.html:102
-#
+#, fuzzy
 #| msgid "Delete results"
 msgid "Delete site"
 msgstr "Supprimer les résultats"
 
 #: templates/workflow/site_profile_list.html:105
-#
+#, fuzzy
 #| msgid "Indicator Data"
 msgid "Indicator data"
 msgstr "Données de l'indicateur"
 
 #: templates/workflow/site_profile_list.html:108
-#
+#, fuzzy
 #| msgid "Project Site"
 msgid "Project data"
 msgstr "Site du projet"
 
 #: templates/workflow/site_profile_list.html:115
-#
+#, fuzzy
 #| msgid "Profile Type"
 msgid "No Site Profiles yet."
 msgstr "Type de profil"
@@ -2476,19 +2477,19 @@ msgstr ""
 
 #: templates/workflow/site_profile_map.html:185
 #: templates/workflow/site_profile_map.html:192
-#
+#, fuzzy
 #| msgid "Village:"
 msgid "Village"
 msgstr "Village :"
 
 #: templates/workflow/site_profile_report.html:8
-#
+#, fuzzy
 #| msgid "Reports"
 msgid "Report"
 msgstr "Rapports"
 
 #: templates/workflow/site_profile_report.html:37
-#
+#, fuzzy
 #| msgid "Tola Sites"
 msgid "Update Sites"
 msgstr "Sites de Tola"
@@ -2498,7 +2499,7 @@ msgid "No sites yet."
 msgstr ""
 
 #: templates/workflow/site_projectcomplete.html:7
-#
+#, fuzzy
 #| msgid "View Project"
 msgid "Site Projects"
 msgstr "Voir le projet"
@@ -2509,7 +2510,7 @@ msgid "Project Data for <small>%(site)s</small>"
 msgstr ""
 
 #: templates/workflow/siteprofile_confirm_delete.html:3
-#
+#, fuzzy
 #| msgid "Indicator Confirm Delete"
 msgid "Confirm Delete"
 msgstr "Indicateur Confirmer Supprimer"
@@ -2531,7 +2532,7 @@ msgid "Personal info"
 msgstr ""
 
 #: tola/admin.py:44
-#
+#, fuzzy
 #| msgid "GAIT program dates"
 msgid "Important dates"
 msgstr "Dates du programme GAIT"
@@ -3552,13 +3553,13 @@ msgid "URL (Link to document or document repository)"
 msgstr "URL (lien vers le référentiel de documents ou de documents)"
 
 #: workflow/models.py:1248
-#, python-format
+#, fuzzy, python-format
 #| msgid "%% complete"
 msgid "% complete"
 msgstr "%% achevée"
 
 #: workflow/models.py:1249
-#, python-format
+#, fuzzy, python-format
 #| msgid "%% cumulative completion"
 msgid "% cumulative completion"
 msgstr "%% d'achèvement cumulatif"
