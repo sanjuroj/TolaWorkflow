@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-31 11:21-0700\n"
+"POT-Creation-Date: 2018-08-31 11:25-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2139,8 +2139,7 @@ msgstr "Indicateur Confirmer Supprimer"
 
 #: templates/workflow/documentation_confirm_delete.html:8
 #: templates/workflow/siteprofile_confirm_delete.html:8
-#, fuzzy, python-format
-#| msgid "Are you sure you want to delete?"
+#, python-format
 msgid "Are you sure you want to delete \"%(object)s\"?"
 msgstr "Etes-vous sûr que vous voulez supprimer ?"
 
