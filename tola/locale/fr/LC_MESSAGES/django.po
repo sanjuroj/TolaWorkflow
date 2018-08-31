@@ -2142,7 +2142,7 @@ msgstr "Indicateur Confirmer Supprimer"
 #, fuzzy, python-format
 #| msgid "Are you sure you want to delete?"
 msgid "Are you sure you want to delete \"%(object)s\"?"
-msgstr "Etes-vous sûr que vous voulez supprimer ?"
+msgstr "Etes-vous sûr que vous voulez supprimer \"%(object)s\"?"
 
 #: templates/workflow/documentation_confirm_delete.html:9
 #: templates/workflow/siteprofile_confirm_delete.html:9
