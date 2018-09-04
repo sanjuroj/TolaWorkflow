@@ -84,6 +84,8 @@
             if ($('#id_date_collected').val() != '') {
                 $('#id_date_collected').val(formatDate($('#id_date_collected').val()));
                 // validate upon loading modal
+                // important: validate this AFTER summoning the datepicker!
+                // TODO: this should be a callback or else condition to zeroing out this field above
                 validatePeriodicTarget();
             }
             // target_frequency is defined in the indicator_list.html file
