@@ -1,6 +1,12 @@
 {% load widget_tweaks %}
 {% load i18n %}
 {% block content %}
+    {# this style tag is inline bc the modal doesn't read the global stylesheet (?) #}
+    <style>
+    .ui-datepicker-inline {
+        position: absolute;
+    }
+    </style>
     <script type="text/javascript">
         $(document).ready(function() {
             /* add select2 js library to the indicator select box */
