@@ -4,10 +4,12 @@ from unittest import skip
 from django.core.urlresolvers import reverse_lazy
 from django.test import Client, RequestFactory, TestCase
 
-from factories.workflow_models import ProgramFactory, UserFactory
-from indicators.models import Indicator
+from factories.workflow_models import ProgramFactory, UserFactory, TolaUserFactory
+from factories.indicators_models import IndicatorFactory
 from indicators.views.views_reports import IPTTReportQuickstartView, IPTT_Mixin
 from indicators.forms import IPTTReportQuickstartForm
+from indicators.models import Indicator
+
 from workflow.models import Program
 
 
@@ -206,9 +208,7 @@ class IPTT_ReportIndicatorsWithVariedStartDateTestCase(TestCase):
 class IPTTReportQuickstartViewTestCase(TestCase):
 
     def setUp(self):
-        self.client = Client()
-        self.program = ProgramFactory()
-        self.user = UserFactory()
+        pass
 
     def test_page_load_returns_200(self):
         """Do we return 200?"""
@@ -235,31 +235,45 @@ class IPTTReportQuickstartViewTestCase(TestCase):
         """Do we get the correct form kwargs?"""
         pass
 
-    @skip('WIP: Currently fails')
     # TODO: This fails because the form is not valid; unclear to me what
     # TODO: invalidates the form; see indicators/views/views_reports.py:1088-1091
     def test_post_with_valid_form(self):
         """Does POSTing to iptt_quickstart with valid form data return 302
         and redirect to /indicators/iptt_report/{program_id}/{reporttype}/"""
-        p = ProgramFactory()
+        self.user = UserFactory(first_name="Indicator", last_name="CreateTest", username="IC")
+        self.user.set_password('password')
+        self.user.save()
+        self.tola_user = TolaUserFactory(user=self.user)
+        self.country = self.tola_user.country
+        self.program = ProgramFactory(
+            funding_status='Funded', reporting_period_start='2016-03-01', reporting_period_end='2020-05-01')
+        self.program.country.add(self.country)
+        self.program.save()
+        self.indicator = IndicatorFactory(
+            program=self.program, unit_of_measure_type=Indicator.NUMBER, is_cumulative=False,
+            direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE, target_frequency=Indicator.ANNUAL)
+        self.request_factory = RequestFactory()
+        self.client = Client()
+        self.client.login(username="IC", password='password')
+
         data = {'csrfmiddlewaretoken': 'lolwut',
-                'program': p.id,
-                'formprefix': 'targetperiods',
-                'timeframe': 1,
-                'targetperiods': 1,
-                'numrecentperiods': None,
-                'prefix': 'targetperiods', }
+                'targetperiods-program': self.program.id,
+                'targetperiods-formprefix': 'targetperiods',
+                'targetperiods-timeframe': 1,
+                'targetperiods-targetperiods': 1,
+                'targetperiods-numrecentperiods': 1, }
         path = reverse_lazy('iptt_quickstart')
 
-        response = self.client.post(path, data=data, kwargs=data, follow=True)
-
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(path, data=data, follow=True)
         self.assertEqual(len(response.redirect_chain), 1)
         self.assertTemplateUsed(response, 'indicators/iptt_report.html')
+        self.assertEqual(response.status_code, 200)
 
-    @skip('TODO: Implement this')
     def test_post_with_invalid_form(self):
-        pass
+        path = reverse_lazy('iptt_quickstart')
+        response = self.client.post(path, data={'foo': 'bar'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'indicators/iptt_quickstart.html')
 
     @skip('TODO: Implement this')
     def test_form_valid(self):
