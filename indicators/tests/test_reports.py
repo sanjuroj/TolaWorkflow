@@ -4,14 +4,14 @@ from unittest import skip
 from django.core.urlresolvers import reverse_lazy
 from django.test import Client, RequestFactory, TestCase
 
-from factories.workflow_models import ProgramFactory, UserFactory
+from factories.indicators_models import IndicatorFactory
+from factories.workflow_models import ProgramFactory, TolaUserFactory, UserFactory
 from indicators.models import Indicator
 from indicators.views.views_reports import IPTTReportQuickstartView, IPTT_Mixin
-from indicators.forms import IPTTReportQuickstartForm
 from workflow.models import Program
 
 
-class IPTT_MixinTestCase(TestCase):
+class IPTT_MixinTests(TestCase):
     """Tests private methods not specifically tested in other test cases"""
     freqs = {
         Indicator.ANNUAL: 12,
@@ -26,9 +26,9 @@ class IPTT_MixinTestCase(TestCase):
 
     def test__get_num_months(self):
         """Do we return the right number of months per period?"""
-        for freq in IPTT_MixinTestCase.freqs:
+        for freq in IPTT_MixinTests.freqs:
             num_months_in_period = self.mixin._get_num_months(freq)
-            self.assertEqual(num_months_in_period, IPTT_MixinTestCase.freqs[freq])
+            self.assertEqual(num_months_in_period, IPTT_MixinTests.freqs[freq])
 
     def test__get_num_periods(self):
         """Do we return the correct number of periods"""
@@ -67,7 +67,7 @@ class IPTT_MixinTestCase(TestCase):
     def test__get_first_period(self):
         """Do we calculate the first period of a date range correctly?"""
         real_start_date = datetime.strptime("2016-07-15", "%Y-%m-%d").date()
-        for freq in IPTT_MixinTestCase.freqs:
+        for freq in IPTT_MixinTests.freqs:
             num_months = self.mixin._get_num_months(freq)
 
             _get_first_period = self.mixin._get_first_period(real_start_date, num_months)
@@ -160,7 +160,7 @@ class IPTT_MixinTestCase(TestCase):
         pass
 
 
-class IPTT_ExcelExportTestCase(TestCase):
+class IPTT_ExcelExportTests(TestCase):
 
     def setUp(self):
         pass
@@ -190,7 +190,7 @@ class IPTT_ExcelExportTestCase(TestCase):
         pass
 
 
-class IPTT_ReportIndicatorsWithVariedStartDateTestCase(TestCase):
+class IPTT_ReportIndicatorsWithVariedStartDateTests(TestCase):
     def setUp(self):
         pass
 
@@ -203,25 +203,41 @@ class IPTT_ReportIndicatorsWithVariedStartDateTestCase(TestCase):
         pass
 
 
-class IPTTReportQuickstartViewTestCase(TestCase):
+class IPTTReportQuickstartViewTests(TestCase):
+    """Unit tests to valid the IPTTReportQuickStartView"""
 
     def setUp(self):
+        self.user = UserFactory(first_name="Indicator", last_name="CreateTest", username="IC")
+        self.user.set_password('password')
+        self.user.save()
+        self.tola_user = TolaUserFactory(user=self.user)
+        self.country = self.tola_user.country
+        self.program = ProgramFactory(
+            funding_status='Funded', reporting_period_start='2016-03-01', reporting_period_end='2020-05-01')
+        self.program.country.add(self.country)
+        self.program.save()
+        self.indicator = IndicatorFactory(
+            program=self.program, unit_of_measure_type=Indicator.NUMBER, is_cumulative=False,
+            direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE, target_frequency=Indicator.ANNUAL)
+        self.request_factory = RequestFactory()
         self.client = Client()
-        self.program = ProgramFactory()
-        self.user = UserFactory()
+        self.client.login(username="IC", password='password')
 
     def test_page_load_returns_200(self):
         """Do we return 200?"""
+
         response = self.client.get(reverse_lazy('iptt_quickstart'))
         self.assertEqual(response.status_code, 200)
 
     def test_page_load_does_not_redirect(self):
         """This page should not redirect"""
+
         response = self.client.get(reverse_lazy('iptt_quickstart'), follow=True)
         self.assertEqual(len(response.redirect_chain), 0)
 
     def test_page_loads_correct_template(self):
         """Do we load the right template?"""
+
         response = self.client.get(reverse_lazy('iptt_quickstart'), follow=True)
         self.assertTemplateUsed(response, 'indicators/iptt_quickstart.html')
         self.assertContains(response, 'Indicator Performance Tracking Table')
@@ -230,51 +246,52 @@ class IPTTReportQuickstartViewTestCase(TestCase):
     def test_get_context_data(self):
         pass
 
-    @skip('TODO: Implement this')
+    @skip('WIP')
     def test_get_form_kwargs(self):
         """Do we get the correct form kwargs?"""
-        pass
 
-    @skip('WIP: Currently fails')
-    # TODO: This fails because the form is not valid; unclear to me what
-    # TODO: invalidates the form; see indicators/views/views_reports.py:1088-1091
-    def test_post_with_valid_form(self):
-        """Does POSTing to iptt_quickstart with valid form data return 302
-        and redirect to /indicators/iptt_report/{program_id}/{reporttype}/"""
-        p = ProgramFactory()
         data = {'csrfmiddlewaretoken': 'lolwut',
-                'program': p.id,
-                'formprefix': 'targetperiods',
-                'timeframe': 1,
-                'targetperiods': 1,
-                'numrecentperiods': None,
-                'prefix': 'targetperiods', }
+                'targetperiods-program': self.program.id,
+                'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
+                'targetperiods-timeframe': Indicator.LOP,
+                'targetperiods-targetperiods': 1,
+                'targetperiods-numrecentperiods': 1, }
+        path = reverse_lazy('iptt_quickstart')
+        response = self.client.post(path, data=data, follow=True)
+
+    def test_post_with_valid_form(self):
+        """Does POSTing to iptt_quickstart with valid form data redirect to the
+        correct view (iptt_report)?"""
+
+        view = IPTTReportQuickstartView
+        data = {'csrfmiddlewaretoken': 'lolwut',
+                'targetperiods-program': self.program.id,
+                'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
+                'targetperiods-timeframe': Indicator.LOP,
+                'targetperiods-targetperiods': 1,
+                'targetperiods-numrecentperiods': 1, }
         path = reverse_lazy('iptt_quickstart')
 
-        response = self.client.post(path, data=data, kwargs=data, follow=True)
-
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(path, data=data, follow=True)
         self.assertEqual(len(response.redirect_chain), 1)
         self.assertTemplateUsed(response, 'indicators/iptt_report.html')
+        self.assertEqual(response.status_code, 200)
 
-    @skip('TODO: Implement this')
     def test_post_with_invalid_form(self):
-        pass
+        """Does POSTing to iptt_quickstart with crap form data leave us at
+        iptt_quickstart?"""
 
-    @skip('TODO: Implement this')
-    def test_form_valid(self):
-        pass
-
-    @skip('TODO: Implement this')
-    def test_form_invalid(self):
-        pass
+        path = reverse_lazy('iptt_quickstart')
+        response = self.client.post(path, data={'foo': 'bar'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'indicators/iptt_quickstart.html')
 
 
 class IPTT_ReportViewTestCase(TestCase):
 
     def setUp(self):
         pass
-    
+
     @skip('TODO: Implement this')
     def test_get(self):
         pass
