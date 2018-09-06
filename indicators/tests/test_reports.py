@@ -2,7 +2,8 @@ from datetime import datetime
 from unittest import skip
 
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import render
 from django.test import Client, RequestFactory, TestCase
 
 from factories.indicators_models import IndicatorFactory
@@ -247,28 +248,21 @@ class IPTTReportQuickstartViewTests(TestCase):
     def test_get_context_data(self):
         pass
 
-    # @skip('WIP')
     def test_get_form_kwargs(self):
         """Do we get the correct form kwargs?"""
 
-        kwargs  = {'initial': None, 'prefix': 'targetperiods', }
-        view = IPTTReportQuickstartView(kwargs=kwargs)
-        data = {'csrfmiddlewaretoken': 'lolwut',
-                'targetperiods-program': self.program.id,
-                'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
-                'targetperiods-timeframe': Indicator.LOP,
-                'targetperiods-targetperiods': 1,
-                'targetperiods-numrecentperiods': 1, }
-        #view.form_class(kwargs=kwargs)
+        kwargs  = {'initial': {'natasha': 'boris', },
+                   'prefix': IPTTReportQuickstartView.FORM_PREFIX_TARGET, }
+        view = IPTTReportQuickstartView()
+        view.initial = kwargs['initial']
+        view.prefix = view.FORM_PREFIX_TARGET
+        view.request = HttpRequest()
 
-        path = reverse_lazy('iptt_quickstart')
-        response = self.client.post(path, data=data, follow=True)
-
-
-        # from pprint import pprint;
-        # pprint('form={0}'.format(response.context['form']))
-        # pprint('request={0}'.format(response.context['request']))
-        # pprint('view={0}'.format(response.context['view']))
+        response = render(view.request, 'indicators/iptt_quickstart.html', status=200)
+        self.assertEqual(response.status_code, 200)
+        form_kwargs = view.get_form_kwargs()
+        for kwarg in kwargs:
+            self.assertIn(kwarg, form_kwargs)
 
     def test_post_with_valid_form(self):
         """Does POSTing to iptt_quickstart with valid form data redirect to the
