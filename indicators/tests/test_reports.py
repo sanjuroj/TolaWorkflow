@@ -247,17 +247,17 @@ class IPTTReportQuickstartViewTests(TestCase):
     def test_get_context_data(self):
         pass
 
-    #@skip('WIP')
+    # @skip('WIP')
     def test_get_form_kwargs(self):
         """Do we get the correct form kwargs?"""
 
         view = IPTTReportQuickstartView
         data = {'csrfmiddlewaretoken': 'lolwut',
-            'targetperiods-program': self.program.id,
-            'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
-            'targetperiods-timeframe': Indicator.LOP,
-            'targetperiods-targetperiods': 1,
-            'targetperiods-numrecentperiods': 1, }
+                'targetperiods-program': self.program.id,
+                'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
+                'targetperiods-timeframe': Indicator.LOP,
+                'targetperiods-targetperiods': 1,
+                'targetperiods-numrecentperiods': 1, }
         view.initial = data
 
         path = reverse_lazy('iptt_quickstart')
@@ -274,11 +274,11 @@ class IPTTReportQuickstartViewTests(TestCase):
 
         view = IPTTReportQuickstartView
         data = {'csrfmiddlewaretoken': 'lolwut',
-            'targetperiods-program': self.program.id,
-            'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
-            'targetperiods-timeframe': Indicator.LOP,
-            'targetperiods-targetperiods': 1,
-            'targetperiods-numrecentperiods': 1, }
+                'targetperiods-program': self.program.id,
+                'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
+                'targetperiods-timeframe': Indicator.LOP,
+                'targetperiods-targetperiods': 1,
+                'targetperiods-numrecentperiods': 1, }
         path = reverse_lazy('iptt_quickstart')
 
         response = self.client.post(path, data=data, follow=True)
