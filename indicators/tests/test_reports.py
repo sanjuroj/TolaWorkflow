@@ -2,12 +2,13 @@ from datetime import datetime
 from unittest import skip
 
 from django.core.urlresolvers import reverse_lazy
+from django.http import HttpRequest
 from django.test import Client, RequestFactory, TestCase
 
 from factories.indicators_models import IndicatorFactory
 from factories.workflow_models import ProgramFactory, TolaUserFactory, UserFactory
 from indicators.models import Indicator
-from indicators.views.views_reports import IPTTReportQuickstartView, IPTT_Mixin
+from indicators.views.views_reports import IPTTReportQuickstartView, IPTTReportQuickstartForm, IPTT_Mixin
 from workflow.models import Program
 
 
@@ -246,18 +247,26 @@ class IPTTReportQuickstartViewTests(TestCase):
     def test_get_context_data(self):
         pass
 
-    @skip('WIP')
+    #@skip('WIP')
     def test_get_form_kwargs(self):
         """Do we get the correct form kwargs?"""
 
+        view = IPTTReportQuickstartView
         data = {'csrfmiddlewaretoken': 'lolwut',
-                'targetperiods-program': self.program.id,
-                'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
-                'targetperiods-timeframe': Indicator.LOP,
-                'targetperiods-targetperiods': 1,
-                'targetperiods-numrecentperiods': 1, }
+            'targetperiods-program': self.program.id,
+            'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
+            'targetperiods-timeframe': Indicator.LOP,
+            'targetperiods-targetperiods': 1,
+            'targetperiods-numrecentperiods': 1, }
+        view.initial = data
+
         path = reverse_lazy('iptt_quickstart')
         response = self.client.post(path, data=data, follow=True)
+
+        # from pprint import pprint;
+        # pprint('form={0}'.format(response.context['form']))
+        # pprint('request={0}'.format(response.context['request']))
+        # pprint('view={0}'.format(response.context['view']))
 
     def test_post_with_valid_form(self):
         """Does POSTing to iptt_quickstart with valid form data redirect to the
@@ -265,11 +274,11 @@ class IPTTReportQuickstartViewTests(TestCase):
 
         view = IPTTReportQuickstartView
         data = {'csrfmiddlewaretoken': 'lolwut',
-                'targetperiods-program': self.program.id,
-                'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
-                'targetperiods-timeframe': Indicator.LOP,
-                'targetperiods-targetperiods': 1,
-                'targetperiods-numrecentperiods': 1, }
+            'targetperiods-program': self.program.id,
+            'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
+            'targetperiods-timeframe': Indicator.LOP,
+            'targetperiods-targetperiods': 1,
+            'targetperiods-numrecentperiods': 1, }
         path = reverse_lazy('iptt_quickstart')
 
         response = self.client.post(path, data=data, follow=True)
