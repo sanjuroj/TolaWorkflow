@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.core.exceptions import ImproperlyConfigured
 
 from factories.indicators_models import IndicatorFactory, PeriodicTargetFactory, CollectedDataFactory
-from factories.workflow_models import ProgramFactory, CountryFactory
+from factories.workflow_models import ProgramFactory, CountryFactory, DocumentationFactory
 from indicators.views.views_reports import IPTT_ReportView
 from indicators.views.views_indicators import generate_periodic_targets
 from indicators.models import Indicator, PeriodicTarget
@@ -15,9 +15,10 @@ from workflow.models import Program
 
 class PeriodicTargetValues(object):
 
-    def __init__(self, target=0, collected_data=None):
+    def __init__(self, target=0, collected_data=None, evidence=None):
         self.target = target
         self.collected_data = collected_data or []
+        self.evidence = evidence or []
 
     @property
     def collected_data_sum(self):
@@ -81,6 +82,7 @@ class IndicatorValues(object):
 
 # Load scenario values into the database
 def instantiate_scenario(program_id, scenario, existing_indicator_ids=None):
+
     if existing_indicator_ids and len(scenario) != len(existing_indicator_ids):
         raise ImproperlyConfigured(
             "Can't instatiate scenario, indicator count (%s) doesn't match scenario indcator count (%s)" %
@@ -108,9 +110,16 @@ def instantiate_scenario(program_id, scenario, existing_indicator_ids=None):
         for i, pt in enumerate(periodic_targets):
             pt.target = indicator_value_set.periodic_targets[i].target
             pt.save()
-            for cd_value in indicator_value_set.periodic_targets[i].collected_data:
-                CollectedDataFactory(
-                    periodic_target=pt, indicator=indicator, program=program, achieved=cd_value)
+            try:
+                evidence_values = indicator_value_set.periodic_targets[i].evidence
+            except KeyError:
+                evidence_values = []
+            for j, cd_value in enumerate(indicator_value_set.periodic_targets[i].collected_data):
+                cd = CollectedDataFactory(
+                    periodic_target=pt, indicator=indicator, program=program, achieved=cd_value, )
+                if evidence_values and evidence_values[j]:
+                    cd.evidence = DocumentationFactory()
+                    cd.save()
 
     return indicator_ids
 
