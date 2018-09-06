@@ -251,17 +251,19 @@ class IPTTReportQuickstartViewTests(TestCase):
     def test_get_form_kwargs(self):
         """Do we get the correct form kwargs?"""
 
-        view = IPTTReportQuickstartView
+        kwargs  = {'initial': None, 'prefix': 'targetperiods', }
+        view = IPTTReportQuickstartView(kwargs=kwargs)
         data = {'csrfmiddlewaretoken': 'lolwut',
                 'targetperiods-program': self.program.id,
                 'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
                 'targetperiods-timeframe': Indicator.LOP,
                 'targetperiods-targetperiods': 1,
                 'targetperiods-numrecentperiods': 1, }
-        view.initial = data
+        #view.form_class(kwargs=kwargs)
 
         path = reverse_lazy('iptt_quickstart')
         response = self.client.post(path, data=data, follow=True)
+
 
         # from pprint import pprint;
         # pprint('form={0}'.format(response.context['form']))
