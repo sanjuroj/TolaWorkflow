@@ -1,10 +1,10 @@
-from django.test import RequestFactory
+from django.test import RequestFactory, TestCase
 from django.urls import reverse_lazy
 
 from tola.test.base_classes import TestBase
 
 
-class IndicatorCreateFunctionTests(TestBase):
+class IndicatorCreateFunctionTests(TestBase, TestCase):
 
     def setUp(self):
         super(IndicatorCreateFunctionTests, self).setUp()
@@ -24,7 +24,7 @@ class IndicatorCreateFunctionTests(TestBase):
         self.assertEqual(response.status_code, 302)
 
 
-class IndicatorUpdateTests(TestBase):
+class IndicatorUpdateTests(TestBase, TestCase):
 
     def setUp(self):
         super(IndicatorUpdateTests, self).setUp()
