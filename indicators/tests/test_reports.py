@@ -355,6 +355,21 @@ class IPTT_ReportViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, template_name=IPTT_ReportView.template_name)
 
-    @skip('TODO: Implement this')
+    @skip('WIP')
     def test_post(self):
-        pass
+        url_kwargs = {
+            'program_id': self.program.id,
+            'reporttype': 'targetperiods',
+        }
+
+        data = {
+            'csrfmiddlewaretoken': 'lolwut',
+            'program': self.program.id,
+            'targetperiods': 1,
+            'timeframe': 1,
+        }
+
+        path = reverse_lazy('iptt_report', kwargs=url_kwargs)
+        response = self.client.post(path, data=data)
+        self.assertEqual(response.status_code, 302)
+        self.assertContains(response, self.program.name)
