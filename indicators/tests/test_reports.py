@@ -261,6 +261,9 @@ class IPTTReportQuickstartViewTests(TestCase):
                 'targetperiods-numrecentperiods': 1, }
         path = reverse_lazy('iptt_quickstart')
         response = self.client.post(path, data=data, follow=True)
+        kwargs = response.resolver_match.kwargs
+        self.assertEqual(kwargs['reporttype'], IPTTReportQuickstartView.FORM_PREFIX_TARGET)
+        self.assertEqual(int(kwargs['program_id']), self.program.id)
 
     def test_get_context_data(self):
         """Do we get the correct context data?"""
@@ -273,21 +276,20 @@ class IPTTReportQuickstartViewTests(TestCase):
                 'targetperiods-numrecentperiods': 1, }
         path = reverse_lazy('iptt_quickstart')
         response = self.client.post(path, data=data, follow=True)
-        context = response.context_data
+        context_data = response.context_data
 
-        self.assertEqual(context['program_id'], self.program.id.__str__())
+        self.assertEqual(int(context_data['program_id']), self.program.id)
         # self.assertEqual(context['report_wide'], ?)
         # self.assertEqual(context['report_date_ranges'], ?)
         # self.assertEqual(context['indicators'], ?)
-        regexp = self.program.name
-        self.assertRegex(str(context['program']), self.program.name)
-        self.assertEqual(str(context['reporttype']),
+        self.assertRegex(str(context_data['program']), self.program.name)
+        self.assertEqual(str(context_data['reporttype']),
                          IPTTReportQuickstartView.FORM_PREFIX_TARGET)
-        self.assertEqual(str(context['report_end_date']),
+        self.assertEqual(str(context_data['report_end_date']),
                          self.program.reporting_period_end)
-        self.assertEqual(str(context['report_end_date_actual']),
+        self.assertEqual(str(context_data['report_end_date_actual']),
                          self.program.reporting_period_end)
-        self.assertEqual(str(context['report_start_date']),
+        self.assertEqual(str(context_data['report_start_date']),
                          self.program.reporting_period_start)
 
     def test_post_with_valid_form(self):
