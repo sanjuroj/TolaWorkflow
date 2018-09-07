@@ -1,13 +1,21 @@
-from datetime import datetime
+import datetime
 from unittest import skip
 
-from django.core.urlresolvers import reverse_lazy
 from django.test import Client, RequestFactory, TestCase
+from django.urls import reverse_lazy
 
 from factories.indicators_models import IndicatorFactory
-from factories.workflow_models import ProgramFactory, TolaUserFactory, UserFactory
+from factories.workflow_models import (
+    ProgramFactory,
+    TolaUserFactory,
+    UserFactory
+)
 from indicators.models import Indicator
-from indicators.views.views_reports import IPTTReportQuickstartView, IPTT_Mixin
+from indicators.views.views_reports import (
+    IPTTReportQuickstartView,
+    IPTT_Mixin,
+    IPTT_ReportView,
+)
 from workflow.models import Program
 
 
@@ -33,8 +41,8 @@ class IPTT_MixinTests(TestCase):
     def test__get_num_periods(self):
         """Do we return the correct number of periods"""
         _get_num_periods = IPTT_Mixin._get_num_periods
-        start_date = datetime.strptime("2016-01-15", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2017-12-16", "%Y-%m-%d").date()
+        start_date = datetime.date(2016, 1, 15)
+        end_date = datetime.date(2017, 12, 16)
 
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.ANNUAL), 2)
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.SEMI_ANNUAL), 4)
@@ -43,10 +51,10 @@ class IPTT_MixinTests(TestCase):
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.MONTHLY), 24)
 
     def test__get_num_periods_returns_0_for_reversed_date_range(self):
-        """Do we return 0 if end date is before start date?"""
+        """Do we return  if end date is before start date?"""
         _get_num_periods = IPTT_Mixin._get_num_periods
-        start_date = datetime.strptime("2020-01-01", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2019-01-01", "%Y-%m-%d").date()
+        start_date = datetime.date(2020, 1, 1)
+        end_date = datetime.date(2019, 1, 1)
 
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.ANNUAL), 0)
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.SEMI_ANNUAL), 0)
@@ -66,26 +74,26 @@ class IPTT_MixinTests(TestCase):
 
     def test__get_first_period(self):
         """Do we calculate the first period of a date range correctly?"""
-        real_start_date = datetime.strptime("2016-07-15", "%Y-%m-%d").date()
+        real_start_date = datetime.date(2016, 7, 15)
         for freq in IPTT_MixinTests.freqs:
             num_months = self.mixin._get_num_months(freq)
 
             _get_first_period = self.mixin._get_first_period(real_start_date, num_months)
             if freq == Indicator.ANNUAL:
                 self.assertEqual(_get_first_period,
-                                 datetime.strptime("2016-01-01", "%Y-%m-%d").date())
+                                 datetime.date(2016, 1, 1))
             elif freq == Indicator.SEMI_ANNUAL:
                 self.assertEqual(_get_first_period,
-                                 datetime.strptime("2016-07-01", "%Y-%m-%d").date())
+                                 datetime.date(2016, 7, 1))
             elif freq == Indicator.TRI_ANNUAL:
                 self.assertEqual(_get_first_period,
-                                 datetime.strptime("2016-05-01", "%Y-%m-%d").date())
+                                 datetime.date(2016, 5, 1))
             elif freq == Indicator.QUARTERLY:
                 self.assertEqual(_get_first_period,
-                                 datetime.strptime("2016-07-01", "%Y-%m-%d").date())
+                                 datetime.date(2016, 7, 1))
             elif freq == Indicator.MONTHLY:
                 self.assertEqual(_get_first_period,
-                                 datetime.strptime("2016-07-01", "%Y-%m-%d").date())
+                                 datetime.date(2016, 7, 1))
             else:
                 self.assertEqual(1, 0, msg="Unexpected target frequency: " + freq)
 
@@ -95,8 +103,8 @@ class IPTT_MixinTests(TestCase):
 
     def test_generate_targetperiods(self):
         """Can we generate target periods correctly"""
-        filter_start_date = datetime.strptime("2018-01-01", "%Y-%m-%d").date()
-        filter_end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        filter_start_date = datetime.date(2018, 1, 1)
+        filter_end_date = datetime.date(2019, 12, 31)
         freq = Indicator.ANNUAL
         num_recents = 0
         show_all = True
@@ -117,8 +125,8 @@ class IPTT_MixinTests(TestCase):
 
     def test_generate_timeperiods(self):
         """Can we generate time periods correctly?"""
-        filter_start_date = datetime.strptime("2018-01-01", "%Y-%m-%d").date()
-        filter_end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        filter_start_date = datetime.date(2018, 1, 1)
+        filter_end_date = datetime.date(2019, 12, 31)
         freq = Indicator.ANNUAL
         num_recents = 0
         show_all = True
@@ -242,31 +250,55 @@ class IPTTReportQuickstartViewTests(TestCase):
         self.assertTemplateUsed(response, 'indicators/iptt_quickstart.html')
         self.assertContains(response, 'Indicator Performance Tracking Table')
 
-    @skip('TODO: Implement this')
-    def test_get_context_data(self):
-        pass
-
-    @skip('WIP')
     def test_get_form_kwargs(self):
         """Do we get the correct form kwargs?"""
 
         data = {'csrfmiddlewaretoken': 'lolwut',
                 'targetperiods-program': self.program.id,
-                'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
+                'targetperiods-formprefix': IPTTReportQuickstartView.FORM_PREFIX_TARGET,
                 'targetperiods-timeframe': Indicator.LOP,
                 'targetperiods-targetperiods': 1,
                 'targetperiods-numrecentperiods': 1, }
         path = reverse_lazy('iptt_quickstart')
         response = self.client.post(path, data=data, follow=True)
+        kwargs = response.resolver_match.kwargs
+        self.assertEqual(kwargs['reporttype'], IPTTReportQuickstartView.FORM_PREFIX_TARGET)
+        self.assertEqual(int(kwargs['program_id']), self.program.id)
+
+    def test_get_context_data(self):
+        """Do we get the correct context data?"""
+
+        data = {'csrfmiddlewaretoken': 'lolwut',
+                'targetperiods-program': self.program.id,
+                'targetperiods-formprefix': IPTTReportQuickstartView.FORM_PREFIX_TARGET,
+                'targetperiods-timeframe': Indicator.LOP,
+                'targetperiods-targetperiods': 1,
+                'targetperiods-numrecentperiods': 1, }
+        path = reverse_lazy('iptt_quickstart')
+        response = self.client.post(path, data=data, follow=True)
+        context_data = response.context_data
+
+        self.assertEqual(int(context_data['program_id']), self.program.id)
+        # self.assertEqual(context['report_wide'], ?)
+        # self.assertEqual(context['report_date_ranges'], ?)
+        # self.assertEqual(context['indicators'], ?)
+        self.assertRegex(str(context_data['program']), self.program.name)
+        self.assertEqual(str(context_data['reporttype']),
+                         IPTTReportQuickstartView.FORM_PREFIX_TARGET)
+        self.assertEqual(str(context_data['report_end_date']),
+                         self.program.reporting_period_end)
+        self.assertEqual(str(context_data['report_end_date_actual']),
+                         self.program.reporting_period_end)
+        self.assertEqual(str(context_data['report_start_date']),
+                         self.program.reporting_period_start)
 
     def test_post_with_valid_form(self):
         """Does POSTing to iptt_quickstart with valid form data redirect to the
         correct view (iptt_report)?"""
 
-        view = IPTTReportQuickstartView
         data = {'csrfmiddlewaretoken': 'lolwut',
                 'targetperiods-program': self.program.id,
-                'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
+                'targetperiods-formprefix': IPTTReportQuickstartView.FORM_PREFIX_TARGET,
                 'targetperiods-timeframe': Indicator.LOP,
                 'targetperiods-targetperiods': 1,
                 'targetperiods-numrecentperiods': 1, }
@@ -287,14 +319,41 @@ class IPTTReportQuickstartViewTests(TestCase):
         self.assertTemplateUsed(response, 'indicators/iptt_quickstart.html')
 
 
-class IPTT_ReportViewTestCase(TestCase):
+class IPTT_ReportViewTests(TestCase):
+    """Unit tests to validate IPTT_ReportView"""
+
+    # url(r'^iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$',
+    #     IPTT_ReportView.as_view(),
+    #     name='iptt_report'),
 
     def setUp(self):
-        pass
+        self.user = UserFactory(first_name="PeterPeter", last_name="PumpkinEater", username="PPPE")
+        self.user.set_password('orangethumb')
+        self.user.save()
+        self.tola_user = TolaUserFactory(user=self.user)
+        self.country = self.tola_user.country
+        self.program = ProgramFactory(
+            funding_status='Funded', reporting_period_start='2016-03-01', reporting_period_end='2020-05-01')
+        self.program.country.add(self.country)
+        self.program.save()
+        self.indicator = IndicatorFactory(
+            program=self.program, unit_of_measure_type=Indicator.NUMBER, is_cumulative=False,
+            direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE, target_frequency=Indicator.ANNUAL)
+        self.request_factory = RequestFactory()
+        self.client = Client()
+        self.client.login(username=self.user.username, password='orangethumb')
 
-    @skip('TODO: Implement this')
     def test_get(self):
-        pass
+        """Does get return 200 and the right template?"""
+
+        url_kwargs = {
+            'program_id': self.program.id,
+            'reporttype': 'targetperiods',
+        }
+        filterdata = {'targetperiods': 1, 'timeframe': 1}
+        response = self.client.get(reverse_lazy('iptt_report', kwargs=url_kwargs), data=filterdata)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, template_name=IPTT_ReportView.template_name)
 
     @skip('TODO: Implement this')
     def test_post(self):
