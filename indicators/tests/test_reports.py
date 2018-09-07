@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from unittest import skip
 
 from django.test import Client, RequestFactory, TestCase
@@ -41,8 +41,8 @@ class IPTT_MixinTests(TestCase):
     def test__get_num_periods(self):
         """Do we return the correct number of periods"""
         _get_num_periods = IPTT_Mixin._get_num_periods
-        start_date = datetime.strptime("2016-01-15", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2017-12-16", "%Y-%m-%d").date()
+        start_date = datetime.date(2016, 1, 15)
+        end_date = datetime.date(2017, 12, 16)
 
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.ANNUAL), 2)
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.SEMI_ANNUAL), 4)
@@ -51,10 +51,10 @@ class IPTT_MixinTests(TestCase):
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.MONTHLY), 24)
 
     def test__get_num_periods_returns_0_for_reversed_date_range(self):
-        """Do we return 0 if end date is before start date?"""
+        """Do we return  if end date is before start date?"""
         _get_num_periods = IPTT_Mixin._get_num_periods
-        start_date = datetime.strptime("2020-01-01", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2019-01-01", "%Y-%m-%d").date()
+        start_date = datetime.date(2020, 1, 1)
+        end_date = datetime.date(2019, 1, 1)
 
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.ANNUAL), 0)
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.SEMI_ANNUAL), 0)
@@ -74,26 +74,26 @@ class IPTT_MixinTests(TestCase):
 
     def test__get_first_period(self):
         """Do we calculate the first period of a date range correctly?"""
-        real_start_date = datetime.strptime("2016-07-15", "%Y-%m-%d").date()
+        real_start_date = datetime.date(2016, 7, 15)
         for freq in IPTT_MixinTests.freqs:
             num_months = self.mixin._get_num_months(freq)
 
             _get_first_period = self.mixin._get_first_period(real_start_date, num_months)
             if freq == Indicator.ANNUAL:
                 self.assertEqual(_get_first_period,
-                                 datetime.strptime("2016-01-01", "%Y-%m-%d").date())
+                                 datetime.date(2016, 1, 1))
             elif freq == Indicator.SEMI_ANNUAL:
                 self.assertEqual(_get_first_period,
-                                 datetime.strptime("2016-07-01", "%Y-%m-%d").date())
+                                 datetime.date(2016, 7, 1))
             elif freq == Indicator.TRI_ANNUAL:
                 self.assertEqual(_get_first_period,
-                                 datetime.strptime("2016-05-01", "%Y-%m-%d").date())
+                                 datetime.date(2016, 5, 1))
             elif freq == Indicator.QUARTERLY:
                 self.assertEqual(_get_first_period,
-                                 datetime.strptime("2016-07-01", "%Y-%m-%d").date())
+                                 datetime.date(2016, 7, 1))
             elif freq == Indicator.MONTHLY:
                 self.assertEqual(_get_first_period,
-                                 datetime.strptime("2016-07-01", "%Y-%m-%d").date())
+                                 datetime.date(2016, 7, 1))
             else:
                 self.assertEqual(1, 0, msg="Unexpected target frequency: " + freq)
 
@@ -103,8 +103,8 @@ class IPTT_MixinTests(TestCase):
 
     def test_generate_targetperiods(self):
         """Can we generate target periods correctly"""
-        filter_start_date = datetime.strptime("2018-01-01", "%Y-%m-%d").date()
-        filter_end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        filter_start_date = datetime.date(2018, 1, 1)
+        filter_end_date = datetime.date(2019, 12, 31)
         freq = Indicator.ANNUAL
         num_recents = 0
         show_all = True
@@ -125,8 +125,8 @@ class IPTT_MixinTests(TestCase):
 
     def test_generate_timeperiods(self):
         """Can we generate time periods correctly?"""
-        filter_start_date = datetime.strptime("2018-01-01", "%Y-%m-%d").date()
-        filter_end_date = datetime.strptime("2019-12-31", "%Y-%m-%d").date()
+        filter_start_date = datetime.date(2018, 1, 1)
+        filter_end_date = datetime.date(2019, 12, 31)
         freq = Indicator.ANNUAL
         num_recents = 0
         show_all = True
