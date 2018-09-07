@@ -7,7 +7,7 @@ from factories.indicators_models import IndicatorTypeFactory
 from factories.workflow_models import ProgramFactory
 from workflow.models import Country, Program
 from indicators.models import Indicator
-from tola.test.base_classes import TestBase, ScenarioBase
+from tola.test.base_classes import TestBase, ScenarioBase, ScenarioBase2, IndicatorDetailsMixin, IndicatorStatsMixin
 from tola.test.scenario_definitions import indicator_scenarios
 from tola.test.utils import instantiate_scenario, generate_core_indicator_data
 
@@ -98,16 +98,21 @@ class CollectedDataTest(TestBase, TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class DefaultScenarioTest(ScenarioBase, TestCase):
+class DefaultScenarioTest(ScenarioBase, IndicatorDetailsMixin, TestCase):
     scenario = indicator_scenarios['scenario_1i-default_5pt_3cd']
     url_name = 'collected_data_view'
 
 
-class CumulativeNumberScenarioTest(ScenarioBase, TestCase):
+class CumulativeNumberScenarioTest(ScenarioBase, IndicatorDetailsMixin, TestCase):
     scenario = indicator_scenarios['scenario_1i-cumulative_number_5pt_3cd']
     url_name = 'collected_data_view'
 
 
-class PercentScenarioTest(ScenarioBase, TestCase):
+class PercentScenarioTest(ScenarioBase, IndicatorDetailsMixin, TestCase):
     scenario = indicator_scenarios['scenario_1i-cumulative_percent_5pt_3cd']
     url_name = 'collected_data_view'
+
+
+class DefaultScenarioStatsTest(ScenarioBase2, IndicatorStatsMixin, TestCase):
+    scenario = indicator_scenarios['scenario_1i-default_5pt_3cd_7ev']
+    url_name = 'program_page'
