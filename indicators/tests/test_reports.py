@@ -335,14 +335,8 @@ class IPTT_ReportViewTests(TestCase):
         self.client = Client()
         self.client.login(username=self.user.username, password='orangethumb')
 
-    # @skip('WIP')
     def test_get_returns_200(self):
         """Does get return 200"""
-
-        # TODO: What values to mock?
-        # period_choices_start, period_choices_end, period_start_initial,period_end_initial,
-        # targetperiods, timeframe
-        # filter_form_initial_data = {}
 
         url_kwargs = {
             'program_id': self.program.id,
@@ -351,11 +345,15 @@ class IPTT_ReportViewTests(TestCase):
         filterdata = {'targetperiods': 1, 'timeframe': 1}
         response = self.client.get(reverse_lazy('iptt_report', kwargs=url_kwargs), data=filterdata)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, template_name=IPTT_ReportView.template_name)
 
-    @skip('TODO: Implement this')
     def test_get_loads_correct_template(self):
-        pass
+        url_kwargs = {
+            'program_id': self.program.id,
+            'reporttype': 'targetperiods',
+        }
+        filterdata = {'targetperiods': 1, 'timeframe': 1}
+        response = self.client.get(reverse_lazy('iptt_report', kwargs=url_kwargs), data=filterdata)
+        self.assertTemplateUsed(response, template_name=IPTT_ReportView.template_name)
 
     @skip('TODO: Implement this')
     def test_post(self):
