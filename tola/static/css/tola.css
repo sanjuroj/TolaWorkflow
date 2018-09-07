@@ -1,9 +1,6 @@
-/*!
- * Bootstrap v4.0.0 (https://getbootstrap.com)
- * Copyright 2011-2018 The Bootstrap Authors
- * Copyright 2011-2018 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- */
+/* Bootstrap libraries */
+/* There should be NO selectors in compiled CSS above this comment */
+/* Bootstrap root CSS */
 :root {
   --blue: #007bff;
   --indigo: #6610f2;
@@ -34,6 +31,7 @@
   --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
+/* Bootstrap reset CSS */
 *,
 *::before,
 *::after {
@@ -296,6 +294,7 @@ template {
 [hidden] {
   display: none !important; }
 
+/* Bootstrap CSS modules */
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
   margin-bottom: 0.5rem;
@@ -6038,6 +6037,7 @@ a.text-dark:hover, a.text-dark:focus {
   .table-bordered td {
     border: 1px solid #ddd !important; } }
 
+/* Local Bootstrap overrides */
 html {
   display: flex;
   flex-direction: column;
@@ -6364,6 +6364,7 @@ input[type="checkbox"].form-control:focus {
 .card-header {
   background: rgba(0, 0, 0, 0.1) !important; }
 
+/* Local custom CSS and overloads for non-BS libraries */
 .map-marker {
   width: 20px;
   height: 20px;
