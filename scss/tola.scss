@@ -1,17 +1,12 @@
-// Bootstrap libraries
+// Bootstrap modules
 @import '../node_modules/bootstrap/scss/functions';
 @import '../node_modules/bootstrap/scss/variables';
 @import '../node_modules/bootstrap/scss/mixins';
 
-// Variables
-@import 'tola_primitives'; // MC Tola variables
-@import 'bootstrap_variables'; // Override Bootstrap variables
-
-// Bootstrap selectors
-@import '../node_modules/bootstrap/scss/bootstrap';
-
-// MC Tola selectors
+// MC Tola modules
+@import 'variables'; // MC variables
 @import 'bootstrap_overrides'; // overload BS selectors
+
 @import 'maps';
 @import 'charts';
 @import 'branding';
