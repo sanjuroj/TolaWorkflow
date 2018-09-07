@@ -1,15 +1,16 @@
 from datetime import datetime
 from unittest import skip
 
-from django.core.urlresolvers import reverse_lazy
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
 from django.shortcuts import render
 from django.test import Client, RequestFactory, TestCase
+from django.urls import reverse_lazy
 
 from factories.indicators_models import IndicatorFactory
 from factories.workflow_models import ProgramFactory, TolaUserFactory, UserFactory
 from indicators.models import Indicator
-from indicators.views.views_reports import IPTTReportQuickstartView, IPTTReportQuickstartForm, IPTT_Mixin
+from indicators.views.views_reports import IPTTReportQuickstartView, IPTT_Mixin, \
+    IPTT_ReportView
 from workflow.models import Program
 
 
@@ -310,13 +311,50 @@ class IPTTReportQuickstartViewTests(TestCase):
         self.assertTemplateUsed(response, 'indicators/iptt_quickstart.html')
 
 
-class IPTT_ReportViewTestCase(TestCase):
+class IPTT_ReportViewTests(TestCase):
+    """Unit tests to validate IPTT_ReportView"""
+
+    # url(r'^iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$',
+    #     IPTT_ReportView.as_view(),
+    #     name='iptt_report'),
 
     def setUp(self):
-        pass
+        self.user = UserFactory(first_name="PeterPeter", last_name="PumpkinEater", username="PPPE")
+        self.user.set_password('orangethumb')
+        self.user.save()
+        self.tola_user = TolaUserFactory(user=self.user)
+        self.country = self.tola_user.country
+        self.program = ProgramFactory(
+            funding_status='Funded', reporting_period_start='2016-03-01', reporting_period_end='2020-05-01')
+        self.program.country.add(self.country)
+        self.program.save()
+        self.indicator = IndicatorFactory(
+            program=self.program, unit_of_measure_type=Indicator.NUMBER, is_cumulative=False,
+            direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE, target_frequency=Indicator.ANNUAL)
+        self.request_factory = RequestFactory()
+        self.client = Client()
+        self.client.login(username=self.user.username, password='orangethumb')
+
+    # @skip('WIP')
+    def test_get_returns_200(self):
+        """Does get return 200"""
+
+        # TODO: What values to mock?
+        # period_choices_start, period_choices_end, period_start_initial,period_end_initial,
+        # targetperiods, timeframe
+        # filter_form_initial_data = {}
+
+        url_kwargs = {
+            'program_id': self.program.id,
+            'reporttype': 'targetperiods',
+        }
+        filterdata = {'targetperiods': 1, 'timeframe': 1}
+        response = self.client.get(reverse_lazy('iptt_report', kwargs=url_kwargs), data=filterdata)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, template_name=IPTT_ReportView.template_name)
 
     @skip('TODO: Implement this')
-    def test_get(self):
+    def test_get_loads_correct_template(self):
         pass
 
     @skip('TODO: Implement this')
