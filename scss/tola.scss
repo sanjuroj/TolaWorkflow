@@ -1,10 +1,9 @@
-// Bootstrap modules
-@import '../node_modules/bootstrap/scss/functions';
-@import '../node_modules/bootstrap/scss/variables';
-@import '../node_modules/bootstrap/scss/mixins';
+@import 'mc_tola_primitives'; // MC primitive variables, LOAD FIRST
 
-// MC Tola modules
-@import 'variables'; // MC variables
+// All Bootstrap modules, including libraries
+@import '../node_modules/bootstrap/scss/bootstrap';
+
+// MC Tola CSS modules
 @import 'bootstrap_overrides'; // overload BS selectors
 
 @import 'maps';
