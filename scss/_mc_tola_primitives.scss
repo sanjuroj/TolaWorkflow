@@ -11,73 +11,73 @@ $red_100_hover: #e51232; // hsl(351,85,48)
 /// Gray
 $gray_100: #54585a; // hsl(200,3,34) //was #4d525a
 $gray_80: #71757b; // hsl(216,4,46)
-$gray_60: #94979c;
-$gray_40: #b8babd;
-$gray_20: #dbdcde;
+$gray_60: #94979c; // hsl(218,4,60)
+$gray_40: #b8babd; // hsl(216,4,73)
+$gray_20: #dbdcde; // hsl(220,4,86)
 /// new non-brand grays
-$gray_f2: #f2f2f2;
+$gray_f2: #f2f2f2; // hsl(0,0,95)
 /// Blue
-$blue_100: #00a49f; //was #00b2a9 and before that, #00afaa
-$blue_100_hover: #33bfbb;
-$blue_80: #33bfbb;
-$blue_60: #66cfcc;
-$blue_40: #99dfdd;
-$blue_20: #ccefee;
+$blue_100: #00a49f; // hsl(178,100,32) //was #00b2a9 and before that, #00afaa
+$blue_100_hover: #33bfbb; // hsl(178,58,47)
+$blue_80: #33bfbb; // hsl(178,58,47)
+$blue_60: #66cfcc; // hsl(178,52,61)
+$blue_40: #99dfdd; // hsl(178,52,74)
+$blue_20: #ccefee; // hsl(178,52,87)
 /// Green
-$green_100: #84bd00; //was #81bc00
-$green_100_hover: #81bc00;
-$green_80: #9ac933;
-$green_60: #b3d766;
-$green_40: #cde499;
-$green_20: #e6f2cc;
+$green_100: #84bd00; // hsl(78,100,37) //was #81bc00
+$green_100_hover: #81bc00; // hsl(79,100,37)
+$green_80: #9ac933; // hsl(79,60,49)
+$green_60: #b3d766; // hsl(79,59,62)
+$green_40: #cde499; // hsl(78,58,75)
+$green_20: #e6f2cc; // hsl(79,59,87)
 /// Yellow
-$yellow_100: #ffd100; //was #ffd200
-$yellow_80: #ffdb33;
-$yellow_60: #ffe466;
-$yellow_40: #ffed99;
-$yellow_20: #fff6cc;
+$yellow_100: #ffd100; // hsl(49,100,50) //was #ffd200
+$yellow_80: #ffdb33; // hsl(49,100,60)
+$yellow_60: #ffe466; // hsl(49,100,70)
+$yellow_40: #ffed99; // hsl(49,100,80)
+$yellow_20: #fff6cc; // hsl(49,100,90)
 $link-hover-opacity: 0.8; //todo move this where it makes sense
 
 // Color: Tola Palette as of 2018-08-27
 // These are cribbed from app.css and bootstrap-overrides.css
 
-$blue-medium: #0645AD;
-$blue-light: #3366cc;
-$blue-lighter: #55acee;
-$blue2-lighter: #59b5fa; ///* highlighted state for blue-lighter */
+$blue-medium: #0645AD; // hsl(217,93,35)
+$blue-light: #3366cc; // hsl(220,60,50)
+$blue-lighter: #55acee; // hsl(206,82,63)
+$blue2-lighter: #59b5fa; // hsl(206,94,66) /* highlighted state for blue-lighter */
 
-$gray-more-darker: #2C2C2C;
-$gray2-more-darker: #222222;
-$gray-darker: #323232; ///* AKA rgb(50,50,50) */
-$gray2-darker: #333333; ///* should probably be #323232 */
-$gray-dark: $gray_100;
-$gray2-medium: #495057; ///* should probably be #54585A */
-$gray-medium: #808080;
-$gray-light: #B8BABD;
-$gray2-lighter: #dddddd; ///* should probably be #DBDCDE */
-$gray-lighter: #DBDCDE;
-$gray-lighter-alt: #E6E7E8; ///* used with .bg-gray-lighter on indicator table */
-$gray-lightest: #F5F5F5;
-$practically-white: #FAFAFA; ///* should probably be #F5F5F5 */
+$gray-more-darker: #2C2C2C; // hsl(0,0,16)
+$gray2-more-darker: #222222; // hsl(0,0,13)
+$gray-darker: #323232; // hsl(0,0,20) ///* AKA rgb(50,50,50) */
+$gray2-darker: #333333; // hsl(0,0,20) /* should probably be #323232 */
+$gray_dark: #54585a; // hsl(200,3,34)
+$gray2-medium: #495057; // hsl(210,9,31) ///* should probably be #54585A */
+$gray-medium: #808080; // hsl(0,0,50)
+$gray-light: #B8BABD; // hsl(216,4,73)
+$gray2-lighter: #dddddd; // hsl(0,0,87) ///* should probably be #DBDCDE */
+$gray-lighter: #DBDCDE; // hsl(220,4,86)
+$gray-lighter-alt: #E6E7E8; // hsl(210,4,91) ///* used with .bg-gray-lighter on indicator table */
+$gray-lightest: #F5F5F5; // hsl(0,0,96)
+$practically-white: #FAFAFA; // hsl(0,0,98) ///* should probably be #F5F5F5 */
 
-$green-light: #74D378;
-$green-medium: #4CAF50;
-$green-dark: #2A7C2D;
+$green-light: #74D378; // hsl(123,52,64)
+$green-medium: #4CAF50; // hsl(122,39,49)
+$green-dark: #2A7C2D; // hsl(122,49,33)
 
-$teal-dark: #046C69;
-$teal-medium: #00A49F;
-$teal-light: #33BFBB;
-$teal-lighter: #CCEFEE;
+$teal-dark: #046C69; // hsl(178,93,22)
+$teal-medium: #00A49F; // hsl(178,100,32)
+$teal-light: #33BFBB; // hsl(178,58,47)
+$teal-lighter: #CCEFEE; // hsl(178,52,87)
 
-$danger-medium: #DD0000;
-$danger-light: #EE7F7F;
-$danger-lighter: #FFE2E2;
+$danger-medium: #DD0000; // hsl(360,100,43)
+$danger-light: #EE7F7F; // hsl(360,77,72)
+$danger-lighter: #FFE2E2; // hsl(360,100,94)
 
-$mc-red: #C8202F;
-$red2-medium: #ff0000; ///* aka red */
+$mc-red: #C8202F; // hsl(355,72,45) // not actual brand color, see above
+$red2-medium: #ff0000; // hsl(360,100,50) ///* aka red */
 
-$blue2-medium: #0000ff; ///* aka blue */
+$blue2-medium: #0000ff; // hsl(240,100,50) ///* aka blue */
 
-$yellow-light: #FAFAD2; ///* AKA lighttgoldenrodyellow */
+$yellow-light: #FAFAD2; // hsl(60,80,90) ///* AKA lighttgoldenrodyellow */
 
 
