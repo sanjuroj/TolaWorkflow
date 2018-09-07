@@ -1,0 +1,76 @@
+// Color: Tola Palette as of 2018-08-27
+// These are cribbed from app.css and bootstrap-overrides.css
+
+$blue-medium: #0645AD;
+$blue-light: #3366cc;
+$blue-lighter: #55acee;
+$gray-more-darker: #2C2C2C;
+$gray-darker: #323232; ///* AKA rgb(50,50,50) */
+$gray-dark: #54585A;
+$gray-medium: #808080;
+$gray-light: #B8BABD;
+$gray-lighter: #DBDCDE;
+$gray-lighter-alt: #E6E7E8; ///* used with .bg-gray-lighter on indicator table */
+$gray-lightest: #F5F5F5;
+$green-light: #74D378;
+$green-medium: #4CAF50;
+$green-dark: #2A7C2D;
+$practically-white: #FAFAFA; ///* should probably be #F5F5F5 */
+$teal-dark: #046C69;
+$teal-medium: #00A49F;
+$teal-light: #33BFBB;
+$teal-lighter: #CCEFEE;
+$danger-medium: #DD0000;
+$danger-light: #EE7F7F;
+$danger-lighter: #FFE2E2;
+$mc-red: #C8202F;
+$red2-medium: #ff0000; ///* aka red */
+$blue2-medium: #0000ff; ///* aka blue */
+$gray2-more-darker: #222222;
+$gray2-darker: #333333; ///* should probably be #323232 */
+$gray2-medium: #495057; ///* should probably be #54585A */
+$gray2-lighter: #dddddd; ///* should probably be #DBDCDE */
+$blue2-lighter: #59b5fa; ///* highlighted state for blue-lighter */
+$yellow-light: #FAFAD2; ///* AKA lighttgoldenrodyellow */
+
+// Color: MC brand palette from Drew
+// This deviates substantially from colors as posted to the identity site:
+// https://identity.mercycorps.org/portals/contentlibrary/#page/our-brand/color
+// or
+// https://identity.mercycorps.org/portals/contentlibrary/#asset/157495
+// These *do* align with Jenny’s mockups
+
+
+/// Red
+$red_100: #c8102e; //was #cf102d
+$red_100_hover: #e51232;
+/// Gray
+$gray_100: #54585a; //was #4d525a
+$gray_80: #71757b;
+$gray_60: #94979c;
+$gray_40: #b8babd;
+$gray_20: #dbdcde;
+/// new non-brand grays
+$gray_f2: #f2f2f2;
+/// Blue
+$blue_100: #00a49f; //was #00b2a9 and before that, #00afaa
+$blue_100_hover: #33bfbb;
+$blue_80: #33bfbb;
+$blue_60: #66cfcc;
+$blue_40: #99dfdd;
+$blue_20: #ccefee;
+/// Green
+$green_100: #84bd00; //was #81bc00
+$green_100_hover: #81bc00;
+$green_80: #9ac933;
+$green_60: #b3d766;
+$green_40: #cde499;
+$green_20: #e6f2cc;
+/// Yellow
+$yellow_100: #ffd100; //was #ffd200
+$yellow_80: #ffdb33;
+$yellow_60: #ffe466;
+$yellow_40: #ffed99;
+$yellow_20: #fff6cc;
+$white: #ffffff;
+$link-hover-opacity: 0.8; //todo move this where it makes sense
