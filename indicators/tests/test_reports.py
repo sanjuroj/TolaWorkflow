@@ -1,16 +1,21 @@
 from datetime import datetime
 from unittest import skip
 
-from django.http import HttpRequest
-from django.shortcuts import render
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse_lazy
 
 from factories.indicators_models import IndicatorFactory
-from factories.workflow_models import ProgramFactory, TolaUserFactory, UserFactory
+from factories.workflow_models import (
+    ProgramFactory,
+    TolaUserFactory,
+    UserFactory
+)
 from indicators.models import Indicator
-from indicators.views.views_reports import IPTTReportQuickstartView, IPTT_Mixin, \
-    IPTT_ReportView
+from indicators.views.views_reports import (
+    IPTTReportQuickstartView,
+    IPTT_Mixin,
+    IPTT_ReportView,
+)
 from workflow.models import Program
 
 
@@ -245,52 +250,53 @@ class IPTTReportQuickstartViewTests(TestCase):
         self.assertTemplateUsed(response, 'indicators/iptt_quickstart.html')
         self.assertContains(response, 'Indicator Performance Tracking Table')
 
-    def test_get_context_data(self):
-        """Do we get the correct context data?"""
-        kwargs = {'initial': {'natasha': 'boris', },
-                  'prefix': IPTTReportQuickstartView.FORM_PREFIX_TARGET,
-                  'files': {}, }
-        view = IPTTReportQuickstartView()
-        view.initial = kwargs['initial']
-        view.prefix = kwargs['prefix']
-        view.files = kwargs['files']
-        view.request = HttpRequest()
-        view.request.method = 'POST'
-        view.request.user = self.user
-
-        response = render(view.request, 'indicators/iptt_quickstart.html', status=200)
-        self.assertEqual(response.status_code, 200)
-
-        form_kwargs = view.get_form_kwargs()
-        context = view.get_context_data(kwargs=form_kwargs)
-
-        for kwarg in form_kwargs:
-            self.assertIn(kwarg, context['kwargs'])
-
     def test_get_form_kwargs(self):
         """Do we get the correct form kwargs?"""
 
-        kwargs = {'initial': {'natasha': 'boris', },
-                  'prefix': IPTTReportQuickstartView.FORM_PREFIX_TARGET, }
-        view = IPTTReportQuickstartView()
-        view.initial = kwargs['initial']
-        view.prefix = kwargs['prefix']
-        view.request = HttpRequest()
+        data = {'csrfmiddlewaretoken': 'lolwut',
+                'targetperiods-program': self.program.id,
+                'targetperiods-formprefix': IPTTReportQuickstartView.FORM_PREFIX_TARGET,
+                'targetperiods-timeframe': Indicator.LOP,
+                'targetperiods-targetperiods': 1,
+                'targetperiods-numrecentperiods': 1, }
+        path = reverse_lazy('iptt_quickstart')
+        response = self.client.post(path, data=data, follow=True)
 
-        response = render(view.request, 'indicators/iptt_quickstart.html', status=200)
-        self.assertEqual(response.status_code, 200)
-        form_kwargs = view.get_form_kwargs()
-        for kwarg in kwargs:
-            self.assertIn(kwarg, form_kwargs)
+    def test_get_context_data(self):
+        """Do we get the correct context data?"""
+
+        data = {'csrfmiddlewaretoken': 'lolwut',
+                'targetperiods-program': self.program.id,
+                'targetperiods-formprefix': IPTTReportQuickstartView.FORM_PREFIX_TARGET,
+                'targetperiods-timeframe': Indicator.LOP,
+                'targetperiods-targetperiods': 1,
+                'targetperiods-numrecentperiods': 1, }
+        path = reverse_lazy('iptt_quickstart')
+        response = self.client.post(path, data=data, follow=True)
+        context = response.context_data
+
+        self.assertEqual(context['program_id'], self.program.id.__str__())
+        # self.assertEqual(context['report_wide'], ?)
+        # self.assertEqual(context['report_date_ranges'], ?)
+        # self.assertEqual(context['indicators'], ?)
+        regexp = self.program.name
+        self.assertRegex(str(context['program']), self.program.name)
+        self.assertEqual(str(context['reporttype']),
+                         IPTTReportQuickstartView.FORM_PREFIX_TARGET)
+        self.assertEqual(str(context['report_end_date']),
+                         self.program.reporting_period_end)
+        self.assertEqual(str(context['report_end_date_actual']),
+                         self.program.reporting_period_end)
+        self.assertEqual(str(context['report_start_date']),
+                         self.program.reporting_period_start)
 
     def test_post_with_valid_form(self):
         """Does POSTing to iptt_quickstart with valid form data redirect to the
         correct view (iptt_report)?"""
 
-        view = IPTTReportQuickstartView
         data = {'csrfmiddlewaretoken': 'lolwut',
                 'targetperiods-program': self.program.id,
-                'targetperiods-formprefix': view.FORM_PREFIX_TARGET,
+                'targetperiods-formprefix': IPTTReportQuickstartView.FORM_PREFIX_TARGET,
                 'targetperiods-timeframe': Indicator.LOP,
                 'targetperiods-targetperiods': 1,
                 'targetperiods-numrecentperiods': 1, }
@@ -335,8 +341,8 @@ class IPTT_ReportViewTests(TestCase):
         self.client = Client()
         self.client.login(username=self.user.username, password='orangethumb')
 
-    def test_get_returns_200(self):
-        """Does get return 200"""
+    def test_get(self):
+        """Does get return 200 and the right template?"""
 
         url_kwargs = {
             'program_id': self.program.id,
@@ -345,14 +351,6 @@ class IPTT_ReportViewTests(TestCase):
         filterdata = {'targetperiods': 1, 'timeframe': 1}
         response = self.client.get(reverse_lazy('iptt_report', kwargs=url_kwargs), data=filterdata)
         self.assertEqual(response.status_code, 200)
-
-    def test_get_loads_correct_template(self):
-        url_kwargs = {
-            'program_id': self.program.id,
-            'reporttype': 'targetperiods',
-        }
-        filterdata = {'targetperiods': 1, 'timeframe': 1}
-        response = self.client.get(reverse_lazy('iptt_report', kwargs=url_kwargs), data=filterdata)
         self.assertTemplateUsed(response, template_name=IPTT_ReportView.template_name)
 
     @skip('TODO: Implement this')
