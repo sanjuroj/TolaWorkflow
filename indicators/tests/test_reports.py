@@ -244,18 +244,36 @@ class IPTTReportQuickstartViewTests(TestCase):
         self.assertTemplateUsed(response, 'indicators/iptt_quickstart.html')
         self.assertContains(response, 'Indicator Performance Tracking Table')
 
-    @skip('TODO: Implement this')
     def test_get_context_data(self):
-        pass
+        """Do we get the correct context data?"""
+        kwargs = {'initial': {'natasha': 'boris', },
+                  'prefix': IPTTReportQuickstartView.FORM_PREFIX_TARGET,
+                  'files': {}, }
+        view = IPTTReportQuickstartView()
+        view.initial = kwargs['initial']
+        view.prefix = kwargs['prefix']
+        view.files = kwargs['files']
+        view.request = HttpRequest()
+        view.request.method = 'POST'
+        view.request.user = self.user
+
+        response = render(view.request, 'indicators/iptt_quickstart.html', status=200)
+        self.assertEqual(response.status_code, 200)
+
+        form_kwargs = view.get_form_kwargs()
+        context = view.get_context_data(kwargs=form_kwargs)
+
+        for kwarg in form_kwargs:
+            self.assertIn(kwarg, context['kwargs'])
 
     def test_get_form_kwargs(self):
         """Do we get the correct form kwargs?"""
 
-        kwargs  = {'initial': {'natasha': 'boris', },
-                   'prefix': IPTTReportQuickstartView.FORM_PREFIX_TARGET, }
+        kwargs = {'initial': {'natasha': 'boris', },
+                  'prefix': IPTTReportQuickstartView.FORM_PREFIX_TARGET, }
         view = IPTTReportQuickstartView()
         view.initial = kwargs['initial']
-        view.prefix = view.FORM_PREFIX_TARGET
+        view.prefix = kwargs['prefix']
         view.request = HttpRequest()
 
         response = render(view.request, 'indicators/iptt_quickstart.html', status=200)
