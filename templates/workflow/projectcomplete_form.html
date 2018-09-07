@@ -7,7 +7,9 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url "dashboard" 0 %}">{% trans 'Projects' %}</a></li>
-        {% if id %}<li class="breadcrumb-item"><a href="{% url "project_dashboard" project_id %}">Project Dashboard</a></li>{% endif %}
+        {% if p_agreement_pk %}<li class="breadcrumb-item">
+            <a href="{% url "project_dashboard" p_agreement_pk %}">Project Dashboard</a></li>
+        {% endif %}
         <li class="breadcrumb-item active">Project tracking form</li>
     </ol>
 </nav>
@@ -36,7 +38,9 @@
 {% endblock %}
 
 {% block content %}
-    <h4><a href="{% url "project_dashboard" id %}">{{ p_name|truncatechars:150 }}</a></h4>
+    {% if p_agreement_pk and p_name %}
+        <h4><a href="{% url "project_dashboard" p_agreement_pk %}">{{ p_name|truncatechars:150 }}</a></h4>
+    {% endif %}
     {% include "form_guidance.html" %}
     {% if form.errors %}
         <div class="help-block">
