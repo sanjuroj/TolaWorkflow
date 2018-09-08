@@ -60,24 +60,14 @@ $gray-lighter-alt: #E6E7E8; // hsl(210,4,91) ///* used with .bg-gray-lighter on 
 $gray-lightest: #F5F5F5; // hsl(0,0,96)
 $practically-white: #FAFAFA; // hsl(0,0,98) ///* should probably be #F5F5F5 */
 
-$green-light: #74D378; // hsl(123,52,64)
-$green-medium: #4CAF50; // hsl(122,39,49)
-$green-dark: #2A7C2D; // hsl(122,49,33)
 
 $teal-dark: #046C69; // hsl(178,93,22)
 $teal-medium: #00A49F; // hsl(178,100,32)
 $teal-light: #33BFBB; // hsl(178,58,47)
 $teal-lighter: #CCEFEE; // hsl(178,52,87)
 
-$danger-medium: #DD0000; // hsl(360,100,43)
-$danger-light: #EE7F7F; // hsl(360,77,72)
-$danger-lighter: #FFE2E2; // hsl(360,100,94)
+$danger-medium: #DD0000; // hsl(360,100,43) // only used in override of .btn-danger
+$danger-light: #EE7F7F; // hsl(360,77,72) // only used in override of .btn-danger
 
-$mc-red: #C8202F; // hsl(355,72,45) // not actual brand color, see above
-$red2-medium: #ff0000; // hsl(360,100,50) ///* aka red */
-
-$blue2-medium: #0000ff; // hsl(240,100,50) ///* aka blue */
-
-$yellow-light: #FAFAD2; // hsl(60,80,90) ///* AKA lighttgoldenrodyellow */
 
 
