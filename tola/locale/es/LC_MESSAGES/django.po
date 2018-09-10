@@ -631,25 +631,25 @@ msgstr "N/A"
 #: indicators/views/views_indicators.py:68
 #, fuzzy, python-format
 #| msgid "Years"
-msgid "Year %s"
+msgid "Year %%s"
 msgstr "Años"
 
 #: indicators/views/views_indicators.py:73
 #, fuzzy, python-format
 #| msgid "Semi-annual periods"
-msgid "Semi-annual period %s"
+msgid "Semi-annual period %%s"
 msgstr "Periodos semestrales"
 
 #: indicators/views/views_indicators.py:78
 #, fuzzy, python-format
 #| msgid "Tri-annual periods"
-msgid "Tri-annual period %s"
+msgid "Tri-annual period %%s"
 msgstr "Períodos trienales"
 
 #: indicators/views/views_indicators.py:83
 #, fuzzy, python-format
 #| msgid "Quarters"
-msgid "Quarter %s"
+msgid "Quarter %%s"
 msgstr "Trimestres"
 
 #: indicators/views/views_indicators.py:200
@@ -2084,7 +2084,7 @@ msgstr "Cerrar"
 #: templates/workflow/documentation_popup_list.html:27
 #, python-format
 msgid "Documentation List for %(program)s "
-msgstr "Lista de documentación para %(programa)s  "
+msgstr "Lista de documentación para %(program)s  "
 
 #: templates/workflow/documentation_popup_list.html:46
 #, fuzzy
@@ -3451,13 +3451,13 @@ msgstr "URL (enlace al repositorio de documentos o documento)"
 #: workflow/models.py:1248
 #, fuzzy, python-format
 #| msgid "%% complete"
-msgid "% complete"
+msgid "%% complete"
 msgstr "%% completado"
 
 #: workflow/models.py:1249
 #, fuzzy, python-format
 #| msgid "%% cumulative completion"
-msgid "% cumulative completion"
+msgid "%% cumulative completion"
 msgstr "%% de compleción acumulativa"
 
 #: workflow/models.py:1250

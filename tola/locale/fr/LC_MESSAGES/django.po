@@ -631,25 +631,25 @@ msgstr "S.O."
 #: indicators/views/views_indicators.py:68
 #, fuzzy, python-format
 #| msgid "Years"
-msgid "Year %s"
+msgid "Year %%s"
 msgstr "Années"
 
 #: indicators/views/views_indicators.py:73
 #, fuzzy, python-format
 #| msgid "Semi-annual periods"
-msgid "Semi-annual period %s"
+msgid "Semi-annual period %%s"
 msgstr "Périodes semestrielles"
 
 #: indicators/views/views_indicators.py:78
 #, fuzzy, python-format
 #| msgid "Tri-annual periods"
-msgid "Tri-annual period %s"
+msgid "Tri-annual period %%s"
 msgstr "Périodes triannuelles"
 
 #: indicators/views/views_indicators.py:83
 #, fuzzy, python-format
 #| msgid "Quarters"
-msgid "Quarter %s"
+msgid "Quarter %%s"
 msgstr "Quarters"
 
 #: indicators/views/views_indicators.py:200
@@ -2084,7 +2084,7 @@ msgstr "Fermer"
 #: templates/workflow/documentation_popup_list.html:27
 #, python-format
 msgid "Documentation List for %(program)s "
-msgstr "Liste de documentation pour %(programme)s "
+msgstr "Liste de documentation pour %(program)s "
 
 #: templates/workflow/documentation_popup_list.html:46
 #, fuzzy
@@ -2159,7 +2159,7 @@ msgstr "Filtré par <b>(Status): %(status|default_if_none:'')s</ b>"
 #: templates/workflow/programdashboard_list.html:25
 #, python-format
 msgid "Filtered by <b>(Program): %(filtered_program|default_if_none:'')s</b>"
-msgstr "Filtré par <b>(Programme): %(filter_program|default_if_none:'')s</ b>"
+msgstr "Filtré par <b>(Programme): %(filtered_program|default_if_none:'')s</ b>"
 
 #: templates/workflow/programdashboard_list.html:36
 #, fuzzy
@@ -3451,13 +3451,13 @@ msgstr "URL (lien vers le référentiel de documents ou de documents)"
 #: workflow/models.py:1248
 #, fuzzy, python-format
 #| msgid "%% complete"
-msgid "% complete"
+msgid "%% complete"
 msgstr "%% achevée"
 
 #: workflow/models.py:1249
 #, fuzzy, python-format
 #| msgid "%% cumulative completion"
-msgid "% cumulative completion"
+msgid "%% cumulative completion"
 msgstr "%% d'achèvement cumulatif"
 
 #: workflow/models.py:1250
