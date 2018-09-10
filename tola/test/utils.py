@@ -73,6 +73,20 @@ class IndicatorValues(object):
                 collected_sums.append(self.collected_data_sets[i][-1])
         return collected_sums
 
+    def program_to_date_achieved_ratio(self, period_ceiling=None):
+        achieved_by_period = self.collected_data_sum_by_periodic_target[:period_ceiling]
+        targets_by_period = self.periodic_target_targets[:period_ceiling]
+        if self.unit_of_measure_type == Indicator.NUMBER:
+            achieved_val = sum(achieved_by_period)
+            if self.is_cumulative:
+                target_val = targets_by_period[:-1]
+            else:
+                target_val = sum(targets_by_period)
+        else:
+            achieved_val = achieved_by_period[:-1]
+            target_val = targets_by_period[:-1]
+        return achieved_val / target_val
+
     def __unicode__(self):
         return 'Indicator with %s periodic targets' % (len(self.periodic_targets))
 
@@ -80,17 +94,29 @@ class IndicatorValues(object):
         return unicode(self).encode('utf-8')
 
 
+class Scenario(object):
+
+    def __init__(self, **kwargs):
+        if kwargs['indicators']:
+            self.indicators = kwargs['indicators']
+        else:
+            self.indicators = []
+
+    def percent_indicators_on_target(self):
+        return 3
+
+
 # Load scenario values into the database
 def instantiate_scenario(program_id, scenario, existing_indicator_ids=None):
 
-    if existing_indicator_ids and len(scenario) != len(existing_indicator_ids):
+    if existing_indicator_ids and len(scenario.indicators) != len(existing_indicator_ids):
         raise ImproperlyConfigured(
-            "Can't instatiate scenario, indicator count (%s) doesn't match scenario indcator count (%s)" %
-            (len(existing_indicator_ids), len(scenario)))
+            "Can't instatiate scenario, indicator count (%s) doesn't match scenario indicator count (%s)" %
+            (len(existing_indicator_ids), len(scenario.indicators)))
 
     indicator_ids = []
     program = Program.objects.get(id=program_id)
-    for n, indicator_value_set in enumerate(scenario):
+    for n, indicator_value_set in enumerate(scenario.indicators):
         if existing_indicator_ids:
             indicator = Indicator.objects.get(id=existing_indicator_ids[n])
         else:
@@ -100,6 +126,9 @@ def instantiate_scenario(program_id, scenario, existing_indicator_ids=None):
                 direction_of_change=indicator_value_set.direction_of_change,
                 target_frequency=indicator_value_set.target_frequency,
                 lop_target=indicator_value_set.lop_target,)
+
+        # It's important to return indicator_ids in order.  Preserving the creation order also preserves
+        # the link between the scenario and the indicator that was created in the database.
         indicator_ids.append(indicator.id)
         make_targets(program, indicator)
         periodic_targets = PeriodicTarget.objects.filter(indicator__id=indicator.id)
