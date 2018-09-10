@@ -54,25 +54,25 @@ a:hover {
 
 h1 {
     font-size: 1.75rem;
-    color: $gray-dark;
+    color: $gray-700;
     font-weight: bold;
 }
 
 h2 {
     font-size: 1.5rem;
-    color: $gray-dark;
+    color: $gray-700;
     font-weight: bold;
 }
 
 h3 {
     font-size: 1.3rem;
-    color: $gray-dark;
+    color: $gray-700;
     font-weight: normal;
 }
 
 h4 {
     font-size: 1rem;
-    color: $gray-dark;
+    color: $gray-700;
     font-weight: bold;
 }
 
@@ -81,7 +81,7 @@ body > .container {
 }
 
 .bg-dark {
-    background-color: $gray-dark!important;
+    background-color: $gray-700 !important;
 }
 .bg-light {
     background-color: $gray-lightest !important;
@@ -280,7 +280,7 @@ input[type="checkbox"].form-control:focus {
     box-shadow: 0 1px 5px rgba(0,0,0,0.2);
 }
 .navbar-dark .dropdown-menu {
-    background: $gray-dark;
+    background: $gray-700;
     border: none;
     border-radius: 0;
     box-shadow: 0 1px 5px rgba(0,0,0,0.2);
@@ -305,7 +305,7 @@ input[type="checkbox"].form-control:focus {
 }
 .multiselect.btn {
     align-items: center;
-    color: $gray-dark;
+    color: $gray-700;
     display: flex;
     justify-content: space-between;
     text-align: left;
@@ -316,7 +316,7 @@ input[type="checkbox"].form-control:focus {
 }
 .multiselect-container > li > a {
     display: block;
-    color: $gray-dark;
+    color: $gray-700;
 }
 .multiselect-container > li > a:hover {
   background: $blue-lighter;
