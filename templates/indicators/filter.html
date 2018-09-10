@@ -58,15 +58,15 @@
 </div>
 
 <script>
-    var programPlaceholder = "{% if program_id %} {{ program_name|truncatechars:55 }} {% else %} {% trans 'Programs' %} {% endif %}";
+    var programPlaceholder = "{% if program_id %} {{ program_name|truncatechars:55 }} {% else %} {% trans 'Programs'|escapejs %} {% endif %}";
     var programId = `{{ program_id }}`;
     var programName = programPlaceholder;
 
-    const indicatorName = `{% if indicator_id %} {{ indicator_name|truncatechars:55 }} {% else %} {% trans 'Indicators' %} {% endif %}`;
+    const indicatorName = `{% if indicator_id %} {{ indicator_name|truncatechars:55 }} {% else %} {% trans 'Indicators'|escapejs %} {% endif %}`;
     const indicatorId = `{{ indicator_id }}`;
 
     var typeId = `{{ type_id }}`;
-    var typeName = `{% if type_id %} {{ type_name|truncatechars:55 }} {% else %} {% trans 'Type' %} {% endif %}`;
+    var typeName = `{% if type_id %} {{ type_name|truncatechars:55 }} {% else %} {% trans 'Type'|escapejs %} {% endif %}`;
 
     var multiselectOptions = {
           enableFiltering: true,

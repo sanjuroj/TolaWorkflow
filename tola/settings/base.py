@@ -27,6 +27,10 @@ LOCALE_PATHS = [
     join(DJANGO_ROOT, 'locale'),
 ]
 
+FORMAT_MODULE_PATH = [
+    'formats'
+]
+
 ########## END PATH CONFIGURATION
 
 
@@ -77,19 +81,19 @@ SITE_ID = 1
 USE_I18N = True
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
-USE_L10N = False
+USE_L10N = True
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = True
 
-DATE_FORMAT = 'Y-n-d'
+DATE_FORMAT = 'Y-m-d'
 
 # Add list of languages available for selection.
 LANGUAGES = [
     ('en', _('English')),
     ('fr', _('French')),
     ('es', _('Spanish')),
-    ('ar', _('Arabic')),
+    # ('ar', _('Arabic')),
 ]
 
 ########## END GENERAL CONFIGURATION
@@ -187,6 +191,7 @@ MIDDLEWARE = (
     # Default Django middleware.
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',  # Activate locale middleware
+    'tola.middleware.UserLanguageMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -195,7 +200,7 @@ MIDDLEWARE = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
-    'tola.middleware.TimingMiddleware'
+    'tola.middleware.TimingMiddleware',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 ########## END MIDDLEWARE CONFIGURATION
@@ -257,6 +262,7 @@ THIRD_PARTY_APPS = (
     'ckeditor_uploader',
     'simplejson',
     'simple_history',
+    #'user_language_middleware',
     'widget_tweaks',
 )
 

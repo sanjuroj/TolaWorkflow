@@ -1,3 +1,4 @@
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -82,12 +83,12 @@
 
             <!-- Main body content -->
             <p>
-            <h1>Whoops!</h1>
+            <h1>{% trans "Whoops!" %}</h1>
             <!-- Page title  -->
-            <h2>500 Error...Whoops something went wrong...</h2>
+            <h2>{% trans "500 Error...Whoops something went wrong..." %}</h2>
 
             <!-- Main body content -->
-            <p>There was a problem loading this page.  Please notify a systems administrator if you think you should not be seeing this page. <br/><a href="http://tola.work">Tola.Work</a><br/><br/>
+            <p>{% trans "There was a problem loading this page.  Please notify a systems administrator if you think you should not be seeing this page." %}
             <img src="/static/img/whoops.png" border="2">
             </p>
 
