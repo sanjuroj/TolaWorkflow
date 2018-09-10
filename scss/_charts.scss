@@ -15,7 +15,7 @@
         cursor: default;
         @include transition(background-color 200ms ease-in-out);
         &:hover {
-            background-color: $practically-white; // should probably be #F5F5F5
+            background-color: $gray-100; // should probably be #F5F5F5
         }
         span {
             display: block;
