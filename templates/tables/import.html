@@ -1,8 +1,9 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Import from Tola Tables</title>
+  <title>{% trans "Import from Tola Tables" %}</title>
 </head>
 <body>
 <script type="text/javascript" src="{{ STATIC_URL }}js/select2.min.js"></script>
@@ -40,7 +41,7 @@
         <strong>{{ error|escape }}</strong>
     </div>
 
-    <h4 class="modal-title">{% block page_title %}Import A Tola Table{% endblock %}</h4>
+    <h4 class="modal-title">{% block page_title %}{% trans "Import A Tola Table" %}{% endblock %}</h4>
 
     </div>
     <div class="modal-body">
@@ -62,8 +63,8 @@
     <br/>
     <div class='jumbotron'>
 
-        <h4>Import a data table from <a href="http://tola-tables.mercycorps.org" target="_new">Tola Tables</a>.</h4>
-        <p>Import one of your Tola Tables or a Table shared with you as a Project Initiation, Indicator, Site Profile or Indicator Evidence.</p>
+        <h4>{% trans "Import a data table from" %} <a href="http://tola-tables.mercycorps.org" target="_new">Tola Tables</a>.</h4>
+        <p>{% trans "Import one of your Tola Tables or a Table shared with you as a Project Initiation, Indicator, Site Profile or Indicator Evidence." %}</p>
         <div class="panel-body">
             <form class="form-horizontal" method="post" enctype="multipart/form-data" id="importForm" name="most" action="/tables/import/" role="form">
               {% csrf_token %}
@@ -100,4 +101,3 @@
 
 </body>
 </html>
-

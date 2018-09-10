@@ -31,7 +31,7 @@
                 $("#tolatablemodal").modal('toggle');
             },
             error: function(data) {
-                $("#alert-error-text").html("{% trans 'Something went wrong!' %}");
+                $("#alert-error-text").html("{% trans 'Something went wrong!'|escapejs %}");
                 $("#alert-error").show()
 
             }

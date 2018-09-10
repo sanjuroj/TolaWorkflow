@@ -217,8 +217,8 @@ class IPTT_Mixin(object):
             self.annotations['Endline_last'] = endline_last
         else:
             for k, v in timeperiods.items():
-                start_date = datetime.strftime(v[0], '%Y-%m-%d')
-                end_date = datetime.strftime(v[1], '%Y-%m-%d')
+                start_date = datetime.strftime(v[0], '%Y-%m-%d') # TODO: localize this date
+                end_date = datetime.strftime(v[1], '%Y-%m-%d') # TODO: localize this date
 
                 last_data_record = CollectedData.objects.filter(
                     indicator=OuterRef('pk'),
@@ -386,6 +386,7 @@ class IPTT_Mixin(object):
             targetperiods = OrderedDict((k, v) for k, v in most_recent_targetperiods)
         elif show_all == 0 and filter_start_date is not None and filter_end_date is not None:
             filtered_targetperiods = OrderedDict()
+            # TODO: localize the following dates
             filter_start_date = datetime.strptime(filter_start_date, "%Y-%m-%d").date()
             filter_end_date = datetime.strptime(filter_end_date, "%Y-%m-%d").date()
             for k, v in targetperiods.items():
@@ -420,7 +421,7 @@ class IPTT_Mixin(object):
             end_date = start_date + relativedelta(months=+num_months_in_period) + relativedelta(days=-1)
             # print('start_date={}, end_date={}'.format(start_date, end_date))
             if frequency == Indicator.MONTHLY:
-                period_name = datetime.strftime(start_date, "%b %Y")
+                period_name = datetime.strftime(start_date, "%b %Y") #
                 timeperiods["{}".format(period_name)] = [start_date, end_date]
             else:
                 timeperiods["{} {}".format(period_name, i)] = [start_date, end_date]
@@ -448,6 +449,7 @@ class IPTT_Mixin(object):
             timeperiods = OrderedDict((k, v) for k, v in most_recent_timeperiods)
         elif show_all == 0 and filter_start_date is not None and filter_end_date is not None:
             filtered_timeperiods = OrderedDict()
+            # TODO: localize the following dates
             filter_start_date = datetime.strptime(filter_start_date, "%Y-%m-%d").date()
             filter_end_date = datetime.strptime(filter_end_date, "%Y-%m-%d").date()
             for k, v in timeperiods.items():
@@ -672,9 +674,12 @@ class IPTT_Mixin(object):
                 prev_start = start
                 choices = []
 
+            # TODO: localize the following dates
             if period == Indicator.MONTHLY:
                 value = "{}".format(
-                    datetime.strftime(periods_date_ranges[name][0], "%b %Y")
+                    formats.date_format(periods_date_ranges[name][0], "MONTH_YEAR_FORMAT").encode('UTF-8')
+                    # this is the date printed to the IPTT
+                    # NOTE encoding
                 )
             else:
                 value = "{} ({} - {})".format(
@@ -773,11 +778,11 @@ class IPTT_Mixin(object):
         if period == Indicator.MID_END or period == Indicator.LOP:
             reporting_sdate = formats.date_format(
                 self.program.reporting_period_start,
-                format="DATE_FORMAT",
+                format="DATE_FORMAT", # Not sure what this date is
                 use_l10n=True)
             reporting_edate = formats.date_format(
                 self.program.reporting_period_end,
-                format="DATE_FORMAT",
+                format="DATE_FORMAT", # Not sure what this date is
                 use_l10n=True)
             all_periods_start = ((self.program.reporting_period_start, reporting_sdate,),)
             all_periods_end = ((self.program.reporting_period_end, reporting_edate),)
@@ -793,7 +798,7 @@ class IPTT_Mixin(object):
                 period_end_initial = None
             all_periods_start = self.prepare_iptt_period_dateranges(period, all_date_ranges, self.FROM)
             all_periods_end = self.prepare_iptt_period_dateranges(period, all_date_ranges, self.TO)
-
+        # TODO: localize the following dates ?
         self.filter_form_initial_data['period_choices_start'] = tuple(all_periods_start)
         self.filter_form_initial_data['period_choices_end'] = tuple(all_periods_end)
         self.filter_form_initial_data['period_start_initial'] = period_start_initial
@@ -815,6 +820,7 @@ class IPTT_Mixin(object):
 
 
 class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
+    # TODO: should be localize dates in the Excel format
 
     def get_filename(self, reporttype):
         report = 'TvA'

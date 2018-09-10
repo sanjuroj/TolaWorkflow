@@ -54,8 +54,8 @@
                 buttons: [
                     {
                         extend: 'csv',
-                        text: '{% trans "Export to CSV" %}',
-                        title: '{% trans "Indicator Library Report" %}',
+                        text: '{% trans "Export to CSV"|escapejs %}',
+                        title: '{% trans "Indicator Library Report"|escapejs %}',
                         exportOptions: { columns: "thead th:not(.noExport)" }
                     }
                 ],
@@ -87,35 +87,35 @@
                     }
                 ],
                 columns: [
-                    { title: "{% trans 'Edit' %}"},
-                    { title: "{% trans 'PID' %}", data: "program__id"},
-                    { title: "{% trans 'IID' %}", data: "id"},
-                    { title: "{% trans 'ITID' %}", data: "indicator_type__id"},
-                    { title: "{% trans 'Program' %}", data: "program__name", "defaultContent": "<i>{% trans 'Not set' %}</i>"},
-                    { title: "{% trans 'Indicator' %}", data: "name", "defaultContent": "<i>{% trans 'Not set' %}</i>",
+                    { title: "{% trans 'Edit'|escapejs %}"},
+                    { title: "{% trans 'PID'|escapejs %}", data: "program__id"},
+                    { title: "{% trans 'IID'|escapejs %}", data: "id"},
+                    { title: "{% trans 'ITID'|escapejs %}", data: "indicator_type__id"},
+                    { title: "{% trans 'Program'|escapejs %}", data: "program__name", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'Indicator'|escapejs %}", data: "name", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>",
                         "mRender": function (data, type, row) {
                             return '<a class="collecteddata" name=' + row.id + ' href="/indicators/indicator_update/' + row.id + '/">' + row.name + '</a>';
                         }
                     },
-                    { title: "{% trans 'Level' %}", data: "level__name", "defaultContent": "<i>{% trans 'Not set' %}</i>" },
-                    { title: "{% trans 'Type' %}", data: "indicator_type__indicator_type", "defaultContent": "<i>{% trans 'Not set</i>"},
-                    { title: "{% trans 'Sector' %}", data: "sector__sector", "defaultContent": "<i>{% trans 'Not set' %}</i>"},
-                    { title: "{% trans 'Disaggregation' %}", data: "disaggregation__disaggregation_type", "defaultContent": "<i>{% trans 'Not set' %}</i>"},
-                    { title: "{% trans 'Method of Analysis' %}", data: "method_of_analysis", "defaultContent": "<i>{% trans 'Not set' %}</i>"},
-                    { title: "{% trans 'source' %}", data: "source", "defaultContent": "<i>{% trans 'Not set' %}</i>"},
-                    { title: "{% trans 'Reporting Frequency' %}", data: "reporting_frequency__frequency", "defaultContent": "<i>{% trans 'Not set' %}</i>"},
-                    { title: "{% trans 'Baseline' %}", data: "baseline", "defaultContent": "<i>{% trans 'Not set' %}</i>"},
-                    { title: "{% trans 'LOP Target' %}", data: "lop_target", "defaultContent": "<i>{% trans 'Not set' %}</i>"},
-                    { title: "{% trans 'External' %}", data: "external_service_record__external_service__name", "defaultContent": "<i>{% trans 'Not set' %}</i>"},
-                    { title: "{% trans 'Supporting Data' %}", data: "collecteddata",
+                    { title: "{% trans 'Level'|escapejs %}", data: "level__name", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>" },
+                    { title: "{% trans 'Type'|escapejs %}", data: "indicator_type__indicator_type", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'Sector'|escapejs %}", data: "sector__sector", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'Disaggregation'|escapejs %}", data: "disaggregation__disaggregation_type", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'Method of Analysis'|escapejs %}", data: "method_of_analysis", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'source'|escapejs %}", data: "source", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'Reporting Frequency'|escapejs %}", data: "reporting_frequency__frequency", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'Baseline'|escapejs %}", data: "baseline", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'LOP Target'|escapejs %}", data: "lop_target", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'External'|escapejs %}", data: "external_service_record__external_service__name", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'Supporting Data'|escapejs %}", data: "collecteddata",
                         "mRender": function (data, type, row) {
                             return '<a class="collecteddata" name=' + row.id + ' href="/indicators/collecteddata/0/' + row.id + '/0/">Collected Data</a>';
                         }
                     },
-                    { title: "{% trans 'Key Performance Indicators' %}",data: "key_performance_indicator", "defaultContent": "<i>{% trans 'Not set' %}</i>"},
-                    { title: "{% trans 'Means of Verification' %}",data: "means_of_verification", "defaultContent": "<i>{% trans 'Not set' %}</i>"},
-                    { title: "{% trans 'Create Date' %}",data: "create_date", "defaultContent": "<i>{% trans 'Not set' %}</i>"},
-                    { title: "{% trans 'Edit Date' %}",data: "edit_date", "defaultContent": "<i>{% trans 'Not set' %}</i>"}
+                    { title: "{% trans 'Key Performance Indicators'|escapejs %}",data: "key_performance_indicator", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'Means of Verification'|escapejs %}",data: "means_of_verification", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'Create Date'|escapejs %}",data: "create_date", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                    { title: "{% trans 'Edit Date'|escapejs %}",data: "edit_date", "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"}
                 ]
             });
         });

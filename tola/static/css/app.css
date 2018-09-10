@@ -377,7 +377,13 @@ ul.paginate li a:hover:not(.active) {background-color: #ddd;} /* should probably
   float: right;
 }
 /* Keep the picker on top of other elements */
-.ui-datepicker{z-index: 10000 !important};
+.ui-datepicker{
+    z-index: 10000 !important;
+}
+/* Inline datepicker on Collected Data form */
+#date_collected-wrapper .ui-datepicker-inline {
+    position: absolute;
+}
 
 /*Indicator line graph with slider*/
 .clear-fix
@@ -955,6 +961,9 @@ used on collected data table in IPTT */
 .break-word {
     word-break: break-word; /* wraps text in the middle of words */
 }
+
+/* language chooser */
+.select-language { }
 
 /* Branding */
 .navbar-brand-wrapper { /* BS has a navbar-brand class already :-( */

@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 import uuid
 from datetime import timedelta
 from decimal import Decimal
 
 from django.db import models
 from django.db.models import Avg
-from django.utils import timezone
+from django.utils import formats, timezone
 from django.utils.translation import ugettext_lazy as _
 
 from django.contrib import admin
@@ -641,26 +642,29 @@ class PeriodicTarget(models.Model):
         verbose_name = _("Periodic Target")
 
     def __unicode__(self):
+        # can't find where this surfaces in the UI
         if self.indicator.target_frequency == Indicator.LOP \
             or self.indicator.target_frequency == Indicator.EVENT \
                 or self.indicator.target_frequency == Indicator.MID_END:
             return self.period
         if self.start_date and self.end_date:
             return "%s (%s - %s)" % (self.period,
-                                     self.start_date.strftime('%b %d, %Y'),
-                                     self.end_date.strftime('%b %d, %Y'))
+                formats.date_format(self.start_date, "MEDIUM_DATE_FORMAT"),
+                formats.date_format(self.end_date, "MEDIUM_DATE_FORMAT"),)
         return self.period
 
     @property
     def start_date_formatted(self):
+        # apparently unused?
         if self.start_date:
-            return self.start_date.strftime('%b %d, %Y').replace(" 0", " ")
+            return formats.date_format(self.start_date, "MEDIUM_DATE_FORMAT")
         return self.start_date
 
     @property
     def end_date_formatted(self):
+        # apparently unused?
         if self.end_date:
-            return self.end_date.strftime('%b %d, %Y').replace(" 0", " ")
+            return formats.date_format(self.end_date, "MEDIUM_DATE_FORMAT")
         return self.end_date
 
     @property
@@ -786,8 +790,9 @@ class CollectedData(models.Model):
 
     @property
     def date_collected_formatted(self):
+        # apparently unused?
         if self.date_collected:
-            return self.date_collected.strftime('%b %d, %Y').replace(" 0", " ")
+            return formats.date_format(self.date_collected, "MEDIUM_DATE_FORMAT")
         return self.date_collected
 
     @property
