@@ -6064,7 +6064,7 @@ body {
   flex-grow: 0;
   width: 100%;
   border-top: 1px solid #F5F5F5;
-  background-color: #DBDCDE;
+  background-color: #dbdcde;
   vertical-align: top;
   color: #343840; }
 
@@ -6233,7 +6233,7 @@ select[disabled=true],
 .form-control:disabled:focus,
 .form-control:disabled.focus,
 .form-control[readonly] {
-  border-color: #DBDCDE;
+  border-color: #dbdcde;
   background-color: #F5F5F5;
   outline: 0;
   box-shadow: none; }
@@ -6257,7 +6257,7 @@ input[type="checkbox"].form-control:focus {
   transition: all .2s ease; }
 
 .navbar-dark .navbar-nav .nav-link {
-  color: #DBDCDE; }
+  color: #dbdcde; }
 
 .navbar-dark .navbar-nav .nav-link:hover {
   color: #fff; }
@@ -6348,12 +6348,12 @@ input[type="checkbox"].form-control:focus {
   padding: .5rem 1rem; }
 
 .nav-tabs .tab-pane a:hover {
-  border-color: #DBDCDE #DBDCDE #b8babd; }
+  border-color: #dbdcde #dbdcde #b8babd; }
 
 .nav-tabs .tab-pane a.active.show {
   color: #54585a;
   background-color: #fff;
-  border-color: #DBDCDE #DBDCDE #fff; }
+  border-color: #dbdcde #dbdcde #fff; }
 
 .tab-content.panel-body {
   margin-top: 1rem; }
@@ -6392,7 +6392,7 @@ input[type="checkbox"].form-control:focus {
     width: 10px;
     height: 10px;
     margin: 5px 0 0 5px;
-    background: #DBDCDE;
+    background: #dbdcde;
     position: absolute;
     border-radius: 50%; }
 
