@@ -6220,7 +6220,7 @@ body > .container {
 .form-control:focus,
 .was-validated .form-control.is-valid:focus,
 .was-validated .form-control:valid:focus {
-  color: #495057;
+  color: #54585a;
   background-color: #fff;
   border-color: #3366cc;
   outline: 0;
@@ -6279,7 +6279,7 @@ input[type="checkbox"].form-control:focus {
 .navbar-dark .dropdown-item:hover {
   color: #fff;
   text-decoration: none;
-  background-color: #808080; }
+  background-color: #54585a; }
 
 .multiselect-native-select .btn-group {
   width: 100%; }
@@ -6351,7 +6351,7 @@ input[type="checkbox"].form-control:focus {
   border-color: #DBDCDE #DBDCDE #B8BABD; }
 
 .nav-tabs .tab-pane a.active.show {
-  color: #495057;
+  color: #54585a;
   background-color: #fff;
   border-color: #DBDCDE #DBDCDE #fff; }
 

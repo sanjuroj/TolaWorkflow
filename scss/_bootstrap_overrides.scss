@@ -223,7 +223,7 @@ body > .container {
 .form-control:focus,
 .was-validated .form-control.is-valid:focus,
 .was-validated .form-control:valid:focus {
-  color: $gray2-medium; // why is this not $gray-dark?
+  color: $gray-700;
   background-color: $white;
   border-color: $blue-light;
   outline: 0;
@@ -292,7 +292,7 @@ input[type="checkbox"].form-control:focus {
 .navbar-dark .dropdown-item:hover {
     color: $white;
     text-decoration: none;
-    background-color: $gray-medium;
+    background-color: $gray-700;
 }
 
 // overload bootstrap-multiselect
@@ -378,7 +378,7 @@ input[type="checkbox"].form-control:focus {
 }
 .nav-tabs .tab-pane a.active.show {
 // same as  .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active
-    color: $gray2-medium;
+    color: $gray-700;
     background-color: $white;
     border-color: $gray-lighter $gray-lighter $white;
 }
