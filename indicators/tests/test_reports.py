@@ -355,7 +355,6 @@ class IPTT_ReportViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, template_name=IPTT_ReportView.template_name)
 
-    @skip('WIP')
     def test_post(self):
         url_kwargs = {
             'program_id': self.program.id,
@@ -370,6 +369,9 @@ class IPTT_ReportViewTests(TestCase):
         }
 
         path = reverse_lazy('iptt_report', kwargs=url_kwargs)
-        response = self.client.post(path, data=data)
-        self.assertEqual(response.status_code, 302)
-        self.assertContains(response, self.program.name)
+        response = self.client.post(path, data=data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.redirect_chain), 1)
+        self.assertIsNotNone(response.content)
+        self.assertIn(self.program.name, response.content)
+        self.assertIn(self.indicator.name, response.content)
