@@ -8,14 +8,6 @@
 /// Red
 $red_100: #c8102e; // hsl(350,85,42) // was #cf102d
 $red_100_hover: #e51232; // hsl(351,85,48)
-/// Gray
-$gray_100: #54585a; // hsl(200,3,34) //was #4d525a
-$gray_80: #71757b; // hsl(216,4,46)
-$gray_60: #94979c; // hsl(218,4,60)
-$gray_40: #b8babd; // hsl(216,4,73)
-$gray_20: #dbdcde; // hsl(220,4,86)
-/// new non-brand grays
-$gray_f2: #f2f2f2; // hsl(0,0,95)
 /// Blue
 $blue_100: #00a49f; // hsl(178,100,32) //was #00b2a9 and before that, #00afaa
 $blue_100_hover: #33bfbb; // hsl(178,58,47)
@@ -46,19 +38,6 @@ $blue-light: #3366cc; // hsl(220,60,50)
 $blue-lighter: #55acee; // hsl(206,82,63)
 $blue2-lighter: #59b5fa; // hsl(206,94,66) /* highlighted state for blue-lighter */
 
-$gray-more-darker: #2C2C2C; // hsl(0,0,16)
-$gray2-more-darker: #222222; // hsl(0,0,13)
-$gray-darker: #323232; // hsl(0,0,20) ///* AKA rgb(50,50,50) */
-$gray2-darker: #333333; // hsl(0,0,20) /* should probably be #323232 */
-$gray_dark: #54585a; // hsl(200,3,34)
-$gray2-medium: #495057; // hsl(210,9,31) ///* should probably be #54585A */
-$gray-medium: #808080; // hsl(0,0,50)
-$gray-light: #B8BABD; // hsl(216,4,73)
-$gray2-lighter: #dddddd; // hsl(0,0,87) ///* should probably be #DBDCDE */
-$gray-lighter: #DBDCDE; // hsl(220,4,86)
-$gray-lighter-alt: #E6E7E8; // hsl(210,4,91) ///* used with .bg-gray-lighter on indicator table */
-$gray-lightest: #F5F5F5; // hsl(0,0,96)
-$practically-white: #FAFAFA; // hsl(0,0,98) ///* should probably be #F5F5F5 */
 
 
 $teal-dark: #046C69; // hsl(178,93,22)
@@ -69,5 +48,40 @@ $teal-lighter: #CCEFEE; // hsl(178,52,87)
 $danger-medium: #DD0000; // hsl(360,100,43) // only used in override of .btn-danger
 $danger-light: #EE7F7F; // hsl(360,77,72) // only used in override of .btn-danger
 
+// Consolidated Grays
+// these are all cooler hues, approx h216
 
+$gray-100: #FAFAFA; // hsl(0,0,98)
+$gray-150: #f5f5f5; // hsl(0,0,96)
+$gray-200: #ebedf0; // hsl(216,14,93)
+$gray-300: #dbdcde; // hsl(220,4,86)
+$gray-400: #d2d5d9; // hsl(214,8,84)
+$gray-500: #b8babd; // hsl(216,4,73)
+$gray-550: #94979c; // hsl(218,4,60)
+$gray-600: #71757b; // hsl(216,4,46)
+$gray-700: #54585a; // hsl(200,3,34)
+$gray-800: #343840; // hsl(220,10,23)
+$gray-900: #212429; // hsl(218,11,15)
+
+$black: #000;
+$gray2-more-darker: #222222; // hsl(0,0,13)
+$gray-more-darker: #2C2C2C; // hsl(0,0,16)
+$gray-darker: #323232; // hsl(0,0,20) ///* AKA rgb(50,50,50) */
+$gray2-darker: #333333; // hsl(0,0,20) /* should probably be #323232 */
+$gray_dark: #54585a; // hsl(200,3,34)
+$gray_100: #54585a; // hsl(200,3,34) //was #4d525a
+$gray2-medium: #495057; // hsl(210,9,31) ///* should probably be #54585A */
+$gray_80: #71757b; // hsl(216,4,46)
+$gray-medium: #808080; // hsl(0,0,50)
+$gray_60: #94979c; // hsl(218,4,60)
+$gray_40: #b8babd; // hsl(216,4,73)
+$gray-light: #B8BABD; // hsl(216,4,73)
+$gray-lighter: #DBDCDE; // hsl(220,4,86)
+$gray_20: #dbdcde; // hsl(220,4,86)
+$gray2-lighter: #dddddd; // hsl(0,0,87) ///* should probably be #DBDCDE */
+$gray-lighter-alt: #E6E7E8; // hsl(210,4,91) ///* used with .bg-gray-lighter on indicator table */
+$gray_f2: #f2f2f2; // hsl(0,0,95)
+$gray-lightest: #F5F5F5; // hsl(0,0,96)
+$practically-white: #FAFAFA; // hsl(0,0,98) ///* should probably be #F5F5F5 */
+$white: #fff;
 
