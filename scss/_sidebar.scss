@@ -6,7 +6,7 @@
     z-index: 3;
     .list-group {
         min-width: 400px;
-        background-color: $gray-darker;
+        background-color: $gray-800;
         min-height: 100vh;
         // see also indentation, below
     }
@@ -15,15 +15,15 @@
     }
     .list-group-item {
         border-radius: 0;
-        background-color: $gray-darker;
+        background-color: $gray-800;
         color: #ccc;
         border-left: 0;
         border-right: 0;
-        border-color: $gray-more-darker;
+        border-color: $gray-900;
         white-space: nowrap;
         // highlight active menu
         &:not(.collapsed) {
-            background-color: $gray-more-darker;
+            background-color: $gray-900;
         }
         // closed state
         &[aria-expanded="false"] {
@@ -37,7 +37,7 @@
         }
         // open state
         &[aria-expanded="true"] {
-            background-color: $gray-more-darker;
+            background-color: $gray-900;
             &::after {
                 content: " \f0da";
                 font-family: FontAwesome;
