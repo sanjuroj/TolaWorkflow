@@ -322,10 +322,6 @@ class IPTTReportQuickstartViewTests(TestCase):
 class IPTT_ReportViewTests(TestCase):
     """Unit tests to validate IPTT_ReportView"""
 
-    # url(r'^iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$',
-    #     IPTT_ReportView.as_view(),
-    #     name='iptt_report'),
-
     def setUp(self):
         self.user = UserFactory(first_name="PeterPeter", last_name="PumpkinEater", username="PPPE")
         self.user.set_password('orangethumb')
@@ -351,10 +347,37 @@ class IPTT_ReportViewTests(TestCase):
             'reporttype': 'targetperiods',
         }
         filterdata = {'targetperiods': 1, 'timeframe': 1}
-        response = self.client.get(reverse_lazy('iptt_report', kwargs=url_kwargs), data=filterdata)
+        path = reverse_lazy('iptt_report', kwargs=url_kwargs)
+
+        response = self.client.get(path, data=filterdata, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, template_name=IPTT_ReportView.template_name)
 
-    @skip('TODO: Implement this')
     def test_post(self):
-        pass
+        """Does post return 200 show the requested report?"""
+        url_kwargs = {
+            'program_id': self.program.id,
+            'reporttype': 'targetperiods',
+        }
+
+        data = {
+            'csrfmiddlewaretoken': 'lolwut',
+            'program': self.program.id,
+            'targetperiods': 1,
+            'timeframe': 1,
+        }
+
+        path = reverse_lazy('iptt_report', kwargs=url_kwargs)
+        response = self.client.post(path, data=data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.redirect_chain), 1)
+
+        # Verify that real program and indicator data are present
+        self.assertIn(self.program.name, response.content)
+        self.assertIn(self.indicator.name, response.content)
+        # Dates returned as '2016-03-01'
+        # Present in content as 'Mar 01, 2016'
+        exp_start = datetime.datetime.strptime(self.program.reporting_period_start, '%Y-%m-%d')
+        exp_end = datetime.datetime.strptime(self.program.reporting_period_end, '%Y-%m-%d')
+        self.assertIn(exp_start.strftime('%b %d, %Y'), response.content)
+        self.assertIn(exp_end.strftime('%b %d, %Y'), response.content)
