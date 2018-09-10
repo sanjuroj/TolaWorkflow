@@ -50,17 +50,16 @@ $danger-light: #EE7F7F; // hsl(360,77,72) // only used in override of .btn-dange
 
 // Consolidated Grays
 // these are all cooler hues, approx h216
-
 $white: #fff;
 $gray-100: #FAFAFA; // hsl(0,0,98)
-$gray-150: #f5f5f5; // hsl(0,0,96)
+$gray-150: #f5f5f5; // hsl(0,0,96)      // same as MC palette $gray_f2
 $gray-200: #ebedf0; // hsl(216,14,93)
-$gray-300: #dbdcde; // hsl(220,4,86)
+$gray-300: #dbdcde; // hsl(220,4,86)    // same as MC palette $gray_20
 $gray-400: #d2d5d9; // hsl(214,8,84)
-$gray-500: #b8babd; // hsl(216,4,73)
-$gray-550: #94979c; // hsl(218,4,60)
-$gray-600: #71757b; // hsl(216,4,46)
-$gray-700: #54585a; // hsl(200,3,34)
+$gray-500: #b8babd; // hsl(216,4,73)    // same as MC palette $gray_40
+$gray-550: #94979c; // hsl(218,4,60)    // same as MC palette $gray_60
+$gray-600: #71757b; // hsl(216,4,46)    // same as MC palette $gray_80
+$gray-700: #54585a; // hsl(200,3,34)    // same as MC palette $gray_100
 $gray-800: #343840; // hsl(220,10,23)
 $gray-900: #212429; // hsl(218,11,15)
 $black: #000;
