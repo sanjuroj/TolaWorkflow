@@ -4,9 +4,7 @@ from unittest import skip
 from django.test import TestCase
 
 from indicators.models import Indicator
-from indicators.views.views_reports import (
-    IPTT_Mixin,
-)
+from indicators.views.views_reports import IPTT_Mixin
 from workflow.models import Program
 
 
