@@ -80,7 +80,8 @@ class IPTT_MixinTests(TestCase):
                 self.assertEqual(_get_first_period,
                                  datetime.date(2016, 7, 1))
             else:
-                self.assertEqual(1, 0, msg="Unexpected target frequency: " + freq)
+                #self.assertEqual(1, 0, msg="Unexpected target frequency: " + freq)
+                self.fail('Unexpected target frequency' + freq)
 
     def test__generate_annotations(self):
         """Do we generate queryset annotations correctly?"""
@@ -125,41 +126,72 @@ class IPTT_MixinTests(TestCase):
 
     def test__generate_targetperiods(self):
         """Can we generate target periods correctly"""
+        freqs = (Indicator.LOP, Indicator.MID_END, Indicator.EVENT, Indicator.ANNUAL,
+                 Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL, Indicator.QUARTERLY,
+                 Indicator.MONTHLY)
 
         filter_start_date = datetime.date(2018, 1, 1)
         filter_end_date = datetime.date(2019, 12, 31)
-        freq = Indicator.ANNUAL
         num_recents = 0
         show_all = True
         self.mixin.program = Program()
         self.mixin.program.reporting_period_start = filter_start_date
         self.mixin.program.reporting_period_end = filter_end_date
 
-        report_end_date, all_date_ranges, targetperiods = self.mixin._generate_targetperiods(
-            self.mixin.program, filter_start_date, filter_end_date, freq, show_all, num_recents
-        )
-        self.assertEqual(filter_end_date, report_end_date)
-        self.assertEqual(len(all_date_ranges), 0)
-        self.assertEqual(len(targetperiods), 0)
+        for freq in freqs:
+            report_end_date, all_date_ranges, targetperiods = self.mixin._generate_targetperiods(
+                self.mixin.program, filter_start_date, filter_end_date, freq, show_all, num_recents
+            )
+            self.assertEqual(filter_end_date, report_end_date)
+            self.assertEqual(len(all_date_ranges), 0)
+            self.assertEqual(len(targetperiods), 0)
 
     def test__generate_timeperiods(self):
         """Can we generate time periods correctly?"""
 
+        freqs = (Indicator.LOP, Indicator.MID_END, Indicator.EVENT, Indicator.ANNUAL,
+                 Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL, Indicator.QUARTERLY,
+                 Indicator.MONTHLY)
         filter_start_date = datetime.date(2018, 1, 1)
         filter_end_date = datetime.date(2019, 12, 31)
-        freq = Indicator.ANNUAL
         num_recents = 0
         show_all = True
         self.mixin.program = Program()
         self.mixin.program.reporting_period_start = filter_start_date
         self.mixin.program.reporting_period_end = filter_end_date
 
-        report_end_date, all_date_ranges, timeperiods = self.mixin._generate_timeperiods(
-            filter_start_date, filter_end_date, freq, show_all, num_recents
-        )
-        self.assertEqual(report_end_date, filter_end_date)
-        self.assertEqual(len(all_date_ranges), 2)
-        self.assertEqual(len(timeperiods), 2)
+        for freq in freqs:
+            report_end_date, all_date_ranges, timeperiods = self.mixin._generate_timeperiods(
+                filter_start_date, filter_end_date, freq, show_all, num_recents
+            )
+            self.assertEqual(report_end_date, filter_end_date, 'End dates don\'t match')
+            if freq == Indicator.LOP or freq == Indicator.MID_END or freq == Indicator.EVENT:
+                self.assertEqual(len(all_date_ranges), 0)
+            elif freq == Indicator.ANNUAL:
+                self.assertEqual(len(all_date_ranges), 2,
+                    'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
+                self.assertEqual(len(timeperiods), 2,
+                    'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
+            elif freq == Indicator.SEMI_ANNUAL:
+                self.assertEqual(len(all_date_ranges), 4,
+                    'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
+                self.assertEqual(len(timeperiods), 4,
+                    'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
+            elif freq == Indicator.TRI_ANNUAL:
+                self.assertEqual(len(all_date_ranges), 6,
+                    'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
+                self.assertEqual(len(timeperiods), 6,
+                    'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
+            elif freq == Indicator.QUARTERLY:
+                self.assertEqual(len(all_date_ranges), 8,
+                    'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
+                self.assertEqual(len(timeperiods), 8,
+                    'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
+            elif freq == Indicator.MONTHLY:
+                self.assertEqual(len(all_date_ranges), 24,
+                    'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
+                self.assertEqual(len(timeperiods), 24,
+                    'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
 
     @skip('TODO: Implement this')
     def test__update_filter_form_initial(self):
