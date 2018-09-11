@@ -42,7 +42,7 @@ class LocaleDateField(DateField):
 class IndicatorForm(forms.ModelForm):
     program2 = forms.CharField(
         widget=forms.TextInput(
-            attrs={'readonly': True, 'label': 'Program'}
+            attrs={'readonly': True}
         )
     )
     unit_of_measure_type = forms.ChoiceField(
@@ -85,6 +85,7 @@ class IndicatorForm(forms.ModelForm):
         super(IndicatorForm, self).__init__(*args, **kwargs)
 
         self.fields['program2'].initial = indicator.programs
+        self.fields['program2'].label = _('Program')
         self.fields['program'].initial = self.programval.id
 
         countries = getCountry(self.request.user)
