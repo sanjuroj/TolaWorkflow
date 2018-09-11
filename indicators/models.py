@@ -313,6 +313,9 @@ class Indicator(models.Model):
         (DIRECTION_OF_CHANGE_NEGATIVE, _("Decrease (-)"))
     )
 
+    ONSCOPE_MARGIN = .15
+
+
     indicator_key = models.UUIDField(
         default=uuid.uuid4, unique=True, help_text=" "),
 
