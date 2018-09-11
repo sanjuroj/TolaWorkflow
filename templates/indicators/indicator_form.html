@@ -10,7 +10,7 @@
     {% if i_name %}
     <h3 id="indicator-header" class="my-4 mx-3 font-weight-light" >
         {% if indicator.level.all %}
-            {{ indicator.level.all|join:', ' }} indicator:
+            {{ indicator.level.all|join:', ' }} {% trans "indicator" %}:
         {% endif %}
         {{i_name|truncatechars:300}}
     </h3>
