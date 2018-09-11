@@ -32,6 +32,7 @@ $teal-400: #33bfbb; // hsl(178,52,47)   // same as MC palette $blue_80 & $blue_1
 $teal-500: #00a49f; // hsl(178,100,32)  // same as MC palette $blue_100 was #00b2a9 and before that, #00afaa
 $teal-600: #046C69; // hsl(178,93,22)
 
+$teal: $teal-500;
 
 // Green
 $green-100: #cde499; // hsl(78,58,75)   // Same as MC Palette $green_40
