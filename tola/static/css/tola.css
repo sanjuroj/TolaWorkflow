@@ -6111,8 +6111,8 @@ body > .container {
 .btn-primary.focus,
 .btn-primary:focus,
 .btn-primary:hover {
-  background-color: #00A49F;
-  border-color: #00A49F;
+  background-color: #00a49f;
+  border-color: #00a49f;
   color: #fff;
   font-size: 1.125rem;
   font-weight: bold;
@@ -6124,8 +6124,8 @@ body > .container {
 .btn-primary:not(:disabled):not(.disabled):active,
 .btn-primary:not(:disabled):not(.disabled):active:focus,
 .btn-primary:active {
-  background-color: #33BFBB;
-  border-color: #33BFBB;
+  background-color: #33bfbb;
+  border-color: #33bfbb;
   color: #fff;
   box-shadow: none; }
 
@@ -6140,8 +6140,8 @@ body > .container {
 .btn-secondary:focus,
 .btn-secondary:hover {
   background-color: #fff;
-  border-color: #00A49F;
-  color: #00A49F;
+  border-color: #00a49f;
+  color: #00a49f;
   font-size: 1.125rem;
   font-weight: bold;
   box-shadow: none;
@@ -6153,8 +6153,8 @@ body > .container {
 .btn-secondary:not(:disabled):not(.disabled):active:focus,
 .btn-secondary:active {
   background-color: #fff;
-  border-color: #33BFBB;
-  color: #33BFBB;
+  border-color: #33bfbb;
+  color: #33bfbb;
   box-shadow: none; }
 
 .btn-secondary:disabled {
@@ -6571,7 +6571,7 @@ input[type="checkbox"].form-control:focus {
   text-align: center;
   width: 40px; }
   .sidebar-toggle a {
-    background-color: #00A49F;
+    background-color: #00a49f;
     color: white;
     display: block;
     font-size: 1.25rem;

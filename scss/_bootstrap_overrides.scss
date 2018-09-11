@@ -97,8 +97,8 @@ body > .container {
 .btn-primary.focus,
 .btn-primary:focus,
 .btn-primary:hover {
-    background-color: $teal-medium;
-    border-color: $teal-medium;
+    background-color: $teal-500;
+    border-color: $teal-500;
     color: $white;
     font-size: 1.125rem;
     font-weight: bold;
@@ -111,8 +111,8 @@ body > .container {
 .btn-primary:not(:disabled):not(.disabled):active,
 .btn-primary:not(:disabled):not(.disabled):active:focus,
 .btn-primary:active {
-    background-color: $teal-light;
-    border-color: $teal-light;
+    background-color: $teal-400;
+    border-color: $teal-400;
     color: $white;
     box-shadow: none;
 }
@@ -129,8 +129,8 @@ body > .container {
 .btn-secondary:focus,
 .btn-secondary:hover {
     background-color: $white;
-    border-color: $teal-medium;
-    color: $teal-medium;
+    border-color: $teal-500;
+    color: $teal-500;
     font-size: 1.125rem;
     font-weight: bold;
     box-shadow: none;
@@ -143,8 +143,8 @@ body > .container {
 .btn-secondary:not(:disabled):not(.disabled):active:focus,
 .btn-secondary:active {
     background-color: $white;
-    border-color: $teal-light;
-    color: $teal-light;
+    border-color: $teal-400;
+    color: $teal-400;
     box-shadow: none;
 }
 

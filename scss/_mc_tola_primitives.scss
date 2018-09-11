@@ -8,10 +8,6 @@ $blue-light: #3366cc; // hsl(220,60,50)
 $blue-lighter: #55acee; // hsl(206,82,63)
 $blue2-lighter: #59b5fa; // hsl(206,94,66) /* highlighted state for blue-lighter */
 
-$teal-dark: #046C69; // hsl(178,93,22)
-$teal-medium: #00A49F; // hsl(178,100,32)
-$teal-light: #33BFBB; // hsl(178,58,47)
-
 $danger-medium: #DD0000; // hsl(360,100,43) // only used in override of .btn-danger
 $danger-light: #EE7F7F; // hsl(360,77,72) // only used in override of .btn-danger
 
@@ -34,6 +30,8 @@ $teal-200: #99dfdd; // hsl(178,52,74)   // same as MC palette $blue_40
 $teal-300: #66cfcc; // hsl(178,52,61)   // same as MC palette $blue_60
 $teal-400: #33bfbb; // hsl(178,52,47)   // same as MC palette $blue_80 & $blue_100_hover
 $teal-500: #00a49f; // hsl(178,100,32)  // same as MC palette $blue_100 was #00b2a9 and before that, #00afaa
+$teal-600: #046C69; // hsl(178,93,22)
+
 
 // Green
 $green-100: #cde499; // hsl(78,58,75)   // Same as MC Palette $green_40
