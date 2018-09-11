@@ -631,26 +631,26 @@ msgstr "N/A"
 #: indicators/views/views_indicators.py:68
 #, fuzzy, python-format
 #| msgid "Years"
-msgid "Year %%s"
-msgstr "Años"
+msgid "Year %s"
+msgstr "Año %s"
 
 #: indicators/views/views_indicators.py:73
 #, fuzzy, python-format
 #| msgid "Semi-annual periods"
-msgid "Semi-annual period %%s"
-msgstr "Periodos semestrales"
+msgid "Semi-annual period %s"
+msgstr "Periodos semestral %s"
 
 #: indicators/views/views_indicators.py:78
 #, fuzzy, python-format
 #| msgid "Tri-annual periods"
-msgid "Tri-annual period %%s"
-msgstr "Períodos trienales"
+msgid "Tri-annual period %s"
+msgstr "Períodos trienal %s"
 
 #: indicators/views/views_indicators.py:83
 #, fuzzy, python-format
 #| msgid "Quarters"
-msgid "Quarter %%s"
-msgstr "Trimestres"
+msgid "Quarter %s"
+msgstr "Trimestre %s"
 
 #: indicators/views/views_indicators.py:200
 msgid "Temporary"
@@ -2045,7 +2045,7 @@ msgstr "Confirmar eliminación del indicador"
 #, fuzzy, python-format
 #| msgid "Are you sure you want to delete?"
 msgid "Are you sure you want to delete \"%(object)s\"?"
-msgstr "¿Está seguro que quiere eliminarlo?"
+msgstr "¿Está seguro que quiere eliminar \"%(object)s\"?"
 
 #: templates/workflow/documentation_confirm_delete.html:9
 #: templates/workflow/siteprofile_confirm_delete.html:9
@@ -2074,7 +2074,7 @@ msgstr "Agregar documento"
 #, fuzzy, python-format
 #| msgid "Documentation"
 msgid "Documentation for %(project)s"
-msgstr "Documentación"
+msgstr "Documentación para %(project)s"
 
 #: templates/workflow/documentation_popup_form.html:107
 #: templates/workflow/documentation_popup_list.html:62

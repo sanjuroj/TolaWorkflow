@@ -631,26 +631,26 @@ msgstr "S.O."
 #: indicators/views/views_indicators.py:68
 #, fuzzy, python-format
 #| msgid "Years"
-msgid "Year %%s"
-msgstr "Années"
+msgid "Year %s"
+msgstr "Année %s"
 
 #: indicators/views/views_indicators.py:73
 #, fuzzy, python-format
 #| msgid "Semi-annual periods"
-msgid "Semi-annual period %%s"
-msgstr "Périodes semestrielles"
+msgid "Semi-annual period %s"
+msgstr "Période semestrielle %s"
 
 #: indicators/views/views_indicators.py:78
 #, fuzzy, python-format
 #| msgid "Tri-annual periods"
-msgid "Tri-annual period %%s"
-msgstr "Périodes triannuelles"
+msgid "Tri-annual period %s"
+msgstr "Période triannuelle %s"
 
 #: indicators/views/views_indicators.py:83
 #, fuzzy, python-format
 #| msgid "Quarters"
-msgid "Quarter %%s"
-msgstr "Quarters"
+msgid "Quarter %s"
+msgstr "Quarter %s"
 
 #: indicators/views/views_indicators.py:200
 msgid "Temporary"
@@ -2074,7 +2074,7 @@ msgstr "Ajouter un document"
 #, fuzzy, python-format
 #| msgid "Documentation"
 msgid "Documentation for %(project)s"
-msgstr "Documentation"
+msgstr "Documentation pour %(project)s"
 
 #: templates/workflow/documentation_popup_form.html:107
 #: templates/workflow/documentation_popup_list.html:62
