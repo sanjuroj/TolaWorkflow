@@ -2,10 +2,10 @@ import datetime
 from unittest import skip
 
 from django.test import TestCase
+
 from indicators.models import Indicator
 from indicators.views.views_reports import (
     IPTT_Mixin,
-    IPTT_ReportView,
 )
 from workflow.models import Program
 
@@ -82,14 +82,12 @@ class IPTT_MixinTests(TestCase):
             else:
                 self.assertEqual(1, 0, msg="Unexpected target frequency: " + freq)
 
-    @skip('WIP -- think I need to add collected data')
     def test__generate_annotations(self):
         """Do we generate queryset annotations correctly?"""
 
         reporttype = 'timeperiods'
         filter_start_date = datetime.date(2018, 1, 1)
         filter_end_date = datetime.date(2019, 12, 31)
-        freq = Indicator.MONTHLY
         num_recents = 0
         show_all = True
 
@@ -97,23 +95,25 @@ class IPTT_MixinTests(TestCase):
         self.mixin.program.reporting_period_start = filter_start_date
         self.mixin.program.reporting_period_end = filter_end_date
 
-        (report_end_date, all_date_ranges, periods_date_ranges) = \
-            self.mixin._generate_timeperiods(filter_start_date,
-                                             filter_end_date,
-                                             freq,
-                                             show_all,
-                                             num_recents)
-        self.assertEqual(self.mixin.program.reporting_period_end, report_end_date)
-        self.assertEqual(self.mixin.program.reporting_period_end, filter_end_date)
-        self.assertEqual(len(all_date_ranges), 24)
-        self.assertEqual(len(periods_date_ranges), 24)
+        freqs = (Indicator.LOP, Indicator.MID_END, Indicator.EVENT, Indicator.ANNUAL,
+                 Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL, Indicator.QUARTERLY,
+                 Indicator.MONTHLY)
 
-        period = Indicator.LOP
-        annotations = self.mixin._generate_annotations(periods_date_ranges, period, reporttype)
-        if freq == Indicator.LOP:
-            self.assertEqual(annotations, {})
-        else:
-            self.assertNotEqual(annotations, {}, "{0} failed".format(freq))
+        for freq in freqs:
+            (report_end_date, all_date_ranges, periods_date_ranges) = \
+                self.mixin._generate_timeperiods(filter_start_date,
+                                                 filter_end_date,
+                                                 freq,
+                                                 show_all,
+                                                 num_recents)
+            self.assertEqual(self.mixin.program.reporting_period_end, report_end_date)
+            self.assertEqual(self.mixin.program.reporting_period_end, filter_end_date)
+
+            annotations = self.mixin._generate_annotations(periods_date_ranges, freq, reporttype)
+            if freq == Indicator.LOP:
+                self.assertEqual(annotations, {})
+            else:
+                self.assertNotEqual(annotations, {})
 
     def test__get_num_periods(self):
         """Do we return the correct number of periods"""
