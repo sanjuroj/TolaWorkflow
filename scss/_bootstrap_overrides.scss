@@ -44,11 +44,11 @@ body {
 
 
 a {
-    color: $blue-medium;
+    color: $blue-500;
 }
 
 a:hover {
-    color: $blue-light;
+    color: $blue-400;
     text-decoration: none;
 }
 
@@ -159,14 +159,14 @@ body > .container {
 .btn-link:focus,
 .btn-link.focus,
 .btn-link:hover {
-    color: $blue-medium;
+    color: $blue-500;
     font-weight: bold;
     text-decoration: none;
 }
 
 .btn-link:active,
 .btn-link.active {
-    color: $blue-light;
+    color: $blue-400;
     text-decoration: none;
 }
 
@@ -225,7 +225,7 @@ body > .container {
 .was-validated .form-control:valid:focus {
   color: $gray-700;
   background-color: $white;
-  border-color: $blue-light;
+  border-color: $blue-400;
   outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40); // transparentize($blue-light, 0.4);
 }
@@ -319,7 +319,7 @@ input[type="checkbox"].form-control:focus {
     color: $gray-700;
 }
 .multiselect-container > li > a:hover {
-  background: $blue-lighter;
+  background: $blue-300;
   color: white;
 }
 .multiselect-container .input-group {

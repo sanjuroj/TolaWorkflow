@@ -2,17 +2,11 @@ $link-hover-opacity: 0.8; //todo move this where it makes sense
 
 // Color: Tola Palette as of 2018-08-27
 // These are cribbed from app.css and bootstrap-overrides.css
-
-$blue-medium: #0645AD; // hsl(217,93,35)
-$blue-light: #3366cc; // hsl(220,60,50)
-$blue-lighter: #55acee; // hsl(206,82,63)
-$blue2-lighter: #59b5fa; // hsl(206,94,66) /* highlighted state for blue-lighter */
-
 $danger-medium: #DD0000; // hsl(360,100,43) // only used in override of .btn-danger
 $danger-light: #EE7F7F; // hsl(360,77,72) // only used in override of .btn-danger
 
 // Consolidated Color Palette
-// Color: MC brand palette from Drew
+// MC brand palette from Drew
 // MC colors have been renamed with BS naming conventions, as noted
 // This deviates substantially from colors as posted to the identity site:
 // https://identity.mercycorps.org/portals/contentlibrary/#page/our-brand/color
@@ -52,6 +46,16 @@ $yellow-400: #ffdb33; // hsl(49,100,60)  // same as MC palette $yellow_80
 $yellow-500: #ffd100; // hsl(49,100,50)  // same as MC palette $yellow_100 //was #ffd200
 $yellow-600: #ffce0a; // hsl(48,100,52)
 $yellow: $yellow-500;
+
+
+// Blue
+// These are NOT in core MC palette. MC "blues" map to "teals" in Tola palette
+// They are used almost exclusively for text links
+$blue-250: #59b5fa; // hsl(206,94,66) /* highlighted state for blue-lighter */
+$blue-300: #55acee; // hsl(206,82,63)
+$blue-400: #3366cc; // hsl(220,60,50)
+$blue-500: #0645AD; // hsl(217,93,35)
+
 
 // Consolidated Grays
 // these are all cooler hues, approx h216
