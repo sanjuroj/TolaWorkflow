@@ -6182,7 +6182,7 @@ body > .container {
 .btn-danger.btn-link.focus,
 .btn-danger.btn-link:focus,
 .btn-danger.btn-link:hover {
-  color: #DD0000;
+  color: #c8102e;
   border: 0px;
   background-color: #fff;
   box-shadow: none;
@@ -6194,7 +6194,7 @@ body > .container {
 .btn-danger.btn-link:not(:disabled):not(.disabled):active:focus,
 .btn-danger.btn-link.active,
 .btn-danger.btn-link:active {
-  color: #EE7F7F;
+  color: #ed8090;
   border: 0px;
   background-color: #fff;
   box-shadow: none;

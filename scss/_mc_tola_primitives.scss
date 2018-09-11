@@ -2,9 +2,6 @@ $link-hover-opacity: 0.8; //todo move this where it makes sense
 
 // Color: Tola Palette as of 2018-08-27
 // These are cribbed from app.css and bootstrap-overrides.css
-$danger-medium: #DD0000; // hsl(360,100,43) // only used in override of .btn-danger
-$danger-light: #EE7F7F; // hsl(360,77,72) // only used in override of .btn-danger
-
 // Consolidated Color Palette
 // MC brand palette from Drew
 // MC colors have been renamed with BS naming conventions, as noted
@@ -15,6 +12,8 @@ $danger-light: #EE7F7F; // hsl(360,77,72) // only used in override of .btn-dange
 // These *do* align with Jenny’s mockups
 
 /// Red
+
+$red-200: #ed8090; // hsl(360,77,72) // only used in override of .btn-danger
 $red-450: #e51232; // hsl(351,85,48) // same as MC palette $red_100_hover
 $red-500: #c8102e; // hsl(350,85,42) // same as MC palette $red_100 // was #cf102d
 //$red: $red-500;
