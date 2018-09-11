@@ -23,10 +23,11 @@ class IPTT_MixinTests(TestCase):
     """Tests private methods not specifically tested in other test cases"""
     freqs = {
         Indicator.ANNUAL: 12,
-        Indicator.SEMI_ANNUAL: 6,
-        Indicator.TRI_ANNUAL: 4,
-        Indicator.QUARTERLY: 3,
-        Indicator.MONTHLY: 1,
+        Indicator.SEMI_ANNUAL: IPTT_Mixin.MONTHS_PER_SEMIANNUAL,
+        Indicator.TRI_ANNUAL: IPTT_Mixin.MONTHS_PER_TRIANNUAL,
+        Indicator.QUARTERLY: IPTT_Mixin.MONTHS_PER_QUARTER,
+        Indicator.MONTHLY: IPTT_Mixin.MONTHS_PER_MONTH,
+        # Indicator.LOP, Indicator.MID_END, Indicator.EVENT
     }
 
     def setUp(self):
@@ -37,18 +38,6 @@ class IPTT_MixinTests(TestCase):
         for freq in IPTT_MixinTests.freqs:
             num_months_in_period = self.mixin._get_num_months(freq)
             self.assertEqual(num_months_in_period, IPTT_MixinTests.freqs[freq])
-
-    def test__get_num_periods(self):
-        """Do we return the correct number of periods"""
-        _get_num_periods = IPTT_Mixin._get_num_periods
-        start_date = datetime.date(2016, 1, 15)
-        end_date = datetime.date(2017, 12, 16)
-
-        self.assertEqual(_get_num_periods(start_date, end_date, Indicator.ANNUAL), 2)
-        self.assertEqual(_get_num_periods(start_date, end_date, Indicator.SEMI_ANNUAL), 4)
-        self.assertEqual(_get_num_periods(start_date, end_date, Indicator.TRI_ANNUAL), 6)
-        self.assertEqual(_get_num_periods(start_date, end_date, Indicator.QUARTERLY), 8)
-        self.assertEqual(_get_num_periods(start_date, end_date, Indicator.MONTHLY), 24)
 
     def test__get_num_periods_returns_0_for_reversed_date_range(self):
         """Do we return  if end date is before start date?"""
@@ -62,7 +51,7 @@ class IPTT_MixinTests(TestCase):
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.QUARTERLY), 0)
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.MONTHLY), 0)
 
-    def test__get_period_names(self):
+    def test__get_period_name(self):
         """Do we return the correct period names?"""
         _get_period_name = IPTT_Mixin._get_period_name
 
@@ -97,11 +86,51 @@ class IPTT_MixinTests(TestCase):
             else:
                 self.assertEqual(1, 0, msg="Unexpected target frequency: " + freq)
 
-    @skip('TODO: Implement this')
-    def test_generate_annotations(self):
-        pass
+    @skip('WIP -- think I need to add collected data')
+    def test__generate_annotations(self):
+        """Do we generate queryset annotations correctly?"""
+        reporttype = 'timeperiods'
+        filter_start_date = datetime.date(2018, 1, 1)
+        filter_end_date = datetime.date(2019, 12, 31)
+        freq = Indicator.MONTHLY
+        num_recents = 0
+        show_all = True
 
-    def test_generate_targetperiods(self):
+        self.mixin.program = Program()
+        self.mixin.program.reporting_period_start = filter_start_date
+        self.mixin.program.reporting_period_end = filter_end_date
+
+        (report_end_date, all_date_ranges, periods_date_ranges) = \
+            self.mixin._generate_timeperiods(filter_start_date,
+                                             filter_end_date,
+                                             freq,
+                                             show_all,
+                                             num_recents)
+        self.assertEqual(self.mixin.program.reporting_period_end, report_end_date)
+        self.assertEqual(self.mixin.program.reporting_period_end, filter_end_date)
+        self.assertEqual(len(all_date_ranges), 24)
+        self.assertEqual(len(periods_date_ranges), 24)
+
+        period = Indicator.LOP
+        annotations = self.mixin._generate_annotations(periods_date_ranges, period, reporttype)
+        if freq == Indicator.LOP:
+            self.assertEqual(annotations, {})
+        else:
+            self.assertNotEqual(annotations, {}, "{0} failed".format(freq))
+
+    def test__get_num_periods(self):
+        """Do we return the correct number of periods"""
+        _get_num_periods = IPTT_Mixin._get_num_periods
+        start_date = datetime.date(2016, 1, 15)
+        end_date = datetime.date(2017, 12, 16)
+
+        self.assertEqual(_get_num_periods(start_date, end_date, Indicator.ANNUAL), 2)
+        self.assertEqual(_get_num_periods(start_date, end_date, Indicator.SEMI_ANNUAL), 4)
+        self.assertEqual(_get_num_periods(start_date, end_date, Indicator.TRI_ANNUAL), 6)
+        self.assertEqual(_get_num_periods(start_date, end_date, Indicator.QUARTERLY), 8)
+        self.assertEqual(_get_num_periods(start_date, end_date, Indicator.MONTHLY), 24)
+
+    def test__generate_targetperiods(self):
         """Can we generate target periods correctly"""
         filter_start_date = datetime.date(2018, 1, 1)
         filter_end_date = datetime.date(2019, 12, 31)
@@ -123,7 +152,7 @@ class IPTT_MixinTests(TestCase):
         self.assertEqual(len(all_date_ranges), 0)
         self.assertEqual(len(targetperiods), 0)
 
-    def test_generate_timeperiods(self):
+    def test__generate_timeperiods(self):
         """Can we generate time periods correctly?"""
         filter_start_date = datetime.date(2018, 1, 1)
         filter_end_date = datetime.date(2019, 12, 31)
@@ -140,19 +169,19 @@ class IPTT_MixinTests(TestCase):
                                              freq,
                                              show_all,
                                              num_recents)
-        self.assertEqual(filter_end_date, report_end_date)
+        self.assertEqual(report_end_date, filter_end_date)
         self.assertEqual(len(all_date_ranges), 2)
         self.assertEqual(len(periods_date_ranges), 2)
 
     @skip('TODO: Implement this')
-    def test_update_filter_form_initial(self):
+    def test__update_filter_form_initial(self):
         """Do we populate the initial filter form properly?"""
         # _update_filter_form_initial(self, formdata)
         # _update_filter_form_initial(self.request.GET)
         pass
 
     @skip('TODO: Implement this')
-    def test_get_filters(self):
+    def test__get_filters(self):
         pass
 
     @skip('TODO: Implement this')
@@ -352,6 +381,16 @@ class IPTT_ReportViewTests(TestCase):
         response = self.client.get(path, data=filterdata, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, template_name=IPTT_ReportView.template_name)
+
+        # Verify that real program and indicator data are present
+        self.assertIn(self.program.name, response.content)
+        self.assertIn(self.indicator.name, response.content)
+        # Dates returned as '2016-03-01'
+        # Present in content as 'Mar 01, 2016'
+        exp_start = datetime.datetime.strptime(self.program.reporting_period_start, '%Y-%m-%d')
+        exp_end = datetime.datetime.strptime(self.program.reporting_period_end, '%Y-%m-%d')
+        self.assertIn(exp_start.strftime('%b %d, %Y'), response.content)
+        self.assertIn(exp_end.strftime('%b %d, %Y'), response.content)
 
     def test_post(self):
         """Does post return 200 show the requested report?"""
