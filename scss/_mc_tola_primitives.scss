@@ -1,33 +1,3 @@
-// Color: MC brand palette from Drew
-// This deviates substantially from colors as posted to the identity site:
-// https://identity.mercycorps.org/portals/contentlibrary/#page/our-brand/color
-// or
-// https://identity.mercycorps.org/portals/contentlibrary/#asset/157495
-// These *do* align with Jenny’s mockups
-
-/// Red
-$red_100: #c8102e; // hsl(350,85,42) // was #cf102d
-$red_100_hover: #e51232; // hsl(351,85,48)
-/// Blue
-$blue_100: #00a49f; // hsl(178,100,32) //was #00b2a9 and before that, #00afaa
-$blue_100_hover: #33bfbb; // hsl(178,58,47)
-$blue_80: #33bfbb; // hsl(178,58,47)
-$blue_60: #66cfcc; // hsl(178,52,61)
-$blue_40: #99dfdd; // hsl(178,52,74)
-$blue_20: #ccefee; // hsl(178,52,87)
-/// Green
-$green_100: #84bd00; // hsl(78,100,37) //was #81bc00
-$green_100_hover: #81bc00; // hsl(79,100,37)
-$green_80: #9ac933; // hsl(79,60,49)
-$green_60: #b3d766; // hsl(79,59,62)
-$green_40: #cde499; // hsl(78,58,75)
-$green_20: #e6f2cc; // hsl(79,59,87)
-/// Yellow
-$yellow_100: #ffd100; // hsl(49,100,50) //was #ffd200
-$yellow_80: #ffdb33; // hsl(49,100,60)
-$yellow_60: #ffe466; // hsl(49,100,70)
-$yellow_40: #ffed99; // hsl(49,100,80)
-$yellow_20: #fff6cc; // hsl(49,100,90)
 $link-hover-opacity: 0.8; //todo move this where it makes sense
 
 // Color: Tola Palette as of 2018-08-27
@@ -38,15 +8,46 @@ $blue-light: #3366cc; // hsl(220,60,50)
 $blue-lighter: #55acee; // hsl(206,82,63)
 $blue2-lighter: #59b5fa; // hsl(206,94,66) /* highlighted state for blue-lighter */
 
-
-
 $teal-dark: #046C69; // hsl(178,93,22)
 $teal-medium: #00A49F; // hsl(178,100,32)
 $teal-light: #33BFBB; // hsl(178,58,47)
-$teal-lighter: #CCEFEE; // hsl(178,52,87)
 
 $danger-medium: #DD0000; // hsl(360,100,43) // only used in override of .btn-danger
 $danger-light: #EE7F7F; // hsl(360,77,72) // only used in override of .btn-danger
+
+// Consolidated Color Palette
+// Color: MC brand palette from Drew
+// MC colors have been renamed with BS naming conventions, as noted
+// This deviates substantially from colors as posted to the identity site:
+// https://identity.mercycorps.org/portals/contentlibrary/#page/our-brand/color
+// or
+// https://identity.mercycorps.org/portals/contentlibrary/#asset/157495
+// These *do* align with Jenny’s mockups
+
+/// Red
+$red-450: #e51232; // hsl(351,85,48) // same as MC palette $red_100_hover
+$red-500: #c8102e; // hsl(350,85,42) // same as MC palette $red_100 // was #cf102d
+
+// Teal (this is "blue" on the MC palette)
+$teal-100: #ccefee; // hsl(178,52,87)   // same as MC palette $blue_20
+$teal-200: #99dfdd; // hsl(178,52,74)   // same as MC palette $blue_40
+$teal-300: #66cfcc; // hsl(178,52,61)   // same as MC palette $blue_60
+$teal-400: #33bfbb; // hsl(178,52,47)   // same as MC palette $blue_80 & $blue_100_hover
+$teal-500: #00a49f; // hsl(178,100,32)  // same as MC palette $blue_100 was #00b2a9 and before that, #00afaa
+
+// Green
+$green-100: #cde499; // hsl(78,58,75)   // Same as MC Palette $green_40
+$green_200: #b3d766; // hsl(79,59,62)   // Same as MC Palette $green_60
+$green-300: #9ac933; // hsl(79,60,49)   // Same as MC Palette $green_80
+$green-450: #81bc00; // hsl(79,100,37)  // Same as MC Palette $green_100_hover
+$green-500: #84bd00; // hsl(78,100,37)  // Same as MC Palette $green_100  // was #81bc00
+
+// Yellow
+$yellow-100: #fff6cc; // hsl(49,100,90)  // same as MC palette $yellow_20
+$yellow-200: #ffed99; // hsl(49,100,80)  // same as MC palette $yellow_40
+$yellow-300: #ffe466; // hsl(49,100,70)  // same as MC palette $yellow_60
+$yellow-400: #ffdb33; // hsl(49,100,60)  // same as MC palette $yellow_80
+$yellow-500: #ffd100; // hsl(49,100,50)  // same as MC palette $yellow_100 //was #ffd200
 
 // Consolidated Grays
 // these are all cooler hues, approx h216
