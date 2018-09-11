@@ -182,11 +182,13 @@ class CollectedDataForm(forms.ModelForm):
         self.fields['target_frequency'].widget = forms.HiddenInput()
         self.fields['site'].queryset = SiteProfile.objects\
             .filter(country__in=countries)
+        self.fields['site'].label = _('Site')
         self.fields['tola_table'].queryset = TolaTable.objects\
             .filter(Q(owner=self.request.user) | Q(id=self.tola_table))
         self.fields['periodic_target'].label = _('Measure against target*')
         self.fields['achieved'].label = _('Actual value')
         self.fields['date_collected'].help_text = ' '
+        self.fields['date_collected'].label = _('Date collected')
 
 
 class ReportFormCommon(forms.Form):
