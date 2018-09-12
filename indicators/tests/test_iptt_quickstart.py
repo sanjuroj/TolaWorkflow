@@ -1,6 +1,3 @@
-import datetime
-from unittest import skip
-
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse_lazy
 
@@ -11,12 +8,7 @@ from factories.workflow_models import (
     UserFactory
 )
 from indicators.models import Indicator
-from indicators.views.views_reports import (
-    IPTTReportQuickstartView,
-    IPTT_Mixin,
-    IPTT_ReportView,
-)
-from workflow.models import Program
+from indicators.views.views_reports import IPTTReportQuickstartView
 
 
 class IPTTReportQuickstartViewTests(TestCase):
@@ -125,4 +117,3 @@ class IPTTReportQuickstartViewTests(TestCase):
         response = self.client.post(path, data={'foo': 'bar'})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'indicators/iptt_quickstart.html')
-
