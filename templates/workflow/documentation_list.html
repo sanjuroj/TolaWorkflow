@@ -58,8 +58,21 @@
         table = $('#documentationtable').DataTable( {
             "order": [],
             "bFilter": false,
+            "bInfo": true,
+            "fnInfoCallback": function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+                return "{% trans 'Showing' %} " + iStart + " – " + iEnd + " {% trans 'of'  %} " + iTotal;
+            },
             'bLengthChange': false,
-            "aoColumnDefs": [{"bSortable": false, "targets": [0, 1, 2, 3]}],
+            "aoColumnDefs": [{
+                "bSortable": false,
+                "targets": [0, 1, 2, 3]
+            }],
+            "oLanguage": {
+                "oPaginate": {
+                    "sNext": "{% trans 'Next' %}",
+                    "sPrevious": "{% trans 'Previous' %}"
+                }
+            },
             retrieve: true,
             data: documentation_records,
             columns: [

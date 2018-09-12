@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-11 17:45-0700\n"
+"POT-Creation-Date: 2018-09-12 10:29-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,7 +45,7 @@ msgstr "Nombre del indicador"
 msgid "Indicator"
 msgstr "Indicador"
 
-#: indicators/forms.py:151 templates/workflow/documentation_list.html:76
+#: indicators/forms.py:151 templates/workflow/documentation_list.html:89
 #: templates/workflow/projectdashboard_list.html:12
 #: templates/workflow/projectdashboard_list.html:17 workflow/models.py:1209
 msgid "Project"
@@ -1428,7 +1428,7 @@ msgid "New Indicator"
 msgstr "Nuevo indicador"
 
 #: templates/indicators/home.html:36
-#: templates/workflow/documentation_list.html:66
+#: templates/workflow/documentation_list.html:79
 #: templates/workflow/programdashboard_list.html:43
 #: templates/workflow/site_projectcomplete.html:25 workflow/models.py:1032
 #: workflow/models.py:1164
@@ -1436,12 +1436,12 @@ msgid "Date Created"
 msgstr "Fecha de creacion"
 
 #: templates/indicators/home.html:51 templates/indicators/report.html:90
-#: templates/workflow/documentation_list.html:80
+#: templates/workflow/documentation_list.html:93
 msgid "Edit"
 msgstr "Editar"
 
 #: templates/indicators/home.html:51
-#: templates/workflow/documentation_list.html:80
+#: templates/workflow/documentation_list.html:93
 msgid "Delete"
 msgstr "Eliminar"
 
@@ -2000,9 +2000,9 @@ msgstr "ITID"
 #: templates/indicators/report.html:108 templates/indicators/report.html:109
 #: templates/indicators/report.html:115 templates/indicators/report.html:116
 #: templates/indicators/report.html:117 templates/indicators/report.html:118
-#: templates/workflow/documentation_list.html:67
-#: templates/workflow/documentation_list.html:72
-#: templates/workflow/documentation_list.html:77
+#: templates/workflow/documentation_list.html:80
+#: templates/workflow/documentation_list.html:85
+#: templates/workflow/documentation_list.html:90
 msgid "Not set"
 msgstr "No establecido"
 
@@ -2177,14 +2177,32 @@ msgstr "Por favor ingrese un URL válido."
 msgid "Add document"
 msgstr "Agregar documento"
 
-#: templates/workflow/documentation_list.html:71
+#: templates/workflow/documentation_list.html:63
+msgid "Showing"
+msgstr "Mostrando"
+
+#: templates/workflow/documentation_list.html:63
+msgid "of"
+msgstr "de"
+
+#: templates/workflow/documentation_list.html:72
+#: templates/workflow/site_profile_list.html:151
+msgid "Next"
+msgstr "Siguiente"
+
+#: templates/workflow/documentation_list.html:73
+#: templates/workflow/site_profile_list.html:126
+msgid "Previous"
+msgstr "Anterior"
+
+#: templates/workflow/documentation_list.html:84
 #: templates/workflow/documentation_popup_list.html:46
 #, fuzzy
 #| msgid "Document"
 msgid "Document Name"
 msgstr "Documento"
 
-#: templates/workflow/documentation_list.html:78
+#: templates/workflow/documentation_list.html:91
 #, fuzzy
 msgid "Actions"
 msgstr "Acciónes"
@@ -2480,14 +2498,6 @@ msgstr "Sitio del proyecto"
 #| msgid "Profile Type"
 msgid "No Site Profiles yet."
 msgstr "Tipo de perfil"
-
-#: templates/workflow/site_profile_list.html:126
-msgid "Previous"
-msgstr "Anterior"
-
-#: templates/workflow/site_profile_list.html:151
-msgid "Next"
-msgstr "Siguiente"
 
 #: templates/workflow/site_profile_list.html:173
 msgid "per page"
