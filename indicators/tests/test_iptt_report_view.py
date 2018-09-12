@@ -1,5 +1,4 @@
 import datetime
-from unittest import skip
 
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse_lazy
@@ -53,12 +52,12 @@ class IPTT_ReportViewTests(TestCase):
         # Verify that real program and indicator data are present
         self.assertIn(self.program.name, response.content)
         self.assertIn(self.indicator.name, response.content)
-        # Dates returned as '2016-03-01'
-        # Present in content as 'Mar 01, 2016'
-        exp_start = datetime.datetime.strptime(self.program.reporting_period_start, '%Y-%m-%d')
-        exp_end = datetime.datetime.strptime(self.program.reporting_period_end, '%Y-%m-%d')
-        self.assertIn(exp_start.strftime('%b %d, %Y'), response.content)
-        self.assertIn(exp_end.strftime('%b %d, %Y'), response.content)
+        # Dates come out the database as '2016-03-01'
+        # Those dates are formatted as 'Mar 01, 2016' in the content
+        expected_start = datetime.datetime.strptime(self.program.reporting_period_start, '%Y-%m-%d')
+        expected_end = datetime.datetime.strptime(self.program.reporting_period_end, '%Y-%m-%d')
+        self.assertIn(expected_start.strftime('%b %d, %Y'), response.content)
+        self.assertIn(expected_end.strftime('%b %d, %Y'), response.content)
 
     def test_post(self):
         """Does post return 200 show the requested report?"""

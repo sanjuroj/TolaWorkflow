@@ -1,12 +1,18 @@
 import datetime
+import urllib
 from unittest import skip
 
-from django.test import TestCase
+from django.http import QueryDict
+from django.test import Client, RequestFactory, TestCase
 
-from indicators.models import Indicator
-from indicators.views.views_reports import (
-    IPTT_Mixin, IPTT_ReportIndicatorsWithVariedStartDate,
+from factories.indicators_models import IndicatorFactory
+from factories.workflow_models import (
+    ProgramFactory,
+    TolaUserFactory,
+    UserFactory,
 )
+from indicators.models import Indicator
+from indicators.views.views_reports import (IPTTReportQuickstartView, IPTT_Mixin)
 from workflow.models import Program
 
 
@@ -24,6 +30,21 @@ class IPTT_MixinTests(TestCase):
 
     def setUp(self):
         self.mixin = IPTT_Mixin()
+        self.user = UserFactory(first_name="Indy", last_name="Cater", username="CI")
+        self.user.set_password('password')
+        self.user.save()
+        self.tola_user = TolaUserFactory(user=self.user)
+        self.country = self.tola_user.country
+        self.program = ProgramFactory(
+            funding_status='Funded', reporting_period_start='2016-03-01', reporting_period_end='2020-05-01')
+        self.program.country.add(self.country)
+        self.program.save()
+        self.indicator = IndicatorFactory(
+            program=self.program, unit_of_measure_type=Indicator.NUMBER, is_cumulative=False,
+            direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE, target_frequency=Indicator.LOP)
+        self.request_factory = RequestFactory()
+        self.client = Client()
+        self.client.login(username="CI", password='password')
 
     def test__get_num_months(self):
         """Do we return the right number of months per period?"""
@@ -80,7 +101,6 @@ class IPTT_MixinTests(TestCase):
                 self.assertEqual(_get_first_period,
                                  datetime.date(2016, 7, 1))
             else:
-                #self.assertEqual(1, 0, msg="Unexpected target frequency: " + freq)
                 self.fail('Unexpected target frequency' + freq)
 
     def test__generate_annotations(self):
@@ -169,39 +189,66 @@ class IPTT_MixinTests(TestCase):
                 self.assertEqual(len(all_date_ranges), 0)
             elif freq == Indicator.ANNUAL:
                 self.assertEqual(len(all_date_ranges), 2,
-                    'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
+                                 'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
                 self.assertEqual(len(timeperiods), 2,
-                    'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
+                                 'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
             elif freq == Indicator.SEMI_ANNUAL:
                 self.assertEqual(len(all_date_ranges), 4,
-                    'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
+                                 'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
                 self.assertEqual(len(timeperiods), 4,
-                    'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
+                                 'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
             elif freq == Indicator.TRI_ANNUAL:
                 self.assertEqual(len(all_date_ranges), 6,
-                    'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
+                                 'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
                 self.assertEqual(len(timeperiods), 6,
-                    'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
+                                 'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
             elif freq == Indicator.QUARTERLY:
                 self.assertEqual(len(all_date_ranges), 8,
-                    'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
+                                 'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
                 self.assertEqual(len(timeperiods), 8,
-                    'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
+                                 'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
             elif freq == Indicator.MONTHLY:
                 self.assertEqual(len(all_date_ranges), 24,
-                    'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
+                                 'Unexpected number of date ranges for {0}: {1}'.format(freq, len(all_date_ranges)))
                 self.assertEqual(len(timeperiods), 24,
-                    'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
+                                 'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
 
-    @skip('TODO: Implement this')
+    # @skip('WIP')
     def test__update_filter_form_initial(self):
         """Do we populate the initial filter form properly?"""
         # _update_filter_form_initial(self, formdata)
         # _update_filter_form_initial(self.request.GET)
-        pass
+
+        data = {
+            'csrfmiddlewaretoken': 'lolwut',
+            'program': self.program.id,
+            'formprefix': IPTTReportQuickstartView.FORM_PREFIX_TARGET,
+            'timeframe': Indicator.LOP,
+            'targetperiods': 1,
+            'numrecentperiods': 1,
+        }
+        query_string = urllib.urlencode(data)
+        formdata = QueryDict(query_string=query_string, mutable=True)
+        self.mixin._update_filter_form_initial(formdata=formdata)
+
+        filter_form_initial_data = self.mixin.filter_form_initial_data
+        # Strips off program and csrfmiddlewaretoekn
+        self.assertEqual(len(filter_form_initial_data), 4)
+        self.assertNotIn('csrfmiddlewaretokeen', filter_form_initial_data)
+        self.assertNotIn('program', filter_form_initial_data)
+
+        # Dicts should have the same keys and the same values
+        del (data['csrfmiddlewaretoken'])
+        del (data['program'])
+        for k in data.keys():
+            self.assertIn(k, formdata)
+            # Coercing both to str because the data arg is an int
+            # and the formdata arg is a unicode value
+            self.assertEqual(str(data[k]), str(formdata[k]))
 
     @skip('TODO: Implement this')
     def test__get_filters(self):
+        # _get_filters(self, data):
         pass
 
     @skip('TODO: Implement this')
