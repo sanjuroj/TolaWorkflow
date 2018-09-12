@@ -1,4 +1,4 @@
-
+{% load i18n %}
 
 <script type="text/javascript">
     var frm = $('#documentForm');
@@ -8,10 +8,10 @@
             url: frm.attr('action'),
             data: frm.serialize(),
             success: function (data) {
-                $("#alert-error").html("Success! ");
+                $("#alert-error").html("{% trans 'Success!'|escapejs %}");
             },
             error: function(data) {
-                $("#alert-error").html("Something went wrong!");
+                $("#alert-error").html("{% trans 'Something went wrong!'|escapejs %}");
             }
         });
         return false;
@@ -102,9 +102,9 @@
             <strong>{{ error|escape }}</strong>
         </div>
 
-        <h4 class="modal-title">{% block page_title %}Documentation for {{ project }} {% endblock %}</h4>
+        <h4 class="modal-title">{% block page_title %}{% blocktrans %}Documentation for {{ project }}{% endblocktrans %}{% endblock %}</h4>
     </div>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "Close" %}"><span aria-hidden="true">&times;</span></button>
 </div>
 <div class="modal-body">
 

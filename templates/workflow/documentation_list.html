@@ -15,10 +15,10 @@
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false">
-        Programs
+        {% trans "Programs" %}
     </button>
     <div class="dropdown-menu" role="menu" aria-labelledby="programDropdown">
-        <a class="dropdown-item" href="#" onclick="program_filter(0)">-- All --</a>
+        <a class="dropdown-item" href="#" onclick="program_filter(0)">-- {% trans "All" %} --</a>
         {% for program in getPrograms %}
             <a class="dropdown-item"
                 href="#"
@@ -27,7 +27,7 @@
         {% endfor %}
     </div>
 </div>
-<a href="/workflow/documentation_add" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans 'Add document' %}</a>
+<a href="/workflow/documentation_add" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add document" %}</a>
 <br/>
 
 <table
@@ -58,26 +58,39 @@
         table = $('#documentationtable').DataTable( {
             "order": [],
             "bFilter": false,
+            "bInfo": true,
+            "fnInfoCallback": function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+                return "{% trans 'Showing' %} " + iStart + " – " + iEnd + " {% trans 'of'  %} " + iTotal;
+            },
             'bLengthChange': false,
-            "aoColumnDefs": [{"bSortable": false, "targets": [0, 1, 2, 3]}],
+            "aoColumnDefs": [{
+                "bSortable": false,
+                "targets": [0, 1, 2, 3]
+            }],
+            "oLanguage": {
+                "oPaginate": {
+                    "sNext": "{% trans 'Next' %}",
+                    "sPrevious": "{% trans 'Previous' %}"
+                }
+            },
             retrieve: true,
             data: documentation_records,
             columns: [
-                { title: "Date Created", data: "create_date",
-                    "defaultContent": "<i>Not set</i>",
+                { title: "{% trans "Date Created" %}", data: "create_date",
+                    "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>",
                     "mRender": function (data, records, row) {
-                        return '<a class="collecteddata" name=' + row.id + ' href="/workflow/documentation_update/'+row.id+'">' + formatDate(row.create_date) + '</a>';
+                        return '<a class="collecteddata" name=' + row.id + ' href="/workflow/documentation_update/'+row.id+'">' + formatDate(row.create_date) + '</a>'; // TODO: shouldn't use formatDate
                         }},
-                { title: "Document Name", data: "name",
-                    "defaultContent": "<i>Not set</i>",
+                { title: "{% trans "Document Name" %}", data: "name",
+                    "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>",
                     "mRender": function (data, narecord, row) {
                         return '<a class="collecteddata" name=' + row.id + ' href="/workflow/documentation_update/'+row.id+'">' + row.name + '</a>';
                         }},
-                { title: "Project", data: "project__project_name",
-                    "defaultContent": "<i>Not set</i>"},
-                { title: "Actions",
+                { title: "{% trans "Project" %}", data: "project__project_name",
+                    "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                { title: "{% trans 'Actions' %}",
                     "mRender": function (data, record, row) {
-                        return '<div class="text-nowrap"><a href="/workflow/documentation_delete/'+row.id+'" class="btn p-0 pr-4 btn-sm btn-text text-danger"><i class="fas fa-trash-alt"></i>&nbsp;Delete</a><a href="/workflow/documentation_update/'+row.id+'" class="btn p-0 btn-sm btn-text"><i class="fas fa-edit"></i>&nbsp;Edit</a></div>';
+                        return '<div class="text-nowrap"><a href="/workflow/documentation_delete/'+row.id+'" class="btn p-0 pr-4 btn-sm btn-text text-danger"><i class="fas fa-trash-alt"></i>&nbsp;{% trans "Delete"|escapejs %}</a><a href="/workflow/documentation_update/'+row.id+'" class="btn p-0 btn-sm btn-text"><i class="fas fa-edit"></i>&nbsp;{% trans "Edit"|escapejs %}</a></div>';
                         }
                 }
             ]

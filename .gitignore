@@ -58,7 +58,6 @@ error.log
 *.secret
 settings.secret.yml
 assets/
-tola/locale/*
 templates/links.html
 coverage_html
 .coverage

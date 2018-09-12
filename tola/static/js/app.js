@@ -19,6 +19,13 @@ if (!Date.prototype.toISODate) {
            ('0'+ this.getDate()).slice(-2);
   }
 }
+
+
+function zeroPad(n, width) {
+    n = n + '';
+    return n.length >= width ? n : new Array(width - n.length + 1).join(0) + n;
+}
+
 function isDate(dateVal) {
     /*
     var pattern = /^(\d{4})-(\d{2})-(\d{2})$/;
@@ -46,20 +53,9 @@ function isDate(dateVal) {
 }
 
 function formatDate(dateString, day=0) {
-    var months = new Array();
-    months[1] = "Jan";
-    months[2] = "Feb";
-    months[3] = "Mar";
-    months[4] = "Apr";
-    months[5] = "May";
-    months[6] = "Jun";
-    months[7] = "Jul";
-    months[8] = "Aug";
-    months[9] = "Sep";
-    months[10] = "Oct";
-    months[11] = "Nov";
-    months[12] = "Dec";
-
+    // Returns an ISO formatted naive datestring
+    // Use only to sanitize simplified date strings e.g. for hidden fields or data attributes
+    // If you’re trying to format a date[string] for user display, you probably want something else
 
     if (dateString == null || dateString == undefined || dateString.length == 0 || dateString == 'undefined' || dateString == 'null' ) {
         return '';
@@ -72,18 +68,23 @@ function formatDate(dateString, day=0) {
             // alert("offsetting timezone tz=" + tz + " hrs = " + hrs);
             dateval.setMinutes(dateval.getMinutes() + tz);
         }
-        var month = months[(dateval.getMonth() + 1)];
-        var ret = month.concat(' ').concat(day == 0 ? dateval.getDate() : day).concat(', ').concat(dateval.getFullYear());
+        var year = dateval.getFullYear()
+        var month = zeroPad((dateval.getMonth() + 1), 2);
+        var day = zeroPad((day == 0 ? dateval.getDate() : day), 2);
+        var ret = year + '-' + month + '-' + day
         return ret;
     } catch (err) {
         console.log(err);
         try {
             var dateArray = dateString.split('-');
-            var month = months[parseInt(dateArray[1])]
-            return month.concat(' ').concat(day == 0 ? dateArray[2] : day).concat(', ').concat(dateArray[0]);
+            var year = dateArray[0];
+            var month = zeroPad(parseInt(dateArray[1]), 2);
+            var day = zeroPad((day == 0 ? dateArray[2] : day), 2);
+            var ret = year + '-' + month + '-' + day
+            return ret
         }
         catch (err) {
-            return dateString == null ? '' : dateString;
+            return dateString == (null ? '' : dateString);
         }
     }
 }
@@ -116,7 +117,7 @@ $(function () {
 
 //custom jquery to trigger date picker, info pop-over and print category text
 $(document).ready(function() {
-    $('.datepicker').datepicker({dateFormat: "yy-mm-dd"});
+    $('.datepicker').datepicker({ dateFormat: "yy-mm-dd" });
 });
 
 
