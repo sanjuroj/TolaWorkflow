@@ -36,7 +36,7 @@ class IPTT_MixinTests(TestCase):
         self.tola_user = TolaUserFactory(user=self.user)
         self.country = self.tola_user.country
         self.program = ProgramFactory(
-            funding_status='Funded', reporting_period_start='2016-03-01', reporting_period_end='2020-05-01')
+            funding_status='Funded', reporting_period_start='2016-04-01', reporting_period_end='2020-06-01')
         self.program.country.add(self.country)
         self.program.save()
         self.indicator = IndicatorFactory(
@@ -243,10 +243,22 @@ class IPTT_MixinTests(TestCase):
             # and the formdata arg is a unicode value
             self.assertEqual(str(data[k]), str(formdata[k]))
 
-    @skip('TODO: Implement this')
+    @skip('WIP')
     def test__get_filters(self):
-        # _get_filters(self, data):
-        pass
+        # setup data
+        data = {
+            'level': 'Outcome',
+            'sector': 'Conflict Management',
+            # workflow.models.SiteProfile ?
+            'site': self.program.country.name,
+            'indicators': self.indicator,
+        }
+
+        # self.mixin._get_filters(data)
+        filters = self.mixin._get_filters(data)
+
+        # assert things about the returned filters
+        # assert things about the report contents
 
     @skip('TODO: Implement this')
     def test_prepare_indicators(self):
