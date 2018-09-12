@@ -243,7 +243,6 @@ class IPTT_MixinTests(TestCase):
             # and the formdata arg is a unicode value
             self.assertEqual(str(data[k]), str(formdata[k]))
 
-    @skip('WIP')
     def test__get_filters(self):
         # setup data
         data = {
