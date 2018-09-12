@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-11 17:11-0700\n"
+"POT-Creation-Date: 2018-09-11 17:46-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2385,6 +2385,7 @@ msgid "recommended"
 msgstr "recommandé"
 
 #: templates/workflow/projectdashboard_list.html:49 tola/forms.py:129
+#: workflow/forms.py:1706
 msgid "Submit"
 msgstr "Soumettre"
 
@@ -2567,6 +2568,10 @@ msgstr "Français"
 #: tola/settings/base.py:95
 msgid "Spanish"
 msgstr "Espanol"
+
+#: workflow/forms.py:1702
+msgid "Search"
+msgstr ""
 
 #: workflow/models.py:35
 msgid "Agency name"

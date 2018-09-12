@@ -3,6 +3,7 @@ from crispy_forms.layout import *
 from crispy_forms.bootstrap import *
 from crispy_forms.layout import Layout, Submit, Reset, Field
 from django.forms import HiddenInput, URLInput
+from django.utils.translation import gettext as _
 from functools import partial
 from widgets import GoogleMapsWidget
 from django import forms
@@ -1695,12 +1696,14 @@ class StakeholderForm(forms.ModelForm):
 
 
 class FilterForm(forms.Form):
+    # Search filter
+    # string translation doesn't work here
     fields = "search"
-    search = forms.CharField(required=False)
+    search = forms.CharField(required=False, label=_('Search'))
     helper = FormHelper()
     helper.form_method = 'get'
     helper.form_class = 'form-inline'
-    helper.layout = Layout(FieldWithButtons('search', StrictButton('Submit', type='submit', css_class='btn-primary')))
+    helper.layout = Layout(FieldWithButtons('search', StrictButton(_('Submit'), type='submit', css_class='btn-primary')))
 
 
 class ProjectCompleteTable(forms.ModelForm):
