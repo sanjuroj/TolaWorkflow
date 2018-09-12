@@ -54,6 +54,7 @@ $blue-250: #59b5fa; // hsl(206,94,66) /* highlighted state for blue-lighter */
 $blue-300: #55acee; // hsl(206,82,63)
 $blue-400: #3366cc; // hsl(220,60,50)
 $blue-500: #0645AD; // hsl(217,93,35)
+$blue: $blue-500;
 
 
 // Consolidated Grays
@@ -71,5 +72,68 @@ $gray-700: #54585a; // hsl(200,3,34)    // same as MC palette $gray_100
 $gray-800: #343840; // hsl(220,10,23)
 $gray-900: #212429; // hsl(218,11,15)
 $black: #000;
+
+// Other Colors & maps from Bootstrap variables
+$grays: () !default;
+$grays: map-merge((
+    "100": $gray-100,
+    "150": $gray-150,
+    "200": $gray-200,
+    "300": $gray-300,
+    "400": $gray-400,
+    "500": $gray-500,
+    "550": $gray-550,
+    "600": $gray-600,
+    "700": $gray-700,
+    "800": $gray-800,
+    "900": $gray-900
+), $grays);
+
+$indigo:  #6610f2;
+$purple:  #6f42c1;
+$pink:    #e83e8c;
+$orange:  #fd7e14;
+$green:   #28a745;
+$cyan:    #17a2b8;
+
+$colors: () !default;
+$colors: map-merge((
+    "blue":       $blue,
+    "indigo":     $indigo,
+    "purple":     $purple,
+    "pink":       $pink,
+    "red":        $red,
+    "orange":     $orange,
+    "yellow":     $yellow,
+    "green":      $green,
+    "teal":       $teal,
+    "cyan":       $cyan,
+    "white":      $white,
+    "gray":       $gray-600,
+    "gray-dark":  $gray-800
+), $colors);
+
+$primary:       $blue;
+$secondary:     $gray-600;
+$success:       $green;
+$info:          $cyan;
+$warning:       $yellow;
+$danger:        $red;
+$light:         $gray-100;
+$dark:          $gray-800;
+
+$theme-colors: () !default;
+$theme-colors: map-merge((
+    "primary":    $primary,
+    "secondary":  $secondary,
+    "success":    $success,
+    "info":       $info,
+    "warning":    $warning,
+    "danger":     $danger,
+    "light":      $light,
+    "dark":       $dark
+), $theme-colors);
+// stylelint-enable
+
 
 

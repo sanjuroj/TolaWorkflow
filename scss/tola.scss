@@ -3,8 +3,8 @@
 
 /* Bootstrap libraries */
 @import "../node_modules/bootstrap/scss/functions";
-@import "../node_modules/bootstrap/scss/variables";
 @import "../node_modules/bootstrap/scss/mixins";
+@import 'bootstrap_variables'; // Local versions of BS variables
 
 /* There should be NO selectors in compiled CSS above this comment */
 
