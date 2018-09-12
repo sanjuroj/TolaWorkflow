@@ -42,7 +42,7 @@ class LocaleDateField(DateField):
 class IndicatorForm(forms.ModelForm):
     program2 = forms.CharField(
         widget=forms.TextInput(
-            attrs={'readonly': True, 'label': 'Program'}
+            attrs={'readonly': True}
         )
     )
     unit_of_measure_type = forms.ChoiceField(
@@ -85,6 +85,7 @@ class IndicatorForm(forms.ModelForm):
         super(IndicatorForm, self).__init__(*args, **kwargs)
 
         self.fields['program2'].initial = indicator.programs
+        self.fields['program2'].label = _('Program')
         self.fields['program'].initial = self.programval.id
 
         countries = getCountry(self.request.user)
@@ -181,11 +182,13 @@ class CollectedDataForm(forms.ModelForm):
         self.fields['target_frequency'].widget = forms.HiddenInput()
         self.fields['site'].queryset = SiteProfile.objects\
             .filter(country__in=countries)
+        self.fields['site'].label = _('Site')
         self.fields['tola_table'].queryset = TolaTable.objects\
             .filter(Q(owner=self.request.user) | Q(id=self.tola_table))
         self.fields['periodic_target'].label = _('Measure against target*')
         self.fields['achieved'].label = _('Actual value')
         self.fields['date_collected'].help_text = ' '
+        self.fields['date_collected'].label = _('Date collected')
 
 
 class ReportFormCommon(forms.Form):
