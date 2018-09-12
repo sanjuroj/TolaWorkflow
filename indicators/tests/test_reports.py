@@ -213,11 +213,8 @@ class IPTT_MixinTests(TestCase):
                 self.assertEqual(len(timeperiods), 24,
                                  'Unexpected number of timeperiods for {0}: {1}'.format(freq, len(timeperiods)))
 
-    # @skip('WIP')
     def test__update_filter_form_initial(self):
         """Do we populate the initial filter form properly?"""
-        # _update_filter_form_initial(self, formdata)
-        # _update_filter_form_initial(self.request.GET)
 
         data = {
             'csrfmiddlewaretoken': 'lolwut',
@@ -232,7 +229,7 @@ class IPTT_MixinTests(TestCase):
         self.mixin._update_filter_form_initial(formdata=formdata)
 
         filter_form_initial_data = self.mixin.filter_form_initial_data
-        # Strips off program and csrfmiddlewaretoekn
+        # Strips off program and csrfmiddlewaretoken
         self.assertEqual(len(filter_form_initial_data), 4)
         self.assertNotIn('csrfmiddlewaretokeen', filter_form_initial_data)
         self.assertNotIn('program', filter_form_initial_data)
