@@ -3,7 +3,7 @@ from crispy_forms.layout import *
 from crispy_forms.bootstrap import *
 from crispy_forms.layout import Layout, Submit, Reset, Field
 from django.forms import HiddenInput, URLInput
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 from functools import partial
 from widgets import GoogleMapsWidget
 from django import forms
