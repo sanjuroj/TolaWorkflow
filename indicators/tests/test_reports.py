@@ -4,7 +4,7 @@ import urllib
 from django.http import QueryDict
 from django.test import Client, RequestFactory, TestCase
 
-from factories.indicators_models import IndicatorFactory
+from factories.indicators_models import IndicatorFactory, IndicatorTypeFactory
 from factories.workflow_models import (
     ProgramFactory,
     TolaUserFactory,
@@ -228,12 +228,12 @@ class IPTT_MixinTests(TestCase):
         self.mixin._update_filter_form_initial(formdata=formdata)
 
         filter_form_initial_data = self.mixin.filter_form_initial_data
-        # Strips off program and csrfmiddlewaretoken
         self.assertEqual(len(filter_form_initial_data), 4)
         self.assertNotIn('csrfmiddlewaretokeen', filter_form_initial_data)
         self.assertNotIn('program', filter_form_initial_data)
 
-        # Dicts should have the same keys and the same values
+        # Dicts should have the same key/value pairs; the method first
+        # strips off program and csrfmiddlewaretoken, so do that, too.
         del (data['csrfmiddlewaretoken'])
         del (data['program'])
         for k in data.keys():
@@ -242,21 +242,33 @@ class IPTT_MixinTests(TestCase):
             # and the formdata arg is a unicode value
             self.assertEqual(str(data[k]), str(formdata[k]))
 
-    def test__get_filters(self):
-        self.skipTest('WIP - currently broken')
-        # setup data
+    def test__get_filters_with_no_periods(self):
         data = {
             'level': 'Outcome',
             'sector': 'Conflict Management',
+            # TODO: prolly not right eh?
+            'ind_type': IndicatorTypeFactory(),
             'site': self.program.country.name,
-            'indicators': self.indicator,
+            'indicators': self.indicator.id,
         }
 
-        # self.mixin._get_filters(data)
         filters = self.mixin._get_filters(data)
+        # Assert things about the returned filters
+        self.assertEqual(len(filters), len(data))
+        self.assertIn(data['level'], filters['level__in'])
+        self.assertIn(data['sector'], filters['sector__in'])
+        self.assertIn(data['ind_type'], filters['indicator_type__in'])
+        self.assertIn(data['site'], filters['collecteddata__site__in'])
+        self.assertIn(data['indicators'], filters['id__in'])
 
-        # assert things about the returned filters
-        # assert things about the report contents
+        self.assertEqual(data['level'], *filters['level__in'])
+        self.assertEqual(data['sector'], *filters['sector__in'])
+        self.assertEqual(data['ind_type'], *filters['indicator_type__in'])
+        self.assertEqual(data['site'], *filters['collecteddata__site__in'])
+        self.assertEqual(data['indicators'], *filters['id__in'])
+
+        # Assert things about the report contents.
+        # TODO: Is this possible without submitting the filters?
 
     def test_prepare_indicators(self):
         self.skipTest('TODO: Implement this')
