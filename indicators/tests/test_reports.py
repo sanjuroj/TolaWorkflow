@@ -1,6 +1,5 @@
 import datetime
 import urllib
-from unittest import skip
 
 from django.http import QueryDict
 from django.test import Client, RequestFactory, TestCase
@@ -83,8 +82,8 @@ class IPTT_MixinTests(TestCase):
         real_start_date = datetime.date(2016, 7, 15)
         for freq in IPTT_MixinTests.freqs:
             num_months = self.mixin._get_num_months(freq)
-
             _get_first_period = self.mixin._get_first_period(real_start_date, num_months)
+
             if freq == Indicator.ANNUAL:
                 self.assertEqual(_get_first_period,
                                  datetime.date(2016, 1, 1))
@@ -229,12 +228,13 @@ class IPTT_MixinTests(TestCase):
         self.mixin._update_filter_form_initial(formdata=formdata)
 
         filter_form_initial_data = self.mixin.filter_form_initial_data
-        # Strips off program and csrfmiddlewaretoken
+
         self.assertEqual(len(filter_form_initial_data), 4)
         self.assertNotIn('csrfmiddlewaretokeen', filter_form_initial_data)
         self.assertNotIn('program', filter_form_initial_data)
 
-        # Dicts should have the same keys and the same values
+        # Dicts should have the same key/value pairs; the method first
+        # strips off program and csrfmiddlewaretoken, so do that, too.
         del (data['csrfmiddlewaretoken'])
         del (data['program'])
         for k in data.keys():
@@ -243,43 +243,50 @@ class IPTT_MixinTests(TestCase):
             # and the formdata arg is a unicode value
             self.assertEqual(str(data[k]), str(formdata[k]))
 
-    def test__get_filters(self):
-        # setup data
+    def test__get_filters_with_no_periods(self):
         data = {
             'level': 'Outcome',
             'sector': 'Conflict Management',
-            # workflow.models.SiteProfile ?
+            # TODO: Load fixtures for level, indicators
+            'ind_type': 'Custom',
             'site': self.program.country.name,
-            'indicators': self.indicator,
+            'indicators': self.indicator.id,
         }
 
-        # self.mixin._get_filters(data)
         filters = self.mixin._get_filters(data)
+        # Assert things about the returned filters
+        self.assertEqual(len(filters), len(data))
+        self.assertIn(data['level'], filters['level__in'])
+        self.assertIn(data['sector'], filters['sector__in'])
+        self.assertIn(data['ind_type'], filters['indicator_type__in'])
+        self.assertIn(data['site'], filters['collecteddata__site__in'])
+        self.assertIn(data['indicators'], filters['id__in'])
 
-        # assert things about the returned filters
-        # assert things about the report contents
+        self.assertEqual(data['level'], *filters['level__in'])
+        self.assertEqual(data['sector'], *filters['sector__in'])
+        self.assertEqual(data['ind_type'], *filters['indicator_type__in'])
+        self.assertEqual(data['site'], *filters['collecteddata__site__in'])
+        self.assertEqual(data['indicators'], *filters['id__in'])
 
-    @skip('TODO: Implement this')
+        # Assert things about the report contents.
+        # TODO: Is this possible without submitting the filters?
+
     def test_prepare_indicators(self):
-        pass
+        self.skipTest('TODO: Test not implemented')
 
-    @skip('TODO: Implement this')
     def test_prepare_iptt_period_dateranges(self):
-        pass
+        self.skipTest('TODO: Test not implemented')
 
-    @skip('TODO: Implement this')
     def test_get_context_data(self):
-        pass
+        self.skipTest('TODO: Test not implemented')
 
 
 class IPTT_ReportIndicatorsWithVariedStartDateTests(TestCase):
     def setUp(self):
         pass
 
-    @skip('TODO: Implement this')
     def test_get_context_data(self):
-        pass
+        self.skipTest('TODO: Test not implemented')
 
-    @skip('TODO: Implement this')
     def test_get(self):
-        pass
+        self.skipTest('TODO: Test not implemented')
