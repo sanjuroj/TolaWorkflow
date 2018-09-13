@@ -82,8 +82,8 @@ class IPTT_MixinTests(TestCase):
         real_start_date = datetime.date(2016, 7, 15)
         for freq in IPTT_MixinTests.freqs:
             num_months = self.mixin._get_num_months(freq)
-
             _get_first_period = self.mixin._get_first_period(real_start_date, num_months)
+
             if freq == Indicator.ANNUAL:
                 self.assertEqual(_get_first_period,
                                  datetime.date(2016, 1, 1))
@@ -228,6 +228,7 @@ class IPTT_MixinTests(TestCase):
         self.mixin._update_filter_form_initial(formdata=formdata)
 
         filter_form_initial_data = self.mixin.filter_form_initial_data
+
         self.assertEqual(len(filter_form_initial_data), 4)
         self.assertNotIn('csrfmiddlewaretokeen', filter_form_initial_data)
         self.assertNotIn('program', filter_form_initial_data)
@@ -271,13 +272,13 @@ class IPTT_MixinTests(TestCase):
         # TODO: Is this possible without submitting the filters?
 
     def test_prepare_indicators(self):
-        self.skipTest('TODO: Implement this')
+        self.skipTest('TODO: Test not implemented')
 
     def test_prepare_iptt_period_dateranges(self):
-        self.skipTest('TODO: Implement this')
+        self.skipTest('TODO: Test not implemented')
 
     def test_get_context_data(self):
-        self.skipTest('TODO: Implement this')
+        self.skipTest('TODO: Test not implemented')
 
 
 class IPTT_ReportIndicatorsWithVariedStartDateTests(TestCase):
@@ -285,7 +286,7 @@ class IPTT_ReportIndicatorsWithVariedStartDateTests(TestCase):
         pass
 
     def test_get_context_data(self):
-        self.skipTest('TODO: Implement this')
+        self.skipTest('TODO: Test not implemented')
 
     def test_get(self):
-        self.skipTest('TODO: Implement this')
+        self.skipTest('TODO: Test not implemented')
