@@ -4,7 +4,7 @@ import urllib
 from django.http import QueryDict
 from django.test import Client, RequestFactory, TestCase
 
-from factories.indicators_models import IndicatorFactory, IndicatorTypeFactory
+from factories.indicators_models import IndicatorFactory
 from factories.workflow_models import (
     ProgramFactory,
     TolaUserFactory,
@@ -247,8 +247,8 @@ class IPTT_MixinTests(TestCase):
         data = {
             'level': 'Outcome',
             'sector': 'Conflict Management',
-            # TODO: prolly not right eh?
-            'ind_type': IndicatorTypeFactory(),
+            # TODO: Load fixtures for level, indicators
+            'ind_type': 'Custom',
             'site': self.program.country.name,
             'indicators': self.indicator.id,
         }
