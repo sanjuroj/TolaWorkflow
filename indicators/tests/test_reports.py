@@ -1,7 +1,8 @@
 import datetime
 import urllib
 
-from django.http import QueryDict
+from django.http import HttpRequest, QueryDict
+from django.shortcuts import render
 from django.test import Client, RequestFactory, TestCase
 
 from factories.indicators_models import IndicatorFactory
@@ -244,6 +245,7 @@ class IPTT_MixinTests(TestCase):
             self.assertEqual(str(data[k]), str(formdata[k]))
 
     def test__get_filters_with_no_periods(self):
+
         data = {
             'level': 'Outcome',
             'sector': 'Conflict Management',
@@ -268,8 +270,8 @@ class IPTT_MixinTests(TestCase):
         self.assertEqual(data['site'], *filters['collecteddata__site__in'])
         self.assertEqual(data['indicators'], *filters['id__in'])
 
-        # Assert things about the report contents.
-        # TODO: Is this possible without submitting the filters?
+        # TODO: Is it possible to make assertions about the filtered report
+        # TODO: without a GET or POST?
 
     def test_prepare_indicators(self):
         self.skipTest('TODO: Test not implemented')
@@ -277,8 +279,24 @@ class IPTT_MixinTests(TestCase):
     def test_prepare_iptt_period_dateranges(self):
         self.skipTest('TODO: Test not implemented')
 
+    # TODO: Finish this test
     def test_get_context_data(self):
-        self.skipTest('TODO: Test not implemented')
+        '''Does get_context_data return existing data untouched
+        and without inserting new data?'''
+        # self.skipTest('WIP')
+        request = HttpRequest()
+        request.user = self.user
+        kwargs = {
+            'prefix': 'targetperiods',
+            'request': request,
+        }
+        context = {
+            'targetprefix': 'targetperiods',
+            'timeprefix': 'timeperiods',
+            'program_id': self.program.id,
+        }
+        result = render(request, 'indicators/iptt_quickstart.html', context=context)
+        print dir(result)
 
 
 class IPTT_ReportIndicatorsWithVariedStartDateTests(TestCase):
