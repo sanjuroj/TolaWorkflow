@@ -283,7 +283,7 @@ class IPTT_MixinTests(TestCase):
     def test_get_context_data(self):
         '''Does get_context_data return existing data untouched
         and without inserting new data?'''
-        # self.skipTest('WIP')
+        self.skipTest('WIP')
         request = HttpRequest()
         request.user = self.user
         kwargs = {
@@ -296,7 +296,6 @@ class IPTT_MixinTests(TestCase):
             'program_id': self.program.id,
         }
         result = render(request, 'indicators/iptt_quickstart.html', context=context)
-        print dir(result)
 
 
 class IPTT_ReportIndicatorsWithVariedStartDateTests(TestCase):
