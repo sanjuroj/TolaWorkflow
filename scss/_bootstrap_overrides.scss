@@ -140,26 +140,25 @@ body > .container {
 }
 
 // Crispy forms does not apply the appropriate classes to its tabs so we have to fake it
-.nav-tabs .tab-pane {
-    // same as .nav-tabs .nav-item
-    margin-bottom: -1px;
-}
-.nav-tabs .tab-pane a {
-    // same as .nav-tabs .nav-link
-    border: 1px solid transparent;
-    border-top-left-radius: .25rem;
-    border-top-right-radius: .25rem;
-    display: block;
-    padding: .5rem 1rem;
-}
-.nav-tabs .tab-pane a:hover {
-    border-color: $gray-300 $gray-300 $gray-500;
-}
-.nav-tabs .tab-pane a.active.show {
-// same as  .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active
-    color: $gray-700;
-    background-color: $white;
-    border-color: $gray-300 $gray-300 $white;
+.nav-tabs {
+    .tab-pane { // same as .nav-tabs .nav-item
+        margin-bottom: -1px;
+        a { // same as .nav-tabs .nav-link
+            border: 1px solid transparent;
+            border-top-left-radius: .25rem;
+            border-top-right-radius: .25rem;
+            display: block;
+            padding: .5rem 1rem;
+            &:hover {
+                border-color: $gray-300 $gray-300 $gray-500;
+            }
+            &.active.show { // same as  .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active
+                color: $gray-700;
+                background-color: $white;
+                border-color: $gray-300 $gray-300 $white;
+            }
+        }
+    }
 }
 .tab-content.panel-body {
     margin-top: 1rem;

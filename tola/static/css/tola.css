@@ -6228,21 +6228,18 @@ body > .container {
 
 .nav-tabs .tab-pane {
   margin-bottom: -1px; }
-
-.nav-tabs .tab-pane a {
-  border: 1px solid transparent;
-  border-top-left-radius: .25rem;
-  border-top-right-radius: .25rem;
-  display: block;
-  padding: .5rem 1rem; }
-
-.nav-tabs .tab-pane a:hover {
-  border-color: #dbdcde #dbdcde #b8babd; }
-
-.nav-tabs .tab-pane a.active.show {
-  color: #54585a;
-  background-color: #fff;
-  border-color: #dbdcde #dbdcde #fff; }
+  .nav-tabs .tab-pane a {
+    border: 1px solid transparent;
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+    display: block;
+    padding: .5rem 1rem; }
+    .nav-tabs .tab-pane a:hover {
+      border-color: #dbdcde #dbdcde #b8babd; }
+    .nav-tabs .tab-pane a.active.show {
+      color: #54585a;
+      background-color: #fff;
+      border-color: #dbdcde #dbdcde #fff; }
 
 .tab-content.panel-body {
   margin-top: 1rem; }
