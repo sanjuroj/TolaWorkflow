@@ -1,8 +1,7 @@
 import datetime
 import urllib
 
-from django.http import HttpRequest, QueryDict
-from django.shortcuts import render
+from django.http import QueryDict
 from django.test import Client, RequestFactory, TestCase
 
 from factories.indicators_models import IndicatorFactory
@@ -279,23 +278,14 @@ class IPTT_MixinTests(TestCase):
     def test_prepare_iptt_period_dateranges(self):
         self.skipTest('TODO: Test not implemented')
 
-    # TODO: Finish this test
+    # TODO: Finish this test; don't know how test it cleanly. IPTT_Mixin
+    # doesn't implement get_context_data and calls the superclass' version.
+    # The test would end up testing Django's TemplateView instead of our
+    # IPTT_Mixin.
     def test_get_context_data(self):
         '''Does get_context_data return existing data untouched
         and without inserting new data?'''
-        self.skipTest('WIP')
-        request = HttpRequest()
-        request.user = self.user
-        kwargs = {
-            'prefix': 'targetperiods',
-            'request': request,
-        }
-        context = {
-            'targetprefix': 'targetperiods',
-            'timeprefix': 'timeperiods',
-            'program_id': self.program.id,
-        }
-        result = render(request, 'indicators/iptt_quickstart.html', context=context)
+        self.skipTest('TODO: Test not implemented')
 
 
 class IPTT_ReportIndicatorsWithVariedStartDateTests(TestCase):
