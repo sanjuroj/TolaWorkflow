@@ -278,10 +278,8 @@ class IPTT_MixinTests(TestCase):
     def test_prepare_iptt_period_dateranges(self):
         self.skipTest('TODO: Test not implemented')
 
-    # TODO: Finish this test; don't know how test it cleanly. IPTT_Mixin
-    # doesn't implement get_context_data and calls the superclass' version.
-    # The test would end up testing Django's TemplateView instead of our
-    # IPTT_Mixin.
+    # TODO: Mock the super call that invokes a non-existent get_context_data
+    # call on IPTT_Mixin.
     def test_get_context_data(self):
         '''Does get_context_data return existing data untouched
         and without inserting new data?'''
@@ -289,6 +287,8 @@ class IPTT_MixinTests(TestCase):
 
 
 class IPTT_ReportIndicatorsWithVariedStartDateTests(TestCase):
+    '''Test IPTT reports which contain indicators with varied start dates'''
+
     def setUp(self):
         pass
 
