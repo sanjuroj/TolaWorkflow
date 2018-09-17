@@ -128,16 +128,6 @@ body > .container {
 }
 
 // expand the caret
-.btn-group.show .multiselect.dropdown-toggle::after {
-}
-.multiselect.btn {
-    align-items: center;
-    color: $gray-700;
-    display: flex;
-    justify-content: space-between;
-    text-align: left;
-    width: 100%;
-}
 .multiselect-container {
     width: 100%;
 }

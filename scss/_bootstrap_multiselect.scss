@@ -121,6 +121,14 @@ span.multiselect-native-select select{
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
 }
+.multiselect.btn { // custom for Tola
+    align-items: center;
+    color: $gray-700;
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+    width: 100%;
+}
 
 .form-inline .multiselect-container{
     
