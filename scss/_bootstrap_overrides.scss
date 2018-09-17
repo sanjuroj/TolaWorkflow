@@ -106,19 +106,12 @@ body > .container {
 }
 
 
-// add a small cleanline to the top of the navbar
+// add a small cleanline to the bottom of the navbar
 .navbar-dark {
     border-bottom: 1px solid $gray-150;
 }
 
 
-// overload base colors
-.navbar-dark .navbar-nav .nav-link {
-    color: $gray-300;
-}
-.navbar-dark .navbar-nav .nav-link:hover {
-    color: $white;
-}
 // overload dropdown menus
 .dropdown-menu {
     border-radius: 0;
