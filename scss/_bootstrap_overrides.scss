@@ -105,17 +105,6 @@ body > .container {
     color: $gray-600; // TODO
 }
 
-input[type="radio"],
-input[type="checkbox"] {
-    border-color: $gray-500;
-    background-color: $white;
-}
-
-input[type="radio"].form-control:focus,
-input[type="checkbox"].form-control:focus {
-  outline: 0;
-  box-shadow: none;
-}
 
 // add a small cleanline to the top of the navbar
 .navbar-dark {
