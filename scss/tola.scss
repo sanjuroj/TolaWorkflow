@@ -48,6 +48,7 @@
 
 // MC Tola CSS modules
 /* Local Bootstrap overrides */
+@import '_bootstrap_multiselect.scss'; // my what a mess this is
 @import 'bootstrap_overrides'; // overload BS selectors.
 
 /* Local custom CSS and overloads for non-BS libraries */
