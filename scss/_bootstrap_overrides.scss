@@ -111,26 +111,15 @@ body > .container {
     border-bottom: 1px solid $gray-150;
 }
 
-
 // overload dropdown menus
-.dropdown-menu {
-    border-radius: 0;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.2);
-}
 .navbar-dark .dropdown-menu {
     background: $gray-700;
-    border: none;
-    border-radius: 0;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.2);
 }
 .navbar-dark .dropdown-item {
     color: $white;
-}
-.navbar-dark .dropdown-item:focus,
-.navbar-dark .dropdown-item:hover {
-    color: $white;
-    text-decoration: none;
-    background-color: $gray-600;
+    &:focus, &:hover {
+        background-color: $gray-600;
+    }
 }
 
 // overload bootstrap-multiselect

@@ -6113,24 +6113,13 @@ body > .container {
 .navbar-dark {
   border-bottom: 1px solid #f5f5f5; }
 
-.dropdown-menu {
-  border-radius: 0;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2); }
-
 .navbar-dark .dropdown-menu {
-  background: #54585a;
-  border: none;
-  border-radius: 0;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2); }
+  background: #54585a; }
 
 .navbar-dark .dropdown-item {
   color: #fff; }
-
-.navbar-dark .dropdown-item:focus,
-.navbar-dark .dropdown-item:hover {
-  color: #fff;
-  text-decoration: none;
-  background-color: #71757b; }
+  .navbar-dark .dropdown-item:focus, .navbar-dark .dropdown-item:hover {
+    background-color: #71757b; }
 
 .multiselect-native-select .btn-group {
   width: 100%; }
