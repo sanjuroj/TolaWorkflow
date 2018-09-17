@@ -53,6 +53,9 @@ body > .container {
 // END Sticky footer styles
 //--------------------------------------------------
 
+
+// extensions to BS buttons
+//--------------------------------------------------
 .btn-primary, .btn-secondary {
     text-transform: uppercase;
 }
@@ -97,16 +100,7 @@ body > .container {
 }
 
 // keep the blue color shadow around form elements even if form is validated successfully
-  // but don't apply the highlight to radios, checkboxes, or readonly/disabled fields
-.form-control:focus,
-.was-validated .form-control.is-valid:focus,
-.was-validated .form-control:valid:focus {
-  color: $gray-700;
-  background-color: $white;
-  border-color: $blue-400;
-  outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40); // transparentize($blue-light, 0.4);
-}
+// but don't apply the highlight to radios, checkboxes, or readonly/disabled fields
 
 input[type="text"]:read-only,
 select[disabled="disabled"],
