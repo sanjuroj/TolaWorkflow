@@ -99,20 +99,10 @@ body > .container {
   border:1px solid $gray-500;
 }
 
-// keep the blue color shadow around form elements even if form is validated successfully
-// but don't apply the highlight to radios, checkboxes, or readonly/disabled fields
-
-input[type="text"]:read-only,
-select[disabled="disabled"],
-select[disabled=true],
-.form-control:disabled,
-.form-control:disabled:focus,
-.form-control:disabled.focus,
-.form-control[readonly] {
-  border-color: $gray-300;
-  background-color: $gray-150;
-  outline: 0;
-  box-shadow: none;
+// Custom color for disabled/readonly elements
+// There is no bootstrap for hook for this?!
+.form-control:disabled, .form-control[readonly] {
+    color: $gray-600; // TODO
 }
 
 input[type="radio"],

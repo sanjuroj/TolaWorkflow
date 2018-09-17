@@ -1271,7 +1271,7 @@ pre {
     color: #71757b;
     opacity: 1; }
   .form-control:disabled, .form-control[readonly] {
-    background-color: #ebedf0;
+    background-color: #f5f5f5;
     opacity: 1; }
 
 select.form-control:not([size]):not([multiple]) {
@@ -6107,17 +6107,8 @@ body > .container {
 .was-validated .form-control:valid {
   border: 1px solid #b8babd; }
 
-input[type="text"]:read-only,
-select[disabled="disabled"],
-select[disabled=true],
-.form-control:disabled,
-.form-control:disabled:focus,
-.form-control:disabled.focus,
-.form-control[readonly] {
-  border-color: #dbdcde;
-  background-color: #f5f5f5;
-  outline: 0;
-  box-shadow: none; }
+.form-control:disabled, .form-control[readonly] {
+  color: #71757b; }
 
 input[type="radio"],
 input[type="checkbox"] {
