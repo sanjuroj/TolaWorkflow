@@ -37,6 +37,9 @@ class UserLanguageMiddleware(object):
 
     def __call__(self, request):
         response = self.get_response(request)
+        return response
+
+    def process_view(self, request, callback, callback_args, callback_kwargs):
         user = getattr(request, 'user', None)
 
         if user.is_authenticated:
@@ -51,4 +54,4 @@ class UserLanguageMiddleware(object):
         else:
             request.session[translation.LANGUAGE_SESSION_KEY] = 'en'
 
-        return response
+
