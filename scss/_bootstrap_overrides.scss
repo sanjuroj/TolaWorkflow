@@ -72,38 +72,13 @@ body > .container {
     font-weight: bold;
 }
 
-
-.btn-danger.btn-link:not(:disabled):not(.disabled).focus,
-.btn-danger.btn-link:not(:disabled):not(.disabled):focus,
-.btn-danger.btn-link,
-.btn-danger.btn-link.focus,
-.btn-danger.btn-link:focus,
-.btn-danger.btn-link:hover {
+.btn-danger.btn-link {
+    // special danger links for remove actions
     color: $red-500;
     border: 0px;
-    background-color: $white;
-    box-shadow: none;
-    text-decoration: none;
+    background: $white;
 }
 
-.btn-danger.btn-link:not(:disabled):not(.disabled).active,
-.btn-danger.btn-link:not(:disabled):not(.disabled).active:focus,
-.btn-danger.btn-link:not(:disabled):not(.disabled):active,
-.btn-danger.btn-link:not(:disabled):not(.disabled):active:focus,
-.btn-danger.btn-link.active,
-.btn-danger.btn-link:active {
-    color: $red-200;
-    border: 0px;
-    background-color: $white;
-    box-shadow: none;
-    text-decoration: none;
-}
-
-.btn {
-    padding-right: 1.25rem;
-    padding-left: 1.25rem;
-    border-radius: .001rem;
-}
 
 .form-control {
     color: $black;

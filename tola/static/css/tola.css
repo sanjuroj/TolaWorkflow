@@ -6090,34 +6090,10 @@ body > .container {
 .btn-link {
   font-weight: bold; }
 
-.btn-danger.btn-link:not(:disabled):not(.disabled).focus,
-.btn-danger.btn-link:not(:disabled):not(.disabled):focus,
-.btn-danger.btn-link,
-.btn-danger.btn-link.focus,
-.btn-danger.btn-link:focus,
-.btn-danger.btn-link:hover {
+.btn-danger.btn-link {
   color: #c8102e;
   border: 0px;
-  background-color: #fff;
-  box-shadow: none;
-  text-decoration: none; }
-
-.btn-danger.btn-link:not(:disabled):not(.disabled).active,
-.btn-danger.btn-link:not(:disabled):not(.disabled).active:focus,
-.btn-danger.btn-link:not(:disabled):not(.disabled):active,
-.btn-danger.btn-link:not(:disabled):not(.disabled):active:focus,
-.btn-danger.btn-link.active,
-.btn-danger.btn-link:active {
-  color: #ed8090;
-  border: 0px;
-  background-color: #fff;
-  box-shadow: none;
-  text-decoration: none; }
-
-.btn {
-  padding-right: 1.25rem;
-  padding-left: 1.25rem;
-  border-radius: .001rem; }
+  background: #fff; }
 
 .form-control {
   color: #000;
