@@ -53,7 +53,7 @@ body > .container {
 // END Sticky footer styles
 //--------------------------------------------------
 
-.btn {
+.btn-primary, .btn-secondary {
     text-transform: uppercase;
 }
 .btn-secondary { // TODO
@@ -68,21 +68,10 @@ body > .container {
         color: $teal-600;
     }
 }
-
-.btn-link,
-.btn-link:focus,
-.btn-link.focus,
-.btn-link:hover {
-    color: $blue-500;
+.btn-link {
     font-weight: bold;
-    text-decoration: none;
 }
 
-.btn-link:active,
-.btn-link.active {
-    color: $blue-400;
-    text-decoration: none;
-}
 
 .btn-danger.btn-link:not(:disabled):not(.disabled).focus,
 .btn-danger.btn-link:not(:disabled):not(.disabled):focus,

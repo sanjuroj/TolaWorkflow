@@ -6074,7 +6074,7 @@ body > .container {
 #footer > .container-fluid {
   padding: 15px; }
 
-.btn {
+.btn-primary, .btn-secondary {
   text-transform: uppercase; }
 
 .btn-secondary, .btn-secondary:link, .btn-secondary:visited {
@@ -6087,18 +6087,8 @@ body > .container {
   border-color: #046C69;
   color: #046C69; }
 
-.btn-link,
-.btn-link:focus,
-.btn-link.focus,
-.btn-link:hover {
-  color: #0645AD;
-  font-weight: bold;
-  text-decoration: none; }
-
-.btn-link:active,
-.btn-link.active {
-  color: #3366cc;
-  text-decoration: none; }
+.btn-link {
+  font-weight: bold; }
 
 .btn-danger.btn-link:not(:disabled):not(.disabled).focus,
 .btn-danger.btn-link:not(:disabled):not(.disabled):focus,
