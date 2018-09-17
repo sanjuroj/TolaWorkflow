@@ -6038,6 +6038,9 @@ a.text-dark:hover, a.text-dark:focus {
     border: 1px solid #ddd !important; } }
 
 /* Local Bootstrap overrides */
+.multiselect-native-select .btn-group {
+  width: 100%; }
+
 span.multiselect-native-select {
   position: relative; }
 
@@ -6057,8 +6060,10 @@ span.multiselect-native-select select {
   position: absolute;
   list-style-type: none;
   margin: 0;
-  padding: 0; }
+  padding: 0;
+  width: 100%; }
   .multiselect-container .input-group {
+    width: auto;
     margin: 5px; }
   .multiselect-container .multiselect-reset .input-group {
     width: 93%; }
@@ -6074,17 +6079,30 @@ span.multiselect-native-select select {
     .multiselect-container > li.multiselect-group-clickable label {
       cursor: pointer; }
     .multiselect-container > li > a {
+      color: #54585a;
+      display: block;
       padding: 0; }
+      .multiselect-container > li > a:hover {
+        background: #55acee;
+        color: white;
+        text-decoration: none; }
       .multiselect-container > li > a > label {
         margin: 0;
         height: 100%;
         cursor: pointer;
+        display: block;
         font-weight: normal;
-        padding: 3px 20px 3px 40px; }
+        padding: 3px 20px 3px 40px;
+        text-indent: -20px; }
+        .multiselect-container > li > a > label.radio {
+          text-indent: 0;
+          padding-left: 20px; }
         .multiselect-container > li > a > label.radio, .multiselect-container > li > a > label.checkbox {
           margin: 0; }
         .multiselect-container > li > a > label > input[type="checkbox"] {
           margin-bottom: 5px; }
+    .multiselect-container > li input[type=radio] {
+      display: none; }
 
 .btn-group > .btn-group:nth-child(2) > .multiselect.btn {
   border-top-left-radius: 4px;
@@ -6104,6 +6122,13 @@ span.multiselect-native-select select {
 .form-inline .multiselect-container li a label.checkbox input[type="checkbox"], .form-inline .multiselect-container li a label.radio input[type="radio"] {
   margin-left: -20px;
   margin-right: 0; }
+
+.multiselect-clear-filter {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem; }
+
+.multiselect-selected-text {
+  overflow: hidden; }
 
 html {
   display: flex;
@@ -6187,41 +6212,6 @@ body > .container {
   color: #fff; }
   .navbar-dark .dropdown-item:focus, .navbar-dark .dropdown-item:hover {
     background-color: #71757b; }
-
-.multiselect-native-select .btn-group {
-  width: 100%; }
-
-.multiselect-container {
-  width: 100%; }
-
-.multiselect-container > li > a {
-  display: block;
-  color: #54585a; }
-
-.multiselect-container > li > a:hover {
-  background: #55acee;
-  color: white; }
-
-.multiselect-container .input-group {
-  width: auto; }
-
-.multiselect-container > li > a > label {
-  text-indent: -20px;
-  display: block; }
-
-.multiselect-container > li > a > label.radio {
-  text-indent: 0;
-  padding-left: 20px; }
-
-.multiselect-container > li input[type=radio] {
-  display: none; }
-
-.multiselect-clear-filter {
-  padding-left: 0.75rem;
-  padding-right: 0.75rem; }
-
-.multiselect-selected-text {
-  overflow: hidden; }
 
 .select2-container--default .select2-selection--single {
   border-radius: 0px !important;

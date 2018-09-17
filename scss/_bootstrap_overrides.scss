@@ -122,44 +122,6 @@ body > .container {
     }
 }
 
-// overload bootstrap-multiselect
-.multiselect-native-select .btn-group {
-    width: 100%;
-}
-
-// expand the caret
-.multiselect-container {
-    width: 100%;
-}
-.multiselect-container > li > a {
-    display: block;
-    color: $gray-700;
-}
-.multiselect-container > li > a:hover {
-  background: $blue-300;
-  color: white;
-}
-.multiselect-container .input-group {
-    width: auto;
-}
-.multiselect-container > li > a > label {
-    text-indent: -20px;
-    display: block;
-}
-.multiselect-container > li > a > label.radio {
-  text-indent: 0;
-  padding-left: 20px;
-}
-.multiselect-container > li input[type=radio] {
-  display: none;
-}
-.multiselect-clear-filter {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-}
-.multiselect-selected-text {
-    overflow: hidden;
-}
 
 // Select 2 overloads
 .select2-container--default .select2-selection--single {
