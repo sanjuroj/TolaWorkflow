@@ -1,0 +1,30 @@
+// forms
+.help-block { // emulates .form-text.text-muted
+    color: $gray-600 !important; // was: #6c757d!important;
+    display: block;
+    margin-top: .25rem;
+}
+.form-actions .form-group {
+    margin-bottom: 0;
+}
+.has-crispy-form {
+    .tab-content.panel-body {
+        background: white;
+        border: 1px solid $gray-300; // was: #dee2e6;
+        border-top-width: 0;
+        margin-top: 0;
+        padding: 1rem;
+    }
+    .nav-tabs {
+        width: 100%;
+    }
+    .input-group {
+        align-items: center;
+    }
+    #div_id_name { /* overloads jankety overload for select2, see line 481 this file */
+        height: auto;
+    }
+}
+.input-group-addon {
+    margin: 0 0.5rem;
+}

@@ -1,0 +1,46 @@
+// IPTT Table
+#iptt_table {
+    background-color: white;
+    &, & thead tr td {
+        border: 0px !important;
+    }
+    tr th {
+        background-color:$gray-150 !important;
+    }
+    // tbody{
+    //background-color:#ffffff !important;
+    //}
+}
+#id_td_iptt_program_name {
+    padding-left: 0; // overloads .table-sm td
+    padding-right: 0; // overloads .table-sm td
+}
+body.page_iptt_table { // body element for extra specificity
+    margin-bottom: 0;
+}
+.page_iptt_table {
+    #id_div_content {
+        display: flex;
+        flex-grow: 1;
+        height: 100%;
+    }
+    .popover {
+        max-width: 100%; /* Max Width of the popover (depending on the container) */
+    }
+    #footer {
+        position: relative;
+    }
+    #id_div_breadcrumb,
+    .page-title {
+        display: none;
+    }
+}
+.iptt_table_wrapper {
+    // See breakpoint mixin below
+    width: 100%;
+    overflow-x: auto;
+    padding-left: 10px;
+}
+#id_div_top_iptt_report {
+    color: $gray-700; // why is this not #54585A ?
+}

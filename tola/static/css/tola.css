@@ -6249,6 +6249,34 @@ body > .container {
   background: rgba(0, 0, 0, 0.1) !important; }
 
 /* Local custom CSS and overloads for non-BS libraries */
+.help-block {
+  color: #71757b !important;
+  display: block;
+  margin-top: .25rem; }
+
+.form-actions .form-group {
+  margin-bottom: 0; }
+
+.has-crispy-form .tab-content.panel-body {
+  background: white;
+  border: 1px solid #dbdcde;
+  border-top-width: 0;
+  margin-top: 0;
+  padding: 1rem; }
+
+.has-crispy-form .nav-tabs {
+  width: 100%; }
+
+.has-crispy-form .input-group {
+  align-items: center; }
+
+.has-crispy-form #div_id_name {
+  /* overloads jankety overload for select2, see line 481 this file */
+  height: auto; }
+
+.input-group-addon {
+  margin: 0 0.5rem; }
+
 .map-marker {
   width: 20px;
   height: 20px;
@@ -6952,34 +6980,6 @@ input[type=number]::-webkit-outer-spin-button {
 
 .page_iptt_table .modal-dialog .collecteddata-table--actions {
   background: transparent; }
-
-.help-block {
-  color: #71757b !important;
-  display: block;
-  margin-top: .25rem; }
-
-.form-actions .form-group {
-  margin-bottom: 0; }
-
-.has-crispy-form .tab-content.panel-body {
-  background: white;
-  border: 1px solid #dbdcde;
-  border-top-width: 0;
-  margin-top: 0;
-  padding: 1rem; }
-
-.has-crispy-form .nav-tabs {
-  width: 100%; }
-
-.has-crispy-form .input-group {
-  align-items: center; }
-
-.has-crispy-form #div_id_name {
-  /* overloads jankety overload for select2, see line 481 this file */
-  height: auto; }
-
-.input-group-addon {
-  margin: 0 0.5rem; }
 
 .is-shown-in-modals {
   display: none; }

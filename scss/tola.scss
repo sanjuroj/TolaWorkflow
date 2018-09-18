@@ -52,8 +52,10 @@
 @import 'bootstrap_overrides'; // overload BS selectors.
 
 /* Local custom CSS and overloads for non-BS libraries */
+@import 'mc_tola_forms';
 @import 'maps';
 @import 'charts';
 @import 'branding';
+@import 'iptt_table'; // the IPTT table & page
 @import 'sidebar'; // IPTT sidebar
 @import 'custom'; // misc. elements & unsorted selectors
