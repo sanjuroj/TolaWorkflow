@@ -464,51 +464,6 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
-// Hidable side bar filter
-.filter-wrapper {
-    display: flex;
-}
-#filter-top {
-    background-color: $gray-700 !important;
-    color: $white;
-    /* margin-bottom: -20px; */
-}
-
-#filter-middle {
-    background-color: $gray-300;
-    margin-bottom: 0px;
-    margin-top: 0px;
-    padding-bottom: 4px;
-}
-
-#filter-bottom {
-    background-color: $gray-600 !important; // was: #808080!important;
-    color: $white;
-    font-size: smaller;
-    padding-top: 10px;
-}
-
-#id_iptt_report_filter {
-    font-size: .875rem;
-    min-width: 330px;
-    max-width: 330px;
-}
-#id_form_indicator_filter .col-form-label {
-  display: block;
-  padding-bottom: calc(.1875rem + 1px); /* TODO: this should be applied universally but regressions */
-}
-.filter-form-padding-10 {
-    width: 100%;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-.filter-title {
-    color: $gray-300;
-    line-height: 42px;
-}
-
-
-
 // "add a thing" buttons
 .btn-add {
     color: $green-450 !important;
@@ -560,17 +515,6 @@ input[type=number]::-webkit-outer-spin-button {
 .bg-gray-lighter-alt { /* note: these do not match colors in colors.css */
     background-color: $gray-150 !important; // was: #EDEDED !important;
 }
-
-// restyle the Results table on the IPTT
-.page_iptt_table .modal-dialog {
-    .collecteddata-link {
-        display: none;
-    }
-    .collecteddata-table--actions {
-        background: transparent;
-    }
-}
-
 
 // conditional styling to hide modal titles in nonmodal contexts.
 // used on collected data table in IPTT

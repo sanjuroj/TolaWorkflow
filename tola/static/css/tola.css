@@ -6373,6 +6373,50 @@ body > .container {
   max-width: 120px;
   height: auto; }
 
+#iptt_table {
+  background-color: white; }
+  #iptt_table, #iptt_table thead tr td {
+    border: 0px !important; }
+  #iptt_table tr th {
+    background-color: #f5f5f5 !important; }
+
+#id_td_iptt_program_name {
+  padding-left: 0;
+  padding-right: 0; }
+
+body.page_iptt_table {
+  margin-bottom: 0; }
+
+.page_iptt_table #id_div_content {
+  display: flex;
+  flex-grow: 1;
+  height: 100%; }
+
+.page_iptt_table .popover {
+  max-width: 100%;
+  /* Max Width of the popover (depending on the container) */ }
+
+.page_iptt_table #footer {
+  position: relative; }
+
+.page_iptt_table #id_div_breadcrumb,
+.page_iptt_table .page-title {
+  display: none; }
+
+.iptt_table_wrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding-left: 10px; }
+
+#id_div_top_iptt_report {
+  color: #54585a; }
+
+.page_iptt_table .modal-dialog .collecteddata-link {
+  display: none; }
+
+.page_iptt_table .modal-dialog .collecteddata-table--actions {
+  background: transparent; }
+
 #sidebar {
   flex-basis: 1;
   overflow: hidden;
@@ -6491,6 +6535,45 @@ body > .container {
     .sidebar-toggle a[aria-expanded=false] svg {
       transform: rotate(-180deg); }
 
+.filter-wrapper {
+  display: flex; }
+
+#filter-top {
+  background-color: #54585a !important;
+  color: #fff;
+  /* margin-bottom: -20px; */ }
+
+#filter-middle {
+  background-color: #dbdcde;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  padding-bottom: 4px; }
+
+#filter-bottom {
+  background-color: #71757b !important;
+  color: #fff;
+  font-size: smaller;
+  padding-top: 10px; }
+
+#id_iptt_report_filter {
+  font-size: .875rem;
+  min-width: 330px;
+  max-width: 330px; }
+
+#id_form_indicator_filter .col-form-label {
+  display: block;
+  padding-bottom: calc(.1875rem + 1px);
+  /* TODO: this should be applied universally but regressions */ }
+
+.filter-form-padding-10 {
+  width: 100%;
+  padding-left: 10px;
+  padding-right: 10px; }
+
+.filter-title {
+  color: #dbdcde;
+  line-height: 42px; }
+
 @media print {
   a[href]:after {
     content: none; } }
@@ -6605,44 +6688,6 @@ table.table-hover tbody tr.row-highlight:hover {
 
 .missing_targets {
   padding-left: 1rem; }
-
-#iptt_table {
-  background-color: white; }
-  #iptt_table, #iptt_table thead tr td {
-    border: 0px !important; }
-  #iptt_table tr th {
-    background-color: #f5f5f5 !important; }
-
-#id_td_iptt_program_name {
-  padding-left: 0;
-  padding-right: 0; }
-
-body.page_iptt_table {
-  margin-bottom: 0; }
-
-.page_iptt_table #id_div_content {
-  display: flex;
-  flex-grow: 1;
-  height: 100%; }
-
-.page_iptt_table .popover {
-  max-width: 100%;
-  /* Max Width of the popover (depending on the container) */ }
-
-.page_iptt_table #footer {
-  position: relative; }
-
-.page_iptt_table #id_div_breadcrumb,
-.page_iptt_table .page-title {
-  display: none; }
-
-.iptt_table_wrapper {
-  width: 100%;
-  overflow-x: auto;
-  padding-left: 10px; }
-
-#id_div_top_iptt_report {
-  color: #54585a; }
 
 .form-check-inline--is-disabled {
   color: #b8babd; }
@@ -6892,45 +6937,6 @@ input[type=number]::-webkit-outer-spin-button {
   100% {
     opacity: 1; } }
 
-.filter-wrapper {
-  display: flex; }
-
-#filter-top {
-  background-color: #54585a !important;
-  color: #fff;
-  /* margin-bottom: -20px; */ }
-
-#filter-middle {
-  background-color: #dbdcde;
-  margin-bottom: 0px;
-  margin-top: 0px;
-  padding-bottom: 4px; }
-
-#filter-bottom {
-  background-color: #71757b !important;
-  color: #fff;
-  font-size: smaller;
-  padding-top: 10px; }
-
-#id_iptt_report_filter {
-  font-size: .875rem;
-  min-width: 330px;
-  max-width: 330px; }
-
-#id_form_indicator_filter .col-form-label {
-  display: block;
-  padding-bottom: calc(.1875rem + 1px);
-  /* TODO: this should be applied universally but regressions */ }
-
-.filter-form-padding-10 {
-  width: 100%;
-  padding-left: 10px;
-  padding-right: 10px; }
-
-.filter-title {
-  color: #dbdcde;
-  line-height: 42px; }
-
 .btn-add {
   color: #81bc00 !important;
   padding-left: 0.625rem;
@@ -6974,12 +6980,6 @@ input[type=number]::-webkit-outer-spin-button {
 .bg-gray-lighter-alt {
   /* note: these do not match colors in colors.css */
   background-color: #f5f5f5 !important; }
-
-.page_iptt_table .modal-dialog .collecteddata-link {
-  display: none; }
-
-.page_iptt_table .modal-dialog .collecteddata-table--actions {
-  background: transparent; }
 
 .is-shown-in-modals {
   display: none; }

@@ -172,3 +172,46 @@
         }
     }
 }
+
+// IPTT sidebar filter// Hidable side bar filter
+.filter-wrapper {
+    display: flex; // unused?
+}
+#filter-top {
+    background-color: $gray-700 !important;
+    color: $white;
+    /* margin-bottom: -20px; */
+}
+
+#filter-middle {
+    background-color: $gray-300;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    padding-bottom: 4px;
+}
+
+#filter-bottom {
+    background-color: $gray-600 !important; // was: #808080!important;
+    color: $white;
+    font-size: smaller;
+    padding-top: 10px;
+}
+
+#id_iptt_report_filter {
+    font-size: .875rem;
+    min-width: 330px;
+    max-width: 330px;
+}
+#id_form_indicator_filter .col-form-label {
+  display: block;
+  padding-bottom: calc(.1875rem + 1px); /* TODO: this should be applied universally but regressions */
+}
+.filter-form-padding-10 {
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.filter-title {
+    color: $gray-300;
+    line-height: 42px;
+}
