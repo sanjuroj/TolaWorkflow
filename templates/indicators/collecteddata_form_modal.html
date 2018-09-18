@@ -1,6 +1,12 @@
 {% load widget_tweaks %}
 {% load i18n %}
 {% block content %}
+    {# this style tag is inline bc the modal doesn't read the global stylesheet (?) #}
+    <style>
+    .ui-datepicker-inline {
+        position: absolute;
+    }
+    </style>
     <script type="text/javascript">
         $(document).ready(function() {
             /* add select2 js library to the indicator select box */
@@ -33,16 +39,29 @@
 
             // Date Collected Datepicker
 
+            var datepicker_value = $('#id_date_collected').val(); // otherwise the datepicker will overwrite the field with a new default when it's initialized
+
             // Inline the datepicker bc otherwise it floats around in this modal
             $('#date_collected-wrapper').datepicker({
                 dateFormat: "yy-mm-dd",
                 inline: true,
+                defaultDate: datepicker_value,
                 altField: '#id_date_collected',
             });
 
             var date_collected_picker = $('#date_collected-wrapper .ui-datepicker-inline');
 
+            if (!datepicker_value) {
+                $('#id_date_collected').val(''); // zero out input field for new result
+            } else {
+                // validate upon loading modal
+                // important: validate this AFTER summoning the datepicker!
+                $('#id_date_collected').val(formatDate($('#id_date_collected').val()));
+                validatePeriodicTarget();
+            }
+
             date_collected_picker.hide();
+
 
             $('#id_date_collected').on('focus', function(e){
                 date_collected_picker.show();
@@ -73,11 +92,6 @@
             });
 
 
-            if ($('#id_date_collected').val() != '') {
-                $('#id_date_collected').val(formatDate($('#id_date_collected').val()));
-                // validate upon loading modal
-                validatePeriodicTarget();
-            }
             // target_frequency is defined in the indicator_list.html file
             var target_frequency = parseInt(`{{object.indicator.target_frequency|safe}}`);
             // indicator_id is defined in the indicator_list.html file.

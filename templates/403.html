@@ -1,12 +1,13 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Addtional Permissions Required{% endblock %}
+{% block ttitle %}{% trans "Addtional Permissions Required"|escapejs %}{% endblock %}
 
-{% block page_title %}You don't appear to have the proper permissions to access this page.{% endblock page_title %}
+{% block page_title %}{% trans "You don't appear to have the proper permissions to access this page."|escapejs %}{% endblock page_title %}
 
 {% block content %}
-<p>
-    Please check with your organization or country admin if you think you should have access to this section.
+<p>t
+    {% trans "Please check with your organization or country admin if you think you should have access to this section."|escapejs %}
     <br/>
     <a href="http://tola.work">Tola Work</a>
 </p>

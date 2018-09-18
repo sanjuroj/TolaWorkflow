@@ -68,8 +68,8 @@ class IndicatorAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         if request.user.is_superuser is False:
             user_country = request.user.tola_user.country
             programs = Program.objects.filter(country__in=[user_country])
-            qs = queryset.filter(program__in=programs)
-        return qs
+            queryset = queryset.filter(program__in=programs)
+        return queryset
 
 
 class CountryFilter(admin.SimpleListFilter):

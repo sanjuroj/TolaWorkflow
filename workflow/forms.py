@@ -3,6 +3,7 @@ from crispy_forms.layout import *
 from crispy_forms.bootstrap import *
 from crispy_forms.layout import Layout, Submit, Reset, Field
 from django.forms import HiddenInput, URLInput
+from django.utils.translation import ugettext_lazy as _
 from functools import partial
 from widgets import GoogleMapsWidget
 from django import forms
@@ -211,8 +212,8 @@ class ProjectAgreementForm(forms.ModelForm):
                                     <tr>
                                         <td>{{ item.description}}</td>
                                         <td>{{ item.site }}</td>
-                                        <td>{{ item.est_start_date|date:"m-d-Y" }}</td>
-                                        <td>{{ item.est_end_date|date:"m-d-Y" }}</td>
+                                        <td>{{ item.est_start_date|date:"MEDIUM_DATE_FORMAT" }}</td>
+                                        <td>{{ item.est_end_date|date:"MEDIUM_DATE_FORMAT" }}</td>
                                         <td>{{ item.budget }}</td>
                                         <td><a class="benchmarks" data-toggle="modal" data-target="#myModal" href='/workflow/benchmark_update/{{ item.id }}/'>Edit</a> | <a class="benchmarks" href='/workflow/benchmark_delete/{{ item.id }}/' data-toggle="modal" data-target="#myModal">Delete</a></td>
                                     </tr>
@@ -530,8 +531,8 @@ class ProjectAgreementSimpleForm(forms.ModelForm):
                                     <tr>
                                         <td>{{ item.description}}</td>
                                         <td>{{ item.site }}</td>
-                                        <td>{{ item.est_start_date|date:"m-d-Y" }}</td>
-                                        <td>{{ item.est_end_date|date:"m-d-Y" }}</td>
+                                        <td>{{ item.est_start_date|date:"MEDIUM_DATE_FORMAT" }}</td>
+                                        <td>{{ item.est_end_date|date:"MEDIUM_DATE_FORMAT" }}</td>
                                         <td>{{ item.budget }}</td>
                                         <td><a class="benchmarks" data-toggle="modal" data-target="#myModal" href='/workflow/benchmark_update/{{ item.id }}/'>Edit</a> | <a class="benchmarks" href='/workflow/benchmark_delete/{{ item.id }}/' data-toggle="modal" data-target="#myModal">Delete</a></td>
                                     </tr>
@@ -850,10 +851,10 @@ class ProjectCompleteForm(forms.ModelForm):
                                     <tr>
                                         <td>{{ item.description}}</td>
                                         <td>{{ item.site }}</td>
-                                        <td>{{ item.est_start_date|date:"m-d-Y"}}</td>
-                                        <td>{{ item.est_end_date|date:"m-d-Y"}}</td>
-                                        <td>{{ item.actual_start_date|date:"m-d-Y"}}</td>
-                                        <td>{{ item.actual_end_date|date:"m-d-Y"}}</td>
+                                        <td>{{ item.est_start_date|date:"MEDIUM_DATE_FORMAT"}}</td>
+                                        <td>{{ item.est_end_date|date:"MEDIUM_DATE_FORMAT"}}</td>
+                                        <td>{{ item.actual_start_date|date:"MEDIUM_DATE_FORMAT"}}</td>
+                                        <td>{{ item.actual_end_date|date:"MEDIUM_DATE_FORMAT"}}</td>
                                         <td>{{ item.budget}}</td>
                                         <td>{{ item.cost}}</td>
                                         <td><a class="benchmarks" data-toggle="modal" data-target="#myModal" href='/workflow/benchmark_complete_update/{{ item.id }}/'>Edit</a> | <a class="benchmarks" href='/workflow/benchmark_complete_delete/{{ item.id }}/' data-toggle="modal" data-target="#myModal">Delete</a></td>
@@ -1118,10 +1119,10 @@ class ProjectCompleteSimpleForm(forms.ModelForm):
                                             <tr>
                                                 <td>{{ item.description}}</td>
                                                 <td>{{ item.site }}</td>
-                                                <td>{{ item.est_start_date|date:"m-d-Y"}}</td>
-                                                <td>{{ item.est_end_date|date:"m-d-Y"}}</td>
-                                                <td>{{ item.actual_start_date|date:"m-d-Y"}}</td>
-                                                <td>{{ item.actual_end_date|date:"m-d-Y"}}</td>
+                                                <td>{{ item.est_start_date|date:"MEDIUM_DATE_FORMAT"}}</td>
+                                                <td>{{ item.est_end_date|date:"MEDIUM_DATE_FORMAT"}}</td>
+                                                <td>{{ item.actual_start_date|date:"MEDIUM_DATE_FORMAT"}}</td>
+                                                <td>{{ item.actual_end_date|date:"MEDIUM_DATE_FORMAT"}}</td>
                                                 <td>{{ item.budget}}</td>
                                                 <td>{{ item.cost}}</td>
                                                 <td><a class="benchmarks" data-toggle="modal" data-target="#myModal" href='/workflow/benchmark_complete_update/{{ item.id }}/'>Edit</a> | <a class="benchmarks" href='/workflow/benchmark_complete_delete/{{ item.id }}/' data-toggle="modal" data-target="#myModal">Delete</a></td>
@@ -1695,12 +1696,14 @@ class StakeholderForm(forms.ModelForm):
 
 
 class FilterForm(forms.Form):
+    # Search filter
+    # string translation doesn't work here
     fields = "search"
-    search = forms.CharField(required=False)
+    search = forms.CharField(required=False, label=_('Search'))
     helper = FormHelper()
     helper.form_method = 'get'
     helper.form_class = 'form-inline'
-    helper.layout = Layout(FieldWithButtons('search', StrictButton('Submit', type='submit', css_class='btn-primary')))
+    helper.layout = Layout(FieldWithButtons('search', StrictButton(_('Submit'), type='submit', css_class='btn-primary')))
 
 
 class ProjectCompleteTable(forms.ModelForm):

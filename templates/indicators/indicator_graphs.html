@@ -15,7 +15,7 @@ $(function () {
         },
 
         title: {
-            text: '{% trans "Targets vs Actuals" %}',
+            text: '{% trans "Targets vs Actuals"|escapejs %}',
             x: -80
         },
 
@@ -48,12 +48,12 @@ $(function () {
         },
 
         series: [{
-            name: '{% trans "Targets" %}',
+            name: '{% trans "Targets"|escapejs %}',
             // add 0 to convert to int
             data: [ {% for indicator in getQuantitativeData %}  {{ indicator.targeted|add:"0" }}, {% endfor %}  ],
             pointPlacement: 'on'
         }, {
-            name: '{% trans "Actuals" %}',
+            name: '{% trans "Actuals"|escapejs %}',
             data: [ {% for indicator in getQuantitativeData %}  {{ indicator.achieved|add:"0" }}, {% endfor %}   ],
             pointPlacement: 'on'
         }]
