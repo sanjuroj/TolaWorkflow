@@ -6611,6 +6611,60 @@ body.page_iptt_table {
   color: #dbdcde;
   line-height: 42px; }
 
+.fontsize-85 {
+  font-size: .85rem; }
+
+.fontsize-125 {
+  font-size: 1.25rem; }
+
+.fontsize-130 {
+  font-size: 1.3rem; }
+
+.break-word {
+  word-break: break-word;
+  /* wraps text in the middle of words */ }
+
+.color-red {
+  color: #c8102e; }
+
+.bg-danger-lighter {
+  background-color: #ffe3e7 !important; }
+
+.bg-gray-lighter {
+  /* note: these do not match colors in colors.css */
+  background-color: #ebedf0 !important; }
+
+.bg-gray-lighter-alt {
+  /* note: these do not match colors in colors.css */
+  background-color: #f5f5f5 !important; }
+
+.border-2 {
+  border-width: 2px !important; }
+
+.border-3 {
+  border-width: 3px !important; }
+
+.border-4 {
+  border-width: 4px !important; }
+
+.paddingright-80 {
+  padding-right: .80rem; }
+
+.paddingright-175 {
+  padding-right: 1.75rem; }
+
+.marginbottom-225 {
+  margin-bottom: 2.25rem; }
+
+.hide {
+  display: none; }
+
+.show {
+  display: block; }
+
+.float-right {
+  float: right; }
+
 @media print {
   a[href]:after {
     content: none; } }
