@@ -5,7 +5,7 @@
   }
 }
 body {
-    background-color: #F5F5F5;
+    background-color: $gray-150;
 }
 .dataTables_wrapper {
     &.container-fluid {
@@ -14,14 +14,10 @@ body {
   }
 }
 .has-error {
-    color: #DD0000 !important;
+    color: $danger;
     .text-muted {
         color: inherit !important;
     }
-    // this might introduce regressions
-    // input {
-        //border-color: #DD0000;
-    //}
 }
 .hide {
   display: none;
@@ -50,7 +46,7 @@ body {
     font-size: 1.3rem;
 }
 .color-red {
-    color: #DD0000;
+    color: $red;
 }
 .paddingright-80 {
     padding-right: .80rem;
@@ -67,7 +63,7 @@ body {
     &:hover,
     &:active,
     &:focus {
-        color: #54585A;
+        color: $gray-700;
         font-size: .875rem;
     }
     &:hover {
@@ -76,15 +72,15 @@ body {
 }
 .filter {
     padding: 3px;
-    color: #000000;
-    background-color: #f5f5f5;
-    border-color: #808080;
+    color: $black;
+    background-color: $gray-150;
+    border-color: $gray-600;
     border-radius: .5px
 }
 .btn-frozen {
-    color: #fff;
-    background-color: #808080;
-    border-color: #808080;
+    color: $white;
+    background-color: $gray-600;
+    border-color: $gray-600;
 }
 .x-modal {
     font-weight: 100;
@@ -96,7 +92,7 @@ body {
     padding: 3px 7px;
     font-size: 12px;
     font-weight: 700;
-    color: #000000;
+    color: $black;
     line-height: 1;
     vertical-align: baseline;
     white-space: nowrap;
@@ -113,21 +109,21 @@ body {
     float: right;
 }
 .lopCols {
-	background-color:#F5F5F5 !important;
+	background-color:$gray-150 !important;
 }
 table.table-hover tbody tr {
     &:hover {
-        background-color: #CCEFEE !important;
+        background-color: $teal-100 !important;
     }
     &:active {
-        background-color: #99DFDD !important;
+        background-color: $teal-200 !important;
     }
 }
 .row-highlight {
-    background-color: #CCEFEE;
+    background-color: $teal-100;
 }
-table.table-hover tbody tr.row-highlight:hover { /* whoa check out this specificity */
-    background-color: #B5E0DF !important;
+table.table-hover tbody tr.row-highlight:hover { //* whoa check out this specificity */
+    background-color: $teal-150 !important;
 }
 .missing_targets_msg {
     padding-left: 2.3rem;
@@ -145,7 +141,7 @@ table.table-hover tbody tr.row-highlight:hover { /* whoa check out this specific
         border: 0px !important;
     }
     tr th {
-        background-color:#F5F5F5 !important;
+        background-color:$gray-150 !important;
     }
     // tbody{
         //background-color:#ffffff !important;
@@ -182,12 +178,12 @@ body.page_iptt_table { // body element for extra specificity
     padding-left: 10px;
 }
 #id_div_top_iptt_report {
-    color: #545858; // why is this not #54585A ?
+    color: $gray-700; // why is this not #54585A ?
 }
 // IPTT quickstart
 // this mimics a standard BS behavior in _forms.scss
 .form-check-inline--is-disabled {
-    color: #aaa;
+    color: $gray-500; // could also be $gray-550
 }
 // Start by setting display:none to make this hidden.
 // Then we position it in relation to the viewport window
@@ -224,12 +220,12 @@ body.loading {
     margin:12px 0px 0px 0px;
 }
 .btn-go {
-    color: #fff;
-    background-color:#55acee;
+    color: $white;
+    background-color:$blue-300;
     margin:12px 0px 12px 0px;
     &:hover{
-        color: #fff;
-        background-color:#59b5fa;
+        color: $white;
+        background-color:$blue-250;
     }
 }
 
@@ -252,14 +248,14 @@ ul.paginate {
             padding: 8px 16px;
             text-decoration: none;
             transition: background-color .3s;
-            border: 1px solid #ddd;
+            border: 1px solid $gray-300;
             &.active {
-                background-color: #4CAF50;
+                background-color: $green-450;
                 color: white;
-                border: 1px solid #4CAF50;
+                border: 1px solid $green-450;// was: #4CAF50;
             }
             &:hover:not(.active) {
-                background-color: #ddd; // should probably be #DBDCDE
+                background-color: $gray-300;
             }
         }
     }
@@ -285,7 +281,7 @@ ul.paginate {
 select.listoption_filters {
   height:36px;
   width:150px;
-  border: 2px solid#ddd; // should probably be #DBDCDE
+  border: 2px solid $gray-300;
   background: none;
   -webkit-appearance: none;
   -webkit-border-radius: 0;
@@ -323,14 +319,14 @@ select.listoption_filters {
     }
 }
 .inputs-in-a-box {
-    background-color: #F5F5F5;
+    background-color: $gray-150;
     border: 0px;
 }
 .periodic-target,
 #pt_sum_targets {
-  border-bottom: 1px solid #DBDCDE;
-  border-top: 1px solid #DBDCDE;
-  background-color: #FFFFFF;
+  border-bottom: 1px solid $gray-300;
+  border-top: 1px solid $gray-300;
+  background-color: $white;
 }
 
 #periodic-targets-tablediv .pt-delete-row {
@@ -341,17 +337,17 @@ select.listoption_filters {
 
 #indicator_modal_body {
     .tab-content {
-        background-color: #FFFFFF;
+        background-color: $white;
     }
     .form-row > label{
         font-weight: bold;
     }
     .select2-selection {
         border-radius: 0px;
-        border-color: #B8BABD;
+        border-color: $gray-500;
     }
     .select2-container--focus .select2-selection {
-        border-color: #3366cc;
+        border-color: $blue-400;
         outline: 0;
         box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
     }
@@ -390,7 +386,7 @@ select.listoption_filters {
 }
 #indicatorTabs .nav-link.active {
     font-size: 1rem;
-    color: #54585A;
+    color: $gray-700;
     font-weight: bold;
 }
 // Don't define border property here.  Assigning here prevents red border from
@@ -408,7 +404,7 @@ select.listoption_filters {
         display: table-cell;
     }
     .controls input::placeholder {
-        color: #b8babd;
+        color: $gray-500;
     }
 }
 
@@ -416,7 +412,7 @@ select.listoption_filters {
   padding: 0px 15px 10px 1px;
   margin-top: 10px;
   margin-bottom: 10px;
-  border-bottom: 1px solid #DBDCDE;
+  border-bottom: 1px solid $gray-300;
 }
 
 .target-value-error {
@@ -427,7 +423,7 @@ select.listoption_filters {
 
 // Used for turning red borders off for input fields with errors
 .border-1px input {
-  border: 1px solid #DBDCDE;
+  border: 1px solid $gray-300;
 }
 
 // turn off arrows from input[type=number]
@@ -441,7 +437,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 #id_div_is_cumulative .card-body {
-    border: 1px solid #B8BABD;
+    border: 1px solid $gray-500;
     border-radius: .25rem;
 }
 
@@ -456,8 +452,8 @@ input[type=number]::-webkit-outer-spin-button {
 // START Indicator list page css
 #div-id-indicator-list {
     .card-header {
-        background-color: #54585A !important;
-        color: #FFFFFF;
+        background-color: $gray-700 !important;
+        color: $white;
         .program-name {
             width: 78%;
         }
@@ -472,7 +468,7 @@ input[type=number]::-webkit-outer-spin-button {
     &:hover,
     &:active,
     &:focus {
-        color: #FFFFFF;
+        color: $white;
     }
 }
 .div-expand-symbol {
@@ -519,21 +515,21 @@ input[type=number]::-webkit-outer-spin-button {
     display: flex;
 }
 #filter-top {
-    background-color: #54585A!important;
-    color:#fff;
+    background-color: $gray-700 !important;
+    color: $white;
     /* margin-bottom: -20px; */
 }
 
 #filter-middle {
-    background-color: #DBDCDE;
+    background-color: $gray-300;
     margin-bottom: 0px;
     margin-top: 0px;
     padding-bottom: 4px;
 }
 
 #filter-bottom {
-    background-color: #808080!important;
-    color:#fff;
+    background-color: $gray-600 !important; // was: #808080!important;
+    color: $white;
     font-size: smaller;
     padding-top: 10px;
 }
@@ -553,7 +549,7 @@ input[type=number]::-webkit-outer-spin-button {
     padding-right: 10px;
 }
 .filter-title {
-    color: #ddd;
+    color: $gray-300;
     line-height: 42px;
 }
 
@@ -561,11 +557,11 @@ input[type=number]::-webkit-outer-spin-button {
 
 // "add a thing" buttons
 .btn-add {
-    color: #4CAF50 !important;
+    color: $green-450 !important;
     padding-left: 0.625rem;
     padding-right: 0.625rem;
     &:hover {
-        color: #2A7C2D;
+        color: $green-600;
     }
 }
 
@@ -575,7 +571,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 #indicator_collecteddata_content .modal-footer { // overloads selectorin modals.scss
-    background-color: #DBDCDE;
+    background-color: $gray-300;
     border-radius: 0 0 0.3rem 0.3rem;
     margin-left: -1rem;
     margin-right: -1rem;
@@ -602,13 +598,13 @@ input[type=number]::-webkit-outer-spin-button {
 
 // Extra colors
 .bg-danger-lighter {
-    background-color: #FFE2E2 !important;
+    background-color: $red-050 !important;
 }
 .bg-gray-lighter { /* note: these do not match colors in colors.css */
-    background-color: #E6E7E8 !important;
+    background-color: $gray-200 !important; // was: #E6E7E8 !important;
 }
 .bg-gray-lighter-alt { /* note: these do not match colors in colors.css */
-    background-color: #EDEDED !important;
+    background-color: $gray-150 !important; // was: #EDEDED !important;
 }
 
 // restyle the Results table on the IPTT
@@ -623,7 +619,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 // forms
 .help-block { // emulates .form-text.text-muted
-    color: #6c757d!important;
+    color: $gray-600 !important; // was: #6c757d!important;
     display: block;
     margin-top: .25rem;
 }
@@ -633,7 +629,7 @@ input[type=number]::-webkit-outer-spin-button {
 .has-crispy-form {
     .tab-content.panel-body {
         background: white;
-        border: 1px solid #dee2e6;
+        border: 1px solid $gray-300; // was: #dee2e6;
         border-top-width: 0;
         margin-top: 0;
         padding: 1rem;

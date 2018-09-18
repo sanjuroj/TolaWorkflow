@@ -13,6 +13,7 @@ $link-hover-opacity: 0.8; //todo move this where it makes sense
 
 /// Red
 
+$red-050: #ffe3e7; // hsl(351,100,95) // only used for .bg-danger-lighter
 $red-200: #ed8090; // hsl(360,77,72) // only used in override of .btn-danger
 $red-450: #e51232; // hsl(351,85,48) // same as MC palette $red_100_hover
 $red-500: #c8102e; // hsl(350,85,42) // same as MC palette $red_100 // was #cf102d
@@ -20,6 +21,7 @@ $red: $red-500;
 
 // Teal (this is "blue" on the MC palette)
 $teal-100: #ccefee; // hsl(178,52,87)   // same as MC palette $blue_20
+$teal-150: #b5e0df; // hsl(179,41,79)   // only used on some table hovers
 $teal-200: #99dfdd; // hsl(178,52,74)   // same as MC palette $blue_40
 $teal-300: #66cfcc; // hsl(178,52,61)   // same as MC palette $blue_60
 $teal-400: #33bfbb; // hsl(178,52,47)   // same as MC palette $blue_80 & $blue_100_hover
