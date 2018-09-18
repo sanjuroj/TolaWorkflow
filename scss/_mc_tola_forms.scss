@@ -1,4 +1,6 @@
-// forms
+// Forms
+// extremely custom selectors for applying very specific styles to forms
+
 .help-block { // emulates .form-text.text-muted
     color: $gray-600 !important; // was: #6c757d!important;
     display: block;
@@ -27,4 +29,49 @@
 }
 .input-group-addon {
     margin: 0 0.5rem;
+}
+.has-error {
+    color: $danger;
+    .text-muted {
+        color: inherit !important;
+    }
+}
+// Used for turning red borders off for input fields with errors
+.border-1px input {
+    border: 1px solid $gray-300;
+}
+
+// turn off arrows from input[type=number]
+input[type=number] {
+    -moz-appearance: textfield;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.input-symbol-percent {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    input {
+        padding-right: 15px;
+        width: 100%;
+    }
+    &:after {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        margin: auto;
+        content:"%";
+        right: 20px;
+    }
+    .input-value {
+        padding-right: 1.60rem;
+    }
+}
+.inputs-in-a-box {
+    background-color: $gray-150;
+    border: 0px;
 }

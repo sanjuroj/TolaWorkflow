@@ -13,18 +13,6 @@ body {
       padding-left: 0px !important;
   }
 }
-.has-error {
-    color: $danger;
-    .text-muted {
-        color: inherit !important;
-    }
-}
-.hide {
-  display: none;
-}
-.show {
-  display: block;
-}
 .td-no-side-borders {
   border-left: 0px !important;
   border-right: 0px !important;
@@ -34,29 +22,6 @@ body {
 //--------------------------------------------------
 // Not required for template or sticky footer method.
 
-// ~14pt from a 16pt reference
-.fontsize-85 {
-    font-size: .85rem;
-}
-// ~20pt from a 16pt reference
-.fontsize-125 {
-    font-size: 1.25rem;
-}
-.fontsize-130 {
-    font-size: 1.3rem;
-}
-.color-red {
-    color: $red;
-}
-.paddingright-80 {
-    padding-right: .80rem;
-}
-.paddingright-175 {
-    padding-right: 1.75rem;
-}
-.marginbottom-225 {
-    margin-bottom: 2.25rem;
-}
 // help links in footer
 .help-link {
     &,
@@ -219,9 +184,6 @@ ul.paginate {
     margin-right: 15px;
 }
 
-.float-right {
-  float: right;
-}
 // Keep the picker on top of other elements
 .ui-datepicker{
     z-index: 10000 !important
@@ -252,30 +214,6 @@ select.listoption_filters {
   padding-bottom: 0px;
 }
 
-.input-symbol-percent {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-    input {
-        padding-right: 15px;
-        width: 100%;
-    }
-    &:after {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        margin: auto;
-        content:"%";
-        right: 20px;
-    }
-    .input-value {
-        padding-right: 1.60rem;
-    }
-}
-.inputs-in-a-box {
-    background-color: $gray-150;
-    border: 0px;
-}
 .periodic-target,
 #pt_sum_targets {
   border-bottom: 1px solid $gray-300;
@@ -375,20 +313,6 @@ select.listoption_filters {
   margin-right: 10px;
 }
 
-// Used for turning red borders off for input fields with errors
-.border-1px input {
-  border: 1px solid $gray-300;
-}
-
-// turn off arrows from input[type=number]
-input[type=number] {
-   -moz-appearance: textfield;
-}
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
 
 #id_div_is_cumulative .card-body {
     border: 1px solid $gray-500;
@@ -494,28 +418,6 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
-// Bootstrap could really use these border utilities
-.border-2 {
-    border-width: 2px !important;
-}
-.border-3 {
-    border-width: 3px !important;
-}
-.border-4 {
-    border-width: 4px !important;
-}
-
-// Extra colors
-.bg-danger-lighter {
-    background-color: $red-050 !important;
-}
-.bg-gray-lighter { /* note: these do not match colors in colors.css */
-    background-color: $gray-200 !important; // was: #E6E7E8 !important;
-}
-.bg-gray-lighter-alt { /* note: these do not match colors in colors.css */
-    background-color: $gray-150 !important; // was: #EDEDED !important;
-}
-
 // conditional styling to hide modal titles in nonmodal contexts.
 // used on collected data table in IPTT
 .is-shown-in-modals {
@@ -528,6 +430,3 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 // unsorted
-.break-word {
-    word-break: break-word; /* wraps text in the middle of words */
-}
