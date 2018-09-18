@@ -244,6 +244,7 @@ class IPTT_MixinTests(TestCase):
             self.assertEqual(str(data[k]), str(formdata[k]))
 
     def test__get_filters_with_no_periods(self):
+
         data = {
             'level': 'Outcome',
             'sector': 'Conflict Management',
@@ -268,8 +269,8 @@ class IPTT_MixinTests(TestCase):
         self.assertEqual(data['site'], *filters['collecteddata__site__in'])
         self.assertEqual(data['indicators'], *filters['id__in'])
 
-        # Assert things about the report contents.
-        # TODO: Is this possible without submitting the filters?
+        # TODO: Is it possible to make assertions about the filtered report
+        # TODO: without a GET or POST?
 
     def test_prepare_indicators(self):
         self.skipTest('TODO: Test not implemented')
@@ -277,11 +278,17 @@ class IPTT_MixinTests(TestCase):
     def test_prepare_iptt_period_dateranges(self):
         self.skipTest('TODO: Test not implemented')
 
+    # TODO: Mock the super call that invokes a non-existent get_context_data
+    # call on IPTT_Mixin.
     def test_get_context_data(self):
+        '''Does get_context_data return existing data untouched
+        and without inserting new data?'''
         self.skipTest('TODO: Test not implemented')
 
 
 class IPTT_ReportIndicatorsWithVariedStartDateTests(TestCase):
+    '''Test IPTT reports which contain indicators with varied start dates'''
+
     def setUp(self):
         pass
 
