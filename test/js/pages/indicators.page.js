@@ -1,5 +1,5 @@
 /**
- * Page model for testing the Program Indicators screen.
+ * Page model for testing the Program indicators screen.
  * @module Indicators
  */
 import TargetsTab from '../pages/targets.page'
@@ -45,7 +45,7 @@ function clickIndicatorsLink () {
   Util.waitForAjax()
   let indicatorsLink = browser.$('ul.navbar-nav').$('=Indicators')
   indicatorsLink.click()
-  browser.waitForVisible('h2=Program Indicators')
+  browser.waitForVisible('h1=Program indicators')
 }
 
 /**
@@ -116,7 +116,7 @@ function clickResetButton () {
  * specific calls.
  */
 function createBasicIndicator () {
-  if (browser.$('h2').getText() !== 'Program Indicators') {
+  if (browser.$('h1').getText() !== 'Program indicators') {
     clickIndicatorsLink()
   }
   clickNewIndicatorButton()
@@ -298,7 +298,7 @@ function getPageName () {
  */
 function saveNewIndicator () {
   // Accept the default values
-  let saveNew = browser.$('form[name="most"]').$('input[value="save"]')
+  let saveNew = browser.$('form[name="most"]').$('button[type="submit"')
   saveNew.click()
 }
 

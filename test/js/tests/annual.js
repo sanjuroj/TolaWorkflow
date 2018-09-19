@@ -57,11 +57,11 @@ describe('"Annual" target frequency', function() {
     TargetsTab.setLoPTarget(293)
     TargetsTab.setBaseline(294)
     TargetsTab.setTargetFrequency('Annual')
-    TargetsTab.setNumTargetPeriods(2)
 
     // This should succeed
     TargetsTab.saveIndicatorChanges()
-    expect(2 === TargetsTab.getNumTargetPeriods())
+    TargetsTab.setNumTargetPeriods(2) // This should fail 
+    expect(4 === TargetsTab.getNumTargetPeriods())
   })
 
   it('should require entering targets for each target period', function() {

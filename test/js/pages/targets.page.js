@@ -511,8 +511,8 @@ function setFirstEventName (value) {
  */
 function setFirstTargetPeriod () {
   // Defaults to the current month
-  browser.scroll('input#id_target_frequency_start')
-  browser.$('input#id_target_frequency_start').click()
+  browser.scroll('select#id_target_frequency_start')
+  browser.$('select#id_target_frequency_start').click()
   browser.pause(msec)
   if (browser.isVisible('button=Done')) {
     // Works on Chrome but not Firefox/Gecko
