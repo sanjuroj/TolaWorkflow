@@ -32,8 +32,8 @@ describe('Indicator creation detail form', function() {
   NavBar.Indicators.click()
   expect('Program Indicators' === IndPage.getPageName())
   IndPage.createBasicIndicator()
-  browser.waitForVisible('h2')
-  let title = browser.$('h2').getText().trim()
+  browser.waitForVisible('h1')
+  let title = browser.$('h1').getText().trim()
   expect(true === title.includes('Goal indicator: Temporary'))
   })
 

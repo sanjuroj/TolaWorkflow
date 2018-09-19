@@ -8,8 +8,8 @@ import Util from '../lib/testutil'
 class IpttPage extends Page {
   get title () {
     browser.waitForVisible('nav.navbar')
-    let h2 = browser.$('h2.mt-2.mb-3.mx-3')
-    return h2.getText()
+    let h1 = browser.$('h1')
+    return h1.getText()
   }
 
   // IPTT: Program indicator overview

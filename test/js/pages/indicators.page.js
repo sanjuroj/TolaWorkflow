@@ -32,9 +32,8 @@ function clickExportAllButton (fileName) {
  * @returns Nothing
  */
 function clickIndicatorsDropdown () {
-  let span = browser.$$('span.select2-selection--single')[1]
-  let indicatorsDropdown = span.$('span#select2-id_indicators_filter_dropdown-container')
-  indicatorsDropdown.click()
+  let filterButtons = browser.$$('span.multiselect-native-select')
+  filterButtons[1].click 
 }
 
 /**
@@ -53,9 +52,8 @@ function clickIndicatorsLink () {
  * @returns Nothing
  */
 function clickIndicatorTypeDropdown () {
-  let span = browser.$$('span.select2-selection--single')[2]
-  let indicatorTypesDropdown = span.$('span#select2-id_indicatortypes_filter_dropdown-container')
-  indicatorTypesDropdown.click()
+  let filterButtons = browser.$$('span.multiselect-native-select')
+  filterButtons[2].click 
 }
 
 // FIXME: Should this be a per-program method?
@@ -73,9 +71,8 @@ function clickNewIndicatorButton () {
  * @returns Nothing
  */
 function clickProgramsDropdown () {
-  let span = browser.$$('span.select2-selection--single')[0]
-  let programsDropdown = span.$('span#select2-id_programs_filter_dropdown-container')
-  programsDropdown.click()
+  let filterButtons = browser.$$('span.multiselect-native-select')
+  filterButtons[0].click 
 }
 
 /**
