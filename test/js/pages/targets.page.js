@@ -505,35 +505,6 @@ function setFirstEventName (value) {
 }
 
 /**
- * Sets the date of the first target period to the 1st day of the
- * current month
- * @returns {Null}
- */
-function setFirstTargetPeriod () {
-  // Defaults to the current month
-  browser.scroll('select#id_target_frequency_start')
-  browser.$('select#id_target_frequency_start').click()
-  browser.pause(msec)
-  if (browser.isVisible('button=Done')) {
-    // Works on Chrome but not Firefox/Gecko
-    browser.$('button=Done').click()
-  } else if (browser.isVisible('button.ui-datepicker-close')) {
-    // Works on Firefox/Gecko but not Chrome
-    browser.$('button.ui-datepicker-close').click()
-  } else {
-    // If we get here, make one last blind, unconditional attempt to click
-    // the buttons
-    try {
-      browser.$('button=Done').click()
-    }
-    catch(NoSuchElementError) {
-      browser.$('button.ui-datepicker-close').click()
-    }
-    return null
-  }
-}
-
-/**
  * Type the specified indicator name into the Name field on thei
  * Performance tab of the indicator detail screen
  * @param {string} name The new name for the indicator
@@ -620,16 +591,6 @@ function setNumTargetEvents (value) {
 }
 
 /**
- * Set the number of periods to the specified value when working with
- * interval-based periodic targets
- * @param {integer} value The value to set
- * @returns Nothing
- */
-function setNumTargetPeriods (value) {
-  browser.$('input#id_target_frequency_num_periods').setValue(value)
-}
-
-/**
  * Select the target frequency from the Target Frequency dropdown on the
  * the Targets tab of the indicator edit screen
  * @param {string} value The target frequency to select from the dropdown
@@ -696,7 +657,6 @@ exports.setBaselineNA = setBaselineNA
 exports.setDirectionOfChange = setDirectionOfChange
 exports.setEndlineTarget = setEndlineTarget
 exports.setFirstEventName = setFirstEventName
-exports.setFirstTargetPeriod = setFirstTargetPeriod
 exports.setIndicatorName = setIndicatorName
 exports.setLoPTarget = setLoPTarget
 exports.setMeasureIsCumulative = setMeasureIsCumulative
@@ -704,6 +664,5 @@ exports.setMeasureIsNonCumulative = setMeasureIsNonCumulative
 exports.setMeasureType = setMeasureType
 exports.setMidlineTarget = setMidlineTarget
 exports.setNumTargetEvents = setNumTargetEvents
-exports.setNumTargetPeriods = setNumTargetPeriods
 exports.setTargetFrequency = setTargetFrequency
 exports.setUnitOfMeasure = setUnitOfMeasure
