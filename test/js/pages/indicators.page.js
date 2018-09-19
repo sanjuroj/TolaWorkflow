@@ -288,8 +288,8 @@ function open (url = parms.baseurl) {
  * @returns {string} The title of the current page
  */
 function getPageName () {
-  // On this page, the "title" is actually the <h2> caption
-  return browser.$('h2').getText()
+  // On this page, the "title" is actually the <h1> caption
+  return browser.$('h1').getText()
 }
 
 /**
@@ -298,7 +298,7 @@ function getPageName () {
  */
 function saveNewIndicator () {
   // Accept the default values
-  let saveNew = browser.$('form[name="most"]').$('button[type="submit"')
+  let saveNew = browser.$('form[name="most"]').$('button[class="btn btn-primary"')
   saveNew.click()
 }
 
