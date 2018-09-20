@@ -27,6 +27,7 @@ describe('Program Indicators table', function() {
     }
   })
 
+/*
   //FIXME: Get webdriver code out of test
   it('should toggle table when a PI button is clicked', function() {
     NavBar.Indicators.click()
@@ -59,21 +60,15 @@ describe('Program Indicators table', function() {
   it('should show a detail screen when an indicator name is clicked', function() {
     Util.waitForAjax()
     NavBar.Indicators.click()
-    // Make list of Indicators buttons
-    let buttons = TargetsTab.getProgramIndicatorButtons()
-
-    // Click the first one to expand the table
-    let button = buttons[0]
-    button.click()
-
-    // Make list of indicator names in resulting table
-    //FIXME: needs to be from table, not dropdown
-    let indicatorNameList = IndPage.getIndicatorsDropdownList()
-    Util.waitForAjax()
-
-    // Click the first one
-    let indicatorName = indicatorNameList[0]
-    IndPage.clickProgramIndicatorsButton(indicatorName)
+    // Pop up indicator setup modal
+    let update_buttons = browser.$$('a.indicator-link')
+    console.log('update_buttons.length=', update_buttons.length)
+    let update_button = update_buttons[0]
+    update_button.click()
+    browser.waitForVisible('h2=Indicator setup')
+    // Delete it
+    let delete_btn = browser.$('button#id_delete_indicator_btn')
+    delete_btn.click()
   })
 
   it('should be able to create PI by clicking the New Indicator button', function() {
@@ -102,6 +97,7 @@ describe('Program Indicators table', function() {
     let newCount = parseInt(buttonText)
     expect(oldCount + 1 === newCount)
   })
+*/
 
   it('should be able to delete PI by clicking its Delete button', function() {
     NavBar.Indicators.click()
