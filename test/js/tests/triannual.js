@@ -27,28 +27,6 @@ describe('Tri-annual target frequency', function() {
     }
   })
 
-  it('should require date that first target period begins', function() {
-    NavBar.Indicators.click()
-    expect('Program Indicators' === IndPage.getPageName())
-    IndPage.createBasicIndicator()
-
-    // This should succeed
-    TargetsTab.setIndicatorName('Tri-annual target first period required testing')
-    TargetsTab.setUnitOfMeasure('Jugs per jalopy')
-    TargetsTab.setLoPTarget(29)
-    TargetsTab.setBaseline(30)
-    TargetsTab.setTargetFrequency('Tri-annual')
-
-    // Trying to save without setting the start date should fail
-    TargetsTab.saveIndicatorChanges()
-    let errorMessage = TargetsTab.getTargetFirstPeriodErrorHint()
-    expect(true === errorMessage.includes('Please complete this field.'))
-  })
-
-  it('should default number of periods to 1', function() {
-    expect(1 === TargetsTab.getNumTargetPeriods())
-  })
-
   it('should create target periods for each period requested', function() {
     IndPage.clickIndicatorsLink()
     IndPage.createBasicIndicator()
@@ -59,8 +37,6 @@ describe('Tri-annual target frequency', function() {
     TargetsTab.setLoPTarget(49)
     TargetsTab.setBaseline(50)
     TargetsTab.setTargetFrequency('Tri-annual')
-    TargetsTab.setFirstTargetPeriod()
-    TargetsTab.setNumTargetPeriods(4)
     TargetsTab.saveIndicatorChanges()
     expect(4 === TargetsTab.getNumTargetPeriods())
   })
@@ -74,9 +50,6 @@ describe('Tri-annual target frequency', function() {
     TargetsTab.setUnitOfMeasure('Trouble per tribble')
     TargetsTab.setLoPTarget(308)
     TargetsTab.setBaseline(309)
-    TargetsTab.setTargetFrequency('Tri-annual')
-    TargetsTab.setNumTargetPeriods(4)
-    TargetsTab.setFirstTargetPeriod()
     TargetsTab.saveIndicatorChanges()
 
     // Find the input boxes
