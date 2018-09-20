@@ -82,7 +82,7 @@ class IpttPage extends Page {
    * object
    */
   get TargetOverviewTargetPeriods () {
-    let div = browser.$('div#div_id_targetperiodss')
+    let div = browser.$('div#div_id_targetperiods')
     return div.$('select#id_targetperiods-targetperiods')
   }
 
@@ -104,16 +104,19 @@ class IpttPage extends Page {
 
   set TargetOverviewProgram (val) {
     let div = browser.$('div#div_id_targets_program')
-    let select = div.$('select[name="targetperiods-program"]')
+    let select = div.$('select[id="id_targetperiods-program"]')
     select.selectByIndex(val)
   }
 
   set TargetOverviewTimeFrame (val) {
     if (val === 'Show all') {
-      browser.$('div#div_id_targetperiods-timeframe_0').click()
+      let div = browser.$('div#div_id_targetperiods-timeframe_0')
+      let radio = div.$('input#id_targetperiods-timeframe_0')
     } else if (val === 'Most recent') {
-      browser.$('div#div_id_targetperiods-timeframe_1').click()
+      let div = browser.$('div#div_id_targetperiods-timeframe_1')
+      let radio = div.$('input#id_targetperiods-timeframe_1')
     }
+    radio.click()
   }
 
   set TargetOverviewTargetPeriods (val) {
