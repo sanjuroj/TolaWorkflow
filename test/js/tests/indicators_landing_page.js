@@ -27,7 +27,7 @@ describe("Programs dropdown", function () {
     }
   })
 
-  it('does someting', function() {
+  it('does something', function() {
     NavBar.Indicators.click()
     //FIXME: getPageName should be a property
     expect('Program Indicators' === IndPage.getPageName())
@@ -68,8 +68,8 @@ describe("Programs dropdown", function () {
         if (! s.includes('-- All --')) {
           browser.selectByVisibleText(s)
         }
-        let h2 = $('h2').getText()
-        expect(s === h2)
+        let h1 = $('h1').getText()
+        expect(s === h1)
     }
   })
 

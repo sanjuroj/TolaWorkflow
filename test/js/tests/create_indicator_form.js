@@ -69,10 +69,11 @@ describe('Create an Indicator form', function() {
     IndPage.saveNewIndicator()
   })
 
+  //FIXME: Get webdriver code out of test
   it('should have a save button', function() {
     IndPage.clickIndicatorsLink()
     IndPage.clickNewIndicatorButton()
-    let control = $('form[name="most"]').$('input[value="save"]')
+    let control = $('form[name="most"]').$('button[class="btn btn-primary"]')
     expect(true === control.isVisible())
     control.click()
   })
@@ -90,7 +91,7 @@ describe('Create an Indicator form', function() {
     IndPage.clickIndicatorsLink()
     IndPage.clickNewIndicatorButton()
     IndPage.saveNewIndicator()
-    let title = browser.$('h2').getText().trim()
+    let title = browser.$('h1').getText().trim()
     expect(title.includes('Goal indicator: Temporary'))
   })
 

@@ -1,5 +1,5 @@
 /**
- * Page model for testing the Program Indicators screen.
+ * Page model for testing the Program indicators screen.
  * @module Indicators
  */
 import TargetsTab from '../pages/targets.page'
@@ -32,9 +32,8 @@ function clickExportAllButton (fileName) {
  * @returns Nothing
  */
 function clickIndicatorsDropdown () {
-  let span = browser.$$('span.select2-selection--single')[1]
-  let indicatorsDropdown = span.$('span#select2-id_indicators_filter_dropdown-container')
-  indicatorsDropdown.click()
+  let filterButtons = browser.$$('span.multiselect-native-select')
+  filterButtons[1].click 
 }
 
 /**
@@ -45,7 +44,7 @@ function clickIndicatorsLink () {
   Util.waitForAjax()
   let indicatorsLink = browser.$('ul.navbar-nav').$('=Indicators')
   indicatorsLink.click()
-  browser.waitForVisible('h2=Program Indicators')
+  browser.waitForVisible('h1=Program indicators')
 }
 
 /**
@@ -53,9 +52,8 @@ function clickIndicatorsLink () {
  * @returns Nothing
  */
 function clickIndicatorTypeDropdown () {
-  let span = browser.$$('span.select2-selection--single')[2]
-  let indicatorTypesDropdown = span.$('span#select2-id_indicatortypes_filter_dropdown-container')
-  indicatorTypesDropdown.click()
+  let filterButtons = browser.$$('span.multiselect-native-select')
+  filterButtons[2].click 
 }
 
 // FIXME: Should this be a per-program method?
@@ -73,9 +71,8 @@ function clickNewIndicatorButton () {
  * @returns Nothing
  */
 function clickProgramsDropdown () {
-  let span = browser.$$('span.select2-selection--single')[0]
-  let programsDropdown = span.$('span#select2-id_programs_filter_dropdown-container')
-  programsDropdown.click()
+  let filterButtons = browser.$$('span.multiselect-native-select')
+  filterButtons[0].click 
 }
 
 /**
@@ -116,7 +113,7 @@ function clickResetButton () {
  * specific calls.
  */
 function createBasicIndicator () {
-  if (browser.$('h2').getText() !== 'Program Indicators') {
+  if (browser.$('h1').getText() !== 'Program indicators') {
     clickIndicatorsLink()
   }
   clickNewIndicatorButton()
@@ -288,8 +285,8 @@ function open (url = parms.baseurl) {
  * @returns {string} The title of the current page
  */
 function getPageName () {
-  // On this page, the "title" is actually the <h2> caption
-  return browser.$('h2').getText()
+  // On this page, the "title" is actually the <h1> caption
+  return browser.$('h1').getText()
 }
 
 /**
@@ -298,7 +295,7 @@ function getPageName () {
  */
 function saveNewIndicator () {
   // Accept the default values
-  let saveNew = browser.$('form[name="most"]').$('input[value="save"]')
+  let saveNew = browser.$('form[name="most"]').$('button[class="btn btn-primary"')
   saveNew.click()
 }
 

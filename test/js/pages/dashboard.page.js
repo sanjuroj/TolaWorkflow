@@ -8,12 +8,8 @@ import Util from '../lib/testutil'
 
 class DashboardPage extends Page {
   get title () {
-    browser.waitForVisible('div.panel.panel-default')
-
-    let panel = browser.$('div.panel.panel-default')
-    let header = panel.$('div.panel-heading')
-    let h4 = header.$('div.row').$('div.col-md-4').$('h4')
-    return h4.getText()
+    browser.waitForVisible('h1.page-title')
+    return browser.$('h1.page-title').getText()
   }
   get CountryDashboardDropdown () { return browser.$('button#dropdownMenu1') }
   get FilterByProgramDropdown () { return browser.$('button#dropdownMenu3') }
