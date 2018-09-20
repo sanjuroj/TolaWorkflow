@@ -33,7 +33,7 @@ function clickExportAllButton (fileName) {
  */
 function clickIndicatorsDropdown () {
   let filterButtons = browser.$$('span.multiselect-native-select')
-  filterButtons[1].click 
+  filterButtons[1].click
 }
 
 /**
@@ -53,7 +53,7 @@ function clickIndicatorsLink () {
  */
 function clickIndicatorTypeDropdown () {
   let filterButtons = browser.$$('span.multiselect-native-select')
-  filterButtons[2].click 
+  filterButtons[2].click
 }
 
 // FIXME: Should this be a per-program method?
@@ -72,7 +72,7 @@ function clickNewIndicatorButton () {
  */
 function clickProgramsDropdown () {
   let filterButtons = browser.$$('span.multiselect-native-select')
-  filterButtons[0].click 
+  filterButtons[0].click
 }
 
 /**
@@ -149,7 +149,7 @@ function editIndicator (indName = 'default') {
   let indButtons = TargetsTab.getProgramIndicatorButtons()
   let indButton = indButtons[0]
   indButton.click()
-
+//*[@id="id_btnOpenindicatorsForProgramId_542"]0
   let editBtns = TargetsTab.getProgramIndicatorEditButtons()
   let editBtn = editBtns[0]
   editBtn.click()
@@ -307,9 +307,7 @@ function saveNewIndicator () {
  */
 function selectProgram (program) {
   clickProgramsDropdown()
-  let span = browser.$$('span.select2-selection--single')[0]
-  let programsDropdown = span.$('span#select2-id_programs_filter_dropdown-container')
-  let listItems = programsDropdown.$$('option')
+  let listItems = getProgramsDropdownList()
   for (let listItem of listItems) {
     let s = listItem.getText()
     let v = listItem.getValue()
