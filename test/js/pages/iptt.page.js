@@ -72,7 +72,15 @@ class IpttPage extends Page {
   get TargetOverviewProgram () {
     let div = browser.$('div#div_id_targets_program')
     // Yeah, the select2 widget does bizarre stuff to HTML markup
-    return div.$('span.select2-selection')
+    return div
+  }
+
+  set TargetOverviewProgram (val) {
+    let div = browser.$('div#div_id_targets_program')
+    let select = div.$('select#id_targetperiods-program')
+    //elem.click()
+    //elem.selectByIndex(val)
+    //elem.click()
   }
 
   /**
@@ -102,19 +110,14 @@ class IpttPage extends Page {
     return browser.$('button#id_submit_targetperiods_button')
   }
 
-  set TargetOverviewProgram (val) {
-    let div = browser.$('div#div_id_targets_program')
-    let select = div.$('select[id="id_targetperiods-program"]')
-    select.selectByIndex(val)
-  }
-
   set TargetOverviewTimeFrame (val) {
+    let div, radio
     if (val === 'Show all') {
-      let div = browser.$('div#div_id_targetperiods-timeframe_0')
-      let radio = div.$('input#id_targetperiods-timeframe_0')
+      div = browser.$('div#div_id_targetperiods-timeframe_0')
+      radio = div.$('input#id_targetperiods-timeframe_0')
     } else if (val === 'Most recent') {
-      let div = browser.$('div#div_id_targetperiods-timeframe_1')
-      let radio = div.$('input#id_targetperiods-timeframe_1')
+      div = browser.$('div#div_id_targetperiods-timeframe_1')
+      radio = div.$('input#id_targetperiods-timeframe_1')
     }
     radio.click()
   }
