@@ -1,12 +1,6 @@
 {% load widget_tweaks %}
 {% load i18n %}
 {% block content %}
-    {# this style tag is inline bc the modal doesn't read the global stylesheet (?) #}
-    <style>
-    .ui-datepicker-inline {
-        position: absolute;
-    }
-    </style>
     <script type="text/javascript">
         $(document).ready(function() {
             /* add select2 js library to the indicator select box */
@@ -36,62 +30,20 @@
             var achieved_formatted_value = parseFloat($("#id_achieved").val()).toFixed(2).replace(/[.,]00$/, "");
             $("#id_achieved").val(achieved_formatted_value);
 
-
-            // Date Collected Datepicker
-
-            var datepicker_value = $('#id_date_collected').val(); // otherwise the datepicker will overwrite the field with a new default when it's initialized
-
-            // Inline the datepicker bc otherwise it floats around in this modal
-            $('#date_collected-wrapper').datepicker({
-                dateFormat: "yy-mm-dd",
-                inline: true,
-                defaultDate: datepicker_value,
-                altField: '#id_date_collected',
+            $('#id_date_collected').on('click', function (e) {
+                windowScrollY = $(this).scrollParent().scrollParent().scrollTop(); // how much the window has been scrolled
+                myScrollPositionY = e.pageY; // this element's position relative to top of document
+                myRealPositionY = myScrollPositionY - windowScrollY + 20; // 20px is a slight fudge
+                $('#ui-datepicker-div').css('top', myRealPositionY + 'px');
             });
 
-            var date_collected_picker = $('#date_collected-wrapper .ui-datepicker-inline');
-
-            if (!datepicker_value) {
-                $('#id_date_collected').val(''); // zero out input field for new result
-            } else {
+            $('.datepicker').datepicker({dateFormat: "yy-mm-dd"});
+            var id_date_collected = $("#id_date_collected");
+            if (id_date_collected.val() != '') {
+                id_date_collected.val(formatDate(id_date_collected.val()));
                 // validate upon loading modal
-                // important: validate this AFTER summoning the datepicker!
-                $('#id_date_collected').val(formatDate($('#id_date_collected').val()));
                 validatePeriodicTarget();
             }
-
-            date_collected_picker.hide();
-
-
-            $('#id_date_collected').on('focus', function(e){
-                date_collected_picker.show();
-            });
-
-            // update datepicker if field changes
-            $('#id_date_collected').change(function(){
-                $('#date_collected-wrapper').datepicker('setDate', $(this).val());
-            });
-
-            // ... or click outside datepicker to close
-            $(window).on('click', function(e){
-                e.stopPropagation();
-                if (e.target.id == 'id_date_collected' || e.target.className.includes('ui-icon-circle-triangle')) {
-                    // className is not a robust target
-                    return;
-                } else {
-                    date_collected_picker.hide();
-                }
-            });
-
-            // ... or when any other input gains focus
-            $('input').on('focus', function(e){
-                var input = $(this)[0];
-                if (input.id != 'id_date_collected') {
-                    date_collected_picker.hide();
-                }
-            });
-
-
             // target_frequency is defined in the indicator_list.html file
             var target_frequency = parseInt(`{{object.indicator.target_frequency|safe}}`);
             // indicator_id is defined in the indicator_list.html file.
