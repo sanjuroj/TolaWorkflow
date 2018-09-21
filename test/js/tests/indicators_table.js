@@ -101,8 +101,12 @@ describe('Program Indicators table', function() {
 
   it('should be able to delete PI by clicking its Delete button', function() {
     NavBar.Indicators.click()
+    let buttons = TargetsTab.getProgramIndicatorButtons()
+    let buttonText = buttons[0].getText()
+    let oldCount = buttonText
+
     IndPage.deleteIndicator()
-  })
+})
 
   it('should decrease PI count after deleting indicator', function() {
     NavBar.Indicators.click()

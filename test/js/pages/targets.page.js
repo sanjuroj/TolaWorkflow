@@ -289,8 +289,7 @@ function getProgramIndicatorsTableCount () {
  * which are actually anchor (<a />) elements, from the programs table
  */
 function getProgramIndicatorButtons () {
-  let buttons = browser.$$('id*=id_btnOpenindicatorsForProgramId')
-  let progs = browser.$$('span.program-name')
+  let buttons = browser.$$('href*=/indicators/indicator_update')
   return buttons
 }
 
