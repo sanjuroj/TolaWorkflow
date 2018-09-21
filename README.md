@@ -234,3 +234,49 @@ for this bug until the bug is well and truly crushed.
    ```bash
    $ mysql -u root -p tola_activity < demo_data.sql
    ```
+   
+   
+## Installing and running the front-end harness
+
+*See also the [front-end architecture roadmap](https://github.com/mercycorps/TolaActivity/wiki/Proposal-for-front-end-architecture).*
+
+This is *optional* if you are not doing significant front-end development. You can bypass the frontend build by dropping selectors into `/path/to/project/tola/static/css/app.css`.
+
+### Installation & Startup:
+
+1. Globally install [npm](https://www.npmjs.com). Here are [general instructions](https://docs.npmjs.com/getting-started/installing-node#install-npm--manage-npm-versions) to do so. On my Mac I prefer to install it via [Homebrew](https://www.dyclassroom.com/howto-mac/how-to-install-nodejs-and-npm-on-mac-using-homebrew)
+2. Install local dependencies:
+    ```bash
+    $ cd /path/to/project/
+    $ npm install
+    ```
+    This will install all necessary node modules into `node_modules` at the project root.
+3. Start a watch task that will copy necessary libraries and compile static files while you work:
+    ```bash
+    $ cd /path/to/project/
+    $ npm start
+    ```
+    You can also configure PyCharm to run this task in the background:
+    1. Select __Run__ → __Edit Configurations...__
+    2. __Add new configuration__ (__⌘-n__ or click the __+__ button)
+    3. Choose __npm__ in the wee popup
+    4. PyCharm should automagically select the correct __package.json__: `/path/to/project/package.json`
+    5. Choose the __Command__ `start`
+    
+npm will compile a single global css file at `/path/to/project/tola/static/css/tola.css`. This file includes the entire Bootstrap library (previously in `bootstrap.min.css` and `bootstrap-multiselect.min.css`), our custom selectors (previously in `app.css`), and overrides to Bootstrap (previously in `bootstrap_overrides.css`)
+
+
+
+### Other tips:
+
+1. __Never edit the compiled css (`tola.css`) directly.__ Any manual changes to compiled css files will be overwritten the next time the css is regenerated. They are theoretically retrievable via Git but see #3, below. Remember: you can always bypass the harness by dropping css selectors directly into `app.css`.
+
+2. But seriously, you should just put your css into a .scss file & compile it properly. __Valid css is also valid scss.__ If you’re not sure where to write a selector, append it to the __end__ of the master scss file: `/path/to/project/scss/tola.scss`.
+
+3. Please commit your compiled css to GitHub, preferably in the same commit as your edits to our scss files.
+
+4. There is no need to resolve merge conflicts in compiled css. Resolve them in the scss files first, then regenerate your css and accept all changes from the right (HEAD) side.
+
+5. Suggestions for Frontend coding practices are forthcoming.
+
+
