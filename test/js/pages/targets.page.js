@@ -366,6 +366,7 @@ function getTargetFrequency () {
  */
 function getTargetInputBoxes () {
   // Find the input boxes
+  browser.scroll('input#submit-id-submit')
   let inputBoxes = browser.$$('input#pt-.form-control.input-value')
   return inputBoxes
 }
