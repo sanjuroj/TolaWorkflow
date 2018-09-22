@@ -288,9 +288,11 @@ function getProgramIndicatorsTableCount () {
  * @returns {Array<buttons>} returns an array of clickable "buttons",
  * which are actually anchor (<a />) elements, from the programs table
  */
+ // TODO: Rename this method and rewrite the docstring because the
+ // buttons are now links rather and the docstring is incorrect
 function getProgramIndicatorButtons () {
-  let buttons = browser.$$('href*=/indicators/indicator_update')
-  return buttons
+  let programs = browser.$$('a[id*="id_btnOpenindicatorsForProgramId_"]')
+  return programs
 }
 
 /**

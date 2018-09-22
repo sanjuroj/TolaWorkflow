@@ -4,6 +4,7 @@
  */
 import TargetsTab from '../pages/targets.page'
 import Util from '../lib/testutil'
+import { expect } from 'chai'
 
 var parms = Util.readConfig()
 parms.baseurl += 'indicators/home/0/0/0'
@@ -146,13 +147,9 @@ function deleteIndicator (indName = 'default') {
  * @returns Nothing
  */
 function editIndicator (indName = 'default') {
-  let indButtons = TargetsTab.getProgramIndicatorButtons()
-  let indButton = indButtons[0]
-  indButton.click()
-//*[@id="id_btnOpenindicatorsForProgramId_542"]0
-  let editBtns = TargetsTab.getProgramIndicatorEditButtons()
-  let editBtn = editBtns[0]
-  editBtn.click()
+  let editButtons = browser.$$('a.indicator-link')
+  let editButton = editButtons[0]
+  editButton.click()
 }
 
 /**
