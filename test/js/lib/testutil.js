@@ -39,6 +39,13 @@ function waitForAjax (secs = 2) {
       visible = browser.isVisible('div#ajaxloading')
     }
   }
+  if (true === browser.isVisible('div.modal-backdrop.fade')) {
+    let visible = browser.isVisible('div.modal-backdrop.fade')
+    while (visible === true) {
+      browser.pause(secs * msec)
+      visible = browser.isVisible('div.modal-backdrop.fade')
+    }
+  }
 }
 
 exports.dp = dp

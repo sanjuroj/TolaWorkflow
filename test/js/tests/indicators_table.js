@@ -91,11 +91,12 @@ describe('Program Indicators table', function() {
     let modal = browser.$(dialog)
     modal.$('button.close').click()
     if(browser.isVisible(dialog)) {
-        browser.waitForVisible(dialog, False)
+        browser.waitForVisible(dialog, false)
     }
   })
 
   it('should be able to create PI by clicking the New Indicator button', function() {
+    Util.waitForAjax()
     NavBar.Indicators.click()
     Util.waitForAjax()
     IndPage.clickNewIndicatorButton()
@@ -110,7 +111,7 @@ describe('Program Indicators table', function() {
     NavBar.Indicators.click()
     // Get old count
     let buttons = TargetsTab.getProgramIndicatorButtons()
-    let buttonText = buttons[0].getText()
+    let buttonText = buttons[1].getText()
     let oldCount = parseInt(buttonText)
 
     // Create new indicator
@@ -120,7 +121,7 @@ describe('Program Indicators table', function() {
 
     // Get new count
     buttons = TargetsTab.getProgramIndicatorButtons()
-    buttonText = buttons[0].getText()
+    buttonText = buttons[1].getText()
 
     // Assert new count > old count
     let newCount = parseInt(buttonText)
@@ -157,6 +158,7 @@ describe('Program Indicators table', function() {
 
   it('should edit an indicator by clicking its Edit button', function() {
     NavBar.Indicators.click()
+    Util.waitForAjax()
     IndPage.editIndicator()
     expect(true === browser.isVisible('div#indicator_modal_content'))
   })
