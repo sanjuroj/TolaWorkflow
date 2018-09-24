@@ -1,9 +1,30 @@
 // Program page and Program Status components
 // May need to split into more components e.g. "gauges"
 
+.program__calendar-complete {
+    // what % of the calendar period is complete
+}
 .program__status-gauges {
     // contains .status-gauge components
 }
+
+// Gauges
+// ------
+
+.gauge-layout {
+    // mainly a layout component, holds a gauge--* element + detail text
+}
+.gauge--performance-band {
+    // indicators above/below track
+}
+.gauge--tank {
+    // shows x% full
+}
+.gauge__value {}
+.gauge__label {}
+.gauge__detail {}
+
+
 .program-page__main {
     // contains .program-page__details and .indicators-list
 }
