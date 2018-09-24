@@ -1,7 +1,10 @@
+import dateparser
 from datetime import datetime
 from functools import partial
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django import forms
+from django.forms.fields import DateField
 from django.utils.translation import ugettext_lazy as _
 from workflow.models import (
     Program, SiteProfile, Documentation, ProjectComplete, TolaUser, Sector
@@ -24,10 +27,22 @@ class DatePicker(forms.DateInput):
     DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 
 
+class LocaleDateField(DateField):
+    def to_python(self, value):
+        if value in self.empty_values:
+            return None
+        try:
+            return dateparser.parse(value).date()
+        except (AttributeError):
+            raise ValidationError(
+                self.error_messages['invalid'], code='invalid')
+
+
+
 class IndicatorForm(forms.ModelForm):
     program2 = forms.CharField(
         widget=forms.TextInput(
-            attrs={'readonly': True, 'label': 'Program'}
+            attrs={'readonly': True}
         )
     )
     unit_of_measure_type = forms.ChoiceField(
@@ -70,6 +85,7 @@ class IndicatorForm(forms.ModelForm):
         super(IndicatorForm, self).__init__(*args, **kwargs)
 
         self.fields['program2'].initial = indicator.programs
+        self.fields['program2'].label = _('Program')
         self.fields['program'].initial = self.programval.id
 
         countries = getCountry(self.request.user)
@@ -166,11 +182,13 @@ class CollectedDataForm(forms.ModelForm):
         self.fields['target_frequency'].widget = forms.HiddenInput()
         self.fields['site'].queryset = SiteProfile.objects\
             .filter(country__in=countries)
+        self.fields['site'].label = _('Site')
         self.fields['tola_table'].queryset = TolaTable.objects\
             .filter(Q(owner=self.request.user) | Q(id=self.tola_table))
         self.fields['periodic_target'].label = _('Measure against target*')
         self.fields['achieved'].label = _('Actual value')
         self.fields['date_collected'].help_text = ' '
+        self.fields['date_collected'].label = _('Date collected')
 
 
 class ReportFormCommon(forms.Form):
@@ -248,8 +266,8 @@ class IPTTReportFilterForm(ReportFormCommon):
 
     def __init__(self, *args, **kwargs):
         program = kwargs.pop('program')
-        periods_choices_start = kwargs.get('initial').get('period_choices_start')
-        periods_choices_end = kwargs.get('initial').get('period_choices_end')
+        periods_choices_start = kwargs.get('initial').get('period_choices_start') # TODO: localize this date
+        periods_choices_end = kwargs.get('initial').get('period_choices_end') # TODO: localize this date
 
         target_frequencies = Indicator.objects.filter(program__in=[program.id], target_frequency__isnull=False) \
             .exclude(target_frequency=Indicator.EVENT) \

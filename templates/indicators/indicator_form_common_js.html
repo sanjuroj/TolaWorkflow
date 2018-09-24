@@ -10,7 +10,7 @@
             changeMonth: true,
             changeYear: true,
             showButtonPanel: true,
-            dateFormat: 'M d, yy',
+            dateFormat: 'yy-mm-dd',
             beforeShow(input, inst){
                 // move date picker popup div inside modal dialog(fix for firefox)
                 $(input).parent().append($('#ui-datepicker-div'));
@@ -74,7 +74,7 @@
         var currentRow = $(e.target).closest("tr");
         var dataCount = parseInt(currentRow.data("collectedCount"));
         if ( dataCount != NaN && dataCount > 0) {
-            if (!confirm(`{% trans "Warning: This action cannot be undone. Removing this target means that" %} ${dataCount} {% trans "data record/s will no longer have targets associated with them. \n\nProceed anyway?" %}`)) {
+            if (!confirm(`{% trans "Warning: This action cannot be undone. Removing this target means that"|escapejs %} ${dataCount} {% trans "data record/s will no longer have targets associated with them. \n\nProceed anyway?"|escapejs %}`)) {
                 dataCount = NaN;
                 return;
             }
@@ -180,7 +180,7 @@
                                 data-end-date="${formatDate(pt.end_date)}"
                                 data-periodictarget="pt"
                                 name="${pt.period}"
-                                placeholder="{% trans 'Enter target' %}"
+                                placeholder="{% trans 'Enter target'|escapejs %}"
                                 class="form-control input-value">
                         </span>
                             <span id="hint_id_pt_${pt.period}" style="margin:0px;" class="help-block"> </span>
@@ -198,9 +198,9 @@
         var dataCountAttribute = $("#periodic_targets_table tr").attr("data-collected-count");
         var msg = '';
         if (typeof dataCountAttribute !== typeof undefined && dataCountAttribute !== false) {
-            msg = '{% trans "Warning: This action cannot be undone. Any data records assigned to a target will need to be reassigned.\n\n Are you sure you want to remove all targets?" %}';
+            msg = '{% trans "Warning: This action cannot be undone. Any data records assigned to a target will need to be reassigned.\n\n Are you sure you want to remove all targets?"|escapejs %}';
         } else {
-            msg = '{% trans "Warning: This action cannot be undone. Are you sure you want to remove all targets?" %}';
+            msg = '{% trans "Warning: This action cannot be undone. Are you sure you want to remove all targets?"|escapejs %}';
         }
         if (!confirm(msg)){
             return;
@@ -241,7 +241,7 @@
         var target_frequency = $("#id_target_frequency").val();
 
         if (numDataPoints > 0 && initalTargetFrequency == 1 && target_frequency != 1) {
-            if (!confirm(`{% trans "Warning: This action cannot be undone. If we make these changes," %} ${numDataPoints} {% trans "data record/s will no longer be associated with the Life of Program target, and will need to be reassigned to new targets. \n\nProceed anyway?" %}`)) {
+            if (!confirm(`{% trans "Warning: This action cannot be undone. If we make these changes,"|escapejs %} ${numDataPoints} {% trans "data record/s will no longer be associated with the Life of Program target, and will need to be reassigned to new targets. \n\nProceed anyway?"|escapejs %}`)) {
                 initalTargetFrequency = undefined;
                 return;
             }
@@ -298,7 +298,7 @@
             form_data += "&is_cumulative=3"
         }
 
-        $("#modalmessages").html("<img src='{{ STATIC_URL }}/img/ajax-loader.gif'>  <span>{% trans 'Saving form... please wait.' %}</span>");
+        $("#modalmessages").html("<img src='{{ STATIC_URL }}/img/ajax-loader.gif'>  <span>{% trans 'Saving form... please wait.'|escapejs %}</span>");
         $.ajax({
             method: 'POST',
             url: form_url,
@@ -318,7 +318,7 @@
 
             $(alertsElement).html('');
 
-            createAlert("success", "{% trans 'Success, form data saved.' %}", true, alertsElement);
+            createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, alertsElement);
 
             var jsondata = $.parseJSON(data);
             var indicator = $.parseJSON(jsondata["indicatorjson"])[0];
@@ -378,9 +378,9 @@
         // set the text for the 'create new target' button.
         var label = '<i class="fas fa-plus-circle"></i> ' + getNewTargetBtnLabel($("#id_target_frequency").val());
         $("#addNewPeriodicTarget").html(label);
-        var selected_option = $("#id_target_frequency").find("option:selected").text();
+        var selected_option = parseInt($("#id_target_frequency").find("option:selected").val()) || 0;
         if ( (lock == true || $('#id_target_frequency').attr('readonly'))
-                 && selected_option != 'Life of Program (LoP) only') {
+                 && selected_option != 1) {
             $("#id_target_frequency option:not(:selected)").attr("disabled", true);
             $("#id_target_frequency").attr("readonly", true);
             $("#id_create_targets_btn").attr("disabled", true);
@@ -388,7 +388,7 @@
             $("#div_id_target_frequency_custom").hide();
             lock = true;
         }
-        if (selected_option == 'Life of Program (LoP) only' || selected_option == '---------') {
+        if (selected_option == 1 || selected_option == 0) {
             $("#div_id_create_targets_btn").hide();
         } else {
             if ($("#id_div_periodic_tables_placeholder").children().length > 0) {
@@ -397,7 +397,7 @@
                 $("#id_delete_targets_btn").hide();
             }
 
-            if (selected_option == 'Event') {
+            if (selected_option == 8) {
                 $("#div_id_target_frequency_num_periods label").text("Number of events*");
                 $("#div_id_create_targets_btn").show();
             } else {
@@ -409,14 +409,14 @@
 
 
         if (lock == false) {
-            if (selected_option == 'Life of Program (LoP) only' ||
-                selected_option == 'Midline and endline' ||
-                selected_option == '---------') {
+            if (selected_option == 1 ||
+                selected_option == 2 ||
+                selected_option == 0) {
                 $("#div_id_target_frequency_num_periods").hide();
                 $("#div_id_target_frequency_custom").hide();
                 $("#id_target_frequency_custom").val('');
 
-            } else if (selected_option == 'Event') {
+            } else if (selected_option == 8) {
                 $("#div_id_target_frequency_custom").show();
                 $("#div_id_target_frequency_num_periods").show();
             } else {
@@ -430,19 +430,19 @@
     function getNewTargetBtnLabel(index) {
         var label = '';
         if (index == 3 ) {
-            label += '{% trans "Add a year" %}';
+            label += '{% trans "Add a year"|escapejs %}';
         } else if (index == 4) {
-            label += '{% trans "Add a semi-annual period" %}';
+            label += '{% trans "Add a semi-annual period"|escapejs %}';
         } else if (index == 5) {
-            label += '{% trans "Add a tri-annual period" %}';
+            label += '{% trans "Add a tri-annual period"|escapejs %}';
         } else if (index == 6) {
-            label += '{% trans "Add a quarter" %}';
+            label += '{% trans "Add a quarter"|escapejs %}';
         } else if (index == 7) {
-            label += '{% trans "Add a month" %}';
+            label += '{% trans "Add a month"|escapejs %}';
         } else if (index == 8) {
-            label += '{% trans "Add an event" %}';
+            label += '{% trans "Add an event"|escapejs %}';
         } else {
-            label = '{% trans "Add a target" %}';
+            label = '{% trans "Add a target"|escapejs %}';
         }
         return label;
     }
@@ -478,9 +478,9 @@
         }
 
         if (!baseline.val()) {
-            errMsg = "{% trans 'Please complete this field. Your baseline can be zero.' %}";
+            errMsg = "{% trans 'Please complete this field. Your baseline can be zero.'|escapejs %}";
         } else if (!$.isNumeric(baseline.val()) || baseline.val() < 0 ) {
-            errMsg = "{% trans 'Please complete this field. Your baseline can be zero.' %}";
+            errMsg = "{% trans 'Please complete this field. Your baseline can be zero.'|escapejs %}";
             return false;
         }
         if (errMsg){
@@ -498,9 +498,9 @@
         const lop = $("#id_lop_target");
         let errMsg = undefined;
         if (!lop.val()) {
-            errMsg = "{% trans 'Please enter a number larger than zero.' %}";
+            errMsg = "{% trans 'Please enter a number larger than zero.'|escapejs %}";
         } else if (!$.isNumeric(lop.val()) || lop.val() <= 0) {
-            errMsg = "{% trans 'Please enter a number larger than zero with no letters or symbols. If your target is a percentage, describe it in the unit of measure field.' %}";
+            errMsg = "{% trans 'Please enter a number larger than zero with no letters or symbols. If your target is a percentage, describe it in the unit of measure field.'|escapejs %}";
         }
 
         if (errMsg) {
@@ -519,7 +519,7 @@
         const field = $("#" + fieldName);
         if ($.isEmptyObject(field.val())) {
             $(field).addClass('is-invalid');
-            $("#validation_" + fieldName).text("{% trans 'Please complete this field.' %}");
+            $("#validation_" + fieldName).text("{% trans 'Please complete this field.'|escapejs %}");
             return false;
         } else {
             $(field).removeClass('is-invalid');
@@ -534,11 +534,11 @@
         let errMsg = undefined;
         if (numPeriodsField.is(":visible")) {
             if (numPeriodsField.val() > 12) {
-                errMsg = "{% trans 'You can start with up to 12 targets and add more later.' %}";
+                errMsg = "{% trans 'You can start with up to 12 targets and add more later.'|escapejs %}";
             } else if (!numPeriodsField.val()) {
-                errMsg = "{% trans 'Please complete this field.' %}";
+                errMsg = "{% trans 'Please complete this field.'|escapejs %}";
             } else if (numPeriodsField.val() < 0) {
-                errMsg = "{% trans 'Please enter a number larger than zero.' %}";
+                errMsg = "{% trans 'Please enter a number larger than zero.'|escapejs %}";
             }
 
             if (errMsg) {
@@ -588,10 +588,10 @@
 
     function getPTMessage () {
         if ($("#periodic_targets_table input[type=text]").length > 0){
-            return ("{% trans 'Please enter a name and target number for every event. Your target value can be zero.' %}");
+            return ("{% trans 'Please enter a name and target number for every event. Your target value can be zero.'|escapejs %}");
         }
         else {
-            return ("{% trans 'Please enter a target value. Your target value can be zero.' %}");
+            return ("{% trans 'Please enter a target value. Your target value can be zero.'|escapejs %}");
         }
     }
 
@@ -650,7 +650,7 @@
         }
 
         if (validationsTargetTab == false) {
-            validation_msgs['target'] = '{% trans "Please complete all required fields in the Targets tab." %}';
+            validation_msgs['target'] = '{% trans "Please complete all required fields in the Targets tab."|escapejs %}';
         } else {
             delete validation_msgs['target'];
         }
@@ -666,7 +666,7 @@
           $("#div_id_name").removeClass("marginbottom-225")
         }
         if (validationsPerformanceTab == false) {
-            validation_msgs['performance'] = '{% trans "Please complete all required fields in the Summary tab." %}';
+            validation_msgs['performance'] = '{% trans "Please complete all required fields in the Summary tab."|escapejs %}';
         } else {
             delete validation_msgs['performance'];
         }

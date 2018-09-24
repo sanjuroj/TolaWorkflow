@@ -11,6 +11,7 @@ from formlibrary.models import TrainingAttendance, Distribution
 from indicators.models import CollectedData, ExternalService
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
+from django.urls import reverse
 
 from .forms import ProjectAgreementForm, ProjectAgreementSimpleForm, ProjectAgreementCreateForm, ProjectCompleteForm, ProjectCompleteSimpleForm, ProjectCompleteCreateForm, DocumentationForm, \
     SiteProfileForm, MonitorForm, BenchmarkForm, BudgetForm, FilterForm, \
@@ -391,9 +392,11 @@ class ProjectAgreementUpdate(UpdateView):
         elif str(is_approved) == "awaiting approval" and check_agreement_status.approval != "awaiting approval":
             messages.success(self.request, 'Success, Initiation has been saved and is now Awaiting Approval (Notifications have been Sent)')
             #email the approver group so they know this was approved
-            link = "Link: " + "https://" + get_current_site(self.request).name + "/workflow/projectagreement_detail/" + str(self.kwargs['pk']) + "/"
+            link = "Link: " + "https://%s%s/" % (
+                get_current_site(self.request).name, reverse("project_dashboard", args=[self.kwargs['pk']]))
             subject = "Project Initiation Waiting for Approval: " + project_name
-            message = "A new initiation was submitted for approval by " + str(self.request.user) + "\n" + "Budget Amount: " + str(form.instance.total_estimated_budget) + "\n"
+            message = "A new initiation was submitted for approval by %s\nBudget Amount: %s\n" % (
+                str(self.request.user), str(form.instance.total_estimated_budget))
             emailGroup(country=country,group=form.instance.approved_by,link=link,subject=subject,message=message)
         else:
             messages.success(self.request, 'Success, form updated!')
@@ -559,8 +562,11 @@ class ProjectCompleteCreate(CreateView):
     def get_context_data(self, **kwargs):
         context = super(ProjectCompleteCreate, self).get_context_data(**kwargs)
 
+        project_agreement = ProjectAgreement.objects.get(id=self.kwargs['pk'])
         pk = self.kwargs['pk']
         context.update({'pk': pk})
+        context.update({'p_name': self.get_initial()['project_name']})
+        context['p_agreement_pk'] = project_agreement.pk
 
         return context
 
@@ -633,6 +639,7 @@ class ProjectCompleteUpdate(UpdateView):
         pk = self.kwargs['pk']
         context.update({'pk': pk})
         context.update({'project_id':getComplete.project_agreement_id})
+        context['p_agreement_pk'] = getComplete.project_agreement_id
 
         # get budget data
         try:

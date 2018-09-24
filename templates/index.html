@@ -16,15 +16,15 @@ $(function () {
             type: 'bar'
         },
         title: {
-            text: '{% trans "Program Projects by Status" %} {% if getFilteredName %} {% trans "for" %} {{ getFilteredName }} {% endif %}</b></p>'
+            text: '{% trans "Program Projects by Status"|escapejs %} {% if getFilteredName %} {% trans "for"|escapejs %} {{ getFilteredName }} {% endif %}</b></p>'
         },
         xAxis: {
-            categories: ['{% trans "Initiation" %}', '{% trans "Tracking" %}']
+            categories: ['{% trans "Initiation"|escapejs %}', '{% trans "Tracking"|escapejs %}']
         },
         yAxis: {
             min: 0,
             title: {
-                text: '{% trans "Number of Approved, Pending or Open Projects" %}'
+                text: '{% trans "Number of Approved, Pending or Open Projects"|escapejs %}'
             }
         },
         legend: {
@@ -45,19 +45,19 @@ $(function () {
 
         series: [
         {
-            name: '{% trans "Approved" %}',
+            name: '{% trans "Approved"|escapejs %}',
             data: [{ y:{{ agreement_approved_count }},ownURL:'/workflow/projectagreement_list/0/none/' }, { y:{{ complete_approved_count }},ownURL:'/workflow/projectcomplete_list/0/' }],
         },
         {
-            name: '{% trans "Pending" %}',
+            name: '{% trans "Pending"|escapejs %}',
             data: [{ y:{{ agreement_wait_count }},ownURL:'/workflow/projectagreement_list/0/none/' }, { y:{{ complete_wait_count }},ownURL:'/workflow/projectcomplete_list/0/' }],
         },
         {
-            name: '{% trans "Awaiting Approval" %}',
+            name: '{% trans "Awaiting Approval"|escapejs %}',
             data: [{ y:{{ agreement_awaiting_count }},ownURL:'/workflow/projectagreement_list/0/none/' }, { y:{{ complete_awaiting_count }},ownURL:'/workflow/projectcomplete_list/0/' }],
         },
         {
-            name: '{% trans "Open" %}',
+            name: '{% trans "Open"|escapejs %}',
             data: [{ y:{{ agreement_open_count }},ownURL:'/workflow/projectagreement_list/0/none/' }, { y:{{ complete_open_count }},ownURL:'/workflow/projectcomplete_list/0/' }],
         },
 
@@ -74,7 +74,7 @@ $(function () {
             type: 'column'
         },
         title: {
-            text: '{% trans "KPI Targets v. Actuals" %}'
+            text: '{% trans "KPI Targets v. Actuals"|escapejs %}'
         },
         xAxis: {
             categories: [ {% for indicator in getQuantitativeDataSums|slice:":20" %}  '{{ indicator.indicator__number }}', {% endfor %}]
@@ -82,7 +82,7 @@ $(function () {
         yAxis: {
             min: 0,
             title: {
-                text: '{% trans "Results" %}'
+                text: '{% trans "Results"|escapejs %}'
             }
         },
         tooltip: {
@@ -96,10 +96,10 @@ $(function () {
             }
         },
         series: [{
-            name: '{% trans "Targets" %}',
+            name: '{% trans "Targets"|escapejs %}',
             data: [ {% for indicator in getQuantitativeDataSums|slice:":20" %}  {{ indicator__lop_target }}, {% endfor %}  ]
         }, {
-            name: '{% trans "Actuals" %}',
+            name: '{% trans "Actuals"|escapejs %}',
             data: [ {% for indicator in getQuantitativeDataSums|slice:":20" %}  {{ indicator.actuals }}, {% endfor %}   ]
         }]
     });
@@ -245,7 +245,7 @@ $(function () {
                     pointStart: 0
                 }],
                 xAxis: {
-                    categories: ['{% trans "Target" %}', '{% trans "Actuals" %}'],
+                    categories: ['{% trans "Target"|escapejs %}', '{% trans "Actuals"|escapejs %}'],
                 },
                 tooltip: {
                     headerFormat: '<span style="font-size: 10px"> {point.key} :</span><br/>',

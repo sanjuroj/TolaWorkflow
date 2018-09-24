@@ -8,8 +8,8 @@
 {% block bread_crumb %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url "documentation_list" 0 0 %}">Documents</a></li>
-        <li class="breadcrumb-item active">Document</li>
+        <li class="breadcrumb-item"><a href="{% url "documentation_list" 0 0 %}">{% trans "Documents" %}</a></li>
+        <li class="breadcrumb-item active">{% trans "Document" %}</li>
     </ol>
 </nav>
 {% endblock %}
@@ -116,7 +116,7 @@
             const nameField = $(`#${nameFieldId}`);
             if (!nameField.val()) {
                 nameField.addClass('is-invalid');
-                $(`#validation_${nameFieldId}`).text('{% trans "Please complete this field." %}');
+                $(`#validation_${nameFieldId}`).text('{% trans "Please complete this field."|escapejs %}');
                 $("#div_id_name").addClass("mb-5");
                 return false;
             }
@@ -131,7 +131,7 @@
             const programField = $(`#${programFieldId}`);
             if (!programField.val()) {
                 programField.addClass('is-invalid');
-                $(`#validation_${programFieldId}`).text('{% trans "Please complete this field" %}');
+                $(`#validation_${programFieldId}`).text('{% trans "Please complete this field"|escapejs %}');
                 return false;
             }
             programField.removeClass('is-invalid');
@@ -145,12 +145,12 @@
             const urlField = $(`#${urlFieldId}`);
             if (!urlField.val()) {
                 urlField.addClass('is-invalid');
-                $(`#validation_${urlFieldId}`).text('{% trans "Please complete this field." %}');
+                $(`#validation_${urlFieldId}`).text('{% trans "Please complete this field."|escapejs %}');
                 return false;
             }
             if (isValidUrl(urlField.val()) == false) {
                 urlField.addClass('is-invalid');
-                $(`#validation_${urlFieldId}`).text('{% trans "Please enter a valid URL." %}');
+                $(`#validation_${urlFieldId}`).text('{% trans "Please enter a valid URL."|escapejs %}');
                 return false;
             }
             urlField.removeClass('is-invalid');

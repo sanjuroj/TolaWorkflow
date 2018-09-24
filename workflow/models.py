@@ -139,6 +139,7 @@ class TolaUser(models.Model):
     employee_number = models.IntegerField(_("Employee Number"), blank=True, null=True)
     user = models.OneToOneField(User, unique=True, related_name='tola_user', verbose_name=_("User"))
     organization = models.ForeignKey(Organization, default=1, blank=True, null=True, verbose_name=_("Organization"))
+    language = models.CharField(max_length=2, choices=settings.LANGUAGES, default='en')
     country = models.ForeignKey(Country, blank=True, null=True, verbose_name=_("Country"))
     countries = models.ManyToManyField(Country, verbose_name=_("Accessible Countries"), related_name='countries', blank=True)
     tables_api_token = models.CharField(blank=True, null=True, max_length=255)
@@ -1244,8 +1245,8 @@ class Migration(migrations.Migration):
     ]
 """
 class Benchmarks(models.Model):
-    percent_complete = models.IntegerField(_("% complete"), blank=True, null=True)
-    percent_cumulative = models.IntegerField(_("% cumulative completion"), blank=True, null=True)
+    percent_complete = models.IntegerField(_("%% complete"), blank=True, null=True)
+    percent_cumulative = models.IntegerField(_("%% cumulative completion"), blank=True, null=True)
     est_start_date = models.DateTimeField(_("Est start date"), null=True, blank=True)
     est_end_date = models.DateTimeField(_("Est end date"), null=True, blank=True)
     actual_start_date = models.DateTimeField(_("Actual start date"), null=True, blank=True)
