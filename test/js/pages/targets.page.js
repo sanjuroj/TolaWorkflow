@@ -288,10 +288,11 @@ function getProgramIndicatorsTableCount () {
  * @returns {Array<buttons>} returns an array of clickable "buttons",
  * which are actually anchor (<a />) elements, from the programs table
  */
+ // TODO: Rename this method and rewrite the docstring because the
+ // buttons are now links rather and the docstring is incorrect
 function getProgramIndicatorButtons () {
-  let buttons = browser.$$('id*=id_btnOpenindicatorsForProgramId')
-  let progs = browser.$$('span.program-name')
-  return buttons
+  let programs = browser.$$('a[id*="id_btnOpenindicatorsForProgramId_"]')
+  return programs
 }
 
 /**
@@ -367,6 +368,7 @@ function getTargetFrequency () {
  */
 function getTargetInputBoxes () {
   // Find the input boxes
+  browser.scroll('input#submit-id-submit')
   let inputBoxes = browser.$$('input#pt-.form-control.input-value')
   return inputBoxes
 }

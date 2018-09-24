@@ -32,7 +32,7 @@ help:
 	@echo "update      : refresh packages in top-level package.json file"
 
 clean:
-	$(RM) -vfr doc errorShots log *server.log
+	$(RM) -vfr doc errorShots log *.log
 
 doc:
 	./node_modules/.bin/jsdoc --verbose \

@@ -27,7 +27,6 @@ describe('Program Indicators table', function() {
     }
   })
 
-/*
   //FIXME: Get webdriver code out of test
   it('should toggle table when a PI button is clicked', function() {
     NavBar.Indicators.click()
@@ -57,24 +56,54 @@ describe('Program Indicators table', function() {
     }
   })
 
+  //FIXME: Get webdriver code out of test
   it('should show a detail screen when an indicator name is clicked', function() {
-    Util.waitForAjax()
     NavBar.Indicators.click()
-    // Pop up indicator setup modal
-    let update_buttons = browser.$$('a.indicator-link')
-    console.log('update_buttons.length=', update_buttons.length)
-    let update_button = update_buttons[0]
-    update_button.click()
+    Util.waitForAjax()
+
+    // Get a list of the programs in the table
+    let progButtons = TargetsTab.getProgramIndicatorButtons()
+    let progButton = progButtons[0]
+    let targetDiv = 'div' + progButton.getAttribute('data-target')
+    
+    // If it's open, close it; start from a known state
+    let isVisible = browser.isVisible(targetDiv)
+    if (isVisible) {
+        progButton.click()
+    }
+    // Wait for the spinner to go away
+    Util.waitForAjax()
+    expect(false === browser.isVisible(targetDiv))
+
+    // Open it
+    progButton.click()
+    Util.waitForAjax()
+    expect(true === browser.isVisible(targetDiv))
+
+
+    // Open the indicator setup modal of the first indicator
+    // in the table
+    let updateButtons = browser.$$('a.indicator-link')
+    let updateButton = updateButtons[0]
+    let dialog = 'div#indicator_modal_div'
+    updateButton.click()
     browser.waitForVisible('h2=Indicator setup')
-    // Delete it
-    let delete_btn = browser.$('button#id_delete_indicator_btn')
-    delete_btn.click()
+    let modal = browser.$(dialog)
+    modal.$('button.close').click()
+    if(browser.isVisible(dialog)) {
+        browser.waitForVisible(dialog, False)
+    }
   })
 
   it('should be able to create PI by clicking the New Indicator button', function() {
     NavBar.Indicators.click()
+    Util.waitForAjax()
     IndPage.clickNewIndicatorButton()
+    expect(browser.$('h1#page-title') === 'Add indicator')
+
     IndPage.saveNewIndicator()
+    expect(browser.$('div.alert.alert-success').getText() != '')
+    expect(browser.$('div.alert.alert-success').getText() != null)
   })
 
   it('should increase PI count after adding new indicator', function() {
@@ -97,12 +126,15 @@ describe('Program Indicators table', function() {
     let newCount = parseInt(buttonText)
     expect(oldCount + 1 === newCount)
   })
-*/
 
   it('should be able to delete PI by clicking its Delete button', function() {
     NavBar.Indicators.click()
+    let buttons = TargetsTab.getProgramIndicatorButtons()
+    let buttonText = buttons[0].getText()
+    let oldCount = buttonText
+
     IndPage.deleteIndicator()
-  })
+})
 
   it('should decrease PI count after deleting indicator', function() {
     NavBar.Indicators.click()
