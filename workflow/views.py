@@ -384,7 +384,7 @@ class ProjectAgreementUpdate(UpdateView):
 
             if form.instance.approval == 'approved':
                 #email the approver group so they know this was approved
-                link = "Link: " + "https://" + get_current_site(self.request).name + "/workflow/projectagreement_detail/" + str(self.kwargs['pk']) + "/"
+                link = "Link: " + "https://" + self.request.get_host() + "/workflow/projectagreement_detail/" + str(self.kwargs['pk']) + "/"
                 subject = "Project Initiation Approved: " + project_name
                 message = "A new initiation was approved by " + str(self.request.user) + "\n" + "Budget Amount: " + str(form.instance.total_estimated_budget) + "\n"
                 getSubmiter = User.objects.get(username=self.request.user)
