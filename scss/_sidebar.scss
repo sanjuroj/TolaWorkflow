@@ -1,0 +1,219 @@
+// IPTT Sidebar
+// Selectors for the IPTT sidebar & filters
+// Could theoretically be used elsewhere
+
+#sidebar {
+    flex-basis: 1;
+    overflow: hidden;
+    z-index: 3;
+    .list-group {
+        min-width: 400px;
+        background-color: $gray-800;
+        min-height: 100vh;
+        // see also indentation, below
+    }
+    i {
+        margin-right: 6px;
+    }
+    .list-group-item {
+        border-radius: 0;
+        background-color: $gray-800;
+        color: #ccc;
+        border-left: 0;
+        border-right: 0;
+        border-color: $gray-900;
+        white-space: nowrap;
+        // highlight active menu
+        &:not(.collapsed) {
+            background-color: $gray-900;
+        }
+        // closed state
+        &[aria-expanded="false"] {
+            &::after {
+                content: " \f0d7";
+                font-family: FontAwesome;
+                display: inline;
+                text-align: right;
+                padding-left: 5px;
+            }
+        }
+        // open state
+        &[aria-expanded="true"] {
+            background-color: $gray-900;
+            &::after {
+                content: " \f0da";
+                font-family: FontAwesome;
+                display: inline;
+                text-align: right;
+                padding-left: 5px;
+            }
+        }
+    }
+    // indentation
+    .list-group {
+        // level 1
+        .collapse .list-group-item,
+        .collapsing .list-group-item  {
+            padding-left: 20px;
+        }
+
+        // level 2
+        .collapse > .collapse .list-group-item,
+        .collapse > .collapsing .list-group-item {
+            padding-left: 30px;
+        }
+
+        // level 3
+        .collapse > .collapse > .collapse .list-group-item {
+            padding-left: 40px;
+        }
+    }
+}
+
+
+@media (max-width:768px) {
+    // TODO: breakpoint
+    .iptt_table_wrapper {
+        padding-left: 0;
+    }
+    #id_span_iptt_date_range {
+        display: block;
+        padding-left: 45px;
+    }
+    .sidebar_wrapper {
+        padding-right: 40px;
+        position: fixed;
+    }
+    .sidebar-toggle {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    #sidebar {
+        width: 330px;
+        overflow-y: auto;
+        overflow-x: visible;
+        @include transition(all 0.2 ease);
+        transform: translateX(40);
+        &.show {
+            transform: translateX(0);
+        }
+        &::-webkit-scrollbar{
+            width: 0px;
+        }
+        &,
+        & .list-group {
+            min-width: 35px;
+            overflow: visible;
+        }
+        .list-group {
+            // overlay sub levels on small screens
+            .collapse.show,
+            .collapsing {
+                position: relative;
+                z-index: 1;
+                width: 190px;
+                top: 0;
+            }
+            & > .list-group-item {
+                text-align: center;
+                padding: .75rem .5rem;
+            }
+            // hide caret icons of top level when collapsed
+            & > .list-group-item[aria-expanded="true"]::after,
+            & > .list-group-item[aria-expanded="false"]::after {
+                display: none;
+            }
+        }
+    }
+}
+
+// Collapse/Collapsing states
+.collapse.show {
+  visibility: visible;
+}
+.collapsing {
+    visibility: visible;
+    height: 0;
+    // TODO: transition mixins
+    -webkit-transition-property: height, visibility;
+    transition-property: height, visibility;
+    -webkit-transition-timing-function: ease;
+    transition-timing-function: ease;
+    &.width {
+        // TODO: transition mixins
+        -webkit-transition-property: width, visibility;
+        transition-property: width, visibility;
+        width: 0;
+        height: 100%;
+        -webkit-transition-timing-function: ease;
+        transition-timing-function: ease;
+    }
+}
+
+// Sidebar toggle
+// See breakpoint element above
+.sidebar_wrapper {
+    // see breakpoint mixin above
+    display: flex;
+}
+.sidebar-toggle {
+    display: block;
+    height: 42px;
+    text-align: center;
+    width: 40px;
+    a {
+        background-color: $teal-500;
+        color: white;
+        display: block;
+        font-size: 1.25rem;
+        padding: 0.3em 0.5em; // TODO: what is the usual visual rhythm?
+
+        &[aria-expanded=false] svg {
+            transform: rotate(-180deg); // TODO: ideally do this via JS
+        }
+    }
+}
+
+// IPTT sidebar filter// Hidable side bar filter
+.filter-wrapper {
+    display: flex; // unused?
+}
+#filter-top {
+    background-color: $gray-700 !important;
+    color: $white;
+    /* margin-bottom: -20px; */
+}
+
+#filter-middle {
+    background-color: $gray-300;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    padding-bottom: 4px;
+}
+
+#filter-bottom {
+    background-color: $gray-600 !important; // was: #808080!important;
+    color: $white;
+    font-size: smaller;
+    padding-top: 10px;
+}
+
+#id_iptt_report_filter {
+    font-size: .875rem;
+    min-width: 330px;
+    max-width: 330px;
+}
+#id_form_indicator_filter .col-form-label {
+  display: block;
+  padding-bottom: calc(.1875rem + 1px); /* TODO: this should be applied universally but regressions */
+}
+.filter-form-padding-10 {
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.filter-title {
+    color: $gray-300;
+    line-height: 42px;
+}

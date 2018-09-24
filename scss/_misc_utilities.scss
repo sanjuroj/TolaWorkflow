@@ -1,0 +1,80 @@
+// Miscellaneous utilities
+// Small utility classes that should probably be bootstrap classes
+
+
+// Font & Type
+// -----------
+// ~14pt from a 16pt reference
+.fontsize-85 {
+    font-size: .85rem;
+}
+// ~20pt from a 16pt reference
+.fontsize-125 {
+    font-size: 1.25rem;
+}
+.fontsize-130 {
+    font-size: 1.3rem;
+}
+.break-word {
+    word-break: break-word; /* wraps text in the middle of words */
+}
+
+
+// Color
+// -----
+.color-red {
+    color: $red;
+}
+.bg-danger-lighter {
+    background-color: $red-050 !important;
+}
+.bg-gray-lighter { /* note: these do not match colors in colors.css */
+    background-color: $gray-200 !important; // was: #E6E7E8 !important;
+}
+.bg-gray-lighter-alt { /* note: these do not match colors in colors.css */
+    background-color: $gray-150 !important; // was: #EDEDED !important;
+}
+
+
+// Borders
+// -------
+// Bootstrap could really use these border utilities
+.border-2 {
+    border-width: 2px !important;
+}
+.border-3 {
+    border-width: 3px !important;
+}
+.border-4 {
+    border-width: 4px !important;
+}
+
+// Rhythm: spacing & padding
+// -------------------------
+.paddingright-80 {
+    padding-right: .80rem;
+}
+.paddingright-175 {
+    padding-right: 1.75rem;
+}
+.marginbottom-225 {
+    margin-bottom: 2.25rem;
+}
+
+
+// Display State
+// -------------
+.hide {
+    display: none;
+}
+.show {
+    display: block;
+}
+
+
+// Layout
+// ------
+.float-right {
+    // there MUST be a BS selector like this
+    float: right;
+}
