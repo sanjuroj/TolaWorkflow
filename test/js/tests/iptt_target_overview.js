@@ -37,11 +37,9 @@ describe('IPTT: Program target overview quickstart', function() {
 
   it('should have a Target Periods dropdown', function() {
     IpttPage.TargetOverviewTargetPeriods.click()
-    IpttPage.TargetOverviewTargetPeriods.click()
   })
 
   it('should have a Program dropdown', function() {
-    IpttPage.TargetOverviewProgram.click()
     IpttPage.TargetOverviewProgram.click()
   })
 
@@ -66,7 +64,7 @@ describe('IPTT: Program target overview quickstart', function() {
 
   })
 
-  it('should allow to specify N recent time periods', function() {
+  it.skip('should allow to specify N recent time periods', function() {
     IpttPage.open()
     //FIXME: magic number
     IpttPage.TargetOverviewProgram = 2
@@ -100,12 +98,10 @@ describe('IPTT: Program target overview quickstart', function() {
     IpttPage.open()
     //FIXME: magic number
     IpttPage.TargetOverviewProgram = 2
-    /*
     IpttPage.TargetOverviewTimePeriods = 'Years'
     IpttPage.TargetOverviewViewReport.click()
     // If the table isn't there, we didn't make a report
     expect(true === browser.isVisible('table#iptt_table'))
-    */
   })
 
   //FIXME: get webdriver code out of test

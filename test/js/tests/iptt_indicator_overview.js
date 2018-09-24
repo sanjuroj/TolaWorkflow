@@ -68,7 +68,7 @@ describe('IPTT: Program indicator overview quickstart', function() {
     expect('View Report' === elem.getText())
   })
 
-  it('should allow to specify N recent time periods', function() {
+  it.skip('should allow to specify N recent time periods', function() {
     // FIXME: magic number
     IpttPage.IndicatorOverviewProgram = 2
     IpttPage.IndicatorOverviewTimePeriods = 'Years'
@@ -76,13 +76,13 @@ describe('IPTT: Program indicator overview quickstart', function() {
     expect(2 === IpttPage.IndicatorOverviewTimeFrame)
   })
 
-  it('should require choosing a program to create report', function() {
+  it.skip('should require choosing a program to create report', function() {
     // Select a time period but not program
     IpttPage.IndicatorOverviewTimePeriods = 'Years'
     expect('disabled' === IpttPage.IndicatorOverviewViewReport.disabled)
   })
 
-  it('should require choosing a time period to create report', function() {
+  it.skip('should require choosing a time period to create report', function() {
     // Select a program, but not a time period
     //FIXME: magic number
     IpttPage.IndicatorOverviewProgram = 2
@@ -90,7 +90,7 @@ describe('IPTT: Program indicator overview quickstart', function() {
     expect('disabled' === IpttPage.IndicatorOverviewViewReport.disabled)
   })
 
-  it('should create report if all params specified correctly', function() {
+  it.skip('should create report if all params specified correctly', function() {
     //FIXME: magic number
     IpttPage.open()
     IpttPage.IndicatorOverviewProgram = 2
