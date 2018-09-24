@@ -1,4 +1,4 @@
-import IpttHome from '../pages/iptt.page'
+import IpttPage from '../pages/iptt.page'
 import LoginPage from '../pages/login.page'
 import NavBar from '../pages/navbar.page'
 import Util from '../lib/testutil'
@@ -31,7 +31,7 @@ describe('IPTT: IPTT landing page', function() {
   })
 
   it('should exist', function() {
-    expect('Indicator Performance Tracking Table' == IpttHome.title)
+    expect('Indicator Performance Tracking Table' == IpttPage.title)
   })
 
   //FIXME: get webdriver code out of test
