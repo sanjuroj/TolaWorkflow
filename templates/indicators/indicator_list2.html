@@ -4,24 +4,31 @@
 {% block page_title %}{{ program.name }}{% endblock %}
 
 {% block content %}
-
-{% include "indicators/filter2.html" %}
-<br>
-{% if indicator_count %}
-    <div id="div_summary_statistics" class="d-flex justify-content-between mt-3 mb-5">
-        <div class="mx-3 text-center">{% trans 'Indicators have defined targets' %}</div>
-        <div class="mx-3 text-center">{% trans 'Indicators meeting or exceeding targets' %}</div>
-        <div class="mx-3 text-center">{% trans 'Indicators have reported results' %}</div>
-        <div class="mx-3 text-center">{% trans 'Results are backed up with evidence' %}</div>
+    <div class="program__percent-complete">
+        Program period is {{ percent_complete }}% complete
     </div>
-{% endif %}
-<div id="program_page_content" class="d-flex flex-row row">
-    <div class="border col-2">
+
+    {% if indicator_count %}
+        <div class="program__status-gauges">
+            <div class="status-gauge">{% trans 'Indicators have defined targets' %}</div>
+            <div class="status-gauge">{% trans 'Indicators meeting or exceeding targets' %}</div>
+            <div class="status-gauge">{% trans 'Indicators have reported results' %}</div>
+            <div class="status-gauge">{% trans 'Results are backed up with evidence' %}</div>
+        </div>
+    {% endif %}
+
+<div class="program-page__main">
+    <div class="program-page__details">
         Side Panel
     </div>
-    <div id="div-id-indicator-list" class="col-10">
-            {% include "indicators/program_indicators_table.html" %}
-            <br>
+    <div id="div-id-indicator-list" class="program-page__indicators">
+        {# filter goes here ? #}
+        {% comment %} #}
+        <div class="program__filters"> {# TODO: this wrapper should be in the filters include #}
+            {% include "indicators/filter2.html" %}
+        </div>
+        {% endcomment %}
+        {% include "indicators/program_indicators_table.html" %}
     </div>
 </div>
 <div class="modal fade" role="dialog" id="conform_modal_div" aria-labelledby="mySmallModalLabel">

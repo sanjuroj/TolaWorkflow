@@ -1,0 +1,20 @@
+// Program page and Program Status components
+// May need to split into more components e.g. "gauges"
+
+.program__status-gauges {
+    // contains .status-gauge components
+}
+.program-page__main {
+    // contains .program-page__details and .indicators-list
+}
+.program-page__details {
+    // sidebar for .program-page__main
+}
+.program-page__indicators {
+    // contains an instance of .indicators-list
+}
+.indicators-list {
+    // standalone component!
+    // TODO: should replace #div-id-indicator-list
+}
+
