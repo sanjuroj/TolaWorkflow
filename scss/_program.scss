@@ -11,13 +11,13 @@
 // Gauges
 // ------
 
-.gauge-layout {
-    // mainly a layout component, holds a gauge--* element + detail text
+.status-gauge {
+    // mainly a layout component, holds a gauge__graphic element + detail text
 }
-.gauge--performance-band {
+.gauge__graphic--performance-band {
     // indicators above/below track
 }
-.gauge--tank {
+.gauge__graphic--tank {
     // shows x% full
 }
 .gauge__value {}

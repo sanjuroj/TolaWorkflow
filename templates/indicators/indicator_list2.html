@@ -10,11 +10,14 @@
 
     {% if indicator_count %}
         <div class="program__status-gauges">
-            <div class="gauge-layout">
-                <div class="gauge--performance-band">
+
+            <div class="status-gauge">
+                <div class="gauge__graphic--performance-band">
                     [performance-band]
                 </div>
-                <div class="gauge__value">50%</div>
+                <div class="gauge__value">
+                    50%
+                </div>
                 <div class="gauge__label">
                     {% trans 'Indicators on track' %}
                 </div>
@@ -25,35 +28,52 @@
                     30% are >15% below target
                 </div>
             </div>
-            <div class="gauge-layout">
-                <div class="gauge--tank">
+
+            <div class="status-gauge">
+                <div class="gauge__graphic--tank">
                     [tank]
                 </div>
-                <div class="gauge__value">50%</div>
+                <div class="gauge__value">
+                    50%
+                </div>
                 <div class="gauge__label">
                     {% trans 'indicators have targets defined' %}
                 </div>
-                <div class="gauge__detail">12% of indicators have no targets</div>
+                <div class="gauge__detail">
+                    12% of indicators have no targets
+                </div>
             </div>
-            <div class="gauge-layout">
-                <div class="gauge--tank">
+
+            <div class="status-gauge">
+                <div class="gauge__graphic--tank">
                     [tank]
                 </div>
-                <div class="gauge__value">50%</div>
+                <div class="gauge__value">
+                    50%
+                </div>
                 <div class="gauge__label">
-                    {% trans 'Indicators have reported results' %}</div>
+                    {% trans 'Indicators have reported results' %}
                 </div>
-            <div class="gauge__detail">35% of indicators have no results</div>
-            <div class="gauge-layout">
-                <div class="gauge--tank">
+                <div class="gauge__detail">
+                    35% of indicators have no results
+                </div>
+            </div>
+
+            <div class="status-gauge">
+                <div class="gauge__graphic--tank">
                     [tank]
                 </div>
-                <div class="gauge__value">50%</div>
+                <div class="gauge__value">
+                    50%
+                </div>
                 <div class="gauge__label">
                     {% trans 'Results are backed up with evidence' %}
                 </div>
-                <div class="gauge__detail">65% of results are missing evidence</div>
+                <div class="gauge__detail">
+                    65% of results are missing evidence
+                </div>
             </div>
+
         </div>
     {% endif %}
 
