@@ -81,13 +81,7 @@
     <div class="program-page__details">
         Side Panel
     </div>
-    <div id="div-id-indicator-list" class="program-page__indicators">
-        {# filter goes here ? #}
-        {% comment %} #}
-        <div class="program__filters"> {# TODO: this wrapper should be in the filters include #}
-            {% include "indicators/filter2.html" %}
-        </div>
-        {% endcomment %}
+    <div id="div-id-indicator-list" class="indicator-list program-page__indicators">
         {% include "indicators/program_indicators_table.html" %}
     </div>
 </div>
