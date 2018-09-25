@@ -6,13 +6,39 @@
 }
 .program__status-gauges {
     // contains .status-gauge components
+    background-color: $card-bg;
+    border: 1px solid $border-color;
+    display: flex;
+    flex-direction: row;
+    margin: $grid-gutter-width 0;
+    padding: $grid-gutter-width/2;
+}
+.program-gauge {
+    // mainly a layout component, holds a .status-gauge block
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    @include make-col(3)
 }
 
 // Gauges
 // ------
 
 .status-gauge {
-    // mainly a layout component, holds a gauge__graphic element + detail text
+    // contains no external layout.
+    // contains gauge__graphic + gauge__labels
+    display: flex;
+    flex-direction: row;
+}
+.gauge__graphic {
+    // TODO: placeholder for graphic
+    // may contain subelements?
+}
+.gauge__labels {
+    // wraps labels on the same row as the gauge__graphic
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 .gauge__graphic--performance-band {
     // indicators above/below track
@@ -20,9 +46,20 @@
 .gauge__graphic--tank {
     // shows x% full
 }
-.gauge__value {}
-.gauge__label {}
-.gauge__detail {}
+.gauge__value {
+    color: $gray-500;
+    font-size: $font-size-base * 2;
+}
+.gauge__label {
+    color: $black;
+    text-transform: uppercase;
+}
+.gauge__detail {
+    font-size: $font-size-sm;
+}
+.gauge__label--small {
+    font-size: $font-size-sm;
+}
 
 
 .program-page__main {
