@@ -1441,7 +1441,7 @@ def dictfetchall(cursor):
 
 class ProgramPage(ListView):
     model = Indicator
-    template_name = 'indicators/indicator_list2.html'
+    template_name = 'indicators/program_page.html'
 
     def get(self, request, *args, **kwargs):
         countries = request.user.tola_user.countries.all()
