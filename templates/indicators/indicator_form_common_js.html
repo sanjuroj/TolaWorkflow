@@ -1,6 +1,35 @@
 {% load i18n %}
 
 <script>
+
+    // Load Indicators
+    function loadIndicators(program, indicator, type){
+        $.get('/indicators/program_indicators/' + program + '/' + indicator + '/' + type + '/', function(data){
+            $('#hidden-' + program).html(data);
+            $("body").removeClass("modal-open");
+        });
+
+        let icon = $(`#id_btnOpenindicatorsForProgramId_${program}`).find("svg");
+        if (icon.hasClass('fa-caret-right')) {
+            icon.attr('class', 'fa-caret-down');
+        } else {
+            icon.attr('class', 'fa-caret-right');
+        }
+    };
+
+    // Load Collected data
+    function loadCollected(indicator,program){
+        let url = "{% url "collected_data_view" 0 0 %})"
+        url = url.replace(/0\/0\//, indicator + "/" + program + "/")
+        var div_name = '#hidden-indicator-' + indicator;
+        $(div_name).empty();
+        $.get(url, function(data){
+            $(div_name).html(data);
+            $("body").removeClass("modal-open");
+        });
+        $("#id_indicator_data_count_btn_"+indicator).blur();
+    };
+
     var validation_msgs = {};
     var mediaSize = window.matchMedia("(max-width: 575px)")
     var userLang = "{{ LANGUAGE_CODE }}";

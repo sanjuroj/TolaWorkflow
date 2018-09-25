@@ -1,0 +1,88 @@
+// Program page and Program Status components
+// May need to split into more components e.g. "gauges"
+
+.program__calendar-complete {
+    // what % of the calendar period is complete
+}
+.program__status-gauges {
+    // contains .status-gauge components
+    background-color: $card-bg;
+    border: 1px solid $border-color;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: $grid-gutter-width/2;
+    margin-top: $grid-gutter-width/2;
+    padding-bottom: $grid-gutter-width/2;
+    padding-top: $grid-gutter-width/2;
+}
+.program-gauge {
+    // mainly a layout component, holds a .status-gauge block
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    @include make-col-ready();
+    @include make-col(3);
+}
+
+// Gauges
+// ------
+
+.status-gauge {
+    // contains no external layout.
+    // contains gauge__graphic + gauge__labels
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+.gauge__graphic {
+    // TODO: placeholder for graphic
+    // may contain subelements?
+    background: $green-300;
+    margin-right: $grid-gutter-width/2;
+    min-width: 40px;
+}
+.gauge__labels {
+    // wraps labels on the same row as the gauge__graphic
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+.gauge__labels--centered {
+    justify-content: center;
+}
+.gauge__graphic--performance-band {
+    // indicators above/below track
+}
+.gauge__graphic--tank {
+    // shows x% full
+}
+.gauge__value {
+    color: $gray-500;
+    font-size: $font-size-base * 2;
+}
+.gauge__label {
+    color: $black;
+    text-transform: uppercase;
+}
+.gauge__detail {
+    font-size: $font-size-sm;
+}
+.gauge__label--small {
+    font-size: $font-size-sm;
+}
+
+
+.program-page__main {
+    // contains .program-page__details and .indicators-list
+}
+.program-page__details {
+    // sidebar for .program-page__main
+}
+.program-page__indicators {
+    // contains an instance of .indicators-list
+}
+.indicators-list {
+    // standalone component!
+    // TODO: should replace #div-id-indicator-list
+}
+
