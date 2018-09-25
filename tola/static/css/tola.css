@@ -6669,24 +6669,40 @@ body.page_iptt_table {
   background-color: #fff;
   border: 1px solid #dbdcde;
   display: flex;
-  flex-direction: row;
-  margin: 30px 0;
-  padding: 15px; }
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+  margin-top: 15px;
+  padding-bottom: 15px;
+  padding-top: 15px; }
 
 .program-gauge {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: stretch;
+  position: relative;
+  width: 100%;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
   flex: 0 0 25%;
   max-width: 25%; }
 
 .status-gauge {
   display: flex;
-  flex-direction: row; }
+  flex-direction: row;
+  flex-grow: 1; }
+
+.gauge__graphic {
+  background: #9ac933;
+  margin-right: 15px;
+  min-width: 40px; }
 
 .gauge__labels {
   display: flex;
   flex-direction: column;
+  justify-content: flex-end; }
+
+.gauge__labels--centered {
   justify-content: center; }
 
 .gauge__value {
