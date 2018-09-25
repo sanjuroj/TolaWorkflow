@@ -647,7 +647,6 @@ class IndicatorUpdate(UpdateView):
                 "content": content,
                 "remove_missing_targts_link": remove_missing_targts_link
             }
-            print("remove_missing_targts_link={}".format(remove_missing_targts_link))
             return HttpResponse(json.dumps(data))
         else:
             messages.success(self.request, _('Success, Indicator Updated!'))
