@@ -47,8 +47,8 @@
     flex-direction: column;
     justify-content: flex-end;
 }
-.gauge__labels--centered {
-    justify-content: center;
+.gauge__labels--justified {
+    justify-content: space-between;
 }
 .gauge__graphic--performance-band {
     // indicators above/below track
@@ -62,10 +62,12 @@
 }
 .gauge__label {
     color: $black;
+    margin: 0;
     text-transform: uppercase;
 }
 .gauge__detail {
     font-size: $font-size-sm;
+    margin-top: $grid-gutter-width/2;
 }
 .gauge__label--small {
     font-size: $font-size-sm;

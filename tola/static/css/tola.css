@@ -6702,8 +6702,8 @@ body.page_iptt_table {
   flex-direction: column;
   justify-content: flex-end; }
 
-.gauge__labels--centered {
-  justify-content: center; }
+.gauge__labels--justified {
+  justify-content: space-between; }
 
 .gauge__value {
   color: #b8babd;
@@ -6711,10 +6711,12 @@ body.page_iptt_table {
 
 .gauge__label {
   color: #000;
+  margin: 0;
   text-transform: uppercase; }
 
 .gauge__detail {
-  font-size: 0.875rem; }
+  font-size: 0.875rem;
+  margin-top: 15px; }
 
 .gauge__label--small {
   font-size: 0.875rem; }

@@ -15,16 +15,18 @@
                 <div class="status-gauge">
                     <div class="gauge__graphic gauge__graphic--performance-band">
                     </div>
-                    <div class="gauge__labels gauge__labels--centered">
+                    <div class="gauge__labels gauge__labels--justified">
                         <div class="gauge__label--small">
                             20% are >15% above target
                         </div>
-                        <div class="gauge__value">
-                            50%
+                        <div class="gauge__labels">
+                            <div class="gauge__value">
+                                50%
+                            </div>
+                            <h6 class="gauge__label">
+                                {% trans 'Indicators on track' %}
+                            </h6>
                         </div>
-                        <h6 class="gauge__label">
-                            {% trans 'Indicators on track' %}
-                        </h6>
                         <div class="gauge__label--small">
                             30% are >15% below target
                         </div>
