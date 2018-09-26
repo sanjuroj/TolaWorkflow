@@ -151,7 +151,10 @@
         <div id="nonfooter" class="container mt-3 mb-3">
         {% endif %}
             <div id="id_div_breadcrumb">{% block bread_crumb %}{% endblock %}</div>
-            <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
+            <header class="region-header">
+                <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
+                {% block header_extras %}{% endblock %}
+            </header>
             <div id="alerts">
                 <!-- Any messages for users -->
                 {% block messages %}
