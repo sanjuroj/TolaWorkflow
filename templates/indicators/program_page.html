@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n mathfilters %}
 {% block title %}{% trans "Program indicators" %} | {% endblock %}
 {% block page_title %}{{ program.name }}{% endblock %}
 
@@ -17,18 +17,18 @@
                     </div>
                     <div class="gauge__labels gauge__labels--justified">
                         <div class="gauge__label--small">
-                            20% are >15% above target
+                            {{ scope_percents.high }}% are >15% above target
                         </div>
                         <div class="gauge__labels">
                             <div class="gauge__value">
-                                50%
+                                {{ scope_percents.on_scope }}%
                             </div>
                             <h6 class="gauge__label">
                                 {% trans 'Indicators on track' %}
                             </h6>
                         </div>
                         <div class="gauge__label--small">
-                            30% are >15% below target
+                            {{ scope_percents.low }}% are >15% below target
                         </div>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                     </div>
                     <div class="gauge__labels">
                         <div class="gauge__value">
-                            50%
+                            {{ results_stats.targets_defined }}%
                         </div>
                         <h6 class="gauge__label">
                             {% trans 'indicators have targets defined' %}
@@ -48,7 +48,7 @@
                     </div>
                 </div>
                 <div class="gauge__detail">
-                    12% of indicators have no targets
+                    {{ "100"|sub:results_stats.targets_defined }}% of indicators have no targets
                 </div>
             </section>
 
@@ -58,7 +58,7 @@
                     </div>
                     <div class="gauge__labels">
                         <div class="gauge__value">
-                            50%
+                            {{ results_stats.reported_results }}%
                         </div>
                         <h6 class="gauge__label">
                             {% trans 'Indicators have reported results' %}
@@ -66,7 +66,7 @@
                     </div>
                 </div>
                 <div class="gauge__detail">
-                    35% of indicators have no results
+                    {{ "100"|sub:results_stats.reported_results }}% of indicators have no results
                 </div>
             </section>
 
@@ -76,7 +76,7 @@
                     </div>
                     <div class="gauge__labels">
                         <div class="gauge__value">
-                            50%
+                            {{ results_stats.results_evidence }}%
                         </div>
                         <h6 class="gauge__label">
                             {% trans 'Results are backed up with evidence' %}
@@ -84,7 +84,7 @@
                     </div>
                 </div>
                 <div class="gauge__detail">
-                    65% of results are missing evidence
+                    {{ "100"|sub:results_stats.results_evidence }}% of results are missing evidence
                 </div>
             </div>
 

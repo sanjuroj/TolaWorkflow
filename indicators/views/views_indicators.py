@@ -1467,7 +1467,19 @@ class ProgramPage(ListView):
         type_ids = set(indicators.values_list('indicator_type', flat=True))
         indicator_types = IndicatorType.objects.filter(id__in=list(type_ids))
         indicator_count = indicators.count()
-        scope_percents = {'low': 0, 'on_scope': 0, 'high': 0}
+        scope_percents = {
+            # TODO: placeholder stats
+            'low': 25,
+            'on_scope': 45,
+            'high': 30,
+        }
+        results_stats = {
+            # TODO: placeholder stats
+            'targets_defined': 35,
+            'reported_results': 45,
+            'results_evidence': 25,
+        }
+
 
         c_data = {
             'program': program,
@@ -1479,6 +1491,8 @@ class ProgramPage(ListView):
             'type_filter_id': type_filter_id,
             'type_filter_name': type_filter_name,
             'scope_percents': scope_percents,
+            'percent_complete': 75, # TODO: % of reporting period complete
+            'results_stats': results_stats,
         }
         return render(request, self.template_name, c_data)
 
