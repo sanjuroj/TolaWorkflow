@@ -21,7 +21,7 @@
         "cpx-leaflet-css": "cpx node_modules/leaflet/dist/leaflet.css $npm_package_config_css",
         "cpx-leaflet-js": "cpx node_modules/leaflet/dist/leaflet.js $npm_package_config_js",
         "copy": "npm-run-all cpx-*",
-        "build-tola-css": "node-sass --include-path scss scss/tola.scss tola/static/css/tola.css",
+        "build-tola-css": "node-sass --source-map=true --include-path scss scss/tola.scss tola/static/css/tola.css",
         "start": "nodemon -e scss -x \"npm run build-tola-css\""
     },
     "devDependencies": {
