@@ -6710,7 +6710,9 @@ body.page_iptt_table {
   flex-grow: 1; }
 
 .gauge__graphic {
-  background: #9ac933;
+  background-color: #9ac933;
+  display: flex;
+  flex-direction: column;
   margin-right: 15px;
   min-width: 40px; }
 
@@ -6722,8 +6724,22 @@ body.page_iptt_table {
 .gauge__labels--justified {
   justify-content: space-between; }
 
+.gauge__graphic--performance-band {
+  background-color: #fff6cc; }
+
+.graphic__performance-band--above-target {
+  background: #ffed99; }
+
+.graphic__performance-band--on-target {
+  background: #9ac933;
+  border-bottom: 1px solid #fff;
+  border-top: 1px solid #fff; }
+
+.graphic__performance-band--below-target {
+  background: #ffed99; }
+
 .gauge__value {
-  color: #b8babd;
+  color: #71757b;
   font-size: 2rem; }
 
 .gauge__label {
@@ -6732,10 +6748,12 @@ body.page_iptt_table {
   text-transform: uppercase; }
 
 .gauge__detail {
+  color: #0645AD;
   font-size: 0.875rem;
   margin-top: 15px; }
 
 .gauge__label--small {
+  color: #0645AD;
   font-size: 0.875rem; }
 
 @media print {

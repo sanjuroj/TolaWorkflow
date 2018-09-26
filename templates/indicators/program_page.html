@@ -21,6 +21,12 @@
             <section class="program-gauge">
                 <div class="status-gauge">
                     <div class="gauge__graphic gauge__graphic--performance-band">
+                        <div class="graphic__performance-band--above-target"
+                             style="flex-basis: {{ scope_percents.high }}%"></div>
+                        <div class="graphic__performance-band--on-target"
+                             style="flex-basis: {{ scope_percents.on_scope }}%"></div>
+                        <div class="graphic__performance-band--below-target"
+                             style="flex-basis: {{ scope_percents.low }}%"></div>
                     </div>
                     <div class="gauge__labels gauge__labels--justified">
                         <div class="gauge__label--small">
