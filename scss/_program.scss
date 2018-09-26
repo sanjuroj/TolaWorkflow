@@ -2,7 +2,18 @@
 // May need to split into more components e.g. "gauges"
 
 .program__calendar-complete {
-    // what % of the calendar period is complete
+    color: $success;
+    display: flex;
+    align-items: center;
+    p {
+        line-height: 1.1;
+        margin: 0;
+    }
+    .fa-calendar {
+        font-size: 42px;
+        margin-right: $grid-gutter-width/4;
+    }
+    
 }
 .program__status-gauges {
     // contains .status-gauge components
@@ -47,8 +58,8 @@
     flex-direction: column;
     justify-content: flex-end;
 }
-.gauge__labels--centered {
-    justify-content: center;
+.gauge__labels--justified {
+    justify-content: space-between;
 }
 .gauge__graphic--performance-band {
     // indicators above/below track
@@ -62,10 +73,12 @@
 }
 .gauge__label {
     color: $black;
+    margin: 0;
     text-transform: uppercase;
 }
 .gauge__detail {
     font-size: $font-size-sm;
+    margin-top: $grid-gutter-width/2;
 }
 .gauge__label--small {
     font-size: $font-size-sm;
