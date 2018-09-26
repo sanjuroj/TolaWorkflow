@@ -49,7 +49,10 @@
 
             <section class="program-gauge">
                 <div class="status-gauge">
+                    {# TODO: this should be a templatetag #}
                     <div class="gauge__graphic gauge__graphic--tank">
+                        <div class="graphic__tank--filled"
+                            style="flex-basis: {{ results_stats.targets_defined }}%"></div>
                     </div>
                     <div class="gauge__labels">
                         <div class="gauge__value">

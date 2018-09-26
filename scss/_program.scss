@@ -46,9 +46,10 @@
     flex-grow: 1;
 }
 .gauge__graphic {
-    background-color: $green-300;
+    background-color: $green-100;
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
     margin-right: $grid-gutter-width/2;
     min-width: 40px;
 }
@@ -63,7 +64,6 @@
 }
 .gauge__graphic--performance-band {
     // contains graphic__performance-band--* subcomponents
-    background-color: $yellow-100;
 }
 .graphic__performance-band--above-target {
     background: $yellow-200;
@@ -76,10 +76,11 @@
 .graphic__performance-band--below-target {
     background: $yellow-200;
 }
-
-
 .gauge__graphic--tank {
     // shows x% full
+}
+.graphic__tank--filled {
+    background: $green-300;
 }
 .gauge__value {
     color: $gray-600;
