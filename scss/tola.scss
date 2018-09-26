@@ -51,6 +51,10 @@
 @import '_bootstrap_multiselect.scss'; // my what a mess this is
 @import 'bootstrap_overrides'; // overload BS selectors.
 
+/* Components */
+// These are well-behaved BEM-compliant selectors
+@import 'components/regions'; // page regions and sub-regions
+
 /* Local custom CSS and overloads for non-BS libraries */
 @import 'mc_tola_forms';
 @import 'maps';
