@@ -67,6 +67,7 @@
     justify-content: flex-end;
     margin-right: $grid-gutter-width/2;
     min-width: 40px;
+    min-height: 80px;
 }
 .gauge__labels {
     // wraps labels on the same row as the gauge__graphic
@@ -95,17 +96,25 @@
     position: relative;
 }
 .graphic__tick-marks {
-    background-image: url('/static/img/gauge-bg.png');
-    background-size: 100% 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
 }
+.graphic__tick {
+    flex-grow: 1;
+    flex-shrink: 0;
+    & + & {
+        border-top: 0.5px solid $white;
+    }
+}
 .graphic__tank--filled {
-    background-color: transparentize($green-500, 0.5);
-    //@include gauge-bg();
+    background-color: $green-300;
 }
 .gauge__value {
     color: $gray-600;

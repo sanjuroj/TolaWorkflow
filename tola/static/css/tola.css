@@ -6724,7 +6724,8 @@ body.page_iptt_table {
   flex-direction: column;
   justify-content: flex-end;
   margin-right: 15px;
-  min-width: 40px; }
+  min-width: 40px;
+  min-height: 80px; }
 
 .gauge__labels {
   display: flex;
@@ -6749,16 +6750,24 @@ body.page_iptt_table {
   position: relative; }
 
 .graphic__tick-marks {
-  background-image: url("/static/img/gauge-bg.png");
-  background-size: 100% 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0; }
 
+.graphic__tick {
+  flex-grow: 1;
+  flex-shrink: 0; }
+  .graphic__tick + .graphic__tick {
+    border-top: 0.5px solid #fff; }
+
 .graphic__tank--filled {
-  background-color: rgba(132, 189, 0, 0.5); }
+  background-color: #9ac933; }
 
 .gauge__value {
   color: #71757b;

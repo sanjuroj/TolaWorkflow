@@ -1477,7 +1477,7 @@ class ProgramPage(ListView):
             # TODO: placeholder stats
             'targets_defined': 35,
             'reported_results': 45,
-            'results_evidence': 25,
+            'results_evidence': 50,
         }
 
 

@@ -105,4 +105,5 @@ def gauge_tank(filled, label, detail):
         'not_filled': 100 - filled,
         'label': label,
         'detail': detail,
+        'ticks': list(range(1,11)),
     }
