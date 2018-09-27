@@ -1,9 +1,8 @@
 {% load i18n %}
 <div class="status-gauge">
-    {# TODO: this should be a templatetag #}
     <div class="gauge__graphic gauge__graphic--tank">
-        <div class="graphic__tank--filled"
-             style="flex-basis: {{ filled }}%"></div>
+        <div class="graphic__tick-marks"></div>
+        <div class="graphic__tank--filled" style="flex-basis: {{ filled }}%"></div>
     </div>
     <div class="gauge__labels">
         <div class="gauge__value">

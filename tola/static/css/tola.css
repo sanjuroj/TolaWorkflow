@@ -6745,8 +6745,20 @@ body.page_iptt_table {
 .graphic__performance-band--below-target {
   background: #ffed99; }
 
+.gauge__graphic--tank {
+  position: relative; }
+
+.graphic__tick-marks {
+  background-image: url("/static/img/gauge-bg.png");
+  background-size: 100% 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; }
+
 .graphic__tank--filled {
-  background: #9ac933; }
+  background-color: rgba(132, 189, 0, 0.5); }
 
 .gauge__value {
   color: #71757b;

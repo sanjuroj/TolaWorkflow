@@ -1,6 +1,13 @@
 // Program page and Program Status components
 // May need to split into more components e.g. "gauges"
 
+@mixin gauge-bg() {
+    background-image: url('/static/img/gauge-bg.svg');
+    background-position:  bottom left;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
 .program__calendar-complete {
     color: $success;
     display: flex;
@@ -13,7 +20,7 @@
         font-size: 42px;
         margin-right: $grid-gutter-width/4;
     }
-    
+
 }
 .program__status-gauges {
     // contains .status-gauge components
@@ -85,10 +92,20 @@
     background: $yellow-200;
 }
 .gauge__graphic--tank {
-    // shows x% full
+    position: relative;
+}
+.graphic__tick-marks {
+    background-image: url('/static/img/gauge-bg.png');
+    background-size: 100% 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
 }
 .graphic__tank--filled {
-    background: $green-300;
+    background-color: transparentize($green-500, 0.5);
+    //@include gauge-bg();
 }
 .gauge__value {
     color: $gray-600;
