@@ -27,7 +27,7 @@ describe("Collected data datepicker", function () {
         }
     })
 
-    describe('using typed-in dates', function () {
+    describe('using clicked dates', function () {
         it('does not display a date automatically when selected', function () {
             // Open indicators page
             Navbar.Indicators.click()
@@ -47,22 +47,27 @@ describe("Collected data datepicker", function () {
             Util.waitForAjax()
 
             // Click the Add results button
-            let addResults = $$('a[href*="/indicators/collecteddata_add/"]')
+            let addResults = browser.$$('a[href*="/indicators/collecteddata_add/"]')
             let button
             if (addResults.length > 0) {
                 button = addResults[0]
             }
             button.click()
-            Util.waitForAjax()
+            //Util.waitForAjax()
 
             // Find the datepicker and confirm it is blank
-            //browser.waitForVisible('h2=Results')
-            //let datepicker = $('input#id_date_collected')
-            //expect(datepicker.getText() == '')
+            browser.waitForVisible('h2=Results')
+            let datepicker = browser.$('input#id_date_collected')
+            expect(datepicker.getText() == '')
 
             // Click into the datepicker and confirm the date remains blank
+            datepicker.click()
+            expect(datepicker.getText() == '')
 
-            // Select a date
+            // Move to another control
+            //let actual = browser.$('input#id_achieved')
+            browser.scroll('input#id_achieved')
+            expect(datepicker.getText() != '')
 
             // Confirm the date that goes into the text box
         })
@@ -78,7 +83,7 @@ describe("Collected data datepicker", function () {
         it('does not do the hokey-pokey')
     })
 
-    describe('using clicked dates', function () {
+    describe('using keyed-in dates', function () {
         it('does not display a date automatically when selected')
         it('closes the datpicker window after selecting a date')
         it('assigns given value to correct period if program lifetime includes date (annual)')
