@@ -68,6 +68,7 @@
     margin-right: $grid-gutter-width/2;
     min-width: 40px;
     min-height: 80px;
+    position: relative;
 }
 .gauge__labels {
     // wraps labels on the same row as the gauge__graphic
@@ -93,7 +94,6 @@
     background: $yellow-200;
 }
 .gauge__graphic--tank {
-    position: relative;
 }
 .graphic__tick-marks {
     display: flex;

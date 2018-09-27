@@ -107,3 +107,13 @@ def gauge_tank(filled, label, detail):
         'detail': detail,
         'ticks': list(range(1,11)),
     }
+
+
+@register.inclusion_tag('indicators/tags/gauge-band.html')
+def gauge_band(high, on_scope, low):
+    return {
+        'high': high,
+        'on_scope': on_scope,
+        'low': low,
+        'ticks': list(range(1,11)),
+    }

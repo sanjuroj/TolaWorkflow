@@ -19,32 +19,7 @@
         <aside class="program__status-gauges">
 
             <section class="program-gauge">
-                <div class="status-gauge">
-                    <div class="gauge__graphic gauge__graphic--performance-band">
-                        <div class="graphic__performance-band--above-target"
-                             style="flex-basis: {{ scope_percents.high }}%"></div>
-                        <div class="graphic__performance-band--on-target"
-                             style="flex-basis: {{ scope_percents.on_scope }}%"></div>
-                        <div class="graphic__performance-band--below-target"
-                             style="flex-basis: {{ scope_percents.low }}%"></div>
-                    </div>
-                    <div class="gauge__labels gauge__labels--justified">
-                        <div class="gauge__label--small">
-                            {{ scope_percents.high }}% are >15% above target
-                        </div>
-                        <div class="gauge__labels">
-                            <div class="gauge__value">
-                                {{ scope_percents.on_scope }}%
-                            </div>
-                            <h6 class="gauge__label">
-                                {% trans 'Indicators on track' %}
-                            </h6>
-                        </div>
-                        <div class="gauge__label--small">
-                            {{ scope_percents.low }}% are >15% below target
-                        </div>
-                    </div>
-                </div>
+                {% gauge_band scope_percents.high scope_percents.on_scope scope_percents.low %}
             </section>
 
             <section class="program-gauge">
