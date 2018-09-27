@@ -32,7 +32,15 @@
     flex-direction: column;
     justify-content: stretch;
     @include make-col-ready();
-    @include make-col(3);
+    @include make-col(1,4);
+    @include media-breakpoint-down(md) {
+        @include make-col(1,1);
+        & + & {
+            border-top: 1px solid $gray-300;
+            margin-top: $grid-gutter-width/2;
+            padding-top: $grid-gutter-width/2;
+        }
+    }
 }
 
 // Gauges

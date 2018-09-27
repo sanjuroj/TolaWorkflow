@@ -6703,6 +6703,14 @@ body.page_iptt_table {
   padding-left: 15px;
   flex: 0 0 25%;
   max-width: 25%; }
+  @media (max-width: 991.98px) {
+    .program-gauge {
+      flex: 0 0 100%;
+      max-width: 100%; }
+      .program-gauge + .program-gauge {
+        border-top: 1px solid #dbdcde;
+        margin-top: 15px;
+        padding-top: 15px; } }
 
 .status-gauge {
   display: flex;
