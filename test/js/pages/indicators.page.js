@@ -253,7 +253,7 @@ function getProgramsDropdownList () {
 
 /**
  * Get a list of the program names in the main Programs table
- * @returns {Array<string>} returns an array of the text strings of the
+ * @returns {Array<string>} an array of the text strings of the
  * program names in the programs table
  */
 

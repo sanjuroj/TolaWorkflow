@@ -5,7 +5,7 @@ import TargetsTab from '../pages/targets.page'
 import Util from '../lib/testutil'
 import { expect } from 'chai'
 
-describe("Programs dropdown", function () {
+describe("Indicators landing page", function () {
   // Disable timeouts
   this.timeout(0)
 
