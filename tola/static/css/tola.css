@@ -6249,10 +6249,11 @@ body > .container {
   background: rgba(0, 0, 0, 0.1) !important; }
 
 /* Components */
-.region-header {
-  align-items: center;
-  display: flex;
-  justify-content: space-between; }
+@media (min-width: 576px) {
+  .region-header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between; } }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
