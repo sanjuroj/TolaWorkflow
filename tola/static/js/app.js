@@ -56,12 +56,13 @@ function formatDate(dateString, day=0) {
     // Returns an ISO formatted naive datestring
     // Use only to sanitize simplified date strings e.g. for hidden fields or data attributes
     // If you’re trying to format a date[string] for user display, you probably want something else
-
+    console.log('dateString: ' + dateString);
     if (dateString == null || dateString == undefined || dateString.length == 0 || dateString == 'undefined' || dateString == 'null' ) {
         return '';
     }
     try {
         var dateval = new Date(dateString);
+        console.log('dateval: ' + dateval);
         tz = dateval.getTimezoneOffset();
         hrs = dateval.getHours();
         if (hrs > 0) {
@@ -72,18 +73,21 @@ function formatDate(dateString, day=0) {
         var month = zeroPad((dateval.getMonth() + 1), 2);
         var day = zeroPad((day == 0 ? dateval.getDate() : day), 2);
         var ret = year + '-' + month + '-' + day
+        console.log('ret1: ' + ret)
         return ret;
     } catch (err) {
-        console.log(err);
+        console.log('err: ' + err);
         try {
             var dateArray = dateString.split('-');
             var year = dateArray[0];
             var month = zeroPad(parseInt(dateArray[1]), 2);
             var day = zeroPad((day == 0 ? dateArray[2] : day), 2);
             var ret = year + '-' + month + '-' + day
+            console.log('ret2: ' + ret)
             return ret
         }
         catch (err) {
+            console.log(dateString == (null ? '' : dateString));
             return dateString == (null ? '' : dateString);
         }
     }

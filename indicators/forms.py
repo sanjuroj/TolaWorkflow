@@ -1,4 +1,5 @@
 import dateparser
+from django.conf import settings
 from datetime import datetime
 from functools import partial
 from django.core.exceptions import ValidationError
@@ -130,8 +131,13 @@ class CollectedDataForm(forms.ModelForm):
         )
     )
     target_frequency = forms.CharField()
-    date_collected = forms.DateField(widget=DatePicker.DateInput(),
-                                     required=True)
+    date_collected = forms.DateField(
+        widget=DatePicker.DateInput(),
+        # TODO: this field outputs dates in non-ISO formats in Spanish & French
+        # input_formats=settings.DATE_INPUT_FORMATS, # no
+        # localize=True, # no
+        required=True,
+    )
 
     def __init__(self, *args, **kwargs):
         # instance = kwargs.get('instance', None)
@@ -187,6 +193,7 @@ class CollectedDataForm(forms.ModelForm):
             .filter(Q(owner=self.request.user) | Q(id=self.tola_table))
         self.fields['periodic_target'].label = _('Measure against target*')
         self.fields['achieved'].label = _('Actual value')
+        # self.clean_date_collected() # no
         self.fields['date_collected'].help_text = ' '
         self.fields['date_collected'].label = _('Date collected')
 

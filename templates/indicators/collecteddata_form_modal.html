@@ -40,7 +40,7 @@
             $('.datepicker').datepicker({dateFormat: "yy-mm-dd"});
             var id_date_collected = $("#id_date_collected");
             if (id_date_collected.val() != '') {
-                id_date_collected.val(formatDate(id_date_collected.val()));
+                id_date_collected.val(formatDate(id_date_collected.val())); // This control needs to receive an ISO date
                 // validate upon loading modal
                 validatePeriodicTarget();
             }
