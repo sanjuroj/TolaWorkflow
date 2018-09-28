@@ -7,6 +7,7 @@ from django.db.models import Q
 from django import forms
 from django.forms.fields import DateField
 from django.utils.translation import ugettext_lazy as _
+from django.utils import formats, translation
 from workflow.models import (
     Program, SiteProfile, Documentation, ProjectComplete, TolaUser, Sector
 )
@@ -17,6 +18,7 @@ from indicators.models import (
     Level, IndicatorType
 )
 
+locale_format = formats.get_format('DATE_INPUT_FORMATS', lang=translation.get_language())[-1]
 
 class DatePicker(forms.DateInput):
     """
@@ -132,10 +134,10 @@ class CollectedDataForm(forms.ModelForm):
     )
     target_frequency = forms.CharField()
     date_collected = forms.DateField(
-        widget=DatePicker.DateInput(),
+        widget=DatePicker.DateInput(format=locale_format),
         # TODO: this field outputs dates in non-ISO formats in Spanish & French
         # input_formats=settings.DATE_INPUT_FORMATS, # no
-        # localize=True, # no
+        localize=True, # no
         required=True,
     )
 
