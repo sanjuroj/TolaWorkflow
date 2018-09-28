@@ -137,7 +137,9 @@ class CollectedDataForm(forms.ModelForm):
         widget=DatePicker.DateInput(format=locale_format),
         # TODO: this field outputs dates in non-ISO formats in Spanish & French
         # input_formats=settings.DATE_INPUT_FORMATS, # no
-        localize=True, # no
+        # We don't display a localized date in the Date Collected field,
+        # and when set to true, it interferes with proper front-end date parsing through the formatDate function.
+        localize=False, # no
         required=True,
     )
 
