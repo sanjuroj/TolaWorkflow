@@ -59,12 +59,20 @@ realclean: clean
 run-chrome:
 	java -jar -Dwebdriver.chrome.driver=chromedriver $(SESERVER) | tee server.log 2>&1 &
 	npm run wdio wdio.chrome.conf | tee chrome.log 2>&1
-	-killall -qw java
+	ifeq ($(XDG_SESSION_TYPE),x11)
+		-killall -w $(jobs -p)
+	else
+		-killall java
+	endif
 
 run-gecko:
 	java -jar -Dwebdriver.gecko.driver=geckodriver $(SESERVER) | tee server.log 2>&1 &
 	npm run wdio wdio.gecko.conf | tee gecko.log 2>&1
-	-killall -qw java
+	ifeq ($(XDG_SESSION_TYPE),x11)
+		-killall -w $(jobs -p)
+	else
+		-killall java
+	endif
 
 update:
 	npm update --verbose --save --dev
