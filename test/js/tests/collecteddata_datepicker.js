@@ -2,6 +2,7 @@ import IndPage from '../pages/indicators.page'
 import TargetsTab from '../pages/targets.page'
 import LoginPage from '../pages/login.page'
 import Navbar from '../pages/navbar.page'
+import Datepicker from '../pages/datepicker'
 import Util from '../lib/testutil'
 import {expect} from 'chai'
 
@@ -53,27 +54,63 @@ describe("Collected data datepicker", function () {
                 button = addResults[0]
             }
             button.click()
+            Util.waitForAjax()
+
+            // Find the datepicker and confirm it is blank
+            let datepicker = Datepicker
+            let curVal = datepicker.getValue()
+            Util.dp('curval='+curval)
+            expect(val === '')
+
+            // Click into the datepicker and confirm the date remains blank
+
+            // Move to another control
+        })
+
+ /*
+        it('closes the datepicker window after selecting a date', function() {
+            // Open indicators page
+            Navbar.Indicators.click()
+            Util.waitForAjax()
+
+            // Click the second program in the list
+            let progButtons =  TargetsTab.getProgramIndicatorButtons()
+            let progButton = progButtons[2]
+            progButton.click()
+            Util.waitForAjax()
+
+            // Click the first indicator
+            let indicators = browser.$$('span.indicator_name')
+            if (indicators.length > 0) {
+                indicators[0].click()
+            }
+            Util.waitForAjax()
+
+            // Click the Add results button
+            let addResults = browser.$$('a[href*="/indicators/collecteddata_add/"]')
+            let button
+            if (addResults.length > 0) {
+                button = addResults[0]
+            }
+            button.click()
             //Util.waitForAjax()
 
             // Find the datepicker and confirm it is blank
             browser.waitForVisible('h2=Results')
             let datepicker = browser.$('input#id_date_collected')
-            expect(datepicker.getText() == '')
+            expect(datepicker.getValue() === '')
 
             // Click into the datepicker and confirm the date remains blank
             datepicker.click()
-            expect(datepicker.getText() == '')
+            expect(datepicker.getValue() === '')
 
             // Move to another control
             //let actual = browser.$('input#id_achieved')
             browser.scroll('input#id_achieved')
-            expect(datepicker.getText() != '')
-
-            // Confirm the date that goes into the text box
+            expect(datepicker.getValue() === '')
         })
 
-/*
-        it('closes the datpicker window after selecting a date')
+        it('chosen date appears in text box datepicker closes)
         it('assigns given value to correct period if program lifetime includes date (annual)')
         it('assigns given value to correct period if program lifetime includes date (semiannual)')
         it('assigns given value to correct period if program lifetime includes date (triannual)')
@@ -84,8 +121,8 @@ describe("Collected data datepicker", function () {
     })
 
     describe('using keyed-in dates', function () {
-        it('does not display a date automatically when selected')
-        it('closes the datpicker window after selecting a date')
+        it('closes the datepicker window after entering a date')
+        it('chosen date appears in text box datepicker closes)
         it('assigns given value to correct period if program lifetime includes date (annual)')
         it('assigns given value to correct period if program lifetime includes date (semiannual)')
         it('assigns given value to correct period if program lifetime includes date (triannual)')
