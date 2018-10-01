@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n mathfilters %}
+{% load i18n mathfilters mytags %}
 {% block title %}{% trans "Program indicators" %} | {% endblock %}
 {% block page_title %}{{ program.name }}{% endblock %}
 {% block header_extras %}
@@ -19,80 +19,28 @@
         <aside class="program__status-gauges">
 
             <section class="program-gauge">
-                <div class="status-gauge">
-                    <div class="gauge__graphic gauge__graphic--performance-band">
-                    </div>
-                    <div class="gauge__labels gauge__labels--justified">
-                        <div class="gauge__label--small">
-                            {{ scope_percents.high }}% are >15% above target
-                        </div>
-                        <div class="gauge__labels">
-                            <div class="gauge__value">
-                                {{ scope_percents.on_scope }}%
-                            </div>
-                            <h6 class="gauge__label">
-                                {% trans 'Indicators on track' %}
-                            </h6>
-                        </div>
-                        <div class="gauge__label--small">
-                            {{ scope_percents.low }}% are >15% below target
-                        </div>
-                    </div>
-                </div>
+                <a href="#" class="gauge__link">
+                    {% gauge_band scope_percents.high scope_percents.on_scope scope_percents.low %}
+                </a>
             </section>
 
             <section class="program-gauge">
-                <div class="status-gauge">
-                    <div class="gauge__graphic gauge__graphic--tank">
-                    </div>
-                    <div class="gauge__labels">
-                        <div class="gauge__value">
-                            {{ results_stats.targets_defined }}%
-                        </div>
-                        <h6 class="gauge__label">
-                            {% trans 'indicators have targets defined' %}
-                        </h6>
-                    </div>
-                </div>
-                <div class="gauge__detail">
-                    {{ "100"|sub:results_stats.targets_defined }}% of indicators have no targets
-                </div>
+                <a href="#" class="gauge__link">
+                    {% gauge_tank results_stats.targets_defined 'indicators have targets defined' 'of indicators have no targets' %}
+                </a>
+                </a>
             </section>
 
             <section class="program-gauge">
-                <div class="status-gauge">
-                    <div class="gauge__graphic gauge__graphic--tank">
-                    </div>
-                    <div class="gauge__labels">
-                        <div class="gauge__value">
-                            {{ results_stats.reported_results }}%
-                        </div>
-                        <h6 class="gauge__label">
-                            {% trans 'Indicators have reported results' %}
-                        </h6>
-                    </div>
-                </div>
-                <div class="gauge__detail">
-                    {{ "100"|sub:results_stats.reported_results }}% of indicators have no results
-                </div>
+                <a href="#" class="gauge__link">
+                    {% gauge_tank results_stats.reported_results 'indicators have reported results' 'of indicators have no results' %}
+                </a>
             </section>
 
             <div class="program-gauge">
-                <div class="status-gauge">
-                    <div class="gauge__graphic gauge__graphic--tank">
-                    </div>
-                    <div class="gauge__labels">
-                        <div class="gauge__value">
-                            {{ results_stats.results_evidence }}%
-                        </div>
-                        <h6 class="gauge__label">
-                            {% trans 'Results are backed up with evidence' %}
-                        </h6>
-                    </div>
-                </div>
-                <div class="gauge__detail">
-                    {{ "100"|sub:results_stats.results_evidence }}% of results are missing evidence
-                </div>
+                <a href="#" class="gauge__link">
+                    {% gauge_tank results_stats.results_evidence 'results are backed up with evidence' 'of results are missing evidence' %}
+                </a>
             </div>
 
         </aside>
