@@ -642,7 +642,7 @@ class PeriodicTarget(models.Model):
         verbose_name = _("Periodic Target")
 
     def __unicode__(self):
-        # can't find where this surfaces in the UI
+        # used in the collected data modal to display options in the target period dropdown
         if self.indicator.target_frequency == Indicator.LOP \
             or self.indicator.target_frequency == Indicator.EVENT \
                 or self.indicator.target_frequency == Indicator.MID_END:

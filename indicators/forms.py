@@ -14,9 +14,9 @@ from workflow.models import (
 from tola.util import getCountry
 from indicators.models import (
     Indicator, PeriodicTarget, CollectedData, Objective, StrategicObjective,
-    TolaTable, DisaggregationType,
-    Level, IndicatorType
+    TolaTable, DisaggregationType, Level, IndicatorType
 )
+from indicators.widgets import DataAttributesSelect
 
 locale_format = formats.get_format('DATE_INPUT_FORMATS', lang=translation.get_language())[-1]
 
@@ -169,9 +169,20 @@ class CollectedDataForm(forms.ModelForm):
         except TypeError:
             pass
 
-        self.fields['periodic_target'].queryset = PeriodicTarget.objects\
-            .filter(indicator=self.indicator)\
+        # Django will deliver localized strings to the template but the form needs to be able to compare the date
+        # entered to the start and end dates of each period.  Data attributes (attached to each option element) are
+        # used to provide access to the start and end dates in ISO format, since they are easier to compare to than
+        # the localized date strings.
+        periodic_targets = PeriodicTarget.objects \
+            .filter(indicator=self.indicator) \
             .order_by('customsort', 'create_date', 'period')
+        data = {'data-start': {'': ''}, 'data-end': {'': ''}}
+        choices = []
+        for pt in periodic_targets:
+            data['data-start'].update({str(pt.id): pt.start_date})
+            data['data-end'].update({str(pt.id): pt.end_date})
+            choices.append((pt.id, str(pt)))
+        self.fields['periodic_target'].widget = DataAttributesSelect(data=data, choices=choices)
 
         self.fields['program2'].initial = self.program
         self.fields['program2'].label = _("Program")
