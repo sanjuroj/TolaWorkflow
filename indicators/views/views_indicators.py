@@ -1469,14 +1469,14 @@ class ProgramPage(ListView):
         indicator_count = indicators.count()
         scope_percents = {
             # TODO: placeholder stats
-            'low': 25,
-            'on_scope': 45,
-            'high': 30,
+            'low': 23,
+            'on_scope': 46,
+            'high': 31,
         }
         results_stats = {
             # TODO: placeholder stats
             'targets_defined': 35,
-            'reported_results': 45,
+            'reported_results': 87,
             'results_evidence': 50,
         }
 

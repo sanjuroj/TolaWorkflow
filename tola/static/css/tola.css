@@ -6736,16 +6736,12 @@ body.page_iptt_table {
 .gauge__labels--justified {
   justify-content: space-between; }
 
-.graphic__performance-band--above-target {
+.graphic__performance-band--above-target,
+.graphic__performance-band--below-target {
   background: #ffed99; }
 
 .graphic__performance-band--on-target {
-  background: #9ac933;
-  border-bottom: 1px solid #fff;
-  border-top: 1px solid #fff; }
-
-.graphic__performance-band--below-target {
-  background: #ffed99; }
+  background: #79AD00; }
 
 .graphic__tick-marks {
   display: flex;
@@ -6765,7 +6761,7 @@ body.page_iptt_table {
     border-top: 0.5px solid #fff; }
 
 .graphic__tank--filled {
-  background-color: #9ac933; }
+  background-color: #79AD00; }
 
 .gauge__value {
   color: #71757b;
