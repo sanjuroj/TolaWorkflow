@@ -19,19 +19,28 @@
         <aside class="program__status-gauges">
 
             <section class="program-gauge">
-                {% gauge_band scope_percents.high scope_percents.on_scope scope_percents.low %}
+                <a href="#" class="gauge__link">
+                    {% gauge_band scope_percents.high scope_percents.on_scope scope_percents.low %}
+                </a>
             </section>
 
             <section class="program-gauge">
-                {% gauge_tank results_stats.targets_defined 'indicators have targets defined' 'of indicators have no targets' %}
+                <a href="#" class="gauge__link">
+                    {% gauge_tank results_stats.targets_defined 'indicators have targets defined' 'of indicators have no targets' %}
+                </a>
+                </a>
             </section>
 
             <section class="program-gauge">
-                {% gauge_tank results_stats.reported_results 'indicators have reported results' 'of indicators have no results' %}
+                <a href="#" class="gauge__link">
+                    {% gauge_tank results_stats.reported_results 'indicators have reported results' 'of indicators have no results' %}
+                </a>
             </section>
 
             <div class="program-gauge">
-                {% gauge_tank results_stats.results_evidence 'results are backed up with evidence' 'of results are missing evidence' %}
+                <a href="#" class="gauge__link">
+                    {% gauge_tank results_stats.results_evidence 'results are backed up with evidence' 'of results are missing evidence' %}
+                </a>
             </div>
 
         </aside>

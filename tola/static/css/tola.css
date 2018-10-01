@@ -6718,6 +6718,18 @@ body.page_iptt_table {
   flex-direction: row;
   flex-grow: 1; }
 
+a.gauge__link {
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: stretch;
+  padding: 7.5px; }
+  a.gauge__link:hover {
+    border-color: #ffd100;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out; }
+
 .gauge__graphic {
   background-color: #cde499;
   display: flex;

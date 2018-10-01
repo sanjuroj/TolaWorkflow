@@ -60,6 +60,19 @@
     flex-direction: row;
     flex-grow: 1;
 }
+a.gauge__link {
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: stretch;
+    padding: $grid-gutter-width/4;
+    &:hover {
+        border-color: $yellow;
+        text-decoration: none;
+        @include transition($transition-base);
+    }
+}
 .gauge__graphic {
     background-color: $green-100;
     display: flex;
