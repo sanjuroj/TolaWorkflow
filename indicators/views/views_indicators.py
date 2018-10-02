@@ -564,14 +564,14 @@ class IndicatorUpdate(UpdateView):
                 try:
                     start_date = dateparser.parse(pt.get('start_date', None))
                     start_date = datetime.strftime(start_date, '%Y-%m-%d')
-                except ValueError:
+                except (ValueError, TypeError):
                     # raise ValueError("Incorrect data value")
                     start_date = None
 
                 try:
                     end_date = dateparser.parse(pt.get('end_date', None))
                     end_date = datetime.strftime(end_date, '%Y-%m-%d')
-                except ValueError:
+                except (ValueError, TypeError):
                     # raise ValueError("Incorrect data value")
                     end_date = None
 
@@ -647,7 +647,6 @@ class IndicatorUpdate(UpdateView):
                 "content": content,
                 "remove_missing_targts_link": remove_missing_targts_link
             }
-            print("remove_missing_targts_link={}".format(remove_missing_targts_link))
             return HttpResponse(json.dumps(data))
         else:
             messages.success(self.request, _('Success, Indicator Updated!'))
