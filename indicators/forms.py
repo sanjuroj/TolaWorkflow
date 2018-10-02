@@ -136,10 +136,9 @@ class CollectedDataForm(forms.ModelForm):
     date_collected = forms.DateField(
         widget=DatePicker.DateInput(format=locale_format),
         # TODO: this field outputs dates in non-ISO formats in Spanish & French
-        # input_formats=settings.DATE_INPUT_FORMATS, # no
         # We don't display a localized date in the Date Collected field,
         # and when set to true, it interferes with proper front-end date parsing through the formatDate function.
-        localize=False, # no
+        localize=False,
         required=True,
     )
 
@@ -197,7 +196,6 @@ class CollectedDataForm(forms.ModelForm):
             .filter(Q(owner=self.request.user) | Q(id=self.tola_table))
         self.fields['periodic_target'].label = _('Measure against target*')
         self.fields['achieved'].label = _('Actual value')
-        # self.clean_date_collected() # no
         self.fields['date_collected'].help_text = ' '
         self.fields['date_collected'].label = _('Date collected')
 

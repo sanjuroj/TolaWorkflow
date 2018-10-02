@@ -42,7 +42,6 @@
 
     $("#indicator_collecteddata_div").on("change", "#id_date_collected", function(e){
         // only validate periodicTarget dropdown if it is an existing record
-        // NOTE: This conditional was commented out for some reason but validatePeriodicTarget() was not
         if( parseInt(`{{object.id|safe}}`) > 0 ){
             validatePeriodicTarget(onlyPeriodic = true);
         }
@@ -121,7 +120,6 @@
         var start_date = new Date($(reporting_period_id).data("rptstart"));
         var end_date = new Date($(reporting_period_id).data("rptend"));
         var field = $("#id_date_collected").val();
-        // var field = formatDate($("#id_date_collected").val()); // nope
         var date_collected = new Date(field);
         if ($.isEmptyObject(field)) {
             $("#div_id_date_collected").addClass('has-error');
