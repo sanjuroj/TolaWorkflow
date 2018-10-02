@@ -149,12 +149,17 @@ a.gauge__link {
 
 .program-page__main {
     // contains .program-page__details and .indicators-list
+    @include make-row();
 }
 .program-page__details {
     // sidebar for .program-page__main
+    @include make-col-ready();
+    @include make-col(1,5);
 }
 .program-page__indicators {
     // contains an instance of .indicators-list
+    @include make-col-ready();
+    @include make-col(4,5);
 }
 .indicators-list {
     // standalone component!

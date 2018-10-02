@@ -6793,6 +6793,30 @@ a.gauge__link {
   color: #0645AD;
   font-size: 0.875rem; }
 
+.program-page__main {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px; }
+
+.program-page__details {
+  position: relative;
+  width: 100%;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+  flex: 0 0 20%;
+  max-width: 20%; }
+
+.program-page__indicators {
+  position: relative;
+  width: 100%;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+  flex: 0 0 80%;
+  max-width: 80%; }
+
 @media print {
   a[href]:after {
     content: none; } }
