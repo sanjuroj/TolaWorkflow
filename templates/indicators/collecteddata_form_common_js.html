@@ -160,10 +160,9 @@
             if (!pt_date_range || pt_date_range == null || pt_date_range == 'null'){
                 return;
             }
-            pt_date_range = pt_date_range[1].split('-');
             try {
-                var start_date = new Date(pt_date_range[0].trim());
-                var end_date = new Date(pt_date_range[1].trim());
+                var start_date = new Date($(this).data("start"));
+                var end_date = new Date($(this).data("end"));
                 var collected_date = new Date($("#id_date_collected").val().trim());
                 if (collected_date >= start_date && collected_date <= end_date) {
                     // deselect the currently selected option
