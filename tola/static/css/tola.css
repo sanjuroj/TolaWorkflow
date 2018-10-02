@@ -6799,7 +6799,7 @@ a.gauge__link {
   margin-right: -15px;
   margin-left: -15px; }
 
-.program-page__details {
+.program-page__sidebar {
   position: relative;
   width: 100%;
   min-height: 1px;
@@ -6807,6 +6807,31 @@ a.gauge__link {
   padding-left: 15px;
   flex: 0 0 20%;
   max-width: 20%; }
+
+.sidebar__detail {
+  padding-bottom: 30px; }
+  .sidebar__detail + .sidebar__detail {
+    border-top: 1px solid #d2d5d9;
+    padding-top: 15px; }
+  .sidebar__detail h3 {
+    font-size: inherit;
+    text-transform: uppercase; }
+
+.pinned-reports {
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 0; }
+
+.pinned-report a {
+  color: inherit;
+  display: block;
+  padding-bottom: 15px;
+  padding-top: 15px; }
+
+.pinned-report h4 {
+  color: inherit;
+  font-size: inherit;
+  margin-bottom: 0; }
 
 .program-page__indicators {
   position: relative;

@@ -47,18 +47,44 @@
     {% endif %}
 
 <div class="program-page__main">
-    <div class="program-page__details">
-        <section class="program-details__details">
-            <h4>Program Details</h4>
+    <div class="program-page__sidebar">
+        <section class="sidebar__detail">
+            <h3>Program Details</h3>
+            <p>
+                <a href="#">Indicator Plan</a>
+            </p>
         </section>
-        <section class="program-details__documents">
-            <h4>Documents</h4>
+        <section class="sidebar__detail">
+            <h3>Documents</h3>
+            <p>
+                <a href="#">View Program Documents</a>
+            </p>
+            <a href="#" class="btn-add"><i class="fas fa-plus-circle"></i> Add Document</a>
         </section>
-        <section class="program-details__sites">
-            <h4>Sites</h4>
+        <section class="sidebar__detail">
+            <h3>Sites</h3>
+            <p>
+                <a href="#">View Program Sites</a>
+            </p>
+            <a href="#" class="btn-add"><i class="fas fa-plus-circle"></i> Add Site</a>
         </section>
-        <section class="program-details__pinned-reports">
-            <h4>Pinned Reports</h4>
+        <section class="sidebar__detail">
+            <h3>Pinned Reports</h3>
+            <ul class="pinned-reports">
+                <li class="pinned-report">
+                    <a href="#">
+                        <h4>IPTT: Recent Progress for All Indicators</h4>
+                    Jun 1, 2018 – Jul 31, 2018
+                    </a>
+                </li>
+                <li class="pinned-report">
+                    <a href="#">
+                        <h4>IPTT: Donor indicators tracked quarterly</h4>
+                        Jan 1, 2018 – Mar 31, 2019
+                    </a>
+                </li>
+            </ul>
+            <a href="#" class="btn-add"><i class="fas fa-plus-circle"></i> Create an IPTT Report</a>
         </section>
     </div>
     <div id="div-id-indicator-list" class="indicator-list program-page__indicators">
