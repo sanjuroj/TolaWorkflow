@@ -21,19 +21,20 @@ build
 # Logs:
 *.log
 
+# TODO Moved to test/js/.gitignore
 # Testing noise
-node_modules/
-test/js/*.jar
-test/js/chromedriver
-test/js/config.json
-test/js/doc
-test/js/drivers
-test/js/errorShots
-test/js/geckodriver
-test/js/logs
-test/js/node_modules
-test/js/allure-results/
-test/js/allure-report/
+#node_modules/
+#test/js/*.jar
+#test/js/chromedriver
+#test/js/config.json
+#test/js/doc
+#test/js/drivers
+#test/js/errorShots
+#test/js/geckodriver
+#test/js/logs
+#test/js/node_modules
+#test/js/allure-results/
+#test/js/allure-report/
 
 #allvritualenv
 .env/
