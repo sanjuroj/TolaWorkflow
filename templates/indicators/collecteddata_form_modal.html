@@ -104,7 +104,7 @@
             {{ hidden_field }}
         {% endfor %}
 
-        <h2>{%  trans 'Results' %}</legend>
+        <h2>{%  trans 'Results' %}</h2>
         <h3>
           {% if object.indicator.levels %}{{ object.indicator.levels }} {% trans "indicator" %}: {% endif %}
           {{ object.indicator.name|truncatechars:300 }}
