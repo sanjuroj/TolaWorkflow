@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-12 10:29-0700\n"
+"POT-Creation-Date: 2018-10-02 13:19-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,8 +18,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: indicators/forms.py:88 indicators/forms.py:124 indicators/forms.py:168
-#: indicators/forms.py:231 indicators/models.py:85 indicators/models.py:485
+#: indicators/forms.py:91 indicators/forms.py:127 indicators/forms.py:188
+#: indicators/forms.py:251 indicators/models.py:85 indicators/models.py:485
 #: indicators/models.py:730 templates/indicators/indicator_create.html:82
 #: templates/indicators/report.html:94
 #: templates/workflow/documentation_popup_list.html:47
@@ -29,11 +29,11 @@ msgstr ""
 msgid "Program"
 msgstr "Programa"
 
-#: indicators/forms.py:98
+#: indicators/forms.py:101
 msgid "Indicator Name"
 msgstr "Nombre del indicador"
 
-#: indicators/forms.py:129 indicators/forms.py:177 indicators/models.py:528
+#: indicators/forms.py:132 indicators/forms.py:197 indicators/models.py:528
 #: indicators/models.py:615 indicators/models.py:715
 #: templates/indicators/disaggregation_print.html:53
 #: templates/indicators/disaggregation_report.html:27
@@ -45,84 +45,84 @@ msgstr "Nombre del indicador"
 msgid "Indicator"
 msgstr "Indicador"
 
-#: indicators/forms.py:151 templates/workflow/documentation_list.html:89
+#: indicators/forms.py:160 templates/workflow/documentation_list.html:89
 #: templates/workflow/projectdashboard_list.html:12
 #: templates/workflow/projectdashboard_list.html:17 workflow/models.py:1209
 msgid "Project"
 msgstr "Proyecto"
 
-#: indicators/forms.py:185 templates/workflow/siteprofile_form.html:3
+#: indicators/forms.py:205 templates/workflow/siteprofile_form.html:3
 #: templates/workflow/siteprofile_form.html:4
 #: templates/workflow/siteprofile_form.html:14 workflow/models.py:41
 #: workflow/models.py:1156
 msgid "Site"
 msgstr "Sitio"
 
-#: indicators/forms.py:188
+#: indicators/forms.py:208
 msgid "Measure against target*"
 msgstr "Medida contra objetivo*"
 
-#: indicators/forms.py:189
+#: indicators/forms.py:209
 msgid "Actual value"
 msgstr "Valor actual"
 
-#: indicators/forms.py:191 indicators/models.py:733
+#: indicators/forms.py:211 indicators/models.py:733
 msgid "Date collected"
 msgstr "Fecha de recoplicación"
 
-#: indicators/forms.py:202
+#: indicators/forms.py:222
 msgid "Years"
 msgstr "Años"
 
-#: indicators/forms.py:203
+#: indicators/forms.py:223
 msgid "Semi-annual periods"
 msgstr "Periodos semestrales"
 
-#: indicators/forms.py:204
+#: indicators/forms.py:224
 msgid "Tri-annual periods"
 msgstr "Períodos trienales"
 
-#: indicators/forms.py:205
+#: indicators/forms.py:225
 msgid "Quarters"
 msgstr "Trimestres"
 
-#: indicators/forms.py:206
+#: indicators/forms.py:226
 msgid "Months"
 msgstr "Meses"
 
-#: indicators/forms.py:212
+#: indicators/forms.py:232
 msgid "Show all"
 msgstr "Mostrar todo"
 
-#: indicators/forms.py:213
+#: indicators/forms.py:233
 msgid "Most recent"
 msgstr "Más reciente"
 
-#: indicators/forms.py:232
+#: indicators/forms.py:252
 msgid "Time periods"
 msgstr "Períodos de tiempo"
 
-#: indicators/forms.py:233
+#: indicators/forms.py:253
 msgid "enter a number"
 msgstr "ingrese un número"
 
-#: indicators/forms.py:234
+#: indicators/forms.py:254
 msgid "Target periods"
 msgstr "Periodos objetivo"
 
-#: indicators/forms.py:260
+#: indicators/forms.py:280
 msgid "Levels"
 msgstr "Niveles"
 
-#: indicators/forms.py:261
+#: indicators/forms.py:281
 msgid "Types"
 msgstr "Tipos"
 
-#: indicators/forms.py:262 workflow/models.py:874
+#: indicators/forms.py:282 workflow/models.py:874
 msgid "Sectors"
 msgstr "Sectores"
 
-#: indicators/forms.py:263 templates/base.html:88 templates/index.html:439
+#: indicators/forms.py:283 templates/base.html:88 templates/index.html:439
 #: templates/workflow/site_indicatordata.html:5
 #: templates/workflow/site_profile_list.html:4
 #: templates/workflow/site_profile_list.html:5
@@ -133,7 +133,7 @@ msgstr "Sectores"
 msgid "Sites"
 msgstr "Sitios"
 
-#: indicators/forms.py:265 templates/base.html:81
+#: indicators/forms.py:285 templates/base.html:81
 #: templates/indicators/collecteddata_form.html:5
 #: templates/indicators/filter.html:65 templates/indicators/grid_report.html:8
 #: templates/indicators/home.html:5 templates/indicators/home.html:27
@@ -141,15 +141,15 @@ msgstr "Sitios"
 msgid "Indicators"
 msgstr "Indicadores"
 
-#: indicators/forms.py:306
+#: indicators/forms.py:326
 msgid "START"
 msgstr "COMIENZO"
 
-#: indicators/forms.py:307
+#: indicators/forms.py:327
 msgid "END"
 msgstr "FIN"
 
-#: indicators/forms.py:312
+#: indicators/forms.py:332
 msgid "TARGET PERIODS"
 msgstr "PERIODOS OBJETIVO"
 
@@ -675,23 +675,23 @@ msgid "Success, Indicator Created!"
 msgstr "¡Éxito, indicador creado!"
 
 #: indicators/views/views_indicators.py:520
-#: indicators/views/views_indicators.py:774
+#: indicators/views/views_indicators.py:773
 msgid "Invalid Form"
 msgstr "Forma inválida"
 
-#: indicators/views/views_indicators.py:653
+#: indicators/views/views_indicators.py:652
 msgid "Success, Indicator Updated!"
 msgstr "¡Éxito, indicador actualizado!"
 
-#: indicators/views/views_indicators.py:673
+#: indicators/views/views_indicators.py:672
 msgid "Success, Indicator Deleted!"
 msgstr "¡Éxito, indicador eliminado!"
 
-#: indicators/views/views_indicators.py:825
+#: indicators/views/views_indicators.py:824
 msgid "Success, Data Created!"
 msgstr "¡Éxito, datos creados!"
 
-#: indicators/views/views_indicators.py:946
+#: indicators/views/views_indicators.py:945
 msgid "Success, Data Updated!"
 msgstr "¡Éxito, datos actualizados!"
 
@@ -865,7 +865,7 @@ msgid "Public Dashboards"
 msgstr "Tableros públicos"
 
 #: templates/form_guidance.html:4 templates/form_guidance.html:7
-#: templates/indicators/indicator_create.html:95
+#: templates/indicators/indicator_create.html:101
 msgid "Help"
 msgstr "Ayuda"
 
@@ -921,7 +921,7 @@ msgstr "Objetivos de KPI frente a los datos reales"
 
 #: templates/index.html:85 templates/indicators/collected_data_table.html:14
 #: templates/indicators/collected_data_table.html:37
-#: templates/indicators/collecteddata_form_modal.html:155
+#: templates/indicators/collecteddata_form_modal.html:107
 msgid "Results"
 msgstr "Resultados"
 
@@ -931,10 +931,10 @@ msgid "Targets"
 msgstr "Objetivos"
 
 #: templates/index.html:102 templates/index.html:248
-#: templates/indicators/collecteddata_form_modal.html:300
-#: templates/indicators/collecteddata_form_modal.html:335
-#: templates/indicators/collecteddata_form_modal.html:364
-#: templates/indicators/collecteddata_form_modal.html:395
+#: templates/indicators/collecteddata_form_modal.html:252
+#: templates/indicators/collecteddata_form_modal.html:287
+#: templates/indicators/collecteddata_form_modal.html:316
+#: templates/indicators/collecteddata_form_modal.html:347
 #: templates/indicators/indicator_graphs.html:56
 #: templates/indicators/tva_print.html:53
 #: templates/indicators/tva_report.html:26
@@ -1045,7 +1045,7 @@ msgstr "Fecha recopilado"
 
 #: templates/indicators/collected_data_report_table.html:6
 #: templates/indicators/collected_data_table.html:38
-#: templates/indicators/collecteddata_form_modal.html:247
+#: templates/indicators/collecteddata_form_modal.html:199
 msgid "Evidence"
 msgstr "Evidencia"
 
@@ -1190,6 +1190,11 @@ msgstr ""
 "Esta fecha queda fuera del rango de sus períodos objetivo. Puede cambiar la "
 "fecha o"
 
+#: templates/indicators/collecteddata_form_common_js.html:81
+#| msgid "Please select a valid program."
+msgid "Please select a target"
+msgstr "Por favor seleccione un objetivo"
+
 #: templates/indicators/collecteddata_form_common_js.html:100
 #: templates/indicators/collecteddata_form_common_js.html:106
 msgid "Please enter a number with no letters or symbols."
@@ -1207,31 +1212,41 @@ msgstr "Por favor complete este campo."
 msgid "Please enter a valid date."
 msgstr "Por favor ingrese una fecha válida."
 
-#: templates/indicators/collecteddata_form_modal.html:157
+#: templates/indicators/collecteddata_form_common_js.html:134
+#| msgid "Please select a valid report type."
+msgid "Please select a date between"
+msgstr "Por favor seleccione una fecha entre"
+
+#: templates/indicators/collecteddata_form_common_js.html:134
+#| msgid "and "
+msgid "and"
+msgstr "y "
+
+#: templates/indicators/collecteddata_form_modal.html:109
 #: templates/indicators/indicator_form.html:13
 msgid "indicator"
 msgstr "indicador"
 
-#: templates/indicators/collecteddata_form_modal.html:272
+#: templates/indicators/collecteddata_form_modal.html:224
 msgid "Import evidence from TolaTables"
 msgstr "Importar evidencia de tablas Tola"
 
-#: templates/indicators/collecteddata_form_modal.html:294
+#: templates/indicators/collecteddata_form_modal.html:246
 msgid "Standard disaggregations"
 msgstr "Desagregaciones estándar"
 
-#: templates/indicators/collecteddata_form_modal.html:299
-#: templates/indicators/collecteddata_form_modal.html:334
-#: templates/indicators/collecteddata_form_modal.html:363
-#: templates/indicators/collecteddata_form_modal.html:394
+#: templates/indicators/collecteddata_form_modal.html:251
+#: templates/indicators/collecteddata_form_modal.html:286
+#: templates/indicators/collecteddata_form_modal.html:315
+#: templates/indicators/collecteddata_form_modal.html:346
 msgid "Disaggregation level"
 msgstr "Nivel de desagregación"
 
-#: templates/indicators/collecteddata_form_modal.html:318
+#: templates/indicators/collecteddata_form_modal.html:270
 msgid "Standard disaggregation levels not entered"
 msgstr "Niveles de desagregación estándar no ingresados"
 
-#: templates/indicators/collecteddata_form_modal.html:319
+#: templates/indicators/collecteddata_form_modal.html:271
 msgid ""
 "Standard disaggregations are entered by the administrator for the entire "
 "organizations.  If you are not seeing any here, please contact your system "
@@ -1241,30 +1256,30 @@ msgstr ""
 "organizaciones. Si no ve ninguna aquí, contáctese con el administrador del "
 "sistema."
 
-#: templates/indicators/collecteddata_form_modal.html:329
+#: templates/indicators/collecteddata_form_modal.html:281
 msgid "New disaggregations"
 msgstr "Nuevas desagregaciones"
 
-#: templates/indicators/collecteddata_form_modal.html:358
+#: templates/indicators/collecteddata_form_modal.html:310
 msgid "Existing disaggregations"
 msgstr "Desagregaciones existentes"
 
-#: templates/indicators/collecteddata_form_modal.html:389
+#: templates/indicators/collecteddata_form_modal.html:341
 msgid "Existing standard disaggregations"
 msgstr "Desagregaciones estándar existentes"
 
-#: templates/indicators/collecteddata_form_modal.html:422
+#: templates/indicators/collecteddata_form_modal.html:374
 msgid "Delete results"
 msgstr "Eliminar resultados"
 
-#: templates/indicators/collecteddata_form_modal.html:428
+#: templates/indicators/collecteddata_form_modal.html:380
 #: templates/indicators/indicator_create.html:92
 #: templates/indicators/indicator_reportingperiod_modal.html:100
 #: templates/workflow/documentation_form.html:263
 msgid "Save changes"
 msgstr "Guardar cambios"
 
-#: templates/indicators/collecteddata_form_modal.html:429
+#: templates/indicators/collecteddata_form_modal.html:381
 #: templates/indicators/indicator_reportingperiod_modal.html:101
 #: templates/indicators/iptt_filter_form.html:134
 #: templates/workflow/documentation_form.html:268 tola/forms.py:130
@@ -1510,7 +1525,7 @@ msgstr ""
 "Escriba el nombre del indicador en el cuadro de arriba para buscar, "
 "comenzando con el tipo, luego el nivel y luego el título."
 
-#: templates/indicators/indicator_create.html:95
+#: templates/indicators/indicator_create.html:98
 #, fuzzy
 #| msgid "Form Guidance"
 msgid "Form Help/Guidance"
