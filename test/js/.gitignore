@@ -5,9 +5,9 @@ config.*
 *.jar
 *.zip
 node_modules/
-test/js/doc
-test/js/errorShots
-test/js/logs
-test/js/allure-results/
-test/js/allure-report/
+doc/
+errorShots/
+logs/
+
+
 
