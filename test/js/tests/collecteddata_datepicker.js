@@ -34,38 +34,39 @@ describe("Collected data datepicker", function () {
             Navbar.Indicators.click()
             Util.waitForAjax()
 
-            Util.dp('// Click the second program in the list')
+            // Click the second program in the list
             let progButtons =  TargetsTab.getProgramIndicatorButtons()
-            let progButton = progButtons[2]
+            let progButton = progButtons[1]
             progButton.click()
             Util.waitForAjax()
 
-            Util.dp('// Click the first indicator')
+            // Click the first indicator
             let indicators = browser.$$('span.indicator_name')
-            if (indicators.length > 0) {
-                indicators[0].click()
-            }
+            expect(indicators.length > 0)
+            indicators[0].click()
             Util.waitForAjax()
 
-            Util.dp('// Click the Add results button')
-            let addResults = browser.$$('a[href*="/indicators/collecteddata_add/"]')
-            let button
-            if (addResults.length > 0) {
-                button = addResults[0]
-                button.scroll()
-                button.click()
-            }
+            // Click the Add results button
+            let addResults = browser.$('a[href*="/indicators/collecteddata_add/"]')
+            addResults.waitForVisible()
+            // expect(addResults !== undefined)
+            // expect(addResults !== null)
+            // expect(addResults.text === 'Add results')
+            addResults.click()
             Util.waitForAjax()
 
-            Util.dp('// Find the datepicker and confirm it is blank')
-            let datepicker = Datepicker()
-            let curVal = datepicker.currentDatepickerDate
-            Util.dp('curval='+curval)
-            expect(val === '')
+            // Find the datepicker and confirm it is blank
+            browser.$('div#div_id_date_collected').scroll()
+            let curVal = browser.$('input#id_date_collected').getText()
+            expect(curVal === '')
+            browser.$('input#id_date_collected').focus( )
+
 
             // Click into the datepicker and confirm the date remains blank
 
             // Move to another control
+
+            // Manually close datepicker window
         })
 
  /*
