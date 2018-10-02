@@ -7114,11 +7114,9 @@ select.listoption_filters {
     opacity: 1; } }
 
 .btn-add {
-  color: #81bc00 !important;
-  padding-left: 0.625rem;
-  padding-right: 0.625rem; }
+  color: #689400 !important; }
   .btn-add:hover {
-    color: #689400; }
+    color: #506e00; }
 
 .page-title {
   margin-bottom: 1rem;

@@ -391,12 +391,13 @@ select.listoption_filters {
 }
 
 // "add a thing" buttons
+// Leave off the 'btn' parent class for a non-bold, non-padded version
 .btn-add {
-    color: $green-450 !important;
-    padding-left: 0.625rem;
-    padding-right: 0.625rem;
+    color: $green-600 !important;
+    //padding-left: 0.625rem;
+    //padding-right: 0.625rem;
     &:hover {
-        color: $green-600;
+        color: $green-700;
     }
 }
 
