@@ -42,9 +42,9 @@
 
     $("#indicator_collecteddata_div").on("change", "#id_date_collected", function(e){
         // only validate periodicTarget dropdown if it is an existing record
-        // if( parseInt(`{{object.id|safe}}`) > 0 ){
+        if( parseInt(`{{object.id|safe}}`) > 0 ){
             validatePeriodicTarget(onlyPeriodic = true);
-        // }
+        }
         validateDateCollected();
     });
 

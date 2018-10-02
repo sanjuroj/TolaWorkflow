@@ -1,4 +1,5 @@
 import dateparser
+from django.conf import settings
 from datetime import datetime
 from functools import partial
 from django.core.exceptions import ValidationError
@@ -6,6 +7,7 @@ from django.db.models import Q
 from django import forms
 from django.forms.fields import DateField
 from django.utils.translation import ugettext_lazy as _
+from django.utils import formats, translation
 from workflow.models import (
     Program, SiteProfile, Documentation, ProjectComplete, TolaUser, Sector
 )
@@ -16,6 +18,7 @@ from indicators.models import (
     Level, IndicatorType
 )
 
+locale_format = formats.get_format('DATE_INPUT_FORMATS', lang=translation.get_language())[-1]
 
 class DatePicker(forms.DateInput):
     """
@@ -130,8 +133,14 @@ class CollectedDataForm(forms.ModelForm):
         )
     )
     target_frequency = forms.CharField()
-    date_collected = forms.DateField(widget=DatePicker.DateInput(),
-                                     required=True)
+    date_collected = forms.DateField(
+        widget=DatePicker.DateInput(format=locale_format),
+        # TODO: this field outputs dates in non-ISO formats in Spanish & French
+        # We don't display a localized date in the Date Collected field,
+        # and when set to true, it interferes with proper front-end date parsing through the formatDate function.
+        localize=False,
+        required=True,
+    )
 
     def __init__(self, *args, **kwargs):
         # instance = kwargs.get('instance', None)
