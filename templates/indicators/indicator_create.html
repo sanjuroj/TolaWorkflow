@@ -92,7 +92,14 @@
                     <button type="submit" class="btn btn-primary">{% trans "Save changes" %}</button>
                 </div>
                 <div class="">
-                    <a onclick="newPopup('https://docs.google.com/document/d/126B9zmnMhS-KYrmoyswrG2PGglIJPtkSVhkDX4NsMoM/edit','{% trans "Form Help/Guidance"|escapejs %}'); return false;" href="#" class="btn btn-link help-link px-1">{% trans "Help" %}</a>
+                    <a
+                        onclick="newPopup(
+                                'https://learn.mercycorps.org/index.php/TOLA:Section_05/en#b._TolaActivity_Indicator_Planning_Form_Guides',
+                                '{% trans "Form Help/Guidance"|escapejs %}'); return false;"
+                        href="#"
+                        class="btn btn-link help-link px-1">
+                        {% trans "Help" %}
+                    </a>
                 </div>
             </div>
         </form>
