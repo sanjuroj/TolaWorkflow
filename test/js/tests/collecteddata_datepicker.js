@@ -11,7 +11,7 @@ describe("Collected data datepicker", function () {
     this.timeout(0)
 
     before(function () {
-//        browser.windowHandleMaximize()
+        browser.windowHandleMaximize()
         let parms = Util.readConfig()
 
         LoginPage.open(parms.baseurl)
@@ -21,7 +21,7 @@ describe("Collected data datepicker", function () {
             LoginPage.login.click()
         } else if (parms.baseurl.includes('localhost')) {
             LoginPage.googleplus.click()
-            if (LoginPage.title != 'TolaActivity') {
+            if (LoginPage.title != 'Dashboard | TolaActivity') {
                 LoginPage.gUsername = parms.username + '@mercycorps.org'
                 LoginPage.gPassword = parms.password
             }
@@ -34,31 +34,32 @@ describe("Collected data datepicker", function () {
             Navbar.Indicators.click()
             Util.waitForAjax()
 
-            // Click the second program in the list
+            Util.dp('// Click the second program in the list')
             let progButtons =  TargetsTab.getProgramIndicatorButtons()
             let progButton = progButtons[2]
             progButton.click()
             Util.waitForAjax()
 
-            // Click the first indicator 
+            Util.dp('// Click the first indicator')
             let indicators = browser.$$('span.indicator_name')
             if (indicators.length > 0) {
                 indicators[0].click()
             }
             Util.waitForAjax()
 
-            // Click the Add results button
+            Util.dp('// Click the Add results button')
             let addResults = browser.$$('a[href*="/indicators/collecteddata_add/"]')
             let button
             if (addResults.length > 0) {
                 button = addResults[0]
+                button.scroll()
+                button.click()
             }
-            button.click()
             Util.waitForAjax()
 
-            // Find the datepicker and confirm it is blank
-            let datepicker = Datepicker
-            let curVal = datepicker.getValue()
+            Util.dp('// Find the datepicker and confirm it is blank')
+            let datepicker = Datepicker()
+            let curVal = datepicker.currentDatepickerDate
             Util.dp('curval='+curval)
             expect(val === '')
 
