@@ -1,8 +1,26 @@
 // Program page and Program Status components
 // May need to split into more components e.g. "gauges"
 
+@mixin gauge-bg() {
+    background-image: url('/static/img/gauge-bg.svg');
+    background-position:  bottom left;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
 .program__calendar-complete {
-    // what % of the calendar period is complete
+    color: $success;
+    display: flex;
+    align-items: center;
+    p {
+        line-height: 1.1;
+        margin: 0;
+    }
+    .fa-calendar {
+        font-size: 42px;
+        margin-right: $grid-gutter-width/4;
+    }
+
 }
 .program__status-gauges {
     // contains .status-gauge components
@@ -21,7 +39,15 @@
     flex-direction: column;
     justify-content: stretch;
     @include make-col-ready();
-    @include make-col(3);
+    @include make-col(1,4);
+    @include media-breakpoint-down(md) {
+        @include make-col(1,1);
+        & + & {
+            border-top: 1px solid $gray-300;
+            margin-top: $grid-gutter-width/2;
+            padding-top: $grid-gutter-width/2;
+        }
+    }
 }
 
 // Gauges
@@ -34,12 +60,28 @@
     flex-direction: row;
     flex-grow: 1;
 }
+a.gauge__link {
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: stretch;
+    padding: $grid-gutter-width/4;
+    &:hover {
+        border-color: $yellow;
+        text-decoration: none;
+        @include transition($transition-base);
+    }
+}
 .gauge__graphic {
-    // TODO: placeholder for graphic
-    // may contain subelements?
-    background: $green-300;
+    background-color: $green-100;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     margin-right: $grid-gutter-width/2;
     min-width: 40px;
+    min-height: 80px;
+    position: relative;
 }
 .gauge__labels {
     // wraps labels on the same row as the gauge__graphic
@@ -47,27 +89,60 @@
     flex-direction: column;
     justify-content: flex-end;
 }
-.gauge__labels--centered {
-    justify-content: center;
+.gauge__labels--justified {
+    justify-content: space-between;
 }
 .gauge__graphic--performance-band {
-    // indicators above/below track
+    // contains graphic__performance-band--* subcomponents
+}
+.graphic__performance-band--above-target,
+.graphic__performance-band--below-target {
+    background: $yellow-200;
+}
+.graphic__performance-band--on-target {
+    background: $green-550;
+    //border-bottom: 1px solid $white;
+    //border-top: 1px solid $white;
 }
 .gauge__graphic--tank {
-    // shows x% full
+}
+.graphic__tick-marks {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.graphic__tick {
+    flex-grow: 1;
+    flex-shrink: 0;
+    & + & {
+        border-top: 0.5px solid $white;
+    }
+}
+.graphic__tank--filled {
+    background-color: $green-550;
 }
 .gauge__value {
-    color: $gray-500;
+    color: $gray-600;
     font-size: $font-size-base * 2;
 }
 .gauge__label {
     color: $black;
+    margin: 0;
     text-transform: uppercase;
 }
 .gauge__detail {
+    color: $blue;
     font-size: $font-size-sm;
+    margin-top: $grid-gutter-width/2;
 }
 .gauge__label--small {
+    color: $blue;
     font-size: $font-size-sm;
 }
 

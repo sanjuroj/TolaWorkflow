@@ -97,3 +97,23 @@ def hash(obj, attr):
     else:
         return None
 
+
+@register.inclusion_tag('indicators/tags/gauge-tank.html')
+def gauge_tank(filled, label, detail):
+    return {
+        'filled': filled,
+        'not_filled': 100 - filled,
+        'label': label,
+        'detail': detail,
+        'ticks': list(range(1,11)),
+    }
+
+
+@register.inclusion_tag('indicators/tags/gauge-band.html')
+def gauge_band(high, on_scope, low):
+    return {
+        'high': high,
+        'on_scope': on_scope,
+        'low': low,
+        'ticks': list(range(1,11)),
+    }

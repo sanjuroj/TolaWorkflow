@@ -35,9 +35,10 @@ $green_200: #b3d766; // hsl(79,59,62)   // Same as MC Palette $green_60
 $green-300: #9ac933; // hsl(79,60,49)   // Same as MC Palette $green_80
 $green-450: #81bc00; // hsl(79,100,37)  // Same as MC Palette $green_100_hover
 $green-500: #84bd00; // hsl(78,100,37)  // Same as MC Palette $green_100  // was #81bc00
-$green-600: #689400; // hsl(78,100,29)
+$green-550: #79AD00; // hsl(78,100,67)
+$green-600: #689400; // hsl(78,100,58)
 $green-700: #506e00; // hsl(76,100,22)
-$green: $green-700;
+$green: $green-550;
 
 // Yellow
 $yellow-100: #fff6cc; // hsl(49,100,90)  // same as MC palette $yellow_20
@@ -95,7 +96,6 @@ $indigo:  #6610f2;
 $purple:  #6f42c1;
 $pink:    #e83e8c;
 $orange:  #fd7e14;
-$green:   #28a745;
 $cyan:    #17a2b8;
 
 $colors: () !default;

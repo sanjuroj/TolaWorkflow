@@ -1,0 +1,10 @@
+// Page regions and sub-regions
+
+.region-header {
+    // contains page-title and related elements
+    @include media-breakpoint-up(sm) {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+    }
+}
