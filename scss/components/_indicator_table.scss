@@ -1,0 +1,15 @@
+// Indicator table on the Indicators page and Program page
+.indicators-list { // the table itself
+}
+
+// Potentially global styles
+.table-header { // tr
+    th {
+        // inherits bold
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+}
+.is-highlighted {
+    background: $yellow-100;
+}

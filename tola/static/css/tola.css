@@ -6339,6 +6339,13 @@ a.gauge__link--small {
   color: #0645AD;
   font-size: 0.875rem; }
 
+.table-header th {
+  text-transform: uppercase;
+  white-space: nowrap; }
+
+.is-highlighted {
+  background: #fff6cc; }
+
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
   color: #71757b !important;

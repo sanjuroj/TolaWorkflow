@@ -14,17 +14,17 @@ $(document).ready(function() {
 });
 </script>
 
-<table class="table hiddenTable">
-    <tr>
-        <th class="text-uppercase text-nowrap" id="id_indicator_name_col_header">{% trans "Indicator" %}</th>
-        <th class="text-uppercase text-nowrap" id="id_indicator_buttons_col_header">&nbsp;</th>
-        <th class="text-uppercase text-nowrap" id="id_indicator_level_col_header">{% trans "Level" %}</th>
-        <th class="text-uppercase text-nowrap" id="id_indicator_unit_col_header">{% trans "Unit of measure" %}</th>
-        <th class="text-uppercase text-right text-nowrap" id="id_indicator_baseline_col_header">{% trans "Baseline" %}</th>
-        <th class="text-uppercase ttext-right ext-nowrap" id="id_indicator_target_col_header">{% trans "Target" %}</th>
+<table class="table hiddenTable indicators-list"> {# hiddenTable is used by js #}
+    <tr class="table-header">
+        <th class="" id="id_indicator_name_col_header">{% trans "Indicator" %}</th>
+        <th class="" id="id_indicator_buttons_col_header">&nbsp;</th>
+        <th class="" id="id_indicator_level_col_header">{% trans "Level" %}</th>
+        <th class="" id="id_indicator_unit_col_header">{% trans "Unit of measure" %}</th>
+        <th class="text-right" id="id_indicator_baseline_col_header">{% trans "Baseline" %}</th>
+        <th class="text-right" id="id_indicator_target_col_header">{% trans "Target" %}</th>
     </tr>
     {% for indicator in indicators %}
-    <tr class="indicator_toggle_parent" id = "id_indicator_{{ indicator.id }}" {% if indicator.just_created %} style="background-color: lightyellow;" {% endif %} >
+    <tr class="indicator_toggle_parent {% if indicator.just_created %}is-highlighted{% endif  %}" id = "id_indicator_{{ indicator.id }}">
         <td id="id_indicator_name_{{ indicator.id }}">
             <a
                 id="id_indicator_data_count_btn_{{ indicator.id }}"
