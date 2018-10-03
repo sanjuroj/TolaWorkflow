@@ -33,9 +33,9 @@ describe("Collected data datepicker", function () {
       Navbar.Indicators.click()
       Util.waitForAjax()
 
-      // Click the second program in the list
+      // Click the third program in the list
       let progButtons = TargetsTab.getProgramIndicatorButtons()
-      let progButton = progButtons[1]
+      let progButton = progButtons[2]
       progButton.click()
       Util.waitForAjax()
 
@@ -73,29 +73,24 @@ describe("Collected data datepicker", function () {
     })
 
     it('closes the datepicker window after selecting a date', function () {
-      // Open indicators page
       Navbar.Indicators.click()
       Util.waitForAjax()
 
-      // Click the second program in the list
       let progButtons = TargetsTab.getProgramIndicatorButtons()
       let progButton = progButtons[2]
       progButton.click()
       Util.waitForAjax()
 
-      // Click the first indicator
       let indicators = browser.$$('span.indicator_name')
       if (indicators.length > 0) {
         indicators[0].click()
       }
       Util.waitForAjax()
 
-      // Click the Add results button
       let addResults = browser.$('a[href*="/indicators/collecteddata_add/"]')
       addResults.waitForVisible()
       addResults.click()
 
-      // Wait for the datepicker to appear
       if (!browser.isVisible('div#div_id_date_collected')) {
         browser.waitForVisible('div#div_id_date_collected')
       }
@@ -108,38 +103,39 @@ describe("Collected data datepicker", function () {
       }
       browser.$('td.ui-datepicker-today').click()
 
-      // Don't care about the actual value -- that's the next test--
-      // just that it's changed.
+      // Don't care about the value, just that it changed
       let curVal = browser.$('input#id_date_collected').getValue()
       expect(curVal !== '')
-      // This test just confirms the datepicker goes away
+
+      // Pop up should disappear after selecting a date
       expect(!browser.isVisible('div#div_id_date_collected'))
 
-      // Manually close collected data modal
       browser.$('div#indicator_collecteddata_div button.close').click()
+      Util.waitForAjax()
     })
 
-    /*
-            it('chosen date appears in text box datepicker closes)
-            it('assigns given value to correct period if program lifetime includes date (annual)')
-            it('assigns given value to correct period if program lifetime includes date (semiannual)')
-            it('assigns given value to correct period if program lifetime includes date (triannual)')
-            it('assigns given value to correct period if program lifetime includes date (quarterly)')
-            it('assigns given value to correct period if program lifetime includes date (monthly)')
-            it('displays warning message if given date is outside program lifetime (all target periods)')
-            it('does not do the hokey-pokey')
-          })
-
-          describe('using keyed-in dates', function () {
-            it('closes the datepicker window after entering a date')
-            it('chosen date appears in text box datepicker closes)
-            it('assigns given value to correct period if program lifetime includes date (annual)')
-            it('assigns given value to correct period if program lifetime includes date (semiannual)')
-            it('assigns given value to correct period if program lifetime includes date (triannual)')
-            it('assigns given value to correct period if program lifetime includes date (quarterly)')
-            it('assigns given value to correct period if program lifetime includes date (monthly)')
-            it('displays warning message if given date is outside program lifetime (all target periods)')
-            it('does not do the hokey-pokey')
-    */
+    it.skip('chosen date appears in text box datepicker closes')
+    it.skip('assigns given value to correct period if program lifetime includes date (annual)')
+    it.skip('assigns given value to correct period if program lifetime includes date (semiannual)')
+    it.skip('assigns given value to correct period if program lifetime includes date (triannual)')
+    it.skip('assigns given value to correct period if program lifetime includes date (quarterly)')
+    it.skip('assigns given value to correct period if program lifetime includes date (monthly)')
+    it.skip('displays warning message if given date is outside program lifetime (all target periods)')
+    it.skip('does not do the hokey-pokey', function() {
+        expect(true)
+    })
   })
+
+  describe('using keyed-in dates', function () {
+    it.skip('closes the datepicker window after entering a date')
+    it.skip('chosen date appears in text box datepicker closes')
+    it.skip('assigns given value to correct period if program lifetime includes date (annual)')
+    it.skip('assigns given value to correct period if program lifetime includes date (semiannual)')
+    it.skip('assigns given value to correct period if program lifetime includes date (triannual)')
+    it.skip('assigns given value to correct period if program lifetime includes date (quarterly)')
+    it.skip('assigns given value to correct period if program lifetime includes date (monthly)')
+    it.skip('displays warning message if given date is outside program lifetime (all target periods)')
+    it.skip('does not do the hokey-pokey')
+  })
+
 })
