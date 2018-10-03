@@ -162,8 +162,9 @@ a.gauge__link--small {
 }
 .program-page__sidebar {
     // sidebar for .program-page__main
+    font-size: $font-size-sm;
     @include make-col-ready();
-    @include make-col(1,5);
+    @include make-col(1,4);
 }
 .sidebar__detail {
     // element inside program page sidebar
@@ -202,7 +203,7 @@ a.gauge__link--small {
 .program-page__indicators {
     // contains an instance of .indicators-list
     @include make-col-ready();
-    @include make-col(4,5);
+    @include make-col(3,4);
 }
 .indicators-list {
     // standalone component!

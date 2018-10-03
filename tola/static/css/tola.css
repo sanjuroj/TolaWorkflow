@@ -6807,13 +6807,14 @@ a.gauge__link--small {
   margin-left: -15px; }
 
 .program-page__sidebar {
+  font-size: 0.875rem;
   position: relative;
   width: 100%;
   min-height: 1px;
   padding-right: 15px;
   padding-left: 15px;
-  flex: 0 0 20%;
-  max-width: 20%; }
+  flex: 0 0 25%;
+  max-width: 25%; }
 
 .sidebar__detail {
   padding-bottom: 30px; }
@@ -6846,8 +6847,8 @@ a.gauge__link--small {
   min-height: 1px;
   padding-right: 15px;
   padding-left: 15px;
-  flex: 0 0 80%;
-  max-width: 80%; }
+  flex: 0 0 75%;
+  max-width: 75%; }
 
 @media print {
   a[href]:after {
