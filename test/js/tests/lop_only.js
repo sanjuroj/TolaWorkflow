@@ -1,5 +1,4 @@
 import IndPage from '../pages/indicators.page'
-import LoginPage from '../pages/login.page'
 import NavBar from '../pages/navbar.page'
 import TargetsTab from '../pages/targets.page'
 import Util from '../lib/testutil'
@@ -9,22 +8,9 @@ describe('"Life of Program (LoP) only" target frequency', function() {
   // Disable timeouts
   this.timeout(0)
 
-  before(function() {
+  before(function () {
     browser.windowHandleMaximize()
-    let parms = Util.readConfig()
-
-    LoginPage.open(parms.baseurl)
-    if (parms.baseurl.includes('mercycorps.org')) {
-      LoginPage.username = parms.username
-      LoginPage.password = parms.password
-      LoginPage.login.click()
-    } else if (parms.baseurl.includes('localhost')) {
-      LoginPage.googleplus.click()
-      if (LoginPage.title != 'Dashboard | TolaActivity') {
-        LoginPage.gUsername = parms.username + '@mercycorps.org'
-        LoginPage.gPassword = parms.password
-      }
-    }
+    Util.loginTola()
   })
 
   it('should permit numeric values for LoP target', function() {
