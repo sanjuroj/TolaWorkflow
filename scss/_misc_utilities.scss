@@ -18,6 +18,9 @@
 .break-word {
     word-break: break-word; /* wraps text in the middle of words */
 }
+.no-bold {
+    font-weight: $font-weight-normal;
+}
 
 
 // Color

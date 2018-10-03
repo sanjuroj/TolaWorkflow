@@ -19,7 +19,7 @@
         <aside class="program__status-gauges">
 
             <section class="program-gauge">
-                <div class="gauge__container">
+                <div class="gauge__link gauge__container">
                     {% gauge_band scope_percents.high scope_percents.on_scope scope_percents.low %}
                 </div>
             </section>
@@ -88,6 +88,7 @@
         </section>
     </div>
     <div id="div-id-indicator-list" class="indicator-list program-page__indicators">
+        <h3 class="no-bold">{{ indicator_count }} indicators</h3>
         {% include "indicators/program_indicators_table.html" %}
     </div>
 </div>

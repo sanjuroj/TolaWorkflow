@@ -1,0 +1,109 @@
+@mixin gauge-bg() {
+    background-image: url('/static/img/gauge-bg.svg');
+    background-position:  bottom left;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+// Gauges
+// ------
+
+.status-gauge {
+    // contains no external layout.
+    // contains gauge__graphic + gauge__labels
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+.gauge__container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: stretch;
+    padding: $grid-gutter-width/4;
+}
+a.gauge__link {
+    border: 2px solid transparent;
+    &:hover {
+        border-color: $yellow;
+        text-decoration: none;
+        @include transition($transition-base);
+    }
+}
+a.gauge__link--small {
+    color: inherit;
+    display: block;
+    padding: 2px;
+}
+.gauge__graphic {
+    background-color: $green-100;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-right: $grid-gutter-width/2;
+    min-width: 40px;
+    min-height: 80px;
+    position: relative;
+}
+.gauge__labels {
+    // wraps labels on the same row as the gauge__graphic
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+.gauge__labels--justified {
+    justify-content: space-between;
+}
+.gauge__graphic--performance-band {
+    // contains graphic__performance-band--* subcomponents
+}
+.graphic__performance-band--above-target,
+.graphic__performance-band--below-target {
+    background: $yellow-200;
+}
+.graphic__performance-band--on-target {
+    background: $green-550;
+    //border-bottom: 1px solid $white;
+    //border-top: 1px solid $white;
+}
+.gauge__graphic--tank {
+}
+.graphic__tick-marks {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.graphic__tick {
+    flex-grow: 1;
+    flex-shrink: 0;
+    & + & {
+        border-top: 0.5px solid $white;
+    }
+}
+.graphic__tank--filled {
+    background-color: $green-550;
+}
+.gauge__value {
+    color: $gray-600;
+    font-size: $font-size-base * 2;
+}
+.gauge__label {
+    color: $black;
+    margin: 0;
+    text-transform: uppercase;
+}
+.gauge__detail {
+    color: $blue;
+    font-size: $font-size-sm;
+    margin-top: $grid-gutter-width/2;
+}
+.gauge__label--small {
+    color: $blue;
+    font-size: $font-size-sm;
+}
+

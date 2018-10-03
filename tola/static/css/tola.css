@@ -6252,6 +6252,93 @@ body > .container {
     display: flex;
     justify-content: space-between; } }
 
+.status-gauge {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1; }
+
+.gauge__container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: stretch;
+  padding: 7.5px; }
+
+a.gauge__link {
+  border: 2px solid transparent; }
+  a.gauge__link:hover {
+    border-color: #ffd100;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out; }
+
+a.gauge__link--small {
+  color: inherit;
+  display: block;
+  padding: 2px; }
+
+.gauge__graphic {
+  background-color: #cde499;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-right: 15px;
+  min-width: 40px;
+  min-height: 80px;
+  position: relative; }
+
+.gauge__labels {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; }
+
+.gauge__labels--justified {
+  justify-content: space-between; }
+
+.graphic__performance-band--above-target,
+.graphic__performance-band--below-target {
+  background: #ffed99; }
+
+.graphic__performance-band--on-target {
+  background: #79AD00; }
+
+.graphic__tick-marks {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; }
+
+.graphic__tick {
+  flex-grow: 1;
+  flex-shrink: 0; }
+  .graphic__tick + .graphic__tick {
+    border-top: 0.5px solid #fff; }
+
+.graphic__tank--filled {
+  background-color: #79AD00; }
+
+.gauge__value {
+  color: #71757b;
+  font-size: 2rem; }
+
+.gauge__label {
+  color: #000;
+  margin: 0;
+  text-transform: uppercase; }
+
+.gauge__detail {
+  color: #0645AD;
+  font-size: 0.875rem;
+  margin-top: 15px; }
+
+.gauge__label--small {
+  color: #0645AD;
+  font-size: 0.875rem; }
+
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
   color: #71757b !important;
@@ -6628,6 +6715,9 @@ body.page_iptt_table {
   word-break: break-word;
   /* wraps text in the middle of words */ }
 
+.no-bold {
+  font-weight: 400; }
+
 .color-red {
   color: #c8102e; }
 
@@ -6709,93 +6799,6 @@ body.page_iptt_table {
         border-top: 1px solid #dbdcde;
         margin-top: 15px;
         padding-top: 15px; } }
-
-.status-gauge {
-  display: flex;
-  flex-direction: row;
-  flex-grow: 1; }
-
-.gauge__container {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  justify-content: stretch;
-  padding: 7.5px; }
-
-.gauge__link {
-  border: 2px solid transparent; }
-  .gauge__link:hover {
-    border-color: #ffd100;
-    text-decoration: none;
-    transition: all 0.2s ease-in-out; }
-
-a.gauge__link--small {
-  color: inherit;
-  display: block;
-  padding: 2px; }
-
-.gauge__graphic {
-  background-color: #cde499;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  margin-right: 15px;
-  min-width: 40px;
-  min-height: 80px;
-  position: relative; }
-
-.gauge__labels {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end; }
-
-.gauge__labels--justified {
-  justify-content: space-between; }
-
-.graphic__performance-band--above-target,
-.graphic__performance-band--below-target {
-  background: #ffed99; }
-
-.graphic__performance-band--on-target {
-  background: #79AD00; }
-
-.graphic__tick-marks {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: stretch;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0; }
-
-.graphic__tick {
-  flex-grow: 1;
-  flex-shrink: 0; }
-  .graphic__tick + .graphic__tick {
-    border-top: 0.5px solid #fff; }
-
-.graphic__tank--filled {
-  background-color: #79AD00; }
-
-.gauge__value {
-  color: #71757b;
-  font-size: 2rem; }
-
-.gauge__label {
-  color: #000;
-  margin: 0;
-  text-transform: uppercase; }
-
-.gauge__detail {
-  color: #0645AD;
-  font-size: 0.875rem;
-  margin-top: 15px; }
-
-.gauge__label--small {
-  color: #0645AD;
-  font-size: 0.875rem; }
 
 .program-page__main {
   display: flex;
