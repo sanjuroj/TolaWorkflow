@@ -19,7 +19,7 @@ describe('TolaActivity Dashboard', function() {
       LoginPage.login.click()
     } else if (parms.baseurl.includes('localhost')) {
       LoginPage.googleplus.click()
-      if ('TolaActivity' !== LoginPage.title) {
+      if (LoginPage.title != 'Dashboard | TolaActivity') {
         LoginPage.gUsername = parms.username + '@mercycorps.org'
         LoginPage.gPassword = parms.password
       }

@@ -20,7 +20,8 @@ describe('Quarterly target frequency', function() {
       LoginPage.login.click()
     } else if (parms.baseurl.includes('localhost')) {
       LoginPage.googleplus.click()
-      if (LoginPage.title != 'TolaActivity') {
+      if (LoginPage.      if (LoginPage.title != 'Dashboard | TolaActivity') {
+ != 'TolaActivity') {
         LoginPage.gUsername = parms.username + '@mercycorps.org'
         LoginPage.gPassword = parms.password
       }

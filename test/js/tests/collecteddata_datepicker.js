@@ -54,17 +54,17 @@ describe("Collected data datepicker", function () {
         browser.waitForVisible('div#div_id_date_collected')
       }
       let dp = browser.$('div#div_id_date_collected')
-      let curVal = dp.getText()
+      let curVal = dp.getValue()
       expect(curVal === '')
 
       // Click into the datepicker and confirm the date remains blank
       dp.click()
-      curVal = dp.getText()
+      curVal = dp.getValue()
       expect(curVal === '')
 
       // Move to another control
       browser.$('input#id_indicator2').click()
-      curVal = dp.getText()
+      curVal = dp.getValue()
       expect(curVal === '')
 
       // Manually close the collected data modal

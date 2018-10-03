@@ -24,7 +24,7 @@ describe('IPTT report: Program target overview report', function() {
       LoginPage.login.click()
     } else if (parms.baseurl.includes('localhost')) {
       LoginPage.googleplus.click()
-      if (LoginPage.title != 'TolaActivity') {
+      if (LoginPage.title != 'Dashboard | TolaActivity') {
         LoginPage.gUsername = parms.username + '@mercycorps.org'
         LoginPage.gPassword = parms.password
       }
