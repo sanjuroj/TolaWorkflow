@@ -28,6 +28,7 @@ describe("Collected data datepicker", function () {
         }
     })
 
+    // TODO: Get the webdriver code out of the test
     describe('using clicked dates', function () {
         it('does not display a date automatically when selected', function () {
             // Open indicators page
@@ -49,24 +50,29 @@ describe("Collected data datepicker", function () {
             // Click the Add results button
             let addResults = browser.$('a[href*="/indicators/collecteddata_add/"]')
             addResults.waitForVisible()
-            // expect(addResults !== undefined)
-            // expect(addResults !== null)
-            // expect(addResults.text === 'Add results')
+            expect(addResults.text === 'Add results')
             addResults.click()
-            Util.waitForAjax()
 
             // Find the datepicker and confirm it is blank
-            browser.$('div#div_id_date_collected').scroll()
-            let curVal = browser.$('input#id_date_collected').getText()
+            if (! browser.isVisible('div#div_id_date_collected')) {
+                browser.waitForVisible('div#div_id_date_collected')
+            }
+            let elem = browser.$('div#div_id_date_collected')
+            let curVal = elem.getText()
             expect(curVal === '')
-            browser.$('input#id_date_collected').focus( )
-
 
             // Click into the datepicker and confirm the date remains blank
+            elem.click()
+            curVal = elem.getText()
+            expect(curVal === '')
 
             // Move to another control
+            browser.$('input#id_indicator2').click()
+            curVal = elem.getText()
+            expect(curVal === '')
 
             // Manually close datepicker window
+            browser.$('div#indicator_collecteddata_div button.close').click()
         })
 
  /*
