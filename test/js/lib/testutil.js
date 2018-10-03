@@ -12,7 +12,7 @@ const msec = 1000
  * @param {string} configFile - Path to config file; defaults to config.json
  * @returns {JSON} - JSON object containing user session data
  */
-function readConfig (configFile = 'config.json') {
+function readConfig(configFile = 'config.json') {
   let fs = require('fs')
   let data = fs.readFileSync(configFile)
   return JSON.parse(data)
@@ -23,7 +23,9 @@ function readConfig (configFile = 'config.json') {
  * @param {string} s The string to print
  * @returns Nothing
  */
-function dp (s) { console.log('***%s***', s) }
+function dp(s) {
+  console.log('***%s***', s)
+}
 
 /**
  * A function to check every secs seconds to see if
@@ -31,7 +33,7 @@ function dp (s) { console.log('***%s***', s) }
  * @param {integer} secs Retry interval (default 2 seconds)
  * @returns Nothing
  */
-function waitForAjax (secs = 2) {
+function waitForAjax(secs = 2) {
   if (true === browser.isVisible('div#ajaxloading')) {
     let visible = browser.isVisible('div#ajaxloading')
     while (visible === true) {
@@ -44,6 +46,13 @@ function waitForAjax (secs = 2) {
     while (visible === true) {
       browser.pause(secs * msec)
       visible = browser.isVisible('div.modal-backdrop.fade')
+    }
+  }
+  if (true === browser.isVisible('div.modal.ajax_loading')) {
+    let visible = browser.isVisible('div.modal.ajax_loading')
+    while (visible === true) {
+      browser.pause(secs * msec)
+      visible = browser.isVisible('div.modal.ajax_loading')
     }
   }
 }
