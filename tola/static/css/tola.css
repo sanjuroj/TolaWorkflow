@@ -6242,9 +6242,6 @@ body > .container {
 .tab-content.panel-body {
   margin-top: 1rem; }
 
-.hiddenRow > td {
-  background: #f5f5f5; }
-
 .card-header {
   background: rgba(0, 0, 0, 0.1) !important; }
 
@@ -6849,6 +6846,8 @@ a.gauge__link--small {
   padding-left: 15px;
   flex: 0 0 75%;
   max-width: 75%; }
+  .program-page__indicators table {
+    background: #fff; }
 
 @media print {
   a[href]:after {
