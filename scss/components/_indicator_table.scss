@@ -1,10 +1,23 @@
 // Indicator table on the Indicators page and Program page
-.indicators-list { // the table itself
+.indicators-list { // indicators table
+}
+.indicators-list__indicator-header {
+    &.is-expanded {
+        background: $gray-300;
+    }
+}
+.indicators-list__indicator-body {
+    > td {
+        // p-0 bg-blue border-0
+        background: $gray-200;
+        border: none;
+        padding: 0;
+    }
 }
 
 // Potentially global styles
 .table-header { // tr
-    th {
+    > th {
         // inherits bold
         text-transform: uppercase;
         white-space: nowrap;

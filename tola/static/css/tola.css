@@ -6339,7 +6339,15 @@ a.gauge__link--small {
   color: #0645AD;
   font-size: 0.875rem; }
 
-.table-header th {
+.indicators-list__indicator-header.is-expanded {
+  background: #dbdcde; }
+
+.indicators-list__indicator-body > td {
+  background: #ebedf0;
+  border: none;
+  padding: 0; }
+
+.table-header > th {
   text-transform: uppercase;
   white-space: nowrap; }
 
