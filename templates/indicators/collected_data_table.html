@@ -94,7 +94,7 @@
                             {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                           {% else %}
                           <a href="{% url 'collecteddata_update' cdata.id %}"
-                             class="collecteddata-link"
+                             class="collected-data__link"
                              id="collected-{{cdata.id}}">
                                   {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                           </a>
@@ -166,7 +166,7 @@
                     {% if is_editable is False %}
                       {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                     {% else %}
-                      <a href="{% url 'collecteddata_update' coldata.id %}" class="collecteddata-link" id="collected-{{coldata.id}}">
+                      <a href="{% url 'collecteddata_update' coldata.id %}" class="collected-data__link" id="collected-{{coldata.id}}">
                           {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                       </a>
                     {% endif %}
@@ -273,7 +273,7 @@
             </td>
         </tr>
     </table>
-    <div class="d-flex justify-content-between align-items-center collecteddata-table--actions">
+    <div class="d-flex justify-content-between align-items-center collected-data-table__actions">
         <div>
         {% if err %}
             <span id="id_span_date_collected_error_msg text-danger" class="color-red">
@@ -295,7 +295,7 @@
         </div>
         <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
             <a href="{% url 'collecteddata_add' program_id indicator.id %}"
-                    class="btn btn-success collecteddata-link mb-4">
+                    class="btn btn-success collected-data__link mb-4">
                 <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
             </a>
         </div>

@@ -27,6 +27,11 @@
     padding-left: $grid-gutter-width;
 }
 
+
+// see _iptt_table.scss
+.collected-data__link {}
+.collected-data-table__actions {}
+
 // Potentially global styles
 .disable-span {
     cursor: not-allowed;

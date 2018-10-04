@@ -6588,10 +6588,10 @@ body.page_iptt_table {
 #id_div_top_iptt_report {
   color: #54585a; }
 
-.page_iptt_table .modal-dialog .collecteddata-link {
+.page_iptt_table .modal-dialog .collected-data__link {
   display: none; }
 
-.page_iptt_table .modal-dialog .collecteddata-table--actions {
+.page_iptt_table .modal-dialog .collected-data-table__actions {
   background: transparent; }
 
 #sidebar {
