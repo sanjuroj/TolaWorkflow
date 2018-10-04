@@ -6246,6 +6246,18 @@ body > .container {
   background: rgba(0, 0, 0, 0.1) !important; }
 
 /* Components */
+.table-header > th {
+  border-top: none;
+  text-transform: uppercase;
+  white-space: nowrap; }
+
+.table__pad-cell {
+  padding-left: 15px;
+  padding-right: 15px; }
+
+.table__stretch-cell {
+  width: 100%; }
+
 @media (min-width: 576px) {
   .region-header {
     align-items: center;
@@ -6346,18 +6358,6 @@ a.gauge__link--small {
   background: #ebedf0;
   border: none;
   padding: 0; }
-
-.table-header > th {
-  border-top: none;
-  text-transform: uppercase;
-  white-space: nowrap; }
-
-.table__pad-cell {
-  padding-left: 15px;
-  padding-right: 15px; }
-
-.table__stretch-cell {
-  width: 100%; }
 
 .is-highlighted {
   background: #fff6cc; }

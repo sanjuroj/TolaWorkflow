@@ -70,6 +70,7 @@
 
 /* Components */
 // These are well-behaved BEM-compliant selectors
+@import 'components/tables'; // semantic addtions to, but not overloads of, Bootstrap tables
 @import 'components/regions'; // page regions and sub-regions
 @import 'components/gauges';  // status gauges, e.g. on Program landing page
 @import 'components/indicator_table';  // indicator list included on Program page and Indicators page
