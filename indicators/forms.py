@@ -175,7 +175,7 @@ class CollectedDataForm(forms.ModelForm):
             .filter(indicator=self.indicator) \
             .order_by('customsort', 'create_date', 'period')
         data = {'data-start': {'': ''}, 'data-end': {'': ''}}
-        choices = []
+        choices = [('', '---------')]
         for pt in periodic_targets:
             data['data-start'].update({str(pt.id): pt.start_date})
             data['data-end'].update({str(pt.id): pt.end_date})
