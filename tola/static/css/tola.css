@@ -7231,6 +7231,12 @@ select.listoption_filters {
     display: flex;
     justify-content: space-between; }
 
+.help-text {
+  font-size: 0.875rem;
+  font-style: italic;
+  font-weight: 300;
+  text-align: left; }
+
 /* Unsorted custom selectors */
 
 /*# sourceMappingURL=tola.css.map */
