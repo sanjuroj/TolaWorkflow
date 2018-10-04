@@ -19,6 +19,7 @@
 .table-header { // tr
     > th {
         // inherits bold
+        border-top: none;
         text-transform: uppercase;
         white-space: nowrap;
     }

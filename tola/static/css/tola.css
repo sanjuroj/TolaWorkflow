@@ -6348,11 +6348,30 @@ a.gauge__link--small {
   padding: 0; }
 
 .table-header > th {
+  border-top: none;
   text-transform: uppercase;
   white-space: nowrap; }
 
 .is-highlighted {
   background: #fff6cc; }
+
+.collected-data-table__wrapper {
+  padding: 15px; }
+
+.collected-data-table {
+  background-color: transparent !important; }
+  .collected-data-table th, .collected-data-table td {
+    font-size: 0.875rem;
+    padding: 0.3rem; }
+  .collected-data-table td {
+    background: #fff; }
+
+.disable-span {
+  cursor: not-allowed;
+  opacity: .65; }
+
+.disable-span a {
+  pointer-events: none; }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
@@ -6864,7 +6883,7 @@ body.page_iptt_table {
   padding-left: 15px;
   flex: 0 0 75%;
   max-width: 75%; }
-  .program-page__indicators table {
+  .program-page__indicators > table {
     background: #fff; }
 
 @media print {

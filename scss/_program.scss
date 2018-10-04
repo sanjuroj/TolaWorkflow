@@ -93,7 +93,7 @@
     // contains an instance of .indicators-list
     @include make-col-ready();
     @include make-col(3,4);
-    table {
+    > table {
         background: $white;
     }
 }
