@@ -6381,6 +6381,11 @@ a.gauge__link--small {
 .result__value {
   padding-left: 30px; }
 
+.collected-data-table__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; }
+
 .disable-span {
   cursor: not-allowed;
   opacity: .65; }

@@ -16,7 +16,6 @@
     }
 }
 .collected-data-table__result {
-    // d-flex justify-content-between text-nowrap
     display: flex;
     justify-content: space-between;
     white-space: nowrap;
@@ -30,7 +29,11 @@
 
 // see _iptt_table.scss
 .collected-data__link {}
-.collected-data-table__actions {}
+.collected-data-table__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
 // Potentially global styles
 .disable-span {

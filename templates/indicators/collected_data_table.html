@@ -126,11 +126,11 @@
                             {% if cdata.complete %}
                                 <a href="{% url 'projectcomplete_update' cdata.complete.id %}"
                                    target="_blank"
-                                   class="fontsize-85 text-uppercase"><i class="fas fa-clipboard"></i> {% trans "View project" %}</a>
+                                   class="btn-link"><i class="fas fa-clipboard"></i> {% trans "View project" %}</a>
                             {% elif cdata.agreement %}
                                 <a href="{% url 'projectagreement_update' cdata.agreement.id %}"
                                    target="_blank"
-                                   class="fontsize-85 text-uppercase"><i class="fas fa-clipboard"></i> {% trans "View project" %}</a>
+                                   class="btn-link"><i class="fas fa-clipboard"></i> {% trans "View project" %}</a>
                             {% endif %}
                             {% comment {{ cdata.complete|default_if_none:cdata.agreement|default_if_none:'' }} %} {% endcomment %}
                         </div>
@@ -162,7 +162,7 @@
                     {% endif %}
                 </td>
                 <td align="right"></td>
-                <td style="" class="d-flex justify-content-between text-nowrap bg-danger-lighter">
+                <td style="" class="collected-data-table__result bg-danger-lighter">
                     {% if is_editable is False %}
                       {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                     {% else %}
@@ -273,10 +273,10 @@
             </td>
         </tr>
     </table>
-    <div class="d-flex justify-content-between align-items-center collected-data-table__actions">
+    <div class="collected-data-table__actions">
         <div>
         {% if err %}
-            <span id="id_span_date_collected_error_msg text-danger" class="color-red">
+            <span id="id_span_date_collected_error_msg" class="text-danger">
                 <small>
                 {% ifequal err 'Error_1' %}
                     {% trans "Targets are not set up for this indicator." %} <strong><a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link"> {% trans "Start by selecting a target frequency." %}</a></strong>
