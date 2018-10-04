@@ -8,22 +8,9 @@ describe('Create an Indicator form', function() {
   // Disable timeouts
   this.timeout(0)
 
-  before(function() {
+  before(function () {
     browser.windowHandleMaximize()
-
-    let parms = Util.readConfig()
-    LoginPage.open(parms.baseurl)
-    if (parms.baseurl.includes('mercycorps.org')) {
-      LoginPage.username = parms.username
-      LoginPage.password = parms.password
-      LoginPage.login.click()
-    } else if (parms.baseurl.includes('localhost')) {
-      LoginPage.googleplus.click()
-      if (LoginPage.title != 'TolaActivity') {
-        LoginPage.gUsername = parms.username + '@mercycorps.org'
-        LoginPage.gPassword = parms.password
-      }
-    }
+    Util.loginTola()
   })
 
   it('should exist', function() {
@@ -69,10 +56,11 @@ describe('Create an Indicator form', function() {
     IndPage.saveNewIndicator()
   })
 
+  //FIXME: Get webdriver code out of test
   it('should have a save button', function() {
     IndPage.clickIndicatorsLink()
     IndPage.clickNewIndicatorButton()
-    let control = $('form[name="most"]').$('input[value="save"]')
+    let control = $('form[name="most"]').$('button[class="btn btn-primary"]')
     expect(true === control.isVisible())
     control.click()
   })
@@ -90,7 +78,7 @@ describe('Create an Indicator form', function() {
     IndPage.clickIndicatorsLink()
     IndPage.clickNewIndicatorButton()
     IndPage.saveNewIndicator()
-    let title = browser.$('h2').getText().trim()
+    let title = browser.$('h1').getText().trim()
     expect(title.includes('Goal indicator: Temporary'))
   })
 

@@ -1,5 +1,4 @@
 import IndPage from '../pages/indicators.page'
-import LoginPage from '../pages/login.page'
 import NavBar from '../pages/navbar.page'
 import TargetsTab from '../pages/targets.page'
 import Util from '../lib/testutil'
@@ -13,22 +12,9 @@ describe('Defining number and percent indicators', function() {
   // Disable timeouts
   this.timeout(0)
 
-  before(function() {
+    before(function () {
     browser.windowHandleMaximize()
-    let parms = Util.readConfig()
-
-    LoginPage.open(parms.baseurl)
-    if (parms.baseurl.includes('mercycorps.org')) {
-      LoginPage.username = parms.username
-      LoginPage.password = parms.password
-      LoginPage.login.click()
-    } else if (parms.baseurl.includes('localhost')) {
-      LoginPage.googleplus.click()
-      if (LoginPage.title != 'TolaActivity') {
-        LoginPage.gUsername = parms.username + '@mercycorps.org'
-        LoginPage.gPassword = parms.password
-      }
-    }
+    Util.loginTola()
   })
 
   it('should allow to set percentage indicators', function() {
@@ -55,8 +41,6 @@ describe('Defining number and percent indicators', function() {
     TargetsTab.setLoPTarget(55)
     TargetsTab.setBaseline(56)
     TargetsTab.setTargetFrequency('Annual')
-    TargetsTab.setFirstTargetPeriod()
-    TargetsTab.setNumTargetPeriods(2)
     TargetsTab.saveIndicatorChanges()
     expect(false === TargetsTab.getMeasureIsCumulative())
   })
@@ -70,8 +54,6 @@ describe('Defining number and percent indicators', function() {
     TargetsTab.setLoPTarget(69)
     TargetsTab.setBaseline(70)
     TargetsTab.setTargetFrequency('Annual')
-    TargetsTab.setFirstTargetPeriod()
-    TargetsTab.setNumTargetPeriods(2)
     TargetsTab.saveIndicatorChanges()
     expect(true === TargetsTab.getMeasureIsCumulative())
   })

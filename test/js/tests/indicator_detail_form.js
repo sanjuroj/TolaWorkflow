@@ -9,22 +9,9 @@ describe('Indicator creation detail form', function() {
   // Disable timeouts
   this.timeout(0)
 
-  before(function() {
+  before(function () {
     browser.windowHandleMaximize()
-    let parms = Util.readConfig()
-
-    LoginPage.open(parms.baseurl)
-    if (parms.baseurl.includes('mercycorps.org')) {
-      LoginPage.username = parms.username
-      LoginPage.password = parms.password
-      LoginPage.login.click()
-    } else if (parms.baseurl.includes('localhost')) {
-      LoginPage.googleplus.click()
-      if (LoginPage.title != 'TolaActivity') {
-        LoginPage.gUsername = parms.username + '@mercycorps.org'
-        LoginPage.gPassword = parms.password
-      }
-    }
+    Util.loginTola()
   })
 
   //FIXME: Get the webdriver code out of the test
@@ -32,8 +19,8 @@ describe('Indicator creation detail form', function() {
   NavBar.Indicators.click()
   expect('Program Indicators' === IndPage.getPageName())
   IndPage.createBasicIndicator()
-  browser.waitForVisible('h2')
-  let title = browser.$('h2').getText().trim()
+  browser.waitForVisible('h1')
+  let title = browser.$('h1').getText().trim()
   expect(true === title.includes('Goal indicator: Temporary'))
   })
 

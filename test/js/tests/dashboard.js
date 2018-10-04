@@ -8,22 +8,9 @@ describe('TolaActivity Dashboard', function() {
   // Disable timeouts
   this.timeout(0)
 
-  before(function() {
+  before(function () {
     browser.windowHandleMaximize()
-    let parms = Util.readConfig()
-
-    LoginPage.open(parms.baseurl)
-    if (parms.baseurl.includes('mercycorps.org')) {
-      LoginPage.username = parms.username
-      LoginPage.password = parms.password
-      LoginPage.login.click()
-    } else if (parms.baseurl.includes('localhost')) {
-      LoginPage.googleplus.click()
-      if ('TolaActivity' !== LoginPage.title) {
-        LoginPage.gUsername = parms.username + '@mercycorps.org'
-        LoginPage.gPassword = parms.password
-      }
-    }
+    Util.loginTola()
   })
 
   it('should have a page header', function() {
@@ -36,19 +23,19 @@ describe('TolaActivity Dashboard', function() {
     NavBar.TolaActivity.click()
   })
 
-  it('should have a Workflow dropdown', function() {
-    expect(null !== NavBar.Workflow)
-    expect(undefined !== NavBar.Workflow)
-    NavBar.Workflow.click()
-  })
+  // it('should have a Workflow dropdown', function() {
+  //   expect(null !== NavBar.Workflow)
+  //   expect(undefined !== NavBar.Workflow)
+  //   NavBar.Workflow.click()
+  // })
 
-  it('should have a Country Dashboard dropdown', function() {
-    DashboardPage.CountryDashboardDropdown.click()
-  })
+  // it('should have a Country Dashboard dropdown', function() {
+  //   DashboardPage.CountryDashboardDropdown.click()
+  // })
 
-  it('should have a Filter by Program link', function() {
-    DashboardPage.FilterByProgramDropdown.click()
-  })
+  // it('should have a Filter by Program link', function() {
+  //   DashboardPage.FilterByProgramDropdown.click()
+  // })
 
   it('should have a Reports dropdown', function() {
     expect(null !== NavBar.Reports)

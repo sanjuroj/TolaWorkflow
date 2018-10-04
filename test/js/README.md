@@ -162,6 +162,7 @@ $ npm install
     [firefox #0-0] Spec: /home/kwall/Work/TolaActivity/test/js/tests/00_login.js
     [firefox #0-0] Running: chrome
 1. Rejoice!
+    ```
     _output deleted_
     
     ==================================================================

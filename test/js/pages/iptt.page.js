@@ -8,8 +8,8 @@ import Util from '../lib/testutil'
 class IpttPage extends Page {
   get title () {
     browser.waitForVisible('nav.navbar')
-    let h2 = browser.$('h2.mt-2.mb-3.mx-3')
-    return h2.getText()
+    let h1 = browser.$('h1')
+    return h1.getText()
   }
 
   // IPTT: Program indicator overview
@@ -72,7 +72,15 @@ class IpttPage extends Page {
   get TargetOverviewProgram () {
     let div = browser.$('div#div_id_targets_program')
     // Yeah, the select2 widget does bizarre stuff to HTML markup
-    return div.$('span.select2-selection')
+    return div
+  }
+
+  set TargetOverviewProgram (val) {
+    let div = browser.$('div#div_id_targets_program')
+    let select = div.$('select#id_targetperiods-program')
+    //elem.click()
+    //elem.selectByIndex(val)
+    //elem.click()
   }
 
   /**
@@ -82,7 +90,7 @@ class IpttPage extends Page {
    * object
    */
   get TargetOverviewTargetPeriods () {
-    let div = browser.$('div#div_id_targetperiodss')
+    let div = browser.$('div#div_id_targetperiods')
     return div.$('select#id_targetperiods-targetperiods')
   }
 
@@ -102,18 +110,16 @@ class IpttPage extends Page {
     return browser.$('button#id_submit_targetperiods_button')
   }
 
-  set TargetOverviewProgram (val) {
-    let div = browser.$('div#div_id_targets_program')
-    let select = div.$('select[name="targetperiods-program"]')
-    select.selectByIndex(val)
-  }
-
   set TargetOverviewTimeFrame (val) {
+    let div, radio
     if (val === 'Show all') {
-      browser.$('div#div_id_targetperiods-timeframe_0').click()
+      div = browser.$('div#div_id_targetperiods-timeframe_0')
+      radio = div.$('input#id_targetperiods-timeframe_0')
     } else if (val === 'Most recent') {
-      browser.$('div#div_id_targetperiods-timeframe_1').click()
+      div = browser.$('div#div_id_targetperiods-timeframe_1')
+      radio = div.$('input#id_targetperiods-timeframe_1')
     }
+    radio.click()
   }
 
   set TargetOverviewTargetPeriods (val) {
@@ -125,7 +131,7 @@ class IpttPage extends Page {
 
   open () {
     let parms = Util.readConfig()
-    super.open(parms.baseurl + 'indicators/iptt_quickstart')
+      super.open(parms.baseurl + 'indicators/iptt_quickstart')
   }
 
   quickstart (source) {
