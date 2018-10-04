@@ -1,5 +1,7 @@
 // Indicator table on the Indicators page and Program page
-.indicators-list { // indicators table
+.indicators-list {
+    // List of indicators
+    // This appears INSIDE each program on the "indicators" list on /indicators
 }
 .indicators-list__header {
     align-items: flex-start;
@@ -20,7 +22,13 @@
     }
 }
 
-// Potentially global styles
-.is-highlighted {
-    background: $yellow-100;
+
+// Indicators page
+.indicators-list--by-program {
+    // list of programs, each of which has a collapsible .indicators-list
+    margin-top: $grid-gutter-width;
 }
+
+
+// Potentially global styles
+

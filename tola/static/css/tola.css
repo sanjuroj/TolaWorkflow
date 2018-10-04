@@ -6364,8 +6364,8 @@ a.gauge__link--small {
   border: none;
   padding: 0; }
 
-.is-highlighted {
-  background: #fff6cc; }
+.indicators-list--by-program {
+  margin-top: 30px; }
 
 .collected-data-table__wrapper {
   padding: 15px; }
@@ -7241,6 +7241,9 @@ select.listoption_filters {
   font-style: italic;
   font-weight: 300;
   text-align: left; }
+
+.is-highlighted {
+  background: #fff6cc; }
 
 /* Unsorted custom selectors */
 
