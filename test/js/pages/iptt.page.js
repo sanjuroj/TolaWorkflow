@@ -131,7 +131,7 @@ class IpttPage extends Page {
 
   open () {
     let parms = Util.readConfig()
-    super.open(parms.baseurl + '/indicators/iptt_quickstart')
+      super.open(parms.baseurl + 'indicators/iptt_quickstart')
   }
 
   quickstart (source) {

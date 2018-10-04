@@ -1,5 +1,5 @@
 exports.config = {
-  // execArgv: ['--inspect'],
+  execArgv: ['--inspect'],
   specs: [
     './tests/**/*.js'
   ],
