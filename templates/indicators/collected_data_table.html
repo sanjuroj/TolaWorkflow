@@ -87,26 +87,28 @@
                     {% if not forloop.first %}
                         <tr>
                     {% endif %}
-                    <td class="collected-data-table__result {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
-                        <div class="result__date">
-                          {% if is_editable is False %}
-                            {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
-                          {% else %}
-                          <a href="{% url 'collecteddata_update' cdata.id %}"
-                             class="collected-data__link"
-                             id="collected-{{cdata.id}}">
-                                  {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
-                          </a>
-                          {% endif %}
-                        </div>
-                        <div class="result__value">
-                            {% with achieved=cdata.achieved|floatformat:"-2" %}
-                                {% if indicator.unit_of_measure_type == 2 %}
-                                    {{ achieved }}%
-                                {% else %}
-                                    {{ achieved }}
-                                {% endif %}
-                            {% endwith %}
+                    <td class="{% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
+                        <div class="collected-data-table__result ">
+                            <div class="result__date">
+                              {% if is_editable is False %}
+                                {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                              {% else %}
+                              <a href="{% url 'collecteddata_update' cdata.id %}"
+                                 class="collected-data__link"
+                                 id="collected-{{cdata.id}}">
+                                      {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                              </a>
+                              {% endif %}
+                            </div>
+                            <div class="result__value">
+                                {% with achieved=cdata.achieved|floatformat:"-2" %}
+                                    {% if indicator.unit_of_measure_type == 2 %}
+                                        {{ achieved }}%
+                                    {% else %}
+                                        {{ achieved }}
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
                         </div>
                     </td>
                     <td>
@@ -138,8 +140,10 @@
                         {% endif %}
                     </td>
                     {% empty %}
-                        <td class="collected-data-table__result">
-                            {% trans "No data collected" %}
+                        <td class="">
+                            <div class="collected-data-table__result">
+                                {% trans "No data collected" %}
+                            </div>
                         </td>
                         <td></td>
                     {% if item.collecteddata_set.count > 1 %}
