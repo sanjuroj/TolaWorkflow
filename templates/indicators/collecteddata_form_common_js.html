@@ -14,7 +14,7 @@
         //     return false;
         // }
         if ($("#collecteddata_update_form div").hasClass('has-error')) {
-            createAlert("danger", "{% trans 'Please complete all required fields.|escapejs'%}", true, "#modalmessages");
+            createAlert("danger", "{% trans 'Please complete all required fields.'|escapejs %}", true, "#modalmessages");
             $('#indicator_collecteddata_div').animate({ scrollTop: 0 }, 'slow');
             return;
         }
@@ -41,7 +41,7 @@
 
 
     $("#indicator_collecteddata_div").on("change", "#id_date_collected", function(e){
-        validatePeriodicTarget();
+        validatePeriodicTarget(onlyPeriodic = true);
         validateDateCollected();
     });
 
@@ -73,6 +73,13 @@
             }
 
             $("#div_id_periodic_target").addClass('has-error');
+        } else if ($("#id_periodic_target").val() == '' && onlyPeriodic == false) {
+            // This is triggered with midline/endline or event target frequencies when user tries to
+            // submit data without selecting a target period.
+            $("#hint_id_periodic_target").html("<small>Please select a target.</small>");
+            $("#div_id_periodic_target").addClass('has-error');
+            $("#id_periodic_target").addClass('is-invalid');
+            return false;
         } else {
             $("#hint_id_periodic_target").html("");
             $("#div_id_periodic_target").removeClass('has-error');
