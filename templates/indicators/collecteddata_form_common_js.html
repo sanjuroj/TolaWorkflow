@@ -41,10 +41,7 @@
 
 
     $("#indicator_collecteddata_div").on("change", "#id_date_collected", function(e){
-        // only validate periodicTarget dropdown if it is an existing record
-        if( parseInt(`{{object.id|safe}}`) > 0 ){
-            validatePeriodicTarget(onlyPeriodic = true);
-        }
+        validatePeriodicTarget();
         validateDateCollected();
     });
 
@@ -76,12 +73,6 @@
             }
 
             $("#div_id_periodic_target").addClass('has-error');
-        } else if ($("#id_periodic_target").val() == '' && onlyPeriodic == false) {
-
-            $("#hint_id_periodic_target").html("<small>{% trans 'Please select a target' %}.</small>");
-            $("#div_id_periodic_target").addClass('has-error');
-            $("#id_periodic_target").addClass('is-invalid');
-            return false;
         } else {
             $("#hint_id_periodic_target").html("");
             $("#div_id_periodic_target").removeClass('has-error');
