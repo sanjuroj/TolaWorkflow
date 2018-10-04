@@ -6352,6 +6352,13 @@ a.gauge__link--small {
   text-transform: uppercase;
   white-space: nowrap; }
 
+.table__pad-cell {
+  padding-left: 15px;
+  padding-right: 15px; }
+
+.table__stretch-cell {
+  width: 100%; }
+
 .is-highlighted {
   background: #fff6cc; }
 
@@ -6365,6 +6372,14 @@ a.gauge__link--small {
     padding: 0.3rem; }
   .collected-data-table td {
     background: #fff; }
+
+.collected-data-table__result {
+  display: flex;
+  justify-content: space-between;
+  white-space: nowrap; }
+
+.result__value {
+  padding-left: 30px; }
 
 .disable-span {
   cursor: not-allowed;

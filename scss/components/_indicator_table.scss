@@ -24,6 +24,15 @@
         white-space: nowrap;
     }
 }
+.table__pad-cell {
+    // more semantic method for adding a little space to very small cells
+    padding-left: $grid-gutter-width/2;
+    padding-right: $grid-gutter-width/2;
+}
+.table__stretch-cell {
+    // more semantic version of w-100
+    width: 100%;
+}
 .is-highlighted {
     background: $yellow-100;
 }

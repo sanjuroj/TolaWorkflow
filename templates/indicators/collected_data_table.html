@@ -24,9 +24,9 @@
                 <th class="" style="">{% trans "Target period" %}</th>
                 <th class="text-right" style="">{% trans "Target" %}</th>
                 <th class="text-right" style="">{% trans "Actual" %}</th>
-                <th class="text-right" style="">{% trans "% Met" %}</th>
+                <th class="table__pad-cell text-right" style="">{% trans "% Met" %}</th>
                 <th class="" style="">{% trans "Results" %}</th>
-                <th class="w-100" style="">{% trans "Evidence" %}</th>
+                <th class="table__stretch-cell" style="">{% trans "Evidence" %}</th>
             </tr>
         </thead>
         {% for item in periodictargets %}
@@ -63,7 +63,7 @@
                                 {% endif %}
                             {% endif %}
                         </td>
-                        <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right">
+                        <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right table__pad-cell">
                             {% if item.target %}
                                 {% if indicator.unit_of_measure_type == 1 %}
                                     {% if indicator.is_cumulative == True %}
@@ -88,8 +88,8 @@
                     {% if not forloop.first %}
                         <tr>
                     {% endif %}
-                    <td class="d-flex justify-content-between text-nowrap {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
-                        <div>
+                    <td class="collected-data-table__result {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
+                        <div class="result__date">
                           {% if is_editable is False %}
                             {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                           {% else %}
@@ -100,7 +100,7 @@
                           </a>
                           {% endif %}
                         </div>
-                        <div class="pl-2">
+                        <div class="result__value">
                             {% with achieved=cdata.achieved|floatformat:"-2" %}
                                 {% if indicator.unit_of_measure_type == 2 %}
                                     {{ achieved }}%

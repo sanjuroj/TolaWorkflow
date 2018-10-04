@@ -15,6 +15,17 @@
         background: $white;
     }
 }
+.collected-data-table__result {
+    // d-flex justify-content-between text-nowrap
+    display: flex;
+    justify-content: space-between;
+    white-space: nowrap;
+}
+.result__date {
+}
+.result__value {
+    padding-left: $grid-gutter-width;
+}
 
 // Potentially global styles
 .disable-span {
