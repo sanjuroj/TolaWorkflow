@@ -1,6 +1,11 @@
 // Indicator table on the Indicators page and Program page
 .indicators-list { // indicators table
 }
+.indicators-list__header {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+}
 .indicators-list__indicator-header {
     &.is-expanded {
         background: $gray-300;

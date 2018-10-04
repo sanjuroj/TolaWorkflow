@@ -28,7 +28,6 @@
                 <a href="#" class="gauge__link gauge__container">
                     {% gauge_tank results_stats.targets_defined 'indicators have targets defined' 'of indicators have no targets' %}
                 </a>
-                </a>
             </section>
 
             <section class="program-gauge">
@@ -87,8 +86,13 @@
             <a href="#" class="btn-add"><i class="fas fa-plus-circle"></i> Create an IPTT Report</a>
         </section>
     </div>
-    <div id="div-id-indicator-list" class="indicator-list program-page__indicators">
-        <h3 class="no-bold">{{ indicator_count }} indicators</h3>
+    <div id="div-id-indicator-list" class="indicators-list program-page__indicators">
+        <div class="indicators-list__header">
+            <h3 class="no-bold">{{ indicator_count }} indicators</h3>
+            <div>
+                <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
+            </div>
+        </div>
         {% include "indicators/program_indicators_table.html" %}
     </div>
 </div>
