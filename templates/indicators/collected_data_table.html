@@ -13,7 +13,6 @@
             class="close"
             data-dismiss="modal"
             aria-label="Close">
-              <!-- <span aria-hidden="true" style="font-weight: 100; font-size: 2rem;">&times;</span> -->
               <span aria-hidden="true" class="x-modal">&times;</span>
         </button>
     </h3>
@@ -21,12 +20,12 @@
     <table class="table collected-data-table">
         <thead>
             <tr class="table-header">
-                <th class="" style="">{% trans "Target period" %}</th>
-                <th class="text-right" style="">{% trans "Target" %}</th>
-                <th class="text-right" style="">{% trans "Actual" %}</th>
-                <th class="table__pad-cell text-right" style="">{% trans "% Met" %}</th>
-                <th class="" style="">{% trans "Results" %}</th>
-                <th class="table__stretch-cell" style="">{% trans "Evidence" %}</th>
+                <th class="">{% trans "Target period" %}</th>
+                <th class="text-right">{% trans "Target" %}</th>
+                <th class="text-right">{% trans "Actual" %}</th>
+                <th class="table__pad-cell text-right">{% trans "% Met" %}</th>
+                <th class="">{% trans "Results" %}</th>
+                <th class="table__stretch-cell">{% trans "Evidence" %}</th>
             </tr>
         </thead>
         {% for item in periodictargets %}
@@ -139,10 +138,10 @@
                         {% endif %}
                     </td>
                     {% empty %}
-                        <td style="white-space: nowrap; overflow: visible; max-width: 125px; border-right: 0px solid;">
+                        <td class="collected-data-table__result">
                             {% trans "No data collected" %}
                         </td>
-                        <td colspan="5" style="border-left: 0px solid;"></td>
+                        <td></td>
                     {% if item.collecteddata_set.count > 1 %}
                         </tr>
                     {% endif %}
@@ -162,7 +161,7 @@
                     {% endif %}
                 </td>
                 <td align="right"></td>
-                <td style="" class="collected-data-table__result bg-danger-lighter">
+                <td class="collected-data-table__result bg-danger-lighter">
                     {% if is_editable is False %}
                       {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                     {% else %}
