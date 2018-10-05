@@ -1,4 +1,4 @@
-import IpttHome from '../pages/iptt.page'
+import IpttPage from '../pages/iptt.page'
 import LoginPage from '../pages/login.page'
 import NavBar from '../pages/navbar.page'
 import Util from '../lib/testutil'
@@ -12,26 +12,13 @@ describe('IPTT: IPTT landing page', function() {
   // Disable timeouts
   this.timeout(0)
 
-  before(function() {
+  before(function () {
     browser.windowHandleMaximize()
-    let parms = Util.readConfig()
-
-    LoginPage.open(parms.baseurl)
-    if (parms.baseurl.includes('mercycorps.org')) {
-      LoginPage.username = parms.username
-      LoginPage.password = parms.password
-      LoginPage.login.click()
-    } else if (parms.baseurl.includes('localhost')) {
-      LoginPage.googleplus.click()
-      if (LoginPage.title != 'TolaActivity') {
-        LoginPage.gUsername = parms.username + '@mercycorps.org'
-        LoginPage.gPassword = parms.password
-      }
-    }
+    Util.loginTola()
   })
 
   it('should exist', function() {
-    expect('Indicator Performance Tracking Table' == IpttHome.title)
+    expect('Indicator Performance Tracking Table' == IpttPage.title)
   })
 
   //FIXME: get webdriver code out of test

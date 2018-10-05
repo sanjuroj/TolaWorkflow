@@ -5,29 +5,16 @@ import TargetsTab from '../pages/targets.page'
 import Util from '../lib/testutil'
 import { expect } from 'chai'
 
-describe("Programs dropdown", function () {
+describe("Indicators landing page", function () {
   // Disable timeouts
   this.timeout(0)
 
-  before(function() {
+  before(function () {
     browser.windowHandleMaximize()
-    let parms = Util.readConfig()
-
-    LoginPage.open(parms.baseurl)
-    if (parms.baseurl.includes('mercycorps.org')) {
-      LoginPage.username = parms.username
-      LoginPage.password = parms.password
-      LoginPage.login.click()
-    } else if (parms.baseurl.includes('localhost')) {
-      LoginPage.googleplus.click()
-      if (LoginPage.title != 'TolaActivity') {
-        LoginPage.gUsername = parms.username + '@mercycorps.org'
-        LoginPage.gPassword = parms.password
-      }
-    }
+    Util.loginTola()
   })
 
-  it('does someting', function() {
+  it('does something', function() {
     NavBar.Indicators.click()
     //FIXME: getPageName should be a property
     expect('Program Indicators' === IndPage.getPageName())
@@ -68,8 +55,8 @@ describe("Programs dropdown", function () {
         if (! s.includes('-- All --')) {
           browser.selectByVisibleText(s)
         }
-        let h2 = $('h2').getText()
-        expect(s === h2)
+        let h1 = $('h1').getText()
+        expect(s === h1)
     }
   })
 

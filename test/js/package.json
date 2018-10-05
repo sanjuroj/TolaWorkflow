@@ -7,7 +7,7 @@
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-register": "^6.26.0",
-    "chai": "^4.1.2",
+    "chai": "^4.2.0",
     "date-arithmetic": "^3.1.0",
     "jsdoc": "^3.5.5",
     "mocha": "^5.1.1",
@@ -18,11 +18,12 @@
     "webdriverio": "^4.12.0"
   },
   "dependencies": {
+    "dateformat": "^3.0.3",
     "readable-stream": "^2.3.6",
     "string_decoder": "^1.1.1"
   },
   "repository": "https://github.com/mercycorps/TolaActivity.git",
   "license": "Apache-2.0",
   "name": "tats",
-  "version": "0.9.3"
+  "version": "0.9.4"
 }

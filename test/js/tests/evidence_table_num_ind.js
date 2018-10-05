@@ -14,22 +14,9 @@ describe('Number indicators in the indicator evidence table', function() {
   // Disable timeouts
   this.timeout(0)
 
-  before(function() {
+  before(function () {
     browser.windowHandleMaximize()
-    let parms = Util.readConfig()
-
-    LoginPage.open(parms.baseurl)
-    if (parms.baseurl.includes('mercycorps.org')) {
-      LoginPage.username = parms.username
-      LoginPage.password = parms.password
-      LoginPage.login.click()
-    } else if (parms.baseurl.includes('localhost')) {
-      LoginPage.googleplus.click()
-      if (LoginPage.title != 'TolaActivity') {
-        LoginPage.gUsername = parms.username + '@mercycorps.org'
-        LoginPage.gPassword = parms.password
-      }
-    }
+    Util.loginTola()
   })
 
   it('should take LoP target of NC number indicators from LoP target field', function() {
@@ -41,8 +28,7 @@ describe('Number indicators in the indicator evidence table', function() {
     TargetsTab.setLoPTarget(600)
     TargetsTab.setBaseline(0)
     TargetsTab.setTargetFrequency('Annual')
-    TargetsTab.setFirstTargetPeriod()
-    TargetsTab.setNumTargetPeriods(3)
+    TargetsTab.saveIndicatorChanges()
     TargetsTab.saveIndicatorChanges()
 
     let expected = TargetsTab.getLoPTarget()
@@ -59,18 +45,15 @@ describe('Number indicators in the indicator evidence table', function() {
     TargetsTab.setLoPTarget(600)
     TargetsTab.setBaseline(0)
     TargetsTab.setTargetFrequency('Annual')
-    TargetsTab.setFirstTargetPeriod()
-    TargetsTab.setNumTargetPeriods(3)
-    // FIXME: I have no idea it takes two calls
     TargetsTab.saveIndicatorChanges()
     TargetsTab.saveIndicatorChanges()
 
     let inputBoxes = TargetsTab.getTargetInputBoxes()
+    // For some reason this is null
+    expect(2 === inputBoxes.length)
     inputBoxes[0].setValue(100)
     inputBoxes[1].setValue(200)
-    inputBoxes[2].setValue(300)
-
-    expect(600 === TargetsTab.getSumOfTargets())
+    expect(300 === TargetsTab.getSumOfTargets())
   })
 
   it('should take LoP target of C number indicators from LoP target field', function() {
@@ -82,9 +65,6 @@ describe('Number indicators in the indicator evidence table', function() {
     TargetsTab.setLoPTarget(600)
     TargetsTab.setBaseline(0)
     TargetsTab.setTargetFrequency('Annual')
-    TargetsTab.setFirstTargetPeriod()
-    TargetsTab.setNumTargetPeriods(3)
-    // FIXME: I have no idea it takes two calls
     TargetsTab.saveIndicatorChanges()
     TargetsTab.saveIndicatorChanges()
 
@@ -92,7 +72,6 @@ describe('Number indicators in the indicator evidence table', function() {
     let inputBoxes = TargetsTab.getTargetInputBoxes()
     inputBoxes[0].setValue(100)
     inputBoxes[1].setValue(100)
-    inputBoxes[2].setValue(100)
 
     let lopTarget = TargetsTab.getLoPTarget()
     let lopActual = TargetsTab.getLoPTargetActual()

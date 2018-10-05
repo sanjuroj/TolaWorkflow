@@ -14,7 +14,7 @@
         //     return false;
         // }
         if ($("#collecteddata_update_form div").hasClass('has-error')) {
-            createAlert("danger", "{% trans 'Please complete all required fields.|escapejs'%}", true, "#modalmessages");
+            createAlert("danger", "{% trans 'Please complete all required fields.'|escapejs %}", true, "#modalmessages");
             $('#indicator_collecteddata_div').animate({ scrollTop: 0 }, 'slow');
             return;
         }
@@ -41,10 +41,7 @@
 
 
     $("#indicator_collecteddata_div").on("change", "#id_date_collected", function(e){
-        // only validate periodicTarget dropdown if it is an existing record
-        // if( parseInt(`{{object.id|safe}}`) > 0 ){
-            validatePeriodicTarget(onlyPeriodic = true);
-        // }
+        validatePeriodicTarget(onlyPeriodic = true);
         validateDateCollected();
     });
 
@@ -77,7 +74,8 @@
 
             $("#div_id_periodic_target").addClass('has-error');
         } else if ($("#id_periodic_target").val() == '' && onlyPeriodic == false) {
-
+            // This is triggered with midline/endline or event target frequencies when user tries to
+            // submit data without selecting a target period.
             $("#hint_id_periodic_target").html("<small>Please select a target.</small>");
             $("#div_id_periodic_target").addClass('has-error');
             $("#id_periodic_target").addClass('is-invalid');
@@ -131,7 +129,7 @@
             return false;
         } else if (date_collected > end_date || date_collected < start_date ) {
             $("#div_id_date_collected").addClass('has-error');
-            $("#hint_id_date_collected").html(`Please select a date between ${formatDate(start_date)} and ${formatDate(end_date)}.`);
+            $("#hint_id_date_collected").html(`{% trans 'Please select a date between'|escapejs %} ${formatDate(start_date)} {% trans "and" %} ${formatDate(end_date)}.`);
             return false;
         } else {
             var val = formatDate(field);
@@ -160,10 +158,9 @@
             if (!pt_date_range || pt_date_range == null || pt_date_range == 'null'){
                 return;
             }
-            pt_date_range = pt_date_range[1].split('-');
             try {
-                var start_date = new Date(pt_date_range[0].trim());
-                var end_date = new Date(pt_date_range[1].trim());
+                var start_date = new Date($(this).data("start"));
+                var end_date = new Date($(this).data("end"));
                 var collected_date = new Date($("#id_date_collected").val().trim());
                 if (collected_date >= start_date && collected_date <= end_date) {
                     // deselect the currently selected option

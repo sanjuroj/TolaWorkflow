@@ -11,22 +11,9 @@ describe('IPTT: Program target overview quickstart', function() {
   // Disable timeouts
   this.timeout(0)
 
-  before(function() {
+  before(function () {
     browser.windowHandleMaximize()
-    let parms = Util.readConfig()
-
-    LoginPage.open(parms.baseurl)
-    if (parms.baseurl.includes('mercycorps.org')) {
-      LoginPage.username = parms.username
-      LoginPage.password = parms.password
-      LoginPage.login.click()
-    } else if (parms.baseurl.includes('localhost')) {
-      LoginPage.googleplus.click()
-      if (LoginPage.title != 'TolaActivity') {
-        LoginPage.gUsername = parms.username + '@mercycorps.org'
-        LoginPage.gPassword = parms.password
-      }
-    }
+    Util.loginTola()
   })
 
   it('should exist', function () {
@@ -37,11 +24,9 @@ describe('IPTT: Program target overview quickstart', function() {
 
   it('should have a Target Periods dropdown', function() {
     IpttPage.TargetOverviewTargetPeriods.click()
-    IpttPage.TargetOverviewTargetPeriods.click()
   })
 
   it('should have a Program dropdown', function() {
-    IpttPage.TargetOverviewProgram.click()
     IpttPage.TargetOverviewProgram.click()
   })
 
@@ -66,7 +51,7 @@ describe('IPTT: Program target overview quickstart', function() {
 
   })
 
-  it('should allow to specify N recent time periods', function() {
+  it.skip('should allow to specify N recent time periods', function() {
     IpttPage.open()
     //FIXME: magic number
     IpttPage.TargetOverviewProgram = 2

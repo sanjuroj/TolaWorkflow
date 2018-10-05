@@ -5,18 +5,18 @@ CHROMESRC="https://chromedriver.storage.googleapis.com"
 GECKOSRC="https://github.com/mozilla/geckodriver/releases/download"
 
 # Server version
-SEURL=$(SESRC)/3.12/selenium-server-standalone-3.12.0.jar
+SEURL=$(SESRC)/3.14/selenium-server-standalone-3.14.0.jar
 SESERVER=$(shell basename $(SEURL))
 
 # Figure out which browser drivers we want
 ifeq ($(XDG_SESSION_TYPE),x11)
 # Linux
-	CHROMEURL=$(CHROMESRC)/2.37/chromedriver_linux64.zip
-	GECKOURL=$(GECKOSRC)/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz
+	CHROMEURL=$(CHROMESRC)/2.42/chromedriver_linux64.zip
+	GECKOURL=$(GECKOSRC)/v0.22.0/geckodriver-v0.22.0-linux64.tar.gz
 else
 # Mac
 	CHROMEURL=$(CHROMESRC)/2.37/chromedriver_mac64.zip
-	GECKOURL=$(GECKOSRC)/v0.20.1/geckodriver-v0.20.1-macos.tar.gz
+	GECKOURL=$(GECKOSRC)/v0.22.0/geckodriver-v0.22.0-macos.tar.gz
 endif
 CHROMEDRIVER=$(shell basename $(CHROMEURL))
 GECKODRIVER=$(shell basename $(GECKOURL))
@@ -32,7 +32,7 @@ help:
 	@echo "update      : refresh packages in top-level package.json file"
 
 clean:
-	$(RM) -vfr doc errorShots log *server.log
+	$(RM) -vfr doc errorShots log *.log
 
 doc:
 	./node_modules/.bin/jsdoc --verbose \
@@ -59,12 +59,21 @@ realclean: clean
 run-chrome:
 	java -jar -Dwebdriver.chrome.driver=chromedriver $(SESERVER) | tee server.log 2>&1 &
 	npm run wdio wdio.chrome.conf | tee chrome.log 2>&1
-	-killall -qw java
+	ifeq ($(XDG_SESSION_TYPE),x11)
+		-killall -w $(jobs -p)
+	else
+		-killall java
+	endif
 
 run-gecko:
 	java -jar -Dwebdriver.gecko.driver=geckodriver $(SESERVER) | tee server.log 2>&1 &
 	npm run wdio wdio.gecko.conf | tee gecko.log 2>&1
-	-killall -qw java
+	ifeq ($(XDG_SESSION_TYPE),x11)
+		-killall -w $(jobs -p)
+	else
+		-killall java
+	endif
 
 update:
-	npm update --verbose --save --dev
+	( cd node_modules; npm update --verbose --save --dev; cd - )
+

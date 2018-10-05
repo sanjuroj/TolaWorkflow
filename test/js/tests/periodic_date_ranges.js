@@ -1,6 +1,5 @@
 import DateMath from 'date-arithmetic'
 import IndPage from '../pages/indicators.page'
-import LoginPage from '../pages/login.page'
 import NavBar from '../pages/navbar.page'
 import TargetsTab from '../pages/targets.page'
 import Util from '../lib/testutil'
@@ -10,22 +9,9 @@ describe('Periodic target date ranges', function() {
   // Disable timeouts
   this.timeout(0)
 
-  before(function() {
+  before(function () {
     browser.windowHandleMaximize()
-    let parms = Util.readConfig()
-
-    LoginPage.open(parms.baseurl)
-    if (parms.baseurl.includes('mercycorps.org')) {
-      LoginPage.username = parms.username
-      LoginPage.password = parms.password
-      LoginPage.login.click()
-    } else if (parms.baseurl.includes('localhost')) {
-      LoginPage.googleplus.click()
-      if (LoginPage.title != 'TolaActivity') {
-        LoginPage.gUsername = parms.username + '@mercycorps.org'
-        LoginPage.gPassword = parms.password
-      }
-    }
+    Util.loginTola()
   })
 
   it('for annual periodic targets should be correct', function() {
@@ -34,9 +20,6 @@ describe('Periodic target date ranges', function() {
     TargetsTab.clickTargetsTab()
     TargetsTab.setTargetFrequency('Annual')
     // Set first period to current month
-    TargetsTab.setFirstTargetPeriod()
-    // Set number of target periods to 2
-    TargetsTab.setNumTargetPeriods(2)
     // Set other required values
     TargetsTab.setUnitOfMeasure('Apples per apiary')
     TargetsTab.setLoPTarget(43)
@@ -61,8 +44,6 @@ describe('Periodic target date ranges', function() {
     IndPage.createBasicIndicator()
     TargetsTab.clickTargetsTab()
     TargetsTab.setTargetFrequency('Semi-annual')
-    TargetsTab.setFirstTargetPeriod()
-    TargetsTab.setNumTargetPeriods(3)
     TargetsTab.setUnitOfMeasure('Bees per bonnet')
     TargetsTab.setLoPTarget(67)
     TargetsTab.setBaseline(68)
@@ -86,8 +67,6 @@ describe('Periodic target date ranges', function() {
     IndPage.createBasicIndicator()
     TargetsTab.clickTargetsTab()
     TargetsTab.setTargetFrequency('Tri-annual')
-    TargetsTab.setFirstTargetPeriod()
-    TargetsTab.setNumTargetPeriods(4)
     TargetsTab.setUnitOfMeasure('Cats per cradle')
     TargetsTab.setLoPTarget(92)
     TargetsTab.setBaseline(93)
@@ -111,8 +90,6 @@ describe('Periodic target date ranges', function() {
     IndPage.createBasicIndicator()
     TargetsTab.clickTargetsTab()
     TargetsTab.setTargetFrequency('Quarterly')
-    TargetsTab.setFirstTargetPeriod()
-    TargetsTab.setNumTargetPeriods(5)
     TargetsTab.setUnitOfMeasure('Doodles per desk')
     TargetsTab.setLoPTarget(116)
     TargetsTab.setBaseline(117)
@@ -136,8 +113,6 @@ describe('Periodic target date ranges', function() {
     IndPage.createBasicIndicator()
     TargetsTab.clickTargetsTab()
     TargetsTab.setTargetFrequency('Tri-annual')
-    TargetsTab.setFirstTargetPeriod()
-    TargetsTab.setNumTargetPeriods(4)
     TargetsTab.setUnitOfMeasure('Egrets per egress')
     TargetsTab.setLoPTarget(140)
     TargetsTab.setBaseline(141)

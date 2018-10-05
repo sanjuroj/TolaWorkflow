@@ -5,8 +5,7 @@
  */
 
 class NavBar {
-  get TolaActivity () { return browser.$('a.navbar-brand') }
-  get Workflow () { return browser.$('=Workflow') }
+  get TolaActivity () { return browser.$('a.navbar-brand--tola') }
   get Indicators () {
     if (!browser.isVisible('nav.navbar')) {
       browser.waitForVisible('nav.navbar')

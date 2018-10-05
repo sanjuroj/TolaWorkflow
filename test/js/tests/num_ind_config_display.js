@@ -1,7 +1,7 @@
-import LoginPage from '../pages/login.page'
 import NavBar from '../pages/navbar.page'
 import IndPage from '../pages/indicators.page'
 import TargetsTab from '../pages/targets.page'
+import Util from "../lib/testutil";
 
 /**
  * Target period table: number indicator config and display
@@ -11,7 +11,10 @@ describe('Number indicators config and display', function() {
   // Disable timeouts
   this.timeout(0)
 
-  before(function() {})
+  before(function () {
+    browser.windowHandleMaximize()
+    Util.loginTola()
+  })
 
   it('should allow to specify number indicators as non-cumulative or cumulative')
   it('should make non-cumulative number indicators the default option')

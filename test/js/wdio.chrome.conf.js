@@ -1,5 +1,5 @@
 exports.config = {
-  // execArgv: ['--inspect'],
+  execArgv: ['--inspect'],
   specs: [
     './tests/**/*.js'
   ],
@@ -39,12 +39,10 @@ exports.config = {
       'tests/event.js',
       'tests/lop_only.js',
       'tests/mid-end_line.js',
-      'tests/annual.js',
       'tests/semiannual.js',
       'tests/triannual.js',
       'tests/monthly.js',
       'tests/quarterly.js',
-      'tests/add_date_ranges.js',
       'tests/periodic_date_ranges.js'
     ]
   },
