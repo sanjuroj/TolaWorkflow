@@ -1,6 +1,6 @@
 # Tola Activity
-### The build status of the dev branch is:
-[![Build Status](https://travis-ci.org/mercycorps/TolaActivity.svg?branch=dev)](https://travis-ci.org/mercycorps/TolaActivity)
+
+**The build status of the dev branch is: [![Build Status](https://travis-ci.org/mercycorps/TolaActivity.svg?branch=dev)](https://travis-ci.org/mercycorps/TolaActivity)**
 
 [TolaActivity](http://www.github.com/toladata/TolaActivity) extends
 the functionality of [TolaData](https://www.toladata.com/) to include a
@@ -35,10 +35,10 @@ $ brew install mysql mysql-utilies
 $ brew install py2cairo pango
 $ git clone https://github.com/mercycorps.org/TolaActivity.git
 $ cd TolaActivity
-$ git checkout dev
-$ virtualenv venv --no-site-packages 
+$ virtualenv -p python2 --no-site-packages venv
 $ source venv/bin/activate
-mkdir config
+$ git checkout dev
+$ mkdir config
 # Place settings.secret.yml into config/ directory
 cp config/sample-settings.secret.yml config/settings.secret.yml
 pip install -r requirements.txt
@@ -50,9 +50,10 @@ Edit the configuration file as described in
 
 ### Ubuntu
 
-On Ubuntu and its derivatives, Python 2 is the default, so the
-following should get you going on any current Python 2 version for most
-_Ubunten_:
+On _Ubunten_ and derivatives, the following should get you going. We
+specify Python 2 because one day Python 3 *will* be the system Python.
+You'll need to get a copy the file _settings.secret.yml_
+from your mentor before proceeding:
 
 ```bash
 $ python --version
@@ -61,9 +62,9 @@ $ sudo apt install mysql-server libmysqld-dev mysql-utilities mysql-client
 $ sudo apt install libsasl2-dev python-dev libldap2-dev libssl-dev
 $ git clone https://github.com/mercycorps.org/TolaActivity.git
 $ cd TolaActivity
-$ git checkout dev
-$ virtualenv venv --no-site-packages
+$ virtualenv -p python2 --no-site-packages venv
 $ source venv/bin/activate
+$ git checkout dev
 $ mkdir config
 # Place settings.secret.yml into config/ directory
 $ pip install -r requirements.txt
@@ -75,48 +76,48 @@ Edit the configuration file as described in
 
 ## Modify the config file
 
-Edit _config/settings.secret.yml_. Find the node named, "DATABASES" and set the
+1. Edit _config/settings.secret.yml_. Find the node named, "DATABASES" and set the
 database `PASSWORD` as appropriate. The result should resemble the following:
 
-```yaml
-DATABASES:
-  default:
-    ENGINE: "django.db.backends.mysql"
-    NAME: "tola_activity"
-    USER: "admin"
-    PASSWORD: "SooperSekritWord"
-    OPTIONS: {"init_command": "SET default_storage_engine=MYISAM",}
-    HOST: "localhost"
-    PORT: ""
-```
+    ```yaml
+    DATABASES:
+      default:
+        ENGINE: "django.db.backends.mysql"
+        NAME: "tola_activity"
+        USER: "admin"
+        PASSWORD: "SooperSekritWord"
+        OPTIONS: {"init_command": "SET default_storage_engine=MYISAM",}
+        HOST: "localhost"
+        PORT: ""
+    ```
 
-Don't change the `USER` entry unless you know why you need
-to do that. Save and exit.
+    Don't change the `USER` entry unless you know why you need
+    to do that.
 
-Add an entry for the `SECRET_KEY` config option at the bottom of the file:
+1. Add an entry for the `SECRET_KEY` at the bottom of the file:
 
-```yaml
-SECRET_KEY: 'YOUR_RANDOM_STRING_HERE'
-```
+    ```yaml
+    SECRET_KEY: 'YOUR_RANDOM_STRING_HERE'
+    ```
 
-Add an entry for the server `LOGFILE` config option at the bottom of the file:
+1. Add an entry for the server `LOGFILE` at the bottom of the file:
 
-```yaml
-LOGFILE: 'logs/runserver.log'
-```
+    ```yaml
+    LOGFILE: 'logs/runserver.log'
+    ```
 
-Make the log dir
+1. Make the log dir
 
-```bash
-mkdir logs
-```
+    ```bash
+    $ mkdir logs
+    ```
 
 ## Set up Django's MySQL backing store
 
 ```sql
-CREATE DATABASE 'tola_activity';
-CREATE USER 'admin';
-GRANT ALL ON tola_activity.* TO 'admin'@'localhost' IDENTIFIED BY 'SooperSekritWord';
+mysql> CREATE DATABASE 'tola_activity';
+mysql> CREATE USER 'admin';
+mysql> GRANT ALL ON tola_activity.* TO 'admin'@'localhost' IDENTIFIED BY 'SooperSekritWord';
 ```
 
 ## Set up Django
@@ -124,7 +125,6 @@ GRANT ALL ON tola_activity.* TO 'admin'@'localhost' IDENTIFIED BY 'SooperSekritW
 Set up the Django database:
 
 ```bash
-$ python manage.py makemigrations
 $ python manage.py migrate
 
 Operations to perform:
@@ -222,8 +222,8 @@ for this bug until the bug is well and truly crushed.
 1. Insert the `id` value from the `auth_user` table into the `user_id` field
    of the `workflow_tolauser` table:
 
-    ```sql
-    INSERT INTO workflow_tolauser (name, privacy_disclaimer_accepted, user_id) VALUES (YOURNAME, 1,1);
+    ```bash
+    msql> INSERT INTO workflow_tolauser (name, privacy_disclaimer_accepted, user_id) VALUES (YOURNAME, 1,1);
     ```
 
 1. Restart the Tola Activity server
@@ -231,7 +231,7 @@ for this bug until the bug is well and truly crushed.
     ```bash
     $ python manage.py runserver
     Performing system checks...
-    
+
     System check identified no issues (0 silenced).
     March 26, 2018 - 23:38:10
     Django version 1.11.2, using settings 'tola.settings.local'
@@ -239,20 +239,20 @@ for this bug until the bug is well and truly crushed.
     Quit the server with CONTROL-C.
     ```
 
-1. Refresh the browser window and you should be at the logged in and immediately
+1. Refresh the browser window and you should be logged in and immediately
    redirected to the TolaActivity home page
 1. Rejoice!
 
 ## Loading demo data
 
-1. Get a recent dump from the demo instance from someone
+1. Get a recent DB dump from a Tola instance from your mentior
 1. Kill the TolaActivity server
-1. Make a backup of the current tola_activity DB if it's precious
-1. Drop and recreate the tola_activity DB:
+1. Make a backup of the current *tola_activity* DB if it's precious
+1. Drop and recreate the *tola_activity* DB. Using the MySQL CLI:
 
-    ```sql
-    DROP DATABASE 'tola_activity';
-    CREATE DATABASE 'tola_activity';
+    ```bash
+    mysql> DROP DATABASE 'tola_activity';
+    mysql> CREATE DATABASE 'tola_activity';
     ```
 
 1. Execute the SQL script you were given to load the data:
@@ -260,14 +260,6 @@ for this bug until the bug is well and truly crushed.
     ```bash
     $ mysql -u root -p tola_activity < demo_data.sql
     ```
-
-1. It might be necessary to migrations after repopulating the databse:
-
-    ```bash
-    $ python manage.py makemigrations
-    $ python manage.py migrate
-    ```
-
 
 ## Installing and running the front-end harness
 
