@@ -14,6 +14,13 @@ $(document).ready(function() {
 });
 </script>
 
+{% if program.does_it_need_additional_target_periods is True %}
+    <div id="id_missing_targets_msg" class="color-red">
+        <i class="fas fa-bullseye"></i>&nbsp;
+        {% trans 'Some indicators have missing targets. To enter these values, click the target icon near the indicator name.' %}
+    </div>
+{% endif %}
+
 <table class="table hiddenTable indicators-list"> {# hiddenTable is used by js? #}
     <tr class="table-header">
         <th class="" id="id_indicator_name_col_header">{% trans "Indicator" %}</th>
