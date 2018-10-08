@@ -10,7 +10,7 @@
     {% for program in programs %}
         <div class='card border-0 program indicators-list__program'>
             <div class='card-header'>
-                <h4>{{ program.name|truncatechars:140 }}</h4>
+                <h4><a href="{% url 'program_page' program.id 0 0 %}">{{ program.name|truncatechars:140 }}</a></h4>
                 {% if not program.reporting_period_start or not program.reporting_period_end %}
                     <div class="">
                         {% trans "Before adding indicators and performance results, we need to know your program's " %}
@@ -51,7 +51,6 @@
             <div id="hidden-{{ program.id }}" class="card-body collapse">
                 {% if program.reporting_period_start and program.reporting_period_end %}
                     <nav class="nav indicators-list__indicator-actions">
-                        <a class="nav-link" href="{% url 'program_page' program.id 0 0 %}">{% trans "Program page" %}</a>
                         <a class="nav-link" href="{% url 'programIndicatorReport' program.id %}">{% trans 'Indicator plan' %}</a>
                         <a
                             id="id_link_reporting_period_{{program.id}}"
@@ -70,12 +69,6 @@
                             <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add nav-link"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
                         {% endif %}
                     </nav>
-                {% endif %}
-                {% if program.does_it_need_additional_target_periods is True %}
-                    <span id="id_missing_targets_msg" class="color-red">
-                    <i class="fas fa-bullseye"></i>&nbsp;
-                    {% trans 'Some indicators have missing targets. To enter these values, click the target icon near the indicator name.' %}
-                </span>
                 {% endif %}
                 {% if program.indicator_set.all %}
                     <div class="indicators-list__table-container">
