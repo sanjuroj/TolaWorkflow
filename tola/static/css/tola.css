@@ -6351,6 +6351,19 @@ a.gauge__link--small {
   color: #0645AD;
   font-size: 0.875rem; }
 
+.btn-white, .btn-white:hover, .btn-white:active, .btn-white:focus {
+  color: #fff; }
+
+.div-expand-symbol {
+  width: .7rem;
+  display: inline-block; }
+
+#id_reporting_period_modal {
+  line-height: 1.2; }
+
+.rptMonthPicker {
+  width: 10rem; }
+
 .indicators-list__header {
   align-items: flex-start;
   display: flex;
@@ -6366,6 +6379,9 @@ a.gauge__link--small {
 
 .indicators-list--by-program {
   margin-top: 30px; }
+
+.indicators-list__program {
+  margin-bottom: 15px; }
 
 .collected-data-table__wrapper {
   padding: 15px; }
@@ -6986,11 +7002,6 @@ table.table-hover tbody tr:active {
 table.table-hover tbody tr.row-highlight:hover {
   background-color: #b5e0df !important; }
 
-.missing_targets_msg {
-  padding-left: 2.3rem;
-  margin-top: -0.875rem;
-  margin-bottom: 1rem; }
-
 .missing_targets {
   padding-left: 1rem; }
 
@@ -7165,29 +7176,6 @@ select.listoption_filters {
 #id_div_is_cumulative_section2,
 #id_div_is_cumulative_section3 {
   display: none; }
-
-#div-id-indicator-list .card-header {
-  background-color: #54585a !important;
-  color: #fff; }
-  #div-id-indicator-list .card-header .program-name {
-    width: 78%; }
-
-#div-id-indicator-list .card-body {
-  padding-top: .5rem;
-  padding-bottom: .5rem; }
-
-.btn-white, .btn-white:hover, .btn-white:active, .btn-white:focus {
-  color: #fff; }
-
-.div-expand-symbol {
-  width: .7rem;
-  display: inline-block; }
-
-#id_reporting_period_modal {
-  line-height: 1.2; }
-
-.rptMonthPicker {
-  width: 10rem; }
 
 .month-only .ui-datepicker-calendar {
   display: none; }

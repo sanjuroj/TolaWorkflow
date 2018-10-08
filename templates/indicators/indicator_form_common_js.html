@@ -5,7 +5,7 @@
     // Load Indicators
     function loadIndicators(program, indicator, type){
         $.get('/indicators/program_indicators/' + program + '/' + indicator + '/' + type + '/', function(data){
-            $('#hidden-' + program).html(data);
+            $('#hidden-' + program + ' .indicators-list__table-container').html(data);
             $("body").removeClass("modal-open");
         });
 
