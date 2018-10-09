@@ -14,26 +14,6 @@
     flex-direction: row;
     flex-grow: 1;
 }
-.gauge__container {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    justify-content: stretch;
-    padding: $grid-gutter-width/4;
-}
-a.gauge__link {
-    border: 2px solid transparent;
-    &:hover {
-        border-color: $yellow;
-        text-decoration: none;
-        @include transition($transition-base);
-    }
-}
-a.gauge__link--small {
-    color: inherit;
-    display: block;
-    padding: 2px;
-}
 .gauge__graphic {
     background-color: $green-100;
     display: flex;

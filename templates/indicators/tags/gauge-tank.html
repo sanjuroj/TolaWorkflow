@@ -14,14 +14,14 @@
             </div>
             {% if label %}
                 <h6 class="gauge__label">
-                    {% trans label %}
+                    <a href="#" class="text-dark">{% trans label %}</a>
                 </h6>
             {% endif %}
         </div>
     </div>
     {% if detail %}
         <div class="gauge__detail">
-            {{ not_filled }}% {% trans detail %}
+            <a href="#" class="text-dark">{{ not_filled }}% {% trans detail %}</a>
         </div>
     {% endif %}
 

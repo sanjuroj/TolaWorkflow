@@ -6269,25 +6269,6 @@ body > .container {
   flex-direction: row;
   flex-grow: 1; }
 
-.gauge__container {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  justify-content: stretch;
-  padding: 7.5px; }
-
-a.gauge__link {
-  border: 2px solid transparent; }
-  a.gauge__link:hover {
-    border-color: #ffd100;
-    text-decoration: none;
-    transition: all 0.2s ease-in-out; }
-
-a.gauge__link--small {
-  color: inherit;
-  display: block;
-  padding: 2px; }
-
 .gauge__graphic {
   background-color: #cde499;
   display: flex;
