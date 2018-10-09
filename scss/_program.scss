@@ -54,6 +54,10 @@
     font-size: $font-size-sm;
     @include make-col-ready();
     @include make-col(1,4);
+    @include media-breakpoint-down(sm) {
+        @include make-col(1,1);
+        order: 2;
+    }
 }
 .sidebar__detail {
     // element inside program page sidebar
@@ -95,6 +99,10 @@
     @include make-col(3,4);
     > table {
         background: $white;
+    }
+    @include media-breakpoint-down(sm) {
+        @include make-col(1,1);
+        order: 1;
     }
 }
 
