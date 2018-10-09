@@ -13,6 +13,7 @@ describe("Indicators landing page", function () {
     browser.windowHandleMaximize()
     Util.loginTola()
   })
+
   it('does something', function() {
     NavBar.Indicators.click()
     //FIXME: getPageName should be a property

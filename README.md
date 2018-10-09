@@ -1,6 +1,6 @@
 # Tola Activity
-### The build status of the bootstrap4 branch is:
-[![Build Status](https://travis-ci.org/mercycorps/TolaActivity.svg?branch=bootstrap4)](https://travis-ci.org/mercycorps/TolaActivity)
+
+**The build status of the dev branch is: [![Build Status](https://travis-ci.org/mercycorps/TolaActivity.svg?branch=dev)](https://travis-ci.org/mercycorps/TolaActivity)**
 
 [TolaActivity](http://www.github.com/toladata/TolaActivity) extends
 the functionality of [TolaData](https://www.toladata.com/) to include a
@@ -16,7 +16,7 @@ Running a local instance of TolaActivity makes development much faster and
 eliminates your dependence on access to any of MC's TolaActivity instances.
 These instructions should get you up and running with a minimum of fuss if
 you have [macOS](#macos) or one of the many [Ubunten](#ubuntu). If they do
-not, pull requests are accepted.
+not, we accept pull requests updating it. :)
 
 ## Install the bits
 
@@ -25,7 +25,8 @@ TolaActivity requires Python 2. MC uses MySQL as Django's datastore.
 ### macOS
 
 On macOS, you can use Homebrew to install Python 2 alongside the system
-Python 2 installation as shown in the following:
+Python 2 installation as shown in the following. You'll need to get a copy
+the file _settings.secret.yml_ from your mentor before proceeding.
 
 ```bash
 $ brew install python@2
@@ -231,11 +232,10 @@ for this bug until the bug is well and truly crushed.
 
 1. Execute the SQL script you were given to load the data:
 
-   ```bash
-   $ mysql -u root -p tola_activity < demo_data.sql
-   ```
-   
-   
+    ```bash
+    $ mysql -u root -p tola_activity < demo_data.sql
+    ```
+
 ## Installing and running the front-end harness
 
 *See also the [front-end architecture roadmap](https://github.com/mercycorps/TolaActivity/wiki/Proposal-for-front-end-architecture).*
@@ -262,7 +262,7 @@ This is *optional* if you are not doing significant front-end development. You c
     3. Choose __npm__ in the wee popup
     4. PyCharm should automagically select the correct __package.json__: `/path/to/project/package.json`
     5. Choose the __Command__ `start`
-    
+
 npm will compile a single global css file at `/path/to/project/tola/static/css/tola.css`. This file includes the entire Bootstrap library (previously in `bootstrap.min.css` and `bootstrap-multiselect.min.css`), our custom selectors (previously in `app.css`), and overrides to Bootstrap (previously in `bootstrap_overrides.css`)
 
 
