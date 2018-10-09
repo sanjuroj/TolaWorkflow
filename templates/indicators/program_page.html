@@ -6,8 +6,7 @@
     <div class="program__calendar-complete">
         <div class="fas fa-calendar"></div>
         <p>
-            Program period is <br>
-            <strong>{{ percent_complete }}% complete</strong>
+        {% blocktrans %}Program period is <br><strong>{{ percent_complete }}% complete</strong>{% endblocktrans %}
         </p>
     </div>
 {% endblock %}
@@ -19,38 +18,66 @@
         <aside class="program__status-gauges">
 
             <section class="program-gauge">
-                <a href="#" class="gauge__link">
-                    {% gauge_band scope_percents.high scope_percents.on_scope scope_percents.low %}
-                </a>
+                {% gauge_band scope_percents.high scope_percents.on_scope scope_percents.low %}
             </section>
 
             <section class="program-gauge">
-                <a href="#" class="gauge__link">
-                    {% gauge_tank results_stats.targets_defined 'indicators have targets defined' 'of indicators have no targets' %}
-                </a>
-                </a>
+                {% gauge_tank results_stats.targets_defined 'indicators have targets defined' 'of indicators have no targets' %}
             </section>
 
             <section class="program-gauge">
-                <a href="#" class="gauge__link">
-                    {% gauge_tank results_stats.reported_results 'indicators have reported results' 'of indicators have no results' %}
-                </a>
+                {% gauge_tank results_stats.reported_results 'indicators have reported results' 'of indicators have no results' %}
             </section>
 
             <div class="program-gauge">
-                <a href="#" class="gauge__link">
-                    {% gauge_tank results_stats.results_evidence 'results are backed up with evidence' 'of results are missing evidence' %}
-                </a>
+                {% gauge_tank results_stats.results_evidence 'results are backed up with evidence' 'of results are missing evidence' %}
             </div>
 
         </aside>
     {% endif %}
 
 <div class="program-page__main">
-    <div class="program-page__details">
-        Side Panel
+    <div class="program-page__sidebar">
+        <section class="sidebar__detail">
+            <h3>{% trans "Program Details" %}</h3>
+            <p><a href="#">{% trans "Indicator Plan" %}</a></p>
+        </section>
+        <section class="sidebar__detail">
+            <h3>{% trans "Documents" %}</h3>
+            <p><a href="#">{% trans "View program documents" %}</a></p>
+            <a href="#" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add document" %}</a>
+        </section>
+        <section class="sidebar__detail">
+            <h3>{% trans "Sites" %}</h3>
+            <p><a href="#">{% trans "View Program Sites" %}</a></p>
+            <a href="#" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add site" %}</a>
+        </section>
+        <section class="sidebar__detail">
+            <h3>{% trans "Pinned Reports" %}</h3>
+            <ul class="pinned-reports">
+                <li class="pinned-report">
+                    <a href="#">
+                        <h4>IPTT: Recent Progress for All Indicators</h4>
+                    Jun 1, 2018 – Jul 31, 2018
+                    </a>
+                </li>
+                <li class="pinned-report">
+                    <a href="#">
+                        <h4>IPTT: Donor indicators tracked quarterly</h4>
+                        Jan 1, 2018 – Mar 31, 2019
+                    </a>
+                </li>
+            </ul>
+            <a href="#" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Create an IPTT report" %}</a>
+        </section>
     </div>
-    <div id="div-id-indicator-list" class="indicator-list program-page__indicators">
+    <div id="div-id-indicator-list" class="indicators-list program-page__indicators">
+        <div class="indicators-list__header">
+            <h3 class="no-bold">{% blocktrans %}{{ indicator_count }} indicators{% endblocktrans %}</h3>
+            <div>
+                <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
+            </div>
+        </div>
         {% include "indicators/program_indicators_table.html" %}
     </div>
 </div>

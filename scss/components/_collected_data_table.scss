@@ -1,0 +1,45 @@
+// Collected data table included in the indicator table (& elsewhere?)
+.collected-data-table__wrapper {
+    // this div provides a little padding but is probably not necessary
+    padding: $grid-gutter-width/2;
+}
+.collected-data-table {
+    background-color: transparent !important;
+    th, td { // table-sm
+        font-size: $font-size-sm;
+        padding: $table-cell-padding-sm;
+    }
+    > th {
+    }
+    td {
+        background: $white;
+    }
+}
+.collected-data-table__result {
+    display: flex;
+    justify-content: space-between;
+    white-space: nowrap;
+}
+.result__date {
+}
+.result__value {
+    padding-left: $grid-gutter-width;
+}
+
+
+// see _iptt_table.scss
+.collected-data__link {}
+.collected-data-table__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+// Potentially global styles
+.disable-span {
+    cursor: not-allowed;
+    opacity: .65;
+}
+.disable-span a {
+    pointer-events: none;
+}

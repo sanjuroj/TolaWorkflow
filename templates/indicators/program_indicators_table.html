@@ -3,7 +3,7 @@
 $(document).ready(function() {
     // rotate toggle
     $('.indicator_results_toggle').on('click', function(e) {
-        $(this).closest(".indicator_toggle_parent").toggleClass('bg-gray-lighter');
+        $(this).closest(".indicators-list__indicator-header").toggleClass('is-expanded');
         let icon = $(this).find("svg");
         if (icon.hasClass('fa-caret-right')) {
             icon.attr('class', 'fa-caret-down');
@@ -14,17 +14,24 @@ $(document).ready(function() {
 });
 </script>
 
-<table class="table hiddenTable">
-    <tr>
-        <th class="text-uppercase text-nowrap" id="id_indicator_name_col_header">{% trans "Indicator" %}</th>
-        <th class="text-uppercase text-nowrap" id="id_indicator_buttons_col_header">&nbsp;</th>
-        <th class="text-uppercase text-nowrap" id="id_indicator_level_col_header">{% trans "Level" %}</th>
-        <th class="text-uppercase text-nowrap" id="id_indicator_unit_col_header">{% trans "Unit of measure" %}</th>
-        <th class="text-uppercase text-right text-nowrap" id="id_indicator_baseline_col_header">{% trans "Baseline" %}</th>
-        <th class="text-uppercase ttext-right ext-nowrap" id="id_indicator_target_col_header">{% trans "Target" %}</th>
+{% if program.does_it_need_additional_target_periods is True %}
+    <div id="id_missing_targets_msg" class="color-red">
+        <i class="fas fa-bullseye"></i>&nbsp;
+        {% trans 'Some indicators have missing targets. To enter these values, click the target icon near the indicator name.' %}
+    </div>
+{% endif %}
+
+<table class="table hiddenTable indicators-list"> {# hiddenTable is used by js? #}
+    <tr class="table-header">
+        <th class="" id="id_indicator_name_col_header">{% trans "Indicator" %}</th>
+        <th class="" id="id_indicator_buttons_col_header">&nbsp;</th>
+        <th class="" id="id_indicator_level_col_header">{% trans "Level" %}</th>
+        <th class="" id="id_indicator_unit_col_header">{% trans "Unit of measure" %}</th>
+        <th class="text-right" id="id_indicator_baseline_col_header">{% trans "Baseline" %}</th>
+        <th class="text-right" id="id_indicator_target_col_header">{% trans "Target" %}</th>
     </tr>
-    {% for indicator in indicators %}
-    <tr class="indicator_toggle_parent" id = "id_indicator_{{ indicator.id }}" {% if indicator.just_created %} style="background-color: lightyellow;" {% endif %} >
+    {% for indicator in indicators %} {# each indicator is in TWO rows #}
+    <tr class="indicators-list__indicator-header {% if indicator.just_created %}is-highlighted{% endif  %}" id = "id_indicator_{{ indicator.id }}">
         <td id="id_indicator_name_{{ indicator.id }}">
             <a
                 id="id_indicator_data_count_btn_{{ indicator.id }}"
@@ -58,8 +65,8 @@ $(document).ready(function() {
         <td class="text-right" id="id_indicator_baseline_{{ indicator.id }}">{{ indicator.baseline }}</td>
         <td class="text-right" id="id_indicator_target_{{ indicator.id }}">{{ indicator.lop_target }}</td>
     </tr>
-    <tr class="hiddenRow">
-        <td colspan="9" class="p-0 bg-gray-lighter-alt border-0">
+    <tr class="indicators-list__indicator-body hiddenRow">{# hiddenRow is used by JS? #}
+        <td colspan="6" class="p-0 bg-blue border-0">
             <div id="hidden-indicator-{{ indicator.id }}" class="collapse">
                 <!-- Table -->
                 {% include "indicators/collected_data_table.html" %}

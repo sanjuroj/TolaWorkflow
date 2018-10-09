@@ -92,11 +92,6 @@ table.table-hover tbody tr {
 table.table-hover tbody tr.row-highlight:hover { //* whoa check out this specificity */
     background-color: $teal-150 !important;
 }
-.missing_targets_msg {
-    padding-left: 2.3rem;
-    margin-top: -0.875rem;
-    margin-bottom: 1rem;
-}
 .missing_targets {
     padding-left: 1rem;
 }
@@ -329,39 +324,6 @@ select.listoption_filters {
 // END Indicator periodic target creation
 
 
-// START Indicator list page css
-#div-id-indicator-list {
-    .card-header {
-        background-color: $gray-700 !important;
-        color: $white;
-        .program-name {
-            width: 78%;
-        }
-    }
-    .card-body {
-        padding-top: .5rem;
-        padding-bottom: .5rem;
-    }
-}
-.btn-white {
-    &,
-    &:hover,
-    &:active,
-    &:focus {
-        color: $white;
-    }
-}
-.div-expand-symbol {
-    width: .7rem;
-    display: inline-block;
-}
-#id_reporting_period_modal {
-    line-height: 1.2;
-}
-.rptMonthPicker {
-    width: 10rem;
-}
-// END Indicator list page css
 
 // BEGIN datepicker styling
 .month-only .ui-datepicker-calendar {
@@ -391,12 +353,13 @@ select.listoption_filters {
 }
 
 // "add a thing" buttons
+// Leave off the 'btn' parent class for a non-bold, non-padded version
 .btn-add {
-    color: $green-450 !important;
-    padding-left: 0.625rem;
-    padding-right: 0.625rem;
+    color: $green-600 !important;
+    //padding-left: 0.625rem;
+    //padding-right: 0.625rem;
     &:hover {
-        color: $green-600;
+        color: $green-700;
     }
 }
 
@@ -432,3 +395,12 @@ select.listoption_filters {
 }
 
 // unsorted
+.help-text {
+    font-size: $font-size-sm;
+    font-style: italic;
+    font-weight: $font-weight-light;
+    text-align: left;
+}
+.is-highlighted {
+    background: $yellow-100;
+}

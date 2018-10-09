@@ -43,7 +43,24 @@
 @import "../node_modules/bootstrap/scss/tooltip";
 @import "../node_modules/bootstrap/scss/popover";
 @import "../node_modules/bootstrap/scss/carousel";
-@import "../node_modules/bootstrap/scss/utilities";
+
+// These *were* all loaded via utilities
+// but I may want to disable some of these later
+@import "../node_modules/bootstrap/scss/utilities/align";
+@import "../node_modules/bootstrap/scss/utilities/background";
+@import "../node_modules/bootstrap/scss/utilities/borders";
+@import "../node_modules/bootstrap/scss/utilities/clearfix";
+@import "../node_modules/bootstrap/scss/utilities/display";
+@import "../node_modules/bootstrap/scss/utilities/embed";
+@import "../node_modules/bootstrap/scss/utilities/flex";
+@import "../node_modules/bootstrap/scss/utilities/float";
+@import "../node_modules/bootstrap/scss/utilities/position";
+@import "../node_modules/bootstrap/scss/utilities/screenreaders";
+@import "../node_modules/bootstrap/scss/utilities/sizing";
+@import "../node_modules/bootstrap/scss/utilities/spacing";
+@import "../node_modules/bootstrap/scss/utilities/text"; // KEEP
+@import "../node_modules/bootstrap/scss/utilities/visibility";
+
 @import "../node_modules/bootstrap/scss/print";
 
 // MC Tola CSS modules
@@ -53,7 +70,11 @@
 
 /* Components */
 // These are well-behaved BEM-compliant selectors
+@import 'components/tables'; // semantic addtions to, but not overloads of, Bootstrap tables
 @import 'components/regions'; // page regions and sub-regions
+@import 'components/gauges';  // status gauges, e.g. on Program landing page
+@import 'components/indicator_table';  // indicator list included on Program page and Indicators page
+@import 'components/collected_data_table';  // collected data table included in indicator list (& elsewhere?)
 
 /* Local custom CSS and overloads for non-BS libraries */
 @import 'mixins';
