@@ -55,7 +55,7 @@ class TestResponseClass(unittest.TestCase):
             for j, daterange in enumerate(indicator['ranges']):
                 for k, expected_value in daterange.items():
                     if k in ['start_date', 'end_date'] and expected_value is not None:
-                        expected_value = datetime.strptime(expected_value, "%Y-%m-%d")
+                        expected_value = datetime.strptime(expected_value, "%Y-%m-%d").strftime("%Y-%m-%d")
                     self.assertEqual(self.processed.indicators[i]['ranges'][j][k],
                                      expected_value,
                                      "Expected indicator {0} range {1} key {2} to have value {3}, got {4}.".format(
