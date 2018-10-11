@@ -1,7 +1,7 @@
 """ Functional tests for the iptt report generation view
 
 in the 'targetperiods' view (all indicators on report are same frequency):
-these classes test monthly indicators generated report ranges, values, sums, and percentages
+these classes test monthly/annual/mid-end indicators generated report ranges, values, sums, and percentages
 """
 
 from datetime import datetime, timedelta
