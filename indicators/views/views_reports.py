@@ -1,9 +1,10 @@
 import bisect
+import csv
 from collections import OrderedDict
-from dateutil import rrule, parser
-from django.utils import formats, timezone
-from dateutil.relativedelta import relativedelta
 from datetime import datetime
+from dateutil import rrule, parser
+from dateutil.relativedelta import relativedelta
+from django.utils import formats, timezone
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max
 from django.views.generic import TemplateView, FormView
@@ -1171,3 +1172,16 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
         redirect_url = "{}?{}".format(reverse_lazy('iptt_report', kwargs=url_kwargs),
                                       filterdata.urlencode())
         return HttpResponseRedirect(redirect_url)
+
+class IPTT_CSVExport(IPTT_Mixin, TemplateView):
+    header_row = ["Program:"]
+    subheader_row = ["id", "name"]
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        self.header_row.append(self.program.name)
+        response = HttpResponse(content_type="text/csv")
+        writer = csv.writer(response)
+        writer.writerow(self.header_row)
+        writer.writerow(self.subheader_row)
+        return response
