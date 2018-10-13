@@ -1175,7 +1175,46 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
 
 class IPTT_CSVExport(IPTT_Mixin, TemplateView):
     header_row = ["Program:"]
-    subheader_row = ["id", "name"]
+    subheader_row = ['id', 'number', 'name', 'level', 'indicator_type', 'source', 'sector',
+                     'definition', 'justification', 'disaggregation', 'unit_of_measure', 'unit_of_measure_type',
+                     'baseline', 'lop_target', 'target_frequency', 'means_of_verification',
+                     'data_collection_method', 'data_collection_frequency', 'lop_sum', 'lop_target', 'lop_met']
+
+    def get_context_data(self, **kwargs):
+        self.program = Program.objects.get(pk=kwargs.get('program_id'))
+        context = {}
+        (context['report_end_date'], context['all_date_ranges'], context['timeperiods']) = self._generate_timeperiods(
+            None, None, Indicator.MONTHLY, 1, None)
+        context['indicators'] = self.program.indicator_set.all()
+        return context
+    
+    def get_totals(self, indicator):
+        return ['a', 'b', 'c']
+
+    def get_indicator_row(self, indicator):
+        row = []
+        row.append(indicator.id)
+        row.append(indicator.number)
+        row.append(indicator.name)
+        row.append(indicator.level.first())
+        row.append(indicator.indicator_type.first())
+        row.append(indicator.source)
+        row.append(indicator.sector)
+        row.append(indicator.definition)
+        row.append(indicator.justification)
+        row.append("/".join([str(disagg) for disagg in indicator.disaggregation.all()]))
+        row.append(indicator.unit_of_measure)
+        row.append(indicator.get_unit_of_measure_type)
+        row.append(indicator.baseline)
+        row.append(indicator.lop_target)
+        row.append(indicator.get_target_frequency_label)
+        row.append(indicator.means_of_verification)
+        row.append(indicator.data_collection_method)
+        row.append(indicator.data_collection_frequency)
+        for c, value in enumerate(row):
+            row[c] = value if value is not None else "N/A"
+        row.append(self.get_totals(indicator))
+        return row
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
@@ -1184,4 +1223,6 @@ class IPTT_CSVExport(IPTT_Mixin, TemplateView):
         writer = csv.writer(response)
         writer.writerow(self.header_row)
         writer.writerow(self.subheader_row)
+        for indicator in context['indicators']:
+            writer.writerow(self.get_indicator_row(indicator))
         return response
