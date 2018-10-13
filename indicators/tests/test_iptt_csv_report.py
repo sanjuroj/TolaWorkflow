@@ -3,20 +3,45 @@
 url: /indicators/iptt_csv/<program_id>/
 """
 
-from factories.workflow_models import ProgramFactory
-from django import test
+from datetime import datetime, timedelta
 from StringIO import StringIO
 import csv
+from factories.workflow_models import ProgramFactory, SectorFactory
+from factories.indicators_models import (
+    IndicatorFactory,
+    DefinedIndicatorFactory,
+    LevelFactory,
+    DisaggregationTypeFactory,
+    IndicatorTypeFactory,
+    CollectedDataFactory
+    )
+from django import test
 
-class TestCSVEndpointGeneratesCSVFile(test.TestCase):
+class CSVTestBase(test.TestCase):
     url = '/indicators/iptt_csv/{0}/'
+    fields = ['id', 'number', 'name', 'level', 'indicator_type', 'source', 'sector',
+              'definition', 'justification', 'disaggregation', 'unit_of_measure', 'get_unit_of_measure_type',
+              'baseline', 'lop_target', 'get_target_frequency_label', 'means_of_verification',
+              'data_collection_method', 'data_collection_frequency']
+    relation_fields = [3, 4, 9]
+    data_fields = ['lop_sum', 'lop_target', 'lop_met']
+
     def setUp(self):
         self.client = test.Client()
-        self.program = ProgramFactory()
+        self.program = ProgramFactory(reporting_period_start=datetime.strptime('2017-01-01', '%Y-%m-%d'),
+                                      reporting_period_end=datetime.strptime('2017-12-31', '%Y-%m-%d'))
         self.url = self.url.format(self.program.id)
 
     def tearDown(self):
         self.program.delete()
+
+
+class TestCSVEndpointGeneratesCSVFile(CSVTestBase):
+    header_row = ['Program:', 'program_name']
+
+    def setUp(self):
+        super(TestCSVEndpointGeneratesCSVFile, self).setUp()
+        self.header_row[1] = self.program.name
 
     def test_endpoint_exists(self):
         response = self.client.get(self.url)
@@ -34,12 +59,196 @@ class TestCSVEndpointGeneratesCSVFile(test.TestCase):
         self.assertGreater(len(header_row), 1,
                            "expected more than 1 cell in a csv file, got:\n {0}".format(
                                response.content))
-        for c, value in enumerate(['Program:', self.program.name]):
+        for c, value in enumerate(self.header_row):
             self.assertEqual(header_row[c], value,
                              "expected header row 1 cell {0} to be {1}, got {2}".format(
-                                c, value, header_row[c]))
+                                 c, value, header_row[c]))
         subheader_row = response_csv.next()
-        for c, value in enumerate(["id", "name"]):
+        for c, value in enumerate(self.fields):
+            value = value[4:] if value[:4] == 'get_' else value
+            value = value[:-6] if value[-6:] == '_label' else value
             self.assertEqual(subheader_row[c], value,
                              "expected subhead row 2 cell {0} to be {1}, got {2}".format(
-                                c, value, subheader_row[c]))
+                                 c, value, subheader_row[c]))
+
+class CSVIndicatorTestBase(CSVTestBase):
+    def setUp(self):
+        super(CSVIndicatorTestBase, self).setUp()
+        self.sectors = [SectorFactory(),]
+        self.levels = [LevelFactory(),]
+        self.disaggregations = [DisaggregationTypeFactory(),]
+        self.indicatortypes = [IndicatorTypeFactory(),]
+        self.indicators = []
+        self.response = None
+
+    def tearDown(self):
+        for indicator in self.indicators:
+            indicator.delete()
+        for sector in self.sectors:
+            sector.delete()
+        for level in self.levels:
+            level.delete()
+        for disag in self.disaggregations:
+            disag.delete()
+        for indicatortype in self.indicatortypes:
+            indicatortype.delete()
+        super(CSVIndicatorTestBase, self).tearDown()
+
+    def assert_msg(self, msg):
+        if self.response:
+            return "Unformatted CSV Response:\n{0}:\n{1}".format(self.response, msg)
+        return msg
+
+    def get_indicator(self, sector=0, level=0, disaggregation=0,
+                      indicatortype=0):
+        indicator = DefinedIndicatorFactory(sector=self.sectors[sector])
+        indicator.level.add(self.levels[level])
+        indicator.disaggregation.add(self.disaggregations[disaggregation])
+        indicator.indicator_type.add(self.indicatortypes[indicatortype])
+        indicator.save()
+        return indicator
+
+    def add_indicator(self, *args, **kwargs):
+        indicator = self.get_indicator(*args, **kwargs)
+        indicator.program.add(self.program)
+        self.indicators.append(indicator)
+        return indicator
+
+    def get_rows(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200,
+                         "Expected a 200 OK at url {0}, got {1}".format(
+                             self.url, response.status_code))
+        self.response = response.content
+        reader = csv.reader(StringIO(response.content))
+        headers = [reader.next(), reader.next()]
+        body = [row for row in reader]
+        return headers, body
+
+
+class TestCSVEndPointIndicatorsAccurate(CSVIndicatorTestBase):
+    # to do: test collected data points
+
+    def compare_indicator(self, indicator, row):
+        for c, field in enumerate(self.fields):
+            self.assertGreater(len(row), c,
+                               self.assert_msg("row should have at least {0} fields, has {1}".format(
+                                   c+1, len(row))))
+            value = getattr(indicator, field)
+            value = value.first() if c in self.relation_fields else value
+            value = str(value) if value is not None else "N/A"
+            self.assertEqual(value, str(row[c]),
+                             self.assert_msg("cell {0} should be {1} field with value {2}, got value {3}".format(
+                                 c, field, value, row[c])))
+        return True
+
+    def test_row_counts(self):
+        self.add_indicator()
+        _, indicator_rows = self.get_rows()
+        self.assertEqual(len(indicator_rows), 1,
+                         self.assert_msg("One indicator added, should have one row returned"))
+        self.add_indicator()
+        _, indicator_rows = self.get_rows()
+        self.assertEqual(len(indicator_rows), 2,
+                         self.assert_msg("Two indicators added, should have two rows returned"))
+        self.add_indicator()
+        _, indicator_rows = self.get_rows()
+        self.assertEqual(len(indicator_rows), 3,
+                         self.assert_msg("Three indicators added, should have three rows returned"))
+        self.indicators.pop(1).delete()
+        _, indicator_rows = self.get_rows()
+        self.assertEqual(len(indicator_rows), 2,
+                         self.assert_msg("Three indicators added, one removed, should have two rows returned"))
+
+    def test_indicator_global_info(self):
+        self.add_indicator()
+        _, indicator_rows = self.get_rows()
+        self.assertTrue(self.compare_indicator(self.indicators[0], indicator_rows[0]))
+
+    def test_indicator_info_with_blanks(self):
+        indicator = self.add_indicator()
+        indicator.level.remove(self.levels[0])
+        indicator.means_of_verification = None
+        indicator.save()
+        _, indicator_rows = self.get_rows()
+        self.assertTrue(self.compare_indicator(self.indicators[0], indicator_rows[0]))
+        self.assertEqual(indicator_rows[0][3], "N/A",
+                         self.assert_msg("removed all levels, level should show N/A, got {0}".format(
+                             indicator_rows[0][3])))
+        self.assertEqual(indicator_rows[0][15], "N/A",
+                         self.assert_msg("removed means of verification, should show N/A, got {0}".format(
+                             indicator_rows[0][15])))
+
+    def test_two_indicators_global_info(self):
+        self.add_indicator()
+        self.add_indicator()
+        _, indicator_rows = self.get_rows()
+        self.assertTrue(self.compare_indicator(self.indicators[0], indicator_rows[0]))
+        self.assertTrue(self.compare_indicator(self.indicators[1], indicator_rows[1]))
+
+    def test_two_indicators_different_relations(self):
+        self.add_indicator()
+        self.sectors.append(SectorFactory())
+        self.add_indicator(sector=1)
+        _, indicator_rows = self.get_rows()
+        self.assertNotEqual(self.sectors[0].sector, self.sectors[1].sector,
+                            "test invalid if sectors have same name")
+        self.assertNotEqual(indicator_rows[0][6], indicator_rows[1][6],
+                            self.assert_msg("sectors have different names, cells must be different also"))
+        self.assertEqual(indicator_rows[0][6], self.sectors[0].sector,
+                         self.assert_msg("different levels should show differently, got {0} instead of {1}".format(
+                             indicator_rows[0][6], self.sectors[0].sector)))
+        self.assertEqual(indicator_rows[1][6], self.sectors[1].sector,
+                         self.assert_msg("different levels should show differently, got {0} instead of {1}".format(
+                             indicator_rows[1][6], self.sectors[1].sector)))
+
+    def test_multiple_disaggregation_types(self):
+        indicator = self.add_indicator()
+        self.disaggregations.append(DisaggregationTypeFactory())
+        indicator.disaggregation.add(self.disaggregations[1])
+        indicator.save()
+        _, indicator_rows = self.get_rows()
+        self.assertEqual(
+            indicator_rows[0][9],
+            self.disaggregations[0].disaggregation_type + "/" + self.disaggregations[1].disaggregation_type,
+            self.assert_msg("disaggregations should combine with \"/\" joiner, got {0}".format(
+                indicator_rows[0][9])))
+
+class TestCSVTotals(CSVIndicatorTestBase):
+    def setUp(self):
+        super(TestCSVTotals, self).setUp()
+        self.datapoints = []
+
+    def tearDown(self):
+        super(TestCSVTotals, self).tearDown()
+        for datapoint in self.datapoints:
+            datapoint.delete()
+
+    def add_data(self, value, collect_date=None, indicator=None):
+        if indicator is None:
+            indicator = self.add_indicator() if not self.indicators else self.indicators[0]
+        collect_date = (
+            self.program.reporting_period_start + timedelta(days=1) if collect_date is None else collect_date
+            )
+        self.datapoints.append(
+            CollectedDataFactory(indicator=indicator, date_collected=collect_date, achieved=value)
+        )
+
+    def get_data_rows(self):
+        _, indicator_rows = self.get_rows()
+        return [row[18:] for row in indicator_rows]
+
+    def test_header_fields(self):
+        header_rows, _ = self.get_rows()
+        for c, value in enumerate(self.data_fields):
+            self.assertEqual(header_rows[1][c+18], value,
+                             self.assert_msg("subhead row cell {0} should have value {1} got {2}".format(
+                                 c+18, value, header_rows[1][c+18])))
+
+    def test_lop_sum(self):
+        self.add_indicator()
+        self.add_data(10)
+        data_row = self.get_data_rows()[0]
+        self.assertEqual(data_row[0], 10,
+                         self.assert_msg("one data point value 10 should yield a total of 10, got {0}".format(
+                            data_row[0])))
