@@ -1182,21 +1182,34 @@ class IPTT_CSVExport(IPTT_Mixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         self.program = Program.objects.get(pk=kwargs.get('program_id'))
+        self.reporttype = kwargs['reporttype']
         context = {}
-        (context['report_end_date'], context['all_date_ranges'], context['timeperiods']) = self._generate_timeperiods(
-            None, None, Indicator.MONTHLY, 1, None)
-        context['indicators'] = self.program.indicator_set.all()
+        if self.reporttype == 'timeperiods':
+            (context['report_end_date'],
+             context['all_date_ranges'],
+             context['timeperiods']) = self._generate_timeperiods(None, None, Indicator.MONTHLY, 1, None)
+            lastlevel = Level.objects.filter(indicator__id=OuterRef('pk')).order_by('-id')
+            last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-date_collected')
+            annotations = self._generate_annotations(context['timeperiods'],
+                                                     Indicator.MONTHLY, self.REPORT_TYPE_TIMEPERIODS)
+        indicators = self.program.indicator_set.annotate(
+            actualsum=Sum('collecteddata__achieved'),
+            lastlevel=Subquery(lastlevel.values('name')[:1]),
+            lastdata=Subquery(last_data_record.values('achieved')[:1]),
+            **annotations
+        )
+        context['indicators'] = indicators
         return context
-    
+
     def get_totals(self, indicator):
         return ['a', 'b', 'c']
 
-    def get_indicator_row(self, indicator):
+    def get_indicator_row(self, indicator, timeperiods):
         row = []
         row.append(indicator.id)
         row.append(indicator.number)
         row.append(indicator.name)
-        row.append(indicator.level.first())
+        row.append(indicator.lastlevel)
         row.append(indicator.indicator_type.first())
         row.append(indicator.source)
         row.append(indicator.sector)
@@ -1211,18 +1224,27 @@ class IPTT_CSVExport(IPTT_Mixin, TemplateView):
         row.append(indicator.means_of_verification)
         row.append(indicator.data_collection_method)
         row.append(indicator.data_collection_frequency)
+        row.append(indicator.actualsum)
+        row.append(indicator.lop_target)
+        if indicator.actualsum is not None and indicator.lop_target is not None:
+            row.append(str(int(round(float(indicator.actualsum) / float(indicator.lop_target) * 100))) + "%")
+        else:
+            row.append(None)
+        for timeperiod in timeperiods.keys():
+            row.append(getattr(indicator, "{}_sum".format(timeperiod)))
         for c, value in enumerate(row):
             row[c] = value if value is not None else "N/A"
-        row.append(self.get_totals(indicator))
         return row
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        self.header_row.append(self.program.name)
+        header_row = self.header_row + [self.program.name] + [''] * (len(self.subheader_row)-2)
+        header_row.extend(context['all_date_ranges'].keys())
+        subheader_row = self.subheader_row + ['Actual'] * len(context['all_date_ranges'].keys())
         response = HttpResponse(content_type="text/csv")
         writer = csv.writer(response)
-        writer.writerow(self.header_row)
-        writer.writerow(self.subheader_row)
+        writer.writerow(header_row)
+        writer.writerow(subheader_row)
         for indicator in context['indicators']:
-            writer.writerow(self.get_indicator_row(indicator))
+            writer.writerow(self.get_indicator_row(indicator, context['timeperiods']))
         return response

@@ -1,6 +1,6 @@
 """ Functional tests for the CSV generation file for Palantir import
 
-url: /indicators/iptt_csv/<program_id>/
+url: /indicators/iptt_csv/<program_id>/<reporttype>
 """
 
 from datetime import datetime, timedelta
@@ -18,7 +18,8 @@ from factories.indicators_models import (
 from django import test
 
 class CSVTestBase(test.TestCase):
-    url = '/indicators/iptt_csv/{0}/'
+    reporrtype = 'timeperiods'
+    url = '/indicators/iptt_csv/{0}/{1}/'
     fields = ['id', 'number', 'name', 'level', 'indicator_type', 'source', 'sector',
               'definition', 'justification', 'disaggregation', 'unit_of_measure', 'get_unit_of_measure_type',
               'baseline', 'lop_target', 'get_target_frequency_label', 'means_of_verification',
@@ -30,7 +31,7 @@ class CSVTestBase(test.TestCase):
         self.client = test.Client()
         self.program = ProgramFactory(reporting_period_start=datetime.strptime('2017-01-01', '%Y-%m-%d'),
                                       reporting_period_end=datetime.strptime('2017-12-31', '%Y-%m-%d'))
-        self.url = self.url.format(self.program.id)
+        self.url = self.url.format(self.program.id, self.reporrtype)
 
     def tearDown(self):
         self.program.delete()
@@ -224,12 +225,17 @@ class TestCSVTotals(CSVIndicatorTestBase):
         for datapoint in self.datapoints:
             datapoint.delete()
 
-    def add_data(self, value, collect_date=None, indicator=None):
+    def add_data(self, value, months=None, indicator=None):
         if indicator is None:
             indicator = self.add_indicator() if not self.indicators else self.indicators[0]
-        collect_date = (
-            self.program.reporting_period_start + timedelta(days=1) if collect_date is None else collect_date
-            )
+        if months is None:
+            collect_date = (self.program.reporting_period_start + timedelta(days=1))
+        else:
+            startdate = self.program.reporting_period_start
+            year = startdate.year + 1 if startdate.month + months > 12 else startdate.year
+            month = startdate.month + months - 12 if startdate.month + months > 12 else startdate.month + months
+            collect_date = datetime(year, month, startdate.day+1)
+        print "adding data {0} for date {1}".format(value, collect_date)
         self.datapoints.append(
             CollectedDataFactory(indicator=indicator, date_collected=collect_date, achieved=value)
         )
@@ -245,10 +251,51 @@ class TestCSVTotals(CSVIndicatorTestBase):
                              self.assert_msg("subhead row cell {0} should have value {1} got {2}".format(
                                  c+18, value, header_rows[1][c+18])))
 
-    def test_lop_sum(self):
-        self.add_indicator()
+    def test_lop_sum_target_met(self):
+        indicator = self.add_indicator()
+        indicator.lop_target = 100
+        indicator.save()
         self.add_data(10)
         data_row = self.get_data_rows()[0]
-        self.assertEqual(data_row[0], 10,
+        self.assertEqual(float(data_row[0]), float(10),
                          self.assert_msg("one data point value 10 should yield a total of 10, got {0}".format(
-                            data_row[0])))
+                             data_row[0])))
+        self.assertEqual(float(data_row[1]), float(100),
+                         self.assert_msg("indicator lop target should be 100, got {0}".format(
+                             data_row[1])))
+        self.assertEqual(data_row[2], "10%",
+                         self.assert_msg("expected 10% for met (10/100), got {0}".format(
+                             data_row[2])))
+
+    def test_num_timeperiods(self):
+        self.add_indicator()
+        header_rows, _ = self.get_rows()
+        timeperiods = [header_rows[0][len(self.fields) + len(self.data_fields):],
+                       header_rows[1][len(self.fields) + len(self.data_fields):]]
+        self.assertEqual(len(timeperiods[0]), 12,
+                         self.assert_msg("expected 12 timeperiods headers, got {0}".format(len(timeperiods[0]))))
+        self.assertEqual(timeperiods[0][0], "Jan 2017",
+                         self.assert_msg("expected first time period to have date Jan 2017, got {0}".format(
+                             timeperiods[0][0])))
+        self.assertEqual(timeperiods[0][8], "Sep 2017",
+                         self.assert_msg("expected ninth time period to have date Sept 2017, got {0}".format(
+                             timeperiods[0][8])))
+        self.assertTrue(all(x == "Actual" for x in timeperiods[1]),
+                        "Expected all timeperiods to have header 'Actual', instead got {0}".format(
+                            timeperiods[1]))
+
+    def test_timeperiods_data_one_indicator(self):
+        self.add_indicator()
+        self.add_data(10, months=0)
+        self.add_data(11, months=1)
+        self.add_data(10, months=2)
+        self.add_data(2, months=2)
+        data_row_timeperiods = self.get_data_rows()[0][3:]
+        for c, value in enumerate(data_row_timeperiods):
+            print "number {0} value {1}".format(c, value)
+        for c, value in enumerate([10, 11, 12, 13]):
+            # almost equal so that floats don't cause failure:
+            self.assertAlmostEqual(float(data_row_timeperiods[c]), value,
+                             self.assert_msg("expected data value for {0} month to be {1}, got {2}".format(
+                                c, value, data_row_timeperiods[c])))
+

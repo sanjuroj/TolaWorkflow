@@ -118,6 +118,6 @@ urlpatterns = [
 
     url(r'^iptt_excel/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ExcelExport.as_view(), name='iptt_excel'),
 
-    url(r'^iptt_csv/(?P<program_id>\d+)/$', IPTT_CSVExport.as_view(), name='iptt_csv'),
+    url(r'^iptt_csv/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_CSVExport.as_view(), name='iptt_csv'),
 
 ]
