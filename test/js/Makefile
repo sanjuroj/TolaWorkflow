@@ -75,4 +75,5 @@ run-gecko:
 	endif
 
 update:
-	npm update --verbose --save --dev
+	( cd node_modules; npm update --verbose --save --dev; cd - )
+

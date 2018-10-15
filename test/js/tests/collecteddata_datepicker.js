@@ -101,7 +101,7 @@ describe("Collected data datepicker", function () {
       Util.waitForAjax()
     })
 
-    it('chosen date appears in text box after datepicker closes', function() {
+    it('chosen date appears in widget after datepicker closes', function() {
       Navbar.Indicators.click()
       Util.waitForAjax()
 
@@ -144,7 +144,13 @@ describe("Collected data datepicker", function () {
       Util.waitForAjax()
     })
 
-    it.skip('assigns given value to correct period if program lifetime includes date (annual)')
+    it('assigns given value to correct period if program lifetime includes date (annual)', function() {
+      // Add an indicator with annual periods
+      // Add collected data for collection dates in each period
+      // Confirm data added to correct periods (2017 data goes in the 2017 period)
+      // Confirm data NOT added to incorrect periods (2017 data should not be in the 2018 period)
+    })
+
     it.skip('assigns given value to correct period if program lifetime includes date (semiannual)')
     it.skip('assigns given value to correct period if program lifetime includes date (triannual)')
     it.skip('assigns given value to correct period if program lifetime includes date (quarterly)')
@@ -236,7 +242,7 @@ describe("Collected data datepicker", function () {
       Util.waitForAjax()
     })
 
-    it('chosen date appears in text box after datepicker closes', function() {
+    it('chosen date appears in widget after datepicker closes', function() {
       Navbar.Indicators.click()
       Util.waitForAjax()
 
@@ -282,7 +288,43 @@ describe("Collected data datepicker", function () {
     it.skip('assigns given value to correct period if program lifetime includes date (triannual)')
     it.skip('assigns given value to correct period if program lifetime includes date (quarterly)')
     it.skip('assigns given value to correct period if program lifetime includes date (monthly)')
-    it.skip('displays warning if given date is outside program lifetime (all target periods)')
+
+    it('displays warning if given date is outside program lifetime (all target periods)', function() {
+      Navbar.Indicators.click()
+      Util.waitForAjax()
+
+      let progButtons = TargetsTab.getProgramIndicatorButtons()
+      let progButton = progButtons[2]
+      progButton.click()
+      Util.waitForAjax()
+
+      let indicators = browser.$$('span.indicator_name')
+      if (indicators.length > 0) {
+        indicators[0].click()
+      }
+      Util.waitForAjax()
+
+      let addResults = browser.$('a[href*="/indicators/collecteddata_add/"]')
+      addResults.waitForVisible()
+      addResults.click()
+
+      if (!browser.isVisible('div#div_id_date_collected')) {
+        browser.waitForVisible('div#div_id_date_collected')
+      }
+
+      // Have to use the input element here because that's the, um, input
+      // source for the keyboard...
+      let dp = browser.$('input#id_date_collected')
+      // Set the date
+      let spookyDate = '2018-10-31'
+      dp.setValue(spookyDate)
+
+      // Warning message should appear below the datepicker text box
+      expect(browser.isVisible('small#hint_id_date_collected'))
+
+      browser.$('div#indicator_collecteddata_div button.close').click()
+      Util.waitForAjax()
+    })
 
     it('does not do the hokey-pokey', function() {
         expect(true)
