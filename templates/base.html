@@ -113,41 +113,23 @@
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Programs" %}</a>
-                                <ul class="dropdown-menu">
-                                    <li class="nav-item dropdown-item dropright">
-                                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Afghanistan</a>
-                                        <ul class="dropdown-menu">
-                                            <li class="dropdown-item">
-                                                <a href="#" class="nav-link">Program 1</a>
-                                            </li>
-                                            <li class="dropdown-item">
-                                                <a href="#" class="nav-link">Program 2</a>
-                                            </li>
-                                            <li class="dropdown-item">
-                                                <a href="#" class="nav-link">Program 3</a>
-                                            </li>
+                                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {% trans "Programs" %}
+                                </a>
+                                <div class="dropdown-menu" id="programs-by-country">
+                                    <div class="accordion">
+                                    {% regroup programs|dictsort:"countries" by countries as country_list %}
+                                    {% for country in country_list %}
+                                        <h4 class="text-white"><a data-toggle="collapse" data-target="menu-{{ country.grouper|slugify }}">{{ country.grouper }}</a></h4>
+                                        <ul id="menu-{{ country.grouper|slugify }}" class="collapse" data-parent="#programs-by-country">
+                                        {% for program in country.list %}
+                                            <li>{{ program.countries }}: {{ program }}</li>
+                                        {% endfor %}
                                         </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            {% comment %}
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarProgramDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Programs" %}</a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarProgramDropdown">
-                                    <div class="dropdown-item dropright">
-                                        <a class="nav-link dropdown-toggle" href="#" id="programs-afghanistan" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Afghanistan</a>
-                                        <div class="dropdown-menu" aria-labelledby="programs-afghanistan">
-                                            <a class="dropdown-item" href="#">Program 1</a>
-                                            <a class="dropdown-item" href="#">Program 2</a>
-                                            <a class="dropdown-item" href="#">Program 3</a>
-                                        </div>
+                                    {% endfor    %}
                                     </div>
-                                    <a class="dropdown-item" href="#">Pakistan</a>
-                                    <a class="dropdown-item" href="#">United States</a>
-                                </ul>
+                                </div>
                             </li>
-                            {%  endcomment %}
                         </ul>
 
                         <ul class="navbar-nav ml-auto">
