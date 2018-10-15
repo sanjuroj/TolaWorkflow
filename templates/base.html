@@ -1,6 +1,6 @@
 {% load staticfiles %}
 {% load static %}
-{% load group_tag %}
+{% load group_tag menu_tag %}
 {% load i18n %}
 <!doctype html>
 <html lang="en">
@@ -113,22 +113,8 @@
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    {% trans "Programs" %}
-                                </a>
-                                <div class="dropdown-menu" id="programs-by-country">
-                                    <div class="accordion">
-                                    {% regroup programs|dictsort:"countries" by countries as country_list %}
-                                    {% for country in country_list %}
-                                        <h4 class="text-white"><a data-toggle="collapse" data-target="menu-{{ country.grouper|slugify }}">{{ country.grouper }}</a></h4>
-                                        <ul id="menu-{{ country.grouper|slugify }}" class="collapse" data-parent="#programs-by-country">
-                                        {% for program in country.list %}
-                                            <li>{{ program.countries }}: {{ program }}</li>
-                                        {% endfor %}
-                                        </ul>
-                                    {% endfor    %}
-                                    </div>
-                                </div>
+                                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Programs" %}</a>
+                                {% program_menu %}
                             </li>
                         </ul>
 
@@ -269,6 +255,7 @@
         <script type="text/javascript">
             var userLang = "{{ LANGUAGE_CODE }}";
             $(document).ready(function() {
+                // Set datepicker language
                 $.datepicker.setDefaults( $.datepicker.regional[ userLang ] );
             });
         </script>
@@ -280,7 +267,6 @@
         {% endif %}
 
         {% block extra_js_in_body %}
-
         {% endblock %}
         {% block debug %}
         {% endblock %}
