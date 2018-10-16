@@ -74,7 +74,7 @@
         var currentRow = $(e.target).closest("tr");
         var dataCount = parseInt(currentRow.data("collectedCount"));
         if ( dataCount != NaN && dataCount > 0) {
-            if (!confirm(`{% trans "Warning: This action cannot be undone. Removing this target means that"|escapejs %} ${dataCount} {% trans "data record/s will no longer have targets associated with them. \n\nProceed anyway?"|escapejs %}`)) {
+            if (!confirm(`{% trans "Warning: This action cannot be undone. Removing this target means that"|escapejs %} ${dataCount} {% trans "data record/s will no longer have targets associated with them."|escapejs %} \n\n {% trans "Proceed anyway?"|escapejs %}`)) {
                 dataCount = NaN;
                 return;
             }
@@ -198,7 +198,7 @@
         var dataCountAttribute = $("#periodic_targets_table tr").attr("data-collected-count");
         var msg = '';
         if (typeof dataCountAttribute !== typeof undefined && dataCountAttribute !== false) {
-            msg = '{% trans "Warning: This action cannot be undone. Any data records assigned to a target will need to be reassigned.\n\n Are you sure you want to remove all targets?"|escapejs %}';
+            msg = '{% trans "Warning: This action cannot be undone. Any data records assigned to a target will need to be reassigned."|escapejs %} \n\n {% trans "Are you sure you want to remove all targets?"|escapejs %}';
         } else {
             msg = '{% trans "Warning: This action cannot be undone. Are you sure you want to remove all targets?"|escapejs %}';
         }
@@ -241,7 +241,7 @@
         var target_frequency = $("#id_target_frequency").val();
 
         if (numDataPoints > 0 && initalTargetFrequency == 1 && target_frequency != 1) {
-            if (!confirm(`{% trans "Warning: This action cannot be undone. If we make these changes,"|escapejs %} ${numDataPoints} {% trans "data record/s will no longer be associated with the Life of Program target, and will need to be reassigned to new targets. \n\nProceed anyway?"|escapejs %}`)) {
+            if (!confirm(`{% trans "Warning: This action cannot be undone. If we make these changes,"|escapejs %} ${numDataPoints} {% trans "data record/s will no longer be associated with the Life of Program target, and will need to be reassigned to new targets."|escapejs %} \n\n {% trans "Proceed anyway?"|escapejs %}`)) {
                 initalTargetFrequency = undefined;
                 return;
             }
