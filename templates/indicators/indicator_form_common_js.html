@@ -297,7 +297,8 @@
         if (form_data.indexOf('is_cumulative') == -1) {
             form_data += "&is_cumulative=3"
         }
-
+        //disable submit button as we are posting and want to prevent double-saves while waiting: 
+        submitBtnName.attr('disabled', true);
         $("#modalmessages").html("<img src='{{ STATIC_URL }}/img/ajax-loader.gif'>  <span>{% trans 'Saving form... please wait.'|escapejs %}</span>");
         $.ajax({
             method: 'POST',
@@ -305,6 +306,8 @@
             data: form_data,
             global: false, }
         ).done(function(data, textStatus, jqXHR) {
+            //undisable submit button as the response is returned:
+            $('input[type=submit]:disabled').attr('disabled', false);
             var alertsElement = "#alerts";
             if ( $("#modalmessages").length) {
                 alertsElement = "#modalmessages";
