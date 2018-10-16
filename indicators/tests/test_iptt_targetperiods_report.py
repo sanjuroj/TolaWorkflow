@@ -59,7 +59,7 @@ class TestMonthlyTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
         return (next_start, period_end)
 
     def test_one_year_range_has_twelve_range_periods(self):
-        self.set_reporting_period('2017-02-01', '2018-02-01')
+        self.set_reporting_period('2017-02-01', '2018-01-31')
         self.add_indicator()
         ranges = self.get_response().indicators[0]['ranges'][1:]
         self.assertEqual(len(ranges), 12,
@@ -68,7 +68,7 @@ class TestMonthlyTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                                  len(ranges))))
 
     def test_eight_month_range_has_eight_range_periods(self):
-        self.set_reporting_period('2018-01-01', '2018-09-01')
+        self.set_reporting_period('2018-01-01', '2018-08-30')
         self.add_indicator()
         ranges = self.get_response().indicators[0]['ranges'][1:]
         self.assertEqual(len(ranges), 8,
@@ -77,7 +77,7 @@ class TestMonthlyTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                                  len(ranges))))
 
     def test_four_month_range_reports_targets(self):
-        self.set_reporting_period('2017-11-01', '2018-03-01')
+        self.set_reporting_period('2017-11-01', '2018-02-28')
         self.add_indicator(targets=[10, 12, 16, 14], values=[20, 11, 12, 13])
         ranges = self.get_response().indicators[0]['ranges'][1:]
         self.assertEqual(len(ranges), 4,
@@ -98,7 +98,7 @@ class TestMonthlyTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                                  ranges[2], ranges[2]['met'])))
 
     def test_fifteen_month_range_cumulative_reports_targets(self):
-        self.set_reporting_period('2016-11-01', '2018-02-01')
+        self.set_reporting_period('2016-11-01', '2018-01-31')
         self.add_indicator(targets=[100]*15, values=[15]*15)
         self.indicators[0].is_cumulative = True
         self.indicators[0].save()
@@ -129,7 +129,7 @@ class TestAnnualTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
         return (next_start, period_end)
 
     def test_two_year_range_has_two_range_periods(self):
-        self.set_reporting_period('2016-02-01', '2018-02-01')
+        self.set_reporting_period('2016-02-01', '2018-01-31')
         self.add_indicator()
         ranges = self.get_response().indicators[0]['ranges'][1:]
         self.assertEqual(len(ranges), 2,
@@ -138,7 +138,7 @@ class TestAnnualTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                                  len(ranges))))
 
     def test_four_and_a_half_year_range_has_five_range_periods(self):
-        self.set_reporting_period('2014-06-01', '2019-01-01')
+        self.set_reporting_period('2014-06-01', '2018-12-31')
         self.add_indicator()
         ranges = self.get_response().indicators[0]['ranges'][1:]
         self.assertEqual(len(ranges), 5,
@@ -147,7 +147,7 @@ class TestAnnualTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                                  len(ranges))))
 
     def test_three_year_range_reports_targets(self):
-        self.set_reporting_period('2015-08-01', '2018-08-01')
+        self.set_reporting_period('2015-08-01', '2018-07-31')
         self.add_indicator(targets=[1000, 500, 200], values=[800, 500, 300])
         ranges = self.get_response().indicators[0]['ranges'][1:]
         self.assertEqual(len(ranges), 3,
@@ -168,7 +168,7 @@ class TestAnnualTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                                  ranges[2], ranges[2]['met'])))
 
     def test_five_year_range_cumulative_reports_targets(self):
-        self.set_reporting_period('2015-11-01', '2020-12-01')
+        self.set_reporting_period('2015-11-01', '2020-11-30')
         self.add_indicator(targets=[100]*6, values=[30]*6)
         self.indicators[0].is_cumulative = True
         self.indicators[0].save()
@@ -208,7 +208,7 @@ class TestMidEndTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                 _ = CollectedDataFactory(indicator=indicator, periodic_target=target, achieved=v)
 
     def test_bare_mid_end_has_two_range_periods(self):
-        self.set_reporting_period('2016-02-01', '2018-02-01')
+        self.set_reporting_period('2016-02-01', '2018-01-31')
         self.add_indicator()
         ranges = self.get_response().indicators[0]['ranges'][1:]
         self.assertEqual(len(ranges), 2,
@@ -217,7 +217,7 @@ class TestMidEndTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                                  len(ranges))))
 
     def test_mid_end_reports_targets(self):
-        self.set_reporting_period('2015-08-01', '2018-08-01')
+        self.set_reporting_period('2015-08-01', '2018-07-31')
         self.add_indicator(targets=[1000, 200], values=[[800,], [500,]])
         ranges = self.get_response().indicators[0]['ranges'][1:]
         self.assertEqual(len(ranges), 2,
@@ -238,7 +238,7 @@ class TestMidEndTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                                  ranges[0], ranges[0]['met'])))
 
     def test_mid_end_multiple_indicatorsreports_targets(self):
-        self.set_reporting_period('2015-08-01', '2018-08-01')
+        self.set_reporting_period('2015-08-01', '2018-07-31')
         self.add_indicator(targets=[1600, 1000], values=[[800, 200], [500, 500]])
         ranges = self.get_response().indicators[0]['ranges'][1:]
         self.assertEqual(len(ranges), 2,
