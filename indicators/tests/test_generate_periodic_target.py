@@ -143,3 +143,20 @@ class GenerateTargetsTests(TestCase):
                                            self.event_name)
 
         self.assertEqual(expected, result)
+
+class GenerateNewPeriodicTargetsWithExisting(TestCase):
+    DATE_AWARE_FREQUENCIES = [
+        Indicator.ANNUAL,
+        Indicator.SEMI_ANNUAL,
+        Indicator.TRI_ANNUAL,
+        Indicator.QUARTERLY,
+    ]
+    start_date = datetime.datetime(2018, 10, 5)
+
+    def test_generate_third_annual(self):
+        """does the generated period name for a new target end with the right number (counting up from existing)?"""
+        for tf in self.DATE_AWARE_FREQUENCIES:
+            result = generate_periodic_targets(tf, self.start_date, 1, '', 2)
+            self.assertEqual(result[0]['period'][-1], '3',
+                             "third {0} target period name should end with 3, got {1}".format(
+                                tf, result[0]['period']))
