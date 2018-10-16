@@ -1,11 +1,18 @@
-<ul class="dropdown-menu">
-    {% regroup programs|dictsort:"countries" by countries as country_list %}
-    {% for country in country_list %}
-        <h4 class="text-white dropdown-item">{{ country.grouper }}</h4>
-        {% for program in country.list %}
-        <li class="dropdown-item">
-            <a class="nav-link" href="{% url 'program_page' program.id 0 0 %}">{{ program|truncatechars:80 }}</a>
-        </li>
-        {% endfor %}
+<select class="" id="goto-country-program">
+    {% for country in countries %}
+        <option value="" class="">{{ country }}</option>{# TODO: this will link to the heompage filtered by {{ country }} #}
     {% endfor %}
-</ul>
+    {% for program in programs %}
+        <option value="{% url 'program_page' program.id 0 0 %}" class="">{{ program|truncatechars:80 }}</option>
+    {% endfor %}
+</select>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#goto-country-program').multiselect({
+            enableFiltering: true,
+            filterPlaceholder: 'Go to program or country…',
+            nonSelectedText: 'Go to program or country…'
+        });
+    });
+</script>

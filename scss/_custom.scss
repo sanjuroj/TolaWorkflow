@@ -394,6 +394,11 @@ select.listoption_filters {
     }
 }
 
+// program/country multiselect
+.multiselect-container.dropdown-menu > li > a {
+    color: $white;
+}
+
 // unsorted
 .help-text {
     font-size: $font-size-sm;

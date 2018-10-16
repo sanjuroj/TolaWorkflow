@@ -10,4 +10,5 @@ def program_menu(context):
     programs = Program.objects.filter(funding_status="Funded", country__in=countries).distinct()
     return {
         'programs': programs,
+        'countries': countries,
     }
