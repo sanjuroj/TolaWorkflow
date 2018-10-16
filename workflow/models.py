@@ -326,6 +326,7 @@ class FundCodeAdmin(admin.ModelAdmin):
 
 
 class ActiveProgramsManager(models.Manager):
+    """manager to return only active programs - those with a status of 'funded' or 'Funded'"""
     ACTIVE_FUNDING_STATUS = 'funded'
     def get_queryset(self):
         return super(ActiveProgramsManager, self).get_queryset().filter(
