@@ -595,7 +595,7 @@ class Indicator(models.Model):
     def get_unit_of_measure_type(self):
         if self.unit_of_measure_type == self.NUMBER:
             return _("#")
-        if self.unit_of_measure_type == self.PERCENTAGE:
+        elif self.unit_of_measure_type == self.PERCENTAGE:
             return _("%")
         return ""
 
@@ -603,7 +603,7 @@ class Indicator(models.Model):
     def get_direction_of_change(self):
         if self.direction_of_change == self.DIRECTION_OF_CHANGE_NEGATIVE:
             return _("-")
-        if self.direction_of_change == self.DIRECTION_OF_CHANGE_POSITIVE:
+        elif self.direction_of_change == self.DIRECTION_OF_CHANGE_POSITIVE:
             return _("+")
         return "N/A"
 
@@ -654,9 +654,11 @@ class PeriodicTarget(models.Model):
                 or self.indicator.target_frequency == Indicator.MID_END:
             return self.period
         if self.start_date and self.end_date:
-            return "%s (%s - %s)" % (self.period,
-                                     formats.date_format(self.start_date, "MEDIUM_DATE_FORMAT"),
-                                     formats.date_format(self.end_date, "MEDIUM_DATE_FORMAT"),)
+            return "%s (%s - %s)" % (
+                self.period,
+                formats.date_format(self.start_date, "MEDIUM_DATE_FORMAT"),
+                formats.date_format(self.end_date, "MEDIUM_DATE_FORMAT"),
+                )
         return self.period
 
     @property
@@ -804,8 +806,7 @@ class CollectedData(models.Model):
     @property
     def disaggregations(self):
         disaggs = self.disaggregation_value.all()
-        return ', '.join([y.disaggregation_label.label + ': ' + y.value for y
-                          in disaggs])
+        return ', '.join([y.disaggregation_label.label + ': ' + y.value for y in disaggs])
 
 
 # @receiver(post_delete, sender=CollectedData)
