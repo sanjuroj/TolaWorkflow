@@ -1,7 +1,9 @@
+""" View functions for generating IPTT Reports (HTML and Excel)"""
+
 import bisect
 from collections import OrderedDict
 from dateutil import rrule, parser
-from django.utils import formats, timezone
+from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
@@ -16,6 +18,7 @@ from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.worksheet.cell_range import CellRange
 
 from tola.util import formatFloat
+from tola.l10n_utils import l10n_date, l10n_monthly_date
 from workflow.models import Program
 from ..models import Indicator, CollectedData, Level, PeriodicTarget
 from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm
@@ -676,22 +679,18 @@ class IPTT_Mixin(object):
 
             # TODO: localize the following dates
             if period == Indicator.MONTHLY:
-                value = "{}".format(
-                    formats.date_format(periods_date_ranges[name][0], "MONTH_YEAR_FORMAT").encode('UTF-8')
-                    # this is the date printed to the IPTT
-                    # NOTE encoding
-                )
+                # this is the value printed to IPTT:
+                value = "{}".format(l10n_monthly_date(periods_date_ranges[name][0]))
             else:
                 value = "{} ({} - {})".format(
                     name,
-                    datetime.strftime(periods_date_ranges[name][0], "%b %d, %Y"),
-                    datetime.strftime(periods_date_ranges[name][1], "%b %d, %Y")
+                    l10n_date(periods_date_ranges[name][0]),
+                    l10n_date(periods_date_ranges[name][1])
                 )
             if from_or_to == self.FROM:
                 key = periods_date_ranges[name][0]
             else:
                 key = periods_date_ranges[name][1]
-            # key = "{}_{}".format(periods_date_ranges[name][0], periods_date_ranges[name][1])
             choices.append((key, value))
 
         if period == Indicator.ANNUAL:
@@ -776,14 +775,8 @@ class IPTT_Mixin(object):
             return context
 
         if period == Indicator.MID_END or period == Indicator.LOP:
-            reporting_sdate = formats.date_format(
-                self.program.reporting_period_start,
-                format="DATE_FORMAT", # Not sure what this date is
-                use_l10n=True)
-            reporting_edate = formats.date_format(
-                self.program.reporting_period_end,
-                format="DATE_FORMAT", # Not sure what this date is
-                use_l10n=True)
+            reporting_sdate = l10n_date(self.program.reporting_period_start)
+            reporting_edate = l10n_date(self.program.reporting_period_end)
             all_periods_start = ((self.program.reporting_period_start, reporting_sdate,),)
             all_periods_end = ((self.program.reporting_period_end, reporting_edate),)
 
