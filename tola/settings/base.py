@@ -88,6 +88,11 @@ USE_TZ = True
 
 DATE_FORMAT = 'Y-m-d'
 
+# global setting for how to display monthly indicators in reports/forms:
+MONTHLY_INDICATOR_DATE_FORMAT = "YEAR_MONTH_FORMAT"
+# global setting for how to display dates on non-monthly (annual/etc.) in reports/forms:
+DATE_AWARE_INDICATOR_DATE_FORMAT = "DATE_FORMAT"
+
 # Add list of languages available for selection.
 LANGUAGES = [
     ('en', _('English')),
