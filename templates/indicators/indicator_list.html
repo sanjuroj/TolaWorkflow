@@ -28,7 +28,10 @@
                         </a>
                     </div>
                 {% elif not program.indicator_set.all %}
-                    <div class="">{% trans "No Indicators have been entered for this program" %}</div>
+                    <div class="">
+                        <p>{% trans "No Indicators have been entered for this program" %}</p>
+                        <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
+                    </div>
                 {% else %}
                     <a
                         id="id_btnOpenindicatorsForProgramId_{{ program.id }}"
@@ -84,46 +87,7 @@
 
 {% include "indicators/indicator_list_modals.html" %}
 
-<script type="javascript">
-    // Filters
-    function getUrl() {
-        var programId = $("#program_filter_value").data('programid');
-        var indicatorId = $("#indicator_filter_value").data('indicatorid');
-        var typeId = $("#type_filter_value").data('typeid');
-        var url = '/indicators/home/';
 
-        url += (parseInt(programId) >= 0 ? programId : 0) + '/';
-        url += (parseInt(indicatorId) >= 0 ? indicatorId : 0) + '/';
-        url += (parseInt(typeId) >= 0 ? typeId : 0 ) + '/';
-        return url;
-    }
-    $("#id_filtersDropdown").on("programFilterUpdated", "#id_programs_filter_dropdown", function(e){
-        var url = getUrl();
-        window.location.href = url;
-    });
-
-    $("#id_filtersDropdown").on("indicatorFilterUpdated", "#id_indicators_filter_dropdown", function(e){
-        var url = getUrl();
-        sessionStorage.setItem("openProgram", "true");
-        window.location.href = url;
-    });
-
-
-    $("#id_filtersDropdown").on("indicatorTypeFilterUpdated", "#id_indicatortypes_filter_dropdown", function(e){
-        var url = getUrl();
-        window.location.href = url;
-    });
-
-    window.onload = function() {
-        var programId = `{{ programs.0.id }}`;
-
-        if (sessionStorage.getItem('openProgram')) {
-            sessionStorage.removeItem("openProgram");
-            loadIndicators(programId, indicatorId, 0);
-            $("#hidden-"+programId).collapse('show');
-        }
-    }
- </script>
 {% include 'indicators/indicator_form_common_js.html' %}
 {% include 'indicators/collecteddata_form_common_js.html' %}
 {% endblock content %}

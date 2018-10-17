@@ -6112,6 +6112,7 @@ span.multiselect-native-select select {
   align-items: center;
   color: #54585a;
   display: flex;
+  font-weight: 400;
   justify-content: space-between;
   text-align: left;
   width: 100%; }
