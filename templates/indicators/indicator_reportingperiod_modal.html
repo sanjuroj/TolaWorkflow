@@ -113,7 +113,24 @@
     var max_target_start = 0;
 
     {% get_current_language as LANGUAGE_CODE %}
-
+    function processDateString(datestr) {
+        // take a date string, return a Date, for datepickers, handles iso dates and human input dates
+        //check for an iso date, and if so parse it with regex (to avoid 0 padding glitches on chrome)
+        var isodate = /(\d{4})\-(\d{1,2})\-(\d{1,2})/.exec(datestr);
+        var defaultDate;
+        if (isodate !== null) {
+            //regex found an iso date, instance a date from the regex parsing:
+            //note: month is 0-index in JS because reasons, so -1 to parse human iso date:
+            defaultDate = new Date(isodate[1], isodate[2]-1, isodate[3]);
+        } else {
+            defaultDate = new Date(
+                datestr.substring(datestr.length - 4, datestr.length),
+                jQuery.inArray(datestr.substring(0, 3), $(this).datepicker('option', 'monthNamesShort')) + 1,
+                0
+            );
+        }
+        return defaultDate;
+    }
     function setupMonthPickers() {
         const start_date_id = "id_reporting_start_date";
         const end_date_id = "id_reporting_end_date";
@@ -137,9 +154,7 @@
                     // so we need to reset them before we set the input field value.
                     $(this).datepicker('option', 'maxDate', "+10y");
                     if ((datestr = $(this).val()).length > 0) {
-                        year = datestr.substring(datestr.length - 4, datestr.length);
-                        month = jQuery.inArray(datestr.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
-                        var defaultDate = new Date(year, month, 1);
+                        var defaultDate = processDateString(datestr);
                         $(this).datepicker('option', 'defaultDate', defaultDate);
                         $(this).datepicker('setDate', defaultDate);
                     }
@@ -186,9 +201,7 @@
                     // before we set the input field value.
                     $(this).datepicker('option', 'minDate', "-10y");
                     if ((datestr = $(this).val()).length > 0) {
-                        year = datestr.substring(datestr.length - 4, datestr.length);
-                        month = jQuery.inArray(datestr.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
-                        var defaultDate = new Date(year, month+1, 0);
+                        var defaultDate = processDateString(datestr);
                         $(this).datepicker('option', 'defaultDate', defaultDate);
                         $(this).datepicker('setDate', defaultDate);
                     }

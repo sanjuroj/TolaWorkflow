@@ -325,6 +325,14 @@ class FundCodeAdmin(admin.ModelAdmin):
     display = 'Fund Code'
 
 
+class ActiveProgramsManager(models.Manager):
+    """manager to return only active programs - those with a status of 'funded' or 'Funded'"""
+    ACTIVE_FUNDING_STATUS = 'funded'
+    def get_queryset(self):
+        return super(ActiveProgramsManager, self).get_queryset().filter(
+            funding_status__iexact=self.ACTIVE_FUNDING_STATUS)
+
+
 class Program(models.Model):
     gaitid = models.CharField(_("ID"), max_length=255, blank=True, unique=True)
     name = models.CharField(_("Program Name"), max_length=255, blank=True)
@@ -343,6 +351,9 @@ class Program(models.Model):
     end_date = models.DateField(_("Program End Date"), null=True, blank=True)
     reporting_period_start = models.DateField(_("Reporting Period Start Date"), null=True, blank=True)
     reporting_period_end = models.DateField(_("Reporting Period End Date"), null=True, blank=True)
+
+    objects = models.Manager()
+    active_programs = ActiveProgramsManager()
 
     class Meta:
         verbose_name = _("Program")

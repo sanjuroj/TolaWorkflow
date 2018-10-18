@@ -223,7 +223,7 @@ for this bug until the bug is well and truly crushed.
    of the `workflow_tolauser` table:
 
     ```bash
-    msql> INSERT INTO workflow_tolauser (name, privacy_disclaimer_accepted, user_id) VALUES (YOURNAME, 1,1);
+    msql> INSERT INTO workflow_tolauser (name, privacy_disclaimer_accepted, user_id, language) VALUES (YOURNAME, 1,1, "en");
     ```
 
 1. Restart the Tola Activity server

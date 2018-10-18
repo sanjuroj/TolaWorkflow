@@ -317,20 +317,26 @@ class Indicator(models.Model):
     indicator_key = models.UUIDField(
         default=uuid.uuid4, unique=True, help_text=" "),
 
+    # i.e. Alpha, Donor, Standard
+    # TODO: make this a foreign key
     indicator_type = models.ManyToManyField(
         IndicatorType, blank=True, help_text=" ",
         verbose_name=_("Indicator type")
     )
 
+    # the Log Frame level (i.e. Goal, Output, Outcome, etc.)
+    # TODO: make this a foreign key (an indicator should have only one level)
     level = models.ManyToManyField(
         Level, blank=True, help_text=" ", verbose_name=_("Level")
     )
 
+    # this includes a relationship to a program
     objectives = models.ManyToManyField(
         Objective, blank=True, verbose_name=_("Program Objective"),
         related_name="obj_indicator", help_text=" "
     )
 
+    # this includes a relationship to a country
     strategic_objectives = models.ManyToManyField(
         StrategicObjective, verbose_name=_("Country Strategic Objective"),
         blank=True, related_name="strat_indicator", help_text=" "
@@ -481,6 +487,8 @@ class Indicator(models.Model):
         _("Comments"), max_length=255, null=True, blank=True, help_text=" "
     )
 
+    # note this is separate (and not validated against) objective.program
+    # TODO: make foreignkey (or eliminate in favor of the relationship through objective)
     program = models.ManyToManyField(
         Program, help_text=" ", verbose_name=_("Program")
     )
@@ -589,8 +597,7 @@ class Indicator(models.Model):
             return _("#")
         elif self.unit_of_measure_type == self.PERCENTAGE:
             return _("%")
-        else:
-            return ""
+        return ""
 
     @property
     def get_direction_of_change(self):
@@ -598,8 +605,7 @@ class Indicator(models.Model):
             return _("-")
         elif self.direction_of_change == self.DIRECTION_OF_CHANGE_POSITIVE:
             return _("+")
-        else:
-            return "N/A"
+        return "N/A"
 
     @property
     def get_collecteddata_average(self):
@@ -648,9 +654,11 @@ class PeriodicTarget(models.Model):
                 or self.indicator.target_frequency == Indicator.MID_END:
             return self.period
         if self.start_date and self.end_date:
-            return "%s (%s - %s)" % (self.period,
+            return "%s (%s - %s)" % (
+                self.period,
                 formats.date_format(self.start_date, "MEDIUM_DATE_FORMAT"),
-                formats.date_format(self.end_date, "MEDIUM_DATE_FORMAT"),)
+                formats.date_format(self.end_date, "MEDIUM_DATE_FORMAT"),
+                )
         return self.period
 
     @property
@@ -798,8 +806,7 @@ class CollectedData(models.Model):
     @property
     def disaggregations(self):
         disaggs = self.disaggregation_value.all()
-        return ', '.join([y.disaggregation_label.label + ': ' + y.value for y
-                         in disaggs])
+        return ', '.join([y.disaggregation_label.label + ': ' + y.value for y in disaggs])
 
 
 # @receiver(post_delete, sender=CollectedData)

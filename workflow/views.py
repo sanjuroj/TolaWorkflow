@@ -681,7 +681,6 @@ class ProjectCompleteUpdate(UpdateView):
     #get shared data from project agreement and pre-populate form with it
     def get_initial(self):
         initial = {
-            'approved_by': self.request.user,
             'approval_submitted_by': self.request.user,
         }
 

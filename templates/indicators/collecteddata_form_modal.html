@@ -29,6 +29,8 @@
 
             var achieved_formatted_value = parseFloat($("#id_achieved").val()).toFixed(2).replace(/[.,]00$/, "");
             $("#id_achieved").val(achieved_formatted_value);
+            //this prevents clicking the whitespace to the left of the datepicker from triggering it:
+            $('label[for="id_date_collected"]').on('click', function(e) {e.preventDefault();});
 
             $('#id_date_collected').on('click', function (e) {
                 windowScrollY = $(this).scrollParent().scrollParent().scrollTop(); // how much the window has been scrolled
