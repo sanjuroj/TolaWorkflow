@@ -1450,7 +1450,7 @@ class DocumentationForm(forms.ModelForm):
         self.fields['url'].widget = URLInput()
         self.fields['url'].required = True
         self.fields['project'].queryset = ProjectAgreement.objects.filter(program__country__in=countries)
-        self.fields['program'].queryset = Program.objects.filter(country__in=countries)
+        self.fields['program'].queryset = Program.active_programs.filter(country__in=countries)
 
 
 class QuantitativeOutputsForm(forms.ModelForm):
