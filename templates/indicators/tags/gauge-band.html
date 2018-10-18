@@ -17,7 +17,8 @@
         </div>
         <div class="gauge__labels gauge__labels--justified">
             <div class="gauge__label--small">
-                <a href="#" class="text-dark">{% blocktrans %}{{ high }}% are &gt;15% above target{% endblocktrans %}</a>
+                {% comment %}Translators: shows how many indicators are a certain percentage above target. Example: 31% are 15% above target.{% endcomment %}
+                <a href="#" class="text-dark">{% blocktrans %}{{ high }}% are &gt;{{ margin }}% above target{% endblocktrans %}</a>
             </div>
             <div class="gauge__labels">
                 <div class="gauge__value">
@@ -28,7 +29,8 @@
                 </h6>
             </div>
             <div class="gauge__label--small">
-                <a href="#" class="text-dark">{% blocktrans %}{{ low }}% are &gt;15% below target{% endblocktrans %}</a>
+                {% comment %}Translators: shows how many indicators are a certain percentage below target. Example: 31% are 15% below target.{% endcomment %}
+                <a href="#" class="text-dark">{% blocktrans %}{{ low }}% are &gt;{{ margin }}% below target{% endblocktrans %}</a>
             </div>
         </div>
     </div>
