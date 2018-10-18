@@ -32,7 +32,8 @@ from .views.views_reports import (
     IPTTReportQuickstartView,
     IPTT_ReportView,
     IPTT_ReportIndicatorsWithVariedStartDate,
-    IPTT_ExcelExport
+    IPTT_ExcelExport,
+    create_pinned_report,
 )
 
 urlpatterns = [
@@ -115,4 +116,6 @@ urlpatterns = [
         name='iptt_redirect'),
 
     url(r'^iptt_excel/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ExcelExport.as_view(), name='iptt_excel'),
+
+    url(r'^pinned_report/$', create_pinned_report, name='create_pinned_report')
 ]

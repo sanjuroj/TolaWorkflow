@@ -1,10 +1,10 @@
 import simplejson
-import re
 from datetime import datetime
 from django.core.serializers import serialize
 from django import template
 from django.db.models import QuerySet
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 from indicators.models import Indicator
 
 register = template.Library()
@@ -96,6 +96,20 @@ def hash(obj, attr):
         return obj.get(attr)
     else:
         return None
+
+
+@register.filter('js', is_safe=True)
+def js(obj):
+    """
+    Render out JSON to get context data to JS
+
+    Ex.
+
+        <script type="text/javascript">
+            var someVar = {{ some_var | js }};
+        </script>
+    """
+    return mark_safe(jsonify(obj))
 
 
 @register.inclusion_tag('indicators/tags/gauge-tank.html')

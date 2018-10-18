@@ -25,7 +25,14 @@
               <h4 class="pb-3">{{ report_start_date|date:"MEDIUM_DATE_FORMAT" }} - {{ report_end_date_actual|date:"MEDIUM_DATE_FORMAT" }}</h4>
             </div>
             <div class="p-3">
-              <a href="{% url 'iptt_excel' program.id reporttype %}?{{ request.GET.urlencode }}" class="btn btn-sm btn-secondary"><i class="fas fa-download"></i> Excel</a>
+              <button type="button"
+                      id="id_button_pin"
+                      class="btn btn-sm btn-secondary">
+                <i class="fas fa-thumbtack"></i> {% trans "Pin" %}
+              </button>
+              <a href="{% url 'iptt_excel' program.id reporttype %}?{{ request.GET.urlencode }}" class="btn btn-sm btn-secondary">
+                <i class="fas fa-download"></i> {% trans "Excel" %}
+              </a>
             </div>
         </div>
 
@@ -196,4 +203,117 @@
 
     {% include 'indicators/indicator_form_common_js.html' %}
   </main>
+
+  {# JS Templates #}
+
+  <script type="text/template" id="pin_popover_form_template">
+    <div class="form-group">
+      <label for="id_input_report_name" class="text-uppercase">{% trans "Report Name" %}</label>
+      <input type="text" class="form-control" id="id_input_report_name" name="report-name" maxlength="50">
+    </div>
+    <button type="button" id="id_button_pin_to_program_page" class="btn btn-primary"
+            disabled="disabled">{% trans "Pin To Program Page" %}</button>
+  </script>
+
+  <script type="text/template" id="pin_popover_success_template">
+    <p>
+      <span>{% trans "Success! This report is now pinned to the program page." %}</span>
+    </p>
+    <p>
+      <a href="{% url 'program_page' program.id 0 0 %}">{% trans "Visit the program page now." %}</a>
+    </p>
+  </script>
 {% endblock content %}
+
+
+{% block extra_js_in_body %}
+  <script>
+    let jsContext = {{ js_context|js }};
+  </script>
+
+  <script>
+    // Popover set up for Pin button
+    let pinBtn = $("#id_button_pin");
+
+    let popoverFormTemplate = $("#pin_popover_form_template").html();
+    let popoverSuccessTemplate = $("#pin_popover_success_template").html();
+
+    // Pin btn popover init
+    pinBtn.popover({
+      html: true,
+      placement: 'bottom',
+      content: popoverFormTemplate,
+    });
+
+    // Change content of Pin popover
+    function setPinPopoverContent(templateStr) {
+      let popover = pinBtn.data('bs.popover');
+      popover.config.content = templateStr;
+      popover.setContent();
+      pinBtn.popover('update');
+    }
+
+    // Toggle pin form button if text field empty
+    $('body').on('input', '#id_input_report_name', function (e) {
+      let createReportBtn = $('#id_button_pin_to_program_page');
+      let disabled = e.target.value.length === 0;
+      createReportBtn.attr('disabled', disabled);
+    });
+
+    // Pin to program page btn click
+    $('body').on('click', '#id_button_pin_to_program_page', function() {
+      $.ajax({
+        type: "POST",
+        url: jsContext.create_pinned_report_url,
+        data: {
+          name: $('#id_input_report_name').val(),
+          program: jsContext.program_id,
+          report_type: jsContext.report_type,
+          query_string: jsContext.qs,
+        },
+        success: function() {
+          setPinPopoverContent(popoverSuccessTemplate);
+        },
+        error: function () {
+          console.log('AJAX error')
+        }
+      });
+    });
+
+    // Reset content on popover close
+    pinBtn.on('hidden.bs.popover', function () {
+      setPinPopoverContent(popoverFormTemplate);
+    });
+
+    // Focus on form input when opened
+    pinBtn.on('shown.bs.popover', function () {
+      $('#id_input_report_name').focus();
+    });
+
+    // Close popover when clicked outside
+    $('body').on('click', function (e) {
+      $('#id_button_pin').each(function () {
+        //the 'is' for buttons that trigger popups
+        //the 'has' for icons within a button that triggers a popup
+        if (!$(this).is(e.target) &&
+            $(this).has(e.target).length === 0 &&
+            $('.popover').has(e.target).length === 0) {
+
+          $(this).popover('hide');
+        }
+      });
+    });
+
+    // Close on ESC
+    $('body').on('keydown', function (e) {
+      if (e.keyCode === 27) { // ESC
+        pinBtn.popover('hide');
+      }
+    });
+
+    // DEV CODE: TODO: DELETE ME
+    pinBtn.popover('show');
+    $('#id_input_report_name').val('Test Report Name 1');
+    $('#id_button_pin_to_program_page').attr('disabled', false);
+  </script>
+{% endblock %}

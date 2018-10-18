@@ -5,10 +5,12 @@ from decimal import Decimal
 
 from django.db import models
 from django.db.models import Avg
+from django.urls import reverse
 from django.utils import formats, timezone
 from django.utils.translation import ugettext_lazy as _
 
 from django.contrib import admin
+from django.conf import settings
 
 from simple_history.models import HistoricalRecords
 
@@ -826,3 +828,24 @@ class CollectedDataAdmin(admin.ModelAdmin):
     list_display = ('indicator', 'date_collected', 'create_date', 'edit_date')
     list_filter = ['indicator__program__country__country']
     display = 'Indicator Output/Outcome Collected Data'
+
+
+class PinnedReport(models.Model):
+    """
+    A named IPTT report for a given program and user
+    """
+    name = models.CharField(max_length=50, verbose_name=_('Report Name'))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    report_type = models.CharField(max_length=32)
+    query_string = models.CharField(max_length=255)
+
+    @property
+    def report_url(self):
+        """
+        Return the fully parameterized ITPP report URL string
+        """
+        return "{}?{}".format(reverse('iptt_report', kwargs={
+            'program_id': self.program_id,
+            'reporttype': self.report_type
+        }), self.query_string)
