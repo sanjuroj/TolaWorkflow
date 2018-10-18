@@ -313,6 +313,7 @@ class Indicator(models.Model):
         (DIRECTION_OF_CHANGE_POSITIVE, _("Increase (+)")),
         (DIRECTION_OF_CHANGE_NEGATIVE, _("Decrease (-)"))
     )
+    SEPARATOR = ','
 
     indicator_key = models.UUIDField(
         default=uuid.uuid4, unique=True, help_text=" "),
@@ -575,7 +576,7 @@ class Indicator(models.Model):
     @property
     def disaggregations(self):
         disaggregations = self.disaggregation.all()
-        return ', '.join([x.disaggregation_type for x in disaggregations])
+        return self.SEPARATOR.join([x.disaggregation_type for x in disaggregations])
 
     @property
     def get_target_frequency_label(self):

@@ -20,11 +20,8 @@ from django import test
 class CSVTestBase(test.TestCase):
     reporrtype = 'timeperiods'
     url = '/indicators/iptt_csv/{0}/{1}/'
-    fields = ['id', 'number', 'name', 'level', 'indicator_type', 'source', 'sector',
-              'definition', 'justification', 'disaggregation', 'unit_of_measure', 'get_unit_of_measure_type',
-              'baseline', 'lop_target', 'get_target_frequency_label', 'means_of_verification',
-              'data_collection_method', 'data_collection_frequency']
-    relation_fields = [3, 4, 9]
+    fields = ['id', 'number', 'name', 'level_name', 'unit_of_measure', 'unit_of_measure_type',
+              'sector', 'disaggregations', 'baseline', 'baseline_na', 'lop_target', 'target_frequency']
     data_fields = ['lop_sum', 'lop_target', 'lop_met']
 
     def setUp(self):
@@ -35,6 +32,11 @@ class CSVTestBase(test.TestCase):
 
     def tearDown(self):
         self.program.delete()
+
+    def get_field(self, field, row):
+        return row[
+            {v: c for c, v in enumerate(self.fields)}[field]
+        ]
 
 
 class TestCSVEndpointGeneratesCSVFile(CSVTestBase):
@@ -135,9 +137,10 @@ class TestCSVEndPointIndicatorsAccurate(CSVIndicatorTestBase):
             self.assertGreater(len(row), c,
                                self.assert_msg("row should have at least {0} fields, has {1}".format(
                                    c+1, len(row))))
-            value = getattr(indicator, field)
-            value = value.first() if c in self.relation_fields else value
-            value = str(value) if value is not None else "N/A"
+            if field == 'level_name':
+                value = indicator.level.first().name if indicator.level.first() is not None else "N/A"
+            else:
+                value = str(getattr(indicator, field, 'N/A'))
             self.assertEqual(value, str(row[c]),
                              self.assert_msg("cell {0} should be {1} field with value {2}, got value {3}".format(
                                  c, field, value, row[c])))
@@ -210,10 +213,10 @@ class TestCSVEndPointIndicatorsAccurate(CSVIndicatorTestBase):
         indicator.save()
         _, indicator_rows = self.get_rows()
         self.assertEqual(
-            indicator_rows[0][9],
+            self.get_field('disaggregations', indicator_rows[0]),
             self.disaggregations[0].disaggregation_type + "/" + self.disaggregations[1].disaggregation_type,
             self.assert_msg("disaggregations should combine with \"/\" joiner, got {0}".format(
-                indicator_rows[0][9])))
+                self.get_field('disaggregations', indicator_rows[0]))))
 
 class TestCSVTotals(CSVIndicatorTestBase):
     def setUp(self):
@@ -235,21 +238,20 @@ class TestCSVTotals(CSVIndicatorTestBase):
             year = startdate.year + 1 if startdate.month + months > 12 else startdate.year
             month = startdate.month + months - 12 if startdate.month + months > 12 else startdate.month + months
             collect_date = datetime(year, month, startdate.day+1)
-        print "adding data {0} for date {1}".format(value, collect_date)
         self.datapoints.append(
             CollectedDataFactory(indicator=indicator, date_collected=collect_date, achieved=value)
         )
 
     def get_data_rows(self):
         _, indicator_rows = self.get_rows()
-        return [row[18:] for row in indicator_rows]
+        return [row[len(self.fields):] for row in indicator_rows]
 
     def test_header_fields(self):
         header_rows, _ = self.get_rows()
         for c, value in enumerate(self.data_fields):
-            self.assertEqual(header_rows[1][c+18], value,
+            self.assertEqual(header_rows[1][c+len(self.fields)], value,
                              self.assert_msg("subhead row cell {0} should have value {1} got {2}".format(
-                                 c+18, value, header_rows[1][c+18])))
+                                 c+18, value, header_rows[1][c+len(self.fields)])))
 
     def test_lop_sum_target_met(self):
         indicator = self.add_indicator()
@@ -291,8 +293,6 @@ class TestCSVTotals(CSVIndicatorTestBase):
         self.add_data(10, months=2)
         self.add_data(2, months=2)
         data_row_timeperiods = self.get_data_rows()[0][3:]
-        for c, value in enumerate(data_row_timeperiods):
-            print "number {0} value {1}".format(c, value)
         for c, value in enumerate([10, 11, 12, 13]):
             # almost equal so that floats don't cause failure:
             self.assertAlmostEqual(float(data_row_timeperiods[c]), value,
