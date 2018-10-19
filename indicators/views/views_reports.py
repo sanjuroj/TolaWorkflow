@@ -1194,6 +1194,6 @@ def create_pinned_report(request):
         pr.tola_user = request.user.tola_user
         pr.save()
     else:
-        return HttpResponseBadRequest(form.errors)
+        return HttpResponseBadRequest(str(form.errors.items()))
 
     return HttpResponse()
