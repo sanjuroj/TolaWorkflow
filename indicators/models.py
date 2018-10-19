@@ -838,6 +838,10 @@ class PinnedReport(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     report_type = models.CharField(max_length=32)
     query_string = models.CharField(max_length=255)
+    creation_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-creation_date']
 
     @property
     def report_url(self):
