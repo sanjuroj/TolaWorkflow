@@ -129,7 +129,7 @@ function createBasicIndicator () {
  * @returns Nothing
  */
 function deleteIndicator (indName = 'default') {
-  let indButtons = TargetsTab.getProgramIndicatorButtons()
+  let indButtons = TargetsTab.getProgramIndicatorLinks()
   let indButton = indButtons[0]
   indButton.click()
   let deleteBtns = TargetsTab.getProgramIndicatorDeleteButtons()
@@ -252,17 +252,16 @@ function getProgramsDropdownList () {
 }
 
 /**
- * Get a list of the program names in the main Programs table
+ * Get a list of the program names in the main Programs table on the 
+ * indicators landing page
  * @returns {Array<string>} an array of the text strings of the
  * program names in the programs table
  */
-
 function getProgramsTable () {
-  let rows = browser.$('div#div-id-indicator-list').$$('div.card')
+  let spans = browser.$$('span.program-name')
   let programs = []
-  for (let row of rows) {
-    let s = row.getText()
-    programs.push(s)
+  for (let span of spans) {
+    programs.push(span.getText())
   }
   return programs
 }
@@ -303,14 +302,14 @@ function saveNewIndicator () {
  * @returns Nothing
  */
 function selectProgram (program) {
-  clickProgramsDropdown()
-  let listItems = getProgramsDropdownList()
+  let programsDropdown = browser.$('select#id_programs_filter_dropdown')
+  let programsList = programsDropdown.$$('option')
+  let idx = programsList.index(program)
+
   for (let listItem of listItems) {
-    let s = listItem.getText()
-    let v = listItem.getValue()
-    if (s.includes(program)) {
-      programsDropdown.selectByValue(v)
-      break
+    if (listItem.includes(program)) {
+      programsDropdown.selectByVisibleText(listItem)
+      Util.waitForAjax()
     }
   }
 }

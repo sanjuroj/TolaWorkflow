@@ -12,11 +12,11 @@ SESERVER=$(shell basename $(SEURL))
 ifeq ($(XDG_SESSION_TYPE),x11)
 # Linux
 	CHROMEURL=$(CHROMESRC)/2.42/chromedriver_linux64.zip
-	GECKOURL=$(GECKOSRC)/v0.22.0/geckodriver-v0.22.0-linux64.tar.gz
+	GECKOURL=$(GECKOSRC)/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz
 else
 # Mac
 	CHROMEURL=$(CHROMESRC)/2.37/chromedriver_mac64.zip
-	GECKOURL=$(GECKOSRC)/v0.22.0/geckodriver-v0.22.0-macos.tar.gz
+	GECKOURL=$(GECKOSRC)/v0.23.0/geckodriver-v0.23.0-macos.tar.gz
 endif
 CHROMEDRIVER=$(shell basename $(CHROMEURL))
 GECKODRIVER=$(shell basename $(GECKOURL))
