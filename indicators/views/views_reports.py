@@ -1191,7 +1191,7 @@ def create_pinned_report(request):
     form = PinnedReportForm(request.POST)
     if form.is_valid():
         pr = form.save(commit=False)
-        pr.user = request.user
+        pr.tola_user = request.user.tola_user
         pr.save()
     else:
         return HttpResponseBadRequest(form.errors)

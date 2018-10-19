@@ -333,4 +333,4 @@ class IPTTReportFilterForm(ReportFormCommon):
 class PinnedReportForm(forms.ModelForm):
     class Meta:
         model = PinnedReport
-        exclude = ('user',)
+        exclude = ('tola_user',)

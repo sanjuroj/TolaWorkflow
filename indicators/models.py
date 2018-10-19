@@ -10,7 +10,6 @@ from django.utils import formats, timezone
 from django.utils.translation import ugettext_lazy as _
 
 from django.contrib import admin
-from django.conf import settings
 
 from simple_history.models import HistoricalRecords
 
@@ -835,7 +834,7 @@ class PinnedReport(models.Model):
     A named IPTT report for a given program and user
     """
     name = models.CharField(max_length=50, verbose_name=_('Report Name'))
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    tola_user = models.ForeignKey(TolaUser, on_delete=models.CASCADE)
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     report_type = models.CharField(max_length=32)
     query_string = models.CharField(max_length=255)
