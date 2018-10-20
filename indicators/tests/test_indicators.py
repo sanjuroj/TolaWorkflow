@@ -52,6 +52,7 @@ class IndicatorTestCase(TestCase):
         self.indicator.save()
         data = {
             "program": self.program.id, "level": "1", "number": "1.1.2",
+            'program2': self.program.id,
             "indicator_type": "1",
             "unit_of_measure": "count", "unit_of_measure_type": "2",
             "lop_target": "44", "direction_of_change": "1", "baseline": "10",

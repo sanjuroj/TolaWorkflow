@@ -713,7 +713,7 @@ class CollectedData(models.Model):
         _("Remarks/comments"), blank=True, null=True, help_text=" ")
 
     indicator = models.ForeignKey(
-        Indicator, help_text=" ", verbose_name=_("Indicator")
+        Indicator, help_text=" ", verbose_name=_("Indicator"),
     )
 
     agreement = models.ForeignKey(
