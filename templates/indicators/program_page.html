@@ -57,10 +57,11 @@
             <ul class="pinned-reports">
                 {% for pr in pinned_reports %}
                     <li class="pinned-report">
-                        <a href="{% url 'iptt_report' pr.program_id pr.report_type %}?{{ pr.query_string }}">
+                        <a href="{% url 'iptt_report' pr.program_id pr.report_type %}?{{ pr.query_string }}" class="pinned-report__link">
                             <h4>{% trans "IPTT:" %} {{ pr.name }}</h4>
                            {{ pr.date_range_str }}
                         </a>
+                        <a href="#" class="pinned-report__remove text-danger"><i class="fa fa-times"></i></a>
                     </li>
                 {% endfor %}
             </ul>

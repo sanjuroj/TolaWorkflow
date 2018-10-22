@@ -6891,16 +6891,23 @@ body.page_iptt_table {
   margin-left: 0;
   padding-left: 0; }
 
-.pinned-report a {
-  color: inherit;
-  display: block;
+.pinned-report {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
   padding-bottom: 15px;
   padding-top: 15px; }
+  .pinned-report h4 {
+    color: inherit;
+    font-size: inherit;
+    margin-bottom: 0; }
 
-.pinned-report h4 {
+.pinned-report__link {
   color: inherit;
-  font-size: inherit;
-  margin-bottom: 0; }
+  display: block; }
+
+.pinned-report__remove {
+  display: block; }
 
 .program-page__indicators {
   position: relative;
