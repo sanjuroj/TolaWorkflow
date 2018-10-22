@@ -1060,19 +1060,26 @@ class IPTTReportQuickstartView(FormView):
     FORM_PREFIX_TIME = 'timeperiods'
     FORM_PREFIX_TARGET = 'targetperiods'
 
+    def get_initial(self):
+        # initial values for built-in `form`
+        initial = super(IPTTReportQuickstartView, self).get_initial()
+        initial['numrecentperiods'] = 2
+        return initial
+
+    def get_form_kwargs(self):
+        # other variables passed into default `form`
+        kwargs = super(IPTTReportQuickstartView, self).get_form_kwargs()
+        kwargs['prefix'] = self.FORM_PREFIX_TIME
+        kwargs['request'] = self.request
+        return kwargs
+
     def get_context_data(self, **kwargs):
         context = super(IPTTReportQuickstartView, self).get_context_data(**kwargs)
-        # Add two instances of the same form to context if they're not present
-        if 'form' not in context:
-            context['form'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TIME)
+        # form - created by ctor - "recent progress form" - values passed in by other FormView methods
+        # form2 - created below - "periodic targets vs actuals"
         if 'form2' not in context:
             context['form2'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TARGET)
         return context
-
-    def get_form_kwargs(self):
-        kwargs = super(IPTTReportQuickstartView, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        return kwargs
 
     def post(self, request, *args, **kwargs):
         targetprefix = request.POST.get('%s-formprefix' % self.FORM_PREFIX_TARGET)
