@@ -1064,6 +1064,10 @@ class IPTTReportQuickstartView(FormView):
         # initial values for built-in `form`
         initial = super(IPTTReportQuickstartView, self).get_initial()
         initial['numrecentperiods'] = 2
+
+        program_id = self.request.GET.get('program_id')
+        initial['program'] = program_id
+
         return initial
 
     def get_form_kwargs(self):
@@ -1077,8 +1081,10 @@ class IPTTReportQuickstartView(FormView):
         context = super(IPTTReportQuickstartView, self).get_context_data(**kwargs)
         # form - created by ctor - "recent progress form" - values passed in by other FormView methods
         # form2 - created below - "periodic targets vs actuals"
+        program_id = self.request.GET.get('program_id')
+
         if 'form2' not in context:
-            context['form2'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TARGET)
+            context['form2'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TARGET, initial={'program': program_id})
         return context
 
     def post(self, request, *args, **kwargs):

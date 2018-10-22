@@ -155,13 +155,17 @@
             mostRecentTimeperiods.attr("checked", true);
 
             // every time a select input changes, lock / unlock fields
-            $("#id_form_program_indicator_overview").on("change", "select", function(e) {
+            function updateSubmitBtnTimeperiodsState() {
                 if (programTimeperiods.val() > 0 ) {
                     submitBtnTimeperiods.attr("disabled", false);
                 } else {
                     submitBtnTimeperiods.attr("disabled", true);
                 }
-            });
+            }
+
+            updateSubmitBtnTimeperiodsState(); // handle initial load state
+
+            $("#id_form_program_indicator_overview").on("change", "select", updateSubmitBtnTimeperiodsState);
 
             //// ........................................................
             const submitBtnTargets = $("#id_submit_targetperiods_button");

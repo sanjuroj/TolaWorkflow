@@ -68,7 +68,7 @@
                     </a>
                 </li>
             </ul>
-            <a href="#" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Create an IPTT report" %}</a>
+            <a href="{% url 'iptt_quickstart' %}?program_id={{ program.id }}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Create an IPTT report" %}</a>
         </section>
     </div>
     <div id="div-id-indicator-list" class="indicators-list program-page__indicators">
