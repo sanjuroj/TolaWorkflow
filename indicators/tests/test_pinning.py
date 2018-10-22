@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.test import TestCase
+from django.test import TestCase, SimpleTestCase
 from django.urls import reverse
 
 from indicators import models
@@ -87,7 +87,7 @@ class TestCreatePinnedReport(TestCase):
         self.assertEquals(models.PinnedReport.objects.count(), 0)
 
 
-class TestPinnedReportDateStrings(TestCase):
+class TestPinnedReportDateStrings(SimpleTestCase):
     """
     Date range strings vary depending on query string args - test possibilities
     """
@@ -109,3 +109,15 @@ class TestPinnedReportDateStrings(TestCase):
         pr.query_string = 'timeperiods=4&numrecentperiods=&timeframe=1'
 
         self.assertEqual(pr.date_range_str, 'Show all Semi-annual periods')
+
+
+class TestDefaultPinnedReport(SimpleTestCase):
+    """
+    Default pinned report for programs page
+    """
+
+    def test_default_report(self):
+        default_report = models.PinnedReport.default_report(0)
+        self.assertEquals(default_report.name, 'Recent progress for all indicators')
+        self.assertEquals(default_report.date_range_str, 'Most recent 2 Months')
+        self.assertEquals(default_report.program_id, 0)

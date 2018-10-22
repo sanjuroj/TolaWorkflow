@@ -905,3 +905,18 @@ class PinnedReport(models.Model):
 
         return ''
 
+
+    @staticmethod
+    def default_report(program_id):
+        """
+        Create a default hardcoded pinned report
+
+        Shows recent progress for all indicators
+        Does not exist in the DB
+        """
+        return PinnedReport(
+            name=_('Recent progress for all indicators'),
+            program_id=program_id,
+            report_type='timeperiods',
+            query_string='timeperiods=7&timeframe=2&numrecentperiods=2',
+        )

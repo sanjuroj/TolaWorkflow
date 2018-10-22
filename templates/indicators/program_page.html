@@ -55,7 +55,7 @@
         <section class="sidebar__detail">
             <h3>{% trans "Pinned Reports" %}</h3>
             <ul class="pinned-reports">
-                {% for pr in program.pinned_reports.all %}
+                {% for pr in pinned_reports %}
                     <li class="pinned-report">
                         <a href="{% url 'iptt_report' pr.program_id pr.report_type %}?{{ pr.query_string }}">
                             <h4>{% trans "IPTT:" %} {{ pr.name }}</h4>
@@ -63,13 +63,6 @@
                         </a>
                     </li>
                 {% endfor %}
-
-                <li class="pinned-report">
-                    <a href="#">
-                        <h4>IPTT: Recent Progress for All Indicators</h4>
-                    Jun 1, 2018 – Jul 31, 2018
-                    </a>
-                </li>
             </ul>
             <a href="{% url 'iptt_quickstart' %}?program_id={{ program.id }}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Create an IPTT report" %}</a>
         </section>

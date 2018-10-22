@@ -38,7 +38,7 @@ from ..forms import IndicatorForm, CollectedDataForm
 from ..models import (
     Indicator, PeriodicTarget, DisaggregationLabel, DisaggregationValue,
     CollectedData, IndicatorType, Level, ExternalServiceRecord,
-    ExternalService, TolaTable
+    ExternalService, TolaTable, PinnedReport
 )
 from .views_reports import IPTT_ReportView
 
@@ -1467,6 +1467,7 @@ class ProgramPage(ListView):
         type_ids = set(indicators.values_list('indicator_type', flat=True))
         indicator_types = IndicatorType.objects.filter(id__in=list(type_ids))
         indicator_count = indicators.count()
+        pinned_reports = list(program.pinned_reports.all()) + [PinnedReport.default_report(program.id)]
         scope_percents = {
             # TODO: placeholder stats
             'low': 23,
@@ -1493,6 +1494,7 @@ class ProgramPage(ListView):
             'scope_percents': scope_percents,
             'percent_complete': 75, # TODO: % of reporting period complete
             'results_stats': results_stats,
+            'pinned_reports': pinned_reports,
         }
         return render(request, self.template_name, c_data)
 
