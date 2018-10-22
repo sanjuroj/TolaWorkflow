@@ -3,6 +3,7 @@ from random import randint
 import faker
 from django.utils import timezone
 from factory import DjangoModelFactory, post_generation, SubFactory, lazy_attribute, Sequence
+from factory.fuzzy import FuzzyChoice
 
 from indicators.models import (
     CollectedData as CollectedDataM,
@@ -14,6 +15,7 @@ from indicators.models import (
     Objective as ObjectiveM,
     PeriodicTarget as PeriodicTargetM,
     StrategicObjective as StrategicObjectiveM,
+    PinnedReport as PinnedReportM,
 )
 from workflow_models import OrganizationFactory, ProgramFactory
 
@@ -140,3 +142,11 @@ class PeriodicTargetFactory(DjangoModelFactory):
     target = 0
     period = lazy_attribute(
         lambda pt: 'PeriodicTarget for %s: %s - %s' % (pt.indicator.name, pt.start_date, pt.end_date))
+
+
+class PinnedReportFactory(DjangoModelFactory):
+    class Meta:
+        model = PinnedReportM
+
+    name = Sequence(lambda n: 'Test pinned report: {0}'.format(n))
+    report_type = FuzzyChoice(['timeperiods', 'targetperiods'])

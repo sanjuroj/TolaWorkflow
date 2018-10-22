@@ -3,6 +3,7 @@
 from django.test import TestCase, SimpleTestCase
 from django.urls import reverse
 
+from factories import PinnedReportFactory
 from indicators import models
 
 from factories.workflow_models import (
@@ -110,6 +111,12 @@ class TestPinnedReportDateStrings(SimpleTestCase):
 
         self.assertEqual(pr.date_range_str, 'Show all Semi-annual periods')
 
+    def test_missing_qs(self):
+        pr = models.PinnedReport()
+        pr.query_string = ''
+
+        self.assertEqual(pr.date_range_str, '')
+
 
 class TestDefaultPinnedReport(SimpleTestCase):
     """
@@ -121,3 +128,54 @@ class TestDefaultPinnedReport(SimpleTestCase):
         self.assertEquals(default_report.name, 'Recent progress for all indicators')
         self.assertEquals(default_report.date_range_str, 'Most recent 2 Months')
         self.assertEquals(default_report.program_id, 0)
+
+
+class TestPinnedReportListInProgramView(TestCase):
+    """
+    Verify list of pinned reports is as expected on program page view
+    """
+
+    def setUp(self):
+        self.user = UserFactory(first_name="PeterPeter", last_name="PumpkinEater", username="PPPE")
+        self.user.set_password('orangethumb')
+        self.user.save()
+        self.tola_user = TolaUserFactory(user=self.user)
+        self.country = self.tola_user.country
+        self.program = ProgramFactory(
+            funding_status='Funded', reporting_period_start='2016-03-01', reporting_period_end='2020-05-01')
+        self.program.country.add(self.country)
+        self.program.save()
+
+        # TolaUser not available on User if not logged in
+        self.client.login(username=self.user.username, password='orangethumb')
+
+    def test_program_view_no_pinned_reports(self):
+        response = self.client.get(reverse('program_page', args=(self.program.id, 0, 0)))
+
+        self.assertEqual(response.status_code, 200)
+        pinned_reports = response.context['pinned_reports']
+        self.assertEquals(len(pinned_reports), 1)  # default report
+
+    def test_program_view(self):
+        # Create 3 reports, 1 tied to a different user
+        for i in range(2):
+            PinnedReportFactory(
+                tola_user=self.tola_user,
+                program=self.program,
+            )
+
+        other_user = UserFactory(first_name='Other', last_name='User', username='otheruser')
+        other_tola_user = TolaUserFactory(user=other_user)
+        PinnedReportFactory(
+            tola_user=other_tola_user,
+            program=self.program,
+        )
+
+        response = self.client.get(reverse('program_page', args=(self.program.id, 0, 0)))
+
+        self.assertEqual(response.status_code, 200)
+        pinned_reports = response.context['pinned_reports']
+        self.assertEquals(len(pinned_reports), 3)  # 2 + 1 default
+
+        # verify ordering - pinned reports should be sorted newest to oldest
+        self.assertTrue(pinned_reports[0].creation_date > pinned_reports[1].creation_date)

@@ -1461,13 +1461,15 @@ class ProgramPage(ListView):
             indicator_filter_name = Indicator.objects.get(id=indicator_filter_id)
             indicator_filters['id'] = indicator_filter_id
 
+        # FIXME: The indicators filter below is overridden 2 lines down
         indicators = Indicator.objects.filter(**{'program__id': program_id, 'id':self.kwargs['indicator_id']})
         program = Program.objects.get(id=program_id, funding_status="Funded", country__in=countries)
         indicators = Indicator.objects.filter(**indicator_filters)
         type_ids = set(indicators.values_list('indicator_type', flat=True))
         indicator_types = IndicatorType.objects.filter(id__in=list(type_ids))
         indicator_count = indicators.count()
-        pinned_reports = list(program.pinned_reports.all()) + [PinnedReport.default_report(program.id)]
+        pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
+                         [PinnedReport.default_report(program.id)]
         scope_percents = {
             # TODO: placeholder stats
             'low': 23,
