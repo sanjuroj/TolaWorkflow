@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.test import TestCase
 from django.urls import reverse
 
@@ -83,3 +85,27 @@ class TestCreatePinnedReport(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEquals(models.PinnedReport.objects.count(), 0)
+
+
+class TestPinnedReportDateStrings(TestCase):
+    """
+    Date range strings vary depending on query string args - test possibilities
+    """
+
+    def test_fixed_date_range(self):
+        pr = models.PinnedReport()
+        pr.query_string = 'timeperiods=7&numrecentperiods=&start_period=2018-01-01&end_period=2018-06-30'
+
+        self.assertEqual(pr.date_range_str, 'Jan 1, 2018 – Jun 30, 2018')
+
+    def test_relative_to_today(self):
+        pr = models.PinnedReport()
+        pr.query_string = 'timeperiods=7&numrecentperiods=2&timeframe=2'
+
+        self.assertEqual(pr.date_range_str, 'Most recent 2 Months')
+
+    def test_show_all(self):
+        pr = models.PinnedReport()
+        pr.query_string = 'timeperiods=4&numrecentperiods=&timeframe=1'
+
+        self.assertEqual(pr.date_range_str, 'Show all Semi-annual periods')

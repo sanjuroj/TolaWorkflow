@@ -3,8 +3,10 @@ import uuid
 from datetime import timedelta
 from decimal import Decimal
 
+import dateparser
 from django.db import models
 from django.db.models import Avg
+from django.http import QueryDict
 from django.urls import reverse
 from django.utils import formats, timezone
 from django.utils.translation import ugettext_lazy as _
@@ -835,7 +837,7 @@ class PinnedReport(models.Model):
     """
     name = models.CharField(max_length=50, verbose_name=_('Report Name'))
     tola_user = models.ForeignKey(TolaUser, on_delete=models.CASCADE)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='pinned_reports')
     report_type = models.CharField(max_length=32)
     query_string = models.CharField(max_length=255)
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -843,12 +845,63 @@ class PinnedReport(models.Model):
     class Meta:
         ordering = ['-creation_date']
 
+    def parse_query_string(self):
+        return QueryDict(self.query_string)
+
     @property
     def report_url(self):
         """
-        Return the fully parameterized ITPP report URL string
+        Return the fully parameterized IPTT report URL string
         """
         return "{}?{}".format(reverse('iptt_report', kwargs={
             'program_id': self.program_id,
             'reporttype': self.report_type
         }), self.query_string)
+
+    @property
+    def date_range_str(self):
+        """
+        A localized string showing the date range covered by the pinned report
+
+        There are 3 types of pinned reports w/ regards to date ranges:
+
+          * A report with a fixed start/end date
+          * A relative report (show previous N months/quarters/year relative to today)
+          * Show all - mostly fixed but may change relative to Program start/end reporting period
+
+        Currently the query string is used to determine the date range type, and thus the returned string
+        """
+        qs = self.parse_query_string()
+
+        start_period = qs.get('start_period')
+        end_period = qs.get('end_period')
+
+        time_frame = qs.get('timeframe')  # show all/most recent
+        num_recent_periods = qs.get('numrecentperiods')  # "most recent" input
+        time_periods = qs.get('timeperiods')  # quarters/months/years/etc
+
+        df = lambda d: formats.date_format(dateparser.parse(d), 'MEDIUM_DATE_FORMAT')
+
+        # Fixed start/end date
+        if start_period and end_period:
+            return '{} – {}'.format(df(start_period), df(end_period))
+
+        from indicators.forms import ReportFormCommon
+
+        time_period_str = None
+        if time_periods:
+            time_period_str_lookup = dict(ReportFormCommon.TIMEPERIODS_CHOICES)
+            time_period_str = time_period_str_lookup.get(int(time_periods))
+
+        # A relative report
+        if time_frame == str(ReportFormCommon.MOST_RECENT) and num_recent_periods:
+            #  Translators: Example: Most recent 2 monthly periods
+            return _('Most recent {} {}'.format(num_recent_periods, time_period_str))
+
+        # Show all
+        if time_frame == str(ReportFormCommon.SHOW_ALL) and time_periods:
+            # Translators: Example: Show all years
+            return _('Show all {}').format(time_period_str)
+
+        return ''
+
