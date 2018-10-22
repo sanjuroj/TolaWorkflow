@@ -13,6 +13,26 @@ from factories.workflow_models import (
 )
 
 
+class PinnedReportTestCase(TestCase):
+    """
+    Set up some base entities in the DB
+    """
+
+    def setUp(self):
+        self.user = UserFactory(first_name="PeterPeter", last_name="PumpkinEater", username="PPPE")
+        self.user.set_password('orangethumb')
+        self.user.save()
+        self.tola_user = TolaUserFactory(user=self.user)
+        self.country = self.tola_user.country
+        self.program = ProgramFactory(
+            funding_status='Funded', reporting_period_start='2016-03-01', reporting_period_end='2020-05-01')
+        self.program.country.add(self.country)
+        self.program.save()
+
+        # TolaUser not available on User if not logged in
+        self.client.login(username=self.user.username, password='orangethumb')
+
+
 class TestUrlCreationFromPinnedReport(TestCase):
     """
     From a saved report, can a GET URL be reconstituted
@@ -33,24 +53,10 @@ class TestUrlCreationFromPinnedReport(TestCase):
         self.assertEquals(url_str, expected)
 
 
-class TestCreatePinnedReport(TestCase):
+class TestCreatePinnedReport(PinnedReportTestCase):
     """
     Test AJAX call for creating a pinned report
     """
-
-    def setUp(self):
-        self.user = UserFactory(first_name="PeterPeter", last_name="PumpkinEater", username="PPPE")
-        self.user.set_password('orangethumb')
-        self.user.save()
-        self.tola_user = TolaUserFactory(user=self.user)
-        self.country = self.tola_user.country
-        self.program = ProgramFactory(
-            funding_status='Funded', reporting_period_start='2016-03-01', reporting_period_end='2020-05-01')
-        self.program.country.add(self.country)
-        self.program.save()
-
-        # TolaUser not available on User if not logged in
-        self.client.login(username=self.user.username, password='orangethumb')
 
     def test_successful_create(self):
         report_name = 'Test report name'
@@ -130,24 +136,10 @@ class TestDefaultPinnedReport(SimpleTestCase):
         self.assertEquals(default_report.program_id, 0)
 
 
-class TestPinnedReportListInProgramView(TestCase):
+class TestPinnedReportListInProgramView(PinnedReportTestCase):
     """
     Verify list of pinned reports is as expected on program page view
     """
-
-    def setUp(self):
-        self.user = UserFactory(first_name="PeterPeter", last_name="PumpkinEater", username="PPPE")
-        self.user.set_password('orangethumb')
-        self.user.save()
-        self.tola_user = TolaUserFactory(user=self.user)
-        self.country = self.tola_user.country
-        self.program = ProgramFactory(
-            funding_status='Funded', reporting_period_start='2016-03-01', reporting_period_end='2020-05-01')
-        self.program.country.add(self.country)
-        self.program.save()
-
-        # TolaUser not available on User if not logged in
-        self.client.login(username=self.user.username, password='orangethumb')
 
     def test_program_view_no_pinned_reports(self):
         response = self.client.get(reverse('program_page', args=(self.program.id, 0, 0)))
@@ -179,3 +171,48 @@ class TestPinnedReportListInProgramView(TestCase):
 
         # verify ordering - pinned reports should be sorted newest to oldest
         self.assertTrue(pinned_reports[0].creation_date > pinned_reports[1].creation_date)
+
+
+class TestDeletePinnedReportAPI(PinnedReportTestCase):
+    """
+    Test delete API call
+    """
+
+    def test_delete_of_pinned_report(self):
+        pr = PinnedReportFactory(
+            tola_user=self.tola_user,
+            program=self.program,
+        )
+
+        self.assertEquals(models.PinnedReport.objects.count(), 1)
+
+        data = {
+            'pinned_report_id': pr.id,
+        }
+
+        response = self.client.post(reverse('delete_pinned_report'), data=data)
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEquals(models.PinnedReport.objects.count(), 0)
+
+    def test_delete_of_pinned_report_not_owned_by_user(self):
+        other_user = UserFactory(first_name='Other', last_name='User', username='otheruser')
+        other_tola_user = TolaUserFactory(user=other_user)
+        pr = PinnedReportFactory(
+            tola_user=other_tola_user,
+            program=self.program,
+        )
+
+        self.assertEquals(models.PinnedReport.objects.count(), 1)
+
+        data = {
+            'pinned_report_id': pr.id,
+        }
+
+        response = self.client.post(reverse('delete_pinned_report'), data=data)
+
+        self.assertEqual(response.status_code, 200)
+
+        # nothing deleted!
+        self.assertEquals(models.PinnedReport.objects.count(), 1)

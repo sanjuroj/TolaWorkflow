@@ -34,7 +34,7 @@ from .views.views_reports import (
     IPTT_ReportIndicatorsWithVariedStartDate,
     IPTT_ExcelExport,
     create_pinned_report,
-)
+    delete_pinned_report)
 
 urlpatterns = [
     url(r'^home/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$', IndicatorList.as_view(), name='indicator_list'),
@@ -117,5 +117,6 @@ urlpatterns = [
 
     url(r'^iptt_excel/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ExcelExport.as_view(), name='iptt_excel'),
 
-    url(r'^pinned_report/$', create_pinned_report, name='create_pinned_report')
+    url(r'^pinned_report/$', create_pinned_report, name='create_pinned_report'),
+    url(r'^pinned_report/delete/$', delete_pinned_report, name='delete_pinned_report'),
 ]

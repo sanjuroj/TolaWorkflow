@@ -18,7 +18,7 @@ from openpyxl.worksheet.cell_range import CellRange
 
 from tola.util import formatFloat
 from workflow.models import Program
-from ..models import Indicator, CollectedData, Level, PeriodicTarget
+from ..models import Indicator, CollectedData, Level, PeriodicTarget, PinnedReport
 from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm, PinnedReportForm
 from ..templatetags.mytags import symbolize_change, symbolize_measuretype
 
@@ -1209,4 +1209,14 @@ def create_pinned_report(request):
     else:
         return HttpResponseBadRequest(str(form.errors.items()))
 
+    return HttpResponse()
+
+
+@require_POST
+def delete_pinned_report(request):
+    """
+    AJAX call for deleting a PinnedReport
+    """
+    pinned_report_id = request.POST.get('pinned_report_id')
+    PinnedReport.objects.filter(id=pinned_report_id, tola_user_id=request.user.tola_user.id).delete()
     return HttpResponse()
