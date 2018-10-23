@@ -99,17 +99,41 @@ class TestPinnedReportDateStrings(SimpleTestCase):
     Date range strings vary depending on query string args - test possibilities
     """
 
-    def test_fixed_date_range(self):
+    def test_fixed_date_range_timeperiods(self):
         pr = models.PinnedReport()
         pr.query_string = 'timeperiods=7&numrecentperiods=&start_period=2018-01-01&end_period=2018-06-30'
 
         self.assertEqual(pr.date_range_str, 'Jan 1, 2018 – Jun 30, 2018')
 
-    def test_relative_to_today(self):
+    def test_fixed_date_range_targetperiods(self):
+        pr = models.PinnedReport()
+        pr.query_string = 'start_period=2017-07-01&numrecentperiods=&end_period=2020-06-30&targetperiods=3'
+
+        self.assertEqual(pr.date_range_str, 'Jul 1, 2017 – Jun 30, 2020')
+
+    def test_relative_to_today_timeperiods(self):
         pr = models.PinnedReport()
         pr.query_string = 'timeperiods=7&numrecentperiods=2&timeframe=2'
 
         self.assertEqual(pr.date_range_str, 'Most recent 2 Months')
+
+        pr.query_string = 'timeperiods=3&numrecentperiods=2&timeframe=2'
+
+        self.assertEqual(pr.date_range_str, 'Most recent 2 Years')
+
+    def test_relative_to_today_targetperiods(self):
+        pr = models.PinnedReport()
+        pr.query_string = 'targetperiods=7&numrecentperiods=2&timeframe=2'
+
+        self.assertEqual(pr.date_range_str, 'Most recent 2 Months')
+
+        pr.query_string = 'targetperiods=3&numrecentperiods=2&timeframe=2'
+
+        self.assertEqual(pr.date_range_str, 'Most recent 2 Years')
+
+        pr.query_string = 'targetperiods=4&numrecentperiods=2&timeframe=2'
+
+        self.assertEqual(pr.date_range_str, 'Most recent 2 Semi-annual periods')
 
     def test_show_all(self):
         pr = models.PinnedReport()
@@ -117,12 +141,23 @@ class TestPinnedReportDateStrings(SimpleTestCase):
 
         self.assertEqual(pr.date_range_str, 'Show all Semi-annual periods')
 
+    def test_midline_endline(self):
+        pr = models.PinnedReport()
+        pr.query_string = 'targetperiods=2&timeframe=1'
+
+        self.assertEqual(pr.date_range_str, 'Show all results')
+
+    def test_lop(self):
+        pr = models.PinnedReport()
+        pr.query_string = 'targetperiods=1&timeframe=1'
+
+        self.assertEqual(pr.date_range_str, 'Show all results')
+
     def test_missing_qs(self):
         pr = models.PinnedReport()
         pr.query_string = ''
 
         self.assertEqual(pr.date_range_str, '')
-
 
 class TestDefaultPinnedReport(SimpleTestCase):
     """

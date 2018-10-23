@@ -863,11 +863,19 @@ class PinnedReport(models.Model):
         """
         A localized string showing the date range covered by the pinned report
 
-        There are 3 types of pinned reports w/ regards to date ranges:
+        There are several types of pinned reports w/ regards to date ranges and report type:
 
           * A report with a fixed start/end date
+            * Recent progress
+            * Annual vs targets
           * A relative report (show previous N months/quarters/year relative to today)
-          * Show all - mostly fixed but may change relative to Program start/end reporting period
+            * Recent progress
+            * Annual vs targets
+          * Show all with a time period selected (annual/monthly)
+            * Recent progress
+            * Annual vs targets
+          * Show all with LoP/Midline+Endline/Event
+            * Annual vs targets
 
         Currently the query string is used to determine the date range type, and thus the returned string
         """
@@ -878,7 +886,8 @@ class PinnedReport(models.Model):
 
         time_frame = qs.get('timeframe')  # show all/most recent
         num_recent_periods = qs.get('numrecentperiods')  # "most recent" input
-        time_periods = qs.get('timeperiods')  # quarters/months/years/etc
+        time_periods = qs.get('timeperiods')  # quarters/months/years/etc (recent progress)
+        target_periods = qs.get('targetperiods')  # LoP/Midline+Endline/Annual/Quarterly/etc (target vs actuals)
 
         df = lambda d: formats.date_format(dateparser.parse(d), 'MEDIUM_DATE_FORMAT')
 
@@ -888,20 +897,59 @@ class PinnedReport(models.Model):
 
         from indicators.forms import ReportFormCommon
 
-        time_period_str = None
+        # This is confusing but ReportFormCommon defines TIMEPERIODS_CHOICES
+        # which is defined in terms of enum values in Indicators
+        # Indicators also defines TARGET_FREQUENCIES which is also used by ReportFormCommon
+        # Because of this, the enum values are interchangeable between ReportFormCommon and Indicators
+
+        # TIMEPERIODS_CHOICES = (
+        #     (YEARS, _("Years")),
+        #     (SEMIANNUAL, _("Semi-annual periods")),
+        #     (TRIANNUAL, _("Tri-annual periods")),
+        #     (QUARTERS, _("Quarters")),
+        #     (MONTHS, _("Months"))
+        # )
+
+        # TARGETPERIOD_CHOICES = [empty] +
+        # TARGET_FREQUENCIES = (
+        #     (LOP, _('Life of Program (LoP) only')),
+        #     (MID_END, _('Midline and endline')),
+        #     (ANNUAL, _('Annual')),
+        #     (SEMI_ANNUAL, _('Semi-annual')),
+        #     (TRI_ANNUAL, _('Tri-annual')),
+        #     (QUARTERLY, _('Quarterly')),
+        #     (MONTHLY, _('Monthly')),
+        #     (EVENT, _('Event'))
+        # )
+
+        # time period strings are used for BOTH timeperiod and targetperiod values
+        time_period_str_lookup = dict(ReportFormCommon.TIMEPERIODS_CHOICES)
+
+        time_or_target_period_str = None
         if time_periods:
-            time_period_str_lookup = dict(ReportFormCommon.TIMEPERIODS_CHOICES)
-            time_period_str = time_period_str_lookup.get(int(time_periods))
+            time_or_target_period_str = time_period_str_lookup.get(int(time_periods))
+        if target_periods:
+            time_or_target_period_str = time_period_str_lookup.get(int(target_periods))
 
-        # A relative report
-        if time_frame == str(ReportFormCommon.MOST_RECENT) and num_recent_periods:
-            #  Translators: Example: Most recent 2 monthly periods
-            return _('Most recent {} {}'.format(num_recent_periods, time_period_str))
+        # A relative report (Recent progress || Target vs Actuals)
+        if time_frame == str(ReportFormCommon.MOST_RECENT) and num_recent_periods and time_or_target_period_str:
+            #  Translators: Example: Most recent 2 Months
+            return _('Most recent {} {}'.format(num_recent_periods, time_or_target_period_str))
 
-        # Show all
-        if time_frame == str(ReportFormCommon.SHOW_ALL) and time_periods:
-            # Translators: Example: Show all years
-            return _('Show all {}').format(time_period_str)
+        # Show all (Recent progress || Target vs Actuals w/ time period (such as annual))
+        if time_frame == str(ReportFormCommon.SHOW_ALL) and time_or_target_period_str:
+            # Translators: Example: Show all Years
+            return _('Show all {}').format(time_or_target_period_str)
+
+        # Show all (Target vs Actuals LoP/Midline+End/Event)
+        remaining_target_freq_set = {
+            Indicator.LOP,
+            Indicator.MID_END,
+            Indicator.EVENT,
+        }
+        if time_frame == str(ReportFormCommon.SHOW_ALL) and target_periods \
+                and int(target_periods) in remaining_target_freq_set:
+            return _('Show all results')
 
         return ''
 
