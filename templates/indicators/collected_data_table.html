@@ -297,7 +297,7 @@
         {% endif %}
         </div>
         <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
-            <a href="{% url 'collecteddata_add' program_id indicator.id %}" class="btn btn-success collected-data__link"><i class="fas fa-plus-circle"></i> {% trans "Add results" %}</a>
+            <a href="{% url 'collecteddata_add' program_id indicator.id %}" class="btn-link btn-add collected-data__link"><i class="fas fa-plus-circle"></i> {% trans "Add results" %}</a>
         </div>
     </div>
 {% else %}

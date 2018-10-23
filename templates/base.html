@@ -111,6 +111,17 @@
                                         <a class="nav-link" href="/workflow/report/0/none">{% trans "Project Report" %}</a>
                                     </li>
                                 </ul>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'indicator_list' 0 0 0 %}">{% trans "Indicators" %}</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarBrowse" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Browse" %}</a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarBrowse">
+                                    <li class="dropdown-item"><a class="nav-link" href="/workflow/documentation_list/0/0/">{% trans "Documents" %}</a></li>
+                                    <li class="dropdown-item"><a class="nav-link" href="/workflow/dashboard/0/">{% trans "Projects" %}</a></li>
+                                    <li class="dropdown-item"><a class="nav-link" href="/workflow/siteprofile_list/0/0/">{% trans "Sites" %}</a></li>
+                                    <li class="dropdown-item"><a class="nav-link" href="/workflow/stakeholder_list/0/0">{% trans "Stakeholders" %}</a></li>
+                                </ul>
                             </li>
                             <li class="nav-item">
                                 {% program_menu %}
