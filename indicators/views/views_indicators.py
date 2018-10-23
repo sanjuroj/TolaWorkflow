@@ -1483,6 +1483,11 @@ class ProgramPage(ListView):
             'results_evidence': 50,
         }
 
+        js_context = {
+            'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
+            'delete_pinned_report_confirmation_msg':
+                _('Warning: This action connot be undone. Are you sure you want to delete this pinned report?'),
+        }
 
         c_data = {
             'program': program,
@@ -1497,6 +1502,7 @@ class ProgramPage(ListView):
             'percent_complete': 75, # TODO: % of reporting period complete
             'results_stats': results_stats,
             'pinned_reports': pinned_reports,
+            'js_context': js_context,
         }
         return render(request, self.template_name, c_data)
 

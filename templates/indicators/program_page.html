@@ -53,7 +53,13 @@
                             <h4>{% trans "IPTT:" %} {{ pr.name }}</h4>
                            {{ pr.date_range_str }}
                         </a>
-                        <a href="#" class="pinned-report__remove text-danger"><i class="fa fa-times"></i></a>
+                        {% if pr.id %}
+                        <a href="#"
+                           class="pinned-report__remove text-danger"
+                           data-delete-pinned-report="{{ pr.id }}">
+                            <i class="fa fa-times"></i>
+                        </a>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
@@ -75,3 +81,36 @@
 {% include 'indicators/indicator_form_common_js.html' %}
 {% include 'indicators/collecteddata_form_common_js.html' %}
 {% endblock content %}
+
+
+{% block extra_js_in_body %}
+    <script>
+        let jsContext = {{ js_context|js }};
+    </script>
+
+    <script>
+        // On pinned report delete btn click
+        $('[data-delete-pinned-report]').click(function (e) {
+            e.preventDefault();
+
+            let prId = $(this).data('deletePinnedReport');
+            let pinnedReport = $(this).closest('.pinned-report');
+
+            if (window.confirm(jsContext.delete_pinned_report_confirmation_msg)) {
+                $.ajax({
+                    type: "POST",
+                    url: jsContext.delete_pinned_report_url,
+                    data: {
+                        pinned_report_id: prId,
+                    },
+                    success: function () {
+                        pinnedReport.remove();
+                    },
+                    error: function () {
+                        console.log('AJAX error')
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}
