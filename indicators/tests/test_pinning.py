@@ -159,6 +159,13 @@ class TestPinnedReportDateStrings(SimpleTestCase):
 
         self.assertEqual(pr.date_range_str, '')
 
+    def test_possible_bad_input(self):
+        # the current quickstart UI allows this invalid form input -> query str
+        pr = models.PinnedReport()
+        pr.query_string = 'targetperiods=1&timeframe=2&numrecentperiods=2'
+
+        self.assertEquals(pr.date_range_str, 'Show all results')
+
 class TestDefaultPinnedReport(SimpleTestCase):
     """
     Default pinned report for programs page

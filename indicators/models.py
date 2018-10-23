@@ -951,6 +951,10 @@ class PinnedReport(models.Model):
                 and int(target_periods) in remaining_target_freq_set:
             return _('Show all results')
 
+        # It's possible to submit bad input, but have the view "fix" it..
+        if time_frame == str(ReportFormCommon.MOST_RECENT) and num_recent_periods and not time_or_target_period_str:
+            return _('Show all results')
+
         return ''
 
 
