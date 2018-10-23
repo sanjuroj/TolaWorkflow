@@ -6,6 +6,7 @@ from django.db.models import QuerySet
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from indicators.models import Indicator
+from django.conf import settings
 
 register = template.Library()
 
@@ -120,6 +121,7 @@ def gauge_tank(filled, label, detail):
         'label': label,
         'detail': detail,
         'ticks': list(range(1,11)),
+        'margin': int(Indicator.ONSCOPE_MARGIN * 100),
     }
 
 
@@ -130,4 +132,5 @@ def gauge_band(high, on_scope, low):
         'on_scope': on_scope,
         'low': low,
         'ticks': list(range(1,11)),
+        'margin': int(Indicator.ONSCOPE_MARGIN * 100),
     }
