@@ -3,6 +3,7 @@
 url: /indicators/iptt_csv/<program_id>/<reporttype>
 """
 
+import unittest
 from datetime import datetime, timedelta
 from StringIO import StringIO
 import csv
@@ -38,7 +39,7 @@ class CSVTestBase(test.TestCase):
             {v: c for c, v in enumerate(self.fields)}[field]
         ]
 
-
+@unittest.skip("Specs changing on CSV file, tests paused")
 class TestCSVEndpointGeneratesCSVFile(CSVTestBase):
     header_row = ['Program:', 'program_name']
 
@@ -128,7 +129,7 @@ class CSVIndicatorTestBase(CSVTestBase):
         body = [row for row in reader]
         return headers, body
 
-
+@unittest.skip("Specs changing on CSV file, tests paused")
 class TestCSVEndPointIndicatorsAccurate(CSVIndicatorTestBase):
     # to do: test collected data points
 
@@ -218,6 +219,7 @@ class TestCSVEndPointIndicatorsAccurate(CSVIndicatorTestBase):
             self.assert_msg("disaggregations should combine with \"/\" joiner, got {0}".format(
                 self.get_field('disaggregations', indicator_rows[0]))))
 
+@unittest.skip("Specs changing on CSV file, tests paused")
 class TestCSVTotals(CSVIndicatorTestBase):
     def setUp(self):
         super(TestCSVTotals, self).setUp()
