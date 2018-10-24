@@ -259,7 +259,7 @@ class TestIndicatorScenarios(test.TestCase):
             created = len(connection.queries)
             iptt_indicator = IPTTIndicator.withtargets.get(pk=self.indicator.pk)
             expected_queries = 2
-            self.assertEqual(
+            self.assertLessEqual(
                 len(connection.queries)-created, expected_queries,
                 "Expecting {0} query to fetch indicator, but it took {1}".format(
                     expected_queries, len(connection.queries)-created))
@@ -293,7 +293,7 @@ class TestIndicatorScenarios(test.TestCase):
             created = len(connection.queries)
             iptt_indicator = IPTTIndicator.notargets.get(pk=self.indicator.pk)
             expected_queries = 1
-            self.assertEqual(
+            self.assertLessEqual(
                 len(connection.queries)-created, expected_queries,
                 "Expecting {0} query to fetch indicator, but it took {1}".format(
                     expected_queries, len(connection.queries)-created))
@@ -384,7 +384,7 @@ class TestIndicatorScenarios(test.TestCase):
             created = len(connection.queries)
             indicator = IPTTIndicator.notargets.periods(periods).get(pk=self.indicator.id)
             expected_queries = 1
-            self.assertEqual(
+            self.assertLessEqual(
                 len(connection.queries)-created, expected_queries,
                 "Expecting {0} queries to fetch indicator, but it took {1}".format(
                     expected_queries, len(connection.queries)-created))
