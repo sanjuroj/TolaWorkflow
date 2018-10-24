@@ -392,6 +392,8 @@ class IPTT_Mixin(object):
             # TODO: localize the following dates
             filter_start_date = datetime.strptime(filter_start_date, "%Y-%m-%d").date()
             filter_end_date = datetime.strptime(filter_end_date, "%Y-%m-%d").date()
+            # update report_end_date context variable so date displays match target periods displayed:
+            report_end_date = filter_end_date
             for k, v in targetperiods.items():
                 start_date = v[0]
                 end_date = v[1]
