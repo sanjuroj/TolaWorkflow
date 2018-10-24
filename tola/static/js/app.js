@@ -194,6 +194,31 @@ $.ajaxSetup({
     }
 });
 
+
+/* Configure PNotify global settings */
+/* Do so on document ready since lib is included after app.js */
+$(function() {
+    PNotify.defaults.styling = 'bootstrap4'; // Bootstrap version 4
+    PNotify.defaults.icons = 'fontawesome5'; // Font Awesome 5
+
+    // Show close button and hide pin button
+    PNotify.modules.Buttons.defaults.closerHover = false;
+    PNotify.modules.Buttons.defaults.sticker = false;
+});
+
+
+/* Notifications */
+
+function notifyError(title, msg) {
+    PNotify.alert({
+        text: msg,
+        title: title,
+        hide: false,
+        type: 'error',
+    });
+}
+
+
 /*
 * Save the bookmark
 */
