@@ -252,6 +252,17 @@
         </script>
         <!-- End JQuery UI language files -->
 
+        <script>
+            let js_context = {
+                strings: {
+                    serverError: '{% trans "Server Error" %}',
+                    networkError: '{% trans "Network Error" %}',
+                    networkErrorTryAgain: '{% trans "Please check your network connection and try again" %}',
+                    unknownNetworkError: '{% trans "Unknown network request error" %}',
+                }
+            }
+        </script>
+
 
         {% if GOOGLE_ANALYTICS_PROPERTY_ID %}
             {% include "google_analytics.html" %}

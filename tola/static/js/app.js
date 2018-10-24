@@ -2,7 +2,7 @@
 // Javascript to enable link to tab
 
 /*
- * A global ajaxComplete method that shows you any messages that are set in Django's view
+ * Global AJAX handlers for indicating a request in progress + error reporting
  */
 $( document )
     .ajaxStart( function() {
@@ -10,6 +10,22 @@ $( document )
     })
     .ajaxStop( function() {
          $('#ajaxloading').hide();
+    })
+    .ajaxError(function( event, jqxhr, settings, thrownError ) {
+        if (jqxhr.readyState === 4) {
+            // HTTP error (can be checked by XMLHttpRequest.status and XMLHttpRequest.statusText)
+            // TODO: Give better error mssages based on HTTP status code
+            let errorStr = `${jqxhr.status}: ${jqxhr.statusText}`;
+            notifyError(js_context.strings.serverError, errorStr);
+        }
+        else if (jqxhr.readyState === 0) {
+            // Network error (i.e. connection refused, access denied due to CORS, etc.)
+            notifyError(js_context.strings.networkError, js_context.strings.networkErrorTryAgain);
+        }
+        else {
+            // something weird is happening
+            notifyError(js_context.strings.unknownNetworkError, jqxhr.statusText);
+        }
     });
 
 if (!Date.prototype.toISODate) {
