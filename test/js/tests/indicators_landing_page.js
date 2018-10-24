@@ -86,7 +86,7 @@ describe("Indicators landing page", function () {
   it('should toggle table by clicking Indicators button', function() {
     IndPage.clickIndicatorsLink()
     Util.waitForAjax()
-    let buttons = TargetsTab.getProgramIndicatorButtons()
+    let buttons = TargetsTab.getProgramIndicatorLinks()
     for (let button of buttons) {
       let targetDiv = 'div' + button.getAttribute('data-target')
       let isVisible = browser.isVisible(targetDiv)

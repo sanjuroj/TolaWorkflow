@@ -18,7 +18,7 @@ describe('Program Indicators table', function() {
     NavBar.Indicators.click()
     Util.waitForAjax()
 
-    let buttons = TargetsTab.getProgramIndicatorButtons()
+    let buttons = TargetsTab.getProgramIndicatorLinks()
     for (let button of buttons) {
       let targetDiv = 'div' + button.getAttribute('data-target')
       let isVisible = browser.isVisible(targetDiv)
@@ -48,7 +48,7 @@ describe('Program Indicators table', function() {
     Util.waitForAjax()
 
     // Get a list of the programs in the table
-    let progButtons = TargetsTab.getProgramIndicatorButtons()
+    let progButtons = TargetsTab.getProgramIndicatorLinks()
     let progButton = progButtons[0]
     let targetDiv = 'div' + progButton.getAttribute('data-target')
     
@@ -96,7 +96,7 @@ describe('Program Indicators table', function() {
   it('should increase PI count after adding new indicator', function() {
     NavBar.Indicators.click()
     // Get old count
-    let buttons = TargetsTab.getProgramIndicatorButtons()
+    let buttons = TargetsTab.getProgramIndicatorLinks()
     let buttonText = buttons[1].getText()
     let oldCount = parseInt(buttonText)
 
@@ -106,7 +106,7 @@ describe('Program Indicators table', function() {
     IndPage.clickIndicatorsLink()
 
     // Get new count
-    buttons = TargetsTab.getProgramIndicatorButtons()
+    buttons = TargetsTab.getProgramIndicatorLinks()
     buttonText = buttons[1].getText()
 
     // Assert new count > old count
@@ -116,7 +116,7 @@ describe('Program Indicators table', function() {
 
   it('should be able to delete PI by clicking its Delete button', function() {
     NavBar.Indicators.click()
-    let buttons = TargetsTab.getProgramIndicatorButtons()
+    let buttons = TargetsTab.getProgramIndicatorLinks()
     let buttonText = buttons[0].getText()
     let oldCount = buttonText
 
@@ -126,7 +126,7 @@ describe('Program Indicators table', function() {
   it('should decrease PI count after deleting indicator', function() {
     NavBar.Indicators.click()
     // Get old count
-    let buttons = TargetsTab.getProgramIndicatorButtons()
+    let buttons = TargetsTab.getProgramIndicatorLinks()
     let buttonText = buttons[0].getText()
     let oldCount = buttonText
 
@@ -134,7 +134,7 @@ describe('Program Indicators table', function() {
     IndPage.deleteIndicator()
 
     // Get new count
-    buttons = TargetsTab.getProgramIndicatorButtons()
+    buttons = TargetsTab.getProgramIndicatorLinks()
     buttonText = buttons[0].getText()
 
     // Assert new count < old count
