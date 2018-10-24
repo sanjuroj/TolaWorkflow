@@ -3,18 +3,31 @@
 """
 
 from django.utils import formats
-from django.conf import settings
 
-def l10n_date(date):
+
+def _date_format(date, format):
     return formats.date_format(
         date,
-        settings.DATE_AWARE_INDICATOR_DATE_FORMAT,
+        format,
         use_l10n=True
     ).encode('UTF-8')
 
-def l10n_monthly_date(date):
-    return formats.date_format(
-        date,
-        settings.MONTHLY_INDICATOR_DATE_FORMAT,
-        use_l10n=True
-    ).encode('UTF-8')
+
+def l10n_date_iso(date):
+    return _date_format(date, 'DATE_FORMAT')
+
+
+def l10n_date_short(date):
+    return _date_format(date, 'SHORT_DATE_FORMAT')
+
+
+def l10n_date_medium(date):
+    return _date_format(date, 'MEDIUM_DATE_FORMAT')
+
+
+def l10n_date_long(date):
+    return _date_format(date, 'LONG_DATE_FORMAT')
+
+
+def l10n_date_year_month(date):
+    return _date_format(date, 'YEAR_MONTH_FORMAT')

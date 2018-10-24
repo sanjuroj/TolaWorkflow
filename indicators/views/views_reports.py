@@ -18,7 +18,7 @@ from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.worksheet.cell_range import CellRange
 
 from tola.util import formatFloat
-from tola.l10n_utils import l10n_date, l10n_monthly_date
+from tola.l10n_utils import l10n_date_year_month, l10n_date_medium
 from workflow.models import Program
 from ..models import Indicator, CollectedData, Level, PeriodicTarget
 from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm
@@ -680,12 +680,12 @@ class IPTT_Mixin(object):
             # TODO: localize the following dates
             if period == Indicator.MONTHLY:
                 # this is the value printed to IPTT:
-                value = "{}".format(l10n_monthly_date(periods_date_ranges[name][0]))
+                value = "{}".format(l10n_date_year_month(periods_date_ranges[name][0]))
             else:
                 value = "{} ({} - {})".format(
                     name,
-                    l10n_date(periods_date_ranges[name][0]),
-                    l10n_date(periods_date_ranges[name][1])
+                    l10n_date_medium(periods_date_ranges[name][0]),
+                    l10n_date_medium(periods_date_ranges[name][1])
                 )
             if from_or_to == self.FROM:
                 key = periods_date_ranges[name][0]
@@ -775,8 +775,8 @@ class IPTT_Mixin(object):
             return context
 
         if period == Indicator.MID_END or period == Indicator.LOP:
-            reporting_sdate = l10n_date(self.program.reporting_period_start)
-            reporting_edate = l10n_date(self.program.reporting_period_end)
+            reporting_sdate = l10n_date_medium(self.program.reporting_period_start)
+            reporting_edate = l10n_date_medium(self.program.reporting_period_end)
             all_periods_start = ((self.program.reporting_period_start, reporting_sdate,),)
             all_periods_end = ((self.program.reporting_period_end, reporting_edate),)
 
