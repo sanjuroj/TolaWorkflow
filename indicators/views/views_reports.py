@@ -339,13 +339,14 @@ class IPTT_Mixin(object):
         today = datetime.today().date()
         # today = datetime.strptime('2020-02-23', '%Y-%m-%d').date()
 
-        # All indicators within a program that have the same target_frequency (annual, monthly, etc)
-        # have the same number of target periods with the same start and end dates, thus we can just
-        # get the first indicator that is within this program and have the same target_frequency(period)
-        # and fetch the related set of periodic_targets
-        ind = Indicator.objects.filter(program__in=[program.id], target_frequency=period).first()
-        periodic_targets = PeriodicTarget.objects.filter(indicator=ind) \
-            .values("id", "period", "target", "start_date", "end_date")
+        # Get all periodic targets whose indicator is in this program and whose frequency matches this period,
+        # use "values" to group by period, target, start_date, and end_date
+        # this "grab all of them and group by" deals with programs where some targets have not been added after
+        # the reporting period was changed (issue #700: https://github.com/mercycorps/TolaActivity/issues/700)
+        periodic_targets = PeriodicTarget.objects.filter(
+            indicator__program__in=[program.id],
+            indicator__target_frequency=period
+        ).values("period", "target", "start_date", "end_date")
 
         try:
             start_date = parser.parse(self.filter_form_initial_data['start_date']).date()
@@ -358,7 +359,7 @@ class IPTT_Mixin(object):
             # if it is LOP Target then do not show any target periods becaseu there are none.
             if pt['period'] == Indicator.TARGET_FREQUENCIES[0][1]:
                 continue
-            targetperiods[pt['period']] = [pt['start_date'], pt['end_date'], pt['target'], pt['id']]
+            targetperiods[pt['period']] = [pt['start_date'], pt['end_date'], pt['target']]
 
         # save the unfiltered targetperiods into the global variable so that
         # it be used to populate the periods dropdown
