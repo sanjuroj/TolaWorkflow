@@ -103,7 +103,7 @@ scenarios = [
         'results': [40, 55, 75],
         'mets': ['80%', '92%', '107%'],
         'over_under': [-1, 0, 0],
-        'semi_annual_results': ['50%', '75%']
+        'semi_annual_results': [50, 75]
     },
     {
         'desc': 'cumulative percent negative',
@@ -119,7 +119,7 @@ scenarios = [
         'results': [75, 55, 25],
         'mets': ['94%', '138%', '125%'],
         'over_under': [0, -1, -1],
-        'semi_annual_results': ['35%', '25%']
+        'semi_annual_results': [35, 25]
     },
     {
         'desc': 'noncumulative number positive',
@@ -292,7 +292,7 @@ class TestIndicatorScenarios(test.TestCase):
         for scenario in self.get_scenarios():
             created = len(connection.queries)
             iptt_indicator = IPTTIndicator.notargets.get(pk=self.indicator.pk)
-            expected_queries = 2
+            expected_queries = 1
             self.assertEqual(
                 len(connection.queries)-created, expected_queries,
                 "Expecting {0} query to fetch indicator, but it took {1}".format(
@@ -382,14 +382,26 @@ class TestIndicatorScenarios(test.TestCase):
             }]
         for scenario in self.get_scenarios():
             created = len(connection.queries)
-            indicator = IPTTIndicator.notargets.periods(periods)
-            expected_queries = 2
+            indicator = IPTTIndicator.notargets.periods(periods).get(pk=self.indicator.id)
+            expected_queries = 1
             self.assertEqual(
                 len(connection.queries)-created, expected_queries,
                 "Expecting {0} queries to fetch indicator, but it took {1}".format(
                     expected_queries, len(connection.queries)-created))
+            expected_results = len(scenario['semi_annual_results']) if not scenario['blank'] else 0
             self.assertEqual(
-                len(indicator.timeperiods),
-                len(scenario['semi_annual_results']),
-                "Expected {0} timeperiods, got {1}".format(
-                    len(scenario['semi_annual_results']), len(indicator.timeperiods)))
+                len([p for p in indicator.timeperiods]),
+                expected_results,
+                "In {desc}, expected {0} timeperiods, got {1}".format(
+                    expected_results, len([p for p in indicator.timeperiods]),
+                    desc=scenario['desc']))
+            for c, period in enumerate(periods):
+                if scenario['blank'] != True:
+                    period_sum = getattr(indicator, "{0}-{1}".format(
+                        period['start_date'].strftime('%Y-%m-%d'),
+                        period['end_date'].strftime('%Y-%m-%d')))
+                    self.assertEqual(
+                        period_sum, scenario['semi_annual_results'][c],
+                        "{desc} expected {0} for sum of semi annual period {1}, got {2}".format(
+                            scenario['semi_annual_results'][c], c, period_sum,
+                            desc=scenario['desc']))
