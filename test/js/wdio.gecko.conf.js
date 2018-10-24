@@ -7,12 +7,12 @@ exports.config = {
     // 'path/to/excluded/files'
   ],
   // Capabilities
-  maxInstances: 1,
+  maxInstances: 2,
   capabilities: [
     {
       browserName: 'firefox',
       maxInstances: 1,
-      args: '[--jsdebugger]',
+      //args: '[--jsdebugger]',
       'moz:firefoxOptions': {
       // []
       }

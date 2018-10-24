@@ -1,5 +1,5 @@
 exports.config = {
-  execArgv: ['--inspect'],
+  //execArgv: ['--inspect'],
   specs: [
     './tests/**/*.js'
   ],
@@ -7,14 +7,11 @@ exports.config = {
     // './tests/**/busticated_test.js'
   ],
   // Capabilities
-  maxInstances: 1,
+  maxInstances: 2,
   capabilities: [{
     // maxInstances can get overwritten per capability
     browserName: 'chrome',
-    maxInstances: 1,
-    chromeOptions: {
-      args: ['--user-data-dir=/tmp/tats']
-    }
+    maxInstances: 1
   }],
   sync: true,
   logLevel: 'verbose',
