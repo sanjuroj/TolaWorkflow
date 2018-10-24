@@ -364,7 +364,7 @@ class TestIndicatorScenarios(test.TestCase):
                     "In {desc}: expected {0} within_target_range to be {1}, got {2}".format(
                         c, scenario['over_under'][c], target_actual.within_target_range,
                         desc=scenario['desc']))
-            self.assertEqual(
+            self.assertLessEqual(
                 len(connection.queries)-created, expected_queries,
                 "(after all tests): expecting {0} queries to fetch indicator, but it took {1}".format(
                     expected_queries, len(connection.queries)-created))
