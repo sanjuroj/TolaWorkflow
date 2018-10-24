@@ -332,14 +332,10 @@ class IPTTIndicator(Indicator):
                 yield getattr(self, "period_{0}".format(count))
                 count += 1
 
-class ProgramWithMetricsManager(models.Manager):
-    pass
-
 class ProgramWithMetrics(wf_models.Program):
     class Meta:
         proxy = True
 
-    objects = ProgramWithMetricsManager()
 
     def get_filters(self):
         filters = []
@@ -378,40 +374,23 @@ class ProgramWithMetrics(wf_models.Program):
     def get_indicators(self):
         return IPTTIndicator.withtargets.filter(program__in=[self.id])
 
-    def get_complete_indicators(self):
-        indicators = self.get_indicators()
-        if self.reporting_period_end > date.today():
-            indicators = indicators.exclude(
-                target_frequency__in=[Indicator.LOP]
-            )
-        return indicators
-
-    @property
-    def incomplete(self):
-        indicators = self.get_indicators()
-        if self.reporting_period_end > date.today():
-            indicators = indicators.filter(
-                target_frequency__in=[Indicator.LOP]
-            )
-        return indicators
-
     @property
     def ontarget(self):
-        indicators = self.get_complete_indicators().filter(
+        indicators = self.reporting.filter(
             over_under=0
         )
         return indicators
 
     @property
     def undertarget(self):
-        indicators = self.get_complete_indicators().filter(
+        indicators = self.reporting.filter(
             over_under=-1
         )
         return indicators
 
     @property
     def overtarget(self):
-        indicators = self.get_complete_indicators().filter(
+        indicators = self.reporting.filter(
             over_under=1
         )
         return indicators
