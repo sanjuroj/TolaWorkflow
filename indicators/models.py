@@ -746,7 +746,7 @@ class CollectedData(models.Model):
         help_text=" ")
 
     evidence = models.ForeignKey(
-        Documentation, null=True, blank=True,
+        Documentation, null=True, blank=True, on_delete=models.SET_NULL,
         verbose_name=_("Evidence Document or Link"), help_text=" ")
 
     approved_by = models.ForeignKey(
