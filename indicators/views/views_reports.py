@@ -1,11 +1,12 @@
 """ View functions for generating IPTT Reports (HTML and Excel)"""
 
 import bisect
+import csv
 from collections import OrderedDict
-from dateutil import rrule, parser
-from django.utils import timezone
-from dateutil.relativedelta import relativedelta
 from datetime import datetime
+from dateutil import rrule, parser
+from dateutil.relativedelta import relativedelta
+from django.utils import timezone
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max
 from django.views.generic import TemplateView, FormView
@@ -23,6 +24,7 @@ from workflow.models import Program
 from ..models import Indicator, CollectedData, Level, PeriodicTarget
 from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm
 from ..templatetags.mytags import symbolize_change, symbolize_measuretype
+from indicators.queries import IPTTIndicator
 
 
 class IPTT_Mixin(object):
@@ -702,6 +704,7 @@ class IPTT_Mixin(object):
                 start_date_choices.append((start.year, tuple(choices)))
         return start_date_choices
 
+
     def get_context_data(self, **kwargs):
         context = super(IPTT_Mixin, self).get_context_data(**kwargs)
         reporttype = kwargs.get('reporttype')
@@ -743,7 +746,7 @@ class IPTT_Mixin(object):
                       lastlevelcustomsort=Subquery(lastlevel.values('customsort')[:1]),
                       lastdata=Subquery(last_data_record.values('achieved')[:1])) \
             .values(
-            'id', 'number', 'name', 'program', 'target_frequency', 'lastlevel', 'unit_of_measure',
+            'id', 'number', 'name', 'program', 'target_frequency', 'lastlevel', 'sector', 'unit_of_measure',
             'direction_of_change', 'unit_of_measure_type', 'is_cumulative', 'baseline', 'baseline_na',
             'lop_target', 'actualsum', 'actualavg', 'lastdata', 'lastlevelcustomsort')
 
@@ -1165,3 +1168,57 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
         redirect_url = "{}?{}".format(reverse_lazy('iptt_report', kwargs=url_kwargs),
                                       filterdata.urlencode())
         return HttpResponseRedirect(redirect_url)
+
+class IPTT_CSVExport(IPTT_Mixin, TemplateView):
+    header_row = ["Program:"]
+    subheader_row = ['id', 'number', 'name', 'level_name', 'unit_of_measure', 'unit_of_measure_type',
+                     'sector', 'disaggregations', 'baseline', 'baseline_na', 'lop_target', 'target_frequency',
+                     'lop_sum', 'lop_target', 'lop_met']
+
+    def _update_filter_form_initial(self, formdata):
+        super(IPTT_CSVExport, self)._update_filter_form_initial(formdata)
+        default_values = {
+            'timeperiods': Indicator.MONTHLY,
+            'timeframe': 2,
+        }
+        default_values.update(self.filter_form_initial_data)
+        self.filter_form_initial_data = default_values
+
+    def get_context_data(self, **kwargs):
+        self.program = Program.objects.get(pk=kwargs.get('program_id'))
+        self.reporttype = kwargs['reporttype']
+        if self.reporttype == self.REPORT_TYPE_TIMEPERIODS:
+            end_date, all_date_ranges, periods_date_ranges = self._generate_timeperiods(
+            self.program.reporting_period_start,
+            self.program.reporting_period_end,
+            Indicator.MONTHLY, None, None)
+            indicators = IPTTIndicator.notargets.filter(program__in=[self.program.id]).period(Indicator.MONTHLY)
+        context = {
+            'program': self.program,
+            'indicators': indicators,
+            'report_date_ranges': periods_date_ranges
+        }
+        return context
+
+    def get_indicator_row(self, indicator, timeperiods):
+        row = []
+        for field in self.subheader_row:
+            value = getattr(indicator, field, 'N/A')
+            value = value if value is not None else 'N/A'
+            row.append(value)
+        for timeperiod in timeperiods:
+            row.append(getattr(indicator, "{}_sum".format(timeperiod), 'N/A'))
+        return row
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        header_row = self.header_row + [self.program.name] + [''] * (len(self.subheader_row)-2)
+        header_row.extend(context['report_date_ranges'].keys())
+        subheader_row = self.subheader_row + ['Actual'] * len(context['report_date_ranges'].keys())
+        response = HttpResponse(content_type="text/csv")
+        writer = csv.writer(response)
+        writer.writerow(header_row)
+        writer.writerow(subheader_row)
+        for indicator in context['indicators']:
+            writer.writerow(self.get_indicator_row(indicator, context['report_date_ranges']))
+        return response
