@@ -38,7 +38,7 @@ from ..forms import IndicatorForm, CollectedDataForm
 from ..models import (
     Indicator, PeriodicTarget, DisaggregationLabel, DisaggregationValue,
     CollectedData, IndicatorType, Level, ExternalServiceRecord,
-    ExternalService, TolaTable
+    ExternalService, TolaTable, PinnedReport
 )
 from .views_reports import IPTT_ReportView
 
@@ -1461,12 +1461,15 @@ class ProgramPage(ListView):
             indicator_filter_name = Indicator.objects.get(id=indicator_filter_id)
             indicator_filters['id'] = indicator_filter_id
 
+        # FIXME: The indicators filter below is overridden 2 lines down
         indicators = Indicator.objects.filter(**{'program__id': program_id, 'id':self.kwargs['indicator_id']})
         program = Program.objects.get(id=program_id, funding_status="Funded", country__in=countries)
         indicators = Indicator.objects.filter(**indicator_filters)
         type_ids = set(indicators.values_list('indicator_type', flat=True))
         indicator_types = IndicatorType.objects.filter(id__in=list(type_ids))
         indicator_count = indicators.count()
+        pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
+                         [PinnedReport.default_report(program.id)]
         scope_percents = {
             # TODO: placeholder stats
             'low': 23,
@@ -1480,6 +1483,11 @@ class ProgramPage(ListView):
             'results_evidence': 50,
         }
 
+        js_context = {
+            'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
+            'delete_pinned_report_confirmation_msg':
+                _('Warning: This action connot be undone. Are you sure you want to delete this pinned report?'),
+        }
 
         c_data = {
             'program': program,
@@ -1493,6 +1501,8 @@ class ProgramPage(ListView):
             'scope_percents': scope_percents,
             'percent_complete': 75, # TODO: % of reporting period complete
             'results_stats': results_stats,
+            'pinned_reports': pinned_reports,
+            'js_context': js_context,
         }
         return render(request, self.template_name, c_data)
 

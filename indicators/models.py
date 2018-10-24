@@ -3,8 +3,11 @@ import uuid
 from datetime import timedelta
 from decimal import Decimal
 
+import dateparser
 from django.db import models
 from django.db.models import Avg
+from django.http import QueryDict
+from django.urls import reverse
 from django.utils import formats, timezone
 from django.utils.translation import ugettext_lazy as _
 
@@ -826,3 +829,146 @@ class CollectedDataAdmin(admin.ModelAdmin):
     list_display = ('indicator', 'date_collected', 'create_date', 'edit_date')
     list_filter = ['indicator__program__country__country']
     display = 'Indicator Output/Outcome Collected Data'
+
+
+class PinnedReport(models.Model):
+    """
+    A named IPTT report for a given program and user
+    """
+    name = models.CharField(max_length=50, verbose_name=_('Report Name'))
+    tola_user = models.ForeignKey(TolaUser, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='pinned_reports')
+    report_type = models.CharField(max_length=32)
+    query_string = models.CharField(max_length=255)
+    creation_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-creation_date']
+
+    def parse_query_string(self):
+        return QueryDict(self.query_string)
+
+    @property
+    def report_url(self):
+        """
+        Return the fully parameterized IPTT report URL string
+        """
+        return "{}?{}".format(reverse('iptt_report', kwargs={
+            'program_id': self.program_id,
+            'reporttype': self.report_type
+        }), self.query_string)
+
+    @property
+    def date_range_str(self):
+        """
+        A localized string showing the date range covered by the pinned report
+
+        There are several types of pinned reports w/ regards to date ranges and report type:
+
+          * A report with a fixed start/end date
+            * Recent progress
+            * Annual vs targets
+          * A relative report (show previous N months/quarters/year relative to today)
+            * Recent progress
+            * Annual vs targets
+          * Show all with a time period selected (annual/monthly)
+            * Recent progress
+            * Annual vs targets
+          * Show all with LoP/Midline+Endline/Event
+            * Annual vs targets
+
+        Currently the query string is used to determine the date range type, and thus the returned string
+        """
+        qs = self.parse_query_string()
+
+        start_period = qs.get('start_period')
+        end_period = qs.get('end_period')
+
+        time_frame = qs.get('timeframe')  # show all/most recent
+        num_recent_periods = qs.get('numrecentperiods')  # "most recent" input
+        time_periods = qs.get('timeperiods')  # quarters/months/years/etc (recent progress)
+        target_periods = qs.get('targetperiods')  # LoP/Midline+Endline/Annual/Quarterly/etc (target vs actuals)
+
+        df = lambda d: formats.date_format(dateparser.parse(d), 'MEDIUM_DATE_FORMAT')
+
+        # Fixed start/end date
+        if start_period and end_period:
+            return '{} – {}'.format(df(start_period), df(end_period))
+
+        from indicators.forms import ReportFormCommon
+
+        # This is confusing but ReportFormCommon defines TIMEPERIODS_CHOICES
+        # which is defined in terms of enum values in Indicators
+        # Indicators also defines TARGET_FREQUENCIES which is also used by ReportFormCommon
+        # Because of this, the enum values are interchangeable between ReportFormCommon and Indicators
+
+        # TIMEPERIODS_CHOICES = (
+        #     (YEARS, _("Years")),
+        #     (SEMIANNUAL, _("Semi-annual periods")),
+        #     (TRIANNUAL, _("Tri-annual periods")),
+        #     (QUARTERS, _("Quarters")),
+        #     (MONTHS, _("Months"))
+        # )
+
+        # TARGETPERIOD_CHOICES = [empty] +
+        # TARGET_FREQUENCIES = (
+        #     (LOP, _('Life of Program (LoP) only')),
+        #     (MID_END, _('Midline and endline')),
+        #     (ANNUAL, _('Annual')),
+        #     (SEMI_ANNUAL, _('Semi-annual')),
+        #     (TRI_ANNUAL, _('Tri-annual')),
+        #     (QUARTERLY, _('Quarterly')),
+        #     (MONTHLY, _('Monthly')),
+        #     (EVENT, _('Event'))
+        # )
+
+        # time period strings are used for BOTH timeperiod and targetperiod values
+        time_period_str_lookup = dict(ReportFormCommon.TIMEPERIODS_CHOICES)
+
+        time_or_target_period_str = None
+        if time_periods:
+            time_or_target_period_str = time_period_str_lookup.get(int(time_periods))
+        if target_periods:
+            time_or_target_period_str = time_period_str_lookup.get(int(target_periods))
+
+        # A relative report (Recent progress || Target vs Actuals)
+        if time_frame == str(ReportFormCommon.MOST_RECENT) and num_recent_periods and time_or_target_period_str:
+            #  Translators: Example: Most recent 2 Months
+            return _('Most recent {} {}'.format(num_recent_periods, time_or_target_period_str))
+
+        # Show all (Recent progress || Target vs Actuals w/ time period (such as annual))
+        if time_frame == str(ReportFormCommon.SHOW_ALL) and time_or_target_period_str:
+            # Translators: Example: Show all Years
+            return _('Show all {}').format(time_or_target_period_str)
+
+        # Show all (Target vs Actuals LoP/Midline+End/Event)
+        remaining_target_freq_set = {
+            Indicator.LOP,
+            Indicator.MID_END,
+            Indicator.EVENT,
+        }
+        if time_frame == str(ReportFormCommon.SHOW_ALL) and target_periods \
+                and int(target_periods) in remaining_target_freq_set:
+            return _('Show all results')
+
+        # It's possible to submit bad input, but have the view "fix" it..
+        if time_frame == str(ReportFormCommon.MOST_RECENT) and num_recent_periods and not time_or_target_period_str:
+            return _('Show all results')
+
+        return ''
+
+
+    @staticmethod
+    def default_report(program_id):
+        """
+        Create a default hardcoded pinned report
+
+        Shows recent progress for all indicators
+        Does not exist in the DB
+        """
+        return PinnedReport(
+            name=_('Recent progress for all indicators'),
+            program_id=program_id,
+            report_type='timeperiods',
+            query_string='timeperiods=7&timeframe=2&numrecentperiods=2',
+        )

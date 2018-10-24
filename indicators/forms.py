@@ -14,8 +14,8 @@ from workflow.models import (
 from tola.util import getCountry
 from indicators.models import (
     Indicator, PeriodicTarget, CollectedData, Objective, StrategicObjective,
-    TolaTable, DisaggregationType, Level, IndicatorType
-)
+    TolaTable, DisaggregationType, Level, IndicatorType,
+    PinnedReport)
 from indicators.widgets import DataAttributesSelect
 
 locale_format = formats.get_format('DATE_INPUT_FORMATS', lang=translation.get_language())[-1]
@@ -328,3 +328,9 @@ class IPTTReportFilterForm(ReportFormCommon):
         self.fields['end_period'].initial = str(last_year_last_daterange_key)
 
         self.fields['targetperiods'] = forms.ChoiceField(choices=target_frequency_choices, label=_("TARGET PERIODS"))
+
+
+class PinnedReportForm(forms.ModelForm):
+    class Meta:
+        model = PinnedReport
+        exclude = ('tola_user',)

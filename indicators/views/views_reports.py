@@ -6,9 +6,10 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max
+from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, FormView
 from django.utils.translation import ugettext_lazy as _
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.contrib import messages
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
@@ -17,8 +18,8 @@ from openpyxl.worksheet.cell_range import CellRange
 
 from tola.util import formatFloat
 from workflow.models import Program
-from ..models import Indicator, CollectedData, Level, PeriodicTarget
-from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm
+from ..models import Indicator, CollectedData, Level, PeriodicTarget, PinnedReport
+from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm, PinnedReportForm
 from ..templatetags.mytags import symbolize_change, symbolize_measuretype
 
 
@@ -1059,19 +1060,32 @@ class IPTTReportQuickstartView(FormView):
     FORM_PREFIX_TIME = 'timeperiods'
     FORM_PREFIX_TARGET = 'targetperiods'
 
-    def get_context_data(self, **kwargs):
-        context = super(IPTTReportQuickstartView, self).get_context_data(**kwargs)
-        # Add two instances of the same form to context if they're not present
-        if 'form' not in context:
-            context['form'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TIME)
-        if 'form2' not in context:
-            context['form2'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TARGET)
-        return context
+    def get_initial(self):
+        # initial values for built-in `form`
+        initial = super(IPTTReportQuickstartView, self).get_initial()
+        initial['numrecentperiods'] = 2
+
+        program_id = self.request.GET.get('program_id')
+        initial['program'] = program_id
+
+        return initial
 
     def get_form_kwargs(self):
+        # other variables passed into default `form`
         kwargs = super(IPTTReportQuickstartView, self).get_form_kwargs()
+        kwargs['prefix'] = self.FORM_PREFIX_TIME
         kwargs['request'] = self.request
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(IPTTReportQuickstartView, self).get_context_data(**kwargs)
+        # form - created by ctor - "recent progress form" - values passed in by other FormView methods
+        # form2 - created below - "periodic targets vs actuals"
+        program_id = self.request.GET.get('program_id')
+
+        if 'form2' not in context:
+            context['form2'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TARGET, initial={'program': program_id})
+        return context
 
     def post(self, request, *args, **kwargs):
         targetprefix = request.POST.get('%s-formprefix' % self.FORM_PREFIX_TARGET)
@@ -1146,6 +1160,15 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
         context['report_wide'] = True
         if context.get('redirect', None):
             return HttpResponseRedirect(reverse_lazy('iptt_quickstart'))
+
+        # Data used by JS
+        context['js_context'] = {
+            'program_id': context['program'].id,
+            'report_type': context['reporttype'],
+            'qs': request.GET.urlencode(),
+            'create_pinned_report_url': str(reverse_lazy('create_pinned_report')),
+        }
+
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
@@ -1171,3 +1194,29 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
         redirect_url = "{}?{}".format(reverse_lazy('iptt_report', kwargs=url_kwargs),
                                       filterdata.urlencode())
         return HttpResponseRedirect(redirect_url)
+
+
+@require_POST
+def create_pinned_report(request):
+    """
+    AJAX call for creating a PinnedReport
+    """
+    form = PinnedReportForm(request.POST)
+    if form.is_valid():
+        pr = form.save(commit=False)
+        pr.tola_user = request.user.tola_user
+        pr.save()
+    else:
+        return HttpResponseBadRequest(str(form.errors.items()))
+
+    return HttpResponse()
+
+
+@require_POST
+def delete_pinned_report(request):
+    """
+    AJAX call for deleting a PinnedReport
+    """
+    pinned_report_id = request.POST.get('pinned_report_id')
+    PinnedReport.objects.filter(id=pinned_report_id, tola_user_id=request.user.tola_user.id).delete()
+    return HttpResponse()

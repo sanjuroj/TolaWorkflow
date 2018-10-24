@@ -47,20 +47,23 @@
         <section class="sidebar__detail">
             <h3>{% trans "Pinned Reports" %}</h3>
             <ul class="pinned-reports">
-                <li class="pinned-report">
-                    <a href="#">
-                        <h4>IPTT: Recent Progress for All Indicators</h4>
-                    Jun 1, 2018 – Jul 31, 2018
-                    </a>
-                </li>
-                <li class="pinned-report">
-                    <a href="#">
-                        <h4>IPTT: Donor indicators tracked quarterly</h4>
-                        Jan 1, 2018 – Mar 31, 2019
-                    </a>
-                </li>
+                {% for pr in pinned_reports %}
+                    <li class="pinned-report">
+                        <a href="{% url 'iptt_report' pr.program_id pr.report_type %}?{{ pr.query_string }}" class="pinned-report__link">
+                            <h4>{% trans "IPTT:" %} {{ pr.name }}</h4>
+                           {{ pr.date_range_str }}
+                        </a>
+                        {% if pr.id %}
+                        <a href="#"
+                           class="pinned-report__remove text-danger"
+                           data-delete-pinned-report="{{ pr.id }}">
+                            <i class="fa fa-times"></i>
+                        </a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
             </ul>
-            <a href="#" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Create an IPTT report" %}</a>
+            <a href="{% url 'iptt_quickstart' %}?program_id={{ program.id }}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Create an IPTT report" %}</a>
         </section>
     </div>
     <div id="div-id-indicator-list" class="indicators-list program-page__indicators">
@@ -78,3 +81,36 @@
 {% include 'indicators/indicator_form_common_js.html' %}
 {% include 'indicators/collecteddata_form_common_js.html' %}
 {% endblock content %}
+
+
+{% block extra_js_in_body %}
+    <script>
+        let jsContext = {{ js_context|js }};
+    </script>
+
+    <script>
+        // On pinned report delete btn click
+        $('[data-delete-pinned-report]').click(function (e) {
+            e.preventDefault();
+
+            let prId = $(this).data('deletePinnedReport');
+            let pinnedReport = $(this).closest('.pinned-report');
+
+            if (window.confirm(jsContext.delete_pinned_report_confirmation_msg)) {
+                $.ajax({
+                    type: "POST",
+                    url: jsContext.delete_pinned_report_url,
+                    data: {
+                        pinned_report_id: prId,
+                    },
+                    success: function () {
+                        pinnedReport.remove();
+                    },
+                    error: function () {
+                        console.log('AJAX error')
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}
