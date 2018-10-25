@@ -38,7 +38,7 @@ from ..forms import IndicatorForm, CollectedDataForm
 from ..models import (
     Indicator, PeriodicTarget, DisaggregationLabel, DisaggregationValue,
     CollectedData, IndicatorType, Level, ExternalServiceRecord,
-    ExternalService, TolaTable
+    ExternalService, TolaTable, PinnedReport
 )
 from .views_reports import IPTT_ReportView
 
@@ -65,22 +65,22 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name=
     if tf == Indicator.ANNUAL:
         start = ((start_date + relativedelta(years=+i)).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(years=+j)) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': _('Year %s') % j, 'start_date': start, 'end_date': end}
+        target_period = {'period': _('Year %s') % period_num, 'start_date': start, 'end_date': end}
 
     elif tf == Indicator.SEMI_ANNUAL:
         start = ((start_date + relativedelta(months=+(i * 6))).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(months=+(j * 6))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': _('Semi-annual period %s') % j, 'start_date': start, 'end_date': end}
+        target_period = {'period': _('Semi-annual period %s') % period_num, 'start_date': start, 'end_date': end}
 
     elif tf == Indicator.TRI_ANNUAL:
         start = ((start_date + relativedelta(months=+(i * 4))).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(months=+(j * 4))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': _('Tri-annual period %s') % j, 'start_date': start, 'end_date': end}
+        target_period = {'period': _('Tri-annual period %s') % period_num, 'start_date': start, 'end_date': end}
 
     elif tf == Indicator.QUARTERLY:
         start = ((start_date + relativedelta(months=+(i * 3))).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(months=+(j * 3))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': _('Quarter %s') % j, 'start_date': start, 'end_date': end}
+        target_period = {'period': _('Quarter %s') % period_num, 'start_date': start, 'end_date': end}
 
     elif tf == Indicator.MONTHLY:
         month = (start_date + relativedelta(months=+i)).strftime("%B")
@@ -1461,12 +1461,15 @@ class ProgramPage(ListView):
             indicator_filter_name = Indicator.objects.get(id=indicator_filter_id)
             indicator_filters['id'] = indicator_filter_id
 
+        # FIXME: The indicators filter below is overridden 2 lines down
         indicators = Indicator.objects.filter(**{'program__id': program_id, 'id':self.kwargs['indicator_id']})
         program = Program.objects.get(id=program_id, funding_status="Funded", country__in=countries)
         indicators = Indicator.objects.filter(**indicator_filters)
         type_ids = set(indicators.values_list('indicator_type', flat=True))
         indicator_types = IndicatorType.objects.filter(id__in=list(type_ids))
         indicator_count = indicators.count()
+        pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
+                         [PinnedReport.default_report(program.id)]
         scope_percents = {
             # TODO: placeholder stats
             'low': 23,
@@ -1480,6 +1483,11 @@ class ProgramPage(ListView):
             'results_evidence': 50,
         }
 
+        js_context = {
+            'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
+            'delete_pinned_report_confirmation_msg':
+                _('Warning: This action connot be undone. Are you sure you want to delete this pinned report?'),
+        }
 
         c_data = {
             'program': program,
@@ -1493,6 +1501,8 @@ class ProgramPage(ListView):
             'scope_percents': scope_percents,
             'percent_complete': 75, # TODO: % of reporting period complete
             'results_stats': results_stats,
+            'pinned_reports': pinned_reports,
+            'js_context': js_context,
         }
         return render(request, self.template_name, c_data)
 

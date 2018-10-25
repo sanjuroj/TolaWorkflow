@@ -3,6 +3,7 @@ from random import randint
 import faker
 from django.utils import timezone
 from factory import DjangoModelFactory, post_generation, SubFactory, lazy_attribute, Sequence
+from factory.fuzzy import FuzzyChoice
 
 from indicators.models import (
     CollectedData as CollectedDataM,
@@ -14,8 +15,11 @@ from indicators.models import (
     Objective as ObjectiveM,
     PeriodicTarget as PeriodicTargetM,
     StrategicObjective as StrategicObjectiveM,
+    PinnedReport as PinnedReportM,
+    DisaggregationType as DisaggregationTypeM,
+    DataCollectionFrequency as DataCollectionFrequencyM
 )
-from workflow_models import OrganizationFactory, ProgramFactory
+from workflow_models import OrganizationFactory, ProgramFactory, CountryFactory
 
 FAKER = faker.Faker(locale='en_US')
 
@@ -77,6 +81,20 @@ class IndicatorFactory(DjangoModelFactory):
             pass
 
 
+class DefinedIndicatorFactory(IndicatorFactory):
+    number = Sequence(lambda n: '1.1.{0}'.format(n))
+    source = "indicator source"
+    definition = "indicator definition"
+    justification = "rationale or justification"
+    unit_of_measure = "a unit of measure"
+    unit_of_measure_type = IndicatorM.NUMBER
+    baseline = 100
+    lop_target = 1000
+    target_frequency = IndicatorM.QUARTERLY
+    means_of_verification = "some means of verifying"
+    data_collection_method = "some method of collecting data"
+    data_collection_frequency = SubFactory('factories.indicators_models.DataCollectionFrequencyFactory')
+
 class Objective(DjangoModelFactory):
     class Meta:
         model = ObjectiveM
@@ -97,6 +115,7 @@ class CollectedDataFactory(DjangoModelFactory):
 
     program = SubFactory(ProgramFactory)
     indicator = SubFactory(IndicatorFactory)
+    description = Sequence(lambda n: 'Data description {0}'.format(n))
     achieved = 10
 
     @post_generation
@@ -140,3 +159,26 @@ class PeriodicTargetFactory(DjangoModelFactory):
     target = 0
     period = lazy_attribute(
         lambda pt: 'PeriodicTarget for %s: %s - %s' % (pt.indicator.name, pt.start_date, pt.end_date))
+
+
+class PinnedReportFactory(DjangoModelFactory):
+    class Meta:
+        model = PinnedReportM
+
+    name = Sequence(lambda n: 'Test pinned report: {0}'.format(n))
+    report_type = FuzzyChoice(['timeperiods', 'targetperiods'])
+
+class DisaggregationTypeFactory(DjangoModelFactory):
+    class Meta:
+        model = DisaggregationTypeM
+    disaggregation_type = Sequence(lambda n: "disagg type {0}".format(n))
+    description = "disaggregation description"
+    country = SubFactory(CountryFactory)
+
+class DataCollectionFrequencyFactory(DjangoModelFactory):
+    class Meta:
+        model = DataCollectionFrequencyM
+
+    frequency = "some reasonable frequency"
+    description = "a description of how frequent this is"
+    numdays = 10

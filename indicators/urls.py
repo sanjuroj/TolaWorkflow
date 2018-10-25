@@ -32,17 +32,22 @@ from .views.views_reports import (
     IPTTReportQuickstartView,
     IPTT_ReportView,
     IPTT_ReportIndicatorsWithVariedStartDate,
-    IPTT_ExcelExport
+    IPTT_ExcelExport,
+    create_pinned_report,
+    delete_pinned_report,
+    IPTT_ExcelExport,
+    IPTT_CSVExport
 )
+
 
 urlpatterns = [
     url(r'^home/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$', IndicatorList.as_view(), name='indicator_list'),
 
-    url(r'^indicator_create/(?P<id>\d+)/$', indicator_create,  name='indicator_create'),
+    url(r'^indicator_create/(?P<id>\d+)/$', indicator_create, name='indicator_create'),
 
     url(r'^indicator_add/(?P<id>\d+)/$', IndicatorCreate.as_view(), name='indicator_add'),
 
-    url(r'^indicator_update/(?P<pk>\d+)/$', IndicatorUpdate.as_view(),  name='indicator_update'),
+    url(r'^indicator_update/(?P<pk>\d+)/$', IndicatorUpdate.as_view(), name='indicator_update'),
 
     url(r'^indicator_delete/(?P<pk>\d+)/$', IndicatorDelete.as_view(), name='indicator_delete'),
 
@@ -56,7 +61,7 @@ urlpatterns = [
     url(r'^collecteddata_add/(?P<program>\d+)/(?P<indicator>\d+)/$',
         CollectedDataCreate.as_view(), name='collecteddata_add'),
 
-    url(r'^collecteddata_import/$', collecteddata_import,  name='collecteddata_import'),
+    url(r'^collecteddata_import/$', collecteddata_import, name='collecteddata_import'),
 
     url(r'^collecteddata_update/(?P<pk>\d+)/$', CollectedDataUpdate.as_view(), name='collecteddata_update'),
 
@@ -75,7 +80,7 @@ urlpatterns = [
     url(r'^report_table/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$',
         IndicatorReport.as_view(), name='indicator_table'),
 
-    url(r'^program_report/(?P<program>\d+)/$', programIndicatorReport,  name='programIndicatorReport'),
+    url(r'^program_report/(?P<program>\d+)/$', programIndicatorReport, name='programIndicatorReport'),
 
 
     url(r'^export/(?P<id>\d+)/(?P<program>\d+)/(?P<indicator_type>\d+)/$',
@@ -115,4 +120,10 @@ urlpatterns = [
         name='iptt_redirect'),
 
     url(r'^iptt_excel/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ExcelExport.as_view(), name='iptt_excel'),
+
+    url(r'^pinned_report/$', create_pinned_report, name='create_pinned_report'),
+    url(r'^pinned_report/delete/$', delete_pinned_report, name='delete_pinned_report'),
+
+    url(r'^iptt_csv/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_CSVExport.as_view(), name='iptt_csv'),
+
 ]

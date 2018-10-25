@@ -1,14 +1,19 @@
+""" View functions for generating IPTT Reports (HTML and Excel)"""
+
 import bisect
+import csv
 from collections import OrderedDict
+from datetime import datetime
 from dateutil import rrule, parser
 from django.utils import formats, timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max
+from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, FormView
 from django.utils.translation import ugettext_lazy as _
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.contrib import messages
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
@@ -16,10 +21,12 @@ from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.worksheet.cell_range import CellRange
 
 from tola.util import formatFloat
+from tola.l10n_utils import l10n_date_year_month, l10n_date_medium
 from workflow.models import Program
-from ..models import Indicator, CollectedData, Level, PeriodicTarget
-from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm
+from ..models import Indicator, CollectedData, Level, PeriodicTarget, PinnedReport
+from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm, PinnedReportForm
 from ..templatetags.mytags import symbolize_change, symbolize_measuretype
+from indicators.queries import IPTTIndicator
 
 
 class IPTT_Mixin(object):
@@ -336,13 +343,14 @@ class IPTT_Mixin(object):
         today = datetime.today().date()
         # today = datetime.strptime('2020-02-23', '%Y-%m-%d').date()
 
-        # All indicators within a program that have the same target_frequency (annual, monthly, etc)
-        # have the same number of target periods with the same start and end dates, thus we can just
-        # get the first indicator that is within this program and have the same target_frequency(period)
-        # and fetch the related set of periodic_targets
-        ind = Indicator.objects.filter(program__in=[program.id], target_frequency=period).first()
-        periodic_targets = PeriodicTarget.objects.filter(indicator=ind) \
-            .values("id", "period", "target", "start_date", "end_date")
+        # Get all periodic targets whose indicator is in this program and whose frequency matches this period,
+        # use "values" to group by period, target, start_date, and end_date
+        # this "grab all of them and group by" deals with programs where some targets have not been added after
+        # the reporting period was changed (issue #700: https://github.com/mercycorps/TolaActivity/issues/700)
+        periodic_targets = PeriodicTarget.objects.filter(
+            indicator__program__in=[program.id],
+            indicator__target_frequency=period
+        ).values("period", "target", "start_date", "end_date")
 
         try:
             start_date = parser.parse(self.filter_form_initial_data['start_date']).date()
@@ -355,7 +363,7 @@ class IPTT_Mixin(object):
             # if it is LOP Target then do not show any target periods becaseu there are none.
             if pt['period'] == Indicator.TARGET_FREQUENCIES[0][1]:
                 continue
-            targetperiods[pt['period']] = [pt['start_date'], pt['end_date'], pt['target'], pt['id']]
+            targetperiods[pt['period']] = [pt['start_date'], pt['end_date'], pt['target']]
 
         # save the unfiltered targetperiods into the global variable so that
         # it be used to populate the periods dropdown
@@ -389,6 +397,8 @@ class IPTT_Mixin(object):
             # TODO: localize the following dates
             filter_start_date = datetime.strptime(filter_start_date, "%Y-%m-%d").date()
             filter_end_date = datetime.strptime(filter_end_date, "%Y-%m-%d").date()
+            # update report_end_date context variable so date displays match target periods displayed:
+            report_end_date = filter_end_date
             for k, v in targetperiods.items():
                 start_date = v[0]
                 end_date = v[1]
@@ -676,22 +686,18 @@ class IPTT_Mixin(object):
 
             # TODO: localize the following dates
             if period == Indicator.MONTHLY:
-                value = "{}".format(
-                    formats.date_format(periods_date_ranges[name][0], "MONTH_YEAR_FORMAT").encode('UTF-8')
-                    # this is the date printed to the IPTT
-                    # NOTE encoding
-                )
+                # this is the value printed to IPTT:
+                value = "{}".format(l10n_date_year_month(periods_date_ranges[name][0]))
             else:
                 value = "{} ({} - {})".format(
                     name,
-                    datetime.strftime(periods_date_ranges[name][0], "%b %d, %Y"),
-                    datetime.strftime(periods_date_ranges[name][1], "%b %d, %Y")
+                    l10n_date_medium(periods_date_ranges[name][0]),
+                    l10n_date_medium(periods_date_ranges[name][1])
                 )
             if from_or_to == self.FROM:
                 key = periods_date_ranges[name][0]
             else:
                 key = periods_date_ranges[name][1]
-            # key = "{}_{}".format(periods_date_ranges[name][0], periods_date_ranges[name][1])
             choices.append((key, value))
 
         if period == Indicator.ANNUAL:
@@ -701,6 +707,7 @@ class IPTT_Mixin(object):
                 # now add the last set of choices from the last iteration
                 start_date_choices.append((start.year, tuple(choices)))
         return start_date_choices
+
 
     def get_context_data(self, **kwargs):
         context = super(IPTT_Mixin, self).get_context_data(**kwargs)
@@ -743,7 +750,7 @@ class IPTT_Mixin(object):
                       lastlevelcustomsort=Subquery(lastlevel.values('customsort')[:1]),
                       lastdata=Subquery(last_data_record.values('achieved')[:1])) \
             .values(
-            'id', 'number', 'name', 'program', 'target_frequency', 'lastlevel', 'unit_of_measure',
+            'id', 'number', 'name', 'program', 'target_frequency', 'lastlevel', 'sector', 'unit_of_measure',
             'direction_of_change', 'unit_of_measure_type', 'is_cumulative', 'baseline', 'baseline_na',
             'lop_target', 'actualsum', 'actualavg', 'lastdata', 'lastlevelcustomsort')
 
@@ -776,14 +783,8 @@ class IPTT_Mixin(object):
             return context
 
         if period == Indicator.MID_END or period == Indicator.LOP:
-            reporting_sdate = formats.date_format(
-                self.program.reporting_period_start,
-                format="DATE_FORMAT", # Not sure what this date is
-                use_l10n=True)
-            reporting_edate = formats.date_format(
-                self.program.reporting_period_end,
-                format="DATE_FORMAT", # Not sure what this date is
-                use_l10n=True)
+            reporting_sdate = l10n_date_medium(self.program.reporting_period_start)
+            reporting_edate = l10n_date_medium(self.program.reporting_period_end)
             all_periods_start = ((self.program.reporting_period_start, reporting_sdate,),)
             all_periods_end = ((self.program.reporting_period_end, reporting_edate),)
 
@@ -1059,19 +1060,32 @@ class IPTTReportQuickstartView(FormView):
     FORM_PREFIX_TIME = 'timeperiods'
     FORM_PREFIX_TARGET = 'targetperiods'
 
-    def get_context_data(self, **kwargs):
-        context = super(IPTTReportQuickstartView, self).get_context_data(**kwargs)
-        # Add two instances of the same form to context if they're not present
-        if 'form' not in context:
-            context['form'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TIME)
-        if 'form2' not in context:
-            context['form2'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TARGET)
-        return context
+    def get_initial(self):
+        # initial values for built-in `form`
+        initial = super(IPTTReportQuickstartView, self).get_initial()
+        initial['numrecentperiods'] = 2
+
+        program_id = self.request.GET.get('program_id')
+        initial['program'] = program_id
+
+        return initial
 
     def get_form_kwargs(self):
+        # other variables passed into default `form`
         kwargs = super(IPTTReportQuickstartView, self).get_form_kwargs()
+        kwargs['prefix'] = self.FORM_PREFIX_TIME
         kwargs['request'] = self.request
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(IPTTReportQuickstartView, self).get_context_data(**kwargs)
+        # form - created by ctor - "recent progress form" - values passed in by other FormView methods
+        # form2 - created below - "periodic targets vs actuals"
+        program_id = self.request.GET.get('program_id')
+
+        if 'form2' not in context:
+            context['form2'] = self.form_class(request=self.request, prefix=self.FORM_PREFIX_TARGET, initial={'program': program_id})
+        return context
 
     def post(self, request, *args, **kwargs):
         targetprefix = request.POST.get('%s-formprefix' % self.FORM_PREFIX_TARGET)
@@ -1146,6 +1160,15 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
         context['report_wide'] = True
         if context.get('redirect', None):
             return HttpResponseRedirect(reverse_lazy('iptt_quickstart'))
+
+        # Data used by JS
+        context['js_context'] = {
+            'program_id': context['program'].id,
+            'report_type': context['reporttype'],
+            'qs': request.GET.urlencode(),
+            'create_pinned_report_url': str(reverse_lazy('create_pinned_report')),
+        }
+
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
@@ -1171,3 +1194,83 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
         redirect_url = "{}?{}".format(reverse_lazy('iptt_report', kwargs=url_kwargs),
                                       filterdata.urlencode())
         return HttpResponseRedirect(redirect_url)
+
+class IPTT_CSVExport(IPTT_Mixin, TemplateView):
+    header_row = ["Program:"]
+    subheader_row = ['id', 'number', 'name', 'level_name', 'unit_of_measure', 'unit_of_measure_type',
+                     'sector', 'disaggregations', 'baseline', 'baseline_na', 'lop_target', 'target_frequency',
+                     'lop_sum', 'lop_target', 'lop_met']
+
+    def _update_filter_form_initial(self, formdata):
+        super(IPTT_CSVExport, self)._update_filter_form_initial(formdata)
+        default_values = {
+            'timeperiods': Indicator.MONTHLY,
+            'timeframe': 2,
+        }
+        default_values.update(self.filter_form_initial_data)
+        self.filter_form_initial_data = default_values
+
+    def get_context_data(self, **kwargs):
+        self.program = Program.objects.get(pk=kwargs.get('program_id'))
+        self.reporttype = kwargs['reporttype']
+        if self.reporttype == self.REPORT_TYPE_TIMEPERIODS:
+            end_date, all_date_ranges, periods_date_ranges = self._generate_timeperiods(
+            self.program.reporting_period_start,
+            self.program.reporting_period_end,
+            Indicator.MONTHLY, None, None)
+            indicators = IPTTIndicator.notargets.filter(program__in=[self.program.id]).period(Indicator.MONTHLY)
+        context = {
+            'program': self.program,
+            'indicators': indicators,
+            'report_date_ranges': periods_date_ranges
+        }
+        return context
+
+    def get_indicator_row(self, indicator, timeperiods):
+        row = []
+        for field in self.subheader_row:
+            value = getattr(indicator, field, 'N/A')
+            value = value if value is not None else 'N/A'
+            row.append(value)
+        for timeperiod in timeperiods:
+            row.append(getattr(indicator, "{}_sum".format(timeperiod), 'N/A'))
+        return row
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        header_row = self.header_row + [self.program.name] + [''] * (len(self.subheader_row)-2)
+        header_row.extend(context['report_date_ranges'].keys())
+        subheader_row = self.subheader_row + ['Actual'] * len(context['report_date_ranges'].keys())
+        response = HttpResponse(content_type="text/csv")
+        writer = csv.writer(response)
+        writer.writerow(header_row)
+        writer.writerow(subheader_row)
+        for indicator in context['indicators']:
+            writer.writerow(self.get_indicator_row(indicator, context['report_date_ranges']))
+        return response
+
+
+@require_POST
+def create_pinned_report(request):
+    """
+    AJAX call for creating a PinnedReport
+    """
+    form = PinnedReportForm(request.POST)
+    if form.is_valid():
+        pr = form.save(commit=False)
+        pr.tola_user = request.user.tola_user
+        pr.save()
+    else:
+        return HttpResponseBadRequest(str(form.errors.items()))
+
+    return HttpResponse()
+
+
+@require_POST
+def delete_pinned_report(request):
+    """
+    AJAX call for deleting a PinnedReport
+    """
+    pinned_report_id = request.POST.get('pinned_report_id')
+    PinnedReport.objects.filter(id=pinned_report_id, tola_user_id=request.user.tola_user.id).delete()
+    return HttpResponse()
