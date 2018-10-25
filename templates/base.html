@@ -239,6 +239,9 @@
         <script type="text/javascript" src="{% static 'js/datepicker-fr.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/datepicker-es.js' %}"></script>
 
+        <script type="text/javascript" src="{% static "js/PNotify.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/PNotifyButtons.js" %}"></script>
+
         {% get_current_language as LANGUAGE_CODE %}
 
         <script type="text/javascript">
@@ -248,6 +251,17 @@
             });
         </script>
         <!-- End JQuery UI language files -->
+
+        <script>
+            let js_context = {
+                strings: {
+                    serverError: '{% trans "Server Error" %}',
+                    networkError: '{% trans "Network Error" %}',
+                    networkErrorTryAgain: '{% trans "Please check your network connection and try again" %}',
+                    unknownNetworkError: '{% trans "Unknown network request error" %}',
+                }
+            }
+        </script>
 
 
         {% if GOOGLE_ANALYTICS_PROPERTY_ID %}
