@@ -6308,6 +6308,9 @@ body > .container {
 .gauge__labels--justified {
   justify-content: space-between; }
 
+.gauge__graphic--performance-band {
+  justify-content: space-between; }
+
 .graphic__performance-band--above-target,
 .graphic__performance-band--below-target {
   background: #ffed99; }

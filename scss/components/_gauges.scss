@@ -51,6 +51,7 @@
 }
 .gauge__graphic--performance-band {
     // contains graphic__performance-band--* subcomponents
+    justify-content: space-between;
 }
 .graphic__performance-band--above-target,
 .graphic__performance-band--below-target {
