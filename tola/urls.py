@@ -81,8 +81,19 @@ urlpatterns = [ # rest framework
                 # internationalization
                 url(r'^i18n/', include('django.conf.urls.i18n')),
 
-                # index
-                url(r'^$', views.index, name='index'),
+                # Old index
+                # TODO: we are keeping the "index" named routes for historical purposes during development
+                # TODO: ...remove these during Mangosteen deployment
+                # url(r'^$', views.index, name='index'),
+
+                # old "dashboard" aka filtered index
+                url(r'^dashboard/(?P<id>\w+)/(?P<sector>\w+)/$', tolaviews.index, name='index'),
+
+                # "dashboard" aka homepage filtered by country, sort of
+                url(r'^(?P<selected_countries>\w+)/$', views.index, name='index'),
+
+                # Site home page
+                url(r'^$', views.home, name='home'),
 
                 # program page
                 url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<type_id>\d+)/$',
@@ -92,13 +103,6 @@ urlpatterns = [ # rest framework
                 url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
                 url(r'^admin/', include(admin.site.urls)),
 
-                url(r'^(?P<selected_countries>\w+)/$', views.index, name='index'),
-
-                # index
-                url(r'^dashboard/(?P<id>\w+)/(?P<sector>\w+)/$', tolaviews.index, name='index'),
-
-                # base template for layout
-                url(r'^$', TemplateView.as_view(template_name='base.html')),
 
                 # enable admin documentation:
                 url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

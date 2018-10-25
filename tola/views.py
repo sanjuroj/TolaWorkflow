@@ -17,11 +17,21 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
+@login_required(login_url='/accounts/login/')
+def home(request):
+    """
+    Mangosteen home page
+    """
+
+    return render(request, 'home.html', {
+        'title': 'Home',
+    })
+
 
 @login_required(login_url='/accounts/login/')
 def index(request, selected_countries=None, id=0, sector=0):
     """
-    Home page
+    Previous "Home" page -- also a filtered index!
     get count of agreements approved and total for dashboard
     """
     program_id = id
