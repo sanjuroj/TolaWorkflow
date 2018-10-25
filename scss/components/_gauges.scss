@@ -31,7 +31,7 @@
 }
 .gauge__graphic {
     // the graphic *without* labels
-    background-color: $green-100;
+    background-color: $gray-300;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -55,7 +55,7 @@
 }
 .graphic__performance-band--above-target,
 .graphic__performance-band--below-target {
-    background: $yellow-200;
+    background: $yellow-300;
 }
 .graphic__performance-band--on-target {
     background: $green-550;

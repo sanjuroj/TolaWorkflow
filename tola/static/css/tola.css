@@ -6291,7 +6291,7 @@ body > .container {
   flex-grow: 1; }
 
 .gauge__graphic {
-  background-color: #cde499;
+  background-color: #dbdcde;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -6313,7 +6313,7 @@ body > .container {
 
 .graphic__performance-band--above-target,
 .graphic__performance-band--below-target {
-  background: #ffed99; }
+  background: #ffe466; }
 
 .graphic__performance-band--on-target {
   background: #79AD00; }
