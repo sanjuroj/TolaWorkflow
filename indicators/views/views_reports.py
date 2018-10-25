@@ -348,7 +348,7 @@ class IPTT_Mixin(object):
         periodic_targets = PeriodicTarget.objects.filter(
             indicator__program__in=[program.id],
             indicator__target_frequency=period
-        ).values("period", "target", "start_date", "end_date")
+        ).values("period", "target", "start_date", "end_date").order_by("start_date")
 
         try:
             start_date = parser.parse(self.filter_form_initial_data['start_date']).date()
@@ -372,7 +372,6 @@ class IPTT_Mixin(object):
             report_end_date = targetperiods[targetperiods.keys()[-1]][1]
         except (TypeError, IndexError):
             report_end_date = self.program.reporting_period_end
-
         # this check is necessary becasue mid/end line do not have start/end dates
         if report_end_date is None:
             report_end_date = self.program.reporting_period_end
