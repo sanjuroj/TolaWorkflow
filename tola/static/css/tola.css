@@ -7226,9 +7226,6 @@ select.listoption_filters {
     display: flex;
     justify-content: space-between; }
 
-.multiselect-container.dropdown-menu > li > a {
-  color: #fff; }
-
 .help-text {
   font-size: 0.875rem;
   font-style: italic;
