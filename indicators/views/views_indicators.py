@@ -40,6 +40,7 @@ from ..models import (
     CollectedData, IndicatorType, Level, ExternalServiceRecord,
     ExternalService, TolaTable, PinnedReport
 )
+from indicators.queries import ProgramWithMetrics
 from .views_reports import IPTT_ReportView
 
 
@@ -1463,22 +1464,24 @@ class ProgramPage(ListView):
 
         # FIXME: The indicators filter below is overridden 2 lines down
         indicators = Indicator.objects.filter(**{'program__id': program_id, 'id':self.kwargs['indicator_id']})
-        program = Program.objects.get(id=program_id, funding_status="Funded", country__in=countries)
+        #program = Program.objects.get(id=program_id, funding_status="Funded", country__in=countries)
+        program = ProgramWithMetrics.objects.get(id=program_id, funding_status="Funded", country__in=countries)
         indicators = Indicator.objects.filter(**indicator_filters)
         type_ids = set(indicators.values_list('indicator_type', flat=True))
         indicator_types = IndicatorType.objects.filter(id__in=list(type_ids))
         indicator_count = indicators.count()
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
                          [PinnedReport.default_report(program.id)]
-        scope_percents = {
-            # TODO: placeholder stats
-            'low': 23,
-            'on_scope': 46,
-            'high': 31,
-        }
+        scope_percents = program.scope_percentages
+        # scope_percents = {
+        #     # TODO: placeholder stats
+        #     'low': 23,
+        #     'on_scope': 46,
+        #     'high': 31,
+        # }
         results_stats = {
             # TODO: placeholder stats
-            'targets_defined': 35,
+            'targets_defined': program.targets_percentages['defined'],
             'reported_results': 87,
             'results_evidence': 50,
         }
