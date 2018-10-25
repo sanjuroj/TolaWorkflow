@@ -8,11 +8,11 @@ from indicators.models import (
     PeriodicTarget,
     CollectedData
 )
-from datetime import date
+from datetime import date, timedelta
 from workflow import models as wf_models
 from django.db import models
 from django.db.models.functions import Concat
-#from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max
+from django.utils.functional import cached_property
 
 class Round(models.Func):
     function = 'ROUND'
@@ -163,6 +163,26 @@ class IPTTIndicatorManager(models.Manager):
                 output_field=models.IntegerField(null=True)
             )
         )
+
+class DefinedTargetsIndicatorManager(IPTTIndicatorManager):
+    def get_defined_targets(self, qs):
+        periodic_targets_with_target_values = PeriodicTarget.objects.filter(
+            indicator_id=models.OuterRef('pk'),
+            target__isnull=False
+        ).order_by().values('indicator_id')
+        qs = qs.annotate(
+            defined_targets=models.Subquery(
+                periodic_targets_with_target_values.annotate(
+                    target_count=models.Count('period')).values('target_count')[:1],
+                output_field=models.IntegerField()
+            )
+        )
+        return qs
+
+    def get_queryset(self):
+        qs = super(DefinedTargetsIndicatorManager, self).get_queryset()
+        qs = self.get_defined_targets(qs)
+        return qs
 
 class NoTargetsIndicatorManager(IPTTIndicatorManager):
 
@@ -317,6 +337,7 @@ class IPTTIndicator(Indicator):
 
     notargets = NoTargetsIndicatorManager()
     withtargets = WithTargetsIndicatorManager()
+    defined_targets = DefinedTargetsIndicatorManager()
 
     @property
     def lop_met_target(self):
@@ -324,7 +345,7 @@ class IPTTIndicator(Indicator):
 
     @property
     def timeperiods(self):
-        if self.unit_of_measure_type == self.PERCENTAGE and self.is_cumulative == False:
+        if self.unit_of_measure_type == self.PERCENTAGE and not self.is_cumulative:
             return
         else:
             count = 0
@@ -333,11 +354,64 @@ class IPTTIndicator(Indicator):
                 count += 1
 
 class ProgramWithMetrics(wf_models.Program):
+    TIME_AWARE_FREQUENCIES = [
+        Indicator.ANNUAL,
+        Indicator.SEMI_ANNUAL,
+        Indicator.TRI_ANNUAL,
+        Indicator.QUARTERLY,
+        Indicator.MONTHLY
+    ]
     class Meta:
         proxy = True
 
+    def get_num_periods(self, frequency):
+        """returns the expected number of target periods given a frequency based on reporting period"""
+        start_date = self.reporting_period_start
+        end_date = self.reporting_period_end
+        if frequency == Indicator.ANNUAL:
+            next_date_func = lambda x: date(
+                x.year+1, x.month, x.day
+            )
+        else:
+            magic_number = {
+                Indicator.SEMI_ANNUAL: 6,
+                Indicator.TRI_ANNUAL: 4,
+                Indicator.QUARTERLY: 3,
+                Indicator.MONTHLY: 1
+            }[frequency]
+            next_date_func = lambda x: date(
+                x.year + 1 if x.month > (12-magic_number) else x.year,
+                x.month - 12 + magic_number if x.month > (12-magic_number) else x.month + magic_number,
+                x.day
+            )
+        periods = 0
+        while start_date <= end_date:
+            periods += 1
+            start_date = next_date_func(start_date)
+        return periods
 
-    def get_filters(self):
+    def get_defined_targets_filter(self):
+        filters = []
+        filters.append(models.Q(target_frequency=Indicator.LOP) & models.Q(lop_target__isnull=False))
+        filters.append(models.Q(target_frequency=Indicator.MID_END) &
+                       models.Q(defined_targets__isnull=False) &
+                       models.Q(defined_targets__gte=2))
+        filters.append(models.Q(target_frequency=Indicator.EVENT) &
+                       models.Q(defined_targets__isnull=False) &
+                       models.Q(defined_targets__gte=1))
+        for frequency in self.TIME_AWARE_FREQUENCIES:
+            num_periods = self.get_num_periods(frequency)
+            filters.append(models.Q(target_frequency=frequency) &
+                           models.Q(defined_targets__isnull=False) &
+                           models.Q(defined_targets__gte=num_periods))
+        combined_filter = filters.pop()
+        for filt in filters:
+            combined_filter |= filt
+        return combined_filter
+
+    def get_reporting_filters(self):
+        """returns an array of filters based on program attributes to filter out indicators that should not be part
+        of reporting metrics"""
         filters = []
         if self.reporting_period_end > date.today():
             # open program -> LOP targets are incomplete
@@ -347,11 +421,11 @@ class ProgramWithMetrics(wf_models.Program):
         filters.append(models.Q(lop_actual_sum__isnull=True))
         return filters
 
-    @property
+    @cached_property
     def nonreporting(self):
         """returns indicators (annotated with target data) that are excluded from reporting metrics"""
         qs = self.get_indicators()
-        filters = self.get_filters()
+        filters = self.get_reporting_filters()
         if filters:
             filter_query = filters.pop()
             for filt in filters:
@@ -359,17 +433,46 @@ class ProgramWithMetrics(wf_models.Program):
             qs = qs.filter(filter_query)
         return qs
 
-    @property
+    @cached_property
     def reporting(self):
         """returns indicators (annotated with target data) that are included in reporting metrics"""
         qs = self.get_indicators()
-        excludes = self.get_filters()
+        excludes = self.get_reporting_filters()
         if excludes:
             exclude_query = excludes.pop()
             for exclude in excludes:
                 exclude_query |= exclude
             qs = qs.exclude(exclude_query)
         return qs
+
+    @cached_property
+    def targets_defined(self):
+        """returns indicators (annotated with target data) that have all their targets defined"""
+        indicators = IPTTIndicator.defined_targets.filter(program__in=[self.id])
+        indicators = indicators.filter(self.get_defined_targets_filter())
+        return indicators
+
+    @cached_property
+    def targets_undefined(self):
+        """returns indicators (annotated with target data) that have undefined targets"""
+        indicators = IPTTIndicator.defined_targets.filter(program__in=[self.id])
+        indicators = indicators.exclude(self.get_defined_targets_filter())
+        return indicators
+
+    @cached_property
+    def targets_percentages(self):
+        """returns percentage of defined and undefined targets"""
+        indicator_count = self.indicator_set.count()
+        if indicator_count == 0:
+            return {
+                'defined': None,
+                'undefined': None
+            }
+        defined = self.targets_defined.count()
+        return {
+            'defined': int(round(float(defined*100)/indicator_count)),
+            'undefined': int(round(float(indicator_count-defined)*100/indicator_count))
+        }
 
     def get_indicators(self):
         return IPTTIndicator.withtargets.filter(program__in=[self.id])
@@ -394,3 +497,19 @@ class ProgramWithMetrics(wf_models.Program):
             over_under=1
         )
         return indicators
+
+    @property
+    def scope_percentages(self):
+        denominator = self.reporting.count()
+        if denominator == 0:
+            return {
+                'low': None,
+                'on_scope': None,
+                'high': None
+            }
+        make_percent = lambda x: int(round(float(x.count()*100)/denominator))
+        return {
+            'low': make_percent(self.undertarget),
+            'on_scope': make_percent(self.ontarget),
+            'high': make_percent(self.overtarget)
+        }
