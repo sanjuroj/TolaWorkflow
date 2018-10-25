@@ -303,6 +303,7 @@ class TestProgramReportingingCounts (test.TestCase):
         for indicator in self.indicators:
             indicator.delete()
         self.program.delete()
+        settings.DEBUG = False
 
     def get_base_indicator(self):
         indicator = i_factories.IndicatorFactory()
@@ -470,6 +471,9 @@ class TestProgramReportingingCounts (test.TestCase):
         nonreporting_count = self.reporting_program.nonreporting.count()
         nonreporting_queries = len(connection.queries) - baseline
         baseline = len(connection.queries)
+        percentages = self.reporting_program.scope_percentages
+        percentages_queries = len(connection.queries) - baseline
+        baseline = len(connection.queries)
         self.assertEqual(
             ontarget_count, 2, "expected 2 ontarget, got {0}".format(ontarget_count)
         )
@@ -482,8 +486,22 @@ class TestProgramReportingingCounts (test.TestCase):
         self.assertEqual(
             nonreporting_count, 1, "expected 1 nonreporting, got {0}".format(nonreporting_count)
         )
+        self.assertEqual(
+            percentages['low'], 17,
+            "expected 17% undertarget for 1/6, got {0}".format(percentages['low'])
+        )
+        self.assertEqual(
+            percentages['on_scope'], 33,
+            "expected 33% ontarget for 2/6, got {0}".format(percentages['on_scope'])
+        )
+        self.assertEqual(
+            percentages['high'], 50,
+            "expected 50% overtarget for 3/6, got {0}".format(percentages['high'])
+        )
         # query count tests:
         for c, query_count in enumerate([self.fetch_queries, ontarget_queries, overtarget_queries,
                                          undertarget_queries, nonreporting_queries]):
             self.assertEqual(query_count, 1, "expected 1 query for #{0} got {1}".format(c, query_count))
+        self.assertEqual(percentages_queries, 4,
+                         "expected 4 queries to fetch 3 scopes and denominator, got {0}".format(percentages_queries))
             
