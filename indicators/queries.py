@@ -8,6 +8,7 @@ from indicators.models import (
     PeriodicTarget,
     CollectedData
 )
+from workflow.models import Documentation
 from datetime import date, timedelta
 from workflow import models as wf_models
 from django.db import models
@@ -164,24 +165,60 @@ class IPTTIndicatorManager(models.Manager):
             )
         )
 
-class DefinedTargetsIndicatorManager(IPTTIndicatorManager):
+class WithMetricsIndicatorManager(IPTTIndicatorManager):
+    def get_evidence_count(self, qs):
+        data_with_evidence = CollectedData.objects.filter(
+            models.Q(indicator_id=models.OuterRef('pk')) |
+            models.Q(periodic_target__indicator_id=models.OuterRef('pk')),
+            evidence__isnull=False
+        ).order_by().values('indicator_id')
+        qs = qs.annotate(
+            evidence_count=models.functions.Coalesce(
+                models.Subquery(
+                    data_with_evidence.annotate(
+                        total_count=models.Count('date_collected')
+                        ).order_by().values('total_count')[:1],
+                    output_field=models.IntegerField()
+                ), 0)
+        )
+        return qs
+
     def get_defined_targets(self, qs):
         periodic_targets_with_target_values = PeriodicTarget.objects.filter(
             indicator_id=models.OuterRef('pk'),
             target__isnull=False
         ).order_by().values('indicator_id')
         qs = qs.annotate(
-            defined_targets=models.Subquery(
-                periodic_targets_with_target_values.annotate(
-                    target_count=models.Count('period')).values('target_count')[:1],
-                output_field=models.IntegerField()
-            )
+            defined_targets=models.functions.Coalesce(
+                models.Subquery(
+                    periodic_targets_with_target_values.annotate(
+                        target_count=models.Count('period')).values('target_count')[:1],
+                    output_field=models.IntegerField()
+                ), 0)
+        )
+        return qs
+
+    def get_reported_results(self, qs):
+        collected_data_with_achieved_values = CollectedData.objects.filter(
+            models.Q(indicator_id=models.OuterRef('pk')) |
+            models.Q(periodic_target__indicator_id=models.OuterRef('pk')),
+            models.Q(achieved__isnull=False)
+        ).order_by().values('indicator_id')
+        qs = qs.annotate(
+            reported_results=models.functions.Coalesce( # coalesce to return 0 if the subquery is empty (not None)
+                models.Subquery(
+                    collected_data_with_achieved_values.annotate(
+                        result_count=models.Count('date_collected')).values('result_count')[:1],
+                    output_field=models.IntegerField()
+                ), 0)
         )
         return qs
 
     def get_queryset(self):
-        qs = super(DefinedTargetsIndicatorManager, self).get_queryset()
+        qs = super(WithMetricsIndicatorManager, self).get_queryset()
         qs = self.get_defined_targets(qs)
+        qs = self.get_reported_results(qs)
+        qs = self.get_evidence_count(qs)
         return qs
 
 class NoTargetsIndicatorManager(IPTTIndicatorManager):
@@ -337,7 +374,7 @@ class IPTTIndicator(Indicator):
 
     notargets = NoTargetsIndicatorManager()
     withtargets = WithTargetsIndicatorManager()
-    defined_targets = DefinedTargetsIndicatorManager()
+    with_metrics = WithMetricsIndicatorManager()
 
     @property
     def lop_met_target(self):
@@ -448,15 +485,43 @@ class ProgramWithMetrics(wf_models.Program):
     @cached_property
     def targets_defined(self):
         """returns indicators (annotated with target data) that have all their targets defined"""
-        indicators = IPTTIndicator.defined_targets.filter(program__in=[self.id])
+        indicators = IPTTIndicator.with_metrics.filter(program__in=[self.id])
         indicators = indicators.filter(self.get_defined_targets_filter())
         return indicators
 
     @cached_property
     def targets_undefined(self):
         """returns indicators (annotated with target data) that have undefined targets"""
-        indicators = IPTTIndicator.defined_targets.filter(program__in=[self.id])
+        indicators = IPTTIndicator.with_metrics.filter(program__in=[self.id])
         indicators = indicators.exclude(self.get_defined_targets_filter())
+        return indicators
+
+    @cached_property
+    def reported_results(self):
+        """returns indicators that have reported results"""
+        indicators = IPTTIndicator.with_metrics.filter(program__in=[self.id])
+        indicators = indicators.filter(reported_results__gte=1)
+        return indicators
+
+    @cached_property
+    def no_reported_results(self):
+        """returns indicators that have no reported results"""
+        indicators = IPTTIndicator.with_metrics.filter(program__in=[self.id])
+        indicators = indicators.filter(reported_results=0)
+        return indicators
+
+    @cached_property
+    def with_evidence(self):
+        """returns indicators that have evidence to back up results"""
+        indicators = IPTTIndicator.with_metrics.filter(program__in=[self.id])
+        indicators = indicators.filter(evidence_count__gte=1)
+        return indicators
+
+    @cached_property
+    def with_no_evidence(self):
+        """returns indicators that have no evidence backing up results"""
+        indicators = IPTTIndicator.with_metrics.filter(program__in=[self.id])
+        indicators = indicators.filter(evidence_count=0)
         return indicators
 
     @cached_property
@@ -512,4 +577,18 @@ class ProgramWithMetrics(wf_models.Program):
             'low': make_percent(self.undertarget),
             'on_scope': make_percent(self.ontarget),
             'high': make_percent(self.overtarget)
+        }
+
+    @cached_property
+    def metrics(self):
+        denominator = self.indicator_set.count()
+        if denominator == 0:
+            return {
+                'no_indicators': True
+            }
+        make_percent = lambda x: int(round(float(x.count()*100)/denominator))
+        return {
+            'reported_results': make_percent(self.reported_results),
+            'targets_defined': make_percent(self.targets_defined),
+            'results_evidence': make_percent(self.with_evidence)
         }
