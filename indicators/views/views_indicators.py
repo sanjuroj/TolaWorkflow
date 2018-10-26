@@ -1469,7 +1469,8 @@ class ProgramPage(ListView):
         indicator_count = indicators.count()
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
                          [PinnedReport.default_report(program.id)]
-        # scope_percents = program.scope_percentages
+        # TODO: add 'nonreporting' to scope_percentages:
+        # scope_percents = program.scope_percentages 
         scope_percents = {
          # TODO: placeholder stats
              'nonreporting': 31,
@@ -1477,11 +1478,8 @@ class ProgramPage(ListView):
              'on_scope': 15,
              'high': 31,
         }
-        results_stats = {
-            'targets_defined': program.targets_percentages['defined'],
-            'reported_results': 87, # this stat is still a placeholder
-            'results_evidence': 50, # this stat is still a placeholder
-        }
+
+        results_stats = program.metrics
 
         js_context = {
             'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
