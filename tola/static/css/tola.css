@@ -6297,21 +6297,20 @@ body > .container {
   justify-content: flex-end;
   margin-right: 15px;
   min-width: 40px;
-  min-height: 80px;
+  min-height: 120px;
   position: relative; }
 
 .gauge__labels {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; }
-
-.gauge__labels--justified {
   justify-content: space-between; }
 
 .gauge__graphic--performance-band {
-  justify-content: space-between; }
+  justify-content: flex-end; }
 
-.graphic__performance-band--above-target,
+.graphic__performance-band--above-target {
+  background: #ffe466; }
+
 .graphic__performance-band--below-target {
   background: #ffe466; }
 
@@ -6338,23 +6337,19 @@ body > .container {
 .graphic__tank--filled {
   background-color: #79AD00; }
 
-.gauge__value {
-  color: #71757b;
-  font-size: 2rem; }
+.gauge__value, .gauge__value:hover {
+  color: #506e00;
+  font-weight: bold; }
+
+.gauge__value--above, .gauge__value--above:hover,
+.gauge__value--below,
+.gauge__value--below:hover {
+  color: #343840; }
 
 .gauge__label {
   color: #000;
-  margin: 0;
-  text-transform: uppercase; }
-
-.gauge__detail {
-  color: #0645AD;
   font-size: 0.875rem;
-  margin-top: 15px; }
-
-.gauge__label--small {
-  color: #0645AD;
-  font-size: 0.875rem; }
+  margin: 0; }
 
 .btn-white, .btn-white:hover, .btn-white:active, .btn-white:focus {
   color: #fff; }

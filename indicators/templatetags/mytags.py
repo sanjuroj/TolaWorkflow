@@ -114,23 +114,22 @@ def js(obj):
 
 
 @register.inclusion_tag('indicators/tags/gauge-tank.html')
-def gauge_tank(filled, label, detail):
+def gauge_tank(filled, filled_label, unfilled_label, title):
     return {
+        'title': title,
         'filled': filled,
-        'not_filled': 100 - filled,
-        'label': label,
-        'detail': detail,
+        'unfilled': 100 - filled,
+        'filled_label': filled_label,
+        'unfilled_label': unfilled_label,
         'ticks': list(range(1,11)),
         'margin': int(Indicator.ONSCOPE_MARGIN * 100),
     }
 
 
 @register.inclusion_tag('indicators/tags/gauge-band.html')
-def gauge_band(high, on_scope, low):
+def gauge_band(scope_percents):
     return {
-        'high': high,
-        'on_scope': on_scope,
-        'low': low,
+        'scope_percents': scope_percents,
         'ticks': list(range(1,11)),
         'margin': int(Indicator.ONSCOPE_MARGIN * 100),
     }

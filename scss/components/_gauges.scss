@@ -21,7 +21,7 @@
         border-color: $yellow;
     }
 }
-
+.gauge__title {}
 .gauge__overview {
     // has no external layout.
     // contains gauge__graphic + gauge__labels
@@ -37,23 +37,22 @@
     justify-content: flex-end;
     margin-right: $grid-gutter-width/2;
     min-width: 40px;
-    min-height: 80px;
+    min-height: 120px;
     position: relative;
 }
 .gauge__labels {
     // wraps labels on the same row as the gauge__graphic
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-}
-.gauge__labels--justified {
     justify-content: space-between;
 }
 .gauge__graphic--performance-band {
     // contains graphic__performance-band--* subcomponents
-    justify-content: space-between;
+    justify-content: flex-end;
 }
-.graphic__performance-band--above-target,
+.graphic__performance-band--above-target {
+    background: $yellow-300;
+}
 .graphic__performance-band--below-target {
     background: $yellow-300;
 }
@@ -86,20 +85,20 @@
     background-color: $green-550;
 }
 .gauge__value {
-    color: $gray-600;
-    font-size: $font-size-base * 2;
+    &, &:hover {
+        color: $green-700;
+        font-weight: bold;
+    }
+}
+.gauge__value--above,
+.gauge__value--below {
+    &, &:hover {
+        color: $gray-800;
+    }
 }
 .gauge__label {
     color: $black;
+    font-size: $font-size-sm;
     margin: 0;
-    text-transform: uppercase;
-}
-.gauge__detail {
-    color: $blue;
-    font-size: $font-size-sm;
-    margin-top: $grid-gutter-width/2;
-}
-.gauge__label--small {
-    color: $blue;
-    font-size: $font-size-sm;
+    //text-transform: uppercase;
 }

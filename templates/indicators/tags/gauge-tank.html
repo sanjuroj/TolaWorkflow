@@ -1,9 +1,11 @@
 {% load i18n %}
 {# TODO: links filter the indicator list, apply a highlight class to the entire gauge, and alter the number of indicators displayed on the program page #}
 <div class="gauge">{# TODO: add .is-highlighted to this element when one of its filters is applied #}
+    <h6 class="gauge__title">{% trans title %}</h6>
     <div class="gauge__overview">
         <div class="gauge__graphic gauge__graphic--tank">
             <div class="graphic__tick-marks">
+                <!-- TOOD: make gauge graphic elements clickable -->
                 {% for i in ticks %}
                 <div class="graphic__tick"></div>
                 {% endfor %}
@@ -11,19 +13,13 @@
             <div class="graphic__tank--filled" style="flex-basis: {{ filled }}%"></div>
         </div>
         <div class="gauge__labels">
-            <div class="gauge__value">
-                {{ filled }}%
+            <div class="gauge__label">
+                <a href="#" class="text-muted">{{ unfilled }}% {% trans unfilled_label %}</a>
+                <!-- TOOLTIP -->
             </div>
-            {% if label %}
-                <h6 class="gauge__label">
-                    <a href="#" class="text-dark">{% trans label %}</a>
-                </h6>
-            {% endif %}
+            <div class="gauge__label">
+                <a href="#" class="gauge__value">{{ filled }}% {% trans filled_label %}</a>
+            </div>
         </div>
     </div>
-    {% if detail %}
-        <div class="gauge__detail">
-            <a href="#" class="text-dark">{{ not_filled }}% {% trans detail %}</a>
-        </div>
-    {% endif %}
 </div>

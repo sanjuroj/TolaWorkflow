@@ -1472,13 +1472,14 @@ class ProgramPage(ListView):
         indicator_count = indicators.count()
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
                          [PinnedReport.default_report(program.id)]
-        scope_percents = program.scope_percentages
-        # scope_percents = {
-        #     # TODO: placeholder stats
-        #     'low': 23,
-        #     'on_scope': 46,
-        #     'high': 31,
-        # }
+        # scope_percents = program.scope_percentages
+        scope_percents = {
+         # TODO: placeholder stats
+             'nonreporting': 31,
+             'low': 23,
+             'on_scope': 15,
+             'high': 31,
+        }
         results_stats = {
             # TODO: placeholder stats
             'targets_defined': program.targets_percentages['defined'],
