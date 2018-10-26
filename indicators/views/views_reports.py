@@ -810,8 +810,8 @@ class IPTT_Mixin(object):
         context['report_end_date_actual'] = report_end_date
         context['report_start_date'] = self.program.reporting_period_start
         context['report_end_date'] = report_end_date
-        context['report_date_ranges'] = periods_date_ranges  # collections.OrderedDict:  OrderedDict([(u'A\xf1o 1', [datetime.date(2017, 7, 1), datetime.date(2018, 6, 30)]), (u'A\xf1o 2', [datetime.date(2018, 7, 1), datetime.date(2019, 6, 30)])])
-        context['indicators'] = indicators  # queryset returns dict()
+        context['report_date_ranges'] = periods_date_ranges  # collections.OrderedDict
+        context['indicators'] = indicators  # iterable of dict()
         context['program'] = self.program
         context['reporttype'] = reporttype
         return context
