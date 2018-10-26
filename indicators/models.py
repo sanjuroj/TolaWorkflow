@@ -251,7 +251,7 @@ class ExternalServiceAdmin(admin.ModelAdmin):
 
 class ExternalServiceRecord(models.Model):
     external_service = models.ForeignKey(
-        ExternalService, blank=True, null=True,
+        ExternalService, blank=True, null=True, on_delete=models.SET_NULL,
         verbose_name=_("External service"))
     full_url = models.CharField(_("Full URL"), max_length=765, blank=True)
     record_id = models.CharField(_("Unique ID"), max_length=765, blank=True)
@@ -440,7 +440,7 @@ class Indicator(models.Model):
     )
 
     data_collection_frequency = models.ForeignKey(
-        DataCollectionFrequency, null=True, blank=True,
+        DataCollectionFrequency, null=True, blank=True, on_delete=models.SET_NULL,
         verbose_name=_("Frequency of Data Collection"), help_text=" "
     )
 
@@ -465,7 +465,7 @@ class Indicator(models.Model):
     )
 
     reporting_frequency = models.ForeignKey(
-        ReportingFrequency, null=True, blank=True,
+        ReportingFrequency, null=True, blank=True, on_delete=models.SET_NULL,
         verbose_name=_("Frequency of Reporting"), help_text=" "
     )
 
@@ -495,7 +495,7 @@ class Indicator(models.Model):
     )
 
     sector = models.ForeignKey(
-        Sector, null=True, blank=True, help_text=" ", verbose_name=_("Sector")
+        Sector, null=True, blank=True, on_delete=models.SET_NULL, help_text=" ", verbose_name=_("Sector")
     )
 
     key_performance_indicator = models.BooleanField(
@@ -504,18 +504,18 @@ class Indicator(models.Model):
     )
 
     approved_by = models.ForeignKey(
-        TolaUser, blank=True, null=True, related_name="approving_indicator",
+        TolaUser, blank=True, null=True, on_delete=models.SET_NULL, related_name="approving_indicator",
         verbose_name=_("Approved by"), help_text=" "
     )
 
     approval_submitted_by = models.ForeignKey(
-        TolaUser, blank=True, null=True, related_name="indicator_submitted_by",
+        TolaUser, blank=True, null=True, on_delete=models.SET_NULL, related_name="indicator_submitted_by",
         verbose_name=_("Approval submitted by"), help_text=" "
     )
 
     external_service_record = models.ForeignKey(
         ExternalServiceRecord, verbose_name=_("External Service ID"),
-        blank=True, null=True, help_text=" "
+        blank=True, null=True, on_delete=models.SET_NULL, help_text=" "
     )
 
     create_date = models.DateTimeField(
@@ -700,7 +700,7 @@ class CollectedData(models.Model):
         default=uuid.uuid4, unique=True, help_text=" "),
 
     periodic_target = models.ForeignKey(
-        PeriodicTarget, null=True, blank=True, help_text=" ",
+        PeriodicTarget, null=True, blank=True, on_delete=models.SET_NULL, help_text=" ",
         verbose_name=_("Periodic target")
     )
 
@@ -725,7 +725,7 @@ class CollectedData(models.Model):
     )
 
     agreement = models.ForeignKey(
-        ProjectAgreement, blank=True, null=True, related_name="q_agreement2",
+        ProjectAgreement, blank=True, null=True, on_delete=models.SET_NULL, related_name="q_agreement2",
         verbose_name=_("Project Initiation"), help_text=" ")
 
     complete = models.ForeignKey(
@@ -746,15 +746,15 @@ class CollectedData(models.Model):
         help_text=" ")
 
     evidence = models.ForeignKey(
-        Documentation, null=True, blank=True,
+        Documentation, null=True, blank=True, on_delete=models.SET_NULL,
         verbose_name=_("Evidence Document or Link"), help_text=" ")
 
     approved_by = models.ForeignKey(
-        TolaUser, blank=True, null=True, verbose_name=_("Originated By"),
+        TolaUser, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Originated By"),
         related_name="approving_data", help_text=" ")
 
     tola_table = models.ForeignKey(
-        TolaTable, blank=True, null=True, verbose_name=_("TolaTable"), help_text=" ")
+        TolaTable, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("TolaTable"), help_text=" ")
 
     update_count_tola_table = models.BooleanField(
         verbose_name=_("Would you like to update the achieved total with the \
