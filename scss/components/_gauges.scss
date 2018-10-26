@@ -68,6 +68,7 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: stretch;
+    opacity: 0.5;
     position: absolute;
     top: 0;
     right: 0;
@@ -92,6 +93,9 @@
 }
 .gauge__value--above,
 .gauge__value--below {
+    strong {
+        background: $yellow-100;
+    }
     &, &:hover {
         color: $gray-800;
     }

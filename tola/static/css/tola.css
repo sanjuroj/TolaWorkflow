@@ -6322,6 +6322,7 @@ body > .container {
   flex-direction: column;
   justify-content: space-between;
   align-items: stretch;
+  opacity: 0.5;
   position: absolute;
   top: 0;
   right: 0;
@@ -6340,6 +6341,10 @@ body > .container {
 .gauge__value, .gauge__value:hover {
   color: #506e00;
   font-weight: bold; }
+
+.gauge__value--above strong,
+.gauge__value--below strong {
+  background: #fff6cc; }
 
 .gauge__value--above, .gauge__value--above:hover,
 .gauge__value--below,
