@@ -1462,9 +1462,6 @@ class ProgramPage(ListView):
             indicator_filter_name = Indicator.objects.get(id=indicator_filter_id)
             indicator_filters['id'] = indicator_filter_id
 
-        # FIXME: The indicators filter below is overridden 2 lines down
-        indicators = Indicator.objects.filter(**{'program__id': program_id, 'id':self.kwargs['indicator_id']})
-        #program = Program.objects.get(id=program_id, funding_status="Funded", country__in=countries)
         program = ProgramWithMetrics.objects.get(id=program_id, funding_status="Funded", country__in=countries)
         indicators = Indicator.objects.filter(**indicator_filters)
         type_ids = set(indicators.values_list('indicator_type', flat=True))
@@ -1481,10 +1478,9 @@ class ProgramPage(ListView):
              'high': 31,
         }
         results_stats = {
-            # TODO: placeholder stats
             'targets_defined': program.targets_percentages['defined'],
-            'reported_results': 87,
-            'results_evidence': 50,
+            'reported_results': 87, # this stat is still a placeholder
+            'results_evidence': 50, # this stat is still a placeholder
         }
 
         js_context = {
