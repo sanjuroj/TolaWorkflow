@@ -644,7 +644,7 @@ class IPTT_Mixin(object):
 
                         # process target_period percent_met value
                         try:
-                            percent_met = 'u{}_percent_met'.format(k)
+                            percent_met = u'{}_percent_met'.format(k)
                             target = float(ind[u"{}_target".format(k)])
                             if ind['unit_of_measure_type'] == Indicator.NUMBER:
                                 if ind['is_cumulative'] is True:
