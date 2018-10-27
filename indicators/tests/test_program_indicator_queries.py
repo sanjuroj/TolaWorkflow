@@ -21,6 +21,7 @@ Decisions:
 """
 
 import datetime
+import unittest
 from indicators.models import Indicator, PeriodicTarget
 from indicators.queries import ProgramWithMetrics, IPTTIndicator
 from factories import (
@@ -28,8 +29,6 @@ from factories import (
     indicators_models as i_factories
     )
 from django import test
-from django.conf import settings
-from django.db import connection
 
 class TestCollectionCorrect(test.TestCase):
     def setUp(self):
@@ -277,9 +276,8 @@ class TestCollectionCorrect(test.TestCase):
             "exepcted 1 overtarget indicator"
         )
 
-class TestProgramReportingingCounts (test.TestCase):
+class TestProgramReportingingCounts (test.TransactionTestCase):
     def setUp(self):
-        settings.DEBUG = True
         self.program = w_factories.ProgramFactory(
             reporting_period_start=datetime.date.today()-datetime.timedelta(days=365),
             reporting_period_end=datetime.date.today()-datetime.timedelta(days=1)
@@ -291,9 +289,7 @@ class TestProgramReportingingCounts (test.TestCase):
         self.indicators.extend(self.get_undertarget_indicators())
         self.indicators.extend(self.get_overtarget_indicators())
         self.indicators.extend(self.get_nonreporting_indicators())
-        baseline = len(connection.queries)
         self.reporting_program = ProgramWithMetrics.objects.get(pk=self.program.id)
-        self.fetch_queries = len(connection.queries) - baseline
 
     def tearDown(self):
         for datum in self.data:
@@ -303,7 +299,6 @@ class TestProgramReportingingCounts (test.TestCase):
         for indicator in self.indicators:
             indicator.delete()
         self.program.delete()
-        settings.DEBUG = False
 
     def get_base_indicator(self):
         indicator = i_factories.IndicatorFactory()
@@ -458,22 +453,11 @@ class TestProgramReportingingCounts (test.TestCase):
         return [event_indicator]
 
     def test_counts(self):
-        baseline = len(connection.queries)
         ontarget_count = self.reporting_program.ontarget.count()
-        ontarget_queries = len(connection.queries) - baseline
-        baseline = len(connection.queries)
         overtarget_count = self.reporting_program.overtarget.count()
-        overtarget_queries = len(connection.queries) - baseline
-        baseline = len(connection.queries)
         undertarget_count = self.reporting_program.undertarget.count()
-        undertarget_queries = len(connection.queries) - baseline
-        baseline = len(connection.queries)
         nonreporting_count = self.reporting_program.nonreporting.count()
-        nonreporting_queries = len(connection.queries) - baseline
-        baseline = len(connection.queries)
-        percentages = self.reporting_program.scope_percentages
-        percentages_queries = len(connection.queries) - baseline
-        baseline = len(connection.queries)
+        percentages = self.reporting_program.scope_percents
         self.assertEqual(
             ontarget_count, 2, "expected 2 ontarget, got {0}".format(ontarget_count)
         )
@@ -498,10 +482,25 @@ class TestProgramReportingingCounts (test.TestCase):
             percentages['high'], 50,
             "expected 50% overtarget for 3/6, got {0}".format(percentages['high'])
         )
-        # query count tests:
-        for c, query_count in enumerate([self.fetch_queries, ontarget_queries, overtarget_queries,
-                                         undertarget_queries, nonreporting_queries]):
-            self.assertEqual(query_count, 1, "expected 1 query for #{0} got {1}".format(c, query_count))
-        self.assertEqual(percentages_queries, 4,
-                         "expected 4 queries to fetch 3 scopes and denominator, got {0}".format(percentages_queries))
-            
+
+    def test_queries(self):
+        expected = {
+            'low': 14,
+            'on_scope': 29,
+            'high': 43,
+            'nonreporting': 14,
+            'indicator_count': 7
+        }
+        with self.assertNumQueries(1):
+            program = ProgramWithMetrics.with_metrics.get(pk=self.program.id)
+            scope_percents = program.scope_percents
+            metrics = program.metrics
+        for key, expected_value in expected.items():
+            with self.assertNumQueries(0):
+                self.assertEqual(
+                    expected_value, scope_percents[key],
+                    "expected {0} to be {1}, but got {2}".format(
+                        key, expected_value, scope_percents[key]
+                    )
+                )
+        self.assertIn('reported_results', metrics.keys())

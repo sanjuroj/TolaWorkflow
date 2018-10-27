@@ -41,9 +41,11 @@ from django import test
 
 class ProgramMetricsBase(test.TestCase):
     def setUp(self):
+        start_date = datetime.date(2016, 10, 1)
+        end_date = datetime.date(2017, 9, 30)
         self.program = w_factories.ProgramFactory(
-            reporting_period_start=datetime.date.today()-datetime.timedelta(days=365),
-            reporting_period_end=datetime.date.today()-datetime.timedelta(days=1)
+            reporting_period_start=start_date,
+            reporting_period_end=end_date
         )
         self.indicators = []
         self.targets = []
@@ -62,7 +64,7 @@ class ProgramMetricsBase(test.TestCase):
         self.program.delete()
 
     def get_reporting_program(self):
-        return ProgramWithMetrics.objects.get(pk=self.program.id)
+        return ProgramWithMetrics.with_metrics.get(pk=self.program.id)
 
     def get_indicator(self, frequency=Indicator.LOP):
         indicator = i_factories.IndicatorFactory(
@@ -367,9 +369,6 @@ class TestIPTTIndicatorReportedResults(ProgramMetricsBase):
                 "Indicator with target should have 2 reported results, got {0}".format(iptt.reported_results))
 
 class TestProgramReportedResultsQueries(ProgramMetricsBase):
-    def get_reporting_program(self):
-        return ProgramWithMetrics.objects.get(pk=self.program.pk)
-
     def test_program_one_indicator_reported_results(self):
         for frequency, _ in Indicator.TARGET_FREQUENCIES:
             indicator = self.get_indicator(frequency=frequency)
@@ -448,9 +447,6 @@ class TestIPTTIndicatorWithEvidence(ProgramMetricsBase):
                 "Indicator with evidence should have 2 evidence, got {0}".format(iptt.evidence_count))
 
 class TestProgramWithEvidenceQueries(ProgramMetricsBase):
-    def get_reporting_program(self):
-        return ProgramWithMetrics.objects.get(pk=self.program.pk)
-
     def test_program_one_indicator_reported_results(self):
         for frequency, _ in Indicator.TARGET_FREQUENCIES:
             indicator = self.get_indicator(frequency=frequency)
