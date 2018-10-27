@@ -7,7 +7,9 @@
             <div class="graphic__tick-marks">
                 <!-- TOOD: make gauge graphic elements clickable -->
                 {% for i in ticks %}
-                <div class="graphic__tick"></div>
+                <div class="graphic__tick" data-target="{{ id_tag }}"
+                     data-target-positive="{% if i <= low_ticks %}-1{% elif i >= high_ticks %}1{% else %}0{% endif %}"
+                     data-ticks="{{ i }}"></div>
                 {% endfor %}
             </div>
             <div class="graphic__tank--filled" style="flex-basis: {{ filled }}%"></div>
