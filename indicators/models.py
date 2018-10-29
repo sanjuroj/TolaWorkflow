@@ -613,6 +613,25 @@ class Indicator(models.Model):
         avg = self.collecteddata_set.aggregate(Avg('achieved'))['achieved__avg']
         return avg
 
+    @property
+    def baseline_display(self):
+        if self.baseline and self.unit_of_measure_type == self.PERCENTAGE:
+            return self.baseline + '%'
+        return self.baseline
+
+    @property
+    def lop_target_display(self):
+        if self.lop_target and self.unit_of_measure_type == self.PERCENTAGE:
+            return self.lop_target + '%'
+        return self.lop_target
+
+    @property
+    def lop_actual_display(self):
+        if self.lop_actual and self.unit_of_measure_type == self.PERCENTAGE:
+            return self.lop_actual + '%'
+        return self.lop_actual
+            
+
 
 class PeriodicTarget(models.Model):
     MIDLINE = _('Midline')
