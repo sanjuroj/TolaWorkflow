@@ -1,3 +1,6 @@
+{% load i18n %}
+{% load l10n %}
+
 <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
 <script src="https://maps.google.com/maps/api/js?v=3.2&key=AIzaSyCcix2ucURnpMK9lWrcBtqlR6jc2qaVanQ&sensor=false"></script>
 <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcix2ucURnpMK9lWrcBtqlR6jc2qaVanQ&callback=initMap" -->
@@ -201,10 +204,11 @@
       className: 'map-marker indicator',
       iconSize: [20,20],
     });
+
     var project_sites = [
     {% for item in getSiteProfile %}
         {%if item.status == 1 %}
-        L.marker([{{ item.latitude }}, {{ item.longitude }}], {icon: projectIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>Project Site<br><a href='/workflow/siteprofile_update/{{ item.id }}'>{{ item.name }}</a> <br/>ADM1: {{ item.province }} <br/>ADM2: {{ item.district }} <br/> ADM3: {{ item.admin_level_three }} <br/> "),
+        L.marker([{{ item.latitude|unlocalize }}, {{ item.longitude|unlocalize }}], {icon: projectIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>{% trans 'Project Site' %}<br><a href='/workflow/siteprofile_update/{{ item.id }}'>{{ item.name }}</a> <br/>ADM1: {{ item.province }} <br/>ADM2: {{ item.district }} <br/> ADM3: {{ item.admin_level_three }} <br/> "),
         {%endif%}
     {%   endfor %}
     ];
@@ -214,7 +218,7 @@
     {% if getSiteProfileIndicator %}
         {% for item in getSiteProfileIndicator %}
             {%if item.status == 1 %}
-            L.marker([{{ item.latitude }}, {{ item.longitude }}], {icon: indicatorIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>Collected Indicator Data Site<br> <a href='/workflow/siteprofile_update/{{ item.id }}'>{{ item.name }}</a> <br/>ADM1: {{ item.province }} <br/>ADM2: {{ item.district }} <br/> ADM3: {{ item.admin_level_three }} <br/>"),
+            L.marker([{{ item.latitude|unlocalize }}, {{ item.longitude|unlocalize }}], {icon: indicatorIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>{% trans 'Collected Indicator Data Site' %}<br> <a href='/workflow/siteprofile_update/{{ item.id }}'>{{ item.name }}</a> <br/>ADM1: {{ item.province }} <br/>ADM2: {{ item.district }} <br/> ADM3: {{ item.admin_level_three }} <br/>"),
             {%endif%}
         {%   endfor %}
     {% endif %}
