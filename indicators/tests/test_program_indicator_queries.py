@@ -289,7 +289,7 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
         self.indicators.extend(self.get_undertarget_indicators())
         self.indicators.extend(self.get_overtarget_indicators())
         self.indicators.extend(self.get_nonreporting_indicators())
-        self.reporting_program = ProgramWithMetrics.objects.get(pk=self.program.id)
+        self.reporting_program = ProgramWithMetrics.with_metrics.get(pk=self.program.id)
 
     def tearDown(self):
         for datum in self.data:
@@ -471,16 +471,16 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
             nonreporting_count, 1, "expected 1 nonreporting, got {0}".format(nonreporting_count)
         )
         self.assertEqual(
-            percentages['low'], 17,
-            "expected 17% undertarget for 1/6, got {0}".format(percentages['low'])
+            percentages['low'], 14,
+            "expected 17% undertarget for 1/7, got {0}".format(percentages['low'])
         )
         self.assertEqual(
-            percentages['on_scope'], 33,
-            "expected 33% ontarget for 2/6, got {0}".format(percentages['on_scope'])
+            percentages['on_scope'], 29,
+            "expected 33% ontarget for 2/7, got {0}".format(percentages['on_scope'])
         )
         self.assertEqual(
-            percentages['high'], 50,
-            "expected 50% overtarget for 3/6, got {0}".format(percentages['high'])
+            percentages['high'], 43,
+            "expected 50% overtarget for 3/7, got {0}".format(percentages['high'])
         )
 
     def test_queries(self):

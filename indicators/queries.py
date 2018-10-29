@@ -22,7 +22,8 @@ class Round(models.Func):
 
 
 class IPTTIndicatorQuerySet(models.QuerySet):
-    pass
+    def count(self):
+        return self.values('id').aggregate(total=models.Count('id', distinct=True))['total']
 
 
 class IPTTIndicatorManager(models.Manager):
@@ -33,7 +34,7 @@ class IPTTIndicatorManager(models.Manager):
         # we only want targets that are either time naive or for completed periods:
         data_subquery = CollectedData.objects.filter(
             periodic_target_id=models.OuterRef('pk')
-        )
+        ).order_by().values('id')
         indicator_targets = PeriodicTarget.objects.annotate(
             data_count=models.Subquery(
                 data_subquery.annotate(total=models.Count('achieved')).values('total')[:1],
@@ -417,6 +418,13 @@ class IPTTIndicator(Indicator):
                 yield getattr(self, "period_{0}".format(count))
                 count += 1
 
+
+class ProgramMetricsQuerySet(models.QuerySet):
+    def count(self):
+        return self.values('id').aggregate(total=models.Count('id', distinct=True))['total']
+
+
+
 class ProgramWithMetricsManager(models.Manager):
     TIME_AWARE_FREQUENCIES = [
         (Indicator.ANNUAL, 12),
@@ -596,7 +604,7 @@ class ProgramWithMetricsManager(models.Manager):
     def get_queryset(self):
         metrics_annotations = self.get_metrics_annotations()
         scope_annotations = self.get_scope_annotations()
-        qs = super(ProgramWithMetricsManager, self).get_queryset()
+        qs = ProgramMetricsQuerySet(self.model, using=self._db)
         qs = self.get_periods_annotations(qs)
         qs = qs.annotate(**metrics_annotations)
         qs = qs.annotate(**scope_annotations)
