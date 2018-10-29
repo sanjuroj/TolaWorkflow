@@ -625,13 +625,6 @@ class Indicator(models.Model):
             return self.lop_target + '%'
         return self.lop_target
 
-    @property
-    def lop_actual_display(self):
-        if self.lop_actual and self.unit_of_measure_type == self.PERCENTAGE:
-            return self.lop_actual + '%'
-        return self.lop_actual
-            
-
 
 class PeriodicTarget(models.Model):
     MIDLINE = _('Midline')
