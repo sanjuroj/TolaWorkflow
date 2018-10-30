@@ -22,11 +22,13 @@ class Round(models.Func):
 
 
 class IPTTIndicatorQuerySet(models.QuerySet):
+    """This overrides the count method because ONLY_FULL_GROUP_BY errors appear otherwise on this custom query"""
     def count(self):
         return self.values('id').aggregate(total=models.Count('id', distinct=True))['total']
 
 
 class IPTTIndicatorManager(models.Manager):
+    """this is the general manager for all IPTT (annotated) indicators - generates totals over LOP"""
     def get_lop_target_annotations(self):
         """generates annotations for LOP target and actual data
 
@@ -341,6 +343,7 @@ class WithMetricsIndicatorManager(IPTTIndicatorManager):
     """queryset annotated to provide counts to the with_metrics Program call"""
 
     def get_evidence_count(self, qs):
+        """annotates qs with evidence_count= # of results that have evidence, and all_results_backed_up=Boolean"""
         data_with_evidence = CollectedData.objects.filter(
             models.Q(indicator_id=models.OuterRef('pk')) |
             models.Q(periodic_target__indicator_id=models.OuterRef('pk')),
@@ -354,6 +357,19 @@ class WithMetricsIndicatorManager(IPTTIndicatorManager):
                         ).order_by().values('total_count')[:1],
                     output_field=models.IntegerField()
                 ), 0)
+        )
+        qs = qs.annotate(
+            all_results_backed_up=models.Case(
+                models.When(
+                    models.Q(reported_results__isnull=False) &
+                    models.Q(evidence_count__isnull=False) &
+                    models.Q(reported_results__gt=0) &
+                    models.Q(evidence_count=models.F('reported_results')),
+                    then=models.Value(True)
+                ),
+                default=models.Value(False),
+                output_field=models.BooleanField()
+            )
         )
         return qs
 
@@ -374,8 +390,7 @@ class WithMetricsIndicatorManager(IPTTIndicatorManager):
 
     def get_reported_results(self, qs):
         collected_data_with_achieved_values = CollectedData.objects.filter(
-            models.Q(indicator_id=models.OuterRef('pk')), #|
-            #models.Q(periodic_target__indicator_id=models.OuterRef('pk')),
+            models.Q(indicator_id=models.OuterRef('pk')),
             models.Q(achieved__isnull=False)
         ).order_by().values('indicator_id')
         qs = qs.annotate(
@@ -540,6 +555,8 @@ class ProgramWithMetricsManager(models.Manager):
                 ).values('reported_count')[:1],
                 output_field=models.IntegerField()
             ), 0)
+        total_results = models.functions.Coalesce(
+            models.Count('indicator__collecteddata'), 0)
         # evidence backing up results filter (at least one data point with evidence attached):
         results_evidence = models.functions.Coalesce(
             models.Subquery(
@@ -570,6 +587,7 @@ class ProgramWithMetricsManager(models.Manager):
             ), 0)
         return {
             'reported_results_count': reported_results,
+            'reported_results_sum': total_results,
             'results_evidence_count': results_evidence,
             'targets_defined_count': targets_defined,
             'indicator_count': indicator_count
@@ -790,10 +808,14 @@ class ProgramWithMetrics(wf_models.Program):
                 'indicator_count': 0
             }
         make_percent = lambda x: int(round(float(x*100)/denominator))
+        total_results = self.reported_results_sum
+        percent_with_evidence = 0
+        if total_results and total_results > 0 and self.results_evidence_count and self.results_evidence_count > 0:
+            percent_with_evidence = int(round(float(self.results_evidence_count*100)/total_results))
         return {
             'reported_results': make_percent(self.reported_results_count),
             'targets_defined': make_percent(self.targets_defined_count),
-            'results_evidence': make_percent(self.results_evidence_count),
+            'results_evidence': percent_with_evidence,
             'indicator_count': denominator
         }
 
