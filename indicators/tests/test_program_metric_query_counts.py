@@ -135,10 +135,12 @@ class QueryTestsMixin:
                 self.assertIn(
                     key, metrics.keys(), "program.metrics should have {0}, got {1}".format(key, metrics.keys()))
                 expected_value = expected[key]
-                if expected[key] != 0 and key != 'indicator_count':
+                if expected[key] != 0 and key != 'indicator_count' and key != 'results_evidence':
                     expected_value = int(round(float(expected[key])*100/metrics['indicator_count']))
-                self.assertEqual(metrics[key], expected_value, "expected {0} for {1}, got {2}".format(
-                    expected_value, key, metrics[key]))
+                elif expected[key] != 0 and key == 'results_evidence':
+                    expected_value = int(round(float(expected[key])*100/expected['reported_results']))
+                self.assertEqual(metrics[key], expected_value, "expected {0} for {1}, got {2} {3}".format(
+                    expected_value, key, metrics, expected))
 
     def test_program_queryset_takes_one_query(self):
         self.get_program_setup()
@@ -163,8 +165,10 @@ class QueryTestsMixin:
                     key, program_response_metrics.keys(), "program.metrics should have {0}, got {1}".format(
                         key, program_response_metrics.keys()))
                 expected_value = expected[key]
-                if expected[key] != 0 and key != 'indicator_count':
+                if expected[key] != 0 and key != 'indicator_count' and key != 'results_evidence':
                     expected_value = int(round(float(expected[key])*100/program_response_metrics['indicator_count']))
+                elif key == 'results_evidence' and expected[key] != 0:
+                    expected_value = int(round(float(expected[key])*100/expected['reported_results']))
                 self.assertEqual(program_response_metrics[key], expected_value,
                                  "expected {0} for {1}, got {2}".format(
                                      expected_value, key, program_response_metrics[key]))

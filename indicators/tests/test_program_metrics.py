@@ -3,7 +3,7 @@
 Interface:
 ProgramWithMetrics.metrics['reported_results'] = int # percentage of indicators with reported results
 ProgramWithMetrics.metrics['defined_targets'] = int # percentage of indicators with targets fully defined
-ProgramWithMetrics.metrics['results_evidence'] = int # percentage of indicators with data that includes evidence
+ProgramWithMetrics.metrics['results_evidence'] = int # percentage of all results for all indicators that have evidence
 ProgramWithMetrics.metrics['indicator_count'] = int # denominator for the above percentages
 
 
@@ -434,17 +434,62 @@ class TestIPTTIndicatorWithEvidence(ProgramMetricsBase):
             self.assertEqual(
                 iptt.evidence_count, 0,
                 "Indicator with data but no docs should have no evidence, got {0}".format(iptt.evidence_count))
+            self.assertFalse(
+                iptt.all_results_backed_up,
+                "Indicator with 1 result and no evidence should not show all results backed up (no evidence)")
             self.add_evidence(data)
             iptt = IPTTIndicator.with_metrics.get(pk=indicator.pk)
             self.assertEqual(
                 iptt.evidence_count, 1,
                 "Indicator with evidence should have 1 evidence, got {0}".format(iptt.evidence_count))
+            self.assertTrue(
+                iptt.all_results_backed_up,
+                "Indicator with 1 result and 1 evidence should show all results backed up")
             data2 = self.add_data(indicator)
             self.add_evidence(data2)
             iptt = IPTTIndicator.with_metrics.get(pk=indicator.pk)
             self.assertEqual(
                 iptt.evidence_count, 2,
                 "Indicator with evidence should have 2 evidence, got {0}".format(iptt.evidence_count))
+            self.assertTrue(
+                iptt.all_results_backed_up,
+                "Indicator with 2 result, both with evidence should show all results backed up")
+
+    def test_fewer_evidence_than_results(self):
+        for frequency, _ in Indicator.TARGET_FREQUENCIES:
+            indicator = self.get_indicator(frequency=frequency)
+            iptt = IPTTIndicator.with_metrics.get(pk=indicator.pk)
+            # add one result with evidence
+            data = self.add_data(indicator)
+            self.add_evidence(data)
+            # add another result (so not all results backed up with evidence)
+            data2 = self.add_data(indicator)
+            iptt = IPTTIndicator.with_metrics.get(pk=indicator.pk)
+            self.assertEqual(
+                iptt.evidence_count, 1,
+                "Indicator with 2 data points but one doc should have 1 evidence, got {0}".format(
+                    iptt.evidence_count))
+            self.assertEqual(
+                iptt.reported_results, 2,
+                "Indicator with 2 data points but one doc should have 2 rep results, got {0}".format(
+                    iptt.reported_results))
+            self.assertFalse(
+                iptt.all_results_backed_up,
+                "Indicator with 2 results and 1 evidence should not show all results backed up")
+            # add another result and another data (still one fewer data than result)
+            self.add_evidence(data2)
+            _ = self.add_data(indicator)
+            iptt = IPTTIndicator.with_metrics.get(pk=indicator.pk)
+            self.assertEqual(
+                iptt.evidence_count, 2,
+                "Indicator with 2 evidence for 3 results should show 2 evidence, got {0}".format(iptt.evidence_count))
+            self.assertEqual(
+                iptt.reported_results, 3,
+                "Indicator with 2 evidence for 3 results should show 3 results, got {0}".format(
+                    iptt.reported_results))
+            self.assertFalse(
+                iptt.all_results_backed_up,
+                "Indicator with 3 results and 2 evidence should not show all results backed up")
 
 class TestProgramWithEvidenceQueries(ProgramMetricsBase):
     def test_program_one_indicator_reported_results(self):
@@ -461,7 +506,7 @@ class TestProgramWithEvidenceQueries(ProgramMetricsBase):
             program = self.get_reporting_program()
             self.assertEqual(
                 program.metrics['results_evidence'], 100,
-                "One indicator with results should be counted as 100% with evidence, got {0}".format(
+                "One indicator with 1 result and 1 evidence should be counted as 100% with evidence, got {0}".format(
                     program.metrics['results_evidence'])
             )
             for doc in self.documents:
@@ -490,6 +535,25 @@ class TestProgramWithEvidenceQueries(ProgramMetricsBase):
             )
         )
 
+    def test_multiple_data_points(self):
+        for frequency, _ in Indicator.TARGET_FREQUENCIES:
+            indicator = self.get_indicator(frequency=frequency)
+            data = self.add_data(indicator)
+            self.add_evidence(data)
+            _ = self.add_data(indicator)
+            _ = self.add_data(indicator)
+        for frequency, _ in Indicator.TARGET_FREQUENCIES:
+            indicator = self.get_indicator(frequency=frequency)
+            data = self.add_data(indicator)
+        program = self.get_reporting_program()
+        self.assertEqual(
+            program.metrics['results_evidence'], 25,
+            "one of each freq with 1 ev/3 results, 1 of each freq with 0 ev/1res"
+            " should count as 25% with evidence results, got {0}".format(
+                program.metrics['results_evidence']
+            )
+        )
+
     def test_percentages(self):
         for _ in range(4):
             indicator = self.get_indicator()
@@ -497,6 +561,7 @@ class TestProgramWithEvidenceQueries(ProgramMetricsBase):
             self.add_evidence(data)
         for expected_evidence, _ in [(80, 20), (67, 33), (57, 43), (50, 50), (44, 56)]:
             indicator = self.get_indicator()
+            _ = self.add_data(indicator)
             program = self.get_reporting_program()
             with_evidence = program.metrics['results_evidence']
             self.assertEqual(
