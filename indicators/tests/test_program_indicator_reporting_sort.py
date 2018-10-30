@@ -122,22 +122,22 @@ class ReportingIndicatorBase(test.TestCase):
         Indicator.SEMI_ANNUAL: lambda x: datetime.date(
             x.year + 1 if x.month > 6 else x.year,
             x.month - 6 if x.month > 6 else x.month + 6,
-            x.day
+            1
         ) - datetime.timedelta(days=1),
         Indicator.TRI_ANNUAL: lambda x: datetime.date(
             x.year + 1 if x.month > 8 else x.year,
             x.month - 8 if x.month > 8 else x.month + 4,
-            x.day
+            1
         ) - datetime.timedelta(days=1),
         Indicator.QUARTERLY: lambda x: datetime.date(
             x.year + 1 if x.month > 9 else x.year,
             x.month - 9 if x.month > 9 else x.month + 3,
-            x.day
+            1
         ) - datetime.timedelta(days=1),
         Indicator.MONTHLY: lambda x: datetime.date(
             x.year + 1 if x.month == 12 else x.year,
             1 if x.month == 12 else x.month + 1,
-            x.day
+            1
         ) - datetime.timedelta(days=1)
     }
 
@@ -157,6 +157,7 @@ class ReportingIndicatorBase(test.TestCase):
             self.indicator.delete()
         if self.program is not None:
             self.program.delete()
+        settings.DEBUG = False
 
     def load_base_indicator(self):
         """loads a bare indicator in this program"""
@@ -238,8 +239,8 @@ class ReportingIndicatorBase(test.TestCase):
 
     def get_closed_program(self):
         self.program = w_factories.ProgramFactory(
-            reporting_period_start=datetime.date.today() - datetime.timedelta(days=366),
-            reporting_period_end=datetime.date.today()-datetime.timedelta(days=2)
+            reporting_period_start=datetime.date(2016, 1, 1),
+            reporting_period_end=datetime.date(2016, 12, 31)
         )
 
 class TestSingleNonReportingIndicator(ReportingIndicatorBase):
