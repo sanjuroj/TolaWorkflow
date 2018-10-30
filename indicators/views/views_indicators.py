@@ -1442,6 +1442,7 @@ def dictfetchall(cursor):
 class ProgramPage(ListView):
     model = Indicator
     template_name = 'indicators/program_page.html'
+    metrics = False
 
     def get(self, request, *args, **kwargs):
         countries = request.user.tola_user.countries.all()
@@ -1454,6 +1455,12 @@ class ProgramPage(ListView):
         #was this for eventually showing more than one program?  Because pk already limits to 1:
         #program = ProgramWithMetrics.with_metrics.get(pk=program_id, funding_status="Funded", country__in=countries)
         program = ProgramWithMetrics.with_metrics.get(pk=program_id)
+        if self.metrics:
+            json_context = {
+                'metrics': program.metrics,
+                'scope_percents': program.scope_percents
+            }
+            return JsonResponse(json_context)
         indicators = program.get_annotated_indicators()
 
         if int(self.kwargs['type_id']):

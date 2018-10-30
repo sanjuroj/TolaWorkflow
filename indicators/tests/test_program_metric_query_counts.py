@@ -15,6 +15,7 @@ program page call with program id:
             - has metrics with correct values
 """
 import datetime
+import json
 import unittest
 from factories import (
     indicators_models as i_factories,
@@ -172,6 +173,31 @@ class QueryTestsMixin:
                 self.assertEqual(program_response_metrics[key], expected_value,
                                  "expected {0} for {1}, got {2}".format(
                                      expected_value, key, program_response_metrics[key]))
+
+    def test_program_ajax_update_returns_correct_program_data(self):
+        self.get_program_setup()
+        client = test.Client()
+        user = w_factories.TolaUserFactory()
+        user.countries.add(self.country)
+        client.force_login(user.user)
+        for expected in self.expected_cases:
+            program = Program.objects.filter(name=expected['name']).first()
+            response = client.get('/program/{program_id}/metrics/'.format(program_id=program.id),
+                                  HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            self.assertEqual(response.status_code, 200)
+            json_metrics = json.loads(response.content)['metrics']
+            for key in ['targets_defined', 'reported_results', 'results_evidence', 'indicator_count']:
+                self.assertIn(
+                    key, json_metrics.keys(), "json metrics should have {0}, got {1}".format(
+                        key, json_metrics.keys()))
+                expected_value = expected[key]
+                if expected[key] != 0 and key != 'indicator_count' and key != 'results_evidence':
+                    expected_value = int(round(float(expected[key])*100/expected['indicator_count']))
+                elif key == 'results_evidence' and expected[key] != 0:
+                    expected_value = int(round(float(expected[key])*100/expected['reported_results']))
+                self.assertEqual(json_metrics[key], expected_value,
+                                 "expected {0} for {1}, got {2}".format(
+                                     expected_value, key, json_metrics[key]))
 
 class TestOneBareProgram(ProgramWithMetricsQueryCountsBase, QueryTestsMixin):
     skip_all = False
