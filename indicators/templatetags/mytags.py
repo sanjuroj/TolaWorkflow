@@ -116,7 +116,6 @@ def js(obj):
 
 @register.inclusion_tag('indicators/tags/gauge-tank.html')
 def gauge_tank(filled, filled_label, unfilled_label, title, id_tag):
-    filled = 36
     tick_count = 10
     low_ticks = float(tick_count*(100-filled))/100
     floor = math.floor(low_ticks)
