@@ -807,7 +807,6 @@ class ProgramWithMetrics(wf_models.Program):
                 'results_evidence': 0,
                 'indicator_count': 0
             }
-        make_percent = lambda x: int(round(float(x*100)/denominator))
         total_results = self.reported_results_sum
         percent_with_evidence = 0
         if total_results and total_results > 0 and self.results_evidence_count and self.results_evidence_count > 0:

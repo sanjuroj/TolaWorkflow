@@ -19,11 +19,11 @@
 
             {% gauge_band program.scope_percents %}
 
-            {% gauge_tank program.metrics.targets_defined program.metrics.indicator_count "have targets defined" "have no targets" "Indicators with targets" "targets_defined" %}
+            {% gauge_tank "targets_defined" "have targets defined" "have no targets" "Indicators with targets" %}
 
-            {% gauge_tank program.metrics.reported_results program.metrics.indicator_count "have reported results" "have no results" "Indicators with results" "reported_results" %}
+            {% gauge_tank "reported_results" "have reported results" "have no results" "Indicators with results" %}
 
-            {% gauge_tank program.metrics.results_evidence program.metrics.indicator_count "have evidence" "are missing evidence" "Results with evidence" "results_evidence" %}
+            {% gauge_tank "results_evidence" "have evidence" "are missing evidence" "Results with evidence" %}
 
         </aside>
     {% endif %}

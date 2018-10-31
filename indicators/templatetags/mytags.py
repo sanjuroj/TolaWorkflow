@@ -114,13 +114,16 @@ def js(obj):
     return mark_safe(jsonify(obj))
 
 
-@register.inclusion_tag('indicators/tags/gauge-tank.html')
-def gauge_tank(filled_value, indicator_count, filled_label, unfilled_label, title, id_tag):
+@register.inclusion_tag('indicators/tags/gauge-tank.html', takes_context=True)
+def gauge_tank(context, metric, filled_label, unfilled_label, title):
+    program = context['program']
+    filled_value = program.metrics[metric]
+    indicator_count = program.metrics['indicator_count']
     filled_percent = int(round(float(filled_value*100)/indicator_count))
     tick_count = 10
     return {
         'title': title,
-        'id_tag': id_tag,
+        'id_tag': metric,
         'filled_value': filled_value,
         'unfilled_value': indicator_count - filled_value,
         'indicator_count': indicator_count,
