@@ -182,10 +182,11 @@ class QueryTestsMixin:
         client.force_login(user.user)
         for expected in self.expected_cases:
             program = Program.objects.filter(name=expected['name']).first()
-            response = client.get('/program/{program_id}/metrics/'.format(program_id=program.id),
-                                  HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-            self.assertEqual(response.status_code, 200)
-            json_metrics = json.loads(response.content)['metrics']
+            with self.assertNumQueries(5):
+                response = client.get('/program/{program_id}/metrics/'.format(program_id=program.id),
+                                      HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+                self.assertEqual(response.status_code, 200)
+                json_metrics = json.loads(response.content)['metrics']
             for key in ['targets_defined', 'reported_results', 'results_evidence', 'indicator_count']:
                 self.assertIn(
                     key, json_metrics.keys(), "json metrics should have {0}, got {1}".format(

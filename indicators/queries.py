@@ -126,7 +126,8 @@ class IPTTIndicatorManager(models.Manager):
     def get_reporting_annotations(self):
         reporting = models.Case(
             models.When(
-                models.Q(target_frequency=Indicator.LOP) & models.Q(program__reporting_period_end__gt=models.functions.Now()),
+                models.Q(target_frequency=Indicator.LOP) &
+                models.Q(program__reporting_period_end__gt=models.functions.Now()),
                 then=models.Value(False)
             ),
             models.When(
