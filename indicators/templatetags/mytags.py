@@ -117,20 +117,6 @@ def js(obj):
 @register.inclusion_tag('indicators/tags/gauge-tank.html')
 def gauge_tank(filled, filled_label, unfilled_label, title, id_tag):
     tick_count = 10
-    low_ticks = float(tick_count*(100-filled))/100
-    floor = math.floor(low_ticks)
-    if low_ticks == floor:
-        low_ticks = floor
-        high_ticks = floor + 1
-    elif low_ticks - floor > .7:
-        low_ticks = math.ceil(low_ticks)
-        high_ticks = low_ticks + 1
-    elif low_ticks - floor > .3:
-        low_ticks = math.floor(low_ticks)
-        high_ticks = low_ticks + 2
-    else:
-        low_ticks = math.floor(low_ticks)
-        high_ticks = low_ticks + 1
     return {
         'title': title,
         'id_tag': id_tag,
@@ -139,8 +125,6 @@ def gauge_tank(filled, filled_label, unfilled_label, title, id_tag):
         'filled_label': filled_label,
         'unfilled_label': unfilled_label,
         'ticks': list(range(1,tick_count+1)),
-        'low_ticks': low_ticks,
-        'high_ticks': high_ticks,
         'margin': int(Indicator.ONSCOPE_MARGIN * 100),
     }
 

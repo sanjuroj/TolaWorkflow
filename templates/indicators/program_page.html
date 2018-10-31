@@ -112,6 +112,7 @@
                 });
             }
         });
+        {# TODO: the following function & .filter-trigger listener belong in a component attached to gauges #}
         function hide_row_factory(positive, target) {
             return function() {
                 var this_show;
@@ -132,17 +133,17 @@
             }
         }
         $(document).ready(function() {
-           $('.graphic__tick').on('click', function(e) {
-            e.preventDefault();
-            var target, positive;
-            target = $(this).data('target');
-            positive = $(this).data('target-positive');
-            if (positive === 0) {
-                return;
-            }
-            callback = hide_row_factory(positive, target);
-            $('.indicators-list__indicator-header').each(callback);
-           });
+            $('.filter-trigger').on('click', function(e) { {# this selector is in the gauge templatetags #}
+                e.preventDefault();
+                var target, positive;
+                target = $(this).data('target');
+                positive = $(this).data('target-positive');
+                if (positive === 0) {
+                    return;
+                }
+                callback = hide_row_factory(positive, target);
+                $('.indicators-list__indicator-header').each(callback);
+            });
         });
     </script>
 {% endblock %}

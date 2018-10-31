@@ -5,22 +5,25 @@
     <div class="gauge__overview">
         <div class="gauge__graphic gauge__graphic--tank">
             <div class="graphic__tick-marks">
-                <!-- TOOD: make gauge graphic elements clickable -->
                 {% for i in ticks %}
-                <div class="graphic__tick" data-target="{{ id_tag }}"
-                     data-target-positive="{% if i <= low_ticks %}-1{% elif i >= high_ticks %}1{% else %}0{% endif %}"
-                     data-ticks="{{ i }}"></div>
+                <div class="graphic__tick"></div>
                 {% endfor %}
             </div>
             <div class="graphic__tank--filled" style="flex-basis: {{ filled }}%"></div>
         </div>
         <div class="gauge__labels">
             <div class="gauge__label">
-                <a href="#" class="text-muted">{{ unfilled }}% {% trans unfilled_label %}</a>
+                <a href="#" class="text-muted filter-trigger"
+                    data-target="{{ id_tag }}"
+                    data-target-positive="-1"
+                    >{{ unfilled }}% {% trans unfilled_label %}</a>
                 <!-- TOOLTIP -->
             </div>
             <div class="gauge__label">
-                <a href="#" class="gauge__value">{{ filled }}% {% trans filled_label %}</a>
+                <a href="#" class="gauge__value filter-trigger"
+                    data-target="{{ id_tag }}"
+                    data-target-positive="1"
+                    >{{ filled }}% {% trans filled_label %}</a>
             </div>
         </div>
     </div>
