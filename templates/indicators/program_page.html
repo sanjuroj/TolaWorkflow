@@ -136,6 +136,7 @@
             $('.filter-trigger').on('click', function(e) { {# this selector is in the gauge templatetags #}
                 e.preventDefault();
                 var target, positive;
+                var highlighted_tab = $(this).parents('.gauge');
                 target = $(this).data('target');
                 positive = $(this).data('target-positive');
                 if (positive === 0) {
@@ -143,6 +144,8 @@
                 }
                 callback = hide_row_factory(positive, target);
                 $('.indicators-list__indicator-header').each(callback);
+                $('.gauge').removeClass('is-highlighted');
+                highlighted_tab.addClass('is-highlighted');
             });
         });
     </script>
