@@ -813,8 +813,8 @@ class ProgramWithMetrics(wf_models.Program):
         if total_results and total_results > 0 and self.results_evidence_count and self.results_evidence_count > 0:
             percent_with_evidence = int(round(float(self.results_evidence_count*100)/total_results))
         return {
-            'reported_results': make_percent(self.reported_results_count),
-            'targets_defined': make_percent(self.targets_defined_count),
+            'reported_results': self.reported_results_count,
+            'targets_defined': self.targets_defined_count,
             'results_evidence': percent_with_evidence,
             'indicator_count': denominator
         }

@@ -10,15 +10,15 @@
                 <div class="graphic__tick"></div>
                 {% endfor %}
             </div>
-            <div class="graphic__tank--unfilled filter-trigger" style="flex-basis: {{ unfilled }}%"
+            <div class="graphic__tank--unfilled filter-trigger" style="flex-basis: {{ unfilled_percent }}%"
                 data-target="{{ id_tag }}"
                 data-target-positive="-1"
-                data-list-title="{% blocktrans %}{{ unfilled }}% of indicators {{ unfilled_label }}{% endblocktrans %}"
+                data-list-title="{% blocktrans %}{{ unfilled_value }} indicators {{ unfilled_label }}{% endblocktrans %}"
                 ></div>
-            <div class="graphic__tank--filled filter-trigger" style="flex-basis: {{ filled }}%"
+            <div class="graphic__tank--filled filter-trigger" style="flex-basis: {{ filled_percent }}%"
                 data-target="{{ id_tag }}"
                 data-target-positive="1"
-                data-list-title="{% blocktrans %}{{ filled }}% of indicators {{ filled_label }}{% endblocktrans %}"
+                data-list-title="{% blocktrans %}{{ filled_value }} indicators {{ filled_label }}{% endblocktrans %}"
                 ></div>
         </div>
         <div class="gauge__labels">
@@ -26,16 +26,16 @@
                 <a href="#" class="text-muted filter-trigger"
                     data-target="{{ id_tag }}"
                     data-target-positive="-1"
-                    data-list-title="{% blocktrans %}{{ unfilled }}% of indicators {{ unfilled_label }}{% endblocktrans %}"
-                    >{{ unfilled }}% {% trans unfilled_label %}</a>
+                    data-list-title="{% blocktrans %}{{ unfilled_value }} indicators {{ unfilled_label }}{% endblocktrans %}"
+                    >{{ unfilled_percent }}% {% trans unfilled_label %}</a>
                 <!-- TOOLTIP -->
             </div>
             <div class="gauge__label">
                 <a href="#" class="gauge__value filter-trigger"
                     data-target="{{ id_tag }}"
                     data-target-positive="1"
-                    data-list-title="{% blocktrans %}{{ filled }}% of indicators {{ filled_label }}{% endblocktrans %}"
-                    >{{ filled }}% {% trans filled_label %}</a>
+                    data-list-title="{% blocktrans %}{{ filled_value }} indicators {{ filled_label }}{% endblocktrans %}"
+                    >{{ filled_percent }}% {% trans filled_label %}</a>
             </div>
         </div>
     </div>

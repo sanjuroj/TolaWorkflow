@@ -115,13 +115,17 @@ def js(obj):
 
 
 @register.inclusion_tag('indicators/tags/gauge-tank.html')
-def gauge_tank(filled, filled_label, unfilled_label, title, id_tag):
+def gauge_tank(filled_value, indicator_count, filled_label, unfilled_label, title, id_tag):
+    filled_percent = int(round(float(filled_value*100)/indicator_count))
     tick_count = 10
     return {
         'title': title,
         'id_tag': id_tag,
-        'filled': filled,
-        'unfilled': 100 - filled,
+        'filled_value': filled_value,
+        'unfilled_value': indicator_count - filled_value,
+        'indicator_count': indicator_count,
+        'filled_percent': filled_percent,
+        'unfilled_percent': 100 - filled_percent,
         'filled_label': filled_label,
         'unfilled_label': unfilled_label,
         'ticks': list(range(1,tick_count+1)),
