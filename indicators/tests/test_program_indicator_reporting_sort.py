@@ -157,6 +157,7 @@ class ReportingIndicatorBase(test.TestCase):
             self.indicator.delete()
         if self.program is not None:
             self.program.delete()
+        settings.DEBUG = False
 
     def load_base_indicator(self):
         """loads a bare indicator in this program"""
