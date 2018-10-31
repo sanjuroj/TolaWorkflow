@@ -79,6 +79,12 @@
             width: '500',
             placeholder: '{% trans "Go to program or country…" %}',
             matcher: modelMatcher,
+            // built-in translation files can be used instead if re-use becomes important
+            language: {
+                noResults: function () {
+                    return '{% trans "No results found" %}';
+                }
+            },
         }).on('select2:select', function (e) {
             // Navigate to program/country page
             let url = e.params.data.id;
