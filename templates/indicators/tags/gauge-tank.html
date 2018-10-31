@@ -9,7 +9,14 @@
                 <div class="graphic__tick"></div>
                 {% endfor %}
             </div>
-            <div class="graphic__tank--filled" style="flex-basis: {{ filled }}%"></div>
+            <div class="graphic__tank--unfilled filter-trigger" style="flex-basis: {{ unfilled }}%"
+                data-target="{{ id_tag }}"
+                data-target-positive="-1"
+                ></div>
+            <div class="graphic__tank--filled filter-trigger" style="flex-basis: {{ filled }}%"
+                data-target="{{ id_tag }}"
+                data-target-positive="1"
+                ></div>
         </div>
         <div class="gauge__labels">
             <div class="gauge__label">

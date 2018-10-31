@@ -69,6 +69,7 @@
     justify-content: space-between;
     align-items: stretch;
     opacity: 0.5;
+    pointer-events: none; // these should be "transparent" to the event stack
     position: absolute;
     top: 0;
     right: 0;
@@ -81,6 +82,9 @@
     & + & {
         border-top: 0.5px solid $white;
     }
+}
+.graphic__tank--unfilled {
+    background-color: transparent;
 }
 .graphic__tank--filled {
     background-color: $green-550;
@@ -109,6 +113,10 @@
 
 // filter triggers
 // TODO: should be mroe generic?
-.filter-trigger {}
+.filter-trigger {
+    &:hover {
+        cursor: pointer;
+    }
+}
 
 

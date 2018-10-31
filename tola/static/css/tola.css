@@ -6323,6 +6323,7 @@ body > .container {
   justify-content: space-between;
   align-items: stretch;
   opacity: 0.5;
+  pointer-events: none;
   position: absolute;
   top: 0;
   right: 0;
@@ -6334,6 +6335,9 @@ body > .container {
   flex-shrink: 0; }
   .graphic__tick + .graphic__tick {
     border-top: 0.5px solid #fff; }
+
+.graphic__tank--unfilled {
+  background-color: transparent; }
 
 .graphic__tank--filled {
   background-color: #79AD00; }
@@ -6355,6 +6359,9 @@ body > .container {
   color: #000;
   font-size: 0.875rem;
   margin: 0; }
+
+.filter-trigger:hover {
+  cursor: pointer; }
 
 .btn-white, .btn-white:hover, .btn-white:active, .btn-white:focus {
   color: #fff; }
