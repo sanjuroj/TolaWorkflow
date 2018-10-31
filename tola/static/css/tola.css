@@ -6342,6 +6342,10 @@ body > .container {
 .graphic__tank--filled {
   background-color: #79AD00; }
 
+.gauge__value {
+  color: #506e00;
+  font-weight: bold; }
+
 .gauge__value--above strong,
 .gauge__value--below strong {
   background: #fff6cc; }
@@ -6356,16 +6360,15 @@ body > .container {
   font-size: 0.875rem;
   margin: 0; }
 
-.gauge__label--value {
-  color: #506e00;
-  font-weight: bold; }
-
 .gauge__cta {
   font-size: 0.875rem;
   margin-top: 15px; }
 
 .filter-trigger:hover {
   cursor: pointer; }
+
+.is-display-none {
+  display: none; }
 
 .btn-white, .btn-white:hover, .btn-white:active, .btn-white:focus {
   color: #fff; }

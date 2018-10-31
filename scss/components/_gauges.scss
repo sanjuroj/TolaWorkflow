@@ -89,6 +89,10 @@
 .graphic__tank--filled {
     background-color: $green-550;
 }
+.gauge__value {
+    color: $green-700;
+    font-weight: bold;
+}
 .gauge__value--above,
 .gauge__value--below {
     strong {
@@ -104,10 +108,6 @@
     margin: 0;
     //text-transform: uppercase;
 }
-.gauge__label--value {
-    color: $green-700;
-    font-weight: bold;
-}
 .gauge__cta {
     font-size: $font-size-sm;
     margin-top: $grid-gutter-width/2;
@@ -121,4 +121,9 @@
     }
 }
 
+// State
+// TODO: more generic
+.is-display-none {
+    display: none;
+}
 

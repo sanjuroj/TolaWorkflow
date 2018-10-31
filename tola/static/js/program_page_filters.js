@@ -18,6 +18,7 @@ function hide_row_factory(positive, target) {
     }
 }
 $(document).ready(function() {
+    var default_list_title = $('#indicators-list-title').text();
     $('.filter-trigger').on('click', function(e) {
         e.preventDefault();
         var target, positive, highlighted_tab, list_title;
@@ -32,6 +33,13 @@ $(document).ready(function() {
         $('.indicators-list__indicator-header').each(callback);
         $('.gauge').removeClass('is-highlighted');
         highlighted_tab.addClass('is-highlighted');
-        $('.indicators-list__header > h3').text(list_title);
+        $('#indicators-list-title').text(list_title);
+        $('#show-all-indicators').removeClass('is-display-none');
+    });
+    $('#show-all-indicators').on('click', function(e) {
+        $('.gauge').removeClass('is-highlighted');
+        $('#show-all-indicators').addClass('is-display-none');
+        $('.indicators-list__indicator-header').show();
+        $('#indicators-list-title').text(default_list_title);
     });
 });

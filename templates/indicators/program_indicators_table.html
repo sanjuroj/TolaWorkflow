@@ -69,7 +69,9 @@ $(document).ready(function() {
         <td class="text-right" id="id_indicator_baseline_{{ indicator.id }}">{{ indicator.baseline }}</td>
         <td class="text-right" id="id_indicator_target_{{ indicator.id }}">{{ indicator.lop_target }}</td>
     </tr>
-    <tr class="indicators-list__indicator-body hiddenRow">{# hiddenRow is used by JS? #}
+    <tr class="indicators-list__indicator-body hiddenRow"
+        {# TODO: indicator bodies are not showing/hiding appropriately with filters #}
+        >{# hiddenRow is used by JS? #}
         <td colspan="6" class="p-0 bg-blue border-0">
             <div id="hidden-indicator-{{ indicator.id }}" class="collapse">
                 <!-- Table -->

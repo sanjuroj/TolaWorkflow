@@ -68,7 +68,7 @@
     </div>
     <div id="div-id-indicator-list" class="indicators-list program-page__indicators">
         <div class="indicators-list__header">
-            <h3 class="no-bold">{% blocktrans %}{{ indicator_count }} indicators{% endblocktrans %}</h3>
+            <h3 class="no-bold"><span id="indicators-list-title">{% blocktrans %}{{ indicator_count }} indicators{% endblocktrans %} </span> <a href="#" id="show-all-indicators" class="is-display-none"><small>Show all</small></a></h3>
             <div>
                 <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
             </div>
