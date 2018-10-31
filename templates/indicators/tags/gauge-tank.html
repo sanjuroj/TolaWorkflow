@@ -13,10 +13,12 @@
             <div class="graphic__tank--unfilled filter-trigger" style="flex-basis: {{ unfilled }}%"
                 data-target="{{ id_tag }}"
                 data-target-positive="-1"
+                data-list-title="{% blocktrans %}{{ unfilled }}% of indicators {{ unfilled_label }}{% endblocktrans %}"
                 ></div>
             <div class="graphic__tank--filled filter-trigger" style="flex-basis: {{ filled }}%"
                 data-target="{{ id_tag }}"
                 data-target-positive="1"
+                data-list-title="{% blocktrans %}{{ filled }}% of indicators {{ filled_label }}{% endblocktrans %}"
                 ></div>
         </div>
         <div class="gauge__labels">
@@ -24,6 +26,7 @@
                 <a href="#" class="text-muted filter-trigger"
                     data-target="{{ id_tag }}"
                     data-target-positive="-1"
+                    data-list-title="{% blocktrans %}{{ unfilled }}% of indicators {{ unfilled_label }}{% endblocktrans %}"
                     >{{ unfilled }}% {% trans unfilled_label %}</a>
                 <!-- TOOLTIP -->
             </div>
@@ -31,6 +34,7 @@
                 <a href="#" class="gauge__value filter-trigger"
                     data-target="{{ id_tag }}"
                     data-target-positive="1"
+                    data-list-title="{% blocktrans %}{{ filled }}% of indicators {{ filled_label }}{% endblocktrans %}"
                     >{{ filled }}% {% trans filled_label %}</a>
             </div>
         </div>

@@ -20,9 +20,10 @@ function hide_row_factory(positive, target) {
 $(document).ready(function() {
     $('.filter-trigger').on('click', function(e) {
         e.preventDefault();
-        var target, positive;
-        var highlighted_tab = $(this).parents('.gauge');
+        var target, positive, highlighted_tab, list_title;
+        highlighted_tab = $(this).parents('.gauge');
         target = $(this).data('target');
+        list_title = $(this).data('list-title');
         positive = $(this).data('target-positive');
         if (positive === 0) {
             return;
@@ -31,5 +32,6 @@ $(document).ready(function() {
         $('.indicators-list__indicator-header').each(callback);
         $('.gauge').removeClass('is-highlighted');
         highlighted_tab.addClass('is-highlighted');
+        $('.indicators-list__header > h3').text(list_title);
     });
 });
