@@ -21,7 +21,7 @@ $(document).ready(function() {
     $('.filter-trigger').on('click', function(e) {
         e.preventDefault();
         var target, positive, highlighted_tab, list_title;
-        highlighted_tab = $(this).parents('.gauge');
+        highlighted_tab = $(this);
         target = $(this).data('target');
         list_title = $(this).data('list-title');
         positive = $(this).data('target-positive');

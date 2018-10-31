@@ -115,7 +115,7 @@ def js(obj):
 
 
 @register.inclusion_tag('indicators/tags/gauge-tank.html', takes_context=True)
-def gauge_tank(context, metric, filled_label, unfilled_label, title):
+def gauge_tank(context, metric, title, filled_label, unfilled_label, cta, filter_title):
     program = context['program']
     filled_value = program.metrics[metric]
     indicator_count = program.metrics['indicator_count']
@@ -133,6 +133,8 @@ def gauge_tank(context, metric, filled_label, unfilled_label, title):
         'unfilled_label': unfilled_label,
         'ticks': list(range(1,tick_count+1)),
         'margin': int(Indicator.ONSCOPE_MARGIN * 100),
+        'cta': cta,
+        'filter_title': filter_title,
     }
 
 

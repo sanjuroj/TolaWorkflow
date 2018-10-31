@@ -6342,10 +6342,6 @@ body > .container {
 .graphic__tank--filled {
   background-color: #79AD00; }
 
-.gauge__value, .gauge__value:hover {
-  color: #506e00;
-  font-weight: bold; }
-
 .gauge__value--above strong,
 .gauge__value--below strong {
   background: #fff6cc; }
@@ -6359,6 +6355,14 @@ body > .container {
   color: #000;
   font-size: 0.875rem;
   margin: 0; }
+
+.gauge__label--value {
+  color: #506e00;
+  font-weight: bold; }
+
+.gauge__cta {
+  font-size: 0.875rem;
+  margin-top: 15px; }
 
 .filter-trigger:hover {
   cursor: pointer; }
