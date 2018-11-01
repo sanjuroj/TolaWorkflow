@@ -118,8 +118,9 @@ def js(obj):
 def gauge_tank(context, metric, title, filled_label, unfilled_label, cta, filter_title):
     program = context['program']
     filled_value = program.metrics[metric]
+    results_count = program.metrics['results_count']
     indicator_count = program.metrics['indicator_count']
-    if (filled_value == 'results_evidence_count'):
+    if (filled_value == 'results_evidence'):
         denominator = results_count
     else:
         denominator = indicator_count
@@ -131,12 +132,12 @@ def gauge_tank(context, metric, title, filled_label, unfilled_label, cta, filter
         'filled_value': filled_value,
         'unfilled_value': indicator_count - filled_value,
         'indicator_count': indicator_count,
+        'results_count': results_count,
         'filled_percent': filled_percent,
         'unfilled_percent': 100 - filled_percent,
         'filled_label': filled_label,
         'unfilled_label': unfilled_label,
         'ticks': list(range(1,tick_count+1)),
-        'margin': int(Indicator.ONSCOPE_MARGIN * 100),
         'cta': cta,
         'filter_title': filter_title,
     }

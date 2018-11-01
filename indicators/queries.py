@@ -805,14 +805,14 @@ class ProgramWithMetrics(wf_models.Program):
                 'reported_results': 0,
                 'targets_defined': 0,
                 'indicator_count': 0,
-                'results_evidence_count': 0,
+                'results_evidence': 0,
                 'results_count': 0,
             }
         return {
             'reported_results': self.reported_results_count,
             'targets_defined': self.targets_defined_count,
             'indicator_count': self.indicator_count,
-            'results_evidence_count': self.results_evidence_count,
+            'results_evidence': self.results_evidence_count,
             'results_count': self.reported_results_sum,
         }
 
