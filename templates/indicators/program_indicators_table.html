@@ -31,8 +31,8 @@ $(document).ready(function() {
         <th class="text-right" id="id_indicator_target_col_header">{% trans "Target" %}</th>
     </tr>
     {% for indicator in indicators %} {# each indicator is in TWO rows #}
-    <tr class="indicators-list__indicator-header {% if indicator.just_created %}is-highlighted{% endif  %}" id = "id_indicator_{{ indicator.id }}"
-        data-reporting="{% if indicator.reporting %}1{% else %}-1{% endif %}" {# whether indicator progress towards targets is reported (min. one target period complete, one result reported) %}
+    <tr class="indicators-list__row indicators-list__indicator-header {% if indicator.just_created %}is-highlighted{% endif  %}" id = "id_indicator_{{ indicator.id }}"
+        data-reporting="{% if indicator.reporting %}1{% else %}-1{% endif %}" {# whether indicator progress towards targets is reported (min. one target period complete, one result reported) #}
         data-defined-targets="{% if indicator.defined_targets > 0 %}1{% else %}-1{% endif %}" {# whether all targets are defined for this indicator #}
         data-reported-results="{% if indicator.reported_results > 0 %}1{% else %}-1{% endif %}" {# whether any collecteddata is reported for this indicator #}
         data-has-evidence="{% if indicator.reported_results > 0 %}{% if indicator.evidence_count == indicator.reported_results %}1{% else %}-1{% endif %}{% else %}0{% endif %}"
@@ -71,9 +71,13 @@ $(document).ready(function() {
         <td class="text-right" id="id_indicator_baseline_{{ indicator.id }}">{{ indicator.baseline }}</td>
         <td class="text-right" id="id_indicator_target_{{ indicator.id }}">{{ indicator.lop_target }}</td>
     </tr>
-    <tr class="indicators-list__indicator-body hiddenRow"
-        {# TODO: indicator bodies are not showing/hiding appropriately with filters #}
-        >{# hiddenRow is used by JS? #}
+    <tr class="indicators-list__row indicators-list__indicator-body hiddenRow"
+        data-reporting="{% if indicator.reporting %}1{% else %}-1{% endif %}" {# whether indicator progress towards targets is reported (min. one target period complete, one result reported) #}
+        data-defined-targets="{% if indicator.defined_targets > 0 %}1{% else %}-1{% endif %}" {# whether all targets are defined for this indicator #}
+        data-reported-results="{% if indicator.reported_results > 0 %}1{% else %}-1{% endif %}" {# whether any collecteddata is reported for this indicator #}
+        data-has-evidence="{% if indicator.reported_results > 0 %}{% if indicator.evidence_count == indicator.reported_results %}1{% else %}-1{% endif %}{% else %}0{% endif %}"
+        {# data-has-evidence: 1: indicator has results and all results have evidence, -1: indicator has results and at least one is missing evidence, 0: indicator has no results #}
+        data-over-under="{{ indicator.over_under }}"> {# indicator progress towards targets (1: over, 0: within 15% of target, -1: under, "None": non reporting #}
         <td colspan="6" class="p-0 bg-blue border-0">
             <div id="hidden-indicator-{{ indicator.id }}" class="collapse">
                 <!-- Table -->

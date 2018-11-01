@@ -800,24 +800,20 @@ class ProgramWithMetrics(wf_models.Program):
 
     @property
     def metrics(self):
-        denominator = self.indicator_count
-        if denominator == 0:
+        if self.indicator_count == 0:
             return {
                 'reported_results': 0,
                 'targets_defined': 0,
+                'indicator_count': 0,
                 'results_evidence': 0,
-                'indicator_count': 0
+                'results_count': 0,
             }
-        #make_percent = lambda x: int(round(float(x)*100/denominator))
-        total_results = self.reported_results_sum
-        percent_with_evidence = 0
-        if total_results and total_results > 0 and self.results_evidence_count and self.results_evidence_count > 0:
-            percent_with_evidence = int(round(float(self.results_evidence_count*100)/total_results))
         return {
             'reported_results': self.reported_results_count,
             'targets_defined': self.targets_defined_count,
-            'results_evidence': percent_with_evidence,
-            'indicator_count': denominator
+            'indicator_count': self.indicator_count,
+            'results_evidence': self.results_evidence_count,
+            'results_count': self.reported_results_sum,
         }
 
     @property

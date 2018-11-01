@@ -30,7 +30,7 @@ $(document).ready(function() {
             return;
         }
         callback = hide_row_factory(positive, target);
-        $('.indicators-list__indicator-header').each(callback);
+        $('.indicators-list__row').each(callback);
         $('.gauge').removeClass('is-highlighted');
         highlighted_tab.addClass('is-highlighted');
         $('#indicators-list-title').text(list_title);
@@ -39,7 +39,7 @@ $(document).ready(function() {
     $('#show-all-indicators').on('click', function(e) {
         $('.gauge').removeClass('is-highlighted');
         $('#show-all-indicators').addClass('is-display-none');
-        $('.indicators-list__indicator-header').show();
+        $('.indicators-list__row').show();
         $('#indicators-list-title').text(default_list_title);
     });
 });
