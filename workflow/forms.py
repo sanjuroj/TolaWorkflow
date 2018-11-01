@@ -1447,7 +1447,6 @@ class DocumentationForm(forms.ModelForm):
         #override the program queryset to use request.user for country
         countries = getCountry(self.request.user)
         self.fields['name'].required = True
-        self.fields['url'].widget = URLInput()
         self.fields['url'].required = True
         self.fields['project'].queryset = ProjectAgreement.objects.filter(program__country__in=countries)
         self.fields['program'].queryset = Program.active_programs.filter(country__in=countries)
