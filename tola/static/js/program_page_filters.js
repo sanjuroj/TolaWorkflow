@@ -8,7 +8,7 @@ function hide_row_factory(positive, target) {
         } else if (target == "targets_defined") {
             this_show = $(this).data('defined-targets') * positive;
         }
-        if (this_show == -1) {
+        if (this_show <= 0) {
             $(this).hide();
             $(this).next().hide();
         } else  {
