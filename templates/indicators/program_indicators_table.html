@@ -34,7 +34,7 @@ $(document).ready(function() {
     <tr class="indicators-list__indicator-header {% if indicator.just_created %}is-highlighted{% endif  %}" id = "id_indicator_{{ indicator.id }}"
         data-reporting="{{ indicator.reporting }}" data-defined-targets="{% if indicator.defined_targets > 0 %}1{% else %}-1{% endif %}"
         data-reported-results="{% if indicator.reported_results > 0 %}1{% else %}-1{% endif %}"
-        data-has-evidence="{% if indicator.evidence_count > 0 and indicator.evidence_count == indicator.reported_results %}1{% elif indicator.reported_results_count == 0 %}0{% else %}-1{% endif %}"
+        data-has-evidence="{% if indicator.evidence_count > 0 and indicator.evidence_count == indicator.reported_results %}1{% else %}-1{% endif %}"
         data-over-under="{{ indicator.over_under }}">
         <td id="id_indicator_name_{{ indicator.id }}">
             <a
