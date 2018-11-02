@@ -104,8 +104,10 @@
         }
 
 
-        function isValidUrl(url){
-            if(/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url)) {
+        function isValidPath(url){
+            isURL = /^(http|https|ftp):\/\/[d-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url);
+            isFile = /((^[D-Z]:(\/|\\\\?))|(^\/))/.test(url);
+            if (isURL | isFile){
                 return true;
             }
             return false;
@@ -148,13 +150,15 @@
                 $(`#validation_${urlFieldId}`).text('{% trans "Please complete this field."|escapejs %}');
                 return false;
             }
-            if (isValidUrl(urlField.val()) == false) {
-                urlField.addClass('is-invalid');
-                $(`#validation_${urlFieldId}`).text('{% trans "Please enter a valid URL."|escapejs %}');
-                return false;
+
+            // Still allows you to submit things that don't pass this test, but it give you a warning.
+            if (isValidPath(urlField.val())) {
+                $(`#validation_${urlFieldId}`).text("");
+            }
+            else {
+                $(`#validation_${urlFieldId}`).text('{% trans "Warning: The value you entered may not be a valid URL or network file path."|escapejs %}');
             }
             urlField.removeClass('is-invalid');
-            $(`#validation_${urlFieldId}`).text("");
             return true;
         }
 
