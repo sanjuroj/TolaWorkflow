@@ -12,9 +12,9 @@ from indicators.models import (
 from workflow import models as wf_models
 from django.db import models
 from django.db.models.functions import Concat
-from django.utils.functional import cached_property
+# from django.utils.functional import cached_property
 
-#pylint disable=W0223
+# pylint disable=W0223
 class Round(models.Func):
     function = 'ROUND'
     template = '%(function)s(%(expressions)s, 0)'
@@ -29,7 +29,7 @@ class IPTTIndicatorQuerySet(models.QuerySet):
 class IPTTIndicatorManager(models.Manager):
     """this is the general manager for all IPTT (annotated) indicators - generates totals over LOP"""
 
-    def get_lop_target_annotations(self):
+    def get_lop_annotations(self):
         """generates annotations for LOP target and actual data
 
         takes into account cumulative/noncumulative and number/percent"""
@@ -117,11 +117,11 @@ class IPTTIndicatorManager(models.Manager):
             'lop_actual_sum': lop_actual_sum,
         }
 
-    def get_labeling_annotations(self):
+    def add_labels(self, qs):
         most_recent_level = Level.objects.filter(indicator__id=models.OuterRef('pk')).order_by('-id')
-        return {
-            'level_name': models.Subquery(most_recent_level.values('name')[:1])
-        }
+        return qs.annotate(
+            level_name=models.Subquery(most_recent_level.values('name')[:1])
+        )
 
     def get_reporting_annotations(self):
         reporting = models.Case(
@@ -144,16 +144,9 @@ class IPTTIndicatorManager(models.Manager):
         return {
             'reporting': reporting
         }
-
-    def get_queryset(self):
-        annotations = self.get_labeling_annotations()
-        annotations.update(self.get_lop_target_annotations())
-        reporting_annotations = self.get_reporting_annotations()
-        return IPTTIndicatorQuerySet(self.model, using=self._db).annotate(
-            **annotations
-        ).annotate(
-            **reporting_annotations
-        ).annotate(
+    
+    def add_scope_annotations(self, qs):
+        return qs.annotate(
             lop_met_real=models.Case(
                 models.When(
                     models.Q(lop_target_sum__isnull=True) |
@@ -194,43 +187,32 @@ class IPTTIndicatorManager(models.Manager):
             )
         )
 
+    def get_queryset(self):
+        return self._get_annotated_queryset()
+
+    def _get_annotated_queryset(self, label=False, lop=False, report=False, scope=False):
+        qs = IPTTIndicatorQuerySet(self.model, using=self._db)
+        # add labels such as "level:"
+        if label:
+            qs = self.add_labels(qs)
+        if lop:
+            # add lop annotations (target_sum and actual_sum):
+            lop_annotations = self.get_lop_annotations()
+            qs = qs.annotate(**lop_annotations)
+        if report:
+            # add reporting annotations (whether this indicator should be counted for on-target reporting)
+            reporting_annotations = self.get_reporting_annotations()
+            qs = qs.annotate(**reporting_annotations)
+        if report and scope:
+            # add over_under calculation:
+            qs = self.add_scope_annotations(qs)
+        return qs
+
 class NoTargetsIndicatorManager(IPTTIndicatorManager):
 
-    def periods(self, periods):
-        """annotate a query with actual data sums for a set of time periods"""
-        period_annotations = {}
-        for c, period in enumerate(periods):
-            date_range = "{0}-{1}".format(
-                period['start_date'].strftime('%Y-%m-%d'),
-                period['end_date'].strftime('%Y-%m-%d')
-            )
-            period_annotations[date_range] = models.Case(
-                models.When(
-                    unit_of_measure_type=Indicator.PERCENTAGE,
-                    then=models.Subquery(
-                        CollectedData.objects.filter(
-                            indicator_id=models.OuterRef('pk'),
-                            date_collected__lte=period['end_date']
-                        ).order_by('-date_collected').values('achieved')[:1],
-                        output_field=models.FloatField()
-                    )),
-                default=models.Subquery(
-                    CollectedData.objects.filter(
-                        indicator_id=models.OuterRef('pk'),
-                        date_collected__lte=period['end_date']
-                    ).filter(
-                        models.Q(date_collected__gte=period['start_date']) |
-                        models.Q(indicator__is_cumulative=True)
-                    ).order_by().values('indicator_id').annotate(
-                        total=models.Sum('achieved')).values('total'),
-                    output_field=models.FloatField())
-            )
-            period_annotations["period_{0}".format(c)] = models.Value(
-                date_range, output_field=models.CharField())
-        return self.get_queryset().annotate(**period_annotations)
-
     def get_queryset(self):
-        qs = super(NoTargetsIndicatorManager, self).get_queryset()
+        # pylint: disable=E1124
+        qs = self._get_annotated_queryset(self, label=True, lop=True)
         return qs
 
 
@@ -335,13 +317,59 @@ class WithTargetsIndicatorManager(IPTTIndicatorManager):
         return prefetch
 
     def get_queryset(self):
-        qs = super(WithTargetsIndicatorManager, self).get_queryset().prefetch_related(
+        # pylint: disable=E1124
+        qs = self._get_annotated_queryset(self, label=True, lop=True).prefetch_related(
             self.get_target_prefetch()
         )
         return qs
 
 class WithMetricsIndicatorManager(IPTTIndicatorManager):
-    """queryset annotated to provide counts to the with_metrics Program call"""
+    """queryset annotated to provide counts to the with_metrics Program call
+
+    Attributes used by program page for filtering:
+        indicator.reporting: T/F whether it is counted towards scope
+        indicator.on_scope: 1/0/-1 (1=high, 0=on-target, -1=low)
+        indicator.all_targets_defined: T/F whether all targets are defined
+        indicator.has_reported_results: T/F indicator has SOME results reported
+        indicator.no_missing_evidence: T/F
+            # True = either has targets and results and all results have evidence, or has no results,
+            # False = has targets AND results AND at least one result is missing evidence
+        """
+
+    def with_filter_labels(self, program):
+        """Booleans for program page filters:
+
+            indicator.reporting and on_scope are part of IPTTIndicatorManager"""
+        qs = self.get_queryset()
+        defined_targets_filter = program.get_defined_targets_filter()
+        qs = qs.annotate(
+            all_targets_defined=models.Case(
+                models.When(
+                    defined_targets_filter,
+                    then=models.Value(True)
+                ),
+                default=models.Value(False),
+                output_field=models.BooleanField()
+            ),
+            has_reported_results=models.Case(
+                models.When(
+                    reported_results__gt=0,
+                    then=models.Value(True)
+                ),
+                default=models.Value(False),
+                output_field=models.BooleanField()
+            ),
+            no_missing_evidence=models.Case(
+                models.When(
+                    models.Q(reported_results__gt=0) &
+                    models.Q(evidence_count__lt=models.F('reported_results')),
+                    then=models.Value(False)
+                ),
+                default=models.Value(True),
+                output_field=models.BooleanField()
+            )
+        )
+        return qs
 
     def get_evidence_count(self, qs):
         """annotates qs with evidence_count= # of results that have evidence, and all_results_backed_up=Boolean"""
@@ -405,7 +433,7 @@ class WithMetricsIndicatorManager(IPTTIndicatorManager):
         return qs
 
     def get_queryset(self):
-        qs = super(WithMetricsIndicatorManager, self).get_queryset()
+        qs = self._get_annotated_queryset(self, lop=True, report=True, scope=True)
         qs = self.get_defined_targets(qs)
         qs = self.get_reported_results(qs)
         qs = self.get_evidence_count(qs)
@@ -800,6 +828,12 @@ class ProgramWithMetrics(wf_models.Program):
 
     @property
     def metrics(self):
+        """ 'reported_results': # of indicators with any results
+            'targets_defined': # of indicators with all targets defined
+            'indicator_count': # of indicators total
+            'results_evidence': # of _results_ with evidence provided
+            'results_count': # of_results_ total for all indicators in the program
+        """
         if self.indicator_count == 0:
             return {
                 'reported_results': 0,
@@ -837,4 +871,4 @@ class ProgramWithMetrics(wf_models.Program):
         }
 
     def get_annotated_indicators(self):
-        return IPTTIndicator.with_metrics.filter(program__in=[self.id])
+        return IPTTIndicator.with_metrics.with_filter_labels(self).filter(program__in=[self.id])
