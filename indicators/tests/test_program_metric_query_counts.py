@@ -14,6 +14,7 @@ program page call with program id:
         - program
             - has metrics with correct values
 """
+import time
 import datetime
 import json
 import unittest
@@ -26,35 +27,82 @@ from indicators.models import Indicator, PeriodicTarget, CollectedData
 from indicators.queries import ProgramWithMetrics, IPTTIndicator
 from django import test
 
-class ProgramWithMetricsQueryCountsBase(test.TransactionTestCase):
+def do_add_indicator(program):
+    indicator = i_factories.IndicatorFactory()
+    indicator.program.add(program)
+    indicator.save()
+    return indicator
+
+def do_add_defined_target(indicator):
+    indicator.target_frequency = Indicator.MID_END
+    mid_target = i_factories.PeriodicTargetFactory(
+        indicator=indicator,
+        period=PeriodicTarget.MIDLINE,
+        target=1000
+    )
+    end_target = i_factories.PeriodicTargetFactory(
+        indicator=indicator,
+        period=PeriodicTarget.ENDLINE,
+        target=400
+    )
+    indicator.save()
+    return (mid_target, end_target)
+
+def do_add_reported_result(indicator, collect_date):
+    return i_factories.CollectedDataFactory(
+        indicator=indicator,
+        date_collected=collect_date,
+        achieved=140
+    )
+
+def do_add_evidence(result):
+    doc = w_factories.DocumentationFactory()
+    result.evidence = doc
+    result.save()
+
+class ProgramWithMetricsQueryCountsBase(test.TestCase):
     skip_all = False
     do_print = False
+    country = None
+    program_start_date = datetime.date.today()-datetime.timedelta(days=730)
+    program_end_date = datetime.date.today()-datetime.timedelta(days=1)
+    collect_date = datetime.date.today()-datetime.timedelta(days=400)
+    programs = []
 
     def setUp(self):
         if self.skip_all:
             raise unittest.SkipTest('skip')
-        self.program_ids = []
-        self.program_start_date = datetime.date.today()-datetime.timedelta(days=730)
-        self.program_end_date = datetime.date.today()-datetime.timedelta(days=1)
-        self.collect_date = datetime.date.today()-datetime.timedelta(days=400)
-        self.country = None
 
-    def get_bare_program(self):
-        self.country = w_factories.CountryFactory()
-        program = w_factories.ProgramFactory(
-            reporting_period_start=self.program_start_date,
-            reporting_period_end=self.program_end_date,
-            funding_status='Funded',
-        )
-        program.country.add(self.country)
-        self.program_ids.append(program.id)
-        return program
+    @classmethod
+    def setUpTestData(cls):
+        cls.country = w_factories.CountryFactory()
+        cls.user = w_factories.TolaUserFactory()
+        cls.user.countries.add(cls.country)
+        for case in cls.expected_cases:
+            program = w_factories.ProgramFactory(
+                reporting_period_start=cls.program_start_date,
+                reporting_period_end=cls.program_end_date,
+                funding_status='Funded',
+                name=case['name']
+            )
+            program.country.add(cls.country)
+            cls.programs.append(program)
+            for c in range(case['indicator_count']):
+                data_count = 0
+                indicator = do_add_indicator(program)
+                if c < case['targets_defined']:
+                    do_add_defined_target(indicator)
+                if c < case['reported_results']:
+                    collect_date = cls.collect_date + datetime.timedelta(days=data_count)
+                    data_count += 1
+                    result = do_add_reported_result(indicator, collect_date)
+                    if c < case['results_evidence']:
+                        do_add_evidence(result)
+
 
     def get_program_setup(self):
-        for case in self.expected_cases:
-            program = self.get_bare_program()
-            program.name = case['name']
-            program.save()
+        for c, case in enumerate(self.expected_cases):
+            program = self.programs[c]
             for c in range(case['indicator_count']):
                 indicator = self.add_indicator(program)
                 if c < case['targets_defined']:
@@ -65,13 +113,15 @@ class ProgramWithMetricsQueryCountsBase(test.TransactionTestCase):
                         self.add_evidence(result)
 
     def get_reporting_qs(self):
-        return ProgramWithMetrics.with_metrics.filter(id__in=self.program_ids)
+        return ProgramWithMetrics.with_metrics.all()
 
     def add_indicator(self, program):
         indicator = i_factories.IndicatorFactory()
         indicator.program.add(program)
         indicator.save()
         return indicator
+
+
 
     def add_defined_target(self, indicator):
         indicator.target_frequency = Indicator.MID_END
@@ -105,14 +155,14 @@ class ProgramWithMetricsQueryCountsBase(test.TransactionTestCase):
 #pylint: disable=W0232
 class QueryTestsMixin:
     def test_program_queryset_returns_one(self):
-        self.get_program_setup()
+        #self.get_program_setup()
         program_qs = self.get_reporting_qs()
         self.assertEqual(program_qs.count(), len(self.expected_cases),
                          "{0} programs created, {1} returned".format(
                              len(self.expected_cases), program_qs.count()))
 
     def test_program_queryset_metric_counts(self):
-        self.get_program_setup()
+        #self.get_program_setup()
         for expected in self.expected_cases:
             if self.do_print:
                 program = self.get_reporting_qs().filter(name=expected['name']).first()
@@ -135,29 +185,25 @@ class QueryTestsMixin:
             for key in ['targets_defined', 'reported_results', 'results_evidence', 'indicator_count']:
                 self.assertIn(
                     key, metrics.keys(), "program.metrics should have {0}, got {1}".format(key, metrics.keys()))
-                expected_value = expected[key]
-                if expected[key] != 0 and key != 'indicator_count' and key != 'results_evidence':
-                    expected_value = int(round(float(expected[key])*100/metrics['indicator_count']))
-                elif expected[key] != 0 and key == 'results_evidence':
-                    expected_value = int(round(float(expected[key])*100/expected['reported_results']))
-                self.assertEqual(metrics[key], expected_value, "expected {0} for {1}, got {2} {3}".format(
-                    expected_value, key, metrics, expected))
+                self.assertEqual(metrics[key], expected[key], "expected {0} for {1}, got {2} {3}".format(
+                    expected[key], key, metrics, expected))
 
     def test_program_queryset_takes_one_query(self):
-        self.get_program_setup()
+        #self.get_program_setup()
         for expected in self.expected_cases:
             with self.assertNumQueries(1):
                 count = self.get_reporting_qs().filter(name=expected['name']).first().metrics['indicator_count']
                 assert count == expected['indicator_count'] # to ensure queryset is evaluated
 
     def test_program_view_returns_correct_program_data(self):
-        self.get_program_setup()
+        #self.get_program_setup()
+        start_time = time.time()
         client = test.Client()
-        user = w_factories.TolaUserFactory()
-        user.countries.add(self.country)
-        client.force_login(user.user)
-        for expected in self.expected_cases:
-            program = Program.objects.filter(name=expected['name']).first()
+        #user = w_factories.TolaUserFactory()
+        #user.countries.add(self.country)
+        client.force_login(self.user.user)
+        for c, expected in enumerate(self.expected_cases):
+            program = self.programs[c]
             response = client.get('/program/{program_id}/0/0/'.format(program_id=program.id))
             self.assertEqual(response.status_code, 200)
             program_response_metrics = response.context['program'].metrics
@@ -165,40 +211,29 @@ class QueryTestsMixin:
                 self.assertIn(
                     key, program_response_metrics.keys(), "program.metrics should have {0}, got {1}".format(
                         key, program_response_metrics.keys()))
-                expected_value = expected[key]
-                if expected[key] != 0 and key != 'indicator_count' and key != 'results_evidence':
-                    expected_value = int(round(float(expected[key])*100/program_response_metrics['indicator_count']))
-                elif key == 'results_evidence' and expected[key] != 0:
-                    expected_value = int(round(float(expected[key])*100/expected['reported_results']))
-                self.assertEqual(program_response_metrics[key], expected_value,
+                self.assertEqual(program_response_metrics[key], expected[key],
                                  "expected {0} for {1}, got {2}".format(
-                                     expected_value, key, program_response_metrics[key]))
+                                     expected[key], key, program_response_metrics[key]))
 
     def test_program_ajax_update_returns_correct_program_data(self):
-        self.get_program_setup()
+        #self.get_program_setup()
         client = test.Client()
-        user = w_factories.TolaUserFactory()
-        user.countries.add(self.country)
-        client.force_login(user.user)
+        #user = w_factories.TolaUserFactory()
+        #user.countries.add(self.country)
+        client.force_login(self.user.user)
         for expected in self.expected_cases:
             program = Program.objects.filter(name=expected['name']).first()
-            with self.assertNumQueries(5):
-                response = client.get('/program/{program_id}/metrics/'.format(program_id=program.id),
-                                      HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-                self.assertEqual(response.status_code, 200)
-                json_metrics = json.loads(response.content)['metrics']
+            response = client.get('/program/{program_id}/metrics/'.format(program_id=program.id),
+                                  HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            self.assertEqual(response.status_code, 200)
+            json_metrics = json.loads(response.content)['metrics']
             for key in ['targets_defined', 'reported_results', 'results_evidence', 'indicator_count']:
                 self.assertIn(
                     key, json_metrics.keys(), "json metrics should have {0}, got {1}".format(
                         key, json_metrics.keys()))
-                expected_value = expected[key]
-                if expected[key] != 0 and key != 'indicator_count' and key != 'results_evidence':
-                    expected_value = int(round(float(expected[key])*100/expected['indicator_count']))
-                elif key == 'results_evidence' and expected[key] != 0:
-                    expected_value = int(round(float(expected[key])*100/expected['reported_results']))
-                self.assertEqual(json_metrics[key], expected_value,
+                self.assertEqual(json_metrics[key], expected[key],
                                  "expected {0} for {1}, got {2}".format(
-                                     expected_value, key, json_metrics[key]))
+                                     expected[key], key, json_metrics[key]))
 
 class TestOneBareProgram(ProgramWithMetricsQueryCountsBase, QueryTestsMixin):
     skip_all = False
@@ -211,11 +246,6 @@ class TestOneBareProgram(ProgramWithMetricsQueryCountsBase, QueryTestsMixin):
             'name': 'Bare 1'
         }
     ]
-
-    def get_program_setup(self):
-        program = self.get_bare_program()
-        program.name = 'Bare 1'
-        program.save()
 
 class TestOneProgramWithIndicators(ProgramWithMetricsQueryCountsBase, QueryTestsMixin):
     expected_cases = [
