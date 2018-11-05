@@ -6864,14 +6864,16 @@ body.page_iptt_table {
     font-size: 42px;
     margin-right: 7.5px; }
 
-.program__status-gauges {
+.program__status {
   background-color: #fff;
   border: 1px solid #dbdcde;
-  display: flex;
-  flex-wrap: wrap;
   margin-bottom: 15px;
   margin-top: 15px;
   padding: 15px; }
+
+.status__gauges {
+  display: flex;
+  flex-wrap: wrap; }
 
 .program-page__main {
   display: flex;
