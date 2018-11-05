@@ -15,7 +15,9 @@
 
 
     {% if indicator_count %}
-        <aside class="program__status-gauges">
+        <aside class="program__status">
+            <h2>{% trans "Program metrics" %}</h2>
+            <div class="status__gauges">
 
             {% gauge_band program.scope_percents %}
 
@@ -24,7 +26,7 @@
             {% gauge_tank "reported_results" "Indicators with results" "have reported results" "have no results" "Add missing results" "have no results" %}
 
             {% gauge_tank "results_evidence"  "Results with evidence" "have evidence" "are missing evidence" "Add missing evidence"  "have results without evidence" %}
-
+            </div>
         </aside>
     {% endif %}
 
