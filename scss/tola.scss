@@ -68,6 +68,11 @@
 @import '_bootstrap_multiselect.scss'; // my what a mess this is
 @import 'bootstrap_overrides'; // overload BS selectors.
 
+//@import 'select2';
+// Select2
+@import "components/select2_defaults";
+@import "../node_modules/select2/src/scss/core.scss";
+
 /* Components */
 // These are well-behaved BEM-compliant selectors
 @import 'components/tables'; // semantic addtions to, but not overloads of, Bootstrap tables
