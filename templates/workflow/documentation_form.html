@@ -105,8 +105,8 @@
 
 
         function isValidPath(url){
-            isURL = /^(http|https|ftp):\/\/[d-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url);
-            isFile = /((^[D-Z]:(\/|\\\\?))|(^\/))/.test(url);
+            isURL = /^(http|https|ftp|smb):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url);
+            isFile = /((^[D-Z]:(\/|\\\\?))|(^[\/\\]{1,2}))/.test(url);
             if (isURL | isFile){
                 return true;
             }
@@ -156,7 +156,7 @@
                 $(`#validation_${urlFieldId}`).text("");
             }
             else {
-                $(`#validation_${urlFieldId}`).text('{% trans "Warning: The value you entered may not be a valid URL or network file path."|escapejs %}');
+                $(`#validation_${urlFieldId}`).text('{% trans "Warning: The file you are linking to should be on external storage. The file path you provided looks like it might be on your local hard drive."|escapejs %}');
             }
             urlField.removeClass('is-invalid');
             return true;
