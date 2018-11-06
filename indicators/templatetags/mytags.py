@@ -1,3 +1,4 @@
+import math
 import simplejson
 from datetime import datetime
 from django.core.serializers import serialize
@@ -113,24 +114,39 @@ def js(obj):
     return mark_safe(jsonify(obj))
 
 
-@register.inclusion_tag('indicators/tags/gauge-tank.html')
-def gauge_tank(filled, label, detail):
+@register.inclusion_tag('indicators/tags/gauge-tank.html', takes_context=True)
+def gauge_tank(context, metric, title, filled_label, unfilled_label, cta, filter_title):
+    program = context['program']
+    filled_value = program.metrics[metric]
+    results_count = program.metrics['results_count']
+    indicator_count = program.metrics['indicator_count']
+    if (filled_value == 'results_evidence'):
+        denominator = results_count
+    else:
+        denominator = indicator_count
+    filled_percent = int(round(float(filled_value*100)/denominator))
+    tick_count = 10
     return {
-        'filled': filled,
-        'not_filled': 100 - filled,
-        'label': label,
-        'detail': detail,
-        'ticks': list(range(1,11)),
-        'margin': int(Indicator.ONSCOPE_MARGIN * 100),
+        'title': title,
+        'id_tag': metric,
+        'filled_value': filled_value,
+        'unfilled_value': indicator_count - filled_value,
+        'indicator_count': indicator_count,
+        'results_count': results_count,
+        'filled_percent': filled_percent,
+        'unfilled_percent': 100 - filled_percent,
+        'filled_label': filled_label,
+        'unfilled_label': unfilled_label,
+        'ticks': list(range(1,tick_count+1)),
+        'cta': cta,
+        'filter_title': filter_title,
     }
 
 
 @register.inclusion_tag('indicators/tags/gauge-band.html')
-def gauge_band(high, on_scope, low):
+def gauge_band(scope_percents):
     return {
-        'high': high,
-        'on_scope': on_scope,
-        'low': low,
+        'scope_percents': scope_percents,
         'ticks': list(range(1,11)),
         'margin': int(Indicator.ONSCOPE_MARGIN * 100),
     }

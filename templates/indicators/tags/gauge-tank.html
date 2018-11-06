@@ -1,6 +1,12 @@
 {% load i18n %}
 {# TODO: links filter the indicator list, apply a highlight class to the entire gauge, and alter the number of indicators displayed on the program page #}
-<div class="gauge">{# TODO: add .is-highlighted to this element when one of its filters is applied #}
+{# to enable list filtering, the page calling this templatetag should load static/js/program_page_filters.js #}
+<div class="gauge filter-trigger"
+    data-target="{{ id_tag }}"
+    data-target-positive="-1"
+    data-list-title="{% blocktrans %}{{ unfilled_value }} indicators {{ filter_title }}{% endblocktrans %}"
+    >
+    <h6 class="gauge__title">{% trans title %}</h6>
     <div class="gauge__overview">
         <div class="gauge__graphic gauge__graphic--tank">
             <div class="graphic__tick-marks">
@@ -8,22 +14,18 @@
                 <div class="graphic__tick"></div>
                 {% endfor %}
             </div>
-            <div class="graphic__tank--filled" style="flex-basis: {{ filled }}%"></div>
+            <div class="graphic__tank--unfilled" style="flex-basis: {{ unfilled_percent }}%"></div>
+            <div class="graphic__tank--filled" style="flex-basis: {{ filled_percent }}%"></div>
         </div>
         <div class="gauge__labels">
-            <div class="gauge__value">
-                {{ filled }}%
+            <div class="gauge__label text-muted">
+                {{ unfilled_percent }}% {% trans unfilled_label %}
+                <!-- TOOLTIP -->
             </div>
-            {% if label %}
-                <h6 class="gauge__label">
-                    <a href="#" class="text-dark">{% trans label %}</a>
-                </h6>
-            {% endif %}
+            <div class="gauge__label">
+                <span class="gauge__value">{{ filled_percent }}% {% trans filled_label %}</span>
+            </div>
         </div>
     </div>
-    {% if detail %}
-        <div class="gauge__detail">
-            <a href="#" class="text-dark">{{ not_filled }}% {% trans detail %}</a>
-        </div>
-    {% endif %}
+    <div class="gauge__cta"><span class="btn-link btn-inline"><i class="fas fa-exclamation-triangle text-warning"></i> {{ cta }}</a></div>
 </div>

@@ -6280,26 +6280,28 @@ body > .container {
   flex-grow: 1; }
 
 .gauge__graphic {
-  background-color: #cde499;
+  background-color: #dbdcde;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   margin-right: 15px;
   min-width: 40px;
-  min-height: 80px;
+  min-height: 120px;
   position: relative; }
 
 .gauge__labels {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; }
-
-.gauge__labels--justified {
   justify-content: space-between; }
 
-.graphic__performance-band--above-target,
+.gauge__graphic--performance-band {
+  justify-content: flex-end; }
+
+.graphic__performance-band--above-target {
+  background: #ffe466; }
+
 .graphic__performance-band--below-target {
-  background: #ffed99; }
+  background: #ffe466; }
 
 .graphic__performance-band--on-target {
   background: #79AD00; }
@@ -6309,6 +6311,8 @@ body > .container {
   flex-direction: column;
   justify-content: space-between;
   align-items: stretch;
+  opacity: 0.5;
+  pointer-events: none;
   position: absolute;
   top: 0;
   right: 0;
@@ -6321,26 +6325,39 @@ body > .container {
   .graphic__tick + .graphic__tick {
     border-top: 0.5px solid #fff; }
 
+.graphic__tank--unfilled {
+  background-color: transparent; }
+
 .graphic__tank--filled {
   background-color: #79AD00; }
 
 .gauge__value {
-  color: #71757b;
-  font-size: 2rem; }
+  color: #506e00;
+  font-weight: bold; }
+
+.gauge__value--above strong,
+.gauge__value--below strong {
+  background: #fff6cc; }
+
+.gauge__value--above, .gauge__value--above:hover,
+.gauge__value--below,
+.gauge__value--below:hover {
+  color: #343840; }
 
 .gauge__label {
   color: #000;
-  margin: 0;
-  text-transform: uppercase; }
+  font-size: 0.875rem;
+  margin: 0; }
 
-.gauge__detail {
-  color: #0645AD;
+.gauge__cta {
   font-size: 0.875rem;
   margin-top: 15px; }
 
-.gauge__label--small {
-  color: #0645AD;
-  font-size: 0.875rem; }
+.filter-trigger:hover {
+  cursor: pointer; }
+
+.is-display-none {
+  display: none; }
 
 .btn-white, .btn-white:hover, .btn-white:active, .btn-white:focus {
   color: #fff; }
@@ -6851,14 +6868,16 @@ body.page_iptt_table {
     font-size: 42px;
     margin-right: 7.5px; }
 
-.program__status-gauges {
+.program__status {
   background-color: #fff;
   border: 1px solid #dbdcde;
-  display: flex;
-  flex-wrap: wrap;
   margin-bottom: 15px;
   margin-top: 15px;
   padding: 15px; }
+
+.status__gauges {
+  display: flex;
+  flex-wrap: wrap; }
 
 .program-page__main {
   display: flex;

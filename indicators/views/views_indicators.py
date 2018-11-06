@@ -40,6 +40,7 @@ from ..models import (
     CollectedData, IndicatorType, Level, ExternalServiceRecord,
     ExternalService, TolaTable, PinnedReport
 )
+from indicators.queries import ProgramWithMetrics
 from .views_reports import IPTT_ReportView
 
 
@@ -1441,6 +1442,7 @@ def dictfetchall(cursor):
 class ProgramPage(ListView):
     model = Indicator
     template_name = 'indicators/program_page.html'
+    metrics = False
 
     def get(self, request, *args, **kwargs):
         countries = request.user.tola_user.countries.all()
@@ -1450,6 +1452,16 @@ class ProgramPage(ListView):
         indicator_filter_id = None
         type_filter_name = None
         indicator_filter_name = None
+        #was this for eventually showing more than one program?  Because pk already limits to 1:
+        #program = ProgramWithMetrics.with_metrics.get(pk=program_id, funding_status="Funded", country__in=countries)
+        program = ProgramWithMetrics.with_metrics.get(pk=program_id)
+        if self.metrics:
+            json_context = {
+                'metrics': program.metrics,
+                'scope_percents': program.scope_percents
+            }
+            return JsonResponse(json_context)
+        indicators = program.get_annotated_indicators()
 
         if int(self.kwargs['type_id']):
             type_filter_id = self.kwargs['type_id']
@@ -1458,30 +1470,16 @@ class ProgramPage(ListView):
 
         if int(self.kwargs['indicator_id']):
             indicator_filter_id = self.kwargs['indicator_id']
-            indicator_filter_name = Indicator.objects.get(id=indicator_filter_id)
+            indicators = indicators.filter(pk=indicator_filter_id)
+            indicator_filter_name = indicators.first()
             indicator_filters['id'] = indicator_filter_id
-
-        # FIXME: The indicators filter below is overridden 2 lines down
-        indicators = Indicator.objects.filter(**{'program__id': program_id, 'id':self.kwargs['indicator_id']})
-        program = Program.objects.get(id=program_id, funding_status="Funded", country__in=countries)
-        indicators = Indicator.objects.filter(**indicator_filters)
+        else:
+            indicators = indicators.filter(**indicator_filters)
         type_ids = set(indicators.values_list('indicator_type', flat=True))
         indicator_types = IndicatorType.objects.filter(id__in=list(type_ids))
         indicator_count = indicators.count()
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
                          [PinnedReport.default_report(program.id)]
-        scope_percents = {
-            # TODO: placeholder stats
-            'low': 23,
-            'on_scope': 46,
-            'high': 31,
-        }
-        results_stats = {
-            # TODO: placeholder stats
-            'targets_defined': 35,
-            'reported_results': 87,
-            'results_evidence': 50,
-        }
 
         js_context = {
             'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
@@ -1498,9 +1496,7 @@ class ProgramPage(ListView):
             'indicator_filter_name': indicator_filter_name,
             'type_filter_id': type_filter_id,
             'type_filter_name': type_filter_name,
-            'scope_percents': scope_percents,
-            'percent_complete': 75, # TODO: % of reporting period complete
-            'results_stats': results_stats,
+            'percent_complete': program.percent_complete,
             'pinned_reports': pinned_reports,
             'js_context': js_context,
         }

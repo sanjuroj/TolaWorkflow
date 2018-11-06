@@ -87,6 +87,10 @@ urlpatterns = [ # rest framework
                 # program page
                 url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<type_id>\d+)/$',
                     ProgramPage.as_view(), name='program_page'),
+                
+                # program ajax update for metrics
+                url(r'^program/(?P<program_id>\d+)/metrics/$',
+                    ProgramPage.as_view(metrics=True), name='program_metrics'),
 
                 # enable the admin:
                 url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
