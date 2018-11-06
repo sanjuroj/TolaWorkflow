@@ -48,15 +48,16 @@ def do_add_defined_target(indicator):
     indicator.save()
     return (mid_target, end_target)
 
-def do_add_reported_result(indicator, collect_date):
+def do_add_reported_result(indicator, collect_date, program):
     return i_factories.CollectedDataFactory(
         indicator=indicator,
         date_collected=collect_date,
-        achieved=140
+        achieved=140,
+        program=program
     )
 
-def do_add_evidence(result):
-    doc = w_factories.DocumentationFactory()
+def do_add_evidence(result, program):
+    doc = w_factories.DocumentationFactory(program=program)
     result.evidence = doc
     result.save()
 
@@ -67,7 +68,6 @@ class ProgramWithMetricsQueryCountsBase(test.TestCase):
     program_start_date = datetime.date.today()-datetime.timedelta(days=730)
     program_end_date = datetime.date.today()-datetime.timedelta(days=1)
     collect_date = datetime.date.today()-datetime.timedelta(days=400)
-    programs = []
 
     def setUp(self):
         if self.skip_all:
@@ -86,7 +86,6 @@ class ProgramWithMetricsQueryCountsBase(test.TestCase):
                 name=case['name']
             )
             program.country.add(cls.country)
-            cls.programs.append(program)
             for c in range(case['indicator_count']):
                 data_count = 0
                 indicator = do_add_indicator(program)
@@ -95,77 +94,22 @@ class ProgramWithMetricsQueryCountsBase(test.TestCase):
                 if c < case['reported_results']:
                     collect_date = cls.collect_date + datetime.timedelta(days=data_count)
                     data_count += 1
-                    result = do_add_reported_result(indicator, collect_date)
+                    result = do_add_reported_result(indicator, collect_date, program)
                     if c < case['results_evidence']:
-                        do_add_evidence(result)
-
-
-    def get_program_setup(self):
-        for c, case in enumerate(self.expected_cases):
-            program = self.programs[c]
-            for c in range(case['indicator_count']):
-                indicator = self.add_indicator(program)
-                if c < case['targets_defined']:
-                    self.add_defined_target(indicator)
-                if c < case['reported_results']:
-                    result = self.add_reported_result(indicator)
-                    if c < case['results_evidence']:
-                        self.add_evidence(result)
-
-    def get_reporting_qs(self):
-        return ProgramWithMetrics.with_metrics.all()
-
-    def add_indicator(self, program):
-        indicator = i_factories.IndicatorFactory()
-        indicator.program.add(program)
-        indicator.save()
-        return indicator
-
-
-
-    def add_defined_target(self, indicator):
-        indicator.target_frequency = Indicator.MID_END
-        mid_target = i_factories.PeriodicTargetFactory(
-            indicator=indicator,
-            period=PeriodicTarget.MIDLINE,
-            target=1000
-        )
-        end_target = i_factories.PeriodicTargetFactory(
-            indicator=indicator,
-            period=PeriodicTarget.ENDLINE,
-            target=400
-        )
-        indicator.save()
-        return (mid_target, end_target)
-
-    def add_reported_result(self, indicator):
-        data = i_factories.CollectedDataFactory(
-            indicator=indicator,
-            date_collected=self.collect_date,
-            achieved=140
-        )
-        self.collect_date = self.collect_date + datetime.timedelta(days=1)
-        return data
-
-    def add_evidence(self, result):
-        doc = w_factories.DocumentationFactory()
-        result.evidence = doc
-        result.save()
+                        do_add_evidence(result, program)
 
 #pylint: disable=W0232
 class QueryTestsMixin:
     def test_program_queryset_returns_one(self):
-        #self.get_program_setup()
-        program_qs = self.get_reporting_qs()
+        program_qs = ProgramWithMetrics.with_metrics.all()
         self.assertEqual(program_qs.count(), len(self.expected_cases),
-                         "{0} programs created, {1} returned".format(
-                             len(self.expected_cases), program_qs.count()))
+                         "{0} programs created, {1} returned, {2}".format(
+                             len(self.expected_cases), program_qs.count(), [x.name for x in program_qs]))
 
     def test_program_queryset_metric_counts(self):
-        #self.get_program_setup()
         for expected in self.expected_cases:
             if self.do_print:
-                program = self.get_reporting_qs().filter(name=expected['name']).first()
+                program = ProgramWithMetrics.with_metrics.filter(name=expected['name']).first()
                 print "targets defined count: {0}".format(program.targets_defined_count)
                 for indicator in IPTTIndicator.with_metrics.filter(program__in=[program.id]).all():
                     print "indicator: {0} and defined_targets {1} and targets {2}".format(
@@ -181,7 +125,7 @@ class QueryTestsMixin:
                         indicator.evidence_count,
                         [x for x in Documentation.objects.filter(collecteddata__indicator_id=indicator.pk).all()])
                 print "metrics: {0}".format(program.metrics)
-            metrics = self.get_reporting_qs().filter(name=expected['name']).first().metrics
+            metrics = ProgramWithMetrics.with_metrics.filter(name=expected['name']).first().metrics
             for key in ['targets_defined', 'reported_results', 'results_evidence', 'indicator_count']:
                 self.assertIn(
                     key, metrics.keys(), "program.metrics should have {0}, got {1}".format(key, metrics.keys()))
@@ -189,22 +133,17 @@ class QueryTestsMixin:
                     expected[key], key, metrics, expected))
 
     def test_program_queryset_takes_one_query(self):
-        #self.get_program_setup()
         for expected in self.expected_cases:
             with self.assertNumQueries(1):
-                count = self.get_reporting_qs().filter(name=expected['name']).first().metrics['indicator_count']
+                count = ProgramWithMetrics.with_metrics.filter(name=expected['name']).first().metrics['indicator_count']
                 assert count == expected['indicator_count'] # to ensure queryset is evaluated
 
     def test_program_view_returns_correct_program_data(self):
-        #self.get_program_setup()
-        start_time = time.time()
         client = test.Client()
-        #user = w_factories.TolaUserFactory()
-        #user.countries.add(self.country)
         client.force_login(self.user.user)
+        programs = ProgramWithMetrics.with_metrics.all()
         for c, expected in enumerate(self.expected_cases):
-            program = self.programs[c]
-            response = client.get('/program/{program_id}/0/0/'.format(program_id=program.id))
+            response = client.get('/program/{program_id}/0/0/'.format(program_id=programs[c].id))
             self.assertEqual(response.status_code, 200)
             program_response_metrics = response.context['program'].metrics
             for key in ['targets_defined', 'reported_results', 'results_evidence', 'indicator_count']:
@@ -216,10 +155,7 @@ class QueryTestsMixin:
                                      expected[key], key, program_response_metrics[key]))
 
     def test_program_ajax_update_returns_correct_program_data(self):
-        #self.get_program_setup()
         client = test.Client()
-        #user = w_factories.TolaUserFactory()
-        #user.countries.add(self.country)
         client.force_login(self.user.user)
         for expected in self.expected_cases:
             program = Program.objects.filter(name=expected['name']).first()
@@ -422,161 +358,3 @@ class TestProgramsWithMixedTargetTypesAndResultsAndEvdience(ProgramWithMetricsQu
             'name': 'test name 3'
         }
     ]
-
-    def get_program_setup(self):
-        self.program_start_date = datetime.date(2015, 10, 1)
-        self.program_end_date = datetime.date(2016, 9, 30)
-        program1 = self.get_bare_program()
-        program1.name = self.expected_cases[0]['name']
-        program1.save()
-        # undefined lop target:
-        indicator11 = self.add_indicator(program1)
-        indicator11.target_frequency = Indicator.LOP
-        # has a result:
-        evidence11 = w_factories.DocumentationFactory()
-        i_factories.CollectedDataFactory(
-            indicator=indicator11,
-            date_collected=datetime.date(2016, 4, 1),
-            achieved=250,
-            evidence=evidence11
-        )
-        indicator11.save()
-        # defined annual target:
-        indicator12 = self.add_indicator(program1)
-        indicator12.target_frequency = Indicator.ANNUAL
-        tp11 = i_factories.PeriodicTargetFactory(
-            indicator=indicator12,
-            period='year 1',
-            start_date=self.program_start_date,
-            end_date=self.program_end_date,
-            target=400
-        )
-        evidence12 = w_factories.DocumentationFactory()
-        i_factories.CollectedDataFactory(
-            indicator=indicator12,
-            periodic_target=tp11,
-            date_collected=datetime.date(2016, 1, 1),
-            achieved=300,
-            evidence=evidence12
-        )
-        indicator12.save()
-        program2 = self.get_bare_program()
-        program2.name = self.expected_cases[1]['name']
-        program2.save()
-        indicator21 = self.add_indicator(program2)
-        indicator21.target_frequency = Indicator.LOP
-        indicator21.lop_target = 10000000
-        indicator21.save()
-        evidence21 = w_factories.DocumentationFactory()
-        i_factories.CollectedDataFactory(
-            indicator=indicator21,
-            date_collected=datetime.date(2016, 1, 1),
-            achieved=300,
-            evidence=evidence21
-        )
-        indicator22 = self.add_indicator(program2)
-        indicator22.target_frequency = Indicator.SEMI_ANNUAL
-        indicator22.save()
-        i_factories.PeriodicTargetFactory(
-            indicator=indicator22,
-            period='semi-year 1',
-            start_date=self.program_start_date,
-            end_date=datetime.date(2016, 3, 31),
-            target=40000
-        )
-        i_factories.PeriodicTargetFactory(
-            indicator=indicator22,
-            period='semi-year 2',
-            start_date=datetime.date(2016, 4, 1),
-            end_date=datetime.date(2016, 9, 30),
-            target=3000
-        )
-        indicator23 = self.add_indicator(program2)
-        indicator23.target_frequency = Indicator.MID_END
-        indicator23.save()
-        i_factories.PeriodicTargetFactory(
-            indicator=indicator23,
-            period=PeriodicTarget.MIDLINE,
-            target=5
-        )
-        i_factories.PeriodicTargetFactory(
-            indicator=indicator23,
-            period=PeriodicTarget.ENDLINE,
-            target=4
-        )
-        evidence22 = w_factories.DocumentationFactory()
-        i_factories.CollectedDataFactory(
-            indicator=indicator23,
-            date_collected=datetime.date(2016, 1, 1),
-            achieved=400,
-            evidence=evidence22
-        )
-        indicator24 = self.add_indicator(program2)
-        indicator24.target_frequency = Indicator.EVENT
-        indicator24.save()
-        i_factories.PeriodicTargetFactory(
-            indicator=indicator24,
-            period='event 1',
-            target=3
-        )
-        evidence23 = w_factories.DocumentationFactory()
-        i_factories.CollectedDataFactory(
-            indicator=indicator24,
-            date_collected=datetime.date(2016, 1, 1),
-            achieved=5,
-            evidence=evidence23
-        )
-        program3 = self.get_bare_program()
-        program3.name = self.expected_cases[2]['name']
-        program3.save()
-        indicator31 = self.add_indicator(program3)
-        indicator31.target_frequency = Indicator.TRI_ANNUAL
-        indicator31.save()
-        i_factories.PeriodicTargetFactory(
-            indicator=indicator31,
-            period='tri annual 1',
-            start_date=datetime.date(2015, 10, 1),
-            end_date=datetime.date(2016, 2, 28),
-            target=3
-        )
-        tp32 = i_factories.PeriodicTargetFactory(
-            indicator=indicator31,
-            period='tri annual 2',
-            start_date=datetime.date(2016, 3, 1),
-            end_date=datetime.date(2016, 7, 31),
-            target=8
-        )
-        evidence31 = w_factories.DocumentationFactory()
-        i_factories.CollectedDataFactory(
-            indicator=indicator31,
-            periodic_target=tp32,
-            date_collected=datetime.date(2016, 1, 1),
-            achieved=300,
-            evidence=evidence31
-        )
-        indicator32 = self.add_indicator(program3)
-        indicator32.target_frequency = Indicator.MONTHLY
-        indicator32.save()
-        tp33 = i_factories.PeriodicTargetFactory(
-            indicator=indicator32,
-            period='month 1',
-            start_date=datetime.date(2015, 10, 1),
-            end_date=datetime.date(2015, 10, 31),
-            target=3
-        )
-        i_factories.CollectedDataFactory(
-            indicator=indicator32,
-            date_collected=datetime.date(2016, 1, 1),
-            periodic_target=tp33,
-            achieved=300,
-        )
-        indicator33 = self.add_indicator(program3)
-        indicator33.target_frequency = Indicator.LOP
-        indicator33.lop_target = 4000
-        indicator33.save()
-        i_factories.CollectedDataFactory(
-            indicator=indicator33,
-            date_collected=datetime.date(2016, 1, 1),
-            achieved=300,
-        )
-    

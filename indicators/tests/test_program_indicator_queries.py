@@ -79,7 +79,7 @@ class TestCollectionCorrect(test.TestCase):
             date_collected=self.program.reporting_period_start + datetime.timedelta(days=10)
         )
         self.data.extend([mid_data, end_data])
-        indicator = IPTTIndicator.withtargets.get(pk=self.indicator.id)
+        indicator = IPTTIndicator.with_metrics.get(pk=self.indicator.id)
         # both have data, defaults to non_cumulative, so should show sum of both targets:
         self.assertEqual(
             indicator.lop_target_sum, 1300,
@@ -94,14 +94,9 @@ class TestCollectionCorrect(test.TestCase):
             indicator.over_under, 0,
             "should show overunder as 0 (in range), got {0}".format(indicator.over_under)
         )
-        self.assertEqual(
-            ProgramWithMetrics.objects.get(pk=self.program.id).ontarget.count(),
-            1,
-            "should show 1 ontarget indicator"
-        )
         self.indicator.is_cumulative = True
         self.indicator.save()
-        indicator = IPTTIndicator.withtargets.get(pk=self.indicator.id)
+        indicator = IPTTIndicator.with_metrics.get(pk=self.indicator.id)
         # both have data, set to cumulative, so should show latest (endline) target:
         self.assertEqual(
             indicator.lop_target_sum, 800,
@@ -116,22 +111,12 @@ class TestCollectionCorrect(test.TestCase):
             indicator.over_under, 1,
             "should show overunder as 1 (over range), got {0}".format(indicator.over_under)
         )
-        self.assertEqual(
-            ProgramWithMetrics.objects.get(pk=self.program.id).overtarget.count(),
-            1,
-            "should show 1 overtarget indicator"
-        )
         self.indicator.direction_of_change = Indicator.DIRECTION_OF_CHANGE_NEGATIVE
         self.indicator.save()
-        indicator = IPTTIndicator.withtargets.get(pk=self.indicator.id)
+        indicator = IPTTIndicator.with_metrics.get(pk=self.indicator.id)
         self.assertEqual(
             indicator.over_under, -1,
             "should show overunder as -1 (under range - negative DOC), got {0}".format(indicator.over_under)
-        )
-        self.assertEqual(
-            ProgramWithMetrics.objects.get(pk=self.program.id).undertarget.count(),
-            1,
-            "should show 1 undertarget indicator"
         )
 
     def test_midend_doesnt_sum_if_no_endline_data(self):
@@ -157,7 +142,7 @@ class TestCollectionCorrect(test.TestCase):
             date_collected=self.program.reporting_period_start + datetime.timedelta(days=1)
         )
         self.data.append(mid_data)
-        indicator = IPTTIndicator.withtargets.get(pk=self.indicator.id)
+        indicator = IPTTIndicator.with_metrics.get(pk=self.indicator.id)
         # both have data, defaults to non_cumulative, so should show sum of both targets:
         self.assertEqual(
             indicator.lop_target_sum, 500,
@@ -171,26 +156,16 @@ class TestCollectionCorrect(test.TestCase):
             indicator.over_under, -1,
             "should show under (350/500), got {0}".format(indicator.over_under)
         )
-        self.assertEqual(
-            ProgramWithMetrics.objects.get(pk=self.program.id).undertarget.count(),
-            1,
-            "should show 1 undertarget indicator"
-        )
         self.indicator.direction_of_change = Indicator.DIRECTION_OF_CHANGE_NEGATIVE
         self.indicator.save()
-        indicator = IPTTIndicator.withtargets.get(pk=self.indicator.id)
+        indicator = IPTTIndicator.with_metrics.get(pk=self.indicator.id)
         self.assertEqual(
             indicator.over_under, 1,
             "should show over (350/500), got {0}".format(indicator.over_under)
         )
-        self.assertEqual(
-            ProgramWithMetrics.objects.get(pk=self.program.id).overtarget.count(),
-            1,
-            "should show 1 overtarget indicator"
-        )
         self.indicator.is_cumulative = True
         self.indicator.save()
-        indicator = IPTTIndicator.withtargets.get(pk=self.indicator.id)
+        indicator = IPTTIndicator.with_metrics.get(pk=self.indicator.id)
         self.assertEqual(
             indicator.lop_target_sum, 500,
             "should not take endline target (no data`) expecting 500, got {0}".format(indicator.lop_target_sum)
@@ -220,7 +195,7 @@ class TestCollectionCorrect(test.TestCase):
             date_collected=self.program.reporting_period_start + datetime.timedelta(days=1)
         )
         self.data.append(data_1)
-        indicator = IPTTIndicator.withtargets.get(pk=self.indicator.id)
+        indicator = IPTTIndicator.with_metrics.get(pk=self.indicator.id)
         # both have data, defaults to non_cumulative, so should show sum of both targets:
         self.assertEqual(
             indicator.lop_target_sum, 500,
@@ -235,11 +210,6 @@ class TestCollectionCorrect(test.TestCase):
             indicator.over_under, -1,
             "should show under (350/500), got {0}".format(indicator.over_under)
         )
-        self.assertEqual(
-            ProgramWithMetrics.objects.get(pk=self.program.id).undertarget.count(),
-            1,
-            "should show 1 undertarget indicator"
-        )
         data_2 = i_factories.CollectedDataFactory(
             indicator=self.indicator,
             periodic_target=target_2,
@@ -247,7 +217,7 @@ class TestCollectionCorrect(test.TestCase):
             date_collected=self.program.reporting_period_start + datetime.timedelta(days=20)
         )
         self.data.append(data_2)
-        indicator = IPTTIndicator.withtargets.get(pk=self.indicator.id)
+        indicator = IPTTIndicator.with_metrics.get(pk=self.indicator.id)
         self.assertEqual(
             indicator.lop_target_sum, 1300,
             "expected sum of targets (both have data) 1300, got {0}".format(indicator.lop_target_sum)
@@ -260,20 +230,12 @@ class TestCollectionCorrect(test.TestCase):
             indicator.over_under, 0,
             "should show on target (over under 0, 1300/1300), got {0}".format(indicator.over_under)
         )
-        self.assertEqual(
-            ProgramWithMetrics.objects.get(pk=self.program.id).ontarget.count(), 1,
-            "should show 1 on target indicator"
-        )
         self.indicator.is_cumulative = True
         self.indicator.save()
-        indicator = IPTTIndicator.withtargets.get(pk=self.indicator.id)
+        indicator = IPTTIndicator.with_metrics.get(pk=self.indicator.id)
         self.assertEqual(
             indicator.lop_target_sum, 800,
             "expected most recent target for non-cumulative indicator 800, got {0}".format(indicator.lop_target_sum)
-        )
-        self.assertEqual(
-            ProgramWithMetrics.objects.get(pk=self.program.id).overtarget.count(), 1,
-            "exepcted 1 overtarget indicator"
         )
 
 class TestProgramReportingingCounts (test.TransactionTestCase):
@@ -452,24 +414,8 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
         self.targets.append(event_target)
         return [event_indicator]
 
-    def test_counts(self):
-        ontarget_count = self.reporting_program.ontarget.count()
-        overtarget_count = self.reporting_program.overtarget.count()
-        undertarget_count = self.reporting_program.undertarget.count()
-        nonreporting_count = self.reporting_program.nonreporting.count()
+    def test_percentages(self):
         percentages = self.reporting_program.scope_percents
-        self.assertEqual(
-            ontarget_count, 2, "expected 2 ontarget, got {0}".format(ontarget_count)
-        )
-        self.assertEqual(
-            overtarget_count, 3, "expected 3 overtarget, got {0}".format(overtarget_count)
-        )
-        self.assertEqual(
-            undertarget_count, 1, "expected 1 undertarget, got {0}".format(undertarget_count)
-        )
-        self.assertEqual(
-            nonreporting_count, 1, "expected 1 nonreporting, got {0}".format(nonreporting_count)
-        )
         self.assertEqual(
             percentages['low'], 14,
             "expected 17% undertarget for 1/7, got {0}".format(percentages['low'])

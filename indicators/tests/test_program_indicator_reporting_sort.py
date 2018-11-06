@@ -61,7 +61,8 @@ Cases:
   1.1. Calculation takes into account cumulative vs non-cumulative and # vs %
   2. For all completed target periods to date, what is the actual value?
   2.1. Calculation takes into account cumulative vs non-cumulative and # vs %
-  3. For all completed target periods to date, what is the percentage variance of the actual value from the target value?
+  3. For all completed target periods to date, what is the percentage variance of the actual value from the target
+    value?
   4. Which indicators are INSIDE the plus or minus 15% variance range?
   3.1. How many indicators?
   3.2. What percentage of indicators?
@@ -95,18 +96,15 @@ Reporting Indicators Queryset (can assume all indicators here have targets, data
     .ontarget
 """
 
-
-from django import test, db
-from django.conf import settings
 import datetime
-import unittest
 from factories import (
     workflow_models as w_factories,
     indicators_models as i_factories
     )
 from indicators.models import Indicator, PeriodicTarget
-from indicators.queries import ProgramWithMetrics, IPTTIndicator
-
+from indicators.queries import ProgramWithMetrics
+from django import test, db
+from django.conf import settings
 
 class ReportingIndicatorBase(test.TestCase):
     TIME_AWARE_FREQUENCIES = [
@@ -227,7 +225,7 @@ class ReportingIndicatorBase(test.TestCase):
 
     def get_annotated_program(self, program=None):
         program = self.program if program is None else program
-        return ProgramWithMetrics.objects.get(pk=program.id)
+        return ProgramWithMetrics.with_metrics.get(pk=program.id)
 
     def query_assert(self, baseline, expected_count, query_type):
         new_baseline = len(db.connection.queries)
@@ -246,16 +244,18 @@ class ReportingIndicatorBase(test.TestCase):
 class TestSingleNonReportingIndicator(ReportingIndicatorBase):
 
     def one_incomplete_assert(self, program, scenario):
+        nonreporting = program.scope_percents['nonreporting_count']
+        reporting = program.scope_percents['reporting_count']
         self.assertEqual(
-            program.nonreporting.count(), 1,
+            nonreporting, 1,
             "For {0}, program should have 1 incomplete indicator, got {1}".format(
-                scenario, program.nonreporting.count()
+                scenario, nonreporting
             )
         )
         self.assertEqual(
-            program.reporting.count(), 0,
+            reporting, 0,
             "For {0}, program should have 0 complete indicators, got {1}".format(
-                scenario, program.reporting.count()
+                scenario, reporting
             )
         )
 
@@ -277,18 +277,18 @@ class TestSingleNonReportingIndicator(ReportingIndicatorBase):
         baseline = len(db.connection.queries)
         program = self.get_annotated_program(self.program)
         baseline = self.query_assert(baseline, 1, "fetch program")
-        incomplete = program.nonreporting
+        incomplete = program.scope_percents['nonreporting_count']
         self.assertEqual(
-            incomplete.count(), 1,
+            incomplete, 1,
             "LOP program with open program reporting period should be in incomplete"
         )
-        baseline = self.query_assert(baseline, 1, "count incompletes")
-        complete = program.reporting
+        baseline = self.query_assert(baseline, 0, "count incompletes")
+        complete = program.scope_percents['reporting_count']
         self.assertEqual(
-            complete.count(), 0,
+            complete, 0,
             "No indicators should be reporting as complete"
         )
-        self.query_assert(baseline, 1, "count completes")
+        self.query_assert(baseline, 0, "count completes")
 
     def test_lop_indicator_no_lop_target(self):
         #program is complete:
@@ -406,15 +406,15 @@ class TestSingleNonReportingIndicator(ReportingIndicatorBase):
 class TestSingleReportingIndicator(ReportingIndicatorBase):
     def one_complete_assert(self, program, scenario):
         self.assertEqual(
-            program.reporting.count(), 1,
+            program.scope_percents['reporting_count'], 1,
             "In {0} query expected 1 complete, got {1}".format(
-                scenario, program.reporting.count()
+                scenario, program.scope_percents['reporting_count']
             )
         )
         self.assertEqual(
-            program.nonreporting.count(), 0,
+            program.scope_percents['nonreporting_count'], 0,
             "In {0} query expected 0 incomplete, got {1}".format(
-                scenario, program.nonreporting.count()
+                scenario, program.scope_percents['nonreporting_count']
             )
         )
 
@@ -533,13 +533,13 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
         baseline = len(db.connection.queries)
         program = self.get_annotated_program(self.program)
         baseline = self.query_assert(baseline, 1, "fetch program, two indicators")
-        reporting = program.reporting.count()
+        reporting = program.scope_percents['reporting_count']
         self.assertEqual(
             reporting, 2,
             "expected both midend and lop indicators to be reporting, got {0}".format(reporting)
         )
-        baseline = self.query_assert(baseline, 1, "reporting count, two indicators")
-        nonreporting = program.nonreporting.count()
+        baseline = self.query_assert(baseline, 0, "reporting count, two indicators")
+        nonreporting = program.scope_percents['nonreporting_count']
         self.assertEqual(
             nonreporting, 0,
             "expected no nonreporting indicators, got {0}".format(nonreporting)
@@ -556,14 +556,15 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
             self.load_targets(indicator=indicator)
             self.load_data(indicator=indicator)
         program = self.get_annotated_program(self.program)
-        reporting = program.reporting.count()
+        reporting = program.scope_percents['reporting_count']
         self.assertEqual(
             reporting, len(self.TIME_AWARE_FREQUENCIES),
-            "expected {0} reporting indicators, got {1}, qs: {2}".format(
-                len(self.TIME_AWARE_FREQUENCIES), reporting, program.reporting.all()
+            "expected {0} reporting indicators, got {1}".format(
+                len(self.TIME_AWARE_FREQUENCIES), reporting
             )
         )
         self.assertEqual(
-            program.nonreporting.count(), 0,
-            "expected 0 nonreporting timeaware indicators, got {0}".format(program.nonreporting.count())
+            program.scope_percents['nonreporting_count'], 0,
+            "expected 0 nonreporting timeaware indicators, got {0}".format(
+                program.scope_percents['nonreporting_count'])
         )
