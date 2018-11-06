@@ -1,3 +1,19 @@
+// File cribbed directly from project src
+
+// Custom variables
+// prefixed with s2- in case they
+$s2-selection-height: 38px;
+$s2-selection-color: $body-color;
+$s2-selection-disabled-color: $gray-150;
+$s2-menu-background: $white;
+$s2-menu-highlighted-background: $teal-400;
+$s2-menu-selected-background: lighten($s2-menu-highlighted-background, 35%);
+$s2-border-radius: 0;
+$s2-border-color: $gray-500;
+$s2-placeholder-color: $gray-600;
+$s2-selection-arrow-color: $gray-600;
+
+
 .select2-container {
   box-sizing: border-box;
 
@@ -29,7 +45,7 @@
 
   // styles required for IE to work
 
-  background-color: #fff;
+  background-color: $s2-menu-background;
   filter: alpha(opacity=0);
 }
 

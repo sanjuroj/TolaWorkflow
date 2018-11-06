@@ -1,7 +1,7 @@
 .select2-selection--multiple {
-  background-color: white;
-  border: 1px solid #aaa;
-  border-radius: 4px;
+  background-color: $s2-menu-background;
+  border: 1px solid $s2-border-color;
+  border-radius: $s2-border-radius;
   cursor: text;
 
   .select2-selection__rendered {
@@ -13,7 +13,7 @@
   }
 
   .select2-selection__placeholder {
-    color: #999;
+    color: $s2-placeholder-color;
 
     margin-top: 5px;
 
