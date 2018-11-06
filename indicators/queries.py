@@ -144,7 +144,7 @@ class IPTTIndicatorManager(models.Manager):
         return {
             'reporting': reporting
         }
-    
+
     def add_scope_annotations(self, qs):
         return qs.annotate(
             lop_met_real=models.Case(
@@ -209,10 +209,42 @@ class IPTTIndicatorManager(models.Manager):
         return qs
 
 class NoTargetsIndicatorManager(IPTTIndicatorManager):
+    def periods(self, periods):
+        """annotate a query with actual data sums for a set of time periods"""
+        period_annotations = {}
+        for c, period in enumerate(periods):
+            date_range = "{0}-{1}".format(
+                period['start_date'].strftime('%Y-%m-%d'),
+                period['end_date'].strftime('%Y-%m-%d')
+            )
+            period_annotations[date_range] = models.Case(
+                models.When(
+                    unit_of_measure_type=Indicator.PERCENTAGE,
+                    then=models.Subquery(
+                        CollectedData.objects.filter(
+                            indicator_id=models.OuterRef('pk'),
+                            date_collected__lte=period['end_date']
+                        ).order_by('-date_collected').values('achieved')[:1],
+                        output_field=models.FloatField()
+                    )),
+                default=models.Subquery(
+                    CollectedData.objects.filter(
+                        indicator_id=models.OuterRef('pk'),
+                        date_collected__lte=period['end_date']
+                    ).filter(
+                        models.Q(date_collected__gte=period['start_date']) |
+                        models.Q(indicator__is_cumulative=True)
+                    ).order_by().values('indicator_id').annotate(
+                        total=models.Sum('achieved')).values('total'),
+                    output_field=models.FloatField())
+            )
+            period_annotations["period_{0}".format(c)] = models.Value(
+                date_range, output_field=models.CharField())
+        return self.get_queryset().annotate(**period_annotations)
 
     def get_queryset(self):
         # pylint: disable=E1124
-        qs = self._get_annotated_queryset(self, label=True, lop=True)
+        qs = self._get_annotated_queryset(label=True, lop=True)
         return qs
 
 
@@ -318,7 +350,7 @@ class WithTargetsIndicatorManager(IPTTIndicatorManager):
 
     def get_queryset(self):
         # pylint: disable=E1124
-        qs = self._get_annotated_queryset(self, label=True, lop=True).prefetch_related(
+        qs = self._get_annotated_queryset(label=True, lop=True).prefetch_related(
             self.get_target_prefetch()
         )
         return qs
@@ -433,7 +465,7 @@ class WithMetricsIndicatorManager(IPTTIndicatorManager):
         return qs
 
     def get_queryset(self):
-        qs = self._get_annotated_queryset(self, lop=True, report=True, scope=True)
+        qs = self._get_annotated_queryset(lop=True, report=True, scope=True)
         qs = self.get_defined_targets(qs)
         qs = self.get_reported_results(qs)
         qs = self.get_evidence_count(qs)
@@ -716,108 +748,6 @@ class ProgramWithMetrics(wf_models.Program):
             combined_filter |= filt
         return combined_filter
 
-    def get_reporting_filters(self):
-        """returns an array of filters based on program attributes to filter out indicators that should not be part
-        of reporting metrics"""
-        filters = []
-        if self.reporting_period_end > datetime.date.today():
-            # open program -> LOP targets are incomplete
-            filters.append(models.Q(target_frequency=Indicator.LOP))
-        # indicator with no periodic targets is incomplete (this field falls back to lop_target for lop indicators:
-        filters.append(models.Q(lop_target_sum__isnull=True))
-        filters.append(models.Q(lop_actual_sum__isnull=True))
-        return filters
-
-    @property
-    def nonreporting(self):
-        """returns indicators (annotated with target data) that are excluded from reporting metrics"""
-        qs = self.get_indicators()
-        filters = self.get_reporting_filters()
-        if filters:
-            filter_query = filters.pop()
-            for filt in filters:
-                filter_query |= filt
-            qs = qs.filter(filter_query)
-        return qs
-
-    @property
-    def reporting(self):
-        """returns indicators (annotated with target data) that are included in reporting metrics"""
-        qs = self.get_indicators()
-        excludes = self.get_reporting_filters()
-        if excludes:
-            exclude_query = excludes.pop()
-            for exclude in excludes:
-                exclude_query |= exclude
-            qs = qs.exclude(exclude_query)
-        return qs
-
-    @property
-    def targets_defined(self):
-        """returns indicators (annotated with target data) that have all their targets defined"""
-        indicators = IPTTIndicator.with_metrics.filter(program__in=[self.id])
-        indicators = indicators.filter(self.get_defined_targets_filter())
-        return indicators
-
-    @property
-    def targets_undefined(self):
-        """returns indicators (annotated with target data) that have undefined targets"""
-        indicators = IPTTIndicator.with_metrics.filter(program__in=[self.id])
-        indicators = indicators.exclude(self.get_defined_targets_filter())
-        return indicators
-
-    @property
-    def reported_results(self):
-        """returns indicators that have reported results"""
-        indicators = IPTTIndicator.with_metrics.filter(program__in=[self.id])
-        indicators = indicators.filter(reported_results__gte=1)
-        return indicators
-
-    @property
-    def no_reported_results(self):
-        """returns indicators that have no reported results"""
-        indicators = IPTTIndicator.with_metrics.filter(program__in=[self.id])
-        indicators = indicators.filter(reported_results=0)
-        return indicators
-
-    @property
-    def with_evidence(self):
-        """returns indicators that have evidence to back up results"""
-        indicators = IPTTIndicator.with_metrics.filter(program__in=[self.id])
-        indicators = indicators.filter(evidence_count__gte=1)
-        return indicators
-
-    @property
-    def with_no_evidence(self):
-        """returns indicators that have no evidence backing up results"""
-        indicators = IPTTIndicator.with_metrics.filter(program__in=[self.id])
-        indicators = indicators.filter(evidence_count=0)
-        return indicators
-
-    def get_indicators(self):
-        return IPTTIndicator.withtargets.filter(program__in=[self.id])
-
-    @property
-    def ontarget(self):
-        indicators = self.reporting.filter(
-            over_under=0
-        )
-        return indicators
-
-    @property
-    def undertarget(self):
-        indicators = self.reporting.filter(
-            over_under=-1
-        )
-        return indicators
-
-    @property
-    def overtarget(self):
-        indicators = self.reporting.filter(
-            over_under=1
-        )
-        return indicators
-
     @property
     def percent_complete(self):
         if self.reporting_period_end is None or self.reporting_period_start is None:
@@ -865,6 +795,8 @@ class ProgramWithMetrics(wf_models.Program):
         return {
             'indicator_count': denominator,
             'nonreporting': make_percent(self.non_reporting_count),
+            'nonreporting_count': self.non_reporting_count,
+            'reporting_count': denominator - self.non_reporting_count,
             'low': make_percent(self.low_count),
             'on_scope': make_percent(self.on_scope_count),
             'high': make_percent(self.high_count)
