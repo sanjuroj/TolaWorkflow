@@ -350,6 +350,10 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 GOOGLE_ANALYTICS_PROPERTY_ID = None # replaced in private settings file
 GOOGLE_ANALYTICS_DOMAIN = 'example.org' # replaced in private settings file
 
+# Projects whitelist (https://github.com/mercycorps/TolaActivity/issues/132)
+# Limit access to projects to existing users while hiding it from all others
+PROJECTS_ACCESS_WHITELIST_SET = {'AF', 'PK'}  # country code in `workflow_country`
+
 ########## LOGGING CONFIGURATION
 LOGGING = {
     'version': 1,
