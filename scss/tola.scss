@@ -70,8 +70,7 @@
 
 //@import 'select2';
 // Select2
-@import "components/select2_defaults";
-@import "../node_modules/select2/src/scss/core.scss";
+@import "components/select2/core";
 
 /* Components */
 // These are well-behaved BEM-compliant selectors
