@@ -1,12 +1,12 @@
-$s2-border-color: invert($gray-500);
-$s2-selection-color: invert($body-color);
-$s2-selection-disabled-color: invert($gray-150);
-$s2-selection-widget-color: invert($gray-550);
-$s2-placeholder-color: invert($gray-600);
-$s2-selection-arrow-color: invert($gray-600);
-$s2-menu-background: invert($white);
-$s2-menu-highlighted-background: invert($teal-400);
-$s2-menu-selected-background: invert(lighten($s2-menu-highlighted-background, 35%));
+$s2-border-color: $gray-700;
+$s2-selection-color: $gray-300;
+$s2-selection-disabled-color: $gray-400;
+$s2-selection-widget-color: $gray-500;
+$s2-placeholder-color: $gray-500;
+$s2-selection-arrow-color: $gray-500;
+$s2-menu-background: $gray-600;
+$s2-menu-highlighted-background: $teal-400;
+$s2-menu-selected-background: darken($s2-menu-highlighted-background, 35%);
 
 .select2-container--dark {
   @import "single";
