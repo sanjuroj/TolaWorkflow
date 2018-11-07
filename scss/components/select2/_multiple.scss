@@ -4,7 +4,7 @@
   cursor: pointer;
   display: block;
 
-  min-height: 32px;
+  min-height: $s2-selection-height - 6px; // check this
 
   user-select: none;
   -webkit-user-select: none;
@@ -25,7 +25,7 @@
     box-sizing: border-box;
     border: none;
     font-size: 100%;
-    margin-top: 5px;
+    margin-top: $s2-selection-margin;
 
     &::-webkit-search-cancel-button {
       -webkit-appearance: none;

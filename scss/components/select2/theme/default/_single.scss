@@ -29,6 +29,7 @@
     width: 20px;
 
     b {
+      // size values here hardcoded for a triangle effect, don't abstract
       border-color: $s2-selection-arrow-color transparent transparent transparent;
       border-style: solid;
       border-width: 5px 4px 0 4px;
@@ -75,6 +76,7 @@
   .select2-selection--single {
     .select2-selection__arrow {
       b {
+        // size values here hardcoded for a triangle effect, don't abstract
         border-color: transparent transparent $s2-selection-arrow-color transparent;
         border-width: 0 4px 5px 4px;
       }

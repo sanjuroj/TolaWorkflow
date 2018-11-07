@@ -15,7 +15,7 @@
   .select2-selection__placeholder {
     color: $s2-placeholder-color;
 
-    margin-top: 5px;
+    margin-top: $s2-selection-margin;
 
     float: left;
   }
@@ -24,8 +24,8 @@
     cursor: pointer;
     float: right;
     font-weight: bold;
-    margin-top: 5px;
-    margin-right: 10px;
+    margin-top: $s2-selection-margin;
+    margin-right: $s2-selection-margin * 2;
   }
 
   .select2-selection__choice {
@@ -37,13 +37,13 @@
 
     float: left;
 
-    margin-right: 5px;
-    margin-top: 5px;
-    padding: 0 5px;
+    margin-right: $s2-selection-margin;
+    margin-top: $s2-selection-margin;
+    padding: 0 $s2-selection-margin;
   }
 
   .select2-selection__choice__remove {
-    color: #999;
+    color: $s2-selection-widget-color;
     cursor: pointer;
 
     display: inline-block;
@@ -52,7 +52,7 @@
     margin-right: 2px;
 
     &:hover {
-      color: #333;
+      color: darken($s2-selection-widget-color, 40%);
     }
   }
 }
@@ -64,7 +64,7 @@
     }
 
     .select2-selection__choice {
-      margin-left: 5px;
+      margin-left: $s2-selection-margin;
       margin-right: auto;
     }
 
@@ -84,7 +84,7 @@
 
 &.select2-container--disabled {
   .select2-selection--multiple {
-    background-color: #eee;
+    background-color: $s2-selection-disabled-color;
     cursor: default;
   }
 
