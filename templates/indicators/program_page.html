@@ -61,17 +61,17 @@
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Program Details" %}</h3>
-            <p><a href="#">{% trans "Indicator Plan" %}</a></p>
+            <p><a href="{% url 'programIndicatorReport' program.id %}">{% trans "Indicator Plan" %}</a></p>
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Documents" %}</h3>
-            <p><a href="#">{% trans "View program documents" %}</a></p>
-            <a href="#" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add document" %}</a>
+            <p><a href="{% url 'documentation_list' program.id 0 %}">{% trans "View program documents" %}</a></p>
+            <a href="{% url 'documentation_add' %}?program_id={{ program.id }}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add document" %}</a>
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Sites" %}</h3>
-            <p><a href="#">{% trans "View Program Sites" %}</a></p>
-            <a href="#" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add site" %}</a>
+            <p><a href="{% url 'siteprofile_list' program.id 0 %}">{% trans "View Program Sites" %}</a></p>
+            <a href="{% url 'siteprofile_add' %}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add site" %}</a>
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Pinned Reports" %}</h3>
