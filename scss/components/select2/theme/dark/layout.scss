@@ -11,7 +11,13 @@ $s2-menu-selected-background: invert(lighten($s2-menu-highlighted-background, 35
 .select2-container--dark {
   @import "single";
   @import "multiple";
-
+  
+  .select2-dropdown {
+      background-color: $s2-menu-background;
+      border: $s2-border-width solid $s2-border-color;
+      color: $white;
+  }
+  
   &.select2-container--open.select2-container--above {
     .select2-selection--single, .select2-selection--multiple {
       border-top-left-radius: 0;
@@ -25,7 +31,6 @@ $s2-menu-selected-background: invert(lighten($s2-menu-highlighted-background, 35
       border-bottom-right-radius: 0;
     }
   }
-
   .select2-search--dropdown {
     .select2-search__field {
       border: 1px solid $s2-border-color;

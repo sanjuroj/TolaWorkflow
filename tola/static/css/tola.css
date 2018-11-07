@@ -6627,6 +6627,11 @@ body > .container {
 .select2-container--dark.select2-container--disabled .select2-selection__choice__remove {
   display: none; }
 
+.select2-container--dark .select2-dropdown {
+  background-color: black;
+  border: 1px solid #474542;
+  color: #fff; }
+
 .select2-container--dark.select2-container--open.select2-container--above .select2-selection--single, .select2-container--dark.select2-container--open.select2-container--above .select2-selection--multiple {
   border-top-left-radius: 0;
   border-top-right-radius: 0; }
