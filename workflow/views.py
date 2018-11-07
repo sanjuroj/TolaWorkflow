@@ -977,6 +977,11 @@ class DocumentationCreate(CreateView):
         kwargs['request'] = self.request
         return kwargs
 
+    def get_initial(self):
+        return {
+            'program': self.request.GET.get('program_id'),
+        }
+
     def form_invalid(self, form):
 
         messages.error(self.request, 'Invalid Form', fail_silently=False)
