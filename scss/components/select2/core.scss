@@ -1,30 +1,30 @@
 // File cribbed directly from project src
 
 // Custom variables
-// prefixed with s2- in case they
+// prefixed with s2- in case they leak into the global scss
 // Global border variables (both selection element & menu)
-$s2-border-width: 1px;
-$s2-border-radius: 0;
-$s2-border-color: $gray-500;
+$s2-border-width: 1px !default;
+$s2-border-radius: 0 !default;
+$s2-border-color: $gray-500 !default;
 // Selection element (i.e. replacement for select/option
-$s2-selection-height: 38px;
-$s2-selection-color: $body-color;
-$s2-selection-disabled-color: $gray-150;
-$s2-selection-padding-left: 8px;
-$s2-selection-padding-right: 20px;
-$s2-selection-margin: 5px;
-$s2-selection-widget-color: $gray-550;
-$s2-placeholder-color: $gray-600;
-$s2-selection-arrow-color: $gray-600;
+$s2-selection-height: 38px !default;
+$s2-selection-color: $body-color !default;
+$s2-selection-disabled-color: $gray-150 !default;
+$s2-selection-padding-left: 8px !default;
+$s2-selection-padding-right: 20px !default;
+$s2-selection-margin: 5px !default;
+$s2-selection-widget-color: $gray-550 !default;
+$s2-placeholder-color: $gray-600 !default;
+$s2-selection-arrow-color: $gray-600 !default;
 // Option and menu element
-$s2-menu-background: $white;
-$s2-menu-highlighted-background: $teal-400;
-$s2-menu-selected-background: lighten($s2-menu-highlighted-background, 35%);
-$s2-dropddown-padding: 4px;
-$s2-option-padding: 6px;
-$s2-options-max-height: 200px;
+$s2-menu-background: $white !default;
+$s2-menu-highlighted-background: $teal-400 !default;
+$s2-menu-selected-background: lighten($s2-menu-highlighted-background, 35%) !default;
+$s2-dropddown-padding: 4px !default;
+$s2-option-padding: 6px !default;
+$s2-options-max-height: 200px !default;
 // Optgroup indents
-$s2-optgroup-indent-width: 1em;
+$s2-optgroup-indent-width: 1em !default;
 
 
 .select2-container {
@@ -58,7 +58,7 @@ $s2-optgroup-indent-width: 1em;
 
   // styles required for IE to work
 
-  background-color: $s2-menu-background;
+  background-color: white;
   filter: alpha(opacity=0);
 }
 
@@ -74,3 +74,4 @@ $s2-optgroup-indent-width: 1em;
 }
 
 @import "theme/default/layout";
+@import "dark"; // Using this for a dark color theme instead of select2's 'theme' option
