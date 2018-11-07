@@ -1478,6 +1478,11 @@ class ProgramPage(ListView):
         type_ids = set(indicators.values_list('indicator_type', flat=True))
         indicator_types = IndicatorType.objects.filter(id__in=list(type_ids))
         indicator_count = indicators.count()
+
+        indicator_level_ids = Indicator.level.through.objects.filter(indicator__in=indicators)\
+            .values_list('level', flat=True).distinct()
+        indicator_levels = Level.objects.filter(id__in=indicator_level_ids)
+
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
                          [PinnedReport.default_report(program.id)]
 
@@ -1494,6 +1499,7 @@ class ProgramPage(ListView):
             'indicator_types': indicator_types,
             'indicator_filter_id': indicator_filter_id,
             'indicator_filter_name': indicator_filter_name,
+            'indicator_levels': indicator_levels,
             'type_filter_id': type_filter_id,
             'type_filter_name': type_filter_name,
             'percent_complete': program.percent_complete,
