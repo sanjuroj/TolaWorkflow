@@ -16,11 +16,20 @@ class TestProjectUserAccess(test.TestCase):
 
         self.client.login(username="tester", password='password')
 
-        self.afghanistan = CountryFactory()
+        self.afghanistan = CountryFactory(country='Afghanistan', code='AF')
 
-    def test_can_access_projects(self):
+    def test_can_access_projects_countries(self):
         self.assertEquals(self.tola_user.allow_projects_access, False)
 
         self.tola_user.countries.add(self.afghanistan)
+
+        self.assertEquals(self.tola_user.allow_projects_access, True)
+
+    def test_can_access_projects_country(self):
+        self.assertEquals(self.tola_user.allow_projects_access, False)
+
+        # Tola user defaults to US for country in factory
+        self.tola_user.country = self.afghanistan
+        self.tola_user.save()
 
         self.assertEquals(self.tola_user.allow_projects_access, True)
