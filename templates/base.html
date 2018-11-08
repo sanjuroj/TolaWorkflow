@@ -1,6 +1,6 @@
 {% load staticfiles %}
 {% load static %}
-{% load group_tag %}
+{% load group_tag menu_tag %}
 {% load i18n %}
 <!doctype html>
 <html lang="en">
@@ -17,10 +17,6 @@
 
         <!-- Datatables css for HTML tables -->
         <link href="{% static 'css/datatables.min.css' %}" rel="stylesheet" type="text/css">
-
-        <!-- select2 -->
-        <link rel="stylesheet" href="{% static "css/select2.min.css" %} ">
-
 
         <!-- compiled CSS -->
         <link href="{% static 'css/tola.css' %}" rel="stylesheet" type="text/css">
@@ -53,7 +49,7 @@
     </head>
     <body class="{% block bodyclasses %}{% endblock %}">
 
-        <nav class="navbar navbar-expand-sm navbar-dark bg-dark navbar-tola">
+        <nav class="navbar navbar-dark navbar-expand-sm navbar-tola">
             <div class="container-fluid navbar-tola--container">
                 <button
                     class="navbar-toggler m-1"
@@ -65,8 +61,10 @@
                     aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="d-flex flex-column" style="flex-grow:1;">
+                <div class="d-flex flex-column" style="flex-grow:1;"> {# TODO: is this necessary? #}
+
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
                         <div class="navbar-brand-wrapper">
                             <div class="navbar-brand--mc">
                                 <img class="navbar-brand--mc-logo" src="{% static "img/mc_logo_bounded.svg" %}" />
@@ -76,34 +74,42 @@
                             </a>
                         </div>
 
-                        <ul class="navbar-nav">
-                            <li class="nav-item pr-2 mr-3">
-                                <a class="nav-link" href="{% url 'indicator_list' 0 0 0 %}">{% trans "Indicators" %}</a>
-                            </li>
-                            <li class="nav-item dropdown pr-2 mr-3">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarBrowse" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Browse" %}</a>
-                                <div class="dropdown-menu" aria-labelledby="navbarBrowse">
-                                    <a class="dropdown-item" href="/workflow/documentation_list/0/0/">{% trans "Documents" %}</a>
-                                    <a class="dropdown-item" href="/workflow/dashboard/0/">{% trans "Projects" %}</a>
-                                    <a class="dropdown-item" href="/workflow/siteprofile_list/0/0/">{% trans "Sites" %}</a>
-                                    <a class="dropdown-item" href="/workflow/stakeholder_list/0/0">{% trans "Stakeholders" %}</a>
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown pr-2 mr-3">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarReportsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Reports" %}</a>
-                                <div class="dropdown-menu" aria-labelledby="navbarReportsDropdown">
-                                    <a class="dropdown-item" href="{% url 'iptt_quickstart' %}">{% trans "Indicator Performance Tracking Table" %}</a>
-                                    <a class="dropdown-item" href="{% url 'disrep' 0 %}">{% trans "Indicator Disaggregation Report" %}</a>
-                                    <a class="dropdown-item" href="/workflow/report/0/none">{% trans "Project Report" %}</a>
-                                    {% comment %}
-                                      <!-- the code behind these reports to be deleted in the next relase to make sure we don't need it-->
-                                      <!-- <a class="dropdown-item" href="/reports/report/">{% trans "Program Report" %}</a> -->
-                                      <!-- <a class="dropdown-item" href="/customdashboard/program_list/0/">{% trans "Public Dashboards" %}</a> -->
 
-                                      <!-- <a class="dropdown-item" href="{% url 'indicator_report' 0 0 0 %}">{% trans "Indicator Library" %}</a> -->
-                                      <!-- <a class="dropdown-item" href="{% url 'tvareport' %}">{% trans "Indicator Targets vs Actual Report" %}</a> -->
-                                     {% endcomment %}
-                                </div>
+
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                {% program_menu %}
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Browse" %}</a>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-item">
+                                        <a class="nav-link" href="/workflow/documentation_list/0/0/">{% trans "Documents" %}</a>
+                                    </li>
+                                    <li class="dropdown-item">
+                                        <a class="nav-link" href="/workflow/dashboard/0/">{% trans "Projects" %}</a>
+                                    </li>
+                                    <li class="dropdown-item">
+                                        <a class="nav-link" href="/workflow/siteprofile_list/0/0/">{% trans "Sites" %}</a>
+                                    </li>
+                                    <li class="dropdown-item">
+                                        <a class="nav-link" href="/workflow/stakeholder_list/0/0">{% trans "Stakeholders" %}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Reports" %}</a>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-item">
+                                        <a class="nav-link" href="{% url 'iptt_quickstart' %}">{% trans "Indicator Performance Tracking Table" %}</a>
+                                    </li>
+                                    <li class="dropdown-item">
+                                        <a class="nav-link" href="{% url 'disrep' 0 %}">{% trans "Indicator Disaggregation Report" %}</a>
+                                    </li>
+                                    <li class="dropdown-item">
+                                        <a class="nav-link" href="/workflow/report/0/none">{% trans "Project Report" %}</a>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
 
@@ -247,6 +253,7 @@
         <script type="text/javascript">
             var userLang = "{{ LANGUAGE_CODE }}";
             $(document).ready(function() {
+                // Set datepicker language
                 $.datepicker.setDefaults( $.datepicker.regional[ userLang ] );
             });
         </script>
@@ -269,7 +276,6 @@
         {% endif %}
 
         {% block extra_js_in_body %}
-
         {% endblock %}
         {% block debug %}
         {% endblock %}

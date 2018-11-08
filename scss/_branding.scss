@@ -4,8 +4,26 @@
     align-items: center;
 }
 .navbar-tola {
+    // navbar-dark
     padding: 0;
+    border-bottom: 1px solid $gray-150;
+    .dropdown-menu {
+        background: $gray-700;
+    }
+    .dropdown-item {
+        color: $white;
+        &:focus, &:hover {
+            background-color: $gray-600;
+        }
+    }
 }
+// add a small cleanline to the bottom of the navbar
+.navbar-dark {
+}
+
+// overload dropdown menus
+
+@include bg-variant('.navbar-tola', $color: $gray-700) //bg-dark
 .navbar-tola--container {
     align-items: flex-start !important;
     padding-left: 0;
