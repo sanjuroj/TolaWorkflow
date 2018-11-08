@@ -26,11 +26,12 @@ def index(request, selected_country=None, id=0, sector=0):
     program_id = id
     user_countries = getCountry(request.user)
     active_country = Country.objects.filter(id=selected_country)[0] if selected_country else user_countries[0]
+    programs = Program.objects.filter(country=active_country)
 
     return render(request, 'home.html', {
-        'title': 'Home',
         'user_countries': user_countries,
         'active_country': active_country,
+        'programs': programs,
     })
 
 

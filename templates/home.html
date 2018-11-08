@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n mytags %}
-{% block title %}{{ title }} | {% endblock %}
+{% block title %}{{ active_country }} | {% endblock %}
 {% block page_title %}{{ active_country }}{% endblock %}
 
 
@@ -19,26 +19,21 @@
 {% block content %}
 
 <section class="home__featured-country">
-    gauges go here
+    map &amp; gauges go here
 </section><!--/.home__featured-country-->
 <section class="home__program-list">
     <h2>{% blocktrans %}[n] active programs{% endblocktrans %}</h2>
-    <article class="program-list__program card">
-        <div class="card-header">
-            <h4><a href="" class="text-dark">Program Name</a></h4>
-        </div>
-        <div class="card-body">
-            Program info
-        </div>
-    </article><!--/.program-list__program-->
-    <article class="program-list__program card">
-        <div class="card-header">
-            <h4><a href="" class="text-dark">Program Name</a></h4>
-        </div>
-        <div class="card-body">
-            Program info
-        </div>
-    </article><!--/.program-list__program-->
+    {% for program in programs %}
+        <article class="program-list__program card">
+            <div class="card-header">
+                <h4><a href="{% url "program_page" program.id 0 0 %}" class="text-dark">{{ program.name }}</a></h4>
+            </div>
+            <div class="card-body">
+                Program info
+            </div>
+        </article><!--/.program-list__program-->
+    {% endfor %}
+    <!--/.program-list__program-->
 </section>
 
 {% endblock content %}
