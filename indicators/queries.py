@@ -412,7 +412,7 @@ class WithMetricsIndicatorManager(IPTTIndicatorManager):
         indicator.on_scope: 1/0/-1 (1=high, 0=on-target, -1=low)
         indicator.all_targets_defined: T/F whether all targets are defined
         indicator.has_reported_results: T/F indicator has SOME results reported
-        indicator.no_missing_evidence: T/F
+        indicator.all_results_backed_up: T/F
             # True = either has targets and results and all results have evidence, or has no results,
             # False = has targets AND results AND at least one result is missing evidence
         """
@@ -430,23 +430,6 @@ class WithMetricsIndicatorManager(IPTTIndicatorManager):
                     then=models.Value(True)
                 ),
                 default=models.Value(False),
-                output_field=models.BooleanField()
-            ),
-            has_reported_results=models.Case(
-                models.When(
-                    reported_results__gt=0,
-                    then=models.Value(True)
-                ),
-                default=models.Value(False),
-                output_field=models.BooleanField()
-            ),
-            no_missing_evidence=models.Case(
-                models.When(
-                    models.Q(reported_results__gt=0) &
-                    models.Q(evidence_count__lt=models.F('reported_results')),
-                    then=models.Value(False)
-                ),
-                default=models.Value(True),
                 output_field=models.BooleanField()
             )
         )
@@ -471,10 +454,13 @@ class WithMetricsIndicatorManager(IPTTIndicatorManager):
         qs = qs.annotate(
             all_results_backed_up=models.Case(
                 models.When(
-                    models.Q(reported_results__isnull=False) &
-                    models.Q(evidence_count__isnull=False) &
-                    models.Q(reported_results__gt=0) &
-                    models.Q(evidence_count=models.F('reported_results')),
+                    # if no results, then it isn't "missing" data, so we count this as all_backed_up
+                    models.Q(reported_results=0) |
+                    models.Q(
+                        #models.Q(reported_results__isnull=False) &
+                        models.Q(evidence_count__isnull=False) &
+                        models.Q(evidence_count=models.F('reported_results'))
+                        ),
                     then=models.Value(True)
                 ),
                 default=models.Value(False),
@@ -510,7 +496,15 @@ class WithMetricsIndicatorManager(IPTTIndicatorManager):
                         result_count=models.Count('date_collected')).values('result_count')[:1],
                     output_field=models.IntegerField()
                 ), 0)
-        )
+        ).annotate(
+            has_reported_results=models.Case(
+                models.When(
+                    reported_results__gte=1,
+                    then=models.Value(True)
+                ),
+                default=models.Value(False),
+                output_field=models.BooleanField()
+            ))
         return qs
 
     def get_queryset(self):
@@ -621,14 +615,13 @@ class ProgramWithMetricsManager(models.Manager):
         )
         # results reporting filter (at least one reported result):
         reported_results = models.functions.Coalesce(
-            models.Count(
-                models.Case(
-                    models.When(
-                        models.Q(indicator__collecteddata__achieved__isnull=False),
-                        then=1
-                    ),
-                    output_field=models.IntegerField()
-                )
+            models.Subquery(
+                indicator_subquery_base.filter(
+                    has_reported_results=True
+                ).order_by().values('program_id').annotate(
+                    reported_results_count=models.Count('id')
+                ).values('reported_results_count'),
+                output_field=models.IntegerField()
             ), 0)
         total_results = models.functions.Coalesce(
             models.Count('indicator__collecteddata', distinct=True), 0)

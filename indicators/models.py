@@ -8,7 +8,7 @@ from django.db import models
 from django.db.models import Avg
 from django.http import QueryDict
 from django.urls import reverse
-from django.utils import formats, timezone
+from django.utils import formats, timezone, functional
 from django.utils.translation import ugettext_lazy as _
 
 from django.contrib import admin
@@ -586,7 +586,7 @@ class Indicator(models.Model):
     def levels(self):
         return ', '.join([x.name for x in self.level.all()])
 
-    @property
+    @functional.cached_property
     def level_ids(self):
         return ', '.join([str(x.id) for x in self.level.all()])
 
