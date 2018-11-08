@@ -42,16 +42,6 @@ class RandomIndicatorFactory(DjangoModelFactory):
         lambda n: "%s.%s.%s" % (randint(1, 2), randint(1, 4), randint(1, 5)))
     create_date = lazy_attribute(lambda t: timezone.now())
 
-    # @post_generation
-    # def program(self, create, extracted, **kwargs):
-    #     if not create:
-    #         # Simple build, do nothing.
-    #         return
-    #     if extracted:
-    #         self.program = extracted
-    #     else:
-    #         pass
-
 
 class IndicatorFactory(DjangoModelFactory):
     class Meta:
@@ -59,16 +49,6 @@ class IndicatorFactory(DjangoModelFactory):
         django_get_or_create = ('name',)
 
     name = Sequence(lambda n: 'Indicator {0}'.format(n))
-
-    # @post_generation
-    # def program(self, create, extracted, **kwargs):
-    #     if not create:
-    #         # Simple build, do nothing.
-    #         return
-    #     if extracted:
-    #         self.program = extracted
-    #     else:
-    #         pass
 
 
 class DefinedIndicatorFactory(IndicatorFactory):
