@@ -81,24 +81,16 @@ urlpatterns = [ # rest framework
                 # internationalization
                 url(r'^i18n/', include('django.conf.urls.i18n')),
 
-                # Old index
-                # TODO: we are keeping the "index" named routes for historical purposes during development
-                # TODO: ...remove these during Mangosteen deployment
-                # url(r'^$', views.index, name='index'),
-
-                # old "dashboard" aka filtered index
-                url(r'^dashboard/(?P<id>\w+)/(?P<sector>\w+)/$', tolaviews.index, name='index'),
-
-                # "dashboard" aka homepage filtered by country, sort of
-                url(r'^(?P<selected_countries>\w+)/$', views.index, name='index'),
+                # Site home page filtered by country
+                url(r'^(?P<selected_country>\w+)/$', views.index, name='index'),
 
                 # Site home page
-                url(r'^$', views.home, name='home'),
+                url(r'^$', views.index, name='index'),
 
                 # program page
                 url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<type_id>\d+)/$',
                     ProgramPage.as_view(), name='program_page'),
-                
+
                 # program ajax update for metrics
                 url(r'^program/(?P<program_id>\d+)/metrics/$',
                     ProgramPage.as_view(metrics=True), name='program_metrics'),

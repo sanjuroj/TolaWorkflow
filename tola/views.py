@@ -18,32 +18,24 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 @login_required(login_url='/accounts/login/')
-def home(request, selected_countries=None, id=0, sector=0):
+def index(request, selected_country=None, id=0, sector=0):
     """
     Mangosteen home page
     """
 
     program_id = id
     user_countries = getCountry(request.user)
-
-    if not selected_countries:
-        selected_countries = user_countries
-        selected_countries_list = None
-        selected_countries_label_list = None
-    else:
-        selected_countries = [selected_countries]
-        selected_countries_list = Country.objects.all().filter(id__in=selected_countries)
-        selected_countries_label_list = Country.objects.all().filter(id__in=selected_countries).values('country')
+    active_country = Country.objects.filter(id=selected_country)[0] if selected_country else user_countries[0]
 
     return render(request, 'home.html', {
         'title': 'Home',
-        'countries': user_countries,
-        'selected_countries': selected_countries,
+        'user_countries': user_countries,
+        'active_country': active_country,
     })
 
 
 @login_required(login_url='/accounts/login/')
-def index(request, selected_countries=None, id=0, sector=0):
+def old_index(request, selected_countries=None, id=0, sector=0):
     """
     Previous "Home" page -- also a filtered index!
     get count of agreements approved and total for dashboard

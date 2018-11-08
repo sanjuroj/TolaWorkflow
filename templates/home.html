@@ -1,33 +1,25 @@
 {% extends "base.html" %}
 {% load i18n mytags %}
 {% block title %}{{ title }} | {% endblock %}
-{% block page_title %}{{ title }}{% endblock %}
+{% block page_title %}{{ active_country }}{% endblock %}
 
 
 {% block header_extras %}
 <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-    {% if selected_countries_list %}
-        {% for item in selected_countries_list %}
-            {{ item.country }}
-        {% endfor %}
-    {% else %}
-        {% trans "change country" %}
-    {% endif %}
+    {% trans "change country" %}
     <span class="caret"></span>
 </button>
 <ul class="dropdown-menu" role="menu">
-    {%for item in countries  %}
-    <li><a href="/{{ item.id }}/">{{ item.country }}</a></li>
+    {% for country in user_countries  %}
+    <li><a href="/{{ country.id }}/">{{ country.country }}</a></li>
     {% endfor %}
-    <li role="separator" class="divider"></li>
-    <li><a href="/">{% trans "All" %}</a></li>
 </ul>
 {% endblock %}
 
 {% block content %}
 
 <section class="home__featured-country">
-    Featured country
+    gauges go here
 </section><!--/.home__featured-country-->
 <section class="home__program-list">
     <h2>{% blocktrans %}[n] active programs{% endblocktrans %}</h2>
