@@ -89,14 +89,17 @@ $ cd TolaActivity/test/js
 ### Create the user config file
 Copy the example user config file to _config.json_ (`cp
 config-example.json config.json`) and edit _config.json_, changing
-_username_, _password_, and _baseurl_ to suit your needs. In particular:
+_username_, _password_, _baseurl_, and _auth_ to suit your needs. 
+In particular:
 
 - _username_ and _password_ must correspond to your MercyCorps SSO login
 - _baseurl_ points to the home page of the TolaActivity instance you
   are testing
-- When running against a local instance, set _googleauth_ to _true_ if 
-  you want to use Google authentication; seet _googleauth_ to _false_ if
-  you want to authenticate using a Django username and password
+- To authenticate against MercyCorps' SSO, set _auth_ to _"mcsso"_
+- To authenticate against GoogleAuth when running a local instance,
+  set _auth_ to _"google"_
+- To authenticate against Django when running a local instance, set 
+  _auth_ to _"django"_
 - **Under no circumstances run the TATS suite against the production
   TolaActivity server. Doing so will create bad data and result in a lot
   of work to remove it, and potentially result in losing known-good,

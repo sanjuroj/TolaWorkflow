@@ -12,7 +12,8 @@ class LoginPage extends Page {
   // Independent of auth source
   get title () { return browser.getTitle() }
 
-  // These are for authentication using Django's built-in auth
+  // These are for authentication using Django's built-in auth on
+  // a local instance; parms.auth = 'django'
   get dUsername () { return browser.$('#id_username') }
   get dPassword () { return browser.$('#id_password') }
   get dLogin () {
@@ -23,11 +24,10 @@ class LoginPage extends Page {
       }
     }
   }
-
   set dUsername (val) { return browser.$('#id_username').setValue(val) }
   set dPassword (val) { return browser.$('#id_password').setValue(val) }
 
-  // These are for authentication using MC's SSO
+  // These are for authentication using MC's SSO; parms.auth = 'mcsso'
   get username () { return browser.$('#login') }
   get password () { return browser.$('#password') }
   get login () { return browser.$('.inputsub') }
@@ -36,7 +36,8 @@ class LoginPage extends Page {
   set username (val) { return browser.$('#login').setValue(val) }
   set password (val) { return browser.$('#password').setValue(val) }
 
-  // These are for authenticating using GoogleAuth on a local instance
+  // These are for authenticating using GoogleAuth on a local instance;
+  // parms.auth = 'google'
   get gUsername () { return browser.$('form').$('input#identifierId') }
   get gPassword () { return browser.$('form').$('input.whsOnd.zHQkBf') }
   get googleplus () { return browser.$('=Google+') }
