@@ -6968,6 +6968,16 @@ body > .container {
       max-width: 100%;
       order: 1; } }
 
+.home__featured-country {
+  display: block;
+  background-color: #fff; }
+
+.home__program-list {
+  margin-top: 30px; }
+
+.program-list__program {
+  margin-bottom: 15px; }
+
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
   color: #71757b !important;

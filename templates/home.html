@@ -3,6 +3,34 @@
 {% block title %}{{ title }} | {% endblock %}
 {% block page_title %}{{ title }}{% endblock %}
 
+
+{% block header_extras %}
+    Change country
+{% endblock %}
+
 {% block content %}
-    {{ title }}
+
+<section class="home__featured-country">
+    Featured country
+</section><!--/.home__featured-country-->
+<section class="home__program-list">
+    <h2>{% blocktrans %}[n] active programs{% endblocktrans %}</h2>
+    <article class="program-list__program card">
+        <div class="card-header">
+            <h4><a href="" class="text-dark">Program Name</a></h4>
+        </div>
+        <div class="card-body">
+            Program info
+        </div>
+    </article><!--/.program-list__program-->
+    <article class="program-list__program card">
+        <div class="card-header">
+            <h4><a href="" class="text-dark">Program Name</a></h4>
+        </div>
+        <div class="card-body">
+            Program info
+        </div>
+    </article><!--/.program-list__program-->
+</section>
+
 {% endblock content %}
