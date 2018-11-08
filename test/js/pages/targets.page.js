@@ -9,23 +9,6 @@ let parms = Util.readConfig()
 parms.baseurl += '/indicators/home/0/0/0'
 
 /**
- * Add num target periods to the targets list, or 1 target period if num
- * not specified
- * @param {integer} num The number of target periods to add
- * @returns {integer} The total number of target periods added
- */
-function addTarget (num = 1) {
-  let link = browser.$('a#addNewPeriodicTarget')
-  let cnt = 0
-
-  while (cnt < num) {
-    link.click()
-    cnt++
-  }
-  return cnt
-}
-
-/**
  * Click the Direction of change dropdown
  * @returns {Nothing}
  */
@@ -580,7 +563,6 @@ function setUnitOfMeasure (unit) {
   bucket.setValue(unit)
 }
 
-exports.addTarget = addTarget
 exports.clickNumberType = clickNumberType
 exports.clickPercentType = clickPercentType
 exports.clickResetButton = clickResetButton

@@ -31,8 +31,6 @@ describe('Adding target date ranges', function() {
 
     // Scrape a list of date ranges off the screen
     let dateRanges = TargetsTab.getTargetDateRanges()
-    // Add a target and verify date ranges
-    TargetsTab.addTarget()
     let rangeStart, rangeEnd, dateObj, dateDiff
     for (let dateRange of dateRanges) {
       // Split dates into start and end date objects
@@ -83,7 +81,6 @@ describe('Adding target date ranges', function() {
     TargetsTab.saveIndicatorChanges()
 
     let dateRanges = TargetsTab.getTargetDateRanges()
-    TargetsTab.addTarget()
     let rangeStart, rangeEnd, dateObj, dateDiff
     for (let dateRange of dateRanges) {
       dateObj = new Date(dateRange.split(' - ')[0])
@@ -130,7 +127,6 @@ describe('Adding target date ranges', function() {
     TargetsTab.saveIndicatorChanges()
 
     let dateRanges = TargetsTab.getTargetDateRanges()
-    TargetsTab.addTarget()
     let rangeStart, rangeEnd, dateObj, dateDiff
     for (let dateRange of dateRanges) {
       dateObj = new Date(dateRange.split(' - ')[0])
@@ -177,7 +173,6 @@ describe('Adding target date ranges', function() {
     TargetsTab.saveIndicatorChanges()
 
     let dateRanges = TargetsTab.getTargetDateRanges()
-    TargetsTab.addTarget()
     let rangeStart, rangeEnd, dateObj, dateDiff
     for (let dateRange of dateRanges) {
       dateObj = new Date(dateRange.split(' - ')[0])
@@ -224,7 +219,6 @@ describe('Adding target date ranges', function() {
     TargetsTab.saveIndicatorChanges()
 
     let dateRanges = TargetsTab.getTargetDateRanges()
-    TargetsTab.addTarget()
     let rangeStart, rangeEnd, dateObj, dateDiff
     for (let dateRange of dateRanges) {
       dateObj = new Date(dateRange.split(' - ')[0])
