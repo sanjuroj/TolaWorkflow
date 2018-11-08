@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block ttitle %}{% trans "Addtional Permissions Required"|escapejs %}{% endblock %}
+{% block title %}{% trans "Additional Permissions Required" %}{% endblock %}
 
 {% block page_title %}{% trans "You don't appear to have the proper permissions to access this page." %}{% endblock page_title %}
 
 {% block content %}
 <p>
-    {% trans "Please check with your organization or country admin if you think you should have access to this section."|escapejs %}
+    {% trans "Please check with your organization or country admin if you think you should have access to this section." %}
     <br/>
     <br/>
     {% trans "You can also reach the TolaData team by using the " %}
