@@ -68,8 +68,9 @@
 @import '_bootstrap_multiselect.scss'; // my what a mess this is
 @import 'bootstrap_overrides'; // overload BS selectors.
 
-//@import 'select2';
-// Select2
+// Select2 multi-select menus
+// AFAIK used only in Program menu and IPTT quickstart page
+// This cribs project /src/ directly, not ideal!
 @import "components/select2/core";
 
 /* Components */
