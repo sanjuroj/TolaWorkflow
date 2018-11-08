@@ -47,22 +47,11 @@ class IndicatorForm(forms.ModelForm):
         choices=Indicator.UNIT_OF_MEASURE_TYPES,
         widget=forms.RadioSelect(),
     )
-    # cumulative_choices = (
-    #     (1, None),
-    #     (2, True),
-    #     (3, False)
-    # )
-    # is_cumulative = forms.ChoiceField(
-    #     choices=cumulative_choices,
-    #     widget=forms.RadioSelect())
-
-    #program = forms.CharField(widget=forms.HiddenInput())
 
     class Meta:
         model = Indicator
         exclude = ['create_date', 'edit_date']
         widgets = {
-            #'program': forms.Select(),
             'definition': forms.Textarea(attrs={'rows': 4}),
             'justification': forms.Textarea(attrs={'rows': 4}),
             'quality_assurance': forms.Textarea(attrs={'rows': 4}),
@@ -300,8 +289,8 @@ class IPTTReportFilterForm(ReportFormCommon):
 
         super(IPTTReportFilterForm, self).__init__(*args, **kwargs)
         del self.fields['formprefix']
-        level_ids = Indicator.objects.filter(program__in=[program.id]).values(
-            'level__id').distinct().order_by('level')
+        level_ids = Program.indicator_set.values(
+            'level_id').distinct().order_by('level')
 
         self.fields['program'].initial = program
         self.fields['sector'].queryset = Sector.objects.filter(
