@@ -99,7 +99,9 @@ In particular:
 - To authenticate against GoogleAuth when running a local instance,
   set _auth_ to _"google"_
 - To authenticate against Django when running a local instance, set 
-  _auth_ to _"django"_
+  _auth_ to _"django"_. If you choose this option, which fast and
+  easy, you have to implement the GoogleAuth fix described in the
+  top-level [README]('../../README.md').
 - **Under no circumstances run the TATS suite against the production
   TolaActivity server. Doing so will create bad data and result in a lot
   of work to remove it, and potentially result in losing known-good,
