@@ -68,7 +68,7 @@ run-chrome:
 run-gecko:
 	java -jar -Dwebdriver.gecko.driver=geckodriver $(SESERVER) | tee server.log 2>&1 &
 	npm run wdio wdio.gecko.conf | tee gecko.log 2>&1
-	ifeq ($(XDG_SESSION_TYPE),x11)
+	ifeq $($(XDG_SESSION_TYPE),x11)
 		-killall -w $(jobs -p)
 	else
 		-killall java
