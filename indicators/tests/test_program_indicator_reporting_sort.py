@@ -161,7 +161,7 @@ class ReportingIndicatorBase(test.TestCase):
         """loads a bare indicator in this program"""
         self.indicator = i_factories.IndicatorFactory()
         if self.program is not None:
-            self.indicator.program.add(self.program)
+            self.indicator.program = self.program
             self.indicator.save()
 
     def load_data(self, indicator=None, achieved=None, date=None, target=None):
@@ -500,10 +500,9 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
         self.get_closed_program()
         indicator_lop = i_factories.IndicatorFactory(
             target_frequency=Indicator.LOP,
-            lop_target=1000
+            lop_target=1000,
+            program=self.program
         )
-        indicator_lop.program.add(self.program)
-        indicator_lop.save()
         self.indicators.append(indicator_lop)
         lop_data = i_factories.CollectedDataFactory(
             indicator=indicator_lop,
@@ -512,10 +511,9 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
         )
         self.data.append(lop_data)
         indicator_midend = i_factories.IndicatorFactory(
-            target_frequency=Indicator.MID_END
+            target_frequency=Indicator.MID_END,
+            program=self.program
         )
-        indicator_midend.program.add(self.program)
-        indicator_midend.save()
         self.indicators.append(indicator_midend)
         mid_target = i_factories.PeriodicTargetFactory(
             indicator=indicator_midend,
@@ -549,10 +547,9 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
         self.get_closed_program()
         for frequency in self.TIME_AWARE_FREQUENCIES:
             indicator = i_factories.IndicatorFactory(
-                target_frequency=frequency
+                target_frequency=frequency,
+                program=self.program
             )
-            indicator.program.add(self.program)
-            indicator.save()
             self.load_targets(indicator=indicator)
             self.load_data(indicator=indicator)
         program = self.get_annotated_program(self.program)

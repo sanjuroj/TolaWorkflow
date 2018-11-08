@@ -105,7 +105,9 @@ class CSVIndicatorTestBase(CSVTestBase):
 
     def get_indicator(self, sector=0, level=0, disaggregation=0,
                       indicatortype=0):
-        indicator = DefinedIndicatorFactory(sector=self.sectors[sector])
+        indicator = DefinedIndicatorFactory(
+            sector=self.sectors[sector],
+        )
         indicator.level.add(self.levels[level])
         indicator.disaggregation.add(self.disaggregations[disaggregation])
         indicator.indicator_type.add(self.indicatortypes[indicatortype])
@@ -114,7 +116,8 @@ class CSVIndicatorTestBase(CSVTestBase):
 
     def add_indicator(self, *args, **kwargs):
         indicator = self.get_indicator(*args, **kwargs)
-        indicator.program.add(self.program)
+        indicator.program = self.program
+        indicator.save()
         self.indicators.append(indicator)
         return indicator
 

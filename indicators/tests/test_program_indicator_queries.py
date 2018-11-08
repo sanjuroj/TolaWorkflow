@@ -36,9 +36,9 @@ class TestCollectionCorrect(test.TestCase):
             reporting_period_start=datetime.date(2016, 10, 1),
             reporting_period_end=datetime.date(2017, 9, 30)
         )
-        self.indicator = i_factories.IndicatorFactory()
-        self.indicator.program.add(self.program)
-        self.indicator.save()
+        self.indicator = i_factories.IndicatorFactory(
+            program=self.program
+        )
         self.targets = []
         self.data = []
 
@@ -263,10 +263,9 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
         self.program.delete()
 
     def get_base_indicator(self):
-        indicator = i_factories.IndicatorFactory()
-        indicator.program.add(self.program)
-        indicator.save()
-        return indicator
+        return i_factories.IndicatorFactory(
+            program=self.program
+        )
 
     def get_base_data(self, indicator, target=None):
         data = i_factories.CollectedDataFactory(
@@ -449,4 +448,4 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
                         key, expected_value, scope_percents[key]
                     )
                 )
-        self.assertIn('reported_results', metrics.keys())
+        self.assertIn('results_count', metrics.keys())

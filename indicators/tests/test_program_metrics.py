@@ -39,6 +39,8 @@ from factories import (
 )
 from workflow.models import Program
 from django import test
+from django.db import connection
+from django.conf import settings
 
 class ProgramMetricsBase(test.TestCase):
     fixtures = ['one_year_program.yaml']
@@ -55,10 +57,9 @@ class ProgramMetricsBase(test.TestCase):
 
     def get_indicator(self, frequency=Indicator.LOP):
         indicator = i_factories.IndicatorFactory(
-            target_frequency=frequency
+            target_frequency=frequency,
+            program=self.program
         )
-        indicator.program.add(self.program)
-        indicator.save()
         self.indicators.append(indicator)
         return indicator
 
@@ -89,7 +90,7 @@ class ProgramMetricsBase(test.TestCase):
 
 # TARGETS DEFINED TESTS:
 
-#pylint: disable=W0232
+# pylint: disable=W0232
 class TargetTestsMixin:
     """mixin containing test methods so tests won't fire on base class"""
 
@@ -386,9 +387,9 @@ class TestProgramReportedResultsQueries(ProgramMetricsBase):
             with self.assertNumQueries(1):
                 program = self.get_reporting_program()
                 self.assertEqual(
-                    program.metrics['reported_results'], 0,
+                    program.metrics['results_count'], 0,
                     "One bare indicator should not be counted as 0 reported results, got {0}".format(
-                        program.metrics['reported_results'])
+                        program.metrics['results_count'])
                 )
             with self.assertNumQueries(1):
                 iptt = program.get_annotated_indicators().get(pk=indicator.pk)
@@ -396,9 +397,9 @@ class TestProgramReportedResultsQueries(ProgramMetricsBase):
             self.add_data(indicator)
             program = self.get_reporting_program()
             self.assertEqual(
-                program.metrics['reported_results'], 1,
+                program.metrics['results_count'], 1,
                 "One indicator with results should  be counted as 1 reported results, got {0}".format(
-                    program.metrics['reported_results'])
+                    program.metrics['results_count'])
             )
             iptt = program.get_annotated_indicators().get(pk=indicator.pk)
             self.assertTrue(iptt.has_reported_results, "Indicator with results should have reported results")
@@ -417,9 +418,9 @@ class TestProgramReportedResultsQueries(ProgramMetricsBase):
             indicator = self.get_indicator(frequency=frequency)
         program = self.get_reporting_program()
         self.assertEqual(
-            program.metrics['reported_results'], len(Indicator.TARGET_FREQUENCIES),
+            program.metrics['results_count'], len(Indicator.TARGET_FREQUENCIES),
             "one of each freq with data should count as {0} reported results, got {1}".format(
-                len(Indicator.TARGET_FREQUENCIES), program.metrics['reported_results']
+                len(Indicator.TARGET_FREQUENCIES), program.metrics['results_count']
             )
         )
 

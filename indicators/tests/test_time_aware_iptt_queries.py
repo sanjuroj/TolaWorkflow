@@ -220,10 +220,9 @@ class TestIndicatorScenarios(test.TestCase):
             ),
             unit_of_measure_type=(
                 Indicator.NUMBER if scenario['number'] else Indicator.PERCENTAGE
-            )
+            ),
+            program=self.program
         )
-        indicator.program.add(self.program)
-        indicator.save()
         for target_number, period in zip(scenario['targets'], dates['targets']):
             self.targets.append(PeriodicTargetFactory(
                 indicator=indicator,
@@ -250,7 +249,7 @@ class TestIndicatorScenarios(test.TestCase):
             except ValidationError:
                 exc_type, exc_value = sys.exc_info()[:2]
                 self.fail("{0} in {1} scenario: {2}".format(exc_type.__name__, scenario['desc'], ",".join(exc_value)))
-            self.assertEqual(self.indicator.program.first(), self.program)
+            self.assertEqual(self.indicator.program, self.program)
             yield scenario
 
     def test_scenario_totals_targetperiods(self):
