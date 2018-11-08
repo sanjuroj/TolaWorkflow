@@ -51,8 +51,8 @@
         <h3>
 
             {% trans "indicator:" as ind %}
-            {% if indicator.levels %}
-                {{ indicator.levels }} {{ ind }}
+            {% if indicator.level %}
+                {{ indicator.level }} {{ ind }}
             {% endif %}
             {{ indicator.name|truncatechars:300 }}
 

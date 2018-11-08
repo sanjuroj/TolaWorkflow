@@ -176,9 +176,8 @@ scenarios = [
 class TestIndicatorInstance(test.TestCase):
 
     def setUp(self):
-        self.indicator = IndicatorFactory(name="testname")
         self.level = LevelFactory()
-        self.indicator.level.add(self.level)
+        self.indicator = IndicatorFactory(name="testname", level=self.level)
 
     def tearDown(self):
         self.level.delete()

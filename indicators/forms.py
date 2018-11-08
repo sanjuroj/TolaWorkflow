@@ -47,22 +47,11 @@ class IndicatorForm(forms.ModelForm):
         choices=Indicator.UNIT_OF_MEASURE_TYPES,
         widget=forms.RadioSelect(),
     )
-    # cumulative_choices = (
-    #     (1, None),
-    #     (2, True),
-    #     (3, False)
-    # )
-    # is_cumulative = forms.ChoiceField(
-    #     choices=cumulative_choices,
-    #     widget=forms.RadioSelect())
-
-    #program = forms.CharField(widget=forms.HiddenInput())
 
     class Meta:
         model = Indicator
         exclude = ['create_date', 'edit_date']
         widgets = {
-            #'program': forms.Select(),
             'definition': forms.Textarea(attrs={'rows': 4}),
             'justification': forms.Textarea(attrs={'rows': 4}),
             'quality_assurance': forms.Textarea(attrs={'rows': 4}),
@@ -300,18 +289,18 @@ class IPTTReportFilterForm(ReportFormCommon):
 
         super(IPTTReportFilterForm, self).__init__(*args, **kwargs)
         del self.fields['formprefix']
-        level_ids = Indicator.objects.filter(program__in=[program.id]).values(
-            'level__id').distinct().order_by('level')
+        level_ids = program.indicator_set.values(
+            'level_id').distinct().order_by('level')
 
         self.fields['program'].initial = program
         self.fields['sector'].queryset = Sector.objects.filter(
-            indicator__program__in=[program.id]).distinct()
+            indicator__program=program).distinct()
         self.fields['level'].queryset = Level.objects.filter(id__in=level_ids).distinct().order_by('customsort')
-        ind_type_ids = Indicator.objects.filter(program__in=[program.id]).values(
+        ind_type_ids = program.indicator_set.values(
             'indicator_type__id').distinct().order_by('indicator_type')
         self.fields['ind_type'].queryset = IndicatorType.objects.filter(id__in=ind_type_ids).distinct()
         self.fields['site'].queryset = program.get_sites()
-        self.fields['indicators'].queryset = Indicator.objects.filter(program=program)
+        self.fields['indicators'].queryset = program.indicator_set.all()
 
         # Start and end periods dropdowns are updated dynamically
         self.fields['start_period'] = forms.ChoiceField(choices=periods_choices_start, label=_("START"))
