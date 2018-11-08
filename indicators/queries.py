@@ -762,8 +762,7 @@ class ProgramWithMetrics(wf_models.Program):
 
     @property
     def scope_percents(self):
-        denominator = self.indicator_count
-        if denominator == 0:
+        if self.indicator_count == 0:
             return {
                 'indicator_count': 0,
                 'nonreporting': 0,
@@ -771,15 +770,13 @@ class ProgramWithMetrics(wf_models.Program):
                 'on_scope': 0,
                 'high': 0
             }
-        make_percent = lambda x: int(round(float(x)*100/denominator))
         return {
-            'indicator_count': denominator,
-            'nonreporting': make_percent(self.non_reporting_count),
-            'nonreporting_count': self.non_reporting_count,
-            'reporting_count': denominator - self.non_reporting_count,
-            'low': make_percent(self.low_count),
-            'on_scope': make_percent(self.on_scope_count),
-            'high': make_percent(self.high_count)
+            'indicator_count': self.indicator_count,
+            'nonreporting': self.non_reporting_count,
+            'reporting_count': self.indicator_count - self.non_reporting_count,
+            'low': self.low_count,
+            'on_scope': self.on_scope_count,
+            'high': self.high_count
         }
 
     def get_annotated_indicators(self):
