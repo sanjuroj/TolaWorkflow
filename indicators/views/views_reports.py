@@ -554,10 +554,10 @@ class IPTT_Mixin(object):
             # process baseline
             if ind['baseline_na'] is True:
                 ind['baseline'] = _("N/A")
-            else:
-                if ind['baseline'] is None:
-                    ind['baseline'] = ''
-
+            elif ind['baseline'] is None:
+                ind['baseline'] = ''
+            elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
+                ind['baseline'] = u"{0}%".format(ind['baseline'])
             # process lop_target
             try:
                 lop_target = float(ind['lop_target'])
