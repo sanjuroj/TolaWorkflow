@@ -348,7 +348,7 @@ class IPTT_Mixin(object):
         # this "grab all of them and group by" deals with programs where some targets have not been added after
         # the reporting period was changed (issue #700: https://github.com/mercycorps/TolaActivity/issues/700)
         periodic_targets = PeriodicTarget.objects.filter(
-            indicator__program__in=[program.id],
+            indicator__program_id=program.id,
             indicator__target_frequency=period
         ).values("period", "target", "start_date", "end_date").order_by("start_date")
 
@@ -742,7 +742,7 @@ class IPTT_Mixin(object):
         # (monthly, quarterly, tri-annually, seminu-annualy, and yearly) for each indicator
         lastlevel = Level.objects.filter(indicator__id=OuterRef('pk')).order_by('-id')
         last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-date_collected')
-        indicators = Indicator.objects.filter(program__in=[program_id], **filters) \
+        indicators = Indicator.objects.filter(program_id=program_id, **filters) \
             .annotate(actualsum=Sum('collecteddata__achieved'),
                       actualavg=Avg('collecteddata__achieved'),
                       lastlevel=Subquery(lastlevel.values('name')[:1]),
@@ -764,7 +764,7 @@ class IPTT_Mixin(object):
 
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
             target_frequencies = Indicator.objects \
-                .filter(program__in=[program_id], target_frequency__isnull=False) \
+                .filter(program_id=program_id, target_frequency__isnull=False) \
                 .exclude(target_frequency=Indicator.EVENT) \
                 .values_list('target_frequency') \
                 .distinct() \
@@ -1217,7 +1217,7 @@ class IPTT_CSVExport(IPTT_Mixin, TemplateView):
             self.program.reporting_period_start,
             self.program.reporting_period_end,
             Indicator.MONTHLY, None, None)
-            indicators = IPTTIndicator.notargets.filter(program__in=[self.program.id]).period(Indicator.MONTHLY)
+            indicators = IPTTIndicator.notargets.filter(program_id=self.program.id).period(Indicator.MONTHLY)
         context = {
             'program': self.program,
             'indicators': indicators,

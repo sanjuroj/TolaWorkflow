@@ -31,8 +31,9 @@ class TestPeriodicTargetsBase(iptt_utility.TestIPTTTargetPeriodsReportResponseBa
         self.program.save()
 
     def add_indicator(self, targets=None, values=None):
-        indicator = IndicatorFactory(target_frequency=self.indicator_frequency)
-        indicator.program.add(self.program)
+        indicator = IndicatorFactory(
+            target_frequency=self.indicator_frequency,
+            program=self.program)
         self.indicators.append(indicator)
         self.add_periodic_targets(indicator, targets=targets, values=values)
 

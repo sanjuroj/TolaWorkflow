@@ -43,11 +43,6 @@ class LocaleDateField(DateField):
 
 
 class IndicatorForm(forms.ModelForm):
-    program2 = forms.CharField(
-        widget=forms.TextInput(
-            attrs={'readonly': True}
-        )
-    )
     unit_of_measure_type = forms.ChoiceField(
         choices=Indicator.UNIT_OF_MEASURE_TYPES,
         widget=forms.RadioSelect(),
@@ -61,13 +56,13 @@ class IndicatorForm(forms.ModelForm):
     #     choices=cumulative_choices,
     #     widget=forms.RadioSelect())
 
-    program = forms.CharField(widget=forms.HiddenInput())
+    #program = forms.CharField(widget=forms.HiddenInput())
 
     class Meta:
         model = Indicator
-        exclude = ['program', 'create_date', 'edit_date']
+        exclude = ['create_date', 'edit_date']
         widgets = {
-            # {'program': forms.Select()}
+            #'program': forms.Select(),
             'definition': forms.Textarea(attrs={'rows': 4}),
             'justification': forms.Textarea(attrs={'rows': 4}),
             'quality_assurance': forms.Textarea(attrs={'rows': 4}),
@@ -87,13 +82,11 @@ class IndicatorForm(forms.ModelForm):
 
         super(IndicatorForm, self).__init__(*args, **kwargs)
 
-        self.fields['program2'].initial = indicator.programs
-        self.fields['program2'].label = _('Program')
-        self.fields['program'].initial = self.programval.id
-
         countries = getCountry(self.request.user)
         self.fields['disaggregation'].queryset = DisaggregationType.objects\
             .filter(country__in=countries, standard=False)
+        self.fields['program'].queryset = Program.objects.filter(
+            funding_status="Funded", country__in=countries)
         self.fields['objectives'].queryset = Objective.objects.filter(program__id__in=[self.programval.id])
         self.fields['strategic_objectives'].queryset = StrategicObjective.objects.filter(country__in=countries)
         self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()

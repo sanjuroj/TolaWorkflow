@@ -36,9 +36,9 @@ class TestCollectionCorrect(test.TestCase):
             reporting_period_start=datetime.date(2016, 10, 1),
             reporting_period_end=datetime.date(2017, 9, 30)
         )
-        self.indicator = i_factories.IndicatorFactory()
-        self.indicator.program.add(self.program)
-        self.indicator.save()
+        self.indicator = i_factories.IndicatorFactory(
+            program=self.program
+        )
         self.targets = []
         self.data = []
 
@@ -263,10 +263,9 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
         self.program.delete()
 
     def get_base_indicator(self):
-        indicator = i_factories.IndicatorFactory()
-        indicator.program.add(self.program)
-        indicator.save()
-        return indicator
+        return i_factories.IndicatorFactory(
+            program=self.program
+        )
 
     def get_base_data(self, indicator, target=None):
         data = i_factories.CollectedDataFactory(
@@ -417,24 +416,24 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
     def test_percentages(self):
         percentages = self.reporting_program.scope_percents
         self.assertEqual(
-            percentages['low'], 14,
-            "expected 17% undertarget for 1/7, got {0}".format(percentages['low'])
+            percentages['low'], 1,
+            "expected 1 undertarget for 1/7, got {0}".format(percentages['low'])
         )
         self.assertEqual(
-            percentages['on_scope'], 29,
-            "expected 33% ontarget for 2/7, got {0}".format(percentages['on_scope'])
+            percentages['on_scope'], 2,
+            "expected 2 ontarget for 2/7, got {0}".format(percentages['on_scope'])
         )
         self.assertEqual(
-            percentages['high'], 43,
-            "expected 50% overtarget for 3/7, got {0}".format(percentages['high'])
+            percentages['high'], 3,
+            "expected 3 overtarget for 3/7, got {0}".format(percentages['high'])
         )
 
     def test_queries(self):
         expected = {
-            'low': 14,
-            'on_scope': 29,
-            'high': 43,
-            'nonreporting': 14,
+            'low': 1,
+            'on_scope': 2,
+            'high': 3,
+            'nonreporting': 1,
             'indicator_count': 7
         }
         with self.assertNumQueries(1):
@@ -449,4 +448,4 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
                         key, expected_value, scope_percents[key]
                     )
                 )
-        self.assertIn('reported_results', metrics.keys())
+        self.assertIn('results_count', metrics.keys())

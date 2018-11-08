@@ -28,9 +28,7 @@ from indicators.queries import ProgramWithMetrics, IPTTIndicator
 from django import test
 
 def do_add_indicator(program):
-    indicator = i_factories.IndicatorFactory()
-    indicator.program.add(program)
-    indicator.save()
+    indicator = i_factories.IndicatorFactory(program=program)
     return indicator
 
 def do_add_defined_target(indicator):

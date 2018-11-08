@@ -8,7 +8,7 @@ from django.db import models
 from django.db.models import Avg
 from django.http import QueryDict
 from django.urls import reverse
-from django.utils import formats, timezone
+from django.utils import formats, timezone, functional
 from django.utils.translation import ugettext_lazy as _
 
 from django.contrib import admin
@@ -494,10 +494,9 @@ class Indicator(models.Model):
         _("Comments"), max_length=255, null=True, blank=True, help_text=" "
     )
 
-    # note this is separate (and not validated against) objective.program
-    # TODO: make foreignkey (or eliminate in favor of the relationship through objective)
-    program = models.ManyToManyField(
-        Program, help_text=" ", verbose_name=_("Program")
+    program = models.ForeignKey(
+        Program, verbose_name=_("Program"),
+        blank=True, null=True, on_delete=models.CASCADE,
     )
 
     sector = models.ForeignKey(
@@ -587,7 +586,7 @@ class Indicator(models.Model):
     def levels(self):
         return ', '.join([x.name for x in self.level.all()])
 
-    @property
+    @functional.cached_property
     def level_ids(self):
         return ', '.join([str(x.id) for x in self.level.all()])
 
