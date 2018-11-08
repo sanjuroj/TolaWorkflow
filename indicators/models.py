@@ -494,10 +494,9 @@ class Indicator(models.Model):
         _("Comments"), max_length=255, null=True, blank=True, help_text=" "
     )
 
-    # note this is separate (and not validated against) objective.program
-    # TODO: make foreignkey (or eliminate in favor of the relationship through objective)
-    program = models.ManyToManyField(
-        Program, help_text=" ", verbose_name=_("Program")
+    program = models.ForeignKey(
+        Program, verbose_name=_("Program"),
+        blank=True, null=True, on_delete=models.CASCADE,
     )
 
     sector = models.ForeignKey(
