@@ -244,7 +244,7 @@ class ReportingIndicatorBase(test.TestCase):
 class TestSingleNonReportingIndicator(ReportingIndicatorBase):
 
     def one_incomplete_assert(self, program, scenario):
-        nonreporting = program.scope_percents['nonreporting_count']
+        nonreporting = program.scope_percents['nonreporting']
         reporting = program.scope_percents['reporting_count']
         self.assertEqual(
             nonreporting, 1,
@@ -277,7 +277,7 @@ class TestSingleNonReportingIndicator(ReportingIndicatorBase):
         baseline = len(db.connection.queries)
         program = self.get_annotated_program(self.program)
         baseline = self.query_assert(baseline, 1, "fetch program")
-        incomplete = program.scope_percents['nonreporting_count']
+        incomplete = program.scope_percents['nonreporting']
         self.assertEqual(
             incomplete, 1,
             "LOP program with open program reporting period should be in incomplete"
@@ -412,9 +412,9 @@ class TestSingleReportingIndicator(ReportingIndicatorBase):
             )
         )
         self.assertEqual(
-            program.scope_percents['nonreporting_count'], 0,
+            program.scope_percents['nonreporting'], 0,
             "In {0} query expected 0 incomplete, got {1}".format(
-                scenario, program.scope_percents['nonreporting_count']
+                scenario, program.scope_percents['nonreporting']
             )
         )
 
@@ -537,7 +537,7 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
             "expected both midend and lop indicators to be reporting, got {0}".format(reporting)
         )
         baseline = self.query_assert(baseline, 0, "reporting count, two indicators")
-        nonreporting = program.scope_percents['nonreporting_count']
+        nonreporting = program.scope_percents['nonreporting']
         self.assertEqual(
             nonreporting, 0,
             "expected no nonreporting indicators, got {0}".format(nonreporting)
@@ -561,7 +561,7 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
             )
         )
         self.assertEqual(
-            program.scope_percents['nonreporting_count'], 0,
+            program.scope_percents['nonreporting'], 0,
             "expected 0 nonreporting timeaware indicators, got {0}".format(
-                program.scope_percents['nonreporting_count'])
+                program.scope_percents['nonreporting'])
         )

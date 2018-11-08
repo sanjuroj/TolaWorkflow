@@ -416,24 +416,24 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
     def test_percentages(self):
         percentages = self.reporting_program.scope_percents
         self.assertEqual(
-            percentages['low'], 14,
-            "expected 17% undertarget for 1/7, got {0}".format(percentages['low'])
+            percentages['low'], 1,
+            "expected 1 undertarget for 1/7, got {0}".format(percentages['low'])
         )
         self.assertEqual(
-            percentages['on_scope'], 29,
-            "expected 33% ontarget for 2/7, got {0}".format(percentages['on_scope'])
+            percentages['on_scope'], 2,
+            "expected 2 ontarget for 2/7, got {0}".format(percentages['on_scope'])
         )
         self.assertEqual(
-            percentages['high'], 43,
-            "expected 50% overtarget for 3/7, got {0}".format(percentages['high'])
+            percentages['high'], 3,
+            "expected 3 overtarget for 3/7, got {0}".format(percentages['high'])
         )
 
     def test_queries(self):
         expected = {
-            'low': 14,
-            'on_scope': 29,
-            'high': 43,
-            'nonreporting': 14,
+            'low': 1,
+            'on_scope': 2,
+            'high': 3,
+            'nonreporting': 1,
             'indicator_count': 7
         }
         with self.assertNumQueries(1):
