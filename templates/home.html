@@ -5,7 +5,23 @@
 
 
 {% block header_extras %}
-    Change country
+<button class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    {% if selected_countries_list %}
+        {% for item in selected_countries_list %}
+            {{ item.country }}
+        {% endfor %}
+    {% else %}
+        {% trans "change country" %}
+    {% endif %}
+    <span class="caret"></span>
+</button>
+<ul class="dropdown-menu" role="menu">
+    {%for item in countries  %}
+    <li><a href="/{{ item.id }}/">{{ item.country }}</a></li>
+    {% endfor %}
+    <li role="separator" class="divider"></li>
+    <li><a href="/">{% trans "All" %}</a></li>
+</ul>
 {% endblock %}
 
 {% block content %}
