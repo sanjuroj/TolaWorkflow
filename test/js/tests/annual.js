@@ -14,27 +14,6 @@ describe('"Annual" target frequency', function() {
     Util.loginTola()
   })
 
-  it('should require date that first target period begins', function() {
-    NavBar.Indicators.click()
-    expect('Program Indicators' === IndPage.getPageName())
-    IndPage.createBasicIndicator()
-
-    TargetsTab.setIndicatorName('Annual target, first period required')
-    TargetsTab.setUnitOfMeasure('Hawks per hectare')
-    TargetsTab.setLoPTarget(271)
-    TargetsTab.setBaseline(272)
-    TargetsTab.setTargetFrequency('Annual')
-
-    // Trying to save without setting the start date should fail
-    TargetsTab.saveIndicatorChanges()
-    let errorMessage = TargetsTab.getTargetFirstPeriodErrorHint()
-    expect(errorMessage.includes('Please complete this field.'))
-  })
-
-  it('should default number of periods to 1', function() {
-    expect(1 === TargetsTab.getNumTargetPeriods())
-  })
-
   it('should create target periods for each period requested', function() {
     NavBar.Indicators.click()
     IndPage.createBasicIndicator()
@@ -44,7 +23,6 @@ describe('"Annual" target frequency', function() {
     TargetsTab.setLoPTarget(293)
     TargetsTab.setBaseline(294)
     TargetsTab.setTargetFrequency('Annual')
-    TargetsTab.setNumTargetPeriods(2)
 
     // This should succeed
     TargetsTab.saveIndicatorChanges()
@@ -60,8 +38,6 @@ describe('"Annual" target frequency', function() {
     TargetsTab.setLoPTarget(308)
     TargetsTab.setBaseline(309)
     TargetsTab.setTargetFrequency('Annual')
-    TargetsTab.setFirstTargetPeriod()
-    TargetsTab.setNumTargetPeriods(2)
     TargetsTab.saveIndicatorChanges()
 
     // Find the input boxes
