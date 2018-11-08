@@ -344,7 +344,7 @@ function getTargetInputBoxes () {
  * @returns {string} The error text present, if any
  */
 function getTargetValueErrorHint () {
-  let errorBox = browser.$('span.target-value-error')
+  let errorBox = browser.$('td#id_pt_errors')
   return errorBox.getText()
 }
 
@@ -611,6 +611,7 @@ exports.getTargetFirstPeriodErrorHint = getTargetFirstPeriodErrorHint
 exports.getTargetFrequency = getTargetFrequency
 exports.getTargetInputBoxes = getTargetInputBoxes
 exports.getUnitOfMeasure = getUnitOfMeasure
+exports.getTargetValueErrorHint = getTargetValueErrorHint
 exports.open = open
 exports.saveIndicatorChanges = saveIndicatorChanges
 exports.setBaseline = setBaseline

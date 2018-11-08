@@ -65,19 +65,19 @@ function waitForAjax(secs = 2) {
   if (true === browser.isVisible('div#ajaxloading')) {
     let visible = browser.isVisible('div#ajaxloading')
     while (visible === true) {
-      browser.pause(secs * msec)
+      browser.pause(secs * delay)
       visible = browser.isVisible('div#ajaxloading')
     }
   } else if (true === browser.isVisible('div.modal-backdrop.fade')) {
     let visible = browser.isVisible('div.modal-backdrop.fade')
     while (visible === true) {
-      browser.pause(secs * msec)
+      browser.pause(secs * delay)
       visible = browser.isVisible('div.modal-backdrop.fade')
     }
   } else if (true === browser.isVisible('div.modal.ajax_loading')) {
     let visible = browser.isVisible('div.modal.ajax_loading')
     while (visible === true) {
-      browser.pause(secs * msec)
+      browser.pause(secs * delay)
       visible = browser.isVisible('div.modal.ajax_loading')
     }
   }

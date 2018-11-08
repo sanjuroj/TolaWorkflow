@@ -11,20 +11,7 @@ describe('"Annual" target frequency', function() {
 
   before(function() {
     browser.windowHandleMaximize()
-
-    let parms = Util.readConfig()
-    LoginPage.open(parms.baseurl)
-    if (parms.baseurl.includes('mercycorps.org')) {
-      LoginPage.username = parms.username
-      LoginPage.password = parms.password
-      LoginPage.login.click()
-    } else if (parms.baseurl.includes('localhost')) {
-      LoginPage.googleplus.click()
-      if (LoginPage.title != 'TolaActivity') {
-        LoginPage.gUsername = parms.username + '@mercycorps.org'
-        LoginPage.gPassword = parms.password
-      }
-    }
+    Util.loginTola()
   })
 
   it('should require date that first target period begins', function() {
