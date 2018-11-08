@@ -762,7 +762,7 @@ class ProgramWithMetrics(wf_models.Program):
         }
 
     @property
-    def scope_percents(self):
+    def scope_counts(self):
         if self.indicator_count == 0:
             return {
                 'indicator_count': 0,

@@ -19,7 +19,7 @@
             <h2>{% trans "Program metrics" %}</h2>
             <div class="status__gauges">
 
-            {% gauge_band program.scope_percents %}
+            {% gauge_band program.scope_counts %}
 
             {% gauge_tank "targets_defined" "Indicators with targets" "have targets defined" "have no targets" "Add missing targets" "have missing targets" %}
 

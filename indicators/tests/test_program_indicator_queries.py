@@ -414,7 +414,7 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
         return [event_indicator]
 
     def test_percentages(self):
-        percentages = self.reporting_program.scope_percents
+        percentages = self.reporting_program.scope_counts
         self.assertEqual(
             percentages['low'], 1,
             "expected 1 undertarget for 1/7, got {0}".format(percentages['low'])
@@ -438,14 +438,14 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
         }
         with self.assertNumQueries(1):
             program = ProgramWithMetrics.with_metrics.get(pk=self.program.id)
-            scope_percents = program.scope_percents
+            scope_counts = program.scope_counts
             metrics = program.metrics
         for key, expected_value in expected.items():
             with self.assertNumQueries(0):
                 self.assertEqual(
-                    expected_value, scope_percents[key],
+                    expected_value, scope_counts[key],
                     "expected {0} to be {1}, but got {2}".format(
-                        key, expected_value, scope_percents[key]
+                        key, expected_value, scope_counts[key]
                     )
                 )
         self.assertIn('results_count', metrics.keys())

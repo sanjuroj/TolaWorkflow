@@ -1458,7 +1458,7 @@ class ProgramPage(ListView):
         if self.metrics:
             json_context = {
                 'metrics': program.metrics,
-                'scope_percents': program.scope_percents
+                'scope_counts': program.scope_counts
             }
             return JsonResponse(json_context)
         indicators = program.get_annotated_indicators()
