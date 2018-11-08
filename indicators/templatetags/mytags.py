@@ -120,11 +120,8 @@ def gauge_tank(context, metric, title, filled_label, unfilled_label, cta, filter
     filled_value = program.metrics[metric]
     results_count = program.metrics['results_count']
     indicator_count = program.metrics['indicator_count']
-    if (filled_value == 'results_evidence'):
-        denominator = results_count
-    else:
-        denominator = indicator_count
-    filled_percent = int(round(float(filled_value*100)/denominator))
+    denominator = results_count if metric == 'results_evidence' else indicator_count
+    filled_percent = int(round(float(filled_value*100)/denominator)) if denominator > 0 else 0
     tick_count = 10
     return {
         'title': title,
