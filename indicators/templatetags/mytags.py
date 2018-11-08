@@ -141,9 +141,21 @@ def gauge_tank(context, metric, title, filled_label, unfilled_label, cta, filter
 
 
 @register.inclusion_tag('indicators/tags/gauge-band.html')
-def gauge_band(scope_percents):
+def gauge_band(scope_counts):
+    denominator = scope_counts['indicator_count']
+    if denominator == 0:
+        make_percent = lambda x: 0
+    else:
+        make_percent = lambda x: int(round(float(x*100)/denominator))
+    scope_percents = {
+        'high': make_percent(scope_counts['high']),
+        'on_scope': make_percent(scope_counts['on_scope']),
+        'low': make_percent(scope_counts['low']),
+        'nonreporting': make_percent(scope_counts['nonreporting'])
+    }
     return {
         'scope_percents': scope_percents,
+        'scope_counts': scope_counts,
         'ticks': list(range(1,11)),
         'margin': int(Indicator.ONSCOPE_MARGIN * 100),
     }

@@ -173,7 +173,8 @@ class IPTTIndicatorManager(models.Manager):
                 then=models.Value(False)
             ),
             models.When(
-                lop_target_sum__isnull=True,
+                models.Q(lop_target_sum__isnull=True) |
+                models.Q(lop_target_sum=0),
                 then=models.Value(False)
             ),
             models.When(
