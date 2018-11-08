@@ -286,6 +286,7 @@ class TestIndicatorScenarios(test.TestCase):
                 "In scenarios {desc}: lop met_target should be {0}, got {1}".format(
                     scenario['lop_met'], iptt_indicator.lop_met_target,
                     desc=scenario['desc']))
+        settings.DEBUG = False
 
     def test_scenario_totals_timeperiods(self):
         settings.DEBUG = True
@@ -320,6 +321,7 @@ class TestIndicatorScenarios(test.TestCase):
                 "In scenarios {desc}: lop met_target should be {0}, got {1}".format(
                     scenario['lop_met'], iptt_indicator.lop_met_target,
                     desc=scenario['desc']))
+        settings.DEBUG = False
 
     def test_periodic_target_scenarios(self):
         settings.DEBUG = True
@@ -368,6 +370,7 @@ class TestIndicatorScenarios(test.TestCase):
                 len(connection.queries)-created, expected_queries,
                 "(after all tests): expecting {0} queries to fetch indicator, but it took {1}".format(
                     expected_queries, len(connection.queries)-created))
+            settings.DEBUG = False
 
     def test_timeperiod_scenarios(self):
         settings.DEBUG = True
@@ -405,3 +408,4 @@ class TestIndicatorScenarios(test.TestCase):
                         "{desc} expected {0} for sum of semi annual period {1}, got {2}".format(
                             scenario['semi_annual_results'][c], c, period_sum,
                             desc=scenario['desc']))
+        settings.DEBUG = False

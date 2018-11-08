@@ -1,6 +1,7 @@
 {% load i18n %}
 {# TODO: links filter the indicator list, apply a highlight class to the entire gauge, and alter the number of indicators displayed on the program page #}
-    <div class="gauge">{# TODO: add .is-highlighted to this element when one of its filters is applied #}
+<div class="gauge">{# TODO: add .is-highlighted to this element when one of its filters is applied #}
+    <h6 class="gauge__title">{% trans "Indicators on track" %}</h6>
     <div class="gauge__overview">
         <div class="gauge__graphic gauge__graphic--performance-band">
             <div class="graphic__tick-marks">
@@ -9,28 +10,29 @@
                 {% endfor %}
             </div>
             <div class="graphic__performance-band--above-target"
-                 style="flex-basis: {{ high }}%"></div>
+                 style="flex-basis: {{ scope_percents.high }}%"></div>
             <div class="graphic__performance-band--on-target"
-                 style="flex-basis: {{ on_scope }}%"></div>
+                 style="flex-basis: {{ scope_percents.on_scope }}%"></div>
             <div class="graphic__performance-band--below-target"
-                 style="flex-basis: {{ low }}%"></div>
+                 style="flex-basis: {{ scope_percents.low }}%"></div>
         </div>
-        <div class="gauge__labels gauge__labels--justified">
-            <div class="gauge__label--small">
-                {% comment %}Translators: shows how many indicators are a certain percentage above target. Example: 31% are 15% above target.{% endcomment %}
-                <a href="#" class="text-dark">{% blocktrans %}{{ high }}% are &gt;{{ margin }}% above target{% endblocktrans %}</a>
+        <div class="gauge__labels">
+            <div class="gauge__label">
+                {% comment %}Translators: shows how many indicators have indicators with nonreporting targets. Example: 31% are nonreporting{% endcomment %}
+                <a href="#" class="text-muted">{% blocktrans with scope_percents.nonreporting as nonreporting %}{{ nonreporting }}% are nonreporting{% endblocktrans %}</a>
+                <!-- TOOLTIP -->
             </div>
-            <div class="gauge__labels">
-                <div class="gauge__value">
-                    {{ on_scope }}%
-                </div>
-                <h6 class="gauge__label">
-                    <a href="#" class="text-dark">{% trans 'Indicators on track' %}</a>
-                </h6>
+            <div class="gauge__label">
+                {% comment %}Translators: shows how many indicators are a certain percentage above target. Example: 31% are >15% above target{% endcomment %}
+                <a href="#" class="gauge__value--above">{% blocktrans with scope_percents.high as high %}<strong>{{ high }}%</strong> are &gt;{{ margin }}% above target{% endblocktrans %}</a>
             </div>
-            <div class="gauge__label--small">
-                {% comment %}Translators: shows how many indicators are a certain percentage below target. Example: 31% are 15% below target.{% endcomment %}
-                <a href="#" class="text-dark">{% blocktrans %}{{ low }}% are &gt;{{ margin }}% below target{% endblocktrans %}</a>
+            <div class="gauge__label">
+                {% comment %}Translators: shows how many indicators are within a set range of target. Example: 31% are on track{% endcomment %}
+                <a href="#" class="gauge__value">{% blocktrans with scope_percents.on_scope as on_scope %}<strong>{{ on_scope }}%</strong> are on track{% endblocktrans %}</a>
+            </div>
+            <div class="gauge__label">
+                {% comment %}Translators: shows how many indicators are a certain percentage below target. Example: 31% are >15% below target{% endcomment %}
+                <a href="#" class="gauge__value--below">{% blocktrans with scope_percents.low as low %}<strong>{{ low }}%</strong> are &gt;{{ margin }}% below target{% endblocktrans %}</a>
             </div>
         </div>
     </div>

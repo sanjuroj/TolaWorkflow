@@ -21,7 +21,7 @@
         border-color: $yellow;
     }
 }
-
+.gauge__title {}
 .gauge__overview {
     // has no external layout.
     // contains gauge__graphic + gauge__labels
@@ -31,30 +31,30 @@
 }
 .gauge__graphic {
     // the graphic *without* labels
-    background-color: $green-100;
+    background-color: $gray-300;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     margin-right: $grid-gutter-width/2;
     min-width: 40px;
-    min-height: 80px;
+    min-height: 120px;
     position: relative;
 }
 .gauge__labels {
     // wraps labels on the same row as the gauge__graphic
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-}
-.gauge__labels--justified {
     justify-content: space-between;
 }
 .gauge__graphic--performance-band {
     // contains graphic__performance-band--* subcomponents
+    justify-content: flex-end;
 }
-.graphic__performance-band--above-target,
+.graphic__performance-band--above-target {
+    background: $yellow-300;
+}
 .graphic__performance-band--below-target {
-    background: $yellow-200;
+    background: $yellow-300;
 }
 .graphic__performance-band--on-target {
     background: $green-550;
@@ -68,6 +68,8 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: stretch;
+    opacity: 0.5;
+    pointer-events: none; // these should be "transparent" to the event stack
     position: absolute;
     top: 0;
     right: 0;
@@ -81,24 +83,47 @@
         border-top: 0.5px solid $white;
     }
 }
+.graphic__tank--unfilled {
+    background-color: transparent;
+}
 .graphic__tank--filled {
     background-color: $green-550;
 }
 .gauge__value {
-    color: $gray-600;
-    font-size: $font-size-base * 2;
+    color: $green-700;
+    font-weight: bold;
+}
+.gauge__value--above,
+.gauge__value--below {
+    strong {
+        background: $yellow-100;
+    }
+    &, &:hover {
+        color: $gray-800;
+    }
 }
 .gauge__label {
     color: $black;
+    font-size: $font-size-sm;
     margin: 0;
-    text-transform: uppercase;
+    //text-transform: uppercase;
 }
-.gauge__detail {
-    color: $blue;
+.gauge__cta {
     font-size: $font-size-sm;
     margin-top: $grid-gutter-width/2;
 }
-.gauge__label--small {
-    color: $blue;
-    font-size: $font-size-sm;
+
+// filter triggers
+// TODO: should be mroe generic?
+.filter-trigger {
+    &:hover {
+        cursor: pointer;
+    }
 }
+
+// State
+// TODO: more generic
+.is-display-none {
+    display: none;
+}
+

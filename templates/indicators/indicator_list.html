@@ -10,7 +10,7 @@
     {% for program in programs %}
         <div class='card border-0 program indicators-list__program'>
             <div class='card-header'>
-                <h4>{{ program.name|truncatechars:140 }}</h4>
+                 <h4><a href="{% url 'program_page' program.id 0 0 %}" class="text-dark">{{ program.name|truncatechars:140 }}</a></h4>
                 {% if not program.reporting_period_start or not program.reporting_period_end %}
                     <div class="">
                         {% trans "Before adding indicators and performance results, we need to know your program's " %}

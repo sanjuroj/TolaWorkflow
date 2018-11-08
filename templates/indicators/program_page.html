@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n mathfilters mytags %}
+{% load i18n mathfilters mytags static %}
 {% block title %}{% trans "Program indicators" %} | {% endblock %}
 {% block page_title %}{{ program.name }}{% endblock %}
 {% block header_extras %}
@@ -15,34 +15,63 @@
 
 
     {% if indicator_count %}
-        <aside class="program__status-gauges">
+        <aside class="program__status">
+            <h2>{% trans "Program metrics" %}</h2>
+            <div class="status__gauges">
 
-            {% gauge_band scope_percents.high scope_percents.on_scope scope_percents.low %}
+            {% gauge_band program.scope_percents %}
 
-            {% gauge_tank results_stats.targets_defined 'indicators have targets defined' 'of indicators have no targets' %}
+            {% gauge_tank "targets_defined" "Indicators with targets" "have targets defined" "have no targets" "Add missing targets" "have missing targets" %}
 
-            {% gauge_tank results_stats.reported_results 'indicators have reported results' 'of indicators have no results' %}
+            {% gauge_tank "reported_results" "Indicators with results" "have reported results" "have no results" "Add missing results" "have no results" %}
 
-            {% gauge_tank results_stats.results_evidence 'results are backed up with evidence' 'of results are missing evidence' %}
-
+            {% gauge_tank "results_evidence"  "Results with evidence" "have evidence" "are missing evidence" "Add missing evidence"  "have results without evidence" %}
+            </div>
         </aside>
     {% endif %}
 
 <div class="program-page__main">
     <div class="program-page__sidebar">
         <section class="sidebar__detail">
+            <div class="form-group" id="id_div_indicators">
+                <label for="id_indicators" class="col-form-label text-uppercase">
+                    {% trans 'Indicators' %}
+                </label>
+                <div class="form-group-row">
+                    <select name="indicators" id="id_indicators" class="form-control" multiple="multiple">
+                        {% for ind in indicators %}
+                            <option value="{{ ind.id }}">{{ ind.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" id="id_div_levels">
+                <label for="id_levels" class="col-form-label text-uppercase">
+                    {% trans 'Levels' %}
+                </label>
+                <div class="form-group-row">
+                    <select name="levels" id="id_levels" class="form-control" multiple="multiple">
+                        {% for level in indicator_levels %}
+                            <option value="{{ level.id }}">{{ level.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </section>
+        <section class="sidebar__detail">
             <h3>{% trans "Program Details" %}</h3>
-            <p><a href="#">{% trans "Indicator Plan" %}</a></p>
+            <p><a href="{% url 'programIndicatorReport' program.id %}">{% trans "Indicator Plan" %}</a></p>
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Documents" %}</h3>
-            <p><a href="#">{% trans "View program documents" %}</a></p>
-            <a href="#" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add document" %}</a>
+            <p><a href="{% url 'documentation_list' program.id 0 %}">{% trans "View program documents" %}</a></p>
+            <a href="{% url 'documentation_add' %}?program_id={{ program.id }}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add document" %}</a>
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Sites" %}</h3>
-            <p><a href="#">{% trans "View Program Sites" %}</a></p>
-            <a href="#" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add site" %}</a>
+            <p><a href="{% url 'siteprofile_list' program.id 0 %}">{% trans "View Program Sites" %}</a></p>
+            <a href="{% url 'siteprofile_add' %}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add site" %}</a>
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Pinned Reports" %}</h3>
@@ -68,7 +97,7 @@
     </div>
     <div id="div-id-indicator-list" class="indicators-list program-page__indicators">
         <div class="indicators-list__header">
-            <h3 class="no-bold">{% blocktrans %}{{ indicator_count }} indicators{% endblocktrans %}</h3>
+            <h3 class="no-bold"><span id="indicators-list-title">{% blocktrans %}{{ indicator_count }} indicators{% endblocktrans %} </span> <a href="#" id="show-all-indicators" class="is-display-none"><small>Show all</small></a></h3>
             <div>
                 <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
             </div>
@@ -113,4 +142,5 @@
             }
         });
     </script>
+    <script src="{% static "js/program_page_filters.js" %}"></script>
 {% endblock %}

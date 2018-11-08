@@ -1,9 +1,12 @@
+import time
 from decimal import Decimal, ROUND_HALF_UP
 
 from factory import Sequence
 
 from django.utils import timezone
 from django.core.exceptions import ImproperlyConfigured
+from django.test import runner
+from unittest import runner as ut_runner
 
 from factories.indicators_models import IndicatorFactory, PeriodicTargetFactory, CollectedDataFactory
 from factories.workflow_models import ProgramFactory, CountryFactory, DocumentationFactory
@@ -199,3 +202,31 @@ def make_targets(program, indicator):
 
 def decimalize(number):
     return Decimal(number).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+
+
+class TimedTestResult(ut_runner.TextTestResult):
+    SLOW_TEST_THRESHOLD = 2
+
+    def startTest(self, test):
+        self._started_at = time.time()
+        super(TimedTestResult, self).startTest(test)
+
+    def addSuccess(self, test):
+        elapsed = time.time() - self._started_at
+        name = self.getDescription(test)
+        if elapsed > self.SLOW_TEST_THRESHOLD:
+            self.stream.write(
+                "\n{} ({:.03}s)\n".format(
+                    name, elapsed)
+                )
+        super(TimedTestResult, self).addSuccess(test)
+
+    def getTestTimings(self):
+        return self.test_timings
+
+class TimedTestRunner(runner.DiscoverRunner):
+
+    def get_test_runner_kwargs(self):
+        kwargs = super(TimedTestRunner, self).get_test_runner_kwargs()
+        kwargs['resultclass'] = TimedTestResult
+        return kwargs

@@ -588,6 +588,10 @@ class Indicator(models.Model):
         return ', '.join([x.name for x in self.level.all()])
 
     @property
+    def level_ids(self):
+        return ', '.join([str(x.id) for x in self.level.all()])
+
+    @property
     def disaggregations(self):
         disaggregations = self.disaggregation.all()
         return self.SEPARATOR.join([x.disaggregation_type for x in disaggregations])
