@@ -5,8 +5,7 @@
 import LoginPage from '../pages/login.page'
 
 // Milliseconds
-const msec = 1000
-
+const delay = LoginPage.delay
 
 /**
  * Login to a remote or local Tola instance
@@ -20,10 +19,18 @@ function loginTola() {
     LoginPage.password = parms.password
     LoginPage.login.click()
   } else if (parms.baseurl.includes('localhost')) {
-    LoginPage.googleplus.click()
-    if (LoginPage.title != 'Dashboard | TolaActivity') {
-      LoginPage.gUsername = parms.username + '@mercycorps.org'
-      LoginPage.gPassword = parms.password
+    if (parms.googleauth) {
+      LoginPage.googleplus.click()
+      if (LoginPage.title != 'Dashboard | TolaActivity') {
+        LoginPage.gUsername = parms.username + '@mercycorps.org'
+        LoginPage.gPassword = parms.password
+      }
+    } else {
+      if (LoginPage.title != 'Dashboard | TolaActivity') {
+        LoginPage.dUsername = parms.username
+        LoginPage.dPassword = parms.password
+        LoginPage.dLogin.click()
+      }
     }
   }
 }

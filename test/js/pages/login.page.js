@@ -12,6 +12,21 @@ class LoginPage extends Page {
   // Independent of auth source
   get title () { return browser.getTitle() }
 
+  // These are for authentication using Django's built-in auth
+  get dUsername () { return browser.$('#id_username') }
+  get dPassword () { return browser.$('#id_password') }
+  get dLogin () {
+    let inputs = browser.$$('input')
+    for (let input of inputs) {
+      if (input.getValue() === 'login') {
+          return input
+      }
+    }
+  }
+
+  set dUsername (val) { return browser.$('#id_username').setValue(val) }
+  set dPassword (val) { return browser.$('#id_password').setValue(val) }
+
   // These are for authentication using MC's SSO
   get username () { return browser.$('#login') }
   get password () { return browser.$('#password') }
@@ -27,6 +42,7 @@ class LoginPage extends Page {
   get googleplus () { return browser.$('=Google+') }
   get gError () { return browser.$('div.dEOOab.RxsGPe').getText() }
 
+  // The hard delays are necessary because Google
   set gUsername (val) {
     browser.waitForVisible('input#identifierId')
     // Works on chrome and firefox
@@ -35,6 +51,8 @@ class LoginPage extends Page {
     browser.$('div#identifierNext').click()
     browser.pause(delay)
   }
+
+  // The hard delays are necessary because Google
   set gPassword (val) {
     browser.waitForVisible('input[name="password"]')
     // Works on chrome and firefox
