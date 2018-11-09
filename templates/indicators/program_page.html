@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n mathfilters mytags static %}
-{% block title %}{% trans "Program indicators" %} | {% endblock %}
+{% block title %}{{ program.name }} | {% endblock %}
 {% block page_title %}{{ program.name }}{% endblock %}
 {% block header_extras %}
     {% program_complete percent_complete %}
