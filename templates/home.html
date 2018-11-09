@@ -3,10 +3,12 @@
 {% block title %}{{ active_country }} | {% endblock %}
 {% block page_title %}{{ active_country }}{% endblock %}
 
+{% block bodyclasses %}home{% endblock %}
 
 {% block header_extras %}
+{% if user_countries.count > 1 %}
 <nav class="country-selector">
-    <button class="btn btn-sm btn-link text-dark dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <button class="btn btn-sm btn-link text-muted dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
         {% trans "change country" %}
         <span class="caret"></span>
     </button>
@@ -16,6 +18,7 @@
         {% endfor %}
     </ul>
 </nav>
+{% endif %}
 {% endblock %}
 
 {% block content %}

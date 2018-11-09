@@ -6987,6 +6987,12 @@ body > .container {
     font-size: 42px;
     margin-right: 7.5px; }
 
+.home .region-header {
+  justify-content: flex-start; }
+
+.home .page-title {
+  margin-right: 15px; }
+
 .home__featured-country {
   display: flex; }
 

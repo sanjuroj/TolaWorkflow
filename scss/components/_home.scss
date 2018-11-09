@@ -1,3 +1,11 @@
+.home { // bodyclass
+    .region-header {
+        justify-content: flex-start;
+    }
+    .page-title {
+        margin-right: $grid-gutter-width/2;
+    }
+}
 .home__featured-country {
     display: flex;
 }
