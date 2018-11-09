@@ -161,7 +161,7 @@ class ReportingIndicatorBase(test.TestCase):
         """loads a bare indicator in this program"""
         self.indicator = i_factories.IndicatorFactory()
         if self.program is not None:
-            self.indicator.program.add(self.program)
+            self.indicator.program = self.program
             self.indicator.save()
 
     def load_data(self, indicator=None, achieved=None, date=None, target=None):
@@ -244,8 +244,8 @@ class ReportingIndicatorBase(test.TestCase):
 class TestSingleNonReportingIndicator(ReportingIndicatorBase):
 
     def one_incomplete_assert(self, program, scenario):
-        nonreporting = program.scope_percents['nonreporting_count']
-        reporting = program.scope_percents['reporting_count']
+        nonreporting = program.scope_counts['nonreporting']
+        reporting = program.scope_counts['reporting_count']
         self.assertEqual(
             nonreporting, 1,
             "For {0}, program should have 1 incomplete indicator, got {1}".format(
@@ -277,13 +277,13 @@ class TestSingleNonReportingIndicator(ReportingIndicatorBase):
         baseline = len(db.connection.queries)
         program = self.get_annotated_program(self.program)
         baseline = self.query_assert(baseline, 1, "fetch program")
-        incomplete = program.scope_percents['nonreporting_count']
+        incomplete = program.scope_counts['nonreporting']
         self.assertEqual(
             incomplete, 1,
             "LOP program with open program reporting period should be in incomplete"
         )
         baseline = self.query_assert(baseline, 0, "count incompletes")
-        complete = program.scope_percents['reporting_count']
+        complete = program.scope_counts['reporting_count']
         self.assertEqual(
             complete, 0,
             "No indicators should be reporting as complete"
@@ -406,15 +406,15 @@ class TestSingleNonReportingIndicator(ReportingIndicatorBase):
 class TestSingleReportingIndicator(ReportingIndicatorBase):
     def one_complete_assert(self, program, scenario):
         self.assertEqual(
-            program.scope_percents['reporting_count'], 1,
+            program.scope_counts['reporting_count'], 1,
             "In {0} query expected 1 complete, got {1}".format(
-                scenario, program.scope_percents['reporting_count']
+                scenario, program.scope_counts['reporting_count']
             )
         )
         self.assertEqual(
-            program.scope_percents['nonreporting_count'], 0,
+            program.scope_counts['nonreporting'], 0,
             "In {0} query expected 0 incomplete, got {1}".format(
-                scenario, program.scope_percents['nonreporting_count']
+                scenario, program.scope_counts['nonreporting']
             )
         )
 
@@ -500,10 +500,9 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
         self.get_closed_program()
         indicator_lop = i_factories.IndicatorFactory(
             target_frequency=Indicator.LOP,
-            lop_target=1000
+            lop_target=1000,
+            program=self.program
         )
-        indicator_lop.program.add(self.program)
-        indicator_lop.save()
         self.indicators.append(indicator_lop)
         lop_data = i_factories.CollectedDataFactory(
             indicator=indicator_lop,
@@ -512,10 +511,9 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
         )
         self.data.append(lop_data)
         indicator_midend = i_factories.IndicatorFactory(
-            target_frequency=Indicator.MID_END
+            target_frequency=Indicator.MID_END,
+            program=self.program
         )
-        indicator_midend.program.add(self.program)
-        indicator_midend.save()
         self.indicators.append(indicator_midend)
         mid_target = i_factories.PeriodicTargetFactory(
             indicator=indicator_midend,
@@ -533,13 +531,13 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
         baseline = len(db.connection.queries)
         program = self.get_annotated_program(self.program)
         baseline = self.query_assert(baseline, 1, "fetch program, two indicators")
-        reporting = program.scope_percents['reporting_count']
+        reporting = program.scope_counts['reporting_count']
         self.assertEqual(
             reporting, 2,
             "expected both midend and lop indicators to be reporting, got {0}".format(reporting)
         )
         baseline = self.query_assert(baseline, 0, "reporting count, two indicators")
-        nonreporting = program.scope_percents['nonreporting_count']
+        nonreporting = program.scope_counts['nonreporting']
         self.assertEqual(
             nonreporting, 0,
             "expected no nonreporting indicators, got {0}".format(nonreporting)
@@ -549,14 +547,13 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
         self.get_closed_program()
         for frequency in self.TIME_AWARE_FREQUENCIES:
             indicator = i_factories.IndicatorFactory(
-                target_frequency=frequency
+                target_frequency=frequency,
+                program=self.program
             )
-            indicator.program.add(self.program)
-            indicator.save()
             self.load_targets(indicator=indicator)
             self.load_data(indicator=indicator)
         program = self.get_annotated_program(self.program)
-        reporting = program.scope_percents['reporting_count']
+        reporting = program.scope_counts['reporting_count']
         self.assertEqual(
             reporting, len(self.TIME_AWARE_FREQUENCIES),
             "expected {0} reporting indicators, got {1}".format(
@@ -564,7 +561,7 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
             )
         )
         self.assertEqual(
-            program.scope_percents['nonreporting_count'], 0,
+            program.scope_counts['nonreporting'], 0,
             "expected 0 nonreporting timeaware indicators, got {0}".format(
-                program.scope_percents['nonreporting_count'])
+                program.scope_counts['nonreporting'])
         )

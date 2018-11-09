@@ -127,8 +127,9 @@ class TestIPTTTargetPeriodsReportResponseBase(test.TestCase):
         self.response = None
 
     def get_indicator_for_program(self, **kwargs):
-        indicator = IndicatorFactory(**kwargs)
-        indicator.program.add(self.program)
+        make_kwargs = {'program': self.program}
+        make_kwargs.update(kwargs)
+        indicator = IndicatorFactory(**make_kwargs)
         return indicator
 
     def get_indicator_by_frequency(self, frequency, **kwargs):
@@ -177,8 +178,9 @@ class TestIPTTTimePeriodsReportResponseBase(test.TestCase):
         self.program.save()
 
     def get_indicator_for_program(self, **kwargs):
-        indicator = IndicatorFactory(**kwargs)
-        indicator.program.add(self.program)
+        make_kwargs = {'program': self.program}
+        make_kwargs.update(kwargs)
+        indicator = IndicatorFactory(**make_kwargs)
         return indicator
 
     def add_indicator(self, frequency=Indicator.ANNUAL, **kwargs):

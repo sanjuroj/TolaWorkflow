@@ -129,7 +129,7 @@ class IndicatorList(ListView):
 
         if program_id != 0:
             filters['id'] = program_id
-            get_indicators = get_indicators.filter(program__in=[program_id])
+            get_indicators = get_indicators.filter(program_id=program_id)
 
         if type_id != 0:
             filters['indicator__indicator_type__id'] = type_id
@@ -225,12 +225,12 @@ def indicator_create(request, id=0):
         # save form
         new_indicator = Indicator(
             sector=sector, name=name, source=source, definition=definition,
-            external_service_record=external_service_record
+            external_service_record=external_service_record,
+            program=program,
+            level=level
         )
         new_indicator.save()
-        new_indicator.program.add(program)
         new_indicator.indicator_type.add(indicator_type)
-        new_indicator.level.add(level)
 
         latest = new_indicator.id
 
@@ -430,7 +430,7 @@ class IndicatorUpdate(UpdateView):
         context = super(IndicatorUpdate, self).get_context_data(**kwargs)
         context.update({'id': self.kwargs['pk']})
         getIndicator = Indicator.objects.get(id=self.kwargs['pk'])
-        program = getIndicator.program.all()[0]
+        program = getIndicator.program
 
         context.update({'i_name': getIndicator.name})
         context['programId'] = program.id
@@ -509,7 +509,7 @@ class IndicatorUpdate(UpdateView):
     def get_form_kwargs(self):
         kwargs = super(IndicatorUpdate, self).get_form_kwargs()
         kwargs['request'] = self.request
-        program = self.object.program.first()
+        program = self.object.program
         kwargs['program'] = program
         return kwargs
 
@@ -529,7 +529,7 @@ class IndicatorUpdate(UpdateView):
         existing_target_frequency = indicatr.target_frequency
         new_target_frequency = form.cleaned_data.get('target_frequency', None)
         lop = form.cleaned_data.get('lop_target', None)
-        program = Program.objects.get(pk=form.cleaned_data.get('program'))
+        program = pk=form.cleaned_data.get('program')
 
         if periodic_targets == 'generateTargets':
             # handle (delete) association of colelctedData records if necessary
@@ -1076,8 +1076,8 @@ def collected_data_view(request, indicator, program):
     ind = Indicator.objects.get(pk=indicator)
     reset_indicator_target_frequency(ind)
     template_name = 'indicators/collected_data_table.html'
-    program = ind.program.all()[0].id
-    program_obj = Program.objects.get(pk=program)
+    program_obj = ind.program
+    program = program_obj.id
     last_data_record = CollectedData.objects.filter(periodic_target=OuterRef('pk')).order_by('-date_collected', '-pk')
     periodictargets = PeriodicTarget.objects \
         .filter(indicator=indicator) \
@@ -1458,7 +1458,7 @@ class ProgramPage(ListView):
         if self.metrics:
             json_context = {
                 'metrics': program.metrics,
-                'scope_percents': program.scope_percents
+                'scope_counts': program.scope_counts
             }
             return JsonResponse(json_context)
         indicators = program.get_annotated_indicators()
@@ -1479,8 +1479,9 @@ class ProgramPage(ListView):
         indicator_types = IndicatorType.objects.filter(id__in=list(type_ids))
         indicator_count = indicators.count()
 
-        indicator_level_ids = Indicator.level.through.objects.filter(indicator__in=indicators)\
-            .values_list('level', flat=True).distinct()
+        #indicator_level_ids = Indicator.level.through.objects.filter(indicator__in=indicators)\
+        #    .values_list('level', flat=True).distinct()
+        indicator_level_ids = indicators.values_list('level_id', flat=True).distinct()
         indicator_levels = Level.objects.filter(id__in=indicator_level_ids)
 
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
@@ -1537,9 +1538,7 @@ class DisaggregationReportMixin(object):
             INNER JOIN indicators_collecteddata AS c \
                 ON c.id = cdv.collecteddata_id \
             INNER JOIN indicators_indicator AS i ON i.id = c.indicator_id\
-            INNER JOIN indicators_indicator_program AS ip \
-                ON ip.indicator_id = i.id \
-            INNER JOIN workflow_program AS p ON p.id = ip.program_id \
+            INNER JOIN workflow_program AS p ON p.id = i.program_id \
             INNER JOIN indicators_disaggregationvalue AS dv \
                 ON dv.id = cdv.disaggregationvalue_id \
             INNER JOIN indicators_disaggregationlabel AS l \
@@ -1563,9 +1562,7 @@ class DisaggregationReportMixin(object):
                 i.lop_target AS LOP_Target, \
                 SUM(cd.achieved) AS Overall \
             FROM indicators_indicator AS i \
-            INNER JOIN indicators_indicator_program AS ip \
-                ON ip.indicator_id = i.id \
-            INNER JOIN workflow_program AS p ON p.id = ip.program_id \
+            INNER JOIN workflow_program AS p ON p.id = i.program_id \
             LEFT OUTER JOIN indicators_collecteddata AS cd \
                 ON i.id = cd.indicator_id \
             WHERE p.id = %s \

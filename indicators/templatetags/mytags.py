@@ -143,17 +143,16 @@ def gauge_tank(context, metric, has_filters=True):
     filled_value = program.metrics[metric]
     results_count = program.metrics['results_count']
     indicator_count = program.metrics['indicator_count']
-    if (filled_value == 'results_evidence'):
-        denominator = results_count
-    else:
-        denominator = indicator_count
-    filled_percent = int(round(float(filled_value*100)/denominator)) if denominator else 0 # avoids div#0 error
+    unfilled_value = indicator_count - filled_value
+    filter_title_count = program.metrics['needs_evidence'] if metric == 'results_evidence' else unfilled_value
+    denominator = results_count if metric == 'results_evidence' else indicator_count
+    filled_percent = int(round(float(filled_value*100)/denominator)) if denominator > 0 else 0
     tick_count = 10
     return {
         'title': labels[metric]['title'],
         'id_tag': metric,
         'filled_value': filled_value,
-        'unfilled_value': indicator_count - filled_value,
+        'unfilled_value': unfilled_value,
         'indicator_count': indicator_count,
         'results_count': results_count,
         'filled_percent': filled_percent,
@@ -164,13 +163,26 @@ def gauge_tank(context, metric, has_filters=True):
         'cta': labels[metric]['cta'],
         'filter_title': labels[metric]['filter_title'],
         'has_filters': has_filters,
+        'filter_title_count': filter_title_count
     }
 
 
 @register.inclusion_tag('indicators/tags/gauge-band.html')
-def gauge_band(scope_percents):
+def gauge_band(scope_counts):
+    denominator = scope_counts['indicator_count']
+    if denominator == 0:
+        make_percent = lambda x: 0
+    else:
+        make_percent = lambda x: int(round(float(x*100)/denominator))
+    scope_percents = {
+        'high': make_percent(scope_counts['high']),
+        'on_scope': make_percent(scope_counts['on_scope']),
+        'low': make_percent(scope_counts['low']),
+        'nonreporting': make_percent(scope_counts['nonreporting'])
+    }
     return {
         'scope_percents': scope_percents,
+        'scope_counts': scope_counts,
         'ticks': list(range(1,11)),
         'margin': int(Indicator.ONSCOPE_MARGIN * 100),
     }

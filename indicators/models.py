@@ -8,7 +8,7 @@ from django.db import models
 from django.db.models import Avg
 from django.http import QueryDict
 from django.urls import reverse
-from django.utils import formats, timezone
+from django.utils import formats, timezone, functional
 from django.utils.translation import ugettext_lazy as _
 
 from django.contrib import admin
@@ -332,9 +332,9 @@ class Indicator(models.Model):
     )
 
     # the Log Frame level (i.e. Goal, Output, Outcome, etc.)
-    # TODO: make this a foreign key (an indicator should have only one level)
-    level = models.ManyToManyField(
-        Level, blank=True, help_text=" ", verbose_name=_("Level")
+    level = models.ForeignKey(
+        Level, blank=True, null=True, verbose_name=_("Level"),
+        on_delete=models.SET_NULL
     )
 
     # this includes a relationship to a program
@@ -494,10 +494,9 @@ class Indicator(models.Model):
         _("Comments"), max_length=255, null=True, blank=True, help_text=" "
     )
 
-    # note this is separate (and not validated against) objective.program
-    # TODO: make foreignkey (or eliminate in favor of the relationship through objective)
-    program = models.ManyToManyField(
-        Program, help_text=" ", verbose_name=_("Program")
+    program = models.ForeignKey(
+        Program, verbose_name=_("Program"),
+        blank=True, null=True, on_delete=models.CASCADE,
     )
 
     sector = models.ForeignKey(
@@ -582,14 +581,6 @@ class Indicator(models.Model):
     @property
     def indicator_types(self):
         return ', '.join([x.indicator_type for x in self.indicator_type.all()])
-
-    @property
-    def levels(self):
-        return ', '.join([x.name for x in self.level.all()])
-
-    @property
-    def level_ids(self):
-        return ', '.join([str(x.id) for x in self.level.all()])
 
     @property
     def disaggregations(self):

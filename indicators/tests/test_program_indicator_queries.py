@@ -36,9 +36,9 @@ class TestCollectionCorrect(test.TestCase):
             reporting_period_start=datetime.date(2016, 10, 1),
             reporting_period_end=datetime.date(2017, 9, 30)
         )
-        self.indicator = i_factories.IndicatorFactory()
-        self.indicator.program.add(self.program)
-        self.indicator.save()
+        self.indicator = i_factories.IndicatorFactory(
+            program=self.program
+        )
         self.targets = []
         self.data = []
 
@@ -263,10 +263,9 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
         self.program.delete()
 
     def get_base_indicator(self):
-        indicator = i_factories.IndicatorFactory()
-        indicator.program.add(self.program)
-        indicator.save()
-        return indicator
+        return i_factories.IndicatorFactory(
+            program=self.program
+        )
 
     def get_base_data(self, indicator, target=None):
         data = i_factories.CollectedDataFactory(
@@ -415,38 +414,38 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
         return [event_indicator]
 
     def test_percentages(self):
-        percentages = self.reporting_program.scope_percents
+        percentages = self.reporting_program.scope_counts
         self.assertEqual(
-            percentages['low'], 14,
-            "expected 17% undertarget for 1/7, got {0}".format(percentages['low'])
+            percentages['low'], 1,
+            "expected 1 undertarget for 1/7, got {0}".format(percentages['low'])
         )
         self.assertEqual(
-            percentages['on_scope'], 29,
-            "expected 33% ontarget for 2/7, got {0}".format(percentages['on_scope'])
+            percentages['on_scope'], 2,
+            "expected 2 ontarget for 2/7, got {0}".format(percentages['on_scope'])
         )
         self.assertEqual(
-            percentages['high'], 43,
-            "expected 50% overtarget for 3/7, got {0}".format(percentages['high'])
+            percentages['high'], 3,
+            "expected 3 overtarget for 3/7, got {0}".format(percentages['high'])
         )
 
     def test_queries(self):
         expected = {
-            'low': 14,
-            'on_scope': 29,
-            'high': 43,
-            'nonreporting': 14,
+            'low': 1,
+            'on_scope': 2,
+            'high': 3,
+            'nonreporting': 1,
             'indicator_count': 7
         }
         with self.assertNumQueries(1):
             program = ProgramWithMetrics.with_metrics.get(pk=self.program.id)
-            scope_percents = program.scope_percents
+            scope_counts = program.scope_counts
             metrics = program.metrics
         for key, expected_value in expected.items():
             with self.assertNumQueries(0):
                 self.assertEqual(
-                    expected_value, scope_percents[key],
+                    expected_value, scope_counts[key],
                     "expected {0} to be {1}, but got {2}".format(
-                        key, expected_value, scope_percents[key]
+                        key, expected_value, scope_counts[key]
                     )
                 )
-        self.assertIn('reported_results', metrics.keys())
+        self.assertIn('results_count', metrics.keys())

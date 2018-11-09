@@ -32,10 +32,12 @@ class TestIPTTReportResponseCounts(iptt_utility.TestIPTTTargetPeriodsReportRespo
 
     def test_out_of_program_indicators_ignored(self):
         other_program = ProgramFactory()
-        other_indicator1 = IndicatorFactory(target_frequency=self.indicator_frequency)
-        other_indicator2 = IndicatorFactory(target_frequency=self.indicator_frequency)
-        other_indicator1.program.add(other_program)
-        other_indicator2.program.add(other_program)
+        other_indicator1 = IndicatorFactory(
+            target_frequency=self.indicator_frequency,
+            program=other_program)
+        other_indicator2 = IndicatorFactory(
+            target_frequency=self.indicator_frequency,
+            program=other_program)
         _ = self.get_indicator_by_frequency(self.indicator_frequency)
         response = self.get_response(self.indicator_frequency)
         self.assertEqual(len(response.indicators), 1,

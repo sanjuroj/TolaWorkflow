@@ -61,7 +61,7 @@ class IndicatorAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
     # ('program', 'key_performance_indicator', 'sector')
     list_filter = (IndicatorListFilter, 'key_performance_indicator', 'sector')
     display = 'Indicators'
-    filter_horizontal = ('program', 'objectives', 'strategic_objectives', 'disaggregation', 'program')
+    filter_horizontal = ('objectives', 'strategic_objectives', 'disaggregation')
 
     def get_queryset(self, request):
         queryset = super(IndicatorAdmin, self).get_queryset(request)
