@@ -1,6 +1,5 @@
 .home__featured-country {
-    display: block;
-    background-color: $white;
+    display: flex;
 }
 .home__program-list {
     margin-top: $grid-gutter-width;
@@ -14,3 +13,14 @@
     }
 }
 
+// Map
+#home_country_map {
+    // This ID is mainly for JS targeting; add styles to the container element, below
+    height: 350px; // yuck
+    z-index: 1; // double yuck
+}
+.featured-country__map {
+    border: 1px solid $gray-500;
+    flex-basis: 66%;
+    margin-right: $grid-gutter-width;
+}

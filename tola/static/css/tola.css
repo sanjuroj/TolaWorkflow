@@ -6974,8 +6974,7 @@ body > .container {
     margin-right: 7.5px; }
 
 .home__featured-country {
-  display: block;
-  background-color: #fff; }
+  display: flex; }
 
 .home__program-list {
   margin-top: 30px; }
@@ -6986,6 +6985,15 @@ body > .container {
     align-items: flex-start;
     display: flex;
     justify-content: space-between; }
+
+#home_country_map {
+  height: 350px;
+  z-index: 1; }
+
+.featured-country__map {
+  border: 1px solid #b8babd;
+  flex-basis: 66%;
+  margin-right: 30px; }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {

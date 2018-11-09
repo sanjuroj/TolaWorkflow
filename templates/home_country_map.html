@@ -1,22 +1,16 @@
+<div id="home_country_map"></div>
 <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
 <script src="https://maps.google.com/maps/api/js?v=3.2&key=AIzaSyCcix2ucURnpMK9lWrcBtqlR6jc2qaVanQ&sensor=false"></script>
-<!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcix2ucURnpMK9lWrcBtqlR6jc2qaVanQ&callback=initMap" -->
-  <!-- type="text/javascript"></script> -->
 <script src="{{ STATIC_URL }}js/leaflet-google.js"></script>
-
 <link rel="borders" type="application/json" href="{{ STATIC_URL }}js/world_borders.geojson">
 <style>
 /* this fixes the following problem:
  * when using a jquery-ui dialog over the map: the control buttons are shown over the dialog instead of staying under it.
  */;
  .leaflet-top { z-index: "auto"; }
-#map {
-    z-index: 1;
-}
 .ui-dialog {
     z-index: 2;
 }
-
 </style>
 <script type="text/javascript">
     // $(".leaflet-top").css("z-index","auto");
@@ -59,7 +53,7 @@
 		};
 
     //Init map with default zoom and coordinates of logged in users country
-    var map = L.map('map', {
+    var map = L.map('home_country_map', {
             layers: [positron], // only add one!
             touchZoom: false,
             scrollWheelZoom: false,

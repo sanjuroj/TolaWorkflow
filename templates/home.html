@@ -21,12 +21,12 @@
 {% block content %}
 
 <section class="home__featured-country">
-    <div class="panel-body">
-        <style>
-            #map { height: 350px; }
-        </style>
-        <div id="map"></div>
+    <div class="featured-country__map">
         {% include "home_country_map.html" %}
+    </div>
+    <div class="featured-country__overview-gauges">
+        <h3>{% trans "Monitoring and Evaluation Status" %}</h3>
+        <p>{% trans "Are programs trackable and backed up with evidence?" %}</p>
     </div>
 </section><!--/.home__featured-country-->
 <section class="home__program-list">
