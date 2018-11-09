@@ -587,12 +587,17 @@ class TestIndicatorReportingEdgeCases(test.TestCase):
         )
 
     def add_result(self, indicator):
-        i_factories.CollectedDataFactory(
+        return i_factories.CollectedDataFactory(
             indicator=indicator,
             program=self.program,
             achieved=100,
             date_collected=self.program.reporting_period_start
         )
+
+    def add_evidence(self, result):
+        document = w_factories.DocumentationFactory()
+        result.evidence = document
+        result.save()
 
     def results_count_asserts(self, indicator_count, with_results_count, results_count):
         reporting_program = ProgramWithMetrics.with_metrics.get(pk=1)
@@ -639,3 +644,64 @@ class TestIndicatorReportingEdgeCases(test.TestCase):
             reporting_indicator3.has_reported_results,
             "2 result should show has_reported_results true")
         self.results_count_asserts(3, 2, 3)
+
+    def test_needs_evidence_counts(self):
+        indicator = self.get_indicator()
+        result = self.add_result(indicator)
+        metrics = ProgramWithMetrics.with_metrics.get(pk=1).metrics
+        self.assertEqual(
+            metrics['results_count'], 1,
+            "one indicator with 1 result should have 1 result count, got {0}".format(metrics['results_count']))
+        self.assertEqual(
+            metrics['results_evidence'], 0,
+            "one indicator with 1 result and no evidence should have 0 evidence, got {0}".format(
+                metrics['results_evidence']
+            )
+        )
+        self.assertEqual(
+            metrics['needs_evidence'], 1,
+            "one indicator with 1 result missing evidence should have 1 needs evidence, got {0}".format(
+                metrics['needs_evidence']
+            )
+        )
+        self.add_evidence(result)
+        metrics = ProgramWithMetrics.with_metrics.get(pk=1).metrics
+        self.assertEqual(
+            metrics['results_count'], 1,
+            "one indicator with 1 result should have 1 result count, got {0}".format(metrics['results_count']))
+        self.assertEqual(
+            metrics['results_evidence'], 1,
+            "one indicator with 1 result and 1 evidence should have 1 evidence, got {0}".format(
+                metrics['results_evidence']
+            )
+        )
+        self.assertEqual(
+            metrics['needs_evidence'], 0,
+            "one indicator with 1 result with evidence should have 0 needs evidence, got {0}".format(
+                metrics['needs_evidence']
+            )
+        )
+        indicator2 = self.get_indicator()
+        result2 = self.add_result(indicator2)
+        indicator3 = self.get_indicator()
+        result3 = self.add_result(indicator3)
+        result4 = self.add_result(indicator3)
+        self.add_evidence(result4)
+        result5 = self.add_result(indicator3)
+        self.add_evidence(result5)
+        metrics = ProgramWithMetrics.with_metrics.get(pk=1).metrics
+        self.assertEqual(
+            metrics['results_count'], 5,
+            "three indicators with 5 results should have 5 result count, got {0}".format(metrics['results_count']))
+        self.assertEqual(
+            metrics['results_evidence'], 3,
+            "three indicators with 5 result and 3 evidence should have 3 evidence, got {0}".format(
+                metrics['results_evidence']
+            )
+        )
+        self.assertEqual(
+            metrics['needs_evidence'], 2,
+            "three indicator with 5 result with 3 evidence should have 2 needs evidence, got {0}".format(
+                metrics['needs_evidence']
+            )
+        )
