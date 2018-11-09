@@ -22,14 +22,26 @@
     map &amp; gauges go here
 </section><!--/.home__featured-country-->
 <section class="home__program-list">
-    <h2>{% blocktrans %}[n] active programs{% endblocktrans %}</h2>
+    <h2>{% blocktrans %}{{ no_programs }} active programs{% endblocktrans %}</h2>
     {% for program in programs %}
         <article class="program-list__program card">
             <div class="card-header">
                 <h4><a href="{% url "program_page" program.id 0 0 %}" class="text-dark">{{ program.name }}</a></h4>
+                <div class="program__calendar-complete">
+                    <div class="fas fa-calendar"></div>
+                    <p>
+                    {% blocktrans with program.percent_complete as percent_complete %}Program period is <br><strong>{{ percent_complete }}% complete</strong>{% endblocktrans %}
+                    </p>
+                </div>
             </div>
             <div class="card-body">
-                Program info
+            {% gauge_band program.scope_percents %}
+
+            {% gauge_tank "targets_defined" "Indicators with targets" "have targets defined" "have no targets" "Add missing targets" "have missing targets" %}
+
+            {% gauge_tank "reported_results" "Indicators with results" "have reported results" "have no results" "Add missing results" "have no results" %}
+
+            {% gauge_tank "results_evidence"  "Results with evidence" "have evidence" "are missing evidence" "Add missing evidence"  "have results without evidence" %}
             </div>
         </article><!--/.program-list__program-->
     {% endfor %}

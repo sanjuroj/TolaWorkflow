@@ -13,25 +13,27 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Q, Count
 from tola.util import getCountry
 from django.contrib.auth.models import Group
+from indicators.queries import ProgramWithMetrics
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 @login_required(login_url='/accounts/login/')
-def index(request, selected_country=None, id=0, sector=0):
+def index(request, selected_country=None):
     """
     Mangosteen home page
     """
 
-    program_id = id
     user_countries = getCountry(request.user)
     active_country = Country.objects.filter(id=selected_country)[0] if selected_country else user_countries[0]
     programs = Program.objects.filter(country=active_country)
+    programs_with_metrics = [ProgramWithMetrics.with_metrics.get(pk=program.id) for program in programs]
 
     return render(request, 'home.html', {
         'user_countries': user_countries,
         'active_country': active_country,
-        'programs': programs,
+        'programs': programs_with_metrics,
+        'no_programs': programs.count(),
     })
 
 
