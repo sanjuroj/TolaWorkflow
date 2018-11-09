@@ -166,6 +166,31 @@ def gauge_tank(context, metric, has_filters=True):
         'filter_title_count': filter_title_count
     }
 
+@register.inclusion_tag('indicators/tags/gauge-tank-small.html', takes_context=True)
+def gauge_tank_small(context, metric):
+    labels = {
+        'targets_defined': {
+            'filled_label': _('programs have all targets defined'),
+        },
+        'reported_results': {
+            'filled_label': _('indicators have reported results'),
+        },
+        'results_evidence': {
+            'filled_label': _('results are backed up with evidence'),
+        },
+    }
+    unfilled_percent = 25
+    filled_percent = 75
+    tick_count = 10
+
+    return {
+        'unfilled_percent': unfilled_percent,
+        'filled_percent': filled_percent,
+        'filled_label': labels[metric]['filled_label'],
+        'ticks': list(range(1,tick_count+1)),
+    }
+
+
 
 @register.inclusion_tag('indicators/tags/gauge-band.html')
 def gauge_band(scope_counts):

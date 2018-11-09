@@ -6734,6 +6734,11 @@ body > .container {
     background: none;
     border-color: #ffd100; }
 
+.gauge--small {
+  display: flex;
+  flex-direction: columns;
+  margin-bottom: 30px; }
+
 .gauge__overview {
   display: flex;
   flex-direction: row;
@@ -6766,6 +6771,10 @@ body > .container {
 .graphic__performance-band--on-target {
   background: #79AD00; }
 
+.gauge__graphic--tank--small {
+  min-height: 52px;
+  min-width: 24px; }
+
 .graphic__tick-marks {
   display: flex;
   flex-direction: column;
@@ -6794,6 +6803,11 @@ body > .container {
 .gauge__value {
   color: #506e00;
   font-weight: bold; }
+
+.gauge__value__value {
+  color: #79AD00;
+  font-size: 1.25rem;
+  font-weight: normal; }
 
 .gauge__value--above strong,
 .gauge__value--below strong {

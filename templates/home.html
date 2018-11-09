@@ -27,6 +27,15 @@
     <div class="featured-country__overview-gauges">
         <h3>{% trans "Monitoring and Evaluation Status" %}</h3>
         <p>{% trans "Are programs trackable and backed up with evidence?" %}</p>
+        <div class="overview-gauges__gauges">
+
+            {% gauge_tank_small "targets_defined" %}
+
+            {% gauge_tank_small "reported_results" %}
+
+            {% gauge_tank_small "results_evidence" %}
+
+        </div>
     </div>
 </section><!--/.home__featured-country-->
 <section class="home__program-list">
