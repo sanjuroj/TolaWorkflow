@@ -51,6 +51,12 @@
         <p>{% trans "External template indicators include agency standard indicator feeds or donor required indicators from a web service.  Skip The service section if creating a 'custom' indicator." %}</p>
         <form class="" method="post" enctype="multipart/form-data" name="most" action="/indicators/indicator_create/{{ program_id }}/" role="form">
           {% csrf_token %}
+
+          <div class="form-group">
+              <label for="name">{% trans "Indicator Name" %}</label>
+              <input type="text" class="form-control" name="name" id="name" required >
+          </div>
+
           <div class="form-group">
               <label for="services">{% trans "Indicator Service Templates (leave blank for custom indicators)" %}</label>
               <select name="services" id="services" class="form-control">

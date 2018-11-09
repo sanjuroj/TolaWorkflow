@@ -198,7 +198,7 @@ def indicator_create(request, id=0):
         node_id = request.POST['service_indicator']
         sector = None
         # add a temp name for custom indicators
-        name = _("Temporary")
+        name = request.POST.get('name', _("Temporary"))
         source = None
         definition = None
         external_service_record = None

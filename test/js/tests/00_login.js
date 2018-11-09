@@ -8,6 +8,7 @@ describe('TolaActivity Login screen', function () {
 
   before(function () {
     browser.windowHandleMaximize()
+    Util.loginTola()
   })
 
   it('should deny access if username is invalid', function () {

@@ -104,11 +104,25 @@
         }
 
 
-        function isValidUrl(url){
-            if(/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url)) {
-                return true;
+        function isValidPath(url){
+            // First test if it starts with an accepted protocol but doesn't match the full address regex
+            isURL = /^(http|https|ftp|smb):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url);
+            if (/^(http|https|ftp|smb)/i.test(url)){
+                if (isURL){
+                    return "";
+                }
+                else{
+                    return "Warning: This may be a badly formatted web address. It should be something like 'https://domain.com/path/to/file' or 'https://docs.google.com/spreadsheets/d/OIjwljwoihgIHOEies'"
+                }
             }
-            return false;
+            // If it contains slashes, it might be a file path, but if there are no slashes, it's not a path,
+            // it could be just a file or garbage.
+            else if (/[\\\/]/.test(url)) {
+                return '{% trans "Warning: The file you are linking to should be on external storage. The file path you provided looks like it might be on your local hard drive." %}';
+            }
+            else {
+                return '{% trans "Warning: You should be providing a location or path to a file that is not on your hard drive.  The link you provided does not appear to be a file path or web link."|escapejs %}';
+            }
         }
 
         function validateNameField() {
@@ -148,13 +162,11 @@
                 $(`#validation_${urlFieldId}`).text('{% trans "Please complete this field."|escapejs %}');
                 return false;
             }
-            if (isValidUrl(urlField.val()) == false) {
-                urlField.addClass('is-invalid');
-                $(`#validation_${urlFieldId}`).text('{% trans "Please enter a valid URL."|escapejs %}');
-                return false;
-            }
+
+            // Still allows you to submit things that don't pass this test, but it gives you a warning.
+            let msg = isValidPath(urlField.val());
+            $(`#validation_${urlFieldId}`).text(msg);
             urlField.removeClass('is-invalid');
-            $(`#validation_${urlFieldId}`).text("");
             return true;
         }
 

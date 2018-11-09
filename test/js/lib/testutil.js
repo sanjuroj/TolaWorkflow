@@ -5,8 +5,7 @@
 import LoginPage from '../pages/login.page'
 
 // Milliseconds
-const msec = 1000
-
+const delay = LoginPage.delay
 
 /**
  * Login to a remote or local Tola instance
@@ -15,12 +14,19 @@ const msec = 1000
 function loginTola() {
   let parms = readConfig()
   LoginPage.open(parms.baseurl)
-  if (parms.baseurl.includes('mercycorps.org')) {
+  if (parms.auth === 'mcsso') {
     LoginPage.username = parms.username
     LoginPage.password = parms.password
     LoginPage.login.click()
-  } else if (parms.baseurl.includes('localhost')) {
+  } else if (parms.auth === 'django') {
+    LoginPage.dUsername = parms.username
+    LoginPage.dPassword = parms.password
+    LoginPage.dLogin.click()
+  } else if (parms.auth === 'google') {
+    // Might bypass the login screen if google auth previously used
+    // by the current browser profile...
     LoginPage.googleplus.click()
+    // ...but if not, we're also ready to login manually
     if (LoginPage.title != 'Dashboard | TolaActivity') {
       LoginPage.gUsername = parms.username + '@mercycorps.org'
       LoginPage.gPassword = parms.password
@@ -59,19 +65,19 @@ function waitForAjax(secs = 2) {
   if (true === browser.isVisible('div#ajaxloading')) {
     let visible = browser.isVisible('div#ajaxloading')
     while (visible === true) {
-      browser.pause(secs * msec)
+      browser.pause(secs * delay)
       visible = browser.isVisible('div#ajaxloading')
     }
   } else if (true === browser.isVisible('div.modal-backdrop.fade')) {
     let visible = browser.isVisible('div.modal-backdrop.fade')
     while (visible === true) {
-      browser.pause(secs * msec)
+      browser.pause(secs * delay)
       visible = browser.isVisible('div.modal-backdrop.fade')
     }
   } else if (true === browser.isVisible('div.modal.ajax_loading')) {
     let visible = browser.isVisible('div.modal.ajax_loading')
     while (visible === true) {
-      browser.pause(secs * msec)
+      browser.pause(secs * delay)
       visible = browser.isVisible('div.modal.ajax_loading')
     }
   }

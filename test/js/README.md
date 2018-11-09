@@ -59,11 +59,11 @@ make realclean install run-chrome run-gecko
 ```
 
 - The `realclean` target deletes all generated files, including the
-  _node_modules_ directory
+  *node_modules* directory
 - The `install` target, in addition to installing all the necessary
   JavaScript packages, also downloads the Selenium Server and the latest
-  known-good versions of the Chrome and Firefox WebDriver clients,
-  `chromedriver` and `geckodriver`, respectively
+  (when this doc was last updated) known-good versions of the Chrome 
+   and Firefox WebDriver clients, `chromedriver` and `geckodriver`, respectively
 - The `run-chrome` and `run-gecko` targets will start the Selenium server,
   run all of the tests for the indicated browser, and then terminate the
   server after the test completes
@@ -89,11 +89,19 @@ $ cd TolaActivity/test/js
 ### Create the user config file
 Copy the example user config file to _config.json_ (`cp
 config-example.json config.json`) and edit _config.json_, changing
-_username_, _password_, and _baseurl_ to suit your needs. In particular:
+_username_, _password_, _baseurl_, and _auth_ to suit your needs. 
+In particular:
 
 - _username_ and _password_ must correspond to your MercyCorps SSO login
 - _baseurl_ points to the home page of the TolaActivity instance you
   are testing
+- To authenticate against MercyCorps' SSO, set _auth_ to _"mcsso"_
+- To authenticate against GoogleAuth when running a local instance,
+  set _auth_ to _"google"_
+- To authenticate against Django when running a local instance, set 
+  _auth_ to _"django"_. If you choose this option, which fast and
+  easy, you have to implement the GoogleAuth fix described in the
+  top-level [README]('../../README.md').
 - **Under no circumstances run the TATS suite against the production
   TolaActivity server. Doing so will create bad data and result in a lot
   of work to remove it, and potentially result in losing known-good,
@@ -113,14 +121,13 @@ steps below were current at the time this document was last updated.
    [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver).
    Place it anywhere in your system $PATH. You may also keep it in
    the testing directory of your local repo because it is gitignored.
-   The current version (when this document was last updated) is 2.37.
-   **NOTE:** Chromedriver v2.38 does not work with TATS at this time.
-   Please stick to 2.37.
+   The current version (when this document was last updated) is 
+   2.42.mumbleblatz.
 1. Download and install Firefox's Selenium browser driver,
    [geckodriver](https://github.com/mozilla/geckodriver/releases).
    Place it anywhere in your system $PATH. You can also keep it in
    the testing directory of your local repo because it is gitignored.
-   The current version (as of the last doc update) is 0.20.1.
+   The current version (as of the last doc update) is 0.23.
 1. Download [Selenium Server](https://goo.gl/hvDPsK) and place it
    the testing directory. The current version (at the time of writing) is
    3.12.0.
@@ -149,7 +156,7 @@ $ npm install
 1. Start the Seleniuim server (targeting the Firefox browser):
     ```
     $ cd test/js
-    $ java -jar -Dwebdriver.gecko.driver=./geckodriver selenium-server-standalone-3.11.0.jar &> selenium-server.log &
+    $ java -jar -Dwebdriver.gecko.driver=./geckodriver selenium-server-standalone-3.14.0.jar &> selenium-server.log &
     ```
 1. Execute the test suite:
     ```
@@ -193,8 +200,8 @@ $ ./node_modules/.bin/wdio --spec invalid
 
 Better still, you can execute a suite of related tests by specifying
 `--suite _name_`, where `_name_` is one the names defined in the 
-_suites:_ section of the config file. For example, the _evidence suite
-is defined in the _wdio.\*.conf.js_ files like so:
+_suites:_ section of the config file. To create suite named
+_evidence_ in the conf file, it might look like this:
 
 ```
         evidence: [
@@ -213,10 +220,10 @@ $ ./node_modules/.bin/wdio --suite evidence
 ```
 
 ## Looking for framework documentation?
-To produce documentation for the test framework, the API is decorated
-with JSDoc decorators, so it will produce JSDoc-compatible documentation
-from the code itself. To do so, execute the command `make doc` at the
-top of the testing directory:
+The framework API is decorated with JSDoc decorators, so it will
+produce JSDoc-compatible documentation from the code itself. To produce
+documentation for the test framework, To do so, execute the command
+`make doc` at the top of the testing directory:
 
 ```
 $ make doc

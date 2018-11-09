@@ -11,11 +11,11 @@ SESERVER=$(shell basename $(SEURL))
 # Figure out which browser drivers we want
 ifeq ($(XDG_SESSION_TYPE),x11)
 # Linux
-	CHROMEURL=$(CHROMESRC)/2.42/chromedriver_linux64.zip
+	CHROMEURL=$(CHROMESRC)/2.43/chromedriver_linux64.zip
 	GECKOURL=$(GECKOSRC)/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz
 else
 # Mac
-	CHROMEURL=$(CHROMESRC)/2.37/chromedriver_mac64.zip
+	CHROMEURL=$(CHROMESRC)/2.43/chromedriver_mac64.zip
 	GECKOURL=$(GECKOSRC)/v0.23.0/geckodriver-v0.23.0-macos.tar.gz
 endif
 CHROMEDRIVER=$(shell basename $(CHROMEURL))
@@ -59,7 +59,7 @@ realclean: clean
 run-chrome:
 	java -jar -Dwebdriver.chrome.driver=chromedriver $(SESERVER) | tee server.log 2>&1 &
 	npm run wdio wdio.chrome.conf | tee chrome.log 2>&1
-	ifeq ($(XDG_SESSION_TYPE),x11)
+	ifeq $($(XDG_SESSION_TYPE),x11)
 		-killall -w $(jobs -p)
 	else
 		-killall java
@@ -68,7 +68,7 @@ run-chrome:
 run-gecko:
 	java -jar -Dwebdriver.gecko.driver=geckodriver $(SESERVER) | tee server.log 2>&1 &
 	npm run wdio wdio.gecko.conf | tee gecko.log 2>&1
-	ifeq ($(XDG_SESSION_TYPE),x11)
+	ifeq $($(XDG_SESSION_TYPE),x11)
 		-killall -w $(jobs -p)
 	else
 		-killall java
