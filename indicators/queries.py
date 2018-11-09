@@ -638,6 +638,15 @@ class ProgramWithMetricsManager(models.Manager):
                     output_field=models.IntegerField()
                 )
             ), 0)
+        needs_evidence = models.functions.Coalesce(
+            models.Subquery(
+                indicator_subquery_base.filter(
+                    all_results_backed_up=False
+                ).order_by().values('program_id').annotate(
+                    needs_evidence_count=models.Count('id')
+                ).values('needs_evidence_count'),
+                output_field=models.IntegerField()
+            ), 0)
         # targets defined (ALL targets defined)
         targets_defined = models.functions.Coalesce(
             models.Subquery(
@@ -657,6 +666,7 @@ class ProgramWithMetricsManager(models.Manager):
             'reported_results_count': reported_results,
             'reported_results_sum': total_results,
             'results_evidence_count': results_evidence,
+            'needs_evidence_count': needs_evidence,
             'targets_defined_count': targets_defined,
             'indicator_count': indicator_count
         }
@@ -752,6 +762,7 @@ class ProgramWithMetrics(wf_models.Program):
                 'indicator_count': 0,
                 'results_evidence': 0,
                 'results_count': 0,
+                'needs_evidence': 0
             }
         return {
             'reported_results': self.reported_results_count,
@@ -759,6 +770,7 @@ class ProgramWithMetrics(wf_models.Program):
             'indicator_count': self.indicator_count,
             'results_evidence': self.results_evidence_count,
             'results_count': self.reported_results_sum,
+            'needs_evidence': self.needs_evidence_count
         }
 
     @property
