@@ -115,7 +115,30 @@ def js(obj):
 
 
 @register.inclusion_tag('indicators/tags/gauge-tank.html', takes_context=True)
-def gauge_tank(context, metric, title, filled_label, unfilled_label, cta, filter_title):
+def gauge_tank(context, metric, has_filters=True):
+    labels = {
+        'targets_defined' : {
+            'title': _('Indicators with targets'),
+            'filled_label': _('have targets defined'),
+            'unfilled_label': _('have no targets'),
+            'cta': _('Add missing targets'),
+            'filter_title': _('have missing targets'),
+        },
+        'reported_results' : {
+            'title': _('Indicators with results'),
+            'filled_label': _('have reported results'),
+            'unfilled_label': _('have no results'),
+            'cta': _('Add missing results'),
+            'filter_title': _('have no results'),
+        },
+        'results_evidence': {
+            'title': _('Results with evidence'),
+            'filled_label': _('have evidence'),
+            'unfilled_label': _('are missing evidence'),
+            'cta': _('Add missing evidence'),
+            'filter_title': _('have results without evidence'),
+        },
+    }
     program = context['program']
     filled_value = program.metrics[metric]
     results_count = program.metrics['results_count']
@@ -127,7 +150,7 @@ def gauge_tank(context, metric, title, filled_label, unfilled_label, cta, filter
     filled_percent = int(round(float(filled_value*100)/denominator)) if denominator else 0 # avoids div#0 error
     tick_count = 10
     return {
-        'title': title,
+        'title': labels[metric]['title'],
         'id_tag': metric,
         'filled_value': filled_value,
         'unfilled_value': indicator_count - filled_value,
@@ -135,11 +158,12 @@ def gauge_tank(context, metric, title, filled_label, unfilled_label, cta, filter
         'results_count': results_count,
         'filled_percent': filled_percent,
         'unfilled_percent': 100 - filled_percent,
-        'filled_label': filled_label,
-        'unfilled_label': unfilled_label,
+        'filled_label': labels[metric]['filled_label'],
+        'unfilled_label': labels[metric]['unfilled_label'],
         'ticks': list(range(1,tick_count+1)),
-        'cta': cta,
-        'filter_title': filter_title,
+        'cta': labels[metric]['cta'],
+        'filter_title': labels[metric]['filter_title'],
+        'has_filters': has_filters,
     }
 
 
