@@ -7,5 +7,10 @@
 }
 .program-list__program {
     margin-bottom: $grid-gutter-width/2;
+    .card-header {
+        align-items: flex-start;
+        display: flex;
+        justify-content: space-between;
+    }
 }
 

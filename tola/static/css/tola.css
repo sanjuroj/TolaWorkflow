@@ -6227,6 +6227,11 @@ body > .container {
 .card-header {
   background: rgba(0, 0, 0, 0.1) !important; }
 
+.nav--text-list .nav-item + .nav-item {
+  border-left: 1px solid #b8babd;
+  margin-left: 7.5px;
+  padding-left: 7.5px; }
+
 .select2-container {
   box-sizing: border-box;
   display: inline-block;
@@ -6977,6 +6982,10 @@ body > .container {
 
 .program-list__program {
   margin-bottom: 15px; }
+  .program-list__program .card-header {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between; }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {

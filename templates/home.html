@@ -33,7 +33,7 @@
                             <a href="{% url "program_page" program.id 0 0 %}" class="">{% trans "Program page" %}</a>
                         </li>
                         <li class="nav-item">
-                            <a href="" class="">{% trans "Recent progress report" %}</a>
+                            <a href="{% url "programIndicatorReport" program.id %}" class="">{% trans "Recent progress report" %}</a>
                         </li>
                     </ul>
                 </div>
