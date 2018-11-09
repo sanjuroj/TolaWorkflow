@@ -12,7 +12,7 @@
     </button>
     <ul class="dropdown-menu" role="menu">
         {% for country in user_countries  %}
-        <li><a href="/{{ country.id }}/">{{ country.country }}</a></li>
+        <li><a href="/{{ country.id }}/" class="dropdown-item">{{ country.country }}</a></li>
         {% endfor %}
     </ul>
 </nav>

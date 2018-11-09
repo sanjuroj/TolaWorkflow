@@ -2093,7 +2093,7 @@ tbody.collapse.show {
   color: #212429;
   text-align: left;
   list-style: none;
-  background-color: #fff;
+  background-color: #ebedf0;
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 0; }
@@ -2179,7 +2179,7 @@ tbody.collapse.show {
 .dropdown-item {
   display: block;
   width: 100%;
-  padding: 0rem 0.5rem;
+  padding: 0.25rem 0.5rem;
   clear: both;
   font-weight: 400;
   color: #212429;
@@ -2188,13 +2188,13 @@ tbody.collapse.show {
   background-color: transparent;
   border: 0; }
   .dropdown-item:hover, .dropdown-item:focus {
-    color: #16181b;
-    text-decoration: none;
-    background-color: #FAFAFA; }
-  .dropdown-item.active, .dropdown-item:active {
     color: #fff;
     text-decoration: none;
-    background-color: #3366cc; }
+    background-color: #00a49f; }
+  .dropdown-item.active, .dropdown-item:active {
+    color: #212429;
+    text-decoration: none;
+    background-color: #b8eceb; }
   .dropdown-item.disabled, .dropdown-item:disabled {
     color: #71757b;
     background-color: transparent; }
