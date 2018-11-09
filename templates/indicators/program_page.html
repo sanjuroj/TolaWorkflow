@@ -3,12 +3,7 @@
 {% block title %}{% trans "Program indicators" %} | {% endblock %}
 {% block page_title %}{{ program.name }}{% endblock %}
 {% block header_extras %}
-    <div class="program__calendar-complete">
-        <div class="fas fa-calendar"></div>
-        <p>
-        {% blocktrans %}Program period is <br><strong>{{ percent_complete }}% complete</strong>{% endblocktrans %}
-        </p>
-    </div>
+    {% program_complete percent_complete %}
 {% endblock %}
 
 {% block content %}

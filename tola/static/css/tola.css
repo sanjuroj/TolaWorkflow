@@ -6877,17 +6877,6 @@ body > .container {
 .disable-span a {
   pointer-events: none; }
 
-.program__calendar-complete {
-  color: #79AD00;
-  display: flex;
-  align-items: center; }
-  .program__calendar-complete p {
-    line-height: 1.1;
-    margin: 0; }
-  .program__calendar-complete .fa-calendar {
-    font-size: 42px;
-    margin-right: 7.5px; }
-
 .program__status {
   background-color: #fff;
   border: 1px solid #dbdcde;
@@ -6967,6 +6956,17 @@ body > .container {
       flex: 0 0 100%;
       max-width: 100%;
       order: 1; } }
+
+.program__calendar-complete {
+  color: #79AD00;
+  display: flex;
+  align-items: center; }
+  .program__calendar-complete p {
+    line-height: 1.1;
+    margin: 0; }
+  .program__calendar-complete .fa-calendar {
+    font-size: 42px;
+    margin-right: 7.5px; }
 
 .home__featured-country {
   display: block;

@@ -174,3 +174,14 @@ def gauge_band(scope_percents):
         'ticks': list(range(1,11)),
         'margin': int(Indicator.ONSCOPE_MARGIN * 100),
     }
+
+
+@register.inclusion_tag('indicators/tags/program-complete.html')
+def program_complete(percent_complete):
+    """
+    Renders percentage complete with a graphic icon.
+    Takes percent_complete as an integer percentage value
+    """
+    return {
+        'percent_complete': percent_complete,
+    }
