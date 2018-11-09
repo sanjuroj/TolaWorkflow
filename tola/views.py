@@ -28,12 +28,22 @@ def index(request, selected_country=None):
     active_country = Country.objects.filter(id=selected_country)[0] if selected_country else user_countries[0]
     programs = Program.objects.filter(country=active_country)
     programs_with_metrics = [ProgramWithMetrics.with_metrics.get(pk=program.id) for program in programs]
+    getSiteProfile = SiteProfile.objects.all()\
+        .prefetch_related('country','district','province')\
+        .filter(country=active_country)\
+        .filter(status=1)
+    getSiteProfileIndicator = SiteProfile.objects.all()\
+        .prefetch_related('country','district','province')\
+        .filter(country=active_country)\
+        .filter(status=1)
 
     return render(request, 'home.html', {
         'user_countries': user_countries,
         'active_country': active_country,
         'programs': programs_with_metrics,
         'no_programs': programs.count(),
+        'getSiteProfile': getSiteProfile,
+        'getSiteProfileIndicator': getSiteProfileIndicator,
     })
 
 

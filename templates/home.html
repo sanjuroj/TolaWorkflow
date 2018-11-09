@@ -21,7 +21,13 @@
 {% block content %}
 
 <section class="home__featured-country">
-    map &amp; gauges go here
+    <div class="panel-body">
+        <style>
+            #map { height: 350px; }
+        </style>
+        <div id="map"></div>
+        {% include "home_country_map.html" %}
+    </div>
 </section><!--/.home__featured-country-->
 <section class="home__program-list">
     <h2>{% blocktrans %}{{ no_programs }} active programs{% endblocktrans %}</h2>
