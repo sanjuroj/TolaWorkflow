@@ -76,6 +76,13 @@ urlpatterns = [ # rest framework
                 url(r'^api/', include(router.urls)),
                 url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
                 url(r'^api-token-auth/', auth_views.obtain_auth_token),
+
+                # enable the admin:
+                url(r'^admin/', include(admin.site.urls)),
+
+                # enable admin documentation:
+                url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+
                 url(r'^bootstrap/', TemplateView.as_view(template_name="bootstrap4.html")),
                 url(r'^datedtargetinfo/(?P<pk>\w+)/$', dated_target_info, name='datedtargetinfo'),
                 # internationalization
@@ -94,14 +101,6 @@ urlpatterns = [ # rest framework
                 # program ajax update for metrics
                 url(r'^program/(?P<program_id>\d+)/metrics/$',
                     ProgramPage.as_view(metrics=True), name='program_metrics'),
-
-                # enable the admin:
-                url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-                url(r'^admin/', include(admin.site.urls)),
-
-
-                # enable admin documentation:
-                url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
                 # app include of workflow urls
                 url(r'^workflow/', include('workflow.urls')),
