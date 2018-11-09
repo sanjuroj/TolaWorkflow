@@ -33,7 +33,8 @@
                             <a href="{% url "program_page" program.id 0 0 %}" class="">{% trans "Program page" %}</a>
                         </li>
                         <li class="nav-item">
-                            <a href="{% url "programIndicatorReport" program.id %}" class="">{% trans "Recent progress report" %}</a>
+                            {# TODO: is this querystring always the same? #}
+                            <a href="{% url "iptt_report" program.id "timeperiods" %}?timeperiods=7&timeframe=2&numrecentperiods=2" class="">{% trans "Recent progress report" %}</a>
                         </li>
                     </ul>
                 </div>
