@@ -124,7 +124,7 @@ def gauge_tank(context, metric, title, filled_label, unfilled_label, cta, filter
         denominator = results_count
     else:
         denominator = indicator_count
-    filled_percent = int(round(float(filled_value*100)/denominator))
+    filled_percent = int(round(float(filled_value*100)/denominator)) if denominator else 0 # avoids div#0 error
     tick_count = 10
     return {
         'title': title,
