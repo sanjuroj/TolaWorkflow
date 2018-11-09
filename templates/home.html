@@ -5,15 +5,17 @@
 
 
 {% block header_extras %}
-<button class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-    {% trans "change country" %}
-    <span class="caret"></span>
-</button>
-<ul class="dropdown-menu" role="menu">
-    {% for country in user_countries  %}
-    <li><a href="/{{ country.id }}/">{{ country.country }}</a></li>
-    {% endfor %}
-</ul>
+<nav class="country-selector">
+    <button class="btn btn-sm btn-link text-dark dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        {% trans "change country" %}
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+        {% for country in user_countries  %}
+        <li><a href="/{{ country.id }}/">{{ country.country }}</a></li>
+        {% endfor %}
+    </ul>
+</nav>
 {% endblock %}
 
 {% block content %}
