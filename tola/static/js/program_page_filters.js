@@ -2,6 +2,7 @@
 // State of what is currently being filtered
 let gas_tank_filter_target;
 let gas_tank_filter_target_positive;
+let over_under_filter = null;
 let selected_indicator_ids = [];
 let selected_indicator_levels = [];
 
@@ -34,6 +35,8 @@ function hide_row_factory(positive, target) {
         } else if (selected_indicator_levels.length > 0 && !indicator_level_ids.some(function (r) {
             return selected_indicator_levels.indexOf(r) >= 0
         })) {
+            hideElem();
+        } else if (over_under_filter !== null && elem.data('over-under') !== over_under_filter) {
             hideElem();
         } else  {
             elem.show();
@@ -71,6 +74,7 @@ $(document).ready(function() {
         clear_side_bar_filters();
         gas_tank_filter_target = target;
         gas_tank_filter_target_positive = positive;
+        over_under_filter = null;
         apply_filters_to_indicator_rows();
     });
 
@@ -82,10 +86,30 @@ $(document).ready(function() {
 
         clear_side_bar_filters();
         gas_tank_filter_target = '';
+        over_under_filter = null;
         apply_filters_to_indicator_rows();
     });
 
-    // indicator/level filters
+    // gauge band links (indicators on track gas tank)
+    $('a[data-over-under-filter]').on('click', function (e) {
+        e.preventDefault();
+        let elem = $(this);
+
+        let highlighted_tab = elem.closest('.gauge');
+        let list_title = elem.data('list-title');
+
+        $('.gauge').removeClass('is-highlighted');
+        highlighted_tab.addClass('is-highlighted');
+        $('#indicators-list-title').text(list_title);
+        $('#show-all-indicators').removeClass('is-display-none');
+
+        clear_side_bar_filters();
+        over_under_filter = $(this).data('over-under-filter');
+        gas_tank_filter_target = '';
+        apply_filters_to_indicator_rows();
+    });
+
+    // indicator/level filters (sidebar)
     const indicators_select = $("#id_indicators");
     const levels_select = $("#id_levels");
 
