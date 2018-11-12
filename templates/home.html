@@ -63,7 +63,7 @@
                         </li>
                     </ul>
                 </div>
-                {% program_complete program.percent_complete %}
+                {% program_complete %}
             </div>
             <div class="card-body">
                 <div class="status__gauges">
@@ -80,5 +80,6 @@
     {% endfor %}
     <!--/.program-list__program-->
 </section>
+{% include "indicators/indicator_list_modals.html" %}
 
 {% endblock content %}

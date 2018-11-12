@@ -216,12 +216,17 @@ def gauge_band(context, has_filters=True):
     }
 
 
-@register.inclusion_tag('indicators/tags/program-complete.html')
-def program_complete(percent_complete):
+@register.inclusion_tag('indicators/tags/program-complete.html', takes_context=True)
+def program_complete(context):
     """
     Renders percentage complete with a graphic icon.
     Takes percent_complete as an integer percentage value
     """
+    program = context['program']
     return {
-        'percent_complete': percent_complete,
+        'program.id': program.id,
+        'program.start_date': program.start_date,
+        'program.end_date': program.end_date,
+        'program.reporting_period_start': program.reporting_period_start,
+        'program.percent_complete': program.percent_complete,
     }
