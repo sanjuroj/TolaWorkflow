@@ -51,7 +51,7 @@
     {% for program in programs %}
         <article class="program-list__program card">
             <div class="card-header">
-                <div>
+                <div class="program-header__info">
                     <h4><a href="{% url "program_page" program.id 0 0 %}" class="text-dark">{{ program.name }}</a></h4>
                     <ul class="nav nav--text-list">
                         <li class="nav-item">

@@ -6977,9 +6977,11 @@ body > .container {
       order: 1; } }
 
 .program__calendar-complete {
+  align-items: center;
   color: #71757b;
   display: flex;
-  align-items: center; }
+  flex-shrink: 0;
+  margin-left: 15px; }
   .program__calendar-complete p {
     line-height: 1.1;
     margin: 0; }
