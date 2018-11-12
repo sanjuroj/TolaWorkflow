@@ -24,7 +24,8 @@
 // Map
 #home_country_map {
     // This ID is mainly for JS targeting; add styles to the container element, below
-    height: 350px; // yuck
+    min-height: 350px; // yuck
+    height: 100%;
     z-index: 1; // double yuck
 }
 .featured-country__map {

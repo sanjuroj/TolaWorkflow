@@ -26,7 +26,9 @@ def index(request, selected_country=None):
 
     user_countries = getCountry(request.user)
     active_country = Country.objects.filter(id=selected_country)[0] if selected_country else user_countries[0]
-    programs = Program.objects.filter(country=active_country)
+    programs = Program.objects\
+        .filter(country=active_country)\
+        .filter(funding_status="Funded")
     programs_with_metrics = [ProgramWithMetrics.with_metrics.get(pk=program.id) for program in programs]
     getSiteProfile = SiteProfile.objects.all()\
         .prefetch_related('country','district','province')\

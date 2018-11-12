@@ -7007,7 +7007,8 @@ body > .container {
     justify-content: space-between; }
 
 #home_country_map {
-  height: 350px;
+  min-height: 350px;
+  height: 100%;
   z-index: 1; }
 
 .featured-country__map {

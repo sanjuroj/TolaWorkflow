@@ -1,7 +1,8 @@
 {% load i18n %}
+{# TODO: this is a link that opens the reporting period modal #}
 <div class="program__calendar-complete">
     <div class="fas fa-calendar"></div>
     <p>
-    {% blocktrans %}Program period is <br><strong class="text-dark">{{ percent_complete }}% complete</strong>{% endblocktrans %}
+    {% blocktrans %}<a href="">Program period</a> is <br><strong class="text-dark">{{ percent_complete }}% complete</strong>{% endblocktrans %}
     </p>
 </div>
