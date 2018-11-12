@@ -138,10 +138,12 @@ class TolaUser(models.Model):
     name = models.CharField(_("Given Name"), blank=True, null=True, max_length=100)
     employee_number = models.IntegerField(_("Employee Number"), blank=True, null=True)
     user = models.OneToOneField(User, unique=True, related_name='tola_user', verbose_name=_("User"))
-    organization = models.ForeignKey(Organization, default=1, blank=True, null=True, verbose_name=_("Organization"))
+    organization = models.ForeignKey(
+        Organization, default=1, blank=True, null=True, verbose_name=_("Organization"))
     language = models.CharField(max_length=2, choices=settings.LANGUAGES, default='en')
-    country = models.ForeignKey(Country, blank=True, null=True, verbose_name=_("Country"))
-    countries = models.ManyToManyField(Country, verbose_name=_("Accessible Countries"), related_name='countries', blank=True)
+    country = models.ForeignKey(Country, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Country"))
+    countries = models.ManyToManyField(
+        Country, verbose_name=_("Accessible Countries"), related_name='countries', blank=True)
     tables_api_token = models.CharField(blank=True, null=True, max_length=255)
     activity_api_token = models.CharField(blank=True, null=True, max_length=255)
     privacy_disclaimer_accepted = models.BooleanField(default=False)
@@ -651,8 +653,8 @@ class SiteProfileManager(models.Manager):
 class SiteProfile(models.Model):
     profile_key = models.UUIDField(default=uuid.uuid4, unique=True),
     name = models.CharField(_("Site Name"), max_length=255, blank=False)
-    type = models.ForeignKey(ProfileType, blank=True, null=True, verbose_name=_("Type"))
-    office = models.ForeignKey(Office, blank=True, null=True, verbose_name=_("Office"))
+    type = models.ForeignKey(ProfileType, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Type"))
+    office = models.ForeignKey(Office, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Office"))
     contact_leader = models.CharField(_("Contact Name"), max_length=255, blank=True, null=True)
     date_of_firstcontact = models.DateTimeField(_("Date of First Contact"), null=True, blank=True)
     contact_number = models.CharField(_("Contact Number"), max_length=255, blank=True, null=True)
@@ -679,31 +681,51 @@ class SiteProfile(models.Model):
     total_population = models.IntegerField(null=True, blank=True, verbose_name=_("Total population"))
     total_male = models.IntegerField(null=True, blank=True, verbose_name=_("Total male"))
     total_female = models.IntegerField(null=True, blank=True, verbose_name=_("Total female"))
-    classify_land = models.ForeignKey(LandType, blank=True, null=True, verbose_name=_("Classify land"))
+    classify_land = models.ForeignKey(
+        LandType, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Classify land"))
     total_land = models.IntegerField(_("Total Land"), help_text="In hectares/jeribs", null=True, blank=True)
-    total_agricultural_land = models.IntegerField(_("Total Agricultural Land"), help_text="In hectares/jeribs", null=True, blank=True)
-    total_rainfed_land = models.IntegerField(_("Total Rain-fed Land"), help_text="In hectares/jeribs", null=True, blank=True)
-    total_horticultural_land = models.IntegerField(_("Total Horticultural Land"), help_text="In hectares/jeribs", null=True, blank=True)
+    total_agricultural_land = models.IntegerField(
+        _("Total Agricultural Land"), help_text="In hectares/jeribs", null=True, blank=True)
+    total_rainfed_land = models.IntegerField(
+        _("Total Rain-fed Land"), help_text="In hectares/jeribs", null=True, blank=True)
+    total_horticultural_land = models.IntegerField(
+        _("Total Horticultural Land"), help_text="In hectares/jeribs", null=True, blank=True)
     total_literate_peoples = models.IntegerField(_("Total Literate People"), help_text="", null=True, blank=True)
     literate_males = models.IntegerField(_("% of Literate Males"), help_text="%", null=True, blank=True)
     literate_females = models.IntegerField(_("% of Literate Females"), help_text="%", null=True, blank=True)
     literacy_rate = models.IntegerField(_("Literacy Rate (%)"), help_text="%", null=True, blank=True)
     populations_owning_land = models.IntegerField(_("Households Owning Land"), help_text="(%)", null=True, blank=True)
-    avg_landholding_size = models.DecimalField(_("Average Landholding Size"), decimal_places=14,max_digits=25, help_text=_("In hectares/jeribs"), default=Decimal("0.00"))
-    households_owning_livestock = models.IntegerField(_("Households Owning Livestock"), help_text="(%)", null=True, blank=True)
-    animal_type = models.CharField(_("Animal Types"), help_text=_("List Animal Types"), max_length=255, null=True, blank=True)
+    avg_landholding_size = models.DecimalField(
+        _("Average Landholding Size"), decimal_places=14,max_digits=25,
+        help_text=_("In hectares/jeribs"), default=Decimal("0.00"))
+    households_owning_livestock = models.IntegerField(
+        _("Households Owning Livestock"), help_text="(%)", null=True, blank=True)
+    animal_type = models.CharField(
+        _("Animal Types"), help_text=_("List Animal Types"), max_length=255, null=True, blank=True)
     country = models.ForeignKey(Country, verbose_name=_("Country"))
-    province = models.ForeignKey(Province, verbose_name=_("Administrative Level 1"), null=True, blank=True)
-    district = models.ForeignKey(District, verbose_name=_("Administrative Level 2"), null=True, blank=True)
-    admin_level_three = models.ForeignKey(AdminLevelThree, verbose_name=_("Administrative Level 3"), null=True, blank=True)
-    village = models.CharField(_("Administrative Level 4"), help_text="", max_length=255, null=True, blank=True)
-    latitude = models.DecimalField(_("Latitude (Decimal Coordinates)"), decimal_places=16,max_digits=25, default=Decimal("0.00"))
-    longitude = models.DecimalField(_("Longitude (Decimal Coordinates)"), decimal_places=16,max_digits=25, default=Decimal("0.00"))
+    province = models.ForeignKey(
+        Province, verbose_name=_("Administrative Level 1"), null=True, blank=True, on_delete=models.SET_NULL)
+    district = models.ForeignKey(
+        District, verbose_name=_("Administrative Level 2"), null=True, blank=True, on_delete=models.SET_NULL)
+    admin_level_three = models.ForeignKey(
+        AdminLevelThree, verbose_name=_("Administrative Level 3"), null=True, blank=True, on_delete=models.SET_NULL)
+    village = models.CharField(
+        _("Administrative Level 4"), help_text="", max_length=255, null=True, blank=True)
+    latitude = models.DecimalField(
+        _("Latitude (Decimal Coordinates)"), decimal_places=16,max_digits=25, default=Decimal("0.00"))
+    longitude = models.DecimalField(
+        _("Longitude (Decimal Coordinates)"), decimal_places=16,max_digits=25, default=Decimal("0.00"))
     status = models.BooleanField(_("Site Active"), default=True)
     approval = models.CharField(_("Approval"), default=_("in progress"), max_length=255, blank=True, null=True)
-    approved_by = models.ForeignKey(TolaUser,help_text=_('This is the Provincial Line Manager'), blank=True, null=True, related_name="comm_approving", verbose_name=_("Approved by"))
-    filled_by = models.ForeignKey(TolaUser, help_text=_('This is the originator'), blank=True, null=True, related_name="comm_estimate", verbose_name=_("Filled by"))
-    location_verified_by = models.ForeignKey(TolaUser, help_text=_('This should be GIS Manager'), blank=True, null=True, related_name="comm_gis", verbose_name=_("Location verified by"))
+    approved_by = models.ForeignKey(
+        TolaUser,help_text=_('This is the Provincial Line Manager'), blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="comm_approving", verbose_name=_("Approved by"))
+    filled_by = models.ForeignKey(
+        TolaUser, help_text=_('This is the originator'), blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="comm_estimate", verbose_name=_("Filled by"))
+    location_verified_by = models.ForeignKey(
+        TolaUser, help_text=_('This should be GIS Manager'), blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="comm_gis", verbose_name=_("Location verified by"))
     create_date = models.DateTimeField(null=True, blank=True)
     edit_date = models.DateTimeField(null=True, blank=True)
     history = HistoricalRecords()
@@ -878,21 +900,27 @@ class StakeholderManager(models.Manager):
 
 class Stakeholder(models.Model):
     name = models.CharField(_("Stakeholder/Organization Name"), max_length=255, blank=True, null=True)
-    type = models.ForeignKey(StakeholderType, blank=True, null=True, verbose_name=_("Type"))
+    type = models.ForeignKey(StakeholderType, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Type"))
     contact = models.ManyToManyField(Contact, max_length=255, blank=True, verbose_name=_("Contact"))
     country = models.ForeignKey(Country, verbose_name=_("Country"))
-    #sector = models.ForeignKey(Sector, blank=True, null=True, related_name='sects')
     sectors = models.ManyToManyField(Sector, blank=True, verbose_name=_("Sectors"))
     stakeholder_register = models.BooleanField(_("Has this partner been added to stakeholder register?"))
-    formal_relationship_document = models.ForeignKey('Documentation', verbose_name=_("Formal Written Description of Relationship"), null=True, blank=True, related_name="relationship_document")
-    vetting_document = models.ForeignKey('Documentation', verbose_name=_("Vetting/ due diligence statement"), null=True, blank=True, related_name="vetting_document")
+    formal_relationship_document = models.ForeignKey(
+        'Documentation', verbose_name=_("Formal Written Description of Relationship"),
+        null=True, blank=True, on_delete=models.SET_NULL, related_name="relationship_document")
+    vetting_document = models.ForeignKey(
+        'Documentation', verbose_name=_("Vetting/ due diligence statement"),
+        null=True, blank=True, on_delete=models.SET_NULL, related_name="vetting_document")
     approval = models.CharField(_("Approval"), default="in progress", max_length=255, blank=True, null=True)
-    approved_by = models.ForeignKey(TolaUser, help_text='', blank=True, null=True, related_name="stake_approving", verbose_name=_("Approved by"))
-    filled_by = models.ForeignKey(TolaUser, help_text='', blank=True, null=True, related_name="stake_filled", verbose_name=_("Filled by"))
+    approved_by = models.ForeignKey(
+        TolaUser, help_text='', blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="stake_approving", verbose_name=_("Approved by"))
+    filled_by = models.ForeignKey(
+        TolaUser, help_text='', blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="stake_filled", verbose_name=_("Filled by"))
     notes = models.TextField(_("Notes"), max_length=765, blank=True, null=True)
     create_date = models.DateTimeField(null=True, blank=True)
     edit_date = models.DateTimeField(null=True, blank=True)
-    #optimize query
     objects = StakeholderManager()
 
     class Meta:
@@ -959,16 +987,24 @@ class ProjectAgreement(models.Model):
     program = models.ForeignKey(Program, verbose_name=_("Program"), related_name="agreement")
     date_of_request = models.DateTimeField(_("Date of Request"), blank=True, null=True)
     # Rename to more generic "nonproject" names
-    project_name = models.CharField(_("Project Name"), help_text=_('Please be specific in your name.  Consider that your Project Name includes WHO, WHAT, WHERE, HOW'), max_length=255)
-    project_type = models.ForeignKey(ProjectType, verbose_name=_("Project Type"), help_text='', max_length=255, blank=True, null=True)
-    project_activity = models.CharField(_("Project Activity"), help_text=_('This should come directly from the activities listed in the Logframe'), max_length=255, blank=True, null=True)
+    project_name = models.CharField(
+        _("Project Name"),
+        help_text=_('Please be specific in your name.  Consider that your Project Name includes WHO, WHAT, WHERE, HOW'),
+        max_length=255)
+    project_type = models.ForeignKey(
+        ProjectType, verbose_name=_("Project Type"), help_text='', max_length=255,
+        blank=True, null=True, on_delete=models.SET_NULL)
+    project_activity = models.CharField(
+        _("Project Activity"), help_text=_('This should come directly from the activities listed in the Logframe'),
+        max_length=255, blank=True, null=True)
     project_description = models.TextField(_("Project Description"), help_text='', blank=True, null=True)
     site = models.ManyToManyField(SiteProfile, blank=True)
-    has_rej_letter = models.BooleanField(_("If Rejected: Rejection Letter Sent?"), help_text=_('If yes attach copy'), default=False)
+    has_rej_letter = models.BooleanField(
+        _("If Rejected: Rejection Letter Sent?"), help_text=_('If yes attach copy'), default=False)
     activity_code = models.CharField(_("Project Code"), help_text='', max_length=255, blank=True, null=True)
-    office = models.ForeignKey(Office, verbose_name=_("Office"), null=True, blank=True)
+    office = models.ForeignKey(Office, verbose_name=_("Office"), null=True, blank=True, on_delete=models.SET_NULL)
     cod_num = models.CharField(_("Project COD #"), max_length=255, blank=True, null=True)
-    sector = models.ForeignKey("Sector", verbose_name=_("Sector"), blank=True, null=True)
+    sector = models.ForeignKey("Sector", verbose_name=_("Sector"), blank=True, null=True, on_delete=models.SET_NULL)
     project_design = models.CharField(_("Activity design for"), max_length=255, blank=True, null=True)
     account_code = models.CharField(_("Fund Code"), help_text='', max_length=255, blank=True, null=True)
     lin_code = models.CharField(_("LIN Code"), help_text='', max_length=255, blank=True, null=True)
@@ -979,24 +1015,47 @@ class ProjectAgreement(models.Model):
     effect_or_impact = models.TextField(_("What is the anticipated Outcome or Goal?"), blank=True, null=True)
     expected_start_date = models.DateTimeField(_("Expected starting date"), blank=True, null=True)
     expected_end_date = models.DateTimeField(_("Expected ending date"),blank=True, null=True)
-    expected_duration = models.CharField(_("Expected duration"), help_text=_("[MONTHS]/[DAYS]"), blank=True, null=True, max_length=255)
-    beneficiary_type = models.CharField(_("Type of direct beneficiaries"), help_text=_("i.e. Farmer, Association, Student, Govt, etc."), max_length=255, blank=True, null=True)
-    estimated_num_direct_beneficiaries = models.CharField(_("Estimated number of direct beneficiaries"), help_text=_("Please provide achievable estimates as we will use these as our 'Targets'"),max_length=255, blank=True, null=True)
-    average_household_size = models.CharField(_("Average Household Size"), help_text=_("Refer to Form 01 - Community Profile"),max_length=255, blank=True, null=True)
-    estimated_num_indirect_beneficiaries = models.CharField(_("Estimated Number of indirect beneficiaries"), help_text=_("This is a calculation - multiply direct beneficiaries by average household size"),max_length=255, blank=True, null=True)
-    total_estimated_budget = models.DecimalField(_("Total Project Budget"), decimal_places=2,max_digits=12, help_text=_("In USD"), default=Decimal("0.00"),blank=True)
-    mc_estimated_budget = models.DecimalField(_("Organizations portion of Project Budget"), decimal_places=2,max_digits=12, help_text=_("In USD"), default=Decimal("0.00"),blank=True)
-    local_total_estimated_budget = models.DecimalField(_("Estimated Total in Local Currency"), decimal_places=2,max_digits=12, help_text=_("In Local Currency"), default=Decimal("0.00"),blank=True)
-    local_mc_estimated_budget = models.DecimalField(_("Estimated Organization Total in Local Currency"), decimal_places=2,max_digits=12, help_text=_("Total portion of estimate for your agency"), default=Decimal("0.00"),blank=True)
-    exchange_rate = models.CharField(help_text=_("Local Currency exchange rate to USD"), max_length=255, blank=True, null=True)
+    expected_duration = models.CharField(
+        _("Expected duration"), help_text=_("[MONTHS]/[DAYS]"), blank=True, null=True, max_length=255)
+    beneficiary_type = models.CharField(
+        _("Type of direct beneficiaries"), help_text=_("i.e. Farmer, Association, Student, Govt, etc."),
+        max_length=255, blank=True, null=True)
+    estimated_num_direct_beneficiaries = models.CharField(
+        _("Estimated number of direct beneficiaries"),
+        help_text=_("Please provide achievable estimates as we will use these as our 'Targets'"),
+        max_length=255, blank=True, null=True)
+    average_household_size = models.CharField(
+        _("Average Household Size"), help_text=_("Refer to Form 01 - Community Profile"),
+        max_length=255, blank=True, null=True)
+    estimated_num_indirect_beneficiaries = models.CharField(
+        _("Estimated Number of indirect beneficiaries"),
+        help_text=_("This is a calculation - multiply direct beneficiaries by average household size"),
+        max_length=255, blank=True, null=True)
+    total_estimated_budget = models.DecimalField(
+        _("Total Project Budget"), decimal_places=2, max_digits=12,
+        help_text=_("In USD"), default=Decimal("0.00"),blank=True)
+    mc_estimated_budget = models.DecimalField(
+        _("Organizations portion of Project Budget"), decimal_places=2, max_digits=12,
+        help_text=_("In USD"), default=Decimal("0.00"),blank=True)
+    local_total_estimated_budget = models.DecimalField(
+        _("Estimated Total in Local Currency"), decimal_places=2, max_digits=12,
+        help_text=_("In Local Currency"), default=Decimal("0.00"),blank=True)
+    local_mc_estimated_budget = models.DecimalField(
+        _("Estimated Organization Total in Local Currency"), decimal_places=2,max_digits=12,
+        help_text=_("Total portion of estimate for your agency"), default=Decimal("0.00"), blank=True)
+    exchange_rate = models.CharField(
+        help_text=_("Local Currency exchange rate to USD"), max_length=255, blank=True, null=True)
     exchange_rate_date = models.DateField(help_text=_("Date of exchange rate"), blank=True, null=True)
     """
     Start Clean Up - These can be removed
     """
     community_rep = models.CharField(_("Community Representative"), max_length=255, blank=True, null=True)
-    community_rep_contact = models.CharField(_("Community Representative Contact"), help_text='Can have mulitple contact numbers', max_length=255, blank=True, null=True)
+    community_rep_contact = models.CharField(
+        _("Community Representative Contact"), help_text='Can have mulitple contact numbers',
+        max_length=255, blank=True, null=True)
     community_mobilizer = models.CharField(_("Community Mobilizer"), max_length=255, blank=True, null=True)
-    community_mobilizer_contact = models.CharField(_("Community Mobilizer Contact Number"), max_length=255, blank=True, null=True)
+    community_mobilizer_contact = models.CharField(
+        _("Community Mobilizer Contact Number"), max_length=255, blank=True, null=True)
     community_proposal = models.FileField(_("Community Proposal"), upload_to='uploads', blank=True, null=True)
     estimate_male_trained = models.IntegerField(_("Estimated # of Male Trained"),blank=True,null=True)
     estimate_female_trained = models.IntegerField(_("Estimated # of Female Trained"),blank=True,null=True)
@@ -1016,30 +1075,50 @@ class ProjectAgreement(models.Model):
     End Clean Up
     """
     estimation_date = models.DateTimeField(_("Estimation date"), blank=True, null=True)
-    estimated_by = models.ForeignKey(TolaUser, blank=True, null=True,verbose_name="Originated By", related_name="estimating")
+    estimated_by = models.ForeignKey(
+        TolaUser, blank=True, null=True, on_delete=models.SET_NULL,
+        verbose_name="Originated By", related_name="estimating")
     estimated_by_date = models.DateTimeField("Date Originated", null=True, blank=True)
-    checked_by = models.ForeignKey(TolaUser, blank=True, null=True, related_name="checking",verbose_name=_("Checked by"))
+    checked_by = models.ForeignKey(
+        TolaUser, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="checking",verbose_name=_("Checked by"))
     checked_by_date = models.DateTimeField("Date Checked", null=True, blank=True)
-    reviewed_by = models.ForeignKey(TolaUser, verbose_name="Request review", blank=True, null=True, related_name="reviewing" )
+    reviewed_by = models.ForeignKey(
+        TolaUser, verbose_name="Request review", blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="reviewing" )
     reviewed_by_date = models.DateTimeField("Date Verified", null=True, blank=True)
-    finance_reviewed_by = models.ForeignKey(TolaUser, blank=True, null=True, related_name="finance_reviewing", verbose_name=_("Finance reviewed by"))
+    finance_reviewed_by = models.ForeignKey(
+        TolaUser, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="finance_reviewing", verbose_name=_("Finance reviewed by"))
     finance_reviewed_by_date = models.DateTimeField(_("Date Reviewed by Finance"), null=True, blank=True)
-    me_reviewed_by = models.ForeignKey(TolaUser, blank=True, null=True, verbose_name=_("M&E Reviewed by"), related_name="reviewing_me")
+    me_reviewed_by = models.ForeignKey(
+        TolaUser, blank=True, null=True, on_delete=models.SET_NULL,
+        verbose_name=_("M&E Reviewed by"), related_name="reviewing_me")
     me_reviewed_by_date = models.DateTimeField(_("Date Reviewed by M&E"), null=True, blank=True)
     capacity = models.ManyToManyField(Capacity,verbose_name=_("Sustainability Plan"), blank=True)
     evaluate = models.ManyToManyField(Evaluate, blank=True, verbose_name=_("Evaluate"))
     approval = models.CharField(_("Approval Status"), default="in progress", max_length=255, blank=True, null=True)
-    approved_by = models.ForeignKey(TolaUser, blank=True, null=True, related_name="approving_agreement", verbose_name="Request approval")
+    approved_by = models.ForeignKey(
+        TolaUser, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="approving_agreement", verbose_name="Request approval")
     approved_by_date = models.DateTimeField(_("Date Approved"), null=True, blank=True)
-    approval_submitted_by = models.ForeignKey(TolaUser, blank=True, null=True, related_name="submitted_by_agreement", verbose_name=_("Approval submitted by"))
+    approval_submitted_by = models.ForeignKey(
+        TolaUser, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="submitted_by_agreement", verbose_name=_("Approval submitted by"))
     approval_remarks = models.CharField(_("Approval Remarks"), max_length=255, blank=True, null=True)
     justification_background = models.TextField(_("General Background and Problem Statement"), blank=True, null=True)
     risks_assumptions = models.TextField(_("Risks and Assumptions"), blank=True, null=True)
-    justification_description_community_selection = models.TextField(_("Description of Stakeholder Selection Criteria"), blank=True, null=True)
+    justification_description_community_selection = models.TextField(
+        _("Description of Stakeholder Selection Criteria"), blank=True, null=True)
     description_of_project_activities = models.TextField(_("Description of project activities"), blank=True, null=True)
-    description_of_government_involvement = models.TextField(_("Description of government involvement"),blank=True, null=True)
-    description_of_community_involvement = models.TextField(_("Description of community involvement"), blank=True, null=True)
-    community_project_description = models.TextField(_("Describe the project you would like the program to consider"), blank=True, null=True, help_text="Description must describe how the Community Proposal meets the project criteria")
+    description_of_government_involvement = models.TextField(
+        _("Description of government involvement"),blank=True, null=True)
+    description_of_community_involvement = models.TextField(
+        _("Description of community involvement"), blank=True, null=True)
+    community_project_description = models.TextField(
+        _("Describe the project you would like the program to consider"),
+        help_text="Description must describe how the Community Proposal meets the project criteria",
+        blank = True, null = True)
     create_date = models.DateTimeField(_("Date Created"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Last Edit Date"), null=True, blank=True)
     history = HistoricalRecords()
@@ -1118,13 +1197,18 @@ class ProjectComplete(models.Model):
     activity_code = models.CharField(_("Project Code"), max_length=255, blank=True, null=True)
     project_name = models.CharField(_("Project Name"), max_length=255, blank=True, null=True)
     project_activity = models.CharField(_("Project Activity"), max_length=255, blank=True, null=True)
-    project_type = models.ForeignKey(ProjectType, max_length=255, blank=True, null=True, verbose_name=_("Project Type"))
-    office = models.ForeignKey(Office, null=True, blank=True, verbose_name=_("Office"))
-    sector = models.ForeignKey("Sector", blank=True, null=True, verbose_name=_("Sector"))
-    expected_start_date = models.DateTimeField(_("Expected start date"), help_text=_("Imported from Project Initiation"), blank=True, null=True)
-    expected_end_date = models.DateTimeField(_("Expected end date"), help_text=_("Imported Project Initiation"), blank=True, null=True)
-    expected_duration = models.CharField(_("Expected Duration"), max_length=255, help_text=_("Imported from Project Initiation"), blank=True, null=True)
-    actual_start_date = models.DateTimeField(_("Actual start date"), help_text=_("Imported from Project Initiation"), blank=True, null=True)
+    project_type = models.ForeignKey(
+        ProjectType, max_length=255, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Project Type"))
+    office = models.ForeignKey(Office, null=True, blank=True, on_delete=models.SET_NULL, verbose_name=_("Office"))
+    sector = models.ForeignKey("Sector", blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Sector"))
+    expected_start_date = models.DateTimeField(
+        _("Expected start date"), help_text=_("Imported from Project Initiation"), blank=True, null=True)
+    expected_end_date = models.DateTimeField(
+        _("Expected end date"), help_text=_("Imported Project Initiation"), blank=True, null=True)
+    expected_duration = models.CharField(
+        _("Expected Duration"), max_length=255, help_text=_("Imported from Project Initiation"), blank=True, null=True)
+    actual_start_date = models.DateTimeField(
+        _("Actual start date"), help_text=_("Imported from Project Initiation"), blank=True, null=True)
     actual_end_date = models.DateTimeField(_("Actual end date"), blank=True, null=True)
     actual_duration = models.CharField(_("Actual duaration"), max_length=255, blank=True, null=True)
     on_time = models.BooleanField(default=None)
@@ -1132,23 +1216,42 @@ class ProjectComplete(models.Model):
     no_explanation = models.TextField(_("If not on time explain delay"), blank=True, null=True)
     account_code = models.CharField(_("Fund Code"), help_text='', max_length=255, blank=True, null=True)
     lin_code = models.CharField(_("LIN Code"), help_text='', max_length=255, blank=True, null=True)
-    estimated_budget = models.DecimalField(_("Estimated Budget"), decimal_places=2,max_digits=12,help_text="", default=Decimal("0.00") ,blank=True)
-    actual_budget = models.DecimalField(_("Actual Cost"), decimal_places=2,max_digits=20, default=Decimal("0.00"), blank=True, help_text="What was the actual final cost?  This should match any financial documentation you have in the file.   It should be completely documented and verifiable by finance and any potential audit")
+    estimated_budget = models.DecimalField(
+        _("Estimated Budget"), decimal_places=2, max_digits=12,help_text="", default=Decimal("0.00") ,blank=True)
+    actual_budget = models.DecimalField(
+        _("Actual Cost"), decimal_places=2, max_digits=20, default=Decimal("0.00"), blank=True,
+        help_text="What was the actual final cost?  This should match any financial documentation you have in the file.   It should be completely documented and verifiable by finance and any potential audit")
     actual_cost_date = models.DateTimeField(_("Actual cost date"), blank=True, null=True)
     budget_variance = models.CharField(_("Budget versus Actual variance"), blank=True, null=True, max_length=255)
     explanation_of_variance = models.CharField(_("Explanation of variance"), blank=True, null=True, max_length=255)
-    total_cost = models.DecimalField(_("Estimated Budget for Organization"),decimal_places=2,max_digits=12,help_text="In USD", default=Decimal("0.00"),blank=True)
-    agency_cost = models.DecimalField(_("Actual Cost for Organization"), decimal_places=2,max_digits=12,help_text="In USD", default=Decimal("0.00"),blank=True)
-    local_total_cost = models.DecimalField(_("Actual Cost"), decimal_places=2,max_digits=12, help_text="In Local Currency", default=Decimal("0.00"),blank=True)
-    local_agency_cost = models.DecimalField(_("Actual Cost for Organization"), decimal_places=2,max_digits=12, help_text="In Local Currency", default=Decimal("0.00"),blank=True)
-    exchange_rate = models.CharField(help_text=_("Local Currency exchange rate to USD"), max_length=255, blank=True, null=True)
+    total_cost = models.DecimalField(
+        _("Estimated Budget for Organization"), decimal_places=2, max_digits=12,
+        help_text="In USD", default=Decimal("0.00"),blank=True)
+    agency_cost = models.DecimalField(
+        _("Actual Cost for Organization"), decimal_places=2, max_digits=12,
+        help_text="In USD", default=Decimal("0.00"),blank=True)
+    local_total_cost = models.DecimalField(
+        _("Actual Cost"), decimal_places=2,max_digits=12,
+        help_text="In Local Currency", default=Decimal("0.00"),blank=True)
+    local_agency_cost = models.DecimalField(
+        _("Actual Cost for Organization"), decimal_places=2,max_digits=12,
+        help_text="In Local Currency", default=Decimal("0.00"),blank=True)
+    exchange_rate = models.CharField(
+        help_text=_("Local Currency exchange rate to USD"), max_length=255, blank=True, null=True)
     exchange_rate_date = models.DateField(help_text=_("Date of exchange rate"), blank=True, null=True)
     """
     Start Clean Up - These can be removed
     """
-    beneficiary_type = models.CharField(_("Type of direct beneficiaries"), help_text=_("i.e. Farmer, Association, Student, Govt, etc."), max_length=255, blank=True, null=True)
-    average_household_size = models.CharField(_("Average Household Size"), help_text=_("Refer to Form 01 - Community Profile"),max_length=255, blank=True, null=True)
-    indirect_beneficiaries = models.CharField(_("Estimated Number of indirect beneficiaries"), help_text=_("This is a calculation - multiply direct beneficiaries by average household size"),max_length=255, blank=True, null=True)
+    beneficiary_type = models.CharField(
+        _("Type of direct beneficiaries"), help_text=_("i.e. Farmer, Association, Student, Govt, etc."),
+        max_length=255, blank=True, null=True)
+    average_household_size = models.CharField(
+        _("Average Household Size"), help_text=_("Refer to Form 01 - Community Profile"),
+        max_length=255, blank=True, null=True)
+    indirect_beneficiaries = models.CharField(
+        _("Estimated Number of indirect beneficiaries"),
+        help_text=_("This is a calculation - multiply direct beneficiaries by average household size"),
+        max_length=255, blank=True, null=True)
     direct_beneficiaries = models.CharField(_("Actual Direct Beneficiaries"), max_length=255, blank=True, null=True)
     jobs_created = models.CharField(_("Number of Jobs Created"), max_length=255, blank=True, null=True)
     jobs_part_time = models.CharField(_("Part Time Jobs"), max_length=255, blank=True, null=True)
@@ -1159,18 +1262,33 @@ class ProjectComplete(models.Model):
     """
     End Clean Up
     """
-    community_handover = models.BooleanField(_("CommunityHandover/Sustainability Maintenance Plan"), help_text=_('Check box if it was completed'), default=None)
-    capacity_built = models.TextField(_("Describe how sustainability was ensured for this project?"), max_length=755, blank=True, null=True)
-    quality_assured = models.TextField(_("How was quality assured for this project"), max_length=755, blank=True, null=True)
-    issues_and_challenges = models.TextField("List any issues or challenges faced (include reasons for delays)", blank=True, null=True)
+    community_handover = models.BooleanField(
+        _("CommunityHandover/Sustainability Maintenance Plan"),
+        help_text=_('Check box if it was completed'), default=None)
+    capacity_built = models.TextField(
+        _("Describe how sustainability was ensured for this project?"), max_length=755, blank=True, null=True)
+    quality_assured = models.TextField(
+        _("How was quality assured for this project"), max_length=755, blank=True, null=True)
+    issues_and_challenges = models.TextField(
+        "List any issues or challenges faced (include reasons for delays)", blank=True, null=True)
     lessons_learned= models.TextField(_("Lessons learned"), blank=True, null=True)
     site = models.ManyToManyField(SiteProfile, blank=True, verbose_name=_("Site"))
-    estimated_by = models.ForeignKey(TolaUser, blank=True, null=True, related_name="estimating_complete", verbose_name=_("Estimated by"))
-    checked_by = models.ForeignKey(TolaUser, blank=True, null=True, related_name="checking_complete", verbose_name=_("Checked by"))
-    reviewed_by = models.ForeignKey(TolaUser, blank=True, null=True, related_name="reviewing_complete", verbose_name=_("Reviewed by"))
+    estimated_by = models.ForeignKey(
+        TolaUser, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="estimating_complete", verbose_name=_("Estimated by"))
+    checked_by = models.ForeignKey(
+        TolaUser, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="checking_complete", verbose_name=_("Checked by"))
+    reviewed_by = models.ForeignKey(
+        TolaUser, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="reviewing_complete", verbose_name=_("Reviewed by"))
     approval = models.CharField(_("Approval Status"), default="in progress", max_length=255, blank=True, null=True)
-    approved_by = models.ForeignKey(TolaUser, blank=True, null=True, related_name="approving_agreement_complete", verbose_name=_("Approved by"))
-    approval_submitted_by = models.ForeignKey(TolaUser, blank=True, null=True, related_name="submitted_by_complete", verbose_name=_("Approval submitted by"))
+    approved_by = models.ForeignKey(
+        TolaUser, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="approving_agreement_complete", verbose_name=_("Approved by"))
+    approval_submitted_by = models.ForeignKey(
+        TolaUser, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="submitted_by_complete", verbose_name=_("Approval submitted by"))
     approval_remarks = models.CharField(_("Approval Remarks"), max_length=255, blank=True, null=True)
     create_date = models.DateTimeField(_("Date Created"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Last Edit Date"), null=True, blank=True)
@@ -1213,9 +1331,10 @@ class ProjectComplete(models.Model):
 # Project Documents, admin is handled in the admin.py
 class Documentation(models.Model):
     name = models.CharField(_("Name of Document"), max_length=135, blank=True, null=True)
-    url = models.CharField(_("URL (Link to document or document repository)"), blank=True, null=True, max_length=135)
+    url = models.CharField(_("Link to document, document repository, or document URL"), blank=True, null=True, max_length=135)
     description = models.CharField(_("Description"), max_length=255, blank=True, null=True)
-    template = models.ForeignKey(Template, blank=True, null=True, verbose_name=_("Template"))
+    template = models.ForeignKey(
+        Template, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Template"))
     file_field = models.FileField(upload_to="uploads", blank=True, null=True)
     project = models.ForeignKey(ProjectAgreement, blank=True, null=True, verbose_name=_("Project"))
     program = models.ForeignKey(Program, verbose_name=_("Program"))
@@ -1262,7 +1381,7 @@ class Benchmarks(models.Model):
     est_end_date = models.DateTimeField(_("Est end date"), null=True, blank=True)
     actual_start_date = models.DateTimeField(_("Actual start date"), null=True, blank=True)
     actual_end_date = models.DateTimeField(_("Actual end date"), null=True, blank=True)
-    site = models.ForeignKey(SiteProfile, null=True, blank=True, verbose_name=_("site"))
+    site = models.ForeignKey(SiteProfile, null=True, blank=True, on_delete=models.SET_NULL, verbose_name=_("site"))
     budget = models.IntegerField(_("Estimated Budget"), blank=True, null=True)
     cost = models.IntegerField(_("Actual Cost"), blank=True, null=True)
     description = models.CharField(_("Description"), max_length=255, blank=True)
@@ -1354,7 +1473,7 @@ class BudgetAdmin(admin.ModelAdmin):
 class Checklist(models.Model):
     name = models.CharField(_("Name"), max_length=255, null=True, blank=True,default="Checklist")
     agreement = models.ForeignKey(ProjectAgreement, null=True, blank=True, verbose_name=_("Project Initiation"))
-    country = models.ForeignKey(Country,null=True,blank=True, verbose_name=_("Country"))
+    country = models.ForeignKey(Country,null=True, blank=True, on_delete=models.SET_NULL, verbose_name=_("Country"))
     create_date = models.DateTimeField(null=True, blank=True)
     edit_date = models.DateTimeField(null=True, blank=True)
 
@@ -1384,7 +1503,7 @@ class ChecklistItem(models.Model):
     in_file = models.BooleanField(default=False)
     not_applicable = models.BooleanField(default=False)
     global_item = models.BooleanField(default=False)
-    owner = models.ForeignKey(TolaUser, null=True, blank=True, verbose_name=_("Owner"))
+    owner = models.ForeignKey(TolaUser, null=True, blank=True, on_delete=models.SET_NULL, verbose_name=_("Owner"))
     create_date = models.DateTimeField(null=True, blank=True)
     edit_date = models.DateTimeField(null=True, blank=True)
 

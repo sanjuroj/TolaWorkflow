@@ -309,7 +309,7 @@ class IPTT_Mixin(object):
                             )
                         )
                     )
-                    self.annotations["{}_target".format(k)] = annotation_target
+                    self.annotations[u"{}_target".format(k)] = annotation_target
 
                 # the following becomes annotations for the queryset
                 # e.g.
@@ -317,9 +317,9 @@ class IPTT_Mixin(object):
                 # Year 1_avg=..., Year 2_avg=..., etc.
                 # Year 1_last=..., Year 2_last=..., etc.
                 #
-                self.annotations["{}_sum".format(k)] = annotation_sum
-                # self.annotations["{}_avg".format(k)] = annotation_avg
-                self.annotations["{}_last".format(k)] = annotation_last
+                self.annotations[u"{}_sum".format(k)] = annotation_sum
+                # self.annotations[u"{}_avg".format(k)] = annotation_avg
+                self.annotations[u"{}_last".format(k)] = annotation_last
         return self.annotations
 
     @staticmethod
@@ -431,9 +431,9 @@ class IPTT_Mixin(object):
             # print('start_date={}, end_date={}'.format(start_date, end_date))
             if frequency == Indicator.MONTHLY:
                 period_name = datetime.strftime(start_date, "%b %Y") #
-                timeperiods["{}".format(period_name)] = [start_date, end_date]
+                timeperiods[u"{}".format(period_name)] = [start_date, end_date]
             else:
-                timeperiods["{} {}".format(period_name, i)] = [start_date, end_date]
+                timeperiods[u"{} {}".format(period_name, i)] = [start_date, end_date]
 
         # save the unfiltered targetperiods into the global variable so that
         # it be used to populate the periods dropdown
@@ -556,15 +556,15 @@ class IPTT_Mixin(object):
             # process baseline
             if ind['baseline_na'] is True:
                 ind['baseline'] = _("N/A")
-            else:
-                if ind['baseline'] is None:
-                    ind['baseline'] = ''
-
+            elif ind['baseline'] is None:
+                ind['baseline'] = ''
+            elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
+                ind['baseline'] = u"{0}%".format(ind['baseline'])
             # process lop_target
             try:
                 lop_target = float(ind['lop_target'])
                 if ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
-                    ind['lop_target'] = "{}%".format(formatFloat(lop_target))
+                    ind['lop_target'] = u"{}%".format(formatFloat(lop_target))
                 else:
                     ind['lop_target'] = formatFloat(lop_target)
             except (ValueError, TypeError):
@@ -582,13 +582,13 @@ class IPTT_Mixin(object):
                     lop_actual = float(ind['lastdata'])
                     percent = "%"
             try:
-                ind['lop_actual'] = "{}{}".format(formatFloat(lop_actual), percent)
+                ind['lop_actual'] = u"{}{}".format(formatFloat(lop_actual), percent)
             except TypeError:
                 ind['lop_actual'] = ''
 
             # process lop_percent_met
             try:
-                ind['lop_percent_met'] = "{}%".format(formatFloat(round(lop_actual / lop_target * 100)))
+                ind['lop_percent_met'] = u"{}%".format(formatFloat(round(lop_actual / lop_target * 100)))
             except TypeError:
                 ind['lop_percent_met'] = ''
             except ZeroDivisionError:
@@ -600,37 +600,37 @@ class IPTT_Mixin(object):
                 # and calculate the cumulative total achieved across date ranges (periods)
                 for k, v in periods_date_ranges.items():
                     if ind['unit_of_measure_type'] == Indicator.NUMBER and ind['is_cumulative'] is True:
-                        current_sum = ind["{}_sum".format(k)]
+                        current_sum = ind[u"{}_sum".format(k)]
                         if current_sum is not None:
                             # current_sum = 0
-                            key = "{}_rsum".format(k)
+                            key = u"{}_rsum".format(k)
                             running_total = running_total + current_sum
                             ind[key] = running_total
 
                     # process target_period actual value
-                    actual = '{}_actual'.format(k)
+                    actual = u'{}_actual'.format(k)
                     actual_val = ''
                     percent_sign = ''
                     if ind['unit_of_measure_type'] == Indicator.NUMBER:
                         if ind['is_cumulative'] is True:
                             try:
-                                actual_val = ind["{}_rsum".format(k)]
+                                actual_val = ind[u"{}_rsum".format(k)]
                             except KeyError:
                                 actual_val = ''
                         else:  # if it is not set to cumulative then default to non-cumulative even it is it not set
-                            actual_val = ind["{}_sum".format(k)]
+                            actual_val = ind[u"{}_sum".format(k)]
                     elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
                         percent_sign = '%'
-                        actual_val = ind["{}_last".format(k)]
+                        actual_val = ind[u"{}_last".format(k)]
 
                     if actual_val is not None and actual_val != '':
-                        ind[actual] = "{}{}".format(formatFloat(actual_val), percent_sign)
+                        ind[actual] = u"{}{}".format(formatFloat(actual_val), percent_sign)
                     else:
                         ind[actual] = ''
 
                     if reporttype == self.REPORT_TYPE_TARGETPERIODS:
                         # process target_period target value
-                        target_key = "{}_target".format(k)
+                        target_key = u"{}_target".format(k)
                         if ind[target_key] is None:
                             target_val = ''
                         else:
@@ -638,26 +638,26 @@ class IPTT_Mixin(object):
 
                         if ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
                             if target_val > 0 and target_val != '':
-                                ind['{}_period_target'.format(k)] = "{}%".format(target_val)
+                                ind[u'{}_period_target'.format(k)] = u"{}%".format(target_val)
                             else:
-                                ind['{}_period_target'.format(k)] = ''
+                                ind[u'{}_period_target'.format(k)] = ''
                         else:
-                            ind['{}_period_target'.format(k)] = target_val
+                            ind[u'{}_period_target'.format(k)] = target_val
 
                         # process target_period percent_met value
                         try:
-                            percent_met = '{}_percent_met'.format(k)
-                            target = float(ind["{}_target".format(k)])
+                            percent_met = u'{}_percent_met'.format(k)
+                            target = float(ind[u"{}_target".format(k)])
                             if ind['unit_of_measure_type'] == Indicator.NUMBER:
                                 if ind['is_cumulative'] is True:
-                                    rsum = float(ind["{}_rsum".format(k)])
+                                    rsum = float(ind[u"{}_rsum".format(k)])
                                     percent_met_val = formatFloat(round(rsum / target * 100))
                                 else:
-                                    percent_met_val = formatFloat(round(float(ind["{}_sum".format(k)]) / target * 100))
-                                ind[percent_met] = "{}%".format(percent_met_val)
+                                    percent_met_val = formatFloat(round(float(ind[u"{}_sum".format(k)]) / target * 100))
+                                ind[percent_met] = u"{}%".format(percent_met_val)
                             elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
-                                percent_met_val = formatFloat(round(float(ind["{}_last".format(k)]) / target * 100))
-                                ind[percent_met] = "{}%".format(percent_met_val)
+                                percent_met_val = formatFloat(round(float(ind[u"{}_last".format(k)]) / target * 100))
+                                ind[percent_met] = u"{}%".format(percent_met_val)
                         except (TypeError, KeyError):
                             ind[percent_met] = ''
                         except ZeroDivisionError:
@@ -686,12 +686,12 @@ class IPTT_Mixin(object):
             # TODO: localize the following dates
             if period == Indicator.MONTHLY:
                 # this is the value printed to IPTT:
-                value = "{}".format(l10n_date_year_month(periods_date_ranges[name][0]))
+                value = u"{}".format(l10n_date_year_month(periods_date_ranges[name][0]).decode('utf-8'))
             else:
-                value = "{} ({} - {})".format(
+                value = u"{} ({} - {})".format(
                     name,
-                    l10n_date_medium(periods_date_ranges[name][0]),
-                    l10n_date_medium(periods_date_ranges[name][1])
+                    l10n_date_medium(periods_date_ranges[name][0]).decode('utf-8'),
+                    l10n_date_medium(periods_date_ranges[name][1]).decode('utf-8')
                 )
             if from_or_to == self.FROM:
                 key = periods_date_ranges[name][0]
@@ -812,8 +812,8 @@ class IPTT_Mixin(object):
         context['report_end_date_actual'] = report_end_date
         context['report_start_date'] = self.program.reporting_period_start
         context['report_end_date'] = report_end_date
-        context['report_date_ranges'] = periods_date_ranges
-        context['indicators'] = indicators
+        context['report_date_ranges'] = periods_date_ranges  # collections.OrderedDict
+        context['indicators'] = indicators  # iterable of dict()
         context['program'] = self.program
         context['reporttype'] = reporttype
         return context
@@ -826,7 +826,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         report = 'TvA'
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
             report = "Actuals only"
-        filename = 'IPTT {} report {}.xlsx'.format(report, timezone.now().strftime('%b %d, %Y'))
+        filename = u'IPTT {} report {}.xlsx'.format(report, timezone.now().strftime('%b %d, %Y'))
         return filename
 
     def style_range(self, ws, cell_range, font, fill):
@@ -857,7 +857,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         ws['A1'].font = report_header_font
         ws.merge_cells('A1:H1')
 
-        ws['A2'] = "{0} - {1}".format(datetime.strftime(data['report_start_date'], "%b %d, %Y"),
+        ws['A2'] = u"{0} - {1}".format(datetime.strftime(data['report_start_date'], "%b %d, %Y"),
                                       datetime.strftime(data['report_end_date'], "%b %d, %Y"))
         ws['A2'].font = report_header_font
         ws.merge_cells('A2:H2')
@@ -980,13 +980,13 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
             if context['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
                 for k, v in periods.items():
                     col = 12 + col_offset
-                    target = "{}_period_target".format(k)
+                    target = u"{}_period_target".format(k)
                     ws.cell(row=row, column=col).value = indicator[target]
 
-                    actual = "{}_actual".format(k)
+                    actual = u"{}_actual".format(k)
                     ws.cell(row=row, column=col + 1).value = indicator[actual]
 
-                    percent_met = "{}_percent_met".format(k)
+                    percent_met = u"{}_percent_met".format(k)
                     try:
                         ws.cell(row=row, column=col + 2).value = indicator[percent_met].encode('UTF-8')
                     except ValueError:
@@ -996,7 +996,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
             elif context['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
                 for k, v in periods.items():
                     col = 12 + col_offset
-                    actual = "{}_actual".format(k)
+                    actual = u"{}_actual".format(k)
                     ws.cell(row, col).value = indicator[actual]
                     col_offset += 1
             row += 1
@@ -1131,9 +1131,9 @@ class IPTTReportQuickstartView(FormView):
         timeframe = form.cleaned_data.get('timeframe')
         redirect_url = reverse_lazy('iptt_report', kwargs={'program_id': program.id, 'reporttype': prefix})
 
-        redirect_url = "{}?{}={}&timeframe={}".format(redirect_url, prefix, period, timeframe)
+        redirect_url = u"{}?{}={}&timeframe={}".format(redirect_url, prefix, period, timeframe)
         if num_recents:
-            redirect_url = "{}&numrecentperiods={}".format(redirect_url, num_recents)
+            redirect_url = u"{}&numrecentperiods={}".format(redirect_url, num_recents)
         return HttpResponseRedirect(redirect_url)
 
     def form_invalid(self, form, **kwargs):
@@ -1190,7 +1190,7 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
             except KeyError:
                 pass
 
-        redirect_url = "{}?{}".format(reverse_lazy('iptt_report', kwargs=url_kwargs),
+        redirect_url = u"{}?{}".format(reverse_lazy('iptt_report', kwargs=url_kwargs),
                                       filterdata.urlencode())
         return HttpResponseRedirect(redirect_url)
 
@@ -1232,7 +1232,7 @@ class IPTT_CSVExport(IPTT_Mixin, TemplateView):
             value = value if value is not None else 'N/A'
             row.append(value)
         for timeperiod in timeperiods:
-            row.append(getattr(indicator, "{}_sum".format(timeperiod), 'N/A'))
+            row.append(getattr(indicator, u"{}_sum".format(timeperiod), 'N/A'))
         return row
 
     def get(self, request, *args, **kwargs):

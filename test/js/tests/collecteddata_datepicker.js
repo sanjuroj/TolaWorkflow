@@ -21,9 +21,9 @@ describe("Collected data datepicker", function () {
       Navbar.Indicators.click()
       Util.waitForAjax()
 
-      // Click the third program in the list
+      // Click the first program in the list
       let progButtons = TargetsTab.getProgramIndicatorLinks()
-      let progButton = progButtons[2]
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
@@ -65,7 +65,7 @@ describe("Collected data datepicker", function () {
       Util.waitForAjax()
 
       let progButtons = TargetsTab.getProgramIndicatorLinks()
-      let progButton = progButtons[2]
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
@@ -107,7 +107,7 @@ describe("Collected data datepicker", function () {
       Util.waitForAjax()
 
       let progButtons = TargetsTab.getProgramIndicatorLinks()
-      let progButton = progButtons[2]
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
@@ -150,7 +150,7 @@ describe("Collected data datepicker", function () {
       Util.waitForAjax()
 
       let progButtons = TargetsTab.getProgramIndicatorLinks()
-      let progButton = progButtons[2]
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
@@ -198,7 +198,7 @@ describe("Collected data datepicker", function () {
       Util.waitForAjax()
 
       let progButtons = TargetsTab.getProgramIndicatorLinks()
-      let progButton = progButtons[2]
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
@@ -242,7 +242,7 @@ describe("Collected data datepicker", function () {
       Util.waitForAjax()
 
       let progButtons = TargetsTab.getProgramIndicatorLinks()
-      let progButton = progButtons[1]
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
@@ -284,7 +284,7 @@ describe("Collected data datepicker", function () {
       Util.waitForAjax()
 
       let progButtons = TargetsTab.getProgramIndicatorLinks()
-      let progButton = progButtons[1]
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
@@ -331,7 +331,7 @@ describe("Collected data datepicker", function () {
       Util.waitForAjax()
 
       let progButtons = TargetsTab.getProgramIndicatorLinks()
-      let progButton = progButtons[2]
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
