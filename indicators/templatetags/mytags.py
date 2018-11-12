@@ -192,8 +192,10 @@ def gauge_tank_small(context, metric):
 
 
 
-@register.inclusion_tag('indicators/tags/gauge-band.html')
-def gauge_band(scope_counts):
+@register.inclusion_tag('indicators/tags/gauge-band.html', takes_context=True)
+def gauge_band(context, has_filters=True):
+    program = context['program']
+    scope_counts = program.scope_counts
     denominator = scope_counts['indicator_count']
     if denominator == 0:
         make_percent = lambda x: 0
@@ -210,6 +212,7 @@ def gauge_band(scope_counts):
         'scope_counts': scope_counts,
         'ticks': list(range(1,11)),
         'margin': int(Indicator.ONSCOPE_MARGIN * 100),
+        'has_filters': has_filters,
     }
 
 
