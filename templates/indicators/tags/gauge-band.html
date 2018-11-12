@@ -19,20 +19,20 @@
         <div class="gauge__labels">
             <div class="gauge__label">
                 {% comment %}Translators: shows how many indicators have indicators with no targets reporting data. Example: 31% unavailable{% endcomment %}
-                {% if has_filters %}<a href="#" class="text-muted">{% endif %}{% blocktrans with scope_percents.nonreporting as unavailable %}{{ unavailable }}% unavailable{% endblocktrans %}{% if has_filters %}</a>{% endif %}
+                {% if has_filters %}<a href="#" class="">{% endif %}<span class="text-muted">{% blocktrans with scope_percents.nonreporting as unavailable %}{{ unavailable }}% unavailable{% endblocktrans %}</span>{% if has_filters %}</a>{% endif %}
                 <!-- TOOLTIP -->
             </div>
             <div class="gauge__label">
                 {% comment %}Translators: shows how many indicators are a certain percentage above target. Example: 31% are >15% above target{% endcomment %}
-                {% if has_filters %}<a href="#" class="gauge__value--above">{% endif %}{% blocktrans with scope_percents.high as high %}<strong>{{ high }}%</strong> are &gt;{{ margin }}% above target{% endblocktrans %}{% if has_filters %}</a>{% endif %}
+                {% if has_filters %}<a href="#" class="">{% endif %}<span class="gauge__value--above">{% blocktrans with scope_percents.high as high %}<strong>{{ high }}%</strong> are &gt;{{ margin }}% above target{% endblocktrans %}</span>{% if has_filters %}</a>{% endif %}
             </div>
             <div class="gauge__label">
                 {% comment %}Translators: shows how many indicators are within a set range of target. Example: 31% are on track{% endcomment %}
-                {% if has_filters %}<a href="#" class="gauge__value">{% endif %}{% blocktrans with scope_percents.on_scope as on_scope %}<strong>{{ on_scope }}%</strong> are on track{% endblocktrans %}{% if has_filters %}</a>{% endif %}
+                {% if has_filters %}<a href="#" class="">{% endif %}<span class="gauge__value">{% blocktrans with scope_percents.on_scope as on_scope %}<strong>{{ on_scope }}%</strong> are on track{% endblocktrans %}</span>{% if has_filters %}</a>{% endif %}
             </div>
             <div class="gauge__label">
                 {% comment %}Translators: shows how many indicators are a certain percentage below target. Example: 31% are >15% below target{% endcomment %}
-                {% if has_filters %}<a href="#" class="gauge__value--below">{% endif %}{% blocktrans with scope_percents.low as low %}<strong>{{ low }}%</strong> are &gt;{{ margin }}% below target{% endblocktrans %}{% if has_filters %}</a>{% endif %}
+                {% if has_filters %}<a href="#" class="">{% endif %}<span class="gauge__value--below">{% blocktrans with scope_percents.low as low %}<strong>{{ low }}%</strong> are &gt;{{ margin }}% below target{% endblocktrans %}</span>{% if has_filters %}</a>{% endif %}
             </div>
         </div>
     </div>
