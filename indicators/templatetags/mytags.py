@@ -121,24 +121,24 @@ def gauge_tank(context, metric, has_filters=True):
     labels = {
         'targets_defined' : {
             'title': _('Indicators with targets'),
-            'filled_label': _('have targets defined'),
-            'unfilled_label': _('have no targets'),
+            'filled_label': _('have targets'),
+            'unfilled_label': _('no targets'),
             'cta': _('Add missing targets'),
             'filter_title': _('have missing targets'),
         },
         'reported_results' : {
             'title': _('Indicators with results'),
-            'filled_label': _('have reported results'),
-            'unfilled_label': _('have no results'),
+            'filled_label': _('have results'),
+            'unfilled_label': _('no results'),
             'cta': _('Add missing results'),
-            'filter_title': _('have no results'),
+            'filter_title': _('have missing results'),
         },
         'results_evidence': {
             'title': _('Results with evidence'),
             'filled_label': _('have evidence'),
-            'unfilled_label': _('are missing evidence'),
+            'unfilled_label': _('no evidence'),
             'cta': _('Add missing evidence'),
-            'filter_title': _('have results without evidence'),
+            'filter_title': _('have missing evidence'),
         },
     }
     program = context['program']
