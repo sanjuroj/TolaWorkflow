@@ -1,5 +1,4 @@
 {% load i18n %}
-{# TODO: links filter the indicator list, apply a highlight class to the entire gauge, and alter the number of indicators displayed on the program page #}
 {# to enable list filtering, the page calling this templatetag should load static/js/program_page_filters.js #}
 <div class="gauge {% if has_filters %}filter-trigger{% endif %}"
     data-target="{{ id_tag }}"
