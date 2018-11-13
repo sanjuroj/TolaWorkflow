@@ -53,8 +53,7 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name=
         period_num = j
 
     if tf == Indicator.LOP:
-        lop_target = Indicator.TARGET_FREQUENCIES[Indicator.LOP - 1][1]
-        return {'period': lop_target}
+        return {'period': PeriodicTarget.LOP_PERIOD}
     elif tf == Indicator.MID_END:
         return [{'period': PeriodicTarget.MIDLINE}, {'period': PeriodicTarget.ENDLINE}]
     elif tf == Indicator.EVENT:
@@ -66,22 +65,34 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name=
     if tf == Indicator.ANNUAL:
         start = ((start_date + relativedelta(years=+i)).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(years=+j)) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': _('Year %s') % period_num, 'start_date': start, 'end_date': end}
+        period_label = '{period} {period_num}'.format(
+            period=PeriodicTarget.ANNUAL_PERIOD, period_num=period_num
+        )
+        target_period = {'period': period_label, 'start_date': start, 'end_date': end}
 
     elif tf == Indicator.SEMI_ANNUAL:
         start = ((start_date + relativedelta(months=+(i * 6))).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(months=+(j * 6))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': _('Semi-annual period %s') % period_num, 'start_date': start, 'end_date': end}
+        period_label = '{period} {period_num}'.format(
+            period=PeriodicTarget.SEMI_ANNUAL_PERIOD, period_num=period_num
+        )
+        target_period = {'period': period_label, 'start_date': start, 'end_date': end}
 
     elif tf == Indicator.TRI_ANNUAL:
         start = ((start_date + relativedelta(months=+(i * 4))).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(months=+(j * 4))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': _('Tri-annual period %s') % period_num, 'start_date': start, 'end_date': end}
+        period_label = '{period} {period_num}'.format(
+            period=PeriodicTarget.TRI_ANNUAL_PERIOD, period_num=period_num
+        )
+        target_period = {'period': period_label, 'start_date': start, 'end_date': end}
 
     elif tf == Indicator.QUARTERLY:
         start = ((start_date + relativedelta(months=+(i * 3))).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(months=+(j * 3))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': _('Quarter %s') % period_num, 'start_date': start, 'end_date': end}
+        period_label = '{period} {period_num}'.format(
+            period=PeriodicTarget.QUARTERLY_PERIOD, period_num=period_num
+        )
+        target_period = {'period': period_label, 'start_date': start, 'end_date': end}
 
     elif tf == Indicator.MONTHLY:
         month = (start_date + relativedelta(months=+i)).strftime("%B")

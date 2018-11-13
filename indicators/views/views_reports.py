@@ -3,7 +3,7 @@
 import bisect
 import csv
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, date
 from dateutil import rrule, parser
 from django.utils import formats, timezone
 from dateutil.relativedelta import relativedelta
@@ -338,147 +338,45 @@ class IPTT_Mixin(object):
             num_periods = 0
         return num_periods
 
-    def _generate_targetperiods(self, program, filter_start_date, filter_end_date, period, show_all, num_recents):
-        targetperiods = OrderedDict()
-        today = datetime.today().date()
-        # today = datetime.strptime('2020-02-23', '%Y-%m-%d').date()
+    def _generate_targetperiods(self, period):
+        num_recents = self.filter_form_initial_data.get('numrecentperiods', 0)
+        show_all = self.filter_form_initial_data.get('timeframe', 0)
+        all_date_ranges = [date_range for date_range in self.program.get_periods_for_frequency(period)]
+        period_generator = PeriodicTarget.generate_for_frequency(period)
+        if show_all == 0:
+            try:
+                start_date = parser.parse(self.filter_form_initial_data.get('start_period')).date()
+            except TypeError, ValueError:
+                start_date = self.reporting_period_start
+            try:
+                end_date = parser.parse(self.filter_form_initial_data.get('end_period')).date()
+            except TypeError, ValueError:
+                end_date = self.program.reporting_period_end
+            filtered_date_ranges = [date_range for date_range in period_generator(start_date, end_date)]
+        elif show_all == 2 and num_recents is not None and num_recents > 0 and num_recents <= len(all_date_ranges):
+            start_date = self.program.reporting_period_start
+            end_date = date.today()
+            if end_date > self.program.reporting_period_end:
+                end_date = self.program.reporting_period_end
+            filtered_date_ranges = [date_range for date_range in period_generator(start_date, end_date)][-num_recents:]
+        else:
+            filtered_date_ranges = all_date_ranges
+        if period == Indicator.MID_END:
+            all_date_ranges = self.program.get_periods_for_frequency(Indicator.LOP)
+        # for x in range(filtered_date_ranges):
+        #     filtered_date_ranges[x]['targets'] = [target for target in periodic_targets if start_date < ]
+        report_end_date = filtered_date_ranges[-1]['end']
+        return (report_end_date, all_date_ranges, filtered_date_ranges)
 
-        # Get all periodic targets whose indicator is in this program and whose frequency matches this period,
-        # use "values" to group by period, target, start_date, and end_date
-        # this "grab all of them and group by" deals with programs where some targets have not been added after
-        # the reporting period was changed (issue #700: https://github.com/mercycorps/TolaActivity/issues/700)
-        periodic_targets = PeriodicTarget.objects.filter(
-            indicator__program_id=program.id,
-            indicator__target_frequency=period
-        ).values("period", "target", "start_date", "end_date").order_by("start_date")
-
-        try:
-            start_date = parser.parse(self.filter_form_initial_data['start_date']).date()
-            end_date = parser.parse(self.filter_form_initial_data['end_date']).date()
-            periodic_targets = periodic_targets.filter(start_date__gte=start_date, end_date__lte=end_date)
-        except (KeyError, ValueError):
-            pass
-
-        for pt in periodic_targets:
-            # if it is LOP Target then do not show any target periods becaseu there are none.
-            if pt['period'] == Indicator.TARGET_FREQUENCIES[0][1]:
-                continue
-            targetperiods[pt['period']] = [pt['start_date'], pt['end_date'], pt['target']]
-
-        # save the unfiltered targetperiods into the global variable so that
-        # it be used to populate the periods dropdown
-        all_date_ranges = targetperiods
-
-        # Update the report_end_date with the last reporting_period's end_date
-        try:
-            report_end_date = targetperiods[targetperiods.keys()[-1]][1]
-        except (TypeError, IndexError):
-            report_end_date = self.program.reporting_period_end
-        # this check is necessary becasue mid/end line do not have start/end dates
-        if report_end_date is None:
-            report_end_date = self.program.reporting_period_end
-
-        if num_recents is not None and num_recents > 0 and period not in [Indicator.LOP, Indicator.MID_END]:
-            # filter out those timeperiods whose end_dates are larger than today's date
-            targetperiods_less_than_today = filter(lambda v: v[1][0] <= today, targetperiods.items())
-
-            if len(targetperiods_less_than_today) > num_recents:
-                # filter out dates that are outside of the most_recent index specified by user
-                most_recent_targetperiods = targetperiods_less_than_today[(
-                    len(targetperiods_less_than_today) - num_recents):]
-            else:
-                most_recent_targetperiods = targetperiods_less_than_today
-
-            # convert to oredered dictionary to preserve order (IMPORTANT!)
-            targetperiods = OrderedDict((k, v) for k, v in most_recent_targetperiods)
-        elif show_all == 0 and filter_start_date is not None and filter_end_date is not None:
-            filtered_targetperiods = OrderedDict()
-            # TODO: localize the following dates
-            filter_start_date = datetime.strptime(filter_start_date, "%Y-%m-%d").date()
-            filter_end_date = datetime.strptime(filter_end_date, "%Y-%m-%d").date()
-            # update report_end_date context variable so date displays match target periods displayed:
-            report_end_date = filter_end_date
-            for k, v in targetperiods.items():
-                start_date = v[0]
-                end_date = v[1]
-                if start_date >= filter_start_date and filter_end_date >= end_date:
-                    filtered_targetperiods[k] = [start_date, end_date]
-            return (report_end_date, all_date_ranges, filtered_targetperiods)
-        return (report_end_date, all_date_ranges, targetperiods)
-
-    def _generate_timeperiods(self, filter_start_date, filter_end_date, frequency, show_all, num_recents):
-        timeperiods = OrderedDict()
-        today_date = datetime.today().date()
-        # today_date = datetime.strptime('2020-02-23', '%Y-%m-%d').date()
-
-        period_name = self._get_period_name(frequency)
-        num_months_in_period = self._get_num_months(frequency)
-
-        num_periods = IPTT_Mixin._get_num_periods(self.program.reporting_period_start,
-                                                  self.program.reporting_period_end, frequency)
-
-        start_date = self.program.reporting_period_start
-
-        # bump up num_periods by 1 because the loop starts from 1 instead of 0
-        num_periods += 1
-        for i in range(1, num_periods):
-            if i > 1:
-                # if it is not the first period then advance the
-                # start_date by the correct number of months.
-                start_date = start_date + relativedelta(months=+num_months_in_period)
-
-            end_date = start_date + relativedelta(months=+num_months_in_period) + relativedelta(days=-1)
-            # print('start_date={}, end_date={}'.format(start_date, end_date))
-            if frequency == Indicator.MONTHLY:
-                period_name = datetime.strftime(start_date, "%b %Y") #
-                timeperiods[u"{}".format(period_name)] = [start_date, end_date]
-            else:
-                timeperiods[u"{} {}".format(period_name, i)] = [start_date, end_date]
-
-        # save the unfiltered targetperiods into the global variable so that
-        # it be used to populate the periods dropdown
-        all_date_ranges = timeperiods
-
-        # Update the report_end_date with the last reporting_period's end_date
-        try:
-            report_end_date = timeperiods[timeperiods.keys()[-1]][1]
-        except (TypeError, IndexError):
-            report_end_date = self.program.reporting_period_end
-
-        if num_recents is not None and num_recents > 0:
-            # filter out those timeperiods whose end_dates are larger than today's date
-            timeperiods_less_than_today = filter(lambda v: v[1][0] <= today_date, timeperiods.items())
-            if len(timeperiods_less_than_today) > num_recents:
-                # filter out dates that are outside of the most_recent index specified by user
-                most_recent_timeperiods = timeperiods_less_than_today[(
-                    len(timeperiods_less_than_today) - num_recents):]
-            else:
-                most_recent_timeperiods = timeperiods_less_than_today
-            # convert to oredered dictionary to preserve order (IMPORTANT!)
-            timeperiods = OrderedDict((k, v) for k, v in most_recent_timeperiods)
-        elif show_all == 0 and filter_start_date is not None and filter_end_date is not None:
-            filtered_timeperiods = OrderedDict()
-            # TODO: localize the following dates
-            filter_start_date = datetime.strptime(filter_start_date, "%Y-%m-%d").date()
-            filter_end_date = datetime.strptime(filter_end_date, "%Y-%m-%d").date()
-            for k, v in timeperiods.items():
-                start_date = v[0]
-                end_date = v[1]
-                if start_date >= filter_start_date and filter_end_date >= end_date:
-                    filtered_timeperiods[k] = [start_date, end_date]
-            return (report_end_date, all_date_ranges, filtered_timeperiods)
-
-        return (report_end_date, all_date_ranges, timeperiods)
 
     def _update_filter_form_initial(self, formdata):
-        self.filter_form_initial_data = {}
+        """ updates self.filter_form_initial_data dict with reqeust.GET values """
         for k in formdata:
             v = formdata.getlist(k)
             if k == 'csrfmiddlewaretoken' or k == 'program':
                 continue
             if isinstance(v, list) and len(v) == 1:
                 v = v[0]
-
             if k == self.REPORT_TYPE_TIMEPERIODS or k == self.REPORT_TYPE_TARGETPERIODS:
                 try:
                     v = int(v)
@@ -490,13 +388,12 @@ class IPTT_Mixin(object):
                     v = int(v)
                 except ValueError:
                     continue
-            # print("{} = {}".format(k, v))
             self.filter_form_initial_data[k] = v
 
     def _get_filters(self, data):
         filters = {}
         try:
-            filters['level__in'] = data['level'] if isinstance(data['level'], list) else [data['level']]
+            filters['level'] = data['level'][0] if isinstance(data['level'], list) else int(data['level'])
         except KeyError:
             pass
 
@@ -709,41 +606,34 @@ class IPTT_Mixin(object):
 
 
     def get_context_data(self, **kwargs):
+        """based on url + request params, populate context variables with all IPTT elements"""
         context = super(IPTT_Mixin, self).get_context_data(**kwargs)
-        reporttype = kwargs.get('reporttype')
-        program_id = kwargs.get('program_id')
+        # reporttype = targetperiods/timeperiods
+        reporttype = kwargs.get('reporttype', self.REPORT_TYPE_TARGETPERIODS)
 
+        # get the program (url parameter)
         try:
-            self.program = Program.objects.get(pk=program_id)
+            self.program = Program.objects.get(pk=kwargs.get('program_id'))
         except Program.DoesNotExist:
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid program."))
             return context
 
+        # populate self.filter_form_initial with GET parameters
         self._update_filter_form_initial(self.request.GET)
+        # use the GET parameter values to filter indicators (by level/sector/site/id)
         filters = self._get_filters(self.filter_form_initial_data)
 
-        if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            period = self.filter_form_initial_data[self.REPORT_TYPE_TIMEPERIODS]
-        else:
-            period = self.filter_form_initial_data[self.REPORT_TYPE_TARGETPERIODS]
-
-        try:
-            num_recents = self.filter_form_initial_data['numrecentperiods']
-        except KeyError:
-            num_recents = 0
-
-        try:
-            show_all = self.filter_form_initial_data['timeframe']
-        except KeyError:
-            show_all = 0
+        # period is from the GET param 'timeperiods' or 'targetperiods'
+        period = self.filter_form_initial_data.get(reporttype)
 
         # calculate aggregated actuals (sum, avg, last) per reporting period
         # (monthly, quarterly, tri-annually, seminu-annualy, and yearly) for each indicator
         lastlevel = Level.objects.filter(indicator__id=OuterRef('pk')).order_by('-id')
         last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-date_collected')
-        indicators = Indicator.objects.filter(program_id=program_id, **filters) \
-            .annotate(actualsum=Sum('collecteddata__achieved'),
+        indicators = self.program.indicator_set.filter(
+            **filters
+            ).annotate(actualsum=Sum('collecteddata__achieved'),
                       actualavg=Avg('collecteddata__achieved'),
                       lastlevel=Subquery(lastlevel.values('name')[:1]),
                       lastlevelcustomsort=Subquery(lastlevel.values('customsort')[:1]),
@@ -753,51 +643,45 @@ class IPTT_Mixin(object):
             'direction_of_change', 'unit_of_measure_type', 'is_cumulative', 'baseline', 'baseline_na',
             'lop_target', 'actualsum', 'actualavg', 'lastdata', 'lastlevelcustomsort')
 
-        start_period = self.request.GET.get('start_period')
-        end_period = self.request.GET.get('end_period')
-
         if reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            # Update the report_end_date to make sure it ends with the last period's end_date
-            # Also, get the all of the periodic date ranges based on the selected period
-            report_end_date, all_date_ranges, periods_date_ranges = self._generate_timeperiods(
-                start_period, end_period, period, show_all, num_recents)
+            period = Indicator.MONTHLY if period is None else period
+            report_end_date, all_date_ranges, periods_date_ranges = self._generate_targetperiods(period)
 
         elif reporttype == self.REPORT_TYPE_TARGETPERIODS:
-            target_frequencies = Indicator.objects \
-                .filter(program_id=program_id, target_frequency__isnull=False) \
+            target_frequencies = self.program.indicator_set.filter(
+                target_frequency__isnull=False) \
                 .exclude(target_frequency=Indicator.EVENT) \
                 .values_list('target_frequency') \
                 .distinct() \
                 .order_by('target_frequency')
 
-            if (period,) not in target_frequencies:
+            if period is None or (period,) not in target_frequencies:
                 period = target_frequencies[0][0]
 
-            report_end_date, all_date_ranges, periods_date_ranges = self._generate_targetperiods(
-                self.program, start_period, end_period, period, show_all, num_recents)
+            report_end_date, all_date_ranges, periods_date_ranges = self._generate_targetperiods(period)
             indicators = indicators.filter(target_frequency=period)
         else:
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid report type."))
             return context
-
-        if period == Indicator.MID_END or period == Indicator.LOP:
-            reporting_sdate = l10n_date_medium(self.program.reporting_period_start)
-            reporting_edate = l10n_date_medium(self.program.reporting_period_end)
-            all_periods_start = ((self.program.reporting_period_start, reporting_sdate,),)
-            all_periods_end = ((self.program.reporting_period_end, reporting_edate),)
-
-            period_start_initial = None  # self.program.reporting_period_start
-            period_end_initial = None  # self.program.reporting_period_end
-        else:
-            try:
-                period_start_initial = periods_date_ranges[periods_date_ranges.keys()[0]][0]
-                period_end_initial = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
-            except IndexError:
-                period_start_initial = None
-                period_end_initial = None
-            all_periods_start = self.prepare_iptt_period_dateranges(period, all_date_ranges, self.FROM)
-            all_periods_end = self.prepare_iptt_period_dateranges(period, all_date_ranges, self.TO)
+        
+        # if period == Indicator.MID_END or period == Indicator.LOP:
+        #     reporting_sdate = l10n_date_medium(self.program.reporting_period_start)
+        #     reporting_edate = l10n_date_medium(self.program.reporting_period_end)
+        #     all_periods_start = ((self.program.reporting_period_start, reporting_sdate,),)
+        #     all_periods_end = ((self.program.reporting_period_end, reporting_edate),)
+        # 
+        #     period_start_initial = None  # self.program.reporting_period_start
+        #     period_end_initial = None  # self.program.reporting_period_end
+        # else:
+        #     try:
+        #         period_start_initial = periods_date_ranges[periods_date_ranges.keys()[0]][0]
+        #         period_end_initial = periods_date_ranges[periods_date_ranges.keys()[-1]][1]
+        #     except IndexError:
+        #         period_start_initial = None
+        #         period_end_initial = None
+        all_periods_start = self.prepare_iptt_period_dateranges(period, all_date_ranges, self.FROM)
+        all_periods_end = self.prepare_iptt_period_dateranges(period, all_date_ranges, self.TO)
         # TODO: localize the following dates ?
         self.filter_form_initial_data['period_choices_start'] = tuple(all_periods_start)
         self.filter_form_initial_data['period_choices_end'] = tuple(all_periods_end)
