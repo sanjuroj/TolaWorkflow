@@ -6999,7 +6999,11 @@ body > .container {
   margin-right: 15px; }
 
 .home__featured-country {
-  display: flex; }
+  display: flex;
+  flex-direction: column; }
+  @media (min-width: 768px) {
+    .home__featured-country {
+      flex-direction: row; } }
 
 .home__program-list {
   margin-top: 30px; }
@@ -7018,8 +7022,10 @@ body > .container {
 
 .featured-country__map {
   border: 1px solid #b8babd;
-  flex-basis: 66%;
   margin-right: 30px; }
+  @media (min-width: 768px) {
+    .featured-country__map {
+      flex-basis: 66%; } }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {

@@ -8,6 +8,10 @@
 }
 .home__featured-country {
     display: flex;
+    flex-direction: column;
+    @include media-breakpoint-up(md) {
+        flex-direction: row;
+    }
 }
 .home__program-list {
     margin-top: $grid-gutter-width;
@@ -32,6 +36,8 @@
 }
 .featured-country__map {
     border: 1px solid $gray-500;
-    flex-basis: 66%;
+    @include media-breakpoint-up(md) {
+        flex-basis: 66%;
+    }
     margin-right: $grid-gutter-width;
 }
