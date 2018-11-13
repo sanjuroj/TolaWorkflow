@@ -6754,6 +6754,10 @@ body > .container {
   min-height: 120px;
   position: relative; }
 
+.gauge__icon--error {
+  color: #d2d5d9;
+  font-size: 56px; }
+
 .gauge__labels {
   display: flex;
   flex-direction: column;

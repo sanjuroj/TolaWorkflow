@@ -45,6 +45,11 @@
     min-height: 120px;
     position: relative;
 }
+.gauge__icon {}
+.gauge__icon--error {
+    color: $gray-400;
+    font-size: 56px;
+}
 .gauge__labels {
     // wraps labels on the same row as the gauge__graphic
     display: flex;
