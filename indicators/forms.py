@@ -157,6 +157,10 @@ class CollectedDataForm(forms.ModelForm):
             .filter(program=self.program)
         self.fields['complete'].label = _("Project")
 
+        # only display Project field to existing users
+        if not self.request.user.tola_user.allow_projects_access:
+            self.fields.pop('complete')
+
         # override the program queryset to use request.user for country
         countries = getCountry(self.request.user)
         # self.fields['program'].queryset = Program.objects\
