@@ -125,6 +125,7 @@ def gauge_tank(context, metric, has_filters=True):
             'unfilled_label': _('no targets'),
             'cta': _('Add missing targets'),
             'filter_title': _('have missing targets'),
+            'empty': _('No targets defined.'),
         },
         'reported_results' : {
             'title': _('Indicators with results'),
@@ -132,6 +133,7 @@ def gauge_tank(context, metric, has_filters=True):
             'unfilled_label': _('no results'),
             'cta': _('Add missing results'),
             'filter_title': _('have missing results'),
+            'empty': _('No results defined.'),
         },
         'results_evidence': {
             'title': _('Results with evidence'),
@@ -139,6 +141,7 @@ def gauge_tank(context, metric, has_filters=True):
             'unfilled_label': _('no evidence'),
             'cta': _('Add missing evidence'),
             'filter_title': _('have missing evidence'),
+            'empty': _('No evidence.'),
         },
     }
     program = context['program']
@@ -151,6 +154,7 @@ def gauge_tank(context, metric, has_filters=True):
     filled_percent = int(round(float(filled_value*100)/denominator)) if denominator > 0 else 0
     tick_count = 10
     return {
+        'program': program,
         'title': labels[metric]['title'],
         'id_tag': metric,
         'filled_value': filled_value,
@@ -165,7 +169,8 @@ def gauge_tank(context, metric, has_filters=True):
         'cta': labels[metric]['cta'],
         'filter_title': labels[metric]['filter_title'],
         'has_filters': has_filters,
-        'filter_title_count': filter_title_count
+        'filter_title_count': filter_title_count,
+        'empty_label': labels[metric]['empty'],
     }
 
 @register.inclusion_tag('indicators/tags/gauge-tank-small.html', takes_context=True)

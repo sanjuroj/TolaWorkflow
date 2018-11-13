@@ -6771,6 +6771,9 @@ body > .container {
 .graphic__performance-band--on-target {
   background: #79AD00; }
 
+.gauge__graphic--empty {
+  opacity: 0.3; }
+
 .gauge__graphic--tank--small {
   min-height: 52px;
   min-width: 24px; }
