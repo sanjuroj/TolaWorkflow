@@ -129,6 +129,7 @@ class PeriodicTargetFactory(DjangoModelFactory):
     target = 0
     period = lazy_attribute(
         lambda pt: 'PeriodicTarget for %s: %s - %s' % (pt.indicator.name, pt.start_date, pt.end_date))
+    customsort = Sequence(lambda n: n)
 
 
 class PinnedReportFactory(DjangoModelFactory):
