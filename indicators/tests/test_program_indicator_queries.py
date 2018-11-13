@@ -261,7 +261,6 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
         for indicator in self.indicators:
             indicator.delete()
         self.program.delete()
-        settings.DEBUG = False
 
     def get_base_indicator(self):
         return i_factories.IndicatorFactory(
