@@ -63,10 +63,27 @@
                         </li>
                     </ul>
                 </div>
-                {% program_complete %}
+                {% if program.reporting_period_start and program.reporting_period_end %}
+                    {% program_complete %}
+                {% endif %}
             </div>
             <div class="card-body">
-                {% if program.metrics.indicator_count == 0 %}
+                {% if not program.reporting_period_start or not program.reporting_period_end %}
+                    <p>Before adding indicators and performance results, we need to know your program's
+                        <a
+                            id="id_link_reporting_period_{{ program.id }}"
+                            class=""
+                            href="#"
+                            data-toggle="modal"
+                            data-program="{{ program.id }}"
+                            data-progstart="{{ program.start_date }}"
+                            data-progend="{{ program.end_date }}"
+                            data-rptstart="{{ program.reporting_period_start }}"
+                            data-rptend="{{ program.reporting_period_end }}"
+                            data-target="#id_reporting_period_modal"
+                            >reporting start and end dates.</a>
+                    </p>
+                {% elif program.metrics.indicator_count == 0 %}
                     <h4>No indicators have been entered for this program.</h4>
                     <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
                 {% elif program.metrics.targets_defined == 0 %}
