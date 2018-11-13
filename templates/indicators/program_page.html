@@ -12,16 +12,17 @@
     {% if indicator_count %}
         <aside class="program__status">
             <h2>{% trans "Program metrics" %}</h2>
-            <div class="status__gauges">
+                <div class="status__gauges">
 
-            {% gauge_band True %}
+                    {% gauge_band True %}
 
-            {% gauge_tank "targets_defined" %}
+                    {% gauge_tank "targets_defined" %}
 
-            {% gauge_tank "reported_results" %}
+                    {% gauge_tank "reported_results" %}
 
-            {% gauge_tank "results_evidence" %}
-            </div>
+                    {% gauge_tank "results_evidence" %}
+
+                </div>
         </aside>
     {% endif %}
 
