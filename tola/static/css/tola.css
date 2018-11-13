@@ -7772,6 +7772,14 @@ select.listoption_filters {
 .is-highlighted {
   background: #fff6cc; }
 
+.float--left {
+  float: left;
+  margin-right: 15px; }
+
+.float--right {
+  float: right;
+  margin-left: 15px; }
+
 /* Unsorted custom selectors */
 
 /*# sourceMappingURL=tola.css.map */
