@@ -125,7 +125,7 @@ def gauge_tank(context, metric, has_filters=True):
             'unfilled_label': _('no targets'),
             'cta': _('Add missing targets'),
             'filter_title': _('have missing targets'),
-            'empty': _('No targets defined.'),
+            'empty': _('No targets.'),
         },
         'reported_results' : {
             'title': _('Indicators with results'),
@@ -133,7 +133,7 @@ def gauge_tank(context, metric, has_filters=True):
             'unfilled_label': _('no results'),
             'cta': _('Add missing results'),
             'filter_title': _('have missing results'),
-            'empty': _('No results defined.'),
+            'empty': _('No results.'),
         },
         'results_evidence': {
             'title': _('Results with evidence'),
