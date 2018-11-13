@@ -74,7 +74,7 @@
                         <i class="gauge__icon gauge__icon--error fas fa-frown"></i>
                     </div>
                     <h4>All indicators are missing targets.</h4>
-                    <p>Visit the <a href="{% url "iptt_report" program.id "timeperiods" %}">Program page</a> to set up targets.
+                    <p>Visit the <a href="{% url "program_page" program.id 0 0 %}">Program page</a> to set up targets.
                 {% else %}
                     <div class="status__gauges">
                         {% gauge_band False %}
