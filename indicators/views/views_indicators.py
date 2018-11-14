@@ -180,17 +180,13 @@ def indicator_create(request, id=0):
     Passed on to IndicatorCreate to do the creation
     """
     get_indicator_types = IndicatorType.objects.all()
-    #get_countries = Country.objects.all()
     countries = getCountry(request.user)
     country = Country.objects.get(country=countries[0])
-    #get_programs = Program.objects.filter(funding_status="Funded",
-    #                                          country__in=countries).distinct()
     get_services = ExternalService.objects.all()
     program = Program.objects.get(pk=id)
 
     if request.method == 'POST':
         indicator_type = IndicatorType.objects.get(indicator_type="custom")
-        # country = Country.objects.get(id=request.POST['country'])
         program = Program.objects.get(id=request.POST['program'])
         service = request.POST['services']
         level = Level.objects.first()
