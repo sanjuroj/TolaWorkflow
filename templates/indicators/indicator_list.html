@@ -252,10 +252,18 @@
                 $("#id_indicator_unit_" + indicator_id).text(form.find("#id_unit_of_measure").val());
 
                 let percent_string = "";
-                if (form.find("#id_unit_of_measure_type_1").val() == 2){
+                if (form.find("#id_baseline").val() && form.find("#id_unit_of_measure_type_1").val() == 2){
                     percent_string = '%';
                 }
-                $("#id_indicator_baseline_" + indicator_id).text(form.find("#id_baseline").val() + percent_string);
+
+                // Need to test the baseline because it can still be blank when returning from the modal, but the
+                // lop_target can't be null, so we don't have to check
+                if (form.find("#id_baseline").val()){
+                    $("#id_indicator_baseline_" + indicator_id).text(form.find("#id_baseline").val() + percent_string);
+                }
+                else {
+                    $("#id_indicator_baseline_" + indicator_id).text("None");
+                }
                 $("#id_indicator_target_" + indicator_id).text(form.find("#id_lop_target").val() + percent_string);
             }
 
