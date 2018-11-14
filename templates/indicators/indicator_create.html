@@ -18,25 +18,48 @@
     <link href="{{ STATIC_URL }}css/select2.min.css" rel="stylesheet" />
 
     <script type="text/javascript">
-        function removeNameField(event) {
-            // if a service indicator type is selected, hide the name field and make it non required
-            if (this.value == 0 || !(this.value)) {
-                // nothing was selected (custom indicator) - show the name field and make it required
-                $('#service-form-group').hide();
-                $('#name-form-group').show();
-                $('#name').prop('required', true);
+        function update_services_dropdown(selected_service, dropdown_id) {
+            if (selected_service == undefined || selected_service == -1 || selected_service == '') {
+                $(dropdown_id).html("<option>--Service--</option>");
             } else {
-                $('#service-form-group').show();
-                $('#name-form-group').hide();
-                $('#name').prop('required', false);
+                var url = "/indicators/service/" + selected_service + "/service_json/";
+                $.getJSON(url, function(service) {
+    
+                    var options = '<option value="0">--Indicator--</option>';
+                    for (var i = 0; i < service.length; i++) {
+                        options += '<option value="' + service[i].nid + '">' + service[i].type + ' - ' + service[i].level + ' - ' + service[i].title + '</option>';
+                    }
+    
+                    $(dropdown_id).html(options);
+                    $(dropdown_id + ":first").attr('selected', 'selected');
+                });
             }
+    
+            // page-specific-action call if a page has implemented the 'country_dropdown_has_changed' function
+            if(typeof services_dropdown_has_changed != 'undefined') services_dropdown_has_changed(selected_service);
         }
         //Searchable select option for service indicator
         $(document).ready(function() {
             /* add select2 js library to the indicator select box */
             $("#service_indicator").select2();
-            $('#services').on('change', removeNameField);
+            $('#service-form-group').hide();
+            $('#custom-indicator-radio').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#service-form-group').hide();
+                    $('#name-form-group').show();
+                    $('#name').prop('required', true);
+                }
+            });
+            $('#dig-indicator-radio').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#service-form-group').show();
+                    $('#name-form-group').hide();
+                    $('#name').prop('required', false);
+                    update_services_dropdown(1, '#service_indicator');
+                }
+            });
         });
+        
     </script>
 
 {% endblock %}
@@ -61,22 +84,22 @@
 
     <fieldset class="clear-all">
 
-        <h3>{% trans "Create an Indicator from an External Template." %}</h3>
-        <p>{% trans "External template indicators include agency standard indicator feeds or donor required indicators from a web service.  Skip The service section if creating a 'custom' indicator." %}</p>
+        <!--<h3>{% trans "Create an Indicator from an External Template." %}</h3>-->
         <form class="" method="post" enctype="multipart/form-data" name="most" action="/indicators/indicator_create/{{ program_id }}/" role="form">
           {% csrf_token %}
-
-
-          <div class="form-group">
-              <label for="services">{% trans "Indicator Service Templates (leave blank for custom indicators)" %}</label>
-              <select name="services" id="services" class="form-control">
-                  <option value="0"> {% trans "-- select --" %} </option>
-                  {% for item in getServices %}
-                  <option value="{{ item.id }}"> {{ item.name }}</option>
-                  {% endfor %}
-              </select>
-              <span id="helpBlock" class="help-block">{% trans "Select an indicator service to select a pre-defined indicator from." %}</span>
-          </div>
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="services" id="custom-indicator-radio" value="0" checked>
+                <label class="form-check-label" for="custom-indicator-radio">Custom (default)</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="services" id="dig-indicator-radio" value="1">
+                <label class="form-check-label" for="dig-indicator-radio">DIG Template</label>
+            </div>
+            <small class="form-text text-muted">
+                {% trans "External template indicators include agency standard indicator feeds or donor required indicators from a web service." %}
+            </small>
+        </div>
 
           <div class="form-group" id="service-form-group">
               <label for="service_indicator">{% trans "Service Indicator (leave blank for custom indicators)" %}</label>
