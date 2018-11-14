@@ -778,7 +778,7 @@ msgstr ""
 
 #: templates/base.html:84
 msgid "Browse"
-msgstr "Feuilleter"
+msgstr "Parcourir"
 
 #: templates/base.html:86 templates/workflow/documentation_form.html:11
 #: templates/workflow/documentation_list.html:3
