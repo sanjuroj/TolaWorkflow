@@ -24,8 +24,19 @@ def index(request, selected_country=None):
     Mangosteen home page
     """
 
-    user_countries = getCountry(request.user)
-    active_country = Country.objects.filter(id=selected_country)[0] if selected_country else user_countries[0]
+    # Find the active country and set a session variable therefrom
+    user_countries = getCountry(request.user) # all countries whose programs are available to the user
+    user_home_country = TolaUser.objects.filter(user=request.user)[0].country
+
+    if selected_country: # from URL
+        active_country = Country.objects.filter(id=selected_country)[0]
+    else:
+        try: # or from session var
+            active_country = Country.objects.filter(id=request.session['country'])[0]
+        except KeyError: # or from user's home country
+            active_country = user_home_country
+    request.session['country'] = active_country.id # (re)set session var
+
     programs = Program.objects\
         .filter(country=active_country)\
         .filter(funding_status="Funded")
