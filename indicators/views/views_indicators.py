@@ -1067,6 +1067,9 @@ def service_json(request, service):
     :param service: The remote data service
     :return: JSON object of the indicators from the service
     """
+    if service == 0:
+        # no service (this is selecting a custom indicator)
+        return HttpResponse(status=204)
     service_indicators = import_indicator(service, deserialize=False)
     return HttpResponse(service_indicators, content_type="application/json")
 
