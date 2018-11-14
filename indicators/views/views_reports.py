@@ -806,6 +806,11 @@ class IPTT_Mixin(object):
             report_start_date = period_start_initial
         else:
             report_start_date = self.program.reporting_period_start
+        if period_end_initial is not None:
+            report_end_date = period_end_initial
+        elif report_end_date is None:
+            report_end_date = self.program.reporting_period_end
+              
         self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
         # update the queryset with annotations for timeperiods
         indicators = indicators.annotate(**self.annotations).order_by('lastlevelcustomsort', 'number', 'name')
