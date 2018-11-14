@@ -392,7 +392,7 @@ class IPTT_Mixin(object):
                 except ValueError:
                     v = int(Indicator.ANNUAL)  # defaults to annual
 
-            if k == 'numrecentperiods':
+            if k in ['numrecentperiods', 'timeframe']:
                 try:
                     v = int(v)
                 except ValueError:
@@ -402,7 +402,7 @@ class IPTT_Mixin(object):
     def _get_filters(self, data):
         filters = {}
         try:
-            filters['level'] = data['level'][0] if isinstance(data['level'], list) else int(data['level'])
+            filters['level__in'] = data['level'] if isinstance(data['level'], list) else [data['level']]
         except KeyError:
             pass
 
@@ -595,16 +595,20 @@ class IPTT_Mixin(object):
             these_ends = []
             for date_range in periods_date_ranges:
                 if date_range['start'].year != this_year:
-                    all_periods_start.append(these_starts)
-                    all_periods_end.append(these_ends)
+                    all_periods_start.append((this_year, these_starts))
+                    all_periods_end.append((this_year, these_ends))
                     this_year = date_range['start'].year
                     these_starts = []
                     these_ends = []
                 these_starts.append(
-                    (date_range['start'], '{0} {1}'.format(date_range['name'], date_range['label']))
+                    (date_range['start'], '{0} {1}'.format(
+                        date_range['name'],
+                        '({})'.format(date_range['label']) if date_range['label'] else ''))
                 )
                 these_ends.append(
-                    (date_range['end'], '{0} {1}'.format(date_range['name'], date_range['label']))
+                    (date_range['end'], '{0} {1}'.format(
+                        date_range['name'],
+                        '({})'.format(date_range['label']) if date_range['label'] else ''))
                 )
         return all_periods_start, all_periods_end
 
@@ -1025,10 +1029,7 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
         context = self.get_context_data(**kwargs)
 
         form_kwargs = {'request': request, 'program': context['program']}
-        print "form kwargs {0}".format(form_kwargs)
-        print "form initial {0}".format(self.filter_form_initial_data)
         context['form'] = IPTTReportFilterForm(initial=self.filter_form_initial_data, **form_kwargs)
-        print "form context {0}".format(context['form'])
 
         context['report_wide'] = True
         if context.get('redirect', None):

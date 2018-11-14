@@ -746,7 +746,7 @@ class PeriodicTarget(models.Model):
             return lambda start, end: [{
                 'name': _(cls.LOP_PERIOD),
                 'start': start,
-                'label': '({0} - {1})'.format(l10n_date_medium(start), l10n_date_medium(end)),
+                'label': '{0} - {1}'.format(l10n_date_medium(start), l10n_date_medium(end)),
                 'end': end,
                 'customsort': 0
                 }]
