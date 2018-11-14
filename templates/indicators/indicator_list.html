@@ -250,8 +250,13 @@
                 $("#id_indicator_name_" + indicator_id + " a .indicator_name").text(indicator_name);
                 $("#id_indicator_sector_" + indicator_id).text(indicator_sector);
                 $("#id_indicator_unit_" + indicator_id).text(form.find("#id_unit_of_measure").val());
-                $("#id_indicator_baseline_" + indicator_id).text(form.find("#id_baseline").val());
-                $("#id_indicator_target_" + indicator_id).text(form.find("#id_lop_target").val());
+
+                let percent_string = "";
+                if (form.find("#id_unit_of_measure_type_1").val() == 2){
+                    percent_string = '%';
+                }
+                $("#id_indicator_baseline_" + indicator_id).text(form.find("#id_baseline").val() + percent_string);
+                $("#id_indicator_target_" + indicator_id).text(form.find("#id_lop_target").val() + percent_string);
             }
 
             // update the results table
