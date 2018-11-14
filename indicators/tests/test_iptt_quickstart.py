@@ -1,3 +1,4 @@
+import unittest
 import datetime
 from django.test import Client, RequestFactory, TestCase, tag
 from django.urls import reverse_lazy
@@ -29,6 +30,9 @@ class IPTTReportQuickstartViewTests(TestCase):
         self.indicator = IndicatorFactory(
             program=self.program, unit_of_measure_type=Indicator.NUMBER, is_cumulative=False,
             direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE, target_frequency=Indicator.ANNUAL)
+        lop_indicator = IndicatorFactory(
+            program=self.program, target_frequency=Indicator.LOP
+        )
         self.request_factory = RequestFactory()
         self.client = Client()
         self.client.login(username="IC", password='password')
@@ -246,6 +250,7 @@ class TestIPTTGenerateTargetPeriods(TestCase):
         }
         (end_date, date_ranges, targetperiods) = mixin._generate_targetperiods(Indicator.QUARTERLY)
         self.assertEqual(end_date, datetime.date(2016, 3, 31))
+        self.assertEqual(targetperiods[1]['name'], 'Quarter 4')
         self.assertEqual(len(date_ranges), 5)
         self.assertEqual(len(targetperiods), 2)
         mixin.filter_form_initial_data = {
@@ -255,6 +260,7 @@ class TestIPTTGenerateTargetPeriods(TestCase):
         (end_date, date_ranges, targetperiods) = mixin._generate_targetperiods(Indicator.QUARTERLY)
         self.assertEqual(end_date, datetime.date(2016, 6, 30))
         self.assertEqual(len(date_ranges), 5)
+        self.assertEqual(targetperiods[0]['name'], 'Quarter 3')
         self.assertEqual(len(targetperiods), 3)
         self.assertEqual(targetperiods[0]['start'], datetime.date(2015, 10, 1))
 
@@ -291,7 +297,8 @@ class TestIPTTGenerateTargetPeriods(TestCase):
         self.assertEqual(date_ranges[0]['start'], datetime.date(2015, 4, 1))
         self.assertEqual(date_ranges[0]['end'], datetime.date(2016, 6, 30))
         self.assertEqual(len(targetperiods), 2)
-    
+
+    @unittest.skip('generate timeperiods made redundant')
     def test_generate_timeperiods(self):
         program = ProgramFactory(
             reporting_period_start=datetime.date(2015, 1, 1),

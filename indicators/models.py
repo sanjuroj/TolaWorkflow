@@ -746,7 +746,7 @@ class PeriodicTarget(models.Model):
             return lambda start, end: [{
                 'name': _(cls.LOP_PERIOD),
                 'start': start,
-                'label': l10n_date_medium(start),
+                'label': '({0} - {1})'.format(l10n_date_medium(start), l10n_date_medium(end)),
                 'end': end,
                 'customsort': 0
                 }]
@@ -773,7 +773,9 @@ class PeriodicTarget(models.Model):
                 yield {
                     'name': name_func(start, count+1),
                     'start': start,
-                    'label': l10n_date_medium(start),
+                    'label': '{0} - {1}'.format(
+                        l10n_date_medium(start), l10n_date_medium(next_start - timedelta(days=1))
+                        ) if frequency != Indicator.MONTHLY else None,
                     'end': next_start - timedelta(days=1),
                     'customsort': count
                 }

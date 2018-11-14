@@ -103,6 +103,7 @@ class IPTTResponse(object):
     def process(self):
         soup = BeautifulSoup(self.rawhtml, 'html.parser')
         self.components['head'] = soup.head.extract()
+        print "nav {0}".format(soup.nav)
         self.components['menu'] = soup.nav.extract()
         self.components['nav'] = process_nav(soup.nav.extract())
         main = process_table(soup.main.extract(), self.timeperiods)
