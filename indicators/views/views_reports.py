@@ -801,14 +801,18 @@ class IPTT_Mixin(object):
         self.filter_form_initial_data['period_choices_end'] = tuple(all_periods_end)
         self.filter_form_initial_data['period_start_initial'] = period_start_initial
         self.filter_form_initial_data['period_end_initial'] = period_end_initial
-
+        # update report start date with filter date or program period start:
+        if period_start_initial is not None:
+            report_start_date = period_start_initial
+        else:
+            report_start_date = self.program.reporting_period_start
         self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
         # update the queryset with annotations for timeperiods
         indicators = indicators.annotate(**self.annotations).order_by('lastlevelcustomsort', 'number', 'name')
         indicators = self.prepare_indicators(reporttype, period, periods_date_ranges, indicators)
 
         context['report_end_date_actual'] = report_end_date
-        context['report_start_date'] = self.program.reporting_period_start
+        context['report_start_date'] = report_start_date
         context['report_end_date'] = report_end_date
         context['report_date_ranges'] = periods_date_ranges  # collections.OrderedDict
         context['indicators'] = indicators  # iterable of dict()
