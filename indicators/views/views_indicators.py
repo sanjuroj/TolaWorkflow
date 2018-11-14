@@ -194,7 +194,7 @@ def indicator_create(request, id=0):
         program = Program.objects.get(id=request.POST['program'])
         service = request.POST['services']
         level = Level.objects.first()
-        node_id = request.POST['service_indicator']
+        node_id = request.POST.get('service_indicator')
         sector = None
         # add a temp name for custom indicators
         name = request.POST.get('name', _("Temporary"))
@@ -203,7 +203,7 @@ def indicator_create(request, id=0):
         external_service_record = None
 
         # checkfor service indicator and update based on values
-        if node_id is not None and int(node_id) != 0:
+        if node_id is not None and node_id != "" and int(node_id) != 0:
             get_imported_indicators = import_indicator(service)
             for item in get_imported_indicators:
                 if item['nid'] == node_id:

@@ -25,7 +25,7 @@
                 var url = "/indicators/service/" + selected_service + "/service_json/";
                 $.getJSON(url, function(service) {
     
-                    var options = '<option value="0">--Indicator--</option>';
+                    var options = '<option value="">--Indicator--</option>';
                     for (var i = 0; i < service.length; i++) {
                         options += '<option value="' + service[i].nid + '">' + service[i].type + ' - ' + service[i].level + ' - ' + service[i].title + '</option>';
                     }
@@ -41,13 +41,13 @@
         //Searchable select option for service indicator
         $(document).ready(function() {
             /* add select2 js library to the indicator select box */
-            $("#service_indicator").select2();
             $('#service-form-group').hide();
             $('#custom-indicator-radio').change(function() {
                 if ($(this).is(':checked')) {
                     $('#service-form-group').hide();
                     $('#name-form-group').show();
                     $('#name').prop('required', true);
+                    $('#service_indicator').prop('required', false);
                 }
             });
             $('#dig-indicator-radio').change(function() {
@@ -55,6 +55,8 @@
                     $('#service-form-group').show();
                     $('#name-form-group').hide();
                     $('#name').prop('required', false);
+                    $('#service_indicator').select2();
+                    $('#service_indicator').prop('required', true);
                     update_services_dropdown(1, '#service_indicator');
                 }
             });
@@ -87,7 +89,11 @@
         <!--<h3>{% trans "Create an Indicator from an External Template." %}</h3>-->
         <form class="" method="post" enctype="multipart/form-data" name="most" action="/indicators/indicator_create/{{ program_id }}/" role="form">
           {% csrf_token %}
+          
         <div class="form-group">
+            <div class="form-text">
+                 {% trans "Are you adding a custom indicator an indicator from the Design for Impact Guide (DIG)?" %}
+            </div>
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="services" id="custom-indicator-radio" value="0" checked>
                 <label class="form-check-label" for="custom-indicator-radio">Custom (default)</label>
@@ -96,15 +102,12 @@
                 <input class="form-check-input" type="radio" name="services" id="dig-indicator-radio" value="1">
                 <label class="form-check-label" for="dig-indicator-radio">DIG Template</label>
             </div>
-            <small class="form-text text-muted">
-                {% trans "External template indicators include agency standard indicator feeds or donor required indicators from a web service." %}
-            </small>
         </div>
 
-          <div class="form-group" id="service-form-group">
+          <div class="form-group" id="service-form-group" style="display:none;">
               <label for="service_indicator">{% trans "Service Indicator (leave blank for custom indicators)" %}</label>
               <select name="service_indicator" id="service_indicator" class="form-control">
-                  <option value="0"> {% trans "-- select --" %} </option>
+                  <option value=""> {% trans "-- select --" %} </option>
               </select>
               <span id="helpBlock" class="help-block">{% trans "Type the name of the Indicator in the box above to search, starting with type then level then title." %}</span>
           </div>
@@ -116,7 +119,7 @@
           
           <div class="form-group">
               <label for="country">{% trans "Country" %}</label>
-              <select name="country" id="country" class="form-control">
+              <select disabled name="country" id="country" class="form-control">
                   <option value="0"> {% trans "-- select --" %} </option>
                   {% for item in getCountries %}
                   <option value="{{ item.id }}" {% if country_id == item.id %} selected="selected"{%endif%}>{{ item.country }}</option>
@@ -125,7 +128,7 @@
           </div>
           <div class="form-group">
           <label for="program">{% trans "Program" %}</label>
-          <select name="program" id="program" class="form-control">
+          <select disabled name="program" id="program" class="form-control">
               <option value="0"> {% trans "-- select --" %} </option>
               {% for item in getPrograms %}
               <option value="{{ item.id }}" {% if program_id == item.id %} selected="selected"{% endif %}> {{ item.name }}</option>
