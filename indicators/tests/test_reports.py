@@ -1,12 +1,19 @@
-from datetime import datetime
+from datetime import datetime, date
 from unittest import skip
+from openpyxl import Workbook
 
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.test import Client, TestCase
 
+from collections import OrderedDict
 from factories.workflow_models import ProgramFactory, UserFactory
+from factories.indicators_models import IndicatorFactory
 from indicators.models import Indicator
-from indicators.views.views_reports import IPTT_Mixin, IPTTReportQuickstartView
+from indicators.views.views_reports import (
+    IPTT_Mixin,
+    IPTTReportQuickstartView,
+    IPTT_ExcelExport
+    )
 from tola.test.base_classes import TestBase, ScenarioBase
 
 from workflow.models import Program
@@ -164,9 +171,13 @@ class IPTT_MixinTests(TestCase):
 class IPTT_ExcelExportTests(TestCase):
 
     def setUp(self):
-        pass
+        self.program = ProgramFactory(
+            reporting_period_start=date(2015, 1, 1),
+            reporting_period_end=date(2019, 12, 31),
+            name='Test Program Name'
+        )
+        self.view = IPTT_ExcelExport()
 
-    @skip('TODO: Implement this')
     def test_get_filename(self):
         pass
 
@@ -174,17 +185,179 @@ class IPTT_ExcelExportTests(TestCase):
     def test_style_range(self):
         pass
 
-    @skip('TODO: Implement this')
     def test_add_headers(self):
-        pass
+        """headers should be built into the worksheet according to context data
+        context variables used:
+        reporttype (timeperiods/targetperiods)
+        program Program
+        report_start_date (date)
+        report_end_date (date)
+        report_date_ranges (dict) period_name : list
+            - start, end, ...
+        """
 
-    @skip('TODO: Implement this')
+        context = {
+            'reporttype': 'timeperiods',
+            'report_start_date': date(2015, 1, 1),
+            'report_end_date': date(2015, 12, 31),
+            'program': self.program,
+            'report_date_ranges': OrderedDict([
+                ('period_1', [date(2015, 1, 1), date(2015, 6, 30)]),
+                ('period_2', [date(2015, 7, 1), date(2015, 12, 31)])
+            ])
+        }
+        wb = Workbook()
+        ws = wb.active
+        ws = self.view.add_headers(ws, context)
+        for column, header in [
+            ('A', 'Program ID'),
+            ('B', 'Indicator ID'),
+            ('C', 'No.'),
+            ('D', 'Indicator'),
+            ('E', 'Level'),
+            ('F', 'Unit of measure'),
+            ('G', 'Change'),
+            ('H', 'C / NC'),
+            ('I', '# / %'),
+            ('J', 'Baseline'),
+            ('K', 'Target'),
+            ('L', 'Actual'),
+            ('M', '% Met'),
+            ('N', 'Actual'),
+            ('O', 'Actual')
+            ]:
+            self.assertEqual(ws['{0}4'.format(column)].value, header, "{0} != {1} for col {2}".format(
+                ws['{0}4'.format(column)].value, header, column))
+        print "L {0} M {1} N {2} O {3}".format(ws['L2'].value, ws['M2'].value, ws['N2'].value, ws['O2'].value)
+        self.assertEqual(ws['N2'].value, 'period_1')
+        self.assertEqual(ws['N3'].value, 'Jan 01, 2015 - Jun 30, 2015')
+        self.assertEqual(ws['O2'].value, 'period_2')
+        self.assertEqual(ws['O3'].value, 'Jul 01, 2015 - Dec 31, 2015')
+        context = {
+            'reporttype': 'targetperiods',
+            'report_start_date': date(2015, 1, 1),
+            'report_end_date': date(2015, 12, 31),
+            'program': self.program,
+            'report_date_ranges': OrderedDict([
+                ('period_1', [date(2015, 1, 1), date(2015, 6, 30)]),
+                ('period_2', [date(2015, 7, 1), date(2015, 12, 31)])
+            ])
+        }
+        wb = Workbook()
+        ws = wb.active
+        ws = self.view.add_headers(ws, context)
+        for column, header in [
+            ('A', 'Program ID'),
+            ('B', 'Indicator ID'),
+            ('C', 'No.'),
+            ('D', 'Indicator'),
+            ('E', 'Level'),
+            ('F', 'Unit of measure'),
+            ('G', 'Change'),
+            ('H', 'C / NC'),
+            ('I', '# / %'),
+            ('J', 'Baseline'),
+            ('K', 'Target'),
+            ('L', 'Actual'),
+            ('M', '% Met'),
+            ('N', 'Target'),
+            ('O', 'Actual'),
+            ('P', '% Met'),
+            ('Q', 'Target'),
+            ('R', 'Actual'),
+            ('S', '% Met'),
+            ]:
+            self.assertEqual(ws['{0}4'.format(column)].value, header, "{0} != {1} for col {2}".format(
+                ws['{0}4'.format(column)].value, header, column))
+        self.assertEqual(ws['N2'].value, 'period_1')
+        self.assertEqual(ws['N3'].value, 'Jan 01, 2015 - Jun 30, 2015')
+        self.assertEqual(ws['Q2'].value, 'period_2')
+        self.assertEqual(ws['Q3'].value, 'Jul 01, 2015 - Dec 31, 2015')
+
+
     def test_add_data(self):
-        pass
+        """does the right ws row get generated based on context data provided?
+        context keys:
+        indicators (list of indicators)
+            -program id
+            -id
+            -number
+            -name
+            -lastlevel
+            -unit_of_measure
+            -direction_of_change
+            -cumulative
+            -unitttype
+            -baseline
+            -lop_target
+            -lop_actual
+            -lop_percent_met
+        report_date_ranges keys: (targetperiods)
+            -key_period_target
+            -key_actual
+            -key_percent_met
+        report_date_ranges keys: (timeperiods)
+            -key_actual"""
+        indicator = OrderedDict([
+            ('id', 1),
+            ('number', '2.4'),
+            ('name', 'indicator name'),
+            ('lastlevel', 'level'),
+            ('unit_of_measure', 'bananas'),
+            ('direction_of_change', '+'),
+            ('cumulative', 'Cumulative'),
+            ('unittype', '#'),
+            ('baseline', '100'),
+            ('lop_target', '100'),
+            ('lop_actual', '50'),
+            ('lop_percent_met', '50%'),
+            ('one_period_target', '25'),
+            ('one_actual', '40'),
+            ('one_percent_met', '90%'),
+            ('two_period_target', '30'),
+            ('two_actual', '80'),
+            ('two_percent_met', '60%')
+        ])
+        context = {
+            'report_date_ranges': OrderedDict([('one', None), ('two', None)]),
+            'program': self.program,
+            'indicators': [
+                indicator
+            ]
+        }
+        wb = Workbook()
+        ws = wb.active
+        context['reporttype'] = 'timeperiods'
+        ws = self.view.add_data(wb, ws, context)
+        self.assertEqual(ws['A5'].value, self.program.id)
+        for col, key in enumerate(indicator.keys()[:-6]):
+            value = ws.cell(row=5, column=col+2).value
+            self.assertEqual(indicator[key], value)
+        self.assertEqual(ws.cell(row=5, column=15).value, u'40')
+        self.assertEqual(ws.cell(row=5, column=16).value, u'80')
+        context['reporttype'] = 'targetperiods'
+        ws = self.view.add_data(wb, ws, context)
+        self.assertEqual(ws['A5'].value, self.program.id)
+        for col, key in enumerate(indicator.keys()):
+            value = ws.cell(row=5, column=col+2).value
+            self.assertEqual(indicator[key], value)
 
-    @skip('TODO: Implement this')
     def test_set_column_widths(self):
-        pass
+        widths = [10, 10, 10, 100, 12, 40, 8, 12]
+        collapseds = [True, True] + [False*6]
+        wb = Workbook()
+        ws = wb.active
+        for x, v in enumerate(['banana']*20):
+            ws.cell(row=1, column=x+1).value = v
+        ws = self.view.set_column_widths(ws)
+        for col, width in enumerate(widths):
+            column_letter = ws.cell(row=1, column=col+1).column
+            self.assertEqual(ws.column_dimensions[column_letter].width,
+                             width)
+        for col, collapsed in enumerate(collapseds):
+            column_letter = ws.cell(row=1, column=col+1).column
+            self.assertEqual(ws.column_dimensions[column_letter].hidden,
+                             collapsed)
 
     @skip('TODO: Implement this')
     def test_get(self):
