@@ -247,7 +247,7 @@ def profile(request):
     """
     if request.user.is_authenticated():
         obj = get_object_or_404(TolaUser, user=request.user)
-        form = ProfileUpdateForm(request.POST or None, instance=obj,initial={'username': request.user})
+        form = ProfileUpdateForm(request.POST or None, instance=obj, user=request.user)
 
         if request.method == 'POST':
             if form.is_valid():

@@ -9,23 +9,21 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 
-
 class ProfileUpdateForm(forms.ModelForm):
     """
     Form for registering a new account.
     """
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('initial')
+        user = kwargs.pop('user')
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
         # if they aren't a super user or User Admin don't let them change countries form field
-        if 'User Admin' not in user['username'].groups.values_list('name', flat=True) and not user['username'].is_superuser:
+        if 'User Admin' not in user.groups.values_list('name', flat=True) and not user.is_superuser:
             self.fields['countries'].disabled = True
             self.fields['country'].disabled = True
 
     class Meta:
         model = TolaUser
         fields = '__all__'
-
 
     helper = FormHelper()
     helper.form_method = 'post'
@@ -38,7 +36,7 @@ class ProfileUpdateForm(forms.ModelForm):
     helper.html5_required = True
     helper.layout = Layout(
         Fieldset(
-            '','title', 'name', 'employee_number', 'user', 'country', 'language', 'countries'),
+            '', 'title', 'name', 'employee_number', 'user', 'country', 'language', 'countries'),
         Div(
             FormActions(
                 Submit('submit', 'Save changes', css_class=''),
