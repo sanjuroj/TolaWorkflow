@@ -180,13 +180,13 @@ def indicator_create(request, id=0):
     Passed on to IndicatorCreate to do the creation
     """
     get_indicator_types = IndicatorType.objects.all()
-    get_countries = Country.objects.all()
+    #get_countries = Country.objects.all()
     countries = getCountry(request.user)
-    country_id = Country.objects.get(country=countries[0]).id
-    get_programs = Program.objects.filter(funding_status="Funded",
-                                          country__in=countries).distinct()
+    country = Country.objects.get(country=countries[0])
+    #get_programs = Program.objects.filter(funding_status="Funded",
+    #                                          country__in=countries).distinct()
     get_services = ExternalService.objects.all()
-    program_id = id
+    program = Program.objects.get(pk=id)
 
     if request.method == 'POST':
         indicator_type = IndicatorType.objects.get(indicator_type="custom")
@@ -241,8 +241,7 @@ def indicator_create(request, id=0):
     # send the keys and vars from the json data to the template along with
     # submitted feed info and silos for new form
     return render(request, "indicators/indicator_create.html",
-                  {'country_id': country_id, 'program_id': int(program_id),
-                   'getCountries': get_countries, 'getPrograms': get_programs,
+                  {'country': country, 'program': program,
                    'getIndicatorTypes': get_indicator_types,
                    'getServices': get_services})
 
