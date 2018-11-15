@@ -89,19 +89,19 @@
         <!--<h3>{% trans "Create an Indicator from an External Template." %}</h3>-->
         <form class="" method="post" enctype="multipart/form-data" name="most" action="/indicators/indicator_create/{{ program.id }}/" role="form">
           {% csrf_token %}
-        <p><b>Program:</b> {{ program.name }}</p>
-        <p><b>Program based in:</b> {{ country }}</p>
+        <p><b>{% trans "Program" %}:</b> {{ program.name }}</p>
+        <p><b>{% trans "Program based in" %}:</b> {{ country }}</p>
         <div class="form-group">
             <div class="form-text">
-                 {% trans "Are you adding a custom indicator or an indicator from the Design for Impact Guide (DIG)?" %}
+                 {% trans 'Are you adding a custom indicator or an indicator from the "Design for Impact Guide (DIG)"?' %}
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="services" id="custom-indicator-radio" value="0" checked>
-                <label class="form-check-label" for="custom-indicator-radio">Custom indicator</label>
+                <label class="form-check-label" for="custom-indicator-radio">{% trans "Custom indicator" %}</label>
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="services" id="dig-indicator-radio" value="1">
-                <label class="form-check-label" for="dig-indicator-radio">DIG indicator</label>
+                <label class="form-check-label" for="dig-indicator-radio">{% trans "DIG indicator" %}</label>
             </div>
         </div>
 
