@@ -13,15 +13,57 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Q, Count
 from tola.util import getCountry
 from django.contrib.auth.models import Group
+from indicators.queries import ProgramWithMetrics
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
+@login_required(login_url='/accounts/login/')
+def index(request, selected_country=None):
+    """
+    Mangosteen home page
+    """
+
+    # Find the active country and set a session variable therefrom
+    user_countries = getCountry(request.user) # all countries whose programs are available to the user
+    user_home_country = TolaUser.objects.filter(user=request.user)[0].country
+
+    if selected_country: # from URL
+        active_country = Country.objects.filter(id=selected_country)[0]
+    else:
+        try: # or from session var
+            active_country = Country.objects.filter(id=request.session['country'])[0]
+        except KeyError: # or from user's home country
+            active_country = user_home_country
+    request.session['country'] = active_country.id # (re)set session var
+
+    programs = Program.objects\
+        .filter(country=active_country)\
+        .filter(funding_status="Funded")
+    programs_with_metrics = [ProgramWithMetrics.with_metrics.get(pk=program.id) for program in programs]
+    getSiteProfile = SiteProfile.objects.all()\
+        .prefetch_related('country','district','province')\
+        .filter(country=active_country)\
+        .filter(status=1)
+    getSiteProfileIndicator = SiteProfile.objects.all()\
+        .prefetch_related('country','district','province')\
+        .filter(country=active_country)\
+        .filter(status=1)
+
+    return render(request, 'home.html', {
+        'user_countries': user_countries,
+        'active_country': active_country,
+        'programs': programs_with_metrics,
+        'no_programs': programs.count(),
+        'getSiteProfile': getSiteProfile,
+        'getSiteProfileIndicator': getSiteProfileIndicator,
+    })
+
 
 @login_required(login_url='/accounts/login/')
-def index(request, selected_countries=None, id=0, sector=0):
+def old_index(request, selected_countries=None, id=0, sector=0):
     """
-    Home page
+    Previous "Home" page -- also a filtered index!
     get count of agreements approved and total for dashboard
     """
     program_id = id

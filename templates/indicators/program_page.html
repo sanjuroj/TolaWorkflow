@@ -1,14 +1,9 @@
 {% extends "base.html" %}
 {% load i18n mathfilters mytags static %}
-{% block title %}{% trans "Program indicators" %} | {% endblock %}
+{% block title %}{{ program.name }} | {% endblock %}
 {% block page_title %}{{ program.name }}{% endblock %}
 {% block header_extras %}
-    <div class="program__calendar-complete">
-        <div class="fas fa-calendar"></div>
-        <p>
-        {% blocktrans %}Program period is <br><strong>{{ percent_complete }}% complete</strong>{% endblocktrans %}
-        </p>
-    </div>
+    {% program_complete %}
 {% endblock %}
 
 {% block content %}
@@ -17,16 +12,17 @@
     {% if indicator_count %}
         <aside class="program__status">
             <h2>{% trans "Program metrics" %}</h2>
-            <div class="status__gauges">
+                <div class="status__gauges">
 
-            {% gauge_band program.scope_counts %}
+                    {% gauge_band True %}
 
-            {% gauge_tank "targets_defined" "Indicators with targets" "have targets defined" "have no targets" "Add missing targets" "have missing targets" %}
+                    {% gauge_tank "targets_defined" %}
 
-            {% gauge_tank "reported_results" "Indicators with results" "have reported results" "have no results" "Add missing results" "have no results" %}
+                    {% gauge_tank "reported_results" %}
 
-            {% gauge_tank "results_evidence"  "Results with evidence" "have evidence" "are missing evidence" "Add missing evidence"  "have results without evidence" %}
-            </div>
+                    {% gauge_tank "results_evidence" %}
+
+                </div>
         </aside>
     {% endif %}
 

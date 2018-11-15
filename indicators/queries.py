@@ -742,10 +742,11 @@ class ProgramWithMetrics(wf_models.Program):
     @property
     def percent_complete(self):
         if self.reporting_period_end is None or self.reporting_period_start is None:
-            return None
+            return 0 # otherwise the UI might show "None% complete"
         total_days = (self.reporting_period_end - self.reporting_period_start).days
         complete = (datetime.date.today() - self.reporting_period_start).days
-        return int(round(float(complete)*100/total_days))
+        return int(round(float(complete)*100/total_days)) if complete < total_days else 100
+        # can't be more than 100% complete
 
     @property
     def metrics(self):
