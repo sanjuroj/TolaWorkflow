@@ -126,6 +126,7 @@ def gauge_tank(context, metric, has_filters=True):
             'cta': _('Add missing targets'),
             'filter_title': _('have missing targets'),
             'empty': _('No targets'),
+            'help_text': _(''), # currently unused
         },
         'reported_results' : {
             'title': _('Indicators with results'),
@@ -134,6 +135,7 @@ def gauge_tank(context, metric, has_filters=True):
             'cta': _('Add missing results'),
             'filter_title': _('have missing results'),
             'empty': _('No results'),
+            'help_text': _(''), # currently unused
         },
         'results_evidence': {
             'title': _('Results with evidence'),
@@ -142,6 +144,7 @@ def gauge_tank(context, metric, has_filters=True):
             'cta': _('Add missing evidence'),
             'filter_title': _('have missing evidence'),
             'empty': _('No evidence'),
+            'help_text': _(''), # currently unused
         },
     }
     program = context['program']
@@ -171,6 +174,7 @@ def gauge_tank(context, metric, has_filters=True):
         'has_filters': has_filters,
         'filter_title_count': filter_title_count,
         'empty_label': labels[metric]['empty'],
+        'help_text': labels[metric]['help_text'],
     }
 
 @register.inclusion_tag('indicators/tags/gauge-tank-small.html', takes_context=True)
@@ -178,12 +182,15 @@ def gauge_tank_small(context, metric):
     labels = {
         'targets_defined': {
             'filled_label': _('programs have all targets defined'),
+            'help_text': _('Each indicator must have a target frequency selected and targets entered for all periods'),
         },
         'reported_results': {
             'filled_label': _('indicators have reported results'),
+            'help_text': ('Each indicator must have at least one reported result.'),
         },
         'results_evidence': {
             'filled_label': _('results are backed up with evidence'),
+            'help_text': ('Each result must include a link to an evidence file or folder.'),
         },
     }
     unfilled_percent = 25
@@ -194,6 +201,7 @@ def gauge_tank_small(context, metric):
         'unfilled_percent': unfilled_percent,
         'filled_percent': filled_percent,
         'filled_label': labels[metric]['filled_label'],
+        'help_text': labels[metric]['help_text'],
         'ticks': list(range(1,tick_count+1)),
     }
 

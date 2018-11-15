@@ -18,6 +18,15 @@
                 <span class="gauge__value--small">
                     <span class="gauge__value__value">{{ filled_percent }}%</span><br>
                     {% trans filled_label %}
+                    {% if help_text %}
+                    <a href="#"
+                       tabindex="0"
+                       data-toggle="popover"
+                       data-placement="bottom"
+                       data-trigger="focus"
+                       data-content="{{ help_text }}"
+                       ><i class="far fa-question-circle"></i></a>
+                    {% endif %}
                 </span>
             </div>
         </div>
