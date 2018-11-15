@@ -22,6 +22,7 @@
                             <div>{% trans "The program reporting period is used in the setup of periodic targets and in Indicator Performance Tracking Tables (IPTT). TolaActivity initially sets the reporting period to include the program’s official start and end dates, as recorded in the Grant and Award Information Tracker (GAIT) system. The reporting period may be adjusted to align with the program’s indicator plan." %}</div>
                         </div>
                         <button
+                            id="reporting_modal_close_btn"
                             type="button"
                             class="close"
                             data-dismiss="modal"
@@ -103,7 +104,7 @@
                         <input type="submit" name="submit" value="{% trans 'Save changes' %}" class="btn btn-primary mx-1 text-uppercase" id="submit-id-submit">
                         {% if close_only %}
                         {# when the modal is required in order to view the program page #}
-                            <input type="exit" class="btn btn-secondary mx-1" value="{% trans 'Back to Homepage' %}">
+                            <input type="exit" id="reportingperiod_update_form_exit_btn" class="btn btn-secondary mx-1" value="{% trans 'Back to Homepage' %}">
                         {% else %}
                             <input type="reset" class="btn btn-secondary mx-1" value="{% trans 'Reset' %}">
                         {% endif %}
@@ -395,6 +396,7 @@
             "#div-id-reportingperiod-alert");
         }
         else{
+             reporting_period_submitting = true;
             $.post($(this).attr('action'), $(this).serialize(), function(data){
 
                 $('#id_reporting_period_modal').modal("hide")
@@ -442,6 +444,11 @@
             }
             catch(error){}
         }
+    });
+    
+    $("#reportingperiod_update_form_exit_btn").on('click', function(e) {
+        e.preventDefault();
+        $('#id_reporting_period_modal').modal('hide');
     });
 
 

@@ -15,14 +15,13 @@
 
 {% block extra_js_in_body %}
     <script>
-        function setup_reporting_modal(event) {
-            console.log('setup');
-        }
-        function reporting_form_submit(event) {
-            console.log('submit form');
-        }
+        var reporting_period_submitting = false;
         function hide_reporting_modal(event) {
-            console.log('hide modal');
+            if (reporting_period_submitting == true) {
+                // show a loading circle here?
+            } else {
+                window.location.replace('/');
+            }
         }
         $(document).ready(function() {
             $('#id_reporting_period_modal').data('program', '{{ program.id }}')
@@ -30,9 +29,7 @@
                 .data('progend', "{{program.end_date}}")
                 .data('rptstart', "{{program.reporting_period_start}}")
                 .data('rptend', "{{program.reporting_period_end}}");
-            $('#id_reporting_period_modal').on('show.bs.modal', setup_reporting_modal);
             $('#id_reporting_period_modal').modal('show');
-            $('#id_reporting_period_modal form').on('submit', reporting_form_submit);
             $('#id_reporting_period_modal').on('hide.bs.modal', hide_reporting_modal);
         });
     </script>
