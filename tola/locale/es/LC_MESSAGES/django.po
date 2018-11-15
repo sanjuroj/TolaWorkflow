@@ -1513,13 +1513,13 @@ msgstr ""
 #, fuzzy
 #| msgid "program indicator"
 msgid "Custom indicator"
-msgstr "indicador personalizado"
+msgstr "Indicador personalizado"
 
 #: templates/indicators/indicator_create.html:104
 #, fuzzy
 #| msgid "indicator"
 msgid "DIG indicator"
-msgstr "indicador DIG"
+msgstr "Indicador DIG"
 
 #: templates/indicators/indicator_create.html:111
 msgid "-- select --"
