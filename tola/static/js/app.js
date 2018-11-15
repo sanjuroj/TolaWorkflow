@@ -116,6 +116,9 @@ $(function() {
     $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
     window.location.hash = e.target.hash;
     });
+
+    // Enable popovers
+    $('[data-toggle="popover"]').popover()
 });
 
 
