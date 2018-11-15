@@ -89,8 +89,7 @@
         <!--<h3>{% trans "Create an Indicator from an External Template." %}</h3>-->
         <form class="" method="post" enctype="multipart/form-data" name="most" action="/indicators/indicator_create/{{ program.id }}/" role="form">
           {% csrf_token %}
-        <p><b>Program:</b> {{ program.name }}</p>
-        <p><b>Country:</b> {{ country.country }}</p>
+        <p><b>Program:</b> {{ program.name }} [{{ country }}]</p>
         <div class="form-group">
             <div class="form-text">
                  {% trans "Are you adding a custom indicator an indicator from the Design for Impact Guide (DIG)?" %}
@@ -116,8 +115,7 @@
               <label for="name">{% trans "Indicator name" %}</label>
               <input type="text" class="form-control" name="name" id="name" required >
           </div>
-          
-            <input name="country" type="hidden" value="{{ country.id }}">
+
             <input name="program" type="hidden" value="{{ program.id }}">
             <div class="form-actions d-flex bg-gray-lighter p-4 justify-content-between">
                 <div class="form-group">
