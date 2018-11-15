@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-09 14:41-0800\n"
+"POT-Creation-Date: 2018-11-15 13:11-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -754,14 +754,18 @@ msgstr ""
 "debería tener acceso a esta sección."
 
 #: templates/403.html:13
-msgid "You can also reach the TolaData team by using the "
+msgid ""
+" You can also reach the TolaData team by using the <a href=\"https://docs."
+"google.com/forms/d/"
+"e/1FAIpQLSclm2PAT9TJ9q23TT6YWQg6hj3EndUAdyF5k6kvNJHu6njNtw/viewform"
+"\">feedback form.</a>\n"
+"    "
 msgstr ""
-
-#: templates/403.html:15
-#, fuzzy
-#| msgid "Feedback"
-msgid "feedback form"
-msgstr "Realimentación"
+"También puede utilizar el "
+"<a href=\"https://docs.google.com/forms/d/"
+"e/1FAIpQLSclm2PAT9TJ9q23TT6YWQg6hj3EndUAdyF5k6kvNJHu6njNtw/viewform"
+"\">formulario de comentarios</a> "
+"para ponerse en contacto con el equipo de TolaData"
 
 #: templates/404.html:4 templates/404.html:6
 msgid "Page Not found"
@@ -3704,6 +3708,11 @@ msgstr "Elemento de la lista de verificación"
 #: workflow/models.py:1539
 msgid "Username"
 msgstr "Nombre de usuario"
+
+#, fuzzy
+#~| msgid "Feedback"
+#~ msgid "feedback form"
+#~ msgstr "Realimentación"
 
 #~| msgid "Please select a valid program."
 #~ msgid "Please select a target"

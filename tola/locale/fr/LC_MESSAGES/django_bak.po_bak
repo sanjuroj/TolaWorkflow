@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-15 13:11-0800\n"
+"POT-Creation-Date: 2018-11-09 14:41-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -796,7 +796,7 @@ msgstr ""
 
 #: templates/base.html:84
 msgid "Browse"
-msgstr "Parcourir"
+msgstr "Feuilleter"
 
 #: templates/base.html:86 templates/workflow/documentation_form.html:11
 #: templates/workflow/documentation_list.html:3
@@ -2234,6 +2234,9 @@ msgid ""
 "Warning: The file you are linking to should be on external storage. The file "
 "path you provided looks like it might be on your local hard drive."
 msgstr ""
+"Avertissement: Le fichier que vous liez devrait se trouver sur un stockage "
+"externe. Le chemin du fichier que vous avez fourni semble se trouver sur "
+"votre disque dur local."
 
 #: templates/workflow/documentation_form.html:124
 msgid ""
@@ -2241,6 +2244,9 @@ msgid ""
 "your hard drive.  The link you provided does not appear to be a file path or "
 "web link."
 msgstr ""
+"Vous devez fournir un emplacement ou un chemin du fichier qui ne se trouve "
+"pas sur votre disque dur local. Le lien que vous avez fourni ne semble pas "
+"être un chemin du fichier ni un lien Web."
 
 #: templates/workflow/documentation_form.html:148
 msgid "Please complete this field"
@@ -3650,7 +3656,9 @@ msgstr "Suivi de projet"
 #, fuzzy
 #| msgid "URL (Link to document or document repository)"
 msgid "Link to document, document repository, or document URL"
-msgstr "URL (lien vers le référentiel de documents ou de documents)"
+msgstr ""
+"Liez vers un document, un référentiel de documents/dossier ou l'adresse "
+"Web d'un document"
 
 #: workflow/models.py:1378
 #, fuzzy, python-format
@@ -3719,11 +3727,6 @@ msgstr "Article de la liste de contrôle"
 #: workflow/models.py:1539
 msgid "Username"
 msgstr "Nom d'utilisateur"
-
-#, fuzzy
-#~| msgid "Feedback"
-#~ msgid "feedback form"
-#~ msgstr "Retour d'information"
 
 #~| msgid "Please select a valid program."
 #~ msgid "Please select a target"
