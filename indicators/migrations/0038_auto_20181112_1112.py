@@ -9,7 +9,7 @@ def make_customsort_unique(apps, schema_editor):
     
         on the prod db.  This fix will result in some bad data on local (duplicate periodictargets with
         consecutive customsorts) - in order to use this on local comment out the first line"""
-    raise NotImplementedError("Read docstring before running")
+    #raise NotImplementedError("Read docstring before running")
     Indicator = apps.get_model('indicators', 'Indicator')
     for indicator in Indicator.objects.all():
         pts = indicator.periodictargets.all()
