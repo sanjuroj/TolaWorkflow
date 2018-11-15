@@ -1447,6 +1447,18 @@ class ProgramPage(ListView):
     def get(self, request, *args, **kwargs):
         countries = request.user.tola_user.countries.all()
         program_id = int(self.kwargs['program_id'])
+        unannotated_program = Program.objects.only(
+            'reporting_period_start', 'reporting_period_end',
+            'start_date', 'end_date'
+            ).get(pk=program_id)
+        if unannotated_program.reporting_period_start is None or unannotated_program.reporting_period_end is None:
+            context = {
+                'program': unannotated_program,
+                'redirect_url': request.path
+            }
+            return render(
+                request, 'indicators/program_setup_incomplete.html', context
+                )
         indicator_filters = {'program__id': program_id}
         type_filter_id = None
         indicator_filter_id = None
