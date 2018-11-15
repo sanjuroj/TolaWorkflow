@@ -91,7 +91,7 @@ $(document).ready(function() {
     });
 
     // gauge band links (indicators on track gas tank)
-    $('a[data-over-under-filter]').on('click', function (e) {
+    $('span[data-over-under-filter]').on('click', function (e) {
         e.preventDefault();
         let elem = $(this);
 
