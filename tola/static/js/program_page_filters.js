@@ -53,6 +53,13 @@ function apply_filters_to_indicator_rows() {
 $(document).ready(function() {
     let default_list_title = $('#indicators-list-title').text();
 
+    function highlightFilterTab(highlighted_tab, list_title) {
+        $('.gauge').removeClass('is-highlighted');
+        highlighted_tab.addClass('is-highlighted');
+        $('#indicators-list-title').text(list_title);
+        $('#show-all-indicators').removeClass('is-display-none');
+    }
+
     // Apply top level gas tank filters
     $('.filter-trigger').on('click', function(e) {
         e.preventDefault();
@@ -65,12 +72,7 @@ $(document).ready(function() {
             return;
         }
 
-        $('.gauge').removeClass('is-highlighted');
-        highlighted_tab.addClass('is-highlighted');
-        $('#indicators-list-title').text(list_title);
-        $('#show-all-indicators').removeClass('is-display-none');
-
-
+        highlightFilterTab(highlighted_tab, list_title);
         clear_side_bar_filters();
         gas_tank_filter_target = target;
         gas_tank_filter_target_positive = positive;
@@ -98,11 +100,7 @@ $(document).ready(function() {
         let highlighted_tab = elem.closest('.gauge');
         let list_title = elem.data('list-title');
 
-        $('.gauge').removeClass('is-highlighted');
-        highlighted_tab.addClass('is-highlighted');
-        $('#indicators-list-title').text(list_title);
-        $('#show-all-indicators').removeClass('is-display-none');
-
+        highlightFilterTab(highlighted_tab, list_title);
         clear_side_bar_filters();
         over_under_filter = $(this).data('over-under-filter');
         gas_tank_filter_target = '';
