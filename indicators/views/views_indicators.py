@@ -176,14 +176,13 @@ def import_indicator(service=1, deserialize=True):
 
 def indicator_create(request, id=0):
     """
-    Step one in Inidcator creation.
-    Passed on to IndicatorCreate to do the creation
+    Step one in Indicator creation.
+    Passed on to IndicatorCreate to do the creation [or  not]
     """
     get_indicator_types = IndicatorType.objects.all()
-    countries = getCountry(request.user)
-    country = Country.objects.get(country=countries[0])
-    get_services = ExternalService.objects.all()
     program = Program.objects.get(pk=id)
+    country = program.country.all().order_by('country')[0]
+    get_services = ExternalService.objects.all()
 
     if request.method == 'POST':
         indicator_type = IndicatorType.objects.get(indicator_type="custom")
@@ -198,7 +197,7 @@ def indicator_create(request, id=0):
         definition = None
         external_service_record = None
 
-        # checkfor service indicator and update based on values
+        # check for service indicator and update based on values
         if node_id is not None and node_id != "" and int(node_id) != 0:
             get_imported_indicators = import_indicator(service)
             for item in get_imported_indicators:
