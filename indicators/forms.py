@@ -269,7 +269,7 @@ class IPTTReportFilterForm(ReportFormCommon):
         periods_choices_start = kwargs.get('initial').get('period_choices_start') # TODO: localize this date
         periods_choices_end = kwargs.get('initial').get('period_choices_end') # TODO: localize this date
 
-        target_frequencies = Indicator.objects.filter(program__in=[program.id], target_frequency__isnull=False) \
+        target_frequencies = program.indicator_set.filter(target_frequency__isnull=False) \
             .exclude(target_frequency=Indicator.EVENT) \
             .values('target_frequency') \
             .distinct() \
