@@ -87,7 +87,7 @@
     <fieldset class="clear-all">
 
         <!--<h3>{% trans "Create an Indicator from an External Template." %}</h3>-->
-        <form class="" method="post" enctype="multipart/form-data" name="most" action="/indicators/indicator_create/{{ program_id }}/" role="form">
+        <form class="" method="post" enctype="multipart/form-data" name="most" action="/indicators/indicator_create/{{ program.id }}/" role="form">
           {% csrf_token %}
         <p><b>Program:</b> {{ program.name }}</p>
         <p><b>Country:</b> {{ country.country }}</p>
