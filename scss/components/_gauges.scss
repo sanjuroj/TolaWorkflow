@@ -139,7 +139,7 @@
 
 // filter triggers
 // TODO: should be mroe generic?
-.filter-trigger {
+.filter-trigger, .filter-trigger--band {
     &:hover {
         cursor: pointer;
     }

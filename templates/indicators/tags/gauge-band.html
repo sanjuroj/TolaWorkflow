@@ -28,7 +28,7 @@
         </div>
         <div class="gauge__labels">
             <div class="gauge__label">
-                <span class="text-muted {% if has_filters %}filter-trigger{% endif %}"
+                <span class="text-muted {% if has_filters %}filter-trigger--band{% endif %}"
                     data-target="over-under"
                     data-over-under-filter="None"
                     {% comment %}Translators: shows what number of indicators have no targets reporting data. Example: 3 indicators have data unavailable{% endcomment %}
@@ -48,7 +48,7 @@
                    ><i class="far fa-question-circle"></i></a>
             </div>
             <div class="gauge__label">
-                <span class="gauge__value--above {% if has_filters %}filter-trigger{% endif %}"
+                <span class="gauge__value--above {% if has_filters %}filter-trigger--band{% endif %}"
                     data-target="over-under"
                     data-over-under-filter="1"
                     {% comment %}Translators: shows what number of indicators are a certain percentage above target. Example: 3 indicators are >15% above target{% endcomment %}
@@ -61,7 +61,7 @@
                 </span>
             </div>
             <div class="gauge__label">
-                <span class="gauge__value {% if has_filters %}filter-trigger{% endif %}"
+                <span class="gauge__value {% if has_filters %}filter-trigger--band{% endif %}"
                     data-target="over-under"
                     data-over-under-filter="0"
                     {% comment %}Translators: shows what number of indicators are within a set range of target. Example: 3 indicators are on track{% endcomment %}
@@ -81,7 +81,7 @@
                    ><i class="far fa-question-circle"></i></a>
             </div>
             <div class="gauge__label">
-                <span class="gauge__value--below {% if has_filters %}filter-trigger{% endif %}"
+                <span class="gauge__value--below {% if has_filters %}filter-trigger--band{% endif %}"
                     data-target="over-under"
                     data-over-under-filter="-1"
                     {% comment %}Translators: shows what number of indicators are a certain percentage below target. Example: 3 indicators are >15% below target{% endcomment %}
