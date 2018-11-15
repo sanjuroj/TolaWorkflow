@@ -828,6 +828,11 @@ class IPTT_Mixin(object):
 
 class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
     # TODO: should be localize dates in the Excel format
+    headers = ['Program ID', 'Indicator ID', 'No.', 'Indicator', 'Level', 'Unit of measure',
+               'Change', 'C / NC', '# / %', 'Baseline']
+    indicator_attributes = ['id', 'number', 'name', 'lastlevel', 'unit_of_measure',
+                            'direction_of_change', 'cumulative', 'unittype', 'baseline',
+                            'lop_target', 'lop_actual', 'lop_percent_met']
 
     def get_filename(self, reporttype):
         report = 'TvA'
@@ -860,45 +865,35 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         alignment_right = Alignment(horizontal='right')
 
         bgcolor = PatternFill('solid', "EEEEEE")
-        ws['A1'] = "Indicator Performance Tracking Report"
-        ws['A1'].font = report_header_font
-        ws.merge_cells('A1:H1')
+        ws['C1'] = "Indicator Performance Tracking Report"
+        ws['C1'].font = report_header_font
+        ws.merge_cells('C1:J1')
 
-        ws['A2'] = u"{0} - {1}".format(datetime.strftime(data['report_start_date'], "%b %d, %Y"),
+        ws['C2'] = u"{0} - {1}".format(datetime.strftime(data['report_start_date'], "%b %d, %Y"),
                                       datetime.strftime(data['report_end_date'], "%b %d, %Y"))
-        ws['A2'].font = report_header_font
-        ws.merge_cells('A2:H2')
+        ws['C2'].font = report_header_font
+        ws.merge_cells('C2:J2')
 
-        ws['A3'] = data['program'].name
-        ws['A3'].font = report_header_font
-        ws.merge_cells('A3:H3')
+        ws['C3'] = data['program'].name
+        ws['C3'].font = report_header_font
+        ws.merge_cells('C3:J3')
+        for col, header in enumerate(self.headers):
+            ws.cell(column=col+1, row=4).value = header
 
-        ws['A4'] = 'No.'
-        ws['B4'] = 'Indicator'
-        ws['C4'] = 'Level'
-        ws['D4'] = 'Unit of measure'
-        ws['E4'] = 'Change'
-        ws['F4'] = 'C / NC'
-        ws['G4'] = '# / %'
-        ws['H4'] = 'Baseline'
-
-        ws.merge_cells(start_row=3, start_column=9, end_row=3, end_column=11)
-        ws.cell(row=3, column=9).value = 'Life of Program'
-        ws.cell(row=3, column=9).alignment = alignment
-        ws.cell(row=3, column=9).font = headers_font
-
-        ws['I4'] = 'Target'
-        ws['I4'].alignment = alignment_right
-        ws['J4'] = 'Actual'
-        ws['J4'].alignment = alignment_right
-        ws['K4'] = '% Met'
-        ws['K4'].alignment = alignment_right
+        ws.merge_cells(start_row=3, start_column=len(self.headers)+1, end_row=3, end_column=len(self.headers)+3)
+        ws.cell(row=3, column=len(self.headers)+1).value = 'Life of Program'
+        ws.cell(row=3, column=len(self.headers)+1).alignment = alignment
+        ws.cell(row=3, column=len(self.headers)+1).font = headers_font
+        for col, header in enumerate(['Target', 'Actual', '% Met']):
+            ws.cell(row=4, column=len(self.headers)+col+1).value = header
+            ws.cell(row=4, column=len(self.headers)+col+1).alignment = alignment_right
         periods = data['report_date_ranges']
         col_offset = 0
         col = 0
+        periods_start_col = len(self.headers) + 4
         if data['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
             for name, period in periods.items():
-                col = 12 + col_offset
+                col = periods_start_col + col_offset
 
                 # processs period date ranges
                 try:
@@ -934,7 +929,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
             col += 2
         elif data['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
             for name, period in periods.items():
-                col = 12 + col_offset
+                col = periods_start_col + col_offset
                 ws.cell(row=2, column=col).value = name
                 ws.cell(row=2, column=col).alignment = alignment
                 ws.cell(row=2, column=col).font = headers_font
@@ -957,62 +952,49 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
     def add_data(self, wb, ws, context):
         alignment = Alignment(wrap_text=True)
         indicators = context['indicators']
+        program = context['program']
         periods = context['report_date_ranges']
         row = 5
         for indicator in indicators:
             wb.guess_types = False
-            ws.cell(row=row, column=1).value = indicator['number'].encode('UTF-8')
-            ws.cell(row=row, column=2).value = indicator['name'].encode('UTF-8')
-            ws.cell(row=row, column=2).alignment = alignment
-            ws.cell(row=row, column=3).value = indicator['lastlevel'].encode('UTF-8')
-            ws.cell(row=row, column=4).value = indicator['unit_of_measure'].encode('UTF-8')
-            ws.cell(row=row, column=4).alignment = alignment
-            ws.cell(row=row, column=5).value = indicator['direction_of_change'].encode('UTF-8')
+            ws.cell(row=row, column=1).value = u'{0}'.format(program.id)
+            for col, attribute in enumerate(self.indicator_attributes):
+                ws.cell(row=row, column=col+2).value = u'{0}'.format(
+                    indicator.get(attribute, 'N/A')
+                    )
+            for col in [2, 4]:
+                ws.cell(row=row, column=col).alignment = alignment
+            for col in [1, 2]:
+                value = ws.cell(row=row, column=col).value
+                ws.cell(row=row, column=col).value = int(value)
 
-            try:
-                ws.cell(row=row, column=6).value = indicator['cumulative'].encode('UTF-8')
-            except KeyError:
-                ws.cell(row=row, column=6).value = ''
-
-            ws.cell(row=row, column=7).value = indicator['unittype'].encode('UTF-8')
-            wb.guess_types = True
-            ws.cell(row=row, column=8).value = indicator['baseline'].encode('UTF-8')
-            ws.cell(row=row, column=9).value = indicator['lop_target'].encode('UTF-8')
-            ws.cell(row=row, column=10).value = indicator['lop_actual'].encode('UTF-8')
-            ws.cell(row=row, column=11).value = indicator['lop_percent_met'].encode('UTF-8')
-
-            # ws.cell(row=row, column=11).number_format = "$"
             col_offset = 0
-            col = 0
-            if context['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
-                for k, v in periods.items():
-                    col = 12 + col_offset
-                    target = u"{}_period_target".format(k)
-                    ws.cell(row=row, column=col).value = indicator[target]
-
-                    actual = u"{}_actual".format(k)
-                    ws.cell(row=row, column=col + 1).value = indicator[actual]
-
-                    percent_met = u"{}_percent_met".format(k)
-                    try:
-                        ws.cell(row=row, column=col + 2).value = indicator[percent_met].encode('UTF-8')
-                    except ValueError:
-                        pass
-
+            period_column_start = len(self.indicator_attributes) + 2 # program_id
+            for period in periods.keys():
+                col = period_column_start + col_offset
+                if context['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
+                    ws.cell(row=row, column=col).value = u'{0}'.format(
+                        indicator.get(u'{0}_period_target'.format(period)))
+                    ws.cell(row=row, column=col+1).value = u'{0}'.format(
+                        indicator.get(u'{0}_actual'.format(period)))
+                    ws.cell(row=row, column=col+2).value = u'{0}'.format(
+                        indicator.get(u'{0}_percent_met'.format(period)))
                     col_offset += 3
-            elif context['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
-                for k, v in periods.items():
-                    col = 12 + col_offset
-                    actual = u"{}_actual".format(k)
-                    ws.cell(row, col).value = indicator[actual]
+                elif context['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
+                    ws.cell(row=row, column=col+1).value = u'{0}'.format(
+                        indicator.get(u'{0}_actual'.format(period)))
                     col_offset += 1
             row += 1
         return ws
 
     def set_column_widths(self, ws):
-        widths = [10, 100, 12, 40, 8, 12]
+        widths = [10, 10, 10, 100, 12, 40, 8, 12]
         for i, w in enumerate(widths):
             ws.column_dimensions[get_column_letter(i + 1)].width = w
+        # collapse the first two columns (hidden program_id and indicator_id)
+        ws.column_dimensions['A'].hidden = True
+        ws.column_dimensions['B'].hidden = True
+        return ws
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
