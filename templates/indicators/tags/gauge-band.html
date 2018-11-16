@@ -7,7 +7,7 @@
     <div class="gauge__overview">
         {% if scope_percents.nonreporting == 100 %}
         <div>
-            <p class="text-muted">Unavailable until results are reported</p>
+            <p class="text-muted">{% trans "Unavailable until results are reported" %}</p>
             <div>
                 <i class="gauge__icon gauge__icon--error fas fa-frown"></i>
             </div>
@@ -32,7 +32,7 @@
                     data-target="over-under"
                     data-over-under-filter="None"
                     {% comment %}Translators: shows what number of indicators have no targets reporting data. Example: 3 indicators have data unavailable{% endcomment %}
-                    data-list-title="{% blocktrans with scope_counts.nonreporting as filter_title_count %}{{ filter_title_count }} indicators have data unavailable{% endblocktrans %}"
+                    data-list-title="{% blocktrans count filter_title_count=scope_counts.nonreporting %}{{ filter_title_count }} indicator has data unavailable{% plural %}{{ filter_title_count }} indicators have data unavailable{% endblocktrans %}"
                     >
                     {% comment %}Translators: shows what percentage of indicators have no targets reporting data. Example: 31% unavailable{% endcomment %}
                     {% blocktrans with scope_percents.nonreporting as unavailable %}
@@ -52,7 +52,7 @@
                     data-target="over-under"
                     data-over-under-filter="1"
                     {% comment %}Translators: shows what number of indicators are a certain percentage above target. Example: 3 indicators are >15% above target{% endcomment %}
-                    data-list-title="{% blocktrans with scope_counts.high as filter_title_count %}{{ filter_title_count }} indicators are &gt;15% above target{% endblocktrans %}"
+                    data-list-title="{% blocktrans count filter_title_count=scope_counts.high %}{{ filter_title_count }} indicator is &gt;15% above target{% plural %}{{ filter_title_count }} indicators are &gt;15% above target{% endblocktrans %}"
                     >
                     {% comment %}Translators: shows what percentage of indicators are a certain percentage above target. Example: 31% are >15% above target{% endcomment %}
                     {% blocktrans with scope_percents.high as high %}
@@ -65,7 +65,7 @@
                     data-target="over-under"
                     data-over-under-filter="0"
                     {% comment %}Translators: shows what number of indicators are within a set range of target. Example: 3 indicators are on track{% endcomment %}
-                    data-list-title="{% blocktrans with scope_counts.on_scope as filter_title_count %}{{ filter_title_count }} indicators are on track{% endblocktrans %}"
+                    data-list-title="{% blocktrans count filter_title_count=scope_counts.on_scope %}{{ filter_title_count }} indicator is on track{% plural %}{{ filter_title_count }} indicators are on track{% endblocktrans %}"
                     >
                     {% comment %}Translators: shows what percentage of indicators are within a set range of target. Example: 31%  are on track{% endcomment %}
                     {% blocktrans with scope_percents.on_scope as on_scope %}
@@ -85,7 +85,7 @@
                     data-target="over-under"
                     data-over-under-filter="-1"
                     {% comment %}Translators: shows what number of indicators are a certain percentage below target. Example: 3 indicators are >15% below target{% endcomment %}
-                    data-list-title="{% blocktrans with scope_counts.low as filter_title_count %}{{ filter_title_count }} indicators are &gt;15% below target{% endblocktrans %}"
+                    data-list-title="{% blocktrans count filter_title_count=scope_counts.low %}{{ filter_title_count }} indicator is &gt;15% below target{% plural %}{{ filter_title_count }} indicators are &gt;15% below target{% endblocktrans %}"
                     >
                     {% comment %}Translators: shows what percentage of indicators are a certain percentage below target. Example: 31% are >15% below target{% endcomment %}
                     {% blocktrans with scope_percents.low as low %}
