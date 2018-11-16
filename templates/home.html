@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n mytags %}
-{% block title %}{{ active_country }} | {% endblock %}
-{% block page_title %}{{ active_country }}{% endblock %}
+{% block title %}{{ active_country|default:"No active country" }} | {% endblock %}
+{% block page_title %}{{ active_country|default:"No active country" }}{% endblock %}
 
 {% block bodyclasses %}home{% endblock %}
 
@@ -23,6 +23,7 @@
 
 {% block content %}
 
+{% if active_country %}
 <section class="home__featured-country">
     <div class="featured-country__map">
         {% include "home_country_map.html" %}
@@ -41,6 +42,8 @@
         </div>
     </div>
 </section><!--/.home__featured-country-->
+{% endif %}
+
 <section class="home__program-list">
     <h2>{% blocktrans %}{{ no_programs }} active programs{% endblocktrans %}</h2>
     {% for program in programs %}

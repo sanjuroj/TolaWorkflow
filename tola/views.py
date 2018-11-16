@@ -26,14 +26,20 @@ def index(request, selected_country=None):
 
     # Find the active country
     user = TolaUser.objects.filter(user=request.user)[0]
-    user_countries = getCountry(user) # all countries whose programs are available to the user
+    user_countries = getCountry(request.user) # all countries whose programs are available to the user
 
     if selected_country: # from URL
         active_country = Country.objects.filter(id=selected_country)[0]
         user.update_active_country(active_country)
         user.save() # this also updates user.edit_date -- is that desireable?
     else:
-        active_country = user.active_country
+        try:
+            # default to first country in user's accessible countries
+            active_country = user.active_country if user.active_country else user_countries[0]
+        except IndexError:
+            # ... or failing that, to their "home" country
+            active_country = user.country
+            # ... failing all of this, the homepage will be blank. Sorry!
 
     programs = Program.objects\
         .filter(country=active_country)\
