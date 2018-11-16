@@ -21,21 +21,19 @@ from django.utils.decorators import method_decorator
 @login_required(login_url='/accounts/login/')
 def index(request, selected_country=None):
     """
-    Mangosteen home page
+    Home page
     """
 
-    # Find the active country and set a session variable therefrom
-    user_countries = getCountry(request.user) # all countries whose programs are available to the user
-    user_home_country = TolaUser.objects.filter(user=request.user)[0].country
+    # Find the active country
+    user = TolaUser.objects.filter(user=request.user)[0]
+    user_countries = getCountry(user) # all countries whose programs are available to the user
 
     if selected_country: # from URL
         active_country = Country.objects.filter(id=selected_country)[0]
+        user.update_active_country(active_country)
+        user.save() # this also updates user.edit_date -- is that desireable?
     else:
-        try: # or from session var
-            active_country = Country.objects.filter(id=request.session['country'])[0]
-        except KeyError: # or from user's home country
-            active_country = user_home_country
-    request.session['country'] = active_country.id # (re)set session var
+        active_country = user.active_country
 
     programs = Program.objects\
         .filter(country=active_country)\

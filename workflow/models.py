@@ -142,6 +142,8 @@ class TolaUser(models.Model):
         Organization, default=1, blank=True, null=True, verbose_name=_("Organization"))
     language = models.CharField(max_length=2, choices=settings.LANGUAGES, default='en')
     country = models.ForeignKey(Country, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Country"))
+    active_country = models.ForeignKey( Country, blank=True, null=True, on_delete=models.SET_NULL,\
+        related_name='active_country', verbose_name=_("Active Country"))
     countries = models.ManyToManyField(
         Country, verbose_name=_("Accessible Countries"), related_name='countries', blank=True)
     tables_api_token = models.CharField(blank=True, null=True, max_length=255)
@@ -178,6 +180,10 @@ class TolaUser(models.Model):
         self.edit_date = timezone.now()
         super(TolaUser, self).save()
 
+    # update active country
+    def update_active_country(self, country):
+        self.active_country = country
+
 
 class TolaBookmarks(models.Model):
     user = models.ForeignKey(TolaUser, related_name='tolabookmark', verbose_name=_("User"))
@@ -206,7 +212,7 @@ class TolaBookmarksAdmin(admin.ModelAdmin):
 
     list_display = ('user', 'name')
     display = 'Tola User Bookmarks'
-    list_filter = ('user__name',)
+    listd_filter = ('user__name',)
     search_fields = ('name','user')
 
 
