@@ -183,6 +183,7 @@ class TolaUser(models.Model):
     # update active country
     def update_active_country(self, country):
         self.active_country = country
+        super(TolaUser, self).save()
 
 
 class TolaBookmarks(models.Model):

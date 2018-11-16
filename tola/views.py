@@ -31,7 +31,6 @@ def index(request, selected_country=None):
     if selected_country: # from URL
         active_country = Country.objects.filter(id=selected_country)[0]
         user.update_active_country(active_country)
-        user.save() # this also updates user.edit_date -- is that desireable?
     else:
         try:
             # default to first country in user's accessible countries
