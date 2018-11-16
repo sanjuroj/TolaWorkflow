@@ -6834,7 +6834,7 @@ body > .container {
   font-size: 0.875rem;
   margin-top: 15px; }
 
-.filter-trigger:hover {
+.filter-trigger:hover, .filter-trigger--band:hover {
   cursor: pointer; }
 
 .is-display-none {
