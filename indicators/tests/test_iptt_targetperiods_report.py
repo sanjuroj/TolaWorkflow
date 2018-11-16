@@ -12,14 +12,18 @@ from indicators.models import Indicator, CollectedData, PeriodicTarget
 
 class TestPeriodicTargetsBase(iptt_utility.TestIPTTTargetPeriodsReportResponseBase):
     def setUp(self):
+        self.program = None
         super(TestPeriodicTargetsBase, self).setUp()
         self.indicators = []
 
     def tearDown(self):
-        super(TestPeriodicTargetsBase, self).tearDown()
+        CollectedData.objects.all().delete()
         PeriodicTarget.objects.all().delete()
         Indicator.objects.all().delete()
-        CollectedData.objects.all().delete()
+        super(TestPeriodicTargetsBase, self).tearDown()
+        if self.program is not None:
+            self.program.delete()
+        self.indicators = []
 
     def set_reporting_period(self, start, end):
         self.program.reporting_period_start = datetime.strptime(start, '%Y-%m-%d')

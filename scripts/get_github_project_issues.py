@@ -11,6 +11,7 @@ from requests.auth import HTTPBasicAuth
 import json
 import sys
 import re
+import getpass
 
 headers = {'Accept': 'application/vnd.github.inertia-preview+json'}
 
@@ -19,12 +20,12 @@ print '\nEnter 1 to use GitHub token authorization (https://github.com/settings/
 print 'Enter 2 to use GitHub username and password: '
 auth_pref = raw_input('Enter 1 or 2: ')
 if auth_pref == '1':
-    token = raw_input('GitHub token: ')
+    token = getpass.getpass('GitHub token: ')
     headers['Authorization'] = 'token %s' % token
     auth = ''
 elif auth_pref == '2':
     username = raw_input('GitHub username: ')
-    password = raw_input('GitHub password: ')
+    password = getpass.getpass('GitHub password: ')
     auth = HTTPBasicAuth(username, password)
 else:
     print type(auth_pref)
@@ -43,7 +44,12 @@ projects = json.loads(response.text)
 project_id = ''
 columnn_ids = []
 for project in projects:
-    pname = project['name'].strip()
+    try:
+        pname = project['name'].strip()
+    except TypeError:
+        print 'Exiting, failed to process this project:'
+        print project
+        sys.exit()
     if project_name == pname:
         project_id = project['id']
         break
@@ -55,8 +61,9 @@ else:
 # Get the columns ids associated with the project
 columns_url = columns_template % project_id
 response = requests.get(columns_url, headers=headers, auth=auth)
-
-column_ids = [col['id'] for col in json.loads(response.text)]
+cols_to_fetch = ['Done', ]
+column_ids = [col['id'] for col in json.loads(response.text) if col['name'] in cols_to_fetch]
+issues = []
 for col_id in column_ids:
 
     # Loop through each card in each column and the the issue data associated
@@ -64,7 +71,6 @@ for col_id in column_ids:
     cards_url = cards_template % col_id
     cards_response = requests.get(cards_url, headers=headers, auth=auth)
 
-    issues = []
     for card in json.loads(cards_response.text):
         match = re.search('(\d+)$', card['content_url'])
         issue_num = match.group(1)
@@ -72,7 +78,10 @@ for col_id in column_ids:
         issue_response = requests.get(issue_url, headers=headers, auth=auth)
         issues.append((issue_num, json.loads(issue_response.text)['title']))
 
-issues.sort(key=lambda k: int(k[0]), reverse=True)
-print ''
-for i in issues:
-    print '#%s - %s' % (i)
+if issues:
+    issues.sort(key=lambda k: int(k[0]), reverse=True)
+    print ''
+    for i in issues:
+        print '#%s - %s' % i
+else:
+    print "No cards in the column(s)", ', '.join(cols_to_fetch)

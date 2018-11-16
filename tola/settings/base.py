@@ -86,12 +86,7 @@ USE_L10N = True
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = True
 
-DATE_FORMAT = 'Y-m-d'
-
-# global setting for how to display monthly indicators in reports/forms:
-MONTHLY_INDICATOR_DATE_FORMAT = "YEAR_MONTH_FORMAT"
-# global setting for how to display dates on non-monthly (annual/etc.) in reports/forms:
-DATE_AWARE_INDICATOR_DATE_FORMAT = "DATE_FORMAT"
+DATE_FORMAT = 'Y-m-d'  # most likely overridden in a formats.py file
 
 # Add list of languages available for selection.
 LANGUAGES = [
@@ -354,6 +349,10 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 GOOGLE_ANALYTICS_PROPERTY_ID = None # replaced in private settings file
 GOOGLE_ANALYTICS_DOMAIN = 'example.org' # replaced in private settings file
+
+# Projects whitelist (https://github.com/mercycorps/TolaActivity/issues/132)
+# Limit access to projects to existing users while hiding it from all others
+PROJECTS_ACCESS_WHITELIST_SET = {'AF', 'PK', 'TL'}  # country code in `workflow_country`
 
 ########## LOGGING CONFIGURATION
 LOGGING = {

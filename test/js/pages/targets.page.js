@@ -9,23 +9,6 @@ let parms = Util.readConfig()
 parms.baseurl += '/indicators/home/0/0/0'
 
 /**
- * Add num target periods to the targets list, or 1 target period if num
- * not specified
- * @param {integer} num The number of target periods to add
- * @returns {integer} The total number of target periods added
- */
-function addTarget (num = 1) {
-  let link = browser.$('a#addNewPeriodicTarget')
-  let cnt = 0
-
-  while (cnt < num) {
-    link.click()
-    cnt++
-  }
-  return cnt
-}
-
-/**
  * Click the Direction of change dropdown
  * @returns {Nothing}
  */
@@ -67,17 +50,6 @@ function clickTargetsTab () {
 }
 
 /**
- * Set the value of the Direction of change dropdown
- */
-function setDirectionOfChange (dir = 'none') {
-  let val
-  if (dir === 'none') { val = 1 }
-  if (dir === 'pos') { val = 2 }
-  if (dir === 'neg') { val = 3 }
-  browser.$('select#id_direction_of_change').selectByValue(val)
-}
-
-/**
  * Get the current value of the target baseline from the indicators detail screen
  * @returns {integer} The current value of the Baseline text field
  */
@@ -108,29 +80,6 @@ function getDirectionOfChange () {
   if (changeDir === 1) { return 'none' }
   if (changeDir === 2) { return 'pos' }
   if (changeDir === 3) { return 'neg' }
-}
-
-/**
- * Get the target date ranges created for given indicator
- * @returns {Array<string>} an array of hyphen-separated start and end dates
- */
-function getTargetDateRanges () {
-  browser.pause(msec)
-  browser.scroll('h3')
-  let placeholder = browser.$('div#id_div_periodic_tables_placeholder')
-  let targetsDiv = placeholder.$('div#periodic-targets-tablediv')
-  if (!browser.isVisible('table#periodic_targets_table')) {
-    browser.waitForVisible('table#periodic_targets_table')
-  }
-	let targetsTable = targetsDiv.$('table#periodic_targets_table')
-  let rows = targetsTable.$$('tbody>tr.periodic-target')
-
-  let dateRanges = []
-  for (let row of rows) {
-    let dateRange = row.$('div').getText()
-    dateRanges.push(dateRange.trim())
-  }
-  return dateRanges
 }
 
 /**
@@ -169,16 +118,6 @@ function getLoPTargetActual () {
   return val
 }
 
-function getNumberType () {
-  let val = browser.$('div#div_id_unit_of_measure_type_0').getText()
-  return val
-}
-
-function getPercentType () {
-  let val = browser.$('div#div_id_unit_of_measure_type_1').getText()
-  return val
-}
-
 /**
  * Get the number of events specified for event-based targets
  * @returns {integer} The number of events specified
@@ -208,17 +147,6 @@ function getNumTargetPeriods () {
   browser.waitForExist('input#id_target_frequency_num_periods')
   let val = browser.$('input#id_target_frequency_num_periods').getValue()
   return val
-}
-
-/**
- * Get the text, if any, from the error box beneath the number of
- * events text bo
- * @returns {string} The error text as a string
- */
-function getNumTargetPeriodsErrorHint () {
-  let errorBox = browser.$('span#validation_target_frequency_num_periods')
-  let errorHint = errorBox.getText()
-  return errorHint
 }
 
 /**
@@ -284,15 +212,12 @@ function getProgramIndicatorsTableCount () {
 }
 
 /**
- * Get a list of the indicator buttons in the main programs table
- * @returns {Array<buttons>} returns an array of clickable "buttons",
- * which are actually anchor (<a />) elements, from the programs table
+ * Get a list of the program indicators links on the indicators landing page
+ * @returns {Array<links>} returns an array of clickable "links",
  */
- // TODO: Rename this method and rewrite the docstring because the
  // buttons are now links rather and the docstring is incorrect
-function getProgramIndicatorButtons () {
-  let programs = browser.$$('a[id*="id_btnOpenindicatorsForProgramId_"]')
-  return programs
+function getProgramIndicatorLinks () {
+  return browser.$$('a[id*="id_btnOpenindicatorsForProgramId_"]')
 }
 
 /**
@@ -320,6 +245,29 @@ function getSumOfTargets () {
 }
 
 /**
+ * Get the target date ranges created for given indicator
+ * @returns {Array<string>} an array of hyphen-separated start and end dates
+ */
+function getTargetDateRanges () {
+  browser.pause(msec)
+  browser.scroll('h3')
+  let placeholder = browser.$('div#id_div_periodic_tables_placeholder')
+  let targetsDiv = placeholder.$('div#periodic-targets-tablediv')
+  if (!browser.isVisible('table#periodic_targets_table')) {
+    browser.waitForVisible('table#periodic_targets_table')
+  }
+	let targetsTable = targetsDiv.$('table#periodic_targets_table')
+  let rows = targetsTable.$$('tbody>tr.periodic-target')
+
+  let dateRanges = []
+  for (let row of rows) {
+    let dateRange = row.$('div').getText()
+    dateRanges.push(dateRange.trim())
+  }
+  return dateRanges
+}
+
+/**
  * Get the current error string, if any, from the error box for
  * the target first event name field on the targets tab of the
  * indictor detail screen
@@ -327,8 +275,7 @@ function getSumOfTargets () {
  */
 function getTargetFirstEventErrorHint () {
   let errorBox = browser.$('#validation_id_target_frequency_custom')
-  let errorHint = errorBox.getText()
-  return errorHint
+  return errorBox.getText()
 }
 
 /**
@@ -350,11 +297,12 @@ function getTargetFirstPeriodErrorHint () {
  */
 function getTargetFrequency () {
   clickTargetsTab()
-  let val = browser.$('select#target_frequency').getValue()
+  Util.waitForAjax()
+  let val = browser.$('select#id_target_frequency').getValue()
   if (val === 0) {
     return '---------'
   } else {
-    let list = browser.$('select#target_frequency').getText()
+    let list = browser.$('select#id_target_frequency').getText()
     let rows = list.split('\n')
     let result = rows[val]
     return result.trim()
@@ -379,9 +327,8 @@ function getTargetInputBoxes () {
  * @returns {string} The error text present, if any
  */
 function getTargetValueErrorHint () {
-  let errorBox = browser.$('span.target-value-error')
-  let errorHint = errorBox.getText()
-  return errorHint
+  let errorBox = browser.$('td#id_pt_errors')
+  return errorBox.getText()
 }
 
 /**
@@ -389,8 +336,7 @@ function getTargetValueErrorHint () {
  * @returns {integer} The current value as an integer
  */
 function getUnitOfMeasure () {
-  let val = browser.$('input#id_unit_of_measure').getValue()
-  return val
+  return browser.$('input#id_unit_of_measure').getValue()
 }
 
 function getMeasureIsCumulative () {
@@ -404,8 +350,7 @@ function getMeasureIsCumulative () {
 
 function getMeasureType () {
   let element = browser.$('input[name="unit_of_measure_type"]')
-  let val = element.getValue()
-  return val
+  return element.getValue()
 }
 
 /**
@@ -417,16 +362,6 @@ function getMeasureType () {
 function open (url = parms.baseurl) {
   browser.url(url)
 }
-
-// FIXME: This should be a property
-/**
- * Return the page title
- * @returns {string} The title of the current page
- */
-// function getPageName () {
-//   // On this page, the "title" is actually the <h2> caption
-//   return browser.$('h2').getText()
-// }
 
 /**
  * Click the "Save changes" button on the Indicator edit screen
@@ -471,6 +406,17 @@ function setBaseline (value) {
 function setBaselineNA () {
   clickTargetsTab()
   browser.$('#id_baseline_na').click()
+}
+
+/**
+ * Set the value of the Direction of change dropdown
+ */
+function setDirectionOfChange (dir = 'none') {
+  let val
+  if (dir === 'none') { val = 1 }
+  if (dir === 'pos') { val = 2 }
+  if (dir === 'neg') { val = 3 }
+  browser.$('select#id_direction_of_change').selectByValue(val)
 }
 
 /**
@@ -617,7 +563,6 @@ function setUnitOfMeasure (unit) {
   bucket.setValue(unit)
 }
 
-exports.addTarget = addTarget
 exports.clickNumberType = clickNumberType
 exports.clickPercentType = clickPercentType
 exports.clickResetButton = clickResetButton
@@ -639,7 +584,7 @@ exports.getProgramIndicatorsTable = getProgramIndicatorsTable
 exports.getProgramIndicatorsTableCount = getProgramIndicatorsTableCount
 exports.getProgramIndicatorDeleteButtons = getProgramIndicatorDeleteButtons
 exports.getProgramIndicatorEditButtons = getProgramIndicatorEditButtons
-exports.getProgramIndicatorButtons = getProgramIndicatorButtons
+exports.getProgramIndicatorLinks = getProgramIndicatorLinks
 exports.getProgramsTable = getProgramsTable
 exports.getSumOfTargets = getSumOfTargets
 exports.getTargetDateRanges = getTargetDateRanges
@@ -647,8 +592,8 @@ exports.getTargetFirstEventErrorHint = getTargetFirstEventErrorHint
 exports.getTargetFirstPeriodErrorHint = getTargetFirstPeriodErrorHint
 exports.getTargetFrequency = getTargetFrequency
 exports.getTargetInputBoxes = getTargetInputBoxes
-exports.getTargetValueErrorHint = getTargetValueErrorHint
 exports.getUnitOfMeasure = getUnitOfMeasure
+exports.getTargetValueErrorHint = getTargetValueErrorHint
 exports.open = open
 exports.saveIndicatorChanges = saveIndicatorChanges
 exports.setBaseline = setBaseline

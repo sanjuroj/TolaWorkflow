@@ -176,34 +176,29 @@ def import_indicator(service=1, deserialize=True):
 
 def indicator_create(request, id=0):
     """
-    Step one in Inidcator creation.
-    Passed on to IndicatorCreate to do the creation
+    Step one in Indicator creation.
+    Passed on to IndicatorCreate to do the creation [or  not]
     """
     get_indicator_types = IndicatorType.objects.all()
-    get_countries = Country.objects.all()
-    countries = getCountry(request.user)
-    country_id = Country.objects.get(country=countries[0]).id
-    get_programs = Program.objects.filter(funding_status="Funded",
-                                          country__in=countries).distinct()
+    program = Program.objects.get(pk=id)
+    countries = ', '.join(program.country.all().order_by('country').values_list('country', flat=True))
     get_services = ExternalService.objects.all()
-    program_id = id
 
     if request.method == 'POST':
         indicator_type = IndicatorType.objects.get(indicator_type="custom")
-        # country = Country.objects.get(id=request.POST['country'])
         program = Program.objects.get(id=request.POST['program'])
         service = request.POST['services']
         level = Level.objects.first()
-        node_id = request.POST['service_indicator']
+        node_id = request.POST.get('service_indicator')
         sector = None
         # add a temp name for custom indicators
-        name = _("Temporary")
+        name = request.POST.get('name', _("Temporary"))
         source = None
         definition = None
         external_service_record = None
 
-        # checkfor service indicator and update based on values
-        if node_id is not None and int(node_id) != 0:
+        # check for service indicator and update based on values
+        if node_id is not None and node_id != "" and int(node_id) != 0:
             get_imported_indicators = import_indicator(service)
             for item in get_imported_indicators:
                 if item['nid'] == node_id:
@@ -241,8 +236,7 @@ def indicator_create(request, id=0):
     # send the keys and vars from the json data to the template along with
     # submitted feed info and silos for new form
     return render(request, "indicators/indicator_create.html",
-                  {'country_id': country_id, 'program_id': int(program_id),
-                   'getCountries': get_countries, 'getPrograms': get_programs,
+                  {'country': countries, 'program': program,
                    'getIndicatorTypes': get_indicator_types,
                    'getServices': get_services})
 
@@ -1067,6 +1061,9 @@ def service_json(request, service):
     :param service: The remote data service
     :return: JSON object of the indicators from the service
     """
+    if service == 0:
+        # no service (this is selecting a custom indicator)
+        return HttpResponse(status=204)
     service_indicators = import_indicator(service, deserialize=False)
     return HttpResponse(service_indicators, content_type="application/json")
 

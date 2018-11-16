@@ -1,3 +1,4 @@
+import IndPage from '../pages/indicators.page'
 import TargetsTab from '../pages/targets.page'
 import Navbar from '../pages/navbar.page'
 import Util from '../lib/testutil'
@@ -20,9 +21,9 @@ describe("Collected data datepicker", function () {
       Navbar.Indicators.click()
       Util.waitForAjax()
 
-      // Click the third program in the list
-      let progButtons = TargetsTab.getProgramIndicatorButtons()
-      let progButton = progButtons[2]
+      // Click the first program in the list
+      let progButtons = TargetsTab.getProgramIndicatorLinks()
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
@@ -63,8 +64,8 @@ describe("Collected data datepicker", function () {
       Navbar.Indicators.click()
       Util.waitForAjax()
 
-      let progButtons = TargetsTab.getProgramIndicatorButtons()
-      let progButton = progButtons[2]
+      let progButtons = TargetsTab.getProgramIndicatorLinks()
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
@@ -105,8 +106,8 @@ describe("Collected data datepicker", function () {
       Navbar.Indicators.click()
       Util.waitForAjax()
 
-      let progButtons = TargetsTab.getProgramIndicatorButtons()
-      let progButton = progButtons[2]
+      let progButtons = TargetsTab.getProgramIndicatorLinks()
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
@@ -144,24 +145,60 @@ describe("Collected data datepicker", function () {
       Util.waitForAjax()
     })
 
-    it('assigns given value to correct period if program lifetime includes date (annual)', function() {
-      // Add an indicator with annual periods
-      // Add collected data for collection dates in each period
-      // Confirm data added to correct periods (2017 data goes in the 2017 period)
-      // Confirm data NOT added to incorrect periods (2017 data should not be in the 2018 period)
+    it('assigns data to correct period of annual program if collected in program lifetime', function() {
+      Navbar.Indicators.click()
+      Util.waitForAjax()
+
+      let progButtons = TargetsTab.getProgramIndicatorLinks()
+      let progButton = progButtons[0]
+      progButton.click()
+      Util.waitForAjax()
+
+      let indicators = browser.$$('span.indicator_name')
+      if (indicators.length > 0) {
+        indicators[0].click()
+      }
+      Util.waitForAjax()
+
+      let addResults = browser.$('a[href*="/indicators/collecteddata_add/"]')
+      addResults.waitForVisible()
+      addResults.click()
+
+      if (!browser.isVisible('div#div_id_date_collected')) {
+        browser.waitForVisible('div#div_id_date_collected')
+      }
+
+      // Set the date
+      let dp = browser.$('div#div_id_date_collected')
+      dp.click()
+      if (!browser.isVisible('td.ui-datepicker-today')) {
+        browser.waitForVisible('td.ui-datepicker-today')
+      }
+      browser.$('td.ui-datepicker-today').click()
+
+      let now = new Date(Date.now())
+      let sysDate = dateFormat(now,'yyyy-mm-dd')
+      let dpDate = browser.$('input#id_date_collected').getValue()
+      expect(sysDate === dpDate)
+
+      // Pop up should disappear after selecting a date
+      expect(!browser.isVisible('div#div_id_date_collected'))
+
+      browser.$('div#indicator_collecteddata_div button.close').click()
+      Util.waitForAjax()
     })
 
-    it.skip('assigns given value to correct period if program lifetime includes date (semiannual)')
-    it.skip('assigns given value to correct period if program lifetime includes date (triannual)')
-    it.skip('assigns given value to correct period if program lifetime includes date (quarterly)')
-    it.skip('assigns given value to correct period if program lifetime includes date (monthly)')
+    it.skip('assigns given value to correct period if program lifetime includes collection date (semiannual)')
+    it.skip('assigns given value to correct period if program lifetime includes collection date (triannual)')
+    it.skip('assigns given value to correct period if program lifetime includes collection date (quarterly)')
+    it.skip('assigns given value to correct period if program lifetime includes collection date (monthly)')
 
     it('displays warning if given date is outside program lifetime (all target periods)', function() {
       Navbar.Indicators.click()
       Util.waitForAjax()
 
-      let progButtons = TargetsTab.getProgramIndicatorButtons()
-      let progButton = progButtons[2]
+      let progButtons = TargetsTab.getProgramIndicatorLinks()
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
@@ -204,8 +241,8 @@ describe("Collected data datepicker", function () {
       Navbar.Indicators.click()
       Util.waitForAjax()
 
-      let progButtons = TargetsTab.getProgramIndicatorButtons()
-      let progButton = progButtons[1]
+      let progButtons = TargetsTab.getProgramIndicatorLinks()
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
@@ -246,8 +283,8 @@ describe("Collected data datepicker", function () {
       Navbar.Indicators.click()
       Util.waitForAjax()
 
-      let progButtons = TargetsTab.getProgramIndicatorButtons()
-      let progButton = progButtons[1]
+      let progButtons = TargetsTab.getProgramIndicatorLinks()
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
@@ -283,18 +320,18 @@ describe("Collected data datepicker", function () {
       Util.waitForAjax()
     })
 
-    it.skip('assigns given value to correct period if program lifetime includes date (annual)')
-    it.skip('assigns given value to correct period if program lifetime includes date (semiannual)')
-    it.skip('assigns given value to correct period if program lifetime includes date (triannual)')
-    it.skip('assigns given value to correct period if program lifetime includes date (quarterly)')
-    it.skip('assigns given value to correct period if program lifetime includes date (monthly)')
+    it.skip('assigns given value to correct period if program lifetime includes collection date (annual)')
+    it.skip('assigns given value to correct period if program lifetime includes collection date (semiannual)')
+    it.skip('assigns given value to correct period if program lifetime includes collection date (triannual)')
+    it.skip('assigns given value to correct period if program lifetime includes collection date (quarterly)')
+    it.skip('assigns given value to correct period if program lifetime includes collection date (monthly)')
 
     it('displays warning if given date is outside program lifetime (all target periods)', function() {
       Navbar.Indicators.click()
       Util.waitForAjax()
 
-      let progButtons = TargetsTab.getProgramIndicatorButtons()
-      let progButton = progButtons[2]
+      let progButtons = TargetsTab.getProgramIndicatorLinks()
+      let progButton = progButtons[0]
       progButton.click()
       Util.waitForAjax()
 
