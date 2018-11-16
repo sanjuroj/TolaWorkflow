@@ -1,6 +1,6 @@
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
-from tola.forms import RegistrationForm, NewUserRegistrationForm, NewTolaUserRegistrationForm, BookmarkForm
+from tola.forms import ProfileUpdateForm, NewUserRegistrationForm, NewTolaUserRegistrationForm, BookmarkForm
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
@@ -289,7 +289,7 @@ def profile(request):
     """
     if request.user.is_authenticated():
         obj = get_object_or_404(TolaUser, user=request.user)
-        form = RegistrationForm(request.POST or None, instance=obj,initial={'username': request.user})
+        form = ProfileUpdateForm(request.POST or None, instance=obj, user=request.user)
 
         if request.method == 'POST':
             if form.is_valid():
@@ -300,7 +300,7 @@ def profile(request):
                 return HttpResponseRedirect(reverse_lazy('profile'))
 
         return render(request, "registration/profile.html", {
-            'form': form, 'helper': RegistrationForm.helper
+            'form': form, 'helper': ProfileUpdateForm.helper
         })
     else:
         return HttpResponseRedirect(reverse_lazy('register'))

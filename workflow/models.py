@@ -161,6 +161,16 @@ class TolaUser(models.Model):
     def countries_list(self):
         return ', '.join([x.code for x in self.countries.all()])
 
+    @property
+    def allow_projects_access(self):
+        """
+        Only allow existing users to access the Projects/workflow functionality
+        """
+        user_country_codes = set(self.countries.values_list('code', flat=True))
+        if self.country:
+            user_country_codes.add(self.country.code)
+        return bool(user_country_codes & settings.PROJECTS_ACCESS_WHITELIST_SET)
+
     # on save add create date or update edit date
     def save(self, *args, **kwargs):
         if self.create_date == None:
