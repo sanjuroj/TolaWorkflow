@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n mytags %}
-{% block title %}{{ active_country|default:"No active country" }} | {% endblock %}
-{% block page_title %}{{ active_country|default:"No active country" }}{% endblock %}
+{% block title %}{{ active_country|default:_("No active country") }} | {% endblock %}
+{% block page_title %}{{ active_country|default:_("No active country") }}{% endblock %}
 
 {% block bodyclasses %}home{% endblock %}
 
