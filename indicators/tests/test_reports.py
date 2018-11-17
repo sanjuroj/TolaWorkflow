@@ -68,8 +68,8 @@ class IPTT_MixinTests(TestCase):
         """Do we return if end date is before start date?"""
 
         _get_num_periods = IPTT_Mixin._get_num_periods
-        start_date = datetime.date(2020, 1, 1)
-        end_date = datetime.date(2019, 1, 1)
+        start_date = date(2020, 1, 1)
+        end_date = date(2019, 1, 1)
 
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.ANNUAL), 0)
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.SEMI_ANNUAL), 0)
@@ -91,26 +91,26 @@ class IPTT_MixinTests(TestCase):
     def test__get_first_period(self):
         """Do we calculate the first period of a date range correctly?"""
 
-        real_start_date = datetime.date(2016, 7, 15)
+        real_start_date = date(2016, 7, 15)
         for freq in IPTT_MixinTests.freqs:
             num_months = self.mixin._get_num_months(freq)
             _get_first_period = self.mixin._get_first_period(real_start_date, num_months)
 
             if freq == Indicator.ANNUAL:
                 self.assertEqual(_get_first_period,
-                                 datetime.date(2016, 1, 1))
+                                 date(2016, 1, 1))
             elif freq == Indicator.SEMI_ANNUAL:
                 self.assertEqual(_get_first_period,
-                                 datetime.date(2016, 7, 1))
+                                 date(2016, 7, 1))
             elif freq == Indicator.TRI_ANNUAL:
                 self.assertEqual(_get_first_period,
-                                 datetime.date(2016, 5, 1))
+                                 date(2016, 5, 1))
             elif freq == Indicator.QUARTERLY:
                 self.assertEqual(_get_first_period,
-                                 datetime.date(2016, 7, 1))
+                                 date(2016, 7, 1))
             elif freq == Indicator.MONTHLY:
                 self.assertEqual(_get_first_period,
-                                 datetime.date(2016, 7, 1))
+                                 date(2016, 7, 1))
             else:
                 self.fail('Unexpected target frequency' + freq)
 
@@ -118,8 +118,8 @@ class IPTT_MixinTests(TestCase):
         """Do we generate queryset annotations correctly?"""
 
         reporttype = 'timeperiods'
-        filter_start_date = datetime.date(2018, 1, 1)
-        filter_end_date = datetime.date(2019, 12, 31)
+        filter_start_date = date(2018, 1, 1)
+        filter_end_date = date(2019, 12, 31)
         num_recents = 0
         show_all = True
 
@@ -147,8 +147,8 @@ class IPTT_MixinTests(TestCase):
     def test__get_num_periods(self):
         """Do we return the correct number of periods"""
         _get_num_periods = IPTT_Mixin._get_num_periods
-        start_date = datetime.date(2016, 1, 15)
-        end_date = datetime.date(2017, 12, 16)
+        start_date = date(2016, 1, 15)
+        end_date = date(2017, 12, 16)
 
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.ANNUAL), 2)
         self.assertEqual(_get_num_periods(start_date, end_date, Indicator.SEMI_ANNUAL), 4)
@@ -169,8 +169,8 @@ class IPTT_MixinTests(TestCase):
             'period_start': '2018-01-01',
             'period_end': '2019-12-31'
         }
-        filter_start_date = datetime.date(2018, 1, 1)
-        filter_end_date = datetime.date(2019, 12, 31)
+        filter_start_date = date(2018, 1, 1)
+        filter_end_date = date(2019, 12, 31)
         num_recents = 0
         show_all = True
         self.mixin.program = Program()
@@ -190,8 +190,8 @@ class IPTT_MixinTests(TestCase):
         freqs = (Indicator.LOP, Indicator.MID_END, Indicator.EVENT, Indicator.ANNUAL,
                  Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL, Indicator.QUARTERLY,
                  Indicator.MONTHLY)
-        filter_start_date = datetime.date(2018, 1, 1)
-        filter_end_date = datetime.date(2019, 12, 31)
+        filter_start_date = date(2018, 1, 1)
+        filter_end_date = date(2019, 12, 31)
         num_recents = 0
         self.mixin.filter_form_initial_data = {
             'timeframe': 1,
@@ -320,7 +320,7 @@ class IPTT_ExcelExportTests(TestCase):
     def test_get_filename(self):
         pass
 
-    @skip('TODO: Implement this')
+    @unittest.skip('TODO: Implement this')
     def test_style_range(self):
         pass
 
@@ -498,7 +498,7 @@ class IPTT_ExcelExportTests(TestCase):
             self.assertEqual(ws.column_dimensions[column_letter].hidden,
                              collapsed)
 
-    @skip('TODO: Implement this')
+    @unittest.skip('TODO: Implement this')
     def test_get(self):
         pass
 
