@@ -22,34 +22,39 @@ class Command(BaseCommand):
         # ***********
         # Creates programs, indicators and results for qa testing
         # ***********
-
+        country, created = Country.objects.get_or_create(country='Tolaland')
         if options['clean']:
-            programs = Program.objects.filter(gaitid__in=['QA Program 1'])
+            programs = Program.objects.filter(name__contains='QA')
             print "Delete these programs?  {}".format(', '.join(p.name for p in programs))
-            # confirm = raw_input('[yes/no]: ')
-            # if confirm == 'yes':
-            for program in programs:
-                for indicator in program.indicator_set.all():
-                    indicator.delete()
-                program.delete()
-            sys.exit()
+            confirm = raw_input('[yes/no]: ')
+            if confirm == 'yes':
+                for program in programs:
+                    for indicator in program.indicator_set.all():
+                        indicator.delete()
+                    program.delete()
+                sys.exit()
 
-        tolaland, created = Country.objects.get_or_create(country='Tolaland')
-        program1 = self.create_program(date(2017, 3, 1), date(2019, 7, 31), 1, tolaland)
-        indicator_ids = self.create_indicators(program1.id)
-        print '{} indids: {}'.format(len(indicator_ids), indicator_ids)
+        tester_names = ['Emily', 'Hanna', 'Marie', 'Jenny']
+        program_ids = []
+        for t_name in tester_names:
+            print t_name
+            program_ids.append(self.create_program(date(2017, 3, 1), date(2019, 7, 31), country, 'QA {}'.format(t_name)))
+        for program_id in program_ids:
+            print 'Creating Indicators for {}'.format(Program.objects.get(id=program_id))
+            indicator_ids = self.create_indicators(program_id)
+            print '{} indids: {}'.format(len(indicator_ids), indicator_ids)
 
     @staticmethod
-    def create_program(start_date, end_date, seq, country):
+    def create_program(start_date, end_date, country, name):
         program = Program.objects.create(**{
-            'name': 'QA Program {}'.format(seq),
+            'name': name,
             'reporting_period_start': start_date,
             'reporting_period_end': end_date,
             'funding_status': 'Funded',
-            'gaitid': 'QA Program {}'.format(seq),
+            'gaitid': name,
         })
         program.country.add(country)
-        return program
+        return program.id
 
     def create_indicators(self, program_id):
         indicator_ids = []
@@ -76,10 +81,11 @@ class Command(BaseCommand):
                             target_frequency=freq[0],
                             unit_of_measure_type=uom_type[0],
                             direction_of_change=direction,
+                            program=program
                         )
                         indicator.save()
-                        indicator.program.add(program)
                         indicator_ids.append(indicator.id)
+
                         seq += 1
                         self.make_targets(program, indicator)
                         periodic_targets = PeriodicTarget.objects.filter(indicator__id=indicator.id)
@@ -120,6 +126,7 @@ class Command(BaseCommand):
                                 achieved_start = 95
                                 achieved_increment = -5
 
+                        lop_target = 0
                         for i, pt in enumerate(periodic_targets):
                             pt.target = target_start + target_increment * i
                             pt.save()
@@ -129,17 +136,35 @@ class Command(BaseCommand):
                                 program=program,
                                 achieved=achieved_start + achieved_increment * i)
                             cd.save()
+                            if is_cumulative:
+                                lop_target = pt.target
+                            else:
+                                lop_target += pt.target
+
+                        indicator.lop_target = lop_target
+                        indicator.save()
+                        indicator_ids.append(indicator.id)
 
         return indicator_ids
 
+    @staticmethod
+    def make_targets(program, indicator):
+        if indicator.target_frequency == Indicator.EVENT:
+            for i in range(3):
+                PeriodicTarget.objects.create(**{
+                    'indicator': indicator,
+                    'customsort': i,
+                    'edit_date': timezone.now(),
+                    'period': 'Event {}'.format(i + 1),
+                })
+            return
 
-    def make_targets(self, program, indicator):
         num_periods = IPTT_ReportView._get_num_periods(
             program.reporting_period_start, program.reporting_period_end, indicator.target_frequency)
         targets_json = generate_periodic_targets(
             tf=indicator.target_frequency, start_date=program.reporting_period_start, numTargets=num_periods)
         for i, pt in enumerate(targets_json):
-            if indicator.target_frequency in [Indicator.LOP, Indicator.MID_END, Indicator.EVENT]:
+            if indicator.target_frequency in [Indicator.LOP, Indicator.MID_END]:
                 PeriodicTarget.objects.create(**{
                     'indicator': indicator,
                     'customsort': i,
@@ -155,3 +180,4 @@ class Command(BaseCommand):
                     'start_date': pt['start_date'],
                     'end_date': pt['end_date'],
                 })
+
