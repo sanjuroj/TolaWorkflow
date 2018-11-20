@@ -7887,5 +7887,8 @@ select.listoption_filters {
   margin-left: 15px; }
 
 /* Unsorted custom selectors */
+.list__filters {
+  margin-bottom: 15px;
+  margin-top: 15px; }
 
 /*# sourceMappingURL=tola.css.map */
