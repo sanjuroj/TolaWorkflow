@@ -6872,6 +6872,9 @@ body > .container {
 .indicators-list__program {
   margin-bottom: 15px; }
 
+.indicators-list__indicator-actions {
+  margin-bottom: 15px; }
+
 .collected-data-table__wrapper {
   padding: 15px; }
 
