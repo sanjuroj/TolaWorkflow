@@ -85,6 +85,7 @@ $(document).ready(function() {
         $('.gauge').removeClass('is-highlighted');
         $('#show-all-indicators').addClass('is-display-none');
         $('#indicators-list-title').text(default_list_title);
+        $('#id_indicators').val('');
 
         clear_side_bar_filters();
         gas_tank_filter_target = '';
@@ -109,6 +110,7 @@ $(document).ready(function() {
 
     // indicator/level filters (sidebar)
     const indicators_select = $("#id_indicators");
+    let list_title = indicators_select.data('list-title');
 
     let multiselectOptions = {
         includeSelectAllOption: true,
@@ -126,6 +128,8 @@ $(document).ready(function() {
     function on_indicators_change() {
         selected_indicator_ids = indicators_select.find('option:selected').map(function() { return parseInt($(this).val()) }).get();
         apply_filters_to_indicator_rows();
+        $('#show-all-indicators').removeClass('is-display-none');
+        $('#indicators-list-title').text(list_title);
     }
 
 

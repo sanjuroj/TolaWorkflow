@@ -73,7 +73,8 @@
         </div>
         <nav class="list__filters">
             <div class="" id="id_div_indicators">
-                <select name="indicators" id="id_indicators" class="form-control">
+                <select name="indicators" id="id_indicators" class="form-control" data-list-title="{% trans "1 indicator" %}">
+                    <option value="">{% trans "Filter indicator..." %}</option>
                     {% for ind in indicators %}
                         <option value="{{ ind.id }}">{{ ind.name }}</option>
                     {% endfor %}
