@@ -668,14 +668,16 @@ class PeriodicTarget(models.Model):
         unique_together = (('indicator', 'customsort'),)
 
     def __unicode__(self):
+        period_name = None
         # used in the collected data modal to display options in the target period dropdown
         if self.indicator.target_frequency == Indicator.MID_END:
             # midline is the translated "midline" or "endline" based on customsort
-            return _(self.MIDLINE) if self.customsort == 0 else _(self.ENDLINE)
+            period_name = _(self.MIDLINE) if self.customsort == 0 else _(self.ENDLINE)
         if self.indicator.target_frequency == Indicator.LOP:
             # lop always has translated lop value
-            return _(self.LOP_PERIOD)
-        period_name = None
+            period_name = _(self.LOP_PERIOD)
+        if period_name is not None:
+            return u'{0}'.format(period_name)
         # for time-based frequencies get translated name of period:
         if self.indicator.target_frequency == Indicator.ANNUAL:
             period_name = _(self.ANNUAL_PERIOD)

@@ -40,10 +40,10 @@ def index(request, selected_country=None):
             active_country = user.country
             # ... failing all of this, the homepage will be blank. Sorry!
 
-    programs = Program.objects\
-        .filter(country=active_country)\
-        .filter(funding_status="Funded")
-    programs_with_metrics = [ProgramWithMetrics.with_metrics.get(pk=program.id) for program in programs]
+    programs_with_metrics = ProgramWithMetrics.home_page.with_annotations().filter(
+        country=active_country,
+        funding_status="Funded"
+    )
     getSiteProfile = SiteProfile.objects.all()\
         .prefetch_related('country','district','province')\
         .filter(country=active_country)\
@@ -57,7 +57,7 @@ def index(request, selected_country=None):
         'user_countries': user_countries,
         'active_country': active_country,
         'programs': programs_with_metrics,
-        'no_programs': programs.count(),
+        'no_programs': programs_with_metrics.count(),
         'getSiteProfile': getSiteProfile,
         'getSiteProfileIndicator': getSiteProfileIndicator,
     })

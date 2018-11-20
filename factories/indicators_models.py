@@ -6,6 +6,7 @@ from factory import DjangoModelFactory, post_generation, SubFactory, lazy_attrib
 from factory.fuzzy import FuzzyChoice
 
 from indicators.models import (
+    TolaTable as TolaTableM,
     CollectedData as CollectedDataM,
     ExternalService as ExternalServiceM,
     ReportingFrequency as ReportingFrequencyM,
@@ -19,7 +20,7 @@ from indicators.models import (
     DisaggregationType as DisaggregationTypeM,
     DataCollectionFrequency as DataCollectionFrequencyM
 )
-from workflow_models import OrganizationFactory, ProgramFactory, CountryFactory
+from workflow_models import OrganizationFactory, ProgramFactory, CountryFactory, UserFactory
 
 FAKER = faker.Faker(locale='en_US')
 
@@ -153,3 +154,9 @@ class DataCollectionFrequencyFactory(DjangoModelFactory):
     frequency = "some reasonable frequency"
     description = "a description of how frequent this is"
     numdays = 10
+
+class TolaTableFactory(DjangoModelFactory):
+    class Meta:
+        model = TolaTableM
+    name = Sequence(lambda n: 'Tola Table {0}'.format(n))
+    owner = SubFactory(UserFactory)
