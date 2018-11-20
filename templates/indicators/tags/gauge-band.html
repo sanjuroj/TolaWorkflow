@@ -5,14 +5,7 @@
         {% trans "Indicators on track" %}
     </h6>
     <div class="gauge__overview">
-        {% if scope_percents.nonreporting == 100 %}
-        <div>
-            <p class="text-muted">{% trans "Unavailable until results are reported" %}</p>
-            <div>
-                <i class="gauge__icon gauge__icon--error fas fa-frown"></i>
-            </div>
-        </div>
-        {% else %}
+        {% if scope_percents.nonreporting > 0 %}
         <div class="gauge__graphic gauge__graphic--performance-band">
             <div class="graphic__tick-marks">
                 {% for i in ticks %}
@@ -92,6 +85,13 @@
                         <strong>{{ low }}%</strong> are &gt;{{ margin }}% below target
                     {% endblocktrans %}
                 </span>
+            </div>
+        </div>
+        {% else %}
+        <div>
+            <p class="text-muted">{% trans "Unavailable until results are reported" %}</p>
+            <div>
+                <i class="gauge__icon gauge__icon--error fas fa-frown"></i>
             </div>
         </div>
         {% endif %}
