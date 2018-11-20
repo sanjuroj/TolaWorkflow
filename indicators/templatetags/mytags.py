@@ -220,7 +220,7 @@ def gauge_band(context, has_filters=True):
         'high': make_percent(scope_counts['high']),
         'on_scope': make_percent(scope_counts['on_scope']),
         'low': make_percent(scope_counts['low']),
-        'nonreporting': make_percent(scope_counts['nonreporting']),
+        'nonreporting': make_percent(scope_counts['nonreporting_count']),
         'reporting': scope_counts['reporting_count']
     }
     return {
