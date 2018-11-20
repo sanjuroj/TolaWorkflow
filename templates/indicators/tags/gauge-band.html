@@ -5,7 +5,7 @@
         {% trans "Indicators on track" %}
     </h6>
     <div class="gauge__overview">
-        {% if scope_percents.nonreporting > 0 %}
+        {% if scope_percents.reporting > 0 %}
         <div class="gauge__graphic gauge__graphic--performance-band">
             <div class="graphic__tick-marks">
                 {% for i in ticks %}
