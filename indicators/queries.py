@@ -1093,7 +1093,7 @@ class ProgramWithMetrics(wf_models.Program):
             return {
                 'indicator_count': 0,
                 'nonreporting_count': 0,
-                'reporting_count': 0
+                'reporting_count': 0,
                 'low': 0,
                 'on_scope': 0,
                 'high': 0
