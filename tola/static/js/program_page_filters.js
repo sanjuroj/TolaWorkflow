@@ -109,7 +109,6 @@ $(document).ready(function() {
 
     // indicator/level filters (sidebar)
     const indicators_select = $("#id_indicators");
-    const levels_select = $("#id_levels");
 
     let multiselectOptions = {
         includeSelectAllOption: true,
@@ -129,17 +128,11 @@ $(document).ready(function() {
         apply_filters_to_indicator_rows();
     }
 
-    function on_levels_change() {
-        selected_indicator_levels = levels_select.find('option:selected').map(function() { return parseInt($(this).val()) }).get();
-        apply_filters_to_indicator_rows();
-    }
 
     function clear_side_bar_filters() {
         // these do not trigger any callbacks
         indicators_select.multiselect('deselectAll', false);
         indicators_select.multiselect('updateButtonText');
-        levels_select.multiselect('deselectAll', false);
-        levels_select.multiselect('updateButtonText');
 
         selected_indicator_ids = [];
         selected_indicator_levels = [];
@@ -149,10 +142,5 @@ $(document).ready(function() {
         onChange: on_indicators_change,
         onSelectAll: on_indicators_change,
         onDeselectAll: on_indicators_change,
-    }));
-    levels_select.multiselect(Object.assign(multiselectOptions, {
-        onChange: on_levels_change,
-        onSelectAll: on_levels_change,
-        onDeselectAll: on_levels_change,
     }));
 });
