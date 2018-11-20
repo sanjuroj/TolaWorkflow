@@ -1468,20 +1468,21 @@ class ProgramPage(ListView):
                 request, 'indicators/program_setup_incomplete.html', context
                 )
         indicator_filters = {'program__id': program_id}
+        #indicator_filters = {}
         type_filter_id = None
         indicator_filter_id = None
         type_filter_name = None
         indicator_filter_name = None
         #was this for eventually showing more than one program?  Because pk already limits to 1:
         #program = ProgramWithMetrics.with_metrics.get(pk=program_id, funding_status="Funded", country__in=countries)
-        program = ProgramWithMetrics.with_metrics.get(pk=program_id)
+        program = ProgramWithMetrics.program_page.get(pk=program_id)
         if self.metrics:
             json_context = {
                 'metrics': program.metrics,
                 'scope_counts': program.scope_counts
             }
             return JsonResponse(json_context)
-        indicators = program.get_annotated_indicators()
+        indicators = program.annotated_indicators
 
         if int(self.kwargs['type_id']):
             type_filter_id = self.kwargs['type_id']
@@ -1506,13 +1507,12 @@ class ProgramPage(ListView):
 
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
                          [PinnedReport.default_report(program.id)]
-
         js_context = {
             'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
             'delete_pinned_report_confirmation_msg':
                 _('Warning: This action connot be undone. Are you sure you want to delete this pinned report?'),
         }
-
+        program.set_metrics(indicators)
         c_data = {
             'program': program,
             'indicators': indicators,
