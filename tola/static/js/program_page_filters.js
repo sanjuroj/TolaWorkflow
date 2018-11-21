@@ -12,7 +12,7 @@ $(document).ready(function() {
     const show_all_link = $('#show-all-indicators');
     const indicators_list_title = $('#indicators-list-title');
     const indicator_list_row = $('.indicators-list__row');
-    let list_title = indicators_select.data('list-title');
+    let list_title = indicators_select.data('list-title'); // Should this really be global?
     let default_list_title = $('#indicators-list-title').text();
 
     // Highlight gauge filter tab
@@ -156,6 +156,7 @@ $(document).ready(function() {
     };
 
     function on_indicators_change() {
+        $('.gauge').removeClass('is-highlighted');
         selected_indicator_ids = indicators_select.find('option:selected').map(function() { return parseInt($(this).val()) }).get();
         apply_filters_to_indicator_rows();
         show_all_link.show();
