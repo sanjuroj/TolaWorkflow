@@ -19,7 +19,7 @@ $(document).ready(function() {
         $('.gauge').removeClass('is-highlighted');
         highlighted_tab.addClass('is-highlighted');
         indicators_list_title.text(list_title);
-        show_all_link.removeClass('is-display-none');
+        show_all_link.show();
     }
 
     // Clear sidebar filters
@@ -27,6 +27,7 @@ $(document).ready(function() {
         // these do not trigger any callbacks
         indicators_select.multiselect('deselectAll', false);
         indicators_select.multiselect('updateButtonText');
+        show_all_link.show();
 
         selected_indicator_ids = [];
         selected_indicator_levels = [];
@@ -35,9 +36,9 @@ $(document).ready(function() {
     // Clear gauge filters
     function clear_gauge_filters() {
         $('.gauge').removeClass('is-highlighted');
-        show_all_link.addClass('is-display-none');
+        show_all_link.hide();
         indicators_list_title.text(default_list_title);
-        $('#id_indicators').val('');
+        indicators_select.val('');
     }
 
     // Show only filtered rows
@@ -85,7 +86,8 @@ $(document).ready(function() {
         $('.indicators-list__row').each(callback);
     }
 
-
+    // Hide "show all" link
+    show_all_link.hide();
 
     // Apply top level gas tank filters
     $('.filter-trigger').on('click', function(e) {
@@ -107,13 +109,15 @@ $(document).ready(function() {
         apply_filters_to_indicator_rows();
     });
 
-    // Click on "show all" button
+    // "show all" button
     show_all_link.on('click', function(e) {
+        e.preventDefault();
         clear_gauge_filters();
         clear_side_bar_filters();
         gas_tank_filter_target = '';
         over_under_filter = null;
         apply_filters_to_indicator_rows();
+        $(this).hide();
     });
 
     // gauge band links (indicators on track gas tank)
@@ -147,7 +151,7 @@ $(document).ready(function() {
     function on_indicators_change() {
         selected_indicator_ids = indicators_select.find('option:selected').map(function() { return parseInt($(this).val()) }).get();
         apply_filters_to_indicator_rows();
-        show_all_link.removeClass('is-display-none');
+        show_all_link.show();
         indicators_list_title.text(list_title);
     }
 
