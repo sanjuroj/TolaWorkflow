@@ -1,12 +1,5 @@
 $(document).ready(function() {
 
-    // State of what is currently being filtered
-    let gas_tank_filter_target;
-    let gas_tank_filter_target_positive;
-    let over_under_filter = null;
-    let selected_indicator_ids = [];
-    let selected_indicator_levels = [];
-
     // Important selectors & attributes
     const indicators_select = $("#id_indicators"); // indicator search filter (sidebar)
     const show_all_link = $('#show-all-indicators');
@@ -29,9 +22,6 @@ $(document).ready(function() {
         indicators_select.multiselect('deselectAll', false);
         indicators_select.multiselect('updateButtonText');
         show_all_link.show();
-
-        selected_indicator_ids = [];
-        selected_indicator_levels = [];
     }
 
     // Clear gauge filters
@@ -41,50 +31,6 @@ $(document).ready(function() {
         indicator_list_row.show();
         indicators_list_title.text(default_list_title);
         indicators_select.val('');
-    }
-
-    // Show only filtered rows
-    function hide_row_factory(positive, target) {
-        return function() {
-            let elem = $(this);
-            let this_show = 1;
-
-            if (target === "results_evidence") {
-                this_show = elem.data('has-evidence') * positive;
-            } else if (target === "reported_results") {
-                this_show = elem.data('reported-results') * positive;
-            } else if (target === "targets_defined") {
-                this_show = elem.data('defined-targets') * positive;
-            }
-
-            let indicator_id = elem.data('indicator-id'); // int;
-            let indicator_level_ids = elem.data('indicator-level-ids'); // array of ints
-
-            let hideElem = function() {
-                elem.hide();
-                elem.next().hide();
-            };
-
-            if (this_show <= 0) {
-                hideElem();
-            } else if (selected_indicator_ids.length > 0 && selected_indicator_ids.indexOf(indicator_id) < 0) {
-                hideElem();
-            } else if (selected_indicator_levels.length > 0 && !indicator_level_ids.some(function (r) {
-                return selected_indicator_levels.indexOf(r) >= 0
-            })) {
-                hideElem();
-            } else if (over_under_filter !== null && elem.data('over-under') !== over_under_filter) {
-                hideElem();
-            } else  {
-                elem.show();
-                elem.next().show();
-            }
-        }
-    }
-
-    function apply_filters_to_indicator_rows() {
-        let callback = hide_row_factory(gas_tank_filter_target_positive, gas_tank_filter_target);
-        indicator_list_row.each(callback);
     }
 
     // Hide "show all" link
@@ -158,9 +104,17 @@ $(document).ready(function() {
     function on_indicators_change() {
         $('.gauge').removeClass('is-highlighted');
         selected_indicator_ids = indicators_select.find('option:selected').map(function() { return parseInt($(this).val()) }).get();
-        apply_filters_to_indicator_rows();
         show_all_link.show();
         indicators_list_title.text(list_title);
+        indicator_list_row.each(function() {
+            let indicator_id = $(this).data('indicator-id');
+
+            if (selected_indicator_ids.indexOf(indicator_id) < 0) { // ?? Less than zero? Ok it works I guess
+                $(this).hide();
+            } else  {
+                $(this).show();
+            }
+        });
     }
 
     indicators_select.multiselect(Object.assign(multiselectOptions, {
