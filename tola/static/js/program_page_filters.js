@@ -11,6 +11,7 @@ $(document).ready(function() {
     const indicators_select = $("#id_indicators"); // indicator search filter (sidebar)
     const show_all_link = $('#show-all-indicators');
     const indicators_list_title = $('#indicators-list-title');
+    const indicator_list_row = $('.indicators-list__row');
     let list_title = indicators_select.data('list-title');
     let default_list_title = $('#indicators-list-title').text();
 
@@ -37,12 +38,12 @@ $(document).ready(function() {
     function clear_gauge_filters() {
         $('.gauge').removeClass('is-highlighted');
         show_all_link.hide();
+        indicator_list_row.show();
         indicators_list_title.text(default_list_title);
         indicators_select.val('');
     }
 
     // Show only filtered rows
-
     function hide_row_factory(positive, target) {
         return function() {
             let elem = $(this);
@@ -83,7 +84,7 @@ $(document).ready(function() {
 
     function apply_filters_to_indicator_rows() {
         let callback = hide_row_factory(gas_tank_filter_target_positive, gas_tank_filter_target);
-        $('.indicators-list__row').each(callback);
+        indicator_list_row.each(callback);
     }
 
     // Hide "show all" link
@@ -92,21 +93,17 @@ $(document).ready(function() {
     // Apply top level gas tank filters
     $('.filter-trigger').on('click', function(e) {
         e.preventDefault();
+        clear_gauge_filters();
+        clear_side_bar_filters();
         let target, positive, highlighted_tab, list_title;
         highlighted_tab = $(this);
         target = $(this).data('target');
         list_title = $(this).data('list-title');
-        positive = $(this).data('target-positive');
-        if (positive === 0) {
-            return;
-        }
-
         highlightFilterTab(highlighted_tab, list_title);
-        clear_side_bar_filters();
-        gas_tank_filter_target = target;
-        gas_tank_filter_target_positive = positive;
-        over_under_filter = null;
-        apply_filters_to_indicator_rows();
+        // is there some way to do this without a callback where data(target) is [value]? like $(this).data{target, 1).hide()
+        indicator_list_row.each(function(){
+            ($(this).data(target) == 1) ? $(this).hide() : '';
+        });
     });
 
     // "show all" button
@@ -116,7 +113,7 @@ $(document).ready(function() {
         clear_side_bar_filters();
         gas_tank_filter_target = '';
         over_under_filter = null;
-        apply_filters_to_indicator_rows();
+        indicator_list_row.show();
         $(this).hide();
     });
 
