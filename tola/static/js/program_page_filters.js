@@ -95,14 +95,19 @@ $(document).ready(function() {
         e.preventDefault();
         clear_gauge_filters();
         clear_side_bar_filters();
-        let target, positive, highlighted_tab, list_title;
-        highlighted_tab = $(this);
-        target = $(this).data('target');
-        list_title = $(this).data('list-title');
+
+        let highlighted_tab = $(this);
+        let target = $(this).data('target');
+        let list_title = $(this).data('list-title');
+
         highlightFilterTab(highlighted_tab, list_title);
         // is there some way to do this without a callback where data(target) is [value]? like $(this).data{target, 1).hide()
         indicator_list_row.each(function(){
-            ($(this).data(target) == 1) ? $(this).hide() : '';
+            if ($(this).data(target) == 1) {
+                $(this).hide()
+            } else {
+                $(this).show()
+            }
         });
     });
 
@@ -111,8 +116,7 @@ $(document).ready(function() {
         e.preventDefault();
         clear_gauge_filters();
         clear_side_bar_filters();
-        gas_tank_filter_target = '';
-        over_under_filter = null;
+
         indicator_list_row.show();
         $(this).hide();
     });
@@ -120,16 +124,22 @@ $(document).ready(function() {
     // gauge band links (indicators on track gas tank)
     $('.filter-trigger--band').on('click', function (e) {
         e.preventDefault();
-        let elem = $(this);
+        clear_gauge_filters();
+        clear_side_bar_filters();
 
+        let elem = $(this);
         let highlighted_tab = elem.closest('.gauge');
         let list_title = elem.data('list-title');
+        let over_under_filter = $(this).data('over-under-filter');
 
         highlightFilterTab(highlighted_tab, list_title);
-        clear_side_bar_filters();
-        over_under_filter = $(this).data('over-under-filter');
-        gas_tank_filter_target = '';
-        apply_filters_to_indicator_rows();
+        indicator_list_row.each(function(){
+            if ($(this).data('over-under') == over_under_filter) {
+                $(this).show()
+            } else {
+                $(this).hide()
+            }
+        });
     });
 
     let multiselectOptions = {
