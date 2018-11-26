@@ -827,6 +827,7 @@ class CollectedData(models.Model):
 
     indicator = models.ForeignKey(
         Indicator, help_text=" ", verbose_name=_("Indicator"),
+        db_index=True
     )
 
     agreement = models.ForeignKey(
