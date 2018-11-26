@@ -12,7 +12,7 @@ from indicators.models import (
 from workflow import models as wf_models
 from django.db import models
 from django.db.models.functions import Concat
-# from django.utils.functional import cached_property
+from django.utils.functional import cached_property
 
 # pylint disable=W0223
 class Round(models.Func):
@@ -416,6 +416,8 @@ class MetricsIndicatorQuerySet(models.QuerySet):
         if 'scope' in annotations:
             qs = qs.annotate(lop_met_real=get_lop_met_real_annotation())
             qs = qs.annotate(over_under=get_over_under_annotation())
+        if 'table' in annotations:
+            qs = qs.select_related('level')
         return qs
 
 class MetricsIndicatorManager(models.Manager):
@@ -435,6 +437,14 @@ class MetricsIndicator(Indicator):
     @property
     def has_reported_results(self):
         return self.results_count > 0
+    
+    @cached_property
+    def cached_data_count(self):
+        return 10
+        if hasattr(self, 'data_count'):
+            return self.data_count
+        else:
+            return self.collecteddata_set.count()
 
 class IPTTIndicatorQuerySet(models.QuerySet):
     """This overrides the count method because ONLY_FULL_GROUP_BY errors appear otherwise on this custom query"""
@@ -1006,9 +1016,11 @@ class ProgramForHomePageManager(models.Manager):
 
 class ProgramWithMetrics(wf_models.Program):
     metrics_set = None
+    cached_annotated_indicators = None
     with_metrics = ProgramWithMetricsManager()
     program_page = ProgramForProgramPageManager()
     home_page = ProgramForHomePageManager()
+    indicator_filters = {}
 
     class Meta:
         proxy = True
@@ -1037,12 +1049,20 @@ class ProgramWithMetrics(wf_models.Program):
                  if indicator.results_count > indicator.results_with_evidence_count]
             ),
         }
-        
 
-    @property
+    @cached_property
+    def indicator_count(self):
+        if not hasattr(self, 'cached_indicator_count'):
+            self.cached_indicator_count = self.indicator_set.count()
+        return self.cached_indicator_count
+
+    @cached_property
     def annotated_indicators(self):
-        program_page_annotations = ['targets', 'results', 'evidence', 'scope']
-        return MetricsIndicator.objects.filter(program=self).with_annotations(*program_page_annotations)
+        if self.cached_annotated_indicators is None:
+            self.indicator_filters['program'] = self
+            program_page_annotations = ['targets', 'results', 'evidence', 'scope', 'table']
+            self.cached_annotated_indicators = MetricsIndicator.objects.filter(**self.indicator_filters).with_annotations(*program_page_annotations)
+        return self.cached_annotated_indicators
 
 
     @property
@@ -1087,8 +1107,6 @@ class ProgramWithMetrics(wf_models.Program):
 
     @property
     def scope_counts(self):
-        if not hasattr(self, 'indicator_count'):
-            self.indicator_count = len(self.annotated_indicators)
         if self.indicator_count == 0:
             return {
                 'indicator_count': 0,
@@ -1097,21 +1115,19 @@ class ProgramWithMetrics(wf_models.Program):
                 'on_scope': 0,
                 'high': 0
             }
-        if not hasattr(self, 'scope_indicators'):
-            self.scope_indicators = self.annotated_indicators
         return {
             'indicator_count': getattr(self, 'indicator_count', None),
-            'nonreporting_count': len([indicator for indicator in self.scope_indicators if not indicator.reporting]),
+            'nonreporting_count': len([indicator for indicator in self.annotated_indicators if not indicator.reporting]),
             'low': len(
-                [indicator for indicator in self.scope_indicators
+                [indicator for indicator in self.annotated_indicators
                  if indicator.reporting and hasattr(indicator, 'over_under') and indicator.over_under == -1]
                 ),
             'on_scope': len(
-                [indicator for indicator in self.scope_indicators
+                [indicator for indicator in self.annotated_indicators
                  if indicator.reporting and hasattr(indicator, 'over_under') and indicator.over_under == 0]
                 ),
             'high': len(
-                [indicator for indicator in self.scope_indicators
+                [indicator for indicator in self.annotated_indicators
                  if indicator.reporting and hasattr(indicator, 'over_under') and indicator.over_under == 1]
                 ),
         }

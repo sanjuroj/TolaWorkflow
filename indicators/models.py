@@ -12,6 +12,8 @@ from django.utils import formats, timezone, functional
 from django.utils.translation import ugettext_lazy as _
 from tola.l10n_utils import l10n_date_year_month, l10n_date_medium
 from django.contrib import admin
+from django.utils.functional import cached_property
+
 
 from simple_history.models import HistoricalRecords
 
@@ -626,6 +628,10 @@ class Indicator(models.Model):
             return self.lop_target + '%'
         return self.lop_target
 
+    @cached_property
+    def cached_data_count(self):
+        return self.collecteddata_set.count()
+
 
 class PeriodicTarget(models.Model):
     LOP_PERIOD = 'Life of Program (LoP) only'
@@ -827,6 +833,7 @@ class CollectedData(models.Model):
 
     indicator = models.ForeignKey(
         Indicator, help_text=" ", verbose_name=_("Indicator"),
+        db_index=True
     )
 
     agreement = models.ForeignKey(
