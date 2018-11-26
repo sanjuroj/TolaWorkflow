@@ -106,15 +106,21 @@ $(document).ready(function() {
         selected_indicator_ids = indicators_select.find('option:selected').map(function() { return parseInt($(this).val()) }).get();
         show_all_link.show();
         indicators_list_title.text(list_title);
-        indicator_list_row.each(function() {
-            let indicator_id = $(this).data('indicator-id');
+        if (selected_indicator_ids != 0) {
+            indicator_list_row.each(function() {
+                let indicator_id = $(this).data('indicator-id');
 
-            if (selected_indicator_ids.indexOf(indicator_id) < 0) { // ?? Less than zero? Ok it works I guess
-                $(this).hide();
-            } else  {
-                $(this).show();
-            }
-        });
+                if (selected_indicator_ids.indexOf(indicator_id) < 0) { // ?? Less than zero? Ok it works I guess
+                    $(this).hide();
+                } else  {
+                    $(this).show();
+                }
+            });
+        } else {
+            indicator_list_row.show();
+            show_all_link.hide();
+            indicators_list_title.text(default_list_title);
+        }
     }
 
     indicators_select.multiselect(Object.assign(multiselectOptions, {
