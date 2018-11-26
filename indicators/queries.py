@@ -1059,7 +1059,6 @@ class ProgramWithMetrics(wf_models.Program):
     @cached_property
     def annotated_indicators(self):
         if self.cached_annotated_indicators is None:
-            print "annotating"
             self.indicator_filters['program'] = self
             program_page_annotations = ['targets', 'results', 'evidence', 'scope', 'table']
             self.cached_annotated_indicators = MetricsIndicator.objects.filter(**self.indicator_filters).with_annotations(*program_page_annotations)
