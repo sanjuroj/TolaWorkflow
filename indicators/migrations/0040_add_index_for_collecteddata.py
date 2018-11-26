@@ -12,5 +12,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL("ALTER TABLE `indicators_collecteddata` ADD KEY (indicator_id)")
+        migrations.RunSQL("""ALTER TABLE `indicators_collecteddata` ADD KEY (indicator_id);""")
     ]
