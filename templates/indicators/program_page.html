@@ -71,10 +71,12 @@
                 <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
             </div>
         </div>
-        <nav class="list__filters">
-            <div class="" id="id_div_indicators">
+        <nav class="list__filters list__filters--inline" id="id_div_indicators">
+            <label>
+                {% trans "Find an indicator:" %}
+            </label>
+            <div class="flex-grow">
                 <select name="indicators" id="id_indicators" class="form-control" data-list-title="{% trans "1 indicator" %}">
-                    <option value="">{% trans "Find an indicator..." %}</option>
                     {% for ind in indicators %}
                         <option value="{{ ind.id }}">{{ ind.name }}</option>
                     {% endfor %}

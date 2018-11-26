@@ -7137,6 +7137,20 @@ body > .container {
     .featured-country__map {
       flex-basis: 66%; } }
 
+.list__filters {
+  margin-bottom: 15px;
+  margin-top: 15px; }
+
+.list__filters--inline {
+  align-items: center;
+  display: flex; }
+  .list__filters--inline label {
+    margin-bottom: 0;
+    margin-right: 1rem;
+    white-space: nowrap; }
+  .list__filters--inline .flex-grow {
+    flex-grow: 1; }
+
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
   color: #71757b !important;
@@ -7887,8 +7901,5 @@ select.listoption_filters {
   margin-left: 15px; }
 
 /* Unsorted custom selectors */
-.list__filters {
-  margin-bottom: 15px;
-  margin-top: 15px; }
 
 /*# sourceMappingURL=tola.css.map */
