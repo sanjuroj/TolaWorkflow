@@ -1016,6 +1016,7 @@ class ProgramForHomePageManager(models.Manager):
 
 class ProgramWithMetrics(wf_models.Program):
     metrics_set = None
+    cached_annotated_indicators = None
     with_metrics = ProgramWithMetricsManager()
     program_page = ProgramForProgramPageManager()
     home_page = ProgramForHomePageManager()
@@ -1057,9 +1058,12 @@ class ProgramWithMetrics(wf_models.Program):
 
     @cached_property
     def annotated_indicators(self):
-        self.indicator_filters['program'] = self
-        program_page_annotations = ['targets', 'results', 'evidence', 'scope', 'table']
-        return MetricsIndicator.objects.filter(**self.indicator_filters).with_annotations(*program_page_annotations)
+        if self.cached_annotated_indicators is None:
+            print "annotating"
+            self.indicator_filters['program'] = self
+            program_page_annotations = ['targets', 'results', 'evidence', 'scope', 'table']
+            self.cached_annotated_indicators = MetricsIndicator.objects.filter(**self.indicator_filters).with_annotations(*program_page_annotations)
+        return self.cached_annotated_indicators
 
 
     @property
