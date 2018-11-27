@@ -819,181 +819,16 @@ class ProgramMetricsQuerySet(models.QuerySet):
         return self.values('id').aggregate(total=models.Count('id', distinct=True))['total']
 
 
-
-class ProgramWithMetricsManager(models.Manager):
-
-    def get_scope_annotations(self):
-        """if self.reporting_period_end > datetime.date.today():
-            # open program -> LOP targets are incomplete
-            filters.append(models.Q(target_frequency=Indicator.LOP))
-        # indicator with no periodic targets is incomplete (this field falls back to lop_target for lop indicators:
-        filters.append(models.Q(lop_target_sum__isnull=True))
-        filters.append(models.Q(lop_actual_sum__isnull=True))"""
-        indicator_base = IPTTIndicator.with_metrics.filter(
-            program_id=models.OuterRef('pk')
-        ).order_by().values('program_id')
-        nonreporting = models.functions.Coalesce(
-            models.Subquery(
-                indicator_base.order_by().values('program_id').filter(
-                    reporting=False
-                ).annotate(
-                    nonreporting_count=models.Count('*')
-                ).values('nonreporting_count')[:1],
-                output_field=models.IntegerField()
-                ), 0)
-        reporting_base = indicator_base.order_by().values('program_id').filter(
-            reporting=True
-        )
-        high = models.functions.Coalesce(
-            models.Subquery(
-                reporting_base.filter(
-                    over_under=1
-                ).order_by().values('program_id').annotate(
-                    high_count=models.Count('*')
-                ).values('high_count')[:1],
-                output_field=models.IntegerField()
-            ), 0)
-        on_scope = models.functions.Coalesce(
-            models.Subquery(
-                reporting_base.filter(
-                    over_under=0
-                ).annotate(
-                    onscope_count=models.Count('*')
-                ).values('onscope_count')[:1],
-                output_field=models.IntegerField()
-            ), 0)
-        low = models.functions.Coalesce(
-            models.Subquery(
-                reporting_base.filter(
-                    over_under=-1
-                ).annotate(
-                    low_count=models.Count('*')
-                ).values('low_count')[:1],
-                output_field=models.IntegerField()
-            ), 0)
-        return {
-            'non_reporting_count': nonreporting,
-            'high_count': high,
-            'on_scope_count': on_scope,
-            'low_count': low,
-        }
-
-    def get_metrics_annotations(self):
-        """annotates programs with counts of metrics for program page
-
-            defined_targets_count: # of indicators with all targets defined
-            reported_results_count: # of indicators with at least one result reported
-            results_evidence_count: # of indicators with at least one result with evidence attached
-            indicator_count: # of indicators for the program"""
-        # get indicators grouped by program:
-        indicator_subquery_base = IPTTIndicator.with_metrics.filter(
-            program_id=models.OuterRef('pk')
-        )
-        # results reporting filter (at least one reported result):
-        reported_results = models.functions.Coalesce(
-            models.Subquery(
-                indicator_subquery_base.filter(
-                    has_reported_results=True
-                ).order_by().values('program_id').annotate(
-                    reported_results_count=models.Count('id')
-                ).values('reported_results_count'),
-                output_field=models.IntegerField()
-            ), 0)
-        total_results = models.functions.Coalesce(
-            models.Count('indicator__collecteddata', distinct=True), 0)
-        # evidence backing up results filter (at least one data point with evidence attached):
-        results_evidence = models.functions.Coalesce(
-            models.Count(
-                models.Case(
-                    models.When(
-                        models.Q(indicator__collecteddata__evidence__isnull=False) |
-                        models.Q(indicator__collecteddata__tola_table__isnull=False),
-                        then=1
-                    ),
-                    output_field=models.IntegerField()
-                )
-            ), 0)
-        needs_evidence = models.functions.Coalesce(
-            models.Subquery(
-                indicator_subquery_base.filter(
-                    all_results_backed_up=False
-                ).order_by().values('program_id').annotate(
-                    needs_evidence_count=models.Count('id')
-                ).values('needs_evidence_count'),
-                output_field=models.IntegerField()
-            ), 0)
-        # targets defined (ALL targets defined)
-        targets_defined = models.functions.Coalesce(
-            models.Subquery(
-                indicator_subquery_base.filter(
-                    get_defined_targets_filter()
-                 ).order_by().values('program_id').annotate(
-                     all_defined_targets_count=models.Count('id')
-                 ).values('all_defined_targets_count'),
-                output_field=models.IntegerField()
-            ), 0)
-        # raw count of indicators for this program:
-        indicator_count = models.functions.Coalesce(
-            models.Count('indicator', distinct=True),
-            0
-        )
-        return {
-            'reported_results_count': reported_results,
-            'reported_results_sum': total_results,
-            'results_evidence_count': results_evidence,
-            'needs_evidence_count': needs_evidence,
-            'targets_defined_count': targets_defined,
-            'indicator_count': indicator_count
-        }
-
-    def get_periods_annotations(self, qs):
-        """annotates the queryset with how many periods of each frequency are needed to be fully defined"""
-        # annotate with the number of months in the reporting period:
-        months_annotation = models.ExpressionWrapper(
-            (
-                (models.functions.ExtractYear('reporting_period_end') -
-                 models.functions.ExtractYear('reporting_period_start')) * 12 +
-                models.functions.ExtractMonth('reporting_period_end') -
-                models.functions.ExtractMonth('reporting_period_start') + 1
-            ),
-            output_field=models.IntegerField()
-        )
-        qs = qs.annotate(
-            months=months_annotation
-        )
-        # NOTE: this relies on the business logic that all reporting period dates are
-        # truncated to the 1st of the month (mid month reporting periods break this logic)
-        # use the months annotation to annotate the periods for different frequencies:
-        period_annotations = {}
-        for frequency, months_count in TIME_AWARE_FREQUENCIES:
-            period_annotations['periods_for_frequency_{0}'.format(frequency)] = models.F('months')/months_count
-        qs = qs.annotate(
-            **period_annotations
-        )
-        return qs
-
-    def get_queryset(self):
-        metrics_annotations = self.get_metrics_annotations()
-        scope_annotations = self.get_scope_annotations()
-        qs = ProgramMetricsQuerySet(self.model, using=self._db)
-        qs = self.get_periods_annotations(qs)
-        qs = qs.annotate(**metrics_annotations)
-        qs = qs.annotate(**scope_annotations)
-        return qs
-
-class ProgramForProgramPageQuerySet(ProgramMetricsQuerySet):
-    pass
-
 class ProgramForProgramPageManager(models.Manager):
     def get_queryset(self):
-        qs = ProgramForProgramPageQuerySet(self.model, using=self._db)
+        qs = ProgramMetricsQuerySet(self.model, using=self._db)
         return qs
 
 class ProgramForHomePageQuerySet(ProgramMetricsQuerySet):
     def with_annotations(self, *annotations):
         if not annotations:
             annotations = ['targets', 'results', 'evidence', 'scope']
-        qs = self.all()
+        qs = self
         if any(key in annotations for key in ['count', 'targets', 'results', 'evidence', 'reporting', 'scope']):
             qs = qs.annotate(indicator_count=models.Count('indicator'))
         if any(key in annotations for key in ['results_count', 'results', 'evidence']):
@@ -1020,7 +855,6 @@ class ProgramForHomePageManager(models.Manager):
 class ProgramWithMetrics(wf_models.Program):
     metrics_set = None
     cached_annotated_indicators = None
-    with_metrics = ProgramWithMetricsManager()
     program_page = ProgramForProgramPageManager()
     home_page = ProgramForHomePageManager()
     indicator_filters = {}
