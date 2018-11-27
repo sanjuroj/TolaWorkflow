@@ -45,11 +45,11 @@ def index(request, selected_country=None):
         funding_status="Funded"
     )
     getSiteProfile = SiteProfile.objects.all()\
-        .prefetch_related('country','district','province')\
+        .prefetch_related('country', 'district', 'province')\
         .filter(country=active_country)\
         .filter(status=1)
     getSiteProfileIndicator = SiteProfile.objects.all()\
-        .prefetch_related('country','district','province')\
+        .prefetch_related('country', 'district', 'province')\
         .filter(country=active_country)\
         .filter(status=1)
 

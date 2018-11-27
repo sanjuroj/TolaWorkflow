@@ -14,12 +14,34 @@ from django.db import models
 from django.db.models.functions import Concat
 from django.utils.functional import cached_property
 
-# pylint disable=W0223
+# pylint: disable=W0223
 class Round(models.Func):
+    """One argument, rounds to integer level (0 decimal places)"""
     function = 'ROUND'
     template = '%(function)s(%(expressions)s, 0)'
 
-def get_lop_annotations():
+# pylint: disable=W0223
+class MonthDate(models.Func):
+    """takes a date and outputs a YYYYMM format date for period_diff comparison"""
+    function = 'DATE_FORMAT'
+    template = '%(function)s(%(expressions)s, \'%%%%Y%%%%m\')'
+
+# pylint: disable=W0223
+class MonthsCount(models.Func):
+    """takes two date fields, finds their value, converts them to MonthDate format, and finds the difference in months
+    
+        note: +1 is due to the 'first of the month to end of the month' inclusive month ranges in our dates
+        note: wrapping parens due to this field being used in division math"""
+    function = 'PERIOD_DIFF'
+    template = '(%(function)s(%(expressions)s)+1)'
+
+    def __init__(self, end_date, start_date, **extra):
+        if not start_date:
+            raise ValueError('two dates required for diff')
+        expressions = MonthDate(models.F(end_date)), MonthDate(models.F(start_date))
+        super(MonthsCount, self).__init__(*expressions)
+
+def indicator_lop_annotations():
     """generates annotations for LOP target and actual data
 
     takes into account cumulative/noncumulative and number/percent"""
@@ -37,7 +59,7 @@ def get_lop_annotations():
         (
             models.Q(indicator__target_frequency__in=[Indicator.LOP, Indicator.MID_END, Indicator.EVENT]) &
             models.Q(data_count__gt=0)
-        ) | models.Q(end_date__lte=datetime.date.today())
+        ) | models.Q(end_date__lte=models.functions.Now())
     )
     indicator_data = CollectedData.objects.filter(
         models.Q(indicator=models.OuterRef('pk'))
@@ -107,12 +129,12 @@ def get_lop_annotations():
         'lop_actual_sum': lop_actual_sum,
     }
 
-def get_reporting_annotation():
+def indicator_reporting_annotation():
     """annotation to sort indicators into 'reporting' and 'nonreporting' based on business rules:
         LOP only reports when the program reporting period has ended
         all indicators only report when their targets are defined
         all indicators only report when they have at least one data point (an actual data sum)
-        for target_sum and actual_sum business logic see get_lop_annotations"""
+        for target_sum and actual_sum business logic see indicator_lop_annotations"""
     return models.Case(
         models.When(
             models.Q(target_frequency=Indicator.LOP) &
@@ -132,7 +154,7 @@ def get_reporting_annotation():
         output_field=models.BooleanField()
     )
 
-def get_lop_met_real_annotation():
+def indicator_lop_met_real_annotation():
     """for a reporting indicator, determines how close actual values are to target values"""
     return models.Case(
         models.When(
@@ -146,7 +168,7 @@ def get_lop_met_real_annotation():
         )
     )
 
-def get_over_under_annotation():
+def indicator_over_under_annotation():
     """annotates indicators with how close to on-track they are:
         -1 : under target by a 15% margin
         0 : within 15% of target
@@ -192,20 +214,18 @@ TIME_AWARE_FREQUENCIES = [
     (Indicator.MONTHLY, 1)
 ]
 
-def get_program_months_annotation():
+def indicator_get_program_months_annotation():
     """annotates an indicator with the number of months in the associated program
         this annotation is used by the defined_targets_filter"""
-    return models.ExpressionWrapper(
-        (
-            (models.functions.ExtractYear('program__reporting_period_end') -
-             models.functions.ExtractYear('program__reporting_period_start')) * 12 +
-            models.functions.ExtractMonth('program__reporting_period_end') -
-            models.functions.ExtractMonth('program__reporting_period_start') + 1
-        ),
-        output_field=models.IntegerField()
-    )
+    return MonthsCount('program__reporting_period_end', 'program__reporting_period_start')
 
-def get_defined_targets_filter():
+
+def program_get_program_months_annotation():
+    """annotates a program with the number of months in the associated program"""
+    return MonthsCount('reporting_period_end', 'reporting_period_start')
+
+
+def indicator_get_defined_targets_filter():
     """returns a set of filters that filter out indicators that do not have all defined targets
         this version is used for an indicator_set that has been annotated with program_months
         (see get_program_months_annotation)"""
@@ -232,7 +252,7 @@ def get_defined_targets_filter():
         combined_filter |= filt
     return combined_filter
 
-def get_defined_targets_months():
+def indicator_defined_targets_months():
     """annotates a queryset of indicators with the number of months their targets cover
         (number of targets * months in period) for time-aware target frequencies
         used by the program level get_defined_targets filter"""
@@ -274,7 +294,7 @@ def program_get_defined_targets_filter():
     return combined_filter
 
 
-def get_program_all_targets_defined_annotation():
+def program_all_targets_defined_annotation():
     """annotates a queryset of programs with whether all targets are defined for all indicators for that program"""
     targets_subquery = PeriodicTarget.objects.filter(
         indicator_id=models.OuterRef('pk')
@@ -288,42 +308,34 @@ def get_program_all_targets_defined_annotation():
             targets_subquery,
             output_field=models.IntegerField()
         )
-    ).annotate(defined_targets_months=get_defined_targets_months())
+    ).annotate(defined_targets_months=indicator_defined_targets_months())
     return models.functions.Coalesce(
         models.Subquery(
             target_subquery.filter(
                 program_get_defined_targets_filter()
-             ).order_by().values('program_id').annotate(
+            ).order_by().values('program_id').annotate(
                  all_defined_targets_count=models.Count('id')
-             ).values('all_defined_targets_count')[:1],
+            ).values('all_defined_targets_count')[:1],
             output_field=models.IntegerField()
         ), 0)
 
-def program_get_program_months_annotation():
-    """annotates a program with the number of months in the associated program"""
-    return models.ExpressionWrapper(
-        (
-            (models.functions.ExtractYear('reporting_period_end') -
-             models.functions.ExtractYear('reporting_period_start')) * 12 +
-            models.functions.ExtractMonth('reporting_period_end') -
-            models.functions.ExtractMonth('reporting_period_start') + 1
-        ),
-        output_field=models.IntegerField()
-    )
 
 
-def get_program_results_annotation(total=True):
-    """annotates a program with the count of indicators which have any reported results"""
+def program_results_annotation(total=True):
+    """annotates a program with the count of indicators which have any reported results
+        or the count of reported results for the program in total
+        Total=True: all results for program, Total=False: number of indicators with results"""
     data_subquery = CollectedData.objects.filter(
         indicator__program=models.OuterRef('pk')
-    ).order_by().values('indicator__program').annotate(data_count=models.Count('indicator_id', distinct=total)).values('data_count')[:1]
+    ).order_by().values('indicator__program').annotate(
+        data_count=models.Count('indicator_id', distinct=total)).values('data_count')[:1]
     return models.functions.Coalesce(
         models.Subquery(
             data_subquery,
             output_field=models.IntegerField()
         ), 0)
 
-def get_program_evidence_annotation():
+def program_evidence_annotation():
     """annotates a program with the count of results for any of the program's indicators which have evidence"""
     cd = CollectedData.objects.filter(
         indicator__program_id=models.OuterRef('pk')
@@ -336,36 +348,36 @@ def get_program_evidence_annotation():
             output_field=models.IntegerField()
         ), 0)
 
-def get_program_scope_annotations(*annotations):
+def program_scope_annotations(*annotations):
     """annotates a program's indicators prefetch query with the required annotations to report their on scope status"""
-    indicators_subquery = Indicator.objects.all()
+    indicators_subquery = Indicator.objects.select_related('program').all()
     if any(key in annotations for key in ['reporting', 'scope']):
         indicators_subquery = indicators_subquery.annotate(
-            **get_lop_annotations()
-        ).annotate(reporting=get_reporting_annotation())
+            **indicator_lop_annotations()
+        ).annotate(reporting=indicator_reporting_annotation())
     if 'scope' in annotations:
         indicators_subquery = indicators_subquery.annotate(
-            lop_met_real=get_lop_met_real_annotation()
+            lop_met_real=indicator_lop_met_real_annotation()
         ).annotate(
-            over_under=get_over_under_annotation()
-        ).select_related().only('program', 'id')
+            over_under=indicator_over_under_annotation()
+        )
     return models.Prefetch(
         'indicator_set', queryset=indicators_subquery, to_attr='scope_indicators'
         )
 
-def get_results_count_annotation():
+def indicator_results_count_annotation():
     """annotates an indicator queryset with the number of results associated with each indicator"""
     return models.functions.Coalesce(
         models.Subquery(
             CollectedData.objects.filter(
                 indicator=models.OuterRef('pk')
                 ).order_by().values('indicator').annotate(
-                total_results=models.Count('id')
+                    total_results=models.Count('id')
                 ).values('total_results')[:1],
             output_field=models.IntegerField()
         ), 0)
 
-def get_results_evidence_annotation():
+def indicator_results_evidence_annotation():
     """annotates an indicator queryset with the number of results associated with each indicator that have
         either a Documentation or TolaTable as evidence"""
     return models.functions.Coalesce(
@@ -373,9 +385,9 @@ def get_results_evidence_annotation():
             CollectedData.objects.filter(
                 indicator=models.OuterRef('pk')
                 ).filter(
-                models.Q(evidence__isnull=False) | models.Q(tola_table__isnull=False)
+                    models.Q(evidence__isnull=False) | models.Q(tola_table__isnull=False)
                 ).order_by().values('indicator').annotate(
-                total_results=models.Count('id')
+                    total_results=models.Count('id')
                 ).values('total_results')[:1],
             output_field=models.IntegerField()
         ), 0)
@@ -387,11 +399,11 @@ class MetricsIndicatorQuerySet(models.QuerySet):
         if 'months' in annotations or 'targets' in annotations:
             # 'months' is for unit testing,
             # 'targets' because program_months is a prerequisite for measuring all_targets_defined
-            qs = qs.annotate(program_months=get_program_months_annotation())
+            qs = qs.annotate(program_months=indicator_get_program_months_annotation())
         if 'targets' in annotations:
             # sets all_targets_defined to True/False based on business rules
             qs = qs.annotate(defined_targets=models.Count('periodictargets'))
-            defined_targets_filter = get_defined_targets_filter()
+            defined_targets_filter = indicator_get_defined_targets_filter()
             qs = qs.annotate(
                 all_targets_defined=models.Case(
                     models.When(
@@ -404,18 +416,18 @@ class MetricsIndicatorQuerySet(models.QuerySet):
             )
         if 'results' in annotations:
             # result count = count of results associated with indicator:
-            qs = qs.annotate(results_count=get_results_count_annotation())
+            qs = qs.annotate(results_count=indicator_results_count_annotation())
         if 'evidence' in annotations:
             # results with evidence count = count of results that have evidence associated
-            qs = qs.annotate(results_with_evidence_count=get_results_evidence_annotation())
+            qs = qs.annotate(results_with_evidence_count=indicator_results_evidence_annotation())
         if 'reporting' in annotations or 'scope' in annotations:
             # reporting indicates whether indicator should be counted towards on-scope reporting
             # note: "reporting" alone is for testing, scope relies on these annotations as a prerequisite
-            qs = qs.annotate(**get_lop_annotations())
-            qs = qs.annotate(reporting=get_reporting_annotation())
+            qs = qs.annotate(**indicator_lop_annotations())
+            qs = qs.annotate(reporting=indicator_reporting_annotation())
         if 'scope' in annotations:
-            qs = qs.annotate(lop_met_real=get_lop_met_real_annotation())
-            qs = qs.annotate(over_under=get_over_under_annotation())
+            qs = qs.annotate(lop_met_real=indicator_lop_met_real_annotation())
+            qs = qs.annotate(over_under=indicator_over_under_annotation())
         if 'table' in annotations:
             qs = qs.select_related('level')
         return qs
@@ -437,14 +449,16 @@ class MetricsIndicator(Indicator):
     @property
     def has_reported_results(self):
         return self.results_count > 0
-    
+
+    @property
+    def all_results_backed_up(self):
+        return self.results_count == self.results_with_evidence_count
+
     @cached_property
     def cached_data_count(self):
-        return 10
         if hasattr(self, 'data_count'):
             return self.data_count
-        else:
-            return self.collecteddata_set.count()
+        return self.collecteddata_set.count()
 
 class IPTTIndicatorQuerySet(models.QuerySet):
     """This overrides the count method because ONLY_FULL_GROUP_BY errors appear otherwise on this custom query"""
@@ -520,11 +534,11 @@ class IPTTIndicatorManager(models.Manager):
             qs = self.add_labels(qs)
         if lop:
             # add lop annotations (target_sum and actual_sum):
-            lop_annotations = get_lop_annotations()
+            lop_annotations = indicator_lop_annotations()
             qs = qs.annotate(**lop_annotations)
         if report:
             # add reporting annotations (whether this indicator should be counted for on-target reporting)
-            qs = qs.annotate(reporting=get_reporting_annotation())
+            qs = qs.annotate(reporting=indicator_reporting_annotation())
         if report and scope:
             # add over_under calculation:
             qs = self.add_scope_annotations(qs)
@@ -816,194 +830,29 @@ class ProgramMetricsQuerySet(models.QuerySet):
         return self.values('id').aggregate(total=models.Count('id', distinct=True))['total']
 
 
-
-class ProgramWithMetricsManager(models.Manager):
-
-    def get_scope_annotations(self):
-        """if self.reporting_period_end > datetime.date.today():
-            # open program -> LOP targets are incomplete
-            filters.append(models.Q(target_frequency=Indicator.LOP))
-        # indicator with no periodic targets is incomplete (this field falls back to lop_target for lop indicators:
-        filters.append(models.Q(lop_target_sum__isnull=True))
-        filters.append(models.Q(lop_actual_sum__isnull=True))"""
-        indicator_base = IPTTIndicator.with_metrics.filter(
-            program_id=models.OuterRef('pk')
-        ).order_by().values('program_id')
-        nonreporting = models.functions.Coalesce(
-            models.Subquery(
-                indicator_base.order_by().values('program_id').filter(
-                    reporting=False
-                ).annotate(
-                    nonreporting_count=models.Count('*')
-                ).values('nonreporting_count')[:1],
-                output_field=models.IntegerField()
-                ), 0)
-        reporting_base = indicator_base.order_by().values('program_id').filter(
-            reporting=True
-        )
-        high = models.functions.Coalesce(
-            models.Subquery(
-                reporting_base.filter(
-                    over_under=1
-                ).order_by().values('program_id').annotate(
-                    high_count=models.Count('*')
-                ).values('high_count')[:1],
-                output_field=models.IntegerField()
-            ), 0)
-        on_scope = models.functions.Coalesce(
-            models.Subquery(
-                reporting_base.filter(
-                    over_under=0
-                ).annotate(
-                    onscope_count=models.Count('*')
-                ).values('onscope_count')[:1],
-                output_field=models.IntegerField()
-            ), 0)
-        low = models.functions.Coalesce(
-            models.Subquery(
-                reporting_base.filter(
-                    over_under=-1
-                ).annotate(
-                    low_count=models.Count('*')
-                ).values('low_count')[:1],
-                output_field=models.IntegerField()
-            ), 0)
-        return {
-            'non_reporting_count': nonreporting,
-            'high_count': high,
-            'on_scope_count': on_scope,
-            'low_count': low,
-        }
-
-    def get_metrics_annotations(self):
-        """annotates programs with counts of metrics for program page
-
-            defined_targets_count: # of indicators with all targets defined
-            reported_results_count: # of indicators with at least one result reported
-            results_evidence_count: # of indicators with at least one result with evidence attached
-            indicator_count: # of indicators for the program"""
-        # get indicators grouped by program:
-        indicator_subquery_base = IPTTIndicator.with_metrics.filter(
-            program_id=models.OuterRef('pk')
-        )
-        # results reporting filter (at least one reported result):
-        reported_results = models.functions.Coalesce(
-            models.Subquery(
-                indicator_subquery_base.filter(
-                    has_reported_results=True
-                ).order_by().values('program_id').annotate(
-                    reported_results_count=models.Count('id')
-                ).values('reported_results_count'),
-                output_field=models.IntegerField()
-            ), 0)
-        total_results = models.functions.Coalesce(
-            models.Count('indicator__collecteddata', distinct=True), 0)
-        # evidence backing up results filter (at least one data point with evidence attached):
-        results_evidence = models.functions.Coalesce(
-            models.Count(
-                models.Case(
-                    models.When(
-                        models.Q(indicator__collecteddata__evidence__isnull=False) |
-                        models.Q(indicator__collecteddata__tola_table__isnull=False),
-                        then=1
-                    ),
-                    output_field=models.IntegerField()
-                )
-            ), 0)
-        needs_evidence = models.functions.Coalesce(
-            models.Subquery(
-                indicator_subquery_base.filter(
-                    all_results_backed_up=False
-                ).order_by().values('program_id').annotate(
-                    needs_evidence_count=models.Count('id')
-                ).values('needs_evidence_count'),
-                output_field=models.IntegerField()
-            ), 0)
-        # targets defined (ALL targets defined)
-        targets_defined = models.functions.Coalesce(
-            models.Subquery(
-                indicator_subquery_base.filter(
-                    get_defined_targets_filter()
-                 ).order_by().values('program_id').annotate(
-                     all_defined_targets_count=models.Count('id')
-                 ).values('all_defined_targets_count'),
-                output_field=models.IntegerField()
-            ), 0)
-        # raw count of indicators for this program:
-        indicator_count = models.functions.Coalesce(
-            models.Count('indicator', distinct=True),
-            0
-        )
-        return {
-            'reported_results_count': reported_results,
-            'reported_results_sum': total_results,
-            'results_evidence_count': results_evidence,
-            'needs_evidence_count': needs_evidence,
-            'targets_defined_count': targets_defined,
-            'indicator_count': indicator_count
-        }
-
-    def get_periods_annotations(self, qs):
-        """annotates the queryset with how many periods of each frequency are needed to be fully defined"""
-        # annotate with the number of months in the reporting period:
-        months_annotation = models.ExpressionWrapper(
-            (
-                (models.functions.ExtractYear('reporting_period_end') -
-                 models.functions.ExtractYear('reporting_period_start')) * 12 +
-                models.functions.ExtractMonth('reporting_period_end') -
-                models.functions.ExtractMonth('reporting_period_start') + 1
-            ),
-            output_field=models.IntegerField()
-        )
-        qs = qs.annotate(
-            months=months_annotation
-        )
-        # NOTE: this relies on the business logic that all reporting period dates are
-        # truncated to the 1st of the month (mid month reporting periods break this logic)
-        # use the months annotation to annotate the periods for different frequencies:
-        period_annotations = {}
-        for frequency, months_count in TIME_AWARE_FREQUENCIES:
-            period_annotations['periods_for_frequency_{0}'.format(frequency)] = models.F('months')/months_count
-        qs = qs.annotate(
-            **period_annotations
-        )
-        return qs
-
-    def get_queryset(self):
-        metrics_annotations = self.get_metrics_annotations()
-        scope_annotations = self.get_scope_annotations()
-        qs = ProgramMetricsQuerySet(self.model, using=self._db)
-        qs = self.get_periods_annotations(qs)
-        qs = qs.annotate(**metrics_annotations)
-        qs = qs.annotate(**scope_annotations)
-        return qs
-
-class ProgramForProgramPageQuerySet(ProgramMetricsQuerySet):
-    pass
-
 class ProgramForProgramPageManager(models.Manager):
     def get_queryset(self):
-        qs = ProgramForProgramPageQuerySet(self.model, using=self._db)
+        qs = ProgramMetricsQuerySet(self.model, using=self._db)
         return qs
 
 class ProgramForHomePageQuerySet(ProgramMetricsQuerySet):
     def with_annotations(self, *annotations):
-        if len(annotations) == 0:
+        if not annotations:
             annotations = ['targets', 'results', 'evidence', 'scope']
-        qs = self.all()
+        qs = self
         if any(key in annotations for key in ['count', 'targets', 'results', 'evidence', 'reporting', 'scope']):
             qs = qs.annotate(indicator_count=models.Count('indicator'))
         if any(key in annotations for key in ['results_count', 'results', 'evidence']):
-            qs = qs.annotate(reported_results_sum=get_program_results_annotation(False))
+            qs = qs.annotate(reported_results_sum=program_results_annotation(False))
         if 'targets' in annotations:
             qs = qs.annotate(program_months=program_get_program_months_annotation())
-            qs = qs.annotate(targets_defined_count=get_program_all_targets_defined_annotation())
+            qs = qs.annotate(targets_defined_count=program_all_targets_defined_annotation())
         if 'results' in annotations:
-            qs = qs.annotate(reported_results_count=get_program_results_annotation(True))
+            qs = qs.annotate(reported_results_count=program_results_annotation(True))
         if 'evidence' in annotations:
-            qs = qs.annotate(results_evidence_count=get_program_evidence_annotation())
+            qs = qs.annotate(results_evidence_count=program_evidence_annotation())
         if 'reporting' in annotations or 'scope' in annotations:
-            qs = qs.prefetch_related(get_program_scope_annotations(*annotations))
+            qs = qs.prefetch_related(program_scope_annotations(*annotations))
         return qs
 
 class ProgramForHomePageManager(models.Manager):
@@ -1017,7 +866,6 @@ class ProgramForHomePageManager(models.Manager):
 class ProgramWithMetrics(wf_models.Program):
     metrics_set = None
     cached_annotated_indicators = None
-    with_metrics = ProgramWithMetricsManager()
     program_page = ProgramForProgramPageManager()
     home_page = ProgramForHomePageManager()
     indicator_filters = {}
@@ -1116,21 +964,29 @@ class ProgramWithMetrics(wf_models.Program):
                 'on_scope': 0,
                 'high': 0
             }
+        if hasattr(self, 'scope_indicators'):
+            scope_indicators = self.scope_indicators
+        else:
+            scope_indicators = self.annotated_indicators
         return {
             'indicator_count': getattr(self, 'indicator_count', None),
-            'nonreporting_count': len([indicator for indicator in self.annotated_indicators if not indicator.reporting]),
-            'reporting_count': len([indicator for indicator in self.annotated_indicators if indicator.reporting]),
+            'nonreporting_count': len(
+                [indicator for indicator in scope_indicators if not indicator.reporting]
+            ),
+            'reporting_count': len(
+                [indicator for indicator in scope_indicators if indicator.reporting]
+            ),
 
             'low': len(
-                [indicator for indicator in self.annotated_indicators
+                [indicator for indicator in scope_indicators
                  if indicator.reporting and hasattr(indicator, 'over_under') and indicator.over_under == -1]
                 ),
             'on_scope': len(
-                [indicator for indicator in self.annotated_indicators
+                [indicator for indicator in scope_indicators
                  if indicator.reporting and hasattr(indicator, 'over_under') and indicator.over_under == 0]
                 ),
             'high': len(
-                [indicator for indicator in self.annotated_indicators
+                [indicator for indicator in scope_indicators
                  if indicator.reporting and hasattr(indicator, 'over_under') and indicator.over_under == 1]
                 ),
         }
