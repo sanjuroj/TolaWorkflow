@@ -27,7 +27,7 @@ class MonthDate(models.Func):
 # pylint: disable=W0223
 class MonthsCount(models.Func):
     function = 'PERIOD_DIFF'
-    template = '%(function)s(%(expressions)s)'
+    template = '(%(function)s(%(expressions)s)+1)'
 
     def __init__(self, end_date, start_date, **extra):
         if not start_date:
