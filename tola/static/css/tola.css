@@ -7778,7 +7778,7 @@ select.listoption_filters {
 #indicator_modal_body .div-input-container > select,
 #indicator_modal_body .div-input-container > .inputs-in-a-box,
 #indicator_modal_body .div-input-container .select2 {
-  height: 100%; }
+  max-height: 100%; }
 
 @media (max-width: 575px) {
   #indicator_modal_body .form-row > label {
