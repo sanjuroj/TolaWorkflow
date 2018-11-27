@@ -9,6 +9,7 @@
   5.2. What percentage of indicators?
 """
 
+import unittest
 import datetime
 from indicators.models import Indicator, PeriodicTarget
 from indicators.queries import ProgramWithMetrics
@@ -194,8 +195,9 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
         self.targets.append(event_target)
         return [event_indicator]
 
+
     def test_percentages(self):
-        with self.assertNumQueries(0):
+        with self.assertNumQueries(1):
             percentages = self.reporting_program.scope_counts
             self.assertEqual(
                 percentages['low'], 1,
@@ -218,7 +220,7 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
             'nonreporting_count': 1,
             'indicator_count': 7
         }
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             program = ProgramWithMetrics.home_page.with_annotations(
                 'scope', 'targets', 'results', 'evidence'
             ).get(pk=self.program.id)

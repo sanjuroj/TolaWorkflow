@@ -1,0 +1,19 @@
+// list filters
+// TODO: very incomplete, currently used only on program page indicator filters
+.list__filters {
+    margin-bottom: $grid-gutter-width/2;
+    margin-top: $grid-gutter-width/2;
+}
+.list__filters--inline-label {
+    align-items: center;
+    display: flex;
+    .filters__label {
+        margin-bottom: 0;
+        margin-right: 1rem;
+        white-space: nowrap;
+    }
+    .filters__control {
+        flex-grow: 1;
+        width: 1%; // for bs.multiselect . May not be replicable for other components
+    }
+}

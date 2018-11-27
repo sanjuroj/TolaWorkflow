@@ -1467,8 +1467,8 @@ class ProgramPage(ListView):
             return render(
                 request, 'indicators/program_setup_incomplete.html', context
                 )
-        indicator_filters = {'program__id': program_id}
-        #indicator_filters = {}
+        #indicator_filters = {'program__id': program_id}
+        indicator_filters = {}
         type_filter_id = None
         indicator_filter_id = None
         type_filter_name = None
@@ -1482,28 +1482,23 @@ class ProgramPage(ListView):
                 'scope_counts': program.scope_counts
             }
             return JsonResponse(json_context)
-        indicators = program.annotated_indicators
+        
 
         if int(self.kwargs['type_id']):
             type_filter_id = self.kwargs['type_id']
             type_filter_name = IndicatorType.objects.get(id=type_filter_id)
-            indicator_filters['indicator_type'] = type_filter_id
+            program.indicator_filters['indicator_type'] = type_filter_id
 
         if int(self.kwargs['indicator_id']):
             indicator_filter_id = self.kwargs['indicator_id']
-            indicators = indicators.filter(pk=indicator_filter_id)
-            indicator_filter_name = indicators.first()
-            indicator_filters['id'] = indicator_filter_id
-        else:
-            indicators = indicators.filter(**indicator_filters)
-        type_ids = set(indicators.values_list('indicator_type', flat=True))
-        indicator_types = IndicatorType.objects.filter(id__in=list(type_ids))
-        indicator_count = indicators.count()
+            program.indicator_filters['id'] = indicator_filter_id
+            indicator_filter_name = program.annotated_indicators.first()
+            
+        indicators = program.annotated_indicators
+        indicator_count = program.indicator_count
 
-        #indicator_level_ids = Indicator.level.through.objects.filter(indicator__in=indicators)\
-        #    .values_list('level', flat=True).distinct()
-        indicator_level_ids = indicators.values_list('level_id', flat=True).distinct()
-        indicator_levels = Level.objects.filter(id__in=indicator_level_ids)
+        indicator_types = IndicatorType.objects.filter(indicator__program__id=program_id)
+        indicator_levels = Level.objects.filter(indicator__program__id=program_id)
 
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
                          [PinnedReport.default_report(program.id)]
@@ -1512,7 +1507,7 @@ class ProgramPage(ListView):
             'delete_pinned_report_confirmation_msg':
                 _('Warning: This action connot be undone. Are you sure you want to delete this pinned report?'),
         }
-        program.set_metrics(indicators)
+        #program.set_metrics(indicators)
         c_data = {
             'program': program,
             'indicators': indicators,

@@ -83,6 +83,7 @@
 @import 'components/program'; // Program Page & related components for Mangosteen
 @import 'components/program_complete'; // Program percent complete with wee calendar icon
 @import 'components/home'; // Home page
+@import 'components/list_filters'; // List filters
 
 /* Local custom CSS and overloads for non-BS libraries */
 @import 'mixins';
@@ -96,5 +97,4 @@
 @import 'custom'; // misc. elements & unsorted selectors
 
 /* Unsorted custom selectors */
-
 

@@ -127,6 +127,7 @@ def gauge_tank(context, metric, has_filters=True):
             'filter_title': _('have missing targets'),
             'empty': _('No targets'),
             'help_text': _(''), # currently unused
+            'data_target': 'defined-targets',
         },
         'reported_results' : {
             'title': _('Indicators with results'),
@@ -136,6 +137,7 @@ def gauge_tank(context, metric, has_filters=True):
             'filter_title': _('have missing results'),
             'empty': _('No results'),
             'help_text': _(''), # currently unused
+            'data_target': 'reported-results',
         },
         'results_evidence': {
             'title': _('Results with evidence'),
@@ -145,6 +147,7 @@ def gauge_tank(context, metric, has_filters=True):
             'filter_title': _('have missing evidence'),
             'empty': _('No evidence'),
             'help_text': _(''), # currently unused
+            'data_target': 'has-evidence',
         },
     }
     program = context['program']
@@ -159,6 +162,7 @@ def gauge_tank(context, metric, has_filters=True):
     return {
         'program': program,
         'title': labels[metric]['title'],
+        'data_target': labels[metric]['data_target'],
         'id_tag': metric,
         'filled_value': filled_value,
         'unfilled_value': unfilled_value,

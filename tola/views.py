@@ -25,7 +25,7 @@ def index(request, selected_country=None):
     """
 
     # Find the active country
-    user = TolaUser.objects.filter(user=request.user)[0]
+    user = request.user.tola_user
     user_countries = getCountry(request.user) # all countries whose programs are available to the user
 
     if selected_country: # from URL
