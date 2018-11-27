@@ -32,7 +32,7 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
         self.indicators.extend(self.get_undertarget_indicators())
         self.indicators.extend(self.get_overtarget_indicators())
         self.indicators.extend(self.get_nonreporting_indicators())
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             self.reporting_program = ProgramWithMetrics.home_page.with_annotations('scope').get(pk=self.program.id)
 
     def tearDown(self):
@@ -197,7 +197,7 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
 
 
     def test_percentages(self):
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(0):
             percentages = self.reporting_program.scope_counts
             self.assertEqual(
                 percentages['low'], 1,
@@ -220,7 +220,7 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
             'nonreporting_count': 1,
             'indicator_count': 7
         }
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(2):
             program = ProgramWithMetrics.home_page.with_annotations(
                 'scope', 'targets', 'results', 'evidence'
             ).get(pk=self.program.id)

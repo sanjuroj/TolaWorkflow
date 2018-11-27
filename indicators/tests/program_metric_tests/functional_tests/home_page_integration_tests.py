@@ -76,9 +76,9 @@ class HomePageQueryStressTest(test.TestCase):
                         end_date=datetime.date(2014, 8, 1),
                         customsort=sort
                     )
-    @unittest.skip('home page query counts currently wrong')
+
     def test_scope_counts_and_metric_counts(self):
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             programs = ProgramWithMetrics.home_page.with_annotations().all()
             nonreporting = sum([p.scope_counts['nonreporting_count'] for p in programs])
             low = sum([p.scope_counts['low'] for p in programs])
