@@ -1111,6 +1111,7 @@ class ProgramWithMetrics(wf_models.Program):
             return {
                 'indicator_count': 0,
                 'nonreporting_count': 0,
+                'reporting_count': 0,
                 'low': 0,
                 'on_scope': 0,
                 'high': 0
@@ -1118,6 +1119,8 @@ class ProgramWithMetrics(wf_models.Program):
         return {
             'indicator_count': getattr(self, 'indicator_count', None),
             'nonreporting_count': len([indicator for indicator in self.annotated_indicators if not indicator.reporting]),
+            'reporting_count': len([indicator for indicator in self.annotated_indicators if indicator.reporting]),
+
             'low': len(
                 [indicator for indicator in self.annotated_indicators
                  if indicator.reporting and hasattr(indicator, 'over_under') and indicator.over_under == -1]
