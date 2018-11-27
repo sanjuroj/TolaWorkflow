@@ -1,21 +1,20 @@
 """Functional (query count and stress test) tests for Home Page (groups of programs not broken out by indicator)"""
 
-import unittest
 import datetime
-import unittest
 from indicators.models import Indicator
-from indicators.queries import ProgramWithMetrics, get_lop_annotations, get_lop_met_real_annotation, get_over_under_annotation
+from indicators.queries import ProgramWithMetrics
 from factories import (
     workflow_models as w_factories,
     indicators_models as i_factories
 )
 from django import test
 
+
 class OneProgramHomePageTests(test.TestCase):
     fixtures = ['one_program_home_page.yaml']
 
     def test_scope_counts_and_metric_counts(self):
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(2):
             program = ProgramWithMetrics.home_page.with_annotations().get(pk=1)
             scope_counts = program.scope_counts
             metrics = program.metrics
@@ -43,7 +42,7 @@ class HomePageQueryStressTest(test.TestCase):
                     lop_target=100,
                     program=program
                 )
-                data = i_factories.CollectedDataFactory(
+                i_factories.CollectedDataFactory(
                     indicator=indicator,
                     achieved=105
                 )
@@ -54,7 +53,7 @@ class HomePageQueryStressTest(test.TestCase):
                     program=program
                 )
                 evidence = w_factories.DocumentationFactory(program=program)
-                data = i_factories.CollectedDataFactory(
+                i_factories.CollectedDataFactory(
                     indicator=indicator,
                     achieved=50,
                     evidence=evidence
@@ -70,7 +69,7 @@ class HomePageQueryStressTest(test.TestCase):
                     program=program
                 )
                 for sort in range(2):
-                    target = i_factories.PeriodicTargetFactory(
+                    i_factories.PeriodicTargetFactory(
                         indicator=indicator,
                         target=40,
                         start_date=datetime.date(2014, 5, 1),

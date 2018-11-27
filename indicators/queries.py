@@ -14,17 +14,17 @@ from django.db import models
 from django.db.models.functions import Concat
 from django.utils.functional import cached_property
 
-# pylint disable=W0223
+# pylint: disable=W0223
 class Round(models.Func):
     function = 'ROUND'
     template = '%(function)s(%(expressions)s, 0)'
 
-# pylint disable=W0223
+# pylint: disable=W0223
 class MonthDate(models.Func):
     function = 'DATE_FORMAT'
     template = '%(function)s(%(expressions)s, \'%%%%Y%%%%m\')'
 
-# pylint disable=W0223
+# pylint: disable=W0223
 class MonthsCount(models.Func):
     function = 'PERIOD_DIFF'
     template = '%(function)s(%(expressions)s)'
@@ -301,9 +301,9 @@ def get_program_all_targets_defined_annotation():
         models.Subquery(
             target_subquery.filter(
                 program_get_defined_targets_filter()
-             ).order_by().values('program_id').annotate(
+            ).order_by().values('program_id').annotate(
                  all_defined_targets_count=models.Count('id')
-             ).values('all_defined_targets_count')[:1],
+            ).values('all_defined_targets_count')[:1],
             output_field=models.IntegerField()
         ), 0)
 
@@ -361,7 +361,7 @@ def get_results_count_annotation():
             CollectedData.objects.filter(
                 indicator=models.OuterRef('pk')
                 ).order_by().values('indicator').annotate(
-                total_results=models.Count('id')
+                    total_results=models.Count('id')
                 ).values('total_results')[:1],
             output_field=models.IntegerField()
         ), 0)
@@ -374,9 +374,9 @@ def get_results_evidence_annotation():
             CollectedData.objects.filter(
                 indicator=models.OuterRef('pk')
                 ).filter(
-                models.Q(evidence__isnull=False) | models.Q(tola_table__isnull=False)
+                    models.Q(evidence__isnull=False) | models.Q(tola_table__isnull=False)
                 ).order_by().values('indicator').annotate(
-                total_results=models.Count('id')
+                    total_results=models.Count('id')
                 ).values('total_results')[:1],
             output_field=models.IntegerField()
         ), 0)
@@ -445,11 +445,9 @@ class MetricsIndicator(Indicator):
 
     @cached_property
     def cached_data_count(self):
-        return 10
         if hasattr(self, 'data_count'):
             return self.data_count
-        else:
-            return self.collecteddata_set.count()
+        return self.collecteddata_set.count()
 
 class IPTTIndicatorQuerySet(models.QuerySet):
     """This overrides the count method because ONLY_FULL_GROUP_BY errors appear otherwise on this custom query"""
@@ -993,7 +991,7 @@ class ProgramForProgramPageManager(models.Manager):
 
 class ProgramForHomePageQuerySet(ProgramMetricsQuerySet):
     def with_annotations(self, *annotations):
-        if len(annotations) == 0:
+        if not annotations:
             annotations = ['targets', 'results', 'evidence', 'scope']
         qs = self.all()
         if any(key in annotations for key in ['count', 'targets', 'results', 'evidence', 'reporting', 'scope']):
