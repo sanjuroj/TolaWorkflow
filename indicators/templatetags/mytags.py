@@ -197,8 +197,20 @@ def gauge_tank_small(context, metric):
             'help_text': ('Each result must include a link to an evidence file or folder.'),
         },
     }
-    unfilled_percent = 25
-    filled_percent = 75
+    if metric == 'targets_defined':
+        denominator = context['programs'].program_count
+        numerator = context['programs'].all_targets_defined_for_all_indicators_count
+    if metric == 'reported_results':
+        denominator = context['programs'].indicators_count
+        numerator = context['programs'].indicators_with_results_count
+    if metric == 'results_evidence':
+        denominator = context['programs'].results_count
+        numerator = context['programs'].results_with_evidence_count
+    if denominator == 0:
+        filled_percent = 0
+    else:
+        filled_percent = int(round(float(numerator*100)/denominator))
+    unfilled_percent = 100 - filled_percent
     tick_count = 10
 
     return {
