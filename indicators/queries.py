@@ -19,6 +19,22 @@ class Round(models.Func):
     function = 'ROUND'
     template = '%(function)s(%(expressions)s, 0)'
 
+# pylint disable=W0223
+class MonthDate(models.Func):
+    function = 'DATE_FORMAT'
+    template = '%(function)s(%(expressions)s, \'%%%%Y%%%%m\')'
+
+# pylint disable=W0223
+class MonthsCount(models.Func):
+    function = 'PERIOD_DIFF'
+    template = '%(function)s(%(expressions)s)'
+
+    def __init__(self, end_date, start_date, **extra):
+        if not start_date:
+            raise ValueError('two dates required for diff')
+        expressions = MonthDate(models.F(end_date)), MonthDate(models.F(start_date))
+        super(MonthsCount, self).__init__(*expressions)
+
 def get_lop_annotations():
     """generates annotations for LOP target and actual data
 
@@ -37,7 +53,7 @@ def get_lop_annotations():
         (
             models.Q(indicator__target_frequency__in=[Indicator.LOP, Indicator.MID_END, Indicator.EVENT]) &
             models.Q(data_count__gt=0)
-        ) | models.Q(end_date__lte=datetime.date.today())
+        ) | models.Q(end_date__lte=models.functions.Now())
     )
     indicator_data = CollectedData.objects.filter(
         models.Q(indicator=models.OuterRef('pk'))
@@ -195,15 +211,7 @@ TIME_AWARE_FREQUENCIES = [
 def get_program_months_annotation():
     """annotates an indicator with the number of months in the associated program
         this annotation is used by the defined_targets_filter"""
-    return models.ExpressionWrapper(
-        (
-            (models.functions.ExtractYear('program__reporting_period_end') -
-             models.functions.ExtractYear('program__reporting_period_start')) * 12 +
-            models.functions.ExtractMonth('program__reporting_period_end') -
-            models.functions.ExtractMonth('program__reporting_period_start') + 1
-        ),
-        output_field=models.IntegerField()
-    )
+    return MonthsCount('program__reporting_period_end', 'program__reporting_period_start')
 
 def get_defined_targets_filter():
     """returns a set of filters that filter out indicators that do not have all defined targets
@@ -301,22 +309,15 @@ def get_program_all_targets_defined_annotation():
 
 def program_get_program_months_annotation():
     """annotates a program with the number of months in the associated program"""
-    return models.ExpressionWrapper(
-        (
-            (models.functions.ExtractYear('reporting_period_end') -
-             models.functions.ExtractYear('reporting_period_start')) * 12 +
-            models.functions.ExtractMonth('reporting_period_end') -
-            models.functions.ExtractMonth('reporting_period_start') + 1
-        ),
-        output_field=models.IntegerField()
-    )
+    return MonthsCount('reporting_period_end', 'reporting_period_start')
 
 
 def get_program_results_annotation(total=True):
     """annotates a program with the count of indicators which have any reported results"""
     data_subquery = CollectedData.objects.filter(
         indicator__program=models.OuterRef('pk')
-    ).order_by().values('indicator__program').annotate(data_count=models.Count('indicator_id', distinct=total)).values('data_count')[:1]
+    ).order_by().values('indicator__program').annotate(
+        data_count=models.Count('indicator_id', distinct=total)).values('data_count')[:1]
     return models.functions.Coalesce(
         models.Subquery(
             data_subquery,
@@ -437,7 +438,11 @@ class MetricsIndicator(Indicator):
     @property
     def has_reported_results(self):
         return self.results_count > 0
-    
+
+    @property
+    def all_results_backed_up(self):
+        return self.results_count == self.results_with_evidence_count
+
     @cached_property
     def cached_data_count(self):
         return 10
