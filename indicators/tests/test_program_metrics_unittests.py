@@ -26,6 +26,14 @@ from program_metric_tests.program_unit.program_reporting_count_unit_tests import
 )
 
 from program_metric_tests.program_unit.program_scope_queries_unit_tests import (
-        TestProgramReportingingCounts,
-        TestTargetsActualsOverUnderCorrect
+    TestProgramReportingingCounts,
+    TestTargetsActualsOverUnderCorrect
+)
+
+from program_metric_tests.program_unit.program_qs_metrics_unittests import (
+    TestTwoProgramsBothDefined,
+    TestTwoProgramsOneDefined,
+    TestTwoProgramsFiveIndicatorsThreeReportedResults,
+    TestTwoProgramsFiveIndicatorsEightResultsFiveEvidence,
+    TestMultipleProgramsStressTestQSCounts
 )
