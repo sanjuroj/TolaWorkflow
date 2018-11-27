@@ -89,6 +89,7 @@
         setupPopupCalendar();
     });
 
+    $("#id_level").val(''); // set level to NONE
 
     // when a user clicks the 'Attach evidence' button in the indicator from.
     $("#indicator_modal_content, #indicator_form").on("click", "#id_add_evidence_btn", function(e){
@@ -326,7 +327,7 @@
         if (form_data.indexOf('is_cumulative') == -1) {
             form_data += "&is_cumulative=3"
         }
-        //disable submit button as we are posting and want to prevent double-saves while waiting: 
+        //disable submit button as we are posting and want to prevent double-saves while waiting:
         submitBtnName.attr('disabled', true);
         // adding button to an Object so it is available inside the success callback
         var disabledButton = {'submit': submitBtnName};
@@ -644,6 +645,7 @@
 
     function validateForm() {
         var validationsTargetTab = true;
+        var validationsSummaryTab = true;
         var validationsPerformanceTab = true;
         if  (validate_baseline() == false ) {
             validationsTargetTab = false
@@ -689,9 +691,9 @@
             delete validation_msgs['target'];
         }
 
-        /* validate fields from the performance tab */
+        /* validate fields from the summary tab */
         if (validateForEmptyField("id_name") == false) {
-            validationsPerformanceTab = false
+            validationsSummaryTab = false
             $("#div_id_name").addClass("marginbottom-225")
             $("#div_id_name").removeClass("mb-3")
         }
@@ -699,12 +701,25 @@
           $("#div_id_name").addClass("mb-3")
           $("#div_id_name").removeClass("marginbottom-225")
         }
+
+        if (validationsSummaryTab == false) {
+            validation_msgs['summary'] = '{% trans "Please complete all required fields in the Summary tab."|escapejs %}';
+        } else {
+            delete validation_msgs['summary'];
+        }
+
+        /* validate fields from the Performance tab */
+        if (validateForEmptyField("id_level") == false) {
+            validationsPerformanceTab = false;
+        }
+
         if (validationsPerformanceTab == false) {
-            validation_msgs['performance'] = '{% trans "Please complete all required fields in the Summary tab."|escapejs %}';
+            validation_msgs['performance'] = '{% trans "Please complete all required fields in the Performance tab."|escapejs %}';
         } else {
             delete validation_msgs['performance'];
         }
-        return (validationsTargetTab && validationsPerformanceTab) ? true: false;
+        // return all tab validations
+        return (validationsTargetTab && validationsSummaryTab && validationsPerformanceTab) ? true: false;
     }
 
     $("#indicator_modal_content, #indicator_form").on("keypress", "input[type=number]", function(e){
@@ -740,6 +755,10 @@
 
     $("#indicator_modal_content, #indicator_form").on("blur", "#id_unit_of_measure", function(e){
         validateForEmptyField("id_unit_of_measure");
+    });
+
+    $("#indicator_modal_content, #indicator_form").on("blur", "#id_level", function(e){
+        validateForEmptyField("id_level");
     });
 
     $("#indicator_modal_content, #indicator_form").on("blur", "#id_target_frequency", function(e){
