@@ -953,21 +953,29 @@ class ProgramWithMetrics(wf_models.Program):
                 'on_scope': 0,
                 'high': 0
             }
+        if hasattr(self, 'scope_indicators'):
+            scope_indicators = self.scope_indicators
+        else:
+            scope_indicators = self.annotated_indicators
         return {
             'indicator_count': getattr(self, 'indicator_count', None),
-            'nonreporting_count': len([indicator for indicator in self.annotated_indicators if not indicator.reporting]),
-            'reporting_count': len([indicator for indicator in self.annotated_indicators if indicator.reporting]),
+            'nonreporting_count': len(
+                [indicator for indicator in scope_indicators if not indicator.reporting]
+            ),
+            'reporting_count': len(
+                [indicator for indicator in scope_indicators if indicator.reporting]
+            ),
 
             'low': len(
-                [indicator for indicator in self.annotated_indicators
+                [indicator for indicator in scope_indicators
                  if indicator.reporting and hasattr(indicator, 'over_under') and indicator.over_under == -1]
                 ),
             'on_scope': len(
-                [indicator for indicator in self.annotated_indicators
+                [indicator for indicator in scope_indicators
                  if indicator.reporting and hasattr(indicator, 'over_under') and indicator.over_under == 0]
                 ),
             'high': len(
-                [indicator for indicator in self.annotated_indicators
+                [indicator for indicator in scope_indicators
                  if indicator.reporting and hasattr(indicator, 'over_under') and indicator.over_under == 1]
                 ),
         }
