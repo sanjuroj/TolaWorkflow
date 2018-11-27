@@ -836,6 +836,30 @@ class ProgramForProgramPageManager(models.Manager):
         return qs
 
 class ProgramForHomePageQuerySet(ProgramMetricsQuerySet):
+    @property
+    def program_count(self):
+        return self.count()
+
+    @property
+    def all_targets_defined_for_all_indicators_count(self):
+        return len([program for program in self if program.all_targets_defined_for_all_indicators])
+
+    @property
+    def indicators_count(self):
+        return sum([program.indicator_count for program in self])
+
+    @property
+    def results_count(self):
+        return sum([program.total_results_count for program in self])
+
+    @property
+    def indicators_with_results_count(self):
+        return sum([program.reported_results_count for program in self])
+
+    @property
+    def results_with_evidence_count(self):
+        return sum([program.results_evidence_count for program in self])
+
     def with_annotations(self, *annotations):
         if not annotations:
             annotations = ['targets', 'results', 'evidence', 'scope']
@@ -848,6 +872,7 @@ class ProgramForHomePageQuerySet(ProgramMetricsQuerySet):
             qs = qs.annotate(program_months=program_get_program_months_annotation())
             qs = qs.annotate(targets_defined_count=program_all_targets_defined_annotation())
         if 'results' in annotations:
+            qs = qs.annotate(total_results_count=program_results_annotation(False))
             qs = qs.annotate(reported_results_count=program_results_annotation(True))
         if 'evidence' in annotations:
             qs = qs.annotate(results_evidence_count=program_evidence_annotation())
@@ -899,10 +924,12 @@ class ProgramWithMetrics(wf_models.Program):
         }
 
     @cached_property
+    def all_targets_defined_for_all_indicators(self):
+        return self.indicator_count == self.metrics['targets_defined']
+
+    @cached_property
     def indicator_count(self):
-        if not hasattr(self, 'cached_indicator_count'):
-            self.cached_indicator_count = self.indicator_set.count()
-        return self.cached_indicator_count
+        return self.indicator_set.count()
 
     @cached_property
     def annotated_indicators(self):
