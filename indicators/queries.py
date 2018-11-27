@@ -339,7 +339,7 @@ def get_program_evidence_annotation():
 
 def get_program_scope_annotations(*annotations):
     """annotates a program's indicators prefetch query with the required annotations to report their on scope status"""
-    indicators_subquery = Indicator.objects.all()
+    indicators_subquery = Indicator.objects.select_related('program').all()
     if any(key in annotations for key in ['reporting', 'scope']):
         indicators_subquery = indicators_subquery.annotate(
             **get_lop_annotations()
@@ -349,7 +349,7 @@ def get_program_scope_annotations(*annotations):
             lop_met_real=get_lop_met_real_annotation()
         ).annotate(
             over_under=get_over_under_annotation()
-        ).select_related().only('program', 'id')
+        )
     return models.Prefetch(
         'indicator_set', queryset=indicators_subquery, to_attr='scope_indicators'
         )
