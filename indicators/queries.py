@@ -1118,8 +1118,8 @@ class ProgramWithMetrics(wf_models.Program):
             }
         return {
             'indicator_count': getattr(self, 'indicator_count', None),
-            'nonreporting_count': len([indicator for indicator in self.scope_indicators if not indicator.reporting]),
-            'reporting_count': len([indicator for indicator in self.scope_indicators if indicator.reporting]),
+            'nonreporting_count': len([indicator for indicator in self.annotated_indicators if not indicator.reporting]),
+            'reporting_count': len([indicator for indicator in self.annotated_indicators if indicator.reporting]),
 
             'low': len(
                 [indicator for indicator in self.annotated_indicators
