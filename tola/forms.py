@@ -23,26 +23,24 @@ class ProfileUpdateForm(forms.ModelForm):
 
     class Meta:
         model = TolaUser
-        fields = '__all__'
+        fields = [ 'language', ]
 
     helper = FormHelper()
     helper.form_method = 'post'
     helper.form_class = ''
     helper.label_class = ''
     helper.field_class = ''
-    helper.form_error_title = 'Form Errors'
+    helper.form_error_title = _('Form Errors')
     helper.error_text_inline = True
     helper.help_text_inline = True
     helper.html5_required = True
     helper.layout = Layout(
-        Fieldset(
-            '', 'title', 'name', 'employee_number', 'user', 'country', 'language', 'countries'),
+        Field( 'language'),
         Div(
             FormActions(
-                Submit('submit', 'Save changes', css_class=''),
-                Reset('reset', 'Reset', css_class='')
+                Submit('submit', _('Save changes'), css_class=''),
+                Reset('reset', _('Cancel'), css_class='')
             ),
-            css_class='form-actions bg-gray-lighter p-4 justify-content-between',
         ),
     )
 
