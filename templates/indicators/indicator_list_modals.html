@@ -108,7 +108,7 @@
                 });
 
                 var indicator_number = form.find("#id_number").val();
-                var indicator_name = `${indicator_number} ${form.find("#id_name").val()}`;
+                var indicator_name = `${form.find("#id_name").val()}`;
 
                 if (kpi) {
                     if ($("#id_indicator_name_" + indicator_id + " span.badge").length == 0) {
@@ -123,6 +123,7 @@
                 $("#id_indicator_type_" + indicator_id).text(indicator_type);
                 $("#id_indicator_level_" + indicator_id).text(indicator_level.trim().slice(0, -1));
                 $("#id_indicator_name_" + indicator_id + " a .indicator_name").text(indicator_name);
+                $("#id_indicator_name_" + indicator_id + " a .indicator_number").text(indicator_number);
                 $("#id_indicator_sector_" + indicator_id).text(indicator_sector);
                 $("#id_indicator_unit_" + indicator_id).text(form.find("#id_unit_of_measure").val());
                 $("#id_indicator_baseline_" + indicator_id).text(form.find("#id_baseline").val());
