@@ -275,10 +275,104 @@ class ExternalServiceRecordAdmin(admin.ModelAdmin):
                     'edit_date')
     display = 'Exeternal Indicator Data Service'
 
+# pylint: disable=W0223
+class DecimalSplit(models.Func):
+    function = 'SUBSTRING_INDEX'
+    template = '%(function)s(%(expressions)s)'
 
-class IndicatorManager(models.Manager):
+    def __init__(self, string, count, **extra):
+        expressions = models.F(string), models.Value('.'), count
+        super(DecimalSplit, self).__init__(*expressions)
+
+# pylint: disable=W0223
+class DoubleDecimalSplit(models.Func):
+    function = 'SUBSTRING_INDEX'
+    template = 'SUBSTRING_INDEX(%(function)s(%(expressions)s), \'.\', -1)'
+
+    def __init__(self, string, count, **extra):
+        expressions = models.F(string), models.Value('.'), count
+        super(DoubleDecimalSplit, self).__init__(*expressions)
+
+class IndicatorSortingQSMixin(object):
+    def with_logframe_sorting(self):
+        numeric_re = r'^[[:space:]]*[0-9]+[[:space:]]*$'
+        logframe_re = r'^[[:space:]]*[0-9]+([[.period.]][0-9]+)?'\
+                      '([[.period.]][0-9]+)?([[.period.]][0-9]+)?[[:space:]]*$'
+        logframe_re2 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?([[.period.]][0-9]+)?[[:space:]]*$'
+        logframe_re3 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?[[:space:]]*$'
+        logframe_re4 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[:space:]]*$'
+
+        qs = self.annotate(
+            logsort_type=models.Case(
+                models.When(
+                    number__regex=logframe_re,
+                    then=1
+                ),
+                models.When(
+                    number__regex=numeric_re,
+                    then=2
+                ),
+                default=3,
+                output_field=models.IntegerField()
+            )
+        ).annotate(
+            logsort_a=models.Case(
+                models.When(
+                    logsort_type=1,
+                    then=DecimalSplit('number', 1)
+                ),
+                models.When(
+                    logsort_type=2,
+                    then=models.F('number'),
+                ),
+                default=models.Value(0),
+                output_field=models.IntegerField()
+            ),
+            logsort_b=models.Case(
+                models.When(
+                    number__regex=logframe_re2,
+                    then=DoubleDecimalSplit('number', 2)
+                ),
+                default=models.Value(0),
+                output_field=models.IntegerField()
+            ),
+            logsort_c=models.Case(
+                models.When(
+                    number__regex=logframe_re3,
+                    then=DoubleDecimalSplit('number', 3)
+                ),
+                default=models.Value(0),
+                output_field=models.IntegerField()
+            ),
+            logsort_d=models.Case(
+                models.When(
+                    number__regex=logframe_re4,
+                    then=DoubleDecimalSplit('number', 4)
+                ),
+                default=models.Value(0),
+                output_field=models.IntegerField()
+            )
+        )
+        return qs.order_by(
+            'logsort_type',
+            models.functions.Cast('logsort_a', models.IntegerField()),
+            models.functions.Cast('logsort_b', models.IntegerField()),
+            models.functions.Cast('logsort_c', models.IntegerField()),
+            'number'
+            )
+
+class IndicatorSortingManagerMixin(object):
+    def with_logframe_sorting(self):
+        qs = self.get_queryset()
+        return qs.with_logframe_sorting()
+
+class IndicatorQuerySet(models.QuerySet, IndicatorSortingQSMixin):
+    pass
+
+class IndicatorManager(models.Manager, IndicatorSortingManagerMixin):
+
     def get_queryset(self):
-        return super(IndicatorManager, self).get_queryset()\
+        return IndicatorQuerySet(self.model, using=self._db)\
             .prefetch_related('program')\
             .select_related('sector')
 

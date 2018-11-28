@@ -7,7 +7,9 @@ from indicators.models import (
     Indicator,
     Level,
     PeriodicTarget,
-    CollectedData
+    CollectedData,
+    IndicatorSortingManagerMixin,
+    IndicatorSortingQSMixin
 )
 from workflow import models as wf_models
 from django.db import models
@@ -391,7 +393,9 @@ def indicator_results_evidence_annotation():
                 ).values('total_results')[:1],
             output_field=models.IntegerField()
         ), 0)
-class MetricsIndicatorQuerySet(models.QuerySet):
+
+
+class MetricsIndicatorQuerySet(models.QuerySet, IndicatorSortingQSMixin):
     """QuerySet for indicators returned for Program Page with annotated metrics"""
 
     def with_annotations(self, *annotations):
@@ -432,7 +436,7 @@ class MetricsIndicatorQuerySet(models.QuerySet):
             qs = qs.select_related('level')
         return qs
 
-class MetricsIndicatorManager(models.Manager):
+class MetricsIndicatorManager(models.Manager, IndicatorSortingManagerMixin):
     def get_queryset(self):
         return MetricsIndicatorQuerySet(self.model, using=self._db)
 
@@ -460,13 +464,13 @@ class MetricsIndicator(Indicator):
             return self.data_count
         return self.collecteddata_set.count()
 
-class IPTTIndicatorQuerySet(models.QuerySet):
+class IPTTIndicatorQuerySet(models.QuerySet, IndicatorSortingQSMixin):
     """This overrides the count method because ONLY_FULL_GROUP_BY errors appear otherwise on this custom query"""
     def count(self):
         return self.values('id').aggregate(total=models.Count('id', distinct=True))['total']
 
 
-class IPTTIndicatorManager(models.Manager):
+class IPTTIndicatorManager(models.Manager, IndicatorSortingManagerMixin):
     """this is the general manager for all IPTT (annotated) indicators - generates totals over LOP"""
 
     def add_labels(self, qs):
