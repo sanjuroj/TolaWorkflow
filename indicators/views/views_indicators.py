@@ -662,8 +662,6 @@ class IndicatorUpdate(UpdateView):
 class IndicatorDelete(DeleteView):
     model = Indicator
     form_class = IndicatorForm
-    success_url = reverse_lazy(
-        'indicator_list', kwargs={'program': 0, 'indicator': 0, 'type': 0})
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
@@ -677,6 +675,10 @@ class IndicatorDelete(DeleteView):
         form.save()
         messages.success(self.request, _('Success, Indicator Deleted!'))
         return self.render_to_response(self.get_context_data(form=form))
+
+    def get_success_url(self):
+        return reverse_lazy('program_page',
+                            kwargs={'program_id': self.object.program_id, 'indicator_id': 0, 'type_id': 0})
 
 
 class PeriodicTargetDeleteView(DeleteView):
@@ -957,13 +959,15 @@ class CollectedDataUpdate(UpdateView):
 
 class CollectedDataDelete(DeleteView):
     model = CollectedData
-    success_url = reverse_lazy(
-        'indicator_list', kwargs={'program': 0, 'indicator': 0, 'type': 0})
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
         return super(CollectedDataDelete, self).dispatch(
             request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('program_page',
+                            kwargs={'program_id': self.object.program_id, 'indicator_id': 0, 'type_id': 0})
 
 
 def getTableCount(url, table_id):
