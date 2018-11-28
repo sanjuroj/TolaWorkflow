@@ -35,5 +35,7 @@ from program_metric_tests.indicator_unit.over_under_queries_unit_tests import (
 
 from program_metric_tests.indicator_unit.indicator_sorting_unittests import (
     TestNumericSorting,
-    TestAlphabeticalSorting
+    TestAlphabeticalSorting,
+    TestLogframeSorting,
+    TestQueryCounts
 )
