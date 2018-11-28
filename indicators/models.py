@@ -372,9 +372,7 @@ class IndicatorQuerySet(models.QuerySet, IndicatorSortingQSMixin):
 class IndicatorManager(models.Manager, IndicatorSortingManagerMixin):
 
     def get_queryset(self):
-        return IndicatorQuerySet(self.model, using=self._db)\
-            .prefetch_related('program')\
-            .select_related('sector')
+        return IndicatorQuerySet(self.model, using=self._db).select_related('program', 'sector')
 
 
 class Indicator(models.Model):
