@@ -29,7 +29,7 @@
 <div class="program-page__main">
     <div class="program-page__sidebar">
         <section class="sidebar__detail">
-            <h3>{% trans "Program Details" %}</h3>
+            <h3>{% trans "Program details" %}</h3>
             <p><a href="{% url 'programIndicatorReport' program.id %}">{% trans "Indicator Plan" %}</a></p>
         </section>
         <section class="sidebar__detail">
@@ -39,11 +39,11 @@
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Sites" %}</h3>
-            <p><a href="{% url 'siteprofile_list' program.id 0 %}">{% trans "View Program Sites" %}</a></p>
+            <p><a href="{% url 'siteprofile_list' program.id 0 %}">{% trans "View program sites" %}</a></p>
             <a href="{% url 'siteprofile_add' %}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add site" %}</a>
         </section>
         <section class="sidebar__detail">
-            <h3>{% trans "Pinned Reports" %}</h3>
+            <h3>{% trans "Pinned reports" %}</h3>
             <ul class="pinned-reports">
                 {% for pr in pinned_reports %}
                     <li class="pinned-report">
