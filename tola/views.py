@@ -13,10 +13,12 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Q, Count
 from tola.util import getCountry
 from django.contrib.auth.models import Group
+from django.utils.translation import gettext as _
 from indicators.queries import ProgramWithMetrics
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+
 
 @login_required(login_url='/accounts/login/')
 def index(request, selected_country=None):
@@ -26,9 +28,9 @@ def index(request, selected_country=None):
 
     # Find the active country
     user = request.user.tola_user
-    user_countries = getCountry(request.user) # all countries whose programs are available to the user
+    user_countries = getCountry(request.user)  # all countries whose programs are available to the user
 
-    if selected_country: # from URL
+    if selected_country:  # from URL
         active_country = Country.objects.filter(id=selected_country)[0]
         user.update_active_country(active_country)
     else:
@@ -79,7 +81,7 @@ def register(request):
             tolauser = tf.save(commit=False)
             tolauser.user = user
             tolauser.save()
-            messages.error(request, 'Thank you, You have been registered as a new user.', fail_silently=False)
+            messages.error(request, _('Thank you, You have been registered as a new user.'), fail_silently=False)
             return HttpResponseRedirect("/")
     else:
         uf = NewUserRegistrationForm()
@@ -102,14 +104,14 @@ def profile(request):
         if request.method == 'POST':
             if form.is_valid():
                 form.save()
-                messages.error(request, 'Your profile has been updated.', fail_silently=False,
+                messages.error(request, _('Your profile has been updated.'), fail_silently=False,
                                extra_tags='success')
-                # immediately redirect to user sees language change
+                # immediately redirect so user sees language change
                 return HttpResponseRedirect(reverse_lazy('profile'))
-
         return render(request, "registration/profile.html", {
             'form': form, 'helper': ProfileUpdateForm.helper
         })
+
     else:
         return HttpResponseRedirect(reverse_lazy('register'))
 
@@ -125,7 +127,7 @@ class BookmarkList(ListView):
         getUser = TolaUser.objects.all().filter(user=request.user)
         getBookmarks = TolaBookmarks.objects.all().filter(user=getUser)
 
-        return render(request, self.template_name, {'getBookmarks':getBookmarks})
+        return render(request, self.template_name, {'getBookmarks': getBookmarks})
 
 
 class BookmarkCreate(CreateView):
@@ -158,13 +160,13 @@ class BookmarkCreate(CreateView):
 
     def form_invalid(self, form):
 
-        messages.error(self.request, 'Invalid Form', fail_silently=False)
+        messages.error(self.request, _('Invalid Form'), fail_silently=False)
 
         return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form):
         form.save()
-        messages.success(self.request, 'Success, Bookmark Created!')
+        messages.success(self.request, _('Success, Bookmark Created!'))
         latest = TolaBookmarks.objects.latest('id')
         redirect_url = '/bookmark_update/' + str(latest.id)
         return HttpResponseRedirect(redirect_url)
@@ -202,7 +204,7 @@ class BookmarkUpdate(UpdateView):
 
     def form_valid(self, form):
         form.save()
-        messages.success(self.request, 'Success, Bookmark Updated!')
+        messages.success(self.request, _('Success, Bookmark Updated!'))
         latest = TolaBookmarks.objects.latest('id')
         redirect_url = '/bookmark_update/' + str(latest.id)
         return HttpResponseRedirect(redirect_url)
@@ -231,7 +233,7 @@ class BookmarkDelete(DeleteView):
 
         form.save()
 
-        messages.success(self.request, 'Success, Bookmark Deleted!')
+        messages.success(self.request, _('Success, Bookmark Deleted!'))
         return self.render_to_response(self.get_context_data(form=form))
 
     form_class = BookmarkForm

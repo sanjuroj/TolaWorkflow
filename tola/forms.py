@@ -16,10 +16,6 @@ class ProfileUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
-        # if they aren't a super user or User Admin don't let them change countries form field
-        if 'User Admin' not in user.groups.values_list('name', flat=True) and not user.is_superuser:
-            self.fields['countries'].disabled = True
-            self.fields['country'].disabled = True
 
     class Meta:
         model = TolaUser
