@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
     // Important selectors & attributes
-    const indicators_select = $("#id_indicators"); // indicator search filter (sidebar)
+    const indicators_select = $("#id_indicators"); // indicator search filter
     const show_all_link = $('#show-all-indicators');
     const indicators_list_title = $('#indicators-list-title');
     const indicator_list_row = $('.indicators-list__row');
@@ -17,11 +17,10 @@ $(document).ready(function() {
     }
 
     // Clear sidebar filters
-    function clear_side_bar_filters() {
+    function clear_indicator_select() {
         // these do not trigger any callbacks
-        indicators_select.multiselect('deselectAll', false);
-        indicators_select.multiselect('updateButtonText');
-        show_all_link.show();
+        indicators_select.val('');
+        indicators_select.multiselect('refresh');
     }
 
     // Clear gauge filters
@@ -30,7 +29,6 @@ $(document).ready(function() {
         show_all_link.hide();
         indicator_list_row.show();
         indicators_list_title.text(default_list_title);
-        indicators_select.val('');
     }
 
     // Hide "show all" link
@@ -40,7 +38,7 @@ $(document).ready(function() {
     $('.filter-trigger').on('click', function(e) {
         e.preventDefault();
         clear_gauge_filters();
-        clear_side_bar_filters();
+        clear_indicator_select();
 
         let highlighted_tab = $(this);
         let target = $(this).data('target');
@@ -61,7 +59,7 @@ $(document).ready(function() {
     show_all_link.on('click', function(e) {
         e.preventDefault();
         clear_gauge_filters();
-        clear_side_bar_filters();
+        clear_indicator_select();
 
         indicator_list_row.show();
         $(this).hide();
@@ -71,7 +69,7 @@ $(document).ready(function() {
     $('.filter-trigger--band').on('click', function (e) {
         e.preventDefault();
         clear_gauge_filters();
-        clear_side_bar_filters();
+        clear_indicator_select();
 
         let elem = $(this);
         let highlighted_tab = elem.closest('.gauge');
@@ -103,7 +101,7 @@ $(document).ready(function() {
 
     function on_indicators_change() {
         $('.gauge').removeClass('is-highlighted');
-        selected_indicator_ids = indicators_select.find('option:selected').map(function() { return parseInt($(this).val()) }).get();
+        let selected_indicator_ids = indicators_select.find('option:selected').map(function() { return parseInt($(this).val()) }).get();
         show_all_link.show();
         indicators_list_title.text(list_title);
         indicator_list_row.each(function() {
@@ -122,4 +120,7 @@ $(document).ready(function() {
         onSelectAll: on_indicators_change,
         onDeselectAll: on_indicators_change,
     }));
+
+    // Set "None selected" in indicator filter on load, otherwise defaults to first value
+    clear_indicator_select();
 });
