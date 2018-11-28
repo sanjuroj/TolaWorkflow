@@ -27,7 +27,7 @@ class ProfileUpdateForm(forms.ModelForm):
 
     helper = FormHelper()
     helper.form_method = 'post'
-    helper.form_class = ''
+    helper.form_class = 'hide-askerisks'
     helper.label_class = ''
     helper.field_class = ''
     helper.form_error_title = _('Form Errors')
@@ -35,7 +35,7 @@ class ProfileUpdateForm(forms.ModelForm):
     helper.help_text_inline = True
     helper.html5_required = True
     helper.layout = Layout(
-        Field( 'language'),
+        Field( 'language' ),
         Div(
             FormActions(
                 Submit('submit', _('Save changes'), css_class=''),
