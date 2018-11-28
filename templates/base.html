@@ -119,7 +119,7 @@
                                         {% elif "local" in request.build_absolute_uri %}
                                             <span class="badge badge-danger">LOCAL</span>
                                         {% endif %}
-                                        {{ user.tola_user.name }}
+                                        {% trans "Settings" %}
                                     </a>
                                 </li>
                             {% else %}
