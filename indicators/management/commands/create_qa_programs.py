@@ -144,6 +144,8 @@ class Command(BaseCommand):
                             name=indicator_name + indicator_suffix,
                             is_cumulative=is_cumulative,
                             target_frequency=freq[0],
+                            unit_of_measure='This is a UOM',
+                            baseline=0,
                             unit_of_measure_type=uom_type[0],
                             direction_of_change=direction,
                             program=program
