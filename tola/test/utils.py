@@ -174,6 +174,7 @@ def generate_core_indicator_data(c_params=None, p_count=3, i_count=4):
         country = CountryFactory(country=c_params[i][0], code=c_params[i][1])
         programs = ProgramFactory.create_batch(
             p_count, countries=[country], name=Sequence(lambda n: 'Program %s %s' % (country.code, n)),
+            funding_status="Funded",
         )
         for p in programs:
             program_ids.append(p.id)
