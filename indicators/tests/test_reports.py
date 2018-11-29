@@ -340,10 +340,20 @@ class IPTT_ExcelExportTests(TestCase):
             'report_start_date': date(2015, 1, 1),
             'report_end_date': date(2015, 12, 31),
             'program': self.program,
-            'report_date_ranges': OrderedDict([
-                ('period_1', [date(2015, 1, 1), date(2015, 6, 30)]),
-                ('period_2', [date(2015, 7, 1), date(2015, 12, 31)])
-            ])
+            'report_date_ranges': [
+                {
+                    'customsort': '0',
+                    'name': 'period_1',
+                    'start': date(2015, 1, 1),
+                    'end': date(2015, 6, 30),
+                },
+                {
+                    'customsort': '1',
+                    'name': 'period_2',
+                    'start': date(2015, 7, 1),
+                    'end': date(2015, 12, 31)
+                }
+            ]
         }
         wb = Workbook()
         ws = wb.active
@@ -377,10 +387,20 @@ class IPTT_ExcelExportTests(TestCase):
             'report_start_date': date(2015, 1, 1),
             'report_end_date': date(2015, 12, 31),
             'program': self.program,
-            'report_date_ranges': OrderedDict([
-                ('period_1', [date(2015, 1, 1), date(2015, 6, 30)]),
-                ('period_2', [date(2015, 7, 1), date(2015, 12, 31)])
-            ])
+            'report_date_ranges': [
+                {
+                    'customsort': '0',
+                    'name': 'period_1',
+                    'start': date(2015, 1, 1),
+                    'end': date(2015, 6, 30)
+                },
+                {
+                    'customsort': '1',
+                    'name': 'period_2',
+                    'start': date(2015, 7, 1),
+                    'end': date(2015, 12, 31),
+                }
+            ]
         }
         wb = Workbook()
         ws = wb.active
@@ -450,15 +470,15 @@ class IPTT_ExcelExportTests(TestCase):
             ('lop_target', '100'),
             ('lop_actual', '50'),
             ('lop_percent_met', '50%'),
-            ('one_period_target', '25'),
-            ('one_actual', '40'),
-            ('one_percent_met', '90%'),
-            ('two_period_target', '30'),
-            ('two_actual', '80'),
-            ('two_percent_met', '60%')
+            ('0_period_target', '25'),
+            ('0_actual', '40'),
+            ('0_percent_met', '90%'),
+            ('1_period_target', '30'),
+            ('1_actual', '80'),
+            ('1_percent_met', '60%')
         ])
         context = {
-            'report_date_ranges': OrderedDict([('one', None), ('two', None)]),
+            'report_date_ranges': [{'customsort': '0'}, {'customsort': '1'}],
             'program': self.program,
             'indicators': [
                 indicator
