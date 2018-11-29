@@ -2,6 +2,7 @@ import datetime
 
 from django.urls import reverse_lazy, reverse
 from django.test import TestCase
+from bs4 import BeautifulSoup
 
 from factories.indicators_models import IndicatorTypeFactory
 from factories.workflow_models import ProgramFactory
@@ -72,6 +73,29 @@ class IndicatorListTests(TestBase, TestCase):
             program__country__country__in=target_country_names).values_list('id', flat=True)
         response = self.client.get(url)
         self.assertListEqual(sorted([i.id for i in response.context['getIndicators']]), sorted(target_indicators))
+
+    def test_no_indicator_program(self):
+        c_params = [
+            ('FakeCountry1', 'C1'),
+        ]
+        created_programs, created_indicators = generate_core_indicator_data(
+            c_params=c_params, p_count=1, i_count=0)
+        self.tola_user.countries.add(Country.objects.get(country='FakeCountry1'))
+        url = reverse_lazy(self.base_url, args=self.base_args)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, features="lxml")
+        indicator_list = soup.find('div', class_='indicators-list--by-program')
+        self.assertIsNotNone(indicator_list)
+        program_list = indicator_list.find_all('div', class_='indicators-list__program')
+        self.assertEqual(len(program_list), 2)
+        title = program_list[0].find('h4')
+        links_count = 0
+        if title.find('a') is not None:
+            self.assertEqual(title.find('a')['href'], '/program/{0}/0/0/'.format(self.program.id))
+            links_count += 1
+        self.assertEqual(links_count, 1)
+            
 
 
 class CollectedDataTest(TestBase, TestCase):
