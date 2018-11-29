@@ -765,7 +765,8 @@ class PeriodicTarget(models.Model):
         verbose_name = _("Periodic Target")
         unique_together = (('indicator', 'customsort'),)
 
-    def __unicode__(self):
+    @property
+    def period_name(self):
         period_name = None
         # used in the collected data modal to display options in the target period dropdown
         if self.indicator.target_frequency == Indicator.MID_END:
@@ -785,25 +786,28 @@ class PeriodicTarget(models.Model):
             period_name = _(self.TRI_ANNUAL_PERIOD)
         elif self.indicator.target_frequency == Indicator.QUARTERLY:
             period_name = _(self.QUARTERLY_PERIOD)
-        if period_name and self.start_date and self.end_date:
+        if period_name:
+            return u"{period_name} {period_number}".format(
+                period_name=period_name, period_number=self.customsort+1
+            )
+        return period_name
+
+    def __unicode__(self):
+        if self.period_name and self.start_date and self.end_date:
             # e.g "Year 1 (date - date)" or "Quarter 2 (date - date)"
-            return "{period_name} {period_number} ({start_date} - {end_date})".format(
-                period_name=period_name,
-                period_number=self.customsort+1,
+            return u"{period_name} ({start_date} - {end_date})".format(
+                period_name=self.period_name,
                 start_date=self.start_date,
                 end_date=self.end_date
             )
-        elif period_name:
+        elif self.period_name:
             # if no date for some reason but time-based frequency:
-            return "{period_name} {period_number}".format(
-                period_name=period_name,
-                period_number=self.customsort
-                )
+            return self.period_name
         if self.indicator.target_frequency == Indicator.MONTHLY:
             # translate month name, add year
             month_name = _(self.start_date.strftime("%B"))
             year = self.start_date.strftime('%Y')
-            return "{month_name} {year}".format(month_name=month_name, year=year)
+            return u"{month_name} {year}".format(month_name=month_name, year=year)
         return self.period
 
     @property
