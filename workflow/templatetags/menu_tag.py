@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 from django import template
+from django.db import models
 from workflow.models import Program
 
 register = template.Library()
@@ -13,7 +14,11 @@ def program_menu(context):
         countries = request.user.tola_user.countries.all()
     except AttributeError:
         countries = []
-    programs = Program.objects.filter(funding_status="Funded", country__in=countries).prefetch_related('country').distinct()
+    programs = Program.objects.annotate(
+        indicator_count=models.Count('indicator', distinct=True)
+    ).filter(
+        funding_status="Funded", country__in=countries, indicator_count__gt=0
+    ).prefetch_related('country').distinct()
 
     programs_by_country = OrderedDict((country.country, []) for country in countries)
 
