@@ -141,6 +141,7 @@
 // TODO: should be mroe generic?
 .filter-trigger, .filter-trigger--band {
     &:hover {
+        background: $yellow-100;
         cursor: pointer;
     }
 }

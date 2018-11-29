@@ -6938,6 +6938,7 @@ body > .container {
   margin-top: 15px; }
 
 .filter-trigger:hover, .filter-trigger--band:hover {
+  background: #fff6cc;
   cursor: pointer; }
 
 .is-display-none {
