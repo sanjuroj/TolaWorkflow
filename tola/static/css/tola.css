@@ -7233,7 +7233,7 @@ input[type=number]::-webkit-outer-spin-button {
   top: 50%;
   margin: -20px 0 0 -20px;
   box-shadow: 2px 1px 1px #71757b; }
-  .map-marker .indicator {
+  .map-marker.indicator {
     width: 20px;
     height: 20px;
     border-radius: 50% 50% 50% 0;
