@@ -12,8 +12,10 @@
             <div class='card-header'>
                 {% if not program.indicator_set.all %}
                     <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add float-right"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
-                {% endif %}
+                    <h4>{{ program.name }}</h4>
+                {% else %}
                 <h4><a href="{% url "program_page" program.id 0 0 %}" class="text-dark">{{ program.name }} <i class="fas fa-arrow-right text-action"></i></a></h4>
+                {% endif %}
                 {% if not program.reporting_period_start or not program.reporting_period_end %}
                     <div class="text-muted">
                         {% trans "Before adding indicators and performance results, we need to know your program's" %}
