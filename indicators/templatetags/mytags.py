@@ -186,7 +186,7 @@ def gauge_tank_small(context, metric):
     labels = {
         'targets_defined': {
             'filled_label': _('programs have all targets defined'),
-            'help_text': _('Each indicator must have a target frequency selected and targets entered for all periods'),
+            'help_text': _('Each indicator must have a target frequency selected and targets entered for all periods.'),
         },
         'reported_results': {
             'filled_label': _('indicators have reported results'),
