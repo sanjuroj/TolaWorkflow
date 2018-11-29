@@ -795,6 +795,7 @@ class DocumentationList(ListView):
     template_name = 'workflow/documentation_list.html'
 
     def get(self, request, *args, **kwargs):
+        program = Program.objects.get(id=self.kwargs['program']) if int(self.kwargs['program']) != 0 else None
 
         project_agreement_id = self.kwargs['project']
         countries = getCountry(request.user)
@@ -808,7 +809,12 @@ class DocumentationList(ListView):
             countries = getCountry(request.user)
             getDocumentation = Documentation.objects.all().prefetch_related('program','project','project__office').filter(program__country__in=countries)
 
-        return render(request, self.template_name, {'getPrograms': getPrograms, 'getDocumentation':getDocumentation, 'project_agreement_id': project_agreement_id})
+        return render(request, self.template_name, {
+            'program': program,
+            'getPrograms': getPrograms,
+            'getDocumentation': getDocumentation,
+            'project_agreement_id': project_agreement_id
+        })
 
 
 class DocumentationAgreementList(AjaxableResponseMixin, CreateView):
@@ -2471,10 +2477,7 @@ class StakeholderObjects(View, AjaxableResponseMixin):
 class DocumentationListObjects(View, AjaxableResponseMixin):
 
     def get(self, request, *args, **kwargs):
-
-        project_agreement_id = self.kwargs['project']
-        countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries)
+        program = Program.objects.get(id=self.kwargs['program']) if int(self.kwargs['program']) != 0 else None
 
         if int(self.kwargs['program']) != 0 & int(self.kwargs['project']) == 0:
             getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(program__id=self.kwargs['program']).values('id', 'name', 'project__project_name', 'create_date')
@@ -2485,9 +2488,12 @@ class DocumentationListObjects(View, AjaxableResponseMixin):
             getDocumentation = Documentation.objects.all().prefetch_related('program','project','project__office').filter(program__country__in=countries).values('id', 'name', 'project__project_name', 'create_date')
 
         getDocumentation = json.dumps(list(getDocumentation), cls=DjangoJSONEncoder)
-        final_dict  = {'getDocumentation': getDocumentation}
 
-        return JsonResponse(final_dict, safe=False)
+        return JsonResponse({
+            'program_name': program.name if program else None,
+            'getDocumentation': getDocumentation,
+        })
+
 
 def reportingperiod_update(request, pk):
     program = Program.objects.get(pk=pk)
