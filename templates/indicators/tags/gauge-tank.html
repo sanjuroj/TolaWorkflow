@@ -31,13 +31,13 @@
             {% endif %}
         </div>
     </div>
-    <div class="gauge__cta">
     {% if has_filters %}
-        <span class="btn-link btn-inline"><i class="fas fa-exclamation-triangle text-warning"></i> {{ cta }}</span>
-    {% elif unfilled_percent > 0 %}
-        <a href="{% url "program_page" program.id 0 0 %}" class="btn-link btn-inline"><i class="fas fa-exclamation-triangle text-warning"></i> {{ cta }}</a>
-    {% else %}
-        &nbsp;
-    {% endif %}
+    <div class="gauge__cta">
+        {% if unfilled_percent > 0%}
+            <span class="btn-link btn-inline"><i class="fas fa-exclamation-triangle text-warning"></i> {{ cta }}</span>
+        {% else %}
+            &nbsp;
+        {% endif %}
     </div>
+    {% endif %}
 </div>
