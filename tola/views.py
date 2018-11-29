@@ -46,13 +46,15 @@ def index(request, selected_country=None):
         country=active_country,
         funding_status="Funded"
     )
-    getSiteProfile = SiteProfile.objects.all()\
-        .prefetch_related('country', 'district', 'province')\
-        .filter(country=active_country)\
+
+    sites_with_results = SiteProfile.objects.all()\
+        .prefetch_related('country', 'district', 'province') \
+        .filter(Q(collecteddata__program__country=active_country))\
         .filter(status=1)
-    getSiteProfileIndicator = SiteProfile.objects.all()\
-        .prefetch_related('country', 'district', 'province')\
-        .filter(country=active_country)\
+
+    sites_without_results = SiteProfile.objects.all() \
+        .prefetch_related('country', 'district', 'province') \
+        .filter(Q(country=active_country) & ~Q(collecteddata__program__country=active_country)) \
         .filter(status=1)
 
     return render(request, 'home.html', {
@@ -60,8 +62,8 @@ def index(request, selected_country=None):
         'active_country': active_country,
         'programs': programs_with_metrics,
         'no_programs': programs_with_metrics.count(),
-        'getSiteProfile': getSiteProfile,
-        'getSiteProfileIndicator': getSiteProfileIndicator,
+        'sites_without_results': sites_without_results,
+        'sites_with_results': sites_with_results,
     })
 
 
