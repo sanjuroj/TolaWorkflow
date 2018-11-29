@@ -50,8 +50,13 @@
         <article class="program-list__program card">
             <div class="card-header">
                 <div class="program-header__info">
-                    <h4><a href="{% url "program_page" program.id 0 0 %}" class="text-dark">{{ program.name }}</a></h4>
-                    {% if program.reporting_period_start and program.reporting_period_end %}
+                    <h4>{% if program.indicator_count %}
+                        <a href="{% url "program_page" program.id 0 0 %}" class="text-dark">{{ program.name }}</a>
+                        {% else %}
+                        {{ program.name }}
+                        {% endif %}
+                    </h4>
+                    {% if program.indicator_count and program.reporting_period_start and program.reporting_period_end %}
                         <ul class="nav nav--text-list">
                             <li class="nav-item">
                                 <small><a href="{% url "program_page" program.id 0 0 %}" class="">{% trans "Program page" %}</a></small>
