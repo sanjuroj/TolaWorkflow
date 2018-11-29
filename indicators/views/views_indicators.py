@@ -200,7 +200,7 @@ def indicator_create(request, id=0):
         indicator_type = IndicatorType.objects.get(indicator_type="custom")
         program = Program.objects.get(id=request.POST['program'])
         service = request.POST['services']
-        level = Level.objects.first()
+        level = None
         node_id = request.POST.get('service_indicator')
         sector = None
         # add a temp name for custom indicators
@@ -1486,7 +1486,7 @@ class ProgramPage(ListView):
                 'scope_counts': program.scope_counts
             }
             return JsonResponse(json_context)
-        
+
 
         if int(self.kwargs['type_id']):
             type_filter_id = self.kwargs['type_id']
@@ -1497,7 +1497,7 @@ class ProgramPage(ListView):
             indicator_filter_id = self.kwargs['indicator_id']
             program.indicator_filters['id'] = indicator_filter_id
             indicator_filter_name = program.annotated_indicators.first()
-            
+
         indicators = program.annotated_indicators
         indicator_count = program.indicator_count
 
