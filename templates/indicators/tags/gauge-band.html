@@ -21,12 +21,7 @@
         </div>
         <div class="gauge__labels">
             <div class="gauge__label">
-                <span class="text-muted {% if has_filters %}filter-trigger--band{% endif %}"
-                    data-target="over-under"
-                    data-over-under-filter="None"
-                    {% comment %}Translators: shows what number of indicators have no targets reporting data. Example: 3 indicators have data unavailable{% endcomment %}
-                    data-list-title="{% blocktrans count filter_title_count=scope_counts.nonreporting_count %}{{ filter_title_count }} indicator has data unavailable{% plural %}{{ filter_title_count }} indicators have data unavailable{% endblocktrans %}"
-                    >
+                <span class="text-muted" >
                     {% comment %}Translators: shows what percentage of indicators have no targets reporting data. Example: 31% unavailable{% endcomment %}
                     {% blocktrans with scope_percents.nonreporting as unavailable %}
                         {{ unavailable }}% unavailable
