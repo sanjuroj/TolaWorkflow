@@ -769,17 +769,17 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         col = 0
         periods_start_col = len(self.headers) + 4
         if data['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
-            for name, period in periods.items():
+            for period in periods:
                 col = periods_start_col + col_offset
 
                 # processs period date ranges
                 try:
-                    start_date = datetime.strftime(period[0], '%b %d, %Y')
-                    end_date = datetime.strftime(period[1], '%b %d, %Y')
+                    start_date = datetime.strftime(period['start'], '%b %d, %Y')
+                    end_date = datetime.strftime(period['end'], '%b %d, %Y')
 
                     # process period name
                     ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col + 2)
-                    ws.cell(row=2, column=col).value = name
+                    ws.cell(row=2, column=col).value = unicode(period['name'])
                     ws.cell(row=2, column=col).alignment = alignment
                     ws.cell(row=2, column=col).font = headers_font
 
@@ -792,7 +792,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                     start_date = ''
                     end_date = ''
                     ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col + 2)
-                    ws.cell(row=3, column=col).value = name
+                    ws.cell(row=3, column=col).value = unicode(period['name'])
                     ws.cell(row=3, column=col).alignment = alignment
                     ws.cell(row=3, column=col).font = headers_font
 
@@ -805,15 +805,15 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                 col_offset += 3
             col += 2
         elif data['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
-            for name, period in periods.items():
+            for period in periods:
                 col = periods_start_col + col_offset
-                ws.cell(row=2, column=col).value = name
+                ws.cell(row=2, column=col).value = period['name']
                 ws.cell(row=2, column=col).alignment = alignment
                 ws.cell(row=2, column=col).font = headers_font
                 ws.column_dimensions[get_column_letter(col)].width = 30
 
-                start_date = datetime.strftime(period[0], '%b %d, %Y')
-                end_date = datetime.strftime(period[1], '%b %d, %Y')
+                start_date = datetime.strftime(period['start'], '%b %d, %Y')
+                end_date = datetime.strftime(period['end'], '%b %d, %Y')
                 ws.cell(row=3, column=col).value = "{} - {}".format(start_date, end_date)
                 ws.cell(row=3, column=col).alignment = alignment
                 ws.cell(row=3, column=col).font = headers_font
@@ -847,19 +847,19 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
 
             col_offset = 0
             period_column_start = len(self.indicator_attributes) + 2 # program_id
-            for period in periods.keys():
+            for period in periods:
                 col = period_column_start + col_offset
                 if context['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
                     ws.cell(row=row, column=col).value = u'{0}'.format(
-                        indicator.get(u'{0}_period_target'.format(period)))
+                        indicator.get(u'{0}_period_target'.format(period['customsort'])))
                     ws.cell(row=row, column=col+1).value = u'{0}'.format(
-                        indicator.get(u'{0}_actual'.format(period)))
+                        indicator.get(u'{0}_actual'.format(period['customsort'])))
                     ws.cell(row=row, column=col+2).value = u'{0}'.format(
-                        indicator.get(u'{0}_percent_met'.format(period)))
+                        indicator.get(u'{0}_percent_met'.format(period['customsort'])))
                     col_offset += 3
                 elif context['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
                     ws.cell(row=row, column=col+1).value = u'{0}'.format(
-                        indicator.get(u'{0}_actual'.format(period)))
+                        indicator.get(u'{0}_actual'.format(period['customsort'])))
                     col_offset += 1
             row += 1
         return ws
