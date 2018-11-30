@@ -260,14 +260,21 @@ class TestSingleNonReportingIndicator(ReportingIndicatorBase):
             reporting_period_start=datetime.date(today.year, today.month, 1),
             reporting_period_end=datetime.date(today.year+1, today.month, 1) - datetime.timedelta(days=1)
         )
-        for frequency in self.TIME_AWARE_FREQUENCIES:
+        for frequency in [freq for freq in self.TIME_AWARE_FREQUENCIES if freq != Indicator.MONTHLY]:
+            # the above hack brought to you by the fact that once a month it is impossible to make a monthly indicator
+            # with no completed programs.  I apologize.
             self.load_base_indicator()
             self.indicator.target_frequency = frequency
             self.indicator.save()
             self.load_targets()
             self.load_data(date=datetime.date.today()-datetime.timedelta(days=1))
             program = self.get_annotated_program()
-            self.assertEqual(program.scope_counts['nonreporting_count'], 1)
+            self.assertEqual(
+                program.scope_counts['nonreporting_count'], 1,
+                '{frequency} frequency indicator got scope counts {sc} instead of 1 nonreporting'.format(
+                    frequency=frequency,
+                    sc=program.scope_counts
+                ))
             for target in self.targets:
                 target.delete()
             self.targets = []
