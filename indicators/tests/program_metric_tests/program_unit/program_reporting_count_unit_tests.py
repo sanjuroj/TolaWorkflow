@@ -255,7 +255,7 @@ class TestSingleNonReportingIndicator(ReportingIndicatorBase):
 
     def test_time_aware_indicators_no_completed_periods(self):
         # if program started yesterday then no targets will be finished by today:
-        today = datetime.date.today() + datetime.timedelta(days=1)
+        today = datetime.date.today() - datetime.timedelta(days=1)
         self.program = w_factories.ProgramFactory(
             reporting_period_start=datetime.date(today.year, today.month, 1),
             reporting_period_end=datetime.date(today.year+1, today.month, 1) - datetime.timedelta(days=1)
