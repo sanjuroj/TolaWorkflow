@@ -132,7 +132,7 @@ class IndicatorDetailsMixin(TestBase):
 
     def test_lop_row_target_value_correct(self):
         response_lop_target = self.response.context['indicator'].lop_target
-        self.assertEqual(unicode(self.scenario.indicators[0].lop_target), response_lop_target)
+        self.assertEqual(Decimal(str(self.scenario.indicators[0].lop_target)), response_lop_target)
 
     def test_lop_row_actual_value_correct(self):
         response_value = self.response.context.pop()['grand_achieved_sum']

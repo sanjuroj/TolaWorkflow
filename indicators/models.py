@@ -489,8 +489,8 @@ class Indicator(models.Model):
         verbose_name=_("Not applicable"), default=False, help_text=" "
     )
 
-    lop_target = models.CharField(
-        verbose_name=_("Life of Program (LoP) target*"), max_length=255,
+    lop_target = models.DecimalField(
+        verbose_name=_("Life of Program (LoP) target*"), max_digits=20, decimal_places=2,
         null=True, blank=True, help_text=" "
     )
 
