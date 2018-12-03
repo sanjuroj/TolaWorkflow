@@ -172,9 +172,9 @@ class TestTwoProgramsFiveIndicatorsEightResultsFiveEvidence(test.TestCase):
 class TestMultipleProgramsStressTestQSCounts(test.TestCase):
     def setUp(self):
         self.program_ids = []
-        for x in range(10):
+        for _ in range(10):
             program = get_program()
-            for x in range(10):
+            for _ in range(10):
                 ind = get_all_targets_defined_indicator(program)
                 get_data(ind)
                 get_evidence(get_data(ind))

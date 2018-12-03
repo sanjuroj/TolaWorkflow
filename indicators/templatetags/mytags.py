@@ -115,6 +115,12 @@ def js(obj):
     """
     return mark_safe(jsonify(obj))
 
+def make_percent(numerator, denominator):
+    if denominator == 0 or numerator == 0:
+        return 0
+    if numerator == denominator:
+        return 100
+    return max(1, min(99, int(round(float(numerator*100)/denominator))))
 
 @register.inclusion_tag('indicators/tags/gauge-tank.html', takes_context=True)
 def gauge_tank(context, metric, has_filters=True):
@@ -157,7 +163,8 @@ def gauge_tank(context, metric, has_filters=True):
     unfilled_value = indicator_count - filled_value
     filter_title_count = program.metrics['needs_evidence'] if metric == 'results_evidence' else unfilled_value
     denominator = results_count if metric == 'results_evidence' else indicator_count
-    filled_percent = int(round(float(filled_value*100)/denominator)) if denominator > 0 else 0
+    #filled_percent = int(round(float(filled_value*100)/denominator)) if denominator > 0 else 0
+    filled_percent = make_percent(filled_value, denominator)
     tick_count = 10
     return {
         'program': program,
@@ -172,7 +179,7 @@ def gauge_tank(context, metric, has_filters=True):
         'unfilled_percent': 100 - filled_percent,
         'filled_label': labels[metric]['filled_label'],
         'unfilled_label': labels[metric]['unfilled_label'],
-        'ticks': list(range(1,tick_count+1)),
+        'ticks': list(range(1, tick_count+1)),
         'cta': labels[metric]['cta'],
         'filter_title': labels[metric]['filter_title'],
         'has_filters': has_filters,
@@ -206,10 +213,11 @@ def gauge_tank_small(context, metric):
     if metric == 'results_evidence':
         denominator = context['programs'].results_count
         numerator = context['programs'].results_with_evidence_count
-    if denominator == 0:
-        filled_percent = 0
-    else:
-        filled_percent = int(round(float(numerator*100)/denominator))
+    #if denominator == 0:
+    #    filled_percent = 0
+    #else:
+    #    filled_percent = 100 if numerator == denominator else max(int(round(float(numerator*100)/denominator)), 99)
+    filled_percent = make_percent(numerator, denominator)
     unfilled_percent = 100 - filled_percent
     tick_count = 10
 
@@ -218,7 +226,7 @@ def gauge_tank_small(context, metric):
         'filled_percent': filled_percent,
         'filled_label': labels[metric]['filled_label'],
         'help_text': labels[metric]['help_text'],
-        'ticks': list(range(1,tick_count+1)),
+        'ticks': list(range(1, tick_count+1)),
     }
 
 
@@ -228,21 +236,22 @@ def gauge_band(context, has_filters=True):
     program = context['program']
     scope_counts = program.scope_counts
     denominator = scope_counts['indicator_count']
-    if denominator == 0:
-        make_percent = lambda x: 0
-    else:
-        make_percent = lambda x: int(round(float(x*100)/denominator))
+    #if denominator == 0:
+    #    make_percent = lambda x: 0
+    #else:
+    #    make_percent = lambda x: 100 if x == denominator else max(int(round(float(x*100)/denominator)), 99)
+
     scope_percents = {
-        'high': make_percent(scope_counts['high']),
-        'on_scope': make_percent(scope_counts['on_scope']),
-        'low': make_percent(scope_counts['low']),
-        'nonreporting': make_percent(scope_counts['nonreporting_count']),
+        'high': make_percent(scope_counts['high'], denominator),
+        'on_scope': make_percent(scope_counts['on_scope'], denominator),
+        'low': make_percent(scope_counts['low'], denominator),
+        'nonreporting': make_percent(scope_counts['nonreporting_count'], denominator),
         'reporting': scope_counts['reporting_count']
     }
     return {
         'scope_percents': scope_percents,
         'scope_counts': scope_counts,
-        'ticks': list(range(1,11)),
+        'ticks': list(range(1, 11)),
         'margin': int(Indicator.ONSCOPE_MARGIN * 100),
         'has_filters': has_filters,
     }
