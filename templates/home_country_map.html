@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <div id="home_country_map"></div>
 <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
 <script
@@ -190,14 +192,14 @@
 
     let sitesWithResults = [
         {% for item in sites_with_results %}
-            L.marker([{{ item.latitude }}, {{ item.longitude }}], {icon: indicatorIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>Collected Indicator Data Site<br> <a href='/workflow/siteprofile_update/{{ item.id }}'>{{ item.name }}</a> <br/>ADM1: {{ item.province }} <br/>ADM2: {{ item.district }} <br/> ADM3: {{ item.admin_level_three }} <br/>"),
+            L.marker([{{ item.latitude }}, {{ item.longitude }}], {icon: indicatorIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>{% trans 'Site with result' %}<br> <a href='{% url 'siteprofile_update' item.id %}'>{{ item.name }}</a> <br/>ADM1: {{ item.province }} <br/>ADM2: {{ item.district }} <br/> ADM3: {{ item.admin_level_three }} <br/>"),
         {%   endfor %}
     ];
     let sitesWithResultsLayer = L.layerGroup(sitesWithResults).addTo(map);
 
     let sitesWithoutResults = [
         {% for item in sites_without_results %}
-            L.marker([{{ item.latitude }}, {{ item.longitude }}], {icon: projectIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>Project Site<br><a href='/workflow/siteprofile_update/{{ item.id }}'>{{ item.name }}</a> <br/>ADM1: {{ item.province }} <br/>ADM2: {{ item.district }} <br/> ADM3: {{ item.admin_level_three }} <br/> "),
+            L.marker([{{ item.latitude }}, {{ item.longitude }}], {icon: projectIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>{% trans 'Site without result' %}<br><a href='{% url 'siteprofile_update' item.id %}'>{{ item.name }}</a> <br/>ADM1: {{ item.province }} <br/>ADM2: {{ item.district }} <br/> ADM3: {{ item.admin_level_three }} <br/> "),
         {%   endfor %}
     ];
     let sitesWithoutResultsLayer = L.layerGroup(sitesWithoutResults).addTo(map);
@@ -205,8 +207,8 @@
 
 
     let overlayMaps = {
-        "Sites with results": sitesWithResultsLayer,
-        "Sites without results": sitesWithoutResultsLayer,
+        "{% trans 'Sites with results' %}": sitesWithResultsLayer,
+        "{% trans 'Sites without results' %}": sitesWithoutResultsLayer,
     };
 
     L.control.layers(baseLayers, overlayMaps).addTo(map);
