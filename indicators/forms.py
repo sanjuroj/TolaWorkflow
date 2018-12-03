@@ -74,7 +74,7 @@ class IndicatorForm(forms.ModelForm):
         self.fields['disaggregation'].queryset = DisaggregationType.objects\
             .filter(country__in=countries, standard=False)
         self.fields['program'].queryset = Program.objects.filter(
-            funding_status="Funded", country__in=countries)
+            funding_status="Funded", country__in=countries).distinct()
         self.fields['program'].disabled = True
         self.fields['objectives'].queryset = Objective.objects.filter(program__id__in=[self.programval.id])
         self.fields['strategic_objectives'].queryset = StrategicObjective.objects.filter(country__in=countries)

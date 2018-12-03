@@ -145,7 +145,7 @@
             showValidations("#alerts");
             return;
         }
-        submitForm(this);
+        submitForm(this, false);
     });
 
     // Intercept IndicatorUpdate form submission and then use ajax to submit it.
@@ -155,7 +155,7 @@
             showValidations("#modalmessages");
             return;
         }
-        submitForm(this);
+        submitForm(this, true);
     });
 
 
@@ -168,14 +168,24 @@
 
     });
 
-    $("#indicator_modal_content, #indicator_form").on("click", "#id_create_targets_btn", function(e) {
+    $("#indicator_modal_content").on("click", "#id_create_targets_btn", function(e) {
         e.preventDefault();
         if (validateForm() == false) {
             showValidations("#modalmessages");
             return;
         }
         $(this).attr("disabled", true);
-        submitForm($("#indicator_update_form"));
+        submitForm($("#indicator_update_form"), true);
+    });
+
+    $("#indicator_form").on("click", "#id_create_targets_btn", function(e) {
+        e.preventDefault();
+        if (validateForm() == false) {
+            showValidations("#modalmessages");
+            return;
+        }
+        $(this).attr("disabled", true);
+        submitForm($("#indicator_update_form"), false);
     });
 
 
@@ -263,7 +273,7 @@
 
     });
 
-    function submitForm(form) {
+    function submitForm(form, isModal) {
         var numDataPoints = parseInt($("#numDataPoints").text());
         var initalTargetFrequency = parseInt($("#initialTargetFrequencyValue").text());
         var target_frequency = $("#id_target_frequency").val();
@@ -351,7 +361,12 @@
 
             $(alertsElement).html('');
 
-            createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, alertsElement);
+            if (isModal) {
+                createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, alertsElement);
+            } else {
+                let programId = $(form).find('[name="program"]').val();
+                createAlert("success", `{% trans 'Success!' %} <a href='/program/${programId}/0/0/'>{% trans 'View your indicator on the program page.' %}</a>`, true, alertsElement);
+            }
 
             var jsondata = $.parseJSON(data);
             var indicator = $.parseJSON(jsondata["indicatorjson"])[0];

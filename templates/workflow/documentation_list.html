@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block title %}{% trans "Documents" %} | {% endblock %}
-{% block page_title %}{% trans "Documents" %}{% if program %}:<br><small>{{ program.name }}</small>{% endif %}{% endblock %}
+{% block page_title %}{% trans "Documents" %}{% if program %}<br><small>{{ program.name }}</small>{% endif %}{% endblock %}
 {% block bread_crumb %}
 {% endblock %}
 
@@ -103,7 +103,7 @@
         let title = '{% trans "Documents" %}';
 
         if (programName) {
-            title += ':<br><small>' + programName + '</small>';
+            title += '<br><small>' + programName + '</small>';
         }
 
         $('h1.page-title').html(title);
