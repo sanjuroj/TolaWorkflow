@@ -1113,11 +1113,11 @@ class PinnedReport(models.Model):
         # Because of this, the enum values are interchangeable between ReportFormCommon and Indicators
 
         # TIMEPERIODS_CHOICES = (
-        #     (YEARS, _("Years")),
-        #     (SEMIANNUAL, _("Semi-annual periods")),
-        #     (TRIANNUAL, _("Tri-annual periods")),
-        #     (QUARTERS, _("Quarters")),
-        #     (MONTHS, _("Months"))
+        #     (YEARS, _("years")),
+        #     (SEMIANNUAL, _("semi-annual periods")),
+        #     (TRIANNUAL, _("tri-annual periods")),
+        #     (QUARTERS, _("quarters")),
+        #     (MONTHS, _("months"))
         # )
 
         # TARGETPERIOD_CHOICES = [empty] +

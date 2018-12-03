@@ -204,11 +204,11 @@ class ReportFormCommon(forms.Form):
     QUARTERS = Indicator.QUARTERLY
     MONTHS = Indicator.MONTHLY
     TIMEPERIODS_CHOICES = (
-        (YEARS, _("Years")),
-        (SEMIANNUAL, _("Semi-annual periods")),
-        (TRIANNUAL, _("Tri-annual periods")),
-        (QUARTERS, _("Quarters")),
-        (MONTHS, _("Months"))
+        (YEARS, _("years")),
+        (SEMIANNUAL, _("semi-annual periods")),
+        (TRIANNUAL, _("tri-annual periods")),
+        (QUARTERS, _("quarters")),
+        (MONTHS, _("months"))
     )
 
     SHOW_ALL = 1
