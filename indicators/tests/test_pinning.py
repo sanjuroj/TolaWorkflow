@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from django.test import TestCase, SimpleTestCase
+from django.test import TestCase
 from django.urls import reverse
+from django.utils import translation
 
 from factories import PinnedReportFactory
 from indicators import models
@@ -94,22 +95,21 @@ class TestCreatePinnedReport(PinnedReportTestCase):
         self.assertEquals(models.PinnedReport.objects.count(), 0)
 
 
-class TestPinnedReportDateStrings(SimpleTestCase):
+class TestPinnedReportDateStrings(TestCase):
     """
     Date range strings vary depending on query string args - test possibilities
     """
-
     def test_fixed_date_range_timeperiods(self):
         pr = models.PinnedReport()
         pr.query_string = 'timeperiods=7&numrecentperiods=&start_period=2018-01-01&end_period=2018-06-30'
 
-        self.assertEqual(pr.date_range_str, 'Jan 1, 2018 – Jun 30, 2018')
+        self.assertEqual(pr.date_range_str, u'Jan 1, 2018 – Jun 30, 2018')
 
     def test_fixed_date_range_targetperiods(self):
         pr = models.PinnedReport()
         pr.query_string = 'start_period=2017-07-01&numrecentperiods=&end_period=2020-06-30&targetperiods=3'
 
-        self.assertEqual(pr.date_range_str, 'Jul 1, 2017 – Jun 30, 2020')
+        self.assertEqual(pr.date_range_str, u'Jul 1, 2017 – Jun 30, 2020')
 
     def test_relative_to_today_timeperiods(self):
         pr = models.PinnedReport()
@@ -166,7 +166,91 @@ class TestPinnedReportDateStrings(SimpleTestCase):
 
         self.assertEquals(pr.date_range_str, 'Show all results')
 
-class TestDefaultPinnedReport(SimpleTestCase):
+
+class TestPinnedReportDateStringsInSpanish(TestCase):
+    """
+    Date range strings vary depending on query string args - test possibilities in Spanish
+    This is important for strings containing unicode chars
+    """
+    @classmethod
+    def setUpClass(cls):
+        super(TestPinnedReportDateStringsInSpanish, cls).setUpClass()
+        translation.activate('es')
+
+    @classmethod
+    def tearDownClass(cls):
+        translation.activate('en')
+        super(TestPinnedReportDateStringsInSpanish, cls).tearDownClass()
+
+    def test_fixed_date_range_timeperiods(self):
+        pr = models.PinnedReport()
+        pr.query_string = 'timeperiods=7&numrecentperiods=&start_period=2018-01-01&end_period=2018-06-30'
+
+        self.assertEqual(pr.date_range_str, u'1 Ene. 2018 \u2013 30 Jun. 2018')
+
+    def test_fixed_date_range_targetperiods(self):
+        pr = models.PinnedReport()
+        pr.query_string = 'start_period=2017-07-01&numrecentperiods=&end_period=2020-06-30&targetperiods=3'
+
+        self.assertEqual(pr.date_range_str, u'1 Jul. 2017 \u2013 30 Jun. 2020')
+
+    def test_relative_to_today_timeperiods(self):
+        pr = models.PinnedReport()
+        pr.query_string = 'timeperiods=7&numrecentperiods=2&timeframe=2'
+
+        self.assertEqual(pr.date_range_str, u'Most recent 2 Meses')
+
+        pr.query_string = 'timeperiods=3&numrecentperiods=2&timeframe=2'
+
+        self.assertEqual(pr.date_range_str, u'Most recent 2 A\xf1os')
+
+    def test_relative_to_today_targetperiods(self):
+        pr = models.PinnedReport()
+        pr.query_string = 'targetperiods=7&numrecentperiods=2&timeframe=2'
+
+        self.assertEqual(pr.date_range_str, u'Most recent 2 Meses')
+
+        pr.query_string = 'targetperiods=3&numrecentperiods=2&timeframe=2'
+
+        self.assertEqual(pr.date_range_str, u'Most recent 2 A\xf1os')
+
+        pr.query_string = 'targetperiods=4&numrecentperiods=2&timeframe=2'
+
+        self.assertEqual(pr.date_range_str, u'Most recent 2 Periodos semestrales')
+
+    def test_show_all(self):
+        pr = models.PinnedReport()
+        pr.query_string = 'timeperiods=4&numrecentperiods=&timeframe=1'
+
+        self.assertEqual(pr.date_range_str, u'Show all Periodos semestrales')
+
+    def test_midline_endline(self):
+        pr = models.PinnedReport()
+        pr.query_string = 'targetperiods=2&timeframe=1'
+
+        self.assertEqual(pr.date_range_str, 'Show all results')
+
+    def test_lop(self):
+        pr = models.PinnedReport()
+        pr.query_string = 'targetperiods=1&timeframe=1'
+
+        self.assertEqual(pr.date_range_str, 'Show all results')
+
+    def test_missing_qs(self):
+        pr = models.PinnedReport()
+        pr.query_string = ''
+
+        self.assertEqual(pr.date_range_str, '')
+
+    def test_possible_bad_input(self):
+        # the current quickstart UI allows this invalid form input -> query str
+        pr = models.PinnedReport()
+        pr.query_string = 'targetperiods=1&timeframe=2&numrecentperiods=2'
+
+        self.assertEquals(pr.date_range_str, 'Show all results')
+
+
+class TestDefaultPinnedReport(TestCase):
     """
     Default pinned report for programs page
     """
@@ -213,6 +297,33 @@ class TestPinnedReportListInProgramView(PinnedReportTestCase):
 
         # verify ordering - pinned reports should be sorted newest to oldest
         self.assertTrue(pinned_reports[0].creation_date > pinned_reports[1].creation_date)
+
+    def test_program_view_spanish_language(self):
+        pr = PinnedReportFactory(
+            tola_user=self.tola_user,
+            program=self.program,
+            query_string='timeperiods=3&numrecentperiods=2&timeframe=2'
+        )
+
+        self.tola_user.language = 'es'
+        self.tola_user.save()
+
+        response = self.client.get(reverse('program_page', args=(self.program.id, 0, 0)))
+
+        self.assertEqual(response.status_code, 200)
+
+        date_range_str_es = response.context['pinned_reports'][0].date_range_str
+        self.assertEquals(date_range_str_es, u'Most recent 2 A\xf1os')
+
+        pr.query_string = 'timeperiods=3&numrecentperiods=&timeframe=1'
+        pr.save()
+
+        response = self.client.get(reverse('program_page', args=(self.program.id, 0, 0)))
+
+        self.assertEqual(response.status_code, 200)
+
+        date_range_str_es = response.context['pinned_reports'][0].date_range_str
+        self.assertEquals(date_range_str_es, u'Show all A\xf1os')
 
 
 class TestDeletePinnedReportAPI(PinnedReportTestCase):

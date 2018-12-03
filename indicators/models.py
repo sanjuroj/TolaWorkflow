@@ -1103,7 +1103,7 @@ class PinnedReport(models.Model):
 
         # Fixed start/end date
         if start_period and end_period:
-            return '{} – {}'.format(df(start_period), df(end_period))
+            return u'{} – {}'.format(df(start_period), df(end_period))
 
         from indicators.forms import ReportFormCommon
 
@@ -1144,12 +1144,12 @@ class PinnedReport(models.Model):
         # A relative report (Recent progress || Target vs Actuals)
         if time_frame == str(ReportFormCommon.MOST_RECENT) and num_recent_periods and time_or_target_period_str:
             #  Translators: Example: Most recent 2 Months
-            return _('Most recent {} {}'.format(num_recent_periods, time_or_target_period_str))
+            return _(u'Most recent {} {}'.format(num_recent_periods, time_or_target_period_str))
 
         # Show all (Recent progress || Target vs Actuals w/ time period (such as annual))
         if time_frame == str(ReportFormCommon.SHOW_ALL) and time_or_target_period_str:
             # Translators: Example: Show all Years
-            return _('Show all {}').format(time_or_target_period_str)
+            return _(u'Show all {}').format(time_or_target_period_str)
 
         # Show all (Target vs Actuals LoP/Midline+End/Event)
         remaining_target_freq_set = {
