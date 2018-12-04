@@ -87,6 +87,7 @@
 
 /* Local custom CSS and overloads for non-BS libraries */
 @import 'mixins';
+@import 'mc_tola_forms';
 @import 'maps';
 @import 'charts';
 @import 'branding';
@@ -94,7 +95,6 @@
 @import 'sidebar'; // IPTT sidebar
 @import 'misc_utilities'; // small utility/helper selectors that should probably be bootstrap classes
 @import 'custom'; // misc. elements & unsorted selectors
-@import 'mc_tola_forms';
 
 /* Unsorted custom selectors */
 
