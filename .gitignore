@@ -12,9 +12,6 @@
 *.swo
 *~
 
-# Sphinx docs:
-build
-
 # SQLite3 database files:
 *.db
 
@@ -45,6 +42,7 @@ assets/
 templates/links.html
 coverage_html
 .coverage
+coverage/
 tola/settings/test_local.py
 log_convert_lop_to_numeric
 
@@ -53,3 +51,6 @@ log_convert_lop_to_numeric
 
 # node modules
 node_modules
+
+webpack-stats-dev.json
+build/dev-dist
