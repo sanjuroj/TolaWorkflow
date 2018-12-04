@@ -7154,74 +7154,6 @@ body > .container {
     width: 1%; }
 
 /* Local custom CSS and overloads for non-BS libraries */
-.help-block {
-  color: #71757b !important;
-  display: block;
-  margin-top: .25rem; }
-
-.form-actions .form-group {
-  margin-bottom: 0; }
-
-.has-crispy-form .tab-content.panel-body {
-  background: white;
-  border: 1px solid #dbdcde;
-  border-top-width: 0;
-  margin-top: 0;
-  padding: 1rem; }
-
-.has-crispy-form .nav-tabs {
-  width: 100%; }
-
-.has-crispy-form .input-group {
-  align-items: center; }
-
-.has-crispy-form #div_id_name {
-  /* overloads jankety overload for select2, see line 481 this file */
-  height: auto; }
-
-.input-group-addon {
-  margin: 0 0.5rem; }
-
-.has-error {
-  color: #c8102e; }
-  .has-error .text-muted {
-    color: inherit !important; }
-
-.border-1px input {
-  border: 1px solid #dbdcde; }
-
-input[type=number] {
-  -moz-appearance: textfield; }
-
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0; }
-
-.input-symbol-percent {
-  position: relative;
-  display: inline-block;
-  width: 100%; }
-  .input-symbol-percent input {
-    padding-right: 15px;
-    width: 100%; }
-  .input-symbol-percent:after {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    margin: auto;
-    content: "%";
-    right: 20px; }
-  .input-symbol-percent .input-value {
-    padding-right: 1.60rem; }
-
-.inputs-in-a-box {
-  background-color: #f5f5f5;
-  border: 0px; }
-
-.hide-askerisks .asteriskField {
-  display: none; }
-
 .map-marker {
   width: 20px;
   height: 20px;
@@ -7904,6 +7836,74 @@ select.listoption_filters {
 .float--right {
   float: right;
   margin-left: 15px; }
+
+.help-block {
+  color: #71757b !important;
+  display: block;
+  margin-top: .25rem; }
+
+.form-actions .form-group {
+  margin-bottom: 0; }
+
+.has-crispy-form .tab-content.panel-body {
+  background: white;
+  border: 1px solid #dbdcde;
+  border-top-width: 0;
+  margin-top: 0;
+  padding: 1rem; }
+
+.has-crispy-form .nav-tabs {
+  width: 100%; }
+
+.has-crispy-form .input-group {
+  align-items: center; }
+
+.has-crispy-form #div_id_name {
+  /* overloads jankety overload for select2, see line 481 this file */
+  height: auto; }
+
+.input-group-addon {
+  margin: 0 0.5rem; }
+
+.has-error {
+  color: #c8102e; }
+  .has-error .text-muted {
+    color: inherit !important; }
+
+.border-1px input {
+  border: 1px solid #dbdcde; }
+
+input[type=number] {
+  -moz-appearance: textfield; }
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0; }
+
+.input-symbol-percent {
+  position: relative;
+  display: inline-block;
+  width: 100%; }
+  .input-symbol-percent input {
+    padding-right: 15px;
+    width: 100%; }
+  .input-symbol-percent:after {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: auto;
+    content: "%";
+    right: 20px; }
+  .input-symbol-percent .input-value {
+    padding-right: 1.60rem; }
+
+.inputs-in-a-box {
+  background-color: #f5f5f5;
+  border: 0px; }
+
+.hide-askerisks .asteriskField {
+  display: none; }
 
 /* Unsorted custom selectors */
 
