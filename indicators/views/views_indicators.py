@@ -29,6 +29,8 @@ from weasyprint import HTML, CSS
 
 from feed.serializers import FlatJsonSerializer
 from util import getCountry, group_excluded, get_table
+
+from indicators.serializers import IndicatorSerializer, ProgramSerializer
 from workflow.forms import FilterForm
 from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
@@ -41,7 +43,7 @@ from ..models import (
     CollectedData, IndicatorType, Level, ExternalServiceRecord,
     ExternalService, TolaTable, PinnedReport
 )
-from indicators.queries import ProgramWithMetrics
+from indicators.queries import ProgramWithMetrics, IPTTIndicator
 from .views_reports import IPTT_ReportView
 
 
@@ -1518,6 +1520,9 @@ class ProgramPage(ListView):
             'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
             'delete_pinned_report_confirmation_msg':
                 _('Warning: This action cannot be undone. Are you sure you want to delete this pinned report?'),
+            'program': ProgramSerializer(program).data,
+            'indicators': IndicatorSerializer(indicators, many=True).data,
+            'indicator_on_scope_margin': Indicator.ONSCOPE_MARGIN,
         }
         #program.set_metrics(indicators)
         c_data = {
@@ -1800,6 +1805,20 @@ class IndicatorDataExport(View):
         response['Content-Disposition'] = 'attachment; \
             filename=indicator_data.csv'
         return response
+
+
+def api_indicator_view(request, indicator_id):
+    """
+    API call for viewing an indicator for the program page
+    """
+    indicator = Indicator.objects.only('program_id', 'sector_id').get(id=indicator_id)
+    program = ProgramWithMetrics.program_page.get(pk=indicator.program_id)
+
+    indicator = program.annotated_indicators \
+        .annotate(target_period_last_end_date=Max('periodictargets__end_date')).get(id=indicator_id)
+
+    return JsonResponse(IndicatorSerializer(indicator).data)
+
 
 
 """

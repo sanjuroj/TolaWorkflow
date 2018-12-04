@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n mathfilters mytags static %}
+{% load render_bundle from webpack_loader %}
 {% block title %}{{ program.name }} | {% endblock %}
 {% block page_title %}{{ program.name }}{% endblock %}
 {% block header_extras %}
@@ -25,6 +26,8 @@
                 </div>
         </aside>
     {% endif %}
+
+    <div id="program-metrics-react-component"></div>
 
 <div class="program-page__main">
     <div class="program-page__sidebar">
@@ -72,27 +75,30 @@
             {% endif %}
         </section>
     </div>
-    <div id="div-id-indicator-list" class="indicators-list program-page__indicators">
-        <div class="indicators-list__header">
-            <h3 class="no-bold"><span id="indicators-list-title">{% blocktrans %}{{ indicator_count }} indicators{% endblocktrans %}</span>&nbsp;&nbsp;&nbsp;<a href="#" id="show-all-indicators"><small>Show all</small></a></h3>
-            <div>
-                <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
-            </div>
-        </div>
-        <nav class="list__filters list__filters--inline-label" id="id_div_indicators">
-            <label class="filters__label">
-                {% trans "Find an indicator:" %}
-            </label>
-            <div class="filters__control">
-                <select name="indicators" id="id_indicators" class="form-control" data-list-title="{% trans "1 indicator" %}">
-                    {% for ind in indicators %}
-                        <option value="{{ ind.id }}">{{ ind.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </nav>
-        {% include "indicators/program_indicators_table.html" %}
-    </div>
+
+    <div id="indicator-list-react-component" class="indicators-list program-page__indicators"></div>
+
+{#    <div id="div-id-indicator-list" class="indicators-list program-page__indicators">#}
+{#        <div class="indicators-list__header">#}
+{#            <h3 class="no-bold"><span id="indicators-list-title">{% blocktrans %}{{ indicator_count }} indicators{% endblocktrans %}</span>&nbsp;&nbsp;&nbsp;<a href="#" id="show-all-indicators"><small>Show all</small></a></h3>#}
+{#            <div>#}
+{#                <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>#}
+{#            </div>#}
+{#        </div>#}
+{#        <nav class="list__filters list__filters--inline-label" id="id_div_indicators">#}
+{#            <label class="filters__label">#}
+{#                {% trans "Find an indicator:" %}#}
+{#            </label>#}
+{#            <div class="filters__control">#}
+{#                <select name="indicators" id="id_indicators" class="form-control" data-list-title="{% trans "1 indicator" %}">#}
+{#                    {% for ind in indicators %}#}
+{#                        <option value="{{ ind.id }}">{{ ind.name }}</option>#}
+{#                    {% endfor %}#}
+{#                </select>#}
+{#            </div>#}
+{#        </nav>#}
+{#        {% include "indicators/program_indicators_table.html" %}#}
+{#    </div>#}
 </div>
 
 {% include "indicators/indicator_list_modals.html" %}
@@ -106,30 +112,7 @@
         let jsContext = {{ js_context|js }};
     </script>
 
-    <script>
-        // On pinned report delete btn click
-        $('[data-delete-pinned-report]').click(function (e) {
-            e.preventDefault();
+{#    <script src="{% static "js/program_page_filters.js" %}"></script>#}
 
-            let prId = $(this).data('deletePinnedReport');
-            let pinnedReport = $(this).closest('.pinned-report');
-
-            if (window.confirm(jsContext.delete_pinned_report_confirmation_msg)) {
-                $.ajax({
-                    type: "POST",
-                    url: jsContext.delete_pinned_report_url,
-                    data: {
-                        pinned_report_id: prId,
-                    },
-                    success: function () {
-                        pinnedReport.remove();
-                    },
-                    error: function () {
-                        console.log('AJAX error')
-                    }
-                });
-            }
-        });
-    </script>
-    <script src="{% static "js/program_page_filters.js" %}"></script>
+    {% render_bundle 'program_page' %}
 {% endblock %}
