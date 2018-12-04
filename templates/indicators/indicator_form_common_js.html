@@ -168,24 +168,17 @@
 
     });
 
-    $("#indicator_modal_content").on("click", "#id_create_targets_btn", function(e) {
+    $("#indicator_modal_content, #indicator_form").on("click", "#id_create_targets_btn", function(e) {
         e.preventDefault();
         if (validateForm() == false) {
             showValidations("#modalmessages");
             return;
         }
         $(this).attr("disabled", true);
-        submitForm($("#indicator_update_form"), true);
-    });
 
-    $("#indicator_form").on("click", "#id_create_targets_btn", function(e) {
-        e.preventDefault();
-        if (validateForm() == false) {
-            showValidations("#modalmessages");
-            return;
-        }
-        $(this).attr("disabled", true);
-        submitForm($("#indicator_update_form"), false);
+        // Even though #indicator_form selector catches case when not a modal, pretend like it's a modal
+        // The reason being is to not display the link to program page when creating targets, regardless of context
+        submitForm($("#indicator_update_form"), true);
     });
 
 
