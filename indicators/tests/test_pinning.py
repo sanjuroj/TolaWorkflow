@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from unittest import skip
 
 from django.test import TestCase
 from django.urls import reverse
@@ -115,31 +116,31 @@ class TestPinnedReportDateStrings(TestCase):
         pr = models.PinnedReport()
         pr.query_string = 'timeperiods=7&numrecentperiods=2&timeframe=2'
 
-        self.assertEqual(pr.date_range_str, 'Most recent 2 Months')
+        self.assertEqual(pr.date_range_str, 'Most recent 2 months')
 
         pr.query_string = 'timeperiods=3&numrecentperiods=2&timeframe=2'
 
-        self.assertEqual(pr.date_range_str, 'Most recent 2 Years')
+        self.assertEqual(pr.date_range_str, 'Most recent 2 years')
 
     def test_relative_to_today_targetperiods(self):
         pr = models.PinnedReport()
         pr.query_string = 'targetperiods=7&numrecentperiods=2&timeframe=2'
 
-        self.assertEqual(pr.date_range_str, 'Most recent 2 Months')
+        self.assertEqual(pr.date_range_str, 'Most recent 2 months')
 
         pr.query_string = 'targetperiods=3&numrecentperiods=2&timeframe=2'
 
-        self.assertEqual(pr.date_range_str, 'Most recent 2 Years')
+        self.assertEqual(pr.date_range_str, 'Most recent 2 years')
 
         pr.query_string = 'targetperiods=4&numrecentperiods=2&timeframe=2'
 
-        self.assertEqual(pr.date_range_str, 'Most recent 2 Semi-annual periods')
+        self.assertEqual(pr.date_range_str, 'Most recent 2 semi-annual periods')
 
     def test_show_all(self):
         pr = models.PinnedReport()
         pr.query_string = 'timeperiods=4&numrecentperiods=&timeframe=1'
 
-        self.assertEqual(pr.date_range_str, 'Show all Semi-annual periods')
+        self.assertEqual(pr.date_range_str, 'Show all semi-annual periods')
 
     def test_midline_endline(self):
         pr = models.PinnedReport()
@@ -194,6 +195,7 @@ class TestPinnedReportDateStringsInSpanish(TestCase):
 
         self.assertEqual(pr.date_range_str, u'1 Jul. 2017 \u2013 30 Jun. 2020')
 
+    @skip('Translation PO files needed for final expected strings')
     def test_relative_to_today_timeperiods(self):
         pr = models.PinnedReport()
         pr.query_string = 'timeperiods=7&numrecentperiods=2&timeframe=2'
@@ -204,6 +206,7 @@ class TestPinnedReportDateStringsInSpanish(TestCase):
 
         self.assertEqual(pr.date_range_str, u'Most recent 2 A\xf1os')
 
+    @skip('Translation PO files needed for final expected strings')
     def test_relative_to_today_targetperiods(self):
         pr = models.PinnedReport()
         pr.query_string = 'targetperiods=7&numrecentperiods=2&timeframe=2'
@@ -218,18 +221,21 @@ class TestPinnedReportDateStringsInSpanish(TestCase):
 
         self.assertEqual(pr.date_range_str, u'Most recent 2 Periodos semestrales')
 
+    @skip('Translation PO files needed for final expected strings')
     def test_show_all(self):
         pr = models.PinnedReport()
         pr.query_string = 'timeperiods=4&numrecentperiods=&timeframe=1'
 
         self.assertEqual(pr.date_range_str, u'Show all Periodos semestrales')
 
+    @skip('Translation PO files needed for final expected strings')
     def test_midline_endline(self):
         pr = models.PinnedReport()
         pr.query_string = 'targetperiods=2&timeframe=1'
 
         self.assertEqual(pr.date_range_str, 'Show all results')
 
+    @skip('Translation PO files needed for final expected strings')
     def test_lop(self):
         pr = models.PinnedReport()
         pr.query_string = 'targetperiods=1&timeframe=1'
@@ -242,6 +248,7 @@ class TestPinnedReportDateStringsInSpanish(TestCase):
 
         self.assertEqual(pr.date_range_str, '')
 
+    @skip('Translation PO files needed for final expected strings')
     def test_possible_bad_input(self):
         # the current quickstart UI allows this invalid form input -> query str
         pr = models.PinnedReport()
@@ -258,7 +265,7 @@ class TestDefaultPinnedReport(TestCase):
     def test_default_report(self):
         default_report = models.PinnedReport.default_report(0)
         self.assertEquals(default_report.name, 'Recent progress for all indicators')
-        self.assertEquals(default_report.date_range_str, 'Most recent 2 Months')
+        self.assertEquals(default_report.date_range_str, 'Most recent 2 months')
         self.assertEquals(default_report.program_id, 0)
 
 
@@ -298,6 +305,7 @@ class TestPinnedReportListInProgramView(PinnedReportTestCase):
         # verify ordering - pinned reports should be sorted newest to oldest
         self.assertTrue(pinned_reports[0].creation_date > pinned_reports[1].creation_date)
 
+    @skip('Translation PO files needed for final expected strings')
     def test_program_view_spanish_language(self):
         pr = PinnedReportFactory(
             tola_user=self.tola_user,
