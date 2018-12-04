@@ -5,8 +5,8 @@ from dateutil.relativedelta import relativedelta
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-from indicators.models import Indicator, CollectedData, PeriodicTarget
-from workflow.models import Program, Country, Documentation
+from indicators.models import Indicator, CollectedData, PeriodicTarget, Level
+from workflow.models import Program, Country, Documentation, Organization
 from indicators.views.views_indicators import generate_periodic_targets
 from indicators.views.views_reports import IPTT_ReportView
 
@@ -33,9 +33,10 @@ class Command(BaseCommand):
             'EVIDENCE': 4,
         }
 
-
+        org = Organization.objects.get(id=1)
         country, created = Country.objects.get_or_create(
-            country='Tolaland', defaults={'latitude': 21.4, 'longitude':-158, 'zoom': 6})
+            country='Tolaland', defaults={
+                'latitude': 21.4, 'longitude': -158, 'zoom': 6, 'organization': org, 'code': 'TO'})
         if options['clean']:
             programs = Program.objects.filter(name__contains='QA Program')
             print "Delete these programs?\n{}".format('\n'.join(p.name for p in programs))
@@ -62,19 +63,15 @@ class Command(BaseCommand):
         # Create programs for specific people
         program_ids = []
         for t_name in tester_names:
-            program_name =  'QA Program - {}'.format(t_name)
-            print 'Creating {}'.format(program_name)
+            program_name = 'QA Program - {}'.format(t_name)
             program_ids.append(self.create_program(main_start_date, main_end_date, country, program_name))
 
         # Create a program whose end date has passed ond one whose start date is in the future
         passed_end_date = main_start_date - timedelta(days=1)
         passed_start_date = (passed_end_date + relativedelta(months=-19)).replace(day=1)
-        future_start_date = main_end_date + timedelta(days=1)
-        future_end_date = (future_start_date + relativedelta(months=+20)).replace(day=1) - timedelta(days=1)
+
         program_ids.append(self.create_program(
             passed_start_date, passed_end_date, country, 'QA Program -- Ghost of Programs Past'))
-        program_ids.append(self.create_program(
-            future_start_date, future_end_date, country, 'QA Program -- Ghost of Programs Future'))
 
         # Create program with lots of indicators
         crazy_indicators_program_id = (self.create_program(
@@ -82,8 +79,7 @@ class Command(BaseCommand):
         program_ids.append(crazy_indicators_program_id)
         for program_id in program_ids:
             print 'Creating Indicators for {}'.format(Program.objects.get(id=program_id))
-            indicator_ids = self.create_indicators(program_id)
-            # print '{} indids: {}'.format(len(indicator_ids), indicator_ids)
+            self.create_indicators(program_id)
 
         print 'Creating moar indicators'
         moar_indicator_ids = self.create_indicators(crazy_indicators_program_id, 'moar1')
@@ -97,15 +93,15 @@ class Command(BaseCommand):
 
         print 'Creating null program with no targets'
         null_id = self.create_program(main_start_date, main_end_date, country, 'QA Program --- No Targets Here')
-        null_indicator_ids = self.create_indicators(null_id, null_level=self.NULL_LEVELS['TARGETS'])
+        self.create_indicators(null_id, null_level=self.NULL_LEVELS['TARGETS'])
 
         print 'Creating null program with no results'
         null_id = self.create_program(main_start_date, main_end_date, country, 'QA Program --- No Results Here')
-        null_indicator_ids = self.create_indicators(null_id, null_level=self.NULL_LEVELS['RESULTS'])
+        self.create_indicators(null_id, null_level=self.NULL_LEVELS['RESULTS'])
 
         print 'Creating null program with no evidence'
         null_id = self.create_program(main_start_date, main_end_date, country, 'QA Program --- No Evidence Here')
-        null_indicator_ids = self.create_indicators(null_id, null_level=self.NULL_LEVELS['EVIDENCE'])
+        self.create_indicators(null_id, null_level=self.NULL_LEVELS['EVIDENCE'])
 
     @staticmethod
     def create_program(start_date, end_date, country, name):
@@ -148,7 +144,8 @@ class Command(BaseCommand):
                             baseline=0,
                             unit_of_measure_type=uom_type[0],
                             direction_of_change=direction,
-                            program=program
+                            program=program,
+                            level=Level.objects.get(name='Goal')
                         )
                         indicator.save()
                         indicator_ids.append(indicator.id)
@@ -160,6 +157,9 @@ class Command(BaseCommand):
                         if null_level == self.NULL_LEVELS['RESULTS']:
                             continue
                         periodic_targets = PeriodicTarget.objects.filter(indicator__id=indicator.id)
+
+                        # Different combinations of UOM type, direction of change and cummulativeness require
+                        # different inputs.
                         if uom_type[0] == Indicator.NUMBER:
                             if direction == Indicator.DIRECTION_OF_CHANGE_POSITIVE:
                                 if is_cumulative:
@@ -198,11 +198,24 @@ class Command(BaseCommand):
                                 achieved_increment = -5
 
                         lop_target = 0
+                        day_offset = timedelta(days=2)
                         for i, pt in enumerate(periodic_targets):
+                            # Create the target amount (the PeriodicTarget object has already been created)
                             pt.target = target_start + target_increment * i
                             pt.save()
+
+                            if is_cumulative:
+                                lop_target = pt.target
+                            else:
+                                lop_target += pt.target
+
+                            # Users shouldn't put in results with a date in the future, so neither should we.
+                            if pt.start_date and date.today() < pt.start_date + day_offset:
+                                continue
+
+                            # Now create the Results and their related Records
                             if pt.start_date:
-                                date_collected = pt.start_date + timedelta(days=2)
+                                date_collected = pt.start_date + day_offset
                             else:
                                 date_collected = date.today()
                             cd = CollectedData(
@@ -212,10 +225,6 @@ class Command(BaseCommand):
                                 achieved=achieved_start + achieved_increment * i,
                                 date_collected=date_collected)
                             cd.save()
-                            if is_cumulative:
-                                lop_target = pt.target
-                            else:
-                                lop_target += pt.target
 
                             if null_level == self.NULL_LEVELS['EVIDENCE']:
                                 continue
@@ -226,8 +235,6 @@ class Command(BaseCommand):
 
                         indicator.lop_target = lop_target
                         indicator.save()
-
-
 
         return indicator_ids
 
@@ -264,4 +271,3 @@ class Command(BaseCommand):
                     'start_date': pt['start_date'],
                     'end_date': pt['end_date'],
                 })
-
