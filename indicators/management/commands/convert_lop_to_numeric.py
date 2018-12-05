@@ -32,17 +32,20 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
+        # Print the starting profil of all the LoP target values
         pre_categories = self.profile_lops(Indicator.objects.all(), execute=options['execute'])
         self.print_categories(pre_categories)
 
         self.profile_lops(IndicatorHistory.objects.all(), execute=options['execute'])
 
+        # If the execute flag is thrown, actually do the conversion.
         if options['execute']:
             print '\n==================== Executing ===========================\n'
             print 'Post execution Counts\n'
             post_categories = self.profile_lops(Indicator.objects.all(), execute=False)
             self.print_categories(post_categories, verbose=False)
 
+            # Calculate what the expected final number of interger values should be
             int_should_be = \
                 len(pre_categories['percent']['values']) + \
                 len(pre_categories['int']['values']) + \
@@ -54,6 +57,7 @@ class Command(BaseCommand):
                 print 'Integer/float counts are off!  Exepected final database value of {} (sum of int, percent, has_separator counts) but final value is {}' \
                     .format(int_should_be, len(post_categories['int']['values']))
 
+            # Calculate what the expected final number of null values should be
             null_should_be = \
                 len(pre_categories['empty_string']['values']) + \
                 len(pre_categories['null']['values']) + \
@@ -67,6 +71,7 @@ class Command(BaseCommand):
                 print 'Null counts are off!  Exepected final database value of {} (sum of null, N/A, empty strings, and none-of-the-above counts) but final value is {}' \
                     .format(null_should_be, len(post_categories['null']['values']))
 
+    # Categorize the lop_target field values and covert to a Decimal field if possible.
     def profile_lops(self, queryset, execute=False):
         categories = {
             'empty_string': {'values': [], 'label': 'Empty String'},
@@ -92,6 +97,8 @@ class Command(BaseCommand):
                 else:
                     raise
 
+            # Set the generic text for when a value's text representation is preserved in the rationale field.
+            # If rationale text already exists, preserve it.
             rationale_text = '{} UPDATE:  TolaActivity no longer accepts non-numeric values in the Life of Program (LOP) target field.  The original LoP target value was: {}.' \
                 .format(date.today(), indicator.lop_target.encode('utf-8'))
             if indicator.rationale_for_target:
