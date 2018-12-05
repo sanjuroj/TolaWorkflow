@@ -79,12 +79,12 @@ class Command(BaseCommand):
         program_ids.append(crazy_indicators_program_id)
         for program_id in program_ids:
             print 'Creating Indicators for {}'.format(Program.objects.get(id=program_id))
-            self.create_indicators(program_id)
+            self.create_full_indicator_set(program_id)
 
         print 'Creating moar indicators'
-        moar_indicator_ids = self.create_indicators(crazy_indicators_program_id, 'moar1')
-        moar_indicator_ids.extend(self.create_indicators(crazy_indicators_program_id, 'moar2'))
-        moar_indicator_ids.extend(self.create_indicators(crazy_indicators_program_id, 'moar3'))
+        moar_indicator_ids = self.create_full_indicator_set(crazy_indicators_program_id, 'moar1')
+        moar_indicator_ids.extend(self.create_full_indicator_set(crazy_indicators_program_id, 'moar2'))
+        moar_indicator_ids.extend(self.create_full_indicator_set(crazy_indicators_program_id, 'moar3'))
         print 'moar indids: {}:'.format(len(moar_indicator_ids))
 
         # Create programs with various levels of no data indicators
@@ -93,15 +93,23 @@ class Command(BaseCommand):
 
         print 'Creating null program with no targets'
         null_id = self.create_program(main_start_date, main_end_date, country, 'QA Program --- No Targets Here')
-        self.create_indicators(null_id, null_level=self.NULL_LEVELS['TARGETS'])
+        self.create_full_indicator_set(null_id, null_level=self.NULL_LEVELS['TARGETS'])
 
         print 'Creating null program with no results'
         null_id = self.create_program(main_start_date, main_end_date, country, 'QA Program --- No Results Here')
-        self.create_indicators(null_id, null_level=self.NULL_LEVELS['RESULTS'])
+        self.create_full_indicator_set(null_id, null_level=self.NULL_LEVELS['RESULTS'])
 
         print 'Creating null program with no evidence'
         null_id = self.create_program(main_start_date, main_end_date, country, 'QA Program --- No Evidence Here')
-        self.create_indicators(null_id, null_level=self.NULL_LEVELS['EVIDENCE'])
+        self.create_full_indicator_set(null_id, null_level=self.NULL_LEVELS['EVIDENCE'])
+
+        print 'Creating PaQ indicator set'
+        paq_id = self.create_program(main_start_date, main_end_date, country, 'QA Program - PaQ')
+        self.create_partial_indicator_set(paq_id)
+
+        print 'Creating partial indicator set'
+        paq_id = self.create_program(main_start_date, main_end_date, country, 'QA Program -- Small Indicator Set')
+        self.create_partial_indicator_set(paq_id)
 
     @staticmethod
     def create_program(start_date, end_date, country, name):
@@ -115,7 +123,7 @@ class Command(BaseCommand):
         program.country.add(country)
         return program.id
 
-    def create_indicators(self, program_id, indicator_suffix='', null_level=0):
+    def create_full_indicator_set(self, program_id, indicator_suffix='', null_level=0):
         if null_level == self.NULL_LEVELS['INDICATORS']:
             return
         indicator_ids = []
@@ -235,6 +243,151 @@ class Command(BaseCommand):
 
                         indicator.lop_target = lop_target
                         indicator.save()
+
+        return indicator_ids
+
+    def create_partial_indicator_set(self, program_id, indicator_suffix=''):
+        indicator_ids = []
+        program = Program.objects.get(id=program_id)
+        frequency_labels = {
+            Indicator.LOP: 'Life of Program (LoP) only',
+            Indicator.MID_END: 'Midline and endline',
+            Indicator.ANNUAL: 'Annual',
+            Indicator.QUARTERLY: 'Quarterly',
+        }
+        uom_labels = {
+            Indicator.DIRECTION_OF_CHANGE_NONE: "Direction of change (not applicable)",
+            Indicator.NUMBER: 'Number (#)',
+            Indicator.PERCENTAGE:"Percentage (%)",
+        }
+        direction_labels = {
+            Indicator.DIRECTION_OF_CHANGE_NONE: "Direction of change (not applicable)",
+            Indicator.DIRECTION_OF_CHANGE_POSITIVE: "Increase (+)",
+            Indicator.DIRECTION_OF_CHANGE_NEGATIVE: "Decrease (-)",
+        }
+
+
+        indicator_types = [
+            {'freq': Indicator.ANNUAL, 'uom_type': Indicator.NUMBER, 'is_cumulative': True, 'direction': Indicator.DIRECTION_OF_CHANGE_POSITIVE},
+            {'freq': Indicator.ANNUAL, 'uom_type': Indicator.PERCENTAGE, 'is_cumulative': True, 'direction': Indicator.DIRECTION_OF_CHANGE_NONE},
+            {'freq': Indicator.QUARTERLY, 'uom_type': Indicator.NUMBER, 'is_cumulative': False, 'direction': Indicator.DIRECTION_OF_CHANGE_NONE},
+            {'freq': Indicator.QUARTERLY, 'uom_type': Indicator.PERCENTAGE, 'is_cumulative': True, 'direction': Indicator.DIRECTION_OF_CHANGE_NEGATIVE},
+            {'freq': Indicator.LOP, 'uom_type': Indicator.NUMBER, 'is_cumulative': True, 'direction': Indicator.DIRECTION_OF_CHANGE_NONE},
+            {'freq': Indicator.LOP, 'uom_type': Indicator.PERCENTAGE, 'is_cumulative': True, 'direction': Indicator.DIRECTION_OF_CHANGE_NONE},
+            {'freq': Indicator.MID_END, 'uom_type': Indicator.NUMBER, 'is_cumulative': True, 'direction': Indicator.DIRECTION_OF_CHANGE_NONE},
+            {'freq': Indicator.MID_END, 'uom_type': Indicator.PERCENTAGE, 'is_cumulative': True, 'direction': Indicator.DIRECTION_OF_CHANGE_NONE},
+        ]
+
+        for q, combo in enumerate(indicator_types):
+
+            if combo['is_cumulative']:
+                cumulative_text = 'cumulative'
+            else:
+                cumulative_text = 'non-cumulative'
+            indicator_name = '{} | {} | {} | {}'.format(
+                frequency_labels[combo['freq']],
+                uom_labels[combo['uom_type']],
+                direction_labels[combo['direction']],
+                cumulative_text
+            )
+            indicator = Indicator(
+                name=indicator_name + indicator_suffix,
+                is_cumulative=combo['is_cumulative'],
+                target_frequency=combo['freq'],
+                unit_of_measure='This is a UOM',
+                baseline=0,
+                unit_of_measure_type=combo['uom_type'],
+                direction_of_change=combo['direction'],
+                program=program,
+                level=Level.objects.get(name='Goal')
+            )
+            indicator.save()
+            indicator_ids.append(indicator.id)
+            if q in [2, 3, 7]:
+                continue
+            self.make_targets(program, indicator)
+
+            periodic_targets = PeriodicTarget.objects.filter(indicator__id=indicator.id)
+
+            # Different combinations of UOM type, direction of change and cummulativeness require
+            # different inputs.
+            if q == 4:
+                continue
+            if combo['uom_type'] == Indicator.NUMBER:
+                if combo['direction'] == Indicator.DIRECTION_OF_CHANGE_POSITIVE:
+                    if combo['is_cumulative']:
+                        target_start = 100
+                        target_increment = target_start
+                        achieved_start = 90
+                        achieved_increment = achieved_start
+                    else:
+                        target_start = 100
+                        target_increment = target_start
+                        achieved_start = 90
+                        achieved_increment = achieved_start
+                else:
+                    if combo['is_cumulative']:
+                        target_start = 500
+                        target_increment = -50
+                        achieved_start = 400
+                        achieved_increment = -50
+                    else:
+                        target_start = 500
+                        target_increment = -50
+                        achieved_start = 400
+                        achieved_increment = -50
+            else:
+                if combo['direction'] == Indicator.DIRECTION_OF_CHANGE_POSITIVE:
+                    # Don't need to check cumulative because we don't really handle it
+                    target_start = 5
+                    target_increment = 5
+                    achieved_start = 4
+                    achieved_increment = 5
+                else:
+                    # Don't need to check cumulative because we don't really handle it
+                    target_start = 90
+                    target_increment = -5
+                    achieved_start = 95
+                    achieved_increment = -5
+
+            lop_target = 0
+            day_offset = timedelta(days=2)
+            for i, pt in enumerate(periodic_targets):
+                # Create the target amount (the PeriodicTarget object has already been created)
+                pt.target = target_start + target_increment * i
+                pt.save()
+
+                if combo['is_cumulative']:
+                    lop_target = pt.target
+                else:
+                    lop_target += pt.target
+
+                # Users shouldn't put in results with a date in the future, so neither should we.
+                if pt.start_date and date.today() < pt.start_date + day_offset:
+                    continue
+
+                # Now create the Results and their related Records
+                if pt.start_date:
+                    date_collected = pt.start_date + day_offset
+                else:
+                    date_collected = date.today()
+                cd = CollectedData(
+                    periodic_target=pt,
+                    indicator=indicator,
+                    program=program,
+                    achieved=achieved_start + achieved_increment * i,
+                    date_collected=date_collected)
+                cd.save()
+
+                if q in [5, 6]:
+                    continue
+                document = Documentation.objects.create(
+                    program=program, name='Doc for CDid {}'.format(cd.id), url='http://my/doc/here/')
+                cd.evidence = document
+                cd.save()
+
+            indicator.lop_target = lop_target
+            indicator.save()
 
         return indicator_ids
 
