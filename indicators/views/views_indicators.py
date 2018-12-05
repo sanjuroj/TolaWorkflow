@@ -1498,7 +1498,8 @@ class ProgramPage(ListView):
             program.indicator_filters['id'] = indicator_filter_id
             indicator_filter_name = program.annotated_indicators.first()
 
-        indicators = program.annotated_indicators
+        indicators = program.annotated_indicators\
+            .annotate(target_period_last_end_date=Max('periodictargets__end_date'))
         indicator_count = program.indicator_count
 
         indicator_types = IndicatorType.objects.filter(indicator__program__id=program_id)
