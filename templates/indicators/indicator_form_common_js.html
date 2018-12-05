@@ -141,7 +141,7 @@
 
     $("#indicator_form").on("submit", "#indicator_update_form", function(e){
         e.preventDefault();
-        if (validateForm() == false) {
+        if (validateForm() === false) {
             showValidations("#alerts");
             return;
         }
@@ -151,7 +151,7 @@
     // Intercept IndicatorUpdate form submission and then use ajax to submit it.
     $("#indicator_modal_content").on("submit", "#indicator_update_form", function(e){
         e.preventDefault();
-        if (validateForm() == false) {
+        if (validateForm() === false) {
             showValidations("#modalmessages");
             return;
         }
@@ -170,8 +170,19 @@
 
     $("#indicator_modal_content, #indicator_form").on("click", "#id_create_targets_btn", function(e) {
         e.preventDefault();
-        if (validateForm() == false) {
+        if (validateForm() === false) {
             showValidations("#modalmessages");
+            return;
+        }
+        $(this).attr("disabled", true);
+
+        submitForm($("#indicator_update_form"), true);
+    });
+
+    $("#indicator_form").on("click", "#id_create_targets_btn", function(e) {
+        e.preventDefault();
+        if (validateForm() === false) {
+            showValidations("#alerts");
             return;
         }
         $(this).attr("disabled", true);
@@ -650,39 +661,42 @@
     }
 
     function validateForm() {
+        // Clear any existing messages
+        validation_msgs = {};
+
         var validationsTargetTab = true;
         var validationsSummaryTab = true;
         var validationsPerformanceTab = true;
-        if  (validate_baseline() == false ) {
+        if  (validate_baseline() === false ) {
             validationsTargetTab = false
         }
-        if (validate_loptarget() == false ) {
+        if (validate_loptarget() === false ) {
             validationsTargetTab = false;
         }
-        if (validateForEmptyField("id_unit_of_measure") == false ) {
+        if (validateForEmptyField("id_unit_of_measure") === false ) {
             validationsTargetTab = false;
         }
         if ($("#id_target_frequency_custom").is(":visible")){
-          if (validateForEmptyField("id_target_frequency_custom") == false) {
-            $("#div_id_target_frequency_custom").addClass('mb-5')
-            $("#div_id_target_frequency_custom").removeClass('mb-3')
+          if (validateForEmptyField("id_target_frequency_custom") === false) {
+            $("#div_id_target_frequency_custom").addClass('mb-5');
+            $("#div_id_target_frequency_custom").removeClass('mb-3');
             validationsTargetTab = false;
           }
           else {
-            $("#div_id_target_frequency_custom").addClass('mb-3')
-            $("#div_id_target_frequency_custom").removeClass('mb-5')
+            $("#div_id_target_frequency_custom").addClass('mb-3');
+            $("#div_id_target_frequency_custom").removeClass('mb-5');
           }
         }
-        if (validateForEmptyField("id_target_frequency") == false) {
+        if (validateForEmptyField("id_target_frequency") === false) {
             validationsTargetTab = false;
-            $("#div_id_target_frequency").addClass("marginbottom-225")
+            $("#div_id_target_frequency").addClass("marginbottom-225");
             $("#div_id_target_frequency").removeClass("mb-3")
         }
-        if (validateNumPeriods() == false) {
+        if (validateNumPeriods() === false) {
             validationsTargetTab = false;
         }
 
-        if (validatePeriodicTargets() == false) {
+        if (validatePeriodicTargets() === false) {
             validationsTargetTab = false;
         }
 
@@ -691,41 +705,36 @@
             validationsTargetTab = false;
         }
 
-        if (validationsTargetTab == false) {
-            validation_msgs['target'] = '{% trans "Please complete all required fields in the Targets tab."|escapejs %}';
-        } else {
-            delete validation_msgs['target'];
+        if (validationsTargetTab === false) {
+            validation_msgs['target'] = '{% trans "Please complete all required fields in the Targets tab." %}';
         }
 
         /* validate fields from the summary tab */
-        if (validateForEmptyField("id_name") == false) {
-            validationsSummaryTab = false
-            $("#div_id_name").addClass("marginbottom-225")
-            $("#div_id_name").removeClass("mb-3")
+        if (validateForEmptyField("id_name") === false) {
+            validationsSummaryTab = false;
+            $("#div_id_name").addClass("marginbottom-225");
+            $("#div_id_name").removeClass("mb-3");
         }
         else {
-          $("#div_id_name").addClass("mb-3")
-          $("#div_id_name").removeClass("marginbottom-225")
+          $("#div_id_name").addClass("mb-3");
+          $("#div_id_name").removeClass("marginbottom-225");
         }
 
-        if (validationsSummaryTab == false) {
+        if (validationsSummaryTab === false) {
             validation_msgs['summary'] = '{% trans "Please complete all required fields in the Summary tab."|escapejs %}';
-        } else {
-            delete validation_msgs['summary'];
         }
 
         /* validate fields from the Performance tab */
-        if (validateForEmptyField("id_level") == false) {
+        if (validateForEmptyField("id_level") === false) {
             validationsPerformanceTab = false;
         }
 
-        if (validationsPerformanceTab == false) {
+        if (validationsPerformanceTab === false) {
             validation_msgs['performance'] = '{% trans "Please complete all required fields in the Performance tab."|escapejs %}';
-        } else {
-            delete validation_msgs['performance'];
         }
+
         // return all tab validations
-        return (validationsTargetTab && validationsSummaryTab && validationsPerformanceTab) ? true: false;
+        return validationsTargetTab && validationsSummaryTab && validationsPerformanceTab;
     }
 
     $("#indicator_modal_content, #indicator_form").on("keypress", "input[type=number]", function(e){
