@@ -269,5 +269,6 @@ def program_complete(context):
         'program.start_date': program.start_date,
         'program.end_date': program.end_date,
         'program.reporting_period_start': program.reporting_period_start,
+        'program.reporting_period_end': program.reporting_period_end,
         'program.percent_complete': program.percent_complete,
     }
