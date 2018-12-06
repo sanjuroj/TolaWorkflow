@@ -929,7 +929,8 @@ class ProgramWithMetrics(wf_models.Program):
 
     @cached_property
     def all_targets_defined_for_all_indicators(self):
-        return self.indicator_count == self.metrics['targets_defined']
+        """note: we define a program with 0 indicators as _not_ having all targets defined"""
+        return self.indicator_count == self.metrics['targets_defined'] and self.indicator_count != 0
 
     @cached_property
     def indicator_count(self):
