@@ -192,15 +192,15 @@ def gauge_tank(context, metric, has_filters=True):
 def gauge_tank_small(context, metric):
     labels = {
         'targets_defined': {
-            'filled_label': _('programs have all targets defined'),
+            'filled_label': _('of programs have all targets defined'),
             'help_text': _('Each indicator must have a target frequency selected and targets entered for all periods.'),
         },
         'reported_results': {
-            'filled_label': _('indicators have reported results'),
+            'filled_label': _('of indicators have reported results'),
             'help_text': ('Each indicator must have at least one reported result.'),
         },
         'results_evidence': {
-            'filled_label': _('results are backed up with evidence'),
+            'filled_label': _('of results are backed up with evidence'),
             'help_text': ('Each result must include a link to an evidence file or folder.'),
         },
     }
