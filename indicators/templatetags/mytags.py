@@ -236,6 +236,7 @@ def gauge_band(context, has_filters=True):
     program = context['program']
     scope_counts = program.scope_counts
     denominator = scope_counts['indicator_count']
+    results_count = program.metrics['results_count']
     #if denominator == 0:
     #    make_percent = lambda x: 0
     #else:
@@ -254,6 +255,7 @@ def gauge_band(context, has_filters=True):
         'ticks': list(range(1, 11)),
         'margin': int(Indicator.ONSCOPE_MARGIN * 100),
         'has_filters': has_filters,
+        'results_count': results_count,
     }
 
 
