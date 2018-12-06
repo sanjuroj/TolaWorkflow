@@ -392,13 +392,8 @@
                 }
 
             }
-            if ($('#indicator_modal_div').length == 1) {
-                // for the modal version;
-                $("#indicator_modal_div").animate({ scrollTop: 0 }, 'slow');
-            } else {
-                // for the non-modal version;
-                $("html, body").animate({ scrollTop: 0 }, "slow");
-            }
+
+            scrollToTop();
 
             show_hide_frequency_fields(true);
             toggleTargetsSumOrAvgRow()
@@ -413,6 +408,17 @@
                 $(`#id_missing_target_periods_for_indicator_id_${indicator.pk}`).html('');
             }
         });
+    }
+
+    // auto scroll either a modal or the whole page to the top
+    function scrollToTop() {
+        if ($('#indicator_modal_div').length == 1) {
+            // for the modal version;
+            $("#indicator_modal_div").animate({ scrollTop: 0 }, 'slow');
+        } else {
+            // for the non-modal version;
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+        }
     }
 
 
@@ -656,6 +662,7 @@
         $(messagesDiv).empty();
         if (!jQuery.isEmptyObject(validation_msgs)) {
             createAlert('danger', msg, false, messagesDiv);
+            scrollToTop();
         }
         validation_msgs = {};
     }
