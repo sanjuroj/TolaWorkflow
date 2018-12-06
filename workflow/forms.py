@@ -1484,7 +1484,8 @@ class QuantitativeOutputsForm(forms.ModelForm):
                     selected = "selected" if pt.id == instance.periodic_target.id else ""
                 else:
                     selected = ""
-                options += "<option value=%s %s>%s</option>" % (pt.id, selected, pt.period)
+                # pt.period is deprecated, transition to pt.period_name
+                options += "<option value=%s %s>%s</option>" % (pt.id, selected, pt.period) 
         self.helper.layout = Layout(
             'indicator',
             'periodic_target',

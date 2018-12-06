@@ -294,6 +294,10 @@ class DoubleDecimalSplit(models.Func):
         super(DoubleDecimalSplit, self).__init__(*expressions)
 
 class IndicatorSortingQSMixin(object):
+    """This provides a temporary relief to indicator number sorting issues in advance of Satsuma -
+    uses regex matches to determine if the number is of the format "1.1" or "1.1.1" etc. and sorts it then by
+    version number sorting, otherwise numeric, and falls back to alphabetical.  Written as a mixin so it can be
+    replaced with log frame sorting on release of Satsuma"""
     def with_logframe_sorting(self):
         numeric_re = r'^[[:space:]]*[0-9]+[[:space:]]*$'
         logframe_re = r'^[[:space:]]*[0-9]+([[.period.]][0-9]+)?'\
@@ -362,6 +366,8 @@ class IndicatorSortingQSMixin(object):
             )
 
 class IndicatorSortingManagerMixin(object):
+    """This provides a temporary relief to indicator number sorting issues in advance of Satsuma -
+    provides a logframe sorting method that utilizes the above QS mixin to sort as though a logframe model existed"""
     def with_logframe_sorting(self):
         qs = self.get_queryset()
         return qs.with_logframe_sorting()
@@ -767,6 +773,13 @@ class PeriodicTarget(models.Model):
 
     @property
     def period_name(self):
+        """returns a period name translated to the local language.
+            - LOP target: see target definition above,
+            - MID/END: uses customsort to pick from definitions above
+            - ANNUAL/SEMI_ANNUAL/TRI_ANNUAL/QUARTERLY: "Year 1" / "Semi-Annual Period 2" / "Quarter 4"
+            - MONTHLY: "Jan 2018"
+            - EVENT: this (and only this) uses the 'period' field and customsort to be "period name 1"
+        """
         period_name = None
         # used in the collected data modal to display options in the target period dropdown
         if self.indicator.target_frequency == Indicator.MID_END:
@@ -793,6 +806,9 @@ class PeriodicTarget(models.Model):
         return period_name
 
     def __unicode__(self):
+        """outputs the period name (see period_name docstring) followed by start and end dates
+        
+        used in filter form options and indicator table"""
         if self.period_name and self.start_date and self.end_date:
             # e.g "Year 1 (date - date)" or "Quarter 2 (date - date)"
             return u"{period_name} ({start_date} - {end_date})".format(

@@ -451,7 +451,7 @@ class IndicatorUpdate(UpdateView):
                 'num_data': pt.num_data,
                 'start_date': pt.start_date,
                 'end_date': pt.end_date,
-                'period': pt.period,
+                'period': pt.period, # period is deprecated, this should move to .period_name
                 'target': pt.target
             })
 
