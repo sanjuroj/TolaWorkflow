@@ -31,7 +31,7 @@ class MonthDate(models.Func):
 # pylint: disable=W0223
 class MonthsCount(models.Func):
     """takes two date fields, finds their value, converts them to MonthDate format, and finds the difference in months
-    
+
         note: +1 is due to the 'first of the month to end of the month' inclusive month ranges in our dates
         note: wrapping parens due to this field being used in division math"""
     function = 'PERIOD_DIFF'
@@ -181,7 +181,8 @@ def indicator_over_under_annotation():
     return models.Case(
         # None for indicators missing targets or data:
         models.When(
-            lop_met_real__isnull=True,
+            models.Q(reporting=False) |
+            models.Q(lop_met_real__isnull=True),
             then=models.Value(None)
             ),
         models.When(
