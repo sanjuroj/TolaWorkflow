@@ -706,7 +706,7 @@
         }
 
         if (validationsTargetTab === false) {
-            validation_msgs['target'] = '{% trans "Please complete all required fields in the Targets tab." %}';
+            validation_msgs['target'] = '{% trans "Please complete all required fields in the Targets tab."|escapejs %}';
         }
 
         /* validate fields from the summary tab */
