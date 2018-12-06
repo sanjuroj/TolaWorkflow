@@ -489,10 +489,16 @@ class Indicator(models.Model):
         verbose_name=_("Not applicable"), default=False, help_text=" "
     )
 
-    lop_target = models.DecimalField(
+    lop_target_old = models.DecimalField(
         verbose_name=_("Life of Program (LoP) target*"), max_digits=20, decimal_places=2,
         null=True, blank=True, help_text=" "
     )
+
+    lop_target_new_thing = models.TextField(
+        verbose_name=_("Life of Program (LoP) target*"), max_length=60,
+        null=True, blank=True, help_text=" "
+    )
+
 
     direction_of_change = models.IntegerField(
         blank=False, null=True, choices=DIRECTION_OF_CHANGE,
@@ -624,8 +630,6 @@ class Indicator(models.Model):
     edit_date = models.DateTimeField(
         _("Edit date"), null=True, blank=True, help_text=" "
     )
-
-    history = HistoricalRecords()
 
     notes = models.TextField(_("Notes"), max_length=500, null=True, blank=True)
     # optimize query for class based views etc.
