@@ -846,22 +846,20 @@ class PeriodicTarget(models.Model):
     def __unicode__(self):
         """outputs the period name (see period_name docstring) followed by start and end dates
         
-        used in filter form options and indicator table"""
-        if self.period_name and self.start_date and self.end_date:
+        used in collect data form"""
+        period_name = self.period_name
+
+        if period_name and self.start_date and self.end_date:
             # e.g "Year 1 (date - date)" or "Quarter 2 (date - date)"
             return u"{period_name} ({start_date} - {end_date})".format(
-                period_name=self.period_name,
+                period_name=period_name,
                 start_date=self.start_date,
                 end_date=self.end_date
             )
-        elif self.period_name:
+        elif period_name:
             # if no date for some reason but time-based frequency:
-            return self.period_name
-        if self.indicator.target_frequency == Indicator.MONTHLY:
-            # translate month name, add year
-            month_name = _(self.start_date.strftime("%B"))
-            year = self.start_date.strftime('%Y')
-            return u"{month_name} {year}".format(month_name=month_name, year=year)
+            return unicode(period_name)
+
         return self.period
 
     @property
@@ -888,6 +886,9 @@ class PeriodicTarget(models.Model):
                 else x.month + months_per_period[frequency] - 12,
                 x.day)
             if frequency == Indicator.MONTHLY:
+                # TODO: strftime() does not work with Django i18n and will not give you localized month names
+                # Could be: name_func = lambda start, count: cls.generate_monthly_period_name(start)
+                # the above breaks things in other places though due to unicode encoding/decoding errors
                 name_func = lambda start, count: '{month_name} {year}'.format(
                     month_name=_(start.strftime('%B')),
                     year=start.strftime('%Y')
