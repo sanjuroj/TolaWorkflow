@@ -709,13 +709,13 @@ class Indicator(models.Model):
     @property
     def baseline_display(self):
         if self.baseline and self.unit_of_measure_type == self.PERCENTAGE:
-            return self.baseline + '%'
+            return u"{0}%".format(self.baseline)
         return self.baseline
 
     @property
     def lop_target_display(self):
         if self.lop_target and self.unit_of_measure_type == self.PERCENTAGE:
-            return self.lop_target + '%'
+            return u"{0}%".format(self.lop_target)
         return self.lop_target
 
     @cached_property
