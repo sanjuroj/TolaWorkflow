@@ -1501,6 +1501,7 @@ class ProgramPage(ListView):
         indicators = program.annotated_indicators\
             .annotate(target_period_last_end_date=Max('periodictargets__end_date'))
         indicator_count = program.indicator_count
+        site_count = len(program.get_sites())
 
         indicator_types = IndicatorType.objects.filter(indicator__program__id=program_id)
         indicator_levels = Level.objects.filter(indicator__program__id=program_id)
@@ -1516,6 +1517,7 @@ class ProgramPage(ListView):
         c_data = {
             'program': program,
             'indicators': indicators,
+            'site_count': site_count,
             'indicator_count': indicator_count,
             'indicator_types': indicator_types,
             'indicator_filter_id': indicator_filter_id,
