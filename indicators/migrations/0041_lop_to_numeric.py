@@ -3,27 +3,16 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+from indicators.management.commands.convert_lop_to_numeric import run_conversion
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indicators', '0041_auto_20181206_1150'),
+        ('indicators', '0040_add_index_for_collecteddata'),
     ]
 
     operations = [
-        migrations.CreateModel(
-            name='IndicatorHistory',
-            fields=[
-                ('lop_target', models.CharField(max_length=255)),
-                ('rationale_for_target', models.TextField()),
-                ('history_id', models.IntegerField(primary_key=True, serialize=False)),
-            ],
-            options={
-                'db_table': 'indicators_historicalindicator',
-                'managed': False,
-            },
-        ),
         migrations.RemoveField(
             model_name='historicalindicator',
             name='approval_submitted_by',
@@ -62,5 +51,21 @@ class Migration(migrations.Migration):
         ),
         migrations.DeleteModel(
             name='HistoricalIndicator',
+        ),
+        migrations.RenameField(
+            model_name='indicator',
+            old_name='lop_target',
+            new_name='lop_target_old',
+        ),
+        migrations.AddField(
+            model_name='indicator',
+            name='lop_target',
+            field=models.DecimalField(blank=True, decimal_places=2, help_text=b' ', max_digits=20, null=True,
+                                      verbose_name='Life of Program (LoP) target*'),
+        ),
+        migrations.RunPython(run_conversion),
+        migrations.RemoveField(
+            model_name='historicalindicator',
+            name='lop_target_old',
         ),
     ]

@@ -13,7 +13,7 @@ def run_conversion(apps_obj, schema_editor_obj):
     pre_categories = profile_lops(Indicator.objects.all(), na_values)
     print_categories(pre_categories, na_values)
 
-    profile_lops(IndicatorHistory.objects.all(), na_values)
+    # profile_lops(IndicatorHistory.objects.all(), na_values)
 
     print '\n==================== Executing ===========================\n'
     print 'Post execution Counts\n'
@@ -66,10 +66,10 @@ def profile_lops(queryset, na_values):
     for indicator in queryset:
 
         try:
-            target = indicator.lop_target.strip()
+            target = indicator.lop_target_old.strip()
         except AttributeError:
-            if indicator.lop_target is None:
-                categories['null']['values'].append(indicator.lop_target)
+            if indicator.lop_target_old is None:
+                categories['null']['values'].append(indicator.lop_target_old)
                 continue
             else:
                 raise
@@ -77,7 +77,7 @@ def profile_lops(queryset, na_values):
         # Set the generic text for when a value's text representation is preserved in the rationale field.
         # If rationale text already exists, preserve it.
         rationale_text = '{} UPDATE:  TolaActivity no longer accepts non-numeric values in the Life of Program (LOP) target field.  The original LoP target value was: {}.' \
-            .format(date.today(), indicator.lop_target.encode('utf-8'))
+            .format(date.today(), indicator.lop_target_old.encode('utf-8'))
         if indicator.rationale_for_target:
             rationale_text = '[' + rationale_text + '] {}'.format(indicator.rationale_for_target.encode('utf-8'))
 
@@ -90,6 +90,7 @@ def profile_lops(queryset, na_values):
 
         try:
             int(target)
+            indicator.lop_target = indicator.lop_target_old
             categories['int']['values'].append(target)
             continue
         except:
@@ -103,6 +104,7 @@ def profile_lops(queryset, na_values):
                 categories['small']['values'].append(target)
                 indicator.save()
             else:
+                indicator.lop_target = indicator.lop_target_old
                 categories['float']['values'].append(target)
             continue
         except:
@@ -168,14 +170,14 @@ def number_has_separator(target, sep=','):
 
 # Need this model to provide entry to the historicalindicator table.  If we don't clear that out as well,
 # the migration won't run.
-class IndicatorHistory(models.Model):
-    lop_target = models.CharField(max_length=255)
-    rationale_for_target = models.TextField()
-    history_id = models.IntegerField(primary_key=True)
-
-    class Meta:
-        managed = False
-        db_table = 'indicators_historicalindicator'
+# class IndicatorHistory(models.Model):
+#     lop_target = models.CharField(max_length=255)
+#     rationale_for_target = models.TextField()
+#     history_id = models.IntegerField(primary_key=True)
+#
+#     class Meta:
+#         managed = False
+#         db_table = 'indicators_historicalindicator'
 
 
 class Command(BaseCommand):

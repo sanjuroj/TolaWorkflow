@@ -489,16 +489,10 @@ class Indicator(models.Model):
         verbose_name=_("Not applicable"), default=False, help_text=" "
     )
 
-    lop_target_old = models.DecimalField(
+    lop_target = models.DecimalField(
         verbose_name=_("Life of Program (LoP) target*"), max_digits=20, decimal_places=2,
         null=True, blank=True, help_text=" "
     )
-
-    lop_target_new_thing = models.TextField(
-        verbose_name=_("Life of Program (LoP) target*"), max_length=60,
-        null=True, blank=True, help_text=" "
-    )
-
 
     direction_of_change = models.IntegerField(
         blank=False, null=True, choices=DIRECTION_OF_CHANGE,
