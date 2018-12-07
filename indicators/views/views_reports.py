@@ -127,13 +127,13 @@ class IPTT_Mixin(object):
             # Create annotations for MIDLINE TargetPeriod
             last_data_record = CollectedData.objects.filter(
                 indicator=OuterRef('pk'),
-                periodic_target__period=PeriodicTarget.MIDLINE) \
+                periodic_target__customsort=0) \
                 .order_by('-date_collected', '-pk')
             midline_sum = Sum(
                 Case(
                     When(
                         Q(unit_of_measure_type=Indicator.NUMBER) &
-                        Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
+                        Q(collecteddata__periodic_target__customsort=0),
                         then=F('collecteddata__achieved')
                     )
                 )
@@ -153,7 +153,7 @@ class IPTT_Mixin(object):
                     When(
                         Q(unit_of_measure_type=Indicator.PERCENTAGE) &
                         # Q(is_cumulative=True) &
-                        Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
+                        Q(collecteddata__periodic_target__customsort=0),
                         then=Subquery(last_data_record.values('achieved')[:1])
                     )
                 )
@@ -162,7 +162,7 @@ class IPTT_Mixin(object):
             midline_target = Max(
                 Case(
                     When(
-                        Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
+                        Q(collecteddata__periodic_target__customsort=0),
                         then=Subquery(last_data_record.values('periodic_target__target')[:1])
                         # Q(periodictargets__period=PeriodicTarget.MIDLINE),
                         # then=F('periodictargets__target')
@@ -173,13 +173,13 @@ class IPTT_Mixin(object):
             # Create annotations for ENDLINE TargetPeriod
             last_data_record = CollectedData.objects.filter(
                 indicator=OuterRef('pk'),
-                periodic_target__period=PeriodicTarget.ENDLINE) \
+                periodic_target__customsort=1) \
                 .order_by('-date_collected', '-pk')
             endline_sum = Sum(
                 Case(
                     When(
                         Q(unit_of_measure_type=Indicator.NUMBER) &
-                        Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
+                        Q(collecteddata__periodic_target__customsort=1),
                         then=F('collecteddata__achieved')
                     )
                 )
@@ -199,7 +199,7 @@ class IPTT_Mixin(object):
                     When(
                         Q(unit_of_measure_type=Indicator.PERCENTAGE) &
                         # Q(is_cumulative=True) &
-                        Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
+                        Q(collecteddata__periodic_target__customsort=1),
                         then=Subquery(last_data_record.values('achieved')[:1])
                     )
                 )
@@ -208,7 +208,7 @@ class IPTT_Mixin(object):
             endline_target = Max(
                 Case(
                     When(
-                        Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
+                        Q(collecteddata__periodic_target__customsort=1),
                         then=Subquery(last_data_record.values('periodic_target__target')[:1])
                         # Q(periodictargets__period=PeriodicTarget.ENDLINE),
                         # then=F('periodictargets__target')
@@ -688,7 +688,7 @@ class IPTT_Mixin(object):
             report_end_date = period_end_initial
         elif report_end_date is None:
             report_end_date = self.program.reporting_period_end
-              
+
         self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
         # update the queryset with annotations for timeperiods
         indicators = indicators.annotate(**self.annotations).order_by('lastlevelcustomsort', 'number', 'name')
