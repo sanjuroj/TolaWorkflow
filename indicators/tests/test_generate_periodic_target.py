@@ -19,7 +19,7 @@ class GenerateSinglePeriodicTarget(test.TestCase):
     def test_lop_generate_periodic_target_single(self):
         """Do we get back the expected result when we have an LOP?"""
         tf = Indicator.LOP
-        expected = {'period': "Life of Program (LoP) only"}
+        expected = {'period': "Life of Program (LoP) only", 'period_name': u'Life of Program (LoP) only'}
         result = generate_periodic_target_single(tf, self.start_date,
                                                  self.nth_target_period,
                                                  event_name=self.event_name)
@@ -28,7 +28,7 @@ class GenerateSinglePeriodicTarget(test.TestCase):
     def test_mid_generate_periodic_target_single(self):
         """Do we get back the expected result when we have an MID_END?"""
         tf = Indicator.MID_END
-        expected = [{'period': 'Midline'}, {'period': 'Endline'}]
+        expected = [{'period': 'Midline', 'period_name': u'Midline'}, {'period': 'Endline', 'period_name': u'Endline'}]
         result = generate_periodic_target_single(tf, self.start_date,
                                                  self.nth_target_period,
                                                  event_name=self.event_name)
@@ -37,7 +37,7 @@ class GenerateSinglePeriodicTarget(test.TestCase):
     def test_event_generate_periodic_target_single(self):
         """Do we get back the expected result when we have an EVENT?"""
         tf = Indicator.EVENT
-        expected = {'period': self.event_name}
+        expected = {'period': self.event_name, 'period_name': self.event_name}
         result = generate_periodic_target_single(tf, self.start_date,
                                                  0,
                                                  event_name=self.event_name)
@@ -48,7 +48,8 @@ class GenerateSinglePeriodicTarget(test.TestCase):
 
         tf = Indicator.ANNUAL
         expected = {'period': 'Year 11', 'end_date': '2029-10-04',
-                    'start_date': '2028-10-01'}
+                    'start_date': '2028-10-01',
+                    'period_name': u'Year 11',}
 
         result = generate_periodic_target_single(tf, self.start_date,
                                                  self.nth_target_period,
@@ -61,7 +62,8 @@ class GenerateSinglePeriodicTarget(test.TestCase):
         tf = Indicator.SEMI_ANNUAL
         expected = {'end_date': '2024-04-04',
                     'period': 'Semi-annual period 11',
-                    'start_date': '2023-10-01'}
+                    'start_date': '2023-10-01',
+                    'period_name': u'Semi-annual period 11',}
 
         result = generate_periodic_target_single(tf, self.start_date,
                                                  self.nth_target_period,
@@ -74,7 +76,8 @@ class GenerateSinglePeriodicTarget(test.TestCase):
         tf = Indicator.TRI_ANNUAL
         expected = {'end_date': '2022-06-04',
                     'period': 'Tri-annual period 11',
-                    'start_date': '2022-02-01'}
+                    'start_date': '2022-02-01',
+                    'period_name': u'Tri-annual period 11',}
 
         result = generate_periodic_target_single(tf, self.start_date,
                                                  self.nth_target_period,
@@ -87,7 +90,8 @@ class GenerateSinglePeriodicTarget(test.TestCase):
         tf = Indicator.QUARTERLY
         expected = {'end_date': '2021-07-04',
                     'period': 'Quarter 11',
-                    'start_date': '2021-04-01'}
+                    'start_date': '2021-04-01',
+                    'period_name': u'Quarter 11',}
 
         result = generate_periodic_target_single(tf, self.start_date,
                                                  self.nth_target_period,
@@ -100,7 +104,8 @@ class GenerateSinglePeriodicTarget(test.TestCase):
         tf = Indicator.MONTHLY
         expected = {'end_date': '2019-09-04',
                     'period': 'August 2019',
-                    'start_date': '2019-08-01'}
+                    'start_date': '2019-08-01',
+                    'period_name': u'August 2019',}
 
         result = generate_periodic_target_single(tf, self.start_date,
                                                  self.nth_target_period,
@@ -130,7 +135,7 @@ class GenerateMultiplePeriodicTargets(test.TestCase):
         Life of Project?"""
 
         tf = Indicator.LOP
-        expected = {'period': u'Life of Program (LoP) only'}
+        expected = {'period': u'Life of Program (LoP) only', 'period_name': u'Life of Program (LoP) only'}
         result = generate_periodic_targets(tf, self.start_date,
                                            self.total_targets,
                                            self.event_name)
@@ -140,7 +145,7 @@ class GenerateMultiplePeriodicTargets(test.TestCase):
         """Do we get back the correct response if we are doing MID?"""
 
         tf = Indicator.MID_END
-        expected = [{'period': 'Midline'}, {'period': 'Endline'}]
+        expected = [{'period': 'Midline', 'period_name': u'Midline'}, {'period': 'Endline', 'period_name': u'Endline'}]
         result = generate_periodic_targets(tf, self.start_date,
                                            self.total_targets,
                                            self.event_name)

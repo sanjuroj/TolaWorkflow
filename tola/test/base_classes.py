@@ -131,7 +131,7 @@ class IndicatorDetailsMixin(TestBase):
         self.assertEqual(scenario_sums, response_sums)
 
     def test_lop_row_target_value_correct(self):
-        response_lop_target = self.response.context['indicator'].lop_target
+        response_lop_target = self.response.context['indicator'].lop_target_display
         self.assertEqual(unicode(self.scenario.indicators[0].lop_target), response_lop_target)
 
     def test_lop_row_actual_value_correct(self):

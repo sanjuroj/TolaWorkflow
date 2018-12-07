@@ -34,7 +34,7 @@
                     {% with dataCount=item.collecteddata_set.count %}
                         <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-nowrap">
                             {# note ".period" is deprecated, and .period_name should be used instead #}
-                            <strong class="text-uppercase">{{ item.period }}</strong><br>
+                            <strong class="text-uppercase">{{ item.period_name }}</strong><br>
                             <small>
                                 {{ item.start_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                                 {% if item.start_date %} - {% endif %}
