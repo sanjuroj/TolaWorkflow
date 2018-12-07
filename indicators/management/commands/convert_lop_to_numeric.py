@@ -1,9 +1,10 @@
 import re
+import os
 from decimal import Decimal
 from django.core.management.base import BaseCommand
-from django.db import connection
 from datetime import date
 import copy
+
 
 '''
 DO NOT DELETE THIS FILE!!!!  CHANGE THIS FILE WITH CAUTION!!!
@@ -21,30 +22,34 @@ itself, just not any of the code in run_conversion or anything run_conversion ca
 '''
 
 
-# TODO: test, write to file rather than STDOUT, insulate models from changes
 def run_conversion(apps_obj, schema_editor_obj):
     if apps_obj:
         Indicator = apps_obj.get_model('indicators', model_name='Indicator')
     else:
         from indicators.models import Indicator
     na_values = ['n/a', 'N/A', 'NA', 'None', 'Not define', '-']
+
+    cwd = os.path.abspath(os.path.dirname(__file__))
+    filepath = os.path.join(cwd, 'log_convert_lop_to_numeric')
+    outfile = open(filepath, 'w')
+
     # Print the starting profil of all the LoP target values
 
     pre_categories, post_categories = munge_lops(Indicator.objects.all(), na_values)
-    print '\n==================== Pre-execution counts ===========================\n'
-    print_categories(pre_categories, na_values, Indicator)
-    print '\n==================== Post-execution counts ===========================\n'
-    print_categories(post_categories, na_values, Indicator, verbose=False)
+    outfile.write('\n==================== Pre-execution counts ===========================\n\n')
+    print_categories(pre_categories, na_values, Indicator, outfile)
+    outfile.write('\n==================== Post-execution counts ===========================\n\n')
+    print_categories(post_categories, na_values, Indicator, outfile, verbose=False)
 
     # Calculate what the expected final number of integer values should be
     int_should_be = \
         len(pre_categories['int']['values']) + \
         len(pre_categories['has_separator']['values'])
     if len(post_categories['int']['values']) == int_should_be:
-        print 'Integer/float counts are as expected'
+        outfile.write('Integer/float counts are as expected\n')
     else:
-        print 'Integer/float counts are off!  Exepected final database value of {} (sum of int, percent, has_separator counts) but final value is {}' \
-            .format(int_should_be, len(post_categories['int']['values']))
+        outfile.write('Integer/float counts are off!  Exepected final database value of {} (sum of int, percent, has_separator counts) but final value is {}\n' \
+            .format(int_should_be, len(post_categories['int']['values'])))
 
     # Calculate what the expected final number of null values should be
     null_should_be = \
@@ -55,12 +60,12 @@ def run_conversion(apps_obj, schema_editor_obj):
         len(pre_categories['small']['values']) + \
         len(pre_categories['zero']['values'])
     if len(post_categories['null']['values']) == null_should_be:
-        print 'Null counts are as expected'
+        outfile.write('Null counts are as expected\n')
     else:
-        print 'Null counts are off!  Expected final database value of {} (sum of null, N/A, empty strings, and none-of-the-above counts) but final value is {}' \
-            .format(null_should_be, len(post_categories['null']['values']))
+        outfile.write('Null counts are off!  Expected final database value of {} (sum of null, N/A, empty strings, and none-of-the-above counts) but final value is {}\n'
+            .format(null_should_be, len(post_categories['null']['values'])))
 
-
+    outfile.close()
 # Categorize the lop_target field values and covert to a Decimal field if possible.
 def munge_lops(queryset, na_values):
 
@@ -168,7 +173,8 @@ def munge_lops(queryset, na_values):
             new_categories['int']['values'].append(old_target)
             indicator.lop_target = Decimal(new_target)
         else:
-            old_categories['other']['values'].append('id:{}, {} -> None'.format(indicator.pk, old_target.encode('utf-8')))
+            old_categories['other']['values'].append(
+                'id:{}, {} -> None'.format(indicator.pk, old_target.encode('utf-8')))
             new_categories['null']['values'].append(old_target)
             indicator.lop_target = None
             indicator.rationale_for_target = rationale_text
@@ -178,22 +184,22 @@ def munge_lops(queryset, na_values):
     return old_categories, new_categories
 
 
-def print_categories(categories, na_values, Indicator, verbose=True):
+def print_categories(categories, na_values, Indicator, outfile, verbose=True):
     if verbose:
         for key in ['percent', 'has_separator', 'other']:
-            print '\n+++++++++++++++++++++++++%s+++++++++++++++++++++++++\n' % key
-            print '\n'.join(categories[key]['values'])
+            outfile.write('\n+++++++++++++++++++++++++%s+++++++++++++++++++++++++\n\n' % key)
+            outfile.write('\n'.join(categories[key]['values']))
 
-        print '\n+++++++++++++++++++++++++++++++++++++++++++++++++++\n'
+            outfile.write('\n+++++++++++++++++++++++++++++++++++++++++++++++++++\n\n')
     categorized_total = sum([len(category['values']) for category in categories.values()])
 
-    print 'categorized sum', categorized_total
-    print 'indicator count', Indicator.objects.count()
-    print 'Values considered as N/A: ', ', '.join(na_values)
-    print 'Count of programs with end dates of < 1 yr ago and unparsable lop_targets:'
-    print 'Category counts:'
+    outfile.write('categorized sum: {}\n'.format(categorized_total))
+    outfile.write('indicator count: {}\n'.format(Indicator.objects.count()))
+    outfile.write('Values considered as N/A: {}\n'.format(', '.join(na_values)))
+    outfile.write('Count of programs with end dates of < 1 yr ago and unparsable lop_targets:\n')
+    outfile.write('Category counts:\n')
     for key, values in categories.iteritems():
-        print '  %s: %s' % (categories[key]['label'], len(categories[key]['values']))
+        outfile.write('  %s: %s\n' % (categories[key]['label'], len(categories[key]['values'])))
 
 
 def number_has_separator(target, sep=','):
