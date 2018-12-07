@@ -395,7 +395,7 @@ class Program(models.Model):
     def __unicode__(self):
         return self.name
 
-    def get_sites(self): # HERE
+    def get_sites(self):
         indicator_ids = Indicator.objects.filter(program__in=[self.id]).values_list('id')
         collecteddata = CollectedData.objects.filter(indicator__id__in=indicator_ids)
         return SiteProfile.objects.filter(collecteddata__id__in=collecteddata).distinct()
