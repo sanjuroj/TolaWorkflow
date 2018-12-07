@@ -53,12 +53,13 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name=
         period_num = j
 
     if tf == Indicator.LOP:
-        return {'period': PeriodicTarget.LOP_PERIOD}
+        return {'period': PeriodicTarget.LOP_PERIOD, 'period_name': PeriodicTarget.generate_lop_period_name()}
     elif tf == Indicator.MID_END:
-        return [{'period': PeriodicTarget.MIDLINE}, {'period': PeriodicTarget.ENDLINE}]
+        return [{'period': PeriodicTarget.MIDLINE, 'period_name': PeriodicTarget.generate_midline_period_name()},
+                {'period': PeriodicTarget.ENDLINE, 'period_name': PeriodicTarget.generate_endline_period_name()}]
     elif tf == Indicator.EVENT:
         if i == 0:
-            return {'period': event_name}
+            return {'period': event_name, 'period_name': PeriodicTarget.generate_event_period_name(event_name)}
         else:
             return {'period': ''}
 
@@ -68,7 +69,7 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name=
         period_label = '{period} {period_num}'.format(
             period=PeriodicTarget.ANNUAL_PERIOD, period_num=period_num
         )
-        target_period = {'period': period_label, 'start_date': start, 'end_date': end}
+        target_period = {'period': period_label, 'start_date': start, 'end_date': end, 'period_name': PeriodicTarget.generate_annual_quarterly_period_name(tf, period_num)}
 
     elif tf == Indicator.SEMI_ANNUAL:
         start = ((start_date + relativedelta(months=+(i * 6))).replace(day=1)).strftime('%Y-%m-%d')
@@ -76,7 +77,7 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name=
         period_label = '{period} {period_num}'.format(
             period=PeriodicTarget.SEMI_ANNUAL_PERIOD, period_num=period_num
         )
-        target_period = {'period': period_label, 'start_date': start, 'end_date': end}
+        target_period = {'period': period_label, 'start_date': start, 'end_date': end, 'period_name': PeriodicTarget.generate_annual_quarterly_period_name(tf, period_num)}
 
     elif tf == Indicator.TRI_ANNUAL:
         start = ((start_date + relativedelta(months=+(i * 4))).replace(day=1)).strftime('%Y-%m-%d')
@@ -84,7 +85,7 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name=
         period_label = '{period} {period_num}'.format(
             period=PeriodicTarget.TRI_ANNUAL_PERIOD, period_num=period_num
         )
-        target_period = {'period': period_label, 'start_date': start, 'end_date': end}
+        target_period = {'period': period_label, 'start_date': start, 'end_date': end, 'period_name': PeriodicTarget.generate_annual_quarterly_period_name(tf, period_num)}
 
     elif tf == Indicator.QUARTERLY:
         start = ((start_date + relativedelta(months=+(i * 3))).replace(day=1)).strftime('%Y-%m-%d')
@@ -92,16 +93,16 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name=
         period_label = '{period} {period_num}'.format(
             period=PeriodicTarget.QUARTERLY_PERIOD, period_num=period_num
         )
-        target_period = {'period': period_label, 'start_date': start, 'end_date': end}
+        target_period = {'period': period_label, 'start_date': start, 'end_date': end, 'period_name': PeriodicTarget.generate_annual_quarterly_period_name(tf, period_num)}
 
     elif tf == Indicator.MONTHLY:
-        month = (start_date + relativedelta(months=+i)).strftime("%B")
-        year = (start_date + relativedelta(months=+i)).strftime("%Y")
-        name = month + " " + year
+        target_period_start_date = start_date + relativedelta(months=+i)
+        name = PeriodicTarget.generate_monthly_period_name(target_period_start_date)
 
         start = ((start_date + relativedelta(months=+i)).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(months=+j)) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': name, 'start_date': start, 'end_date': end}
+        target_period = {'period': name, 'start_date': start, 'end_date': end, 'period_name': name}
+
     return target_period
 
 
@@ -452,6 +453,7 @@ class IndicatorUpdate(UpdateView):
                 'start_date': pt.start_date,
                 'end_date': pt.end_date,
                 'period': pt.period, # period is deprecated, this should move to .period_name
+                'period_name': pt.period_name,
                 'target': pt.target
             })
 

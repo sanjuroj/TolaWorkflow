@@ -4,6 +4,7 @@ from datetime import timedelta, date
 from decimal import Decimal
 
 import dateparser
+from dateutil.relativedelta import relativedelta
 from django.db import models
 from django.db.models import Avg
 from django.http import QueryDict
@@ -13,6 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from tola.l10n_utils import l10n_date_year_month, l10n_date_medium
 from django.contrib import admin
 from django.utils.functional import cached_property
+import django.template.defaultfilters
 
 
 from simple_history.models import HistoricalRecords
@@ -732,18 +734,19 @@ class Indicator(models.Model):
 
 
 class PeriodicTarget(models.Model):
-    LOP_PERIOD = 'Life of Program (LoP) only'
-    MIDLINE = 'Midline'
-    ENDLINE = 'Endline'
-    ANNUAL_PERIOD = 'Year'
-    SEMI_ANNUAL_PERIOD = 'Semi-annual period'
-    TRI_ANNUAL_PERIOD = 'Tri-annual period'
-    QUARTERLY_PERIOD = 'Quarter'
+    LOP_PERIOD = _('Life of Program (LoP) only')
+    MIDLINE = _('Midline')
+    ENDLINE = _('Endline')
+    ANNUAL_PERIOD = _('Year')
+    SEMI_ANNUAL_PERIOD = _('Semi-annual period')
+    TRI_ANNUAL_PERIOD = _('Tri-annual period')
+    QUARTERLY_PERIOD = _('Quarter')
 
     indicator = models.ForeignKey(
         Indicator, null=False, blank=False, verbose_name=_("Indicator"), related_name="periodictargets"
     )
 
+    # This field should never be referenced directly in the UI! See period_name below.
     period = models.CharField(
         _("Period"), max_length=255, null=True, blank=True
     )
@@ -771,6 +774,45 @@ class PeriodicTarget(models.Model):
         verbose_name = _("Periodic Target")
         unique_together = (('indicator', 'customsort'),)
 
+    @staticmethod
+    def generate_monthly_period_name(start_date):
+        return django.template.defaultfilters.date(start_date, 'F Y')
+
+    @staticmethod
+    def generate_event_period_name(event_name):
+        return event_name
+
+    @classmethod
+    def generate_midline_period_name(cls):
+        return cls.MIDLINE
+
+    @classmethod
+    def generate_endline_period_name(cls):
+        return cls.ENDLINE
+
+    @classmethod
+    def generate_lop_period_name(cls):
+        return cls.LOP_PERIOD
+
+    @classmethod
+    def generate_annual_quarterly_period_name(cls, target_frequency, period_seq_num):
+        target_frequency_to_period_name = {
+            Indicator.ANNUAL: cls.ANNUAL_PERIOD,
+            Indicator.SEMI_ANNUAL: cls.SEMI_ANNUAL_PERIOD,
+            Indicator.TRI_ANNUAL: cls.TRI_ANNUAL_PERIOD,
+            Indicator.QUARTERLY: cls.QUARTERLY_PERIOD,
+        }
+
+        period_name = target_frequency_to_period_name.get(target_frequency)
+
+        if period_name is None:
+            raise Exception('Invalid target_frequency passed to generate_annual_quarterly_period_name()')
+
+        return u"{period_name} {period_number}".format(
+            period_name=period_name,
+            period_number=period_seq_num,
+        )
+
     @property
     def period_name(self):
         """returns a period name translated to the local language.
@@ -780,30 +822,26 @@ class PeriodicTarget(models.Model):
             - MONTHLY: "Jan 2018"
             - EVENT: this (and only this) uses the 'period' field and customsort to be "period name 1"
         """
-        period_name = None
+        target_frequency = self.indicator.target_frequency
+
         # used in the collected data modal to display options in the target period dropdown
-        if self.indicator.target_frequency == Indicator.MID_END:
+        if target_frequency == Indicator.MID_END:
             # midline is the translated "midline" or "endline" based on customsort
-            period_name = _(self.MIDLINE) if self.customsort == 0 else _(self.ENDLINE)
-        if self.indicator.target_frequency == Indicator.LOP:
+            return self.generate_midline_period_name() if self.customsort == 0 else self.generate_endline_period_name()
+        if target_frequency == Indicator.LOP:
             # lop always has translated lop value
-            period_name = _(self.LOP_PERIOD)
-        if period_name is not None:
-            return u'{0}'.format(period_name)
+            return self.generate_lop_period_name()
+
+        # use locale specific month names
+        if target_frequency == Indicator.MONTHLY:
+            return self.generate_monthly_period_name(self.start_date)
+
+        # Do nothing for events
+        if target_frequency == Indicator.EVENT:
+            return self.generate_event_period_name(self.period)
+
         # for time-based frequencies get translated name of period:
-        if self.indicator.target_frequency == Indicator.ANNUAL:
-            period_name = _(self.ANNUAL_PERIOD)
-        elif self.indicator.target_frequency == Indicator.SEMI_ANNUAL:
-            period_name = _(self.SEMI_ANNUAL_PERIOD)
-        elif self.indicator.target_frequency == Indicator.TRI_ANNUAL:
-            period_name = _(self.TRI_ANNUAL_PERIOD)
-        elif self.indicator.target_frequency == Indicator.QUARTERLY:
-            period_name = _(self.QUARTERLY_PERIOD)
-        if period_name:
-            return u"{period_name} {period_number}".format(
-                period_name=period_name, period_number=self.customsort+1
-            )
-        return period_name
+        return self.generate_annual_quarterly_period_name(target_frequency, self.customsort + 1)
 
     def __unicode__(self):
         """outputs the period name (see period_name docstring) followed by start and end dates
