@@ -39,7 +39,11 @@
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Sites" %}</h3>
-            <p><a href="{% url 'siteprofile_list' program.id 0 %}">{% trans "View program sites" %}</a></p>
+            {% if site_count > 0 %}
+                <p><a href="{% url 'siteprofile_list' program.id 0 %}">{% trans "View program sites" %}</a></p>
+            {% else %}
+                <p class="text-muted">{% trans "There are no program sites." %}</p>
+            {% endif %}
             <a href="{% url 'siteprofile_add' %}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add site" %}</a>
         </section>
         <section class="sidebar__detail">
