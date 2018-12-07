@@ -1,32 +1,30 @@
 import re
 from decimal import Decimal
 from django.core.management.base import BaseCommand
-from django.db import models
-from indicators.models import Indicator
 from datetime import date
+import copy
 
 
-
+# TODO: test, write to file rather than STDOUT
 def run_conversion(apps_obj, schema_editor_obj):
+    if apps_obj:
+        Indicator = apps_obj.get_model('indicators', model_name='Indicator')
+    else:
+        from indicators.models import Indicator
     na_values = ['n/a', 'N/A', 'NA', 'None', 'Not define', '-']
     # Print the starting profil of all the LoP target values
-    pre_categories = profile_lops(Indicator.objects.all(), na_values)
-    print_categories(pre_categories, na_values)
 
-    # profile_lops(IndicatorHistory.objects.all(), na_values)
-
-    print '\n==================== Executing ===========================\n'
-    print 'Post execution Counts\n'
-    post_categories = profile_lops(Indicator.objects.all(), na_values)
-    print_categories(post_categories, na_values, verbose=False)
+    pre_categories, post_categories = munge_lops(Indicator.objects.all(), na_values)
+    print '\n==================== Pre-execution counts ===========================\n'
+    print_categories(pre_categories, na_values, Indicator)
+    print '\n==================== Post-execution counts ===========================\n'
+    print_categories(post_categories, na_values, Indicator, verbose=False)
 
     # Calculate what the expected final number of interger values should be
     int_should_be = \
-        len(pre_categories['percent']['values']) + \
         len(pre_categories['int']['values']) + \
-        len(pre_categories['float']['values']) + \
         len(pre_categories['has_separator']['values'])
-    if len(post_categories['int']['values']) + len(post_categories['float']['values']) == int_should_be:
+    if len(post_categories['int']['values']) == int_should_be:
         print 'Integer/float counts are as expected'
     else:
         print 'Integer/float counts are off!  Exepected final database value of {} (sum of int, percent, has_separator counts) but final value is {}' \
@@ -43,25 +41,27 @@ def run_conversion(apps_obj, schema_editor_obj):
     if len(post_categories['null']['values']) == null_should_be:
         print 'Null counts are as expected'
     else:
-        print 'Null counts are off!  Exepected final database value of {} (sum of null, N/A, empty strings, and none-of-the-above counts) but final value is {}' \
+        print 'Null counts are off!  Expected final database value of {} (sum of null, N/A, empty strings, and none-of-the-above counts) but final value is {}' \
             .format(null_should_be, len(post_categories['null']['values']))
 
 
 # Categorize the lop_target field values and covert to a Decimal field if possible.
-def profile_lops(queryset, na_values):
+def munge_lops(queryset, na_values):
 
-    categories = {
+    old_categories = {
         'empty_string': {'values': [], 'label': 'Empty String'},
         'zero': {'values': [], 'label': 'Zero'},
         'null': {'values': [], 'label': 'Null in DB'},
         'N/A': {'values': [], 'label': 'Entered N/A'},
         'int': {'values': [], 'label': 'Integer'},
         'float': {'values': [], 'label': 'Float'},
+        'rounded': {'values': [], 'label': 'Rounded'},
         'small': {'values': [], 'label': '<.01'},
         'percent': {'values': [], 'label': 'Percent'},
         'has_separator': {'values': [], 'label': 'Number with comma/space'},
         'other': {'values': [], 'label': 'Other'},
     }
+    new_categories = copy.deepcopy(old_categories)
 
     for indicator in queryset:
 
@@ -69,7 +69,8 @@ def profile_lops(queryset, na_values):
             target = indicator.lop_target_old.strip()
         except AttributeError:
             if indicator.lop_target_old is None:
-                categories['null']['values'].append(indicator.lop_target_old)
+                old_categories['null']['values'].append(indicator.lop_target_old)
+                new_categories['null']['values'].append(indicator.lop_target_old)
                 continue
             else:
                 raise
@@ -82,7 +83,8 @@ def profile_lops(queryset, na_values):
             rationale_text = '[' + rationale_text + '] {}'.format(indicator.rationale_for_target.encode('utf-8'))
 
         if target == '0':
-            categories['zero']['values'].append(target)
+            old_categories['zero']['values'].append(target)
+            new_categories['null']['values'].append(target)
             indicator.lop_target = None
             indicator.rationale_for_target = rationale_text
             indicator.save()
@@ -91,7 +93,9 @@ def profile_lops(queryset, na_values):
         try:
             int(target)
             indicator.lop_target = indicator.lop_target_old
-            categories['int']['values'].append(target)
+            old_categories['int']['values'].append(target)
+            new_categories['int']['values'].append(target)
+            indicator.save()
             continue
         except:
             pass
@@ -99,51 +103,67 @@ def profile_lops(queryset, na_values):
         try:
             decimal_value = Decimal(target)
             if decimal_value < .01:
+                old_categories['small']['values'].append(target)
+                new_categories['null']['values'].append(target)
                 indicator.lop_target = None
                 indicator.rationale_for_target = rationale_text
-                categories['small']['values'].append(target)
-                indicator.save()
             else:
-                indicator.lop_target = indicator.lop_target_old
-                categories['float']['values'].append(target)
+                old_categories['float']['values'].append(target)
+                match = re.search('\.(\d+)', target)
+                if len(match.group(1)) > 2:
+                    new_value = Decimal(target).quantize(Decimal('1.00'))
+                    new_categories['rounded']['values'].append(
+                        'id:{}, {} -> {}'.format(indicator.pk, target.encode('utf-8'), new_value))
+                    indicator.lop_target = new_value
+                    indicator.rationale_for_target = rationale_text
+                else:
+                    new_categories['float']['values'].append(target)
+                    indicator.lop_target = indicator.lop_target_old
+            indicator.save()
             continue
         except:
             pass
 
         if target == '':
-            categories['empty_string']['values'].append(target)
+            old_categories['empty_string']['values'].append(target)
+            new_categories['null']['values'].append(target)
             indicator.lop_target = None
         elif target in na_values:
-            categories['N/A']['values'].append(target)
+            old_categories['N/A']['values'].append(target)
+            new_categories['null']['values'].append(target)
             indicator.lop_target = None
             indicator.rationale_for_target = rationale_text
 
         elif re.search('^\d+%$', target):
             match = re.search('^(\d+)%$', target)
             indicator.lop_target = Decimal(match.group(1))
-            categories['percent']['values'].append(
+            old_categories['percent']['values'].append(
                 'id:{}, {} -> {}'.format(indicator.pk, target.encode('utf-8'), Decimal(match.group(1))))
+            new_categories['float']['values'].append(target)
         elif re.search('^[\d,]+$', target) and number_has_separator(target):
             new_target = target.replace(',', '')
-            categories['has_separator']['values'].append(
+            old_categories['has_separator']['values'].append(
                 'id:{}, {} -> {}'.format(indicator.pk, target.encode('utf-8'), new_target))
+            new_categories['int']['values'].append(target)
             indicator.lop_target = Decimal(new_target)
         elif re.search('^[\d\s]+$', target) and number_has_separator(target, sep=' '):
             new_target = target.replace(' ', '')
-            categories['has_separator']['values'].append(
+            old_categories['has_separator']['values'].append(
                 'id:{}, {} -> {}'.format(indicator.pk, target.encode('utf-8'), new_target))
+            new_categories['int']['values'].append(target)
             indicator.lop_target = Decimal(new_target)
         else:
-            categories['other']['values'].append('id:{}, {} -> None'.format(indicator.pk, target.encode('utf-8')))
+            old_categories['other']['values'].append('id:{}, {} -> None'.format(indicator.pk, target.encode('utf-8')))
+            new_categories['null']['values'].append(target)
             indicator.lop_target = None
             indicator.rationale_for_target = rationale_text
 
         indicator.save()
 
-    return categories
+    return old_categories, new_categories
 
 
-def print_categories(categories, na_values, verbose=True):
+def print_categories(categories, na_values, Indicator, verbose=True):
     if verbose:
         for key in ['percent', 'has_separator', 'other']:
             print '\n+++++++++++++++++++++++++%s+++++++++++++++++++++++++\n' % key
@@ -192,4 +212,4 @@ class Command(BaseCommand):
             '--execute', action='store_true', help='Use if you want to execute the changes')
 
     def handle(self, *args, **options):
-        run_conversion("a", "b")
+        run_conversion(None, None)

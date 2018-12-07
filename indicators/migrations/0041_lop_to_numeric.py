@@ -64,8 +64,8 @@ class Migration(migrations.Migration):
                                       verbose_name='Life of Program (LoP) target*'),
         ),
         migrations.RunPython(run_conversion),
-        migrations.RemoveField(
-            model_name='historicalindicator',
-            name='lop_target_old',
-        ),
+        # migrations.RemoveField(
+        #     model_name='historicalindicator',
+        #     name='lop_target_old',
+        # ),
     ]
