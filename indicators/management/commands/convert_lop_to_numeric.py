@@ -1,11 +1,27 @@
 import re
 from decimal import Decimal
 from django.core.management.base import BaseCommand
+from django.db import connection
 from datetime import date
 import copy
 
+'''
+DO NOT DELETE THIS FILE!!!!  CHANGE THIS FILE WITH CAUTION!!!
+Technically this can be run as a management command but really it's run through a migration.  If you delete this
+file, the migration will break and you will be sad.  
 
-# TODO: test, write to file rather than STDOUT
+The general idea is to convert the text values in the lop_target field into Decimal values, while preserving
+the old text value in the rationale field if it can't be converted.  The extensive output is to document 
+what was modified and to confirm that the categories of things beore and after the conversion line up the 
+way they are expected to.   
+
+If you run this as a management command you will need both Indicator.lop_target and Indicator.lop_target_old
+defined as part of the model.  Technically, you can change any of the code related to the management command
+itself, just not any of the code in run_conversion or anything run_conversion calls.    
+'''
+
+
+# TODO: test, write to file rather than STDOUT, insulate models from changes
 def run_conversion(apps_obj, schema_editor_obj):
     if apps_obj:
         Indicator = apps_obj.get_model('indicators', model_name='Indicator')
@@ -20,7 +36,7 @@ def run_conversion(apps_obj, schema_editor_obj):
     print '\n==================== Post-execution counts ===========================\n'
     print_categories(post_categories, na_values, Indicator, verbose=False)
 
-    # Calculate what the expected final number of interger values should be
+    # Calculate what the expected final number of integer values should be
     int_should_be = \
         len(pre_categories['int']['values']) + \
         len(pre_categories['has_separator']['values'])
@@ -64,9 +80,8 @@ def munge_lops(queryset, na_values):
     new_categories = copy.deepcopy(old_categories)
 
     for indicator in queryset:
-
         try:
-            target = indicator.lop_target_old.strip()
+            old_target = indicator.lop_target_old.strip()
         except AttributeError:
             if indicator.lop_target_old is None:
                 old_categories['null']['values'].append(indicator.lop_target_old)
@@ -77,84 +92,84 @@ def munge_lops(queryset, na_values):
 
         # Set the generic text for when a value's text representation is preserved in the rationale field.
         # If rationale text already exists, preserve it.
-        rationale_text = '{} UPDATE:  TolaActivity no longer accepts non-numeric values in the Life of Program (LOP) target field.  The original LoP target value was: {}.' \
-            .format(date.today(), indicator.lop_target_old.encode('utf-8'))
+        rationale_text = '{} UPDATE:  TolaActivity no longer accepts non-numeric or zero values in the Life of Program (LOP) target field.  The original LoP target value was: {}.' \
+            .format(date.today(), old_target.encode('utf-8'))
         if indicator.rationale_for_target:
             rationale_text = '[' + rationale_text + '] {}'.format(indicator.rationale_for_target.encode('utf-8'))
 
-        if target == '0':
-            old_categories['zero']['values'].append(target)
-            new_categories['null']['values'].append(target)
+        if old_target == '0':
+            old_categories['zero']['values'].append(old_target)
+            new_categories['null']['values'].append(old_target)
             indicator.lop_target = None
             indicator.rationale_for_target = rationale_text
             indicator.save()
             continue
 
         try:
-            int(target)
-            indicator.lop_target = indicator.lop_target_old
-            old_categories['int']['values'].append(target)
-            new_categories['int']['values'].append(target)
+            int(old_target)
+            indicator.lop_target = old_target
+            old_categories['int']['values'].append(old_target)
+            new_categories['int']['values'].append(old_target)
             indicator.save()
             continue
         except:
             pass
 
         try:
-            decimal_value = Decimal(target)
+            decimal_value = Decimal(old_target)
             if decimal_value < .01:
-                old_categories['small']['values'].append(target)
-                new_categories['null']['values'].append(target)
+                old_categories['small']['values'].append(old_target)
+                new_categories['null']['values'].append(old_target)
                 indicator.lop_target = None
                 indicator.rationale_for_target = rationale_text
             else:
-                old_categories['float']['values'].append(target)
-                match = re.search('\.(\d+)', target)
+                old_categories['float']['values'].append(old_target)
+                match = re.search('\.(\d+)', old_target)
                 if len(match.group(1)) > 2:
-                    new_value = Decimal(target).quantize(Decimal('1.00'))
+                    new_value = Decimal(old_target).quantize(Decimal('1.00'))
                     new_categories['rounded']['values'].append(
-                        'id:{}, {} -> {}'.format(indicator.pk, target.encode('utf-8'), new_value))
+                        'id:{}, {} -> {}'.format(indicator.pk, old_target.encode('utf-8'), new_value))
                     indicator.lop_target = new_value
                     indicator.rationale_for_target = rationale_text
                 else:
-                    new_categories['float']['values'].append(target)
+                    new_categories['float']['values'].append(old_target)
                     indicator.lop_target = indicator.lop_target_old
             indicator.save()
             continue
         except:
             pass
 
-        if target == '':
-            old_categories['empty_string']['values'].append(target)
-            new_categories['null']['values'].append(target)
+        if old_target == '':
+            old_categories['empty_string']['values'].append(old_target)
+            new_categories['null']['values'].append(old_target)
             indicator.lop_target = None
-        elif target in na_values:
-            old_categories['N/A']['values'].append(target)
-            new_categories['null']['values'].append(target)
+        elif old_target in na_values:
+            old_categories['N/A']['values'].append(old_target)
+            new_categories['null']['values'].append(old_target)
             indicator.lop_target = None
             indicator.rationale_for_target = rationale_text
 
-        elif re.search('^\d+%$', target):
-            match = re.search('^(\d+)%$', target)
+        elif re.search('^\d+%$', old_target):
+            match = re.search('^(\d+)%$', old_target)
             indicator.lop_target = Decimal(match.group(1))
             old_categories['percent']['values'].append(
-                'id:{}, {} -> {}'.format(indicator.pk, target.encode('utf-8'), Decimal(match.group(1))))
-            new_categories['float']['values'].append(target)
-        elif re.search('^[\d,]+$', target) and number_has_separator(target):
-            new_target = target.replace(',', '')
+                'id:{}, {} -> {}'.format(indicator.pk, old_target.encode('utf-8'), Decimal(match.group(1))))
+            new_categories['float']['values'].append(old_target)
+        elif re.search('^[\d,]+$', old_target) and number_has_separator(old_target):
+            new_target = old_target.replace(',', '')
             old_categories['has_separator']['values'].append(
-                'id:{}, {} -> {}'.format(indicator.pk, target.encode('utf-8'), new_target))
-            new_categories['int']['values'].append(target)
+                'id:{}, {} -> {}'.format(indicator.pk, old_target.encode('utf-8'), new_target))
+            new_categories['int']['values'].append(old_target)
             indicator.lop_target = Decimal(new_target)
-        elif re.search('^[\d\s]+$', target) and number_has_separator(target, sep=' '):
-            new_target = target.replace(' ', '')
+        elif re.search('^[\d\s]+$', old_target) and number_has_separator(old_target, sep=' '):
+            new_target = old_target.replace(' ', '')
             old_categories['has_separator']['values'].append(
-                'id:{}, {} -> {}'.format(indicator.pk, target.encode('utf-8'), new_target))
-            new_categories['int']['values'].append(target)
+                'id:{}, {} -> {}'.format(indicator.pk, old_target.encode('utf-8'), new_target))
+            new_categories['int']['values'].append(old_target)
             indicator.lop_target = Decimal(new_target)
         else:
-            old_categories['other']['values'].append('id:{}, {} -> None'.format(indicator.pk, target.encode('utf-8')))
-            new_categories['null']['values'].append(target)
+            old_categories['other']['values'].append('id:{}, {} -> None'.format(indicator.pk, old_target.encode('utf-8')))
+            new_categories['null']['values'].append(old_target)
             indicator.lop_target = None
             indicator.rationale_for_target = rationale_text
 
@@ -188,23 +203,10 @@ def number_has_separator(target, sep=','):
     return len(pieces[0]) <= 3 and all([len(val) == 3 for val in pieces[1:]])
 
 
-# Need this model to provide entry to the historicalindicator table.  If we don't clear that out as well,
-# the migration won't run.
-# class IndicatorHistory(models.Model):
-#     lop_target = models.CharField(max_length=255)
-#     rationale_for_target = models.TextField()
-#     history_id = models.IntegerField(primary_key=True)
-#
-#     class Meta:
-#         managed = False
-#         db_table = 'indicators_historicalindicator'
-
-
 class Command(BaseCommand):
     help = """
         Converts Indicator lop_target field from Char to Decimal.  Characterizes the text types and converts as 
-        many as practicable to Decimal, sets the rest to null.  Mirrors changes to indicator table in the 
-        historicalindicator table.
+        many as practicable to Decimal, sets the rest to null.  
         """
 
     def add_arguments(self, parser):

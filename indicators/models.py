@@ -494,11 +494,6 @@ class Indicator(models.Model):
         null=True, blank=True, help_text=" "
     )
 
-    lop_target_old = models.CharField(
-        verbose_name=_("Life of Program (LoP) target*"), max_length=255,
-        null=True, blank=True, help_text=" "
-    )
-
     direction_of_change = models.IntegerField(
         blank=False, null=True, choices=DIRECTION_OF_CHANGE,
         default=DIRECTION_OF_CHANGE_NONE,
