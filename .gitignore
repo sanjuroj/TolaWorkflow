@@ -46,6 +46,7 @@ templates/links.html
 coverage_html
 .coverage
 tola/settings/test_local.py
+log_convert_lop_to_numeric
 
 # SASS Source Map
 *.css.map

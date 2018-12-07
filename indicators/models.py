@@ -631,8 +631,6 @@ class Indicator(models.Model):
         _("Edit date"), null=True, blank=True, help_text=" "
     )
 
-    history = HistoricalRecords()
-
     notes = models.TextField(_("Notes"), max_length=500, null=True, blank=True)
     # optimize query for class based views etc.
     objects = IndicatorManager()
@@ -717,13 +715,18 @@ class Indicator(models.Model):
     @property
     def baseline_display(self):
         if self.baseline and self.unit_of_measure_type == self.PERCENTAGE:
-            return self.baseline + '%'
+            return u"{0}%".format(self.baseline)
         return self.baseline
 
     @property
     def lop_target_display(self):
-        if self.lop_target and self.unit_of_measure_type == self.PERCENTAGE:
-            return self.lop_target + '%'
+        """adding logic to strip trailing zeros in case of a decimal with superfluous zeros to the right of the ."""
+        if self.lop_target:
+            lop_stripped = str(self.lop_target)
+            lop_stripped = lop_stripped.rstrip('0').rstrip('.') if '.' in lop_stripped else lop_stripped
+            if self.unit_of_measure_type == self.PERCENTAGE:
+                return u"{0}%".format(lop_stripped)
+            return lop_stripped
         return self.lop_target
 
     @cached_property
