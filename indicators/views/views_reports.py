@@ -610,6 +610,8 @@ class IPTT_Mixin(object):
                         date_range['name'],
                         '({})'.format(date_range['label']) if date_range['label'] else ''))
                 )
+            all_periods_start.append((this_year, these_starts))
+            all_periods_end.append((this_year, these_ends))
         return all_periods_start, all_periods_end
 
 
