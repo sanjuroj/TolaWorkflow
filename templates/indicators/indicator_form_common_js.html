@@ -574,7 +574,16 @@
     }
 
     function validateForEmptyField(fieldName) {
-        const field = $("#" + fieldName);
+        /* on the IPTT edit form there are multiple "id_level" fields (one for
+         * filter form, one for edit form) so in case of id_level validation
+         * this ensures we get the one on the edit form
+         */
+        var field;
+        if (fieldName == "id_level") {
+            field = $('#performanceTab #id_level');
+        } else {
+            field = $("#" + fieldName);
+        }
         if ($.isEmptyObject(field.val())) {
             $(field).addClass('is-invalid');
             $("#validation_" + fieldName).text("{% trans 'Please complete this field.'|escapejs %}");
