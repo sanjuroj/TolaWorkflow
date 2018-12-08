@@ -7,7 +7,7 @@ from django.db.models import Q
 from django import forms
 from django.forms.fields import DateField
 from django.utils.translation import ugettext_lazy as _
-from django.utils import formats, translation
+from django.utils import formats, translation, timezone
 from workflow.models import (
     Program, SiteProfile, Documentation, ProjectComplete, TolaUser, Sector
 )
@@ -242,6 +242,7 @@ class ReportFormCommon(forms.Form):
                     funding_status="Funded",
                     reporting_period_start__isnull=False,
                     reporting_period_end__isnull=False,
+                    reporting_period_start__lte=timezone.localdate(),
                     indicator__target_frequency__isnull=False,) \
             .exclude(indicator__isnull=True) \
             .distinct()
