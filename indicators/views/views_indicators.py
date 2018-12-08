@@ -1530,6 +1530,7 @@ class ProgramPage(ListView):
             'percent_complete': program.percent_complete,
             'pinned_reports': pinned_reports,
             'js_context': js_context,
+            'has_started': program.has_started,
         }
         return render(request, self.template_name, c_data)
 

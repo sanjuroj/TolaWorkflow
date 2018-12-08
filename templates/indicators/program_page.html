@@ -48,23 +48,27 @@
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Pinned reports" %}</h3>
-            <ul class="pinned-reports">
-                {% for pr in pinned_reports %}
-                    <li class="pinned-report">
-                        <a href="{% url 'iptt_report' pr.program_id pr.report_type %}?{{ pr.query_string }}" class="pinned-report__link">
-                            <h4>{% trans "IPTT:" %} {{ pr.name }}</h4>
-                           {{ pr.date_range_str }}
-                        </a>
-                        {% if pr.id %}
-                        <a href="#"
-                           class="pinned-report__remove text-danger"
-                           data-delete-pinned-report="{{ pr.id }}">
-                            <i class="fa fa-times"></i>
-                        </a>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
+            {% if program.has_started %}
+                <ul class="pinned-reports">
+                    {% for pr in pinned_reports %}
+                        <li class="pinned-report">
+                            <a href="{% url 'iptt_report' pr.program_id pr.report_type %}?{{ pr.query_string }}" class="pinned-report__link">
+                                <h4>{% trans "IPTT:" %} {{ pr.name }}</h4>
+                               {{ pr.date_range_str }}
+                            </a>
+                            {% if pr.id %}
+                            <a href="#"
+                               class="pinned-report__remove text-danger"
+                               data-delete-pinned-report="{{ pr.id }}">
+                                <i class="fa fa-times"></i>
+                            </a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">{% trans "Recent Progress reports will be available after the program start date" %}</p>
+            {% endif %}
             <a href="{% url 'iptt_quickstart' %}?program_id={{ program.id }}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Create an IPTT report" %}</a>
         </section>
     </div>
