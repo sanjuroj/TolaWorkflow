@@ -391,6 +391,10 @@ class Program(models.Model):
     def countries(self):
         return ', '.join([x.country for x in self.country.all()])
 
+    @property
+    def has_started(self):
+        return True if self.reporting_period_start <= timezone.localdate() else False
+
     # displayed in admin templates
     def __unicode__(self):
         return self.name
