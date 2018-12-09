@@ -574,9 +574,9 @@ class IPTT_Mixin(object):
     def prepare_iptt_period_dateranges(self, period, periods_date_ranges):
         """
         formats date_ranges with optgroup by year for all target_frequencies
-        except ANNUAL.
+        except ANNUAL, LOP, and MID_END.
         """
-        if period in [Indicator.ANNUAL, Indicator.LOP, Indicator.MID_END]:
+        if period in [Indicator.ANNUAL]:
             all_periods_start = [
                 (date_range['start'], '{0} {1}'.format(
                     date_range['name'],
@@ -586,6 +586,13 @@ class IPTT_Mixin(object):
                 (date_range['end'], '{0} {1}'.format(
                     date_range['name'],
                     '({})'.format(date_range['label']) if date_range['label'] else ''))
+                for date_range in periods_date_ranges]
+        elif period in [Indicator.LOP, Indicator.MID_END]:
+            all_periods_start = [
+                (date_range['start'], l10n_date_medium(periods_date_ranges[0]['start']))
+                for date_range in periods_date_ranges]
+            all_periods_end = [
+                (date_range['end'], l10n_date_medium(periods_date_ranges[0]['end']))
                 for date_range in periods_date_ranges]
         else:
             all_periods_start = []
