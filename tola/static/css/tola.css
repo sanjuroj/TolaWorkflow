@@ -7016,6 +7016,8 @@ body > .container {
   margin-bottom: 15px;
   margin-top: 15px;
   padding: 15px; }
+  .program__status h2 {
+    margin-bottom: 15px; }
 
 .status__gauges {
   display: flex;

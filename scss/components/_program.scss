@@ -7,6 +7,9 @@
     margin-bottom: $grid-gutter-width/2;
     margin-top: $grid-gutter-width/2;
     padding: $grid-gutter-width/2;
+    h2 {
+        margin-bottom: $grid-gutter-width/2;
+    }
 }
 .status__gauges {
     // contains .status-gauge components
