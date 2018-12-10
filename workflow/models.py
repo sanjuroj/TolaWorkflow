@@ -393,7 +393,7 @@ class Program(models.Model):
 
     @property
     def has_started(self):
-        return True if self.reporting_period_start <= timezone.localdate() else False
+        return self.reporting_period_start is not None and self.reporting_period_start <= timezone.localdate()
 
     # displayed in admin templates
     def __unicode__(self):

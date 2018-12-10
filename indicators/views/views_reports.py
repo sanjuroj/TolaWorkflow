@@ -1039,7 +1039,7 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
 
         # If program period is set in the future, do not run report
         program = context['program']
-        if program.reporting_period_start is None or program.reporting_period_start > timezone.now().date():
+        if not program.has_started:
             messages.error(self.request, _('IPTT report can not be run on a program with a reporting period set in the future.'))
             return HttpResponseRedirect(reverse_lazy('program_page', args=(program.id, 0, 0)))
 
