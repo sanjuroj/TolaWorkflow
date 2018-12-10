@@ -8,15 +8,11 @@
 {% include "indicators/filter.html" %}
 <div id="div-id-indicator-list" class="indicators-list--by-program">
     {% for program in programs %}
-        <div class='card border-0 program indicators-list__program'>
+        <div id="program-{{ program.id }}" class='card program indicators-list__program'>
+
             <div class='card-header'>
-                {% if not program.indicator_set.all %}
-                    <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add float-right"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
+                {% if not program.reporting_period_start or not program.reporting_period_end %} {# no start/end dates #}
                     <h4>{{ program.name }}</h4>
-                {% else %}
-                <h4><a href="{% url "program_page" program.id 0 0 %}" class="text-dark">{{ program.name }} <i class="fas fa-arrow-right text-action"></i></a></h4>
-                {% endif %}
-                {% if not program.reporting_period_start or not program.reporting_period_end %}
                     <div class="text-muted">
                         {% trans "Before adding indicators and performance results, we need to know your program's" %}
                         <a
@@ -32,12 +28,17 @@
                             {% trans "reporting start and end dates." %}
                         </a>
                     </div>
-                {% elif not program.indicator_set.all %}
+
+                {% elif not program.indicator_set.all %} {# no indicators #}
+                    <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add float-right"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
+                    <h4>{{ program.name }}</h4>
                     <div class="text-muted">
                         {% trans "No Indicators have been entered for this program." %}
                         <a href="{% url 'indicator_create' program.id %}" role="" class="">{% trans "Add an indicator." %}</a>
                     </div>
-                {% else %}
+
+                {% else %} {# start/end + indicators #}
+                    <h4><a href="{% url "program_page" program.id 0 0 %}" class="text-dark">{{ program.name }} <i class="fas fa-arrow-right text-action"></i></a></h4>
                     <a
                         id="id_btnOpenindicatorsForProgramId_{{ program.id }}"
                         href="#"
@@ -53,10 +54,12 @@
                             {{ indicator_count }} program indicators
                         {% endblocktrans %}
                     </a>
+
                 {% endif %}
-            </div>
-            <div id="hidden-{{ program.id }}" class="card-body collapse">
-                {% if program.reporting_period_start and program.reporting_period_end %}
+            </div>{#<!--/.card-header-->#}
+
+            {% if program.reporting_period_start and program.reporting_period_end %}
+                <div id="hidden-{{ program.id }}" class="card-body collapse">
                     <ul class="nav indicators-list__indicator-actions nav--text-list">
                         <li class="nav-item">
                             <small><a class="" href="{% url "program_page" program.id 0 0 %}">{% trans "Program page" %}</a></small>
@@ -85,22 +88,20 @@
                             </li>
                         {% endif %}
                     </ul>
-                {% endif %}
-                {% if program.indicator_set.all %}
-                    <div class="indicators-list__table-container">
-                        {% include "indicators/program_indicators_table.html" %}
-                    </div>
-                {% endif %}
-            </div>
-        </div>
+                    {% if program.indicator_set.all %}
+                        <div class="indicators-list__table-container">
+                            {% include "indicators/program_indicators_table.html" %}
+                        </div>
+                    {% endif %}
+                </div>{#<!--/.card-body-->#}
+            {% endif %}
+        </div><!--/#program-{{ program.id }}-->{#<!--/.card.program indicators-list__program-->#}
     {% empty %}
         <p>{% trans "No Programs" %}</p>
     {% endfor %}
-</div>
+</div>{#<!--/#div-id-indicator-list.indicators-list--by-program-->#}
 
 {% include "indicators/indicator_list_modals.html" %}
-
-
-{% include 'indicators/indicator_form_common_js.html' %}
-{% include 'indicators/collecteddata_form_common_js.html' %}
+{% include "indicators/indicator_form_common_js.html" %}
+{% include "indicators/collecteddata_form_common_js.html" %}
 {% endblock content %}
