@@ -235,7 +235,6 @@ class ReportFormCommon(forms.Form):
         super(ReportFormCommon, self).__init__(*args, **kwargs)
         self.fields['program'].label = _("Program")
         self.fields['timeperiods'].label = _("Time periods")
-        self.fields['timeperiods'].choices = ((k, v.capitalize()) for k, v in self.TIMEPERIODS_CHOICES)
         self.fields['numrecentperiods'].widget.attrs['placeholder'] = _("enter a number")
         self.fields['targetperiods'].label = _("Target periods")
         self.fields['program'].queryset = Program.objects \
