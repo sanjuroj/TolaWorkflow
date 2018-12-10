@@ -558,7 +558,7 @@
         if (!lop.val()) {
             errMsg = "{% trans 'Please enter a number larger than zero.'|escapejs %}";
         } else if (!$.isNumeric(lop.val()) || lop.val() <= 0) {
-            errMsg = "{% trans 'Please enter a number larger than zero with no letters or symbols. If your target is a percentage, describe it in the unit of measure field.'|escapejs %}";
+            errMsg = "{% trans 'Please enter a number larger than zero with no letters or symbols.'|escapejs %}";
         }
 
         if (errMsg) {
