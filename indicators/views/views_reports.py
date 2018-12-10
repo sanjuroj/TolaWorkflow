@@ -367,7 +367,13 @@ class IPTT_Mixin(object):
             filtered_date_ranges = [
                 date_range for date_range in all_date_ranges
                 if date_range['start'] >= start_date and date_range['start'] <= end_date
-                ][-num_recents:]
+            ]
+
+            if filtered_date_ranges:
+                filtered_date_ranges = filtered_date_ranges[-num_recents:]
+            else:
+                # in case of reporting period in the future, don't crash
+                filtered_date_ranges = all_date_ranges
         else:
             filtered_date_ranges = all_date_ranges
         if period == Indicator.MID_END:
