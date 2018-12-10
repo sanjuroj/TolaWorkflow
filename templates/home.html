@@ -61,10 +61,12 @@
                             <li class="nav-item">
                                 <small><a href="{% url "program_page" program.id 0 0 %}" class="">{% trans "Program page" %}</a></small>
                             </li>
+                            {% if program.has_started %}
                             <li class="nav-item">
                                 {# TODO: is this querystring always the same? #}
                                 <small><a href="{% url "iptt_report" program.id "timeperiods" %}?timeperiods=7&timeframe=2&numrecentperiods=2" class="">{% trans "Recent progress report" %}</a></small>
                             </li>
+                            {% endif %}
                         </ul>
                     {% endif %}
                 </div>

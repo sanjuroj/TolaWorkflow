@@ -367,7 +367,13 @@ class IPTT_Mixin(object):
             filtered_date_ranges = [
                 date_range for date_range in all_date_ranges
                 if date_range['start'] >= start_date and date_range['start'] <= end_date
-                ][-num_recents:]
+            ]
+
+            if filtered_date_ranges:
+                filtered_date_ranges = filtered_date_ranges[-num_recents:]
+            else:
+                # in case of reporting period in the future, don't crash
+                filtered_date_ranges = all_date_ranges
         else:
             filtered_date_ranges = all_date_ranges
         if period == Indicator.MID_END:
@@ -1033,7 +1039,7 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
 
         # If program period is set in the future, do not run report
         program = context['program']
-        if program.reporting_period_start is None or program.reporting_period_start > timezone.now().date():
+        if not program.has_started:
             messages.error(self.request, _('IPTT report can not be run on a program with a reporting period set in the future.'))
             return HttpResponseRedirect(reverse_lazy('program_page', args=(program.id, 0, 0)))
 
