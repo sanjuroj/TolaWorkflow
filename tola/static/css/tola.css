@@ -6822,7 +6822,7 @@ body > .container {
   display: flex;
   flex-direction: column;
   justify-content: stretch;
-  padding: 15px 15px 0 15px;
+  padding: 0 15px;
   flex: 0 0 25%;
   max-width: 25%; }
   @media (max-width: 991.98px) {
