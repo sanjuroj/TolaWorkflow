@@ -684,6 +684,10 @@ class IPTT_Mixin(object):
         all_periods_start, all_periods_end = self.prepare_iptt_period_dateranges(period, all_date_ranges)
         period_start_initial = periods_date_ranges[0]['start']
         period_end_initial = periods_date_ranges[-1]['end']
+        # this removes the "Life Of Program" date range from the report so it doesn't duplicate the LOP values
+        # shown for all indicators:
+        if period == Indicator.LOP:
+            periods_date_ranges.pop()
         self.filter_form_initial_data['period_choices_start'] = tuple(all_periods_start)
         self.filter_form_initial_data['period_choices_end'] = tuple(all_periods_end)
         self.filter_form_initial_data['period_start_initial'] = period_start_initial
