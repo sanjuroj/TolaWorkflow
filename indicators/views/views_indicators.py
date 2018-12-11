@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 from datetime import datetime, timedelta
 from urlparse import urlparse
@@ -42,6 +43,9 @@ from ..models import (
 )
 from indicators.queries import ProgramWithMetrics
 from .views_reports import IPTT_ReportView
+
+
+logger = logging.getLogger(__name__)
 
 
 def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name='', num_existing_targets=0):
@@ -172,19 +176,19 @@ class IndicatorList(ListView):
         return render(request, self.template_name, c_data)
 
 
-def import_indicator(service=1, deserialize=True):
+def import_indicator(service=1):
     """
     Imports an indicator from a web service (the dig only for now)
     """
     service = ExternalService.objects.get(id=service)
-    response = requests.get(service.feed_url)
 
-    if deserialize is True:
-        data = json.loads(response.content)  # deserialises it
-    else:
-        # send json data back not deserialized data
-        data = response
-    return data
+    try:
+        response = requests.get(service.feed_url)
+    except requests.exceptions.RequestException as e:
+        logger.exception('Error reaching DIG service')
+        return []
+
+    return response.json()
 
 
 def indicator_create(request, id=0):
@@ -1082,8 +1086,8 @@ def service_json(request, service):
     if service == 0:
         # no service (this is selecting a custom indicator)
         return HttpResponse(status=204)
-    service_indicators = import_indicator(service, deserialize=False)
-    return HttpResponse(service_indicators, content_type="application/json")
+    service_indicators = import_indicator(service)
+    return JsonResponse(service_indicators, safe=False)
 
 
 def collected_data_view(request, indicator, program):
