@@ -1,0 +1,72 @@
+// from _custom.scss
+// START Indicator list page css
+#div-id-indicator-list {
+}
+.btn-white {
+    &,
+    &:hover,
+    &:active,
+    &:focus {
+        color: $white;
+    }
+}
+.div-expand-symbol {
+    width: .7rem;
+    display: inline-block;
+}
+#id_reporting_period_modal {
+    line-height: 1.2;
+}
+.rptMonthPicker {
+    width: 10rem;
+}
+// END Indicator list page css
+
+// Indicator table on the Indicators page and Program page
+.indicators-list {
+    // List of indicators
+    // This appears INSIDE each program on the "indicators" list on /indicators
+}
+.indicators-list__header {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+}
+.indicators-list__indicator-header {
+    &.is-expanded {
+        background: $gray-300;
+    }
+}
+.indicators-list__indicator-body {
+    > td {
+        // p-0 bg-blue border-0
+        background: $gray-200;
+        border: none;
+        padding: 0;
+    }
+}
+
+
+// Indicators page
+.indicators-list--by-program {
+    // list of programs, each of which has a collapsible .indicators-list
+    margin-top: $grid-gutter-width;
+}
+.indicators-list__program {
+    // individual program in this list
+    margin-bottom: $grid-gutter-width/2;
+}
+.indicators-list__table-container {
+    // wraps the table; empty div targeted by loadIndicators()
+}
+.indicators-list__indicator-actions {
+    // for each program: edit plan, reporting period, add indicators
+    margin-bottom: $grid-gutter-width/2;
+}
+
+
+// Potentially global styles
+
+
+
+

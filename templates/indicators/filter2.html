@@ -1,0 +1,105 @@
+{% load i18n %}
+
+<div style="display: none;">
+    <span class="filter" id="indicator_filter_value"></span>
+    <span class="filter" id="program_filter_value"></span>
+    <span class="filter" id="type_filter_value"></span>
+</div>
+<div id="id_filtersDropdown">
+    <div class="row">
+        <div class="col-sm-5" style="padding-right: 2px; padding-left: 0px;">
+            {% if indicators %}
+                <select name="indicators_filter" id="id_indicators_filter_dropdown" class="select form-control">
+                    <option value = "0">{% trans "-- All --" %}</option>
+                    {% for item in indicators %}
+                        <option value="{{ item.id }}">{{ item.number|default_if_none:'' }} - {{ item.name|truncatechars:82}} </option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+        </div>
+
+        <div class="col-sm-2" style="padding-left: 0px;">
+            {%if indicator_types %}
+                <select name="indicatortypes_filter" id="id_indicatortypes_filter_dropdown" class="select form-control">
+                    <option value = "0">{% trans "-- All --" %}</option>
+                    {% for item in indicator_types %}
+                    <option value="{{ item.id }}">{{ item.indicator_type }}</option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+
+    const indicatorName = `{% if indicator_filter_id %} {{ indicator_filter_name|truncatechars:55 }} {% else %} {% trans 'Indicators' %} {% endif %}`;
+    const indicatorId = `{{ indicator_filter_id }}`;
+
+    var typeId = `{{ type_filter_id }}`;
+    var typeName = `{% if type_filter_id %} {{ type_filter_name|truncatechars:55 }} {% else %} {% trans 'Type' %} {% endif %}`;
+
+    var multiselectOptions = {
+          enableFiltering: true,
+          enableCaseInsensitiveFiltering: true,
+          maxHeight: 320,
+          numberDisplayed: 1,
+          buttonClass: 'btn form-control',
+          onDropdownShown : function(event) {
+            this.$select.parent().find("button.multiselect-clear-filter").click();
+            this.$select.parent().find("input[type='text'].multiselect-search").focus();
+	        },
+          templates: {
+            filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
+            filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
+          }
+    }
+
+    $(document).ready(function() {
+
+        var indicatorDropdown = $("#id_indicators_filter_dropdown");
+        indicatorDropdown.prop("selectedIndex", -1); // ?
+        indicatorDropdown.multiselect(Object.assign({}, multiselectOptions, { nonSelectedText: indicatorName }));
+
+        if (parseInt(indicatorId) > 0 ) {
+            $("#indicator_filter_value").data('indicatorid', indicatorId);
+            // only trigger event with the namespace that multiselect is looking for
+            // so other event handlers will not be triggered.
+            indicatorDropdown.val(indicatorId).trigger('change.multiselect');
+        }
+
+        var indicatorTypeDropdown = $("#id_indicatortypes_filter_dropdown");
+        indicatorTypeDropdown.prop("selectedIndex", -1); // ?
+        indicatorTypeDropdown.multiselect(Object.assign({}, multiselectOptions, { nonSelectedText: typeName }));
+
+        if (parseInt(typeId) > 0 ) {
+            $("#type_filter_value").data('typeid', typeId);
+            // only trigger event with the namespace that multiselect is looking for
+            // so other event handlers will not be triggered.
+            indicatorTypeDropdown.val(typeId).trigger('change.multiselect');
+        }
+
+    });
+
+    // watch for selection change in indicator dropdown
+    $("#id_indicators_filter_dropdown").change(function(e){
+        var selectedValue = $("#id_indicators_filter_dropdown :selected").val();
+        $("#indicator_filter_value").data('indicatorid', selectedValue);
+        $("#id_indicators_filter_dropdown").trigger("indicatorFilterUpdated");
+    });
+
+    $("#id_indicators_filter_dropdown").on("multiselect:select multiselect:unselecting", function(e) {
+        $("#indicator_filter_value").data('indicatorid', 0);
+    });
+
+    // watch for selection change indicator_type dropdown
+    $("#id_indicatortypes_filter_dropdown").change(function(e){
+        var selectedValue = $("#id_indicatortypes_filter_dropdown :selected").val();
+        $("#type_filter_value").data('typeid', selectedValue);
+        $("#id_indicatortypes_filter_dropdown").trigger("indicatorTypeFilterUpdated");
+    });
+
+    $("#id_indicatortypes_filter_dropdown").on("multiselect:select multiselect:unselecting", function(e) {
+        $("#type_filter_value").data('typeid', 0);
+    });
+</script>

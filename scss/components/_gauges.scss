@@ -1,0 +1,154 @@
+// Gauges
+// ------
+.gauge {
+    // contains the entire gauge component.
+    border: 2px solid transparent; // to maintain consistent layout with highlighted elements
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    padding: 0 $grid-gutter-width/2;
+    @include make-col(1,4);
+    @include media-breakpoint-down(md) {
+        @include make-col(1,1);
+        & + & {
+            border-top: 1px solid $gray-300;
+            margin-top: $grid-gutter-width/2;
+            padding-top: $grid-gutter-width/2;
+        }
+    }
+    &.is-highlighted {
+        background: none;
+        border-color: $yellow;
+    }
+}
+.gauge--small {
+    display: flex;
+    flex-direction: columns;
+    margin-bottom: $grid-gutter-width;
+}
+.gauge__title {}
+.gauge__overview {
+    // has no external layout.
+    // contains gauge__graphic + gauge__labels
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+.gauge__graphic {
+    // the graphic *without* labels
+    background-color: $gray-300;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-right: $grid-gutter-width/2;
+    min-width: 40px;
+    min-height: 120px;
+    position: relative;
+}
+.gauge__icon {}
+.gauge__icon--error {
+    color: $gray-400;
+    font-size: 56px;
+}
+.gauge__labels {
+    // wraps labels on the same row as the gauge__graphic
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.gauge__graphic--performance-band {
+    // contains graphic__performance-band--* subcomponents
+    justify-content: flex-end;
+}
+.graphic__performance-band--above-target {
+    background: $yellow-300;
+}
+.graphic__performance-band--below-target {
+    background: $yellow-300;
+}
+.graphic__performance-band--on-target {
+    background: $green-550;
+    //border-bottom: 1px solid $white;
+    //border-top: 1px solid $white;
+}
+.gauge__graphic--empty {
+    opacity: 0.3;
+}
+.gauge__graphic--tank {
+}
+.gauge__graphic--tank--small {
+    min-height: 52px;
+    min-width: 24px;
+}
+.graphic__tick-marks {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    opacity: 0.5;
+    pointer-events: none; // these should be "transparent" to the event stack
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.graphic__tick {
+    flex-grow: 1;
+    flex-shrink: 0;
+    & + & {
+        border-top: 0.5px solid $white;
+    }
+}
+.graphic__tank--unfilled {
+    background-color: transparent;
+}
+.graphic__tank--filled {
+    background-color: $green-550;
+}
+.gauge__value {
+    color: $green-700;
+    font-weight: bold;
+}
+.gauge__value--small {
+}
+.gauge__value__value { // only used on small gauges
+    color: $success;
+    font-size: $font-size-lg;
+    font-weight: normal;
+}
+.gauge__value--above,
+.gauge__value--below {
+    strong {
+        background: $yellow-100;
+    }
+    &, &:hover {
+        color: $gray-800;
+    }
+}
+.gauge__label {
+    color: $black;
+    font-size: $font-size-sm;
+    margin: 0;
+    //text-transform: uppercase;
+}
+.gauge__cta {
+    font-size: $font-size-sm;
+    margin-top: $grid-gutter-width/2;
+}
+
+// filter triggers
+// TODO: should be mroe generic?
+.filter-trigger, .filter-trigger--band {
+    &:hover {
+        background: $yellow-100;
+        cursor: pointer;
+    }
+}
+
+// State
+// TODO: more generic
+.is-display-none {
+    display: none;
+}
+

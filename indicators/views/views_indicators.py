@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 from datetime import datetime, timedelta
 from urlparse import urlparse
@@ -38,9 +39,13 @@ from ..forms import IndicatorForm, CollectedDataForm
 from ..models import (
     Indicator, PeriodicTarget, DisaggregationLabel, DisaggregationValue,
     CollectedData, IndicatorType, Level, ExternalServiceRecord,
-    ExternalService, TolaTable
+    ExternalService, TolaTable, PinnedReport
 )
+from indicators.queries import ProgramWithMetrics
 from .views_reports import IPTT_ReportView
+
+
+logger = logging.getLogger(__name__)
 
 
 def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name='', num_existing_targets=0):
@@ -52,44 +57,56 @@ def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name=
         period_num = j
 
     if tf == Indicator.LOP:
-        lop_target = Indicator.TARGET_FREQUENCIES[Indicator.LOP - 1][1]
-        return {'period': lop_target}
+        return {'period': PeriodicTarget.LOP_PERIOD, 'period_name': PeriodicTarget.generate_lop_period_name()}
     elif tf == Indicator.MID_END:
-        return [{'period': PeriodicTarget.MIDLINE}, {'period': PeriodicTarget.ENDLINE}]
+        return [{'period': PeriodicTarget.MIDLINE, 'period_name': PeriodicTarget.generate_midline_period_name()},
+                {'period': PeriodicTarget.ENDLINE, 'period_name': PeriodicTarget.generate_endline_period_name()}]
     elif tf == Indicator.EVENT:
         if i == 0:
-            return {'period': event_name}
+            return {'period': event_name, 'period_name': PeriodicTarget.generate_event_period_name(event_name)}
         else:
             return {'period': ''}
 
     if tf == Indicator.ANNUAL:
         start = ((start_date + relativedelta(years=+i)).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(years=+j)) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': _('Year %s') % period_num, 'start_date': start, 'end_date': end}
+        period_label = '{period} {period_num}'.format(
+            period=PeriodicTarget.ANNUAL_PERIOD, period_num=period_num
+        )
+        target_period = {'period': period_label, 'start_date': start, 'end_date': end, 'period_name': PeriodicTarget.generate_annual_quarterly_period_name(tf, period_num)}
 
     elif tf == Indicator.SEMI_ANNUAL:
         start = ((start_date + relativedelta(months=+(i * 6))).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(months=+(j * 6))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': _('Semi-annual period %s') % period_num, 'start_date': start, 'end_date': end}
+        period_label = '{period} {period_num}'.format(
+            period=PeriodicTarget.SEMI_ANNUAL_PERIOD, period_num=period_num
+        )
+        target_period = {'period': period_label, 'start_date': start, 'end_date': end, 'period_name': PeriodicTarget.generate_annual_quarterly_period_name(tf, period_num)}
 
     elif tf == Indicator.TRI_ANNUAL:
         start = ((start_date + relativedelta(months=+(i * 4))).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(months=+(j * 4))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': _('Tri-annual period %s') % period_num, 'start_date': start, 'end_date': end}
+        period_label = '{period} {period_num}'.format(
+            period=PeriodicTarget.TRI_ANNUAL_PERIOD, period_num=period_num
+        )
+        target_period = {'period': period_label, 'start_date': start, 'end_date': end, 'period_name': PeriodicTarget.generate_annual_quarterly_period_name(tf, period_num)}
 
     elif tf == Indicator.QUARTERLY:
         start = ((start_date + relativedelta(months=+(i * 3))).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(months=+(j * 3))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': _('Quarter %s') % period_num, 'start_date': start, 'end_date': end}
+        period_label = '{period} {period_num}'.format(
+            period=PeriodicTarget.QUARTERLY_PERIOD, period_num=period_num
+        )
+        target_period = {'period': period_label, 'start_date': start, 'end_date': end, 'period_name': PeriodicTarget.generate_annual_quarterly_period_name(tf, period_num)}
 
     elif tf == Indicator.MONTHLY:
-        month = (start_date + relativedelta(months=+i)).strftime("%B")
-        year = (start_date + relativedelta(months=+i)).strftime("%Y")
-        name = month + " " + year
+        target_period_start_date = start_date + relativedelta(months=+i)
+        name = PeriodicTarget.generate_monthly_period_name(target_period_start_date)
 
         start = ((start_date + relativedelta(months=+i)).replace(day=1)).strftime('%Y-%m-%d')
         end = ((start_date + relativedelta(months=+j)) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': name, 'start_date': start, 'end_date': end}
+        target_period = {'period': name, 'start_date': start, 'end_date': end, 'period_name': name}
+
     return target_period
 
 
@@ -128,7 +145,7 @@ class IndicatorList(ListView):
 
         if program_id != 0:
             filters['id'] = program_id
-            get_indicators = get_indicators.filter(program__in=[program_id])
+            get_indicators = get_indicators.filter(program_id=program_id)
 
         if type_id != 0:
             filters['indicator__indicator_type__id'] = type_id
@@ -159,19 +176,19 @@ class IndicatorList(ListView):
         return render(request, self.template_name, c_data)
 
 
-def import_indicator(service=1, deserialize=True):
+def import_indicator(service=1):
     """
     Imports an indicator from a web service (the dig only for now)
     """
     service = ExternalService.objects.get(id=service)
-    response = requests.get(service.feed_url)
 
-    if deserialize is True:
-        data = json.loads(response.content)  # deserialises it
-    else:
-        # send json data back not deserialized data
-        data = response
-    return data
+    try:
+        response = requests.get(service.feed_url)
+    except requests.exceptions.RequestException as e:
+        logger.exception('Error reaching DIG service')
+        return []
+
+    return response.json()
 
 
 def indicator_create(request, id=0):
@@ -188,7 +205,7 @@ def indicator_create(request, id=0):
         indicator_type = IndicatorType.objects.get(indicator_type="custom")
         program = Program.objects.get(id=request.POST['program'])
         service = request.POST['services']
-        level = Level.objects.first()
+        level = None
         node_id = request.POST.get('service_indicator')
         sector = None
         # add a temp name for custom indicators
@@ -202,8 +219,8 @@ def indicator_create(request, id=0):
             get_imported_indicators = import_indicator(service)
             for item in get_imported_indicators:
                 if item['nid'] == node_id:
-                    sector, created = Sector.objects.get_or_create(sector=item['sector'])
-                    level, created = Level.objects.get_or_create(name=item['level'].title())
+                    sector, created = Sector.objects.get_or_create(sector=item['sector']) if item['sector'] is not None else (None, False)
+                    level, created = Level.objects.get_or_create(name=item['level'].title()) if item['level'] is not None else (None, False)
                     name = item['title']
                     source = item['source']
                     definition = item['definition']
@@ -219,12 +236,12 @@ def indicator_create(request, id=0):
         # save form
         new_indicator = Indicator(
             sector=sector, name=name, source=source, definition=definition,
-            external_service_record=external_service_record
+            external_service_record=external_service_record,
+            program=program,
+            level=level
         )
         new_indicator.save()
-        new_indicator.program.add(program)
         new_indicator.indicator_type.add(indicator_type)
-        new_indicator.level.add(level)
 
         latest = new_indicator.id
 
@@ -423,7 +440,7 @@ class IndicatorUpdate(UpdateView):
         context = super(IndicatorUpdate, self).get_context_data(**kwargs)
         context.update({'id': self.kwargs['pk']})
         getIndicator = Indicator.objects.get(id=self.kwargs['pk'])
-        program = getIndicator.program.all()[0]
+        program = getIndicator.program
 
         context.update({'i_name': getIndicator.name})
         context['programId'] = program.id
@@ -439,7 +456,8 @@ class IndicatorUpdate(UpdateView):
                 'num_data': pt.num_data,
                 'start_date': pt.start_date,
                 'end_date': pt.end_date,
-                'period': pt.period,
+                'period': pt.period, # period is deprecated, this should move to .period_name
+                'period_name': pt.period_name,
                 'target': pt.target
             })
 
@@ -502,7 +520,7 @@ class IndicatorUpdate(UpdateView):
     def get_form_kwargs(self):
         kwargs = super(IndicatorUpdate, self).get_form_kwargs()
         kwargs['request'] = self.request
-        program = self.object.program.first()
+        program = self.object.program
         kwargs['program'] = program
         return kwargs
 
@@ -522,7 +540,7 @@ class IndicatorUpdate(UpdateView):
         existing_target_frequency = indicatr.target_frequency
         new_target_frequency = form.cleaned_data.get('target_frequency', None)
         lop = form.cleaned_data.get('lop_target', None)
-        program = Program.objects.get(pk=form.cleaned_data.get('program'))
+        program = pk=form.cleaned_data.get('program')
 
         if periodic_targets == 'generateTargets':
             # handle (delete) association of colelctedData records if necessary
@@ -650,8 +668,6 @@ class IndicatorUpdate(UpdateView):
 class IndicatorDelete(DeleteView):
     model = Indicator
     form_class = IndicatorForm
-    success_url = reverse_lazy(
-        'indicator_list', kwargs={'program': 0, 'indicator': 0, 'type': 0})
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
@@ -665,6 +681,10 @@ class IndicatorDelete(DeleteView):
         form.save()
         messages.success(self.request, _('Success, Indicator Deleted!'))
         return self.render_to_response(self.get_context_data(form=form))
+
+    def get_success_url(self):
+        return reverse_lazy('program_page',
+                            kwargs={'program_id': self.object.program_id, 'indicator_id': 0, 'type_id': 0})
 
 
 class PeriodicTargetDeleteView(DeleteView):
@@ -945,13 +965,15 @@ class CollectedDataUpdate(UpdateView):
 
 class CollectedDataDelete(DeleteView):
     model = CollectedData
-    success_url = reverse_lazy(
-        'indicator_list', kwargs={'program': 0, 'indicator': 0, 'type': 0})
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
         return super(CollectedDataDelete, self).dispatch(
             request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('program_page',
+                            kwargs={'program_id': self.object.program_id, 'indicator_id': 0, 'type_id': 0})
 
 
 def getTableCount(url, table_id):
@@ -1064,16 +1086,16 @@ def service_json(request, service):
     if service == 0:
         # no service (this is selecting a custom indicator)
         return HttpResponse(status=204)
-    service_indicators = import_indicator(service, deserialize=False)
-    return HttpResponse(service_indicators, content_type="application/json")
+    service_indicators = import_indicator(service)
+    return JsonResponse(service_indicators, safe=False)
 
 
 def collected_data_view(request, indicator, program):
     ind = Indicator.objects.get(pk=indicator)
     reset_indicator_target_frequency(ind)
     template_name = 'indicators/collected_data_table.html'
-    program = ind.program.all()[0].id
-    program_obj = Program.objects.get(pk=program)
+    program_obj = ind.program
+    program = program_obj.id
     last_data_record = CollectedData.objects.filter(periodic_target=OuterRef('pk')).order_by('-date_collected', '-pk')
     periodictargets = PeriodicTarget.objects \
         .filter(indicator=indicator) \
@@ -1435,6 +1457,87 @@ def dictfetchall(cursor):
     ]
 
 
+class ProgramPage(ListView):
+    model = Indicator
+    template_name = 'indicators/program_page.html'
+    metrics = False
+
+    def get(self, request, *args, **kwargs):
+        countries = request.user.tola_user.countries.all()
+        program_id = int(self.kwargs['program_id'])
+        unannotated_program = Program.objects.only(
+            'reporting_period_start', 'reporting_period_end',
+            'start_date', 'end_date'
+            ).get(pk=program_id)
+        if unannotated_program.reporting_period_start is None or unannotated_program.reporting_period_end is None:
+            context = {
+                'program': unannotated_program,
+                'redirect_url': request.path
+            }
+            return render(
+                request, 'indicators/program_setup_incomplete.html', context
+                )
+        #indicator_filters = {'program__id': program_id}
+        indicator_filters = {}
+        type_filter_id = None
+        indicator_filter_id = None
+        type_filter_name = None
+        indicator_filter_name = None
+        #was this for eventually showing more than one program?  Because pk already limits to 1:
+        #program = ProgramWithMetrics.with_metrics.get(pk=program_id, funding_status="Funded", country__in=countries)
+        program = ProgramWithMetrics.program_page.get(pk=program_id)
+        if self.metrics:
+            json_context = {
+                'metrics': program.metrics,
+                'scope_counts': program.scope_counts
+            }
+            return JsonResponse(json_context)
+
+
+        if int(self.kwargs['type_id']):
+            type_filter_id = self.kwargs['type_id']
+            type_filter_name = IndicatorType.objects.get(id=type_filter_id)
+            program.indicator_filters['indicator_type'] = type_filter_id
+
+        if int(self.kwargs['indicator_id']):
+            indicator_filter_id = self.kwargs['indicator_id']
+            program.indicator_filters['id'] = indicator_filter_id
+            indicator_filter_name = program.annotated_indicators.first()
+
+        indicators = program.annotated_indicators\
+            .annotate(target_period_last_end_date=Max('periodictargets__end_date'))
+        indicator_count = program.indicator_count
+        site_count = len(program.get_sites())
+
+        indicator_types = IndicatorType.objects.filter(indicator__program__id=program_id)
+        indicator_levels = Level.objects.filter(indicator__program__id=program_id)
+
+        pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
+                         [PinnedReport.default_report(program.id)]
+        js_context = {
+            'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
+            'delete_pinned_report_confirmation_msg':
+                _('Warning: This action cannot be undone. Are you sure you want to delete this pinned report?'),
+        }
+        #program.set_metrics(indicators)
+        c_data = {
+            'program': program,
+            'indicators': indicators,
+            'site_count': site_count,
+            'indicator_count': indicator_count,
+            'indicator_types': indicator_types,
+            'indicator_filter_id': indicator_filter_id,
+            'indicator_filter_name': indicator_filter_name,
+            'indicator_levels': indicator_levels,
+            'type_filter_id': type_filter_id,
+            'type_filter_name': type_filter_name,
+            'percent_complete': program.percent_complete,
+            'pinned_reports': pinned_reports,
+            'js_context': js_context,
+        }
+        return render(request, self.template_name, c_data)
+
+
 class DisaggregationReportMixin(object):
     def get_context_data(self, **kwargs):
         context = super(DisaggregationReportMixin, self) \
@@ -1463,9 +1566,7 @@ class DisaggregationReportMixin(object):
             INNER JOIN indicators_collecteddata AS c \
                 ON c.id = cdv.collecteddata_id \
             INNER JOIN indicators_indicator AS i ON i.id = c.indicator_id\
-            INNER JOIN indicators_indicator_program AS ip \
-                ON ip.indicator_id = i.id \
-            INNER JOIN workflow_program AS p ON p.id = ip.program_id \
+            INNER JOIN workflow_program AS p ON p.id = i.program_id \
             INNER JOIN indicators_disaggregationvalue AS dv \
                 ON dv.id = cdv.disaggregationvalue_id \
             INNER JOIN indicators_disaggregationlabel AS l \
@@ -1489,9 +1590,7 @@ class DisaggregationReportMixin(object):
                 i.lop_target AS LOP_Target, \
                 SUM(cd.achieved) AS Overall \
             FROM indicators_indicator AS i \
-            INNER JOIN indicators_indicator_program AS ip \
-                ON ip.indicator_id = i.id \
-            INNER JOIN workflow_program AS p ON p.id = ip.program_id \
+            INNER JOIN workflow_program AS p ON p.id = i.program_id \
             LEFT OUTER JOIN indicators_collecteddata AS cd \
                 ON i.id = cd.indicator_id \
             WHERE p.id = %s \

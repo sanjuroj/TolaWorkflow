@@ -108,7 +108,7 @@
 
         <h2>{%  trans 'Results' %}</h2>
         <h3>
-          {% if object.indicator.levels %}{{ object.indicator.levels }} {% trans "indicator" %}: {% endif %}
+          {% if object.indicator.level %}{{ object.indicator.level }} {% trans "indicator" %}: {% endif %}
           {{ object.indicator.name|truncatechars:300 }}
         </h3>
 

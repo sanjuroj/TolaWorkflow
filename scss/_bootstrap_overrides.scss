@@ -1,0 +1,171 @@
+// TODO: this file should go away!
+
+// Sticky footer styles
+//--------------------------------------------------
+html {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    position: relative;
+    min-height: 100%;
+    font-size:  100%;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    font-family: Arial;
+    height: 100%;
+    justify-content: space-between;
+}
+
+
+#nonfooter {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.report-wide {
+    // margin-top: -16px;    regressions?
+}
+
+#footer {
+    bottom: 0px;
+    flex-grow: 0;
+    width: 100%;
+    border-top: 1px solid $gray-150;
+    background-color: $gray-300;
+    vertical-align: top;
+    color: $gray-800;
+}
+
+body > .container {
+    height: 100%;
+}
+
+#footer > .container-fluid {
+    padding: 15px;
+}
+#footer > .container-fluid  .row {
+}
+
+
+// END Sticky footer styles
+//--------------------------------------------------
+
+
+// extensions to BS buttons
+//--------------------------------------------------
+.btn-primary, .btn-secondary {
+    text-transform: uppercase;
+}
+.btn-secondary { // TODO
+    &, &:link, &:visited {
+        background-color: $white;
+        border-color: $teal-500;
+        color: $teal-500;
+    }
+    &.focus, &:focus, &:hover {
+        background-color: $gray-300;
+        border-color: $teal-600;
+        color: $teal-600;
+    }
+}
+.btn-link {
+    font-weight: bold;
+}
+
+.btn-danger.btn-link {
+    // special danger links for remove actions
+    color: $red-500;
+    border: 0px;
+    background: $white;
+}
+
+
+.form-control {
+    color: $black;
+    border-radius: .001rem;
+    border-color: $gray-500;
+    background-color: $white;
+}
+
+.col-form-label { // too much vertical space in block labels
+    padding-bottom: calc(0.1rem + 1px);
+}
+
+// do not change border color to green when form is validated
+.was-validated .form-control:valid {
+  border:1px solid $gray-500;
+}
+
+// Custom color for disabled/readonly elements
+// There is no bootstrap for hook for this?!
+.form-control:disabled, .form-control[readonly] {
+    color: $gray-600; // TODO
+}
+
+
+
+// Select 2 overloads
+// Not going to bother doing this the "right" way bc we are deprecating select2
+.select2-container--default {
+    .select2-selection--single {
+        //border-radius: 0px !important;
+        //height: 38px !important;
+        .select2-selection__rendered {
+            //line-height: 38px !important;
+        }
+        .select2-selection__arrow {
+            //height: 38px !important;
+        }
+    }
+    .select2-results > .select2-results__options {
+        // same dropshadow as multiselect
+        box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+    }
+}
+
+// Crispy forms does not apply the appropriate classes to its tabs so we have to fake it
+.nav-tabs {
+    .tab-pane { // same as .nav-tabs .nav-item
+        margin-bottom: -1px;
+        a { // same as .nav-tabs .nav-link
+            border: 1px solid transparent;
+            border-top-left-radius: .25rem;
+            border-top-right-radius: .25rem;
+            display: block;
+            padding: .5rem 1rem;
+            &:hover {
+                border-color: $gray-300 $gray-300 $gray-500;
+            }
+            &.active.show { // same as  .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active
+                color: $gray-700;
+                background-color: $white;
+                border-color: $gray-300 $gray-300 $white;
+            }
+        }
+    }
+}
+.tab-content.panel-body {
+    margin-top: 1rem;
+}
+
+// Overrides for Indicator tables
+.hiddenRow > td {
+    // background: $gray-150;
+}
+
+// Overrides for cards
+.card-header {
+    background: rgba(0,0,0,0.1) !important;
+}
+
+// inline text style nav with pipes for separators
+.nav--text-list {
+    .nav-item + .nav-item {
+        border-left: 1px solid $gray-300;
+        margin-left: $grid-gutter-width/4;
+        padding-left: $grid-gutter-width/4;
+    }
+}

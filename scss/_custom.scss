@@ -1,0 +1,416 @@
+// Unsorted custom selectors
+// These are mostly singletons that mimic components or slightly extend BS components
+
+@media print {
+  a[href]:after {
+    content: none;
+  }
+}
+body {
+    background-color: $gray-150;
+}
+.dataTables_wrapper {
+    &.container-fluid {
+      padding-right: 0px !important;
+      padding-left: 0px !important;
+  }
+}
+.td-no-side-borders {
+  border-left: 0px !important;
+  border-right: 0px !important;
+}
+
+// Custom page CSS
+//--------------------------------------------------
+// Not required for template or sticky footer method.
+
+// help links in footer
+.help-link {
+    &,
+    &:hover,
+    &:active,
+    &:focus {
+        color: $gray-700;
+        font-size: .875rem;
+    }
+    &:hover {
+        text-decoration: underline;
+    }
+}
+.filter {
+    padding: 3px;
+    color: $black;
+    background-color: $gray-150;
+    border-color: $gray-600;
+    border-radius: .5px
+}
+.btn-frozen {
+    color: $white;
+    background-color: $gray-600;
+    border-color: $gray-600;
+}
+.x-modal {
+    font-weight: 100;
+    font-size: 2rem;
+}
+.date-badge {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: 700;
+    color: $black;
+    line-height: 1;
+    vertical-align: baseline;
+    white-space: nowrap;
+    text-align: center;
+    background-color: lightgoldenrodyellow;
+    border-radius: 5px
+}
+.jumbotron.dashboard {
+    padding-top: 5px;
+    padding-bottom: 16px;
+    margin-bottom: 30px;
+}
+.btn-group.align-right {
+    float: right;
+}
+.lopCols {
+	background-color:$gray-150 !important;
+}
+table.table-hover tbody tr {
+    &:hover {
+        background-color: $teal-100 !important;
+    }
+    &:active {
+        background-color: $teal-200 !important;
+    }
+}
+.row-highlight {
+    background-color: $teal-100;
+}
+table.table-hover tbody tr.row-highlight:hover { //* whoa check out this specificity */
+    background-color: $teal-150 !important;
+}
+.missing_targets {
+    padding-left: 1rem;
+}
+
+// IPTT quickstart
+// this mimics a standard BS behavior in _forms.scss
+.form-check-inline--is-disabled {
+    color: $gray-500; // could also be $gray-550
+}
+// Start by setting display:none to make this hidden.
+// Then we position it in relation to the viewport window
+// with position:fixed. Width, height, top and left speak
+// for themselves. Background we set to 80% white with
+// our animation centered, and no-repeating
+.ajax_loading {
+    display:    none;
+    position:   fixed;
+    z-index:    100000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 )
+                url('../img/ajax-loader.gif')
+                50% 50%
+                no-repeat;
+}
+
+// When the body has the loading class, we turn
+// the scrollbar off with overflow:hidden
+body.loading {
+    overflow: hidden;
+    // Anytime the body has the loading class, our
+    // modal element will be visible
+    .ajax_loading {
+        display: block;
+    }
+}
+
+// Login buttons for Social
+.social-buttons{
+    margin:12px 0px 0px 0px;
+}
+.btn-go {
+    color: $white;
+    background-color:$blue-300;
+    margin:12px 0px 12px 0px;
+    &:hover{
+        color: $white;
+        background-color:$blue-250;
+    }
+}
+
+#iframe {
+    width: 400px;
+    height: 100px;
+    overflow: auto;
+}
+
+// paginate
+ul.paginate {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    li {
+        display: inline;
+        a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+            border: 1px solid $gray-300;
+            &.active {
+                background-color: $green-450;
+                color: white;
+                border: 1px solid $green-450;// was: #4CAF50;
+            }
+            &:hover:not(.active) {
+                background-color: $gray-300;
+            }
+        }
+    }
+}
+.per_page {
+    float: right;
+    margin-right: 15px;
+}
+
+// Keep the picker on top of other elements
+.ui-datepicker{
+    z-index: 10000 !important
+};
+
+// Indicator line graph with slider
+.clear-fix { // ??? really? this is crazy general
+  margin-top: 10px;
+  min-height: 10px;
+}
+select.listoption_filters {
+  height:36px;
+  width:150px;
+  border: 2px solid $gray-300;
+  background: none;
+  -webkit-appearance: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  padding-left: 5px;
+  -moz-appearance: none;
+}
+
+// Indicator periodic target creation
+#indicator_form .tab-content.panel-body,
+#indicator_modal_body .tab-content.panel-body,
+#indicator_modal_body {
+  padding-bottom: 0px;
+}
+
+.periodic-target,
+#pt_sum_targets {
+  border-bottom: 1px solid $gray-300;
+  border-top: 1px solid $gray-300;
+  background-color: $white;
+}
+
+#periodic-targets-tablediv .pt-delete-row {
+  padding: 1px 0px 1px 10px;
+  vertical-align: middle;
+  border: none;
+}
+
+#indicator_modal_body {
+    .tab-content {
+        background-color: $white;
+    }
+    .form-row > label{
+        font-weight: bold;
+    }
+    .select2-selection {
+        border-radius: 0px;
+        border-color: $gray-500;
+    }
+    .select2-container--focus .select2-selection {
+        border-color: $blue-400;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
+    }
+    // This helps with the predictability of spacing between
+    // inputs on the indicator setup page/modal
+    // TODO: this is crazy brittle
+    .div-input-container > textarea,
+    .div-input-container > input,
+    .div-input-container > select,
+    .div-input-container > .inputs-in-a-box,
+    .div-input-container .select2 {
+        max-height: 100%
+    }
+}
+@media (max-width: 575px) { // TODO: breakpoint !
+    #indicator_modal_body .form-row > label{
+        text-align: left;
+    }
+}
+
+// In each case, the hieght of these divs changes when the has-error class is
+// applied.  This keeps the inputs from getting taller when there is an error.
+#div_id_name,
+#div_id_target_frequency,
+#div_id_target_frequency .div-input-container,
+#id_baseline,
+#div_id_target_frequency_custom,
+#div_id_target_frequency_num_periods {
+    height: 2.25rem;
+}
+#div_id_unit_of_measure_type_0 {
+    margin-left: 2px;
+}
+#id_delete_indicator_btn {
+    font-size: 1rem;
+}
+#indicatorTabs .nav-link.active {
+    font-size: 1rem;
+    color: $gray-700;
+    font-weight: bold;
+}
+// Don't define border property here.  Assigning here prevents red border from
+// being applied when there is no value
+.periodic-target .input-value {
+    margin: 10px 10px 10px 6px;
+    padding-right: 10px;
+    text-align: right;
+    width: 150px;
+    display: table-cell;
+    .input-text {
+        padding-right: 2px;
+        text-align: left;
+        box-shadow: none;
+        display: table-cell;
+    }
+    .controls input::placeholder {
+        color: $gray-500;
+    }
+}
+
+.lop-display {
+  padding: 0px 15px 10px 1px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid $gray-300;
+}
+
+.target-value-error {
+  margin: 5px 5px 0px 5px;
+  float: left;
+  margin-right: 10px;
+}
+
+
+#id_div_is_cumulative .card-body {
+    border: 1px solid $gray-500;
+    border-radius: .25rem;
+}
+
+#id_div_is_cumulative_section1,
+#id_div_is_cumulative_section2,
+#id_div_is_cumulative_section3 {
+    display: none;
+}
+// END Indicator periodic target creation
+
+
+
+// BEGIN datepicker styling
+.month-only .ui-datepicker-calendar {
+  display: none;
+}
+// END datepicker styling
+
+.blink {
+    animation: blink 2s linear infinite;
+}
+// where is this used?
+@keyframes blink {
+    0% {
+        opacity: .2;
+        color: blue;
+    }
+    50% {
+        opacity: .7;
+        color: red;
+    }
+    80% {
+        opacity: .8;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+// "add a thing" buttons
+// Leave off the 'btn' parent class for a non-bold, non-padded version
+.btn-add {
+    color: $green-600 !important;
+    //padding-left: 0.625rem;
+    //padding-right: 0.625rem;
+    &:hover {
+        color: $green-700;
+    }
+}
+
+.page-title {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+#indicator_collecteddata_content .modal-footer { // overloads selectorin modals.scss
+    background-color: $gray-300;
+    border-radius: 0 0 0.3rem 0.3rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+}
+.indicator_results_toggle {
+    display: block;
+    text-indent: -15px;
+    margin-left: 15px;
+    .svg-inline--fa {
+        margin-right: 5px;
+    }
+}
+
+// conditional styling to hide modal titles in nonmodal contexts.
+// used on collected data table in IPTT
+.is-shown-in-modals {
+    display: none;
+    .modal-dialog & {
+        align-items: flex-start;
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+// unsorted
+.help-text {
+    font-size: $font-size-sm;
+    font-style: italic;
+    font-weight: $font-weight-light;
+    text-align: left;
+}
+.is-highlighted {
+    background: $yellow-100;
+}
+
+// to replace bootstrap's float classes
+.float--left {
+    float: left;
+    margin-right: $grid-gutter-width/2;
+}
+.float--right {
+    float: right;
+    margin-left: $grid-gutter-width/2;
+}

@@ -1451,6 +1451,10 @@ class DocumentationForm(forms.ModelForm):
         self.fields['project'].queryset = ProjectAgreement.objects.filter(program__country__in=countries)
         self.fields['program'].queryset = Program.active_programs.filter(country__in=countries)
 
+        # only display Project field to existing users
+        if not self.request.user.tola_user.allow_projects_access:
+            self.fields.pop('project')
+
 
 class QuantitativeOutputsForm(forms.ModelForm):
     is_it_project_complete_form = forms.CharField(required=False)
@@ -1480,7 +1484,8 @@ class QuantitativeOutputsForm(forms.ModelForm):
                     selected = "selected" if pt.id == instance.periodic_target.id else ""
                 else:
                     selected = ""
-                options += "<option value=%s %s>%s</option>" % (pt.id, selected, pt.period)
+                # pt.period is deprecated, transition to pt.period_name
+                options += "<option value=%s %s>%s</option>" % (pt.id, selected, pt.period) 
         self.helper.layout = Layout(
             'indicator',
             'periodic_target',

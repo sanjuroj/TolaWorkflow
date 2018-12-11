@@ -105,8 +105,10 @@ class CSVIndicatorTestBase(CSVTestBase):
 
     def get_indicator(self, sector=0, level=0, disaggregation=0,
                       indicatortype=0):
-        indicator = DefinedIndicatorFactory(sector=self.sectors[sector])
-        indicator.level.add(self.levels[level])
+        indicator = DefinedIndicatorFactory(
+            sector=self.sectors[sector],
+            level = self.levels[level]
+        )
         indicator.disaggregation.add(self.disaggregations[disaggregation])
         indicator.indicator_type.add(self.indicatortypes[indicatortype])
         indicator.save()
@@ -114,7 +116,8 @@ class CSVIndicatorTestBase(CSVTestBase):
 
     def add_indicator(self, *args, **kwargs):
         indicator = self.get_indicator(*args, **kwargs)
-        indicator.program.add(self.program)
+        indicator.program = self.program
+        indicator.save()
         self.indicators.append(indicator)
         return indicator
 
@@ -139,7 +142,7 @@ class TestCSVEndPointIndicatorsAccurate(CSVIndicatorTestBase):
                                self.assert_msg("row should have at least {0} fields, has {1}".format(
                                    c+1, len(row))))
             if field == 'level_name':
-                value = indicator.level.first().name if indicator.level.first() is not None else "N/A"
+                value = indicator.level.name if indicator.level is not None else "N/A"
             else:
                 value = str(getattr(indicator, field, 'N/A'))
             self.assertEqual(value, str(row[c]),
@@ -172,7 +175,7 @@ class TestCSVEndPointIndicatorsAccurate(CSVIndicatorTestBase):
 
     def test_indicator_info_with_blanks(self):
         indicator = self.add_indicator()
-        indicator.level.remove(self.levels[0])
+        indicator.level = None
         indicator.means_of_verification = None
         indicator.save()
         _, indicator_rows = self.get_rows()

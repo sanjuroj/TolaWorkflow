@@ -7,15 +7,15 @@ from django.db.models import Q
 from django import forms
 from django.forms.fields import DateField
 from django.utils.translation import ugettext_lazy as _
-from django.utils import formats, translation
+from django.utils import formats, translation, timezone
 from workflow.models import (
     Program, SiteProfile, Documentation, ProjectComplete, TolaUser, Sector
 )
 from tola.util import getCountry
 from indicators.models import (
     Indicator, PeriodicTarget, CollectedData, Objective, StrategicObjective,
-    TolaTable, DisaggregationType, Level, IndicatorType
-)
+    TolaTable, DisaggregationType, Level, IndicatorType,
+    PinnedReport)
 from indicators.widgets import DataAttributesSelect
 
 locale_format = formats.get_format('DATE_INPUT_FORMATS', lang=translation.get_language())[-1]
@@ -41,33 +41,16 @@ class LocaleDateField(DateField):
                 self.error_messages['invalid'], code='invalid')
 
 
-
 class IndicatorForm(forms.ModelForm):
-    program2 = forms.CharField(
-        widget=forms.TextInput(
-            attrs={'readonly': True}
-        )
-    )
     unit_of_measure_type = forms.ChoiceField(
         choices=Indicator.UNIT_OF_MEASURE_TYPES,
         widget=forms.RadioSelect(),
     )
-    # cumulative_choices = (
-    #     (1, None),
-    #     (2, True),
-    #     (3, False)
-    # )
-    # is_cumulative = forms.ChoiceField(
-    #     choices=cumulative_choices,
-    #     widget=forms.RadioSelect())
-
-    program = forms.CharField(widget=forms.HiddenInput())
 
     class Meta:
         model = Indicator
-        exclude = ['program', 'create_date', 'edit_date']
+        exclude = ['create_date', 'edit_date']
         widgets = {
-            # {'program': forms.Select()}
             'definition': forms.Textarea(attrs={'rows': 4}),
             'justification': forms.Textarea(attrs={'rows': 4}),
             'quality_assurance': forms.Textarea(attrs={'rows': 4}),
@@ -82,23 +65,27 @@ class IndicatorForm(forms.ModelForm):
         indicator = kwargs.get('instance', None)
         if not indicator.unit_of_measure_type:
             kwargs['initial']['unit_of_measure_type'] = Indicator.UNIT_OF_MEASURE_TYPES[0][0]
+        if indicator.lop_target:
+            lop_stripped = str(indicator.lop_target)
+            lop_stripped = lop_stripped.rstrip('0').rstrip('.') if '.' in lop_stripped else lop_stripped
+            kwargs['initial']['lop_target'] = lop_stripped
         self.request = kwargs.pop('request')
         self.programval = kwargs.pop('program')
 
         super(IndicatorForm, self).__init__(*args, **kwargs)
 
-        self.fields['program2'].initial = indicator.programs
-        self.fields['program2'].label = _('Program')
-        self.fields['program'].initial = self.programval.id
-
         countries = getCountry(self.request.user)
         self.fields['disaggregation'].queryset = DisaggregationType.objects\
             .filter(country__in=countries, standard=False)
+        self.fields['program'].queryset = Program.objects.filter(
+            funding_status="Funded", country__in=countries).distinct()
+        self.fields['program'].disabled = True
         self.fields['objectives'].queryset = Objective.objects.filter(program__id__in=[self.programval.id])
         self.fields['strategic_objectives'].queryset = StrategicObjective.objects.filter(country__in=countries)
         self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
         self.fields['approval_submitted_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
         self.fields['name'].label = _('Indicator Name')
+        self.fields['level'].required = True
         self.fields['name'].required = True
         self.fields['unit_of_measure'].required = True
         self.fields['target_frequency'].required = True
@@ -106,6 +93,12 @@ class IndicatorForm(forms.ModelForm):
         # self.fields['is_cumulative'].widget = forms.RadioSelect()
         if self.instance.target_frequency and self.instance.target_frequency != Indicator.LOP:
             self.fields['target_frequency'].widget.attrs['readonly'] = True
+
+    def clean_lop_target(self):
+        data = self.cleaned_data['lop_target']
+        if data < 0:
+            raise forms.ValidationError(_('Please enter a number larger than zero.'))
+        return data
 
 
 class CollectedDataForm(forms.ModelForm):
@@ -221,11 +214,11 @@ class ReportFormCommon(forms.Form):
     QUARTERS = Indicator.QUARTERLY
     MONTHS = Indicator.MONTHLY
     TIMEPERIODS_CHOICES = (
-        (YEARS, _("Years")),
-        (SEMIANNUAL, _("Semi-annual periods")),
-        (TRIANNUAL, _("Tri-annual periods")),
-        (QUARTERS, _("Quarters")),
-        (MONTHS, _("Months"))
+        (YEARS, _("years")),
+        (SEMIANNUAL, _("semi-annual periods")),
+        (TRIANNUAL, _("tri-annual periods")),
+        (QUARTERS, _("quarters")),
+        (MONTHS, _("months"))
     )
 
     SHOW_ALL = 1
@@ -252,6 +245,7 @@ class ReportFormCommon(forms.Form):
         super(ReportFormCommon, self).__init__(*args, **kwargs)
         self.fields['program'].label = _("Program")
         self.fields['timeperiods'].label = _("Time periods")
+        self.fields['timeperiods'].choices = ((k, v.capitalize()) for k, v in self.TIMEPERIODS_CHOICES)
         self.fields['numrecentperiods'].widget.attrs['placeholder'] = _("enter a number")
         self.fields['targetperiods'].label = _("Target periods")
         self.fields['program'].queryset = Program.objects \
@@ -259,6 +253,7 @@ class ReportFormCommon(forms.Form):
                     funding_status="Funded",
                     reporting_period_start__isnull=False,
                     reporting_period_end__isnull=False,
+                    reporting_period_start__lte=timezone.localdate(),
                     indicator__target_frequency__isnull=False,) \
             .exclude(indicator__isnull=True) \
             .distinct()
@@ -291,7 +286,7 @@ class IPTTReportFilterForm(ReportFormCommon):
         periods_choices_start = kwargs.get('initial').get('period_choices_start') # TODO: localize this date
         periods_choices_end = kwargs.get('initial').get('period_choices_end') # TODO: localize this date
 
-        target_frequencies = Indicator.objects.filter(program__in=[program.id], target_frequency__isnull=False) \
+        target_frequencies = program.indicator_set.filter(target_frequency__isnull=False) \
             .exclude(target_frequency=Indicator.EVENT) \
             .values('target_frequency') \
             .distinct() \
@@ -311,18 +306,18 @@ class IPTTReportFilterForm(ReportFormCommon):
 
         super(IPTTReportFilterForm, self).__init__(*args, **kwargs)
         del self.fields['formprefix']
-        level_ids = Indicator.objects.filter(program__in=[program.id]).values(
-            'level__id').distinct().order_by('level')
+        level_ids = program.indicator_set.values(
+            'level_id').distinct().order_by('level')
 
         self.fields['program'].initial = program
         self.fields['sector'].queryset = Sector.objects.filter(
-            indicator__program__in=[program.id]).distinct()
+            indicator__program=program).distinct()
         self.fields['level'].queryset = Level.objects.filter(id__in=level_ids).distinct().order_by('customsort')
-        ind_type_ids = Indicator.objects.filter(program__in=[program.id]).values(
+        ind_type_ids = program.indicator_set.values(
             'indicator_type__id').distinct().order_by('indicator_type')
         self.fields['ind_type'].queryset = IndicatorType.objects.filter(id__in=ind_type_ids).distinct()
         self.fields['site'].queryset = program.get_sites()
-        self.fields['indicators'].queryset = Indicator.objects.filter(program=program)
+        self.fields['indicators'].queryset = program.indicator_set.all()
 
         # Start and end periods dropdowns are updated dynamically
         self.fields['start_period'] = forms.ChoiceField(choices=periods_choices_start, label=_("START"))
@@ -332,3 +327,9 @@ class IPTTReportFilterForm(ReportFormCommon):
         self.fields['end_period'].initial = str(last_year_last_daterange_key)
 
         self.fields['targetperiods'] = forms.ChoiceField(choices=target_frequency_choices, label=_("TARGET PERIODS"))
+
+
+class PinnedReportForm(forms.ModelForm):
+    class Meta:
+        model = PinnedReport
+        exclude = ('tola_user',)
