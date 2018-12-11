@@ -569,6 +569,7 @@
             lop.removeClass('is-invalid');
             $("#validation_id_lop_target").text(" ");
             errMsg = undefined;
+            lop.val(Math.round(lop.val() * 100) / 100);
             return true;
         }
     }
