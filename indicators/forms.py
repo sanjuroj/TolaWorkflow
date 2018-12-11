@@ -94,6 +94,12 @@ class IndicatorForm(forms.ModelForm):
         if self.instance.target_frequency and self.instance.target_frequency != Indicator.LOP:
             self.fields['target_frequency'].widget.attrs['readonly'] = True
 
+    def clean_lop_target(self):
+        data = self.cleaned_data['lop_target']
+        if data < 0:
+            raise forms.ValidationError(_('Please enter a number larger than zero.'))
+        return data
+
 
 class CollectedDataForm(forms.ModelForm):
 
