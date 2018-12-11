@@ -215,8 +215,8 @@ def indicator_create(request, id=0):
             get_imported_indicators = import_indicator(service)
             for item in get_imported_indicators:
                 if item['nid'] == node_id:
-                    sector, created = Sector.objects.get_or_create(sector=item['sector'])
-                    level, created = Level.objects.get_or_create(name=item['level'].title())
+                    sector, created = Sector.objects.get_or_create(sector=item['sector']) if item['sector'] is not None else (None, False)
+                    level, created = Level.objects.get_or_create(name=item['level'].title()) if item['level'] is not None else (None, False)
                     name = item['title']
                     source = item['source']
                     definition = item['definition']
