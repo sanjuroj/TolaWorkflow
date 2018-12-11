@@ -23,6 +23,11 @@
             } else {
                 var url = "/indicators/service/" + selected_service + "/service_json/";
                 $.getJSON(url, function(service) {
+
+                    if (service.length === 0) {
+                        notifyError("{% trans 'Server Error' %}", "{% trans 'Error reaching DIG service for list of indicators' %}");
+                        return;
+                    }
     
                     var options = '<option value="">--Indicator--</option>';
                     for (var i = 0; i < service.length; i++) {
