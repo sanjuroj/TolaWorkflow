@@ -3,22 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#: indicators/templatetags/mytags.py:135 indicators/templatetags/mytags.py:145
-#: indicators/templatetags/mytags.py:155
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-12-09 19:54-0800\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2018-12-11 12:21-0800\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 2.2\n"
 
 #: indicators/forms.py:83
 msgid "Indicator Name"
@@ -106,7 +104,7 @@ msgstr "Meses"
 
 #: indicators/forms.py:217
 msgid "Show all"
-msgstr "Mostrar todo"
+msgstr "Ver todo"
 
 #: indicators/forms.py:218
 msgid "Most recent"
@@ -663,10 +661,8 @@ msgstr ""
 "tablas Tola?"
 
 #: indicators/models.py:1105 templates/indicators/iptt_report.html:211
-#, fuzzy
-#| msgid "Sector Name"
 msgid "Report Name"
-msgstr "Nombre del sector"
+msgstr ""
 
 #. Translators: Example: Most recent 2 Months
 #: indicators/models.py:1204
@@ -681,10 +677,8 @@ msgid "Show all {time_or_target_period_str}"
 msgstr ""
 
 #: indicators/models.py:1220 indicators/models.py:1224
-#, fuzzy
-#| msgid "Show all"
 msgid "Show all results"
-msgstr "Mostrar todo"
+msgstr "Ver todos los resultados"
 
 #: indicators/models.py:1238 templates/indicators/iptt_quickstart.html:78
 msgid "Recent progress for all indicators"
@@ -698,22 +692,18 @@ msgid "N/A"
 msgstr "N/A"
 
 #: indicators/templatetags/mytags.py:129
-#, fuzzy
-#| msgid "This indicator has no targets."
 msgid "Indicators with targets"
-msgstr "Este indicador no tiene objetivos."
+msgstr ""
 
 #: indicators/templatetags/mytags.py:130
 #, fuzzy
-#| msgid "targets"
 msgid "have targets"
-msgstr "objetivos"
+msgstr "tienen objetivos"
 
 #: indicators/templatetags/mytags.py:131
 #, fuzzy
-#| msgid "targets"
 msgid "no targets"
-msgstr "objetivos"
+msgstr "sin objetivos"
 
 #: indicators/templatetags/mytags.py:132
 #, fuzzy
@@ -726,28 +716,21 @@ msgid "have missing targets"
 msgstr "faltan objetivos"
 
 #: indicators/templatetags/mytags.py:134
-#, fuzzy
-#| msgid "targets"
 msgid "No targets"
-msgstr "objetivos"
+msgstr ""
 
 #: indicators/templatetags/mytags.py:139
 #, fuzzy
-#| msgid "Indicator type"
 msgid "Indicators with results"
-msgstr "Tipo de indicador"
+msgstr "Indicadores con resultados"
 
 #: indicators/templatetags/mytags.py:140
-#, fuzzy
-#| msgid "Add results"
 msgid "have results"
-msgstr "Agregar resultados"
+msgstr ""
 
 #: indicators/templatetags/mytags.py:141
-#, fuzzy
-#| msgid "Add results"
 msgid "no results"
-msgstr "Agregar resultados"
+msgstr ""
 
 #: indicators/templatetags/mytags.py:142
 #, fuzzy
@@ -761,31 +744,25 @@ msgstr "faltan resultados"
 
 #: indicators/templatetags/mytags.py:144
 #, fuzzy
-#| msgid "Add results"
 msgid "No results"
-msgstr "Agregar resultados"
+msgstr "Sin resultados"
 
 #: indicators/templatetags/mytags.py:149
 msgid "Results with evidence"
 msgstr "Resultados con evidencia"
 
 #: indicators/templatetags/mytags.py:150
-#, fuzzy
-#| msgid "Evidence"
 msgid "have evidence"
-msgstr "Evidencia"
+msgstr "hay evidencia adjunta"
 
 #: indicators/templatetags/mytags.py:151
-#, fuzzy
-#| msgid "Evidence"
 msgid "no evidence"
-msgstr "Evidencia"
+msgstr "no hay evidencia adjunta"
 
 #: indicators/templatetags/mytags.py:152
 #, fuzzy
-#| msgid "Add an event"
 msgid "Add missing evidence"
-msgstr "Agregar un evento"
+msgstr "Agregar evidencia faltante"
 
 #: indicators/templatetags/mytags.py:153
 msgid "have missing evidence"
@@ -793,9 +770,8 @@ msgstr "faltan pruebas"
 
 #: indicators/templatetags/mytags.py:154
 #, fuzzy
-#| msgid "Evidence"
 msgid "No evidence"
-msgstr "Evidencia"
+msgstr "Sin evidencia"
 
 #: indicators/templatetags/mytags.py:195
 #, fuzzy
@@ -804,22 +780,16 @@ msgid "of programs have all targets defined"
 msgstr "los programas tienen todos los objetivos definidos"
 
 #: indicators/templatetags/mytags.py:196
-#, fuzzy
-#| msgid ""
-#| "Each indicator must have a target frequency selected and targets entered "
-#| "for all periods"
 msgid ""
 "Each indicator must have a target frequency selected and targets entered for "
 "all periods."
 msgstr ""
 "Cada indicador debe tener una frecuencia objetivo seleccionada y debe haber "
-"objetivos ingresados para todos los períodos"
+"objetivos ingresados para todos los períodos."
 
 #: indicators/templatetags/mytags.py:199
-#, fuzzy
-#| msgid "This indicator has no targets."
 msgid "of indicators have reported results"
-msgstr "Este indicador no tiene objetivos."
+msgstr ""
 
 #: indicators/templatetags/mytags.py:203
 #, fuzzy
@@ -862,15 +832,10 @@ msgstr "¡Éxito, datos actualizados!"
 
 #: indicators/views/views_indicators.py:1516
 #, fuzzy
-#| msgid ""
-#| "Warning: This action cannot be undone. Are you sure you want to remove "
-#| "all targets?"
 msgid ""
 "Warning: This action cannot be undone. Are you sure you want to delete this "
 "pinned report?"
-msgstr ""
-"Advertencia: esta acción no se puede deshacer. ¿Está seguro de que desea "
-"eliminar todos los objetivos?"
+msgstr "Advertencia: esta acción no se puede deshacer."
 
 #: indicators/views/views_reports.py:81
 msgid "Month"
@@ -930,7 +895,7 @@ msgid ""
 "\">feedback form.</a>\n"
 "    "
 msgstr ""
-"También puede utilizar el <a href=\"https://docs.google.com/forms/d/"
+" También puede utilizar el <a href=\"https://docs.google.com/forms/d/"
 "e/1FAIpQLSclm2PAT9TJ9q23TT6YWQg6hj3EndUAdyF5k6kvNJHu6njNtw/viewform"
 "\">formulario de comentarios</a> para ponerse en contacto con el equipo de "
 "TolaData"
@@ -1086,10 +1051,8 @@ msgid "No active country"
 msgstr "No hay países activos"
 
 #: templates/home.html:12
-#, fuzzy
-#| msgid "Unique count"
 msgid "change country"
-msgstr "Recuento único"
+msgstr ""
 
 #: templates/home.html:32
 msgid "Monitoring and Evaluation Status"
@@ -1106,15 +1069,13 @@ msgstr "%(no_programs)s programas activos"
 
 #: templates/home.html:62 templates/indicators/indicator_list.html:62
 #, fuzzy
-#| msgid "Program Name"
 msgid "Program page"
-msgstr "Nombre del programa"
+msgstr "Página del programa"
 
 #: templates/home.html:66
 #, fuzzy
-#| msgid "Recent progress for all indicators"
 msgid "Recent progress report"
-msgstr "Progreso reciente para todos los indicadores"
+msgstr "Progreso reciente"
 
 #: templates/home.html:93 templates/indicators/indicator_create.html:4
 #: templates/indicators/indicator_create.html:5
@@ -1126,28 +1087,20 @@ msgid "Add indicator"
 msgstr "Agregar indicador"
 
 #: templates/home_country_map.html:195
-#, fuzzy
-#| msgid "Indicator type"
 msgid "Site with result"
-msgstr "Tipo de indicador"
+msgstr ""
 
 #: templates/home_country_map.html:202
-#, fuzzy
-#| msgid "Indicator type"
 msgid "Site without result"
-msgstr "Tipo de indicador"
+msgstr ""
 
 #: templates/home_country_map.html:210
-#, fuzzy
-#| msgid "Indicator type"
 msgid "Sites with results"
-msgstr "Tipo de indicador"
+msgstr ""
 
 #: templates/home_country_map.html:211
-#, fuzzy
-#| msgid "Indicator type"
 msgid "Sites without results"
-msgstr "Tipo de indicador"
+msgstr ""
 
 #: templates/index.html:4 templates/index.html:5 templates/index.html:292
 #: templates/indicators/dashboard.html:3
@@ -1493,7 +1446,7 @@ msgstr "Por favor seleccione una fecha entre"
 
 #: templates/indicators/collecteddata_form_common_js.html:132
 msgid "and"
-msgstr "y "
+msgstr "y"
 
 #: templates/indicators/collecteddata_form_modal.html:111
 #: templates/indicators/indicator_form.html:13
@@ -1636,7 +1589,7 @@ msgstr "PID"
 #: templates/indicators/report.html:108 templates/indicators/tva_print.html:52
 #: templates/indicators/tva_report.html:25
 msgid "LOP Target"
-msgstr "Objetivo LOP "
+msgstr "Objetivo LOP"
 
 #: templates/indicators/disaggregation_report.html:29
 msgid "Actual Total"
@@ -2024,10 +1977,8 @@ msgid "reporting start and end dates."
 msgstr "las fechas de inicio y finalización de su programa."
 
 #: templates/indicators/indicator_list.html:37
-#, fuzzy
-#| msgid "No Indicators have been entered for this program"
 msgid "No Indicators have been entered for this program."
-msgstr "No se han ingresado indicadores para este programa"
+msgstr "No se han ingresado indicadores para este programa."
 
 #: templates/indicators/indicator_list.html:38
 #, fuzzy
@@ -2036,7 +1987,7 @@ msgid "Add an indicator."
 msgstr "Agregar indicador"
 
 #: templates/indicators/indicator_list.html:50
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
 "                            %(indicator_count)s program indicator\n"
@@ -2090,7 +2041,7 @@ msgstr "No"
 msgid "Program reporting dates are required in order to view program metrics"
 msgstr ""
 "Las fechas de informes del programa son necesarias para ver las métricas del "
-"programa."
+"programa"
 
 #: templates/indicators/indicator_reportingperiod_modal.html:22
 msgid ""
@@ -2272,9 +2223,8 @@ msgstr ""
 
 #: templates/indicators/iptt_report.html:31
 #, fuzzy
-#| msgid "Pending"
 msgid "Pin"
-msgstr "Pendiente"
+msgstr "Alfiler"
 
 #: templates/indicators/iptt_report.html:34
 msgid "Excel"
@@ -2299,10 +2249,8 @@ msgid "# / %%"
 msgstr "# / %%"
 
 #: templates/indicators/iptt_report.html:215
-#, fuzzy
-#| msgid "Life of Program (LoP) target"
 msgid "Pin To Program Page"
-msgstr "Objetivo de la vida del programa (LoP)"
+msgstr "Afiler a la página del programa"
 
 #: templates/indicators/iptt_report.html:220
 msgid "Success! This report is now pinned to the program page."
@@ -2322,22 +2270,18 @@ msgstr ""
 "en el ícono de objetivo cerca del nombre del indicador."
 
 #: templates/indicators/program_page.html:14
-#, fuzzy
-#| msgid "Program Name"
 msgid "Program metrics"
-msgstr "Nombre del programa"
+msgstr "Indicadores claves del programa"
 
 #: templates/indicators/program_page.html:32
 #, fuzzy
-#| msgid "Program Reports"
 msgid "Program details"
-msgstr "Informes del programa"
+msgstr "Detalles del programa"
 
 #: templates/indicators/program_page.html:37
 #, fuzzy
-#| msgid "Filter program reports"
 msgid "View program documents"
-msgstr "Filtrar informes del programa"
+msgstr "Ver documentos del programa"
 
 #: templates/indicators/program_page.html:38
 #: templates/workflow/documentation_list.html:30
@@ -2345,16 +2289,12 @@ msgid "Add document"
 msgstr "Agregar documento"
 
 #: templates/indicators/program_page.html:43
-#, fuzzy
-#| msgid "GAIT program dates"
 msgid "View program sites"
-msgstr "Fechas del programa GAIT"
+msgstr ""
 
 #: templates/indicators/program_page.html:45
-#, fuzzy
-#| msgid "GAIT program dates"
 msgid "There are no program sites."
-msgstr "Fechas del programa GAIT"
+msgstr ""
 
 #: templates/indicators/program_page.html:47
 #: templates/workflow/site_profile_list.html:30
@@ -2363,9 +2303,8 @@ msgstr "Agregar sitio"
 
 #: templates/indicators/program_page.html:50
 #, fuzzy
-#| msgid "View Report"
 msgid "Pinned reports"
-msgstr "Ver informe"
+msgstr "Informes fijados"
 
 #: templates/indicators/program_page.html:56
 msgid "IPTT:"
@@ -2385,22 +2324,17 @@ msgid "%(indicator_count)s indicators"
 msgstr "%(indicator_count)s indicadores"
 
 #: templates/indicators/program_page.html:84
-#, fuzzy
-#| msgid "indicator:"
 msgid "Find an indicator:"
-msgstr "indicador:"
+msgstr ""
 
 #: templates/indicators/program_page.html:87
 #, fuzzy
-#| msgid "indicator"
 msgid "1 indicator"
-msgstr "indicador"
+msgstr "1 indicador"
 
 #: templates/indicators/program_setup_incomplete.html:3
-#, fuzzy
-#| msgid "Programs"
 msgid "Program setup"
-msgstr "Programas"
+msgstr ""
 
 #: templates/indicators/program_setup_incomplete.html:8
 msgid ""
@@ -2465,9 +2399,8 @@ msgstr "Fecha de edición"
 
 #: templates/indicators/tags/gauge-band.html:5
 #, fuzzy
-#| msgid "Indicator Data"
 msgid "Indicators on track"
-msgstr "Datos del indicador"
+msgstr "Indicadores en progreso"
 
 #. Translators: shows what percentage of indicators have no targets reporting data. Example: 31% unavailable
 #: templates/indicators/tags/gauge-band.html:27
@@ -2495,7 +2428,7 @@ msgstr ""
 
 #. Translators: shows what number of indicators are a certain percentage above target. Example: 3 indicators are >15% above target
 #: templates/indicators/tags/gauge-band.html:44
-#, python-format
+#, fuzzy, python-format
 msgid "%(filter_title_count)s indicator is &gt;15%% above target"
 msgid_plural "%(filter_title_count)s indicators are &gt;15%% above target"
 msgstr[0] "%(filter_title_count)s indicador está >15%% por encima del objetivo"
@@ -2503,12 +2436,7 @@ msgstr[1] "%(filter_title_count)s indicador está >15%% por encima del objetivo"
 
 #. Translators: shows what percentage of indicators are a certain percentage above target. Example: 31% are >15% above target
 #: templates/indicators/tags/gauge-band.html:47
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "                        <strong>%(high)s%%</strong> are &gt;%(margin)s%% "
-#| "above target\n"
-#| "                    "
+#, python-format
 msgid ""
 "\n"
 "                                <strong>%(high)s%%</strong> are &gt;"
@@ -2516,8 +2444,8 @@ msgid ""
 "                            "
 msgstr ""
 "\n"
-"                        <strong>%(high)s%%</strong> están >%(margin)s%% por "
-"encima del objetivo\n"
+"                        <strong>%(high)s%%</strong> están &gt;%(margin)s%% "
+"por encima del objetivo\n"
 "                    "
 
 #. Translators: shows what number of indicators are within a set range of target. Example: 3 indicators are on track
@@ -2546,14 +2474,7 @@ msgstr ""
 "                    "
 
 #: templates/indicators/tags/gauge-band.html:69
-#, fuzzy, python-format
-#| msgid ""
-#| "The actual value matches the target value, plus or minus 15%%. So if your "
-#| "target is 100 and your result is 110, the indicator is 10%% above target "
-#| "and on track.  Please note that if your indicator has a decreasing "
-#| "direction of change, then “above” and “below” are transposed. In that "
-#| "case, if your target is 100 and your result is 200, your indicator is "
-#| "50%% below target and not on track."
+#, python-format
 msgid ""
 "The actual value matches the target value, plus or minus 15%%. So if your "
 "target is 100 and your result is 110, the indicator is 10%% above target and "
@@ -2564,10 +2485,10 @@ msgid ""
 msgstr ""
 "El valor real coincide con el valor objetivo, más o menos 15%%. Entonces, si "
 "su objetivo es 100 y su resultado es 110, el indicador está 10%% por encima "
-"del objetivo y está encaminado. Tenga en cuenta que si su indicador tiene "
-"una dirección de cambio decreciente, entonces se transponen “arriba” y "
-"“abajo”. En ese caso, si su objetivo es 100 y su resultado es 200, su "
-"indicador está 50%% por debajo del objetivo y no está encaminado."
+"del objetivo y está encaminado.   <br><br>Tenga en cuenta que si su "
+"indicador tiene una dirección de cambio decreciente, entonces se transponen "
+"“arriba” y “abajo”. En ese caso, si su objetivo es 100 y su resultado es "
+"200, su indicador está 50%% por debajo del objetivo y no está encaminado."
 
 #. Translators: shows what number of indicators are a certain percentage below target. Example: 3 indicators are >15% below target
 #: templates/indicators/tags/gauge-band.html:77
@@ -2597,10 +2518,8 @@ msgstr ""
 "                    "
 
 #: templates/indicators/tags/gauge-band.html:96
-#, fuzzy
-#| msgid "Unavailable until results are reported"
 msgid "Unavailable until the first target period ends with results reported"
-msgstr "No disponible hasta que se informen los resultados"
+msgstr ""
 
 #: templates/indicators/tags/gauge-band.html:102
 msgid "Unavailable until results are reported"
@@ -2662,29 +2581,21 @@ msgid "Target vs Actuals Report"
 msgstr "Informe objetivo frente a informes reales"
 
 #: templates/registration/bookmark_confirm_delete.html:3
-#, fuzzy
-#| msgid "Indicator Confirm Delete"
 msgid "Bookmark Confirm Delete"
-msgstr "Confirmar eliminación del indicador"
+msgstr ""
 
 #: templates/registration/bookmark_confirm_delete.html:8
 #: templates/workflow/documentation_agreement_confirm_delete.html:40
-#, fuzzy
-#| msgid "Are you sure you want to delete?"
 msgid "Are you sure you want to delete"
 msgstr "¿Está seguro que quiere eliminarlo?"
 
 #: templates/registration/bookmark_list.html:11
-#, fuzzy
-#| msgid "Tola Bookmarks"
 msgid "Your Bookmarks List"
-msgstr "Marcadores de Tola"
+msgstr ""
 
 #: templates/registration/login.html:18
-#, fuzzy
-#| msgid "Login with Tola account"
 msgid "Register a new Tola Account"
-msgstr "Iniciar sesión con la cuenta de Tola"
+msgstr ""
 
 #: templates/small_site_profile_map.html:211
 #: templates/workflow/site_profile_map.html:185
@@ -2703,10 +2614,8 @@ msgid "Import A Tola Table"
 msgstr "Importar de tablas Tola"
 
 #: templates/tables/import.html:66
-#, fuzzy
-#| msgid "Import Indicator Evidence from"
 msgid "Import a data table from"
-msgstr "Importar evidencia del indicador de"
+msgstr ""
 
 #: templates/tables/import.html:67
 #, fuzzy
@@ -2721,16 +2630,12 @@ msgstr ""
 "evidencia indicadora."
 
 #: templates/workflow/documentation_agreement_confirm_delete.html:6
-#, fuzzy
-#| msgid "Documentation"
 msgid "Delete Documentation"
-msgstr "Documentación"
+msgstr ""
 
 #: templates/workflow/documentation_agreement_confirm_delete.html:34
-#, fuzzy
-#| msgid "Documentation"
 msgid "Documentation Delete"
-msgstr "Documentación"
+msgstr ""
 
 #: templates/workflow/documentation_agreement_confirm_delete.html:42
 #: tola/forms.py:38
@@ -2738,10 +2643,8 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #: templates/workflow/documentation_confirm_delete.html:3
-#, fuzzy
-#| msgid "Indicator Confirm Delete"
 msgid "Document Confirm Delete"
-msgstr "Confirmar eliminación del indicador"
+msgstr ""
 
 #: templates/workflow/documentation_confirm_delete.html:8
 #: templates/workflow/siteprofile_confirm_delete.html:8
@@ -2837,22 +2740,16 @@ msgid "Add to Project"
 msgstr "Agregar un proyecto"
 
 #: templates/workflow/documentation_popup_list.html:57
-#, fuzzy
-#| msgid "Documents"
 msgid "No Documents."
-msgstr "Documentos"
+msgstr ""
 
 #: templates/workflow/filter.html:3
-#, fuzzy
-#| msgid "Filter by Program"
 msgid "Filter by:"
-msgstr "Filtrar por programa"
+msgstr ""
 
 #: templates/workflow/filter.html:27
-#, fuzzy
-#| msgid "Project Site"
 msgid "Project Status"
-msgstr "Sitio del proyecto"
+msgstr ""
 
 #: templates/workflow/program_projects_table.html:6
 #: templates/workflow/program_projects_table.html:8
@@ -2880,31 +2777,31 @@ msgstr "Corto"
 #: templates/workflow/program_projects_table.html:19
 #: templates/workflow/site_projectcomplete.html:38
 #, fuzzy
-#| msgid "Longitude"
 msgid "Long"
-msgstr "Longitud"
+msgstr "Largo"
 
 #: templates/workflow/program_projects_table.html:22
 #: templates/workflow/projectagreement_form.html:10
 msgid "Project Dashboard"
 msgstr "Tablero del proyecto"
 
+# "(Status)" shoud be translated
 #: templates/workflow/programdashboard_list.html:19
-#, python-format
+#, fuzzy, python-format
 msgid "Filtered by <b>(Status): %(status|default_if_none:'')s</b>"
 msgstr "Filtrado por <b>(Status):%(status|default_if_none:'')s</ b>"
 
+# "(Program)" should be translated
 #: templates/workflow/programdashboard_list.html:25
-#, python-format
+#, fuzzy, python-format
 msgid "Filtered by <b>(Program): %(filtered_program|default_if_none:'')s</b>"
 msgstr ""
-"Filtrado por <b>(Program): %(filtered_program|default_if_none:'')s</ b>"
+"Filtrado por <b>(Programa): %(filtered_program|default_if_none:'')s</ b>"
 
 #: templates/workflow/programdashboard_list.html:36
 #, fuzzy
-#| msgid "Project Dashboard"
 msgid "Program Dashboard"
-msgstr "Tablero del proyecto"
+msgstr "Tablero del programa"
 
 #: templates/workflow/programdashboard_list.html:44
 #: templates/workflow/site_projectcomplete.html:26 workflow/models.py:1016
@@ -2935,36 +2832,28 @@ msgid "Approval Status"
 msgstr "Estado de aprobación"
 
 #: templates/workflow/programdashboard_list.html:56
-#, fuzzy
-#| msgid "in progress"
 msgid "No in progress projects."
-msgstr "en progreso"
+msgstr ""
 
 #: templates/workflow/programdashboard_list.html:62
 msgid "No approved projects yet."
 msgstr "No hay proyectos aprobados todavía."
 
 #: templates/workflow/programdashboard_list.html:68
-#, fuzzy
-#| msgid "Awaiting Approval"
 msgid "No projects awaiting approval."
-msgstr "Esperando aprobación"
+msgstr ""
 
 #: templates/workflow/programdashboard_list.html:74
 msgid "No rejected projects."
-msgstr "Sin proyectos rechazados"
+msgstr "Sin proyectos rechazados."
 
 #: templates/workflow/programdashboard_list.html:80
-#, fuzzy
-#| msgid "View project"
 msgid "No New projects."
-msgstr "Ver proyecto"
+msgstr ""
 
 #: templates/workflow/programdashboard_list.html:86
-#, fuzzy
-#| msgid "Project Type"
 msgid "No projects yet."
-msgstr "Tipo de proyecto"
+msgstr ""
 
 #: templates/workflow/projectagreement_form.html:3
 #: templates/workflow/projectagreement_form.html:4
@@ -3006,10 +2895,8 @@ msgid "Submit"
 msgstr "Enviar"
 
 #: templates/workflow/site_indicatordata.html:6
-#, fuzzy
-#| msgid "Site Name"
 msgid "Site Data"
-msgstr "Nombre del sitio"
+msgstr ""
 
 #: templates/workflow/site_indicatordata.html:10
 #, python-format
@@ -3025,10 +2912,8 @@ msgid "Site Profile Map and List"
 msgstr "Mapa y lista de perfil del sitio"
 
 #: templates/workflow/site_profile_list.html:41
-#, fuzzy
-#| msgid "Offline (No map provided)"
 msgid "Offline (No map provided"
-msgstr "Sin conexión (no se proporciona el mapa)"
+msgstr "Sin conexión (no se proporciona el mapa"
 
 #: templates/workflow/site_profile_list.html:73
 #, fuzzy
@@ -3043,24 +2928,18 @@ msgid "Site name"
 msgstr "Nombre del sitio"
 
 #: templates/workflow/site_profile_list.html:75
-#, fuzzy
-#| msgid "Funding Status"
 msgid "Status"
-msgstr "Estado de financiamiento"
+msgstr ""
 
 #: templates/workflow/site_profile_list.html:76
-#, fuzzy
-#| msgid "Site Active"
 msgid "Site type"
-msgstr "Sitio activo"
+msgstr ""
 
 #: templates/workflow/site_profile_list.html:77
 #: templates/workflow/site_profile_map.html:185
 #: templates/workflow/site_profile_map.html:192
-#, fuzzy
-#| msgid "Province:"
 msgid "Province"
-msgstr "Provincia:"
+msgstr "Provincia"
 
 #: templates/workflow/site_profile_list.html:78
 #: templates/workflow/site_profile_map.html:185
@@ -3069,20 +2948,16 @@ msgid "District"
 msgstr "Distrito"
 
 #: templates/workflow/site_profile_list.html:91
-#, fuzzy
-#| msgid "Site Active"
 msgid "Active"
-msgstr "Sitio activo"
+msgstr ""
 
 #: templates/workflow/site_profile_list.html:95
 msgid "Inactive"
 msgstr "Inactivo"
 
 #: templates/workflow/site_profile_list.html:102
-#, fuzzy
-#| msgid "Delete results"
 msgid "Delete site"
-msgstr "Eliminar resultados"
+msgstr ""
 
 #: templates/workflow/site_profile_list.html:105
 #, fuzzy
@@ -3091,16 +2966,12 @@ msgid "Indicator data"
 msgstr "Datos del indicador"
 
 #: templates/workflow/site_profile_list.html:108
-#, fuzzy
-#| msgid "Project Site"
 msgid "Project data"
-msgstr "Sitio del proyecto"
+msgstr ""
 
 #: templates/workflow/site_profile_list.html:115
-#, fuzzy
-#| msgid "Profile Type"
 msgid "No Site Profiles yet."
-msgstr "Tipo de perfil"
+msgstr ""
 
 #: templates/workflow/site_profile_list.html:173
 msgid "per page"
@@ -3108,10 +2979,8 @@ msgstr "por página"
 
 #: templates/workflow/site_profile_map.html:185
 #: templates/workflow/site_profile_map.html:192
-#, fuzzy
-#| msgid "Village:"
 msgid "Village"
-msgstr "Pueblo:"
+msgstr "Pueblo"
 
 #: templates/workflow/site_profile_report.html:8
 #, fuzzy
@@ -3120,20 +2989,16 @@ msgid "Report"
 msgstr "Informes"
 
 #: templates/workflow/site_profile_report.html:37
-#, fuzzy
-#| msgid "Tola Sites"
 msgid "Update Sites"
-msgstr "Sitios de Tola"
+msgstr ""
 
 #: templates/workflow/site_profile_report.html:41
 msgid "No sites yet."
 msgstr "No hay sitios todavía."
 
 #: templates/workflow/site_projectcomplete.html:7
-#, fuzzy
-#| msgid "View Project"
 msgid "Site Projects"
-msgstr "Ver proyecto"
+msgstr ""
 
 #: templates/workflow/site_projectcomplete.html:11
 #, python-format
@@ -3142,9 +3007,8 @@ msgstr "Datos del proyecto para <small>%(site)s</ small>"
 
 #: templates/workflow/siteprofile_confirm_delete.html:3
 #, fuzzy
-#| msgid "Indicator Confirm Delete"
 msgid "Confirm Delete"
-msgstr "Confirmar eliminación del indicador"
+msgstr "Confirmar eliminación"
 
 #: templates/workflow/stakeholder_form.html:3
 #: templates/workflow/stakeholder_form.html:4 workflow/models.py:1240
@@ -3156,32 +3020,24 @@ msgid "Countries"
 msgstr "Países"
 
 #: templates/workflow/tags/program_menu.html:83
-#, fuzzy
-#| msgid "Program Reports"
 msgid "Program or country…"
-msgstr "Informes del programa"
+msgstr ""
 
 #: templates/workflow/tags/program_menu.html:88
-#, fuzzy
-#| msgid "Page Not found"
 msgid "No results found"
-msgstr "Página no encontrada"
+msgstr ""
 
 #: tola/admin.py:40
 msgid "Personal info"
 msgstr "Información personal"
 
 #: tola/admin.py:44
-#, fuzzy
-#| msgid "GAIT program dates"
 msgid "Important dates"
-msgstr "Fechas del programa GAIT"
+msgstr ""
 
 #: tola/forms.py:29
-#, fuzzy
-#| msgid "Form Version"
 msgid "Form Errors"
-msgstr "Versión del formulario"
+msgstr ""
 
 #: tola/settings/base.py:93
 msgid "English"
@@ -3204,22 +3060,16 @@ msgid "Your profile has been updated."
 msgstr "Su perfil se ha actualizado."
 
 #: tola/views.py:171
-#, fuzzy
-#| msgid "Success, Data Created!"
 msgid "Success, Bookmark Created!"
-msgstr "¡Éxito, datos creados!"
+msgstr ""
 
 #: tola/views.py:209
-#, fuzzy
-#| msgid "Success, Data Updated!"
 msgid "Success, Bookmark Updated!"
-msgstr "¡Éxito, datos actualizados!"
+msgstr ""
 
 #: tola/views.py:238
-#, fuzzy
-#| msgid "Success, Indicator Deleted!"
 msgid "Success, Bookmark Deleted!"
-msgstr "¡Éxito, indicador eliminado!"
+msgstr ""
 
 #: workflow/forms.py:1706
 msgid "Search"
