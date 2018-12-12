@@ -149,12 +149,17 @@
         var regExp = /\(([^)]+)\)/;
         var matchFound = false
         var target_frequency = $("#id_target_frequency").val();
-
         if (target_frequency == 1 || target_frequency == 2 || target_frequency == 8) {
             return true;
         }
         $("#id_periodic_target option").each(function() {
-            var pt_date_range = regExp.exec(this.text);
+            var pt_date_range;
+            if (target_frequency == 7) {
+                //monthly indicators do not follow the <name> (<date> <date>) model
+                pt_date_range = this.text;
+            } else {
+                pt_date_range = regExp.exec(this.text);
+            }
             if (!pt_date_range || pt_date_range == null || pt_date_range == 'null'){
                 return;
             }

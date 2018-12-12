@@ -1,0 +1,89 @@
+// Program page and Program Status components
+// May need to split into more components e.g. "gauges"
+
+.program__status {
+    background-color: $card-bg;
+    border: 1px solid $border-color;
+    margin-bottom: $grid-gutter-width/2;
+    margin-top: $grid-gutter-width/2;
+    padding: $grid-gutter-width/2;
+    h2 {
+        margin-bottom: $grid-gutter-width/2;
+    }
+}
+.status__gauges {
+    // contains .status-gauge components
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
+
+.program-page__main {
+    // contains .program-page__details and .indicators-list
+    @include make-row();
+}
+.program-page__sidebar {
+    // sidebar for .program-page__main
+    font-size: $font-size-sm;
+    @include make-col-ready();
+    @include make-col(1,4);
+    @include media-breakpoint-down(sm) {
+        @include make-col(1,1);
+        order: 2;
+    }
+}
+.sidebar__detail {
+    // element inside program page sidebar
+    // may be a more generic component
+    padding-bottom: $grid-gutter-width;
+    & + & {
+        border-top: 1px solid $gray-400;
+        padding-top: $grid-gutter-width/2;
+    }
+    h3 { // TODO
+        font-size: inherit;
+        text-transform: uppercase;
+    }
+}
+.pinned-reports {
+    // probably needs to be a separate component
+    // or more generic
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+.pinned-report {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: $grid-gutter-width/2;
+    padding-top: $grid-gutter-width/2;
+    h4 {
+        color: inherit;
+        font-size: inherit;
+        margin-bottom: 0;
+    }
+}
+.pinned-report__link {
+    color: inherit;
+    display: block;
+}
+.pinned-report__remove {
+    // TOOD: should probably be a more generic component
+    display: block;
+}
+
+.program-page__indicators {
+    // contains an instance of .indicators-list
+    @include make-col-ready();
+    @include make-col(3,4);
+    > table {
+        background: $white;
+    }
+    @include media-breakpoint-down(sm) {
+        @include make-col(1,1);
+        order: 1;
+    }
+}
+

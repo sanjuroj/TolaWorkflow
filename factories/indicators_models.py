@@ -3,8 +3,10 @@ from random import randint
 import faker
 from django.utils import timezone
 from factory import DjangoModelFactory, post_generation, SubFactory, lazy_attribute, Sequence
+from factory.fuzzy import FuzzyChoice
 
 from indicators.models import (
+    TolaTable as TolaTableM,
     CollectedData as CollectedDataM,
     ExternalService as ExternalServiceM,
     ReportingFrequency as ReportingFrequencyM,
@@ -14,10 +16,11 @@ from indicators.models import (
     Objective as ObjectiveM,
     PeriodicTarget as PeriodicTargetM,
     StrategicObjective as StrategicObjectiveM,
+    PinnedReport as PinnedReportM,
     DisaggregationType as DisaggregationTypeM,
     DataCollectionFrequency as DataCollectionFrequencyM
 )
-from workflow_models import OrganizationFactory, ProgramFactory, CountryFactory
+from workflow_models import OrganizationFactory, ProgramFactory, CountryFactory, UserFactory
 
 FAKER = faker.Faker(locale='en_US')
 
@@ -40,21 +43,6 @@ class RandomIndicatorFactory(DjangoModelFactory):
         lambda n: "%s.%s.%s" % (randint(1, 2), randint(1, 4), randint(1, 5)))
     create_date = lazy_attribute(lambda t: timezone.now())
 
-    @post_generation
-    def program(self, create, extracted, **kwargs):
-        if not create:
-            # Simple build, do nothing.
-            return
-
-        if type(extracted) is list:
-            # A list of program were passed in, use them
-            for program in extracted:
-                self.program.add(program)
-        elif extracted:
-            self.program.add(extracted)
-        else:
-            pass
-
 
 class IndicatorFactory(DjangoModelFactory):
     class Meta:
@@ -62,21 +50,6 @@ class IndicatorFactory(DjangoModelFactory):
         django_get_or_create = ('name',)
 
     name = Sequence(lambda n: 'Indicator {0}'.format(n))
-
-    @post_generation
-    def program(self, create, extracted, **kwargs):
-        if not create:
-            # Simple build, do nothing.
-            return
-
-        if type(extracted) is list:
-            # A list of program were passed in, use them
-            for program in extracted:
-                self.program.add(program)
-        elif extracted:
-            self.program.add(extracted)
-        else:
-            pass
 
 
 class DefinedIndicatorFactory(IndicatorFactory):
@@ -157,6 +130,15 @@ class PeriodicTargetFactory(DjangoModelFactory):
     target = 0
     period = lazy_attribute(
         lambda pt: 'PeriodicTarget for %s: %s - %s' % (pt.indicator.name, pt.start_date, pt.end_date))
+    customsort = Sequence(lambda n: n)
+
+
+class PinnedReportFactory(DjangoModelFactory):
+    class Meta:
+        model = PinnedReportM
+
+    name = Sequence(lambda n: 'Test pinned report: {0}'.format(n))
+    report_type = FuzzyChoice(['timeperiods', 'targetperiods'])
 
 class DisaggregationTypeFactory(DjangoModelFactory):
     class Meta:
@@ -172,3 +154,9 @@ class DataCollectionFrequencyFactory(DjangoModelFactory):
     frequency = "some reasonable frequency"
     description = "a description of how frequent this is"
     numdays = 10
+
+class TolaTableFactory(DjangoModelFactory):
+    class Meta:
+        model = TolaTableM
+    name = Sequence(lambda n: 'Tola Table {0}'.format(n))
+    owner = SubFactory(UserFactory)

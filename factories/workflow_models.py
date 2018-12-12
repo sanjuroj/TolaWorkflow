@@ -100,11 +100,11 @@ class ProgramFactory(DjangoModelFactory):
             self.country.add(*extracted)
 
 
-class Documentation(DjangoModelFactory):
+class DocumentationFactory(DjangoModelFactory):
     class Meta:
         model = DocumentationM
 
-    name = 'Strengthening access and demand in Mandera County'
+    name = Sequence(lambda n: 'Document {0}'.format(n))
     program = SubFactory(ProgramFactory)
 
 

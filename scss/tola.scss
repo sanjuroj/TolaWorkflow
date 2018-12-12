@@ -1,0 +1,100 @@
+// /* css-style comments */ intentionally included here for build debugging
+@import 'mc_tola_primitives'; // MC primitive variables, LOAD FIRST
+
+/* Bootstrap libraries */
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/mixins";
+@import 'bootstrap_variables'; // Local versions of BS variables
+
+/* There should be NO selectors in compiled CSS above this comment */
+
+/* Bootstrap root CSS */
+@import "../node_modules/bootstrap/scss/root";
+
+/* Bootstrap reset CSS */
+@import "../node_modules/bootstrap/scss/reboot";
+
+/* Bootstrap CSS modules */
+@import "../node_modules/bootstrap/scss/type";
+@import "../node_modules/bootstrap/scss/images";
+@import "../node_modules/bootstrap/scss/code";
+@import "../node_modules/bootstrap/scss/grid";
+@import "../node_modules/bootstrap/scss/tables";
+@import "../node_modules/bootstrap/scss/forms";
+@import "../node_modules/bootstrap/scss/buttons";
+@import "../node_modules/bootstrap/scss/transitions";
+@import "../node_modules/bootstrap/scss/dropdown";
+@import "../node_modules/bootstrap/scss/button-group";
+@import "../node_modules/bootstrap/scss/input-group";
+@import "../node_modules/bootstrap/scss/custom-forms";
+@import "../node_modules/bootstrap/scss/nav";
+@import "../node_modules/bootstrap/scss/navbar";
+@import "../node_modules/bootstrap/scss/card";
+@import "../node_modules/bootstrap/scss/breadcrumb";
+@import "../node_modules/bootstrap/scss/pagination";
+@import "../node_modules/bootstrap/scss/badge";
+@import "../node_modules/bootstrap/scss/jumbotron";
+@import "../node_modules/bootstrap/scss/alert";
+@import "../node_modules/bootstrap/scss/progress";
+@import "../node_modules/bootstrap/scss/media";
+@import "../node_modules/bootstrap/scss/list-group";
+@import "../node_modules/bootstrap/scss/close";
+@import "../node_modules/bootstrap/scss/modal";
+@import "../node_modules/bootstrap/scss/tooltip";
+@import "../node_modules/bootstrap/scss/popover";
+@import "../node_modules/bootstrap/scss/carousel";
+
+// These *were* all loaded via utilities
+// but I may want to disable some of these later
+@import "../node_modules/bootstrap/scss/utilities/align";
+@import "../node_modules/bootstrap/scss/utilities/background";
+@import "../node_modules/bootstrap/scss/utilities/borders";
+@import "../node_modules/bootstrap/scss/utilities/clearfix";
+@import "../node_modules/bootstrap/scss/utilities/display";
+@import "../node_modules/bootstrap/scss/utilities/embed";
+@import "../node_modules/bootstrap/scss/utilities/flex";
+@import "../node_modules/bootstrap/scss/utilities/float";
+@import "../node_modules/bootstrap/scss/utilities/position";
+@import "../node_modules/bootstrap/scss/utilities/screenreaders";
+@import "../node_modules/bootstrap/scss/utilities/sizing";
+@import "../node_modules/bootstrap/scss/utilities/spacing";
+@import "../node_modules/bootstrap/scss/utilities/text"; // KEEP
+@import "../node_modules/bootstrap/scss/utilities/visibility";
+
+@import "../node_modules/bootstrap/scss/print";
+
+// MC Tola CSS modules
+/* Local Bootstrap overrides */
+@import '_bootstrap_multiselect.scss'; // my what a mess this is
+@import 'bootstrap_overrides'; // overload BS selectors.
+
+// Select2 multi-select menus
+// AFAIK used only in Program menu and IPTT quickstart page
+// This cribs project /src/ directly, not ideal!
+@import "components/select2/core";
+
+/* Components */
+// These are well-behaved BEM-compliant selectors
+@import 'components/tables'; // semantic addtions to, but not overloads of, Bootstrap tables
+@import 'components/regions'; // page regions and sub-regions
+@import 'components/gauges';  // status gauges, e.g. on Program landing page
+@import 'components/indicator_table';  // indicator list included on Program page and Indicators page
+@import 'components/collected_data_table';  // collected data table included in indicator list (& elsewhere?)
+@import 'components/program'; // Program Page & related components for Mangosteen
+@import 'components/program_complete'; // Program percent complete with wee calendar icon
+@import 'components/home'; // Home page
+@import 'components/list_filters'; // List filters
+
+/* Local custom CSS and overloads for non-BS libraries */
+@import 'mixins';
+@import 'mc_tola_forms';
+@import 'maps';
+@import 'charts';
+@import 'branding';
+@import 'iptt_table'; // the IPTT table & page
+@import 'sidebar'; // IPTT sidebar
+@import 'misc_utilities'; // small utility/helper selectors that should probably be bootstrap classes
+@import 'custom'; // misc. elements & unsorted selectors
+
+/* Unsorted custom selectors */
+

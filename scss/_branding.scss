@@ -1,0 +1,49 @@
+// Branding
+.navbar-brand-wrapper { /* BS has a navbar-brand class already :-( */
+    display: flex;
+    align-items: center;
+}
+.navbar-tola {
+    // navbar-dark
+    padding: 0;
+    border-bottom: 1px solid $gray-150;
+    .dropdown-menu {
+        background: $gray-700;
+    }
+    .dropdown-item {
+        color: $white;
+        &:focus, &:hover {
+            background-color: $gray-600;
+        }
+    }
+}
+// add a small cleanline to the bottom of the navbar
+.navbar-dark {
+}
+
+// overload dropdown menus
+
+@include bg-variant('.navbar-tola', $color: $gray-700) //bg-dark
+.navbar-tola--container {
+    align-items: flex-start !important;
+    padding-left: 0;
+}
+.navbar-brand--mc {
+    display: block;
+    background: $red-500;
+    margin-right: 15px;
+}
+.navbar-brand--mc-logo {
+    display: block;
+    height: 60px;
+    width: auto;
+}
+.navbar-brand--tola {
+    display: block;
+    margin-right: 25px;
+}
+.navbar-brand--tola-logo {
+    display: block;
+    max-width: 120px;
+    height: auto;
+}

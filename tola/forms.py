@@ -16,33 +16,27 @@ class ProfileUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
-        # if they aren't a super user or User Admin don't let them change countries form field
-        if 'User Admin' not in user.groups.values_list('name', flat=True) and not user.is_superuser:
-            self.fields['countries'].disabled = True
-            self.fields['country'].disabled = True
 
     class Meta:
         model = TolaUser
-        fields = '__all__'
+        fields = [ 'language', ]
 
     helper = FormHelper()
     helper.form_method = 'post'
-    helper.form_class = ''
+    helper.form_class = 'hide-askerisks'
     helper.label_class = ''
     helper.field_class = ''
-    helper.form_error_title = 'Form Errors'
+    helper.form_error_title = _('Form Errors')
     helper.error_text_inline = True
     helper.help_text_inline = True
     helper.html5_required = True
     helper.layout = Layout(
-        Fieldset(
-            '', 'title', 'name', 'employee_number', 'user', 'country', 'language', 'countries'),
+        Field( 'language' ),
         Div(
             FormActions(
-                Submit('submit', 'Save changes', css_class=''),
-                Reset('reset', 'Reset', css_class='')
+                Submit('submit', _('Save changes'), css_class=''),
+                Reset('reset', _('Cancel'), css_class='')
             ),
-            css_class='form-actions bg-gray-lighter p-4 justify-content-between',
         ),
     )
 

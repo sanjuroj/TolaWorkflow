@@ -31,8 +31,9 @@ class TestPeriodicTargetsBase(iptt_utility.TestIPTTTargetPeriodsReportResponseBa
         self.program.save()
 
     def add_indicator(self, targets=None, values=None):
-        indicator = IndicatorFactory(target_frequency=self.indicator_frequency)
-        indicator.program.add(self.program)
+        indicator = IndicatorFactory(
+            target_frequency=self.indicator_frequency,
+            program=self.program)
         self.indicators.append(indicator)
         self.add_periodic_targets(indicator, targets=targets, values=values)
 
@@ -201,13 +202,16 @@ class TestMidEndTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
         assert targets is None or len(targets) == 2, "targets should be a tuple of two, midline and endline"
         assert values is None or len(values) == 2, "values should be two tuples, midline and endline"
         if targets is None:
-            target = PeriodicTargetFactory(indicator=indicator, period=PeriodicTarget.MIDLINE)
+            target = PeriodicTargetFactory(indicator=indicator, period=PeriodicTarget.MIDLINE, customsort=0)
             _ = CollectedDataFactory(indicator=indicator, periodic_target=target)
-            target = PeriodicTargetFactory(indicator=indicator, period=PeriodicTarget.ENDLINE)
+            target = PeriodicTargetFactory(indicator=indicator, period=PeriodicTarget.ENDLINE, customsort=1)
             _ = CollectedDataFactory(indicator=indicator, periodic_target=target)
             return
-        for c, (target, target_type) in enumerate(zip(targets, [PeriodicTarget.MIDLINE, PeriodicTarget.ENDLINE])):
-            target = PeriodicTargetFactory(indicator=indicator, period=target_type, target=target)
+        for c, (target, (customsort, target_type)) in enumerate(
+                zip(targets, [(0, PeriodicTarget.MIDLINE), (1, PeriodicTarget.ENDLINE)])
+            ):
+            target = PeriodicTargetFactory(indicator=indicator, period=target_type,
+                                           target=target, customsort=customsort)
             for v in values[c] if values is not None else [10]:
                 _ = CollectedDataFactory(indicator=indicator, periodic_target=target, achieved=v)
 

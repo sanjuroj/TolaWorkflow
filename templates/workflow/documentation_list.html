@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block title %}{% trans "Documents" %} | {% endblock %}
-{% block page_title %}{% trans "Documents" %}{% endblock %}
+{% block page_title %}{% trans "Documents" %}{% if program %}<br><small>{{ program.name }}</small>{% endif %}{% endblock %}
 {% block bread_crumb %}
 {% endblock %}
 
@@ -38,16 +38,16 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-      program_filter(0);
+      program_filter(document.URL.split('/')[5]);
     });
 
     function show_documentation_table(documentation_data) {
-        documentation_records = JSON.parse(documentation_data);
+        let documentation_records = JSON.parse(documentation_data);
         //First destroy any old version of the table to refresh anew
         if ( $.fn.dataTable.isDataTable('#documentationtable') ) {
             table.destroy();
             $('#documentationtable').empty();
-        };
+        }
 
         $('#documentationtable').on('page.dt', function () {
             $('html, body').animate({
@@ -65,7 +65,7 @@
             'bLengthChange': false,
             "aoColumnDefs": [{
                 "bSortable": false,
-                "targets": [0, 1, 2, 3]
+                "aTargets": {% if user.tola_user.allow_projects_access %} [2, 3] {% else %} [2] {% endif %}
             }],
             "oLanguage": {
                 "oPaginate": {
@@ -86,8 +86,10 @@
                     "mRender": function (data, narecord, row) {
                         return '<a class="collecteddata" name=' + row.id + ' href="/workflow/documentation_update/'+row.id+'">' + row.name + '</a>';
                         }},
+                {% if user.tola_user.allow_projects_access %}
                 { title: "{% trans "Project" %}", data: "project__project_name",
                     "defaultContent": "<i>{% trans 'Not set'|escapejs %}</i>"},
+                {% endif %}
                 { title: "{% trans 'Actions' %}",
                     "mRender": function (data, record, row) {
                         return '<div class="text-nowrap"><a href="/workflow/documentation_delete/'+row.id+'" class="btn p-0 pr-4 btn-sm btn-text text-danger"><i class="fas fa-trash-alt"></i>&nbsp;{% trans "Delete"|escapejs %}</a><a href="/workflow/documentation_update/'+row.id+'" class="btn p-0 btn-sm btn-text"><i class="fas fa-edit"></i>&nbsp;{% trans "Edit"|escapejs %}</a></div>';
@@ -97,15 +99,26 @@
         });
     }
 
+    function updatePageTitle(programName) {
+        let title = '{% trans "Documents" %}';
+
+        if (programName) {
+            title += '<br><small>' + programName + '</small>';
+        }
+
+        $('h1.page-title').html(title);
+    }
+
     function program_filter(program_id) {
         if (program_id != 0) {
             $.getJSON("/workflow/documentation_objects/"+ program_id + "/0/", function(data) {
+                updatePageTitle(data['program_name']);
                 show_documentation_table(data['getDocumentation']);
             });
-        }  else{
-            program_id = document.URL.split('/')[5];
-            project_id = document.URL.split('/')[6];
+        } else {
+            let project_id = document.URL.split('/')[6];
             $.getJSON("/workflow/documentation_objects/"+program_id+"/"+project_id+"/", function(data) {
+                updatePageTitle(data['program_name']);
                 show_documentation_table(data['getDocumentation']);
             });
         }

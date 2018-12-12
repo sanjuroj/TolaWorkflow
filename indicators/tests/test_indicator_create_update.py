@@ -1,10 +1,11 @@
-from django.test import RequestFactory
+from django.test import RequestFactory, TestCase
 from django.urls import reverse_lazy
 
+from indicators.models import Indicator
 from tola.test.base_classes import TestBase
 
 
-class IndicatorCreateFunctionTests(TestBase):
+class IndicatorCreateFunctionTests(TestBase, TestCase):
 
     def setUp(self):
         super(IndicatorCreateFunctionTests, self).setUp()
@@ -24,7 +25,7 @@ class IndicatorCreateFunctionTests(TestBase):
         self.assertEqual(response.status_code, 302)
 
 
-class IndicatorUpdateTests(TestBase):
+class IndicatorUpdateTests(TestBase, TestCase):
 
     def setUp(self):
         super(IndicatorUpdateTests, self).setUp()
@@ -41,11 +42,15 @@ class IndicatorUpdateTests(TestBase):
         # build form data using URL encoded form key value pairs
         data = {
             'name': 'Test+Name',
-            'program2': self.program.name,
+            'program2': self.program.id,
+            'target_frequency': Indicator.ANNUAL,
             'level': 1,
             'indicator_type': 1,
             'unit_of_measure_type': 1,
+            'unit_of_measure': 1,
             'lop_target': 3223,
+            'program': self.program.id,
+            'direction_of_change': Indicator.DIRECTION_OF_CHANGE_NONE,
         }
         request = RequestFactory()
         request.user = self.user

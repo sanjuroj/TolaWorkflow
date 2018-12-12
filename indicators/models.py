@@ -1,14 +1,21 @@
 # -*- coding: utf-8 -*-
 import uuid
-from datetime import timedelta
+from datetime import timedelta, date
 from decimal import Decimal
 
+import dateparser
+from dateutil.relativedelta import relativedelta
 from django.db import models
 from django.db.models import Avg
-from django.utils import formats, timezone
+from django.http import QueryDict
+from django.urls import reverse
+from django.utils import formats, timezone, functional
 from django.utils.translation import ugettext_lazy as _
-
+from tola.l10n_utils import l10n_date_year_month, l10n_date_medium
 from django.contrib import admin
+from django.utils.functional import cached_property
+import django.template.defaultfilters
+
 
 from simple_history.models import HistoricalRecords
 
@@ -270,12 +277,110 @@ class ExternalServiceRecordAdmin(admin.ModelAdmin):
                     'edit_date')
     display = 'Exeternal Indicator Data Service'
 
+# pylint: disable=W0223
+class DecimalSplit(models.Func):
+    function = 'SUBSTRING_INDEX'
+    template = '%(function)s(%(expressions)s)'
 
-class IndicatorManager(models.Manager):
+    def __init__(self, string, count, **extra):
+        expressions = models.F(string), models.Value('.'), count
+        super(DecimalSplit, self).__init__(*expressions)
+
+# pylint: disable=W0223
+class DoubleDecimalSplit(models.Func):
+    function = 'SUBSTRING_INDEX'
+    template = 'SUBSTRING_INDEX(%(function)s(%(expressions)s), \'.\', -1)'
+
+    def __init__(self, string, count, **extra):
+        expressions = models.F(string), models.Value('.'), count
+        super(DoubleDecimalSplit, self).__init__(*expressions)
+
+class IndicatorSortingQSMixin(object):
+    """This provides a temporary relief to indicator number sorting issues in advance of Satsuma -
+    uses regex matches to determine if the number is of the format "1.1" or "1.1.1" etc. and sorts it then by
+    version number sorting, otherwise numeric, and falls back to alphabetical.  Written as a mixin so it can be
+    replaced with log frame sorting on release of Satsuma"""
+    def with_logframe_sorting(self):
+        numeric_re = r'^[[:space:]]*[0-9]+[[:space:]]*$'
+        logframe_re = r'^[[:space:]]*[0-9]+([[.period.]][0-9]+)?'\
+                      '([[.period.]][0-9]+)?([[.period.]][0-9]+)?[[:space:]]*$'
+        logframe_re2 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?([[.period.]][0-9]+)?[[:space:]]*$'
+        logframe_re3 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?[[:space:]]*$'
+        logframe_re4 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[:space:]]*$'
+
+        qs = self.annotate(
+            logsort_type=models.Case(
+                models.When(
+                    number__regex=logframe_re,
+                    then=1
+                ),
+                models.When(
+                    number__regex=numeric_re,
+                    then=2
+                ),
+                default=3,
+                output_field=models.IntegerField()
+            )
+        ).annotate(
+            logsort_a=models.Case(
+                models.When(
+                    logsort_type=1,
+                    then=DecimalSplit('number', 1)
+                ),
+                models.When(
+                    logsort_type=2,
+                    then=models.F('number'),
+                ),
+                default=models.Value(0),
+                output_field=models.IntegerField()
+            ),
+            logsort_b=models.Case(
+                models.When(
+                    number__regex=logframe_re2,
+                    then=DoubleDecimalSplit('number', 2)
+                ),
+                default=models.Value(0),
+                output_field=models.IntegerField()
+            ),
+            logsort_c=models.Case(
+                models.When(
+                    number__regex=logframe_re3,
+                    then=DoubleDecimalSplit('number', 3)
+                ),
+                default=models.Value(0),
+                output_field=models.IntegerField()
+            ),
+            logsort_d=models.Case(
+                models.When(
+                    number__regex=logframe_re4,
+                    then=DoubleDecimalSplit('number', 4)
+                ),
+                default=models.Value(0),
+                output_field=models.IntegerField()
+            )
+        )
+        return qs.order_by(
+            'logsort_type',
+            models.functions.Cast('logsort_a', models.IntegerField()),
+            models.functions.Cast('logsort_b', models.IntegerField()),
+            models.functions.Cast('logsort_c', models.IntegerField()),
+            'number'
+            )
+
+class IndicatorSortingManagerMixin(object):
+    """This provides a temporary relief to indicator number sorting issues in advance of Satsuma -
+    provides a logframe sorting method that utilizes the above QS mixin to sort as though a logframe model existed"""
+    def with_logframe_sorting(self):
+        qs = self.get_queryset()
+        return qs.with_logframe_sorting()
+
+class IndicatorQuerySet(models.QuerySet, IndicatorSortingQSMixin):
+    pass
+
+class IndicatorManager(models.Manager, IndicatorSortingManagerMixin):
+
     def get_queryset(self):
-        return super(IndicatorManager, self).get_queryset()\
-            .prefetch_related('program')\
-            .select_related('sector')
+        return IndicatorQuerySet(self.model, using=self._db).select_related('program', 'sector')
 
 
 class Indicator(models.Model):
@@ -315,6 +420,9 @@ class Indicator(models.Model):
     )
     SEPARATOR = ','
 
+    ONSCOPE_MARGIN = .15
+
+
     indicator_key = models.UUIDField(
         default=uuid.uuid4, unique=True, help_text=" "),
 
@@ -326,9 +434,9 @@ class Indicator(models.Model):
     )
 
     # the Log Frame level (i.e. Goal, Output, Outcome, etc.)
-    # TODO: make this a foreign key (an indicator should have only one level)
-    level = models.ManyToManyField(
-        Level, blank=True, help_text=" ", verbose_name=_("Level")
+    level = models.ForeignKey(
+        Level, blank=True, null=True, verbose_name=_("Level"),
+        on_delete=models.SET_NULL
     )
 
     # this includes a relationship to a program
@@ -389,10 +497,9 @@ class Indicator(models.Model):
         verbose_name=_("Not applicable"), default=False, help_text=" "
     )
 
-    lop_target = models.CharField(
-        verbose_name=_("Life of Program (LoP) target*"), max_length=255,
-        null=True, blank=True, help_text=" "
-    )
+    lop_target = models.DecimalField(
+        blank=True, decimal_places=2, help_text=b' ',
+        max_digits=20, null=True, verbose_name='Life of Program (LoP) target*')
 
     direction_of_change = models.IntegerField(
         blank=False, null=True, choices=DIRECTION_OF_CHANGE,
@@ -488,10 +595,9 @@ class Indicator(models.Model):
         _("Comments"), max_length=255, null=True, blank=True, help_text=" "
     )
 
-    # note this is separate (and not validated against) objective.program
-    # TODO: make foreignkey (or eliminate in favor of the relationship through objective)
-    program = models.ManyToManyField(
-        Program, help_text=" ", verbose_name=_("Program")
+    program = models.ForeignKey(
+        Program, verbose_name=_("Program"),
+        blank=True, null=True, on_delete=models.CASCADE,
     )
 
     sector = models.ForeignKey(
@@ -525,8 +631,6 @@ class Indicator(models.Model):
     edit_date = models.DateTimeField(
         _("Edit date"), null=True, blank=True, help_text=" "
     )
-
-    history = HistoricalRecords()
 
     notes = models.TextField(_("Notes"), max_length=500, null=True, blank=True)
     # optimize query for class based views etc.
@@ -578,10 +682,6 @@ class Indicator(models.Model):
         return ', '.join([x.indicator_type for x in self.indicator_type.all()])
 
     @property
-    def levels(self):
-        return ', '.join([x.name for x in self.level.all()])
-
-    @property
     def disaggregations(self):
         disaggregations = self.disaggregation.all()
         return self.SEPARATOR.join([x.disaggregation_type for x in disaggregations])
@@ -616,24 +716,39 @@ class Indicator(models.Model):
     @property
     def baseline_display(self):
         if self.baseline and self.unit_of_measure_type == self.PERCENTAGE:
-            return self.baseline + '%'
+            return u"{0}%".format(self.baseline)
         return self.baseline
 
     @property
     def lop_target_display(self):
-        if self.lop_target and self.unit_of_measure_type == self.PERCENTAGE:
-            return self.lop_target + '%'
+        """adding logic to strip trailing zeros in case of a decimal with superfluous zeros to the right of the ."""
+        if self.lop_target:
+            lop_stripped = str(self.lop_target)
+            lop_stripped = lop_stripped.rstrip('0').rstrip('.') if '.' in lop_stripped else lop_stripped
+            if self.unit_of_measure_type == self.PERCENTAGE:
+                return u"{0}%".format(lop_stripped)
+            return lop_stripped
         return self.lop_target
+
+    @cached_property
+    def cached_data_count(self):
+        return self.collecteddata_set.count()
 
 
 class PeriodicTarget(models.Model):
+    LOP_PERIOD = _('Life of Program (LoP) only')
     MIDLINE = _('Midline')
     ENDLINE = _('Endline')
+    ANNUAL_PERIOD = _('Year')
+    SEMI_ANNUAL_PERIOD = _('Semi-annual period')
+    TRI_ANNUAL_PERIOD = _('Tri-annual period')
+    QUARTERLY_PERIOD = _('Quarter')
 
     indicator = models.ForeignKey(
         Indicator, null=False, blank=False, verbose_name=_("Indicator"), related_name="periodictargets"
     )
 
+    # This field should never be referenced directly in the UI! See period_name below.
     period = models.CharField(
         _("Period"), max_length=255, null=True, blank=True
     )
@@ -652,45 +767,182 @@ class PeriodicTarget(models.Model):
         blank=True
     )
 
-    customsort = models.IntegerField(_("Customsort"), blank=True, null=True)
+    customsort = models.IntegerField(_("Customsort"), default=0)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
     class Meta:
         ordering = ('customsort', '-create_date')
         verbose_name = _("Periodic Target")
+        unique_together = (('indicator', 'customsort'),)
+
+    @staticmethod
+    def generate_monthly_period_name(start_date):
+        return django.template.defaultfilters.date(start_date, 'F Y')
+
+    @staticmethod
+    def generate_event_period_name(event_name):
+        return event_name
+
+    @classmethod
+    def generate_midline_period_name(cls):
+        return cls.MIDLINE
+
+    @classmethod
+    def generate_endline_period_name(cls):
+        return cls.ENDLINE
+
+    @classmethod
+    def generate_lop_period_name(cls):
+        return cls.LOP_PERIOD
+
+    @classmethod
+    def generate_annual_quarterly_period_name(cls, target_frequency, period_seq_num):
+        target_frequency_to_period_name = {
+            Indicator.ANNUAL: cls.ANNUAL_PERIOD,
+            Indicator.SEMI_ANNUAL: cls.SEMI_ANNUAL_PERIOD,
+            Indicator.TRI_ANNUAL: cls.TRI_ANNUAL_PERIOD,
+            Indicator.QUARTERLY: cls.QUARTERLY_PERIOD,
+        }
+
+        period_name = target_frequency_to_period_name.get(target_frequency)
+
+        if period_name is None:
+            raise Exception('Invalid target_frequency passed to generate_annual_quarterly_period_name()')
+
+        return u"{period_name} {period_number}".format(
+            period_name=period_name,
+            period_number=period_seq_num,
+        )
+
+    @property
+    def period_name(self):
+        """returns a period name translated to the local language.
+            - LOP target: see target definition above,
+            - MID/END: uses customsort to pick from definitions above
+            - ANNUAL/SEMI_ANNUAL/TRI_ANNUAL/QUARTERLY: "Year 1" / "Semi-Annual Period 2" / "Quarter 4"
+            - MONTHLY: "Jan 2018"
+            - EVENT: this (and only this) uses the 'period' field and customsort to be "period name 1"
+        """
+        target_frequency = self.indicator.target_frequency
+
+        # used in the collected data modal to display options in the target period dropdown
+        if target_frequency == Indicator.MID_END:
+            # midline is the translated "midline" or "endline" based on customsort
+            return self.generate_midline_period_name() if self.customsort == 0 else self.generate_endline_period_name()
+        if target_frequency == Indicator.LOP:
+            # lop always has translated lop value
+            return self.generate_lop_period_name()
+
+        # use locale specific month names
+        if target_frequency == Indicator.MONTHLY:
+            return self.generate_monthly_period_name(self.start_date)
+
+        # Do nothing for events
+        if target_frequency == Indicator.EVENT:
+            return self.generate_event_period_name(self.period)
+
+        # for time-based frequencies get translated name of period:
+        return self.generate_annual_quarterly_period_name(target_frequency, self.customsort + 1)
 
     def __unicode__(self):
-        # used in the collected data modal to display options in the target period dropdown
-        if self.indicator.target_frequency == Indicator.LOP \
-            or self.indicator.target_frequency == Indicator.EVENT \
-                or self.indicator.target_frequency == Indicator.MID_END:
-            return self.period
-        if self.start_date and self.end_date:
-            return "%s (%s - %s)" % (
-                self.period,
-                formats.date_format(self.start_date, "MEDIUM_DATE_FORMAT"),
-                formats.date_format(self.end_date, "MEDIUM_DATE_FORMAT"),
-                )
+        """outputs the period name (see period_name docstring) followed by start and end dates
+        
+        used in collect data form"""
+        period_name = self.period_name
+
+        if period_name and self.start_date and self.end_date:
+            # e.g "Year 1 (date - date)" or "Quarter 2 (date - date)"
+            return u"{period_name} ({start_date} - {end_date})".format(
+                period_name=period_name,
+                start_date=l10n_date_medium(self.start_date),
+                end_date=l10n_date_medium(self.end_date)
+            )
+        elif period_name:
+            # if no date for some reason but time-based frequency:
+            return unicode(period_name)
+
         return self.period
-
-    @property
-    def start_date_formatted(self):
-        # apparently unused?
-        if self.start_date:
-            return formats.date_format(self.start_date, "MEDIUM_DATE_FORMAT")
-        return self.start_date
-
-    @property
-    def end_date_formatted(self):
-        # apparently unused?
-        if self.end_date:
-            return formats.date_format(self.end_date, "MEDIUM_DATE_FORMAT")
-        return self.end_date
 
     @property
     def getcollected_data(self):
         return self.collecteddata_set.all().order_by('date_collected')
+
+    @classmethod
+    def generate_for_frequency(cls, frequency):
+        """ returns a generator function to yield periods based on start and end dates for a given frequency"""
+        months_per_period = {
+            Indicator.SEMI_ANNUAL: 6,
+            Indicator.TRI_ANNUAL: 4,
+            Indicator.QUARTERLY: 3,
+            Indicator.MONTHLY: 1
+        }
+        if frequency == Indicator.ANNUAL:
+            next_date_func = lambda x: date(x.year + 1, x.month, x.day)
+            name_func = lambda start, count: '{period_name} {count}'.format(
+                period_name=_(cls.ANNUAL_PERIOD), count=count)
+        elif frequency in months_per_period:
+            next_date_func = lambda x: date(
+                x.year if x.month <= 12-months_per_period[frequency] else x.year + 1,
+                x.month + months_per_period[frequency] if x.month <= 12 - months_per_period[frequency] \
+                else x.month + months_per_period[frequency] - 12,
+                x.day)
+            if frequency == Indicator.MONTHLY:
+                # TODO: strftime() does not work with Django i18n and will not give you localized month names
+                # Could be: name_func = lambda start, count: cls.generate_monthly_period_name(start)
+                # the above breaks things in other places though due to unicode encoding/decoding errors
+                name_func = lambda start, count: '{month_name} {year}'.format(
+                    month_name=_(start.strftime('%B')),
+                    year=start.strftime('%Y')
+                    )
+            else:
+                period_name = {
+                    Indicator.SEMI_ANNUAL: cls.SEMI_ANNUAL_PERIOD,
+                    Indicator.TRI_ANNUAL: cls.TRI_ANNUAL_PERIOD,
+                    Indicator.QUARTERLY: cls.QUARTERLY_PERIOD
+                }[frequency]
+                name_func = lambda start, count: '{period_name} {count}'.format(
+                    period_name=_(period_name), count=count)
+        elif frequency == Indicator.LOP:
+            return lambda start, end: [{
+                'name': _(cls.LOP_PERIOD),
+                'start': start,
+                'label': '{0} - {1}'.format(l10n_date_medium(start), l10n_date_medium(end)),
+                'end': end,
+                'customsort': 0
+                }]
+        elif frequency == Indicator.MID_END:
+            return lambda start, end: [
+                {'name': _(cls.MIDLINE),
+                 'start': start,
+                 'label': None,
+                 'end': end,
+                 'customsort': 0},
+                {'name': _(cls.ENDLINE),
+                 'start': start,
+                 'label': None,
+                 'end': end,
+                 'customsort': 1}
+            ]
+        else:
+            next_date_func = None
+            name_func = None
+        def period_generator(start, end):
+            count = 0
+            while start < end:
+                next_start = next_date_func(start)
+                yield {
+                    'name': name_func(start, count+1),
+                    'start': start,
+                    'label': '{0} - {1}'.format(
+                        l10n_date_medium(start), l10n_date_medium(next_start - timedelta(days=1))
+                        ) if frequency != Indicator.MONTHLY else None,
+                    'end': next_start - timedelta(days=1),
+                    'customsort': count
+                }
+                count += 1
+                start = next_start
+        return period_generator
 
 
 class PeriodicTargetAdmin(admin.ModelAdmin):
@@ -734,6 +986,7 @@ class CollectedData(models.Model):
 
     indicator = models.ForeignKey(
         Indicator, help_text=" ", verbose_name=_("Indicator"),
+        db_index=True
     )
 
     agreement = models.ForeignKey(
@@ -843,3 +1096,147 @@ class CollectedDataAdmin(admin.ModelAdmin):
     list_display = ('indicator', 'date_collected', 'create_date', 'edit_date')
     list_filter = ['indicator__program__country__country']
     display = 'Indicator Output/Outcome Collected Data'
+
+
+class PinnedReport(models.Model):
+    """
+    A named IPTT report for a given program and user
+    """
+    name = models.CharField(max_length=50, verbose_name=_('Report Name'))
+    tola_user = models.ForeignKey(TolaUser, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='pinned_reports')
+    report_type = models.CharField(max_length=32)
+    query_string = models.CharField(max_length=255)
+    creation_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-creation_date']
+
+    def parse_query_string(self):
+        return QueryDict(self.query_string)
+
+    @property
+    def report_url(self):
+        """
+        Return the fully parameterized IPTT report URL string
+        """
+        return "{}?{}".format(reverse('iptt_report', kwargs={
+            'program_id': self.program_id,
+            'reporttype': self.report_type
+        }), self.query_string)
+
+    @property
+    def date_range_str(self):
+        """
+        A localized string showing the date range covered by the pinned report
+
+        There are several types of pinned reports w/ regards to date ranges and report type:
+
+          * A report with a fixed start/end date
+            * Recent progress
+            * Annual vs targets
+          * A relative report (show previous N months/quarters/year relative to today)
+            * Recent progress
+            * Annual vs targets
+          * Show all with a time period selected (annual/monthly)
+            * Recent progress
+            * Annual vs targets
+          * Show all with LoP/Midline+Endline/Event
+            * Annual vs targets
+
+        Currently the query string is used to determine the date range type, and thus the returned string
+        """
+        qs = self.parse_query_string()
+
+        start_period = qs.get('start_period')
+        end_period = qs.get('end_period')
+
+        time_frame = qs.get('timeframe')  # show all/most recent
+        num_recent_periods = qs.get('numrecentperiods')  # "most recent" input
+        time_periods = qs.get('timeperiods')  # quarters/months/years/etc (recent progress)
+        target_periods = qs.get('targetperiods')  # LoP/Midline+Endline/Annual/Quarterly/etc (target vs actuals)
+
+        df = lambda d: formats.date_format(dateparser.parse(d), 'MEDIUM_DATE_FORMAT')
+
+        # Fixed start/end date
+        if start_period and end_period:
+            return u'{} – {}'.format(df(start_period), df(end_period))
+
+        from indicators.forms import ReportFormCommon
+
+        # This is confusing but ReportFormCommon defines TIMEPERIODS_CHOICES
+        # which is defined in terms of enum values in Indicators
+        # Indicators also defines TARGET_FREQUENCIES which is also used by ReportFormCommon
+        # Because of this, the enum values are interchangeable between ReportFormCommon and Indicators
+
+        # TIMEPERIODS_CHOICES = (
+        #     (YEARS, _("years")),
+        #     (SEMIANNUAL, _("semi-annual periods")),
+        #     (TRIANNUAL, _("tri-annual periods")),
+        #     (QUARTERS, _("quarters")),
+        #     (MONTHS, _("months"))
+        # )
+
+        # TARGETPERIOD_CHOICES = [empty] +
+        # TARGET_FREQUENCIES = (
+        #     (LOP, _('Life of Program (LoP) only')),
+        #     (MID_END, _('Midline and endline')),
+        #     (ANNUAL, _('Annual')),
+        #     (SEMI_ANNUAL, _('Semi-annual')),
+        #     (TRI_ANNUAL, _('Tri-annual')),
+        #     (QUARTERLY, _('Quarterly')),
+        #     (MONTHLY, _('Monthly')),
+        #     (EVENT, _('Event'))
+        # )
+
+        # time period strings are used for BOTH timeperiod and targetperiod values
+        time_period_str_lookup = dict(ReportFormCommon.TIMEPERIODS_CHOICES)
+
+        time_or_target_period_str = None
+        if time_periods:
+            time_or_target_period_str = time_period_str_lookup.get(int(time_periods))
+        if target_periods:
+            time_or_target_period_str = time_period_str_lookup.get(int(target_periods))
+
+        # A relative report (Recent progress || Target vs Actuals)
+        if time_frame == str(ReportFormCommon.MOST_RECENT) and num_recent_periods and time_or_target_period_str:
+            #  Translators: Example: Most recent 2 Months
+            return _('Most recent {num_recent_periods} {time_or_target_period_str}').format(
+                num_recent_periods=num_recent_periods, time_or_target_period_str=time_or_target_period_str)
+
+        # Show all (Recent progress || Target vs Actuals w/ time period (such as annual))
+        if time_frame == str(ReportFormCommon.SHOW_ALL) and time_or_target_period_str:
+            # Translators: Example: Show all Years
+            return _('Show all {time_or_target_period_str}').format(time_or_target_period_str=time_or_target_period_str)
+
+        # Show all (Target vs Actuals LoP/Midline+End/Event)
+        remaining_target_freq_set = {
+            Indicator.LOP,
+            Indicator.MID_END,
+            Indicator.EVENT,
+        }
+        if time_frame == str(ReportFormCommon.SHOW_ALL) and target_periods \
+                and int(target_periods) in remaining_target_freq_set:
+            return _('Show all results')
+
+        # It's possible to submit bad input, but have the view "fix" it..
+        if time_frame == str(ReportFormCommon.MOST_RECENT) and num_recent_periods and not time_or_target_period_str:
+            return _('Show all results')
+
+        return ''
+
+
+    @staticmethod
+    def default_report(program_id):
+        """
+        Create a default hardcoded pinned report
+
+        Shows recent progress for all indicators
+        Does not exist in the DB
+        """
+        return PinnedReport(
+            name=_('Recent progress for all indicators'),
+            program_id=program_id,
+            report_type='timeperiods',
+            query_string='timeperiods=7&timeframe=2&numrecentperiods=2',
+        )

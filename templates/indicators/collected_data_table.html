@@ -1,20 +1,11 @@
 {% load i18n %}
 {% load assign %}
 
-<style>
-  .disable-span {
-      cursor: not-allowed;
-      opacity: .65;
-  }
-  .disable-span a {
-      pointer-events: none;
-  }
-</style>
 <script type="text/javascript">
-    $("#id_indicator_data_span_count_" + `{{indicator.id}}`).text("{% trans 'Results'|escapejs %} ({{ indicator.collecteddata_set.count|default:0 }})" );
+    $("#id_indicator_data_span_count_" + `{{indicator.id}}`).text("{% trans 'Results'|escapejs %} ({{ indicator.cached_data_count|default:0 }})" );
 </script>
 
-<div class="p-3">
+<div class="collected-data-table__wrapper">
     <h3 class="is-shown-in-modals">
         {{ indicator.name }}
         <button
@@ -22,20 +13,19 @@
             class="close"
             data-dismiss="modal"
             aria-label="Close">
-              <!-- <span aria-hidden="true" style="font-weight: 100; font-size: 2rem;">&times;</span> -->
               <span aria-hidden="true" class="x-modal">&times;</span>
         </button>
     </h3>
-{% if indicator.collecteddata_set.count > 0 or indicator.target_frequency %}
-    <table class="table table-sm my-2 collected-data-table">
+{% if indicator.cached_data_count > 0 or indicator.target_frequency %}
+    <table class="table collected-data-table">
         <thead>
-            <tr class="bg-gray-lighter-alt">
-                <th class="text-uppercase border-top-0  text-nowrap" style="">{% trans "Target period" %}</th>
-                <th class="text-uppercase border-top-0  text-right" style="">{% trans "Target" %}</th>
-                <th class="text-uppercase border-top-0  text-right" style="">{% trans "Actual" %}</th>
-                <th class="text-uppercase border-top-0 pr-4  text-nowrap text-right" style="">{% trans "% Met" %}</th>
-                <th class="text-uppercase border-top-0" style="">{% trans "Results" %}</th>
-                <th class="text-uppercase border-top-0 w-100" style="">{% trans "Evidence" %}</th>
+            <tr class="table-header">
+                <th class="">{% trans "Target period" %}</th>
+                <th class="text-right">{% trans "Target" %}</th>
+                <th class="text-right">{% trans "Actual" %}</th>
+                <th class="table__pad-cell text-right">{% trans "% Met" %}</th>
+                <th class="">{% trans "Results" %}</th>
+                <th class="table__stretch-cell">{% trans "Evidence" %}</th>
             </tr>
         </thead>
         {% for item in periodictargets %}
@@ -43,14 +33,15 @@
                 {% ifchanged item %}
                     {% with dataCount=item.collecteddata_set.count %}
                         <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-nowrap">
-                            <strong class="text-uppercase">{{ item.period }}</strong><br>
+                            {# note ".period" is deprecated, and .period_name should be used instead #}
+                            <strong class="text-uppercase">{{ item.period_name }}</strong><br>
                             <small>
                                 {{ item.start_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                                 {% if item.start_date %} - {% endif %}
                                 {{ item.end_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                             </small>
                         </td>
-                        <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} align="right">
+                        <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right">
                             {% with target=item.target|floatformat:"-2" %}
                                 {% if indicator.unit_of_measure_type == 2 %}
                                     {{ target }}%
@@ -59,7 +50,7 @@
                                 {% endif %}
                             {% endwith %}
                         </td>
-                        <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} align="right">
+                        <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right">
                             {% if indicator.unit_of_measure_type == 1 %}
                                 {% if indicator.is_cumulative == True %}
                                     {{ item.cumulative_sum|floatformat:"-2" }}
@@ -72,7 +63,7 @@
                                 {% endif %}
                             {% endif %}
                         </td>
-                        <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} align="right" class="pr-4">
+                        <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right table__pad-cell">
                             {% if item.target %}
                                 {% if indicator.unit_of_measure_type == 1 %}
                                     {% if indicator.is_cumulative == True %}
@@ -97,26 +88,28 @@
                     {% if not forloop.first %}
                         <tr>
                     {% endif %}
-                    <td class="d-flex justify-content-between text-nowrap {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
-                        <div>
-                          {% if is_editable is False %}
-                            {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
-                          {% else %}
-                          <a href="{% url 'collecteddata_update' cdata.id %}"
-                             class="collecteddata-link"
-                             id="collected-{{cdata.id}}">
-                                  {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
-                          </a>
-                          {% endif %}
-                        </div>
-                        <div class="pl-2">
-                            {% with achieved=cdata.achieved|floatformat:"-2" %}
-                                {% if indicator.unit_of_measure_type == 2 %}
-                                    {{ achieved }}%
-                                {% else %}
-                                    {{ achieved }}
-                                {% endif %}
-                            {% endwith %}
+                    <td class="{% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
+                        <div class="collected-data-table__result ">
+                            <div class="result__date">
+                              {% if is_editable is False %}
+                                {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                              {% else %}
+                              <a href="{% url 'collecteddata_update' cdata.id %}"
+                                 class="collected-data__link"
+                                 id="collected-{{cdata.id}}">
+                                      {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                              </a>
+                              {% endif %}
+                            </div>
+                            <div class="result__value">
+                                {% with achieved=cdata.achieved|floatformat:"-2" %}
+                                    {% if indicator.unit_of_measure_type == 2 %}
+                                        {{ achieved }}%
+                                    {% else %}
+                                        {{ achieved }}
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
                         </div>
                     </td>
                     <td>
@@ -135,11 +128,11 @@
                             {% if cdata.complete %}
                                 <a href="{% url 'projectcomplete_update' cdata.complete.id %}"
                                    target="_blank"
-                                   class="fontsize-85 text-uppercase"><i class="fas fa-clipboard"></i> {% trans "View project" %}</a>
+                                   class="btn-link"><i class="fas fa-clipboard"></i> {% trans "View project" %}</a>
                             {% elif cdata.agreement %}
                                 <a href="{% url 'projectagreement_update' cdata.agreement.id %}"
                                    target="_blank"
-                                   class="fontsize-85 text-uppercase"><i class="fas fa-clipboard"></i> {% trans "View project" %}</a>
+                                   class="btn-link"><i class="fas fa-clipboard"></i> {% trans "View project" %}</a>
                             {% endif %}
                             {% comment {{ cdata.complete|default_if_none:cdata.agreement|default_if_none:'' }} %} {% endcomment %}
                         </div>
@@ -148,10 +141,12 @@
                         {% endif %}
                     </td>
                     {% empty %}
-                        <td style="white-space: nowrap; overflow: visible; max-width: 125px; border-right: 0px solid;">
-                            {% trans "No data collected" %}
+                        <td class="">
+                            <div class="collected-data-table__result">
+                                {% trans "No data collected" %}
+                            </div>
                         </td>
-                        <td colspan="5" style="border-left: 0px solid;"></td>
+                        <td></td>
                     {% if item.collecteddata_set.count > 1 %}
                         </tr>
                     {% endif %}
@@ -171,11 +166,11 @@
                     {% endif %}
                 </td>
                 <td align="right"></td>
-                <td style="" class="d-flex justify-content-between text-nowrap bg-danger-lighter">
+                <td class="collected-data-table__result bg-danger-lighter">
                     {% if is_editable is False %}
                       {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                     {% else %}
-                      <a href="{% url 'collecteddata_update' coldata.id %}" class="collecteddata-link" id="collected-{{coldata.id}}">
+                      <a href="{% url 'collecteddata_update' coldata.id %}" class="collected-data__link" id="collected-{{coldata.id}}">
                           {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                       </a>
                     {% endif %}
@@ -203,11 +198,11 @@
                         {% if coldata.complete %}
                             <a href="{% url 'projectcomplete_update' coldata.complete.id %}"
                                target="_blank"
-                               class="btn btn-sm btn-link">{% trans "View Project" %}</a>
+                               class="btn-link">{% trans "View Project" %}</a>
                         {% elif coldata.agreement %}
                             <a href="{% url 'projectagreement_update' coldata.agreement.id %}"
                                target="_blank"
-                               class="btn btn-sm btn-link">{% trans "View Project" %}</a>
+                               class="btn-link">{% trans "View Project" %}</a>
                         {% endif %}
                         {% comment {{ coldata.complete|default_if_none:coldata.agreement|default_if_none:'' }} %} {% endcomment %}
                     </div>
@@ -261,7 +256,7 @@
             </td>
             <td colspan="2" class="">
               <div class="">
-                <div class="small text-left font-italic font-weight-light">
+                <div class="help-text">
                   {% if indicator.target_frequency is not None %}
                     {% if indicator.unit_of_measure_type == 1 %}
                       {% if indicator.is_cumulative == True %}
@@ -282,10 +277,10 @@
             </td>
         </tr>
     </table>
-    <div class="d-flex justify-content-between align-items-center collecteddata-table--actions">
+    <div class="collected-data-table__actions">
         <div>
         {% if err %}
-            <span id="id_span_date_collected_error_msg text-danger" class="color-red">
+            <span id="id_span_date_collected_error_msg" class="text-danger">
                 <small>
                 {% ifequal err 'Error_1' %}
                     {% trans "Targets are not set up for this indicator." %} <strong><a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link"> {% trans "Start by selecting a target frequency." %}</a></strong>
@@ -303,14 +298,11 @@
         {% endif %}
         </div>
         <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
-            <a href="{% url 'collecteddata_add' program_id indicator.id %}"
-                    class="btn btn-success collecteddata-link mb-4">
-                <i class="fas fa-plus-circle"></i> {% trans "Add results" %}
-            </a>
+            <a href="{% url 'collecteddata_add' program_id indicator.id %}" class="btn-link btn-add collected-data__link"><i class="fas fa-plus-circle"></i> {% trans "Add results" %}</a>
         </div>
     </div>
 {% else %}
-    <div class="my-3 color-red">
+    <div class="text-danger">
         <i class="fas fa-bullseye"></i>&nbsp;{% trans "This indicator has no targets." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link btn btn-success"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add targets" %}</a>
     </div>
 {% endif %}

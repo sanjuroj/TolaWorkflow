@@ -1,0 +1,143 @@
+$link-hover-opacity: 0.8; //todo move this where it makes sense
+
+// Color: Tola Palette as of 2018-08-27
+// These are cribbed from app.css and bootstrap-overrides.css
+// Consolidated Color Palette
+// MC brand palette from Drew
+// MC colors have been renamed with BS naming conventions, as noted
+// This deviates substantially from colors as posted to the identity site:
+// https://identity.mercycorps.org/portals/contentlibrary/#page/our-brand/color
+// or
+// https://identity.mercycorps.org/portals/contentlibrary/#asset/157495
+// These *do* align with Jenny’s mockups
+
+/// Red
+
+$red-050: #ffe3e7; // hsl(351,100,95) // only used for .bg-danger-lighter
+$red-200: #ed8090; // hsl(360,77,72) // only used in override of .btn-danger
+$red-450: #e51232; // hsl(351,85,48) // same as MC palette $red_100_hover
+$red-500: #c8102e; // hsl(350,85,42) // same as MC palette $red_100 // was #cf102d
+$red: $red-500;
+
+// Teal (this is "blue" on the MC palette)
+$teal-100: #ccefee; // hsl(178,52,87)   // same as MC palette $blue_20
+$teal-150: #b5e0df; // hsl(179,41,79)   // only used on some table hovers
+$teal-200: #99dfdd; // hsl(178,52,74)   // same as MC palette $blue_40
+$teal-300: #66cfcc; // hsl(178,52,61)   // same as MC palette $blue_60
+$teal-400: #33bfbb; // hsl(178,52,47)   // same as MC palette $blue_80 & $blue_100_hover
+$teal-500: #00a49f; // hsl(178,100,32)  // same as MC palette $blue_100 was #00b2a9 and before that, #00afaa
+$teal-600: #046C69; // hsl(178,93,22)
+$teal: $teal-500;
+
+// Green
+$green-100: #cde499; // hsl(78,58,75)   // Same as MC Palette $green_40
+$green_200: #b3d766; // hsl(79,59,62)   // Same as MC Palette $green_60
+$green-300: #9ac933; // hsl(79,60,49)   // Same as MC Palette $green_80
+$green-450: #81bc00; // hsl(79,100,37)  // Same as MC Palette $green_100_hover
+$green-500: #84bd00; // hsl(78,100,37)  // Same as MC Palette $green_100  // was #81bc00
+$green-550: #79AD00; // hsl(78,100,67)
+$green-600: #689400; // hsl(78,100,58)
+$green-700: #506e00; // hsl(76,100,22)
+$green: $green-550;
+
+// Yellow
+$yellow-100: #fff6cc; // hsl(49,100,90)  // same as MC palette $yellow_20
+$yellow-200: #ffed99; // hsl(49,100,80)  // same as MC palette $yellow_40
+$yellow-300: #ffe466; // hsl(49,100,70)  // same as MC palette $yellow_60
+$yellow-400: #ffdb33; // hsl(49,100,60)  // same as MC palette $yellow_80
+$yellow-500: #ffd100; // hsl(49,100,50)  // same as MC palette $yellow_100 //was #ffd200
+$yellow-600: #ffce0a; // hsl(48,100,52)
+$yellow: $yellow-500;
+
+
+// Blue
+// These are NOT in core MC palette. MC "blues" map to "teals" in Tola palette
+// They are used almost exclusively for text links
+$blue-250: #59b5fa; // hsl(206,94,66) /* highlighted state for blue-lighter */
+$blue-300: #55acee; // hsl(206,82,63)
+$blue-400: #3366cc; // hsl(220,60,50)
+$blue-500: #0645AD; // hsl(217,93,35)
+$blue: $blue-500;
+
+
+// Consolidated Grays
+// these are all cooler hues, approx h216
+$white: #fff;
+$gray-100: #FAFAFA; // hsl(0,0,98)
+$gray-150: #f5f5f5; // hsl(0,0,96)      // same as MC palette $gray_f2
+$gray-200: #ebedf0; // hsl(216,14,93)
+$gray-300: #dbdcde; // hsl(220,4,86)    // same as MC palette $gray_20
+$gray-400: #d2d5d9; // hsl(214,8,84)
+$gray-500: #b8babd; // hsl(216,4,73)    // same as MC palette $gray_40
+$gray-550: #94979c; // hsl(218,4,60)    // same as MC palette $gray_60
+$gray-600: #71757b; // hsl(216,4,46)    // same as MC palette $gray_80
+$gray-700: #54585a; // hsl(200,3,34)    // same as MC palette $gray_100
+$gray-800: #343840; // hsl(220,10,23)
+$gray-900: #212429; // hsl(218,11,15)
+$black: #000;
+
+// Other Colors & maps from Bootstrap variables
+$grays: () !default;
+$grays: map-merge((
+    "100": $gray-100,
+    "150": $gray-150,
+    "200": $gray-200,
+    "300": $gray-300,
+    "400": $gray-400,
+    "500": $gray-500,
+    "550": $gray-550,
+    "600": $gray-600,
+    "700": $gray-700,
+    "800": $gray-800,
+    "900": $gray-900
+), $grays);
+
+$indigo:  #6610f2;
+$purple:  #6f42c1;
+$pink:    #e83e8c;
+$orange:  #fd7e14;
+$cyan:    #17a2b8;
+
+$colors: () !default;
+$colors: map-merge((
+    "blue":       $blue,
+    "indigo":     $indigo,
+    "purple":     $purple,
+    "pink":       $pink,
+    "red":        $red,
+    "orange":     $orange,
+    "yellow":     $yellow,
+    "green":      $green,
+    "teal":       $teal,
+    "cyan":       $cyan,
+    "white":      $white,
+    "gray":       $gray-600,
+    "gray-dark":  $gray-800
+), $colors);
+
+$primary:       $teal;
+$secondary:     $gray-600;
+$success:       $green;
+$info:          $cyan;
+$warning:       $yellow;
+$danger:        $red;
+$action:        $blue;
+$light:         $gray-100;
+$dark:          $gray-800;
+
+$theme-colors: () !default;
+$theme-colors: map-merge((
+    "primary":    $primary,
+    "secondary":  $secondary,
+    "success":    $success,
+    "info":       $info,
+    "action":     $action,
+    "warning":    $warning,
+    "danger":     $danger,
+    "light":      $light,
+    "dark":       $dark
+), $theme-colors);
+// stylelint-enable
+
+
+

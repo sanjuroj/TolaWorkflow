@@ -35,9 +35,9 @@ $ brew install mysql mysql-utilies
 $ brew install py2cairo pango
 $ git clone https://github.com/mercycorps.org/TolaActivity.git
 $ cd TolaActivity
-$ virtualenv -p python2 --no-site-packages venv
-$ source venv/bin/activate
 $ git checkout dev
+$ virtualenv -p python2 TolaActivty --no-site-packages venv # need to specify Python 2 for systems that might have Python 3 as default system version
+$ source venv/bin/activate
 $ mkdir config
 # Place settings.secret.yml into config/ directory
 cp config/sample-settings.secret.yml config/settings.secret.yml
@@ -216,7 +216,7 @@ for this bug until the bug is well and truly crushed.
     |  1 | kwall    | Kurt       | Wall      |
     +----+----------+------------+-----------+
     ```
-
+    
     Note the value for `id` to use in the next step.
 
 1. Insert the `id` value from the `auth_user` table into the `user_id` field
@@ -245,15 +245,15 @@ for this bug until the bug is well and truly crushed.
 
 ## Loading demo data
 
-1. Get a recent DB dump from a Tola instance from your mentior
+1. Get a recent DB dump from a Tola instance from your mentor
 1. Kill the TolaActivity server
 1. Make a backup of the current *tola_activity* DB if it's precious
 1. Drop and recreate the *tola_activity* DB. Using the MySQL CLI:
 
-    ```bash
-    mysql> DROP DATABASE 'tola_activity';
-    mysql> CREATE DATABASE 'tola_activity';
-    ```
+   ```sql
+   DROP DATABASE 'tola_activity';
+   CREATE DATABASE 'tola_activity';
+   ```
 
 1. Execute the SQL script you were given to load the data:
 

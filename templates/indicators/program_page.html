@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load i18n mathfilters mytags static %}
+{% block title %}{{ program.name }} | {% endblock %}
+{% block page_title %}{{ program.name }}{% endblock %}
+{% block header_extras %}
+    {% program_complete %}
+{% endblock %}
+
+{% block content %}
+
+
+    {% if indicator_count %}
+        <aside class="program__status">
+            <h2>{% trans "Program metrics" %}</h2>
+                <div class="status__gauges">
+
+                    {% gauge_band True %}
+
+                    {% gauge_tank "targets_defined" %}
+
+                    {% gauge_tank "reported_results" %}
+
+                    {% gauge_tank "results_evidence" %}
+
+                </div>
+        </aside>
+    {% endif %}
+
+<div class="program-page__main">
+    <div class="program-page__sidebar">
+        <section class="sidebar__detail">
+            <h3>{% trans "Program details" %}</h3>
+            <p><a href="{% url 'programIndicatorReport' program.id %}">{% trans "Indicator Plan" %}</a></p>
+        </section>
+        <section class="sidebar__detail">
+            <h3>{% trans "Documents" %}</h3>
+            <p><a href="{% url 'documentation_list' program.id 0 %}">{% trans "View program documents" %}</a></p>
+            <a href="{% url 'documentation_add' %}?program_id={{ program.id }}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add document" %}</a>
+        </section>
+        <section class="sidebar__detail">
+            <h3>{% trans "Sites" %}</h3>
+            {% if site_count > 0 %}
+                <p><a href="{% url 'siteprofile_list' program.id 0 %}">{% trans "View program sites" %}</a></p>
+            {% else %}
+                <p class="text-muted">{% trans "There are no program sites." %}</p>
+            {% endif %}
+            <a href="{% url 'siteprofile_add' %}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add site" %}</a>
+        </section>
+        <section class="sidebar__detail">
+            <h3>{% trans "Pinned reports" %}</h3>
+            {% if program.has_started %}
+                <ul class="pinned-reports">
+                    {% for pr in pinned_reports %}
+                        <li class="pinned-report">
+                            <a href="{% url 'iptt_report' pr.program_id pr.report_type %}?{{ pr.query_string }}" class="pinned-report__link">
+                                <h4>{% trans "IPTT:" %} {{ pr.name }}</h4>
+                               {{ pr.date_range_str }}
+                            </a>
+                            {% if pr.id %}
+                            <a href="#"
+                               class="pinned-report__remove text-danger"
+                               data-delete-pinned-report="{{ pr.id }}">
+                                <i class="fa fa-times"></i>
+                            </a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+                <a href="{% url 'iptt_quickstart' %}?program_id={{ program.id }}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Create an IPTT report" %}</a>
+            {% else %}
+                <p class="text-muted">{% trans "Reports will be available after the program start date." %}</p>
+            {% endif %}
+        </section>
+    </div>
+    <div id="div-id-indicator-list" class="indicators-list program-page__indicators">
+        <div class="indicators-list__header">
+            <h3 class="no-bold"><span id="indicators-list-title">{% blocktrans %}{{ indicator_count }} indicators{% endblocktrans %}</span>&nbsp;&nbsp;&nbsp;<a href="#" id="show-all-indicators"><small>Show all</small></a></h3>
+            <div>
+                <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
+            </div>
+        </div>
+        <nav class="list__filters list__filters--inline-label" id="id_div_indicators">
+            <label class="filters__label">
+                {% trans "Find an indicator:" %}
+            </label>
+            <div class="filters__control">
+                <select name="indicators" id="id_indicators" class="form-control" data-list-title="{% trans "1 indicator" %}">
+                    {% for ind in indicators %}
+                        <option value="{{ ind.id }}">{{ ind.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </nav>
+        {% include "indicators/program_indicators_table.html" %}
+    </div>
+</div>
+
+{% include "indicators/indicator_list_modals.html" %}
+{% include "indicators/indicator_form_common_js.html" %}
+{% include "indicators/collecteddata_form_common_js.html" %}
+{% endblock content %}
+
+
+{% block extra_js_in_body %}
+    <script>
+        let jsContext = {{ js_context|js }};
+    </script>
+
+    <script>
+        // On pinned report delete btn click
+        $('[data-delete-pinned-report]').click(function (e) {
+            e.preventDefault();
+
+            let prId = $(this).data('deletePinnedReport');
+            let pinnedReport = $(this).closest('.pinned-report');
+
+            if (window.confirm(jsContext.delete_pinned_report_confirmation_msg)) {
+                $.ajax({
+                    type: "POST",
+                    url: jsContext.delete_pinned_report_url,
+                    data: {
+                        pinned_report_id: prId,
+                    },
+                    success: function () {
+                        pinnedReport.remove();
+                    },
+                    error: function () {
+                        console.log('AJAX error')
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="{% static "js/program_page_filters.js" %}"></script>
+{% endblock %}

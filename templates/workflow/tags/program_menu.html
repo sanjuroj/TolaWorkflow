@@ -1,0 +1,100 @@
+{% load i18n %}
+
+<select class="" id="goto-country-program" style="display: none">
+    <option value=""></option>
+    <optgroup label="{% trans 'Countries' %}">
+        {% for country in countries %}
+            <option value="{% url 'index' country.id %}" class="">{{ country }}</option>
+        {% endfor %}
+    </optgroup>
+
+    {% for country_name, programs in programs_by_country.items %}
+        <optgroup label="{{ country_name }}">
+            {% for program in programs %}
+                {% if program.reporting_period_start or program.reporting_period_end %}
+                    <option value="{% url 'program_page' program.id 0 0 %}" class="">{{ program }}</option>
+                {% endif %}
+            {% endfor %}
+        </optgroup>
+    {% endfor %}
+</select>
+
+<script type="text/javascript">
+    // Custom matcher used to search both program names
+    // and also the country optgroup they reside in
+    function modelMatcher (params, data) {
+        data.parentText = data.parentText || "";
+
+        // Always return the object if there is nothing to compare
+        if ($.trim(params.term) === '') {
+            return data;
+        }
+
+        // Do a recursive check for options with children
+        if (data.children && data.children.length > 0) {
+            // Clone the data object if there are children
+            // This is required as we modify the object to remove any non-matches
+            let match = $.extend(true, {}, data);
+
+            // Check each child of the option
+            for (let c = data.children.length - 1; c >= 0; c--) {
+                let child = data.children[c];
+                child.parentText += data.parentText + " " + data.text;
+
+                let matches = modelMatcher(params, child);
+
+                // If there wasn't a match, remove the object in the array
+                if (matches == null) {
+                    match.children.splice(c, 1);
+                }
+            }
+
+            // If any children matched, return the new object
+            if (match.children.length > 0) {
+                return match;
+            }
+
+            // If there were no matching children, check just the plain object
+            return modelMatcher(params, match);
+        }
+
+        // If the typed-in term matches the text of this term, or the text from any
+        // parent term, then it's a match.
+        let original = (data.parentText + ' ' + data.text).toUpperCase();
+        let term = params.term.toUpperCase();
+
+
+        // Check if the text contains the term
+        if (original.indexOf(term) > -1) {
+            return data;
+        }
+
+        // If it doesn't contain the term, don't return anything
+        return null;
+    }
+
+    // TODO: Set language for built-in select2 strings
+    $(document).ready(function() {
+        $('#goto-country-program').val(''); // clear on back btn
+
+        $('#goto-country-program').select2({
+            width: '300',
+            theme: 'dark',
+            placeholder: '{% trans "Program or country…" %}',
+            matcher: modelMatcher,
+            // built-in translation files can be used instead if re-use becomes important
+            language: {
+                noResults: function () {
+                    return '{% trans "No results found" %}';
+                }
+            },
+        }).on('select2:select', function (e) {
+            // Navigate to program/country page
+            let url = e.params.data.id;
+            window.location.href = url;
+        });
+
+        // Only show after select2 init
+        $('#goto-country-program').show();
+    });
+</script>
