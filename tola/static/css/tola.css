@@ -6990,13 +6990,22 @@ body > .container {
   .collected-data-table td {
     background: #fff; }
 
-.collected-data-table__result {
-  display: flex;
-  justify-content: space-between;
+.result__date {
+  border-left: 1px solid #ebedf0;
+  border-right: 1px solid #ebedf0;
   white-space: nowrap; }
 
 .result__value {
-  padding-left: 30px; }
+  border-right: 1px solid #ebedf0;
+  text-align: right;
+  white-space: nowrap; }
+
+.result__nodata {
+  border-left: 1px solid #ebedf0;
+  white-space: nowrap; }
+
+.collected-data__row--supplemental td {
+  border-top: 1px solid #ebedf0; }
 
 .collected-data-table__actions {
   display: flex;

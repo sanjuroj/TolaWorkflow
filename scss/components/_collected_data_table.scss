@@ -16,16 +16,28 @@
     }
 }
 .collected-data-table__result {
-    display: flex;
-    justify-content: space-between;
-    white-space: nowrap;
 }
 .result__date {
+    border-left: 1px solid $gray-200;
+    border-right: 1px solid $gray-200;
+    white-space: nowrap;
 }
 .result__value {
-    padding-left: $grid-gutter-width;
+    border-right: 1px solid $gray-200;
+    text-align: right;
+    white-space: nowrap;
+}
+.result__nodata {
+    border-left: 1px solid $gray-200;
+    white-space: nowrap;
 }
 
+.collected-data__row--main {}
+.collected-data__row--supplemental {
+    td {
+        border-top: 1px solid $gray-200;
+    }
+}
 
 // see _iptt_table.scss
 .collected-data__link {}
