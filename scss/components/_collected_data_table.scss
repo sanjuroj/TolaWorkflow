@@ -18,24 +18,23 @@
 .collected-data-table__result {
 }
 .result__date {
-    border-left: 1px solid $gray-200;
-    border-right: 1px solid $gray-200;
+    border-left: 1px solid $gray-150;
     white-space: nowrap;
 }
 .result__value {
-    border-right: 1px solid $gray-200;
+    border-right: 1px solid $gray-150;
     text-align: right;
     white-space: nowrap;
 }
 .result__nodata {
-    border-left: 1px solid $gray-200;
+    border-left: 1px solid $gray-150;
     white-space: nowrap;
 }
 
 .collected-data__row--main {}
 .collected-data__row--supplemental {
     td {
-        border-top: 1px solid $gray-200;
+        border-top: 1px solid $gray-150;
     }
 }
 
