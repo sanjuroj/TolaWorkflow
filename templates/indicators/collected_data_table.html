@@ -42,57 +42,49 @@
                 </small>
             </td>
             <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right">
-                {% with target=item.target|floatformat:"-2" %}
-                {% if indicator.unit_of_measure_type == 2 %}
-                {{ target }}%
-                {% else %}
-                {{ target }}
-                {% endif %}
-                {% endwith %}
+                {{ item.target|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
             </td>
             <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right">
                 {% if indicator.unit_of_measure_type == 1 %}
-                {% if indicator.is_cumulative == True %}
-                {{ item.cumulative_sum|floatformat:"-2" }}
+                    {% if indicator.is_cumulative == True %}
+                        {{ item.cumulative_sum|floatformat:"-2" }}
+                    {% else %}
+                        {{ item.achieved_sum|floatformat:"-2" }}
+                    {% endif %}
                 {% else %}
-                {{ item.achieved_sum|floatformat:"-2" }}
-                {% endif %}
-                {% else %}
-                {% if item.last_data_row %}
-                {{ item.last_data_row|floatformat:"-2" }}%
-                {% endif %}
+                    {% if item.last_data_row %}
+                        {{ item.last_data_row|floatformat:"-2" }}%
+                    {% endif %}
                 {% endif %}
             </td>
             <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right table__pad-cell">
                 {% if item.target %}
-                {% if indicator.unit_of_measure_type == 1 %}
-                {% if indicator.is_cumulative == True %}
-                {% widthratio item.cumulative_sum item.target 100 as percent_met %}
-                {% if percent_met %} {{ percent_met }}% {% endif %}
+                    {% if indicator.unit_of_measure_type == 1 %}
+                        {% if indicator.is_cumulative == True %}
+                            {% widthratio item.cumulative_sum item.target 100 as percent_met %}
+                            {% if percent_met %} {{ percent_met }}% {% endif %}
+                        {% else %}
+                            {% widthratio item.achieved_sum item.target 100 as percent_met %}
+                            {% if percent_met %} {{ percent_met }}% {% endif %}
+                        {% endif %}
+                    {% else %}
+                        {% widthratio item.last_data_row item.target 100 as percent_met %}
+                        {% if percent_met %} {{ percent_met }}% {% endif %}
+                    {% endif %}
                 {% else %}
-                {% widthratio item.achieved_sum item.target 100 as percent_met %}
-                {% if percent_met %} {{ percent_met }}% {% endif %}
-                {% endif %}
-                {% else %}
-                {% widthratio item.last_data_row item.target 100 as percent_met %}
-                {% if percent_met %} {{ percent_met }}% {% endif %}
-                {% endif %}
-                {% else %}
-                {% trans 'N/A' %}
+                    {% trans 'N/A' %}
                 {% endif %}
             </td>
             {% endwith %}
             {% endifchanged %}
 
             {% for cdata in item.getcollected_data %}
-            {% if not forloop.first %}
-            <tr>
-                {% endif %}
+            {% if not forloop.first %}<tr>{% endif %}
                 <td class="{% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
                     <div class="collected-data-table__result ">
                         <div class="result__date">
                             {% if is_editable is False %}
-                            {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                                {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                             {% else %}
                             <a href="{% url 'collecteddata_update' cdata.id %}"
                                class="collected-data__link"
@@ -103,11 +95,7 @@
                         </div>
                         <div class="result__value">
                             {% with achieved=cdata.achieved|floatformat:"-2" %}
-                            {% if indicator.unit_of_measure_type == 2 %}
-                            {{ achieved }}%
-                            {% else %}
-                            {{ achieved }}
-                            {% endif %}
+                            {{ achieved }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                             {% endwith %}
                         </div>
                     </div>
@@ -115,15 +103,11 @@
                 <td>
                     {% if cdata.evidence %}
                     <div>
-                        {% if cdata.evidence.url %}
-                        <a href="{{cdata.evidence.url}}" target="_blank">
-                            {% endif %}
-                            {{ cdata.evidence|default_if_none:"" }}
-                            {% if cdata.evidence.url %}
-                        </a>
-                        {% endif %}
+                        {% if cdata.evidence.url %}<a href="{{cdata.evidence.url}}" target="_blank">{% endif %}
+                        {{ cdata.evidence|default_if_none:"" }}
+                        {% if cdata.evidence.url %}</a>{% endif %}
                     </div>
-                    {%endif%}
+                    {% endif %}
                     <div class="">
                         {% if cdata.complete %}
                         <a href="{% url 'projectcomplete_update' cdata.complete.id %}"
@@ -137,7 +121,7 @@
                         {% comment {{ cdata.complete|default_if_none:cdata.agreement|default_if_none:'' }} %} {% endcomment %}
                     </div>
                     {% if cdata.tola_table %}
-                    <a href="{{ cdata.tola_table.detail_url }}" target="_blank">{{ cdata.tola_table }}</a>
+                        <a href="{{ cdata.tola_table.detail_url }}" target="_blank">{{ cdata.tola_table }}</a>
                     {% endif %}
                 </td>
                 {% empty %}
@@ -150,9 +134,9 @@
                 {% if item.collecteddata_set.count > 1 %}
             </tr>
             {% endif %}
-            {% endfor %}
+            {% endfor %}{# for cdata in item.getcollected_data #}
         </tr>
-        {% endfor %}
+        {% endfor %}{# for item in periodictargets #}
 
         {% for coldata in collecteddata_without_periodictargets %}
         <tr>
@@ -160,15 +144,15 @@
             <td></td>
             <td align="right">
                 {% if indicator.unit_of_measure_type == 1 %}
-                {{ coldata.achieved|floatformat:"-2" }}
+                    {{ coldata.achieved|floatformat:"-2" }}
                 {% else %}
-                {{ coldata.achieved|floatformat:"-2" }}%
+                    {{ coldata.achieved|floatformat:"-2" }}%
                 {% endif %}
             </td>
             <td align="right"></td>
             <td class="collected-data-table__result bg-danger-lighter">
                 {% if is_editable is False %}
-                {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                    {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                 {% else %}
                 <a href="{% url 'collecteddata_update' coldata.id %}" class="collected-data__link" id="collected-{{coldata.id}}">
                     {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
@@ -176,24 +160,16 @@
                 {% endif %}
                 <div class="pl-2">
                     {% with achieved=coldata.achieved|floatformat:"-2" %}
-                    {% if indicator.unit_of_measure_type == 2 %}
-                    {{ achieved }}%
-                    {% else %}
-                    {{ achieved }}
-                    {% endif %}
+                    {{ achieved }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                     {% endwith %}
                 </div>
             </td>
             <td>
                 {% if coldata.evidence %}
-                {% if coldata.evidence.url %}
-                <a href="{{coldata.evidence.url}}" target="_blank">
-                    {% endif %}
+                    {% if coldata.evidence.url %}<a href="{{coldata.evidence.url}}" target="_blank">{% endif %}
                     {{ coldata.evidence|default_if_none:"" }}
-                    {% if coldata.evidence.url %}
-                </a>
+                    {% if coldata.evidence.url %}</a>{% endif %}
                 {% endif %}
-                {%endif%}
                 <div class="float-right">
                     {% if coldata.complete %}
                     <a href="{% url 'projectcomplete_update' coldata.complete.id %}"
@@ -211,16 +187,16 @@
                 {% endif %}
             </td>
         </tr>
-        {% endfor %}
+        {% endfor %}{# for coldata in collecteddata_without_periodictargets #}
 
         {% if collecteddata_without_periodictargets.count %}
-        {% if indicator.target_frequency == None %}
-        {% assign err 'Error_1' %}
-        {% elif indicator.target_frequency == 2 or indicator.target_frequency == 8 %}
-        {% assign err 'Error_2' %}
-        {% else %}
-        {% assign err 'Error_3' %}
-        {% endif %}
+            {% if indicator.target_frequency == None %}
+                {% assign err 'Error_1' %}
+            {% elif indicator.target_frequency == 2 or indicator.target_frequency == 8 %}
+                {% assign err 'Error_2' %}
+            {% else %}
+                {% assign err 'Error_3' %}
+            {% endif %}
         {% endif %}
 
         <tr class="bg-white">
@@ -228,29 +204,25 @@
             <td align="right">
                 <strong>
                     {% with lop=indicator.lop_target|floatformat:"-2" %}
-                    {% if indicator.unit_of_measure_type == 2 %}
-                    {{ lop }}%
-                    {% else %}
-                    {{ lop }}
-                    {% endif %}
+                    {{ lop }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                     {% endwith %}
                 </strong>
             </td>
             <td align="right">
                 <strong>
                     {% if indicator.unit_of_measure_type == 1 %}
-                    {{ grand_achieved_sum|floatformat:"-2" }}
+                        {{ grand_achieved_sum|floatformat:"-2" }}
                     {% elif indicator.unit_of_measure_type == 2 %}
-                    {{ last_data_record_value|floatformat:"-2" }}%
+                        {{ last_data_record_value|floatformat:"-2" }}%
                     {% endif %}
                 </strong>
             </td>
             <td align="right" class="pr-4">
                 <strong>
                     {% if indicator.unit_of_measure_type == 1 %}
-                    {% widthratio grand_achieved_sum indicator.lop_target 100 %}%
+                        {% widthratio grand_achieved_sum indicator.lop_target 100 %}%
                     {% elif indicator.unit_of_measure_type == 2 %}
-                    {% widthratio last_data_record_value indicator.lop_target 100 %}%
+                        {% widthratio last_data_record_value indicator.lop_target 100 %}%
                     {% endif %}
                 </strong>
             </td>
@@ -258,19 +230,19 @@
                 <div class="">
                     <div class="help-text">
                         {% if indicator.target_frequency is not None %}
-                        {% if indicator.unit_of_measure_type == 1 %}
-                        {% if indicator.is_cumulative == True %}
-                        {% trans "Results are cumulative. The Life of Program result mirrors the latest period result." %}
-                        {% elif indicator.is_cumulative == False %}
-                        {% trans "Results are non-cumulative. The Life of Program result is the sum of target periods results." %}
-                        {% endif %}
-                        {% elif indicator.unit_of_measure_type == 2 %}
-                        {% if indicator.is_cumulative == True %}
-                        {% trans "Results are cumulative. The Life of Program result mirrors the latest period result." %}
-                        {% elif indicator.is_cumulative == False %}
-                        {% trans "Results are non-cumulative. Target period and Life of Program results are calculated from the average of collected data." %}
-                        {% endif %}
-                        {% endif %}
+                            {% if indicator.unit_of_measure_type == 1 %}
+                                {% if indicator.is_cumulative == True %}
+                                    {% trans "Results are cumulative. The Life of Program result mirrors the latest period result." %}
+                                {% elif indicator.is_cumulative == False %}
+                                    {% trans "Results are non-cumulative. The Life of Program result is the sum of target periods results." %}
+                                {% endif %}
+                            {% elif indicator.unit_of_measure_type == 2 %}
+                                {% if indicator.is_cumulative == True %}
+                                    {% trans "Results are cumulative. The Life of Program result mirrors the latest period result." %}
+                                {% elif indicator.is_cumulative == False %}
+                                    {% trans "Results are non-cumulative. Target period and Life of Program results are calculated from the average of collected data." %}
+                                {% endif %}
+                            {% endif %}
                         {% endif %}
                     </div>
                 </div>
@@ -283,15 +255,15 @@
             <span id="id_span_date_collected_error_msg" class="text-danger">
                 <small>
                     {% ifequal err 'Error_1' %}
-                    {% trans "Targets are not set up for this indicator." %} <strong><a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link"> {% trans "Start by selecting a target frequency." %}</a></strong>
+                        {% trans "Targets are not set up for this indicator." %} <strong><a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link"> {% trans "Start by selecting a target frequency." %}</a></strong>
                     {% endifequal %}
 
                     {% ifequal err 'Error_2' %}
-                    {% trans 'This record is not associated with a target. Open the data record and select an option from the "Measure against target" menu.' %}
+                        {% trans 'This record is not associated with a target. Open the data record and select an option from the "Measure against target" menu.' %}
                     {% endifequal %}
 
                     {% ifequal err 'Error_3' %}
-                    {% trans 'This date falls outside the range of your target periods. Please select a date between ' %} {{ program.reporting_period_start|date:"MEDIUM_DATE_FORMAT" }} {% trans 'and ' %} {{ program.reporting_period_end|date:"MEDIUM_DATE_FORMAT" }}.
+                        {% trans 'This date falls outside the range of your target periods. Please select a date between ' %} {{ program.reporting_period_start|date:"MEDIUM_DATE_FORMAT" }} {% trans 'and ' %} {{ program.reporting_period_end|date:"MEDIUM_DATE_FORMAT" }}.
                     {% endifequal %}
                 </small>
             </span>
