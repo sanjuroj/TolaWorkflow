@@ -1,14 +1,17 @@
-#! /usr/local/bin/python2
+#! /usr/local/bin/python
 
 """
 This script uses GitHub APIs to fetch a list of issues associated with a project.
 It outputs issue numbers and titles for all cards in all columns of the project.
 The output is particularly useful for putting into the GitHub release notes.
+You can store your github token in the settings.secret.yml file, if you wish, as GITHUB_TOKEN
 """
 
 import requests
 from requests.auth import HTTPBasicAuth
 import json
+import os
+import yaml
 import sys
 import re
 import getpass
@@ -20,7 +23,14 @@ print '\nEnter 1 to use GitHub token authorization (https://github.com/settings/
 print 'Enter 2 to use GitHub username and password: '
 auth_pref = raw_input('Enter 1 or 2: ')
 if auth_pref == '1':
-    token = getpass.getpass('GitHub token: ')
+    CONFIG_PATH = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir, os.pardir, 'config', 'settings.secret.yml'))
+    with open(CONFIG_PATH, 'r') as fh:
+        app_settings = yaml.load(fh)
+    try:
+        token = app_settings['GITHUB_TOKEN']
+        print 'Found your GitHub key in the settings file\n'
+    except KeyError:
+        token = getpass.getpass('GitHub token: ')
     headers['Authorization'] = 'token %s' % token
     auth = ''
 elif auth_pref == '2':
@@ -34,8 +44,8 @@ else:
 
 projects_url = 'https://api.github.com/repos/mercycorps/TolaActivity/projects'
 columns_template = 'https://api.github.com/projects/%s/columns'
-cards_template = 'https://api.github.com/projects/columns/%s/cards'
-issue_template = 'https://api.github.com/repos/mercycorps/TolaActivity/issues/%s'
+cards_template = 'https://api.github.com/projects/columns/{}/cards'
+issue_template = 'https://api.github.com/repos/mercycorps/TolaActivity/issues/{}'
 
 # Get the project id
 print 'Fetching data'
@@ -68,15 +78,23 @@ for col_id in column_ids:
 
     # Loop through each card in each column and the the issue data associated
     # with the card
-    cards_url = cards_template % col_id
-    cards_response = requests.get(cards_url, headers=headers, auth=auth)
+    cards_url_partial = cards_template.format(col_id) + '?page={}'
+    page_num = 1
+    has_next = True
+    while has_next:
+        cards_url = cards_url_partial.format(page_num)
+        cards_response = requests.get(cards_url, headers=headers, auth=auth)
+        for card in json.loads(cards_response.text):
+            match = re.search('(\d+)$', card['content_url'])
+            issue_num = match.group(1)
+            issue_url = issue_template.format(issue_num)
+            issue_response = requests.get(issue_url, headers=headers, auth=auth)
+            issues.append((issue_num, json.loads(issue_response.text)['title']))
 
-    for card in json.loads(cards_response.text):
-        match = re.search('(\d+)$', card['content_url'])
-        issue_num = match.group(1)
-        issue_url = issue_template % issue_num
-        issue_response = requests.get(issue_url, headers=headers, auth=auth)
-        issues.append((issue_num, json.loads(issue_response.text)['title']))
+        if 'next' in cards_response.links:
+            page_num += 1
+        else:
+            has_next = False
 
 if issues:
     issues.sort(key=lambda k: int(k[0]), reverse=True)
