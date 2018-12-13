@@ -16,17 +16,17 @@
     }
 }
 .collected-data__result--date {
-    border-left: 1px solid $gray-150;
+    border-left: 1px solid $gray-200;
     white-space: nowrap;
 }
 .collected-data__result--value {
-    border-right: 1px solid $gray-150;
+    border-right: 1px solid $gray-200;
     text-align: right;
     white-space: nowrap;
 }
 .collected-data__result--nodata {
-    border-left: 1px solid $gray-150;
-    border-right: 1px solid $gray-150;
+    border-left: 1px solid $gray-200;
+    border-right: 1px solid $gray-200;
     white-space: nowrap;
 }
 
