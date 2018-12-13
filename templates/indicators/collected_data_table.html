@@ -80,7 +80,7 @@
 
             {% for cdata in item.getcollected_data %}
             {% if not forloop.first %}<tr class="collected-data__row--supplemental">{% endif %}
-                <td class="result__date {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
+                <td class="collected-data__result--date {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
                     {% if is_editable is False %}
                         {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                     {% else %}
@@ -90,7 +90,7 @@
                         {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                     </a>
                     {% endif %}
-                <td class="result__value {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
+                <td class="collected-data__result--value {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
                     {% with achieved=cdata.achieved|floatformat:"-2" %}
                     {{ achieved }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                     {% endwith %}
@@ -117,7 +117,7 @@
                     {% endif %}
                 </td>
                 {% empty %}
-                <td class="result__nodata" colspan="2">
+                <td class="collected-data__result--nodata" colspan="2">
                     {% trans "No data collected" %}
                 </td>
                 <td></td>

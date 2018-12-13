@@ -15,19 +15,18 @@
         background: $white;
     }
 }
-.collected-data-table__result {
-}
-.result__date {
+.collected-data__result--date {
     border-left: 1px solid $gray-150;
     white-space: nowrap;
 }
-.result__value {
+.collected-data__result--value {
     border-right: 1px solid $gray-150;
     text-align: right;
     white-space: nowrap;
 }
-.result__nodata {
+.collected-data__result--nodata {
     border-left: 1px solid $gray-150;
+    border-right: 1px solid $gray-150;
     white-space: nowrap;
 }
 

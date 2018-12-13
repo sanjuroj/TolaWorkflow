@@ -6990,17 +6990,18 @@ body > .container {
   .collected-data-table td {
     background: #fff; }
 
-.result__date {
+.collected-data__result--date {
   border-left: 1px solid #f5f5f5;
   white-space: nowrap; }
 
-.result__value {
+.collected-data__result--value {
   border-right: 1px solid #f5f5f5;
   text-align: right;
   white-space: nowrap; }
 
-.result__nodata {
+.collected-data__result--nodata {
   border-left: 1px solid #f5f5f5;
+  border-right: 1px solid #f5f5f5;
   white-space: nowrap; }
 
 .collected-data__row--supplemental td {
