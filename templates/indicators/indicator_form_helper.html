@@ -282,54 +282,44 @@
             </div>
             <div role="tabpanel" class="tab-pane" id="dataAcquisitionTab">
                 <fieldset>
-                    <br>
-                    <div class="form-row mb-3" id="div_id_means_of_verification">
-                        <label for="id_means_of_verification" class="col-sm-4 col-form-label" align="right">{{ form.means_of_verification.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.means_of_verification class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.means_of_verification.help_text }}</small>
-                            <span id="validation_id_means_of_verification" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_means_of_verification">
+                        <label for="id_means_of_verification" class="">{{ form.means_of_verification.label }} </label>
+                        {% render_field form.means_of_verification class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.means_of_verification.help_text }}</small>
+                        <span id="validation_id_means_of_verification" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_data_collection_method">
-                        <label for="id_data_collection_method" class="col-sm-4 col-form-label" align="right">{{ form.data_collection_method.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.data_collection_method class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.data_collection_method.help_text }}</small>
-                            <span id="validation_id_data_collection_method" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_data_collection_method">
+                        <label for="id_data_collection_method" class="">{{ form.data_collection_method.label }} </label>
+                        {% render_field form.data_collection_method class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.data_collection_method.help_text }}</small>
+                        <span id="validation_id_data_collection_method" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_data_collection_frequency">
-                        <label for="id_data_collection_frequency" class="col-sm-4 col-form-label" align="right">{{ form.data_collection_frequency.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.data_collection_frequency class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.data_collection_frequency.help_text }}</small>
-                            <span id="validation_id_data_collection_frequency" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_data_collection_frequency">
+                        <label for="id_data_collection_frequency" class="">{{ form.data_collection_frequency.label }} </label>
+                        {% render_field form.data_collection_frequency class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.data_collection_frequency.help_text }}</small>
+                        <span id="validation_id_data_collection_frequency" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_data_points">
-                        <label for="id_data_points" class="col-sm-4 col-form-label" align="right">{{ form.data_points.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.data_points class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.data_points.help_text }}</small>
-                            <span id="validation_id_data_points" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_data_points">
+                        <label for="id_data_points" class="">{{ form.data_points.label }} </label>
+                        {% render_field form.data_points class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.data_points.help_text }}</small>
+                        <span id="validation_id_data_points" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_responsible_person">
-                        <label for="id_responsible_person" class="col-sm-4 col-form-label" align="right">{{ form.responsible_person.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.responsible_person class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.responsible_person.help_text }}</small>
-                            <span id="validation_id_responsible_person" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_responsible_person">
+                        <label for="id_responsible_person" class="">{{ form.responsible_person.label }} </label>
+                        {% render_field form.responsible_person class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.responsible_person.help_text }}</small>
+                        <span id="validation_id_responsible_person" class="has-error"></span>
                     </div>
 
                 </fieldset>
-            </div>
+            </div><!--/#dataAcquisitionTab-->
+
             <div role="tabpanel" class="tab-pane" id="analysisReportingTab">
                 <br>
                 <fieldset>
