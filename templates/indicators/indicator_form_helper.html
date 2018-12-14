@@ -382,28 +382,24 @@
             </div><!--/#analysisReportingTab-->
 
             <div role="tabpanel" class="tab-pane" id="approvalTab">
-                <br>
                 <fieldset>
 
-                    <div class="form-row mb-3" id="div_id_approval_submitted_by">
-                        <label for="id_approval_submitted_by" class="col-sm-4 col-form-label" align="right">{{ form.approval_submitted_by.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.approval_submitted_by class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.approval_submitted_by.help_text }}</small>
-                            <span id="validation_id_approval_submitted_by" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_approval_submitted_by">
+                        <label for="id_approval_submitted_by" class="">{{ form.approval_submitted_by.label }} </label>
+                        {% render_field form.approval_submitted_by class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.approval_submitted_by.help_text }}</small>
+                        <span id="validation_id_approval_submitted_by" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_approved_by">
-                        <label for="id_approved_by" class="col-sm-4 col-form-label" align="right">{{ form.approved_by.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.approved_by class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.approved_by.help_text }}</small>
-                            <span id="validation_id_approved_by" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_approved_by">
+                        <label for="id_approved_by" class="">{{ form.approved_by.label }} </label>
+                        {% render_field form.approved_by class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.approved_by.help_text }}</small>
+                        <span id="validation_id_approved_by" class="has-error"></span>
                     </div>
                 </fieldset>
-            </div>
+            </div><!--/#approvalTab-->
+
         </div>
 
     </div> <!-- modal body -->
