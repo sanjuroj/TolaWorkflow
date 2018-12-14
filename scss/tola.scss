@@ -84,10 +84,11 @@
 @import 'components/program_complete'; // Program percent complete with wee calendar icon
 @import 'components/home'; // Home page
 @import 'components/list_filters'; // List filters
+@import 'components/forms';
 
 /* Local custom CSS and overloads for non-BS libraries */
 @import 'mixins';
-@import 'mc_tola_forms';
+@import 'mc_tola_forms'; // extremely custom!
 @import 'maps';
 @import 'charts';
 @import 'branding';

@@ -7164,6 +7164,9 @@ body > .container {
     flex-grow: 1;
     width: 1%; }
 
+.label--required:after {
+  content: "*"; }
+
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
   color: #71757b !important;
