@@ -14,7 +14,8 @@
                 {% if not program.reporting_period_start or not program.reporting_period_end %} {# no start/end dates #}
                     <h4>{{ program.name }}</h4>
                     <div class="text-muted">
-                        {% trans "Before adding indicators and performance results, we need to know your program's" %}
+                        {% blocktrans %}
+                        Before adding indicators and performance results, we need to know your program’s
                         <a
                             class="pl-1"
                             href="#"
@@ -25,8 +26,8 @@
                             data-rptstart="{{ program.reporting_period_start }}"
                             data-rptend="{{ program.reporting_period_end }}"
                             data-target="#id_reporting_period_modal">
-                            {% trans "reporting start and end dates." %}
-                        </a>
+                            program start and end dates.</a>
+                        {% endblocktrans %}
                     </div>
 
                 {% elif not program.indicator_set.all %} {# no indicators #}
@@ -79,7 +80,8 @@
                                 data-rptstart="{{ program.reporting_period_start }}"
                                 data-rptend="{{ program.reporting_period_end }}"
                                 data-target="#id_reporting_period_modal">
-                                    {% trans 'Reporting period' %}
+                                    {# Translators: The time period over which a project will take place. #}
+                                    {% trans 'Program period' %}
                             </a></small>
                         </li>
                         {% if program.reporting_period_start and program.reporting_period_end %}
