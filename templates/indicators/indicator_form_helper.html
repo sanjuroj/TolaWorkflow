@@ -38,164 +38,117 @@
 
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="summaryTab">
-                <br>
                 <fieldset>
-                    <div class="form-row mb-3" id="div_id_name">
-                        <label for="id_name" class="col-sm-4 col-form-label" align="right">{{ form.name.label }}* </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.name class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.name.help_text }}</small>
-                            <span id="validation_id_name" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_name">
+                        <label for="id_name" class="label--required">{{ form.name.label }}</label>
+                        {% render_field form.name class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.name.help_text }}</small>
+                        <span id="validation_id_name" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_program">
-                        <label for="id_program" class="col-sm-4 col-form-label" align="right">{{ form.program.label }}</label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.program class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.program.help_text }}</small>
-                            <span id="validation_id_program" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_program">
+                        <label for="id_program" class="">{{ form.program.label }}</label>
+                        {% render_field form.program class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.program.help_text }}</small>
+                        <span id="validation_id_program" class="has-error"></span>
                     </div>
 
-
-                    <!-- <div class="form-row mb-2" id="div_id_program">
-                        <label for="id_program" class="col-sm-4 col-form-label" align="right">{{ form.program.label }}</label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.program class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.program.help_text }}</small>
-                        </div>
-                    </div> -->
-
-                    <div class="form-row mb-3" id="div_id_sector">
-                        <label for="id_sector" class="col-sm-4 col-form-label" align="right">{{ form.sector.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.sector class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.sector.help_text }}</small>
-                            <span id="validation_id_sector" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_sector">
+                        <label for="id_sector" class="">{{ form.sector.label }} </label>
+                        {% render_field form.sector class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.sector.help_text }}</small>
+                        <span id="validation_id_sector" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_objectives">
-                        <label for="id_objectives" class="col-sm-4 col-form-label" align="right">{{ form.objectives.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.objectives class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.objectives.help_text }}</small>
-                            <span id="validation_id_objectives" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_objectives">
+                        <label for="id_objectives" class="">{{ form.objectives.label }} </label>
+                        {% render_field form.objectives class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.objectives.help_text }}</small>
+                        <span id="validation_id_objectives" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-2" id="div_id_strategic_objectives">
-                        <label for="id_strategic_objectives" class="col-sm-4 col-form-label" align="right">{{ form.strategic_objectives.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.strategic_objectives class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.strategic_objectives.help_text }}</small>
-                            <span id="validation_id_strategic_objectives" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_strategic_objectives">
+                        <label for="id_strategic_objectives" class="">{{ form.strategic_objectives.label }} </label>
+                        {% render_field form.strategic_objectives class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.strategic_objectives.help_text }}</small>
+                        <span id="validation_id_strategic_objectives" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-2" id="div_id_remove_indicator">
-                        <div class="col-sm-7 offset-sm-4">
-                            <button
-                                type="button"
-                                id="id_delete_indicator_btn"
-                                onclick='location.href="/indicators/indicator_delete/{{ indicator.id }}"'
-                                class="btn btn-sm btn-link btn-danger pr-1"
-                                style="float: right">
-                                    <i class="fas fa-trash-alt"></i> {% trans "Delete this indicator" %}</a>
-                            </button>
-                        </div>
+                    <div class="form-group text-right" id="div_id_remove_indicator">
+                        <button
+                            type="button"
+                            id="id_delete_indicator_btn"
+                            onclick='location.href="/indicators/indicator_delete/{{ indicator.id }}"'
+                            class="btn btn-sm btn-link btn-danger">
+                                <i class="fas fa-trash-alt"></i> {% trans "Delete this indicator" %}</a>
+                        </button>
                     </div>
 
                 </fieldset>
             </div>
+
             <div role="tabpanel" class="tab-pane" id="performanceTab" name="Performance tab">
-                <br>
                 <fieldset>
-                    <!-- <div class="form-row mb-3" id="div_id_name">
-                        <label for="id_name" class="col-sm-4 col-form-label" align="right">{{ form.name.label }}* </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.name class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.name.help_text }}</small>
-                            <span id="validation_id_name" class="has-error"></span>
-                        </div>
-                    </div> -->
 
-                    <div class="form-row mb-3" id="div_id_level">
-                        <label for="id_level" class="col-sm-4 col-form-label" align="right">{{ form.level.label }}* </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.level class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.level.help_text }}</small>
-                            <span id="validation_id_level" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_level">
+                        <label for="id_level" class="label--required">{{ form.level.label }}</label>
+                        {% render_field form.level class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.level.help_text }}</small>
+                        <span id="validation_id_level" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_number">
-                        <label for="id_number" class="col-sm-4 col-form-label" align="right">{{ form.number.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.number class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.number.help_text }}</small>
-                            <span id="validation_id_number" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_number">
+                        <label for="id_number" class="">{{ form.number.label }} </label>
+                        {% render_field form.number class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.number.help_text }}</small>
+                        <span id="validation_id_number" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_source">
-                        <label for="id_source" class="col-sm-4 col-form-label" align="right">{{ form.source.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.source class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.source.help_text }}</small>
-                            <span id="validation_id_source" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_source">
+                        <label for="id_source" class="">{{ form.source.label }} </label>
+                        {% render_field form.source class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.source.help_text }}</small>
+                        <span id="validation_id_source" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_definition">
-                        <label for="id_definition" class="col-sm-4 col-form-label" align="right">{{ form.definition.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.definition class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.definition.help_text }}</small>
-                            <span id="validation_id_definition" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_definition">
+                        <label for="id_definition" class="">{{ form.definition.label }} </label>
+                        <small class="form-text text-muted">{{ form.definition.help_text }}</small>
+                        <span id="validation_id_definition" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_justification">
-                        <label for="id_justification" class="col-sm-4 col-form-label" align="right">{{ form.justification.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.justification class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.justification.help_text }}</small>
-                            <span id="validation_id_justification" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_justification">
+                        <label for="id_justification" class="">{{ form.justification.label }} </label>
+                        {% render_field form.justification class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.justification.help_text }}</small>
+                        <span id="validation_id_justification" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_disaggregation">
-                        <label for="id_disaggregation" class="col-sm-4 col-form-label" align="right">{{ form.disaggregation.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.disaggregation class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.disaggregation.help_text }}</small>
-                            <span id="validation_id_disaggregation" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_disaggregation">
+                        <label for="id_disaggregation" class="">{{ form.disaggregation.label }} </label>
+                        {% render_field form.disaggregation class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.disaggregation.help_text }}</small>
+                        <span id="validation_id_disaggregation" class="has-error"></span>
                     </div>
 
-                    <div class="form-row" id="div_id_indicator_type">
-                        <label for="id_indicator_type" class="col-sm-4 col-form-label" align="right">{{ form.indicator_type.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.indicator_type class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.indicator_type.help_text }}</small>
-                            <span id="validation_id_indicator_type" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_indicator_type">
+                        <label for="id_indicator_type" class="">{{ form.indicator_type.label }} </label>
+                        {% render_field form.indicator_type class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.indicator_type.help_text }}</small>
+                        <span id="validation_id_indicator_type" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_key_performance_indicator">
-                        <label for="id_key_performance_indicator" class="col-sm-4 col-form-label" align="right"></label>
-                        <div class=" col-sm-7 div-input-container d-flex">
-                            {{ form.key_performance_indicator }}
-                            <label for="id_key_performance_indicator" class="col-form-label">{{ form.key_performance_indicator.label }}</label>
-                            <small class="form-text text-muted">{{ form.key_performance_indicator.help_text }}</small>
-                            <span id="validation_id_key_performance_indicator" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_key_performance_indicator">
+                        <label for="id_key_performance_indicator" class=""></label>
+                        {{ form.key_performance_indicator }}
+                        <label for="id_key_performance_indicator" class="">{{ form.key_performance_indicator.label }}</label>
+                        <small class="form-text text-muted">{{ form.key_performance_indicator.help_text }}</small>
+                        <span id="validation_id_key_performance_indicator" class="has-error"></span>
                     </div>
 
                 </fieldset>
             </div>
+
             <div role="tabpanel" class="tab-pane" id="targetsTab" name="Targets tab">
                 <br>
                 <fieldset>
