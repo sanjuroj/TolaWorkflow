@@ -321,82 +321,66 @@
             </div><!--/#dataAcquisitionTab-->
 
             <div role="tabpanel" class="tab-pane" id="analysisReportingTab">
-                <br>
                 <fieldset>
-                    <div class="form-row mb-3" id="div_id_method_of_analysis">
-                        <label for="id_method_of_analysis" class="col-sm-4 col-form-label" align="right">{{ form.method_of_analysis.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.method_of_analysis class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.method_of_analysis.help_text }}</small>
-                            <span id="validation_id_method_of_analysis" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_method_of_analysis">
+                        <label for="id_method_of_analysis" class="">{{ form.method_of_analysis.label }} </label>
+                        {% render_field form.method_of_analysis class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.method_of_analysis.help_text }}</small>
+                        <span id="validation_id_method_of_analysis" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_information_use">
-                        <label for="id_information_use" class="col-sm-4 col-form-label" align="right">{{ form.information_use.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.information_use class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.information_use.help_text }}</small>
-                            <span id="validation_id_information_use" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_information_use">
+                        <label for="id_information_use" class="">{{ form.information_use.label }} </label>
+                        {% render_field form.information_use class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.information_use.help_text }}</small>
+                        <span id="validation_id_information_use" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_reporting_frequency">
-                        <label for="id_reporting_frequency" class="col-sm-4 col-form-label" align="right">{{ form.reporting_frequency.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.reporting_frequency class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.reporting_frequency.help_text }}</small>
-                            <span id="validation_id_reporting_frequency" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_reporting_frequency">
+                        <label for="id_reporting_frequency" class="">{{ form.reporting_frequency.label }} </label>
+                        {% render_field form.reporting_frequency class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.reporting_frequency.help_text }}</small>
+                        <span id="validation_id_reporting_frequency" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_quality_assurance">
-                        <label for="id_quality_assurance" class="col-sm-4 col-form-label" align="right">{{ form.quality_assurance.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.quality_assurance class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.quality_assurance.help_text }}</small>
-                            <span id="validation_id_quality_assurance" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_quality_assurance">
+                        <label for="id_quality_assurance" class="">{{ form.quality_assurance.label }} </label>
+                        {% render_field form.quality_assurance class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.quality_assurance.help_text }}</small>
+                        <span id="validation_id_quality_assurance" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_data_issues">
-                        <label for="id_data_issues" class="col-sm-4 col-form-label" align="right">{{ form.data_issues.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.data_issues class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.data_issues.help_text }}</small>
-                            <span id="validation_id_data_issues" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_data_issues">
+                        <label for="id_data_issues" class="">{{ form.data_issues.label }} </label>
+                        {% render_field form.data_issues class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.data_issues.help_text }}</small>
+                        <span id="validation_id_data_issues" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_indicator_changes">
-                        <label for="id_indicator_changes" class="col-sm-4 col-form-label" align="right">{{ form.indicator_changes.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.indicator_changes class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.indicator_changes.help_text }}</small>
-                            <span id="validation_id_indicator_changes" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_indicator_changes">
+                        <label for="id_indicator_changes" class="">{{ form.indicator_changes.label }} </label>
+                        {% render_field form.indicator_changes class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.indicator_changes.help_text }}</small>
+                        <span id="validation_id_indicator_changes" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_comments">
-                        <label for="id_comments" class="col-sm-4 col-form-label" align="right">{{ form.comments.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.comments class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.comments.help_text }}</small>
-                            <span id="validation_id_comments" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_comments">
+                        <label for="id_comments" class="">{{ form.comments.label }} </label>
+                        {% render_field form.comments class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.comments.help_text }}</small>
+                        <span id="validation_id_comments" class="has-error"></span>
                     </div>
 
-                    <div class="form-row mb-3" id="div_id_notes">
-                        <label for="id_notes" class="col-sm-4 col-form-label" align="right">{{ form.notes.label }} </label>
-                        <div class=" col-sm-7 div-input-container">
-                            {% render_field form.notes class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.notes.help_text }}</small>
-                            <span id="validation_id_notes" class="has-error"></span>
-                        </div>
+                    <div class="form-group" id="div_id_notes">
+                        <label for="id_notes" class="">{{ form.notes.label }} </label>
+                        {% render_field form.notes class+="form-control" %}
+                        <small class="form-text text-muted">{{ form.notes.help_text }}</small>
+                        <span id="validation_id_notes" class="has-error"></span>
                     </div>
 
                 </fieldset>
-            </div>
+            </div><!--/#analysisReportingTab-->
+
             <div role="tabpanel" class="tab-pane" id="approvalTab">
                 <br>
                 <fieldset>
