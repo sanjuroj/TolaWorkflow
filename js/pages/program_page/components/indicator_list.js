@@ -16,32 +16,32 @@ function getStatusIndicatorString(filterType, indicatorCount) {
     let fmts;
     switch (filterType) {
         case IndicatorFilterType.missingTarget:
-            // Translators: The number of indicators that do not have targets defined on them
+            // # Translators: The number of indicators that do not have targets defined on them
             fmts = ngettext("%s indicator has missing targets", "%s indicators have missing targets", indicatorCount);
             return interpolate(fmts, [indicatorCount]);
         case IndicatorFilterType.missingResults:
-            // Translators: The number of indicators that no one has entered in any results for
+            // # Translators: The number of indicators that no one has entered in any results for
             fmts = ngettext("%s indicator has no results", "%s indicators have no results", indicatorCount);
             return interpolate(fmts, [indicatorCount]);
         case IndicatorFilterType.missingEvidence:
-            // Translators: The number of indicators that contain results that are not backed up with evidence
+            // # Translators: The number of indicators that contain results that are not backed up with evidence
             fmts = ngettext("%s indicator has results without evidence", "%s indicators have results without evidence", indicatorCount);
             return interpolate(fmts, [indicatorCount]);
         case IndicatorFilterType.aboveTarget:
-            // Translators: shows what number of indicators are a certain percentage above target. Example: 3 indicators are >15% above target
+            // # Translators: shows what number of indicators are a certain percentage above target. Example: 3 indicators are >15% above target
             fmts = ngettext("%s indicator is >15% above target", "%s indicators are >15% above target", indicatorCount);
             return interpolate(fmts, [indicatorCount]);
         case IndicatorFilterType.belowTarget:
-            // Translators: shows what number of indicators are a certain percentage below target. Example: 3 indicators are >15% below target
+            // # Translators: shows what number of indicators are a certain percentage below target. Example: 3 indicators are >15% below target
             fmts = ngettext("%s indicator is >15% below target", "%s indicators are >15% below target", indicatorCount);
             return interpolate(fmts, [indicatorCount]);
         case IndicatorFilterType.onTarget:
-            // Translators: shows what number of indicators are within a set range of target. Example: 3 indicators are on track
+            // # Translators: shows what number of indicators are within a set range of target. Example: 3 indicators are on track
             fmts = ngettext("%s indicator is on track", "%s indicators are on track", indicatorCount);
             return interpolate(fmts, [indicatorCount]);
 
         default:
-            // Translators: the number of indicators in a list. Example: 3 indicators
+            // # Translators: the number of indicators in a list. Example: 3 indicators
             fmts = ngettext("%s indicator", "%s indicators", indicatorCount);
             return interpolate(fmts, [indicatorCount]);
     }

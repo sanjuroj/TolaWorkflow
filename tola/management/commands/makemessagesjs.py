@@ -77,19 +77,27 @@ class Command(makemessages.Command):
 
     def js_file_stats(self):
         gettext_pattern = r'n?p?gettext|gettext_noop'
+        translator_comment_pattern = r'Translators:'
 
         js_file_str_counts = collections.defaultdict(int)
+        js_file_comment_counts = collections.defaultdict(int)
 
         file_list = self.find_files(".")
         for js_file in file_list:  # list of TranslatableFiles
             with open(js_file.path) as f:
-                i18n_strs_count = len(re.findall(gettext_pattern, f.read()))
-                js_file_str_counts[js_file.path[2:]] += i18n_strs_count  # remove './' off js file path
+                whole_file = f.read()
+                i18n_strs_count = len(re.findall(gettext_pattern, whole_file))
+                translator_comment_count = len(re.findall(translator_comment_pattern, whole_file))
 
-        return js_file_str_counts
+                js_file_path = js_file.path[2:]  # remove './' off js file path
+                js_file_str_counts[js_file_path] += i18n_strs_count
+                js_file_comment_counts[js_file_path] += translator_comment_count
+
+        return js_file_str_counts, js_file_comment_counts
 
     def pot_file_stats(self):
         pot_file_str_counts = collections.defaultdict(int)
+        pot_file_comment_counts = collections.defaultdict(int)
 
         # self.locale_paths can contain duplicates, so prevent the same .pot file from being read twice
         seen_pot_files = set()
@@ -100,21 +108,26 @@ class Command(makemessages.Command):
                 if not os.path.exists(potfile) or potfile in seen_pot_files:
                     continue
                 with open(potfile) as f:
-                    for line in f.readlines():
+                    file_lines = f.readlines()
+                    for lineno, line in enumerate(file_lines):
                         if line.startswith('#: '):
                             js_file_name = line[3:].split(':')[0]
                             pot_file_str_counts[js_file_name] += 1
 
+                            # Check to see if the prev line is a comment
+                            if file_lines[lineno-1].startswith('#. '):
+                                pot_file_comment_counts[js_file_name] += 1
+
                     seen_pot_files.add(potfile)
-        return pot_file_str_counts
+        return pot_file_str_counts, pot_file_comment_counts
 
     def print_i18n_js_stats(self):
         """
         There was some trouble parsing out all of the strings marked for translation from JS files
         so print out some stats of found strings as a sanity check
         """
-        pot_file_str_counts = self.pot_file_stats()
-        js_file_str_counts = self.js_file_stats()
+        pot_file_str_counts, pot_file_comment_counts = self.pot_file_stats()
+        js_file_str_counts, js_file_comment_counts = self.js_file_stats()
 
         self.stdout.write('\n')
 
@@ -122,6 +135,9 @@ class Command(makemessages.Command):
         for file_name, count in js_file_str_counts.items():
             js_count = js_file_str_counts.get(file_name, 0)
             pot_count = pot_file_str_counts.get(file_name, 0)
+
+            js_comment_count = js_file_comment_counts.get(file_name, 0)
+            pot_comment_count = pot_file_comment_counts.get(file_name, 0)
 
             if js_count == 0 and pot_count == 0:
                 continue
@@ -133,6 +149,17 @@ class Command(makemessages.Command):
             )
 
             if js_count == pot_count:
+                self.stdout.write(self.style.SUCCESS(out_str))
+            else:
+                self.stdout.write(self.style.WARNING(out_str))
+
+            out_str = '{file_name}: Translator comments in .pot/.js: [{pot_comment_count}/{js_comment_count}]'.format(
+                file_name=file_name,
+                pot_comment_count=pot_comment_count,
+                js_comment_count=js_comment_count,
+            )
+
+            if js_comment_count == pot_comment_count:
                 self.stdout.write(self.style.SUCCESS(out_str))
             else:
                 self.stdout.write(self.style.WARNING(out_str))

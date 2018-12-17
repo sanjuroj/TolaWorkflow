@@ -137,7 +137,7 @@ class GaugeBand extends React.Component {
         if (indicatorStore.getTotalResultsCount === 0) {
             return <Gauge>
                 <div>
-                    {/* Translators: message describing why this display does not show any data. */}
+                    {/* # Translators: message describing why this display does not show any data. */}
                     <p className="text-muted">{gettext("Unavailable until results are reported")}</p>
                     <div>
                         <i className="gauge__icon gauge__icon--error fas fa-frown"/>
@@ -155,7 +155,7 @@ class GaugeBand extends React.Component {
                 </div>
                 <div className="gauge__labels">
                     <div className="gauge__label">
-                        {/* Translators: message describing why this display does not show any data. */}
+                        {/* # Translators: message describing why this display does not show any data. */}
                         <p className="text-muted">{gettext("Unavailable until the first target period ends with results reported")}</p>
                     </div>
                 </div>
@@ -165,19 +165,19 @@ class GaugeBand extends React.Component {
         // Handle strings containing HTML markup
 
         const aboveTargetMarkup = () => {
-            /* Translators: variable %(percentHigh)s shows what percentage of indicators are a certain percentage above target percent %(marginPercent)s. Example: 31% are >15% above target */
+            /* # Translators: variable %(percentHigh)s shows what percentage of indicators are a certain percentage above target percent %(marginPercent)s. Example: 31% are >15% above target */
             let s = gettext('<strong>%(percentHigh)s%</strong> are >%(marginPercent)s% above target');
             return {__html: interpolate(s, {percentHigh, marginPercent}, true)};
         };
 
         const onTargetMarkup = () => {
-            /* Translators: variable %s shows what percentage of indicators are within a set range of target. Example: 31%  are on track */
+            /* # Translators: variable %s shows what percentage of indicators are within a set range of target. Example: 31%  are on track */
             let s = gettext('<strong>%s%</strong> are on track');
             return {__html: interpolate(s, [percentOnTarget])};
         };
 
         const belowTargetMarkup = () => {
-            /* Translators: variable %(percentBelow)s shows what percentage of indicators are a certain percentage below target. The variable %(marginPercent)s is that percentage. Example: 31% are >15% below target */
+            /* # Translators: variable %(percentBelow)s shows what percentage of indicators are a certain percentage below target. The variable %(marginPercent)s is that percentage. Example: 31% are >15% below target */
             let s = gettext('<strong>%(percentBelow)s%</strong> are >%(marginPercent)s% below target');
             return {__html: interpolate(s, {percentBelow, marginPercent}, true)};
         };
@@ -199,7 +199,7 @@ class GaugeBand extends React.Component {
                 <div className="gauge__label">
                     <span className="text-muted">
                         {
-                            /* Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
+                            /* # Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
                             interpolate(gettext('%s% unavailable'), [percentNonReporting])
                         }
                     </span>
@@ -210,7 +210,7 @@ class GaugeBand extends React.Component {
                        data-placement="right"
                        data-trigger="focus"
                        data-content={
-                           /* Translators: help text for the percentage of indicators with no targets reporting data. */
+                           /* # Translators: help text for the percentage of indicators with no targets reporting data. */
                            gettext("The indicator has no targets, no completed target periods, or no results reported.")
                        }
                        onClick={e => e.preventDefault()}
@@ -234,7 +234,7 @@ class GaugeBand extends React.Component {
                        data-placement="right"
                        data-trigger="focus"
                        data-content={
-                           /* Translators: Help text explaining what an "on track" indicator is. */
+                           /* # Translators: Help text explaining what an "on track" indicator is. */
                            gettext('The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is 110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a decreasing direction of change, then “above” and “below” are switched. In that case, if your target is 100 and your result is 200, your indicator is 50% below target and not on track.')
                        }
                        onClick={e => e.preventDefault()}
@@ -264,13 +264,13 @@ export const ProgramMetrics = observer(function (props) {
     // Use objs for labels below to allow for translator notes to be added
 
     const targetLabels = {
-        /* Translators: title of a graphic showing indicators with targets */
+        /* # Translators: title of a graphic showing indicators with targets */
         title: gettext("Indicators with targets"),
 
-        /* Translators: a label in a graphic. Example: 31% have targets */
+        /* # Translators: a label in a graphic. Example: 31% have targets */
         filledLabel: gettext("have targets"),
 
-        /* Translators: a label in a graphic. Example: 31% no targets */
+        /* # Translators: a label in a graphic. Example: 31% no targets */
         unfilledLabel: gettext("no targets"),
 
         cta: gettext("Add missing targets"),
@@ -279,13 +279,13 @@ export const ProgramMetrics = observer(function (props) {
     };
 
     const resultsLabels = {
-        /* Translators: title of a graphic showing indicators with results */
+        /* # Translators: title of a graphic showing indicators with results */
         title: gettext("Indicators with results"),
 
-        /* Translators: a label in a graphic. Example: 31% have results */
+        /* # Translators: a label in a graphic. Example: 31% have results */
         filledLabel: gettext("have results"),
 
-        /* Translators: a label in a graphic. Example: 31% no results */
+        /* # Translators: a label in a graphic. Example: 31% no results */
         unfilledLabel: gettext("no results"),
 
         cta: gettext("Add missing results"),
@@ -294,13 +294,13 @@ export const ProgramMetrics = observer(function (props) {
     };
 
     const evidenceLabels = {
-        /* Translators: title of a graphic showing results with evidence */
+        /* # Translators: title of a graphic showing results with evidence */
         title: gettext("Results with evidence"),
 
-        /* Translators: a label in a graphic. Example: 31% have evidence */
+        /* # Translators: a label in a graphic. Example: 31% have evidence */
         filledLabel: gettext("have evidence"),
 
-        /* Translators: a label in a graphic. Example: 31% no evidence */
+        /* # Translators: a label in a graphic. Example: 31% no evidence */
         unfilledLabel: gettext("no evidence"),
 
         cta: gettext("Add missing evidence"),
