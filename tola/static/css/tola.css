@@ -6979,15 +6979,22 @@ body > .container {
 .indicators-list__indicator-actions {
   margin-bottom: 15px; }
 
-.periodic-targets {
-  padding: 30px; }
+#indicator_modal_body .select2-selection {
+  border-radius: 0px;
+  border-color: #b8babd; }
 
-.periodic-target__name {
-  display: flex;
-  align-items: center; }
+#indicator_modal_body .select2-container--focus .select2-selection {
+  border-color: #3366cc;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, 0.4); }
+
+.periodic-targets {
+  background: #fff;
+  margin-bottom: 30px;
+  padding: 15px; }
 
 td.periodic-targets__sum {
-  padding: 10px 20px 10px 0; }
+  padding: 10px 20px; }
 
 .periodic-target .input-value {
   padding-right: 10px;
@@ -7775,32 +7782,6 @@ select.listoption_filters {
   border-radius: 0;
   padding-left: 5px;
   -moz-appearance: none; }
-
-#indicator_modal_body .tab-content {
-  background-color: #fff; }
-
-#indicator_modal_body .form-row > label {
-  font-weight: bold; }
-
-#indicator_modal_body .select2-selection {
-  border-radius: 0px;
-  border-color: #b8babd; }
-
-#indicator_modal_body .select2-container--focus .select2-selection {
-  border-color: #3366cc;
-  outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, 0.4); }
-
-#indicator_modal_body .div-input-container > textarea,
-#indicator_modal_body .div-input-container > input,
-#indicator_modal_body .div-input-container > select,
-#indicator_modal_body .div-input-container > .inputs-in-a-box,
-#indicator_modal_body .div-input-container .select2 {
-  max-height: 100%; }
-
-@media (max-width: 575px) {
-  #indicator_modal_body .form-row > label {
-    text-align: left; } }
 
 #div_id_unit_of_measure_type_0 {
   margin-left: 2px; }

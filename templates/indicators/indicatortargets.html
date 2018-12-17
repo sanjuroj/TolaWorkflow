@@ -15,21 +15,23 @@
                 <tbody>
                     {% for pt in periodic_targets %}
                     <tr id="{{pt.id}}" data-collected-count="{{pt.num_data}}" class="periodic-target">
-                        <td class="text-left periodic-target__name">
-                            {% if indicator.target_frequency == 8 %} {# 8 is a stand alone EVENT #}
-                                <a href=
-                                "{% if pt.id %} {% url 'pt_delete' pt.id %} {% else %} # {% endif %}"
-                                    id="deleteLastPT"
-                                    class="deletebtn btn btn-sm" >
-                                    <i class="fas fa-times text-danger"></i>
-                                </a>
-                                <input type="text" name="{{ pt.period }}" value="{{ pt.period }}" class="form-control input-text">
-                                <span style="" class="help-block"> </span>
-                                {% else %}
-                                <strong>{{ pt.period_name }}</strong>
-                                <div>{{ pt.start_date|convert2dateobject|date:"MEDIUM_DATE_FORMAT"|default:'' }} {% if pt.start_date %} - {% endif %} {{ pt.end_date|convert2dateobject|date:"MEDIUM_DATE_FORMAT"|default:'' }}</div>
-                            {% endif %}
+                        {% if indicator.target_frequency == 8 %} {# 8 is a stand alone EVENT #}
+                        <td class="text-left d-flex align-items-center">
+                            <a href=
+                            "{% if pt.id %} {% url 'pt_delete' pt.id %} {% else %} # {% endif %}"
+                                id="deleteLastPT"
+                                class="deletebtn btn btn-sm" >
+                                <i class="fas fa-times text-danger"></i>
+                            </a>
+                            <input type="text" name="{{ pt.period }}" value="{{ pt.period }}" class="form-control input-text">
+                            <span style="" class="help-block"> </span>
                         </td>
+                        {% else %}
+                        <td class="text-left">
+                            <h4 class="text-dark">{{ pt.period_name }}</h4>
+                            <div>{{ pt.start_date|convert2dateobject|date:"MEDIUM_DATE_FORMAT"|default:'' }} {% if pt.start_date %} - {% endif %} {{ pt.end_date|convert2dateobject|date:"MEDIUM_DATE_FORMAT"|default:'' }}</div>
+                        </td>
+                        {% endif %}
 
                         <td class="text-right">
                             <span id="id_span_{{ pt.id }}" class="{% if indicator.unit_of_measure_type == 2 %}input-symbol-percent{% endif %}">

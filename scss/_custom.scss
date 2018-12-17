@@ -205,39 +205,7 @@ select.listoption_filters {
 }
 
 
-#indicator_modal_body {
-    .tab-content {
-        background-color: $white;
-    }
-    .form-row > label{
-        font-weight: bold;
-    }
-    .select2-selection {
-        border-radius: 0px;
-        border-color: $gray-500;
-    }
-    .select2-container--focus .select2-selection {
-        border-color: $blue-400;
-        outline: 0;
-        box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
-    }
-    // This helps with the predictability of spacing between
-    // inputs on the indicator setup page/modal
-    // TODO: this is crazy brittle
-    .div-input-container > textarea,
-    .div-input-container > input,
-    .div-input-container > select,
-    .div-input-container > .inputs-in-a-box,
-    .div-input-container .select2 {
-        max-height: 100%
-    }
-}
-@media (max-width: 575px) { // TODO: breakpoint !
-    #indicator_modal_body .form-row > label{
-        text-align: left;
-    }
-}
-
+// indicators, unsorted
 #div_id_unit_of_measure_type_0 {
     margin-left: 2px;
 }
@@ -274,7 +242,6 @@ select.listoption_filters {
 #id_div_is_cumulative_section3 {
     display: none;
 }
-// END Indicator periodic target creation
 
 
 

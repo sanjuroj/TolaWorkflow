@@ -1,17 +1,24 @@
+#indicator_modal_body {
+    .select2-selection {
+        border-radius: 0px;
+        border-color: $gray-500;
+    }
+    .select2-container--focus .select2-selection {
+        border-color: $blue-400;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
+    }
+}
 .periodic-targets {
-    padding: $grid-gutter-width;
+    background: $white;
+    margin-bottom: $grid-gutter-width;
+    padding: $grid-gutter-width/2;
 }
 .periodic-targets__table {}
 .periodic-target {}
-.periodic-target__name {
-    display: flex;
-    align-items: center;
-}
-
 td.periodic-targets__sum { // td needed for extra specificity
-    padding: $grid-gutter-width/3 $grid-gutter-width/1.5 $grid-gutter-width/3 0;
+    padding: $grid-gutter-width/3 $grid-gutter-width/1.5;
 }
-
 // Don't define border property here.  Assigning here prevents red border from
 // being applied when there is no value
 .periodic-target .input-value {
