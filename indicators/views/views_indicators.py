@@ -1465,7 +1465,7 @@ class ProgramPage(ListView):
     metrics = False
 
     def get(self, request, *args, **kwargs):
-        countries = request.user.tola_user.countries.all()
+        # countries = request.user.tola_user.countries.all()
         program_id = int(self.kwargs['program_id'])
         unannotated_program = Program.objects.only(
             'reporting_period_start', 'reporting_period_end',
@@ -1480,7 +1480,7 @@ class ProgramPage(ListView):
                 request, 'indicators/program_setup_incomplete.html', context
                 )
         #indicator_filters = {'program__id': program_id}
-        indicator_filters = {}
+        # indicator_filters = {}
         type_filter_id = None
         indicator_filter_id = None
         type_filter_name = None
@@ -1508,18 +1508,13 @@ class ProgramPage(ListView):
 
         indicators = program.annotated_indicators\
             .annotate(target_period_last_end_date=Max('periodictargets__end_date'))
-        indicator_count = program.indicator_count
+        # indicator_count = program.indicator_count
         site_count = len(program.get_sites())
-
-        indicator_types = IndicatorType.objects.filter(indicator__program__id=program_id)
-        indicator_levels = Level.objects.filter(indicator__program__id=program_id)
 
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
                          [PinnedReport.default_report(program.id)]
         js_context = {
             'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
-            'delete_pinned_report_confirmation_msg':
-                _('Warning: This action cannot be undone. Are you sure you want to delete this pinned report?'),
             'program': ProgramSerializer(program).data,
             'indicators': IndicatorSerializer(indicators, many=True).data,
             'indicator_on_scope_margin': Indicator.ONSCOPE_MARGIN,
@@ -1527,13 +1522,9 @@ class ProgramPage(ListView):
         #program.set_metrics(indicators)
         c_data = {
             'program': program,
-            'indicators': indicators,
             'site_count': site_count,
-            'indicator_count': indicator_count,
-            'indicator_types': indicator_types,
             'indicator_filter_id': indicator_filter_id,
             'indicator_filter_name': indicator_filter_name,
-            'indicator_levels': indicator_levels,
             'type_filter_id': type_filter_id,
             'type_filter_name': type_filter_name,
             'percent_complete': program.percent_complete,

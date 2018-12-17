@@ -81,20 +81,6 @@
             "over_under": null
         }
     ],
-    "indicator_levels": [
-        {
-            "id": 1,
-            "name": "Goal"
-        },
-        {
-            "id": 3,
-            "name": "Outcome"
-        },
-        {
-            "id": 2,
-            "name": "Output"
-        }
-    ],
     "program": {
         "id": 512,
         "does_it_need_additional_target_periods": false
