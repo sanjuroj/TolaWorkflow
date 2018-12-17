@@ -117,62 +117,64 @@
         </div>
         {% endif %}
 
-        <div class="col-sm-11 mx-auto">
-            <div class="card inputs-in-a-box" id="id_div_is_cumulative">
-                <div class="card-body p-1">
-                    <!-- UNIT_OF_MEASURE_TYPE = 1 IS NUMBER AND 2 IS PERCENTAGE -->
-                    <!-- IS_CUMULATIVE = 2 and NON_CUMULATIVE = 3 -->
-                    {% with unit_type=indicator.unit_of_measure_type %}
-                        <div id="id_is_cumulative_section_header" class="d-flex flex-row px-2 pt-2 mb-1">
-                            <strong>
-                                <h4>
-                                    <span id="id_span_is_cumulative_header">
-                                        {% trans "OPTIONS FOR NUMBER (#) INDICATORS" %}
-                                    </span>
-                                </h4>
-                            </strong>
-                        </div>
-                        <div id="id_div_is_cumulative_section1" class="flex-row px-2 pb-2">
-                            <input
-                                type="radio"
-                                name="is_cumulative"
-                                value="3"
-                                required
-                                {% if indicator.is_cumulative is None or indicator.is_cumulative is False %} checked {% endif %}
-                                class="form-control mr-1 mt-1"
-                                id="id_is_cumulative_1"
-                                style="width: 1.78rem;">
-                            <label
-                                class="form-check-label"
-                                for="id_is_cumulative_1">
-                                {% trans "NON-CUMULATIVE (NC): Target period results are automatically calculated from data collected during the period. The Life of Program result is the sum of target period values." %}
-                            </label>
-                        </div>
-                        <div id="id_div_is_cumulative_section2" class="flex-row px-2">
-                            <input
-                                type="radio"
-                                name="is_cumulative"
-                                value="2"
-                                required
-                                {% if indicator.is_cumulative is True %} checked {% endif %}
-                                class="form-control mr-1 mt-1"
-                                id="id_is_cumulative_2"
-                                style="width: 1.5rem;">
-                            <label
-                                class="form-check-label"
-                                for="id_is_cumulative_2">
-                                {% trans "CUMULATIVE (C): Target period results automatically include data from previous periods. The Life of Program result mirrors the latest period value." %}
-                            </label>
-                        </div>
-                        <div id="id_div_is_cumulative_section3" class="flex-row px-2">
-                            <span class="form-check-label">
-                                {% trans "CUMULATIVE (C): The Life of Program result mirrors the latest period result. No calculations are performed with collected data." %}
-                            </span>
-                        </div>
-                    {% endwith %}
-
-                </div>
+        <div class="form-group" id="id_div_is_cumulative">
+            <!-- UNIT_OF_MEASURE_TYPE = 1 IS NUMBER AND 2 IS PERCENTAGE -->
+            <!-- IS_CUMULATIVE = 2 and NON_CUMULATIVE = 3 -->
+            {% with unit_type=indicator.unit_of_measure_type %}
+            <div class="" id="id_is_cumulative_section_header">
+                <strong>
+                    <h4>
+                        <span id="id_span_is_cumulative_header">
+                            {% trans "Options for number (#) indicators" %}
+                        </span>
+                    </h4>
+                </strong>
             </div>
+            <div id="id_div_is_cumulative_section1" class="form-check">
+                <input
+                    type="radio"
+                    name="is_cumulative"
+                    value="3"
+                    required
+                    {% if indicator.is_cumulative is None or indicator.is_cumulative is False %} checked {% endif %}
+                    class="form-control form-check-input"
+                    id="id_is_cumulative_1"
+                    >
+                <label
+                    class="form-check-label"
+                    for="id_is_cumulative_1">
+                    {% blocktrans %}
+                    <strong>Non-cumulative (NC):</strong> Target period results are automatically calculated from data collected during the period. The Life of Program result is the sum of target period values.
+                    {% endblocktrans %}
+                </label>
+            </div>
+            <div id="id_div_is_cumulative_section2" class="form-check">
+                <input
+                    type="radio"
+                    name="is_cumulative"
+                    value="2"
+                    required
+                    {% if indicator.is_cumulative is True %} checked {% endif %}
+                    class="form-control form-check-input"
+                    id="id_is_cumulative_2"
+                    >
+                <label
+                    class="form-check-label"
+                    for="id_is_cumulative_2">
+                    {% blocktrans %}
+                    <strong>Cumulative (C):</strong> Target period results automatically include data from previous periods. The Life of Program result mirrors the latest period value.
+                    {% endblocktrans %}
+                </label>
+            </div>
+            <div id="id_div_is_cumulative_section3" class="form-group">
+                <span class="form-check-label">
+                    {% blocktrans %}
+                    <strong>Cumulative (C):</strong> The Life of Program result mirrors the latest period result. No calculations are performed with collected data.
+                    {% endblocktrans %}
+                </span>
+            </div>
+            {% endwith %}
+
         </div>
 
     </div><!--/.periodic-targets-->

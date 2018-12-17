@@ -458,20 +458,14 @@
         if (type == 'number') {
             $("#id_span_is_cumulative_header").text("{% trans 'OPTIONS FOR NUMBER (#) INDICATORS'|escapejs %}");
             $("#id_div_is_cumulative_section1").show();
-            $("#id_div_is_cumulative_section1").addClass("d-flex");
             $("#id_div_is_cumulative_section2").show();
-            $("#id_div_is_cumulative_section2").addClass("d-flex");
             $("#id_div_is_cumulative_section3").hide();
-            $("#id_div_is_cumulative_section3").removeClass("d-flex");
         }
         else {
             $("#id_span_is_cumulative_header").text("{% trans 'PERCENTAGE (%) INDICATORS'|escapejs %}");
             $("#id_div_is_cumulative_section3").show();
-            $("#id_div_is_cumulative_section3").addClass("d-flex");
             $("#id_div_is_cumulative_section1").hide();
-            $("#id_div_is_cumulative_section1").removeClass("d-flex");
             $("#id_div_is_cumulative_section2").hide();
-            $("#id_div_is_cumulative_section2").removeClass("d-flex");
             $("#id_is_cumulative_2").prop("checked", true);
         }
     }
