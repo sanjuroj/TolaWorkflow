@@ -291,6 +291,22 @@ $ npm run watch
 
 This should be done along side `./manage.py runserver`
 
+### Run JS unit tests
+
+```bash
+$ npm test
+```
+
+It's also possible to run the tests in "watch" mode
+
+```bash
+$ npm test -- --watch
+```
+or
+```bash
+$ npm run test:watch
+```
+
 ### Build bundles for production
 
 When you are ready to deploy to an external server, you will need to build and check-in the
