@@ -166,17 +166,20 @@ class GaugeBand extends React.Component {
 
         const aboveTargetMarkup = () => {
             /* Translators: variable %(percentHigh)s shows what percentage of indicators are a certain percentage above target percent %(marginPercent)s. Example: 31% are >15% above target */
-            return {__html: interpolate('<strong>%(percentHigh)s%</strong> are >%(marginPercent)s% above target', {percentHigh, marginPercent}, true)};
+            let s = gettext('<strong>%(percentHigh)s%</strong> are >%(marginPercent)s% above target');
+            return {__html: interpolate(s, {percentHigh, marginPercent}, true)};
         };
 
         const onTargetMarkup = () => {
             /* Translators: variable %s shows what percentage of indicators are within a set range of target. Example: 31%  are on track */
-            return {__html: interpolate('<strong>%s%</strong> are on track', [percentOnTarget])};
+            let s = gettext('<strong>%s%</strong> are on track');
+            return {__html: interpolate(s, [percentOnTarget])};
         };
 
         const belowTargetMarkup = () => {
             /* Translators: variable %(percentBelow)s shows what percentage of indicators are a certain percentage below target. The variable %(marginPercent)s is that percentage. Example: 31% are >15% below target */
-            return {__html: interpolate('<strong>%(percentBelow)s%</strong> are >%(marginPercent)s% below target', {percentBelow, marginPercent}, true)};
+            let s = gettext('<strong>%(percentBelow)s%</strong> are >%(marginPercent)s% below target');
+            return {__html: interpolate(s, {percentBelow, marginPercent}, true)};
         };
 
 
@@ -197,7 +200,7 @@ class GaugeBand extends React.Component {
                     <span className="text-muted">
                         {
                             /* Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
-                            interpolate('%s% unavailable', [percentNonReporting])
+                            interpolate(gettext('%s% unavailable'), [percentNonReporting])
                         }
                     </span>
                     {' '}
