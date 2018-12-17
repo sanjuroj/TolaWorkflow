@@ -1,4 +1,4 @@
-#indicator_modal_body {
+#indicator_modal_body { // TODO: refactor this away
     .select2-selection {
         border-radius: 0px;
         border-color: $gray-500;
@@ -8,6 +8,15 @@
         outline: 0;
         box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
     }
+}
+.indicator-setup {
+    // overload tab functionality here for vertical tabs
+    display: flex;
+    .nav-tabs {}
+    .nav-item {
+        white-space: nowrap;
+    }
+    .tab-content {}
 }
 .periodic-targets {
     background: $white;

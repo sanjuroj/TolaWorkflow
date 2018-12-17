@@ -6988,6 +6988,11 @@ body > .container {
   outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, 0.4); }
 
+.indicator-setup {
+  display: flex; }
+  .indicator-setup .nav-item {
+    white-space: nowrap; }
+
 .periodic-targets {
   background: #fff;
   margin-bottom: 30px;
