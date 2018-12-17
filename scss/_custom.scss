@@ -257,16 +257,6 @@ select.listoption_filters {
     }
 }
 
-// In each case, the hieght of these divs changes when the has-error class is
-// applied.  This keeps the inputs from getting taller when there is an error.
-//#div_id_name, // #div_id_name is now a textarea field per ticket #926
-#div_id_target_frequency,
-#div_id_target_frequency .div-input-container,
-#id_baseline,
-#div_id_target_frequency_custom,
-#div_id_target_frequency_num_periods {
-    height: 2.25rem;
-}
 #div_id_unit_of_measure_type_0 {
     margin-left: 2px;
 }

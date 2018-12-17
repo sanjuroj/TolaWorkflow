@@ -7795,13 +7795,6 @@ select.listoption_filters {
   #indicator_modal_body .form-row > label {
     text-align: left; } }
 
-#div_id_target_frequency,
-#div_id_target_frequency .div-input-container,
-#id_baseline,
-#div_id_target_frequency_custom,
-#div_id_target_frequency_num_periods {
-  height: 2.25rem; }
-
 #div_id_unit_of_measure_type_0 {
   margin-left: 2px; }
 

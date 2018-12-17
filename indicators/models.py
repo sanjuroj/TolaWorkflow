@@ -474,7 +474,7 @@ class Indicator(models.Model):
 
     unit_of_measure = models.CharField(
         max_length=135, null=True, blank=True,
-        verbose_name=_("Unit of measure*"),
+        verbose_name=_("Unit of measure"),
         help_text=" "
     )
 
@@ -489,7 +489,7 @@ class Indicator(models.Model):
         verbose_name=_("Disaggregation"))
 
     baseline = models.CharField(
-        verbose_name=_("Baseline*"), max_length=255, null=True, blank=True,
+        verbose_name=_("Baseline"), max_length=255, null=True, blank=True,
         help_text=" "
     )
 
@@ -499,7 +499,7 @@ class Indicator(models.Model):
 
     lop_target = models.DecimalField(
         blank=True, decimal_places=2, help_text=b' ',
-        max_digits=20, null=True, verbose_name='Life of Program (LoP) target*')
+        max_digits=20, null=True, verbose_name='Life of Program (LoP) target')
 
     direction_of_change = models.IntegerField(
         blank=False, null=True, choices=DIRECTION_OF_CHANGE,
@@ -847,7 +847,7 @@ class PeriodicTarget(models.Model):
 
     def __unicode__(self):
         """outputs the period name (see period_name docstring) followed by start and end dates
-        
+
         used in collect data form"""
         period_name = self.period_name
 
