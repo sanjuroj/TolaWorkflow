@@ -3,38 +3,41 @@
 {% load mytags %}
 
 {% if periodic_targets and indicator.target_frequency != 1%}
-    <div class="d-flex flex-column p-4 inputs-in-a-box">
-        <div class="col-sm-11 mx-auto">
-            <h3 class="mb-1">{{ indicator.get_target_frequency_label }} {% trans "targets" %}</h3>
-        </div>
-        <div id="periodic-targets-tablediv" class="col-sm-11 mx-auto">
-            <table class="table table-sm mb-0" id="periodic_targets_table">
+    <div class="periodic-targets">
+
+        <h3 class="no-bold">
+            {% blocktrans with indicator.get_target_frequency_label as get_target_frequency_label %}
+            {{ get_target_frequency_label }} targets
+            {% endblocktrans %}
+        </h3>
+        <div class="" id="periodic-targets-tablediv">
+            <table class="table table-sm periodic-targets__table" id="periodic_targets_table">
                 <tbody>
-                {% for pt in periodic_targets %}
+                    {% for pt in periodic_targets %}
                     <tr id="{{pt.id}}" data-collected-count="{{pt.num_data}}" class="periodic-target">
-                        <td class="align-middle p-1 text-center">
+                        <td class="pt-delete-row">
                             <a href=
-                                "{% if pt.id %} {% url 'pt_delete' pt.id %} {% else %} # {% endif %}"
+                            "{% if pt.id %} {% url 'pt_delete' pt.id %} {% else %} # {% endif %}"
                                 id="deleteLastPT"
                                 class="deletebtn"
+                                {# TODO: this style attr #}
                                 style="color: red; display:{% if indicator.target_frequency == 8 %} block {% else %}none{% endif %}">
-
-                                    <i class="fas fa-times"></i>
+                                <i class="fas fa-times"></i>
                             </a>
                         </td>
 
-                        <td class="align-middle pr-0">
+                        <td class="text-left">
                             {# 8 is a stand alone EVENT #}
                             {% if indicator.target_frequency == 8 %}
-                                <input type="text" name="{{ pt.period }}" value="{{ pt.period }}" class="form-control input-text">
-                                <span style="margin:0px;" class="help-block"> </span>
+                            <input type="text" name="{{ pt.period }}" value="{{ pt.period }}" class="form-control input-text">
+                            <span style="margin:0px;" class="help-block"> </span>
                             {% else %}
-                                <strong>{{ pt.period_name }}</strong>
-                                <div>{{ pt.start_date|convert2dateobject|date:"MEDIUM_DATE_FORMAT"|default:'' }} {% if pt.start_date %} - {% endif %} {{ pt.end_date|convert2dateobject|date:"MEDIUM_DATE_FORMAT"|default:'' }}</div>
+                            <strong>{{ pt.period_name }}</strong>
+                            <div>{{ pt.start_date|convert2dateobject|date:"MEDIUM_DATE_FORMAT"|default:'' }} {% if pt.start_date %} - {% endif %} {{ pt.end_date|convert2dateobject|date:"MEDIUM_DATE_FORMAT"|default:'' }}</div>
                             {% endif %}
                         </td>
 
-                        <td class="align-middle" align="right" width="150px">
+                        <td class="text-right">
                             <span id="id_span_{{ pt.id }}" class="{% if indicator.unit_of_measure_type == 2 %}input-symbol-percent{% endif %}">
                                 <input
                                     type="number"
@@ -47,54 +50,48 @@
                                     placeholder="{% trans 'Enter target' %}"
                                     class="form-control input-value">
                             </span>
-                            <span id="hint_id_pt_{{pt.id}}" style="margin:0px;" class="help-block"> </span>
+                            <span id="hint_id_pt_{{pt.id}}" style="margin:0px;" class="help-block"> </span>{# TODO: this style attr #}
                         </td>
                     </tr>
+
                     {% if forloop.last %}
-                        <tr id="pt_sum_targets"
-                            {% if indicator.unit_of_measure_type == 1 %}
-                                {% if indicator.is_cumulative is True %}
-                                    style="display:table-row;"
-                                {% endif %}
-                            {% else %}
-                                {% if indicator.is_cumulative is True or indicator.is_cumulative is None %}
-                                    style="display: none";
-                                {% endif %}
-                            {% endif %}>
-                            <td class="pt-delete-row"> </td>
-                            <td align="left" class="align-middle">
-                                <strong>
-                                    <span id="id_span_label_targets_sum">
-                                        {% trans "Sum of targets" %}
-                                    </span>
-                                </strong>
-                            </td>
-                            <td align="right" class="align-middle">
-                                <div class="m-2 paddingright-80">
-                                    <strong>
-                                        <span id="id_span_targets_sum">
-                                            {% if indicator.unit_of_measure_type == 1%}
-                                                {{ targets_sum|floatformat:"-2" }}
-                                            {% else %}
-                                                {{ targets_avg|floatformat:"-2" }}
-                                            {% endif %}
-                                        </span>
-                                        <span id="id_span_targtsaggregate_percent_sign">
-                                            {% if indicator.unit_of_measure_type == 2 %}%{% endif %}
-                                        </span>
-                                    </strong>
-                                </div>
-                            </td>
-                        </tr>
+                    <tr class="periodic-target" id="pt_sum_targets" {# TODO: this class? #}
+                        {% if indicator.unit_of_measure_type == 1 %} {# TODO: this style loop #}
+                            {% if indicator.is_cumulative is True %}
+                                style="display:table-row;"
+                            {% endif %}
+                        {% else %}
+                            {% if indicator.is_cumulative is True or indicator.is_cumulative is None %}
+                                style="display: none";
+                            {% endif %}
+                        {% endif %}>
+                        <td class="pt-delete-row"></td>
+                        <td class="periodic-targets__sum text-left">
+                            <strong><span id="id_span_label_targets_sum">{% trans "Sum of targets" %}</span></strong>
+                        </td>
+                        <td class="periodic-targets__sum text-right">
+                            <strong>
+                                <span id="id_span_targets_sum">
+                                    {% if indicator.unit_of_measure_type == 1%}
+                                        {{ targets_sum|floatformat:"-2" }}
+                                    {% else %}
+                                        {{ targets_avg|floatformat:"-2" }}
+                                    {% endif %}
+                                </span>
+                                <span id="id_span_targtsaggregate_percent_sign">
+                                    {% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                                </span>
+                            </strong>
+                        </td>
+                    </tr>
                     {% endif %}
-                {% endfor %}
-                <tr style="background-color:#F5F5F5">
-                    <td class="pt-delete-row"> </td>
-                    <td align="left" class="align-middle">
-                        <strong>{% trans "Life of Program (LoP) target" %}</strong>
-                    </td>
-                    <td align="right" class="align-middle">
-                        <div class="m-2 paddingright-80">
+                    {% endfor %}
+                    <tr class="table-secondary">
+                        <td class="pt-delete-row"> </td>
+                        <td class="periodic-targets__sum text-left">
+                            <strong>{% trans "Life of Program (LoP) target" %}</strong>
+                        </td>
+                        <td class="periodic-targets__sum text-right">
                             <strong>
                                 <span id="id_span_loptarget">
                                     {{indicator.lop_target|floatformat:"-2" }}
@@ -103,9 +100,8 @@
                                     </span>
                                 </span>
                             </strong>
-                        </div>
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
                 </tbody>
                 <tfoot>
                     <tr style="background-color:#F5F5F5">
@@ -114,11 +110,13 @@
                 </tfoot>
             </table>
         </div>
-        <div class="col-sm-11 mx-auto m-3 text-right">
-            {% if indicator.target_frequency == 8 %}
-                <a href="#" id="addNewPeriodicTarget" class="btn btn-add btn-link"><i class="fas fa-plus-circle"></i> {% trans "Add a target" %}</a>
-            {% endif %}
+
+        {% if indicator.target_frequency == 8 %}
+        <div class="text-right">
+            <a href="#" id="addNewPeriodicTarget" class="btn btn-add btn-link"><i class="fas fa-plus-circle"></i> {% trans "Add a target" %}</a>
         </div>
+        {% endif %}
+
         <div class="col-sm-11 mx-auto">
             <div class="card inputs-in-a-box" id="id_div_is_cumulative">
                 <div class="card-body p-1">
@@ -176,5 +174,6 @@
                 </div>
             </div>
         </div>
-    </div>
+
+    </div><!--/.periodic-targets-->
 {% endif %}
