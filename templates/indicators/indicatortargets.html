@@ -16,8 +16,7 @@
                     {% for pt in periodic_targets %}
                     <tr id="{{pt.id}}" data-collected-count="{{pt.num_data}}" class="periodic-target">
                         <td class="text-left periodic-target__name">
-                            {# 8 is a stand alone EVENT #}
-                            {% if indicator.target_frequency == 8 %}
+                            {% if indicator.target_frequency == 8 %} {# 8 is a stand alone EVENT #}
                                 <a href=
                                 "{% if pt.id %} {% url 'pt_delete' pt.id %} {% else %} # {% endif %}"
                                     id="deleteLastPT"
