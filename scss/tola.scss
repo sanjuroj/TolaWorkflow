@@ -79,7 +79,7 @@
 @import 'components/regions'; // page regions and sub-regions
 @import 'components/gauges';  // status gauges, e.g. on Program landing page
 @import 'components/indicator_table';  // indicator list included on Program page and Indicators page
-@import 'components/periodic_targets';  // periodic targets table included on indicator setup forms
+@import 'components/indicator_setup';  // indicator setup and periodic targets table included
 @import 'components/collected_data_table';  // collected data table included in indicator list (& elsewhere?)
 @import 'components/program'; // Program Page & related components for Mangosteen
 @import 'components/program_complete'; // Program percent complete with wee calendar icon
