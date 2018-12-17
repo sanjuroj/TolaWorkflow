@@ -6982,22 +6982,14 @@ body > .container {
 .periodic-targets {
   padding: 30px; }
 
-.periodic-target,
-#pt_sum_targets {
-  border-bottom: 1px solid #dbdcde;
-  border-top: 1px solid #dbdcde;
-  background-color: #fff; }
+.periodic-target__name {
+  display: flex;
+  align-items: center; }
 
 td.periodic-targets__sum {
   padding: 10px 20px 10px 0; }
 
-#periodic-targets-tablediv .pt-delete-row {
-  padding: 1px 0px 1px 10px;
-  vertical-align: middle;
-  border: none; }
-
 .periodic-target .input-value {
-  margin: 10px 10px 10px 6px;
   padding-right: 10px;
   text-align: right;
   width: 150px;
