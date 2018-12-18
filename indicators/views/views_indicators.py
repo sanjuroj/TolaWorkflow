@@ -545,6 +545,11 @@ class IndicatorUpdate(UpdateView):
                     'edit_date': timezone.now()
                 }
 
+                # Validate PeriodicTarget target field is > 0... throws with ValidationError
+                # Needed to be done here since the form itself does not check
+                # Front-end validation exists which is why we are not bothering with UI feedback
+                PeriodicTarget(indicator=indicatr, **defaults).clean_fields()
+
                 periodic_target, created = PeriodicTarget.objects \
                     .update_or_create(indicator=indicatr, id=pk, defaults=defaults)
 
