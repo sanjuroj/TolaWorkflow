@@ -1,5 +1,4 @@
 {% load i18n %}
-{# to enable list filtering, the page calling this templatetag should load static/js/program_page_filters.js #}
 <div class="gauge {% if has_filters %}filter-trigger{% endif %}"
     data-target="{{ data_target }}"
     data-list-title="{% blocktrans %}{{ filter_title_count }} indicators {{ filter_title }}{% endblocktrans %}"
