@@ -8,7 +8,6 @@ from .views.views_indicators import (
     IndicatorCreate,
     IndicatorDelete,
     IndicatorUpdate,
-    IndicatorList,
     IndicatorExport,
     IndicatorReportData,
     CollectedDataReportData,
@@ -41,8 +40,6 @@ from .views.views_reports import (
 
 
 urlpatterns = [
-    url(r'^home/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$', IndicatorList.as_view(), name='indicator_list'),
-
     url(r'^indicator_create/(?P<id>\d+)/$', indicator_create, name='indicator_create'),
 
     url(r'^indicator_add/(?P<id>\d+)/$', IndicatorCreate.as_view(), name='indicator_add'),

@@ -127,57 +127,6 @@ def generate_periodic_targets(tf, start_date, numTargets, event_name='', num_exi
     return gentargets
 
 
-class IndicatorList(ListView):
-    model = Indicator
-    template_name = 'indicators/indicator_list.html'
-
-    def get(self, request, *args, **kwargs):
-        countries = request.user.tola_user.countries.all()
-        get_programs = Program.objects.filter(funding_status="Funded", country__in=countries).distinct()
-        get_indicators = Indicator.objects.filter(program__country__in=countries)
-        get_indicator_types = IndicatorType.objects.all()
-
-        program_id = int(self.kwargs['program'])
-        program_name = get_programs.get(pk=program_id).name if program_id else ''
-        indicator_id = int(self.kwargs['indicator'])
-        indicator_name = get_indicators.get(pk=indicator_id).name if indicator_id else ''
-        type_id = int(self.kwargs['type'])
-        type_name = get_indicator_types.get(pk=type_id).indicator_type if type_id else ''
-        filters = {'id__isnull': False}
-
-        if program_id != 0:
-            filters['id'] = program_id
-            get_indicators = get_indicators.filter(program_id=program_id)
-
-        if type_id != 0:
-            filters['indicator__indicator_type__id'] = type_id
-            get_indicators = get_indicators.filter(indicator_type=type_id)
-
-        if indicator_id != 0:
-            filters['indicator'] = indicator_id
-
-        programs = Program.objects.prefetch_related('indicator_set') \
-            .filter(funding_status="Funded", country__in=countries) \
-            .filter(**filters).order_by('name') \
-            .annotate(
-                indicator_count=Count('indicator', distinct=True),
-                target_period_last_end_date=Max('indicator__periodictargets__end_date', distinct=True)
-            )
-
-        c_data = {
-            'getPrograms': get_programs,
-            'getIndicators': get_indicators,
-            'getIndicatorTypes': get_indicator_types,
-            'program_id': program_id,
-            'program_name': program_name,
-            'indicator_id': indicator_id,
-            'indicator_name': indicator_name,
-            'type_name': type_name,
-            'type_id': type_id,
-            'programs': programs}
-        return render(request, self.template_name, c_data)
-
-
 def import_indicator(service=1):
     """
     Imports an indicator from a web service (the dig only for now)
