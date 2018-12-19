@@ -5,7 +5,7 @@ from django.shortcuts import render
 from workflow.models import ProjectAgreement, ProjectComplete, Program, SiteProfile,Country, TolaSites
 from customdashboard.models import ProgramNarratives, JupyterNotebooks
 from formlibrary.models import TrainingAttendance, Distribution, Beneficiary
-from indicators.models import CollectedData, Indicator, TolaTable
+from indicators.models import Result, Indicator, TolaTable
 
 from django.db.models import Sum
 from django.db.models import Q
@@ -41,7 +41,7 @@ class ProgramList(ListView):
         program_list = []
         for program in getProgram:
             # get the percentage of indicators with data
-            getInidcatorDataCount = Indicator.objects.filter(program__id=program.id).exclude(collecteddata__periodic_target=None).count()
+            getInidcatorDataCount = Indicator.objects.filter(program__id=program.id).exclude(result__periodic_target=None).count()
             getInidcatorCount = Indicator.objects.filter(program__id=program.id).count()
             if getInidcatorCount > 0 and getInidcatorDataCount > 0:
                 getInidcatorDataPercent = 100 * float(getInidcatorDataCount) / float(getInidcatorCount)
@@ -81,7 +81,7 @@ def DefaultCustomDashboard(request,id=0,status=0):
     #transform to list if a submitted country
     selected_countries_list = Country.objects.all().filter(program__id=program_id)
 
-    getQuantitativeDataSums = CollectedData.objects.filter(indicator__program__id=program_id,achieved__isnull=False, indicator__key_performance_indicator=True).exclude(achieved=None).order_by('indicator__number').values('indicator__number','indicator__name','indicator__id').annotate(targets=Sum('periodic_target__target'), actuals=Sum('achieved')).exclude(achieved=None)
+    getQuantitativeDataSums = Result.objects.filter(indicator__program__id=program_id,achieved__isnull=False, indicator__key_performance_indicator=True).exclude(achieved=None).order_by('indicator__number').values('indicator__number','indicator__name','indicator__id').annotate(targets=Sum('periodic_target__target'), actuals=Sum('achieved')).exclude(achieved=None)
 
     totalTargets = getQuantitativeDataSums.aggregate(Sum('targets'))
     totalActuals = getQuantitativeDataSums.aggregate(Sum('actuals'))
@@ -96,8 +96,8 @@ def DefaultCustomDashboard(request,id=0,status=0):
     getInProgressCount = ProjectAgreement.objects.all().filter(program__id=program_id).filter(Q(Q(approval='in progress') | Q(approval=None)), program__country__in=countries).count()
     nostatus_count = ProjectAgreement.objects.all().filter(program__id=program_id).filter(Q(Q(approval=None) | Q(approval=""))).count()
 
-    getSiteProfile = SiteProfile.objects.all().filter(Q(projectagreement__program__id=program_id) | Q(collecteddata__program__id=program_id))
-    getSiteProfileIndicator = SiteProfile.objects.all().filter(Q(collecteddata__program__id=program_id))
+    getSiteProfile = SiteProfile.objects.all().filter(Q(projectagreement__program__id=program_id) | Q(result__program__id=program_id))
+    getSiteProfileIndicator = SiteProfile.objects.all().filter(Q(result__program__id=program_id))
 
     if (status) =='Approved':
        getProjects = ProjectAgreement.objects.all().filter(program__id=program_id, program__country__in=countries, approval='approved').prefetch_related('projectcomplete')
@@ -142,11 +142,11 @@ def PublicDashboard(request,id=0,public=0):
     http://127.0.0.1:8000/customdashboard/program_dashboard/65/0/
     """
     program_id = id
-    getQuantitativeDataSums_2 = CollectedData.objects.all().filter(indicator__program__id=program_id,achieved__isnull=False).order_by('indicator__source').values('indicator__number','indicator__source','indicator__id')
-    getQuantitativeDataSums = CollectedData.objects.filter(indicator__program__id=program_id,achieved__isnull=False).exclude(achieved=None).order_by('indicator__number').values('indicator__number','indicator__name','indicator__id').annotate(targets=Sum('periodic_target__target'), actuals=Sum('achieved'))
+    getQuantitativeDataSums_2 = Result.objects.all().filter(indicator__program__id=program_id,achieved__isnull=False).order_by('indicator__source').values('indicator__number','indicator__source','indicator__id')
+    getQuantitativeDataSums = Result.objects.filter(indicator__program__id=program_id,achieved__isnull=False).exclude(achieved=None).order_by('indicator__number').values('indicator__number','indicator__name','indicator__id').annotate(targets=Sum('periodic_target__target'), actuals=Sum('achieved'))
     getIndicatorCount = Indicator.objects.all().filter(program__id=program_id).count()
 
-    getIndicatorData = CollectedData.objects.all().filter(indicator__program__id=program_id,achieved__isnull=False).order_by('date_collected')
+    getIndicatorData = Result.objects.all().filter(indicator__program__id=program_id,achieved__isnull=False).order_by('date_collected')
 
     getIndicatorCountData = getIndicatorData.count()
 
@@ -159,7 +159,7 @@ def PublicDashboard(request,id=0,public=0):
     getProjects = ProjectComplete.objects.all().filter(program_id=program_id)
     getAllProjects = ProjectAgreement.objects.all().filter(program_id=program_id)
     getSiteProfile = SiteProfile.objects.all().filter(projectagreement__program__id=program_id)
-    getSiteProfileIndicator = SiteProfile.objects.all().filter(Q(collecteddata__program__id=program_id))
+    getSiteProfileIndicator = SiteProfile.objects.all().filter(Q(result__program__id=program_id))
 
     getProjectsCount = ProjectAgreement.objects.all().filter(program__id=program_id).count()
     getAwaitingApprovalCount = ProjectAgreement.objects.all().filter(program__id=program_id, approval='awaiting approval').count()

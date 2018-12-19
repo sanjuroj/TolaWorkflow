@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib import admin
 from workflow.models import Program, ProjectAgreement, ProjectComplete, Country
-from indicators.models import Indicator, CollectedData
+from indicators.models import Indicator, Result
 
 
 class Report(models.Model):
@@ -10,7 +10,7 @@ class Report(models.Model):
     agreement = models.ForeignKey(ProjectAgreement, null=True, blank=True)
     complete = models.ForeignKey(ProjectComplete, null=True, blank=True)
     indicator = models.ForeignKey(Indicator, null=True, blank=True)
-    collected = models.ForeignKey(CollectedData, null=True, blank=True)
+    collected = models.ForeignKey(Result, null=True, blank=True)
     description = models.CharField("Status Description", max_length=200, blank=True)
     shared = models.BooleanField(default=False)
     public = models.BooleanField(default=False)
