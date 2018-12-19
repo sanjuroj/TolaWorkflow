@@ -52,13 +52,13 @@ class TestTargetsActualsOverUnderCorrect(test.TestCase):
             customsort=1
         )
         self.targets.extend([mid_target, end_target])
-        mid_data = i_factories.CollectedDataFactory(
+        mid_data = i_factories.ResultFactory(
             indicator=self.indicator,
             periodic_target=mid_target,
             achieved=350,
             date_collected=self.program.reporting_period_start + datetime.timedelta(days=1)
         )
-        end_data = i_factories.CollectedDataFactory(
+        end_data = i_factories.ResultFactory(
             indicator=self.indicator,
             periodic_target=end_target,
             achieved=950,
@@ -121,7 +121,7 @@ class TestTargetsActualsOverUnderCorrect(test.TestCase):
             customsort=1
         )
         self.targets.extend([mid_target, end_target])
-        mid_data = i_factories.CollectedDataFactory(
+        mid_data = i_factories.ResultFactory(
             indicator=self.indicator,
             periodic_target=mid_target,
             achieved=350,
@@ -174,7 +174,7 @@ class TestTargetsActualsOverUnderCorrect(test.TestCase):
             customsort=1
         )
         self.targets.extend([target_1, target_2])
-        data_1 = i_factories.CollectedDataFactory(
+        data_1 = i_factories.ResultFactory(
             indicator=self.indicator,
             periodic_target=target_1,
             achieved=350,
@@ -196,7 +196,7 @@ class TestTargetsActualsOverUnderCorrect(test.TestCase):
             indicator.over_under, -1,
             "should show under (350/500), got {0}".format(indicator.over_under)
         )
-        data_2 = i_factories.CollectedDataFactory(
+        data_2 = i_factories.ResultFactory(
             indicator=self.indicator,
             periodic_target=target_2,
             achieved=950,

@@ -6,7 +6,7 @@ from factories.indicators_models import (
     IndicatorFactory,
     LevelFactory,
     PeriodicTargetFactory,
-    CollectedDataFactory
+    ResultFactory
     )
 from factories.workflow_models import ProgramFactory
 from django import test
@@ -232,7 +232,7 @@ class TestIndicatorScenarios(test.TestCase):
         for c, data_set in enumerate(scenario['data']):
             date_set = dates['collects'][c]
             for data, date in zip(data_set, date_set):
-                self.data.append(CollectedDataFactory(
+                self.data.append(ResultFactory(
                     periodic_target=self.targets[c],
                     achieved=data,
                     indicator=indicator,

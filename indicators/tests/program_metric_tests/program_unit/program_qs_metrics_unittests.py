@@ -40,7 +40,7 @@ def get_all_targets_defined_indicator(program):
     return indicator
 
 def get_data(indicator):
-    return i_factories.CollectedDataFactory(
+    return i_factories.ResultFactory(
         indicator=indicator,
         achieved=100,
         date_collected=datetime.date(2016, 10, 1)

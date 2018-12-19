@@ -50,7 +50,7 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
         )
 
     def get_base_data(self, indicator, target=None):
-        data = i_factories.CollectedDataFactory(
+        data = i_factories.ResultFactory(
             indicator=indicator,
             periodic_target=target,
             date_collected=self.program.reporting_period_start + datetime.timedelta(days=10)
@@ -93,13 +93,13 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
             end_date=self.program.reporting_period_end
         )
         self.targets.extend([time_target_1, time_target_2])
-        data_1 = i_factories.CollectedDataFactory(
+        data_1 = i_factories.ResultFactory(
             indicator=time_indicator,
             periodic_target=time_target_1,
             date_collected=time_target_1.start_date + datetime.timedelta(days=2),
             achieved=200
         )
-        data_2 = i_factories.CollectedDataFactory(
+        data_2 = i_factories.ResultFactory(
             indicator=time_indicator,
             periodic_target=time_target_2,
             date_collected=time_target_2.start_date + datetime.timedelta(days=2),
@@ -273,13 +273,13 @@ class TestTargetsActualsOverUnderCorrect(test.TestCase):
             customsort=1
         )
         self.targets.extend([mid_target, end_target])
-        mid_data = i_factories.CollectedDataFactory(
+        mid_data = i_factories.ResultFactory(
             indicator=self.indicator,
             periodic_target=mid_target,
             achieved=350,
             date_collected=self.program.reporting_period_start + datetime.timedelta(days=1)
         )
-        end_data = i_factories.CollectedDataFactory(
+        end_data = i_factories.ResultFactory(
             indicator=self.indicator,
             periodic_target=end_target,
             achieved=950,
@@ -323,7 +323,7 @@ class TestTargetsActualsOverUnderCorrect(test.TestCase):
             customsort=1
         )
         self.targets.extend([mid_target, end_target])
-        mid_data = i_factories.CollectedDataFactory(
+        mid_data = i_factories.ResultFactory(
             indicator=self.indicator,
             periodic_target=mid_target,
             achieved=350,

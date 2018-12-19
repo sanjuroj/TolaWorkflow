@@ -31,7 +31,7 @@ class TestIPTTTimePeriodReportsI18N(iptt_utility.TestIPTTTimePeriodsReportRespon
 
         self.set_dates('2016-06-01', '2018-05-30')
 
-        # create indicators w/ collected data
+        # create indicators w/ results
         self.add_indicator_with_data(Indicator.MONTHLY, [100]*24)
 
         # create and login user (defaulted to 'en' language)

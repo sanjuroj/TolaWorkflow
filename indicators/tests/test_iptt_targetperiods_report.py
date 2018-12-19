@@ -6,8 +6,8 @@ these classes test monthly/annual/mid-end indicators generated report ranges, va
 
 from datetime import datetime, timedelta
 from iptt_sample_data import iptt_utility
-from factories.indicators_models import IndicatorFactory, CollectedDataFactory, PeriodicTargetFactory
-from indicators.models import Indicator, CollectedData, PeriodicTarget
+from factories.indicators_models import IndicatorFactory, ResultFactory, PeriodicTargetFactory
+from indicators.models import Indicator, Result, PeriodicTarget
 
 
 class TestPeriodicTargetsBase(iptt_utility.TestIPTTTargetPeriodsReportResponseBase):
@@ -17,7 +17,7 @@ class TestPeriodicTargetsBase(iptt_utility.TestIPTTTargetPeriodsReportResponseBa
         self.indicators = []
 
     def tearDown(self):
-        CollectedData.objects.all().delete()
+        Result.objects.all().delete()
         PeriodicTarget.objects.all().delete()
         Indicator.objects.all().delete()
         super(TestPeriodicTargetsBase, self).tearDown()
@@ -48,7 +48,7 @@ class TestPeriodicTargetsBase(iptt_utility.TestIPTTTargetPeriodsReportResponseBa
                 target.target = targets[count]
                 target.save()
                 value = 10 if values is None else values[count]
-                _ = CollectedDataFactory(indicator=indicator, periodic_target=target, achieved=value,
+                _ = ResultFactory(indicator=indicator, periodic_target=target, achieved=value,
                                          date_collected=current)
             current = next_start
             count += 1
@@ -203,9 +203,9 @@ class TestMidEndTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
         assert values is None or len(values) == 2, "values should be two tuples, midline and endline"
         if targets is None:
             target = PeriodicTargetFactory(indicator=indicator, period=PeriodicTarget.MIDLINE, customsort=0)
-            _ = CollectedDataFactory(indicator=indicator, periodic_target=target)
+            _ = ResultFactory(indicator=indicator, periodic_target=target)
             target = PeriodicTargetFactory(indicator=indicator, period=PeriodicTarget.ENDLINE, customsort=1)
-            _ = CollectedDataFactory(indicator=indicator, periodic_target=target)
+            _ = ResultFactory(indicator=indicator, periodic_target=target)
             return
         for c, (target, (customsort, target_type)) in enumerate(
                 zip(targets, [(0, PeriodicTarget.MIDLINE), (1, PeriodicTarget.ENDLINE)])
@@ -213,7 +213,7 @@ class TestMidEndTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
             target = PeriodicTargetFactory(indicator=indicator, period=target_type,
                                            target=target, customsort=customsort)
             for v in values[c] if values is not None else [10]:
-                _ = CollectedDataFactory(indicator=indicator, periodic_target=target, achieved=v)
+                _ = ResultFactory(indicator=indicator, periodic_target=target, achieved=v)
 
     def test_bare_mid_end_has_two_range_periods(self):
         self.set_reporting_period('2016-02-01', '2018-01-31')

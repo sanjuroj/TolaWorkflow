@@ -282,12 +282,12 @@ class IPTT_MixinTests(TestCase):
         self.assertIn(data['level'], filters['level__in'])
         self.assertIn(data['sector'], filters['sector__in'])
         self.assertIn(data['ind_type'], filters['indicator_type__in'])
-        self.assertIn(data['site'], filters['collecteddata__site__in'])
+        self.assertIn(data['site'], filters['result__site__in'])
         self.assertIn(data['indicators'], filters['id__in'])
         self.assertEqual(data['level'], *filters['level__in'])
         self.assertEqual(data['sector'], *filters['sector__in'])
         self.assertEqual(data['ind_type'], *filters['indicator_type__in'])
-        self.assertEqual(data['site'], *filters['collecteddata__site__in'])
+        self.assertEqual(data['site'], *filters['result__site__in'])
         self.assertEqual(data['indicators'], *filters['id__in'])
 
         # TODO: Is it possible to make assertions about the filtered report

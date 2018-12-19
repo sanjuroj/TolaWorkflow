@@ -44,7 +44,7 @@ class ProgramMetricsBase(test.TestCase):
         return indicator
 
     def add_data(self, indicator=None, target=None):
-        data = i_factories.CollectedDataFactory(
+        data = i_factories.ResultFactory(
             indicator=indicator,
             periodic_target=target,
             date_collected=self.program.reporting_period_start+datetime.timedelta(days=3+2*len(self.data)),
@@ -457,7 +457,7 @@ class TestIndicatorReportingEdgeCases(test.TestCase):
         )
 
     def add_result(self, indicator):
-        return i_factories.CollectedDataFactory(
+        return i_factories.ResultFactory(
             indicator=indicator,
             program=self.program,
             achieved=100,

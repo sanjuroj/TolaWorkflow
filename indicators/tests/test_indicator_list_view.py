@@ -98,10 +98,10 @@ class IndicatorListTests(TestBase, TestCase):
             
 
 
-class CollectedDataTest(TestBase, TestCase):
+class ResultTest(TestBase, TestCase):
 
     def setUp(self):
-        super(CollectedDataTest, self).setUp()
+        super(ResultTest, self).setUp()
         core_params = {'c_params': [('Country1', 'C1')], 'p_count': 1, 'i_count': 2}
         self.program_ids, self.indicator_ids = generate_core_indicator_data(**core_params)
         program = Program.objects.get(id=self.program_ids[0])
@@ -111,7 +111,7 @@ class CollectedDataTest(TestBase, TestCase):
         instantiate_scenario(
             program.id, indicator_scenarios['scenario_2i-default_4pt_3cd'], self.indicator_ids)
 
-        self.base_url = 'collected_data_view'
+        self.base_url = 'result_view'
         self.base_args = [0, 0, 0]
 
     def test_load_correct_indicator_data(self):
@@ -124,17 +124,17 @@ class CollectedDataTest(TestBase, TestCase):
 
 class DefaultScenarioTest(ScenarioBase, IndicatorDetailsMixin, TestCase):
     scenario = indicator_scenarios['scenario_1i-default_5pt_3cd']
-    url_name = 'collected_data_view'
+    url_name = 'result_view'
 
 
 class CumulativeNumberScenarioTest(ScenarioBase, IndicatorDetailsMixin, TestCase):
     scenario = indicator_scenarios['scenario_1i-cumulative_number_5pt_3cd']
-    url_name = 'collected_data_view'
+    url_name = 'result_view'
 
 
 class PercentScenarioTest(ScenarioBase, IndicatorDetailsMixin, TestCase):
     scenario = indicator_scenarios['scenario_1i-cumulative_percent_5pt_3cd']
-    url_name = 'collected_data_view'
+    url_name = 'result_view'
 
 
 class DefaultScenarioStatsTest(ScenarioBase2, IndicatorStatsMixin, TestCase):

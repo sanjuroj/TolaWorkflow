@@ -9,12 +9,11 @@ from StringIO import StringIO
 import csv
 from factories.workflow_models import ProgramFactory, SectorFactory
 from factories.indicators_models import (
-    IndicatorFactory,
     DefinedIndicatorFactory,
     LevelFactory,
     DisaggregationTypeFactory,
     IndicatorTypeFactory,
-    CollectedDataFactory
+    ResultFactory
     )
 from django import test
 
@@ -107,7 +106,7 @@ class CSVIndicatorTestBase(CSVTestBase):
                       indicatortype=0):
         indicator = DefinedIndicatorFactory(
             sector=self.sectors[sector],
-            level = self.levels[level]
+            level=self.levels[level]
         )
         indicator.disaggregation.add(self.disaggregations[disaggregation])
         indicator.indicator_type.add(self.indicatortypes[indicatortype])
@@ -134,7 +133,7 @@ class CSVIndicatorTestBase(CSVTestBase):
 
 @unittest.skip("Specs changing on CSV file, tests paused")
 class TestCSVEndPointIndicatorsAccurate(CSVIndicatorTestBase):
-    # to do: test collected data points
+    # to do: test result points
 
     def compare_indicator(self, indicator, row):
         for c, field in enumerate(self.fields):
@@ -244,7 +243,7 @@ class TestCSVTotals(CSVIndicatorTestBase):
             month = startdate.month + months - 12 if startdate.month + months > 12 else startdate.month + months
             collect_date = datetime(year, month, startdate.day+1)
         self.datapoints.append(
-            CollectedDataFactory(indicator=indicator, date_collected=collect_date, achieved=value)
+            ResultFactory(indicator=indicator, date_collected=collect_date, achieved=value)
         )
 
     def get_data_rows(self):
@@ -302,5 +301,4 @@ class TestCSVTotals(CSVIndicatorTestBase):
             # almost equal so that floats don't cause failure:
             self.assertAlmostEqual(float(data_row_timeperiods[c]), value,
                              self.assert_msg("expected data value for {0} month to be {1}, got {2}".format(
-                                c, value, data_row_timeperiods[c])))
-
+                                 c, value, data_row_timeperiods[c])))

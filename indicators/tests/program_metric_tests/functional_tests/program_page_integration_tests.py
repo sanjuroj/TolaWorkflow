@@ -2,10 +2,9 @@
 
 import datetime
 import unittest
-import time
 import json
-from indicators.models import Indicator, PeriodicTarget, CollectedData
 from workflow.models import Documentation, Program
+from indicators.models import Indicator, PeriodicTarget, Result
 from indicators.queries import ProgramWithMetrics
 from factories import (
     workflow_models as w_factories,
@@ -61,7 +60,7 @@ def do_add_defined_target(indicator):
     return (mid_target, end_target)
 
 def do_add_reported_result(indicator, collect_date, program):
-    return i_factories.CollectedDataFactory(
+    return i_factories.ResultFactory(
         indicator=indicator,
         date_collected=collect_date,
         achieved=140,
@@ -132,11 +131,11 @@ class QueryTestsMixin:
                     print "indicator: {0} and reported_results {1} and results {2}".format(
                         indicator,
                         indicator.reported_results,
-                        [x.achieved for x in CollectedData.objects.filter(indicator_id=indicator.pk).all()])
+                        [x.achieved for x in Result.objects.filter(indicator_id=indicator.pk).all()])
                     print "indicator: {0} and evidence count {1} and documents {2}".format(
                         indicator,
                         indicator.evidence_count,
-                        [x for x in Documentation.objects.filter(collecteddata__indicator_id=indicator.pk).all()])
+                        [x for x in Documentation.objects.filter(result__indicator_id=indicator.pk).all()])
                 print "metrics: {0}".format(program.metrics)
             metrics = program.metrics
             for key in ['targets_defined', 'reported_results', 'results_evidence', 'indicator_count']:
@@ -150,14 +149,12 @@ class QueryTestsMixin:
             with self.assertNumQueries(2):
                 metrics = ProgramWithMetrics.program_page.filter(name=expected['name']).first().metrics
                 count = metrics['indicator_count']
-                defined_targets = metrics['targets_defined']
                 assert count == expected['indicator_count'] # to ensure queryset is evaluated
-                
 
     def test_program_view_returns_correct_program_data(self):
         client = test.Client()
         client.force_login(self.user.user)
-        for c, expected in enumerate(self.expected_cases):
+        for expected in self.expected_cases:
             program = Program.objects.filter(name=expected['name']).first()
             response = client.get('/program/{program_id}/0/0/'.format(program_id=program.id))
             self.assertEqual(response.status_code, 200)

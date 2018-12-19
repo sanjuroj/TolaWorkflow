@@ -42,7 +42,7 @@ class HomePageQueryStressTest(test.TestCase):
                     lop_target=100,
                     program=program
                 )
-                i_factories.CollectedDataFactory(
+                i_factories.ResultFactory(
                     indicator=indicator,
                     achieved=105
                 )
@@ -53,7 +53,7 @@ class HomePageQueryStressTest(test.TestCase):
                     program=program
                 )
                 evidence = w_factories.DocumentationFactory(program=program)
-                i_factories.CollectedDataFactory(
+                i_factories.ResultFactory(
                     indicator=indicator,
                     achieved=50,
                     evidence=evidence

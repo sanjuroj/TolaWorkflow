@@ -8,7 +8,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.test import runner
 from unittest import runner as ut_runner
 
-from factories.indicators_models import IndicatorFactory, PeriodicTargetFactory, CollectedDataFactory
+from factories.indicators_models import IndicatorFactory, PeriodicTargetFactory, ResultFactory
 from factories.workflow_models import ProgramFactory, CountryFactory, DocumentationFactory
 from indicators.views.views_reports import IPTT_ReportView
 from indicators.views.views_indicators import generate_periodic_targets
@@ -18,14 +18,14 @@ from workflow.models import Program
 
 class PeriodicTargetValues(object):
 
-    def __init__(self, target=0, collected_data=None, evidence=None):
+    def __init__(self, target=0, results=None, evidence=None):
         self.target = target
-        self.collected_data = collected_data or []
+        self.results = results or []
         self.evidence = evidence or []
 
     @property
-    def collected_data_sum(self):
-        return sum(self.collected_data)
+    def result_sum(self):
+        return sum(self.results)
 
 
 class IndicatorValues(object):
@@ -47,37 +47,37 @@ class IndicatorValues(object):
         self.unit_of_measure_type = unit_of_measure_type
 
     @property
-    def collected_data_sum(self):
+    def result_sum(self):
         # For program total or program-to-date, calculation is same if indicator is cumulative or not.
-        return sum([pt_values.collected_data_sum for pt_values in self.periodic_targets])
+        return sum([pt_values.result_sum for pt_values in self.periodic_targets])
 
     @property
-    def collected_data_sets(self):
-        collected_data_values_sets = []
+    def result_sets(self):
+        result_values_sets = []
         for pt_values in self.periodic_targets:
-            collected_data_values_sets.append([decimalize(cd_value) for cd_value in pt_values.collected_data])
-        return collected_data_values_sets
+            result_values_sets.append([decimalize(cd_value) for cd_value in pt_values.results])
+        return result_values_sets
 
     @property
     def periodic_target_targets(self):
         return [decimalize(pt.target) for pt in self.periodic_targets]
 
     @property
-    def collected_data_sum_by_periodic_target(self):
-        collected_sums = []
+    def result_sum_by_periodic_target(self):
+        result_sums = []
         for i, pt_values in enumerate(self.periodic_targets):
             if self.unit_of_measure_type == Indicator.NUMBER:
                 if self.is_cumulative:
-                    # Sum a list of lists.  These are lists of collected data "to-date".
-                    collected_sums.append(sum([sum(vals) for vals in self.collected_data_sets[:i+1]]))
+                    # Sum a list of lists.  These are lists of results "to-date".
+                    result_sums.append(sum([sum(vals) for vals in self.result_sets[:i+1]]))
                 else:
-                    collected_sums.append(sum(self.collected_data_sets[i]))
+                    result_sums.append(sum(self.result_sets[i]))
             else:
-                collected_sums.append(self.collected_data_sets[i][-1])
-        return collected_sums
+                result_sums.append(self.result_sets[i][-1])
+        return result_sums
 
     def program_to_date_achieved_ratio(self, period_ceiling=None):
-        achieved_by_period = self.collected_data_sum_by_periodic_target[:period_ceiling]
+        achieved_by_period = self.result_sum_by_periodic_target[:period_ceiling]
         targets_by_period = self.periodic_target_targets[:period_ceiling]
         if self.unit_of_measure_type == Indicator.NUMBER:
             achieved_val = sum(achieved_by_period)
@@ -146,12 +146,12 @@ def instantiate_scenario(program_id, scenario, existing_indicator_ids=None):
                 evidence_values = indicator_value_set.periodic_targets[i].evidence
             except KeyError:
                 evidence_values = []
-            for j, cd_value in enumerate(indicator_value_set.periodic_targets[i].collected_data):
-                cd = CollectedDataFactory(
-                    periodic_target=pt, indicator=indicator, program=program, achieved=cd_value, )
+            for j, res_value in enumerate(indicator_value_set.periodic_targets[i].results):
+                res = ResultFactory(
+                    periodic_target=pt, indicator=indicator, program=program, achieved=res_value, )
                 if evidence_values and evidence_values[j]:
-                    cd.evidence = DocumentationFactory()
-                    cd.save()
+                    res.evidence = DocumentationFactory()
+                    res.save()
 
     return indicator_ids
 

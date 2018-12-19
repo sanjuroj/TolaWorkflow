@@ -67,7 +67,7 @@ class ReportingIndicatorBase(test.TestCase):
         indicator = self.indicator if indicator is None else indicator
         achieved = 800 if achieved is None else achieved
         date = self.program.reporting_period_start + datetime.timedelta(days=5) if date is None else date
-        datum = i_factories.CollectedDataFactory(
+        datum = i_factories.ResultFactory(
             indicator=indicator,
             achieved=achieved,
             date_collected=date,
@@ -356,7 +356,7 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
             lop_target=1000,
             program=self.program
         )
-        lop_data = i_factories.CollectedDataFactory(
+        lop_data = i_factories.ResultFactory(
             indicator=indicator_lop,
             achieved=400,
             date_collected=self.program.reporting_period_end - datetime.timedelta(days=10)
@@ -370,7 +370,7 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
             period=PeriodicTarget.MIDLINE,
             target=1000
         )
-        mid_data = i_factories.CollectedDataFactory(
+        mid_data = i_factories.ResultFactory(
             indicator=indicator_midend,
             periodic_target=mid_target,
             achieved=400,

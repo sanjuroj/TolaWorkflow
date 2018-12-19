@@ -7,7 +7,7 @@ from factory.fuzzy import FuzzyChoice
 
 from indicators.models import (
     TolaTable as TolaTableM,
-    CollectedData as CollectedDataM,
+    Result as ResultM,
     ExternalService as ExternalServiceM,
     ReportingFrequency as ReportingFrequencyM,
     Indicator as IndicatorM,
@@ -80,9 +80,9 @@ class LevelFactory(DjangoModelFactory):
     name = Sequence(lambda n: 'Level: {0}'.format(n))
 
 
-class CollectedDataFactory(DjangoModelFactory):
+class ResultFactory(DjangoModelFactory):
     class Meta:
-        model = CollectedDataM
+        model = ResultM
 
     program = SubFactory(ProgramFactory)
     indicator = SubFactory(IndicatorFactory)

@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 from indicators.models import Indicator
 from indicators.views.views_reports import IPTT_Mixin
-from factories.indicators_models import IndicatorFactory, CollectedDataFactory
+from factories.indicators_models import IndicatorFactory, ResultFactory
 from factories.workflow_models import ProgramFactory
 from django import test
 
@@ -191,7 +191,7 @@ class TestIPTTTimePeriodsReportResponseBase(test.TestCase):
         indicator = self.add_indicator(frequency=frequency)
         collect_date = self.program.reporting_period_start + timedelta(days=1)
         for value in values:
-            _ = CollectedDataFactory(indicator=indicator, date_collected=collect_date, achieved=value)
+            _ = ResultFactory(indicator=indicator, date_collected=collect_date, achieved=value)
             if frequency == Indicator.ANNUAL:
                 collect_date = datetime(collect_date.year + 1, collect_date.month, collect_date.day)
             elif frequency == Indicator.SEMI_ANNUAL:
