@@ -1,3 +1,6 @@
+.form-group label {
+    // font-weight: bold; // NO
+}
 .label--required {
     &:after {
         content: "*";

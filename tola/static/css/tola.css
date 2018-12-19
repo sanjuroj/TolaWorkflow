@@ -7213,8 +7213,8 @@ td.periodic-targets__sum {
     .tab-set--vertical .nav-tabs .nav-link {
       border-bottom-left-radius: 0;
       border-top-right-radius: 0; }
-      .tab-set--vertical .nav-tabs .nav-link:hover {
-        border-color: #ebedf0 #ebedf0 #dbdcde !important; }
+      .tab-set--vertical .nav-tabs .nav-link:hover, .tab-set--vertical .nav-tabs .nav-link:focus {
+        border-color: #dbdcde !important; }
       .tab-set--vertical .nav-tabs .nav-link.active {
         border-color: #dbdcde #fff #dbdcde #dbdcde; }
   .tab-set--vertical .tab-content {
