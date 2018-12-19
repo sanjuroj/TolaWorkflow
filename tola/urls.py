@@ -7,7 +7,7 @@ from feed.views import (
     ExternalServiceViewSet, ExternalServiceRecordViewSet, StrategicObjectiveViewSet, StakeholderViewSet,
     StakeholderTypeViewSet, CapacityViewSet, EvaluateViewSet, ProfileTypeViewSet, ProvinceViewSet,
     DistrictViewSet, AdminLevelThreeViewSet, VillageViewSet, ContactViewSet, DocumentationViewSet,
-    CollectedDataViewSet, TolaTableViewSet, DisaggregationValueViewSet, ProjectAgreementViewSet,
+    ResultViewSet, TolaTableViewSet, DisaggregationValueViewSet, ProjectAgreementViewSet,
     LoggedUserViewSet, ChecklistViewSet, OrganizationViewSet, PogramIndicatorReadOnlyViewSet,
     PeriodicTargetReadOnlyViewSet, ProgramTargetFrequencies
 )
@@ -62,7 +62,7 @@ router.register(r'adminlevelthree', AdminLevelThreeViewSet)
 router.register(r'village', VillageViewSet)
 router.register(r'contact', ContactViewSet)
 router.register(r'documentation', DocumentationViewSet)
-router.register(r'collecteddata', CollectedDataViewSet)
+router.register(r'result', ResultViewSet)
 router.register(r'tolatable', TolaTableViewSet, base_name='tolatable')
 router.register(r'disaggregationvalue', DisaggregationValueViewSet)
 router.register(r'projectagreements', ProjectAgreementViewSet)

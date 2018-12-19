@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Indicator, IndicatorType, CollectedData, StrategicObjective, Objective, Level,
+    Indicator, IndicatorType, Result, StrategicObjective, Objective, Level,
     TolaTable, ExternalService, ExternalServiceRecord, DataCollectionFrequency,
     DisaggregationType, PeriodicTarget, DisaggregationLabel, ReportingFrequency,
     ExternalServiceAdmin,
@@ -187,18 +187,18 @@ class TolaTableAdmin(ImportExportModelAdmin):
     display = 'Tola Table'
 
 
-class CollectedDataResource(resources.ModelResource):
+class ResultResource(resources.ModelResource):
     class Meta:
-        model = CollectedData
+        model = Result
         # import_id_fields = ['id']
 
 
-class CollectedDataAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
-    resource_class = CollectedDataResource
+class ResultAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
+    resource_class = ResultResource
     list_display = ('indicator', 'program', 'agreement')
     search_fields = ('indicator', 'agreement', 'program', 'owner__username')
     list_filter = ('indicator__program__country__country', 'program', 'approved_by')
-    display = 'Collected Data on Indicators'
+    display = 'Indicators Results'
 
 
 class ReportingFrequencyAdmin(admin.ModelAdmin):
@@ -211,7 +211,7 @@ admin.site.register(Indicator, IndicatorAdmin)
 admin.site.register(ReportingFrequency)
 admin.site.register(DisaggregationType, DisaggregationTypeAdmin)
 admin.site.register(DisaggregationLabel, DisaggregationLabelAdmin)
-admin.site.register(CollectedData, CollectedDataAdmin)
+admin.site.register(Result, ResultAdmin)
 admin.site.register(Objective, ObjectiveAdmin)
 admin.site.register(StrategicObjective, StrategicObjectiveAdmin)
 admin.site.register(Level)

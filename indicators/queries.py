@@ -7,7 +7,7 @@ from indicators.models import (
     Indicator,
     Level,
     PeriodicTarget,
-    CollectedData,
+    Result,
     IndicatorSortingManagerMixin,
     IndicatorSortingQSMixin
 )
@@ -48,7 +48,7 @@ def indicator_lop_annotations():
 
     takes into account cumulative/noncumulative and number/percent"""
     # we only want targets that are either time naive or for completed periods:
-    data_subquery = CollectedData.objects.filter(
+    data_subquery = Result.objects.filter(
         periodic_target_id=models.OuterRef('pk')
     ).order_by().values('id')
     indicator_targets = PeriodicTarget.objects.annotate(
@@ -63,7 +63,7 @@ def indicator_lop_annotations():
             models.Q(data_count__gt=0)
         ) | models.Q(end_date__lte=models.functions.Now())
     )
-    indicator_data = CollectedData.objects.filter(
+    indicator_data = Result.objects.filter(
         models.Q(indicator=models.OuterRef('pk'))
     )
     lop_target_sum = models.Case(
@@ -104,7 +104,7 @@ def indicator_lop_annotations():
             output_field=models.FloatField()
         )
     )
-    # lop_actual_sum = sum of all the data collected:
+    # lop_actual_sum = sum of all the results:
     lop_actual_sum = models.Case(
         models.When(
             unit_of_measure_type=Indicator.PERCENTAGE,
@@ -328,7 +328,7 @@ def program_results_annotation(total=True):
     """annotates a program with the count of indicators which have any reported results
         or the count of reported results for the program in total
         Total=True: all results for program, Total=False: number of indicators with results"""
-    data_subquery = CollectedData.objects.filter(
+    data_subquery = Result.objects.filter(
         indicator__program=models.OuterRef('pk')
     ).order_by().values('indicator__program').annotate(
         data_count=models.Count('indicator_id', distinct=total)).values('data_count')[:1]
@@ -340,7 +340,7 @@ def program_results_annotation(total=True):
 
 def program_evidence_annotation():
     """annotates a program with the count of results for any of the program's indicators which have evidence"""
-    cd = CollectedData.objects.filter(
+    cd = Result.objects.filter(
         indicator__program_id=models.OuterRef('pk')
     ).filter(
         models.Q(evidence__isnull=False) | models.Q(tola_table__isnull=False)
@@ -372,7 +372,7 @@ def indicator_results_count_annotation():
     """annotates an indicator queryset with the number of results associated with each indicator"""
     return models.functions.Coalesce(
         models.Subquery(
-            CollectedData.objects.filter(
+            Result.objects.filter(
                 indicator=models.OuterRef('pk')
                 ).order_by().values('indicator').annotate(
                     total_results=models.Count('id')
@@ -385,7 +385,7 @@ def indicator_results_evidence_annotation():
         either a Documentation or TolaTable as evidence"""
     return models.functions.Coalesce(
         models.Subquery(
-            CollectedData.objects.filter(
+            Result.objects.filter(
                 indicator=models.OuterRef('pk')
                 ).filter(
                     models.Q(evidence__isnull=False) | models.Q(tola_table__isnull=False)
@@ -463,7 +463,7 @@ class MetricsIndicator(Indicator):
     def cached_data_count(self):
         if hasattr(self, 'data_count'):
             return self.data_count
-        return self.collecteddata_set.count()
+        return self.result_set.count()
 
 class IPTTIndicatorQuerySet(models.QuerySet, IndicatorSortingQSMixin):
     """This overrides the count method because ONLY_FULL_GROUP_BY errors appear otherwise on this custom query"""
@@ -562,14 +562,14 @@ class NoTargetsIndicatorManager(IPTTIndicatorManager):
                 models.When(
                     unit_of_measure_type=Indicator.PERCENTAGE,
                     then=models.Subquery(
-                        CollectedData.objects.filter(
+                        Result.objects.filter(
                             indicator_id=models.OuterRef('pk'),
                             date_collected__lte=period['end_date']
                         ).order_by('-date_collected').values('achieved')[:1],
                         output_field=models.FloatField()
                     )),
                 default=models.Subquery(
-                    CollectedData.objects.filter(
+                    Result.objects.filter(
                         indicator_id=models.OuterRef('pk'),
                         date_collected__lte=period['end_date']
                     ).filter(
@@ -590,28 +590,28 @@ class NoTargetsIndicatorManager(IPTTIndicatorManager):
 
 
 class WithTargetsIndicatorManager(IPTTIndicatorManager):
-    """Manager for Indicator with PeriodicTargets and CollectedData
+    """Manager for Indicator with PeriodicTargets and Results
 
-    automatically annotates for lop target and actual lop sum of collected data
+    automatically annotates for lop target and actual lop sum of results
     also can self-annotate for periodic target and actual sum
     returns % met for the above"""
 
     def get_target_prefetch(self):
-        # inner query to apply target_id to data collected within target range
+        # inner query to apply target_id to results within target range
         target_inner_query = PeriodicTarget.objects.filter(
             indicator_id=models.OuterRef('indicator_id'),
             start_date__lte=models.OuterRef('date_collected'),
             end_date__gte=models.OuterRef('date_collected')
         ).order_by().values('id')[:1]
         # inner query to collect data annotated by target_id
-        data_with_periods_non_cumulative = CollectedData.objects.filter(
+        data_with_periods_non_cumulative = Result.objects.filter(
             indicator_id=models.OuterRef('indicator_id')
         ).annotate(
             target_id=models.Subquery(target_inner_query)
         ).filter(
             target_id=models.OuterRef('id')
         ).order_by().values('target_id')
-        data_with_periods_cumulative = CollectedData.objects.filter(
+        data_with_periods_cumulative = Result.objects.filter(
             indicator_id=models.OuterRef('indicator_id'),
             date_collected__lte=models.OuterRef('end_date')
         ).order_by().values('indicator_id')
@@ -729,7 +729,7 @@ class WithMetricsIndicatorManager(IPTTIndicatorManager):
 
     def get_evidence_count(self, qs):
         """annotates qs with evidence_count= # of results that have evidence, and all_results_backed_up=Boolean"""
-        data_with_evidence = CollectedData.objects.filter(
+        data_with_evidence = Result.objects.filter(
             models.Q(indicator_id=models.OuterRef('pk')) |
             models.Q(periodic_target__indicator_id=models.OuterRef('pk')),
             models.Q(evidence__isnull=False) | models.Q(tola_table__isnull=False)
@@ -777,14 +777,14 @@ class WithMetricsIndicatorManager(IPTTIndicatorManager):
         return qs
 
     def get_reported_results(self, qs):
-        collected_data_with_achieved_values = CollectedData.objects.filter(
+        results_with_achieved_values = Result.objects.filter(
             models.Q(indicator_id=models.OuterRef('pk')),
             models.Q(achieved__isnull=False)
         ).order_by().values('indicator_id')
         qs = qs.annotate(
             reported_results=models.functions.Coalesce( # coalesce to return 0 if the subquery is empty (not None)
                 models.Subquery(
-                    collected_data_with_achieved_values.annotate(
+                    results_with_achieved_values.annotate(
                         result_count=models.Count('date_collected')).values('result_count')[:1],
                     output_field=models.IntegerField()
                 ), 0)

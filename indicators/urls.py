@@ -2,21 +2,21 @@ from django.conf.urls import url
 
 from .views.views_indicators import (
     indicator_create,
-    CollectedDataCreate,
-    CollectedDataUpdate,
-    CollectedDataDelete,
+    ResultCreate,
+    ResultUpdate,
+    ResultDelete,
     IndicatorCreate,
     IndicatorDelete,
     IndicatorUpdate,
     IndicatorList,
     IndicatorExport,
     IndicatorReportData,
-    CollectedDataReportData,
-    collecteddata_import,
+    ResultReportData,
+    result_import,
     service_json,
     PeriodicTargetView,
     PeriodicTargetDeleteView,
-    collected_data_view,
+    result_view,
     program_indicators_json,
     programIndicatorReport,
     indicator_report,
@@ -58,14 +58,14 @@ urlpatterns = [
     url(r'^periodic_target_deleteall/(?P<indicator>\d+)/(?P<deleteall>\w+)/$',
         PeriodicTargetView.as_view(), name='pt_deleteall'),
 
-    url(r'^collecteddata_add/(?P<program>\d+)/(?P<indicator>\d+)/$',
-        CollectedDataCreate.as_view(), name='collecteddata_add'),
+     url(r'^result_add/(?P<program>\d+)/(?P<indicator>\d+)/$',
+        ResultCreate.as_view(), name='result_add'),
 
-    url(r'^collecteddata_import/$', collecteddata_import, name='collecteddata_import'),
+    url(r'^result_import/$', result_import, name='result_import'),
 
-    url(r'^collecteddata_update/(?P<pk>\d+)/$', CollectedDataUpdate.as_view(), name='collecteddata_update'),
+    url(r'^result_update/(?P<pk>\d+)/$', ResultUpdate.as_view(), name='result_update'),
 
-    url(r'^collecteddata_delete/(?P<pk>\d+)/$', CollectedDataDelete.as_view(), name='collecteddata_delete'),
+    url(r'^result_delete/(?P<pk>\d+)/$', ResultDelete.as_view(), name='result_delete'),
 
     url(r'^report/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$', indicator_report, name='indicator_report'),
 
@@ -88,8 +88,8 @@ urlpatterns = [
 
     url(r'^service/(?P<service>[-\w]+)/service_json/', service_json, name='service_json'),
 
-    url(r'^collected_data_table/(?P<indicator>\d+)/(?P<program>\d+)/',
-        collected_data_view, name='collected_data_view'),
+    url(r'^result_table/(?P<indicator>\d+)/(?P<program>\d+)/',
+        result_view, name='result_view'),
 
     url(r'^program_indicators/(?P<program>\d+)/(?P<indicator>\d+)/'
         r'(?P<type>\d+)', program_indicators_json, name='program_indicators_json'),
@@ -102,15 +102,10 @@ urlpatterns = [
         IndicatorExport.as_view(),
         name='indicator_export'),
 
-    url(r'^collecteddata_report_data/(?P<program>\d+)/(?P<indicator>\d+)/'
+    url(r'^result_report_data/(?P<program>\d+)/(?P<indicator>\d+)/'
         r'(?P<type>\d+)/$',
-        CollectedDataReportData.as_view(),
-        name='collecteddata_report_data'),
-
-    url(r'^collecteddata_report_data/(?P<program>\d+)/(?P<indicator>\d+)/'
-        r'(?P<type>\d+)/export/$',
-        IndicatorDataExport.as_view(),
-        name='collecteddata_report_data_export'),
+        ResultReportData.as_view(),
+        name='result_report_data'),
 
     url(r'^iptt_quickstart/', IPTTReportQuickstartView.as_view(), name='iptt_quickstart'),
 

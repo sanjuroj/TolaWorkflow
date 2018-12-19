@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from workflow.models import ProjectAgreement, ProjectComplete, Program, SiteProfile, Sector,Country, TolaUser,TolaSites, TolaBookmarks, FormGuidance
-from indicators.models import CollectedData, Indicator
+from indicators.models import Indicator
 
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Q, Count
@@ -49,12 +49,12 @@ def index(request, selected_country=None):
 
     sites_with_results = SiteProfile.objects.all()\
         .prefetch_related('country', 'district', 'province') \
-        .filter(Q(collecteddata__program__country=active_country))\
+        .filter(Q(result__program__country=active_country))\
         .filter(status=1)
 
     sites_without_results = SiteProfile.objects.all() \
         .prefetch_related('country', 'district', 'province') \
-        .filter(Q(country=active_country) & ~Q(collecteddata__program__country=active_country)) \
+        .filter(Q(country=active_country) & ~Q(result__program__country=active_country)) \
         .filter(status=1)
 
     return render(request, 'home.html', {

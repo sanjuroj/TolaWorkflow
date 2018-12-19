@@ -8,7 +8,7 @@ from .models import Program, Country, Province, AdminLevelThree, District, Proje
     Documentation, Monitor, Benchmarks, Budget, ApprovalAuthority, Checklist, ChecklistItem, Contact, Stakeholder, FormGuidance, \
     TolaBookmarks, TolaUser
 from formlibrary.models import TrainingAttendance, Distribution
-from indicators.models import CollectedData, ExternalService
+from indicators.models import Result, ExternalService
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.urls import reverse
@@ -307,8 +307,8 @@ class ProjectAgreementUpdate(UpdateView):
 
 
         try:
-            getQuantitative = CollectedData.objects.all().filter(agreement__id=self.kwargs['pk']).order_by('indicator')
-        except CollectedData.DoesNotExist:
+            getQuantitative = Result.objects.all().filter(agreement__id=self.kwargs['pk']).order_by('indicator')
+        except Result.DoesNotExist:
             getQuantitative = None
         context.update({'getQuantitative': getQuantitative})
 
@@ -445,9 +445,9 @@ class ProjectAgreementDetail(DetailView):
         context.update({'getDocuments': getDocuments})
 
         try:
-            getQuantitativeOutputs = CollectedData.objects.all().filter(agreement__id=self.kwargs['pk'])
+            getQuantitativeOutputs = Result.objects.all().filter(agreement__id=self.kwargs['pk'])
 
-        except CollectedData.DoesNotExist:
+        except Result.DoesNotExist:
             getQuantitativeOutputs = None
         context.update({'getQuantitativeOutputs': getQuantitativeOutputs})
 
@@ -586,7 +586,7 @@ class ProjectCompleteCreate(CreateView):
         getAgreement = ProjectAgreement.objects.get(id=self.request.POST['project_agreement'])
 
         #update the quantitative data fields to include the newly created complete
-        CollectedData.objects.filter(agreement__id=getComplete.project_agreement_id).update(complete=getComplete)
+        Result.objects.filter(agreement__id=getComplete.project_agreement_id).update(complete=getComplete)
 
         #update the other budget items
         Budget.objects.filter(agreement__id=getComplete.project_agreement_id).update(complete=getComplete)
@@ -650,8 +650,8 @@ class ProjectCompleteUpdate(UpdateView):
 
         # get Quantitative data
         try:
-            getQuantitative = CollectedData.objects.all().filter(Q(agreement__id=getComplete.project_agreement_id) | Q(complete__id=getComplete.pk)).order_by('indicator')
-        except CollectedData.DoesNotExist:
+            getQuantitative = Result.objects.all().filter(Q(agreement__id=getComplete.project_agreement_id) | Q(complete__id=getComplete.pk)).order_by('indicator')
+        except Result.DoesNotExist:
             getQuantitative = None
         context.update({'getQuantitative': getQuantitative})
 
@@ -1067,7 +1067,7 @@ class DocumentationDelete(DeleteView):
 
 class IndicatorDataBySite(ListView):
     template_name = 'workflow/site_indicatordata.html'
-    context_object_name = 'collecteddata'
+    context_object_name = 'result'
 
     def get_context_data(self, **kwargs):
         context = super(IndicatorDataBySite, self).get_context_data(**kwargs)
@@ -1075,7 +1075,7 @@ class IndicatorDataBySite(ListView):
         return context
 
     def get_queryset(self):
-        q = CollectedData.objects.filter(site__id = self.kwargs.get('site_id')).order_by('program', 'indicator')
+        q = Result.objects.filter(site__id = self.kwargs.get('site_id')).order_by('program', 'indicator')
         return q
 
 
@@ -1127,7 +1127,7 @@ class SiteProfileList(ListView):
             getSiteProfile = SiteProfile.objects.prefetch_related(\
                     'country','district','province')\
                 .filter(Q(projectagreement__program__id=program_id)\
-                        | Q(collecteddata__program__id=program_id))\
+                        | Q(result__program__id=program_id))\
                 .distinct()
         else:
             getSiteProfile = SiteProfile.objects.prefetch_related(\
@@ -1192,7 +1192,7 @@ class SiteProfileReport(ListView):
 
         if int(self.kwargs['pk']) == 0:
             getSiteProfile = SiteProfile.objects.all().prefetch_related('country','district','province').filter(country__in=countries).filter(status=1)
-            getSiteProfileIndicator = SiteProfile.objects.all().prefetch_related('country','district','province').filter(Q(collecteddata__program__country__in=countries)).filter(status=1)
+            getSiteProfileIndicator = SiteProfile.objects.all().prefetch_related('country','district','province').filter(Q(result__program__country__in=countries)).filter(status=1)
         else:
             getSiteProfile = SiteProfile.objects.all().prefetch_related('country','district','province').filter(projectagreement__id=self.kwargs['pk']).filter(status=1)
             getSiteProfileIndicator = None
@@ -1840,7 +1840,7 @@ class QuantitativeOutputsCreate(AjaxableResponseMixin, CreateView):
     """
     QuantitativeOutput Form
     """
-    model = CollectedData
+    model = Result
     template_name = 'workflow/quantitativeoutputs_form.html'
 
     # add the request to the kwargs
@@ -1904,7 +1904,7 @@ class QuantitativeOutputsUpdate(AjaxableResponseMixin, UpdateView):
     """
     QuantitativeOutput Form
     """
-    model = CollectedData
+    model = Result
     template_name = 'workflow/quantitativeoutputs_form.html'
 
     # add the request to the kwargs
@@ -1956,7 +1956,7 @@ class QuantitativeOutputsDelete(AjaxableResponseMixin, DeleteView):
     """
     QuantitativeOutput Delete
     """
-    model = CollectedData
+    model = Result
     # success_url = '/'
 
     def get_success_url(self):

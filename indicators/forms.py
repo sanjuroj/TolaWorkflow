@@ -1,22 +1,25 @@
-import dateparser
-from django.conf import settings
 from datetime import datetime
 from functools import partial
+
+from workflow.models import (
+    Program, SiteProfile, Documentation, ProjectComplete, TolaUser, Sector
+)
+from tola.util import getCountry
+from indicators.models import (
+    Indicator, PeriodicTarget, Result, Objective, StrategicObjective,
+    TolaTable, DisaggregationType, Level, IndicatorType,
+    PinnedReport)
+from indicators.widgets import DataAttributesSelect
+
+import dateparser
+
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django import forms
 from django.forms.fields import DateField
 from django.utils.translation import ugettext_lazy as _
 from django.utils import formats, translation, timezone
-from workflow.models import (
-    Program, SiteProfile, Documentation, ProjectComplete, TolaUser, Sector
-)
-from tola.util import getCountry
-from indicators.models import (
-    Indicator, PeriodicTarget, CollectedData, Objective, StrategicObjective,
-    TolaTable, DisaggregationType, Level, IndicatorType,
-    PinnedReport)
-from indicators.widgets import DataAttributesSelect
+
 
 locale_format = formats.get_format('DATE_INPUT_FORMATS', lang=translation.get_language())[-1]
 
@@ -36,7 +39,7 @@ class LocaleDateField(DateField):
             return None
         try:
             return dateparser.parse(value).date()
-        except (AttributeError):
+        except AttributeError:
             raise ValidationError(
                 self.error_messages['invalid'], code='invalid')
 
@@ -101,10 +104,10 @@ class IndicatorForm(forms.ModelForm):
         return data
 
 
-class CollectedDataForm(forms.ModelForm):
+class ResultForm(forms.ModelForm):
 
     class Meta:
-        model = CollectedData
+        model = Result
         exclude = ['create_date', 'edit_date']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
@@ -139,7 +142,7 @@ class CollectedDataForm(forms.ModelForm):
         self.program = kwargs.pop('program')
         self.indicator = kwargs.pop('indicator', None)
         self.tola_table = kwargs.pop('tola_table')
-        super(CollectedDataForm, self).__init__(*args, **kwargs)
+        super(ResultForm, self).__init__(*args, **kwargs)
 
         # override the program queryset to use request.user for country
         self.fields['evidence'].queryset = Documentation.objects\
@@ -295,9 +298,8 @@ class IPTTReportFilterForm(ReportFormCommon):
         target_frequency_choices = []
         for tp in target_frequencies:
             try:
-                id = int(tp['target_frequency'])
-                target_frequency_choices.append((id, Indicator.TARGET_FREQUENCIES[id-1][1]))
-                # print("id={}, tf={}".format(id, Indicator.TARGET_FREQUENCIES[id]))
+                pk = int(tp['target_frequency'])
+                target_frequency_choices.append((pk, Indicator.TARGET_FREQUENCIES[pk-1][1]))
             except TypeError:
                 pass
 

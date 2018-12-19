@@ -7,8 +7,12 @@ from django.utils.translation import ugettext_lazy as _
 from functools import partial
 from widgets import GoogleMapsWidget
 from django import forms
-from .models import ProjectAgreement, ProjectComplete, Program, SiteProfile, Documentation, Benchmarks, Monitor, Budget, Capacity, Evaluate, Office, Checklist, ChecklistItem, Province, Stakeholder, TolaUser, Contact, Sector
-from indicators.models import CollectedData, Indicator, PeriodicTarget
+from .models import (
+    ProjectAgreement, ProjectComplete, Program, SiteProfile, Documentation, Benchmarks,
+    Monitor, Budget, Capacity, Evaluate, Office, Checklist, ChecklistItem, Province, Stakeholder,
+    TolaUser, Contact, Sector
+)
+from indicators.models import Result, Indicator, PeriodicTarget
 from crispy_forms.layout import LayoutObject, TEMPLATE_PACK
 from tola.util import getCountry
 import ast
@@ -1460,7 +1464,7 @@ class QuantitativeOutputsForm(forms.ModelForm):
     is_it_project_complete_form = forms.CharField(required=False)
 
     class Meta:
-        model = CollectedData
+        model = Result
         exclude = ['create_date', 'edit_date']
 
     def __init__(self, *args, **kwargs):
