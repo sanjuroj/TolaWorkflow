@@ -23,7 +23,7 @@ from openpyxl.worksheet.cell_range import CellRange
 from tola.util import formatFloat
 from tola.l10n_utils import l10n_date_year_month, l10n_date_medium
 from workflow.models import Program
-from ..models import Indicator, CollectedData, Level, PeriodicTarget, PinnedReport
+from ..models import Indicator, Result, Level, PeriodicTarget, PinnedReport
 from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm, PinnedReportForm
 from ..templatetags.mytags import symbolize_change, symbolize_measuretype
 from indicators.queries import IPTTIndicator
@@ -125,7 +125,7 @@ class IPTT_Mixin(object):
             self.annotations = {}
         elif period == Indicator.MID_END:
             # Create annotations for MIDLINE TargetPeriod
-            last_data_record = CollectedData.objects.filter(
+            last_data_record = Result.objects.filter(
                 indicator=OuterRef('pk'),
                 periodic_target__customsort=0) \
                 .order_by('-date_collected', '-pk')
@@ -133,27 +133,18 @@ class IPTT_Mixin(object):
                 Case(
                     When(
                         Q(unit_of_measure_type=Indicator.NUMBER) &
-                        Q(collecteddata__periodic_target__customsort=0),
-                        then=F('collecteddata__achieved')
+                        Q(result__periodic_target__customsort=0),
+                        then=F('result__achieved')
                     )
                 )
             )
-            # midline_avg = Avg(
-            #     Case(
-            #         When(
-            #             Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-            #             Q(is_cumulative=False) &
-            #             Q(collecteddata__periodic_target__period=PeriodicTarget.MIDLINE),
-            #             then=F('collecteddata__achieved')
-            #         )
-            #     )
-            # )
+
             midline_last = Max(
                 Case(
                     When(
                         Q(unit_of_measure_type=Indicator.PERCENTAGE) &
                         # Q(is_cumulative=True) &
-                        Q(collecteddata__periodic_target__customsort=0),
+                        Q(result__periodic_target__customsort=0),
                         then=Subquery(last_data_record.values('achieved')[:1])
                     )
                 )
@@ -162,16 +153,14 @@ class IPTT_Mixin(object):
             midline_target = Max(
                 Case(
                     When(
-                        Q(collecteddata__periodic_target__customsort=0),
+                        Q(result__periodic_target__customsort=0),
                         then=Subquery(last_data_record.values('periodic_target__target')[:1])
-                        # Q(periodictargets__period=PeriodicTarget.MIDLINE),
-                        # then=F('periodictargets__target')
                     )
                 )
             )
 
             # Create annotations for ENDLINE TargetPeriod
-            last_data_record = CollectedData.objects.filter(
+            last_data_record = Result.objects.filter(
                 indicator=OuterRef('pk'),
                 periodic_target__customsort=1) \
                 .order_by('-date_collected', '-pk')
@@ -179,27 +168,17 @@ class IPTT_Mixin(object):
                 Case(
                     When(
                         Q(unit_of_measure_type=Indicator.NUMBER) &
-                        Q(collecteddata__periodic_target__customsort=1),
-                        then=F('collecteddata__achieved')
+                        Q(result__periodic_target__customsort=1),
+                        then=F('result__achieved')
                     )
                 )
             )
-            # endline_avg = Avg(
-            #     Case(
-            #         When(
-            #             Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-            #             Q(is_cumulative=False) &
-            #             Q(collecteddata__periodic_target__period=PeriodicTarget.ENDLINE),
-            #             then=F('collecteddata__achieved')
-            #         )
-            #     )
-            # )
             endline_last = Max(
                 Case(
                     When(
                         Q(unit_of_measure_type=Indicator.PERCENTAGE) &
                         # Q(is_cumulative=True) &
-                        Q(collecteddata__periodic_target__customsort=1),
+                        Q(result__periodic_target__customsort=1),
                         then=Subquery(last_data_record.values('achieved')[:1])
                     )
                 )
@@ -208,7 +187,7 @@ class IPTT_Mixin(object):
             endline_target = Max(
                 Case(
                     When(
-                        Q(collecteddata__periodic_target__customsort=1),
+                        Q(result__periodic_target__customsort=1),
                         then=Subquery(last_data_record.values('periodic_target__target')[:1])
                         # Q(periodictargets__period=PeriodicTarget.ENDLINE),
                         # then=F('periodictargets__target')
@@ -231,7 +210,7 @@ class IPTT_Mixin(object):
                 #start_date = datetime.strftime(v[0], '%Y-%m-%d') # TODO: localize this date
                 #end_date = datetime.strftime(v[1], '%Y-%m-%d') # TODO: localize this date
 
-                last_data_record = CollectedData.objects.filter(
+                last_data_record = Result.objects.filter(
                     indicator=OuterRef('pk'),
                     date_collected__gte=start_date,
                     date_collected__lte=end_date) \
@@ -253,14 +232,14 @@ class IPTT_Mixin(object):
                             When(
                                 Q(unit_of_measure_type=Indicator.NUMBER) &
                                 Q(is_cumulative=True) &
-                                Q(collecteddata__date_collected__lte=end_date),
-                                then=F('collecteddata__achieved')
+                                Q(result__date_collected__lte=end_date),
+                                then=F('result__achieved')
                             ),
                             When(
                                 Q(unit_of_measure_type=Indicator.NUMBER) &
-                                Q(collecteddata__date_collected__gte=start_date) &
-                                Q(collecteddata__date_collected__lte=end_date),
-                                then=F('collecteddata__achieved')
+                                Q(result__date_collected__gte=start_date) &
+                                Q(result__date_collected__lte=end_date),
+                                then=F('result__achieved')
                             )
                         )
                     )
@@ -269,31 +248,21 @@ class IPTT_Mixin(object):
                         Case(
                             When(
                                 Q(unit_of_measure_type=Indicator.NUMBER) &
-                                Q(collecteddata__date_collected__gte=start_date) &
-                                Q(collecteddata__date_collected__lte=end_date),
-                                then=F('collecteddata__achieved')
+                                Q(result__date_collected__gte=start_date) &
+                                Q(result__date_collected__lte=end_date),
+                                then=F('result__achieved')
                             )
                         )
                     )
                 i += 1
-                # annotation_avg = Avg(
-                #     Case(
-                #         When(
-                #             Q(unit_of_measure_type=Indicator.PERCENTAGE) &
-                #             Q(is_cumulative=False) &
-                #             Q(collecteddata__date_collected__gte=start_date) &
-                #             Q(collecteddata__date_collected__lte=end_date),
-                #             then=F('collecteddata__achieved')
-                #         )
-                #     )
-                # )
+
                 annotation_last = Max(
                     Case(
                         When(
                             Q(unit_of_measure_type=Indicator.PERCENTAGE) &
                             # Q(is_cumulative=True) &
-                            Q(collecteddata__date_collected__gte=start_date) &
-                            Q(collecteddata__date_collected__lte=end_date),
+                            Q(result__date_collected__gte=start_date) &
+                            Q(result__date_collected__lte=end_date),
                             then=Subquery(last_data_record.values('achieved')[:1])
                         )
                     )
@@ -304,8 +273,8 @@ class IPTT_Mixin(object):
                     annotation_target = Max(
                         Case(
                             When(
-                                Q(collecteddata__date_collected__gte=start_date) &
-                                Q(collecteddata__date_collected__lte=end_date),
+                                Q(result__date_collected__gte=start_date) &
+                                Q(result__date_collected__lte=end_date),
                                 then=Subquery(last_data_record.values('periodic_target__target')[:1])
                                 # Q(periodictargets__start_date__gte=start_date) &
                                 # Q(periodictargets__end_date__lte=end_date),
@@ -317,9 +286,8 @@ class IPTT_Mixin(object):
 
                 # the following becomes annotations for the queryset
                 # e.g.
-                # Year 1_sum=..., Year 2_sum=..., etc.
-                # Year 1_avg=..., Year 2_avg=..., etc.
-                # Year 1_last=..., Year 2_last=..., etc.
+                # 0_sum=..., 1_sum=..., etc.
+                # 0_last=..., 1_last=..., etc.
                 #
                 self.annotations[u"{}_sum".format(sequence_count)] = annotation_sum
                 # self.annotations[u"{}_avg".format(k)] = annotation_avg
@@ -424,7 +392,7 @@ class IPTT_Mixin(object):
             pass
 
         try:
-            filters['collecteddata__site__in'] = data['site'] if isinstance(data['site'], list) else [data['site']]
+            filters['result__site__in'] = data['site'] if isinstance(data['site'], list) else [data['site']]
         except KeyError:
             pass
 
@@ -653,11 +621,11 @@ class IPTT_Mixin(object):
         # calculate aggregated actuals (sum, avg, last) per reporting period
         # (monthly, quarterly, tri-annually, seminu-annualy, and yearly) for each indicator
         lastlevel = Level.objects.filter(indicator__id=OuterRef('pk')).order_by('-id')
-        last_data_record = CollectedData.objects.filter(indicator=OuterRef('pk')).order_by('-date_collected')
+        last_data_record = Result.objects.filter(indicator=OuterRef('pk')).order_by('-date_collected')
         indicators = self.program.indicator_set.filter(
             **filters
-            ).annotate(actualsum=Sum('collecteddata__achieved'),
-                      actualavg=Avg('collecteddata__achieved'),
+            ).annotate(actualsum=Sum('result__achieved'),
+                      actualavg=Avg('result__achieved'),
                       lastlevel=Subquery(lastlevel.values('name')[:1]),
                       lastlevelcustomsort=Subquery(lastlevel.values('customsort')[:1]),
                       lastdata=Subquery(last_data_record.values('achieved')[:1])) \

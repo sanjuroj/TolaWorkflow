@@ -34,11 +34,11 @@ from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
     Program, Country, Sector, TolaSites, FormGuidance
 )
-from ..export import IndicatorResource, CollectedDataResource
-from ..forms import IndicatorForm, CollectedDataForm
+from ..export import IndicatorResource, ResultResource
+from ..forms import IndicatorForm, ResultForm
 from ..models import (
     Indicator, PeriodicTarget, DisaggregationLabel, DisaggregationValue,
-    CollectedData, IndicatorType, Level, ExternalServiceRecord,
+    Result, IndicatorType, Level, ExternalServiceRecord,
     ExternalService, TolaTable, PinnedReport
 )
 from indicators.queries import ProgramWithMetrics
@@ -350,7 +350,7 @@ class PeriodicTargetView(View):
                 indicator=indicator)
 
             for pt in periodic_targets:
-                pt.collecteddata_set.all().update(periodic_target=None)
+                pt.result_set.all().update(periodic_target=None)
                 pt.delete()
             indicator.target_frequency = None
             indicator.target_frequency_num_periods = 1
@@ -365,19 +365,19 @@ def handleDataCollectedRecords(indicatr, lop, existing_target_frequency,
                                new_target_frequency, generated_pt_ids=[]):
     """
     If the target_frequency is changed from LOP to something else then
-    disassociate all collected_data from the LOP periodic_target and then
+    disassociate all results from the LOP periodic_target and then
     delete the LOP periodic_target
     if existing_target_frequency == Indicator.LOP
     and new_target_frequency != Indicator.LOP:
     """
     if existing_target_frequency != new_target_frequency:
-        CollectedData.objects.filter(indicator=indicatr) \
+        Result.objects.filter(indicator=indicatr) \
             .update(periodic_target=None)
 
         PeriodicTarget.objects.filter(indicator=indicatr).delete()
 
     # If the user sets target_frequency to LOP then create a LOP
-    # periodic_target and associate all collected data for this indicator with
+    # periodic_target and associate all results for this indicator with
     # this single LOP periodic_target
     if existing_target_frequency != Indicator.LOP and \
             new_target_frequency == Indicator.LOP:
@@ -386,14 +386,14 @@ def handleDataCollectedRecords(indicatr, lop, existing_target_frequency,
             indicator=indicatr, period=Indicator.TARGET_FREQUENCIES[0][1],
             target=lop, create_date=timezone.now()
         )
-        CollectedData.objects.filter(indicator=indicatr) \
+        Result.objects.filter(indicator=indicatr) \
             .update(periodic_target=lop_pt)
 
     if generated_pt_ids:
         pts = PeriodicTarget.objects.filter(indicator=indicatr,
                                             pk__in=generated_pt_ids)
         for pt in pts:
-            CollectedData.objects.filter(
+            Result.objects.filter(
                 indicator=indicatr,
                 date_collected__range=[pt.start_date, pt.end_date]) \
                 .update(periodic_target=pt)
@@ -446,7 +446,7 @@ class IndicatorUpdate(UpdateView):
         context['programId'] = program.id
 
         pts = PeriodicTarget.objects.filter(indicator=getIndicator) \
-            .annotate(num_data=Count('collecteddata')).order_by('customsort', 'create_date', 'period')
+            .annotate(num_data=Count('result')).order_by('customsort', 'create_date', 'period')
 
         ptargets = []
         # context['periodic_targets']
@@ -602,7 +602,7 @@ class IndicatorUpdate(UpdateView):
                     periodic_target.save()
                     generated_pt_ids.append(periodic_target.id)
 
-            # handle related collected_data records for new periodic targets
+            # handle related result objects for new periodic targets
             handleDataCollectedRecords(indicatr, lop, existing_target_frequency, new_target_frequency,
                                        generated_pt_ids)
 
@@ -620,7 +620,7 @@ class IndicatorUpdate(UpdateView):
 
         # fetch all existing periodic_targets for this indicator
         periodic_targets = PeriodicTarget.objects.filter(indicator=indicatr) \
-            .annotate(num_data=Count('collecteddata')) \
+            .annotate(num_data=Count('result')) \
             .order_by('customsort', 'create_date', 'period')
 
         if self.request.is_ajax():
@@ -691,9 +691,9 @@ class PeriodicTargetDeleteView(DeleteView):
     model = PeriodicTarget
 
     def delete(self, request, *args, **kwargs):
-        collecteddata_count = self.get_object().collecteddata_set.count()
-        if collecteddata_count > 0:
-            self.get_object().collecteddata_set.all().update(
+        result_count = self.get_object().result_set.count()
+        if result_count > 0:
+            self.get_object().result_set.all().update(
                 periodic_target=None)
 
         # super(PeriodicTargetDeleteView).delete(request, args, kwargs)
@@ -716,26 +716,26 @@ class PeriodicTargetDeleteView(DeleteView):
         )
 
 
-class CollectedDataCreate(CreateView):
-    model = CollectedData
-    form_class = CollectedDataForm
+class ResultCreate(CreateView):
+    model = Result
+    form_class = ResultForm
 
     def get_template_names(self):
         if self.request.is_ajax():
-            return 'indicators/collecteddata_form_modal.html'
-        return 'indicators/collecteddata_form.html'
+            return 'indicators/result_form_modal.html'
+        return 'indicators/result_form.html'
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
         try:
-            self.guidance = FormGuidance.objects.get(form="CollectedData")
+            self.guidance = FormGuidance.objects.get(form="Result")
         except FormGuidance.DoesNotExist:
             self.guidance = None
-        return super(CollectedDataCreate, self).dispatch(
+        return super(ResultCreate, self).dispatch(
             request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(CollectedDataCreate, self).get_context_data(**kwargs)
+        context = super(ResultCreate, self).get_context_data(**kwargs)
         try:
             getDisaggregationLabel = DisaggregationLabel.objects.filter(
                 disaggregation_type__indicator__id=self.kwargs['indicator'])
@@ -771,7 +771,7 @@ class CollectedDataCreate(CreateView):
 
     # add the request to the kwargs
     def get_form_kwargs(self):
-        kwargs = super(CollectedDataCreate, self).get_form_kwargs()
+        kwargs = super(ResultCreate, self).get_form_kwargs()
         kwargs['request'] = self.request
         kwargs['program'] = self.kwargs['program']
         kwargs['indicator'] = self.kwargs['indicator']
@@ -841,27 +841,27 @@ class CollectedDataCreate(CreateView):
         return HttpResponseRedirect(redirect_url)
 
 
-class CollectedDataUpdate(UpdateView):
-    model = CollectedData
-    form_class = CollectedDataForm
+class ResultUpdate(UpdateView):
+    model = Result
+    form_class = ResultForm
 
     def get_template_names(self):
         if self.request.is_ajax():
-            return 'indicators/collecteddata_form_modal.html'
-        return 'indicators/collecteddata_form.html'
+            return 'indicators/result_form_modal.html'
+        return 'indicators/result_form.html'
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
         try:
-            self.guidance = FormGuidance.objects.get(form="CollectedData")
+            self.guidance = FormGuidance.objects.get(form="Result")
         except FormGuidance.DoesNotExist:
             self.guidance = None
-        return super(CollectedDataUpdate, self).dispatch(
+        return super(ResultUpdate, self).dispatch(
             request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(CollectedDataUpdate, self).get_context_data(**kwargs)
-        getIndicator = CollectedData.objects.get(id=self.kwargs['pk'])
+        context = super(ResultUpdate, self).get_context_data(**kwargs)
+        getIndicator = Result.objects.get(id=self.kwargs['pk'])
 
         try:
             getDisaggregationLabel = DisaggregationLabel.objects.filter(
@@ -876,11 +876,11 @@ class CollectedDataUpdate(UpdateView):
 
         try:
             getDisaggregationValue = DisaggregationValue.objects \
-                .filter(collecteddata=self.kwargs['pk']) \
+                .filter(result=self.kwargs['pk']) \
                 .exclude(disaggregation_label__disaggregation_type__standard=True)
 
             getDisaggregationValueStandard = DisaggregationValue.objects \
-                .filter(collecteddata=self.kwargs['pk']) \
+                .filter(result=self.kwargs['pk']) \
                 .filter(disaggregation_label__disaggregation_type__standard=True)
 
         except DisaggregationLabel.DoesNotExist:
@@ -902,8 +902,8 @@ class CollectedDataUpdate(UpdateView):
 
     # add the request to the kwargs
     def get_form_kwargs(self):
-        get_data = CollectedData.objects.get(id=self.kwargs['pk'])
-        kwargs = super(CollectedDataUpdate, self).get_form_kwargs()
+        get_data = Result.objects.get(id=self.kwargs['pk'])
+        kwargs = super(ResultUpdate, self).get_form_kwargs()
         kwargs['request'] = self.request
         kwargs['program'] = get_data.program
         kwargs['indicator'] = get_data.indicator
@@ -914,14 +914,14 @@ class CollectedDataUpdate(UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        getCollectedData = CollectedData.objects.get(id=self.kwargs['pk'])
+        getResult = Result.objects.get(id=self.kwargs['pk'])
         indicator = self.request.POST['indicator']
 
         getDisaggregationLabel = DisaggregationLabel.objects.filter(
             Q(disaggregation_type__indicator__id=indicator) |
             Q(disaggregation_type__standard=True)).distinct()
 
-        getIndicator = CollectedData.objects.get(id=self.kwargs['pk'])
+        getIndicator = Result.objects.get(id=self.kwargs['pk'])
 
         # update the count with the value of Table unique count
         if form.instance.update_count_tola_table and form.instance.tola_table:
@@ -947,10 +947,10 @@ class CollectedDataUpdate(UpdateView):
             for key, value in self.request.POST.iteritems():
                 if key == str(label.id):
                     value_to_insert = value
-                    save = getCollectedData.disaggregation_value.create(
+                    save = getResult.disaggregation_value.create(
                         disaggregation_label=label, value=value_to_insert)
 
-                    getCollectedData.disaggregation_value.add(save.id)
+                    getResult.disaggregation_value.add(save.id)
 
         if self.request.is_ajax():
             data = serializers.serialize('json', [self.object])
@@ -963,12 +963,12 @@ class CollectedDataUpdate(UpdateView):
         return HttpResponseRedirect(redirect_url)
 
 
-class CollectedDataDelete(DeleteView):
-    model = CollectedData
+class ResultDelete(DeleteView):
+    model = Result
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
-        return super(CollectedDataDelete, self).dispatch(
+        return super(ResultDelete, self).dispatch(
             request, *args, **kwargs)
 
     def get_success_url(self):
@@ -1014,9 +1014,9 @@ def merge_two_dicts(x, y):
     return z
 
 
-def collecteddata_import(request):
+def result_import(request):
     """
-    Import collected data from Tola Tables
+    Import resuts from Tola Tables
     """
     owner = request.user
 
@@ -1073,7 +1073,7 @@ def collecteddata_import(request):
 
     # send the keys and vars from the json data to the template along
     # with submitted feed info and silos for new form
-    return render(request, "indicators/collecteddata_import.html",
+    return render(request, "indicators/result_import.html",
                   {'getTables': data})
 
 
@@ -1090,18 +1090,18 @@ def service_json(request, service):
     return JsonResponse(service_indicators, safe=False)
 
 
-def collected_data_view(request, indicator, program):
+def result_view(request, indicator, program):
     ind = Indicator.objects.get(pk=indicator)
     reset_indicator_target_frequency(ind)
-    template_name = 'indicators/collected_data_table.html'
+    template_name = 'indicators/result_table.html'
     program_obj = ind.program
     program = program_obj.id
-    last_data_record = CollectedData.objects.filter(periodic_target=OuterRef('pk')).order_by('-date_collected', '-pk')
+    last_data_record = Result.objects.filter(periodic_target=OuterRef('pk')).order_by('-date_collected', '-pk')
     periodictargets = PeriodicTarget.objects \
         .filter(indicator=indicator) \
-        .prefetch_related('collecteddata_set') \
+        .prefetch_related('result_set') \
         .annotate(
-            achieved_sum=Sum('collecteddata__achieved', output_field=DecimalField()),
+            achieved_sum=Sum('result__achieved', output_field=DecimalField()),
             last_data_row=Subquery(last_data_record.values('achieved')[:1])) \
         .order_by('customsort')
 
@@ -1137,17 +1137,17 @@ def collected_data_view(request, indicator, program):
 
     # show all of the data records that do not yet have periodic_targets
     # associated with them.
-    collecteddata_without_periodictargets = CollectedData.objects \
+    results_without_periodictargets = Result.objects \
         .filter(indicator=indicator, periodic_target__isnull=True)
 
     is_editable = False if request.GET.get('edit') == 'false' else True
     return render_to_response(
         template_name, {
             'periodictargets': periodictargets,
-            'collecteddata_without_periodictargets': collecteddata_without_periodictargets,
+            'results_without_periodictargets': results_without_periodictargets,
             'last_data_record_value': last_data_record_value,
             'grand_achieved_sum': grand_achieved_sum,
-            'grand_achieved_avg': ind.get_collecteddata_average,
+            'grand_achieved_avg': ind.get_result_average,
             'indicator': ind,
             'program_id': program,
             'program': program_obj,
@@ -1170,10 +1170,10 @@ def program_indicators_json(request, program, indicator, type):
 
     indicators = Indicator.objects \
         .select_related('sector') \
-        .prefetch_related('collecteddata_set', 'indicator_type', 'level',
+        .prefetch_related('result_set', 'indicator_type', 'level',
                           'periodictargets') \
         .filter(**q) \
-        .annotate(data_count=Count('collecteddata'),
+        .annotate(data_count=Count('result'),
                   levelmin=Min('level__customsort'),
                   target_period_last_end_date=Max('periodictargets__end_date')) \
         .order_by('levelmin', 'number', 'name')
@@ -1349,13 +1349,13 @@ class IndicatorReportData(View, AjaxableResponseMixin):
         indicator_count = Indicator.objects \
             .filter(program__country__in=countries) \
             .filter(**q) \
-            .filter(collecteddata__isnull=True) \
+            .filter(result__isnull=True) \
             .distinct() \
             .count()
 
         indicator_data_count = Indicator.objects \
             .filter(program__country__in=countries) \
-            .filter(**q).filter(collecteddata__isnull=False) \
+            .filter(**q).filter(result__isnull=False) \
             .distinct() \
             .count()
 
@@ -1381,9 +1381,9 @@ class IndicatorReportData(View, AjaxableResponseMixin):
         return JsonResponse(final_dict, safe=False)
 
 
-class CollectedDataReportData(View, AjaxableResponseMixin):
+class ResultReportData(View, AjaxableResponseMixin):
     """
-    This is the Collected Data reports data in JSON format for a specific
+    This is the Result reports data in JSON format for a specific
     indicator
     """
 
@@ -1412,7 +1412,7 @@ class CollectedDataReportData(View, AjaxableResponseMixin):
             }
             q.update(s)
 
-        getCollectedData = CollectedData.objects \
+        getResult = Result.objects \
             .select_related('periodic_target') \
             .prefetch_related('evidence', 'indicator', 'program',
                               'indicator__objectives',
@@ -1431,7 +1431,7 @@ class CollectedDataReportData(View, AjaxableResponseMixin):
                 'indicator__external_service_record__external_service__name',
                 'evidence', 'tola_table', 'periodic_target', 'achieved')
 
-        collected_sum = CollectedData.objects \
+        result_sum = Result.objects \
             .select_related('periodic_target') \
             .filter(program__country__in=countries) \
             .filter(**q) \
@@ -1439,11 +1439,11 @@ class CollectedDataReportData(View, AjaxableResponseMixin):
 
         # datetime encoding breaks without using this
         from django.core.serializers.json import DjangoJSONEncoder
-        collected_serialized = json.dumps(list(getCollectedData),
+        result_serialized = json.dumps(list(getResult),
                                           cls=DjangoJSONEncoder)
         final_dict = {
-            'collected': collected_serialized,
-            'collected_sum': collected_sum
+            'result': result_serialized,
+            'result_sum': result_sum
         }
         return JsonResponse(final_dict, safe=False)
 
@@ -1562,9 +1562,9 @@ class DisaggregationReportMixin(object):
                 l.customsort AS customsort, \
                 l.label AS Disaggregation, \
                 SUM(dv.value) AS Actuals \
-            FROM indicators_collecteddata_disaggregation_value AS cdv \
-            INNER JOIN indicators_collecteddata AS c \
-                ON c.id = cdv.collecteddata_id \
+            FROM indicators_result_disaggregation_value AS cdv \
+            INNER JOIN indicators_result AS c \
+                ON c.id = cdv.result_id \
             INNER JOIN indicators_indicator AS i ON i.id = c.indicator_id\
             INNER JOIN workflow_program AS p ON p.id = i.program_id \
             INNER JOIN indicators_disaggregationvalue AS dv \
@@ -1591,7 +1591,7 @@ class DisaggregationReportMixin(object):
                 SUM(cd.achieved) AS Overall \
             FROM indicators_indicator AS i \
             INNER JOIN workflow_program AS p ON p.id = i.program_id \
-            LEFT OUTER JOIN indicators_collecteddata AS cd \
+            LEFT OUTER JOIN indicators_result AS cd \
                 ON i.id = cd.indicator_id \
             WHERE p.id = %s \
             GROUP BY PID, IndicatorID \
@@ -1666,7 +1666,7 @@ class TVAPrint(TemplateView):
             .select_related('sector') \
             .prefetch_related('indicator_type', 'level', 'program') \
             .filter(program=program) \
-            .annotate(actuals=Sum('collecteddata__achieved'))
+            .annotate(actuals=Sum('result__achieved'))
 
         # hmtl_string = render_to_string('indicators/tva_print.html',
         # {'data': context['data'], 'program': context['program']})
@@ -1732,12 +1732,12 @@ class TVAReport(TemplateView):
             .select_related('sector') \
             .prefetch_related('indicator_type', 'level', 'program') \
             .filter(**filters) \
-            .annotate(actuals=Sum('collecteddata__achieved'))
+            .annotate(actuals=Sum('result__achieved'))
 
         context['data'] = indicators
         context['getIndicators'] = Indicator.objects \
             .filter(program__country__in=countries) \
-            .exclude(collecteddata__isnull=True)
+            .exclude(result__isnull=True)
 
         context['getPrograms'] = Program.objects \
             .filter(funding_status="Funded", country__in=countries).distinct()
@@ -1790,11 +1790,11 @@ class IndicatorDataExport(View):
             del kwargs['type']
 
         countries = getCountry(request.user)
-        queryset = CollectedData.objects \
+        queryset = Result.objects \
             .filter(**kwargs) \
             .filter(indicator__program__country__in=countries)
 
-        dataset = CollectedDataResource().export(queryset)
+        dataset = ResultResource().export(queryset)
         response = HttpResponse(dataset.csv,
                                 content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; \
