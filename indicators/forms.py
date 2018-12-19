@@ -112,62 +112,79 @@ class ResultForm(forms.ModelForm):
         exclude = ['create_date', 'edit_date']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
+            'program': forms.HiddenInput(),
+            'indicator': forms.HiddenInput(),
+        }
+        labels = {
+            'site': _('Site'),
+            'achieved': _('Actual value'),
+            'periodic_target': _('Measure against target*'),
+            'complete': _('Project'),
         }
 
-    def clean_date_collected(self):
-        date_collected = self.cleaned_data['date_collected']
-        date_collected = datetime.strftime(date_collected, '%Y-%m-%d')
-        return date_collected
-
-    program2 = forms.CharField(
-        widget=forms.TextInput(
-            attrs={'readonly': True, 'label': _('Program')}
-        )
+    target_frequency = forms.CharField(
+        widget=forms.HiddenInput()
     )
-    indicator2 = forms.CharField(
-        widget=forms.TextInput(
-            attrs={'readonly': True, 'label': _('Indicator')}
-        )
-    )
-    target_frequency = forms.CharField()
     date_collected = forms.DateField(
         widget=DatePicker.DateInput(format=locale_format),
         # TODO: this field outputs dates in non-ISO formats in Spanish & French
         localize=True,
         required=True,
+        help_text=' ',
+        label=_('Result date')
+    )
+    submitted_by = forms.CharField(
+        widget=forms.TextInput(attrs={'readonly': True}),
+        label=_('Submitted by')
+    )
+    record_name = forms.CharField(
+        label=_('Record name')
+    )
+    record_url = forms.URLField(
+        label=_('Link to file or folder')
+    )
+    record_description = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 4}),
+        label=_('Description')
     )
 
     def __init__(self, *args, **kwargs):
-        # instance = kwargs.get('instance', None)
         self.request = kwargs.pop('request')
         self.program = kwargs.pop('program')
-        self.indicator = kwargs.pop('indicator', None)
-        self.tola_table = kwargs.pop('tola_table')
-        super(ResultForm, self).__init__(*args, **kwargs)
-
-        # override the program queryset to use request.user for country
-        self.fields['evidence'].queryset = Documentation.objects\
-            .filter(program=self.program)
-
-        # override the program queryset to use request.user for country
-        self.fields['complete'].queryset = ProjectComplete.objects\
-            .filter(program=self.program)
-        self.fields['complete'].label = _("Project")
-
-        # only display Project field to existing users
-        if not self.request.user.tola_user.allow_projects_access:
-            self.fields.pop('complete')
-
-        # override the program queryset to use request.user for country
-        countries = getCountry(self.request.user)
-        # self.fields['program'].queryset = Program.objects\
-        #   .filter(funding_status="Funded", country__in=countries).distinct()
         try:
             int(self.program)
             self.program = Program.objects.get(id=self.program)
         except TypeError:
             pass
+        self.indicator = kwargs.pop('indicator', None)
+        try:
+            int(self.indicator)
+            self.indicator = Indicator.objects.get(id=self.indicator)
+        except TypeError:
+            pass
+        super(ResultForm, self).__init__(*args, **kwargs)
 
+        self.set_initial_querysets()
+        self.set_periodic_target_widget()
+        self.fields['target_frequency'].initial = self.indicator.target_frequency
+        self.fields['submitted_by'].initial = self.request.user.tola_user.display_with_organization
+
+    def set_initial_querysets(self):
+        """populate foreign key fields with limited quersets based on user / country / program"""
+        # provide only in-program Documentation objects for the evidence queryset
+        self.fields['evidence'].queryset = Documentation.objects\
+            .filter(program=self.program)
+        # only display Project field to existing users
+        if not self.request.user.tola_user.allow_projects_access:
+            self.fields.pop('complete')
+        else:
+            # provide only in-program projects for the complete queryset:
+            self.fields['complete'].queryset = ProjectComplete.objects.filter(program=self.program)
+        self.fields['site'].queryset = SiteProfile.objects.filter(
+            country__in=getCountry(self.request.user)
+        )
+
+    def set_periodic_target_widget(self):
         # Django will deliver localized strings to the template but the form needs to be able to compare the date
         # entered to the start and end dates of each period.  Data attributes (attached to each option element) are
         # used to provide access to the start and end dates in ISO format, since they are easier to compare to than
@@ -183,31 +200,10 @@ class ResultForm(forms.ModelForm):
             choices.append((pt.id, str(pt)))
         self.fields['periodic_target'].widget = DataAttributesSelect(data=data, choices=choices)
 
-        self.fields['program2'].initial = self.program
-        self.fields['program2'].label = _("Program")
-
-        try:
-            int(self.indicator)
-            self.indicator = Indicator.objects.get(id=self.indicator)
-        except TypeError:
-            pass
-
-        self.fields['indicator2'].initial = self.indicator.name
-        self.fields['indicator2'].label = _("Indicator")
-        self.fields['program'].widget = forms.HiddenInput()
-        self.fields['indicator'].widget = forms.HiddenInput()
-        self.fields['target_frequency'].initial = self.indicator\
-            .target_frequency
-        self.fields['target_frequency'].widget = forms.HiddenInput()
-        self.fields['site'].queryset = SiteProfile.objects\
-            .filter(country__in=countries)
-        self.fields['site'].label = _('Site')
-        self.fields['tola_table'].queryset = TolaTable.objects\
-            .filter(Q(owner=self.request.user) | Q(id=self.tola_table))
-        self.fields['periodic_target'].label = _('Measure against target*')
-        self.fields['achieved'].label = _('Actual value')
-        self.fields['date_collected'].help_text = ' '
-        self.fields['date_collected'].label = _('Date collected')
+    def clean_date_collected(self):
+        date_collected = self.cleaned_data['date_collected']
+        date_collected = datetime.strftime(date_collected, '%Y-%m-%d')
+        return date_collected
 
 
 class ReportFormCommon(forms.Form):
