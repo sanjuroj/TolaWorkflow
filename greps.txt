@@ -1,0 +1,92 @@
+./templates/workflow/site_indicatordata.html:13:    {% regroup collecteddata by program as program_list %}
+./templates/workflow/documentation_list.html:82:                        return '<a class="collecteddata" name=' + row.id + ' href="/workflow/documentation_update/'+row.id+'">' + formatDate(row.create_date) + '</a>'; // TODO: shouldn't use formatDate
+./templates/workflow/documentation_list.html:87:                        return '<a class="collecteddata" name=' + row.id + ' href="/workflow/documentation_update/'+row.id+'">' + row.name + '</a>';
+./templates/workflow/site_profile_map.html:192:            L.marker([{{ item.latitude }}, {{ item.longitude }}], {icon: indicatorIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>{% trans "Collected Indicator Data Site"|escapejs %}<br> <a href='/workflow/siteprofile_update/{{ item.id }}'>{{ item.name }}</a> <br/>{% trans "Province"|escapejs %}: {{ item.province }} <br/>{% trans "District"|escapejs %}: {{ item.district }} <br/> {% trans "Village"|escapejs %}: {{ item.village }} <br/>");
+./templates/workflow/stakeholder_list.html:72:                                return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + formatDate(row.create_date) + '</a>';
+./templates/workflow/stakeholder_list.html:77:                                return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + row.name + '</a>';
+./templates/workflow/stakeholder_list.html:82:                                return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + row.type__name + '</a>';
+./templates/workflow/stakeholder_list.html:87:                                return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + row.sectors__sector + '</a>';
+./templates/small_site_profile_map.html:221:            L.marker([{{ item.latitude|unlocalize }}, {{ item.longitude|unlocalize }}], {icon: indicatorIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>{% trans 'Collected Indicator Data Site' %}<br> <a href='/workflow/siteprofile_update/{{ item.id }}'>{{ item.name }}</a> <br/>ADM1: {{ item.province }} <br/>ADM2: {{ item.district }} <br/> ADM3: {{ item.admin_level_three }} <br/>"),
+./templates/bootstrap4.html:58:                                <a class="dropdown-item" href="/indicators/collecteddata/0/0/0/">Indicator Data Report</a>
+./templates/bootstrap4.html:97:                            <a class="dropdown-item" href="/indicators/collecteddata/0/0/0/">Indicator Data Report</a>
+./fixtures/formguidance.json:1:[{"model": "workflow.formguidance", "pk": 2, "fields": {"form": "Agreement", "guidance_link": "https://drive.google.com/open?id=111BzD3uHlJpaj4MSk7l8XApvrpu69QgimWPnfXbBUT4", "guidance": "", "create_date": "2016-05-22T09:07:13Z"}}, {"model": "workflow.formguidance", "pk": 3, "fields": {"form": "Complete", "guidance_link": "https://docs.google.com/document/d/1tDwo3m1ychefNiAMr-8hCZnhEugQlt36AOyUYHlPbVo/edit?usp=sharing", "guidance": "", "create_date": "2016-05-22T09:48:38.546Z"}}, {"model": "workflow.formguidance", "pk": 4, "fields": {"form": "SiteProfile", "guidance_link": "https://drive.google.com/open?id=18nGr_uk1VSzitwjkstxvjGWxtINzlITUgBGFP_s-b9o", "guidance": "", "create_date": "2016-05-22T09:51:00.534Z"}}, {"model": "workflow.formguidance", "pk": 5, "fields": {"form": "Beneficiary", "guidance_link": "", "guidance": "The Beneficiary form has no guidance at this time.", "create_date": "2016-05-22T09:58:02Z"}}, {"model": "workflow.formguidance", "pk": 6, "fields": {"form": "Training", "guidance_link": "", "guidance": "The Training form has no guidance at this time.", "create_date": "2016-05-22T09:58:13Z"}}, {"model": "workflow.formguidance", "pk": 7, "fields": {"form": "ChecklistItem", "guidance_link": "", "guidance": "The Checklist form has no guidance at this time.", "create_date": "2016-05-22T09:58:28Z"}}, {"model": "workflow.formguidance", "pk": 8, "fields": {"form": "Stakeholder", "guidance_link": "", "guidance": "The Stakeholder form has no guidance at this time.", "create_date": "2016-05-22T09:58:55Z"}}, {"model": "workflow.formguidance", "pk": 9, "fields": {"form": "Contact", "guidance_link": "", "guidance": "The Contact form has no guidance at this time.", "create_date": "2016-05-22T09:59:02Z"}}, {"model": "workflow.formguidance", "pk": 10, "fields": {"form": "Documentation", "guidance_link": "", "guidance": "The Documentation form has no guidance at this time.", "create_date": "2016-05-22T09:59:21Z"}}, {"model": "workflow.formguidance", "pk": 11, "fields": {"form": "Indicator", "guidance_link": "https://docs.google.com/document/d/18QN7U6-b3AXmjL9fcHfFaxo1yisxuvpefGmsJTslJY4/", "guidance": "", "create_date": "2016-05-22T09:59:31Z"}}, {"model": "workflow.formguidance", "pk": 12, "fields": {"form": "CollectedData", "guidance_link": "https://docs.google.com/document/d/1sTBwo-oueQeH9NTGDXpbYZdlBTpRXBBK14IZUS0wN08/", "guidance": "", "create_date": "2016-05-22T09:59:41Z"}}]
+Binary file ./.git/objects/pack/pack-36718b0289803bd5c7e6dc629468a40a91135ba0.pack matches
+./.git/logs/HEAD:545:090dad9d4614e72bdf689eafeccc75740a010731 aff59d5ceffd84d9a1d849e38867eb98a77131ae Cameron Mcfee <cameron.mcfee@gmail.com> 1544137649 -0800	commit: Updated validation logic to handle monthly periodic targets for collected data entry, closes #903
+Binary file ./.git/index matches
+./.git/FETCH_HEAD:6:c236bf3a8a870aa9ff7c4038ec1e8d8a8462f539	not-for-merge	branch '687-collected-data-lop' of https://github.com/mercycorps/TolaActivity
+./assets/css/tola.css:6405:.collected-data-table__wrapper {
+./assets/css/tola.css:6408:.collected-data-table {
+./assets/css/tola.css:6410:  .collected-data-table th, .collected-data-table td {
+./assets/css/tola.css:6413:  .collected-data-table td {
+./assets/css/tola.css:6416:.collected-data-table__result {
+./assets/css/tola.css:6424:.collected-data-table__actions {
+./assets/css/tola.css:6636:.page_iptt_table .modal-dialog .collected-data__link {
+./assets/css/tola.css:6639:.page_iptt_table .modal-dialog .collected-data-table__actions {
+./assets/js/maps/example.js:58:                                <br/>Collected Indicator Data Site:
+./assets/js/highcharts/js/modules/exporting.src.js:55:// Buttons and menus are collected in a separate config option set called 'navigation'.
+./assets/js/app.js:449:    * Expand accordion down to location hash and then load collected data
+./assets/report_builder/bower_components/lodash/dist/lodash.compat.js:5956:        // clear the `func` variable so the function may be garbage collected
+./assets/report_builder/bower_components/lodash/dist/lodash.js:5606:        // clear the `func` variable so the function may be garbage collected
+./assets/report_builder/bower_components/lodash/dist/lodash.underscore.js:4057:      // clear the `func` variable so the function may be garbage collected
+./assets/report_builder/bower_components/angular/angular.js:6971:     * for a particular node are collected their compile functions are executed. The compile
+./assets/report_builder/bower_components/angular/angular.js:7254:     * Once the directives have been collected, their compile functions are executed. This method
+./assets/report_builder/bower_components/angular/angular.js:7258:     * @param {Array} directives Array of collected directives to execute their compile function.
+./assets/report_builder/bower_components/angular-material/modules/closure/virtualRepeat/virtualRepeat.js:616:  // Attach collected blocks to the document.
+./assets/report_builder/bower_components/angular-material/modules/js/virtualRepeat/virtualRepeat.js:617:  // Attach collected blocks to the document.
+./assets/report_builder/bower_components/hammerjs/hammer.js:1005:    // filter changed touches to only contain touches that exist in the collected target ids
+./assets/report_builder/bower_components/hammerjs/hammer.js:1186: * when the touchActions are collected they are not a valid value, so we need to clean things up. *
+./assets/report_builder/bower_components/angular-animate/angular-animate.js:1666:        //this item will be garbage collected by the closing
+./reports/migrations/0001_initial.py:29:                ('collected', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='indicators.CollectedData')),
+Binary file ./reports/migrations/0001_initial.pyc matches
+Binary file ./reports/models.pyc matches
+./reports/models.py:13:    collected = models.ForeignKey(Result, null=True, blank=True)
+Binary file ./reports/urls.pyc matches
+./reports/templates/report.html:73:                    { title: "Supporting Data", data: "collecteddata",
+./reports/templates/report.html:75:                                return '<a class="collecteddata" name=' + row.id + '>Collected Data</a>';
+./reports/templates/report.html:84:            $('.collecteddata').click(function(){ data_report(filters,this.name); });
+./reports/templates/report.html:90:        function show_collecteddata_table(collecteddata_data,filters) {
+./reports/templates/report.html:92:            collecteddata_records = JSON.parse(collecteddata_data);
+./reports/templates/report.html:106:                data: collecteddata_records,
+./reports/templates/report.html:117:            $('#export').click(function(){ do_export(filters,"collecteddata"); });
+./reports/templates/report.html:239:                        filters.collecteddata__isnull="False";
+./reports/templates/report.html:241:                        filters.collecteddata__isnull="True";
+./reports/templates/report.html:250:            document.getElementById('bar-header').innerHTML = "Collected Data Chart";
+./reports/templates/report.html:334:            $.getJSON("/reports/report_data/collecteddata/", filters, function(data) {
+./reports/templates/report.html:336:                show_collecteddata_table(data['collecteddata'],filters);
+./reports/templates/report.html:337:                show_collecteddata_charts(data['collecteddata'],filters);
+./reports/templates/report.html:361:            } else if (type == "collecteddata") {
+./reports/templates/report.html:362:                new_location='/reports/report_data/collecteddata?export=true&' + param_filters;
+./reports/templates/report.html:397:            } else if (document.getElementById('report_type').innerHTML.valueOf == "Collected Data Report") {
+./reports/templates/report.html:399:                collecteddata_report(filters);
+./reports/urls.py:14:    url(r'^report_data/collecteddata/$', ResultReportData.as_view(), name='collecteddata_report_data'),
+Binary file ./media/profile/4dde440d-3bac-4af1-8e07-8f709a0fdada.prof matches
+Binary file ./media/profile/16668a35-306e-4263-b645-21d6b876ff94.prof matches
+Binary file ./media/profile/472a1153-d54a-4a55-8390-89a643f52d27.prof matches
+Binary file ./media/profile/df9d1700-1f4e-415a-8e53-b75585c6429e.prof matches
+Binary file ./media/profile/58e0a0bd-27c2-49ba-955a-1c784888864b.prof matches
+Binary file ./media/profile/db72881a-17d5-475e-9f85-955eac7aea0c.prof matches
+Binary file ./media/profile/60ccdf67-7030-4f24-84dd-e3041ea38c00.prof matches
+Binary file ./media/profile/d0817896-911d-4fcf-9e78-a38d69ea7494.prof matches
+Binary file ./media/profile/5fd4fbdf-7298-4530-94c4-29c98cc1dfc0.prof matches
+Binary file ./media/profile/d1770649-bd49-472a-9648-d24d97d1913e.prof matches
+Binary file ./media/profile/9e048151-c186-4603-a294-b90ad58da87b.prof matches
+Binary file ./media/profile/2c38ae1a-9446-4b85-aec5-6d429622501b.prof matches
+Binary file ./media/profile/b8b404bb-eede-449e-9eb3-3f89fce8cde1.prof matches
+Binary file ./media/profile/c3a9d01c-c794-424b-bc79-37f94a394130.prof matches
+Binary file ./media/profile/9d7ee0b4-93e9-45b7-ae29-57ab0d88a9c0.prof matches
+Binary file ./media/profile/c581d320-6200-4b30-9a30-4db50339ead3.prof matches
+Binary file ./media/profile/3f6c40bb-e444-4e25-8963-d3711db02756.prof matches
+Binary file ./media/profile/4a846171-b739-4603-8a34-c35b3ab1b10a.prof matches
+Binary file ./media/profile/e206266a-3c2f-476f-a556-cf0fe41a1b4e.prof matches
+Binary file ./media/profile/0bcb61ec-f665-4614-a34c-da0812659f23.prof matches
+Binary file ./media/profile/0c3f3dea-0b5e-4689-96ce-a1350b6eabec.prof matches
+Binary file ./media/profile/65111be9-dc33-43c6-8368-f104d3438c0a.prof matches
+Binary file ./media/profile/8ca35652-d0b0-4c60-b9e6-491a90fd7d48.prof matches
+Binary file ./media/profile/b607e6bf-0dc8-49cd-a399-c2e0392da5c1.prof matches
+Binary file ./media/profile/d85fd929-b869-4f73-b5f6-2223cebb6791.prof matches
+Binary file ./media/profile/ee011b40-1f3f-4d29-9dd3-c9b557ef1b13.prof matches
+Binary file ./media/profile/b63f5be5-0963-47e7-8487-b2687c033fa8.prof matches
+Binary file ./media/profile/e867630f-19f8-4451-ad23-44929dd86284.prof matches
+Binary file ./media/profile/79976d6b-a27e-4ff1-bd46-756423442d69.prof matches
+Binary file ./media/profile/26f6ea4a-86c2-4c9a-b66b-df2c3f499a3a.prof matches
+Binary file ./media/profile/cdb3077a-c9ac-4d27-92c0-e3650bcc961a.prof matches

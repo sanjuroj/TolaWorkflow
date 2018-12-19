@@ -629,7 +629,8 @@
         // validate target values (number fields)
         $("#periodic_targets_table input[type=number]").each(function(){
             if ($(this).attr('id').substr(0, 2) == "pt" ) {
-                if ($(this).val()) {
+                let val = $(this).val();
+                if (val && $.isNumeric(val) && val >= 0) {
                     $(this).removeClass('is-invalid');
                 } else {
                     $(this).addClass('is-invalid');
@@ -659,7 +660,7 @@
             return ("{% trans 'Please enter a name and target number for every event. Your target value can be zero.'|escapejs %}");
         }
         else {
-            return ("{% trans 'Please enter a target value. Your target value can be zero.'|escapejs %}");
+            return ("{% trans 'Please enter a number with no letters or symbols.'|escapejs %}");
         }
     }
 
