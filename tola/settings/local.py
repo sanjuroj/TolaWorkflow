@@ -111,6 +111,6 @@ LOGGING['handlers']['file']['filename'] = app_settings['LOGFILE']
 WEBPACK_LOADER = {
     'DEFAULT': {
         'BUNDLE_DIR_NAME': 'dist/',
-        'STATS_FILE': os.path.join(SITE_ROOT, 'webpack-stats-dev.json'),
+        'STATS_FILE': os.path.join(SITE_ROOT, app_settings.get('WEBPACK_STATS_FILE', 'webpack-stats-local.json')),
     }
 }
