@@ -60,7 +60,7 @@ body {
   line-height: 1.5;
   color: #212429;
   text-align: left;
-  background-color: #fff; }
+  background-color: #f5f5f5; }
 
 [tabindex="-1"]:focus {
   outline: 0 !important; }
@@ -396,7 +396,7 @@ mark,
 
 .img-thumbnail {
   padding: 0.25rem;
-  background-color: #fff;
+  background-color: #f5f5f5;
   border: 1px solid #dbdcde;
   border-radius: 0;
   max-width: 100%;
@@ -1054,7 +1054,7 @@ pre {
   .table tbody + tbody {
     border-top: 2px solid #dbdcde; }
   .table .table {
-    background-color: #fff; }
+    background-color: #f5f5f5; }
 
 .table-sm th,
 .table-sm td {
@@ -1186,7 +1186,7 @@ pre {
     background-color: rgba(0, 0, 0, 0.075); }
 
 .table .thead-dark th {
-  color: #fff;
+  color: #f5f5f5;
   background-color: #212429;
   border-color: #32373e; }
 
@@ -1196,7 +1196,7 @@ pre {
   border-color: #dbdcde; }
 
 .table-dark {
-  color: #fff;
+  color: #f5f5f5;
   background-color: #212429; }
   .table-dark th,
   .table-dark td,
@@ -1478,7 +1478,7 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
   background-color: #9de000; }
 
 .was-validated .custom-control-input:valid:focus ~ .custom-control-label::before, .custom-control-input.is-valid:focus ~ .custom-control-label::before {
-  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(121, 173, 0, 0.25); }
+  box-shadow: 0 0 0 1px #f5f5f5, 0 0 0 0.2rem rgba(121, 173, 0, 0.25); }
 
 .was-validated .custom-file-input:valid ~ .custom-file-label, .custom-file-input.is-valid ~ .custom-file-label {
   border-color: #79AD00; }
@@ -1555,7 +1555,7 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
   background-color: #ed1e40; }
 
 .was-validated .custom-control-input:invalid:focus ~ .custom-control-label::before, .custom-control-input.is-invalid:focus ~ .custom-control-label::before {
-  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(200, 16, 46, 0.25); }
+  box-shadow: 0 0 0 1px #f5f5f5, 0 0 0 0.2rem rgba(200, 16, 46, 0.25); }
 
 .was-validated .custom-file-input:invalid ~ .custom-file-label, .custom-file-input.is-invalid ~ .custom-file-label {
   border-color: #c8102e; }
@@ -2486,7 +2486,7 @@ tbody.collapse.show {
     color: #fff;
     background-color: #3366cc; }
   .custom-control-input:focus ~ .custom-control-label::before {
-    box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(51, 102, 204, 0.25); }
+    box-shadow: 0 0 0 1px #f5f5f5, 0 0 0 0.2rem rgba(51, 102, 204, 0.25); }
   .custom-control-input:active ~ .custom-control-label::before {
     color: #fff;
     background-color: #c2d1f0; }
@@ -2678,8 +2678,8 @@ tbody.collapse.show {
   .nav-tabs .nav-link.active,
   .nav-tabs .nav-item.show .nav-link {
     color: #54585a;
-    background-color: #fff;
-    border-color: #dbdcde #dbdcde #fff; }
+    background-color: #FAFAFA;
+    border-color: #dbdcde #dbdcde #FAFAFA; }
   .nav-tabs .dropdown-menu {
     margin-top: -1px;
     border-top-left-radius: 0;
@@ -3728,7 +3728,7 @@ button.close {
   flex-direction: column;
   width: 100%;
   pointer-events: auto;
-  background-color: #fff;
+  background-color: #f5f5f5;
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 0.3rem;
@@ -7216,7 +7216,7 @@ td.periodic-targets__sum {
       .tab-set--vertical .nav-tabs .nav-link:hover, .tab-set--vertical .nav-tabs .nav-link:focus {
         border-color: #dbdcde !important; }
       .tab-set--vertical .nav-tabs .nav-link.active {
-        border-color: #dbdcde #fff #dbdcde #dbdcde; }
+        border-color: #dbdcde #FAFAFA #dbdcde #dbdcde; }
   .tab-set--vertical .tab-content {
     flex-grow: 1;
     padding-left: 15px; }
@@ -7655,9 +7655,6 @@ body.page_iptt_table {
 @media print {
   a[href]:after {
     content: none; } }
-
-body {
-  background-color: #f5f5f5; }
 
 .dataTables_wrapper.container-fluid {
   padding-right: 0px !important;
