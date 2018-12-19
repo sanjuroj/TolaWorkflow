@@ -142,7 +142,7 @@ class Command(BaseCommand):
                         continue
 
                     try:
-                        CollectedData.objects.filter(indicator=indicator,date_collected__range=[ptarget.start_date, ptarget.end_date])\
+                        Result.objects.filter(indicator=indicator,date_collected__range=[ptarget.start_date, ptarget.end_date])\
                             .update(periodic_target=ptarget)
                     except Exception as e:
                         self.stdout.write(self.style.ERROR('%s, could not associate data records for periodic_target (%s)' % (indicator.id, ptarget.period) ))

@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-from indicators.models import Indicator, CollectedData, PeriodicTarget, Level
+from indicators.models import Indicator, Result, PeriodicTarget, Level
 from workflow.models import Program, Country, Documentation, Organization
 from indicators.views.views_indicators import generate_periodic_targets
 from indicators.views.views_reports import IPTT_ReportView
@@ -226,20 +226,20 @@ class Command(BaseCommand):
                                 date_collected = pt.start_date + day_offset
                             else:
                                 date_collected = date.today()
-                            cd = CollectedData(
+                            rs = Result(
                                 periodic_target=pt,
                                 indicator=indicator,
                                 program=program,
                                 achieved=achieved_start + achieved_increment * i,
                                 date_collected=date_collected)
-                            cd.save()
+                            rs.save()
 
                             if null_level == self.NULL_LEVELS['EVIDENCE']:
                                 continue
                             document = Documentation.objects.create(
-                                program=program, name='Doc for CDid {}'.format(cd.id), url='http://my/doc/here/')
-                            cd.evidence = document
-                            cd.save()
+                                program=program, name='Doc for RSid {}'.format(rs.id), url='http://my/doc/here/')
+                            rs.evidence = document
+                            rs.save()
 
                         indicator.lop_target = lop_target
                         indicator.save()
@@ -371,20 +371,20 @@ class Command(BaseCommand):
                     date_collected = pt.start_date + day_offset
                 else:
                     date_collected = date.today()
-                cd = CollectedData(
+                rs = Result(
                     periodic_target=pt,
                     indicator=indicator,
                     program=program,
                     achieved=achieved_start + achieved_increment * i,
                     date_collected=date_collected)
-                cd.save()
+                rs.save()
 
                 if q in [5, 6]:
                     continue
                 document = Documentation.objects.create(
-                    program=program, name='Doc for CDid {}'.format(cd.id), url='http://my/doc/here/')
-                cd.evidence = document
-                cd.save()
+                    program=program, name='Doc for RSid {}'.format(rs.id), url='http://my/doc/here/')
+                rs.evidence = document
+                rs.save()
 
             indicator.lop_target = lop_target
             indicator.save()

@@ -1,5 +1,8 @@
-from django.core.management.base import BaseCommand, CommandError
-from indicators.models import *
+from indicators.models import (
+    Indicator,
+    PeriodicTarget
+)
+from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 class Command(BaseCommand):
@@ -26,20 +29,22 @@ class Command(BaseCommand):
             indicators = Indicator.objects.all() #filter(program = 452)
 
         for ind in indicators:
-            collecteddata_count = ind.collecteddata_set.all().count()
-            if collecteddata_count == 0:
+            result_count = ind.result_set.all().count()
+            if result_count == 0:
                 ind.periodictargets.all().delete()
-                self.stdout.write(self.style.SUCCESS("%s, only deleted periodic_targets because data count is %s" % (ind.id, collecteddata_count)))
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        "%s, only deleted periodic_targets because data count is %s" % (ind.id, result_count)))
             else:
                 try:
-                    # disassociate collected_data records of this indicator with existing periodic targets
-                    ind.collecteddata_set.update(periodic_target=None)
+                    # disassociate result objects of this indicator with existing periodic targets
+                    ind.result_set.update(periodic_target=None)
 
                     # remove all existing periodic targets
                     ind.periodictargets.all().delete()
 
-                    # just checking to see if lop_target is a numeric value; if it is not then exception will be raised.
-                    lop = float(ind.lop_target)
+                    # just checking to see if lop_target is a numeric value; if it is not then exception will be raised
+                    _ = float(ind.lop_target)
 
                     # create a "Life of Program (LOP) Only" target
                     lop_pt = PeriodicTarget.objects.create(\
@@ -48,8 +53,9 @@ class Command(BaseCommand):
                                 target=ind.lop_target,\
                                 create_date = timezone.now())
 
-                    # associate all collected_data records of this indicator with the newly created "Life of Program (LOP) Only" target
-                    ind.collecteddata_set.update(periodic_target=lop_pt)
+                    # associate all result objects of this indicator with
+                    # the newly created "Life of Program (LOP) Only" target
+                    ind.result_set.update(periodic_target=lop_pt)
 
                     # set the target_frequency of this indicator to "Life of Program (LOP) Only" target
                     ind.target_frequency = Indicator.LOP
@@ -57,6 +63,7 @@ class Command(BaseCommand):
 
                     self.stdout.write(self.style.SUCCESS('%s, Processed successfully.' % ind.id))
                 except ValueError as e:
-                    self.stdout.write(self.style.ERROR('%s, LOP [%s] is missing or not numeric.' % (ind.id, ind.lop_target)))
+                    self.stdout.write(self.style.ERROR(
+                        '%s, LOP [%s] is missing or not numeric.' % (ind.id, ind.lop_target)))
                 except Exception as e:
                     self.stdout.write(self.style.ERROR("%s, Error occured: %s" % (ind.id, e)))
