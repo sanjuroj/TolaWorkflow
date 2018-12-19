@@ -35,7 +35,7 @@ eventBus.on('open-indicator-update-modal', (indicatorId) => {
 
 // get results html blob for indicator
 eventBus.on('load-indicator-results', (indicatorId) => {
-    let url = `/indicators/collected_data_table/${indicatorId}/${rootStore.program.id}/`;
+    let url = `/indicators/result_table/${indicatorId}/${rootStore.program.id}/`;
 
     $.get(url, function (data) {
         rootStore.addResultsHTML(indicatorId, data);
