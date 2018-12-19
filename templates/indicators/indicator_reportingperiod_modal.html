@@ -224,9 +224,8 @@
                         $(this).datepicker('option', 'minDate', new Date(year, month, 0));
                     }
                     else if ((selectedDate = $(`#${start_date_id}`).val()).length > 0) {
-                        year = selectedDate.substring(selectedDate.length - 4, selectedDate.length);
-                        month = jQuery.inArray(selectedDate.substring(0, 3), $(this).datepicker('option', 'monthNamesShort'));
-                        $(this).datepicker("option", "minDate", new Date(year, parseInt(month)+1, 0));
+                        let selectedStartDate = processDateString(selectedDate);
+                        $(this).datepicker("option", "minDate", new Date(selectedStartDate.getFullYear(), selectedStartDate.getMonth()+1, 0));
                     }
                 },
             })
@@ -382,38 +381,54 @@
     });
 
 
-    $("#reportingperiod_update_form").on('submit', function(e) {
+    $("#reportingperiod_update_form").on('submit', function (e) {
         e.preventDefault();
-        if ($("#id_reporting_start_date").val() == "" || $("#id_reporting_end_date").val() == ""){
-          createAlert(
-            "danger",
-            "{% trans 'You must enter values for the reporting start and end dates before saving.'|escapejs %}",
-            false,
-            "#div-id-reportingperiod-alert");
-        }
-        else{
-             reporting_period_submitting = true;
-            $.post($(this).attr('action'), $(this).serialize(), function(data){
 
-                $('#id_reporting_period_modal').modal("hide")
-                // var program_id = data.program_id;
-                // var modalLink = $(`a[data-program="${program_id}"]`);
-                // modalLink.data("rptstart", data.rptstart);
-                // modalLink.data("rptend", data.rptend);
-                // createAlert(
-                //   "success",
-                //   "{% trans 'Success. Reporting period changes were saved.'|escapejs %}",
-                //   true,
-                //   "#div-id-reportingperiod-alert");
+        let startDateStr = $("#id_reporting_start_date").val();
+        let endDateStr = $("#id_reporting_end_date").val();
 
-            }).fail(function(data) {
-                createAlert(
-                  "danger",
-                  "{% trans 'There was a problem saving your changes.'|escapejs %}",
-                  false,
-                  "#div-id-reportingperiod-alert");
-            });
+        if (startDateStr === "" || endDateStr === "") {
+            createAlert(
+                "danger",
+                "{% trans 'You must enter values for the reporting start and end dates before saving.'|escapejs %}",
+                false,
+                "#div-id-reportingperiod-alert");
+
+            return;
         }
+
+        if (processDateString(startDateStr) > processDateString(endDateStr)) {
+            createAlert(
+                "danger",
+                "{% trans 'The end date must come after the start date.'|escapejs %}",
+                false,
+                "#div-id-reportingperiod-alert");
+
+            return;
+        }
+
+        reporting_period_submitting = true;
+        $.post($(this).attr('action'), $(this).serialize(), function (data) {
+
+            $('#id_reporting_period_modal').modal("hide")
+            // var program_id = data.program_id;
+            // var modalLink = $(`a[data-program="${program_id}"]`);
+            // modalLink.data("rptstart", data.rptstart);
+            // modalLink.data("rptend", data.rptend);
+            // createAlert(
+            //   "success",
+            //   "{% trans 'Success. Reporting period changes were saved.'|escapejs %}",
+            //   true,
+            //   "#div-id-reportingperiod-alert");
+
+        }).fail(function (data) {
+            createAlert(
+                "danger",
+                "{% trans 'There was a problem saving your changes.'|escapejs %}",
+                false,
+                "#div-id-reportingperiod-alert");
+        });
+
     });
 
     $("#reportingperiod_update_form").on('reset', function(e) {

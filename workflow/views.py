@@ -2497,20 +2497,25 @@ class DocumentationListObjects(View, AjaxableResponseMixin):
 
 def reportingperiod_update(request, pk):
     program = Program.objects.get(pk=pk)
-    dated = parser.parse(request.POST['reporting_period_end'])
 
     # In some cases the start date input will be disabled and won't come through POST
-    try:
-        program.reporting_period_start = parser.parse(request.POST['reporting_period_start'])
-    except MultiValueDictKeyError as e:
-        pass
-    program.reporting_period_end = parser.parse(request.POST['reporting_period_end'])
+    if 'reporting_period_start' in request.POST:
+        program.reporting_period_start = parser.parse(request.POST['reporting_period_start']).date()
+
+    program.reporting_period_end = parser.parse(request.POST['reporting_period_end']).date()
+
+    # Should never happen w/ front end validation
+    if program.reporting_period_start > program.reporting_period_end:
+        return HttpResponse('End date can not come before start date', status=400)
+
     program.save()
+
     return JsonResponse({
         'msg': 'success',
         'program_id': pk,
         'rptstart': program.reporting_period_start,
-        'rptend': program.reporting_period_end, })
+        'rptend': program.reporting_period_end,
+    })
 
 
 @api_view(['GET'])
