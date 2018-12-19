@@ -7198,6 +7198,7 @@ td.periodic-targets__sum {
     width: 1%; }
 
 .label--required:after {
+  color: #c8102e;
   content: "*"; }
 
 .tab-set--vertical {
