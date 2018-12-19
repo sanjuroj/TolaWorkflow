@@ -8,7 +8,7 @@ from workflow.models import (
 )
 from indicators.models import (
     Indicator, ReportingFrequency, TolaUser, IndicatorType, Objective, DisaggregationType, Level, ExternalService,
-    ExternalServiceRecord, StrategicObjective, CollectedData, TolaTable, DisaggregationValue, PeriodicTarget
+    ExternalServiceRecord, StrategicObjective, Result, TolaTable, DisaggregationValue, PeriodicTarget
 )
 from django.contrib.auth.models import User
 from django.core.serializers.python import Serializer as PythonSerializer
@@ -210,8 +210,8 @@ class IndicatorLightSerializer(serializers.ModelSerializer):
     datacount = serializers.SerializerMethodField()
 
     def get_datacount(self, obj):
-        # Returns the number of collecteddata points by an indicator
-        return obj.collecteddata_set.count()
+        # Returns the number of result points by an indicator
+        return obj.result_set.count()
 
     def get_sector(self, obj):
         if obj.sector is None:
@@ -375,10 +375,10 @@ class DocumentationSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class CollectedDataSerializer(serializers.HyperlinkedModelSerializer):
+class ResultSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
-        model = CollectedData
+        model = Result
         fields = '__all__'
 
 
