@@ -99,7 +99,7 @@ urlpatterns = [
                 url(r'^$', views.index, name='index'),
 
                 # program page
-                url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<type_id>\d+)/$',
+                url(r'^program/(?P<program_id>\d+)(?:/(?P<indicator_id>\d+))?(?:/(?P<type_id>\d+))?/$',
                     ProgramPage.as_view(), name='program_page'),
 
                 # program ajax update for metrics

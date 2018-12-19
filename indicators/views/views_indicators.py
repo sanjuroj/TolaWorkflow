@@ -673,6 +673,7 @@ class PeriodicTargetDeleteView(DeleteView):
 
 
 class ResultCreate(CreateView):
+    """Create new Result called by result_add as modal (if ajax) or full page (non-ajax)"""
     model = Result
     form_class = ResultForm
 
@@ -731,7 +732,6 @@ class ResultCreate(CreateView):
         kwargs['request'] = self.request
         kwargs['program'] = self.kwargs['program']
         kwargs['indicator'] = self.kwargs['indicator']
-        kwargs['tola_table'] = None
         return kwargs
 
     def form_invalid(self, form):
@@ -798,6 +798,7 @@ class ResultCreate(CreateView):
 
 
 class ResultUpdate(UpdateView):
+    """Update Result view called by result_update as modal (if ajax) or full page (non-ajax)"""
     model = Result
     form_class = ResultForm
 
@@ -1449,14 +1450,14 @@ class ProgramPage(ListView):
             }
             return JsonResponse(json_context)
 
-
-        if int(self.kwargs['type_id']):
-            type_filter_id = self.kwargs['type_id']
+        type_id = self.kwargs.get('type_id', 0)
+        if type_id is not None and int(type_id):
+            type_filter_id = int(type_id)
             type_filter_name = IndicatorType.objects.get(id=type_filter_id)
             program.indicator_filters['indicator_type'] = type_filter_id
-
-        if int(self.kwargs['indicator_id']):
-            indicator_filter_id = self.kwargs['indicator_id']
+        indicator_id = self.kwargs.get('indicator_id', 0)
+        if indicator_id is not None and int(indicator_id):
+            indicator_filter_id = int(indicator_id)
             program.indicator_filters['id'] = indicator_filter_id
             indicator_filter_name = program.annotated_indicators.first()
 
