@@ -196,7 +196,7 @@
     function createPeriodicTargetRow(pt, target_frequency, isLastIteration, rowNum) {
         var markup = `
                 <tr class="periodic-target">
-                    <td class="text-left periodic-target__name">
+                    <td class="text-left d-flex align-items-center">
                         <a href="/indicators/periodic_target_delete/${pt.id}/" class="deletebtn btn btn-sm" style="display: ${(isLastIteration && target_frequency != 2 || target_frequency == 8) ? 'block' : 'none'}">
                             <i class="fas fa-times text-danger"></i>
                         </a>
