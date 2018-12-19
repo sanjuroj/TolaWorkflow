@@ -160,6 +160,12 @@ class TolaUser(models.Model):
         return self.name
 
     @property
+    def display_with_organization(self):
+        if not self.organization:
+            return str(self)
+        return u'{0} ({1})'.format(self, self.organization)
+
+    @property
     def countries_list(self):
         return ', '.join([x.code for x in self.countries.all()])
 
