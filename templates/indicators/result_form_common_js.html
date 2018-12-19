@@ -3,7 +3,7 @@
 <script>
 
     // Intercept CollectedDataUpdate form submission and then use ajax to submit it.
-    $("#indicator_collecteddata_div").on("submit", "#collecteddata_update_form", function(e){
+    $("#indicator_collecteddata_div").on("submit", "#result_update_form", function(e){
         e.preventDefault();
         var isFormValid = true;
         $("#modalmessages").empty();
@@ -13,7 +13,7 @@
         // if (pts_valid == false || datecollected_valid == false || achieved_valid == false) {
         //     return false;
         // }
-        if ($("#collecteddata_update_form div").hasClass('has-error')) {
+        if ($("#result_update_form div").hasClass('has-error')) {
             createAlert("danger", "{% trans 'Please complete all required fields.'|escapejs %}", true, "#modalmessages");
             $('#indicator_collecteddata_div').animate({ scrollTop: 0 }, 'slow');
             return;

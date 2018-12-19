@@ -31,7 +31,7 @@
         {% for item in periodictargets %}
             <tr>
                 {% ifchanged item %}
-                    {% with dataCount=item.collecteddata_set.count %}
+                    {% with dataCount=item.result_set.count %}
                         <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-nowrap">
                             {# note ".period" is deprecated, and .period_name should be used instead #}
                             <strong class="text-uppercase">{{ item.period_name }}</strong><br>
@@ -84,7 +84,7 @@
                     {% endwith %}
                 {% endifchanged %}
 
-                {% for cdata in item.getcollected_data %}
+                {% for cdata in item.result_set.all %}
                     {% if not forloop.first %}
                         <tr>
                     {% endif %}
@@ -94,7 +94,7 @@
                               {% if is_editable is False %}
                                 {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                               {% else %}
-                              <a href="{% url 'collecteddata_update' cdata.id %}"
+                              <a href="{% url 'result_update' cdata.id %}"
                                  class="collected-data__link"
                                  id="collected-{{cdata.id}}">
                                       {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
@@ -147,35 +147,35 @@
                             </div>
                         </td>
                         <td></td>
-                    {% if item.collecteddata_set.count > 1 %}
+                    {% if item.result_set.count > 1 %}
                         </tr>
                     {% endif %}
                 {% endfor %}
             </tr>
         {% endfor %}
 
-        {% for coldata in collecteddata_without_periodictargets %}
+        {% for result in results_without_periodictargets %}
             <tr>
                 <td></td>
                 <td></td>
                 <td align="right">
                     {% if indicator.unit_of_measure_type == 1 %}
-                        {{ coldata.achieved|floatformat:"-2" }}
+                        {{ result.achieved|floatformat:"-2" }}
                     {% else %}
-                        {{ coldata.achieved|floatformat:"-2" }}%
+                        {{ result.achieved|floatformat:"-2" }}%
                     {% endif %}
                 </td>
                 <td align="right"></td>
                 <td class="collected-data-table__result bg-danger-lighter">
                     {% if is_editable is False %}
-                      {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                      {{ result.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                     {% else %}
-                      <a href="{% url 'collecteddata_update' coldata.id %}" class="collected-data__link" id="collected-{{coldata.id}}">
-                          {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                      <a href="{% url 'result_update' coldata.id %}" class="collected-data__link" id="collected-{{coldata.id}}">
+                          {{ result.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                       </a>
                     {% endif %}
                     <div class="pl-2">
-                        {% with achieved=coldata.achieved|floatformat:"-2" %}
+                        {% with achieved=result.achieved|floatformat:"-2" %}
                             {% if indicator.unit_of_measure_type == 2 %}
                                 {{ achieved }}%
                             {% else %}
@@ -185,35 +185,35 @@
                     </div>
                 </td>
                 <td>
-                    {% if coldata.evidence %}
-                        {% if coldata.evidence.url %}
-                            <a href="{{coldata.evidence.url}}" target="_blank">
+                    {% if result.evidence %}
+                        {% if result.evidence.url %}
+                            <a href="{{result.evidence.url}}" target="_blank">
                         {% endif %}
-                        {{ coldata.evidence|default_if_none:"" }}
-                        {% if coldata.evidence.url %}
+                        {{ result.evidence|default_if_none:"" }}
+                        {% if result.evidence.url %}
                             </a>
                         {% endif %}
                     {%endif%}
                     <div class="float-right">
                         {% if coldata.complete %}
-                            <a href="{% url 'projectcomplete_update' coldata.complete.id %}"
+                            <a href="{% url 'projectcomplete_update' result.complete.id %}"
                                target="_blank"
                                class="btn-link">{% trans "View Project" %}</a>
                         {% elif coldata.agreement %}
-                            <a href="{% url 'projectagreement_update' coldata.agreement.id %}"
+                            <a href="{% url 'projectagreement_update' result.agreement.id %}"
                                target="_blank"
                                class="btn-link">{% trans "View Project" %}</a>
                         {% endif %}
-                        {% comment {{ coldata.complete|default_if_none:coldata.agreement|default_if_none:'' }} %} {% endcomment %}
+                        {% comment {{ result.complete|default_if_none:result.agreement|default_if_none:'' }} %} {% endcomment %}
                     </div>
-                    {% if coldata.tola_table %}
-                        <a href="{{ coldata.tola_table.detail_url }}" target="_blank">{{ coldata.tola_table }}</a>
+                    {% if result.tola_table %}
+                        <a href="{{ result.tola_table.detail_url }}" target="_blank">{{ result.tola_table }}</a>
                     {% endif %}
                 </td>
             </tr>
         {% endfor %}
 
-        {% if collecteddata_without_periodictargets.count %}
+        {% if results_without_periodictargets.count %}
             {% if indicator.target_frequency == None %}
                 {% assign err 'Error_1' %}
             {% elif indicator.target_frequency == 2 or indicator.target_frequency == 8 %}
@@ -298,7 +298,7 @@
         {% endif %}
         </div>
         <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
-            <a href="{% url 'collecteddata_add' program_id indicator.id %}" class="btn-link btn-add collected-data__link"><i class="fas fa-plus-circle"></i> {% trans "Add results" %}</a>
+            <a href="{% url 'result_add' program_id indicator.id %}" class="btn-link btn-add collected-data__link"><i class="fas fa-plus-circle"></i> {% trans "Add results" %}</a>
         </div>
     </div>
 {% else %}

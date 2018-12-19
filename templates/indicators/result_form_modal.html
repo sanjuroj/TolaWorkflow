@@ -80,7 +80,7 @@
         */
         $("#tolaTablesLink").on("click", function(e){
             e.preventDefault();
-            $("#tolatablemodal .modal-content").load('/indicators/collecteddata_import/');
+            $("#tolatablemodal .modal-content").load('/indicators/result_import/');
             $("#tolatablemodal").modal("show");
         });
 
@@ -91,12 +91,12 @@
 
     <form
         action="{% if object.id %}
-                    {% url 'collecteddata_update' object.id %}
+                    {% url 'result_update' object.id %}
                 {% else %}
-                    {% url 'collecteddata_add' program_id indicator.id %}
+                    {% url 'result_add' program_id indicator.id %}
                 {% endif %}
                 "
-        id="collecteddata_update_form"
+        id="result_update_form"
         class="form-horizontal"
         method="post"
         novalidate>
@@ -368,7 +368,7 @@
 
                 <a
                     {% if id %}
-                        href="{% url 'collecteddata_delete' id %}"
+                        href="{% url 'result_delete' id %}"
                     {% else %}
                         href="#" data-dismiss="modal"
                     {% endif %}

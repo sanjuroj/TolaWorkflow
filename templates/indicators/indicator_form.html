@@ -5,7 +5,7 @@
 {% block page_title %}{% trans "Indicator setup" %}{% endblock %}
 
 {% block content %}
-    <div id="numDataPoints" style="display: none;">{{ object.collecteddata_set.all.count }}</div>
+    <div id="numDataPoints" style="display: none;">{{ object.result_set.all.count }}</div>
     <div id="initialTargetFrequencyValue" style="display:none;">{{ object.target_frequency }}</div>
     {% if i_name %}
     <h3 id="indicator-header" class="my-4 mx-3 font-weight-light" >

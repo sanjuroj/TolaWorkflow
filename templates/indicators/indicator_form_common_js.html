@@ -19,7 +19,7 @@
 
     // Load Collected data
     function loadCollected(indicator,program){
-        let url = "{% url "collected_data_view" 0 0 %})"
+        let url = "{% url "result_view" 0 0 %})"
         url = url.replace(/0\/0\//, indicator + "/" + program + "/")
         var div_name = '#hidden-indicator-' + indicator;
         $(div_name).empty();

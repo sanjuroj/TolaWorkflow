@@ -191,7 +191,7 @@
         $("#id_div_top_iptt_report").on("click", ".indicator-ajax-popup", function (e) {
           e.preventDefault();
           const indicatorId = $(this).data('indicatorid');
-          const url = `/indicators/collected_data_table/${indicatorId}/0/?edit=false`;
+          const url = `/indicators/report_table/${indicatorId}/0/?edit=false`;
           $("#indicator_modal_content").empty();
           $("#modalmessages").empty();
           $("#indicator_modal_content").load(url);
