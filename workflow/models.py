@@ -401,12 +401,12 @@ class Program(models.Model):
 
     def get_sites(self):
         indicator_ids = Indicator.objects.filter(program__in=[self.id]).values_list('id')
-        collecteddata = CollectedData.objects.filter(indicator__id__in=indicator_ids)
-        return SiteProfile.objects.filter(collecteddata__id__in=collecteddata).distinct()
+        results = Result.objects.filter(indicator__id__in=indicator_ids)
+        return SiteProfile.objects.filter(result__id__in=results).distinct()
 
     @property
     def collected_record_count(self):
-        return Program.objects.filter(pk=self.pk).annotate(num_data=Count('indicator__collecteddata')) \
+        return Program.objects.filter(pk=self.pk).annotate(num_data=Count('indicator__result')) \
                     .values('id', 'num_data')[0]['num_data']
 
     @property
@@ -1620,4 +1620,4 @@ def get_user_country(request):
         return response
 
 # importing at the bottom of the file so that there is not circular imports
-from indicators.models import Indicator, PeriodicTarget, CollectedData
+from indicators.models import Indicator, PeriodicTarget, Result
