@@ -45,7 +45,7 @@
   pk: 1
   fields:
     program: 1
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 1
   fields:
     indicator: 1
@@ -72,14 +72,14 @@
   pk: 2
   fields:
     program: 1
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 2
   fields:
     indicator: 2
     date_collected: '2015-01-10'
     achieved: 450
     evidence: 2
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 3
   fields:
     indicator: 2
@@ -101,7 +101,7 @@
     indicator: 3
     target: 400
     customsort: 0
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 4
   fields:
     indicator: 3
@@ -123,7 +123,7 @@
     indicator: 4
     target: 45
     customsort: 0
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 5
   fields:
     indicator: 4
@@ -145,7 +145,7 @@
     indicator: 5
     target: 85
     customsort: 0
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 6
   fields:
     indicator: 5
@@ -167,13 +167,13 @@
     indicator: 6
     target: 35
     customsort: 0
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 7
   fields:
     indicator: 6
     date_collected: '2015-01-10'
     achieved: 40
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 8
   fields:
     indicator: 6
@@ -195,7 +195,7 @@
     indicator: 7
     target: 10000
     customsort: 0
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 9
   fields:
     indicator: 7
@@ -217,7 +217,7 @@
     indicator: 8
     target: 400
     customsort: 0
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 10
   fields:
     indicator: 8
@@ -238,7 +238,7 @@
     indicator: 9
     target: 100
     customsort: 0
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 11
   fields:
     indicator: 9
@@ -251,7 +251,7 @@
     indicator: 9
     target: 200
     customsort: 1
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 12
   fields:
     indicator: 9
@@ -273,7 +273,7 @@
     indicator: 10
     target: 300
     customsort: 0
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 13
   fields:
     indicator: 10
@@ -286,7 +286,7 @@
     indicator: 10
     target: 100
     customsort: 1
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 14
   fields:
     indicator: 10
@@ -310,7 +310,7 @@
     start_date: '2015-01-01'
     end_date: '2015-06-30'
     customsort: 0
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 15
   fields:
     indicator: 11
@@ -324,7 +324,7 @@
     start_date: '2015-07-01'
     end_date: '2015-12-31'
     customsort: 1
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 16
   fields:
     indicator: 11
@@ -338,7 +338,7 @@
     start_date: '2016-01-01'
     end_date: '2016-06-30'
     customsort: 2
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 17
   fields:
     indicator: 11
@@ -352,7 +352,7 @@
     start_date: '2016-07-01'
     end_date: '2016-12-31'
     customsort: 3
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 18
   fields:
     indicator: 11
@@ -375,7 +375,7 @@
     start_date: '2015-01-01'
     end_date: '2015-06-30'
     customsort: 0
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 19
   fields:
     indicator: 12
@@ -389,7 +389,7 @@
     start_date: '2015-07-01'
     end_date: '2015-12-31'
     customsort: 1
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 20
   fields:
     indicator: 12
@@ -403,7 +403,7 @@
     start_date: '2016-01-01'
     end_date: '2016-06-30'
     customsort: 2
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 21
   fields:
     indicator: 12
@@ -417,7 +417,7 @@
     start_date: '2016-07-01'
     end_date: '2016-12-31'
     customsort: 3
-- model: indicators.collecteddata
+- model: indicators.result
   pk: 22
   fields:
     indicator: 12
