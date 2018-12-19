@@ -11,7 +11,6 @@
 }
 .indicator-setup {
     // overload tab functionality here for vertical tabs
-    display: flex;
     .nav-tabs {}
     .nav-item {
         white-space: nowrap;
@@ -45,3 +44,4 @@ td.periodic-targets__sum { // td needed for extra specificity
         color: $gray-500;
     }
 }
+

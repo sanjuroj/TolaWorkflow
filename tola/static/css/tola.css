@@ -6988,10 +6988,8 @@ body > .container {
   outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, 0.4); }
 
-.indicator-setup {
-  display: flex; }
-  .indicator-setup .nav-item {
-    white-space: nowrap; }
+.indicator-setup .nav-item {
+  white-space: nowrap; }
 
 .periodic-targets {
   background: #fff;
@@ -7201,6 +7199,27 @@ td.periodic-targets__sum {
 
 .label--required:after {
   content: "*"; }
+
+.tab-set--vertical {
+  display: flex;
+  margin-bottom: 15px; }
+  .tab-set--vertical .nav-tabs {
+    border-bottom: none;
+    border-right: 1px solid #dbdcde;
+    flex-direction: column; }
+    .tab-set--vertical .nav-tabs .nav-item {
+      margin-bottom: 0;
+      margin-right: -1px; }
+    .tab-set--vertical .nav-tabs .nav-link {
+      border-bottom-left-radius: 0;
+      border-top-right-radius: 0; }
+      .tab-set--vertical .nav-tabs .nav-link:hover {
+        border-color: #ebedf0 #ebedf0 #dbdcde !important; }
+      .tab-set--vertical .nav-tabs .nav-link.active {
+        border-color: #dbdcde #fff #dbdcde #dbdcde; }
+  .tab-set--vertical .tab-content {
+    flex-grow: 1;
+    padding-left: 15px; }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {

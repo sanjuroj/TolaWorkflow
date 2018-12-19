@@ -86,6 +86,7 @@
 @import 'components/home'; // Home page
 @import 'components/list_filters'; // List filters
 @import 'components/forms';
+@import 'components/tab_set'; // wraps & overclasses BS nav-tabs and nav-content for e.g. vertical tabs
 
 /* Local custom CSS and overloads for non-BS libraries */
 @import 'mixins';
