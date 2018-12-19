@@ -1,0 +1,22 @@
+{% load widget_tweaks %}
+{% load i18n %}
+<fieldset>
+    <div class="form-group" id="div_id_record_name">
+        <label for="id_record_name" class="label--required">{{ form.record_name.label }}</label>
+        {% render_field form.record_name class+="form-control" %}
+        <small class="form-text text-muted">{{ form.record_name.help_text }}</small>
+        <span id="validation_id_record_name" class="has-error"></span>
+    </div>
+    <div class="form-group" id="div_id_record_url">
+        <label for="id_record_url" class="label--required">{{ form.record_url.label }}</label>
+        {% render_field form.record_url class+="form-control" %}
+        <small class="form-text text-muted">{{ form.record_url.help_text }}</small>
+        <span id="validation_id_record_url" class="has-error"></span>
+    </div>
+    <div class="form-group" id="div_id_record_description">
+        <label for="id_record_description">{{ form.record_description.label }}</label>
+        {% render_field form.record_description class+="form-control" %}
+        <small class="form-text text-muted">{{ form.record_description.help_text }}</small>
+        <span id="validation_id_record_description" class="has-error"></span>
+    </div>
+</fieldset>
