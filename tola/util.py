@@ -1,6 +1,6 @@
 import unicodedata
 import json
-import sys
+import logging
 import requests
 
 from workflow.models import Country, TolaUser, TolaSites
@@ -9,6 +9,7 @@ from django.core.mail import send_mail, mail_admins, mail_managers, EmailMessage
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import user_passes_test
 
+logger = logging.getLogger(__name__)
 
 #CREATE NEW DATA DICTIONARY OBJECT
 def siloToDict(silo):
@@ -143,5 +144,10 @@ def get_GAIT_data(gait_ids):
         except ValueError:
             pass
     base_url = 'https://mcapi.mercycorps.org/gaitprogram/?gaitids='
-    response = requests.get(base_url + ','.join(cleaned_ids))
-    return json.loads(response.content)
+
+    try:
+        response = requests.get(base_url + ','.join(cleaned_ids))
+        return json.loads(response.content)
+    except requests.exceptions.RequestException as e:
+        logger.exception('Error reaching GAIT service')
+        return []
