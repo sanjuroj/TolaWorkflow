@@ -16,7 +16,7 @@ from django.db.models import (
     Count, Min, Q, Sum, Avg, Max, DecimalField, OuterRef, Subquery
 )
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -669,10 +669,51 @@ class PeriodicTargetDeleteView(DeleteView):
         return JsonResponse(
             {"status": "success", "msg": "Periodic Target deleted\
              successfully.", "targets_sum": targets_sum}
-        )
+            )
 
 
-class ResultCreate(CreateView):
+class ResultFormMixin(object):
+    def get_form_guidance(self):
+        try:
+            return FormGuidance.objects.get(form="Result")
+        except FormGuidance.DoesNotExist:
+            return None
+
+    def get_result_context(self):
+        if 'pk' in self.kwargs:
+            result = get_object_or_404(Result, pk=self.kwargs.get('pk'))
+            self.indicator = result.indicator
+            disaggregation_values = DisaggregationValue.objects.filter(
+                result=result).exclude(
+                disaggregation_label__disaggregation_type__standard=True)
+
+            standard_disaggregation_values = DisaggregationValue.objects.filter(
+                result=result).filter(
+                disaggregation_label__disaggregation_type__standard=True)
+        elif 'indicator' in self.kwargs:
+            self.indicator = get_object_or_404(Indicator, pk=self.kwargs.get('indicator'))
+            disaggregation_values = None
+            standard_disaggregation_values = None
+        disaggregation_labels = DisaggregationLabel.objects.filter(
+            disaggregation_type__indicator=self.indicator.id)
+        standard_disaggregation_labels = DisaggregationLabel.get_standard_labels()
+
+        return {
+            'indicator': self.indicator,
+            'disaggregation_labels': disaggregation_labels,
+            'standard_disaggregation_labels': standard_disaggregation_labels,
+            'disaggregation_values': disaggregation_values,
+            'standard_disaggregation_values': standard_disaggregation_values,
+        }
+
+    def form_invalid(self, form):
+        if self.request.is_ajax():
+            return JsonResponse(form.errors, status=400)
+        messages.error(self.request, 'Invalid Form', fail_silently=False)
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class ResultCreate(CreateView, ResultFormMixin):
     """Create new Result called by result_add as modal (if ajax) or full page (non-ajax)"""
     model = Result
     form_class = ResultForm
@@ -684,65 +725,21 @@ class ResultCreate(CreateView):
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
-        try:
-            self.guidance = FormGuidance.objects.get(form="Result")
-        except FormGuidance.DoesNotExist:
-            self.guidance = None
+        self.guidance = self.get_form_guidance()
         return super(ResultCreate, self).dispatch(
             request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        result_context = self.get_result_context()
         context = super(ResultCreate, self).get_context_data(**kwargs)
-        try:
-            getDisaggregationLabel = DisaggregationLabel.objects.filter(
-                disaggregation_type__indicator__id=self.kwargs['indicator'])
-
-            getDisaggregationLabelStandard = DisaggregationLabel.objects \
-                .filter(disaggregation_type__standard=True)
-
-        except DisaggregationLabel.DoesNotExist:
-            getDisaggregationLabelStandard = None
-            getDisaggregationLabel = None
-
-        # set values to None so the form doesn't display empty fields for
-        # previous entries
-        getDisaggregationValue = None
-        indicator = Indicator.objects.get(pk=self.kwargs.get('indicator'))
-
-        context.update({'getDisaggregationValue': getDisaggregationValue})
-        context.update({'getDisaggregationLabel': getDisaggregationLabel})
-        context.update({'getDisaggregationLabelStandard':
-                        getDisaggregationLabelStandard})
-
-        context.update({'indicator_id': self.kwargs['indicator']})
-        context.update({'indicator': indicator})
-        context.update({'program_id': self.kwargs['program']})
+        context.update(result_context)
         return context
 
-    def get_initial(self):
-        initial = {
-            'indicator': self.kwargs['indicator'],
-            'program': self.kwargs['program'],
-        }
-        return initial
-
-    # add the request to the kwargs
     def get_form_kwargs(self):
         kwargs = super(ResultCreate, self).get_form_kwargs()
         kwargs['request'] = self.request
-        kwargs['program'] = self.kwargs['program']
-        kwargs['indicator'] = self.kwargs['indicator']
+        kwargs['indicator'] = self.indicator
         return kwargs
-
-    def form_invalid(self, form):
-        # this is not receiving a valid date
-        if self.request.is_ajax():
-            print(".....%s....." % form.errors)
-            return HttpResponse(status=400)
-        else:
-            messages.error(self.request, _('Invalid Form'), fail_silently=False)
-            print(".....%s....." % form.errors)
-            return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form):
         indicator = self.request.POST['indicator']
@@ -797,7 +794,7 @@ class ResultCreate(CreateView):
         return HttpResponseRedirect(redirect_url)
 
 
-class ResultUpdate(UpdateView):
+class ResultUpdate(UpdateView, ResultFormMixin):
     """Update Result view called by result_update as modal (if ajax) or full page (non-ajax)"""
     model = Result
     form_class = ResultForm
@@ -809,65 +806,21 @@ class ResultUpdate(UpdateView):
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
-        try:
-            self.guidance = FormGuidance.objects.get(form="Result")
-        except FormGuidance.DoesNotExist:
-            self.guidance = None
+        self.guidance = self.get_form_guidance()
         return super(ResultUpdate, self).dispatch(
             request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        result_context = self.get_result_context()
         context = super(ResultUpdate, self).get_context_data(**kwargs)
-        getIndicator = Result.objects.get(id=self.kwargs['pk'])
-
-        try:
-            getDisaggregationLabel = DisaggregationLabel.objects.filter(
-                disaggregation_type__indicator__id=getIndicator.indicator_id)
-
-            getDisaggregationLabelStandard = DisaggregationLabel.objects \
-                .filter(disaggregation_type__standard=True)
-
-        except DisaggregationLabel.DoesNotExist:
-            getDisaggregationLabel = None
-            getDisaggregationLabelStandard = None
-
-        try:
-            getDisaggregationValue = DisaggregationValue.objects \
-                .filter(result=self.kwargs['pk']) \
-                .exclude(disaggregation_label__disaggregation_type__standard=True)
-
-            getDisaggregationValueStandard = DisaggregationValue.objects \
-                .filter(result=self.kwargs['pk']) \
-                .filter(disaggregation_label__disaggregation_type__standard=True)
-
-        except DisaggregationLabel.DoesNotExist:
-            getDisaggregationValue = None
-            getDisaggregationValueStandard = None
-
-        context.update({'getDisaggregationLabelStandard': getDisaggregationLabelStandard})
-        context.update({'getDisaggregationValueStandard': getDisaggregationValueStandard})
-        context.update({'getDisaggregationValue': getDisaggregationValue})
-        context.update({'getDisaggregationLabel': getDisaggregationLabel})
-        context.update({'id': self.kwargs['pk']})
-        context.update({'indicator_id': getIndicator.indicator_id})
-        context.update({'indicator': getIndicator})
+        context.update(result_context)
         return context
-
-    def form_invalid(self, form):
-        messages.error(self.request, 'Invalid Form', fail_silently=False)
-        return self.render_to_response(self.get_context_data(form=form))
 
     # add the request to the kwargs
     def get_form_kwargs(self):
-        get_data = Result.objects.get(id=self.kwargs['pk'])
         kwargs = super(ResultUpdate, self).get_form_kwargs()
         kwargs['request'] = self.request
-        kwargs['program'] = get_data.program
-        kwargs['indicator'] = get_data.indicator
-        if get_data.tola_table:
-            kwargs['tola_table'] = get_data.tola_table.id
-        else:
-            kwargs['tola_table'] = None
+        kwargs['indicator'] = self.indicator
         return kwargs
 
     def form_valid(self, form):
