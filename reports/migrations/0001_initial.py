@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('workflow', '0001_initial'),
-        ('indicators', '0042_collecteddata_to_result_rename'),
+        ('indicators', '0001_initial')
     ]
 
     operations = [
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('create_date', models.DateTimeField(blank=True, null=True)),
                 ('edit_date', models.DateTimeField(blank=True, null=True)),
                 ('agreement', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='workflow.ProjectAgreement')),
-                ('collected', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='indicators.Result')),
+                ('collected', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='indicators.CollectedData')),
                 ('complete', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='workflow.ProjectComplete')),
                 ('country', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='workflow.Country')),
                 ('indicator', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='indicators.Indicator')),

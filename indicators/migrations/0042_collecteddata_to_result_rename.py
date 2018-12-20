@@ -4,11 +4,20 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
+def update_formguidance(apps, schema_editor):
+    # Form Guidance data value needs to match new Form Name
+    FormGuidance = apps.get_model('workflow', 'FormGuidance')
+    res_form = FormGuidance.objects.filter(form='CollectedData')
+    if res_form.count() == 1:
+        res_form = res_form.first()
+        res_form.form = 'Result'
+        res_form.save()
 
 class Migration(migrations.Migration):
 
     dependencies = [
         ('indicators', '0041_lop_to_numeric'),
+        ('reports', '0001_initial')
     ]
 
     operations = [
@@ -28,4 +37,5 @@ class Migration(migrations.Migration):
             name='result',
             options={'ordering': ('indicator', 'date_collected'), 'verbose_name_plural': 'Indicator Output/Outcome Result'},
         ),
+        migrations.RunPython(update_formguidance),
     ]
