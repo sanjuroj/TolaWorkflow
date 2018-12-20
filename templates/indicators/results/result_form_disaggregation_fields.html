@@ -2,130 +2,125 @@
 {% load i18n %}
 {# disaggregation fields in result_form.html and result_form_modal.html #}
 {# TODO: update design, test functionality #}
-{% if getDisaggregationLabelStandard and not getDisaggregationValueStandard %}
-                    <div
-                            id="disagg_toggle"
-                            class="fontsize-130 btn btn-link"
-                            data-toggle="collapse"
-                            data-target="#standardDisagg"
-                            aria-expanded="false"
-                            aria-controls="standardDisagg">
-                            <!-- Need the div to make ensure rotating symbol doesn't push text to the right -->
-                            <div class="div-expand-symbol"><i class="fas fa-caret-right"></i></div>
-                        {% trans "Standard disaggregations" %}
-                    </div>
-                    <div class="collapse" id="standardDisagg">
-                        <table class="table table-sm table-hover table-striped">
-                            <tr>
-                                <th>{% trans "Disaggregation level" %}</th>
-                                <th>{% trans "Actuals" %}</th>
-                            </tr>
-                            {% for item in getDisaggregationLabelStandard %}
-                                <tr>
-                                    <td>{{ item.label }}</td>
-                                    <td>
-                                        <input type="number" min="0"
-                                            class="form-control form-control-sm"
-                                            name="{{ item.id }}"
-                                            value="">
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </table>
-                    </div>
-                </div>
-            {% else %}
-                {% if not getDisaggregationValueStandard %}
-                    <h4>{% trans "Standard disaggregation levels not entered" %}</h4>
-                    <p>{% trans "Standard disaggregations are entered by the administrator for the entire organizations.  If you are not seeing any here, please contact your system administrator." %}</p>
-                {% endif %}
-            {% endif %}
-            {% if getDisaggregationLabel and not getDisaggregationValue %}
-                <div class="card mt-1">
-                    <div class="card-header"
-                            data-toggle="collapse"
-                            data-target="#newDisagg"
-                            aria-expanded="false"
-                            aria-controls="newDisagg">
-                        {% trans "New disaggregations" %}
-                    </div>
-                    <div class="card-body collapse" id="newDisagg">
-                        <table class="table table-sm table-hover table-striped">
-                            <tr>
-                                <th>{% trans "Disaggregation level" %}</th>
-                                <th>{% trans "Actuals" %}</th>
-                            </tr>
-                        {% for item in getDisaggregationLabel %}
-                            <tr>
-                                <td>{{ item.label }}</td>
-                                <td>
-                                    <input type="number" min="0"
-                                        class="form-control form-control-sm"
-                                        name="{{ item.id }}"
-                                        value="">
-                                </td>
-                            </tr>
-                        {% endfor %}
-                      </table>
-                </div>
-            {% endif %}
-            {% if getDisaggregationValue %}
-                <div class="card mt-1">
-                    <div class="card-header"
-                            data-toggle="collapse"
-                            data-target="#existingDisagg"
-                            aria-expanded="false"
-                            aria-controls="existingDisagg">
-                        {% trans "Existing disaggregations" %}
-                    </div>
-                    <div class="card-body collapse" id="existingDisagg">
-                        <table class="table table-sm table-hover table-striped">
-                            <tr>
-                                <th>{% trans "Disaggregation level" %}</th>
-                                <th>{% trans "Actuals" %}</th>
-                            </tr>
-                            {% for item in getDisaggregationValue %}
-                            <tr>
-                                <td>{{ item.disaggregation_label.label }}</td>
-                                <td>
-                                    <input type="number" min="0"
-                                        class="form-control form-controm-sm"
-                                        name="{{ item.disaggregation_label.id }}"
-                                        value="{{ item.value }}">
-                                </td>
-                            </tr>
-                        {% endfor %}
-                      </table>
-                    </div>
-                </div>
-            {% endif %}
-
-            {% if getDisaggregationValueStandard %}
-                <div class="card">
-                    <div class="card-header"
-                            data-toggle="collapse"
-                            data-target="#existingStandardDisagg"
-                            aria-expanded="false"
-                            aria-controls="existingStandardDisagg">
-                        {% trans "Existing standard disaggregations" %}
-                    </div>
-                    <div class="card-body collapse" id="existingStandardDisagg">
-                        <table class="table table-sm table-hover table-striped">
-                            <tr>
-                                <th>{% trans "Disaggregation level" %}</th>
-                                <th>{% trans "Actuals" %}</th>
-                            </tr>
-                            {% for item in getDisaggregationValueStandard %}
-                            <tr>
-                                <td>{{ item.disaggregation_label.label }}</td>
-                                <td>
-                                    <input type="number" min="0"
-                                        class="form-control form-control-sm"
-                                        name="{{ item.disaggregation_label.id }}"
-                                        value="{{ item.value }}"></td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-                    </div>
-                </div>
-            {% endif %}
+{% if standard_disaggregation_labels and not getDisaggregationValueStandard %}
+    <div
+        id="disagg_toggle" class="btn btn-link"
+        data-toggle="collapse" data-target="#standardDisagg"
+        aria-expanded="false" aria-controls="standardDisagg">
+        <!-- Need the div to make ensure rotating symbol doesn't push text to the right -->
+        <div class="div-expand-symbol"><i class="fas fa-caret-right"></i></div>
+        {% trans "Standard disaggregations" %}
+    </div>
+    <div class="collapse" id="standardDisagg">
+        <table class="table table-sm table-hover table-striped">
+            <tr>
+                <th>{% trans "Disaggregation level" %}</th>
+                <th>{% trans "Actuals" %}</th>
+            </tr>
+            {% for item in standard_disaggregation_labels %}
+                <tr>
+                    <td>{{ item.label }}</td>
+                    <td>
+                        <input type="number" min="0"
+                            class="form-control form-control-sm"
+                            name="{{ item.id }}"
+                            value="">
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% else %}
+    {% if not standard_disaggregation_labels %}
+        <h4>{% trans "Standard disaggregation levels not entered" %}</h4>
+        <p>{% trans "Standard disaggregations are entered by the administrator for the entire organizations.  If you are not seeing any here, please contact your system administrator." %}</p>
+    {% endif %}
+{% endif %}
+{% if disaggregation_labels and not disaggregation_values %}
+    <div class="card mt-1">
+        <div class="card-header"
+                data-toggle="collapse"
+                data-target="#newDisagg"
+                aria-expanded="false"
+                aria-controls="newDisagg">
+            {% trans "New disaggregations" %}
+        </div>
+        <div class="card-body collapse" id="newDisagg">
+            <table class="table table-sm table-hover table-striped">
+                <tr>
+                    <th>{% trans "Disaggregation level" %}</th>
+                    <th>{% trans "Actuals" %}</th>
+                </tr>
+            {% for item in disaggregation_labels %}
+                <tr>
+                    <td>{{ item.label }}</td>
+                    <td>
+                        <input type="number" min="0"
+                            class="form-control form-control-sm"
+                            name="{{ item.id }}"
+                            value="">
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+{% endif %}
+{% if disaggregation_values %}
+    <div class="card mt-1">
+        <div class="card-header"
+                data-toggle="collapse"
+                data-target="#existingDisagg"
+                aria-expanded="false"
+                aria-controls="existingDisagg">
+            {% trans "Existing disaggregations" %}
+        </div>
+        <div class="card-body collapse" id="existingDisagg">
+            <table class="table table-sm table-hover table-striped">
+                <tr>
+                    <th>{% trans "Disaggregation level" %}</th>
+                    <th>{% trans "Actuals" %}</th>
+                </tr>
+                {% for item in disaggregation_values %}
+                <tr>
+                    <td>{{ item.disaggregation_label.label }}</td>
+                    <td>
+                        <input type="number" min="0"
+                            class="form-control form-controm-sm"
+                            name="{{ item.disaggregation_label.id }}"
+                            value="{{ item.value }}">
+                    </td>
+                </tr>
+            {% endfor %}
+          </table>
+        </div>
+    </div>
+{% endif %}
+{% if standard_disaggregation_values %}
+    <div class="card">
+        <div class="card-header"
+                data-toggle="collapse"
+                data-target="#existingStandardDisagg"
+                aria-expanded="false"
+                aria-controls="existingStandardDisagg">
+            {% trans "Existing standard disaggregations" %}
+        </div>
+        <div class="card-body collapse" id="existingStandardDisagg">
+            <table class="table table-sm table-hover table-striped">
+                <tr>
+                    <th>{% trans "Disaggregation level" %}</th>
+                    <th>{% trans "Actuals" %}</th>
+                </tr>
+                {% for item in standard_disaggregation_values %}
+                <tr>
+                    <td>{{ item.disaggregation_label.label }}</td>
+                    <td>
+                        <input type="number" min="0"
+                            class="form-control form-control-sm"
+                            name="{{ item.disaggregation_label.id }}"
+                            value="{{ item.value }}"></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endif %}

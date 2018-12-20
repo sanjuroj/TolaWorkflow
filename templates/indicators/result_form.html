@@ -3,9 +3,9 @@
 {# called by indicators.views.views_indicators.ResultCreate and indicators.views.views_indicators.ResultUpdate #}
 {% block bread_crumb %}
 <ol class="breadcrumb">
-  <li><a href="{% url 'program_page' program_id %}">{% trans "Program" %}</a></li>
-  <li><a href="{% url 'program_page' program_id indicator_id %}">{% trans "Indicator" %}</a></li>
-  <li class="active">{% trans "Result Form" %}</li>
+  <li><a href="{% url 'program_page' indicator.program.id %}">{% trans "Program" %}</a></li>
+  <li><a href="{% url 'program_page' indicator.program.id indicator.id %}">{% trans "Indicator" %}</a></li>
+  <li class="active">{% trans "Result" %}</li>
 </ol>
 
 {% endblock %}
