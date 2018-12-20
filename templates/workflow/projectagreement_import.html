@@ -24,7 +24,7 @@
             if (selected_service == undefined || selected_service == -1 || selected_service == '') {
                 $("#serivce").html("<option>--Service--</option>");
             } else {
-                var url = "/workflow/service/" + selected_service + "/service_json/";
+                var url = "/indicators/service/" + selected_service + "/service_json/";
                 $.getJSON(url, function(service) {
                     var options = '<option value="0">--Data--</option>';
                     for (var i = 0; i < service.length; i++) {
