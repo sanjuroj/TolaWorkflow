@@ -1,3 +1,4 @@
+import unittest
 from factories import (
     IndicatorTypeFactory,
     IndicatorFactory,
@@ -11,6 +12,7 @@ from factories import (
 from indicators.forms import IPTTReportFilterForm
 from django.test import TestCase, RequestFactory
 
+@unittest.skip('no')
 class TestFilterForm(TestCase):
 
     def test_form_populates(self):
@@ -45,3 +47,9 @@ class TestFilterForm(TestCase):
         self.assertIn(expected.name, stuff)
         self.assertIn(expected2.name, stuff)
         self.assertIn(indicator.name, stuff)
+
+from indicators.tests.form_tests.result_form_unittests import (
+    TestResultCreateUpdate404,
+    TestUpdateFormInitialValues,
+    TestCreateValidation
+)
