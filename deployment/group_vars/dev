@@ -1,0 +1,28 @@
+app_user: vagrant
+app_name: tolaactivity
+hostname: local.tolaactivity.com
+install_dir: "/srv/www/{{app_name}}"
+app_dir: "{{install_dir}}"
+virtualenv: "{{app_dir}}/venv"
+logfile: "/var/log/{{app_name}}.log"
+socket: "/tmp/{{app_name}}.sock"
+requirements_file: "{{app_dir}}/requirements.txt"
+local_settings_file: "{{app_dir}}/config/settings.secret.yml"
+source_dir: "{{inventory_dir}}/../"
+is_vagrant: true
+dev_server: true
+django_secret_key: "this is extremely secure"
+
+db:
+  host: 127.0.0.1
+  port: 5432
+  name: tola_activity
+  user: mercy_corps
+  password: mercy_corps
+
+global_packages:
+  - build-essential
+  - vim
+
+debug: True
+testing: True

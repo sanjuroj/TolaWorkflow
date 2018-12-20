@@ -1,0 +1,118 @@
+---
+- name: Install packages
+  apt:
+    pkg: '{{global_packages}}'
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Ensure resolvconf is gone, because it's evil
+  apt: pkg=resolvconf state=absent
+  become: yes
+
+- name: Install environment specific packages
+  become: yes
+  apt:
+    pkg:
+      - nginx
+      - uwsgi
+      - python
+      - python-pip
+      - python-virtualenv
+      - python-mysqldb
+      - mysql-server
+      - libmysqld-dev
+      - mysql-utilities
+      - mysql-client
+      - libsasl2-dev
+      - python-dev
+      - libldap2-dev
+      - libssl-dev
+      - libcairo2-dev
+      - libpango1.0-dev
+      - uwsgi-plugin-python
+    state: present
+  tags:
+    - provision
+
+# - name: Install python packages for deployment
+#   become: yes
+#   pip:
+#     name: psycopg2
+
+- name: add mysql db
+  become: yes
+  mysql_db:
+    name: "{{db.name}}"
+    login_user: "root"
+    state: present
+
+- name: add mysql user
+  become: yes
+  mysql_user:
+    login_user: "root"
+    name: "{{db.user}}"
+    password: "{{db.password}}"
+    priv: "{{db.name}}.*:ALL"
+    state: present
+
+- name: create app logfile
+  become: yes
+  file:
+    path: "{{logfile}}"
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
+    state: touch
+    mode: 0644
+
+- name: Install vhosts nginx
+  become: yes
+  template: src=nginx.conf dest="/etc/nginx/sites-enabled/{{app_name}}.conf" owner=root
+  tags:
+    - nginx
+  notify:
+    - Restart nginx
+
+- name: create app folder
+  become: yes
+  file:
+    path: "{{install_dir}}"
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
+    state: directory
+
+- name: Install uWSGI endpoint
+  become: yes
+  template: src=uwsgi.ini dest="/etc/uwsgi/apps-enabled/{{app_name}}.ini" owner="{{app_user}}"
+  tags:
+    - uwsgi
+  notify:
+    - Restart uWSGI
+
+- name: install python dependencies
+  become: yes
+  become_user: "{{ app_user }}"
+  pip:
+    requirements: "{{requirements_file}}"
+    virtualenv: "{{virtualenv}}"
+  tags:
+    - virtualenv
+
+- name: force latest google-api-python-client
+  pip:
+    name: google-api-python-client
+    state: latest
+
+- name: Push local_settings.py
+  remote_user: "{{app_user}}"
+  template: src=local_settings.yml dest="{{local_settings_file}}"
+  tags:
+    - deploy
+  notify:
+    - Restart uWSGI
+
+- name: migrate db
+  django_manage:
+    command: migrate
+    app_path: "{{app_dir}}"
+    virtualenv: "{{virtualenv}}"
