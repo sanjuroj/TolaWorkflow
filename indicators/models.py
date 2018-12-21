@@ -5,6 +5,7 @@ from decimal import Decimal
 
 import dateparser
 from dateutil.relativedelta import relativedelta
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Avg
 from django.http import QueryDict
@@ -754,7 +755,7 @@ class PeriodicTarget(models.Model):
     )
 
     target = models.DecimalField(
-        _("Target"), max_digits=20, decimal_places=2, default=Decimal('0.00')
+        _("Target"), max_digits=20, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.0'))]
     )
 
     start_date = models.DateField(

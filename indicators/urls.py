@@ -8,7 +8,6 @@ from .views.views_indicators import (
     IndicatorCreate,
     IndicatorDelete,
     IndicatorUpdate,
-    IndicatorList,
     IndicatorExport,
     IndicatorReportData,
     CollectedDataReportData,
@@ -25,8 +24,8 @@ from .views.views_indicators import (
     TVAReport,
     DisaggregationReport,
     TVAPrint,
-    DisaggregationPrint
-)
+    DisaggregationPrint,
+    api_indicator_view)
 
 from .views.views_reports import (
     IPTTReportQuickstartView,
@@ -41,8 +40,6 @@ from .views.views_reports import (
 
 
 urlpatterns = [
-    url(r'^home/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$', IndicatorList.as_view(), name='indicator_list'),
-
     url(r'^indicator_create/(?P<id>\d+)/$', indicator_create, name='indicator_create'),
 
     url(r'^indicator_add/(?P<id>\d+)/$', IndicatorCreate.as_view(), name='indicator_add'),
@@ -126,4 +123,6 @@ urlpatterns = [
 
     url(r'^iptt_csv/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_CSVExport.as_view(), name='iptt_csv'),
 
+    # API call for program page
+    url(r'^api/indicator/(?P<indicator_id>\d+)', api_indicator_view, name='api_indicator_view'),
 ]

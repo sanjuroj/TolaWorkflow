@@ -29,6 +29,8 @@ from weasyprint import HTML, CSS
 
 from feed.serializers import FlatJsonSerializer
 from util import getCountry, group_excluded, get_table
+
+from indicators.serializers import IndicatorSerializer, ProgramSerializer
 from workflow.forms import FilterForm
 from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
@@ -41,7 +43,7 @@ from ..models import (
     CollectedData, IndicatorType, Level, ExternalServiceRecord,
     ExternalService, TolaTable, PinnedReport
 )
-from indicators.queries import ProgramWithMetrics
+from indicators.queries import ProgramWithMetrics, IPTTIndicator
 from .views_reports import IPTT_ReportView
 
 
@@ -123,57 +125,6 @@ def generate_periodic_targets(tf, start_date, numTargets, event_name='', num_exi
 
         gentargets.append(target_period)
     return gentargets
-
-
-class IndicatorList(ListView):
-    model = Indicator
-    template_name = 'indicators/indicator_list.html'
-
-    def get(self, request, *args, **kwargs):
-        countries = request.user.tola_user.countries.all()
-        get_programs = Program.objects.filter(funding_status="Funded", country__in=countries).distinct()
-        get_indicators = Indicator.objects.filter(program__country__in=countries)
-        get_indicator_types = IndicatorType.objects.all()
-
-        program_id = int(self.kwargs['program'])
-        program_name = get_programs.get(pk=program_id).name if program_id else ''
-        indicator_id = int(self.kwargs['indicator'])
-        indicator_name = get_indicators.get(pk=indicator_id).name if indicator_id else ''
-        type_id = int(self.kwargs['type'])
-        type_name = get_indicator_types.get(pk=type_id).indicator_type if type_id else ''
-        filters = {'id__isnull': False}
-
-        if program_id != 0:
-            filters['id'] = program_id
-            get_indicators = get_indicators.filter(program_id=program_id)
-
-        if type_id != 0:
-            filters['indicator__indicator_type__id'] = type_id
-            get_indicators = get_indicators.filter(indicator_type=type_id)
-
-        if indicator_id != 0:
-            filters['indicator'] = indicator_id
-
-        programs = Program.objects.prefetch_related('indicator_set') \
-            .filter(funding_status="Funded", country__in=countries) \
-            .filter(**filters).order_by('name') \
-            .annotate(
-                indicator_count=Count('indicator', distinct=True),
-                target_period_last_end_date=Max('indicator__periodictargets__end_date', distinct=True)
-            )
-
-        c_data = {
-            'getPrograms': get_programs,
-            'getIndicators': get_indicators,
-            'getIndicatorTypes': get_indicator_types,
-            'program_id': program_id,
-            'program_name': program_name,
-            'indicator_id': indicator_id,
-            'indicator_name': indicator_name,
-            'type_name': type_name,
-            'type_id': type_id,
-            'programs': programs}
-        return render(request, self.template_name, c_data)
 
 
 def import_indicator(service=1):
@@ -593,6 +544,11 @@ class IndicatorUpdate(UpdateView):
                     'start_date': start_date, 'end_date': end_date,
                     'edit_date': timezone.now()
                 }
+
+                # Validate PeriodicTarget target field is > 0... throws with ValidationError
+                # Needed to be done here since the form itself does not check
+                # Front-end validation exists which is why we are not bothering with UI feedback
+                PeriodicTarget(indicator=indicatr, **defaults).clean_fields()
 
                 periodic_target, created = PeriodicTarget.objects \
                     .update_or_create(indicator=indicatr, id=pk, defaults=defaults)
@@ -1463,7 +1419,7 @@ class ProgramPage(ListView):
     metrics = False
 
     def get(self, request, *args, **kwargs):
-        countries = request.user.tola_user.countries.all()
+        # countries = request.user.tola_user.countries.all()
         program_id = int(self.kwargs['program_id'])
         unannotated_program = Program.objects.only(
             'reporting_period_start', 'reporting_period_end',
@@ -1478,7 +1434,7 @@ class ProgramPage(ListView):
                 request, 'indicators/program_setup_incomplete.html', context
                 )
         #indicator_filters = {'program__id': program_id}
-        indicator_filters = {}
+        # indicator_filters = {}
         type_filter_id = None
         indicator_filter_id = None
         type_filter_name = None
@@ -1506,29 +1462,23 @@ class ProgramPage(ListView):
 
         indicators = program.annotated_indicators\
             .annotate(target_period_last_end_date=Max('periodictargets__end_date'))
-        indicator_count = program.indicator_count
+        # indicator_count = program.indicator_count
         site_count = len(program.get_sites())
-
-        indicator_types = IndicatorType.objects.filter(indicator__program__id=program_id)
-        indicator_levels = Level.objects.filter(indicator__program__id=program_id)
 
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
                          [PinnedReport.default_report(program.id)]
         js_context = {
             'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
-            'delete_pinned_report_confirmation_msg':
-                _('Warning: This action cannot be undone. Are you sure you want to delete this pinned report?'),
+            'program': ProgramSerializer(program).data,
+            'indicators': IndicatorSerializer(indicators, many=True).data,
+            'indicator_on_scope_margin': Indicator.ONSCOPE_MARGIN,
         }
         #program.set_metrics(indicators)
         c_data = {
             'program': program,
-            'indicators': indicators,
             'site_count': site_count,
-            'indicator_count': indicator_count,
-            'indicator_types': indicator_types,
             'indicator_filter_id': indicator_filter_id,
             'indicator_filter_name': indicator_filter_name,
-            'indicator_levels': indicator_levels,
             'type_filter_id': type_filter_id,
             'type_filter_name': type_filter_name,
             'percent_complete': program.percent_complete,
@@ -1800,6 +1750,20 @@ class IndicatorDataExport(View):
         response['Content-Disposition'] = 'attachment; \
             filename=indicator_data.csv'
         return response
+
+
+def api_indicator_view(request, indicator_id):
+    """
+    API call for viewing an indicator for the program page
+    """
+    indicator = Indicator.objects.only('program_id', 'sector_id').get(id=indicator_id)
+    program = ProgramWithMetrics.program_page.get(pk=indicator.program_id)
+
+    indicator = program.annotated_indicators \
+        .annotate(target_period_last_end_date=Max('periodictargets__end_date')).get(id=indicator_id)
+
+    return JsonResponse(IndicatorSerializer(indicator).data)
+
 
 
 """
