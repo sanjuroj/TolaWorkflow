@@ -21,11 +21,11 @@ function getStatusIndicatorString(filterType, indicatorCount) {
             return interpolate(fmts, [indicatorCount]);
         case IndicatorFilterType.missingResults:
             // # Translators: The number of indicators that no one has entered in any results for
-            fmts = ngettext("%s indicator has no results", "%s indicators have no results", indicatorCount);
+            fmts = ngettext("%s indicator has missing results", "%s indicators have missing results", indicatorCount);
             return interpolate(fmts, [indicatorCount]);
         case IndicatorFilterType.missingEvidence:
             // # Translators: The number of indicators that contain results that are not backed up with evidence
-            fmts = ngettext("%s indicator has results without evidence", "%s indicators have results without evidence", indicatorCount);
+            fmts = ngettext("%s indicator has missing evidence", "%s indicators have missing evidence", indicatorCount);
             return interpolate(fmts, [indicatorCount]);
         case IndicatorFilterType.aboveTarget:
             // # Translators: shows what number of indicators are a certain percentage above target. Example: 3 indicators are >15% above target
