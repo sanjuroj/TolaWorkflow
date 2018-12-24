@@ -6289,7 +6289,7 @@ body > .container {
 .btn-danger.btn-link {
   color: #c8102e;
   border: 0px;
-  background: #fff; }
+  background: transparent; }
 
 .form-control {
   color: #000;
