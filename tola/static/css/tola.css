@@ -354,7 +354,7 @@ hr {
 
 small,
 .small {
-  font-size: 80%;
+  font-size: 85%;
   font-weight: 400; }
 
 mark,
@@ -1420,7 +1420,7 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
   display: none;
   width: 100%;
   margin-top: 0.25rem;
-  font-size: 80%;
+  font-size: 85%;
   color: #79AD00; }
 
 .valid-tooltip {
@@ -1497,7 +1497,7 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
   display: none;
   width: 100%;
   margin-top: 0.25rem;
-  font-size: 80%;
+  font-size: 85%;
   color: #c8102e; }
 
 .invalid-tooltip {
@@ -7196,6 +7196,9 @@ td.periodic-targets__sum {
   .list__filters--inline-label .filters__control {
     flex-grow: 1;
     width: 1%; }
+
+.form-group label {
+  font-size: 85%; }
 
 .label--required:after {
   color: #c8102e;
