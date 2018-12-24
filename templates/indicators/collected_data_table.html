@@ -23,9 +23,9 @@
                 <th class="">{% trans "Target period" %}</th>
                 <th class="text-right">{% trans "Target" %}</th>
                 <th class="text-right">{% trans "Actual" %}</th>
-                <th class="table__pad-cell text-right">{% trans "% Met" %}</th>
+                <th class="td--pad text-right">{% trans "% Met" %}</th>
                 <th class="" colspan="2">{% trans "Results" %}</th>
-                <th class="table__stretch-cell">{% trans "Evidence" %}</th>
+                <th class="td--stretch">{% trans "Evidence" %}</th>
             </tr>
         </thead>
         {% for item in periodictargets %}
@@ -57,7 +57,7 @@
                     {% endif %}
                 {% endif %}
             </td>
-            <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right table__pad-cell">
+            <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right td--pad">
                 {% if item.target %}
                     {% if indicator.unit_of_measure_type == 1 %}
                         {% if indicator.is_cumulative == True %}

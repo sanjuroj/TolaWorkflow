@@ -6804,11 +6804,11 @@ body > .container {
   text-transform: uppercase;
   white-space: nowrap; }
 
-.table__pad-cell {
+.td--pad {
   padding-left: 15px;
   padding-right: 15px; }
 
-.table__stretch-cell {
+.td--stretch {
   width: 100%; }
 
 @media (min-width: 576px) {
