@@ -1,5 +1,27 @@
 // wraps and overclasses BS nav-tabs and tab-content classes
 // for example to provide vertical or responsive tabs
+.nav-tabs {
+    margin-bottom: $grid-gutter-width/2;
+    .nav-link {
+        &:hover, &:focus {
+            border-bottom-color: transparent;
+        }
+    }
+}
+.tab-set--horizontal {
+    // This is default. Currently its only use is to provide some styling for tab content
+    .nav-tabs {
+        margin-bottom: 0;
+    }
+    .tab-content {
+        background: $nav-tabs-link-active-bg;
+        border-color: $nav-tabs-border-color;
+        border-style: solid;
+        border-width: 0 $nav-tabs-border-width $nav-tabs-border-width $nav-tabs-border-width;
+        margin-bottom: $grid-gutter-width/2;
+        padding: $grid-gutter-width/2;
+    }
+}
 
 .tab-set--vertical {
     display: flex;
@@ -8,6 +30,7 @@
         border-bottom: none;
         border-right: 1px solid $nav-tabs-border-color;
         flex-direction: column;
+        margin-bottom: 0;
         .nav-item {
             margin-bottom: 0;
             margin-right: -1px;
@@ -16,7 +39,7 @@
             border-bottom-left-radius: $nav-tabs-border-radius;
             border-top-right-radius: 0;
             &:hover, &:focus {
-                border-color: $gray-300 !important;
+                border-right-color: transparent;
             }
             &.active {
                 border-color: $nav-tabs-border-color $nav-tabs-link-active-bg $nav-tabs-border-color $nav-tabs-border-color;
@@ -24,7 +47,11 @@
         }
     }
     .tab-content {
+        background: $nav-tabs-link-active-bg;
+        border-color: $nav-tabs-border-color;
+        border-style: solid;
+        border-width: $nav-tabs-border-width $nav-tabs-border-width $nav-tabs-border-width 0;
         flex-grow: 1;
-        padding-left: $grid-gutter-width/2;
+        padding: $grid-gutter-width/2;
     }
 }
