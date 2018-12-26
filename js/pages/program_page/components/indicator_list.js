@@ -209,7 +209,7 @@ class IndicatorListTable extends React.Component {
 
                     <tr className="indicators-list__row indicators-list__indicator-body hiddenRow">
                         <td colSpan="6" className="p-0 bg-blue border-0">
-                            {/* collected_data_table.html container */}
+                            {/* result_table.html container */}
                             {resultsExist &&
                                 <div dangerouslySetInnerHTML={{__html: resultsStr}} />
                             }
