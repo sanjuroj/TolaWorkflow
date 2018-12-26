@@ -12,11 +12,14 @@ import $ from 'jquery';
     - onSelectCb: a callback function that takes a list of selected values
     - isMultiSelect: boolean - is a multi-select?
     - forceEmptySelect: boolean - in single select, force "None selected" even if empty option is not provided
+
+    Right now the widget will not refresh if new props.options are passed in. The reason being is that
+    resetting the options rebuilds the filter, thus clearing it, which is not desired behavior.
  */
 export class Select extends React.Component {
     constructor(props) {
         super(props);
-
+        
         this.onChange = this.onChange.bind(this);
         this.clearInternalSelection = this.clearInternalSelection.bind(this);
     }
@@ -34,7 +37,6 @@ export class Select extends React.Component {
         // these do not trigger any bs-multiselect callbacks
         if (this.props.forceEmptySelect) {
             this.$el.val('');
-            this.$el.multiselect('refresh');
         }
     }
 
@@ -64,22 +66,23 @@ export class Select extends React.Component {
         // initial setup of BS multiselect
         this.$el.multiselect(multiSelectOptions);
 
-        // set up options and selection
+        // set options list
+        this.$el.multiselect('dataprovider', options);
+
+        // set the selection
         this.componentDidUpdate();
     }
 
     componentDidUpdate() {
-        const options = this.props.options;
         const selected = this.props.selected;
-
-        // set options list
-        this.$el.multiselect('dataprovider', options);
 
         this.$el.multiselect('select', selected);
 
         if (selected.length === 0) {
             this.clearInternalSelection();
         }
+
+        this.$el.multiselect('refresh');
     }
 
     componentWillUnmount() {
