@@ -31,7 +31,7 @@ the file _settings.secret.yml_ from your mentor before proceeding.
 ```bash
 $ brew install python@2
 $ brew install pip
-$ brew install mysql mysql-utilies
+$ brew install mysql mysql-utilities
 $ brew install py2cairo pango
 $ git clone https://github.com/mercycorps.org/TolaActivity.git
 $ cd TolaActivity
