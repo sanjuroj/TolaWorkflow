@@ -196,13 +196,10 @@
     function createPeriodicTargetRow(pt, target_frequency, isLastIteration, rowNum) {
         var markup = `
                 <tr class="periodic-target">
-                    <td class="align-middle pr-0" style="width: 50px; text-align: center;">
-                        <a href="/indicators/periodic_target_delete/${pt.id}/" class="deletebtn" style="text-align: center; color:red; display: ${(isLastIteration && target_frequency != 2 || target_frequency == 8) ? 'block' : 'none'}">
-                            <i class="fas fa-times"></i>
+                    <td class="text-left d-flex align-items-center">
+                        <a href="/indicators/periodic_target_delete/${pt.id}/" class="deletebtn btn btn-sm" style="display: ${(isLastIteration && target_frequency != 2 || target_frequency == 8) ? 'block' : 'none'}">
+                            <i class="fas fa-times text-danger"></i>
                         </a>
-                    </td>
-
-                    <td class="align-middle pr-0">
                         ${(target_frequency != 8) ? `
                             <strong>${pt.period }</strong></div>
                             <div>${formatDate(pt.start_date)} ${ pt.start_date ? '-' : ''} ${formatDate(pt.end_date)}</div>`
@@ -212,7 +209,7 @@
                         }
                     </td>
 
-                    <td class="align-middle" align="right" width="150px">
+                    <td class="text-right">
                         <span class=${ $("#id_unit_of_measure_type_1").is(":checked")?"input-symbol-percent":""}>
                             <input
                                 type="number"
@@ -225,7 +222,7 @@
                                 placeholder="{% trans 'Enter target'|escapejs %}"
                                 class="form-control input-value">
                         </span>
-                            <span id="hint_id_pt_${pt.period}" style="margin:0px;" class="help-block"> </span>
+                        <span id="hint_id_pt_${pt.period}" style="margin:0px;" class="help-block"> </span>
                     </td>
                 </tr>
             `;
