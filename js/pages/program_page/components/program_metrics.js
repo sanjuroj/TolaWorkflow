@@ -62,12 +62,12 @@ class GaugeTank extends React.Component {
                     }
                 </div>
             </div>
+            { unfilledPercent > 0 &&
             <div className="gauge__cta">
-                { unfilledPercent > 0 &&
-                    <span className="btn-link btn-inline"><i className="fas fa-exclamation-triangle text-warning"/> {cta}</span>
-                }
+                <span className="btn-link btn-inline"><i className="fas fa-exclamation-triangle text-warning"/> {cta}</span>
                 &nbsp;
             </div>
+            }
         </div>;
     }
 }
