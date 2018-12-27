@@ -50,12 +50,12 @@
         <article class="program-list__program card">
             <div class="card-header">
                 <div class="program-header__info">
-                    <h4>{% if program.indicator_count %}
+                    <h3>{% if program.indicator_count %}
                         <a href="{% url "program_page" program.id 0 0 %}" class="text-dark">{{ program.name }}</a>
                         {% else %}
                         {{ program.name }}
                         {% endif %}
-                    </h4>
+                    </h3>
                     {% if program.indicator_count and program.reporting_period_start and program.reporting_period_end %}
                         <ul class="nav nav--text-list">
                             <li class="nav-item">
@@ -75,6 +75,19 @@
                 {% endif %}
             </div>
             <div class="card-body">
+                <h4>
+                    Program metrics
+                    <small>for target periods completed so far
+                    <a href="#"
+                       tabindex="0"
+                       data-toggle="popover"
+                       data-placement="right"
+                       data-trigger="focus"
+                       {# Translators:  #}
+                       data-content="{% blocktrans %}<p>Only completed target periods are included in the “indicators on track” calculations.<p><strong>Last completed target period</strong><br>Annual: MMM DD, YYYY<br>Semi-annual: MMM DD, YYYY<br>Quarterly: MMMM DD, YYYY<br>Monthly: MMMM DD, YYYY</p><p>If an indicator only has a Life of Program (LoP) target, we calculate performance after the program end date. For midline/endline and event-based target periods, we begin tracking performance as soon as the first result is submitted.</p>{% endblocktrans %}"
+                       ><i class="far fa-question-circle"></i></a>
+                    </small>
+                </h4>
                 {% if not program.reporting_period_start or not program.reporting_period_end %}
                     <p>Before adding indicators and performance results, we need to know your program's
                         <a
