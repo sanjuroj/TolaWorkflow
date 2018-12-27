@@ -36,7 +36,7 @@ $ brew install py2cairo pango
 $ git clone https://github.com/mercycorps/TolaActivity.git
 $ cd TolaActivity
 $ git checkout dev
-$ virtualenv -p python2 TolaActivty --no-site-packages venv # need to specify Python 2 for systems that might have Python 3 as default system version
+$ virtualenv -p python2 --no-site-packages venv # need to specify Python 2 for systems that might have Python 3 as default system version
 $ source venv/bin/activate
 $ mkdir config
 # Place settings.secret.yml into config/ directory
