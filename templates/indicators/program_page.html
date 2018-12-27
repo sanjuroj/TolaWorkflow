@@ -9,7 +9,22 @@
 
 {% block content %}
 
-<div id="program-metrics-react-component"></div>
+<aside class="program__status">
+    <h3>
+        Program metrics
+        <small>for target periods completed so far
+        <a href="#"
+           tabindex="0"
+           data-toggle="popover"
+           data-placement="right"
+           data-trigger="focus"
+           {# Translators:  #}
+           data-content="{% blocktrans %}<p>Only completed target periods are included in the “indicators on track” calculations.<p><strong>Last completed target period</strong><br>Annual: MMM DD, YYYY<br>Semi-annual: MMM DD, YYYY<br>Quarterly: MMMM DD, YYYY<br>Monthly: MMMM DD, YYYY</p><p>If an indicator only has a Life of Program (LoP) target, we calculate performance after the program end date. For midline/endline and event-based target periods, we begin tracking performance as soon as the first result is submitted.</p>{% endblocktrans %}"
+           ><i class="far fa-question-circle"></i></a>
+        </small>
+    </h3>
+    <div id="program-metrics-react-component"></div>
+</aside>
 
 <div class="program-page__main">
     <div class="program-page__sidebar">

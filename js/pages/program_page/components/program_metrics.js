@@ -311,9 +311,7 @@ export const ProgramMetrics = observer(function (props) {
     // Do not display on pages with no indicators
     if (indicators.length === 0) return null;
 
-    return <aside className="program__status">
-        <h2>{gettext("Program metrics")} <small>for target periods completed so far</small></h2>
-        <div className="status__gauges">
+    return <div className="status__gauges">
 
             <GaugeBand currentIndicatorFilter={currentIndicatorFilter}
                        indicatorOnScopeMargin={indicatorOnScopeMargin}
@@ -349,5 +347,4 @@ export const ProgramMetrics = observer(function (props) {
                        />
 
         </div>
-    </aside>
 });
