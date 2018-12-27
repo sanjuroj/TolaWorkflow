@@ -3,6 +3,7 @@
 
 import React from 'react';
 import $ from 'jquery';
+import isEqual from 'react-fast-compare';
 
 /*
   Props:
@@ -12,9 +13,6 @@ import $ from 'jquery';
     - onSelectCb: a callback function that takes a list of selected values
     - isMultiSelect: boolean - is a multi-select?
     - forceEmptySelect: boolean - in single select, force "None selected" even if empty option is not provided
-
-    Right now the widget will not refresh if new props.options are passed in. The reason being is that
-    resetting the options rebuilds the filter, thus clearing it, which is not desired behavior.
  */
 export class Select extends React.Component {
     constructor(props) {
@@ -66,15 +64,19 @@ export class Select extends React.Component {
         // initial setup of BS multiselect
         this.$el.multiselect(multiSelectOptions);
 
-        // set options list
-        this.$el.multiselect('dataprovider', options);
-
-        // set the selection
+        // set the selection and options
         this.componentDidUpdate();
     }
 
-    componentDidUpdate() {
-        const selected = this.props.selected;
+    componentDidUpdate(prevProps) {
+        const {options, selected} = this.props;
+
+        // Setting the options clears the filter search field which is not desired behavior
+        // As such, limit setting the options unless they really have changed
+        // Hopefully this deep check isn't too slow for a large number of options
+        if (!prevProps || !isEqual(prevProps.options, options)) {
+            this.$el.multiselect('dataprovider', options);
+        }
 
         this.$el.multiselect('select', selected);
 
