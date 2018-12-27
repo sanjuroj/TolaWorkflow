@@ -33,7 +33,7 @@ $ brew install python@2
 $ brew install pip
 $ brew install mysql mysql-utilities
 $ brew install py2cairo pango
-$ git clone https://github.com/mercycorps.org/TolaActivity.git
+$ git clone https://github.com/mercycorps/TolaActivity.git
 $ cd TolaActivity
 $ git checkout dev
 $ virtualenv -p python2 TolaActivty --no-site-packages venv # need to specify Python 2 for systems that might have Python 3 as default system version
@@ -60,7 +60,7 @@ $ python --version
 # Make sure output from above indicates Python 2
 $ sudo apt install mysql-server libmysqld-dev mysql-utilities mysql-client
 $ sudo apt install libsasl2-dev python-dev libldap2-dev libssl-dev
-$ git clone https://github.com/mercycorps.org/TolaActivity.git
+$ git clone https://github.com/mercycorps/TolaActivity.git
 $ cd TolaActivity
 $ virtualenv -p python2 --no-site-packages venv
 $ source venv/bin/activate
