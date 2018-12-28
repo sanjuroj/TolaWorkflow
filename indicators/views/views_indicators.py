@@ -792,8 +792,7 @@ class ResultCreate(CreateView):
             return HttpResponse(data)
 
         messages.success(self.request, _('Success, Data Created!'))
-        redirect_url = '/indicators/home/0/0/0/#hidden-%s' % \
-                       str(self.kwargs['program'])
+        redirect_url = reverse_lazy('program_page', args=(self.kwargs['program'], 0, 0))
         return HttpResponseRedirect(redirect_url)
 
 
@@ -913,8 +912,7 @@ class ResultUpdate(UpdateView):
             return HttpResponse(data)
 
         messages.success(self.request, _('Success, Data Updated!'))
-        redirect_url = '/indicators/home/0/0/0/#hidden-%s' \
-                       % str(getIndicator.program.id)
+        redirect_url = reverse_lazy('program_page', args=(getIndicator.program.id, 0, 0))
 
         return HttpResponseRedirect(redirect_url)
 
