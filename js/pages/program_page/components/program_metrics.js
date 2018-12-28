@@ -27,7 +27,9 @@ class GaugeTank extends React.Component {
 
         const isHighlighted = filterType === currentIndicatorFilter;
 
-        const unfilledPercent = allIndicatorsLength > 0 ? Math.round((filteredIndicatorsLength / allIndicatorsLength) * 100) : 100;
+        const unfilledPercent = (allIndicatorsLength > 0 && filteredIndicatorsLength != 0) ?
+            (allIndicatorsLength == filteredIndicatorsLength ?
+                0 : Math.min(1, Math.max(Math.round((filteredIndicatorsLength / allIndicatorsLength) * 100), 99))) : 100;
         const filledPercent = 100 - unfilledPercent;
 
         return <div className={classNames('gauge', 'filter-trigger', {'is-highlighted': isHighlighted})}
