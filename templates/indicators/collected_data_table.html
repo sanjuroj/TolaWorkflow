@@ -140,7 +140,7 @@
                 {% endif %}
             </td>
             <td class="text-right"></td>
-            <td class="collected-data-table__result bg-danger-lighter">
+            <td class="collected-data__result--date bg-danger-lighter">
                 {% if is_editable is False %}
                     {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                 {% else %}
@@ -148,13 +148,13 @@
                     {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                 </a>
                 {% endif %}
-                <div class="pl-2">
+            </td>
+            <td class="collected-data__result--value bg-danger-lighter">
                     {% with achieved=coldata.achieved|floatformat:"-2" %}
                     {{ achieved }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                     {% endwith %}
-                </div>
             </td>
-            <td>
+            <td class="td--stretch">
                 {% if coldata.evidence %}
                     {% if coldata.evidence.url %}<a href="{{coldata.evidence.url}}" target="_blank">{% endif %}
                     {{ coldata.evidence|default_if_none:"" }}
