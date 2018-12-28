@@ -6367,10 +6367,10 @@ body > .container {
     -webkit-user-select: none; }
     .select2-container .select2-selection--multiple .select2-selection__rendered {
       display: inline-block;
+      font-size: 0.875rem;
       overflow: hidden;
       padding-left: 8px;
-      text-overflow: ellipsis;
-      white-space: nowrap; }
+      text-overflow: ellipsis; }
   .select2-container .select2-search--inline {
     float: left; }
     .select2-container .select2-search--inline .select2-search__field {
