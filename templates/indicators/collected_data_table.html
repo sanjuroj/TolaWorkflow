@@ -238,7 +238,7 @@
         </tr>
     </table>
     <div class="collected-data-table__actions">
-        <div>
+        <div class="cd-actions__message">
             {% if err %}
             <span id="id_span_date_collected_error_msg" class="text-danger">
                 <small>
@@ -247,17 +247,21 @@
                     {% endifequal %}
 
                     {% ifequal err 'Error_2' %}
-                        {% trans 'This record is not associated with a target. Open the data record and select an option from the "Measure against target" menu.' %}
+                        {% blocktrans %}
+                        This record is not associated with a target. Open the data record and select an option from the “Measure against target” menu.
+                        {% endblocktrans %}
                     {% endifequal %}
 
                     {% ifequal err 'Error_3' %}
-                        {% trans 'This date falls outside the range of your target periods. Please select a date between ' %} {{ program.reporting_period_start|date:"MEDIUM_DATE_FORMAT" }} {% trans 'and ' %} {{ program.reporting_period_end|date:"MEDIUM_DATE_FORMAT" }}.
+                        {% blocktrans with reporting_period_start=program.reporting_period_start|date:"MEDIUM_DATE_FORMAT" reporting_period_end=program.reporting_period_end|date:"MEDIUM_DATE_FORMAT"  %}
+                        This date falls outside the range of your target periods. Please select a date between {{ reporting_period_start }} and {{ reporting_period_end }}.
+                        {% endblocktrans %}
                     {% endifequal %}
                 </small>
             </span>
             {% endif %}
         </div>
-        <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
+        <div class="cd-actions__button{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
             <a href="{% url 'collecteddata_add' program_id indicator.id %}" class="btn-link btn-add collected-data__link"><i class="fas fa-plus-circle"></i> {% trans "Add results" %}</a>
         </div>
     </div>
