@@ -95,7 +95,7 @@
                     {{ achieved }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                     {% endwith %}
                 </td>
-                <td>
+                <td class="td--stretch">
                     {% if cdata.evidence %}
                         {% if cdata.evidence.url %}<a href="{{cdata.evidence.url}}" target="_blank">{% endif %}
                         {{ cdata.evidence|default_if_none:"" }}
