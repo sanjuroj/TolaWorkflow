@@ -35,7 +35,6 @@ DATABASES:
    NAME: "{{db.name}}"
    USER: "{{db.user}}"
    PASSWORD: "{{db.password}}"
-   OPTIONS: {"init_command": "SET default_storage_engine=MYISAM",}
    HOST: "localhost"
    PORT: ""
 

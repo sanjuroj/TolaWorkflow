@@ -145,7 +145,7 @@ class TolaUser(models.Model):
     active_country = models.ForeignKey( Country, blank=True, null=True, on_delete=models.SET_NULL,\
         related_name='active_country', verbose_name=_("Active Country"))
     countries = models.ManyToManyField(
-        Country, verbose_name=_("Accessible Countries"), related_name='countries', blank=True)
+        Country, verbose_name=_("Accessible Countries"), related_name='users', blank=True)
     tables_api_token = models.CharField(blank=True, null=True, max_length=255)
     activity_api_token = models.CharField(blank=True, null=True, max_length=255)
     privacy_disclaimer_accepted = models.BooleanField(default=False)

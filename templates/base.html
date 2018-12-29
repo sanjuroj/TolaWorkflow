@@ -103,6 +103,15 @@
                                     {% endif %}
                                 </div>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarAdminDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Admin" %}</a>
+                                <div class="dropdown-menu" aria-labelledby="navbarAdminDropdown">
+                                    <a class="dropdown-item" href="{% url 'tola_management' react_app_page='user' %}">{% trans "Users" %}</a>
+                                    <a class="dropdown-item" href="">{% trans "Programs" %}</a>
+                                    <a class="dropdown-item" href="">{% trans "Organizations" %}</a>
+                                    <a class="dropdown-item" href="">{% trans "Countries" %}</a>
+                                </div>
+                            </li>
                         </ul>
 
                         <ul class="navbar-nav ml-auto">

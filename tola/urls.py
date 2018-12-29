@@ -92,6 +92,7 @@ urlpatterns = [
                 # internationalization
                 url(r'^i18n/', include('django.conf.urls.i18n')),
 
+                url(r'^tola_management/', include('tola_management.urls')),
                 # Site home page filtered by country
                 url(r'^(?P<selected_country>\w+)/$', views.index, name='index'),
 
