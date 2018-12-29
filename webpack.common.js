@@ -9,6 +9,7 @@ module.exports = {
 
     entry: {
         program_page: './js/pages/program_page/index.js' ,
+        record_list: './js/pages/record_list/index.js' ,
     },
 
     output: {

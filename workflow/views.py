@@ -4,6 +4,8 @@ import unicodedata
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
+
+from workflow.serializers import RecordListProgramSerializer, RecordListRecordSerializer
 from .models import Program, Country, Province, AdminLevelThree, District, ProjectAgreement, ProjectComplete, SiteProfile, \
     Documentation, Monitor, Benchmarks, Budget, ApprovalAuthority, Checklist, ChecklistItem, Contact, Stakeholder, FormGuidance, \
     TolaBookmarks, TolaUser
@@ -789,7 +791,7 @@ class ProjectCompleteImport(ListView):
 
 class DocumentationList(ListView):
     """
-    Documentation
+    Documentation List
     """
     model = Documentation
     template_name = 'workflow/documentation_list.html'
@@ -797,24 +799,52 @@ class DocumentationList(ListView):
     def get(self, request, *args, **kwargs):
         program = Program.objects.get(id=self.kwargs['program']) if int(self.kwargs['program']) != 0 else None
 
-        project_agreement_id = self.kwargs['project']
-        countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries)
+        user_countries = request.user.tola_user.countries.all()
+        programs = Program.objects.all().filter(funding_status="Funded", country__in=user_countries)
 
         if int(self.kwargs['program']) != 0 & int(self.kwargs['project']) == 0:
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(program__id=self.kwargs['program'])
+            records = Documentation.objects.all().prefetch_related('program','project').filter(program__id=self.kwargs['program'])
         elif int(self.kwargs['project']) != 0:
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(project__id=self.kwargs['project'])
+            records = Documentation.objects.all().prefetch_related('program','project').filter(project__id=self.kwargs['project'])
         else:
-            countries = getCountry(request.user)
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project','project__office').filter(program__country__in=countries)
+            records = Documentation.objects.all().prefetch_related('program','project').filter(program__in=programs)
+
+        js_context = {
+            'allowProjectsAccess': request.user.tola_user.allow_projects_access,
+            'programs': RecordListProgramSerializer(programs, many=True).data,
+            'records': RecordListRecordSerializer(records, many=True).data,
+        }
 
         return render(request, self.template_name, {
             'program': program,
-            'getPrograms': getPrograms,
-            'getDocumentation': getDocumentation,
-            'project_agreement_id': project_agreement_id
+            'getPrograms': programs,
+            'getDocumentation': records,
+
+            'js_context': js_context,
         })
+
+
+# TODO: DELETE ME
+class DocumentationListObjects(View, AjaxableResponseMixin):
+
+    def get(self, request, *args, **kwargs):
+        program = Program.objects.get(id=self.kwargs['program']) if int(self.kwargs['program']) != 0 else None
+
+        if int(self.kwargs['program']) != 0 & int(self.kwargs['project']) == 0:
+            getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(program__id=self.kwargs['program']).values('id', 'name', 'project__project_name', 'create_date', 'url')
+        elif int(self.kwargs['project']) != 0:
+            getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(project__id=self.kwargs['project']).values('id', 'name', 'project__project_name', 'create_date', 'url')
+        else:
+            countries = getCountry(request.user)
+            getDocumentation = Documentation.objects.all().prefetch_related('program','project','project__office').filter(program__country__in=countries).values('id', 'name', 'project__project_name', 'create_date', 'url')
+
+        getDocumentation = json.dumps(list(getDocumentation), cls=DjangoJSONEncoder)
+
+        return JsonResponse({
+            'program_name': program.name if program else None,
+            'getDocumentation': getDocumentation,
+        })
+
 
 
 class DocumentationAgreementList(AjaxableResponseMixin, CreateView):
@@ -2472,27 +2502,6 @@ class StakeholderObjects(View, AjaxableResponseMixin):
         final_dict = {'getStakeholders': getStakeholders}
 
         return JsonResponse(final_dict, safe=False)
-
-
-class DocumentationListObjects(View, AjaxableResponseMixin):
-
-    def get(self, request, *args, **kwargs):
-        program = Program.objects.get(id=self.kwargs['program']) if int(self.kwargs['program']) != 0 else None
-
-        if int(self.kwargs['program']) != 0 & int(self.kwargs['project']) == 0:
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(program__id=self.kwargs['program']).values('id', 'name', 'project__project_name', 'create_date', 'url')
-        elif int(self.kwargs['project']) != 0:
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(project__id=self.kwargs['project']).values('id', 'name', 'project__project_name', 'create_date', 'url')
-        else:
-            countries = getCountry(request.user)
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project','project__office').filter(program__country__in=countries).values('id', 'name', 'project__project_name', 'create_date', 'url')
-
-        getDocumentation = json.dumps(list(getDocumentation), cls=DjangoJSONEncoder)
-
-        return JsonResponse({
-            'program_name': program.name if program else None,
-            'getDocumentation': getDocumentation,
-        })
 
 
 def reportingperiod_update(request, pk):

@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load mytags %}
+{% load render_bundle from webpack_loader %}
+
 {% block title %}{% trans "Records" %} | {% endblock %}
 {% block page_title %}{% trans "Records" %}{% if program %}<br><small>{{ program.name }}</small>{% endif %}{% endblock %}
 {% block bread_crumb %}
@@ -7,6 +10,8 @@
 
 
 {% block content %}
+
+    <div id="records-view"></div>
 
 <div class="btn-group" role="group">
     <button class="btn btn-secondary btn-sm dropdown-toggle"
@@ -28,7 +33,6 @@
     </div>
 </div>
 <a href="/workflow/documentation_add" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add record" %}</a>
-</div>
 <br/>
 
 <table
@@ -136,10 +140,13 @@
     }
 </script>
 
-<div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        </div>
-    </div>
-</div>
 {% endblock content %}
+
+
+{% block extra_js_in_body %}
+    <script>
+        let jsContext = {{ js_context|js }};
+    </script>
+
+    {% render_bundle 'record_list' %}
+{% endblock %}
