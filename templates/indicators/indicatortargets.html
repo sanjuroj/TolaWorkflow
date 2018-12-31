@@ -14,7 +14,7 @@
             <table class="table table-sm periodic-targets__table" id="periodic_targets_table">
                 <tbody>
                     {% for pt in periodic_targets %}
-                    <tr id="{{pt.id}}" data-collected-count="{{pt.num_data}}" class="periodic-target">
+                    <tr id="{{ pt.id }}" data-collected-count="{{ pt.num_data }}" class="periodic-target">
                         {% if indicator.target_frequency == 8 %} {# 8 is a stand alone EVENT #}
                         <td class="text-left d-flex align-items-center td--stretch">
                             <a href=
@@ -73,7 +73,8 @@
                         </td>
                     </tr>
                     {% endif %}
-                    {% endfor %}
+                    {% endfor %}{# for pt in periodic_targets #}
+
                     <tr class="table-secondary">
                         <td class="periodic-targets__sum text-left td--stretch">
                             <strong>{% trans "Life of Program (LoP) target" %}</strong>
@@ -81,7 +82,7 @@
                         <td class="periodic-targets__sum text-right">
                             <strong>
                                 <span id="id_span_loptarget">
-                                    {{indicator.lop_target|floatformat:"-2" }}
+                                    {{ indicator.lop_target|floatformat:"-2" }}
                                     <span id="id_span_loptarget_percent_sign" style="margin-left: -.20rem">
                                         {% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                                     </span>
