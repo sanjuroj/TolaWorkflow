@@ -5,63 +5,114 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import eventBus from '../../../eventbus';
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons'
 import {Select} from '../../../components/bootstrap_multiselect';
-
-// library.add(faCaretDown, faCaretRight);
-
+import {dateFromISOString, mediumDateFormatStr} from "../../../date_utils";
 
 
 
+class RecordsFilterBar extends React.Component {
+    constructor(props) {
+        super(props);
 
-// @observer
-// class IndicatorFilter extends React.Component{
-//     render() {
-//         const indicators = this.props.rootStore.indicatorStore.indicators;
-//         const selectedIndicatorIds = this.props.uiStore.selectedIndicatorIds;
-//
-//         const indicatorSelectOptions = indicators.map(i => {
-//             return {
-//                 value: i.id,
-//                 label: i.name,
-//             }
-//         });
-//
-//         return <nav className="list__filters list__filters--inline-label" id="id_div_indicators">
-//             <label className="filters__label">
-//                 {gettext("Find an indicator:")}
-//             </label>
-//             <div className="filters__control">
-//                 <Select forceEmptySelect={true}
-//                         options={indicatorSelectOptions}
-//                         selected={selectedIndicatorIds}
-//                         onSelectCb={(selectedIndicatorIds) => eventBus.emit('select-indicators-to-filter', selectedIndicatorIds)} />
-//             </div>
-//         </nav>;
-//     }
-// }
-
-const columns = [
-    {
-        dataField: 'name',
-        text: 'Record',
-        sort: true
-    },
-    {
-        dataField: 'create_date',
-        text: 'Date added',
-        sort: true
     }
-];
+
+    render() {
+        const {programs} = this.props.rootStore;
+
+        const programOptions = programs.map(p => { return {value: p.id, label: p.name} });
+
+        return <div className="row">
+            <div className="col-3">
+                <Select
+                    options={programOptions}
+                    selected={[]}
+                />
+            </div>
+            <div className="col-3">
+                <Select
+                    options={programOptions}
+                    selected={[]}
+                />
+            </div>
+            <div className="col-3">
+                <Select
+                    options={programOptions}
+                    selected={[]}
+                />
+            </div>
+            <div className="col-3 text-right">
+                <a href="/workflow/documentation_add" className="btn btn-link btn-add">
+                    <i className="fas fa-plus-circle"/> {gettext("Add record")}</a>
+            </div>
+        </div>
+    }
+
+}
+
+
+
+const RecordsListTable = observer(function ({rootStore}) {
+    const columns = [
+        {
+            dataField: 'name',
+            text: gettext('Record'),
+            sort: true,
+            formatter: (cell, row) => {
+                return <a href={row.url} target="_blank">{row.name}</a>
+            }
+        },
+        {
+            dataField: 'create_date',
+            text: gettext('Date added'),
+            sort: true,
+            formatter: (cell, row) => {
+                return <span>{mediumDateFormatStr(dateFromISOString(row.create_date))}</span>
+            }
+        },
+        {
+            dataField: 'project.project_name',
+            text: gettext('Project'),
+            hidden: ! rootStore.allowProjectsAccess
+        },
+        {
+            dataField: 'actions',
+            isDummyField: true,
+            text: '',
+            align: 'right',
+            formatter: (cell, row) => {
+                return <div className="text-nowrap">
+                    <a href={"/workflow/documentation_delete/" + row.id} className="btn p-0 pr-4 btn-sm btn-text text-danger">
+                        <i className="fas fa-trash-alt"/>&nbsp;{gettext("Delete")}</a>
+                    <a href={"/workflow/documentation_update/" + row.id} className="btn p-0 btn-sm btn-text">
+                        <i className="fas fa-edit"/>&nbsp;{gettext("Edit")}</a>
+                </div>
+            }
+        }
+    ];
+
+    const defaultSorted = [{
+        dataField: 'create_date',
+        order: 'desc'
+    }];
+
+    return <React.Fragment>
+        <BootstrapTable
+            keyField="id"
+            data={rootStore.records}
+            columns={columns}
+            bootstrap4={true}
+            pagination={paginationFactory()}
+            defaultSorted={defaultSorted}
+        />
+    </React.Fragment>
+});
+
 
 
 export const RecordsView = observer(function ({rootStore}) {
     return <React.Fragment>
-        <div><h3>Hi world!</h3></div>
-        <div>
-            <BootstrapTable keyField="id" data={rootStore.records} columns={columns} bootstrap4={true} pagination={ paginationFactory() }/>
-        </div>
+        <RecordsFilterBar rootStore={rootStore}/>
+        <br/>
+        <RecordsListTable rootStore={rootStore}/>
     </React.Fragment>
 });

@@ -9,12 +9,12 @@ import {RecordListStore, RecordListUIStore} from './models';
 
 console.log(jsContext);
 
-const {records, programs} = jsContext;
+const {records, programs, allowProjectsAccess} = jsContext;
 
 /*
  * Model/Store setup
  */
-const rootStore = new RecordListStore(records, programs);
+const rootStore = new RecordListStore(records, programs, allowProjectsAccess);
 const uiStore = new RecordListUIStore();
 
 /*

@@ -5,10 +5,12 @@ import { observable, computed, action } from "mobx";
 export class RecordListStore {
     @observable records = [];
     @observable programs = [];
+    @observable allowProjectsAccess = false;
 
-    constructor(records, programs) {
+    constructor(records, programs, allowProjectsAccess) {
         this.records = records;
         this.programs = programs;
+        this.allowProjectsAccess = allowProjectsAccess;
     }
 }
 

@@ -803,11 +803,11 @@ class DocumentationList(ListView):
         programs = Program.objects.all().filter(funding_status="Funded", country__in=user_countries)
 
         if int(self.kwargs['program']) != 0 & int(self.kwargs['project']) == 0:
-            records = Documentation.objects.all().prefetch_related('program','project').filter(program__id=self.kwargs['program'])
+            records = Documentation.objects.all().prefetch_related('program', 'project').filter(program__id=self.kwargs['program'])
         elif int(self.kwargs['project']) != 0:
-            records = Documentation.objects.all().prefetch_related('program','project').filter(project__id=self.kwargs['project'])
+            records = Documentation.objects.all().prefetch_related('program', 'project').filter(project__id=self.kwargs['project'])
         else:
-            records = Documentation.objects.all().prefetch_related('program','project').filter(program__country__in=user_countries)
+            records = Documentation.objects.all().prefetch_related('program', 'project').filter(program__country__in=user_countries)
 
         js_context = {
             'allowProjectsAccess': request.user.tola_user.allow_projects_access,

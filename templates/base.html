@@ -243,7 +243,9 @@
         {% get_current_language as LANGUAGE_CODE %}
 
         <script type="text/javascript">
+            // This is now referenced in other JS, not just here in the date picker!
             var userLang = "{{ LANGUAGE_CODE }}";
+
             $(document).ready(function() {
                 $.datepicker.setDefaults( $.datepicker.regional[ userLang ] );
             });

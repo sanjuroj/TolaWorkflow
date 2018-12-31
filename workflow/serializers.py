@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from workflow.models import Program, Documentation
+from workflow.models import Program, Documentation, ProjectAgreement
 
 
 class RecordListProgramSerializer(serializers.ModelSerializer):
@@ -13,7 +13,18 @@ class RecordListProgramSerializer(serializers.ModelSerializer):
         ]
 
 
+class RecordListProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectAgreement
+        fields = [
+            'id',
+            'project_name',
+        ]
+
+
 class RecordListRecordSerializer(serializers.ModelSerializer):
+    project = RecordListProjectSerializer(read_only=True)
+
     class Meta:
         model = Documentation
         fields = [
