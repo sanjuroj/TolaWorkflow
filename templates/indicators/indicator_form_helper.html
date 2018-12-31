@@ -113,6 +113,7 @@
 
                     <div class="form-group" id="div_id_definition">
                         <label for="id_definition" class="">{{ form.definition.label }} </label>
+                        {% render_field form.definition class+="form-control" %}
                         <small class="form-text text-muted">{{ form.definition.help_text }}</small>
                         <span id="validation_id_definition" class="has-error"></span>
                     </div>
