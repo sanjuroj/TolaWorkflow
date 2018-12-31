@@ -6335,6 +6335,9 @@ body > .container {
   margin-left: 7.5px;
   padding-left: 7.5px; }
 
+.form-check-input {
+  width: auto !important; }
+
 .select2-container {
   box-sizing: border-box;
   display: inline-block;
@@ -6367,10 +6370,10 @@ body > .container {
     -webkit-user-select: none; }
     .select2-container .select2-selection--multiple .select2-selection__rendered {
       display: inline-block;
+      font-size: 0.875rem;
       overflow: hidden;
       padding-left: 8px;
-      text-overflow: ellipsis;
-      white-space: nowrap; }
+      text-overflow: ellipsis; }
   .select2-container .select2-search--inline {
     float: left; }
     .select2-container .select2-search--inline .select2-search__field {
@@ -6996,9 +6999,6 @@ body > .container {
   margin-bottom: 30px;
   padding: 15px; }
 
-td.periodic-targets__sum {
-  padding: 10px 20px; }
-
 .periodic-target .input-value {
   padding-right: 10px;
   text-align: right;
@@ -7044,6 +7044,10 @@ td.periodic-targets__sum {
   display: flex;
   justify-content: space-between;
   align-items: center; }
+
+.cd-actions__button {
+  margin-left: 15px;
+  white-space: nowrap; }
 
 .disable-span {
   cursor: not-allowed;
@@ -7301,7 +7305,7 @@ input[type=number]::-webkit-outer-spin-button {
     transform: translateY(-50%);
     margin: auto;
     content: "%";
-    right: 20px; }
+    right: 0.4rem; }
   .input-symbol-percent input.input-value {
     padding-right: 1.60rem; }
 
