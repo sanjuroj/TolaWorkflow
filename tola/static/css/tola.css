@@ -6335,6 +6335,9 @@ body > .container {
   margin-left: 7.5px;
   padding-left: 7.5px; }
 
+.form-check-input {
+  width: auto !important; }
+
 .select2-container {
   box-sizing: border-box;
   display: inline-block;
