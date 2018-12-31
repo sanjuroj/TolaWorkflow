@@ -176,4 +176,30 @@ class TestCreateValidation(test.TestCase):
         db_result = Result.objects.get(pk=new_result.id)
         self.assertIsNotNone(db_result.evidence)
         self.assertEqual(db_result.evidence.name, 'test 1')
+
+    def test_adding_record_without_name_fails_validation(self):
+        bad_data = {
+            'date_collected': '2016-03-31',
+            'achieved': '30',
+            'indicator': self.indicator.id,
+            'program': self.program.id,
+            'record_url': 'http://google.com',
+            'record_description': 'new description'
+        }
+        form = ResultForm(bad_data, request=self.mockrequest, indicator=self.indicator)
+        self.assertFalse(form.is_valid())
+        self.assertIn('record_name', form.errors)
+
+    def test_adding_record_without_url_fails_validation(self):
+        bad_data = {
+            'date_collected': '2016-03-31',
+            'achieved': '30',
+            'indicator': self.indicator.id,
+            'program': self.program.id,
+            'record_name': 'new record',
+            'record_description': 'new description'
+        }
+        form = ResultForm(bad_data, request=self.mockrequest, indicator=self.indicator)
+        self.assertFalse(form.is_valid())
+        self.assertIn('record_url', form.errors)
         

@@ -209,6 +209,19 @@ class ResultForm(forms.ModelForm):
         date_collected = datetime.strftime(date_collected, '%Y-%m-%d')
         return date_collected
 
+    def clean(self):
+        cleaned_data = super(ResultForm, self).clean()
+        record_name = cleaned_data.get('record_name')
+        record_url = cleaned_data.get('record_url')
+        record_description = cleaned_data.get('record_description')
+        if any([record_name, record_url, record_description]):
+            if not record_name:
+                msg = forms.ValidationError(_('This field is required'))
+                self.add_error('record_name', msg)
+            if not record_url:
+                msg = forms.ValidationError(_('This field is required'))
+                self.add_error('record_url', msg)
+
     def save(self, commit=True):
         instance = super(ResultForm, self).save(commit=False)
         evidence_id = self.cleaned_data.get('evidence')
