@@ -7042,6 +7042,10 @@ body > .container {
   justify-content: space-between;
   align-items: center; }
 
+.cd-actions__button {
+  margin-left: 15px;
+  white-space: nowrap; }
+
 .disable-span {
   cursor: not-allowed;
   opacity: .65; }

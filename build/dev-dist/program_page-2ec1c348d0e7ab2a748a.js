@@ -32895,8 +32895,10 @@ function (_React$Component) {
           emptyLabel = _this$props.emptyLabel;
       var filterType = this.props.filterType;
       var currentIndicatorFilter = this.props.currentIndicatorFilter;
-      var isHighlighted = filterType === currentIndicatorFilter;
-      var unfilledPercent = allIndicatorsLength > 0 ? Math.round(filteredIndicatorsLength / allIndicatorsLength * 100) : 100;
+      var isHighlighted = filterType === currentIndicatorFilter; // Gauge should only show 100%/0% if filtered == all/0 (absolute 100%, not rounding to 100%)
+      // to accomplish this, added a Math.max and Math.min to prevent rounding to absolute values:
+
+      var unfilledPercent = allIndicatorsLength <= 0 || allIndicatorsLength == filteredIndicatorsLength ? 100 : filteredIndicatorsLength == 0 ? 0 : Math.max(1, Math.min(Math.round(filteredIndicatorsLength / allIndicatorsLength * 100), 99));
       var filledPercent = 100 - unfilledPercent;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: classnames__WEBPACK_IMPORTED_MODULE_1___default()('gauge', 'filter-trigger', {
@@ -32994,9 +32996,10 @@ function (_React$Component2) {
       var nonReportingCount = indicatorStore.getIndicatorsNotReporting.length;
       var highCount = indicatorStore.getIndicatorsAboveTarget.length;
       var lowCount = indicatorStore.getIndicatorsBelowTarget.length;
-      var onTargetCount = indicatorStore.getIndicatorsOnTarget.length;
+      var onTargetCount = indicatorStore.getIndicatorsOnTarget.length; //100 and 0 should only represent absolute "all" and "none" values respectively (no round to 100 or to 0)
+
       var makePercent = totalIndicatorCount > 0 ? function (x) {
-        return Math.round(x / totalIndicatorCount * 100);
+        return x == totalIndicatorCount ? 100 : x == 0 ? 0 : Math.max(1, Math.min(Math.round(x / totalIndicatorCount * 100), 99));
       } : function (x) {
         return 0;
       };
@@ -40338,4 +40341,4 @@ module.exports = g;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=program_page-ca459196a4944af00646.js.map
+//# sourceMappingURL=program_page-2ec1c348d0e7ab2a748a.js.map
