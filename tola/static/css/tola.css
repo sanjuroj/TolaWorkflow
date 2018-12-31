@@ -6996,9 +6996,6 @@ body > .container {
   margin-bottom: 30px;
   padding: 15px; }
 
-td.periodic-targets__sum {
-  padding: 10px 20px; }
-
 .periodic-target .input-value {
   padding-right: 10px;
   text-align: right;
@@ -7305,7 +7302,7 @@ input[type=number]::-webkit-outer-spin-button {
     transform: translateY(-50%);
     margin: auto;
     content: "%";
-    right: 20px; }
+    right: 0.4rem; }
   .input-symbol-percent input.input-value {
     padding-right: 1.60rem; }
 
