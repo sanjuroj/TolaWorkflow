@@ -37,3 +37,9 @@ from program_metric_tests.program_unit.program_qs_metrics_unittests import (
     TestTwoProgramsFiveIndicatorsEightResultsFiveEvidence,
     TestMultipleProgramsStressTestQSCounts
 )
+
+from program_metric_tests.program_unit.last_completed_periods import (
+    TestProgramHasLOP,
+    TestProgramHasMidEnd,
+    TestAnnualLastCompleted
+)
