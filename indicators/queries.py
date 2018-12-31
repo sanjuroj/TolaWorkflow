@@ -834,10 +834,86 @@ class ProgramMetricsQuerySet(models.QuerySet):
     def count(self):
         return self.values('id').aggregate(total=models.Count('id', distinct=True))['total']
 
+    def add_target_annotations(self):
+        """adds annotations for the target_period_info stats on the Program Page"""
+        lop_targets = Indicator.objects.filter(
+            program=models.OuterRef('pk'),
+            target_frequency=Indicator.LOP
+        )
+        midend_targets = Indicator.objects.filter(
+            program=models.OuterRef('pk'),
+            target_frequency=Indicator.MID_END
+        )
+        event_targets = Indicator.objects.filter(
+            program=models.OuterRef('pk'),
+            target_frequency=Indicator.EVENT
+        )
+        annual_targets = PeriodicTarget.objects.filter(
+            indicator__program=models.OuterRef('pk'),
+            indicator__target_frequency=Indicator.ANNUAL
+        )
+        semi_annual_targets = PeriodicTarget.objects.filter(
+            indicator__program=models.OuterRef('pk'),
+            indicator__target_frequency=Indicator.SEMI_ANNUAL
+        )
+        tri_annual_targets = PeriodicTarget.objects.filter(
+            indicator__program=models.OuterRef('pk'),
+            indicator__target_frequency=Indicator.TRI_ANNUAL
+        )
+        quarterly_targets = PeriodicTarget.objects.filter(
+            indicator__program=models.OuterRef('pk'),
+            indicator__target_frequency=Indicator.QUARTERLY
+        )
+        monthly_targets = PeriodicTarget.objects.filter(
+            indicator__program=models.OuterRef('pk'),
+            indicator__target_frequency=Indicator.MONTHLY
+        )
+        return self.annotate(
+            has_lop=models.Exists(lop_targets),
+            has_midend=models.Exists(midend_targets),
+            has_event=models.Exists(event_targets),
+            has_annual=models.Exists(annual_targets),
+            annual_period=models.Subquery(
+                annual_targets.filter(
+                    end_date__lte=models.functions.Now()
+                ).order_by('-end_date').values('end_date')[:1],
+                output_field=models.DateField()
+            ),
+            has_semi_annual=models.Exists(semi_annual_targets),
+            semi_annual_period=models.Subquery(
+                semi_annual_targets.filter(
+                    end_date__lte=models.functions.Now()
+                ).order_by('-end_date').values('end_date')[:1],
+                output_field=models.DateField()
+            ),
+            has_tri_annual=models.Exists(tri_annual_targets),
+            tri_annual_period=models.Subquery(
+                tri_annual_targets.filter(
+                    end_date__lte=models.functions.Now()
+                ).order_by('-end_date').values('end_date')[:1],
+                output_field=models.DateField()
+            ),
+            has_quarterly=models.Exists(quarterly_targets),
+            quarterly_period=models.Subquery(
+                quarterly_targets.filter(
+                    end_date__lte=models.functions.Now()
+                ).order_by('-end_date').values('end_date')[:1],
+                output_field=models.DateField()
+            ),
+            has_monthly=models.Exists(monthly_targets),
+            monthly_period=models.Subquery(
+                monthly_targets.filter(
+                    end_date__lte=models.functions.Now()
+                ).order_by('-end_date').values('end_date')[:1],
+                output_field=models.DateField()
+            ),
+        )
+
 
 class ProgramForProgramPageManager(models.Manager):
     def get_queryset(self):
         qs = ProgramMetricsQuerySet(self.model, using=self._db)
+        qs = qs.add_target_annotations()
         return qs
 
 class ProgramForHomePageQuerySet(ProgramMetricsQuerySet):
@@ -1026,4 +1102,23 @@ class ProgramWithMetrics(wf_models.Program):
                 [indicator for indicator in scope_indicators
                  if indicator.reporting and hasattr(indicator, 'over_under') and indicator.over_under == 1]
                 ),
+        }
+
+    @property
+    def target_period_info(self):
+        """for determining help text on program page:
+            has_lop: T/F whether a program has any lop indicators
+        """
+        return {
+            'lop': self.has_lop,
+            'midend': self.has_midend,
+            'event': self.has_event,
+            'time_targets': any(
+                [self.has_annual, self.has_semi_annual, self.has_tri_annual, self.has_quarterly, self.has_monthly]
+            ),
+            'annual': self.annual_period,
+            'semi_annual': self.semi_annual_period,
+            'tri_annual': self.tri_annual_period,
+            'quarterly': self.quarterly_period,
+            'monthly': self.monthly_period
         }
