@@ -706,7 +706,7 @@ class ResultFormMixin(object):
             'standard_disaggregation_values': standard_disaggregation_values,
         }
 
-    def form_invalid(self, form):
+    def invalid_response(self, form):
         if self.request.is_ajax():
             return JsonResponse(form.errors, status=400)
         messages.error(self.request, 'Invalid Form', fail_silently=False)
@@ -717,6 +717,7 @@ class ResultCreate(CreateView, ResultFormMixin):
     """Create new Result called by result_add as modal (if ajax) or full page (non-ajax)"""
     model = Result
     form_class = ResultForm
+    result_context = None
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -730,12 +731,14 @@ class ResultCreate(CreateView, ResultFormMixin):
             request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        result_context = self.get_result_context()
+        if self.result_context is None:
+            self.result_context = self.get_result_context()
         context = super(ResultCreate, self).get_context_data(**kwargs)
-        context.update(result_context)
+        context.update(self.result_context)
         return context
 
     def get_form_kwargs(self):
+        self.result_context = self.get_result_context()
         kwargs = super(ResultCreate, self).get_form_kwargs()
         kwargs['request'] = self.request
         kwargs['indicator'] = self.indicator
@@ -793,11 +796,15 @@ class ResultCreate(CreateView, ResultFormMixin):
                        str(self.kwargs['program'])
         return HttpResponseRedirect(redirect_url)
 
+    def form_invalid(self, form):
+        return self.invalid_response(form)
+
 
 class ResultUpdate(UpdateView, ResultFormMixin):
     """Update Result view called by result_update as modal (if ajax) or full page (non-ajax)"""
     model = Result
     form_class = ResultForm
+    result_context = None
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -811,13 +818,15 @@ class ResultUpdate(UpdateView, ResultFormMixin):
             request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        result_context = self.get_result_context()
+        if self.result_context is None:
+            self.result_context = self.get_result_context()
         context = super(ResultUpdate, self).get_context_data(**kwargs)
-        context.update(result_context)
+        context.update(self.result_context)
         return context
 
     # add the request to the kwargs
     def get_form_kwargs(self):
+        self.result_context = self.get_result_context()
         kwargs = super(ResultUpdate, self).get_form_kwargs()
         kwargs['request'] = self.request
         kwargs['indicator'] = self.indicator
@@ -871,6 +880,9 @@ class ResultUpdate(UpdateView, ResultFormMixin):
                        % str(getIndicator.program.id)
 
         return HttpResponseRedirect(redirect_url)
+
+    def form_invalid(self, form):
+        return self.invalid_response(form)
 
 
 class ResultDelete(DeleteView):
