@@ -73,6 +73,11 @@
 // This cribs project /src/ directly, not ideal!
 @import "components/select2/core";
 
+// react-bootstrap-table2 + extra modules
+// this is installed via npm (react-bootstrap-next)
+@import "components/react-bootstrap-table/react-bootstrap-table2";
+@import "components/react-bootstrap-table/react-bootstrap-table2-paginator";
+
 /* Components */
 // These are well-behaved BEM-compliant selectors
 @import 'components/tables'; // semantic addtions to, but not overloads of, Bootstrap tables
