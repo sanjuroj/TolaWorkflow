@@ -807,7 +807,7 @@ class DocumentationList(ListView):
         elif int(self.kwargs['project']) != 0:
             records = Documentation.objects.all().prefetch_related('program','project').filter(project__id=self.kwargs['project'])
         else:
-            records = Documentation.objects.all().prefetch_related('program','project').filter(program__in=programs)
+            records = Documentation.objects.all().prefetch_related('program','project').filter(program__country__in=user_countries)
 
         js_context = {
             'allowProjectsAccess': request.user.tola_user.allow_projects_access,
