@@ -239,7 +239,7 @@ class ResultForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
-        
+
 
 
 class ReportFormCommon(forms.Form):
