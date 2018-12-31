@@ -13,14 +13,33 @@
     <h3>
         Program metrics
         <small>for target periods completed so far
-        <!-- variables for use in the on track helptext: program.target_period_info is a dict with keys: 'time_targets' = t/f (are there any time-aware targets), 'annual_period', 'semi_annual_period' etc. give most recent period end date -->
         <a href="#"
            tabindex="0"
            data-toggle="popover"
            data-placement="right"
            data-trigger="focus"
-           {# Translators:  #}
-           data-content="{% blocktrans %}<p>Only completed target periods are included in the “indicators on track” calculations.<p><strong>Last completed target period</strong><br>Annual: MMM DD, YYYY<br>Semi-annual: MMM DD, YYYY<br>Quarterly: MMMM DD, YYYY<br>Monthly: MMMM DD, YYYY</p><p>If an indicator only has a Life of Program (LoP) target, we calculate performance after the program end date. For midline/endline and event-based target periods, we begin tracking performance as soon as the first result is submitted.</p>{% endblocktrans %}"
+           {# variables for use in the on track helptext: program.target_period_info is a dict with keys: 'time_targets' = t/f (are there any time-aware targets), 'annual_period', 'semi_annual_period' etc. give most recent period end date #}
+           data-content="
+           {% with program.target_period_info as tp_info %}
+           {% trans "Only completed target periods are included in the “indicators on track” calculations." %}
+           {% if tp_info.annual or tp_info.semi_annual or tp_info.tri_annual or tp_info.quarterly or tp_info.monthly %}
+               <br><br><strong>{% trans "Last completed target period" %}</strong>
+               {# Translators:  label for the date of the last completed Annual target period. #}
+               {% if tp_info.annual %}<br>{% trans "Annual" %}: {{ tp_info.annual|date:"MEDIUM_DATE_FORMAT" }}{% endif %}
+               {# Translators:  label for the date of the last completed Semi-Annual target period. #}
+               {% if tp_info.semi_annual %}<br>{% trans "Semi-Annual" %}: {{ tp_info.semi_annual|date:"MEDIUM_DATE_FORMAT" }}{% endif %}
+               {# Translators:  label for the date of the last completed Tri-Annual target period. #}
+               {% if tp_info.tri_annual %}<br>{% trans "Tri-Annual" %}: {{ tp_info.tri_annual|date:"MEDIUM_DATE_FORMAT" }}{% endif %}
+               {# Translators:  label for the date of the last completed Quarterly target period. #}
+               {% if tp_info.quarterly %}<br>{% trans "Quarterly" %}: {{ tp_info.quarterly|date:"MEDIUM_DATE_FORMAT" }}{% endif %}
+               {# Translators:  label for the date of the last completed Monthly target period. #}
+               {% if tp_info.monthly %}<br>{% trans "Monthly" %}: {{ tp_info.monthly|date:"MEDIUM_DATE_FORMAT" }}{% endif %}
+           {% endif %}
+           {% if tp_info.lop or tp_info.event or tp_info.midend %}<br><br>{% endif %}
+           {% if tp_info.lop %}{% trans "If an indicator only has a Life of Program (LoP) target, we calculate performance after the program end date." %}{% endif %}
+           {% if tp_info.event or tp_info.midend %}{% trans "For midline/endline and event-based target periods, we begin tracking performance as soon as the first result is submitted." %}{% endif %}
+           {% endwith %}
+           "
            ><i class="far fa-question-circle"></i></a>
         </small>
     </h3>
