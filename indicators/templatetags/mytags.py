@@ -34,6 +34,13 @@ def jsonify(object):
         return serialize('json', object)
     return simplejson.dumps(object)
 
+@register.filter('and_only')
+def and_only(value1, value2):
+    """
+    returns "and" if both values are true
+    Usage: {{ value1|and_only:value2 }}
+    """
+    return _("and") if (value1 and value2) else ""
 
 @register.filter('symbolize_change')
 def symbolize_change(value):

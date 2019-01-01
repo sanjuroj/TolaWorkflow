@@ -38,8 +38,9 @@
                 {% if tp_info.lop or tp_info.event or tp_info.midend %}<br><br>{% endif %}
                 {% if tp_info.lop %}{% trans "If an indicator only has a Life of Program (LoP) target, we calculate performance after the program end date." %}{% endif %}
                 {% if tp_info.event or tp_info.midend %}
-                    {% blocktrans with event=tp_info.event|yesno:"event-based," midend=tp_info.midend|yesno:"midline/endline," and_or="and" %}
-                    For {{ midend }} {{ and_or }} {{ event }} target periods, we begin tracking performance as soon as the first result is submitted.
+                    {# Translators: {{ midend }} is "midline/endline" if there are midline/endline targets, {{ event }} is "event-based" if there are event-based targets, and {{ and_only }} is "and" if there are BOTH midline/endline and event-based targets #}
+                    {% blocktrans with event=tp_info.event|yesno:_("event-based,") midend=tp_info.midend|yesno:_("midline/endline,") and_only=tp_info.midend|and_only:tp_info.event %}
+                    For {{ midend }} {{ and_only }} {{ event }} target periods, we begin tracking performance as soon as the first result is submitted.
                     {% endblocktrans %}
                 {% endif %}
                 {% endwith %}
