@@ -35,11 +35,6 @@
   tags:
     - provision
 
-# - name: Install python packages for deployment
-#   become: yes
-#   pip:
-#     name: psycopg2
-
 - name: add mysql db
   become: yes
   mysql_db:
@@ -116,3 +111,24 @@
     command: migrate
     app_path: "{{app_dir}}"
     virtualenv: "{{virtualenv}}"
+
+- name: Install the gpg key for nodejs LTS
+  become: yes
+  apt_key:
+    url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    state: present
+
+- name: Install the nodejs LTS repos
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_10.x xenial main"
+    state: present
+    update_cache: yes
+
+- name: Install the nodejs
+  apt:
+    name: nodejs
+    state: present
+
+- name: Install package.json packages
+  npm:
+    path: "{{app_dir}}"
