@@ -241,14 +241,6 @@ class ReportingFrequencySerializer(serializers.HyperlinkedModelSerializer):
         model = ReportingFrequency
         fields = '__all__'
 
-
-class TolaUserSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = TolaUser
-        fields = '__all__'
-
-
 class IndicatorTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -413,6 +405,12 @@ class OrganizationSerializer(serializers.HyperlinkedModelSerializer):
         model = Organization
         fields = '__all__'
 
+class TolaUserSerializer(serializers.HyperlinkedModelSerializer):
+    organization = OrganizationSerializer(read_only=True)
+
+    class Meta:
+        model = TolaUser
+        fields = '__all__'
 
 class ProgramTargetFrequenciesSerializer(serializers.Serializer):
     frequency_name = serializers.SerializerMethodField()
@@ -428,4 +426,3 @@ class ProgramTargetFrequenciesSerializer(serializers.Serializer):
 
     class Meta:
         fields = ('target_frequency', 'frequency_name')
-

@@ -280,7 +280,7 @@ LOCAL_APPS = (
     #'configurabledashboard',
     'tables',
     'reports',
-
+    'tola_management'
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

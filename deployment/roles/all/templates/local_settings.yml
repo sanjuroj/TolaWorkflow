@@ -35,7 +35,6 @@ DATABASES:
    NAME: "{{db.name}}"
    USER: "{{db.user}}"
    PASSWORD: "{{db.password}}"
-   OPTIONS: {"init_command": "SET default_storage_engine=MYISAM",}
    HOST: "localhost"
    PORT: ""
 
@@ -82,3 +81,4 @@ GOOGLE_ANALYTICS_PROPERTY_ID: 'UA-1111111-11'
 GOOGLE_ANALYTICS_DOMAIN: 'example.org'
 
 LOGFILE: '{{logfile}}'
+SECRET_KEY: '{{django_secret_key}}'
