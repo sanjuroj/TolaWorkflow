@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n mathfilters mytags static %}
+{% load render_bundle from webpack_loader %}
+{% block title %}{% endblock %}
+{% block page_title %}{% endblock %}
+
+{% block content %}
+<div id="app_root">
+</div>
+{% endblock content %}
+
+
+{% block extra_js_in_body %}
+    <script>
+        let jsContext = {{ js_context|js }};
+    </script>
+
+    {% render_bundle bundle_name %}
+{% endblock %}

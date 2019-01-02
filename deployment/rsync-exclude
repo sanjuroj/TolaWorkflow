@@ -1,0 +1,7 @@
+/.git
+*.pyc
+/deployment
+/Vagrantfile
+/.vagrant
+*.swp
+*.orig
