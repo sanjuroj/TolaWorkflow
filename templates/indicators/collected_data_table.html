@@ -23,9 +23,9 @@
                 <th class="">{% trans "Target period" %}</th>
                 <th class="text-right">{% trans "Target" %}</th>
                 <th class="text-right">{% trans "Actual" %}</th>
-                <th class="table__pad-cell text-right">{% trans "% Met" %}</th>
+                <th class="td--pad text-right">{% trans "% Met" %}</th>
                 <th class="" colspan="2">{% trans "Results" %}</th>
-                <th class="table__stretch-cell">{% trans "Evidence" %}</th>
+                <th class="td--stretch">{% trans "Evidence" %}</th>
             </tr>
         </thead>
         {% for item in periodictargets %}
@@ -57,7 +57,7 @@
                     {% endif %}
                 {% endif %}
             </td>
-            <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right table__pad-cell">
+            <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right td--pad">
                 {% if item.target %}
                     {% if indicator.unit_of_measure_type == 1 %}
                         {% if indicator.is_cumulative == True %}
@@ -95,7 +95,7 @@
                     {{ achieved }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                     {% endwith %}
                 </td>
-                <td>
+                <td class="td--stretch">
                     {% if cdata.evidence %}
                         {% if cdata.evidence.url %}<a href="{{cdata.evidence.url}}" target="_blank">{% endif %}
                         {{ cdata.evidence|default_if_none:"" }}
@@ -140,7 +140,7 @@
                 {% endif %}
             </td>
             <td class="text-right"></td>
-            <td class="collected-data-table__result bg-danger-lighter">
+            <td class="collected-data__result--date bg-danger-lighter">
                 {% if is_editable is False %}
                     {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                 {% else %}
@@ -148,13 +148,13 @@
                     {{ coldata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                 </a>
                 {% endif %}
-                <div class="pl-2">
+            </td>
+            <td class="collected-data__result--value bg-danger-lighter">
                     {% with achieved=coldata.achieved|floatformat:"-2" %}
                     {{ achieved }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                     {% endwith %}
-                </div>
             </td>
-            <td>
+            <td class="td--stretch">
                 {% if coldata.evidence %}
                     {% if coldata.evidence.url %}<a href="{{coldata.evidence.url}}" target="_blank">{% endif %}
                     {{ coldata.evidence|default_if_none:"" }}
@@ -238,7 +238,7 @@
         </tr>
     </table>
     <div class="collected-data-table__actions">
-        <div>
+        <div class="cd-actions__message">
             {% if err %}
             <span id="id_span_date_collected_error_msg" class="text-danger">
                 <small>
@@ -247,17 +247,21 @@
                     {% endifequal %}
 
                     {% ifequal err 'Error_2' %}
-                        {% trans 'This record is not associated with a target. Open the data record and select an option from the "Measure against target" menu.' %}
+                        {% blocktrans %}
+                        This record is not associated with a target. Open the data record and select an option from the “Measure against target” menu.
+                        {% endblocktrans %}
                     {% endifequal %}
 
                     {% ifequal err 'Error_3' %}
-                        {% trans 'This date falls outside the range of your target periods. Please select a date between ' %} {{ program.reporting_period_start|date:"MEDIUM_DATE_FORMAT" }} {% trans 'and ' %} {{ program.reporting_period_end|date:"MEDIUM_DATE_FORMAT" }}.
+                        {% blocktrans with reporting_period_start=program.reporting_period_start|date:"MEDIUM_DATE_FORMAT" reporting_period_end=program.reporting_period_end|date:"MEDIUM_DATE_FORMAT"  %}
+                        This date falls outside the range of your target periods. Please select a date between {{ reporting_period_start }} and {{ reporting_period_end }}.
+                        {% endblocktrans %}
                     {% endifequal %}
                 </small>
             </span>
             {% endif %}
         </div>
-        <div class="{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
+        <div class="cd-actions__button{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
             <a href="{% url 'collecteddata_add' program_id indicator.id %}" class="btn-link btn-add collected-data__link"><i class="fas fa-plus-circle"></i> {% trans "Add results" %}</a>
         </div>
     </div>

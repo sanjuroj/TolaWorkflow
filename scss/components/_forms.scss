@@ -1,0 +1,9 @@
+.form-group label {
+    font-size: $small-font-size;
+}
+.label--required {
+    &:after {
+        color: $danger;
+        content: "*";
+    }
+}

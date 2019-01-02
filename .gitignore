@@ -52,4 +52,4 @@ log_convert_lop_to_numeric
 # node modules
 node_modules
 
-build/dev-dist
+webpack-stats-local.json

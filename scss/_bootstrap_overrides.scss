@@ -79,7 +79,7 @@ body > .container {
     // special danger links for remove actions
     color: $red-500;
     border: 0px;
-    background: $white;
+    background: transparent;
 }
 
 
@@ -168,4 +168,9 @@ body > .container {
         margin-left: $grid-gutter-width/4;
         padding-left: $grid-gutter-width/4;
     }
+}
+
+// Overrides for form elements
+.form-check-input {
+    width: auto !important; // fixes bug in latest Chrome + pre-Mojave macs ?
 }

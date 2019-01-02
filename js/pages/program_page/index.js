@@ -57,6 +57,8 @@ eventBus.on('apply-gauge-tank-filter', indicatorFilter => {
     // reset all filters
     eventBus.emit('clear-all-indicator-filters');
 
+    eventBus.emit('close-all-indicators');
+
     uiStore.setIndicatorFilter(indicatorFilter);
 });
 
@@ -64,6 +66,7 @@ eventBus.on('apply-gauge-tank-filter', indicatorFilter => {
 eventBus.on('clear-all-indicator-filters', () => {
     uiStore.clearIndicatorFilter();
     eventBus.emit('select-indicators-to-filter', []);
+    eventBus.emit('close-all-indicators');
 });
 
 // filter down by selecting individual indicator
@@ -75,6 +78,11 @@ eventBus.on('select-indicators-to-filter', (selectedIndicatorIds) => {
 
     // Open up results pane as well
     selectedIndicatorIds.forEach(id => eventBus.emit('load-indicator-results', id));
+});
+
+// close all expanded indicators in the table
+eventBus.on('close-all-indicators', () => {
+    rootStore.deleteAllResultsHTML();
 });
 
 

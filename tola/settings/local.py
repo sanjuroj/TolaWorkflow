@@ -110,7 +110,7 @@ LOGGING['handlers']['file']['filename'] = app_settings['LOGFILE']
 # use webpack dev server
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'dist/',
-        'STATS_FILE': os.path.join(SITE_ROOT, 'webpack-stats-dev.json'),
+        'BUNDLE_DIR_NAME': app_settings.get('WEBPACK_BUNDLE_DIR_NAME', 'dist/'),
+        'STATS_FILE': os.path.join(SITE_ROOT, app_settings.get('WEBPACK_STATS_FILE', 'webpack-stats-local.json')),
     }
 }
