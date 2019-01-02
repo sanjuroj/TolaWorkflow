@@ -835,7 +835,7 @@ class ProgramMetricsQuerySet(models.QuerySet):
         return self.values('id').aggregate(total=models.Count('id', distinct=True))['total']
 
     def add_target_annotations(self):
-        """adds annotations for the target_period_info stats on the Program Page"""
+        """adds annotations for the target_period_info stats on the Program Page and Home Page"""
         lop_targets = Indicator.objects.filter(
             program=models.OuterRef('pk'),
             target_frequency=Indicator.LOP
@@ -913,6 +913,7 @@ class ProgramMetricsQuerySet(models.QuerySet):
 class ProgramForProgramPageManager(models.Manager):
     def get_queryset(self):
         qs = ProgramMetricsQuerySet(self.model, using=self._db)
+        # add target_info annotations (for determining helptext on indicator reporting explainers):
         qs = qs.add_target_annotations()
         return qs
 
@@ -964,6 +965,8 @@ class ProgramForHomePageQuerySet(ProgramMetricsQuerySet):
 class ProgramForHomePageManager(models.Manager):
     def get_queryset(self):
         qs = ProgramForHomePageQuerySet(self.model, using=self._db)
+        # add target_info annotations (for determining helptext on indicator reporting explainers):
+        qs = qs.add_target_annotations()
         return qs
 
     def with_annotations(self, *annotations):
@@ -1107,7 +1110,10 @@ class ProgramWithMetrics(wf_models.Program):
     @property
     def target_period_info(self):
         """for determining help text on program page:
-            has_lop: T/F whether a program has any lop indicators
+            - has_lop/midend/event: T/F whether a program has any lop indicators
+            - time_targets: T/F whether a program has any time-based indicators
+            - annual/semi_annual/tri_annual/quarterly/monthly: date that most recently completed period ended for each
+                frequency
         """
         return {
             'lop': self.has_lop,
