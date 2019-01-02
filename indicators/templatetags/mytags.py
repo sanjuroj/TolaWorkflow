@@ -20,6 +20,7 @@ def convert2dateobject(value):
     except Exception:
         return value
 
+
 @register.filter
 def concat_string(value1, value2):
     """
@@ -28,19 +29,48 @@ def concat_string(value1, value2):
     """
     return "%s%s" % (value1, value2)
 
+
 @register.filter('jsonify')
 def jsonify(object):
     if isinstance(object, QuerySet):
         return serialize('json', object)
     return simplejson.dumps(object)
 
-@register.filter('and_only')
+
+@register.filter
 def and_only(value1, value2):
     """
-    returns "and" if both values are true
+    Returns "and" if both values are true.
+    Useful inside {% blocktrans %}
     Usage: {{ value1|and_only:value2 }}
     """
     return _("and") if (value1 and value2) else ""
+
+
+@register.filter
+def or_only(value1, value2):
+    """
+    Returns "or" if either value is true
+    Useful inside {% blocktrans %}
+    Usage: {{ value1|or_only:value2 }}
+    """
+    return _("or") if (value1 or value2) else ""
+
+
+@register.filter
+def and_or(value1, value2):
+    """
+    Returns "or" if either value is true, returns "and" if both values are true
+    Useful inside {% blocktrans %}
+    Usage: {{ value1|and_or:value2 }}
+    """
+    result = ""
+    if (value1 and value2):
+        result = _("and")
+    elif (value1 or value2):
+        result = _("or")
+    return result
+
 
 @register.filter('symbolize_change')
 def symbolize_change(value):
