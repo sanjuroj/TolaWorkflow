@@ -120,7 +120,7 @@
 
 - name: Install the nodejs LTS repos
   apt_repository:
-    repo: "deb https://deb.nodesource.com/node_11.x xenial main"
+    repo: "deb https://deb.nodesource.com/node_10.x xenial main"
     state: present
     update_cache: yes
 
