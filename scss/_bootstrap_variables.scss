@@ -641,10 +641,10 @@ $popover-arrow-outer-color:         fade-in($popover-border-color, .05) !default
 
 // Badges
 
-$badge-font-size:                   75% !default;
+$badge-font-size:                   inherit;
 $badge-font-weight:                 $font-weight-bold !default;
-$badge-padding-y:                   .25em !default;
-$badge-padding-x:                   .4em !default;
+$badge-padding-y:                   .15em;
+$badge-padding-x:                   .3em;
 $badge-border-radius:               $border-radius !default;
 
 $badge-pill-padding-x:              .6em !default;
