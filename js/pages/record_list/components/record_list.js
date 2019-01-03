@@ -54,7 +54,7 @@ class ProgramFilterSelect extends React.Component {
 
         let selectedValue = null;
         if (selectedProgramId) {
-            selectedValue = programOptions.filter(p => p.value === selectedProgramId)[0];
+            selectedValue = programOptions.find(p => p.value === selectedProgramId);
         }
 
         return <Select
@@ -88,13 +88,13 @@ class IndicatorFilterSelect extends React.Component {
         let indicatorOptions = [];
         if (selectedProgramId) {
             indicatorOptions = rootStore.getIndicators(selectedProgramId).map(i => {
-                return {value: i.id, label: i.name}
+                return {value: i.id, label: i.number ? i.number + ' ' + i.name : i.name}
             });
         }
 
         let selectedValue = null;
         if (selectedIndicatorId) {
-            selectedValue = indicatorOptions.filter(p => p.value === selectedIndicatorId)[0];
+            selectedValue = indicatorOptions.find(p => p.value === selectedIndicatorId);
         }
 
         return <Select
@@ -133,7 +133,7 @@ class RecordFilterSelect extends React.Component {
 
         let selectedValue = null;
         if (selectedRecordId) {
-            selectedValue = recordOptions.filter(r => r.value === selectedRecordId)[0];
+            selectedValue = recordOptions.find(r => r.value === selectedRecordId);
         }
 
         return <Select
