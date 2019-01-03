@@ -61,7 +61,7 @@ const router = createRouter(routes, {
     defaultRoute: 'all', // used if route not found
     defaultParams: {},
 });
-router.usePlugin(browserPlugin({useHash: false, base: '/workflow/documentation_list/0/0'}));
+router.usePlugin(browserPlugin({useHash: false, base: '/workflow/documentation_list'}));
 router.subscribe(onNavigation);
 router.start();
 
