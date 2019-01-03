@@ -68,6 +68,7 @@
         "react-bootstrap-table2-paginator": "^2.0.0",
         "react-dom": "^16.6.0",
         "react-fast-compare": "^2.0.4",
+        "react-select": "^2.2.0",
         "router5": "^7.0.1",
         "router5-plugin-browser": "^7.0.1",
         "select2": "4.0.0",

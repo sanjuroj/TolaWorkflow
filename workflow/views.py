@@ -800,7 +800,7 @@ class DocumentationList(ListView):
         program = Program.objects.get(id=self.kwargs['program']) if int(self.kwargs['program']) != 0 else None
 
         user_countries = request.user.tola_user.countries.all()
-        programs = Program.objects.all().filter(funding_status="Funded", country__in=user_countries)
+        programs = Program.objects.all().filter(funding_status="Funded", country__in=user_countries).prefetch_related('indicator_set')
 
         if int(self.kwargs['program']) != 0 & int(self.kwargs['project']) == 0:
             records = Documentation.objects.all().prefetch_related('program', 'project').filter(program__id=self.kwargs['program'])

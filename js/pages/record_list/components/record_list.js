@@ -3,42 +3,111 @@ import classNames from 'classnames';
 import { observer } from "mobx-react"
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
+import Select from 'react-select';
 import eventBus from '../../../eventbus';
 
-import {Select} from '../../../components/bootstrap_multiselect';
 import {dateFromISOString, mediumDateFormatStr} from "../../../date_utils";
 
 
-
-class RecordsFilterBar extends React.Component {
+@observer
+class ProgramFilterSelect extends React.Component {
     constructor(props) {
         super(props);
 
+        this.onSelection = this.onSelection.bind(this);
+    }
+
+    onSelection(selectedObject) {
+        let programId = selectedObject ? selectedObject.value : null;
+        eventBus.emit('program-id-filter-selected', programId);
     }
 
     render() {
-        const {programs} = this.props.rootStore;
+        const {rootStore, uiStore} = this.props;
+        const programs = rootStore.programs;
+        const selectedProgramId = uiStore.selectedProgramId;
 
-        const programOptions = programs.map(p => { return {value: p.id, label: p.name} });
+        let programOptions = programs.map(p => {
+            return {value: p.id, label: p.name}
+        });
+
+        let selectedValue = null;
+        if (selectedProgramId) {
+            selectedValue = programOptions.filter(p => p.value === selectedProgramId)[0];
+        }
+
+        return <Select
+            options={programOptions}
+            value={selectedValue}
+            isClearable={true}
+            placeholder={gettext('Filter by program')}
+            onChange={this.onSelection}
+        />
+    }
+}
+
+
+@observer
+class IndicatorFilterSelect extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.onSelection = this.onSelection.bind(this);
+    }
+
+    onSelection(selectedObject) {
+        let indicatorId = selectedObject ? selectedObject.value : null;
+        eventBus.emit('indicator-id-filter-selected', indicatorId);
+    }
+
+    render() {
+        const {rootStore, uiStore} = this.props;
+        const {selectedProgramId, selectedIndicatorId} = uiStore;
+        const placeholderText = gettext('Filter by indicator');
+
+        // Only enabled if a program is selected
+        if (! selectedProgramId) {
+            return <Select
+                isDisabled={true}
+                placeholder={placeholderText}
+            />
+        }
+
+        const indicators = rootStore.getIndicators(selectedProgramId);
+
+        let indicatorOptions = indicators.map(i => {
+            return {value: i.id, label: i.name}
+        });
+
+        let selectedValue = null;
+        if (selectedIndicatorId) {
+            selectedValue = indicatorOptions.filter(p => p.value === selectedIndicatorId)[0];
+        }
+
+        return <Select
+            options={indicatorOptions}
+            value={selectedValue}
+            isClearable={true}
+            placeholder={placeholderText}
+            onChange={this.onSelection}
+        />
+    }
+}
+
+
+@observer
+class RecordsFilterBar extends React.Component {
+    render() {
+        const {rootStore, uiStore} = this.props;
 
         return <div className="row">
             <div className="col-3">
-                <Select
-                    options={programOptions}
-                    selected={[]}
-                />
+                <ProgramFilterSelect rootStore={rootStore} uiStore={uiStore} />
             </div>
             <div className="col-3">
-                <Select
-                    options={programOptions}
-                    selected={[]}
-                />
+                <IndicatorFilterSelect rootStore={rootStore} uiStore={uiStore} />
             </div>
             <div className="col-3">
-                <Select
-                    options={programOptions}
-                    selected={[]}
-                />
             </div>
             <div className="col-3 text-right">
                 <a href="/workflow/documentation_add" className="btn btn-link btn-add">
@@ -50,8 +119,25 @@ class RecordsFilterBar extends React.Component {
 }
 
 
+const RecordsListTable = observer(function ({rootStore, uiStore}) {
+    // Apply filters to displayed list of records
+    let records = rootStore.records;
 
-const RecordsListTable = observer(function ({rootStore}) {
+    if (uiStore.selectedProgramId) {
+        records = records.filter(r => r.program === uiStore.selectedProgramId);
+    }
+
+    if (uiStore.selectedIndicatorId) {
+        records = records.filter(r => r.indicator === uiStore.selectedIndicatorId);
+    }
+
+    // If no records, don't show a table
+    if (records.length === 0) {
+        return <div>
+            <span>No records available</span>
+        </div>
+    }
+
     const columns = [
         {
             dataField: 'name',
@@ -95,24 +181,22 @@ const RecordsListTable = observer(function ({rootStore}) {
         order: 'desc'
     }];
 
-    return <React.Fragment>
-        <BootstrapTable
-            keyField="id"
-            data={rootStore.records}
-            columns={columns}
-            bootstrap4={true}
-            pagination={paginationFactory()}
-            defaultSorted={defaultSorted}
-        />
-    </React.Fragment>
+    return <BootstrapTable
+        keyField="id"
+        data={records}
+        columns={columns}
+        bootstrap4={true}
+        pagination={paginationFactory()}
+        defaultSorted={defaultSorted}
+    />
 });
 
 
 
-export const RecordsView = observer(function ({rootStore}) {
+export const RecordsView = observer(function ({rootStore, uiStore}) {
     return <React.Fragment>
-        <RecordsFilterBar rootStore={rootStore}/>
+        <RecordsFilterBar rootStore={rootStore} uiStore={uiStore}/>
         <br/>
-        <RecordsListTable rootStore={rootStore}/>
+        <RecordsListTable rootStore={rootStore} uiStore={uiStore}/>
     </React.Fragment>
 });

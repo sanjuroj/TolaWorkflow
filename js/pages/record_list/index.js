@@ -17,6 +17,7 @@ const {records, programs, allowProjectsAccess} = jsContext;
 const rootStore = new RecordListStore(records, programs, allowProjectsAccess);
 const uiStore = new RecordListUIStore();
 
+
 /*
  * Routing
  */
@@ -24,8 +25,9 @@ const uiStore = new RecordListUIStore();
 const routes = [
     {name: 'all', path: '/'},
     {name: 'program', path: '/program/:program_id<\\d+>'},
-    {name: 'indicator', path: '/program/:program_id/:indicator_id'},
-    {name: 'record', path: '/record/:record_id'},
+    {name: 'project', path: '/project/:project_id<\\d+>'},
+    {name: 'indicator', path: '/program/:program_id<\\d+>/:indicator_id<\\d+>'},
+    {name: 'record', path: '/record/:record_id<\\d+>'},
 ];
 
 // When the URL changes due to navigation, back button press, etc
@@ -33,15 +35,27 @@ function onNavigation(navRoutes) {
     let {previousRoute, route} = navRoutes;
     let params = route.params;
 
+    let indicatorId, programId;
+
+    // Clear all selections such that routes don't need to worry about previous routes
+    uiStore.clearSelectedProgramId();
+    uiStore.clearSelectedIndicatorId();
+
     // params may be strings or ints depending
     switch (navRoutes.route.name) {
         case 'all':
-            console.log('alllll');
             break;
         case 'program':
-            console.log(params.program_id);
+            programId = parseInt(params.program_id);
+            uiStore.setSelectedProgramId(programId);
+            break;
+        case 'project':
             break;
         case 'indicator':
+            programId = parseInt(params.program_id);
+            indicatorId = parseInt(params.indicator_id);
+            uiStore.setSelectedProgramId(programId);
+            uiStore.setSelectedIndicatorId(indicatorId);
             break;
         case 'record':
             break;
@@ -59,25 +73,29 @@ router.usePlugin(browserPlugin({useHash: false, base: '/workflow/documentation_l
 router.subscribe(onNavigation);
 router.start();
 
-// setTimeout(function() {router.navigate('program', {program_id: 10})}, 4000)
-// setTimeout(function() {router.navigate('indicator', {program_id: 10, indicator_id: 12})}, 8000)
 
 /*
  * Event Handlers
  */
 
-// open indicator update modal with form loaded from server
-// eventBus.on('open-indicator-update-modal', (indicatorId) => {
-//     // Note: depends on indicator_list_modals.html
-//
-//     let url = `/indicators/indicator_update/${indicatorId}/?modal=1`;
-//
-//     $("#indicator_modal_content").empty();
-//     $("#modalmessages").empty();
-//
-//     $("#indicator_modal_content").load(url);
-//     $("#indicator_modal_div").modal('show');
-// });
+// program filter selection
+eventBus.on('program-id-filter-selected', (programId) => {
+    if (programId) {
+        router.navigate('program', {program_id: programId});
+    } else {
+        router.navigate('all');
+    }
+});
+
+eventBus.on('indicator-id-filter-selected', (indicatorId) => {
+    const programId = uiStore.selectedProgramId;
+
+    if (indicatorId) {
+        router.navigate('indicator', {program_id: programId, indicator_id: indicatorId});
+    } else {
+        router.navigate('program', {program_id: programId});
+    }
+});
 
 
 /*
