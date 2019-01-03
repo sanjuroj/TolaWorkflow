@@ -1,0 +1,5 @@
+{% if on_target %}
+    <a href="#" aria-describedby="success" class="badge badge-success-light">{{ percent_met|floatformat:"0" }}%</a>
+{% else %}
+    <a href="#" aria-describedby="warning" class="badge badge-warning-light">{{ percent_met|floatformat:"0" }}%</a>
+{% endif %}

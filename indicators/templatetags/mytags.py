@@ -122,6 +122,14 @@ def make_percent(numerator, denominator):
         return 100
     return max(1, min(99, int(round(float(numerator*100)/denominator))))
 
+@register.inclusion_tag('indicators/tags/target-percent-met.html', takes_context=True)
+def target_percent_met(context, on_target, percent_met):
+    return {
+        'on_target': on_target,
+        'percent_met': percent_met,
+    }
+
+
 @register.inclusion_tag('indicators/tags/gauge-tank.html', takes_context=True)
 def gauge_tank(context, metric, has_filters=True):
     labels = {

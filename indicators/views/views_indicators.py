@@ -1080,6 +1080,7 @@ def collected_data_view(request, indicator, program):
             except TypeError:
                 pass
 
+        # percentage of target met for this target
         try:
             if ind.unit_of_measure_type == 1:
                 if ind.is_cumulative:
@@ -1091,7 +1092,18 @@ def collected_data_view(request, indicator, program):
         except TypeError:
             pt.percent_met = 0
 
+        # if this target is on target # TODO (ugh "on target")
         pt.on_target = True if (85 <= pt.percent_met <= 115) else False
+
+    # percentage of targets met for Life of Program for this indicator
+    percent_met = 0
+    if ind.unit_of_measure_type == 1:
+        percent_met = grand_achieved_sum / ind.lop_target * 100
+    elif ind.unit_of_measure_type == 2:
+        percent_met = last_data_record_value / ind.lop_target * 100
+
+    # whether this indicator is target # TODO "on target"
+    on_target = True if (85 <= percent_met <= 115) else False
 
     # show all of the data records that do not yet have periodic_targets
     # associated with them.
@@ -1109,7 +1121,9 @@ def collected_data_view(request, indicator, program):
             'indicator': ind,
             'program_id': program,
             'program': program_obj,
-            'is_editable': is_editable
+            'is_editable': is_editable,
+            'percent_met': percent_met,
+            'on_target': on_target,
         }
     )
 

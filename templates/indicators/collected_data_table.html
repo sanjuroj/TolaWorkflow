@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n mytags %}
 {% load assign %}
 
 <script type="text/javascript">
@@ -59,7 +59,7 @@
             </td>
             <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right td--pad">
                 {% if item.target %}
-                    <a href="#" aria-describedby="{% if item.on_target %}success{% else %}warning{% endif %}" class="badge {% if item.on_target %}badge-success-light{% else %}badge-warning-light{% endif %}">{{ item.percent_met|floatformat:"0" }}%</a>
+                    {% target_percent_met item.on_target item.percent_met %}
                 {% else %}
                     {% trans 'N/A' %}
                 {% endif %}
@@ -197,13 +197,7 @@
                 </strong>
             </td>
             <td class="text-right">
-                <strong>
-                    {% if indicator.unit_of_measure_type == 1 %}
-                        {% widthratio grand_achieved_sum indicator.lop_target 100 %}%
-                    {% elif indicator.unit_of_measure_type == 2 %}
-                        {% widthratio last_data_record_value indicator.lop_target 100 %}%
-                    {% endif %}
-                </strong>
+                {% target_percent_met on_target percent_met %}
             </td>
             <td colspan="3" class="">
                 <div class="help-text">
