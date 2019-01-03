@@ -406,8 +406,6 @@ class OrganizationSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 class TolaUserSerializer(serializers.HyperlinkedModelSerializer):
-    organization = OrganizationSerializer(read_only=True)
-
     class Meta:
         model = TolaUser
         fields = '__all__'
