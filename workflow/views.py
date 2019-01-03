@@ -1,3 +1,4 @@
+import collections
 import operator
 import unicodedata
 
@@ -10,7 +11,7 @@ from .models import Program, Country, Province, AdminLevelThree, District, Proje
     Documentation, Monitor, Benchmarks, Budget, ApprovalAuthority, Checklist, ChecklistItem, Contact, Stakeholder, FormGuidance, \
     TolaBookmarks, TolaUser
 from formlibrary.models import TrainingAttendance, Distribution
-from indicators.models import Result, ExternalService
+from indicators.models import Result, ExternalService, Indicator
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.urls import reverse
@@ -24,7 +25,7 @@ import pytz # TODO: not used, keeping this import for potential regressions
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.db.models import Count, Q, Max
+from django.db.models import Count, Q, Max, Prefetch
 from tables import ProjectAgreementTable
 from filters import ProjectAgreementFilter
 import json
@@ -800,7 +801,12 @@ class DocumentationList(ListView):
         program = Program.objects.get(id=self.kwargs['program']) if int(self.kwargs['program']) != 0 else None
 
         user_countries = request.user.tola_user.countries.all()
-        programs = Program.objects.all().filter(funding_status="Funded", country__in=user_countries).prefetch_related('indicator_set')
+        programs = Program.objects.all().filter(funding_status="Funded", country__in=user_countries).prefetch_related(Prefetch('indicator_set', queryset=Indicator.objects.order_by('name')))
+
+        all_program_results = Result.objects.filter(indicator__program__in=programs, evidence__isnull=False)
+        indicator_to_records_map = collections.defaultdict(list)
+        for record in all_program_results:
+            indicator_to_records_map[record.indicator_id].append(record.evidence_id)
 
         if int(self.kwargs['program']) != 0 & int(self.kwargs['project']) == 0:
             records = Documentation.objects.all().prefetch_related('program', 'project').filter(program__id=self.kwargs['program'])
@@ -813,6 +819,7 @@ class DocumentationList(ListView):
             'allowProjectsAccess': request.user.tola_user.allow_projects_access,
             'programs': RecordListProgramSerializer(programs, many=True).data,
             'records': RecordListRecordSerializer(records, many=True).data,
+            'indicatorToRecordsMap': dict(indicator_to_records_map),
         }
 
         return render(request, self.template_name, {

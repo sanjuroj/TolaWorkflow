@@ -9,12 +9,12 @@ import {RecordListStore, RecordListUIStore} from './models';
 
 console.log(jsContext);
 
-const {records, programs, allowProjectsAccess} = jsContext;
+const {records, programs, indicatorToRecordsMap, allowProjectsAccess} = jsContext;
 
 /*
  * Model/Store setup
  */
-const rootStore = new RecordListStore(records, programs, allowProjectsAccess);
+const rootStore = new RecordListStore(records, programs, indicatorToRecordsMap, allowProjectsAccess);
 const uiStore = new RecordListUIStore();
 
 
@@ -23,11 +23,7 @@ const uiStore = new RecordListUIStore();
  */
 
 const routes = [
-    {name: 'all', path: '/'},
-    {name: 'program', path: '/program/:program_id<\\d+>'},
-    {name: 'project', path: '/project/:project_id<\\d+>'},
-    {name: 'indicator', path: '/program/:program_id<\\d+>/:indicator_id<\\d+>'},
-    {name: 'record', path: '/record/:record_id<\\d+>'},
+    {name: 'records', path: '/?program_id&project_id&indicator_id&record_id'},
 ];
 
 // When the URL changes due to navigation, back button press, etc
@@ -35,34 +31,30 @@ function onNavigation(navRoutes) {
     let {previousRoute, route} = navRoutes;
     let params = route.params;
 
-    let indicatorId, programId;
-
-    // Clear all selections such that routes don't need to worry about previous routes
-    uiStore.clearSelectedProgramId();
-    uiStore.clearSelectedIndicatorId();
-
-    // params may be strings or ints depending
-    switch (navRoutes.route.name) {
-        case 'all':
-            break;
-        case 'program':
-            programId = parseInt(params.program_id);
-            uiStore.setSelectedProgramId(programId);
-            break;
-        case 'project':
-            break;
-        case 'indicator':
-            programId = parseInt(params.program_id);
-            indicatorId = parseInt(params.indicator_id);
-            uiStore.setSelectedProgramId(programId);
-            uiStore.setSelectedIndicatorId(indicatorId);
-            break;
-        case 'record':
-            break;
-        default:
-            console.log('hmmm')
+    if (params.indicator_id) {
+        uiStore.setSelectedIndicatorId(parseInt(params.indicator_id));
+    } else {
+        uiStore.clearSelectedIndicatorId();
     }
-    console.log(navRoutes);
+
+    if (params.program_id) {
+        uiStore.setSelectedProgramId(parseInt(params.program_id));
+    } else {
+        uiStore.clearSelectedProgramId();
+        uiStore.clearSelectedIndicatorId();
+    }
+
+    if (params.record_id) {
+        uiStore.setSelectedRecordId(parseInt(params.record_id));
+    } else {
+        uiStore.clearSelectedRecordId();
+    }
+
+    if (params.project_id) {
+        uiStore.setSelectedProjectId(parseInt(params.project_id));
+    } else {
+        uiStore.clearSelectedProjectId();
+    }
 }
 
 const router = createRouter(routes, {
@@ -81,9 +73,9 @@ router.start();
 // program filter selection
 eventBus.on('program-id-filter-selected', (programId) => {
     if (programId) {
-        router.navigate('program', {program_id: programId});
+        router.navigate('records', {program_id: programId});
     } else {
-        router.navigate('all');
+        router.navigate('records');
     }
 });
 
@@ -91,10 +83,31 @@ eventBus.on('indicator-id-filter-selected', (indicatorId) => {
     const programId = uiStore.selectedProgramId;
 
     if (indicatorId) {
-        router.navigate('indicator', {program_id: programId, indicator_id: indicatorId});
+        router.navigate('records', {program_id: programId, indicator_id: indicatorId});
     } else {
-        router.navigate('program', {program_id: programId});
+        router.navigate('records', {program_id: programId});
     }
+});
+
+eventBus.on('record-id-filter-selected', (recordId) => {
+    const programId = uiStore.selectedProgramId;
+    const indicatorId = uiStore.selectedIndicatorId;
+
+    let qs = {};
+
+    if (programId) {
+        qs.program_id = programId;
+    }
+
+    if (indicatorId) {
+        qs.indicator_id = indicatorId;
+    }
+
+    if (recordId) {
+        qs.record_id = recordId;
+    }
+
+    router.navigate('records', qs);
 });
 
 

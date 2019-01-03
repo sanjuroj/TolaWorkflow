@@ -9,6 +9,27 @@ import eventBus from '../../../eventbus';
 import {dateFromISOString, mediumDateFormatStr} from "../../../date_utils";
 
 
+// Given the full records list in rootStore, and the selected filters in uiStore, apply filtering (sans individual record select)
+function filterRecords(rootStore, uiStore) {
+    let records = rootStore.records;
+
+    if (uiStore.selectedProgramId) {
+        records = records.filter(r => r.program === uiStore.selectedProgramId);
+    }
+
+    if (uiStore.selectedProjectId) {
+        records = records.filter(r => r.project && r.project.id === uiStore.selectedProjectId);
+    }
+
+    if (uiStore.selectedIndicatorId) {
+        let recordsForIndicator = new Set(rootStore.getRecordsForIndicator(uiStore.selectedIndicatorId));
+        records = records.filter(r => recordsForIndicator.has(r.id));
+    }
+
+    return records
+}
+
+
 @observer
 class ProgramFilterSelect extends React.Component {
     constructor(props) {
@@ -63,21 +84,13 @@ class IndicatorFilterSelect extends React.Component {
     render() {
         const {rootStore, uiStore} = this.props;
         const {selectedProgramId, selectedIndicatorId} = uiStore;
-        const placeholderText = gettext('Filter by indicator');
 
-        // Only enabled if a program is selected
-        if (! selectedProgramId) {
-            return <Select
-                isDisabled={true}
-                placeholder={placeholderText}
-            />
+        let indicatorOptions = [];
+        if (selectedProgramId) {
+            indicatorOptions = rootStore.getIndicators(selectedProgramId).map(i => {
+                return {value: i.id, label: i.name}
+            });
         }
-
-        const indicators = rootStore.getIndicators(selectedProgramId);
-
-        let indicatorOptions = indicators.map(i => {
-            return {value: i.id, label: i.name}
-        });
 
         let selectedValue = null;
         if (selectedIndicatorId) {
@@ -85,10 +98,49 @@ class IndicatorFilterSelect extends React.Component {
         }
 
         return <Select
+            isDisabled={! selectedProgramId}
             options={indicatorOptions}
             value={selectedValue}
             isClearable={true}
-            placeholder={placeholderText}
+            placeholder={gettext('Filter by indicator')}
+            onChange={this.onSelection}
+        />
+    }
+}
+
+
+@observer
+class RecordFilterSelect extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.onSelection = this.onSelection.bind(this);
+    }
+
+    onSelection(selectedObject) {
+        let recordId = selectedObject ? selectedObject.value : null;
+        eventBus.emit('record-id-filter-selected', recordId);
+    }
+
+    render() {
+        const {rootStore, uiStore} = this.props;
+        const records = filterRecords(rootStore, uiStore);
+        const selectedRecordId = uiStore.selectedRecordId;
+
+        let recordOptions = records.map(r => {
+            return {value: r.id, label: r.name}
+        });
+
+        let selectedValue = null;
+        if (selectedRecordId) {
+            selectedValue = recordOptions.filter(r => r.value === selectedRecordId)[0];
+        }
+
+        return <Select
+            options={recordOptions}
+            value={selectedValue}
+            isClearable={true}
+            placeholder={gettext('Find a record')}
             onChange={this.onSelection}
         />
     }
@@ -108,6 +160,7 @@ class RecordsFilterBar extends React.Component {
                 <IndicatorFilterSelect rootStore={rootStore} uiStore={uiStore} />
             </div>
             <div className="col-3">
+                <RecordFilterSelect rootStore={rootStore} uiStore={uiStore} />
             </div>
             <div className="col-3 text-right">
                 <a href="/workflow/documentation_add" className="btn btn-link btn-add">
@@ -121,14 +174,11 @@ class RecordsFilterBar extends React.Component {
 
 const RecordsListTable = observer(function ({rootStore, uiStore}) {
     // Apply filters to displayed list of records
-    let records = rootStore.records;
+    let records = filterRecords(rootStore, uiStore);
 
-    if (uiStore.selectedProgramId) {
-        records = records.filter(r => r.program === uiStore.selectedProgramId);
-    }
-
-    if (uiStore.selectedIndicatorId) {
-        records = records.filter(r => r.indicator === uiStore.selectedIndicatorId);
+    // filter down by individual record select
+    if (uiStore.selectedRecordId) {
+        records = records.filter(r => r.id === uiStore.selectedRecordId);
     }
 
     // If no records, don't show a table

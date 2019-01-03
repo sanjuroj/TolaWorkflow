@@ -36,9 +36,9 @@
             <p><a href="{% url 'programIndicatorReport' program.id %}">{% trans "Indicator Plan" %}</a></p>
         </section>
         <section class="sidebar__detail">
-            <h3>{% trans "Documents" %}</h3>
-            <p><a href="{% url 'documentation_list' program.id 0 %}">{% trans "View program documents" %}</a></p>
-            <a href="{% url 'documentation_add' %}?program_id={{ program.id }}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add document" %}</a>
+            <h3>{% trans "Records" %}</h3>
+            <p><a href="{% url 'documentation_list' program.id 0 %}">{% trans "View program records" %}</a></p>
+            <a href="{% url 'documentation_add' %}?program_id={{ program.id }}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add record" %}</a>
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Sites" %}</h3>
