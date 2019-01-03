@@ -75,6 +75,7 @@
         "webpack-merge": "^4.1.4"
     },
     "dependencies": {
-        "axios": "^0.18.0"
+        "axios": "^0.18.0",
+        "react-paginate": "^6.0.0"
     }
 }
