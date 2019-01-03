@@ -792,7 +792,10 @@ class ProjectCompleteImport(ListView):
 
 def documentation_list(request):
     user_countries = request.user.tola_user.countries.all()
-    programs = Program.objects.all().filter(funding_status="Funded", country__in=user_countries).prefetch_related(Prefetch('indicator_set', queryset=Indicator.objects.order_by('name')))
+
+    # indicators = Indicator.objects.order_by('name')
+    indicators = Indicator.objects.with_logframe_sorting()
+    programs = Program.objects.all().filter(funding_status="Funded", country__in=user_countries).prefetch_related(Prefetch('indicator_set', queryset=indicators))
 
     # create a mapping of indicators to records
     all_program_results = Result.objects.filter(indicator__program__in=programs, evidence__isnull=False)

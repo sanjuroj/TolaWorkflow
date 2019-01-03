@@ -10,6 +10,7 @@ class RecordListIndicatorSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'name',
+            'number',
         ]
 
 
