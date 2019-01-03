@@ -1070,24 +1070,28 @@ def collected_data_view(request, indicator, program):
         if index == 0:
             last_data_record_value = pt.last_data_row
             grand_achieved_sum = pt.achieved_sum if pt.achieved_sum is not None else 0
-            if grand_achieved_sum == 0:
-                pt.cumulative_sum = ''
-            else:
-                pt.cumulative_sum = grand_achieved_sum
+            pt.cumulative_sum = grand_achieved_sum
         else:
             try:
                 # update this variable only if there is a data value
                 last_data_record_value = pt.last_data_row if pt.last_data_row is not None else last_data_record_value
                 grand_achieved_sum += pt.achieved_sum
-                if grand_achieved_sum == 0:
-                    pt.cumulative_sum = ''
-                else:
-                    pt.cumulative_sum = grand_achieved_sum
+                pt.cumulative_sum = grand_achieved_sum
             except TypeError:
                 pass
 
-    if grand_achieved_sum == 0:
-        grand_achieved_sum = ''
+        try:
+            if ind.unit_of_measure_type == 1:
+                if ind.is_cumulative:
+                    pt.percent_met = pt.cumulative_sum / pt.target * 100
+                else:
+                    pt.percent_met = pt.achieved_sum / pt.target * 100
+            else:
+                pt.percent_met = pt.last_data_row / pt.target * 100
+        except TypeError:
+            pt.percent_met = 0
+
+        pt.on_target = True if (85 <= pt.percent_met <= 115) else False
 
     # show all of the data records that do not yet have periodic_targets
     # associated with them.

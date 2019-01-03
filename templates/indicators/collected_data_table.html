@@ -59,18 +59,7 @@
             </td>
             <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right td--pad">
                 {% if item.target %}
-                    {% if indicator.unit_of_measure_type == 1 %}
-                        {% if indicator.is_cumulative == True %}
-                            {% widthratio item.cumulative_sum item.target 100 as percent_met %}
-                            {% if percent_met %} {{ percent_met }}% {% endif %}
-                        {% else %}
-                            {% widthratio item.achieved_sum item.target 100 as percent_met %}
-                            {% if percent_met %} {{ percent_met }}% {% endif %}
-                        {% endif %}
-                    {% else %}
-                        {% widthratio item.last_data_row item.target 100 as percent_met %}
-                        {% if percent_met %} {{ percent_met }}% {% endif %}
-                    {% endif %}
+                    <a href="#" aria-describedby="{% if item.on_target %}success{% else %}warning{% endif %}" class="badge {% if item.on_target %}badge-success-light{% else %}badge-warning-light{% endif %}">{{ item.percent_met|floatformat:"0" }}%</a>
                 {% else %}
                     {% trans 'N/A' %}
                 {% endif %}
