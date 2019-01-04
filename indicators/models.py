@@ -819,13 +819,14 @@ class PeriodicTarget(models.Model):
     @property
     def has_ended(self):
         try:
-            if self.indicator.is_target_frequency_time_aware:
+            if self.indicator.is_target_frequency_time_aware: # for annual, semi-annual, quarterly, monthly
                 return self.end_date < timezone.localdate()
+            elif self.indicator.target_frequency == Indicator.LOP: # LOP target ends when the program does
+                return self.indicator.program.reporting_period_end < timezone.localdate()
             else:
                 return False
         except TypeError: # some edge cases for time-aware targets created without dates
                 return False
-        #TODO: what should we do with targets that are not time aware but have timestamps e.g events
 
     @property
     def period_name(self):

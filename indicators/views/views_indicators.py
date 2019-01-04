@@ -1097,10 +1097,13 @@ def collected_data_view(request, indicator, program):
 
     # percentage of targets met for Life of Program for this indicator
     percent_met = 0
-    if ind.unit_of_measure_type == 1:
-        percent_met = grand_achieved_sum / ind.lop_target * 100
-    elif ind.unit_of_measure_type == 2:
-        percent_met = last_data_record_value / ind.lop_target * 100
+    try:
+        if ind.unit_of_measure_type == 1:
+            percent_met = grand_achieved_sum / ind.lop_target * 100
+        elif ind.unit_of_measure_type == 2:
+            percent_met = last_data_record_value / ind.lop_target * 100
+    except TypeError: # in case last_data_record_value is NoneType
+        percent_met = 0
 
     # whether this indicator is track
     on_track = True if (85 <= percent_met <= 115) else False
