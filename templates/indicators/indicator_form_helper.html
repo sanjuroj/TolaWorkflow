@@ -398,16 +398,12 @@
 
     /*
     Adds/removes the percent symbol to the LOP_TARGET and BASELINE fields
-    if the UNIT_OF_MEASURE_TYPE is set to Number (#)
-    params:
-        - unit_of_measure_type:
-            1 = Number (#)
-            2 = Percentage (%)
     */
     function togglePercentSymbol(){
+        // toggle % sign on sum values
         $(".periodic-targets__sum__value").toggleClass('input-symbol-percent')
 
-        // add the % sign to target values
+        // toggle % sign to target inputs
         $("#periodic_targets_table input[data-periodictarget]").each(function(index, element) {
             $(element).parent().toggleClass('input-symbol-percent');
         });
@@ -526,7 +522,6 @@
 
     $( document ).ready(function() {
         var unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
-        //togglePercentSymbol(unit_of_measure_type);
         if (unit_of_measure_type == 2){
             show_hide_cummulative_inputs('percent')
         }
