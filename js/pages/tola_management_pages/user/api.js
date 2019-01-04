@@ -1,6 +1,6 @@
 import {api} from '../../../api';
 
-export const fetchUsersWithFilter = (page) => api.get('/api/tola_management/user/', {params: {page: page}}).then(response => {
+export const fetchUsersWithFilter = (page, filters) => api.get('/api/tola_management/user/', {params: {page: page, ...filters}}).then(response => {
     let data = response.data
 
     let total_results_count = data.count
