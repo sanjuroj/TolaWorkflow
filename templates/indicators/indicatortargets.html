@@ -27,15 +27,15 @@
                             <span style="" class="help-block"> </span>
                         </td>
                         {% else %}
-                        <td class="text-left td--stretch">
-                            <h4 class="text-dark">
-                                {{ pt.period_name }}<br>
-                                <small>{{ pt.start_date|convert2dateobject|date:"MEDIUM_DATE_FORMAT"|default:'' }} {% if pt.start_date %} - {% endif %} {{ pt.end_date|convert2dateobject|date:"MEDIUM_DATE_FORMAT"|default:'' }}</small>
-                            </h4>
+                        <td class="text-left align-middle td--stretch">
+                            <strong>{{ pt.period_name }}</strong>
+                            {% if pt.start_date %}
+                                <br><small>{{ pt.start_date|convert2dateobject|date:"MEDIUM_DATE_FORMAT"|default:'' }} {% if pt.start_date %} - {% endif %} {{ pt.end_date|convert2dateobject|date:"MEDIUM_DATE_FORMAT"|default:'' }}</small>
+                            {% endif %}
                         </td>
                         {% endif %}
 
-                        <td class="text-right">
+                        <td class="text-right align-middle">
                             <span id="id_span_{{ pt.id }}" class="{% if indicator.unit_of_measure_type == 2 %}input-symbol-percent{% endif %}">
                                 <input
                                     type="number"
@@ -54,20 +54,17 @@
 
                     {% if forloop.last %}
                     <tr class="" id="pt_sum_targets">
-                        <td class="periodic-targets__sum text-left td--stretch">
+                        <td class="periodic-targets__sum text-left align-middle td--stretch">
                             <strong><span id="id_span_label_targets_sum">{% trans "Sum of targets" %}</span></strong>
                         </td>
-                        <td class="periodic-targets__sum text-right">
+                        <td class="periodic-targets__sum align-middle text-right">
                             <strong>
-                                <span id="id_span_targets_sum">
+                                <span id="id_span_targets_sum" class="{% if indicator.unit_of_measure_type == 2 %}input-symbol-percent{% endif %}">
                                     {% if indicator.unit_of_measure_type == 1%}
                                         {{ targets_sum|floatformat:"-2" }}
                                     {% else %}
                                         {{ targets_avg|floatformat:"-2" }}
                                     {% endif %}
-                                </span>
-                                <span id="id_span_targtsaggregate_percent_sign">
-                                    {% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                                 </span>
                             </strong>
                         </td>
@@ -79,13 +76,10 @@
                         <td class="periodic-targets__sum text-left td--stretch">
                             <strong>{% trans "Life of Program (LoP) target" %}</strong>
                         </td>
-                        <td class="periodic-targets__sum text-right">
-                            <strong>
-                                <span id="id_span_loptarget">
+                        <td class="periodic-targets__sum text-right ">
+                            <strong class="{% if indicator.unit_of_measure_type == 2 %}input-symbol-percent{% endif %}">
+                                <span id="id_span_loptarget" class="input-value">
                                     {{ indicator.lop_target|floatformat:"-2" }}
-                                    <span id="id_span_loptarget_percent_sign" style="margin-left: -.20rem">
-                                        {% if indicator.unit_of_measure_type == 2 %}%{% endif %}
-                                    </span>
                                 </span>
                             </strong>
                         </td>
@@ -105,18 +99,16 @@
         </div>
         {% endif %}
 
-        <div class="form-group" id="id_div_is_cumulative">
+        <div class="form-group card card-body" id="id_div_is_cumulative">
             <!-- UNIT_OF_MEASURE_TYPE = 1 IS NUMBER AND 2 IS PERCENTAGE -->
             <!-- IS_CUMULATIVE = 2 and NON_CUMULATIVE = 3 -->
             {% with unit_type=indicator.unit_of_measure_type %}
             <div class="" id="id_is_cumulative_section_header">
-                <strong>
-                    <h4>
-                        <span id="id_span_is_cumulative_header">
-                            {% trans "Options for number (#) indicators" %}
-                        </span>
-                    </h4>
-                </strong>
+                <h4>
+                    <span id="id_span_is_cumulative_header">
+                        {% trans "Options for number (#) indicators" %}
+                    </span>
+                </h4>
             </div>
             <div id="id_div_is_cumulative_section1" class="form-check">
                 <input
