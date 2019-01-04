@@ -820,7 +820,7 @@ class PeriodicTarget(models.Model):
     def has_ended(self):
         """ returns whether the target period is considered 'ended" for purposes of aggregating e.g. in gauges """
         try:
-            if self.indicator.is_target_frequency_time_aware: # for annual, semi-annual, quarterly, monthly
+            if self.indicator.is_target_frequency_time_aware: # for annual, semi/tri-annual, quarterly, monthly
                 return self.end_date < timezone.localdate()
             elif self.indicator.target_frequency == Indicator.LOP: # LOP target ends when the program does
                 return self.indicator.program.reporting_period_end < timezone.localdate()
