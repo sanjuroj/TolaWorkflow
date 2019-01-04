@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n mathfilters mytags static %}
+{% load i18n mytags static %}
 {% load render_bundle from webpack_loader %}
 {% block title %}{% endblock %}
 {% block page_title %}{% endblock %}
@@ -12,7 +12,7 @@
 
 {% block extra_js_in_body %}
     <script>
-        let jsContext = {{ js_context|js }};
+        let jsContext = {{ js_context | safe }};
     </script>
 
     {% render_bundle bundle_name %}

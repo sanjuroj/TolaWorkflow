@@ -7250,6 +7250,39 @@ td.periodic-targets__sum {
     flex-grow: 1;
     padding: 15px; }
 
+#user-management-index-view .td--stretch {
+  display: flex;
+  justify-content: space-around; }
+  #user-management-index-view .td--stretch div {
+    width: 1rem; }
+
+#user-management-index-view .filter-buttons {
+  display: flex;
+  justify-content: space-around; }
+
+.list-metadata {
+  display: flex;
+  justify-content: space-between; }
+
+.pagination {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 0.3rem; }
+  .pagination li {
+    color: #0645AD; }
+    .pagination li:hover, .pagination li.active {
+      color: #ADD8E6; }
+    .pagination li.disabled {
+      color: #ccc; }
+      .pagination li.disabled a {
+        cursor: default; }
+    .pagination li a {
+      text-decoration: none;
+      color: inherit;
+      width: 1rem;
+      padding: 0 1rem;
+      cursor: pointer; }
+
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
   color: #71757b !important;
