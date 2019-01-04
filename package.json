@@ -77,6 +77,8 @@
     },
     "dependencies": {
         "axios": "^0.18.0",
-        "react-paginate": "^6.0.0"
+        "react-bootstrap-table-next": "^2.0.0",
+        "react-paginate": "^6.0.0",
+        "react-select": "^2.2.0"
     }
 }
