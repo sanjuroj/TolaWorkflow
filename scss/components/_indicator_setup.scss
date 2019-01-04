@@ -1,0 +1,47 @@
+#indicator_modal_body { // TODO: refactor this away
+    .select2-selection {
+        border-radius: 0px;
+        border-color: $gray-500;
+    }
+    .select2-container--focus .select2-selection {
+        border-color: $blue-400;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
+    }
+}
+.indicator-setup {
+    // overload tab functionality here for vertical tabs
+    .nav-tabs {}
+    .nav-item {
+        white-space: nowrap;
+    }
+    .tab-content {}
+}
+.periodic-targets {
+    background: $white;
+    margin-bottom: $grid-gutter-width;
+    padding: $grid-gutter-width/2;
+}
+.periodic-targets__table {}
+.periodic-target {}
+td.periodic-targets__sum { // td needed for extra specificity
+    padding: $grid-gutter-width/3 $grid-gutter-width/1.5;
+}
+// Don't define border property here.  Assigning here prevents red border from
+// being applied when there is no value
+.periodic-target .input-value {
+    padding-right: 10px;
+    text-align: right;
+    width: 150px;
+    display: table-cell;
+    .input-text {
+        padding-right: 2px;
+        text-align: left;
+        box-shadow: none;
+        display: table-cell;
+    }
+    .controls input::placeholder {
+        color: $gray-500;
+    }
+}
+
