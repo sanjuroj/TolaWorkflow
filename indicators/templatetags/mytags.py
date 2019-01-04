@@ -123,10 +123,11 @@ def make_percent(numerator, denominator):
     return max(1, min(99, int(round(float(numerator*100)/denominator))))
 
 @register.inclusion_tag('indicators/tags/target-percent-met.html', takes_context=True)
-def target_percent_met(context, on_target, percent_met):
+def target_percent_met(context, on_target, percent_met, has_ended):
     return {
         'on_target': on_target,
         'percent_met': percent_met,
+        'has_ended': has_ended
     }
 
 

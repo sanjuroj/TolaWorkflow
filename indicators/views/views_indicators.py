@@ -1092,7 +1092,7 @@ def collected_data_view(request, indicator, program):
         except TypeError:
             pt.percent_met = 0
 
-        # if this target is on target
+        # if this target is on track
         pt.on_track = True if (85 <= pt.percent_met <= 115) else False
 
     # percentage of targets met for Life of Program for this indicator
@@ -1102,7 +1102,7 @@ def collected_data_view(request, indicator, program):
     elif ind.unit_of_measure_type == 2:
         percent_met = last_data_record_value / ind.lop_target * 100
 
-    # whether this indicator is target
+    # whether this indicator is track
     on_track = True if (85 <= percent_met <= 115) else False
 
     # show all of the data records that do not yet have periodic_targets
