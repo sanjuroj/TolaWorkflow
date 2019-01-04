@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load static %}
+{% load render_bundle from webpack_loader %}
 {% load group_tag menu_tag %}
 {% load i18n %}
 <!doctype html>
@@ -270,6 +271,10 @@
 
         <!-- Django i18n tools and translations -->
         <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
+
+        {# Webpack runtime and vendor bundles, shared across all pages using webpack #}
+        {% render_bundle 'runtime' %}
+        {% render_bundle 'vendors' %}
 
         {% block extra_js_in_body %}
         {% endblock %}

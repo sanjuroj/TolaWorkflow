@@ -61,6 +61,23 @@ module.exports = {
         // }),
     ],
 
+    optimization: {
+        // split manifest out
+        runtimeChunk: 'single',
+        // splitChunks: {
+        //     chunks: 'initial',
+        // },
+        splitChunks: {
+            cacheGroups: {
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    chunks: 'all'
+                }
+            }
+        },
+    },
+
     externals: {
         jquery: 'jQuery',
     }
