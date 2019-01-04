@@ -7000,8 +7000,10 @@ body > .container {
 .periodic-target {
   background: #fff; }
 
-td.periodic-targets__sum {
-  padding-right: 15px; }
+.periodic-targets__sum__value {
+  padding-right: 0.7rem; }
+  .periodic-targets__sum__value.input-symbol-percent {
+    padding: 0; }
 
 .periodic-target .input-value {
   padding-right: 10px;
@@ -7309,9 +7311,9 @@ input[type=number]::-webkit-outer-spin-button {
     transform: translateY(-50%);
     margin: auto;
     content: "%";
-    right: 0.4rem; }
+    right: 0.5rem; }
   .input-symbol-percent .input-value, .input-symbol-percent input.input-value {
-    padding-right: 1.60rem; }
+    padding-right: 1.5rem; }
 
 .hide-askerisks .asteriskField {
   display: none; }

@@ -25,8 +25,17 @@
     background: $white;
 }
 td.periodic-targets__sum { // td needed for extra specificity
-    padding-right: $grid-gutter-width/2;
+    //padding-right: $grid-gutter-width/2;
 }
+.periodic-targets__sum__value {
+    // fakes alignment on targets table for NON-percent (i.e. Number) values
+    padding-right: 0.7rem;
+    &.input-symbol-percent {
+        // ...unfake it
+        padding: 0;
+    }
+}
+
 // Don't define border property here.  Assigning here prevents red border from
 // being applied when there is no value
 .periodic-target .input-value {

@@ -404,26 +404,13 @@
             1 = Number (#)
             2 = Percentage (%)
     */
-    function togglePercentSymbol(unit_of_measure_type){
-        var unit_of_measure_type = parseInt(unit_of_measure_type);
+    function togglePercentSymbol(){
+        $(".periodic-targets__sum__value").toggleClass('input-symbol-percent')
 
-        if (unit_of_measure_type == 2) { // 2 is for percent option
-            $("#span_id_lop_target").addClass('input-symbol-percent')
-            $("#span_id_baseline").addClass('input-symbol-percent');
-
-            // add the % sign to target values
-            $("#periodic_targets_table input[data-periodictarget]").each(function(index, element) {
-                $(element).parent().addClass('input-symbol-percent');
-            });
-        } else {
-            $("#span_id_lop_target").removeClass('input-symbol-percent')
-            $("#span_id_baseline").removeClass('input-symbol-percent');
-
-            // remove the % sign from target values
-            $("#periodic_targets_table input[data-periodictarget]").each(function(index, element) {
-                $(element).parent().removeClass('input-symbol-percent');
-            });
-        }
+        // add the % sign to target values
+        $("#periodic_targets_table input[data-periodictarget]").each(function(index, element) {
+            $(element).parent().toggleClass('input-symbol-percent');
+        });
     }
 
     /*
@@ -539,7 +526,7 @@
 
     $( document ).ready(function() {
         var unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
-        togglePercentSymbol(unit_of_measure_type);
+        //togglePercentSymbol(unit_of_measure_type);
         if (unit_of_measure_type == 2){
             show_hide_cummulative_inputs('percent')
         }
@@ -557,7 +544,7 @@
     */
     $("#indicator_modal_content, #indicator_form").on("change", ":input[name='unit_of_measure_type']", function(e){
         var unit_of_measure_type = parseInt(e.target.value);
-        togglePercentSymbol(unit_of_measure_type);
+        togglePercentSymbol();
         toggleCummulativeOptions(unit_of_measure_type);
         updateAggregateRowValueAndLabel();
     });
