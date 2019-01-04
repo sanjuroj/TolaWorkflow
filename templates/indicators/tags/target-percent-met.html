@@ -1,8 +1,8 @@
 {% if has_ended %}
     {% if on_track %}
-        <a href="#" aria-describedby="success" class="badge badge-success-light">{{ percent_met|floatformat:"0" }}%</a>
+        <span aria-describedby="success" class="badge badge-success-light">{{ percent_met|floatformat:"0" }}%</span>
     {% else %}
-        <a href="#" aria-describedby="warning" class="badge badge-warning-light">{{ percent_met|floatformat:"0" }}%</a>
+        <span aria-describedby="warning" class="badge badge-warning-light">{{ percent_met|floatformat:"0" }}%</span>
     {% endif %}
 {% else %}
         <span class="badge">{{ percent_met|floatformat:"0" }}%</span>
