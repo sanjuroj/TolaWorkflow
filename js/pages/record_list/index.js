@@ -7,7 +7,7 @@ import eventBus from '../../eventbus';
 import {RecordsView} from './components/record_list';
 import {RecordListStore, RecordListUIStore} from './models';
 
-console.log(jsContext);
+// console.log(jsContext);
 
 const {records, programs, indicatorToRecordsMap, allowProjectsAccess} = jsContext;
 

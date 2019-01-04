@@ -231,12 +231,18 @@ const RecordsListTable = observer(function ({rootStore, uiStore}) {
         order: 'desc'
     }];
 
+    const paginationOptions = {
+        sizePerPage: 50,
+        // page: 2,
+        showTotal: true,
+    };
+
     return <BootstrapTable
         keyField="id"
         data={records}
         columns={columns}
         bootstrap4={true}
-        pagination={paginationFactory()}
+        pagination={paginationFactory(paginationOptions)}
         defaultSorted={defaultSorted}
     />
 });
