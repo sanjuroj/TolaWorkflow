@@ -9,28 +9,80 @@ export class UserStore {
     @observable previous_page = null
     @observable next_page = null
     @observable total_pages = null
-    @observable available_countries = []
     @observable bulk_targets = new Map()
     @observable bulk_targets_all = false
 
+    //filter options
+    @observable available_countries = []
+    @observable available_organizations = []
+    @observable available_programs = []
+    @observable available_users = []
+    user_status_options = [
+        {value: 1, label: 'Active'},
+        {value: 0, label: 'Inactive'}
+    ]
+
+    admin_role_options = [
+        {value: 1, label: 'Yes'},
+        {value: 0, label: 'No'}
+    ]
+
     @observable filters = {
-        country: '',
-        base_country: '',
-        organization: '',
-        programs: '',
-        status: '',
-        roles_and_perms: '',
-        users: ''
+        countries: [],
+        base_countries: [],
+        organizations: [],
+        programs: [],
+        user_status: '',
+        admin_role: '',
+        users: []
     }
 
-    constructor(available_countries) {
-        this.available_countries = available_countries
+    constructor(
+        countries,
+        organizations,
+        programs,
+        users
+    ) {
+        this.available_countries = countries
+        this.available_organizations = organizations
+        this.available_programs = programs
+        this.available_users = users.filter(user => user.name)
+    }
+
+    /*******************
+    we turn the complex intermediate filter objects into simple lists for
+    transmission to the api, (while retaining their filter keys)
+
+    eg
+
+    {
+    ...
+    countries: [{label: 'Afghanistan', value: 1}]
+    }
+
+    becomes
+
+    {
+    ...
+    countries: [1]
+    }
+
+    */
+    marshalFilters(filters) {
+        return Object.entries(filters).reduce((xs, x) => {
+            if(Array.isArray(x[1])) {
+                xs[x[0]] = x[1].map(x => x.value)
+            } else {
+                xs[x[0]] = x[1].value
+            }
+            return xs
+        }, {})
     }
 
     @action
     async fetchUsers() {
         this.fetching = true
-        let results = await fetchUsersWithFilter(this.current_page + 1, this.filters)
+        let results = await fetchUsersWithFilter(this.current_page + 1, this.marshalFilters(this.filters))
         this.fetching = false
         this.users = results.users
         this.bulk_targets = new Map(this.users.map(user => [user.id, false]))
@@ -62,25 +114,50 @@ export class UserStore {
     }
 
     @action
-    changeCountryFilter(country_id) {
-        this.filters.country = country_id;
+    changeCountryFilter(countries) {
+        this.filters.countries = countries
     }
 
     @action
-    changeBaseCountryFilter(country_id) {
-        this.filters.base_country = country_id;
+    changeBaseCountryFilter(countries) {
+        this.filters.base_countries = base_countries
+    }
+
+    @action
+    changeOrganizationFilter(organizations) {
+        this.filters.organizations = organizations
+    }
+
+    @action
+    changeProgramFilter(programs) {
+        this.filters.programs = programs
+    }
+
+    @action
+    changeUserStatusFilter(status) {
+        this.filters.user_status = status
+    }
+
+    @action
+    changeAdminRoleFilter(role) {
+        this.filters.admin_role = role
+    }
+
+    @action
+    changeUserFilter(users) {
+        this.filters.users = users
     }
 
     @action
     clearFilters() {
         this.filters = {
-            country: '',
-            base_country: '',
-            organization: '',
-            programs: '',
-            status: '',
-            roles_and_perms: '',
-            users: ''
+            countries: [],
+            base_countries: [],
+            organizations: [],
+            programs: [],
+            user_status: '',
+            admin_role: '',
+            users: []
         }
     }
 }

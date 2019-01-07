@@ -2,6 +2,8 @@ import React from 'react'
 import ReactPaginate from 'react-paginate'
 import { observer } from "mobx-react"
 import BootstrapTable from 'react-bootstrap-table-next'
+import Select from 'react-select'
+import {VirtualizedMenuList as MenuList} from '../../../components/virtualized-react-select'
 
 
 export const IndexView = observer(
@@ -43,6 +45,13 @@ export const IndexView = observer(
                 }
             },
             {
+                dataField: 'is_admin',
+                text: 'Admin Role',
+                formatter: (cell, row) => {
+                    return (cell)?'Yes':'No'
+                }
+            },
+            {
                 dataField: 'is_active',
                 text: 'Status',
                 formatter: (cell, row) => {
@@ -51,51 +60,81 @@ export const IndexView = observer(
             },
         ]
 
+        const countries_listing = store.available_countries.map(country => ({value: country.id, label: country.country}))
+        const organization_listing = store.available_organizations.map(org => ({value: org.id, label: org.name}))
+        const program_listing = store.available_programs.map(program => ({value: program.id, label: program.name}))
+        const user_listing = store.available_users.map(user => ({value: user.id, label: user.name}))
+
         return <div id="user-management-index-view" className="container-fluid row">
             <div className="col col-sm-3 filter-section">
                 <div className="form-group">
                     <label htmlFor="countries_permitted_filter">Countries Permitted</label>
-                    <select value={store.filters.country} onChange={(e) => store.changeCountryFilter(e.target.value)} className="form-control" id="countries_permitted_filter">
-                        <option value=''>None Selected</option>
-                        {store.available_countries.map(country => <option value={country.id} key={country.id}>{country.country}</option>)}
-                    </select>
+                    <Select
+                    value={store.filters.countries}
+                    options={countries_listing}
+                    onChange={(e) => store.changeCountryFilter(e)}
+                    isMulti={true}
+                    placeholder="None Selected"
+                    id="countries_permitted_filter" />
                 </div>
                 <div className="form-group">
                     <label htmlFor="base_country_filter">Base Country</label>
-                    <select value={store.filters.base_country} onChange={(e) => store.changeBaseCountryFilter(e.target.value)} className="form-control" id="base_country_filter">
-                        <option value=''>None Selected</option>
-                        {store.available_countries.map(country => <option value={country.id} key={country.id}>{country.country}</option>)}
-                    </select>
+                    <Select
+                    value={store.filters.base_countries}
+                    options={countries_listing}
+                    onChange={(e) => store.changeBaseCountryFilter(e)}
+                    isMulti={true}
+                    placeholder="None Selected"
+                    id="base_country_filter" />
                 </div>
-                <div className="foorm-group">
+                <div className="form-group">
                     <label htmlFor="organization_filter">Organization</label>
-                    <select className="form-control" id="organization_filter">
-                        <option>None Selected</option>
-                    </select>
+                    <Select
+                    value={store.filters.organizations}
+                    options={organization_listing}
+                    onChange={(e) => store.changeOrganizationFilter(e)}
+                    isMulti={true}
+                    placeholder="None Selected"
+                    id="organization_filter" />
                 </div>
-                <div className="foorm-group">
+                <div className="form-group">
                     <label htmlFor="programs_filter">Programs</label>
-                    <select className="form-control" id="programs_filter">
-                        <option>None Selected</option>
-                    </select>
+                    <Select
+                    value={store.filters.programs}
+                    options={program_listing}
+                    onChange={(e) => store.changeProgramFilter(e)}
+                    isMulti={true}
+                    placeholder="None Selected"
+                    id="programs_filter" />
                 </div>
-                <div className="foorm-group">
+                <div className="form-group">
                     <label htmlFor="status_filter">Status</label>
-                    <select className="form-control" id="status_filter">
-                        <option>None Selected</option>
-                    </select>
+                    <Select
+                    value={store.filters.user_status}
+                    options={store.user_status_options}
+                    onChange={(e) => store.changeUserStatusFilter(e)}
+                    placeholder="None Selected"
+                    id="status_filter" />
                 </div>
-                <div className="foorm-group">
-                    <label htmlFor="roles_and_perms_filter">Roles And Permissions</label>
-                    <select className="form-control" id="roles_and_perms_filter">
-                        <option>None Selected</option>
-                    </select>
+                <div className="form-group">
+                    <label htmlFor="admin_role_filter">Admin Role</label>
+                    <Select
+                    value={store.filters.admin_role}
+                    options={store.admin_role_options}
+                    onChange={(e) => store.changeAdminRoleFilter(e)}
+                    placeholder="None Selected"
+                    id="admin_role_filter" />
                 </div>
-                <div className="foorm-group">
+                <div className="form-group">
                     <label htmlFor="users_filter">Users</label>
-                    <select className="form-control" id="users_filter">
-                        <option>None Selected</option>
-                    </select>
+                    <Select
+                    components={{MenuList}}
+                    value={store.filters.users}
+                    options={user_listing}
+                    onChange={(e) => store.changeUserFilter(e)}
+                    isMulti={true}
+                    placeholder="None Selected"
+                    id="users_filter" />
                 </div>
                 <div className="filter-buttons">
                     <button className="btn btn-primary" onClick={() => store.fetchUsers()}>Apply</button>
