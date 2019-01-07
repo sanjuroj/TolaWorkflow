@@ -6,7 +6,10 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from workflow.models import TolaUser, TolaBookmarks
 from django.contrib.auth.models import User
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import (
+    ugettext_lazy as _,
+    activate as set_language
+    )
 
 
 class ProfileUpdateForm(forms.ModelForm):
@@ -15,6 +18,16 @@ class ProfileUpdateForm(forms.ModelForm):
     """
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
+        # moving helper button description to init so translations will re-init on reload:
+        self.helper.layout = Layout(
+            Field( 'language' ),
+            Div(
+                FormActions(
+                    Submit('submit', _('Save changes'), css_class=''),
+                    Reset('reset', _('Cancel'), css_class='')
+                ),
+            ),
+        )
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
 
     class Meta:
@@ -30,15 +43,13 @@ class ProfileUpdateForm(forms.ModelForm):
     helper.error_text_inline = True
     helper.help_text_inline = True
     helper.html5_required = True
-    helper.layout = Layout(
-        Field( 'language' ),
-        Div(
-            FormActions(
-                Submit('submit', _('Save changes'), css_class=''),
-                Reset('reset', _('Cancel'), css_class='')
-            ),
-        ),
-    )
+
+
+    def save(self, *args, **kwargs):
+        model = super(ProfileUpdateForm, self).save(*args, **kwargs)
+        # explicitly update the language on form save so success messages are in the correct lang:
+        set_language(model.language)
+        return model
 
 
 class NewUserRegistrationForm(UserCreationForm):
