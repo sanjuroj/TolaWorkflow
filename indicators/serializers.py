@@ -63,7 +63,6 @@ class IndicatorSerializer(serializers.ModelSerializer):
             'lop_target_display',
             'key_performance_indicator',
             'just_created',
-            'program',
 
             # DB annotations
             'reporting',  # whether indicator progress towards targets is reported (min. one target period complete, one result reported)
