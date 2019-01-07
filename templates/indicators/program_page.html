@@ -9,25 +9,15 @@
 
 {% block content %}
 
-
-{#    {% if indicator_count %}#}
-{#        <aside class="program__status">#}
-{#            <h2>{% trans "Program metrics" %}</h2>#}
-{#                <div class="status__gauges">#}
-{##}
-{#                    {% gauge_band True %}#}
-{##}
-{#                    {% gauge_tank "targets_defined" %}#}
-{##}
-{#                    {% gauge_tank "reported_results" %}#}
-{##}
-{#                    {% gauge_tank "results_evidence" %}#}
-{##}
-{#                </div>#}
-{#        </aside>#}
-{#    {% endif %}#}
-
+<aside class="program__status">
+    <h3>
+        Program metrics
+        <small>for target periods completed so far
+            {% include "indicators/program_target_period_info_helptext.html" %}
+        </small>
+    </h3>
     <div id="program-metrics-react-component"></div>
+</aside>
 
 <div class="program-page__main">
     <div class="program-page__sidebar">

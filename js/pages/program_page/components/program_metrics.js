@@ -66,12 +66,12 @@ class GaugeTank extends React.Component {
                     }
                 </div>
             </div>
+            { unfilledPercent > 0 &&
             <div className="gauge__cta">
-                { unfilledPercent > 0 &&
-                    <span className="btn-link btn-inline"><i className="fas fa-exclamation-triangle text-warning"/> {cta}</span>
-                }
+                <span className="btn-link btn-inline"><i className="fas fa-exclamation-triangle text-warning"/> {cta}</span>
                 &nbsp;
             </div>
+            }
         </div>;
     }
 }
@@ -318,9 +318,7 @@ export const ProgramMetrics = observer(function (props) {
     // Do not display on pages with no indicators
     if (indicators.length === 0) return null;
 
-    return <aside className="program__status">
-        <h2>{gettext("Program metrics")}</h2>
-        <div className="status__gauges">
+    return <div className="status__gauges">
 
             <GaugeBand currentIndicatorFilter={currentIndicatorFilter}
                        indicatorOnScopeMargin={indicatorOnScopeMargin}
@@ -356,5 +354,4 @@ export const ProgramMetrics = observer(function (props) {
                        />
 
         </div>
-    </aside>
 });
