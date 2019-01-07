@@ -7,7 +7,12 @@ import {IndexView} from './views';
 /*
  * Model/Store setup
  */
-const store = new UserStore(jsContext.available_countries);
+const store = new UserStore(
+    jsContext.countries,
+    jsContext.organizations,
+    jsContext.programs,
+    jsContext.users
+);
 
 store.fetchUsers();
 
