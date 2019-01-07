@@ -235,6 +235,15 @@ const RecordsListTable = observer(function ({rootStore, uiStore}) {
         sizePerPage: 50,
         // page: 2,
         showTotal: true,
+        paginationTotalRenderer: (from, to, size) => {
+            /* # Translators: Ex. Showing rows 1 to 50 of 92 */
+            const str = interpolate(gettext('Showing rows %(fromCount)s to %(toCount)s of %(totalCount)s'), {
+                fromCount: from,
+                toCount: to,
+                totalCount: size,
+            }, true);
+            return <span className="react-bootstrap-table-pagination-total">&nbsp;{str}</span>
+        }
     };
 
     return <BootstrapTable
