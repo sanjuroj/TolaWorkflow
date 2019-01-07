@@ -167,6 +167,7 @@ class IndicatorListTable extends React.Component {
                 const resultsExist = resultsMap.has(indicator.id);
                 const resultsStr = resultsMap.get(indicator.id);
                 const targetPeriodLastEndDate = indicator.target_period_last_end_date ? new Date(indicator.target_period_last_end_date) : null;
+                // ^^^ Because calling Date() on null returns the current date, and we actually need null!
 
                 return <React.Fragment key={indicator.id}>
                     <tr className={classNames("indicators-list__row", "indicators-list__indicator-header", {

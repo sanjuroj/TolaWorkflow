@@ -70,7 +70,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
             'all_targets_defined',  # whether all targets are defined for this indicator
             'results_count',
             'results_with_evidence_count',
-            'target_period_last_end_date',
+            'target_period_last_end_date', # last end date of last target period, for time-aware indicators
             'over_under',  # indicator progress towards targets (1: over, 0: within 15% of target, -1: under, "None": non reporting
         ]
 
