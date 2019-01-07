@@ -49,6 +49,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
     results_count = serializers.IntegerField()
     results_with_evidence_count = serializers.IntegerField()
     over_under = serializers.IntegerField()
+    target_period_last_end_date = serializers.DateField()
 
     class Meta:
         model = Indicator
@@ -62,12 +63,14 @@ class IndicatorSerializer(serializers.ModelSerializer):
             'lop_target_display',
             'key_performance_indicator',
             'just_created',
+            'program',
 
             # DB annotations
             'reporting',  # whether indicator progress towards targets is reported (min. one target period complete, one result reported)
             'all_targets_defined',  # whether all targets are defined for this indicator
             'results_count',
             'results_with_evidence_count',
+            'target_period_last_end_date',
             'over_under',  # indicator progress towards targets (1: over, 0: within 15% of target, -1: under, "None": non reporting
         ]
 
@@ -81,4 +84,5 @@ class ProgramSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'does_it_need_additional_target_periods',
+            'reporting_period_end',
         ]
