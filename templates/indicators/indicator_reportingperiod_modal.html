@@ -13,13 +13,13 @@
                     <input hidden=true name="program_id">
                     <div class="mb-4">
                         <div class="pt-3" style="display:inline-block; width: 90%">
-                            <div id="id-reportingperiod-title" class="mb-4"><h2>{% trans 'Reporting period' %}</h2></div>
+                            <div id="id-reportingperiod-title" class="mb-4"><h2>{% trans 'Program period' %}</h2></div>
                                 <div id="div-id-reportingperiod-alert">
                                 </div>
                             {% if close_only %} {# display only when the modal is required in order to show the program page #}
                                 <div>{% trans "Program reporting dates are required in order to view program metrics" %}</div>
                             {% endif %}
-                            <div>{% trans "The program reporting period is used in the setup of periodic targets and in Indicator Performance Tracking Tables (IPTT). TolaActivity initially sets the reporting period to include the program’s official start and end dates, as recorded in the Grant and Award Information Tracker (GAIT) system. The reporting period may be adjusted to align with the program’s indicator plan." %}</div>
+                            <div>{% trans "The program period is used in the setup of periodic targets and in Indicator Performance Tracking Tables (IPTT). TolaActivity initially sets the program period to include the program’s official start and end dates, as recorded in the Grant and Award Information Tracker (GAIT) system. The program period may be adjusted to align with the program’s indicator plan." %}</div>
                         </div>
                         <button
                             id="reporting_modal_close_btn"
@@ -54,7 +54,7 @@
                     <div class="card inputs-in-a-box" id="div-card-user-dates" style="width: 90%">
                         <div class="card-body px-4 py-3">
                             <div id="div_reporting_dates_title" class="mb-3">
-                                <h3>{% trans 'Reporting start and end dates' %}</h3>
+                                <h3>{% trans 'Program start and end dates' %}</h3>
                             </div>
                             <div id="div_reporting_dates" class="d-flex mb-3">
                                 <div id="div_id_reporting_start_date" class="mr-3 div-rpt-date-input">
@@ -83,18 +83,14 @@
                                 </div>
                             </div>
                             <div id="div_reporting_dates_description_unlocked">
-                                {% trans 'While a program may begin and end any day of the month, reporting periods must begin on the first day of the month and end on the last day of the month. Please note that the reporting start date can only be adjusted ' %}
-                                <span class="color-red">
-                                    {% trans 'before periodic targets are set up and a program begins submitting performance results. ' %}
-                                </span>
-                                {% trans "The reporting end date can be moved later at any time, but can't be moved earlier once periodic targets are set up." %}
+                                {% blocktrans %}
+                                While a program may begin and end any day of the month, program periods must begin on the first day of the month and end on the last day of the month. Please note that the program start date can only be adjusted <span class="color-red">before periodic targets are set up and a program begins submitting performance results.</span> The program end date can be moved later at any time, but can't be moved earlier once periodic targets are set up.
+                                {% endblocktrans %}
                             </div>
                             <div id="div_reporting_dates_description_locked">
-                                {% trans 'While a program may begin and end any day of the month, reporting periods must begin on the first day of the month and end on the last day of the month. Please note that the reporting start date can only be adjusted ' %}
-                                <span class="color-red">
-                                    {% trans 'before targets are set up and a program begins submitting performance results. ' %}
-                                </span>
-                                {% trans "Because this program already has periodic targets set up, only the reporting end date can be moved later." %}
+                                {% blocktrans %}
+                                While a program may begin and end any day of the month, program periods must begin on the first day of the month and end on the last day of the month. Please note that the program start date can only be adjusted <span class="color-red">before targets are set up and a program begins submitting performance results.</span> Because this program already has periodic targets set up, only the program end date can be moved later.
+                                {% endblocktrans %}
                             </div>
                         </div>
                     </div>
@@ -270,7 +266,7 @@
             source_data = $(this).data();
         }
         api_url = api_url.replace(/0\//, source_data['program']) + '/?format=json';
-        
+
         $.get(api_url, function(data){
             max_target_start = data['max_start_date'];
             modalSetup(data, source_data);
@@ -447,7 +443,7 @@
             catch(error){}
         }
     });
-    
+
     $("#reportingperiod_update_form_exit_btn").on('click', function(e) {
         e.preventDefault();
         $('#id_reporting_period_modal').modal('hide');

@@ -18,37 +18,69 @@ These instructions should get you up and running with a minimum of fuss if
 you have [macOS](#macos) or one of the many [Ubunten](#ubuntu). If they do
 not, we accept pull requests updating it. :)
 
+Through all of these instructions, it is __very important__ that a plain-text editor is used to edit the text files.
+For instance, TextEdit or Notepad are fine, MS Word is emphatically not.  Even some plain-text editors default 
+to a rich text format, so make sure you are saving plain text.
+
 ## Install the bits
 
 TolaActivity requires Python 2. MC uses MySQL as Django's datastore.
 
 ### macOS
 
-On macOS, you can use Homebrew to install Python 2 alongside the system
-Python 2 installation as shown in the following. You'll need to get a copy
-the file _settings.secret.yml_ from your mentor before proceeding.
+On macOS, you can use Homebrew to install much of the software needed for TolaActivity.  
+To see if you have Homebrew installed, run `which brew` at the command line.  If you don't get a file path, 
+it is not installed and you should run the following command from the command line.
+```bash
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
 
+Before starting the install process, you may also want to request a copy of the _settings.secret.yml_ file and 
+a dump of an existing TolaActivity database. 
+
+
+At the Terminal command line:
 ```bash
 $ brew install python@2
-$ brew install pip
-$ brew install mysql mysql-utilies
+$ brew install mysql@5.7
+```
+
+Add these lines to ~/.bash_profile (you may need to create it)
+```text
+export PATH="/usr/local/opt/openssl/bin:$PATH"
+export LIBRARY_PATH="/usr/local/opt/openssl/lib/:$LIBRARY_PATH"
+export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"
+
+export LDFLAGS="-L/usr/local/opt/openssl/lib"
+export CPPFLAGS="-I/usr/local/opt/openssl/include"
+export LDFLAGS="-L/usr/local/opt/mysql@5.7/lib"
+export CPPFLAGS="-I/usr/local/opt/mysql@5.7/include"
+```
+
+Back at the command line:
+```bash
+$ source ~/.bash_profile
+$ brew install mysql-utilities
 $ brew install py2cairo pango
-$ git clone https://github.com/mercycorps.org/TolaActivity.git
+$ git clone https://github.com/mercycorps/TolaActivity.git
 $ cd TolaActivity
-$ git checkout dev
-$ virtualenv -p python2 TolaActivty --no-site-packages venv # need to specify Python 2 for systems that might have Python 3 as default system version
-$ source venv/bin/activate
-$ mkdir config
-# Place settings.secret.yml into config/ directory
+$ pip install virtualenv
+$ virtualenv -p python2 --no-site-packages venv  # need to specify Python 2 for systems that might have Python 3 as default system version
+$ source venv/bin/activate  # you should see '(venv)' appear on the left of your command prompt
+$ pip install -r requirements.txt
+$ pip install --upgrade google-api-python-client
+```
+
+If you have a copy of the _settings.secret.yml_ file, place it in the TolaActivity/config 
+directory.  If you don't, then copy the sample file thusly:
+``` 
 cp config/sample-settings.secret.yml config/settings.secret.yml
-pip install -r requirements.txt
-pip install --upgrade google-api-python-client
 ```
 
 Edit the configuration file as described in
 [Modify the config file](#modify-the-config-file).
 
-### Ubuntu
+## Ubuntu
 
 On _Ubunten_ and derivatives, the following should get you going. We
 specify Python 2 because one day Python 3 *will* be the system Python.
@@ -60,7 +92,7 @@ $ python --version
 # Make sure output from above indicates Python 2
 $ sudo apt install mysql-server libmysqld-dev mysql-utilities mysql-client
 $ sudo apt install libsasl2-dev python-dev libldap2-dev libssl-dev
-$ git clone https://github.com/mercycorps.org/TolaActivity.git
+$ git clone https://github.com/mercycorps/TolaActivity.git
 $ cd TolaActivity
 $ virtualenv -p python2 --no-site-packages venv
 $ source venv/bin/activate
@@ -75,8 +107,9 @@ Edit the configuration file as described in
 [Modify the config file](#modify-the-config-file).
 
 ## Modify the config file
-
-1. Edit _config/settings.secret.yml_. Find the node named, "DATABASES" and set the
+Open the _config/settings.secret.yml_ file with a plain-text editor.
+ 
+1. Find the node named, "DATABASES" and set the
 database `PASSWORD` as appropriate. The result should resemble the following:
 
     ```yaml
@@ -84,62 +117,55 @@ database `PASSWORD` as appropriate. The result should resemble the following:
       default:
         ENGINE: "django.db.backends.mysql"
         NAME: "tola_activity"
-        USER: "admin"
+        USER: "tola"
         PASSWORD: "SooperSekritWord"
-        OPTIONS: {"init_command": "SET default_storage_engine=MYISAM",}
         HOST: "localhost"
         PORT: ""
     ```
 
-    Don't change the `USER` entry unless you know why you need
-    to do that.
+    The rest of the instructions assume that you've used the values above.
 
-1. Add an entry for the `SECRET_KEY` at the bottom of the file:
-
-    ```yaml
-    SECRET_KEY: 'YOUR_RANDOM_STRING_HERE'
-    ```
-
-1. Add an entry for the server `LOGFILE` at the bottom of the file:
+1. Modify the LOGFILE entry so it points to a file in the _logs_ directory you just created.
+    For example:
 
     ```yaml
-    LOGFILE: 'logs/runserver.log'
+    LOGFILE: '/User/<username>/logs/django_error.log'
     ```
 
-1. Make the log dir
-
-    ```bash
-    $ mkdir logs
+1. If they don't already exist, add the two lines below.  These let Django know which webpack bundles to use.
+    ```yaml
+    WEBPACK_STATS_FILE: 'webpack-stats.json'
+    WEBPACK_BUNDLE_DIR_NAME: 'dist/'
     ```
+
+
+## Create the log directory
+
+```bash
+$ mkdir /User/<username>/logs
+```    
 
 ## Set up Django's MySQL backing store
-
+Log into mysql and create the database, create the user, and grant permissions.
 ```sql
-mysql> CREATE DATABASE 'tola_activity';
-mysql> CREATE USER 'admin';
-mysql> GRANT ALL ON tola_activity.* TO 'admin'@'localhost' IDENTIFIED BY 'SooperSekritWord';
+$ mysql -u root
+mysql> CREATE DATABASE tola_activity;
+mysql> CREATE USER 'tola'@'localhost' IDENTIFIED BY 'SooperSekritWord';
+mysql> GRANT ALL ON tola_activity.* TO 'tola'@'localhost';
+mysql> exit
+
 ```
 
 ## Set up Django
 
-Set up the Django database:
+If you have a copy of an existing Tola database, you can load through the mysql command.  When prompted, you should provide the database password (SooperSekritWord).
+```bash
+$ mysql -u tola -p tola_activity < /path/to/file.sql
+```
+Run the database migrations, even if you just uploaded the .sql file.
 
 ```bash
 $ python manage.py migrate
-
-Operations to perform:
-  Apply all migrations: admin, auth, authtoken, contenttypes, customdashboard, formlibrary, indicators, reports, sessions, sites, social_django, workflow
-Running migrations:
-  Applying contenttypes.0001_initial... OK
-  Applying auth.0001_initial... OK
-  Applying admin.0001_initial... OK
-
-
-  [output deleted]
-
-  Applying workflow.0018_auto_20180514_1637... OK
-  Applying workflow.0019_language_choice... OK
-  Applying workflow.0020_auto_20180918_1554... OK
 ```
 
 ### If you get an error during migration
@@ -157,12 +183,13 @@ to a value too long for the destination row. To fix this, manually change the fo
 * social_auth_association.server_url to varchar(100)
 * social_auth_association.handle to varchar(100)
 
-In the MySQL CLI:
+You can address this through the MySQL CLI:
 
 ```bash
-mysql> USE tola_activity;
+$ mysql -u tola -p tola_activity  # you will be prompted for the database password
 mysql> ALTER TABLE social_auth_association MODIFY server_url varchar(100) NOT NULL;
 mysql> ALTER TABLE social_auth_association MODIFY handle varchar(100) NOT NULL;
+mysql> exit
 ```
 
 ...then re-run the migration as normal:
@@ -185,81 +212,126 @@ Starting development server at http://0.0.0.0:8000/
 Quit the server with CONTROL-C.
 ```
 
-## Configuring OAuth authentication
+## Try launching Tola in your browser
+In your browser, navigate to `localhost:8000`.  You should see a TolaActivity login screen.  You should also be able
+login through the Google+ link. 
 
-When running a local instance, we use Google's OAuth API for
-authentication to TolaActivity. There exists a bug in the API library
-that requires an ugly manual workaround before you can actually log in
-and starting using TolaActivity. The following procedure is a workaround
-for this bug until the bug is well and truly crushed.
+## Creating a local user
 
-1. Start the TolaActivity server as described in the previous section
-1. Open the home page in a web browser
-1. Click the "Google+" link below the login button to authenticate with
-   Google OAuth
-1. Login as normal using your MercyCorps SSO login
-1. What _should_ happen is that you get logged in and redirected to
-   to the TolaActivity home page. Likely as not, though, you'll get
-   a screen remarkably similar to the one in the following figure.
-   You guessed it, that means you've hit the bug.
-   ![ugly Django/Python traceback](docs/oauth_error.png)
-1. Stop the TolaActivity server
-1. Open a MySQL shell and connect to the tola_activity database
-1. Get the id of the record Google OAuth added to the TolaActivity
-   user table:
+If you are not logging in through the Google+ link, you will need to create a local user so you can log in.
+The following commands will create a local superuser and add the additional data that is required.
+When the `createsuperuser` command asks for an email, you can just hit the Enter key to skip the question.
 
-    ```bash
-    mysql> SELECT id,username,first_name,last_name FROM auth_user;
-    +----+----------+------------+-----------+
-    | id | username | first_name | last_name |
-    +----+----------+------------+-----------+
-    |  1 | kwall    | Kurt       | Wall      |
-    +----+----------+------------+-----------+
-    ```
-    
-    Note the value for `id` to use in the next step.
+```bash
+$ python manage.py createsuperuser
+Username: myname
+Email address: 
+Password: 
+Password (again): 
+Superuser created successfully.
 
-1. Insert the `id` value from the `auth_user` table into the `user_id` field
-   of the `workflow_tolauser` table:
+``` 
 
-    ```bash
-    msql> INSERT INTO workflow_tolauser (name, privacy_disclaimer_accepted, user_id, language) VALUES (YOURNAME, 1,1, "en");
-    ```
+Now get the id of the record you just added to the auth.user table:
 
-1. Restart the Tola Activity server
+```bash
+$ mysql -u tola -p tola_activity
+mysql> SELECT id,username FROM auth_user;
++----+----------+
+| id | username |
++----+----------+
+|  1 | myname    |
++----+----------+
+```
 
-    ```bash
-    $ python manage.py runserver
-    Performing system checks...
+Note the value for `id` to use in the next step.
 
-    System check identified no issues (0 silenced).
-    March 26, 2018 - 23:38:10
-    Django version 1.11.2, using settings 'tola.settings.local'
-    Starting development server at http://127.0.0.1:8000/
-    Quit the server with CONTROL-C.
-    ```
+Insert the `id` value from the `auth_user` table into the `user_id` field of the `workflow_tolauser` table:
 
-1. Refresh the browser window and you should be logged in and immediately
-   redirected to the TolaActivity home page
-1. Rejoice!
+```bash
+mysql> INSERT INTO workflow_tolauser (name, privacy_disclaimer_accepted, user_id, language) VALUES ("My Name", 1,1, "en");
+mysql> exit
+```
 
-## Loading demo data
+Restart the Tola Activity server
 
-1. Get a recent DB dump from a Tola instance from your mentor
-1. Kill the TolaActivity server
-1. Make a backup of the current *tola_activity* DB if it's precious
-1. Drop and recreate the *tola_activity* DB. Using the MySQL CLI:
+```bash
+$ python manage.py runserver
+Performing system checks...
 
-   ```sql
-   DROP DATABASE 'tola_activity';
-   CREATE DATABASE 'tola_activity';
-   ```
+System check identified no issues (0 silenced).
+March 26, 2018 - 23:38:10
+Django version 1.11.2, using settings 'tola.settings.local'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+```
 
-1. Execute the SQL script you were given to load the data:
+You should now be able to login using the username and password fields of the login screen.  Once you have logged in,
+you will be taken to the home page. 
 
-    ```bash
-    $ mysql -u root -p tola_activity < demo_data.sql
-    ```
+
+# For Developers
+
+## Front-end development setup and dev server
+
+Tola uses Webpack and `npm` installed packages in `node_modules` to build javascript bundles.
+During development, you will need to run the webpack development server to have the latest JS
+bundles available, and to re-generate the bundles if you modify any JS handled by Webpack.
+
+Directions for installing `npm` can be found below. It can also be installed via homebrew on macOS
+
+```bash
+$ brew install npm
+```
+
+### Install all `node_module` package dependencies using `npm`
+
+```bash
+$ npm install
+```
+
+Note: You made need to periodiclly run this after doing a `git pull` if `package.json` has been
+updated with new dependencies. This is similar to running `pip install -r requements.txt` if
+the `requirements.txt` has been updated.
+
+### Start the webpack development server
+
+```bash
+$ npm run watch
+```
+
+This should be done along side `./manage.py runserver`
+
+### Run JS unit tests
+
+```bash
+$ npm test
+```
+
+It's also possible to run the tests in "watch" mode
+
+```bash
+$ npm test -- --watch
+```
+or
+```bash
+$ npm run test:watch
+```
+
+### Build bundles for production
+
+When you are ready to deploy to an external server, you will need to build and check-in the
+production ready bundles. These are generated with:
+
+```bash
+$ npm run build:prod
+```
+
+or use the alias
+
+```bash
+$ npm run build
+```
 
 ## Installing and running the front-end harness
 

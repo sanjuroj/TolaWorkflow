@@ -2,21 +2,14 @@
 {% load i18n %}
 
 {% block title %}{% trans "Indicator Plan" %} | {% endblock %}
-{% block bread_crumb %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/indicators/home/0/0/0/">{% trans "Indicators" %}</a></li>
-        <li class="active breadcrumb-item">{% trans "Indicator Plan" %}</li>
-    </ol>
-</nav>
-{% endblock bread_crumb %}
+
 {% load render_table from django_tables2 %}
 
 {% block page_title %}{% trans "Indicator Plan" %}{% endblock %}
 
 {% block content %}
 
-<h3>{{ getProgram.gaitid }} - {{ getProgram.name }}</h3>
+<h3><a href="{% url 'program_page' getProgram.id 0 0 %}">{{ getProgram.gaitid }} - {{ getProgram.name }}</a></h3>
 
     <!-- Table -->
     <!--

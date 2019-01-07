@@ -87,6 +87,7 @@ class IndicatorForm(forms.ModelForm):
         self.fields['name'].label = _('Indicator Name')
         self.fields['level'].required = True
         self.fields['name'].required = True
+        self.fields['name'].widget = forms.Textarea(attrs={'rows': 3})
         self.fields['unit_of_measure'].required = True
         self.fields['target_frequency'].required = True
         self.fields['target_frequency_start'].widget.attrs['class'] = 'monthPicker'

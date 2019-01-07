@@ -107,9 +107,14 @@
         {% endfor %}
 
         <h2>{%  trans 'Results' %}</h2>
-        <h3>
-          {% if object.indicator.level %}{{ object.indicator.level }} {% trans "indicator" %}: {% endif %}
-          {{ object.indicator.name|truncatechars:300 }}
+        <h3 class="no-bold">
+          {% if object %}
+              {% if object.indicator.level %}{{ object.indicator.level }} {% trans "indicator" %}: {% endif %}
+              {{ object.indicator.name }}
+          {% else %}
+              {{ indicator.level }} {% trans "indicator" %}:
+              {{ indicator.name }}
+          {% endif %}
         </h3>
 
         <fieldset>
