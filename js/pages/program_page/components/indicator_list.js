@@ -209,7 +209,7 @@ class IndicatorListTable extends React.Component {
         
                     {resultsExist &&
                     <tr className="indicators-list__row indicators-list__indicator-body">
-                        <td colSpan="6" className="p-0 bg-blue border-0" ref={el => $(el).find('[data-toggle="popover"]').popover()}>
+                        <td colSpan="6" ref={el => $(el).find('[data-toggle="popover"]').popover({html:true})}>
                             {/* collected_data_table.html container */}
                                 <div dangerouslySetInnerHTML={{__html: resultsStr}} />
                         </td>
