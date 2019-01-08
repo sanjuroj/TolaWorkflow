@@ -14,8 +14,6 @@ const store = new UserStore(
     jsContext.users
 );
 
-store.fetchUsers();
-
 ReactDOM.render(
     <IndexView store={store} />,
     document.querySelector('#app_root')

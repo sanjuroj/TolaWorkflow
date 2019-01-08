@@ -3,5 +3,7 @@
 /deployment
 /Vagrantfile
 /.vagrant
+/node_modules
+/venv
 *.swp
 *.orig
