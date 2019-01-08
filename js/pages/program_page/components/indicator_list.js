@@ -126,9 +126,11 @@ class IndicatorListTable extends React.Component {
         this.onIndicatorResultsToggleClick = this.onIndicatorResultsToggleClick.bind(this);
     }
     
-    componentDidUpdate(props) {
-        this.$myRef = $(this.myRef);
-        this.$myRef.find('[data-toggle="popover"]').popover({
+    componentDidUpdate() {
+        this.$targetTooltip = $(this.targetTooltip);
+        console.log(this.targetTooltip);
+        let myTargetTooltip = this.$targetTooltip.find('[data-toggle="popover"]');
+        myTargetTooltip.popover({
             html: true
         });
     }
@@ -213,16 +215,15 @@ class IndicatorListTable extends React.Component {
                         <td className="text-right">{indicator.baseline_display}</td>
                         <td className="text-right">{indicator.lop_target_display}</td>
                     </tr>
-
-                    <tr className="indicators-list__row indicators-list__indicator-body hiddenRow">
-                        <td colSpan="6" className="p-0 bg-blue border-0">
-                        <td colSpan="6" className="p-0 bg-blue border-0" ref={el => this.myRef = el}>
+        
+                    {resultsExist &&
+                    <tr className="indicators-list__row indicators-list__indicator-body">
+                        <td colSpan="6" className="p-0 bg-blue border-0" ref={el => this.targetTooltip = el}>
                             {/* collected_data_table.html container */}
-                            {resultsExist &&
                                 <div dangerouslySetInnerHTML={{__html: resultsStr}} />
-                            }
                         </td>
                     </tr>
+                    }
                 </React.Fragment>
 
             })}

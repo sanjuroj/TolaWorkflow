@@ -1,7 +1,6 @@
 {% if has_ended %}
     {% if on_track %}
-        <a
-            href="#"
+        <span
             tabindex="0"
             aria-describedby="success"
             class="badge badge-success-light"
@@ -9,10 +8,9 @@
             data-placement="right"
             data-trigger="focus"
             data-content="On track"
-        >{{ percent_met|floatformat:"0" }}%</a>
+        >{{ percent_met|floatformat:"0" }}%</span>
     {% else %}
-        <a
-            href="#"
+        <span
             tabindex="0"
             aria-describedby="warning"
             class="badge badge-warning-light"
@@ -20,7 +18,7 @@
             data-placement="right"
             data-trigger="focus"
             data-content="Not on track"
-        >{{ percent_met|floatformat:"0" }}%</a>
+        >{{ percent_met|floatformat:"0" }}%</span>
     {% endif %}
 {% else %}
         <span class="badge">{{ percent_met|floatformat:"0" }}%</span>
