@@ -1,8 +1,26 @@
 {% if has_ended %}
     {% if on_track %}
-        <span aria-describedby="success" class="badge badge-success-light">{{ percent_met|floatformat:"0" }}%</span>
+        <a
+            href="#"
+            tabindex="0"
+            aria-describedby="success"
+            class="badge badge-success-light"
+            data-toggle="popover"
+            data-placement="right"
+            data-trigger="focus"
+            data-content="On track"
+        >{{ percent_met|floatformat:"0" }}%</a>
     {% else %}
-        <span aria-describedby="warning" class="badge badge-warning-light">{{ percent_met|floatformat:"0" }}%</span>
+        <a
+            href="#"
+            tabindex="0"
+            aria-describedby="warning"
+            class="badge badge-warning-light"
+            data-toggle="popover"
+            data-placement="right"
+            data-trigger="focus"
+            data-content="Not on track"
+        >{{ percent_met|floatformat:"0" }}%</a>
     {% endif %}
 {% else %}
         <span class="badge">{{ percent_met|floatformat:"0" }}%</span>
