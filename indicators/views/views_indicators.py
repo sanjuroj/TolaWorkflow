@@ -1045,10 +1045,10 @@ def service_json(request, service):
 
 
 def collected_data_view(request, indicator, program):
-    ind = Indicator.objects.get(pk=indicator)
-    reset_indicator_target_frequency(ind)
+    indicator = Indicator.objects.get(pk=indicator)
+    reset_indicator_target_frequency(indicator)
     template_name = 'indicators/collected_data_table.html'
-    program_obj = ind.program
+    program_obj = indicator.program
     program = program_obj.id
     last_data_record = CollectedData.objects.filter(periodic_target=OuterRef('pk')).order_by('-date_collected', '-pk')
     periodictargets = PeriodicTarget.objects \
@@ -1067,43 +1067,17 @@ def collected_data_view(request, indicator, program):
 
     # setup cumulative values for achieved across an indicator targets
     for index, pt in enumerate(periodictargets):
-        if index == 0:
+        if index == 0: # for the first record, for some reason
             last_data_record_value = pt.last_data_row
             grand_achieved_sum = pt.achieved_sum if pt.achieved_sum is not None else 0
             pt.cumulative_sum = grand_achieved_sum
         else:
-            try:
-                # update this variable only if there is a data value
-                last_data_record_value = pt.last_data_row if pt.last_data_row is not None else last_data_record_value
-                grand_achieved_sum += pt.achieved_sum
-                pt.cumulative_sum = grand_achieved_sum
-            except TypeError:
-                pass
+            # update this variable only if there is a data value
+            last_data_record_value = pt.last_data_row if pt.last_data_row is not None else last_data_record_value
+            grand_achieved_sum += pt.achieved_sum if pt.achieved_sum is not None else grand_achieved_sum
+            pt.cumulative_sum = grand_achieved_sum
 
-        # percentage of target met for this target
-        try:
-            if ind.unit_of_measure_type == 1:
-                if ind.is_cumulative:
-                    pt.percent_met = pt.cumulative_sum / pt.target * 100
-                else:
-                    pt.percent_met = pt.achieved_sum / pt.target * 100
-            else:
-                pt.percent_met = pt.last_data_row / pt.target * 100
-        except TypeError:
-            pt.percent_met = 0
-
-        # if this target is on track
-        pt.on_track = True if (85 <= pt.percent_met <= 115) else False
-
-    # percentage of targets met for Life of Program for this indicator
-    percent_met = 0
-    try:
-        if ind.unit_of_measure_type == 1:
-            percent_met = grand_achieved_sum / ind.lop_target * 100
-        elif ind.unit_of_measure_type == 2:
-            percent_met = last_data_record_value / ind.lop_target * 100
-    except TypeError: # in case last_data_record_value is NoneType
-        percent_met = 0
+    percent_met = 0 # TMP
 
     # whether this indicator is track
     on_track = True if (85 <= percent_met <= 115) else False
@@ -1114,18 +1088,18 @@ def collected_data_view(request, indicator, program):
         .filter(indicator=indicator, periodic_target__isnull=True)
 
     is_editable = False if request.GET.get('edit') == 'false' else True
+
     return render_to_response(
         template_name, {
+            'indicator': indicator,
             'periodictargets': periodictargets,
             'collecteddata_without_periodictargets': collecteddata_without_periodictargets,
             'last_data_record_value': last_data_record_value,
             'grand_achieved_sum': grand_achieved_sum,
-            'grand_achieved_avg': ind.get_collecteddata_average,
-            'indicator': ind,
+            'grand_achieved_avg': indicator.get_collecteddata_average,
             'program_id': program,
             'program': program_obj,
             'is_editable': is_editable,
-            'percent_met': percent_met,
             'on_track': on_track,
         }
     )
