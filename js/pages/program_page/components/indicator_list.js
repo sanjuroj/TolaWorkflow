@@ -125,6 +125,13 @@ class IndicatorListTable extends React.Component {
         this.onIndicatorUpdateClick = this.onIndicatorUpdateClick.bind(this);
         this.onIndicatorResultsToggleClick = this.onIndicatorResultsToggleClick.bind(this);
     }
+    
+    componentDidUpdate(props) {
+        this.$myRef = $(this.myRef);
+        this.$myRef.find('[data-toggle="popover"]').popover({
+            html: true
+        });
+    }
 
     onIndicatorUpdateClick(e, indicatorId) {
         e.preventDefault();
@@ -209,6 +216,7 @@ class IndicatorListTable extends React.Component {
 
                     <tr className="indicators-list__row indicators-list__indicator-body hiddenRow">
                         <td colSpan="6" className="p-0 bg-blue border-0">
+                        <td colSpan="6" className="p-0 bg-blue border-0" ref={el => this.myRef = el}>
                             {/* collected_data_table.html container */}
                             {resultsExist &&
                                 <div dangerouslySetInnerHTML={{__html: resultsStr}} />
