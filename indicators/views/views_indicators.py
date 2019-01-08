@@ -1067,20 +1067,48 @@ def collected_data_view(request, indicator, program):
 
     # setup cumulative values for achieved across an indicator targets
     for index, pt in enumerate(periodictargets):
-        if index == 0: # for the first record, for some reason
+        # recast potential NoneType values as 0
+        pt.achieved_sum = pt.achieved_sum if pt.achieved_sum is not None else 0
+        pt.last_data_row = pt.last_data_row if pt.last_data_row is not None else 0
+
+        # first target is special (?) TODO!
+        # NTS: this is surely related to the fuzzy meaning of "cumulative" but AFAICS the results still work
+        if index == 0:
             last_data_record_value = pt.last_data_row
-            grand_achieved_sum = pt.achieved_sum if pt.achieved_sum is not None else 0
+            grand_achieved_sum = pt.achieved_sum
             pt.cumulative_sum = grand_achieved_sum
         else:
             # update this variable only if there is a data value
             last_data_record_value = pt.last_data_row if pt.last_data_row is not None else last_data_record_value
-            grand_achieved_sum += pt.achieved_sum if pt.achieved_sum is not None else grand_achieved_sum
+            grand_achieved_sum += pt.achieved_sum
             pt.cumulative_sum = grand_achieved_sum
 
-    percent_met = 0 # TMP
+        # percentage of target met for this target
+        pt.percent_met = 0
+
+        if pt.target != 0: # avoid div/0 error
+            if indicator.unit_of_measure_type == 1: # Number
+                if indicator.is_cumulative:
+                    pt.percent_met = pt.cumulative_sum / pt.target * 100 if pt.cumulative_sum is not None else grand_achieved_sum
+                else:
+                    pt.percent_met = pt.achieved_sum / pt.target * 100
+            elif indicator.unit_of_measure_type == 2: # Percentage
+                pt.percent_met = pt.last_data_row / pt.target * 100
+
+        # whether this target is on track
+        pt.on_track = True if (85 <= pt.percent_met <= 115) else False
+
+    # percentage of targets met for Life of Program for this indicator
+    lop_percent_met = 0
+
+    if indicator.lop_target != 0: # avoid div/0 error
+        if indicator.unit_of_measure_type == 1: # Number
+            lop_percent_met = grand_achieved_sum / indicator.lop_target * 100
+        elif indicator.unit_of_measure_type == 2: # Percentage
+            lop_percent_met = last_data_record_value / indicator.lop_target * 100
 
     # whether this indicator is track
-    on_track = True if (85 <= percent_met <= 115) else False
+    on_track = True if (85 <= lop_percent_met <= 115) else False
 
     # show all of the data records that do not yet have periodic_targets
     # associated with them.
@@ -1100,6 +1128,7 @@ def collected_data_view(request, indicator, program):
             'program_id': program,
             'program': program_obj,
             'is_editable': is_editable,
+            'lop_percent_met': lop_percent_met,
             'on_track': on_track,
         }
     )
