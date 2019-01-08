@@ -1059,6 +1059,10 @@ def collected_data_view(request, indicator, program):
             last_data_row=Subquery(last_data_record.values('achieved')[:1])) \
         .order_by('customsort')
 
+    # Percentify upper/lower onscope margins
+    on_track_lower = 100 - 100 * Indicator.ONSCOPE_MARGIN
+    on_track_upper = 100 + 100 * Indicator.ONSCOPE_MARGIN
+
     # the total of achieved values across all periodic targets of an indicator
     grand_achieved_sum = 0
 
@@ -1096,7 +1100,7 @@ def collected_data_view(request, indicator, program):
                 pt.percent_met = pt.last_data_row / pt.target * 100
 
         # whether this target is on track
-        pt.on_track = True if (85 <= pt.percent_met <= 115) else False
+        pt.on_track = True if (on_track_lower <= pt.percent_met <= on_track_upper) else False
 
     # percentage of targets met for Life of Program for this indicator
     lop_percent_met = 0
@@ -1108,7 +1112,7 @@ def collected_data_view(request, indicator, program):
             lop_percent_met = last_data_record_value / indicator.lop_target * 100
 
     # whether this indicator is track
-    on_track = True if (85 <= lop_percent_met <= 115) else False
+    on_track = True if (on_track_lower <= lop_percent_met <= on_track_upper) else False
 
     # show all of the data records that do not yet have periodic_targets
     # associated with them.
