@@ -3,7 +3,7 @@ import ReactPaginate from 'react-paginate'
 import { observer } from "mobx-react"
 import BootstrapTable from 'react-bootstrap-table-next'
 import Select from 'react-select'
-import {VirtualizedMenuList as MenuList} from '../../../components/virtualized-react-select'
+import CheckboxedMultiSelect from '../../../components/checkboxed-multi-select'
 
 
 export const IndexView = observer(
@@ -127,12 +127,10 @@ export const IndexView = observer(
                 </div>
                 <div className="form-group">
                     <label htmlFor="users_filter">Users</label>
-                    <Select
-                    components={{MenuList}}
+                    <CheckboxedMultiSelect
                     value={store.filters.users}
                     options={user_listing}
                     onChange={(e) => store.changeUserFilter(e)}
-                    isMulti={true}
                     placeholder="None Selected"
                     id="users_filter" />
                 </div>
