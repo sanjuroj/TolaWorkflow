@@ -125,15 +125,6 @@ class IndicatorListTable extends React.Component {
         this.onIndicatorUpdateClick = this.onIndicatorUpdateClick.bind(this);
         this.onIndicatorResultsToggleClick = this.onIndicatorResultsToggleClick.bind(this);
     }
-    
-    componentDidUpdate() {
-        this.$targetTooltip = $(this.targetTooltip);
-        console.log(this.targetTooltip);
-        let myTargetTooltip = this.$targetTooltip.find('[data-toggle="popover"]');
-        myTargetTooltip.popover({
-            html: true
-        });
-    }
 
     onIndicatorUpdateClick(e, indicatorId) {
         e.preventDefault();
@@ -218,7 +209,7 @@ class IndicatorListTable extends React.Component {
         
                     {resultsExist &&
                     <tr className="indicators-list__row indicators-list__indicator-body">
-                        <td colSpan="6" className="p-0 bg-blue border-0" ref={el => this.targetTooltip = el}>
+                        <td colSpan="6" className="p-0 bg-blue border-0" ref={el => $(el).find('[data-toggle="popover"]').popover()}>
                             {/* collected_data_table.html container */}
                                 <div dangerouslySetInnerHTML={{__html: resultsStr}} />
                         </td>
