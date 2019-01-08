@@ -1,3 +1,4 @@
+{% load i18n %}
 {% if has_ended %}
     {% if on_track %}
         <span
@@ -8,9 +9,11 @@
             data-placement="right"
             data-trigger="focus"
             data-content="
+            {% blocktrans with percent_met=percent_met|floatformat:"0" %}
             <h4 class='badge badge-success-light'>On track</h4>
-            <p><strong>The actual value is {{ percent_met|floatformat:"0" }}% of the target value.</strong> An indicator is on track if the result is no less than 85% of the target and no more than 115% of the target.</p>
+            <p><strong>The actual value is {{ percent_met }}% of the target value.</strong> An indicator is on track if the result is no less than 85% of the target and no more than 115% of the target.</p>
             <p><em>Remember to consider your direction of change when thinking about whether the indicator is on track.</em></p>
+            {% endblocktrans %}
             "
         >{{ percent_met|floatformat:"0" }}%</span>
     {% else %}
@@ -22,9 +25,11 @@
             data-placement="right"
             data-trigger="focus"
             data-content="
+            {% blocktrans with percent_met=percent_met|floatformat:"0" %}
             <h4 class='badge badge-warning-light'>Not on track</h4>
-            <p><strong>The actual value is {{ percent_met|floatformat:"0" }}% of the target value.</strong> An indicator is on track if the result is no less than 85% of the target and no more than 115% of the target.</p>
+            <p><strong>The actual value is {{ percent_met }}% of the target value.</strong> An indicator is on track if the result is no less than 85% of the target and no more than 115% of the target.</p>
             <p><em>Remember to consider your direction of change when thinking about whether the indicator is on track.</em></p>
+            {% endblocktrans %}
             "
         >{{ percent_met|floatformat:"0" }}%</span>
     {% endif %}
