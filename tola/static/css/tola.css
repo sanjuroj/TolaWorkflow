@@ -6232,7 +6232,8 @@ span.multiselect-native-select select {
   padding-right: 0.75rem; }
 
 .multiselect-selected-text {
-  overflow: hidden; }
+  overflow: hidden;
+  white-space: normal; }
 
 html {
   display: flex;
