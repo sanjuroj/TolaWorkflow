@@ -40,6 +40,18 @@ class PeriodictargetSerializer(serializers.ModelSerializer):
                   'cumulative_sum')
 
 
+class LevelSerializer(serializers.ModelSerializer):
+    """
+    Level serializer for Program Page
+    """
+    class Meta:
+        model = Level
+        fields = [
+            'id',
+            'name'
+        ]
+
+
 class IndicatorSerializer(serializers.ModelSerializer):
     """
     Serializer specific to the Program Page
@@ -50,6 +62,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
     results_with_evidence_count = serializers.IntegerField()
     over_under = serializers.IntegerField()
     target_period_last_end_date = serializers.DateField()
+    level = LevelSerializer(read_only=True)
 
     class Meta:
         model = Indicator

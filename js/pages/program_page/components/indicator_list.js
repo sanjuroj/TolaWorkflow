@@ -202,7 +202,7 @@ class IndicatorListTable extends React.Component {
                                onClick={(e) => this.onIndicatorUpdateClick(e, indicator.id)}><i
                                 className="fas fa-cog"/></a>
                         </td>
-                        <td>{indicator.level}</td>
+                        <td>{indicator.level ? indicator.level.name : ''}</td>
                         <td>{indicator.unit_of_measure}</td>
                         <td className="text-right">{indicator.baseline_display}</td>
                         <td className="text-right">{indicator.lop_target_display}</td>
