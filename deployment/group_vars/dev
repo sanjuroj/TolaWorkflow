@@ -12,6 +12,7 @@ source_dir: "{{inventory_dir}}/../"
 is_vagrant: true
 dev_server: true
 django_secret_key: "this is extremely secure"
+webpack_stats_file: 'webpack-stats-vagrant.json'
 
 db:
   host: 127.0.0.1

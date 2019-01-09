@@ -86,10 +86,4 @@ GOOGLE_ANALYTICS_DOMAIN: 'example.org'
 LOGFILE: '{{logfile}}'
 SECRET_KEY: '{{django_secret_key}}'
 
-# use webpack dev server
-WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': app_settings.get('WEBPACK_BUNDLE_DIR_NAME', 'dist/'),
-        'STATS_FILE': os.path.join(SITE_ROOT, app_settings.get('WEBPACK_STATS_FILE', {{webpack_stats_file}})),
-    }
-}
+WEBPACK_STATS_FILE: '{{webpack_stats_file}}'
