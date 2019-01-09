@@ -7059,6 +7059,9 @@ body > .container {
 .form-check-input {
   width: auto !important; }
 
+span[data-toggle="popover"]:hover {
+  cursor: pointer; }
+
 .select2-container {
   box-sizing: border-box;
   display: inline-block;
