@@ -1046,9 +1046,6 @@ def service_json(request, service):
 
 def collected_data_view(request, indicator, program):
     indicator = ResultsIndicator.results_view.get(pk=indicator)
-    print "indicator percent met {0} and lop met real {1} and target sum {2} and actual sum {2}".format(
-        indicator.percent_met, indicator.lop_met_real, indicator.lop_target_sum, indicator.lop_actual_sum
-    )
     reset_indicator_target_frequency(indicator)
     template_name = 'indicators/collected_data_table.html'
     program_obj = indicator.program

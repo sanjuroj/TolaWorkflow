@@ -166,7 +166,6 @@ def target_percent_met(context, percent_met, has_ended):
     if percent_met:
         on_track = abs(1-percent_met) <= margin
         percent_met = percent_met*100
-    print "percent met: {0} has ended {1}".format(percent_met, has_ended)
     return {
         'on_track': on_track,
         'percent_met': percent_met,
