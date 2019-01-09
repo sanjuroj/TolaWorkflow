@@ -180,7 +180,7 @@ class IndicatorListTable extends React.Component {
                                onClick={(e) => this.onIndicatorResultsToggleClick(e, indicator.id)}
                             >
                                 <FontAwesomeIcon icon={resultsExist ? 'caret-down' : 'caret-right'} />
-                                <strong>{indicator.number}</strong>
+                                <strong>{indicator.number}</strong>&nbsp;
                                 <span className="indicator_name">{indicator.name}</span>
                             </a>
 
