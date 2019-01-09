@@ -119,8 +119,27 @@ def target_achieved_sum_annotation():
         ),
         default=models.Subquery(
             CollectedData.objects.filter(
-                periodic_target=models.OuterRef('pk')
-            ).order_by().values('periodic_target').annotate(
+                models.Q(
+                    models.Q(periodic_target__indicator=models.OuterRef('indicator')) &
+                    models.Q(
+                        models.Q(
+                            models.Q(
+                                periodic_target__indicator__target_frequency__in=[
+                                    f[0] for f in utils.TIME_AWARE_FREQUENCIES
+                                    ]
+                                ) &
+                            models.Q(periodic_target__start_date__lte=models.OuterRef('start_date'))
+                        ) |
+                        models.Q(
+                            models.Q(periodic_target__indicator__target_frequency__in=[
+                                Indicator.MID_END, Indicator.EVENT
+                            ]) &
+                            models.Q(periodic_target__customsort__lte=models.OuterRef('customsort'))
+                        ) |
+                        models.Q(periodic_target__indicator__target_frequency=Indicator.LOP)
+                        )
+                    )
+            ).order_by().values('indicator').annotate(
                 results_sum=models.Sum('achieved')
             ).values('results_sum')[:1],
             output_field=models.IntegerField()
