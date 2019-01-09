@@ -111,12 +111,12 @@ $colors: map-merge((
     "teal":       $teal,
     "cyan":       $cyan,
     "white":      $white,
-    "gray":       $gray-600,
+    "gray":       $gray-500,
     "gray-dark":  $gray-800
 ), $colors);
 
 $primary:       $teal;
-$secondary:     $gray-600;
+$secondary:     $gray-500;
 $success:       $green;
 $info:          $cyan;
 $warning:       $yellow;

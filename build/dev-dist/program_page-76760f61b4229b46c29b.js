@@ -33114,7 +33114,7 @@ function (_React$Component2) {
         className: "text-muted"
       },
       /* # Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
-      interpolate(gettext('%s% unavailable'), [percentNonReporting])), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      interpolate(gettext('%s%% unavailable'), [percentNonReporting])), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
         tabIndex: "0",
         "data-toggle": "popover",
@@ -40341,4 +40341,4 @@ module.exports = g;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=program_page-2ec1c348d0e7ab2a748a.js.map
+//# sourceMappingURL=program_page-76760f61b4229b46c29b.js.map

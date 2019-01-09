@@ -173,7 +173,7 @@ def gauge_tank(context, metric, has_filters=True):
             # Translators: a label in a graphic. Example: 31% have missing targets
             'filter_title': _('have missing targets'),
             'empty': _('No targets'),
-            'help_text': _(''), # currently unused
+            'help_text': '', # currently unused
             'data_target': 'defined-targets',
         },
         'reported_results' : {
@@ -187,7 +187,7 @@ def gauge_tank(context, metric, has_filters=True):
             # Translators: a label in a graphic. Example: 31% have missing results
             'filter_title': _('have missing results'),
             'empty': _('No results'),
-            'help_text': _(''), # currently unused
+            'help_text': '', # currently unused
             'data_target': 'reported-results',
         },
         'results_evidence': {
@@ -201,7 +201,7 @@ def gauge_tank(context, metric, has_filters=True):
             # Translators: a label in a graphic. Example: 31% have missing evidence
             'filter_title': _('have missing evidence'),
             'empty': _('No evidence'),
-            'help_text': _(''), # currently unused
+            'help_text': '', # currently unused
             'data_target': 'has-evidence',
         },
     }
