@@ -6283,6 +6283,14 @@ body > .container {
   border-color: #046C69;
   color: #046C69; }
 
+.btn-inverse {
+  color: #71757b;
+  font-weight: normal;
+  text-transform: uppercase;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
+  .btn-inverse:hover, .btn-inverse:focus {
+    color: #c8102e; }
+
 .btn-link {
   font-weight: bold; }
 

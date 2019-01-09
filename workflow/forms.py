@@ -1438,7 +1438,7 @@ class DocumentationForm(forms.ModelForm):
 
             FormActions(
                 Submit('submit', 'Save', css_class='btn-primary'),
-                Reset('reset', 'Reset', css_class='btn-secondary')
+                Reset('reset', 'Reset', css_class='btn-inverse')
             )
         )
 
