@@ -590,8 +590,10 @@ class Village(models.Model):
 
 class VillageAdmin(admin.ModelAdmin):
     list_display = ('name', 'district', 'create_date', 'edit_date')
-    list_filter = ('district__province__country__country','district')
+    search_fields = ('name', 'admin_3__name')
+    list_filter = ('admin_3__district__province__country__country',)
     display = 'Admin Level 4'
+
 
 class Office(models.Model):
     name = models.CharField(_("Office Name"), max_length=255, blank=True)
