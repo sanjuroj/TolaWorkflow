@@ -3,62 +3,14 @@ import ReactPaginate from 'react-paginate'
 import { observer } from "mobx-react"
 import BootstrapTable from 'react-bootstrap-table-next'
 import Select from 'react-select'
-import CheckboxedMultiSelect from '../../../components/checkboxed-multi-select'
+import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
+import ManagementTable from 'components/management-table'
+import UserEditor from './components/user_editor'
 
 
 export const IndexView = observer(
     ({store}) => {
         const {bulk_targets, bulk_targets_all} = store
-        const table_definition = [
-            {
-                dataField: 'id',
-                text: '',
-                formatter: (cell, row) => {
-                    return <div className="td--stretch">
-                        <input type="checkbox" checked={bulk_targets.get(cell) || false} onChange={() => store.toggleBulkTarget(cell) }/>
-                        <div><i className="fa fa-user"></i></div>
-                    </div>
-                },
-                headerFormatter: (col, idx, components) => {
-                    return <div className="td--stretch">
-                        <input type="checkbox" checked={bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
-                        <div></div>
-                    </div>
-                }
-            },
-            {
-                dataField: 'name',
-                text: 'User'
-            },
-            {
-                dataField: 'organization_name',
-                text: 'Organization',
-                formatter: (cell, row) => {
-                    return <a href="">{cell}</a>
-                }
-            },
-            {
-                dataField: 'user_programs',
-                text: 'Programs',
-                formatter: (cell, row) => {
-                    return <a href="">{cell} programs</a>
-                }
-            },
-            {
-                dataField: 'is_admin',
-                text: 'Admin Role',
-                formatter: (cell, row) => {
-                    return (cell)?'Yes':'No'
-                }
-            },
-            {
-                dataField: 'is_active',
-                text: 'Status',
-                formatter: (cell, row) => {
-                    return (cell)?'Active':'Inactive'
-                }
-            },
-        ]
 
         const countries_listing = store.available_countries.map(country => ({value: country.id, label: country.country}))
         const organization_listing = store.available_organizations.map(org => ({value: org.id, label: org.name}))
@@ -147,7 +99,46 @@ export const IndexView = observer(
                     <button>Add User</button>
                 </div>
                 <div className="list-table">
-                    <BootstrapTable keyField="id" data={store.users} columns={table_definition} />
+                    <ManagementTable
+                        data={store.users}
+                        keyField="id"
+                        HeaderRow={({Col, Row}) =>
+                            <Row>
+                                <Col>
+                                    <div className="td--stretch">
+                                        <input type="checkbox" checked={bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
+                                        <div></div>
+                                    </div>
+                                </Col>
+                                <Col>User</Col>
+                                <Col>Organization</Col>
+                                <Col>Programs</Col>
+                                <Col>Admin Role</Col>
+                                <Col>Status</Col>
+                            </Row>
+                        }
+                        Row={({Col, Row, data}) =>
+                            <Row>
+                                <Col>
+                                    <div className="td--stretch">
+                                        <input type="checkbox" checked={bulk_targets.get(data.id)} onChange={() => store.toggleBulkTarget(data.id) }/>
+                                        <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)}><i className="fa fa-user"></i></div>
+                                    </div>
+                                </Col>
+                                <Col>{data.name}</Col>
+                                <Col>{data.organization_name}</Col>
+                                <Col><a href="">{data.user_programs} programs</a></Col>
+                                <Col>{data.is_admin?'Yes':'No'}</Col>
+                                <Col>{data.is_active?'Active':'Inactive'}</Col>
+                            </Row>
+                        }
+                        expandoTarget={store.editing_target}
+                        Expando={({Wrapper}) =>
+                            <Wrapper>
+                                <UserEditor />
+                            </Wrapper>
+                        }
+                    />
                 </div>
                 <div className="list-metadata">
                     <div id="users-count">{store.users_count?`${store.users_count} users`:`--`}</div>

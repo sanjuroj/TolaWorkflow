@@ -44,7 +44,11 @@ module.exports = {
     },
 
     resolve: {
-        extensions: ['*', '.js', '.jsx']
+        extensions: ['*', '.js', '.jsx'],
+        modules: [
+            path.resolve(__dirname, "js"),
+            'node_modules'
+        ],
     },
 
     plugins: [
