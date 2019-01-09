@@ -11,6 +11,7 @@ export class UserStore {
     @observable total_pages = null
     @observable bulk_targets = new Map()
     @observable bulk_targets_all = false
+    @observable editing_target = null
 
     //filter options
     @observable available_countries = []
@@ -47,6 +48,7 @@ export class UserStore {
         this.available_organizations = organizations
         this.available_programs = programs
         this.available_users = users.filter(user => user.name)
+        this.fetchUsers()
     }
 
     /*******************
@@ -80,16 +82,17 @@ export class UserStore {
     }
 
     @action
-    async fetchUsers() {
+    fetchUsers() {
         this.fetching = true
-        let results = await fetchUsersWithFilter(this.current_page + 1, this.marshalFilters(this.filters))
-        this.fetching = false
-        this.users = results.users
-        this.bulk_targets = new Map(this.users.map(user => [user.id, false]))
-        this.users_count = results.total_users
-        this.total_pages = results.total_pages
-        this.next_page = results.next_page
-        this.previous_page = results.previous_page
+        fetchUsersWithFilter(this.current_page + 1, this.marshalFilters(this.filters)).then(results => {
+            this.fetching = false
+            this.users = results.users
+            this.bulk_targets = new Map(this.users.map(user => [user.id, false]))
+            this.users_count = results.total_users
+            this.total_pages = results.total_pages
+            this.next_page = results.next_page
+            this.previous_page = results.previous_page
+        })
     }
 
     @action
@@ -102,9 +105,13 @@ export class UserStore {
     toggleBulkTargetsAll() {
         this.bulk_targets_all = !this.bulk_targets_all;
         if(this.bulk_targets_all) {
-            this.bulk_targets = new Map(this.users.map(user => [user.id, true]))
+            this.bulk_targets.forEach((val, key, map) => {
+                map.set(key, true)
+            })
         } else {
-            this.bulk_targets = new Map(this.users.map(user => [user.id, false]))
+            this.bulk_targets.forEach((val, key, map) => {
+                map.set(key, false)
+            })
         }
     }
 
@@ -146,6 +153,15 @@ export class UserStore {
     @action
     changeUserFilter(users) {
         this.filters.users = users
+    }
+
+    @action
+    toggleEditingTarget(user_id) {
+        if(this.editing_target == user_id) {
+           this.editing_target = null
+        } else {
+            this.editing_target = user_id
+        }
     }
 
     @action

@@ -1,0 +1,54 @@
+#user-management-index-view {
+    .td--stretch {
+        display: flex;
+        justify-content: space-around;
+
+        div {
+            width: 1rem;
+        }
+    }
+
+    .icon__clickable {
+        cursor: pointer;
+        color: darkblue;
+    }
+
+    .filter-buttons {
+        display: flex;
+        justify-content: space-around;
+    }
+}
+
+.list-metadata {
+    display: flex;
+    justify-content: space-between;
+}
+
+.pagination {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0.3rem;
+
+    li {
+        color: #0645AD;
+
+        &:hover, &.active {
+            color: #ADD8E6;
+        }
+
+        &.disabled {
+            color: #ccc;
+            a {
+                cursor: default;
+            }
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            width: 1rem;
+            padding: 0 1rem;
+            cursor: pointer;
+        }
+    }
+}

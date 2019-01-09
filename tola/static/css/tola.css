@@ -7250,11 +7250,27 @@ td.periodic-targets__sum {
     flex-grow: 1;
     padding: 15px; }
 
+.mgmt-table {
+  display: table;
+  width: 100%; }
+  .mgmt-table .mgmt-table__head {
+    display: table-header-group; }
+  .mgmt-table .mgmt-table__body {
+    display: table-row-group; }
+  .mgmt-table .mgmt-table__row {
+    display: table-row; }
+  .mgmt-table .mgmt-table__col {
+    display: table-cell; }
+
 #user-management-index-view .td--stretch {
   display: flex;
   justify-content: space-around; }
   #user-management-index-view .td--stretch div {
     width: 1rem; }
+
+#user-management-index-view .icon__clickable {
+  cursor: pointer;
+  color: darkblue; }
 
 #user-management-index-view .filter-buttons {
   display: flex;

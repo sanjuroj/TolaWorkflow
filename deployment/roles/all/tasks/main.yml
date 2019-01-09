@@ -35,6 +35,11 @@
   tags:
     - provision
 
+- name: Create app user
+  user:
+    name: '{{app_user}}'
+    system: no
+
 - name: add mysql db
   become: yes
   mysql_db:
@@ -76,6 +81,16 @@
     group: "{{app_user}}"
     state: directory
 
+- name: Sync code up to web servers
+  become: yes
+  become_user: "{{app_user}}"
+  synchronize: delete=yes src="{{source_dir}}" dest="{{install_dir}}/" owner=no group=no rsync_opts=--exclude-from={{inventory_dir}}/rsync-exclude
+  when: is_vagrant is not defined or not is_vagrant
+  tags:
+    - deploy
+  notify:
+    - Restart uWSGI
+
 - name: Install uWSGI endpoint
   become: yes
   template: src=uwsgi.ini dest="/etc/uwsgi/apps-enabled/{{app_name}}.ini" owner="{{app_user}}"
@@ -99,7 +114,8 @@
     state: latest
 
 - name: Push local_settings.py
-  remote_user: "{{app_user}}"
+  become: yes
+  become_user: "{{app_user}}"
   template: src=local_settings.yml dest="{{local_settings_file}}"
   tags:
     - deploy
@@ -111,6 +127,8 @@
     command: migrate
     app_path: "{{app_dir}}"
     virtualenv: "{{virtualenv}}"
+  tags:
+    - deploy
 
 - name: Install the gpg key for nodejs LTS
   become: yes
