@@ -31,8 +31,7 @@
         {% for item in periodictargets %}
         <tr class="collected-data__row--main">
             {% ifchanged item %}
-            {% with dataCount=item.collecteddata_set.count %}
-            <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-nowrap">
+            <td {% if item.results_count %} rowspan="{{ item.results_count }}" {% endif %} class="text-nowrap">
                 {# note ".period" is deprecated, and .period_name should be used instead #}
                 <strong class="text-uppercase">{{ item.period_name }}</strong><br>
                 <small>
@@ -41,30 +40,19 @@
                     {{ item.end_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                 </small>
             </td>
-            <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right">
+            <td {% if item.results_count %} rowspan="{{ item.results_count }}" {% endif %} class="text-right">
                 {{ item.target|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
             </td>
-            <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right">
-                {% if indicator.unit_of_measure_type == 1 %}
-                    {% if indicator.is_cumulative == True %}
-                        {{ item.cumulative_sum|floatformat:"-2" }}
-                    {% else %}
-                        {{ item.achieved_sum|floatformat:"-2" }}
-                    {% endif %}
-                {% else %}
-                    {% if item.last_data_row %}
-                        {{ item.last_data_row|floatformat:"-2" }}%
-                    {% endif %}
-                {% endif %}
+            <td {% if item.results_count %} rowspan="{{ item.results_count }}" {% endif %} class="text-right">
+                {{ item.achieved|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
             </td>
-            <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right td--pad">
+            <td {% if item.results_count %} rowspan="{{ item.results_count }}" {% endif %} class="text-right td--pad">
                 {% if item.target %}
-                    {% target_percent_met item.on_track item.percent_met item.has_ended %}
+                    {% target_percent_met item.percent_met item.is_complete %}
                 {% else %}
                     {% trans 'N/A' %}
                 {% endif %}
             </td>
-            {% endwith %}
             {% endifchanged %}
 
             {% for cdata in item.getcollected_data %}
@@ -197,7 +185,7 @@
                 </strong>
             </td>
             <td class="text-right">
-                {% target_percent_met on_track lop_percent_met program.has_ended %}
+                {% target_percent_met indicator.percent_met indicator.is_complete %}
             </td>
             <td colspan="3" class="">
                 <div class="help-text">
