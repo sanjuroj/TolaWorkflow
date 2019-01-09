@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import eventBus from '../../../eventbus';
 import {UserStore} from './models';
 import {IndexView} from './views';
 
