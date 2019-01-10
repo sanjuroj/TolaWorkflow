@@ -7251,29 +7251,15 @@ td.periodic-targets__sum {
     padding: 15px; }
 
 .mgmt-table {
-  width: 100%; }
+  width: 100%;
+  border: 1px solid #ddd; }
   .mgmt-table .mgmt-table__row {
-    display: flex; }
+    display: flex;
+    padding: 10px 0; }
+    .mgmt-table .mgmt-table__row:hover {
+      background-color: #eee; }
   .mgmt-table .mgmt-table__col {
     flex: 1; }
-
-#user-management-index-view .td--stretch {
-  display: flex;
-  justify-content: space-around; }
-  #user-management-index-view .td--stretch div {
-    width: 1rem; }
-
-#user-management-index-view .icon__clickable {
-  cursor: pointer;
-  color: darkblue; }
-
-#user-management-index-view .filter-buttons {
-  display: flex;
-  justify-content: space-around; }
-
-.list-metadata {
-  display: flex;
-  justify-content: space-between; }
 
 .pagination {
   border: 1px solid #ccc;
@@ -7293,6 +7279,43 @@ td.periodic-targets__sum {
       width: 1rem;
       padding: 0 1rem;
       cursor: pointer; }
+
+#user-management-index-view .td--stretch {
+  display: flex;
+  justify-content: space-around; }
+  #user-management-index-view .td--stretch div {
+    width: 1rem; }
+
+#user-management-index-view .icon__clickable {
+  cursor: pointer;
+  color: darkblue; }
+
+#user-management-index-view .filter-buttons {
+  display: flex;
+  justify-content: space-around; }
+
+#user-management-index-view .list-controls {
+  display: flex;
+  justify-content: space-between; }
+  #user-management-index-view .list-controls .selector {
+    min-width: 10em; }
+  #user-management-index-view .list-controls .bulk-controls {
+    display: flex; }
+
+#user-management-index-view .user-editor__navigation {
+  background-color: #eee; }
+  #user-management-index-view .user-editor__navigation .list-group-item {
+    cursor: pointer;
+    color: darkblue;
+    background-color: transparent;
+    border: none; }
+  #user-management-index-view .user-editor__navigation .list-group-item.selected {
+    color: #888;
+    cursor: default; }
+
+.list-metadata {
+  display: flex;
+  justify-content: space-between; }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {

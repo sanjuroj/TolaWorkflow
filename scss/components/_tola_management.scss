@@ -17,38 +17,38 @@
         display: flex;
         justify-content: space-around;
     }
+
+    .list-controls {
+        display: flex;
+        justify-content: space-between;
+
+        .selector {
+            min-width: 10em;
+        }
+
+        .bulk-controls {
+            display: flex;
+        }
+    }
+
+    .user-editor__navigation {
+        background-color: #eee;
+
+        .list-group-item {
+            cursor: pointer;
+            color: darkblue;
+            background-color: transparent;
+            border: none;
+        }
+
+        .list-group-item.selected {
+            color: #888;
+            cursor: default;
+        }
+    }
 }
 
 .list-metadata {
     display: flex;
     justify-content: space-between;
-}
-
-.pagination {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 0.3rem;
-
-    li {
-        color: #0645AD;
-
-        &:hover, &.active {
-            color: #ADD8E6;
-        }
-
-        &.disabled {
-            color: #ccc;
-            a {
-                cursor: default;
-            }
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-            width: 1rem;
-            padding: 0 1rem;
-            cursor: pointer;
-        }
-    }
 }

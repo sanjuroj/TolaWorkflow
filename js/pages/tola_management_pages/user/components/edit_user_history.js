@@ -3,7 +3,7 @@ import { observer } from "mobx-react"
 
 export const EditUserHistory = observer(
     ({onSave}) => {
-        return <div class="edit-user-profile">
+        return <div className="edit-user-history">
             test3
         </div>
     }

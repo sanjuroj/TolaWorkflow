@@ -1,19 +1,17 @@
 import React from 'react'
-import ReactPaginate from 'react-paginate'
 import { observer } from "mobx-react"
-import BootstrapTable from 'react-bootstrap-table-next'
 import Select from 'react-select'
 import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
 import ManagementTable from 'components/management-table'
+import UserEditor from './components/user_editor'
 import EditUserProfile from './components/edit_user_profile'
 import EditUserPrograms from './components/edit_user_programs'
 import EditUserHistory from './components/edit_user_history'
+import Pagination from 'components/pagination'
 
 
 export const IndexView = observer(
     ({store}) => {
-        const {bulk_targets, bulk_targets_all} = store
-
         const countries_listing = store.available_countries.map(country => ({value: country.id, label: country.country}))
         const organization_listing = store.available_organizations.map(org => ({value: org.id, label: org.name}))
         const program_listing = store.available_programs.map(program => ({value: program.id, label: program.name}))
@@ -94,13 +92,19 @@ export const IndexView = observer(
                 </div>
             </div>
             <div className="col col-sm-9 list-section">
-                <div className="list-controls">
-                    <select>
-                        <option>Bulk actions</option>
-                    </select>
-                    <button>Add User</button>
+                <div className="list-controls row">
+                    <div className="bulk-controls">
+                        <Select className="selector" placeholder="Bulk Actions">
+                        </Select>
+                        <Select className="selector" placeholder="---">
+                        </Select>
+                        <button className="btn btn-outline-primary">Apply</button>
+                    </div>
+                    <div>
+                        <button className="btn btn-primary"><i className="fa fa-plus-circle"></i>Add User</button>
+                    </div>
                 </div>
-                <div className="list-table">
+                <div className="list-table row">
                     <ManagementTable
                         data={store.users}
                         keyField="id"
@@ -108,78 +112,56 @@ export const IndexView = observer(
                             <Row>
                                 <Col size="0.5">
                                     <div className="td--stretch">
-                                        <input type="checkbox" checked={bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
+                                        <input type="checkbox" checked={store.bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
                                         <div></div>
                                     </div>
                                 </Col>
                                 <Col size="2">User</Col>
                                 <Col>Organization</Col>
                                 <Col>Programs</Col>
-                                <Col>Admin Role</Col>
-                                <Col>Status</Col>
+                                <Col size="0.5">Admin Role</Col>
+                                <Col size="0.25">Status</Col>
                             </Row>
                         }
                         Row={({Col, Row, data}) =>
-                            <Row>
+                            <Row
+                            expanded={data.editing}
+                            Expando={({Wrapper}) =>
+                                <Wrapper>
+                                    <UserEditor
+                                        ProfileSection={() => <EditUserProfile
+                                                                userData={data}
+                                                                onSave={(new_user_data) => store.saveUserEdit(new_user_data)}
+                                                                organizations={store.available_organizations}
+                                        />}
+                                        ProgramSection={() => <EditUserPrograms />}
+                                        HistorySection={() => <EditUserHistory />}
+                                    />
+                                </Wrapper>
+                            }>
                                 <Col size="0.5">
                                     <div className="td--stretch">
-                                        <input type="checkbox" checked={bulk_targets.get(data.id)} onChange={() => store.toggleBulkTarget(data.id) }/>
+                                        <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
                                         <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)}><i className="fa fa-user"></i></div>
                                     </div>
                                 </Col>
                                 <Col size="2">{data.name}</Col>
                                 <Col>{data.organization_name}</Col>
                                 <Col><a href="">{data.user_programs} programs</a></Col>
-                                <Col>{data.is_admin?'Yes':'No'}</Col>
-                                <Col>{data.is_active?'Active':'Inactive'}</Col>
+                                <Col size="0.5">{data.is_admin?'Yes':'No'}</Col>
+                                <Col size="0.25">{data.is_active?'Active':'Inactive'}</Col>
                             </Row>
-                        }
-                        expandoTarget={store.editing_target}
-                        Expando={({Wrapper}) =>
-                            <Wrapper>
-                                <div class="user-editor row">
-                                    <div class="user-editor__navigation col-sm-3">
-                                        <ul>
-                                            <li><a onClick={() => store.updateActiveEditPage('profile')}>Profile</a></li>
-                                            <li><a onClick={() => store.updateActiveEditPage('programs_and_roles')}>Programs and Roles</a></li>
-                                            <li><a onClick={() => store.updateActiveEditPage('status_and_history')}>Status and History</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="user-editor__content col-sm-9">
-                                        {store.active_edit_page == 'profile' &&
-                                        <EditUserProfile onSave={() => {}} />
-                                        }
-
-                                        {store.active_edit_page == 'programs_and_roles' &&
-                                        <EditUserPrograms onSave={() => {}} />
-                                        }
-
-                                        {store.active_edit_page == 'status_and_history' &&
-                                        <EditUserHistory onSave={() => {}} />
-                                        }
-                                    </div>
-                                </div>
-                            </Wrapper>
                         }
                     />
                 </div>
-                <div className="list-metadata">
+                <div className="list-metadata row">
                     <div id="users-count">{store.users_count?`${store.users_count} users`:`--`}</div>
                     <div id ="pagination-controls">
                         {store.total_pages &&
-                         <ReactPaginate
-                             previousLabel={<i className="fa fa-angle-left"></i>}
-                             nextLabel={<i className="fa fa-angle-right"></i>}
-                             breakLabel={"..."}
-                             breakClassName={"break-me"}
-                             pageCount={store.total_pages}
-                             initialPage={store.current_page}
-                             marginPagesDisplayed={2}
-                             pageRangeDisplayed={5}
-                             onPageChange={page => store.changePage(page)}
-                             containerClassName={"pagination"}
-                             subContainerClassName={"pages pagination"}
-                             activeClassName={"active"} />
+                         <Pagination
+                            pageCount={store.total_pages}
+                            initialPage={store.current_page}
+                            onPageChange={page => store.changePage(page)} />
                         }
                     </div>
                 </div>
