@@ -872,8 +872,8 @@ class PeriodicTarget(models.Model):
             # e.g "Year 1 (date - date)" or "Quarter 2 (date - date)"
             return u"{period_name} ({start_date} - {end_date})".format(
                 period_name=period_name,
-                start_date=l10n_date_medium(self.start_date),
-                end_date=l10n_date_medium(self.end_date)
+                start_date=l10n_date_medium(self.start_date).decode('utf-8'),
+                end_date=l10n_date_medium(self.end_date).decode('utf-8'),
             )
         elif period_name:
             # if no date for some reason but time-based frequency:

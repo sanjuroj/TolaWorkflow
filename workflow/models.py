@@ -127,9 +127,9 @@ class Country(models.Model):
 
 
 TITLE_CHOICES = (
-    (_('mr'), _('Mr.')),
-    (_('mrs'), _('Mrs.')),
-    (_('ms'), _('Ms.')),
+    ('mr', _('Mr.')),
+    ('mrs', _('Mrs.')),
+    ('ms', _('Ms.')),
 )
 
 
@@ -1298,7 +1298,7 @@ class ProjectComplete(models.Model):
         _("CommunityHandover/Sustainability Maintenance Plan"),
         help_text=_('Check box if it was completed'), default=None)
     capacity_built = models.TextField(
-        _("Describe how sustainability was ensured for this project?"), max_length=755, blank=True, null=True)
+        _("Describe how sustainability was ensured for this project"), max_length=755, blank=True, null=True)
     quality_assured = models.TextField(
         _("How was quality assured for this project"), max_length=755, blank=True, null=True)
     issues_and_challenges = models.TextField(
