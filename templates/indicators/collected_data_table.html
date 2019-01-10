@@ -41,10 +41,10 @@
                 </small>
             </td>
             <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="text-right">
-                {{ pt.target|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                {% if pt.target is not None %}{{ pt.target|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}{% else %}—{% endif %}
             </td>
             <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="text-right">
-                {{ pt.actual|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                {% if pt.actual is not None %}{{ pt.actual|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}{% else %}—{% endif %}
             </td>
             <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="text-right td--pad">
                 {% target_percent_met pt.percent_met pt.is_complete %}
