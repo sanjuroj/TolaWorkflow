@@ -44,7 +44,7 @@
                 {{ item.target|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
             </td>
             <td {% if item.results_count %} rowspan="{{ item.results_count }}" {% endif %} class="text-right">
-                {{ item.achieved|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                {{ item.actual|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
             </td>
             <td {% if item.results_count %} rowspan="{{ item.results_count }}" {% endif %} class="text-right td--pad">
                 {% if item.target %}
@@ -177,15 +177,13 @@
             </td>
             <td class="text-right">
                 <strong>
-                    {% if indicator.unit_of_measure_type == 1 %}
-                        {{ grand_achieved_sum|floatformat:"-2" }}
-                    {% elif indicator.unit_of_measure_type == 2 %}
-                        {{ last_data_record_value|floatformat:"-2" }}%
-                    {% endif %}
+                    {% with actual=indicator.lop_actual|floatformat:"-2"  %}
+                    {{ actual }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                    {% endwith %}
                 </strong>
             </td>
             <td class="text-right">
-                {% target_percent_met indicator.percent_met indicator.is_complete %}
+                {% target_percent_met indicator.lop_percent_met indicator.is_complete %}
             </td>
             <td colspan="3" class="">
                 <div class="help-text">

@@ -16,9 +16,6 @@ class ResultsTargetQuerySet(models.QuerySet):
         qs = qs.annotate(results_count=target_results_count_annotation())
         # add is_complete annotation:
         qs = qs.annotate(is_complete=target_is_complete_annotation())
-        # add a target_sum annotation (all targets up to and including this one
-        #  combined with indicator number type logic):
-        qs = qs.annotate(target_sum=target_target_sum_annotation())
         # add an achieved_sum annotation (all results for this target combined with indicator number type logic):
         qs = qs.annotate(actual=target_actual_annotation())
         # combine target and achieved to determine percent met:
@@ -30,12 +27,17 @@ class ResultsTargetManager(models.Manager):
         return ResultsTargetQuerySet(self.model, using=self._db)
 
 class ResultsTarget(PeriodicTarget):
+    """A target for the Results table view, annotated with actual (combined Results values) and percent met"""
     class Meta:
         proxy = True
 
     objects = ResultsTargetManager()
 
 def target_results_count_annotation():
+    """number of results associated with this periodic target
+        - used to determine active MID-END/EVENT targets
+        - used to determine how many rows are needed in the results table
+    """
     return models.functions.Coalesce(
         models.Subquery(
             CollectedData.objects.filter(
@@ -47,6 +49,11 @@ def target_results_count_annotation():
         ), 0)
 
 def target_is_complete_annotation():
+    """is_complete == active == reporting
+        time-aware: the target period is over
+        lop: the program reporting period is over
+        event/mid-end: there is at least one data point entered
+    """
     return models.Case(
         models.When(
             models.Q(
@@ -73,40 +80,12 @@ def target_is_complete_annotation():
         output_field=models.BooleanField()
     )
 
-def target_target_sum_annotation():
-    targets = PeriodicTarget.objects.filter(
-        models.Q(indicator=models.OuterRef('indicator_id')) &
-        models.Q(
-            models.Q(indicator__target_frequency=Indicator.LOP) |
-            models.Q(
-                models.Q(indicator__target_frequency__in=[f[0] for f in utils.TIME_AWARE_FREQUENCIES]) &
-                models.Q(start_date__lte=models.OuterRef('start_date'))
-            ) |
-            models.Q(
-                models.Q(indicator__target_frequency__in=[Indicator.MID_END, Indicator.EVENT]) &
-                models.Q(customsort__lte=models.OuterRef('customsort'))
-            )
-        )
-    )
-    return models.Case(
-        models.When(
-            models.Q(
-                models.Q(indicator__unit_of_measure_type=Indicator.PERCENTAGE) |
-                models.Q(indicator__is_cumulative=True)
-                ),
-            then=models.Subquery(
-                targets.order_by('-start_date').values('target')[:1]
-            )
-        ),
-        default=models.Subquery(
-            targets.order_by().values('indicator').annotate(
-                target_sum=models.Sum('target')
-            ).values('target_sum')[:1]
-        ),
-        output_field=models.IntegerField()
-    )
-
 def target_actual_annotation():
+    """ value for "actual" on this target's row in the Results Table:
+        - NUMBER/cumulative: sum of results in this periodic target period,
+        - NUMBER/noncumulative: sum of results from all periods up to and including this one
+        - PERCENTAGE: latest result in this period
+    """
     return models.Case(
         models.When(
             indicator__unit_of_measure_type=Indicator.PERCENTAGE,
@@ -124,7 +103,8 @@ def target_actual_annotation():
                 ),
             then=models.Subquery(
                 CollectedData.objects.filter(
-                    periodic_target__end_date__lte=models.OuterRef('end_date')
+                    models.Q(indicator=models.OuterRef('indicator')) &
+                    models.Q(periodic_target__end_date__lte=models.OuterRef('end_date'))
                 ).order_by().values('indicator').annotate(
                     achieved_sum=models.Sum('achieved')
                 ).values('achieved_sum')[:1]
@@ -141,6 +121,8 @@ def target_actual_annotation():
     )
 
 def target_percent_met_annotation():
+    """ value for the % met column in the results table
+        logic is explained in target_actual_annotation"""
     return models.Case(
         models.When(
             models.Q(

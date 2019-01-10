@@ -60,6 +60,11 @@ def add_results_for_targets(targets, values):
         ))
     return results
 
+def get_next_date_monthly(_, date):
+        if date.month > 11:
+            return datetime.date(date.year + 1, date.month - 11, 1)
+        return datetime.date(date.year, date.month + 1, 1)
+
 class TestAnnualNoncumulativeNumeric(test.TestCase):
     is_cumulative = False
     lop_target = 1500
@@ -242,3 +247,94 @@ class TestMidEndPercent(test.TestCase):
     def test_annotated_target_is_complete(self):
         for target, expected in zip(self.results_indicator.annotated_targets, self.complete):
             self.assertEqual(target.is_complete, expected)
+
+class ScenarioBuilderMixin:
+    program_dates = [datetime.date(2017, 6, 1), datetime.date(2020, 1, 31)]
+    unit_of_measure_type = Indicator.NUMBER
+    direction_of_change = Indicator.DIRECTION_OF_CHANGE_POSITIVE
+    target_frequency = Indicator.ANNUAL
+    is_cumulative = False
+    target_values = []
+    result_values = []
+    
+    def do_setup(self):
+        self.program = self.get_program()
+        self.indicator = self.get_indicator()
+        self.targets, self.results = self.get_targets()
+        self.results_indicator = ResultsIndicator.results_view.get(pk=self.indicator.pk)
+
+    def get_program(self):
+        return w_factories.ProgramFactory(
+            reporting_period_start=self.program_dates[0],
+            reporting_period_end=self.program_dates[1]
+        )
+
+    def get_indicator(self):
+        return i_factories.IndicatorFactory(
+            program=self.program,
+            target_frequency=self.target_frequency,
+            unit_of_measure_type=self.unit_of_measure_type,
+            direction_of_change=self.direction_of_change,
+            is_cumulative=self.is_cumulative
+        )
+
+    def get_targets(self):
+        targets = []
+        results = []
+        start_date = self.program_dates[0]
+        end_date = self.program_dates[1]
+        next_date = self.next_date_func(start_date)
+        counter = 0
+        while start_date < end_date:
+            target = i_factories.PeriodicTargetFactory(
+                indicator=self.indicator,
+                start_date=start_date,
+                end_date=next_date - datetime.timedelta(days=1),
+                target=self.target_values[counter]
+            )
+            targets.append(target)
+            if counter < len(self.result_values):
+                results.append(
+                    i_factories.CollectedDataFactory(
+                        indicator=self.indicator,
+                        periodic_target=target,
+                        date_collected=start_date + datetime.timedelta(days=1),
+                        achieved=self.result_values[counter]
+                    )
+                )
+            counter += 1
+            start_date = next_date
+            next_date = self.next_date_func(start_date)
+        return targets, results
+
+class TestMonthlyDecreaseCumulative(test.TestCase, ScenarioBuilderMixin):
+    """built to deal with a weird failing edge case"""
+    program_dates = [datetime.date(2017, 6, 1), datetime.date(2020, 1, 31)]
+    unit_of_measure_type = Indicator.NUMBER
+    direction_of_change = Indicator.DIRECTION_OF_CHANGE_NEGATIVE
+    target_frequency = Indicator.MONTHLY
+    is_cumulative = True
+    target_values = range(500, 180, -10)
+    result_values = range(400, 628, 12)
+    expected_result_values = []
+    next_date_func = get_next_date_monthly
+
+    def setUp(self):
+        self.do_setup()
+        self.expected_result_values = [sum(self.result_values[:count+1]) for count in range(len(self.result_values))]
+
+    def test_result_rows_target_values(self):
+        for expected, pt_row in zip(self.target_values, self.results_indicator.annotated_targets):
+            self.assertEqual(expected, pt_row.target)
+
+    def test_result_rows_actual_values(self):
+        for expected, pt_row in zip(self.expected_result_values, self.results_indicator.annotated_targets):
+            self.assertEqual(expected, pt_row.actual)
+
+    def test_result_rows_percents_values(self):
+        for count, pt_row in enumerate(self.results_indicator.annotated_targets):
+            if count < len(self.expected_result_values):
+                expected = round(float(self.expected_result_values[count])/self.target_values[count], 2)
+            else:
+                expected = None
+            self.assertAlmostEqual(expected, pt_row.percent_met, 2)

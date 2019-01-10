@@ -89,7 +89,11 @@ class IPTTIndicatorManager(models.Manager, IndicatorSortingManagerMixin):
             qs = self.add_labels(qs)
         if lop:
             # add lop annotations (target_sum and actual_sum):
-            qs = qs.annotate(**utils.indicator_lop_annotations())
+            qs = qs.annotate(lop_target_calculated=utils.indicator_lop_target_calculated_annotation())
+            # add lop_actual annotation (for results display):
+            qs = qs.annotate(lop_actual=utils.indicator_lop_actual_annotation())
+            # add lop_met_real annotation:
+            qs = qs.annotate(lop_percent_met=utils.indicator_lop_percent_met_annotation())
         if report:
             # add reporting annotations (whether this indicator should be counted for on-target reporting)
             qs = qs.annotate(reporting=utils.indicator_reporting_annotation())

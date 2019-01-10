@@ -388,20 +388,6 @@ def program_evidence_annotation():
 
 def program_scope_annotations(*annotations):
     """annotates a program's indicators prefetch query with the required annotations to report their on scope status"""
-    # indicators_subquery = Indicator.objects.select_related('program').all()
-    # if any(key in annotations for key in ['reporting', 'scope']):
-    #     indicators_subquery = indicators_subquery.annotate(
-    #         lop
-    #     ).annotate(reporting=utils.indicator_reporting_annotation())
-    # if 'scope' in annotations:
-    #     indicators_subquery = indicators_subquery.annotate(
-    #         lop_met_real=utils.indicator_lop_met_real_annotation()
-    #     ).annotate(
-    #         over_under=utils.indicator_over_under_annotation()
-    #     )
-    # return models.Prefetch(
-    #     'indicator_set', queryset=indicators_subquery, to_attr='scope_indicators'
-    #     )
     indicators_subquery = iq.MetricsIndicator.objects.select_related('program').with_annotations(*annotations)
     return models.Prefetch(
         'indicator_set', queryset=indicators_subquery, to_attr='scope_indicators'

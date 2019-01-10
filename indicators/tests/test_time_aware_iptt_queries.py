@@ -1,3 +1,4 @@
+import unittest
 import sys
 from datetime import datetime
 from indicators.queries import IPTTIndicator
@@ -267,22 +268,22 @@ class TestIndicatorScenarios(test.TestCase):
                 # no tests on a blank (unsupported for annotations) indicator:
                 return
             self.assertEqual(
-                iptt_indicator.lop_target_sum,
+                iptt_indicator.lop_target_calculated,
                 scenario['lop_target'],
                 "In scenario {desc}: calculated lop_target_sum should be {1}, got {0}".format(
-                    iptt_indicator.lop_target_sum, scenario['lop_target'],
+                    iptt_indicator.lop_target_calculated, scenario['lop_target'],
                     desc=scenario['desc']))
             self.assertEqual(
-                iptt_indicator.lop_actual_sum,
+                iptt_indicator.lop_actual,
                 scenario['lop_sum'],
                 "In scenario {desc}: calculated lop sum should be {0}, got {1}".format(
-                    scenario['lop_sum'], iptt_indicator.lop_actual_sum,
+                    scenario['lop_sum'], iptt_indicator.lop_actual,
                     desc=scenario['desc']))
             self.assertEqual(
-                iptt_indicator.lop_met_target,
+                iptt_indicator.lop_percent_met,
                 scenario['lop_met'],
                 "In scenarios {desc}: lop met_target should be {0}, got {1}".format(
-                    scenario['lop_met'], iptt_indicator.lop_met_target,
+                    scenario['lop_met'], iptt_indicator.lop_percent_met,
                     desc=scenario['desc']))
         settings.DEBUG = False
 
