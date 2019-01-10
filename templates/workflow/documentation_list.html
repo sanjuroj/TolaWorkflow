@@ -3,13 +3,13 @@
 {% load mytags %}
 {% load render_bundle from webpack_loader %}
 
-{% block title %}{% trans "Records" %} | {% endblock %}
-{% block page_title %}{% trans "Records" %}{% endblock %}
+{% block title %}{% trans "Documents" %} | {% endblock %}
+{% block page_title %}{% trans "Documents" %}{% endblock %}
 
 
 {% block content %}
 
-    <div id="records-view"></div>
+    <div id="documents-view"></div>
 
 {% endblock content %}
 
@@ -19,5 +19,5 @@
         let jsContext = {{ js_context|js }};
     </script>
 
-    {% render_bundle 'record_list' %}
+    {% render_bundle 'document_list' %}
 {% endblock %}

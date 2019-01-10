@@ -795,23 +795,23 @@ def documentation_list(request):
 
     programs = Program.objects.filter(funding_status="Funded", country__in=user_countries)
 
-    # create a mapping of indicators to records
+    # create a mapping of indicators to documents
     all_program_results = Result.objects.filter(indicator__program__in=programs, evidence__isnull=False)
-    indicator_to_records_map = collections.defaultdict(list)
-    for record in all_program_results:
-        indicator_to_records_map[record.indicator_id].append(record.evidence_id)
+    indicator_to_documents_map = collections.defaultdict(list)
+    for result in all_program_results:
+        indicator_to_documents_map[result.indicator_id].append(result.evidence_id)
 
-    # limit indicators to those with results w/ records
-    indicators = Indicator.objects.filter(id__in=indicator_to_records_map.keys()).with_logframe_sorting()
+    # limit indicators to those with results w/ documents
+    indicators = Indicator.objects.filter(id__in=indicator_to_documents_map.keys()).with_logframe_sorting()
     programs = programs.prefetch_related(Prefetch('indicator_set', queryset=indicators))
 
-    records = Documentation.objects.all().select_related('project').filter(program__country__in=user_countries)
+    documents = Documentation.objects.all().select_related('project').filter(program__country__in=user_countries)
 
     js_context = {
         'allowProjectsAccess': request.user.tola_user.allow_projects_access,
         'programs': RecordListProgramSerializer(programs, many=True).data,
-        'records': RecordListRecordSerializer(records, many=True).data,
-        'indicatorToRecordsMap': dict(indicator_to_records_map),
+        'documents': RecordListRecordSerializer(documents, many=True).data,
+        'indicatorToDocumentsMap': dict(indicator_to_documents_map),
     }
 
     return render(request, 'workflow/documentation_list.html', {

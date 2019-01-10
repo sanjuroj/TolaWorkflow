@@ -9,24 +9,24 @@ import eventBus from '../../../eventbus';
 import {dateFromISOString, mediumDateFormatStr} from "../../../date_utils";
 
 
-// Given the full records list in rootStore, and the selected filters in uiStore, apply filtering (sans individual record select)
-function filterRecords(rootStore, uiStore) {
-    let records = rootStore.records;
+// Given the full documents list in rootStore, and the selected filters in uiStore, apply filtering (sans individual document select)
+function filterDocuments(rootStore, uiStore) {
+    let documents = rootStore.documents;
 
     if (uiStore.selectedProgramId) {
-        records = records.filter(r => r.program === uiStore.selectedProgramId);
+        documents = documents.filter(r => r.program === uiStore.selectedProgramId);
     }
 
     if (uiStore.selectedProjectId) {
-        records = records.filter(r => r.project && r.project.id === uiStore.selectedProjectId);
+        documents = documents.filter(r => r.project && r.project.id === uiStore.selectedProjectId);
     }
 
     if (uiStore.selectedIndicatorId) {
-        let recordsForIndicator = new Set(rootStore.getRecordsForIndicator(uiStore.selectedIndicatorId));
-        records = records.filter(r => recordsForIndicator.has(r.id));
+        let documentsForIndicator = new Set(rootStore.getDocumentsForIndicator(uiStore.selectedIndicatorId));
+        documents = documents.filter(r => documentsForIndicator.has(r.id));
     }
 
-    return records
+    return documents
 }
 
 
@@ -110,7 +110,7 @@ class IndicatorFilterSelect extends React.Component {
 
 
 @observer
-class RecordFilterSelect extends React.Component {
+class DocumentFilterSelect extends React.Component {
     constructor(props) {
         super(props);
 
@@ -118,29 +118,29 @@ class RecordFilterSelect extends React.Component {
     }
 
     onSelection(selectedObject) {
-        let recordId = selectedObject ? selectedObject.value : null;
-        eventBus.emit('record-id-filter-selected', recordId);
+        let documentId = selectedObject ? selectedObject.value : null;
+        eventBus.emit('document-id-filter-selected', documentId);
     }
 
     render() {
         const {rootStore, uiStore} = this.props;
-        const records = filterRecords(rootStore, uiStore);
-        const selectedRecordId = uiStore.selectedRecordId;
+        const documents = filterDocuments(rootStore, uiStore);
+        const selectedDocumentId = uiStore.selectedDocumentId;
 
-        let recordOptions = records.map(r => {
+        let documentOptions = documents.map(r => {
             return {value: r.id, label: r.name}
         });
 
         let selectedValue = null;
-        if (selectedRecordId) {
-            selectedValue = recordOptions.find(r => r.value === selectedRecordId);
+        if (selectedDocumentId) {
+            selectedValue = documentOptions.find(r => r.value === selectedDocumentId);
         }
 
         return <Select
-            options={recordOptions}
+            options={documentOptions}
             value={selectedValue}
             isClearable={true}
-            placeholder={gettext('Find a record')}
+            placeholder={gettext('Find a document')}
             onChange={this.onSelection}
         />
     }
@@ -148,7 +148,7 @@ class RecordFilterSelect extends React.Component {
 
 
 @observer
-class RecordsFilterBar extends React.Component {
+class DocumentsFilterBar extends React.Component {
     render() {
         const {rootStore, uiStore} = this.props;
 
@@ -160,11 +160,11 @@ class RecordsFilterBar extends React.Component {
                 <IndicatorFilterSelect rootStore={rootStore} uiStore={uiStore} />
             </div>
             <div className="col-3">
-                <RecordFilterSelect rootStore={rootStore} uiStore={uiStore} />
+                <DocumentFilterSelect rootStore={rootStore} uiStore={uiStore} />
             </div>
             <div className="col-3 text-right">
                 <a href="/workflow/documentation_add" className="btn btn-link btn-add">
-                    <i className="fas fa-plus-circle"/> {gettext("Add record")}</a>
+                    <i className="fas fa-plus-circle"/> {gettext("Add document")}</a>
             </div>
         </div>
     }
@@ -172,26 +172,26 @@ class RecordsFilterBar extends React.Component {
 }
 
 
-const RecordsListTable = observer(function ({rootStore, uiStore}) {
-    // Apply filters to displayed list of records
-    let records = filterRecords(rootStore, uiStore);
+const DocumentsListTable = observer(function ({rootStore, uiStore}) {
+    // Apply filters to displayed list of documents
+    let documents = filterDocuments(rootStore, uiStore);
 
-    // filter down by individual record select
-    if (uiStore.selectedRecordId) {
-        records = records.filter(r => r.id === uiStore.selectedRecordId);
+    // filter down by individual document select
+    if (uiStore.selectedDocumentId) {
+        documents = documents.filter(r => r.id === uiStore.selectedDocumentId);
     }
 
-    // If no records, don't show a table
-    if (records.length === 0) {
+    // If no documents, don't show a table
+    if (documents.length === 0) {
         return <div>
-            <span>No records available</span>
+            <span>No documents available</span>
         </div>
     }
 
     const columns = [
         {
             dataField: 'name',
-            text: gettext('Record'),
+            text: gettext('Document'),
             sort: true,
             formatter: (cell, row) => {
                 return <a href={row.url} target="_blank">{row.name}</a>
@@ -248,7 +248,7 @@ const RecordsListTable = observer(function ({rootStore, uiStore}) {
 
     return <BootstrapTable
         keyField="id"
-        data={records}
+        data={documents}
         columns={columns}
         bootstrap4={true}
         pagination={paginationFactory(paginationOptions)}
@@ -258,10 +258,10 @@ const RecordsListTable = observer(function ({rootStore, uiStore}) {
 
 
 
-export const RecordsView = observer(function ({rootStore, uiStore}) {
+export const DocumentsView = observer(function ({rootStore, uiStore}) {
     return <React.Fragment>
-        <RecordsFilterBar rootStore={rootStore} uiStore={uiStore}/>
+        <DocumentsFilterBar rootStore={rootStore} uiStore={uiStore}/>
         <br/>
-        <RecordsListTable rootStore={rootStore} uiStore={uiStore}/>
+        <DocumentsListTable rootStore={rootStore} uiStore={uiStore}/>
     </React.Fragment>
 });

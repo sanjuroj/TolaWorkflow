@@ -2,20 +2,20 @@ import { observable, computed, action } from "mobx";
 
 
 
-export class RecordListStore {
-    @observable records = [];
+export class DocumentListStore {
+    @observable documents = [];
     @observable programs = [];
-    @observable indicatorToRecordsMap = {};
+    @observable indicatorToDocumentsMap = {};
     @observable allowProjectsAccess = false;
 
-    constructor(records, programs, indicatorToRecordsMap, allowProjectsAccess) {
-        this.records = records;
+    constructor(documents, programs, indicatorToDocumentsMap, allowProjectsAccess) {
+        this.documents = documents;
         this.programs = programs;
-        this.indicatorToRecordsMap = indicatorToRecordsMap;
+        this.indicatorToDocumentsMap = indicatorToDocumentsMap;
         this.allowProjectsAccess = allowProjectsAccess;
 
         this.getIndicators = this.getIndicators.bind(this);
-        this.getRecordsForIndicator = this.getRecordsForIndicator.bind(this);
+        this.getDocumentsForIndicator = this.getDocumentsForIndicator.bind(this);
     }
 
     // For a given program, return a list of indicators
@@ -28,15 +28,15 @@ export class RecordListStore {
         return [];
     }
 
-    getRecordsForIndicator(indicatorId) {
-        return this.indicatorToRecordsMap[indicatorId];
+    getDocumentsForIndicator(indicatorId) {
+        return this.indicatorToDocumentsMap[indicatorId];
     }
 }
 
-export class RecordListUIStore {
+export class DocumentListUIStore {
     @observable selectedProgramId;  // program filter selection
     @observable selectedIndicatorId;  // indicator filter selection
-    @observable selectedRecordId;  // single record filter selection
+    @observable selectedDocumentId;  // single document filter selection
     @observable selectedProjectId;  // legacy URL filter for projects
 
     constructor() {
@@ -44,8 +44,8 @@ export class RecordListUIStore {
         this.clearSelectedProgramId = this.clearSelectedProgramId.bind(this);
         this.setSelectedIndicatorId = this.setSelectedIndicatorId.bind(this);
         this.clearSelectedIndicatorId = this.clearSelectedIndicatorId.bind(this);
-        this.setSelectedRecordId = this.setSelectedRecordId.bind(this);
-        this.clearSelectedRecordId = this.clearSelectedRecordId.bind(this);
+        this.setSelectedDocumentId = this.setSelectedDocumentId.bind(this);
+        this.clearSelectedDocumentId = this.clearSelectedDocumentId.bind(this);
         this.setSelectedProjectId = this.setSelectedProjectId.bind(this);
         this.clearSelectedProjectId = this.clearSelectedProjectId.bind(this);
     }
@@ -71,13 +71,13 @@ export class RecordListUIStore {
     }
 
     @action
-    setSelectedRecordId(recordId) {
-        this.selectedRecordId = recordId;
+    setSelectedDocumentId(documentId) {
+        this.selectedDocumentId = documentId;
     }
 
     @action
-    clearSelectedRecordId() {
-        this.selectedRecordId = null;
+    clearSelectedDocumentId() {
+        this.selectedDocumentId = null;
     }
 
     @action

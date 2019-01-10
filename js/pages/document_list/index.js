@@ -4,18 +4,18 @@ import createRouter from 'router5';
 import browserPlugin from 'router5-plugin-browser';
 import eventBus from '../../eventbus';
 
-import {RecordsView} from './components/record_list';
-import {RecordListStore, RecordListUIStore} from './models';
+import {DocumentsView} from './components/document_list';
+import {DocumentListStore, DocumentListUIStore} from './models';
 
 // console.log(jsContext);
 
-const {records, programs, indicatorToRecordsMap, allowProjectsAccess} = jsContext;
+const {documents, programs, indicatorToDocumentsMap, allowProjectsAccess} = jsContext;
 
 /*
  * Model/Store setup
  */
-const rootStore = new RecordListStore(records, programs, indicatorToRecordsMap, allowProjectsAccess);
-const uiStore = new RecordListUIStore();
+const rootStore = new DocumentListStore(documents, programs, indicatorToDocumentsMap, allowProjectsAccess);
+const uiStore = new DocumentListUIStore();
 
 
 /*
@@ -23,7 +23,7 @@ const uiStore = new RecordListUIStore();
  */
 
 const routes = [
-    {name: 'records', path: '/?program_id&project_id&indicator_id&record_id'},
+    {name: 'documents', path: '/?program_id&project_id&indicator_id&document_id'},
 ];
 
 // When the URL changes due to navigation, back button press, etc
@@ -44,10 +44,10 @@ function onNavigation(navRoutes) {
         uiStore.clearSelectedIndicatorId();
     }
 
-    if (params.record_id) {
-        uiStore.setSelectedRecordId(parseInt(params.record_id));
+    if (params.document_id) {
+        uiStore.setSelectedDocumentId(parseInt(params.document_id));
     } else {
-        uiStore.clearSelectedRecordId();
+        uiStore.clearSelectedDocumentId();
     }
 
     if (params.project_id) {
@@ -73,9 +73,9 @@ router.start();
 // program filter selection
 eventBus.on('program-id-filter-selected', (programId) => {
     if (programId) {
-        router.navigate('records', {program_id: programId});
+        router.navigate('documents', {program_id: programId});
     } else {
-        router.navigate('records');
+        router.navigate('documents');
     }
 });
 
@@ -83,13 +83,13 @@ eventBus.on('indicator-id-filter-selected', (indicatorId) => {
     const programId = uiStore.selectedProgramId;
 
     if (indicatorId) {
-        router.navigate('records', {program_id: programId, indicator_id: indicatorId});
+        router.navigate('documents', {program_id: programId, indicator_id: indicatorId});
     } else {
-        router.navigate('records', {program_id: programId});
+        router.navigate('documents', {program_id: programId});
     }
 });
 
-eventBus.on('record-id-filter-selected', (recordId) => {
+eventBus.on('document-id-filter-selected', (documentId) => {
     const programId = uiStore.selectedProgramId;
     const indicatorId = uiStore.selectedIndicatorId;
 
@@ -103,11 +103,11 @@ eventBus.on('record-id-filter-selected', (recordId) => {
         qs.indicator_id = indicatorId;
     }
 
-    if (recordId) {
-        qs.record_id = recordId;
+    if (documentId) {
+        qs.document_id = documentId;
     }
 
-    router.navigate('records', qs);
+    router.navigate('documents', qs);
 });
 
 
@@ -115,5 +115,5 @@ eventBus.on('record-id-filter-selected', (recordId) => {
  * React components on page
  */
 
-ReactDOM.render(<RecordsView rootStore={rootStore} uiStore={uiStore}/>,
-    document.querySelector('#records-view'));
+ReactDOM.render(<DocumentsView rootStore={rootStore} uiStore={uiStore}/>,
+    document.querySelector('#documents-view'));
