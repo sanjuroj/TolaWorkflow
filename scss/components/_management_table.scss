@@ -1,20 +1,17 @@
 .mgmt-table {
-    display: table;
     width: 100%;
 
     .mgmt-table__head {
-        display: table-header-group;
     }
 
     .mgmt-table__body {
-        display: table-row-group;
     }
 
     .mgmt-table__row {
-        display: table-row;
+        display: flex;
     }
 
     .mgmt-table__col {
-        display: table-cell;
+        flex: 1;
     }
 }

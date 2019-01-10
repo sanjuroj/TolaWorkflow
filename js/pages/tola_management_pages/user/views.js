@@ -5,7 +5,9 @@ import BootstrapTable from 'react-bootstrap-table-next'
 import Select from 'react-select'
 import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
 import ManagementTable from 'components/management-table'
-import UserEditor from './components/user_editor'
+import EditUserProfile from './components/edit_user_profile'
+import EditUserPrograms from './components/edit_user_programs'
+import EditUserHistory from './components/edit_user_history'
 
 
 export const IndexView = observer(
@@ -104,13 +106,13 @@ export const IndexView = observer(
                         keyField="id"
                         HeaderRow={({Col, Row}) =>
                             <Row>
-                                <Col>
+                                <Col size="0.5">
                                     <div className="td--stretch">
                                         <input type="checkbox" checked={bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
                                         <div></div>
                                     </div>
                                 </Col>
-                                <Col>User</Col>
+                                <Col size="2">User</Col>
                                 <Col>Organization</Col>
                                 <Col>Programs</Col>
                                 <Col>Admin Role</Col>
@@ -119,13 +121,13 @@ export const IndexView = observer(
                         }
                         Row={({Col, Row, data}) =>
                             <Row>
-                                <Col>
+                                <Col size="0.5">
                                     <div className="td--stretch">
                                         <input type="checkbox" checked={bulk_targets.get(data.id)} onChange={() => store.toggleBulkTarget(data.id) }/>
                                         <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)}><i className="fa fa-user"></i></div>
                                     </div>
                                 </Col>
-                                <Col>{data.name}</Col>
+                                <Col size="2">{data.name}</Col>
                                 <Col>{data.organization_name}</Col>
                                 <Col><a href="">{data.user_programs} programs</a></Col>
                                 <Col>{data.is_admin?'Yes':'No'}</Col>
@@ -135,7 +137,28 @@ export const IndexView = observer(
                         expandoTarget={store.editing_target}
                         Expando={({Wrapper}) =>
                             <Wrapper>
-                                <UserEditor />
+                                <div class="user-editor row">
+                                    <div class="user-editor__navigation col-sm-3">
+                                        <ul>
+                                            <li><a onClick={() => store.updateActiveEditPage('profile')}>Profile</a></li>
+                                            <li><a onClick={() => store.updateActiveEditPage('programs_and_roles')}>Programs and Roles</a></li>
+                                            <li><a onClick={() => store.updateActiveEditPage('status_and_history')}>Status and History</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="user-editor__content col-sm-9">
+                                        {store.active_edit_page == 'profile' &&
+                                        <EditUserProfile onSave={() => {}} />
+                                        }
+
+                                        {store.active_edit_page == 'programs_and_roles' &&
+                                        <EditUserPrograms onSave={() => {}} />
+                                        }
+
+                                        {store.active_edit_page == 'status_and_history' &&
+                                        <EditUserHistory onSave={() => {}} />
+                                        }
+                                    </div>
+                                </div>
                             </Wrapper>
                         }
                     />
