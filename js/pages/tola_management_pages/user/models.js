@@ -9,6 +9,7 @@ export class UserStore {
     @observable total_pages = null
     @observable bulk_targets = new Map()
     @observable bulk_targets_all = false
+    @observable editing_target = null
 
     //filter options
     @observable available_countries = []
@@ -154,13 +155,11 @@ export class UserStore {
 
     @action
     toggleEditingTarget(user_id) {
-        let user = this.users.forEach(u => {
-            if(u.id == user_id) {
-                u.editing = !u.editing;
-            } else {
-                u.editing = false;
-            }
-        })
+        if(this.editing_target == user_id) {
+            this.editing_target = false;
+        } else {
+            this.editing_target = user_id;
+        }
     }
 
     @action

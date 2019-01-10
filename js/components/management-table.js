@@ -26,7 +26,6 @@ const RowComponent = observer(({className, expanded, Expando, ...props}) => {
     }
 })
 const ExpandoWrapper = ({className, ...props}) => <div className={["container-fluid", className].join(' ')} {...props}>{props.children}</div>
-
 const RowList = observer(({data, Row, keyField, ...props}) => {
     const ObservedRow = observer(Row)
     return <div className="mgmt-table__rows">

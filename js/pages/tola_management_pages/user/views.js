@@ -125,7 +125,7 @@ export const IndexView = observer(
                         }
                         Row={({Col, Row, data}) =>
                             <Row
-                            expanded={data.editing}
+                            expanded={data.id == store.editing_target}
                             Expando={({Wrapper}) =>
                                 <Wrapper>
                                     <UserEditor
