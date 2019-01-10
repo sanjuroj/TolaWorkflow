@@ -19,485 +19,226 @@ from factories import (
     indicators_models as i_factories
 )
 from indicators.models import Indicator
-from indicators.queries import ResultsIndicator
+from indicators.queries import ResultsIndicator, MetricsIndicator
 from django import test
 
-def get_indicator_and_targets(indicator_pk):
-    return ResultsIndicator.results_view.get(pk=indicator_pk)
+def get_open_program():
+    return w_factories.ProgramFactory(
+        reporting_period_start=datetime.date(2017, 1, 1),
+        reporting_period_end=datetime.date(2020, 12, 31)
+    )
 
-class ResultsViewBase:
-    def get_set_up(self):
-        program = w_factories.ProgramFactory(
-            reporting_period_start=self.start_date,
-            reporting_period_end=self.end_date
-        )
-        self.indicator = i_factories.IndicatorFactory(
+def get_annual_indicator(program, lop_target, is_cumulative):
+    return i_factories.IndicatorFactory(
+        program=program,
+        target_frequency=Indicator.ANNUAL,
+        unit_of_measure_type=Indicator.NUMBER,
+        is_cumulative=is_cumulative,
+        lop_target=lop_target
+    )
+
+def get_annual_targets(indicator, target_values):
+    start_date = indicator.program.reporting_period_start
+    targets = []
+    for c, value in enumerate(target_values):
+        targets.append(i_factories.PeriodicTargetFactory(
+            indicator=indicator,
+            start_date=datetime.date(start_date.year + c, 1, 1),
+            end_date=datetime.date(start_date.year + c, 12, 31),
+            target=value
+        ))
+    return targets
+
+def add_results_for_targets(targets, values):
+    results = []
+    for c, value in enumerate(values):
+        results.append(i_factories.CollectedDataFactory(
+            indicator=targets[c].indicator,
+            periodic_target=targets[c],
+            date_collected=targets[c].start_date,
+            achieved=value
+        ))
+    return results
+
+class TestAnnualNoncumulativeNumeric(test.TestCase):
+    is_cumulative = False
+    lop_target = 1500
+    calculated_lop_target = 1200
+    progress_lop_target = 300
+    lop_actual = 520
+    lop_percent_met = 0.35
+    lop_actual_progress = 170
+    lop_percent_met_progress = 0.57
+    target_values = [100, 200, 400, 500]
+    result_values = [50, 120, 350]
+    expected_results_values = [50, 120, 350, None]
+    expected_percent_mets = [0.5, 0.6, 0.88, None]
+    complete = [True, True, False, False, False]
+
+    def setUp(self):
+        program = get_open_program()
+        indicator = get_annual_indicator(program, self.lop_target, self.is_cumulative)
+        targets = get_annual_targets(indicator, self.target_values)
+        results = add_results_for_targets(targets, self.result_values)
+        self.results_indicator = ResultsIndicator.results_view.get(pk=indicator.pk)
+        self.metrics_indicator = MetricsIndicator.objects.with_annotations('scope').get(pk=indicator.pk)
+
+    def test_lop_targets(self):
+        # lop_target is set by indicator setup field (arbitrary, non-calculated, being deprecated):
+        self.assertEqual(self.results_indicator.lop_target, self.lop_target)
+        # lop_target_calculated is the sum of all targets entered for the program for noncumulative number
+        self.assertEqual(self.results_indicator.lop_target_calculated, self.calculated_lop_target)
+        # lop_target_active is currently the lop_target field (this alias is to assist in deprecating):
+        self.assertEqual(self.results_indicator.lop_target_active, self.results_indicator.lop_target)
+        # lop_target_progress is for metrics only, sum of targets for ACTIVE target periods
+        # (active target period = completed for time-aware, with-data for event/mid-end, lop_target_active for lop)
+        self.assertEqual(self.metrics_indicator.lop_target_progress, self.progress_lop_target)
+
+    def test_lop_actuals(self):
+        # lop_actual is sum of all results for the entire program:
+        self.assertEqual(self.results_indicator.lop_actual, self.lop_actual)
+        # lop_actual_progress is for metrics only, sum of achieved values in ACTIVE target periods:
+        self.assertEqual(self.metrics_indicator.lop_actual_progress, self.lop_actual_progress)
+
+    def test_lop_percent_met(self):
+        # lop_percent_met is the sum of all results divided by the arbitrary lop target
+        self.assertEqual(round(self.results_indicator.lop_percent_met, 2), self.lop_percent_met)
+        # lop_percent_met_progress is the sum of all results in active targets divided by the sum of all active
+        # targets:
+        self.assertEqual(round(self.metrics_indicator.lop_percent_met_progress, 2), self.lop_percent_met_progress,
+                         "actual progress {0} and target progress {1}".format(self.metrics_indicator.lop_actual_progress, self.metrics_indicator.lop_target_progress))
+
+    def test_annotated_target_targets(self):
+        # target should always match exactly what was entered for that target:
+        for target, expected in zip(self.results_indicator.annotated_targets, self.target_values):
+            self.assertEqual(target.target, expected)
+
+    def test_annotated_target_actuals(self):
+        for expected, target in zip(self.expected_results_values, self.results_indicator.annotated_targets):
+            self.assertEqual(target.actual, expected,
+                             "expected {0} got {1} for target starting {2}".format(
+                                expected, target.actual, target.start_date))
+
+    def test_annotated_target_percent_mets(self):
+        for expected, target in zip(self.expected_percent_mets, self.results_indicator.annotated_targets):
+            if expected is None:
+                self.assertIsNone(target.percent_met)
+            else:
+                self.assertEqual(round(target.percent_met, 2), expected)
+
+    def test_annotated_target_is_complete(self):
+        for target, expected in zip(self.results_indicator.annotated_targets, self.complete):
+            self.assertEqual(target.is_complete, expected)
+
+class TestAnnualCumulativeNumeric(TestAnnualNoncumulativeNumeric):
+    is_cumulative = True
+    lop_target = 200
+    calculated_lop_target = 90
+    progress_lop_target = 20
+    lop_actual = 78
+    lop_percent_met = 0.39
+    lop_actual_progress = 33
+    lop_percent_met_progress = 1.65
+    target_values = [10, 20, 50, 90]
+    result_values = [8, 25, 45]
+    expected_results_values = [8, 33, 78, None]
+    expected_percent_mets = [0.8, 1.65, 1.56, None]
+    complete = [True, True, False, False, False]
+
+class TestMidEndPercent(test.TestCase):
+    lop_target = 60
+    calculated_lop_target = 65
+    progress_lop_target = 80
+    lop_actual = 70
+    lop_percent_met = 1.17
+    lop_actual_progress = 70
+    lop_percent_met_progress = 0.88
+    target_values = [80, 65]
+    expected_results_values = [70, None]
+    complete = [True, False]
+    expected_percent_mets = [0.88, None]
+
+    def setUp(self):
+        program = get_open_program()
+        indicator = i_factories.IndicatorFactory(
             program=program,
-            target_frequency=self.target_frequency,
-            lop_target=1000
-        )
-        self.get_targets(self.indicator)
-        self.annotated_indicator = get_indicator_and_targets(self.indicator.pk)
-
-class TestLOPIndicatorIncompleteNoData(test.TestCase, ResultsViewBase):
-    start_date = datetime.date(2016, 1, 1)
-    end_date = datetime.date(2026, 12, 31)
-    target_frequency = Indicator.LOP
-
-    def setUp(self):
-        self.get_set_up()
-
-    def get_targets(self, indicator):
-        i_factories.PeriodicTargetFactory(
-            indicator=indicator,
-            start_date=self.start_date,
-            end_date=self.end_date,
-            target=1000
-        )
-
-    def test_achieved_and_target(self):
-        self.assertEqual(self.annotated_indicator.lop_actual_sum, None)
-        self.assertEqual(self.annotated_indicator.lop_target_sum, 1000)
-        self.assertEqual(self.annotated_indicator.lop_met_real, None)
-
-    def test_targets_achieved_and_target(self):
-        targets = self.annotated_indicator.annotated_targets
-        self.assertEqual(len(targets), 1)
-        self.assertEqual(targets[0].achieved, None)
-        self.assertEqual(targets[0].target, 1000)
-        self.assertEqual(targets[0].percent_met, None)
-
-    def test_is_complete_methods(self):
-        self.assertFalse(self.annotated_indicator.is_complete)
-        self.assertFalse(self.annotated_indicator.annotated_targets[0].is_complete)
-
-    def test_is_complete_with_not_setup_program(self):
-        program = self.annotated_indicator.program
-        program.reporting_period_end = None
-        program.save()
-        self.assertFalse(get_indicator_and_targets(self.annotated_indicator.pk).is_complete)
-
-class TestLOPIndicatorIncompleteWithData(test.TestCase, ResultsViewBase):
-    start_date = datetime.date(2016, 1, 1)
-    end_date = datetime.date(2026, 12, 31)
-    target_frequency = Indicator.LOP
-
-    def setUp(self):
-        self.get_set_up()
-
-    def get_targets(self, indicator):
-        target = i_factories.PeriodicTargetFactory(
-            indicator=indicator,
-            start_date=self.start_date,
-            end_date=self.end_date,
-            target=1000
-        )
-        i_factories.CollectedDataFactory(
-            indicator=indicator,
-            periodic_target=target,
-            date_collected=datetime.date(2016, 10, 1),
-            achieved=400
-        )
-        i_factories.CollectedDataFactory(
-            indicator=indicator,
-            periodic_target=target,
-            date_collected=datetime.date(2016, 11, 1),
-            achieved=300
-        )
-
-    def test_targets_and_is_complete(self):
-        self.assertEqual(self.annotated_indicator.lop_target_sum, 1000)
-        self.assertFalse(self.annotated_indicator.is_complete)
-        self.assertEqual(self.annotated_indicator.annotated_targets[0].target, 1000)
-        self.assertFalse(self.annotated_indicator.annotated_targets[0].is_complete)
-
-    def test_achieved_sum_logic_non_cumulative(self):
-        self.indicator.is_cumulative = False
-        self.indicator.save()
-        a_i = ResultsIndicator.results_view.get(pk=self.indicator.pk)
-        self.assertEqual(a_i.lop_actual_sum, 700)
-        self.assertEqual(a_i.percent_met, 0.7)
-        self.assertEqual(a_i.annotated_targets[0].achieved, 700)
-        self.assertEqual(a_i.annotated_targets[0].percent_met, 0.7)
-
-    def test_achieved_sum_logic_cumulative(self):
-        self.indicator.is_cumulative = True
-        self.indicator.save()
-        a_i = ResultsIndicator.results_view.get(pk=self.indicator.pk)
-        self.assertEqual(a_i.lop_actual_sum, 700)
-        self.assertEqual(a_i.percent_met, 0.7)
-        self.assertEqual(a_i.annotated_targets[0].achieved, 700)
-        self.assertEqual(a_i.annotated_targets[0].percent_met, 0.7)
-
-    def test_achieved_sum_logic_percent(self):
-        self.indicator.unit_of_measure_type=Indicator.PERCENTAGE
-        self.indicator.save()
-        a_i = get_indicator_and_targets(self.indicator.pk)
-        self.assertEqual(a_i.lop_actual_sum, 300)
-        self.assertEqual(a_i.percent_met, 0.3)
-        self.assertEqual(a_i.annotated_targets[0].achieved, 300)
-        self.assertEqual(a_i.annotated_targets[0].percent_met, 0.3)
-
-class TestLOPIndicatorCompleteWithoutData(test.TestCase, ResultsViewBase):
-    start_date = datetime.date(2014, 1, 1)
-    end_date = datetime.date(2016, 12, 31)
-    target_frequency = Indicator.LOP
-
-    def setUp(self):
-        self.get_set_up()
-
-    def get_targets(self, indicator):
-        i_factories.PeriodicTargetFactory(
-            indicator=indicator,
-            start_date=self.start_date,
-            end_date=self.end_date,
-            target=1000
-        )
-
-    def test_achieved_and_target(self):
-        self.assertEqual(self.annotated_indicator.lop_actual_sum, None)
-        self.assertEqual(self.annotated_indicator.lop_target_sum, 1000)
-        self.assertEqual(self.annotated_indicator.lop_met_real, None)
-
-    def test_targets_achieved_and_target(self):
-        targets = self.annotated_indicator.annotated_targets
-        self.assertEqual(len(targets), 1)
-        self.assertEqual(targets[0].achieved, None)
-        self.assertEqual(targets[0].target, 1000)
-        self.assertEqual(targets[0].percent_met, None)
-
-    def test_is_complete_methods(self):
-        self.assertTrue(self.annotated_indicator.is_complete)
-        self.assertTrue(self.annotated_indicator.annotated_targets[0].is_complete)
-
-class TestLOPIndicatorCompleteWithData(test.TestCase, ResultsViewBase):
-    start_date = datetime.date(2014, 1, 1)
-    end_date = datetime.date(2016, 12, 31)
-    target_frequency = Indicator.LOP
-
-    def setUp(self):
-        self.get_set_up()
-
-    def get_targets(self, indicator):
-        target = i_factories.PeriodicTargetFactory(
-            indicator=indicator,
-            start_date=self.start_date,
-            end_date=self.end_date,
-            target=1000
-        )
-        i_factories.CollectedDataFactory(
-            indicator=indicator,
-            periodic_target=target,
-            date_collected=datetime.date(2014, 10, 1),
-            achieved=400
-        )
-        i_factories.CollectedDataFactory(
-            indicator=indicator,
-            periodic_target=target,
-            date_collected=datetime.date(2015, 11, 1),
-            achieved=300
-        )
-
-    def test_targets_and_is_complete(self):
-        self.assertEqual(self.annotated_indicator.lop_target_sum, 1000)
-        self.assertTrue(self.annotated_indicator.is_complete)
-        self.assertEqual(self.annotated_indicator.annotated_targets[0].target, 1000)
-        self.assertEqual(self.annotated_indicator.annotated_targets[0].target_sum, 1000)
-        self.assertTrue(self.annotated_indicator.annotated_targets[0].is_complete)
-
-    def test_achieved_sum_logic_non_cumulative(self):
-        self.indicator.is_cumulative = False
-        self.indicator.save()
-        a_i = ResultsIndicator.results_view.get(pk=self.indicator.pk)
-        self.assertEqual(a_i.lop_actual_sum, 700)
-        self.assertEqual(a_i.percent_met, 0.7)
-        self.assertEqual(a_i.annotated_targets[0].achieved, 700)
-        self.assertEqual(a_i.annotated_targets[0].percent_met, 0.7)
-
-    def test_achieved_sum_logic_cumulative(self):
-        self.indicator.is_cumulative = True
-        self.indicator.save()
-        a_i = ResultsIndicator.results_view.get(pk=self.indicator.pk)
-        self.assertEqual(a_i.lop_actual_sum, 700)
-        self.assertEqual(a_i.percent_met, 0.7)
-        self.assertEqual(a_i.annotated_targets[0].achieved, 700)
-        self.assertEqual(a_i.annotated_targets[0].percent_met, 0.7)
-
-    def test_achieved_sum_logic_percent(self):
-        self.indicator.unit_of_measure_type=Indicator.PERCENTAGE
-        self.indicator.save()
-        a_i = get_indicator_and_targets(self.indicator.pk)
-        self.assertEqual(a_i.lop_actual_sum, 300)
-        self.assertEqual(a_i.percent_met, 0.3)
-        self.assertEqual(a_i.annotated_targets[0].achieved, 300)
-        self.assertEqual(a_i.annotated_targets[0].percent_met, 0.3)
-
-class TestMidEndIndicator(test.TestCase):
-    start_date=datetime.date(2014, 1, 1)
-    end_date=datetime.date(2015, 12, 31)
-
-    def setUp(self):
-        self.program = w_factories.ProgramFactory(
-            reporting_period_start=self.start_date,
-            reporting_period_end=self.end_date
-        )
-
-    def test_one_target_no_data(self):
-        indicator = i_factories.IndicatorFactory(
-            program=self.program,
             target_frequency=Indicator.MID_END,
-            lop_target=400
+            unit_of_measure_type=Indicator.PERCENTAGE,
+            lop_target=60
         )
-        i_factories.PeriodicTargetFactory(
-            indicator=indicator,
-            customsort=0,
-            start_date=None,
-            end_date=None,
-            target=10000
-        )
-        a_i = get_indicator_and_targets(indicator.pk)
-        self.assertEqual(a_i.lop_actual_sum, None)
-        self.assertEqual(a_i.percent_met, None)
-        self.assertEqual(a_i.lop_target_sum, None)
-        self.assertEqual(len(a_i.annotated_targets), 1)
-        self.assertEqual(a_i.annotated_targets[0].percent_met, None)
-        self.assertEqual(a_i.annotated_targets[0].achieved, None)
-        self.assertEqual(a_i.annotated_targets[0].target, 10000)
-        self.assertEqual(a_i.annotated_targets[0].target_sum, 10000)
-
-    def test_two_targets_no_data(self):
-        indicator = i_factories.IndicatorFactory(
-            program=self.program,
-            target_frequency=Indicator.MID_END,
-            is_cumulative=False,
-            unit_of_measure_type=Indicator.NUMBER,
-            lop_target=130
-        )
-        i_factories.PeriodicTargetFactory(
-            indicator=indicator,
-            customsort=0,
-            start_date=None,
-            end_date=None,
-            target=40
-        )
-        i_factories.PeriodicTargetFactory(
-            indicator=indicator,
-            customsort=1,
-            start_date=None,
-            end_date=None,
-            target=90
-        )
-        a_i = get_indicator_and_targets(indicator.pk)
-        self.assertEqual(a_i.lop_actual_sum, None)
-        self.assertEqual(a_i.percent_met, None)
-        self.assertEqual(a_i.lop_target_sum, None)
-        self.assertEqual(len(a_i.annotated_targets), 2)
-        self.assertEqual(a_i.annotated_targets[0].percent_met, None)
-        self.assertEqual(a_i.annotated_targets[0].achieved, None)
-        self.assertEqual(a_i.annotated_targets[0].target, 40)
-        self.assertEqual(a_i.annotated_targets[0].target_sum, 40)
-        self.assertFalse(a_i.annotated_targets[0].is_complete)
-        self.assertEqual(a_i.annotated_targets[1].target, 90)
-        self.assertEqual(a_i.annotated_targets[1].target_sum, 130)
-        self.assertFalse(a_i.annotated_targets[1].is_complete)
-
-    def test_one_target_with_data(self):
-        indicator = i_factories.IndicatorFactory(
-            program=self.program,
-            target_frequency=Indicator.MID_END,
-            lop_target=400
-        )
-        target = i_factories.PeriodicTargetFactory(
-            indicator=indicator,
-            customsort=0,
-            start_date=None,
-            end_date=None,
-            target=505
-        )
-        i_factories.CollectedDataFactory(
-            indicator=indicator,
-            periodic_target=target,
-            date_collected=datetime.date(2015, 1, 1),
-            achieved=379
-        )
-        a_i = get_indicator_and_targets(indicator.pk)
-        self.assertEqual(a_i.lop_actual_sum, 379)
-        self.assertAlmostEqual(a_i.percent_met, 0.75, 2)
-        self.assertEqual(a_i.lop_target_sum, 505)
-        self.assertEqual(len(a_i.annotated_targets), 1)
-        self.assertAlmostEqual(a_i.annotated_targets[0].percent_met, 0.75, 2)
-        self.assertEqual(a_i.annotated_targets[0].achieved, 379)
-        self.assertEqual(a_i.annotated_targets[0].target, 505)
-        self.assertEqual(a_i.annotated_targets[0].target_sum, 505)
-        self.assertTrue(a_i.annotated_targets[0].is_complete)
-
-    def test_two_targets_with_one_data(self):
-        indicator = i_factories.IndicatorFactory(
-            program=self.program,
-            target_frequency=Indicator.MID_END,
-            lop_target=300
-        )
-        target = i_factories.PeriodicTargetFactory(
-            indicator=indicator,
-            customsort=0,
-            start_date=None,
-            end_date=None,
-            target=100
-        )
-        i_factories.CollectedDataFactory(
-            indicator=indicator,
-            periodic_target=target,
-            date_collected=datetime.date(2015, 1, 1),
-            achieved=80
-        )
-        i_factories.PeriodicTargetFactory(
-            indicator=indicator,
-            customsort=1,
-            start_date=None,
-            end_date=None,
-            target=200
-        )
-        a_i = get_indicator_and_targets(indicator.pk)
-        self.assertEqual(a_i.lop_actual_sum, 80)
-        self.assertAlmostEqual(a_i.percent_met, 0.8, 2)
-        self.assertEqual(a_i.lop_target_sum, 100)
-        self.assertEqual(len(a_i.annotated_targets), 2)
-        self.assertAlmostEqual(a_i.annotated_targets[0].percent_met, 0.80, 2)
-        self.assertEqual(a_i.annotated_targets[0].achieved, 80)
-        self.assertEqual(a_i.annotated_targets[0].target, 100)
-        self.assertTrue(a_i.annotated_targets[0].is_complete)
-        #self.assertEqual(a_i.annotated_targets[1].achieved, None)
-        self.assertEqual(a_i.annotated_targets[1].achieved, 80)
-        self.assertEqual(a_i.annotated_targets[1].target, 200)
-        self.assertEqual(a_i.annotated_targets[1].percent_met, 0.4)
-        self.assertEqual(a_i.annotated_targets[1].target_sum, 300)
-        self.assertFalse(a_i.annotated_targets[1].is_complete)
-
-    def test_two_targets_two_data(self):
-        indicator = i_factories.IndicatorFactory(
-            program=self.program,
-            target_frequency=Indicator.MID_END,
-            lop_target=300
-        )
-        target = i_factories.PeriodicTargetFactory(
-            indicator=indicator,
-            customsort=0,
-            start_date=None,
-            end_date=None,
-            target=100
-        )
-        i_factories.CollectedDataFactory(
-            indicator=indicator,
-            periodic_target=target,
-            date_collected=datetime.date(2015, 1, 1),
-            achieved=80
-        )
-        target2 = i_factories.PeriodicTargetFactory(
-            indicator=indicator,
-            customsort=1,
-            start_date=None,
-            end_date=None,
-            target=200
-        )
-        i_factories.CollectedDataFactory(
-            indicator=indicator,
-            periodic_target=target2,
-            date_collected=datetime.date(2015, 10, 1),
-            achieved=280
-        )
-        a_i = get_indicator_and_targets(indicator.pk)
-        self.assertEqual(a_i.lop_actual_sum, 360)
-        self.assertAlmostEqual(a_i.percent_met, 1.2, 2)
-        self.assertEqual(a_i.lop_target_sum, 300)
-        self.assertEqual(len(a_i.annotated_targets), 2)
-        self.assertAlmostEqual(a_i.annotated_targets[0].percent_met, 0.80, 2)
-        self.assertEqual(a_i.annotated_targets[0].achieved, 80)
-        self.assertEqual(a_i.annotated_targets[0].target, 100)
-        self.assertEqual(a_i.annotated_targets[0].target_sum, 100)
-        self.assertTrue(a_i.annotated_targets[0].is_complete)
-        self.assertEqual(a_i.annotated_targets[1].achieved, 360)
-        self.assertEqual(a_i.annotated_targets[1].target, 200)
-        self.assertAlmostEqual(a_i.annotated_targets[1].percent_met, 1.8, 2)
-        self.assertEqual(a_i.annotated_targets[1].target_sum, 300)
-        self.assertTrue(a_i.annotated_targets[1].is_complete)
-
-class TestTimeAwareTargets(test.TestCase):
-    start_date = datetime.date(2015, 1, 1)
-    end_date = datetime.date(2020, 12, 31)
-
-    def setUp(self):
-        self.program = w_factories.ProgramFactory(
-            reporting_period_start=self.start_date,
-            reporting_period_end=self.end_date
-        )
-
-    def test_annual_targets(self):
-        indicator = i_factories.IndicatorFactory(
-            program=self.program,
-            target_frequency=Indicator.ANNUAL,
-            lop_target=1000
-        )
-        for year in range(2015, 2021):
+        targets = [
             i_factories.PeriodicTargetFactory(
                 indicator=indicator,
-                target=100,
-                start_date=datetime.date(year, 1, 1),
-                end_date=datetime.date(year, 12, 31)
-            )
-        a_i = get_indicator_and_targets(indicator.pk)
-        self.assertEqual(a_i.lop_actual_sum, None)
-        self.assertEqual(a_i.percent_met, None)
-        self.assertEqual(a_i.lop_target_sum, 400)
-        self.assertEqual(len(a_i.annotated_targets), 6)
-        self.assertEqual(a_i.annotated_targets[0].achieved, None)
-        self.assertEqual(a_i.annotated_targets[0].percent_met, None)
-        self.assertEqual(a_i.annotated_targets[0].target, 100)
-        self.assertTrue(a_i.annotated_targets[0].is_complete)
-        self.assertEqual(a_i.annotated_targets[0].target_sum, 100)
-        self.assertEqual(a_i.annotated_targets[3].achieved, None)
-        self.assertEqual(a_i.annotated_targets[3].percent_met, None)
-        self.assertEqual(a_i.annotated_targets[3].target, 100)
-        self.assertEqual(a_i.annotated_targets[3].target_sum, 400)
-        self.assertFalse(a_i.annotated_targets[5].is_complete)
-
-    def test_annual_targets_with_data(self):
-        indicator = i_factories.IndicatorFactory(
-            program=self.program,
-            target_frequency=Indicator.ANNUAL,
-            lop_target=1000
-        )
-        targets = []
-        for year in range(2015, 2021):
-            targets.append(i_factories.PeriodicTargetFactory(
+                customsort=0,
+                start_date=None,
+                end_date=None,
+                target=80
+            ),
+            i_factories.PeriodicTargetFactory(
                 indicator=indicator,
-                target=100,
-                start_date=datetime.date(year, 1, 1),
-                end_date=datetime.date(year, 12, 31)
-            ))
-        for c, achieved in enumerate([50, 150, 175]):
+                customsort=1,
+                start_date=None,
+                end_date=None,
+                target=65
+            )
+        ]
+        results = [
             i_factories.CollectedDataFactory(
                 indicator=indicator,
-                periodic_target=targets[c],
-                date_collected=targets[c].start_date,
-                achieved=achieved
+                periodic_target=targets[0],
+                date_collected=datetime.date(2018, 1, 1),
+                achieved=75
+            ),
+            i_factories.CollectedDataFactory(
+                indicator=indicator,
+                periodic_target=targets[0],
+                date_collected=datetime.date(2018, 2, 1),
+                achieved=70
             )
-        a_i = get_indicator_and_targets(indicator.pk)
-        self.assertEqual(a_i.lop_actual_sum, 375)
-        self.assertAlmostEqual(a_i.percent_met, 0.94, 2)
-        self.assertEqual(a_i.lop_target_sum, 400)
-        self.assertEqual(len(a_i.annotated_targets), 6)
-        self.assertEqual(a_i.annotated_targets[0].achieved, 50)
-        self.assertEqual(a_i.annotated_targets[0].percent_met, 0.5)
-        self.assertEqual(a_i.annotated_targets[0].target, 100)
-        self.assertTrue(a_i.annotated_targets[0].is_complete)
-        self.assertEqual(a_i.annotated_targets[0].target_sum, 100)
-        self.assertEqual(a_i.annotated_targets[1].achieved, 200)
-        self.assertEqual(a_i.annotated_targets[1].percent_met, 2.0)
-        self.assertEqual(a_i.annotated_targets[1].target, 100)
-        self.assertTrue(a_i.annotated_targets[1].is_complete)
-        self.assertEqual(a_i.annotated_targets[1].target_sum, 200)
-        self.assertEqual(a_i.annotated_targets[2].achieved, 375)
-        self.assertEqual(a_i.annotated_targets[2].percent_met, 3.75)
-        self.assertEqual(a_i.annotated_targets[2].target, 100)
-        self.assertEqual(a_i.annotated_targets[2].target_sum, 300)
-        self.assertFalse(a_i.annotated_targets[5].is_complete)
+        ]
+        self.results_indicator = ResultsIndicator.results_view.get(pk=indicator.pk)
+        self.metrics_indicator = MetricsIndicator.objects.with_annotations('scope').get(pk=indicator.pk)
+
+    def test_lop_targets(self):
+        # lop_target is set by indicator setup field (arbitrary, non-calculated, being deprecated):
+        self.assertEqual(self.results_indicator.lop_target, self.lop_target)
+        # lop_target_calculated is the sum of all targets entered for the program for noncumulative number
+        self.assertEqual(self.results_indicator.lop_target_calculated, self.calculated_lop_target)
+        # lop_target_active is currently the lop_target field (this alias is to assist in deprecating):
+        self.assertEqual(self.results_indicator.lop_target_active, self.results_indicator.lop_target)
+        # lop_target_progress is for metrics only, sum of targets for ACTIVE target periods
+        # (active target period = completed for time-aware, with-data for event/mid-end, lop_target_active for lop)
+        self.assertEqual(self.metrics_indicator.lop_target_progress, self.progress_lop_target)
+
+    def test_lop_actuals(self):
+        # lop_actual is sum of all results for the entire program:
+        self.assertEqual(self.results_indicator.lop_actual, self.lop_actual)
+        # lop_actual_progress is for metrics only, sum of achieved values in ACTIVE target periods:
+        self.assertEqual(self.metrics_indicator.lop_actual_progress, self.lop_actual_progress)
+
+    def test_lop_percent_met(self):
+        # lop_percent_met is the sum of all results divided by the arbitrary lop target
+        self.assertEqual(round(self.results_indicator.lop_percent_met, 2), self.lop_percent_met)
+        # lop_percent_met_progress is the sum of all results in active targets divided by the sum of all active
+        # targets:
+        self.assertEqual(round(self.metrics_indicator.lop_percent_met_progress, 2), self.lop_percent_met_progress)
+
+    def test_annotated_target_targets(self):
+        # target should always match exactly what was entered for that target:
+        for target, expected in zip(self.results_indicator.annotated_targets, self.target_values):
+            self.assertEqual(target.target, expected)
+
+    def test_annotated_target_actuals(self):
+        for expected, target in zip(self.expected_results_values, self.results_indicator.annotated_targets):
+            self.assertEqual(target.actual, expected)
+
+    def test_annotated_target_percent_mets(self):
+        for expected, target in zip(self.expected_percent_mets, self.results_indicator.annotated_targets):
+            if expected is None:
+                self.assertIsNone(target.percent_met)
+            else:
+                self.assertEqual(round(target.percent_met, 2), expected)
+
+    def test_annotated_target_is_complete(self):
+        for target, expected in zip(self.results_indicator.annotated_targets, self.complete):
+            self.assertEqual(target.is_complete, expected)
