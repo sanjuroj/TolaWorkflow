@@ -4,6 +4,7 @@
 
 from indicators.models import (
     Indicator,
+    PeriodicTarget,
     CollectedData,
     IndicatorSortingQSMixin,
     IndicatorSortingManagerMixin
@@ -48,7 +49,9 @@ class MetricsIndicatorQuerySet(models.QuerySet, IndicatorSortingQSMixin):
         if 'reporting' in annotations or 'scope' in annotations:
             # reporting indicates whether indicator should be counted towards on-scope reporting
             # note: "reporting" alone is for testing, scope relies on these annotations as a prerequisite
-            qs = qs.annotate(**utils.indicator_lop_annotations())
+            qs = qs.annotate(lop_actual_progress=utils.indicator_lop_actual_progress_annotation())
+            qs = qs.annotate(lop_target_progress=utils.indicator_lop_target_progress_annotation())
+            qs = qs.annotate(lop_percent_met_progress=utils.indicator_lop_percent_met_progress_annotation())
             qs = qs.annotate(reporting=utils.indicator_reporting_annotation())
         if 'scope' in annotations:
             qs = qs.annotate(lop_met_real=utils.indicator_lop_met_real_annotation())
@@ -89,10 +92,12 @@ class MetricsIndicator(Indicator):
 class ResultsIndicatorQuerySet(models.QuerySet):
     def annotated(self):
         qs = self.all()
-        # add lop_target_sum and lop_actual_sum annotations:
-        qs = qs.annotate(**utils.indicator_lop_annotations())
+        # add lop_target_calculated annotation (not used yet, but will replace deprecated lop_target value):
+        qs = qs.annotate(lop_target_calculated=indicator_lop_target_calculated_annotation())
+        # add lop_actual annotation (for results display):
+        qs = qs.annotate(lop_actual=indicator_lop_actual_annotation())
         # add lop_met_real annotation:
-        qs = qs.annotate(lop_met_real=utils.indicator_lop_met_real_annotation())
+        qs = qs.annotate(lop_percent_met=indicator_lop_percent_met_annotation())
         # add is_complete annotation:
         qs = qs.annotate(is_complete=indicator_is_complete_annotation())
         return qs
@@ -109,14 +114,16 @@ class ResultsIndicator(Indicator):
     results_view = ResultsIndicatorManager()
 
     @property
+    def lop_target_active(self):
+        """currently points at lop_target field, but this alias will let us move to lop_target_calculated
+           when we deprecate the lop_target field"""
+        return self.lop_target
+
+    @property
     def annotated_targets(self):
         targets = tq.ResultsTarget.objects.filter(indicator=self)
         return targets.with_annotations()
 
-    @property
-    def percent_met(self):
-        """alias to provide consistent naming with ResultsTargets"""
-        return self.lop_met_real
 
 # utils:
 
@@ -193,4 +200,85 @@ def indicator_is_complete_annotation():
         ),
         default=models.Value(False),
         output_field=models.BooleanField()
+    )
+
+
+def indicator_lop_actual_annotation():
+    """annotates an indicator with the value for the results table Life of Program Actual field
+       NOT FOR progress measurement, does not take into account completed/active periods"""
+
+    return models.Case(
+        models.When(
+            unit_of_measure_type=Indicator.PERCENTAGE,
+            then=models.Subquery(
+                CollectedData.objects.filter(
+                    indicator=models.OuterRef('pk')
+                ).order_by('-date_collected').values('achieved')[:1]
+                )
+            ),
+        default=models.Subquery(
+            CollectedData.objects.filter(
+                indicator=models.OuterRef('pk')
+            ).order_by().values('indicator').annotate(
+                achieved_sum=models.Sum('achieved')
+            ).values('achieved_sum')[:1]
+            ),
+        output_field=models.DecimalField(decimal_places=2)
+        )
+
+def indicator_lop_target_calculated_annotation():
+    """annotates an indicator with the sum of targets for the entire program (not taking active/inactive targets)
+       into account - NOT for progress, for results display only"""
+    return models.Case(
+        models.When(
+            models.Q(
+                models.Q(
+                    models.Q(unit_of_measure_type=Indicator.PERCENTAGE) |
+                    models.Q(is_cumulative=True)
+                    ) &
+                models.Q(target_frequency__in=[Indicator.MID_END, Indicator.EVENT])
+                ),
+            then=models.Subquery(
+                PeriodicTarget.objects.filter(
+                    indicator=models.OuterRef('pk')
+                ).order_by('-customsort').values('target')[:1],
+                output_field=models.IntegerField()
+                )
+            ),
+        models.When(
+            models.Q(
+                models.Q(unit_of_measure_type=Indicator.PERCENTAGE) |
+                models.Q(is_cumulative=True)
+                ),
+            then=models.Subquery(
+                PeriodicTarget.objects.filter(
+                    indicator=models.OuterRef('pk')
+                ).order_by('-end_date').values('target')[:1],
+                output_field=models.IntegerField()
+                )
+            ),
+        default=models.Subquery(
+            PeriodicTarget.objects.filter(
+                indicator=models.OuterRef('pk')
+            ).order_by().values('indicator').annotate(
+                target_sum=models.Sum('target')
+            ).values('target_sum')[:1],
+            output_field=models.IntegerField()
+        )
+    )
+
+def indicator_lop_percent_met_annotation():
+    """annotates an indicator with the percent met using:
+        - lop_target (currently lop_target field, but will shift to lop_target_calculated)
+        - lop_actual"""
+    return models.Case(
+        models.When(
+            models.Q(lop_target__isnull=True) |
+            models.Q(lop_actual__isnull=True),
+            then=models.Value(None)
+            ),
+        default=models.ExpressionWrapper(
+            models.F('lop_actual') / models.F('lop_target'),
+            output_field=models.FloatField()
+        )
     )

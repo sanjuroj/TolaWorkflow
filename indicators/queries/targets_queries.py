@@ -20,7 +20,7 @@ class ResultsTargetQuerySet(models.QuerySet):
         #  combined with indicator number type logic):
         qs = qs.annotate(target_sum=target_target_sum_annotation())
         # add an achieved_sum annotation (all results for this target combined with indicator number type logic):
-        qs = qs.annotate(achieved=target_achieved_sum_annotation())
+        qs = qs.annotate(actual=target_actual_annotation())
         # combine target and achieved to determine percent met:
         qs = qs.annotate(percent_met=target_percent_met_annotation())
         return qs
@@ -106,7 +106,7 @@ def target_target_sum_annotation():
         output_field=models.IntegerField()
     )
 
-def target_achieved_sum_annotation():
+def target_actual_annotation():
     return models.Case(
         models.When(
             indicator__unit_of_measure_type=Indicator.PERCENTAGE,
@@ -114,36 +114,30 @@ def target_achieved_sum_annotation():
                 CollectedData.objects.filter(
                     periodic_target=models.OuterRef('pk')
                 ).order_by('-date_collected').values('achieved')[:1],
-                output_field=models.IntegerField()
+            )
+        ),
+        models.When(
+            models.Q(
+                models.Q(indicator__unit_of_measure_type=Indicator.NUMBER) &
+                models.Q(indicator__is_cumulative=True) &
+                models.Q(results_count__gt=0)
+                ),
+            then=models.Subquery(
+                CollectedData.objects.filter(
+                    periodic_target__end_date__lte=models.OuterRef('end_date')
+                ).order_by().values('indicator').annotate(
+                    achieved_sum=models.Sum('achieved')
+                ).values('achieved_sum')[:1]
             )
         ),
         default=models.Subquery(
             CollectedData.objects.filter(
-                models.Q(
-                    models.Q(periodic_target__indicator=models.OuterRef('indicator')) &
-                    models.Q(
-                        models.Q(
-                            models.Q(
-                                periodic_target__indicator__target_frequency__in=[
-                                    f[0] for f in utils.TIME_AWARE_FREQUENCIES
-                                    ]
-                                ) &
-                            models.Q(periodic_target__start_date__lte=models.OuterRef('start_date'))
-                        ) |
-                        models.Q(
-                            models.Q(periodic_target__indicator__target_frequency__in=[
-                                Indicator.MID_END, Indicator.EVENT
-                            ]) &
-                            models.Q(periodic_target__customsort__lte=models.OuterRef('customsort'))
-                        ) |
-                        models.Q(periodic_target__indicator__target_frequency=Indicator.LOP)
-                        )
-                    )
-            ).order_by().values('indicator').annotate(
-                results_sum=models.Sum('achieved')
-            ).values('results_sum')[:1],
-            output_field=models.IntegerField()
-        )
+                periodic_target=models.OuterRef('pk')
+            ).order_by().values('periodic_target').annotate(
+                achieved_sum=models.Sum('achieved')
+            ).values('achieved_sum')[:1]
+        ),
+        output_field=models.DecimalField(decimal_places=2)
     )
 
 def target_percent_met_annotation():
@@ -151,12 +145,12 @@ def target_percent_met_annotation():
         models.When(
             models.Q(
                 models.Q(target__isnull=True) &
-                models.Q(achieved__isnull=True)
+                models.Q(actual__isnull=True)
             ),
             then=models.Value(None)
         ),
         default=models.ExpressionWrapper(
-            models.F('achieved') / models.F('target'),
+            models.F('actual') / models.F('target'),
             output_field=models.FloatField()
         )
     )

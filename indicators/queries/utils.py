@@ -45,8 +45,181 @@ class MonthsCount(models.Func):
         super(MonthsCount, self).__init__(*expressions)
 
 
+def active_targets_subquery():
+    """return a subquery of active targets
+        Active target is defined as:
+            - time-aware target with a completed period
+            - event/mid-end target with at least one data point
+            - lop target in a program with a completed reporting period
+    """
+
+    return PeriodicTarget.objects.filter(
+        indicator=models.OuterRef('pk')
+    ).annotate(
+        has_data=models.Exists(
+            CollectedData.objects.filter(periodic_target=models.OuterRef('pk'))
+        )
+    ).filter(
+        models.Q(
+            models.Q(indicator__target_frequency__in=[f[0] for f in TIME_AWARE_FREQUENCIES]) &
+            models.Q(end_date__lte=models.functions.Now())
+        ) |
+        models.Q(
+            models.Q(indicator__target_frequency__in=[Indicator.EVENT, Indicator.MID_END]) &
+            models.Q(has_data=True)
+        ) |
+        models.Q(
+            models.Q(indicator__target_frequency=Indicator.LOP) &
+            models.Q(indicator__program__reporting_period_end__lte=models.functions.Now())
+        )
+    )
+
+def indicator_lop_actual_progress_annotation():
+    return models.Case(
+        models.When(
+            models.Q(
+                models.Q(
+                    models.Q(
+                        models.Q(target_frequency=Indicator.LOP) &
+                        models.Q(program__reporting_period_end__lte=models.functions.Now())
+                    ) |
+                    models.Q(target_frequency__in=[Indicator.MID_END, Indicator.EVENT])
+                ) &
+                models.Q(unit_of_measure_type=Indicator.PERCENTAGE)
+                ),
+            then=models.Subquery(
+                CollectedData.objects.filter(
+                    indicator=models.OuterRef('pk')
+                ).order_by('-date_collected').values('achieved')[:1]
+            )
+        ),
+        models.When(
+            models.Q(
+                models.Q(
+                    models.Q(target_frequency=Indicator.LOP) &
+                    models.Q(program__reporting_period_end__lte=models.functions.Now())
+                ) |
+                models.Q(target_frequency__in=[Indicator.MID_END, Indicator.EVENT])
+            ),
+            then=models.Subquery(
+                CollectedData.objects.filter(
+                    indicator=models.OuterRef('pk')
+                ).order_by().values('indicator').annotate(
+                    actual_sum=models.Sum('achieved')
+                ).values('actual_sum')[:1]
+            )
+        ),
+        models.When(
+            models.Q(
+                models.Q(target_frequency__in=[f[0] for f in TIME_AWARE_FREQUENCIES]) &
+                models.Q(unit_of_measure_type=Indicator.PERCENTAGE)
+                ),
+            then=models.Subquery(
+                CollectedData.objects.filter(
+                    models.Q(indicator=models.OuterRef('pk')) &
+                    models.Q(periodic_target__end_date__lte=models.functions.Now())
+                ).order_by('-date_collected').values('achieved')[:1]
+            )
+        ),
+        models.When(
+            target_frequency__in=[f[0] for f in TIME_AWARE_FREQUENCIES],
+            then=models.Subquery(
+                CollectedData.objects.filter(
+                    models.Q(indicator=models.OuterRef('pk')) &
+                    models.Q(periodic_target__end_date__lte=models.functions.Now())
+                ).order_by().values('indicator').annotate(
+                    actual_sum=models.Sum('achieved')
+                ).values('actual_sum')[:1]
+            )
+        ),
+        default=models.Value(None),
+        output_field=models.IntegerField()
+    )
+
+def indicator_lop_target_progress_annotation():
+    return models.Case(
+        models.When(
+            models.Q(
+                models.Q(
+                    models.Q(target_frequency=Indicator.LOP) &
+                    models.Q(program__reporting_period_end__lte=models.functions.Now())
+                )
+            ),
+            then=models.F('lop_target')
+        ),
+        models.When(
+            models.Q(
+                models.Q(target_frequency__in=[f[0] for f in TIME_AWARE_FREQUENCIES]) &
+                models.Q(is_cumulative=True)
+                ),
+            then=models.Subquery(
+                PeriodicTarget.objects.filter(
+                    models.Q(indicator=models.OuterRef('pk')) &
+                    models.Q(end_date__lte=models.functions.Now())
+                ).order_by('-end_date').values('target')[:1]
+            )
+        ),
+        models.When(
+            target_frequency__in=[f[0] for f in TIME_AWARE_FREQUENCIES],
+            then=models.Subquery(
+                PeriodicTarget.objects.filter(
+                    models.Q(indicator=models.OuterRef('pk')) &
+                    models.Q(end_date__lte=models.functions.Now())
+                ).order_by().values('indicator').annotate(
+                    target_sum=models.Sum('target')
+                ).values('target_sum')[:1]
+            )
+        ),
+        models.When(
+            models.Q(
+                models.Q(target_frequency__in=[Indicator.MID_END, Indicator.EVENT]) &
+                models.Q(is_cumulative=True)
+                ),
+            then=models.Subquery(
+                PeriodicTarget.objects.filter(
+                    indicator=models.OuterRef('pk')
+                ).annotate(
+                    has_data=models.Exists(CollectedData.objects.filter(periodic_target=models.OuterRef('pk')))
+                ).filter(
+                    has_data=True
+                ).order_by('-customsort').values('target')[:1]
+            )
+        ),
+        models.When(
+            target_frequency__in=[Indicator.MID_END, Indicator.EVENT],
+            then=models.Subquery(
+                PeriodicTarget.objects.filter(
+                    indicator=models.OuterRef('pk')
+                ).annotate(
+                    has_data=models.Exists(CollectedData.objects.filter(periodic_target=models.OuterRef('pk')))
+                ).filter(
+                    has_data=True
+                ).order_by().values('indicator').annotate(
+                    target_sum=models.Sum('target')
+                ).values('target_sum')[:1]
+            )
+        ),
+        default=models.Value(None),
+        output_field=models.IntegerField()
+    )
+
+def indicator_lop_percent_met_progress_annotation():
+    return models.Case(
+        models.When(
+            models.Q(
+                models.Q(lop_actual_progress__isnull=False) &
+                models.Q(lop_target_progress__isnull=False)
+            ),
+            then=models.ExpressionWrapper(
+                models.F('lop_actual_progress') / models.F('lop_target_progress'),
+                output_field=models.FloatField()
+            )
+        ),
+        default=models.Value(None)
+    )
+
 def indicator_lop_annotations():
-    """generates annotations for LOP target and actual data
+    """generates annotations for LOP target and actual data for PROGRESS measurement (only active periods)
 
     takes into account cumulative/noncumulative and number/percent"""
     # we only want targets that are either time naive or for completed periods:
@@ -147,12 +320,11 @@ def indicator_reporting_annotation():
             then=models.Value(False)
         ),
         models.When(
-            models.Q(lop_target_sum__isnull=True) |
-            models.Q(lop_target_sum=0),
+            lop_target_progress__isnull=True,
             then=models.Value(False)
         ),
         models.When(
-            lop_actual_sum__isnull=True,
+            lop_actual_progress__isnull=True,
             then=models.Value(False)
         ),
         default=models.Value(True),
@@ -163,12 +335,12 @@ def indicator_lop_met_real_annotation():
     """for a reporting indicator, determines how close actual values are to target values"""
     return models.Case(
         models.When(
-            models.Q(lop_target_sum__isnull=True) |
-            models.Q(lop_actual_sum__isnull=True),
+            models.Q(lop_target_progress__isnull=True) |
+            models.Q(lop_actual_progress__isnull=True),
             then=models.Value(None)
             ),
         default=models.ExpressionWrapper(
-            models.F('lop_actual_sum') / models.F('lop_target_sum'),
+            models.F('lop_actual_progress') / models.F('lop_target_progress'),
             output_field=models.FloatField()
         )
     )
