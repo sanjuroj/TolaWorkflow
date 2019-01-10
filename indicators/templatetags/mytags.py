@@ -161,7 +161,7 @@ def make_percent(numerator, denominator):
 
 @register.inclusion_tag('indicators/tags/target-percent-met.html', takes_context=True)
 def target_percent_met(context, percent_met, has_ended):
-    margin = .15 # this should be set somewhere globally?
+    margin = Indicator.ONSCOPE_MARGIN
     on_track = None
     if percent_met:
         on_track = abs(1-percent_met) <= margin

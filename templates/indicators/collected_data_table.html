@@ -28,34 +28,30 @@
                 <th class="td--stretch">{% trans "Evidence" %}</th>
             </tr>
         </thead>
-        {% for item in periodictargets %}
+        {% for pt in periodictargets %}
         <tr class="collected-data__row--main">
-            {% ifchanged item %}
-            <td {% if item.results_count %} rowspan="{{ item.results_count }}" {% endif %} class="text-nowrap">
+            {% ifchanged pt %}
+            <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="text-nowrap">
                 {# note ".period" is deprecated, and .period_name should be used instead #}
-                <strong class="text-uppercase">{{ item.period_name }}</strong><br>
+                <strong class="text-uppercase">{{ pt.period_name }}</strong><br>
                 <small>
-                    {{ item.start_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
-                    {% if item.start_date %} - {% endif %}
-                    {{ item.end_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                    {{ pt.start_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                    {% if pt.start_date %} - {% endif %}
+                    {{ pt.end_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                 </small>
             </td>
-            <td {% if item.results_count %} rowspan="{{ item.results_count }}" {% endif %} class="text-right">
-                {{ item.target|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+            <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="text-right">
+                {{ pt.target|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
             </td>
-            <td {% if item.results_count %} rowspan="{{ item.results_count }}" {% endif %} class="text-right">
-                {{ item.actual|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+            <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="text-right">
+                {{ pt.actual|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
             </td>
-            <td {% if item.results_count %} rowspan="{{ item.results_count }}" {% endif %} class="text-right td--pad">
-                {% if item.target %}
-                    {% target_percent_met item.percent_met item.is_complete %}
-                {% else %}
-                    {% trans 'N/A' %}
-                {% endif %}
+            <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="text-right td--pad">
+                {% target_percent_met pt.percent_met pt.is_complete %}
             </td>
             {% endifchanged %}
 
-            {% for cdata in item.getcollected_data %}
+            {% for cdata in pt.getcollected_data %}
             {% if not forloop.first %}<tr class="collected-data__row--supplemental">{% endif %}
                 <td class="collected-data__result--date {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
                     {% if is_editable is False %}
@@ -98,7 +94,7 @@
                     {% trans "No data collected" %}
                 </td>
                 <td></td>
-                {% if item.collecteddata_set.count > 1 %}
+                {% if pt.collecteddata_set.count > 1 %}
             </tr>
             {% endif %}
             {% endfor %}{# for cdata in item.getcollected_data #}
