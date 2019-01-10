@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ View functions for generating IPTT Reports (HTML and Excel)"""
 
 import bisect
@@ -480,11 +481,11 @@ class IPTT_Mixin(object):
                 else:
                     ind['lop_target'] = formatFloat(lop_target)
             except (ValueError, TypeError):
-                lop_target = ''
+                lop_target = '—'
                 ind['lop_target'] = lop_target
 
             # process lop_actual
-            lop_actual = ''
+            lop_actual = u'—'
             percent = ''
             if ind['unit_of_measure_type'] == Indicator.NUMBER:
                 if ind['actualsum'] is not None:
@@ -496,13 +497,13 @@ class IPTT_Mixin(object):
             try:
                 ind['lop_actual'] = u"{}{}".format(formatFloat(lop_actual), percent)
             except TypeError:
-                ind['lop_actual'] = ''
+                ind['lop_actual'] = u'—'
 
             # process lop_percent_met
             try:
                 ind['lop_percent_met'] = u"{}%".format(formatFloat(round(lop_actual / lop_target * 100)))
             except TypeError:
-                ind['lop_percent_met'] = ''
+                ind['lop_percent_met'] = _('N/A')
             except ZeroDivisionError:
                 ind['lop_percent_met'] = _('N/A')
 
@@ -539,7 +540,7 @@ class IPTT_Mixin(object):
                     if actual_val is not None and actual_val != '':
                         ind[actual] = u"{}{}".format(formatFloat(actual_val), percent_sign)
                     else:
-                        ind[actual] = ''
+                        ind[actual] = u'—'
 
                     if reporttype == self.REPORT_TYPE_TARGETPERIODS:
                         # process target_period target value
