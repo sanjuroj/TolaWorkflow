@@ -7251,16 +7251,11 @@ td.periodic-targets__sum {
     padding: 15px; }
 
 .mgmt-table {
-  display: table;
   width: 100%; }
-  .mgmt-table .mgmt-table__head {
-    display: table-header-group; }
-  .mgmt-table .mgmt-table__body {
-    display: table-row-group; }
   .mgmt-table .mgmt-table__row {
-    display: table-row; }
+    display: flex; }
   .mgmt-table .mgmt-table__col {
-    display: table-cell; }
+    flex: 1; }
 
 #user-management-index-view .td--stretch {
   display: flex;

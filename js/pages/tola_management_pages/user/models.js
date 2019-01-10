@@ -12,6 +12,7 @@ export class UserStore {
     @observable bulk_targets = new Map()
     @observable bulk_targets_all = false
     @observable editing_target = null
+    @observable active_edit_page = null
 
     //filter options
     @observable available_countries = []
@@ -162,6 +163,12 @@ export class UserStore {
         } else {
             this.editing_target = user_id
         }
+        this.active_edit_page = 'profile'
+    }
+
+    @action
+    updateActiveEditPage(section_name) {
+        this.active_edit_page = section_name
     }
 
     @action
