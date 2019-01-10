@@ -6,13 +6,9 @@ export class UserStore {
     @observable users_count = null
     @observable fetching = false
     @observable current_page = 0
-    @observable previous_page = null
-    @observable next_page = null
     @observable total_pages = null
     @observable bulk_targets = new Map()
     @observable bulk_targets_all = false
-    @observable editing_target = null
-    @observable active_edit_page = null
 
     //filter options
     @observable available_countries = []
@@ -158,12 +154,13 @@ export class UserStore {
 
     @action
     toggleEditingTarget(user_id) {
-        if(this.editing_target == user_id) {
-           this.editing_target = null
-        } else {
-            this.editing_target = user_id
-        }
-        this.active_edit_page = 'profile'
+        let user = this.users.forEach(u => {
+            if(u.id == user_id) {
+                u.editing = !u.editing;
+            } else {
+                u.editing = false;
+            }
+        })
     }
 
     @action
