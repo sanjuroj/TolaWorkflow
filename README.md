@@ -22,9 +22,9 @@ Through all of these instructions, it is __very important__ that a plain-text ed
 For instance, TextEdit or Notepad are fine, MS Word is emphatically not.  Even some plain-text editors default 
 to a rich text format, so make sure you are saving plain text.
 
-## Install the bits
+## Install software dependencies
 
-TolaActivity requires Python 2. MC uses MySQL as Django's datastore.
+TolaActivity requires Python 2. These instructions assume MySQL is being used as Django's datastore.
 
 ### macOS
 
@@ -62,51 +62,81 @@ Back at the command line:
 $ source ~/.bash_profile
 $ brew install mysql-utilities
 $ brew install py2cairo pango
+$ pip install virtualenv
+```
+
+You should now also start the mysql server:
+```bash
+brew services start mysql
+```
+
+Now you're ready to [install and configure the source files](#Install the source files).
+
+
+### Windows
+For Windows installations, install the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) using a Ubuntu distribution as the base.  Once this has successfully been installed, launch a Powershell window and proceed with the Ubuntu instructions below. 
+
+
+### Ubuntu
+
+First check what python version you have installed.  Try these commands:
+```bash
+$ python --version
+$ python2 --version
+```
+
+If neither of those yield a Python 2 installation, you will need to install Python 2:
+```bash
+$ sudo apt-get update
+$ sudo apt-get install python
+```
+
+Now if you try `python --version`, it should be pointed at Python 2.  Assuming it is, install some additional packages.
+
+```bash
+$ sudo apt install mysql-server libmysqld-dev mysql-utilities mysql-client
+$ sudo apt install libsasl2-dev libldap2-dev libssl-dev
+$ sudo apt-get install python-dev libffi-dev
+$ sudo apt-get install libpq-dev libxml2-dev libxslt1-dev libldap2-dev libsasl2-dev
+$ sudo apt-get install libcairo2-dev
+$ sudo apt-get install libpango1.0-dev
+$ sudo apt install virtualenv
+```
+
+You should now also start the mysql server:
+```bash
+sudo service mysql start
+```
+
+Now you're ready to [install and configure the source files](#Install the source files).
+
+
+##Install and configure the TolaActivity source files
+
+###Install the source files and the python libraries
+All operating systems should now be ready to install TolaActivity source files and do some OS-independent installations.
+```bash
 $ git clone https://github.com/mercycorps/TolaActivity.git
 $ cd TolaActivity
-$ pip install virtualenv
-$ virtualenv -p python2 --no-site-packages venv  # need to specify Python 2 for systems that might have Python 3 as default system version
+$ virtualenv -p python2 --no-site-packages venv
 $ source venv/bin/activate  # you should see '(venv)' appear on the left of your command prompt
 $ pip install -r requirements.txt
 $ pip install --upgrade google-api-python-client
 ```
 
+###Modify the config file
 If you have a copy of the _settings.secret.yml_ file, place it in the TolaActivity/config 
-directory.  If you don't, then copy the sample file thusly:
-``` 
-cp config/sample-settings.secret.yml config/settings.secret.yml
-```
-
-Edit the configuration file as described in
-[Modify the config file](#modify-the-config-file).
-
-## Ubuntu
-
-On _Ubunten_ and derivatives, the following should get you going. We
-specify Python 2 because one day Python 3 *will* be the system Python.
-You'll need to get a copy the file _settings.secret.yml_
-from your mentor before proceeding:
-
+directory.  In Windows, you will need to copy it from where the file is stored on your hard drive.  You may want to modify the file per the instructions below (not with an MS Office product!) before moving it to the TolaActivity folder.  To move the file, f the file is in your Downloads directory, you could use a command that looks something like this:
 ```bash
-$ python --version
-# Make sure output from above indicates Python 2
-$ sudo apt install mysql-server libmysqld-dev mysql-utilities mysql-client
-$ sudo apt install libsasl2-dev python-dev libldap2-dev libssl-dev
-$ git clone https://github.com/mercycorps/TolaActivity.git
-$ cd TolaActivity
-$ virtualenv -p python2 --no-site-packages venv
-$ source venv/bin/activate
-$ git checkout dev
-$ mkdir config
-# Place settings.secret.yml into config/ directory
-$ pip install -r requirements.txt
-$ pip install --upgrade google-api-python-client
+$ cp /mnt/c/Users/<your_username>/Downloads/settings.secret.yml config
 ```
 
-Edit the configuration file as described in
-[Modify the config file](#modify-the-config-file).
+If you don't have a copy of the settings.secret.py file, then copy the sample file thusly:
+``` 
+$ cp config/sample-settings.secret.yml config/settings.secret.yml
+```
 
-## Modify the config file
+
 Open the _config/settings.secret.yml_ file with a plain-text editor.
  
 1. Find the node named, "DATABASES" and set the
@@ -146,9 +176,9 @@ $ mkdir /User/<username>/logs
 ```    
 
 ## Set up Django's MySQL backing store
-Log into mysql and create the database, create the user, and grant permissions.
+Log into mysql and create the database, create the user, and grant permissions. 
 ```sql
-$ mysql -u root
+$ mysql -u root  # Ubuntu users will need to use sudo for this line
 mysql> CREATE DATABASE tola_activity;
 mysql> CREATE USER 'tola'@'localhost' IDENTIFIED BY 'SooperSekritWord';
 mysql> GRANT ALL ON tola_activity.* TO 'tola'@'localhost';
