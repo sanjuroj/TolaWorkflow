@@ -14,7 +14,7 @@ from tola.util import getCountry, get_GAIT_data
 from .models import (
     Documentation, ProjectAgreement, ProjectComplete, ProjectType, Country, SiteProfile,
     Office, Program, TolaUser, District, Province, ProfileType, AdminLevelThree, TolaUserProxy,
-    Organization, Village, Sector, Capacity, Evaluate, Benchmarks, Budget, Template, Monitor,
+    Organization, Village, VillageAdmin, Sector, Capacity, Evaluate, Benchmarks, Budget, Template, Monitor,
     ApprovalAuthority, Checklist, ChecklistItem, Stakeholder, Contact, StakeholderType, TolaSites, FormGuidance,
     TolaBookmarks,
     OrganizationAdmin, ProvinceAdmin, AdminLevelThreeAdmin,
@@ -274,7 +274,7 @@ admin.site.register(Province, ProvinceAdmin)
 admin.site.register(Office, OfficeAdmin)
 admin.site.register(District, DistrictAdmin)
 admin.site.register(AdminLevelThree, AdminLevelThreeAdmin)
-admin.site.register(Village)
+admin.site.register(Village, VillageAdmin)
 admin.site.register(Program, ProgramAdmin)
 admin.site.register(Sector)
 admin.site.register(ProjectAgreement, ProjectAgreementAdmin)
