@@ -14,8 +14,11 @@ export const IndexView = observer(
     ({store}) => {
         const countries_listing = store.available_countries.map(country => ({value: country.id, label: country.country}))
         const organization_listing = store.available_organizations.map(org => ({value: org.id, label: org.name}))
-        const program_listing = store.available_programs.map(program => ({value: program.id, label: program.name}))
+        const program_listing = Object.entries(store.available_programs).map(([k, program]) => ({value: program.id, label: program.name}))
         const user_listing = store.available_users.map(user => ({value: user.id, label: user.name}))
+        const programs_by_country_listing = Object.entries(store.programs_by_country).map(
+            ([k, country]) => ({...country, programs: country.programs.map(program_id => store.available_programs[program_id])})
+        )
 
         return <div id="user-management-index-view" className="container-fluid row">
             <div className="col col-sm-3 filter-section">
@@ -134,7 +137,10 @@ export const IndexView = observer(
                                             userData={data}
                                             onSave={(new_user_data) => store.saveUserEdit(new_user_data)}
                                             organizations={store.available_organizations} />}
-                                        ProgramSection={() => <EditUserPrograms />}
+                                        ProgramSection={() =>
+                                            <EditUserPrograms
+                                            user={data}
+                                            programsByCountry={programs_by_country_listing}/>}
                                         HistorySection={() => <EditUserHistory />}
                                     />
                                 </Wrapper>
