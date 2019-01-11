@@ -7767,7 +7767,7 @@ table.table-hover tbody tr.row-highlight:hover {
   left: 0;
   height: 100%;
   width: 100%;
-  background: rgba(255, 255, 255, 0.8) url("../img/ajax-loader.gif") 50% 50% no-repeat; }
+  background: rgba(255, 255, 255, 0.8) url(ajax-loader-e4234472afb925ddb203ad99cb2ec0b0.gif) 50% 50% no-repeat; }
 
 body.loading {
   overflow: hidden; }
@@ -7930,4 +7930,5 @@ select.listoption_filters {
 
 /* Unsorted custom selectors */
 
-/*# sourceMappingURL=tola.css.map */
+
+/*# sourceMappingURL=base-f8520862346c7b354899.css.map*/
