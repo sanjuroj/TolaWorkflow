@@ -15,7 +15,8 @@ export class UserStore {
     //filter options
     @observable available_countries = []
     @observable available_organizations = []
-    @observable available_programs = []
+    @observable available_programs = {}
+    @observable programs_by_country = {}
     @observable available_users = []
     user_status_options = [
         {value: 1, label: 'Active'},
@@ -41,11 +42,13 @@ export class UserStore {
         countries,
         organizations,
         programs,
-        users
+        programs_by_country,
+        users,
     ) {
         this.available_countries = countries
         this.available_organizations = organizations
         this.available_programs = programs
+        this.programs_by_country = programs_by_country
         this.available_users = users.filter(user => user.name)
         this.fetchUsers()
     }

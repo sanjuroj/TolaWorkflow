@@ -10,6 +10,7 @@ const store = new UserStore(
     jsContext.countries,
     jsContext.organizations,
     jsContext.programs,
+    jsContext.programs_by_country,
     jsContext.users
 );
 

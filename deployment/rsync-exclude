@@ -5,5 +5,6 @@
 /.vagrant
 /node_modules
 /venv
+/config
 *.swp
 *.orig

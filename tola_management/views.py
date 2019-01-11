@@ -31,25 +31,36 @@ from workflow.models import (
 
 def get_programs_for_user_queryset(user_id):
     return Program.objects.raw("""
-        SELECT *
+        SELECT wp.id, wp.name, wc.id country_id, wc.country country_name
         FROM workflow_program wp
         INNER JOIN workflow_program_user_access wpuc ON wp.id = wpuc.program_id
         INNER JOIN workflow_program_country wpc ON wp.id = wpc.program_id
         INNER JOIN workflow_tolauser_countries wtc ON wtc.country_id = wpc.country_id
+        INNER JOIN workflow_country wc ON wpc.country_id = wc.id
         WHERE wtc.tolauser_id = %s OR wpuc.tolauser_id = %s
     """, [user_id, user_id])
 
 def get_user_page_context(request):
     programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
 
-    programs = []
+    programs = {}
+    programs_by_country = {}
     for program in list(programs_qs):
-        programs.append({"id": program.id, "name": program.name})
+        if not (program.country_id in programs_by_country):
+            programs_by_country[program.country_id] = {
+                "id": program.country_id,
+                "name": program.country_name,
+                "programs": []
+            }
+
+        programs_by_country[program.country_id]["programs"].append(program.id)
+        programs[program.id] = {"id": program.id, "name": program.name, "country_id": program.country_id}
 
     return {
         "countries": list(getCountry(request.user).values()),
         "organizations": list(Organization.objects.all().values()),
         "programs": programs,
+        "programs_by_country": programs_by_country,
         "users": list(TolaUser.objects.all().values())
     }
 
