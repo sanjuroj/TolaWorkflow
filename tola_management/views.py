@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 import json
 
+from rest_framework.decorators import list_route, detail_route
 from rest_framework.generics import ListAPIView
 from rest_framework.serializers import Serializer, CharField, IntegerField, PrimaryKeyRelatedField, BooleanField
 from rest_framework.response import Response
@@ -74,7 +75,7 @@ class UserAdminSerializer(Serializer):
     class Meta:
         fields = ('id', 'name', 'organization_name', 'organization_id', 'user_programs', 'is_active', 'is_admin')
 
-class UserAdminViewSet(viewsets.GenericViewSet):
+class UserAdminViewSet(viewsets.ModelViewSet):
     serializer_class = UserAdminSerializer
     pagination_class = SmallResultsSetPagination
 
@@ -208,3 +209,14 @@ class UserAdminViewSet(viewsets.GenericViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @list_route(methods=['post'], url_path='create_user', url_name='create_user')
+    def create_user(self, request):
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        return Response({
+            'status': True
+        })
+
+    @detail_route(methods=['post'], url_path='update_user', url_name='update_user')
+    def update_user(self, request, pk=None):
+        print("??????????????????????????????????????")

@@ -129,11 +129,11 @@ export const IndexView = observer(
                             Expando={({Wrapper}) =>
                                 <Wrapper>
                                     <UserEditor
-                                        ProfileSection={() => <EditUserProfile
-                                                                userData={data}
-                                                                onSave={(new_user_data) => store.saveUserEdit(new_user_data)}
-                                                                organizations={store.available_organizations}
-                                        />}
+                                        ProfileSection={() =>
+                                            <EditUserProfile
+                                            userData={data}
+                                            onSave={(new_user_data) => store.saveUserEdit(new_user_data)}
+                                            organizations={store.available_organizations} />}
                                         ProgramSection={() => <EditUserPrograms />}
                                         HistorySection={() => <EditUserHistory />}
                                     />
@@ -142,7 +142,9 @@ export const IndexView = observer(
                                 <Col size="0.5">
                                     <div className="td--stretch">
                                         <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
-                                        <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)}><i className="fa fa-user"></i></div>
+                                        <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
+                                            <i className="fa fa-user"></i>
+                                        </div>
                                     </div>
                                 </Col>
                                 <Col size="2">{data.name}</Col>
