@@ -71,6 +71,17 @@ body > .container {
         color: $teal-600;
     }
 }
+.btn-inverse {
+    // not a standard BS button style
+    // mostly used for RESET and CLEAR buttons
+    color: $text-muted;
+    font-weight: normal;
+    text-transform: uppercase;
+    @include transition($btn-transition);
+    &:hover, &:focus {
+        color: $danger;
+    }
+}
 .btn-link {
     font-weight: bold;
 }
