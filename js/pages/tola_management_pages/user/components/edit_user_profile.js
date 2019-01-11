@@ -10,6 +10,7 @@ export default class EditUserProfile extends React.Component {
         const organization_listing = props.organizations.map(org => ({value: org.id, label: org.name}))
         const selected_organization = organization_listing.find(o => o.label == userData.organization_name)
         const user_data = {
+            id: userData.id,
             full_name: userData.name,
             organization: selected_organization?selected_organization:null,
             mode_of_address: '',
@@ -23,6 +24,18 @@ export default class EditUserProfile extends React.Component {
             managed_user_data: user_data,
             organization_listing
         }
+    }
+
+
+    saveForm(e) {
+        e.preventDefault()
+        const ud = this.state.managed_user_data
+        const marshalledUserData = {
+            ...ud,
+            name: ud.full_name,
+            organization_id: (ud.organization)?ud.organization.value:null,
+        }
+        this.props.onSave(marshalledUserData)
     }
 
     updateFullName(new_full_name) {
@@ -88,10 +101,6 @@ export default class EditUserProfile extends React.Component {
         })
     }
 
-    saveForm() {
-        this.props.onSave(this.managed_user_data)
-    }
-
     resetForm() {
         this.setState({
             managed_user_data: this.state.original_user_data
@@ -99,7 +108,6 @@ export default class EditUserProfile extends React.Component {
     }
 
     render() {
-        const {onSave, organizations} = this.props
         const ud = this.state.managed_user_data
         return (
             <div className="edit-user-profile">
@@ -169,7 +177,7 @@ export default class EditUserProfile extends React.Component {
                             id="user-mode-of-contact-input" />
                     </div>
                     <div className="form-group">
-                        <button className="btn btn-primary" onClick={() => onSave()}>Save</button>
+                        <button className="btn btn-primary" onClick={(e) => this.saveForm(e)}>Save</button>
                         <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Reset</button>
                     </div>
                 </form>

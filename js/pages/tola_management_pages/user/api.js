@@ -15,3 +15,12 @@ export const fetchUsersWithFilter = (page, filters) => api.get('/api/tola_manage
         prev_page: data.previous
     }
 })
+
+export const saveUser = (data) => api.post(`/api/tola_managment/user/${data.id}/update_user`, data).then((response) => {
+    return response.data
+})
+
+export default {
+    fetchUsersWithFilter,
+    saveUser
+}

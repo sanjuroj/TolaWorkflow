@@ -1,10 +1,11 @@
 import { observable, computed, action } from "mobx";
-import {fetchUsersWithFilter} from './api';
+import api from './api';
 
 export class UserStore {
     @observable users = []
     @observable users_count = null
     @observable fetching = false
+    @observable saving = false
     @observable current_page = 0
     @observable total_pages = null
     @observable bulk_targets = new Map()
@@ -82,7 +83,7 @@ export class UserStore {
     @action
     fetchUsers() {
         this.fetching = true
-        fetchUsersWithFilter(this.current_page + 1, this.marshalFilters(this.filters)).then(results => {
+        api.fetchUsersWithFilter(this.current_page + 1, this.marshalFilters(this.filters)).then(results => {
             this.fetching = false
             this.users = results.users
             this.bulk_targets = new Map(this.users.map(user => [user.id, false]))
@@ -165,6 +166,19 @@ export class UserStore {
     @action
     updateActiveEditPage(section_name) {
         this.active_edit_page = section_name
+    }
+
+    @action
+    saveUserEdit(new_user_data) {
+        const user_idx = this.users.findIndex(u => u.id == new_user_data.id)
+
+        if(user_idx !== -1) {
+            this.users[user_idx] = new_user_data
+            this.saving = true
+            api.saveUser(new_user_data).then(result => {
+                this.saving = false
+            })
+        }
     }
 
     @action
