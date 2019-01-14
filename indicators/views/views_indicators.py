@@ -1489,7 +1489,7 @@ class ProgramPage(ListView):
             indicator_filter_name = program.annotated_indicators.first()
 
         indicators = program.annotated_indicators\
-            .annotate(target_period_last_end_date=Max('periodictargets__end_date'))
+            .annotate(target_period_last_end_date=Max('periodictargets__end_date')).select_related('level')
         # indicator_count = program.indicator_count
         site_count = len(program.get_sites())
 
