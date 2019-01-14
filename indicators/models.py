@@ -871,7 +871,34 @@ class PeriodicTarget(models.Model):
 
     @classmethod
     def generate_for_frequency(cls, frequency):
-        """ returns a generator function to yield periods based on start and end dates for a given frequency"""
+        """
+        Returns a generator function to yield periods based on start and end dates for a given frequency
+
+        WARNING: This function as it stands can return either a str() or a unicode() depending on the `frequency`
+
+        It returns a str() in the case of:
+
+            * ANNUAL
+            * MONTHLY
+            * SEMI_ANNUAL_PERIOD
+            * TRI_ANNUAL_PERIOD
+            * QUARTERLY_PERIOD
+
+        It returns unicode() in the case of:
+
+            * LOP_PERIOD
+            * MID_END
+
+        It's unclear how some of these ''.format() works, as some params are gettext_lazy() (unicode) values containing
+        non-ASCII chars being plugged into a non-unicode string. This normally crashes but for some reason it works here.
+
+        An example of something that crashes in the REPL but seemingly works here when using ugettext_lazy():
+
+            '{year}'.format(year=u'Año')
+
+        It's my hope one day to find out how this works, but for now I would be happy with this just returning unicode
+        for all cases as a consolation prize
+        """
         months_per_period = {
             Indicator.SEMI_ANNUAL: 6,
             Indicator.TRI_ANNUAL: 4,
@@ -892,6 +919,9 @@ class PeriodicTarget(models.Model):
                 # TODO: strftime() does not work with Django i18n and will not give you localized month names
                 # Could be: name_func = lambda start, count: cls.generate_monthly_period_name(start)
                 # the above breaks things in other places though due to unicode encoding/decoding errors
+                # UPDATE: Turns out the below still translates... strftime() still returns an english
+                # month name, but since month names are translated elsewhere in the app, the _() turns it into
+                # the correct language
                 name_func = lambda start, count: '{month_name} {year}'.format(
                     month_name=_(start.strftime('%B')),
                     year=start.strftime('%Y')
