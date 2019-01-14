@@ -252,6 +252,7 @@ class TestIndicatorScenarios(test.TestCase):
             self.assertEqual(self.indicator.program, self.program)
             yield scenario
 
+    @unittest.skip('not implemented - IPTT Indicator not currently in use, fix tests when it is reintroduced')
     def test_scenario_totals_targetperiods(self):
         settings.DEBUG = True
         for scenario in self.get_scenarios():
@@ -287,6 +288,7 @@ class TestIndicatorScenarios(test.TestCase):
                     desc=scenario['desc']))
         settings.DEBUG = False
 
+    @unittest.skip('not implemented - IPTT Indicator not currently in use, fix tests when it is reintroduced')
     def test_scenario_totals_timeperiods(self):
         settings.DEBUG = True
         for scenario in self.get_scenarios():
