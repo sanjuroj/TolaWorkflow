@@ -28901,7 +28901,7 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('open-indicator-update-moda
 }); // get results html blob for indicator
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('load-indicator-results', function (indicatorId) {
-  var url = "/indicators/collected_data_table/".concat(indicatorId, "/").concat(rootStore.program.id, "/");
+  var url = "/indicators/result_table/".concat(indicatorId, "/").concat(rootStore.program.id, "/");
   $.get(url, function (data) {
     rootStore.addResultsHTML(indicatorId, data);
   });
@@ -40338,4 +40338,4 @@ module.exports = g;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=program_page-ca459196a4944af00646.js.map
+//# sourceMappingURL=program_page-8440270387a250daf2c9.js.map
