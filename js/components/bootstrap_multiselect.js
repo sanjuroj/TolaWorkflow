@@ -3,6 +3,7 @@
 
 import React from 'react';
 import $ from 'jquery';
+import isEqual from 'react-fast-compare';
 
 /*
   Props:
@@ -16,7 +17,7 @@ import $ from 'jquery';
 export class Select extends React.Component {
     constructor(props) {
         super(props);
-
+        
         this.onChange = this.onChange.bind(this);
         this.clearInternalSelection = this.clearInternalSelection.bind(this);
     }
@@ -34,7 +35,6 @@ export class Select extends React.Component {
         // these do not trigger any bs-multiselect callbacks
         if (this.props.forceEmptySelect) {
             this.$el.val('');
-            this.$el.multiselect('refresh');
         }
     }
 
@@ -64,22 +64,27 @@ export class Select extends React.Component {
         // initial setup of BS multiselect
         this.$el.multiselect(multiSelectOptions);
 
-        // set up options and selection
+        // set the selection and options
         this.componentDidUpdate();
     }
 
-    componentDidUpdate() {
-        const options = this.props.options;
-        const selected = this.props.selected;
+    componentDidUpdate(prevProps) {
+        const {options, selected} = this.props;
 
-        // set options list
-        this.$el.multiselect('dataprovider', options);
+        // Setting the options clears the filter search field which is not desired behavior
+        // As such, limit setting the options unless they really have changed
+        // Hopefully this deep check isn't too slow for a large number of options
+        if (!prevProps || !isEqual(prevProps.options, options)) {
+            this.$el.multiselect('dataprovider', options);
+        }
 
         this.$el.multiselect('select', selected);
 
         if (selected.length === 0) {
             this.clearInternalSelection();
         }
+
+        this.$el.multiselect('refresh');
     }
 
     componentWillUnmount() {

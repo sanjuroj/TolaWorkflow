@@ -7703,12 +7703,12 @@ function getStatusIndicatorString(filterType, indicatorCount) {
 
     case _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingResults:
       // # Translators: The number of indicators that no one has entered in any results for
-      fmts = ngettext("%s indicator has no results", "%s indicators have no results", indicatorCount);
+      fmts = ngettext("%s indicator has missing results", "%s indicators have missing results", indicatorCount);
       return interpolate(fmts, [indicatorCount]);
 
     case _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingEvidence:
       // # Translators: The number of indicators that contain results that are not backed up with evidence
-      fmts = ngettext("%s indicator has results without evidence", "%s indicators have results without evidence", indicatorCount);
+      fmts = ngettext("%s indicator has missing evidence", "%s indicators have missing evidence", indicatorCount);
       return interpolate(fmts, [indicatorCount]);
 
     case _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].aboveTarget:
@@ -9040,6 +9040,11 @@ function () {
     value: function deleteResultsHTML(indicatorId) {
       this.resultsMap.delete(indicatorId);
     }
+  }, {
+    key: "deleteAllResultsHTML",
+    value: function deleteAllResultsHTML() {
+      this.resultsMap.clear();
+    }
   }]);
 
   return ProgramPageStore;
@@ -9057,7 +9062,7 @@ function () {
   initializer: function initializer() {
     return new Map();
   }
-}), _applyDecoratedDescriptor(_class3.prototype, "addResultsHTML", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "addResultsHTML"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "deleteResultsHTML", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "deleteResultsHTML"), _class3.prototype)), _class3);
+}), _applyDecoratedDescriptor(_class3.prototype, "addResultsHTML", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "addResultsHTML"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "deleteResultsHTML", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "deleteResultsHTML"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "deleteAllResultsHTML", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "deleteAllResultsHTML"), _class3.prototype)), _class3);
 var ProgramPageUIStore = (_class5 = (_temp3 =
 /*#__PURE__*/
 function () {
@@ -28913,12 +28918,14 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('reload-indicator', functio
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('apply-gauge-tank-filter', function (indicatorFilter) {
   // reset all filters
   _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('clear-all-indicator-filters');
+  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('close-all-indicators');
   uiStore.setIndicatorFilter(indicatorFilter);
 }); // clear all gas tank and indicator select filters
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('clear-all-indicator-filters', function () {
   uiStore.clearIndicatorFilter();
   _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('select-indicators-to-filter', []);
+  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('close-all-indicators');
 }); // filter down by selecting individual indicator
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('select-indicators-to-filter', function (selectedIndicatorIds) {
@@ -28929,6 +28936,10 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('select-indicators-to-filte
   selectedIndicatorIds.forEach(function (id) {
     return _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('load-indicator-results', id);
   });
+}); // close all expanded indicators in the table
+
+_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('close-all-indicators', function () {
+  rootStore.deleteAllResultsHTML();
 });
 /*
  * React components on page
@@ -28996,6 +29007,112 @@ $('#indicator_collecteddata_div').on('hide.bs.modal', function (e) {
     _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('reload-indicator', indicator_id);
   }
 });
+
+/***/ }),
+
+/***/ "bmMU":
+/*!**************************************************!*\
+  !*** ./node_modules/react-fast-compare/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var isArray = Array.isArray;
+var keyList = Object.keys;
+var hasProp = Object.prototype.hasOwnProperty;
+var hasElementType = typeof Element !== 'undefined';
+
+function equal(a, b) {
+  // fast-deep-equal index.js 2.0.1
+  if (a === b) return true;
+
+  if (a && b && typeof a == 'object' && typeof b == 'object') {
+    var arrA = isArray(a)
+      , arrB = isArray(b)
+      , i
+      , length
+      , key;
+
+    if (arrA && arrB) {
+      length = a.length;
+      if (length != b.length) return false;
+      for (i = length; i-- !== 0;)
+        if (!equal(a[i], b[i])) return false;
+      return true;
+    }
+
+    if (arrA != arrB) return false;
+
+    var dateA = a instanceof Date
+      , dateB = b instanceof Date;
+    if (dateA != dateB) return false;
+    if (dateA && dateB) return a.getTime() == b.getTime();
+
+    var regexpA = a instanceof RegExp
+      , regexpB = b instanceof RegExp;
+    if (regexpA != regexpB) return false;
+    if (regexpA && regexpB) return a.toString() == b.toString();
+
+    var keys = keyList(a);
+    length = keys.length;
+
+    if (length !== keyList(b).length)
+      return false;
+
+    for (i = length; i-- !== 0;)
+      if (!hasProp.call(b, keys[i])) return false;
+    // end fast-deep-equal
+
+    // start react-fast-compare
+    // custom handling for DOM elements
+    if (hasElementType && a instanceof Element && b instanceof Element)
+      return a === b;
+
+    // custom handling for React
+    for (i = length; i-- !== 0;) {
+      key = keys[i];
+      if (key === '_owner' && a.$$typeof) {
+        // React-specific: avoid traversing React elements' _owner.
+        //  _owner contains circular references
+        // and is not needed when comparing the actual elements (and not their owners)
+        // .$$typeof and ._store on just reasonable markers of a react element
+        continue;
+      } else {
+        // all other properties should be traversed as usual
+        if (!equal(a[key], b[key])) return false;
+      }
+    }
+    // end react-fast-compare
+
+    // fast-deep-equal index.js 2.0.1
+    return true;
+  }
+
+  return a !== a && b !== b;
+}
+// end fast-deep-equal
+
+module.exports = function exportedEqual(a, b) {
+  try {
+    return equal(a, b);
+  } catch (error) {
+    if ((error.message && error.message.match(/stack|recursion/i)) || (error.number === -2146828260)) {
+      // warn on circular references, don't crash
+      // browsers give this different errors name and messages:
+      // chrome/safari: "RangeError", "Maximum call stack size exceeded"
+      // firefox: "InternalError", too much recursion"
+      // edge: "Error", "Out of stack space"
+      console.warn('Warning: react-fast-compare does not handle circular references.', error.name, error.message);
+      return false;
+    }
+    // some other error. we should definitely know about these
+    throw error;
+  }
+};
+
 
 /***/ }),
 
@@ -30927,6 +31044,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "xeH2");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react_fast_compare__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-fast-compare */ "bmMU");
+/* harmony import */ var react_fast_compare__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_fast_compare__WEBPACK_IMPORTED_MODULE_2__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -30948,6 +31067,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 /* React wrappers to bootstrap-multiselect widgets */
 
 /* Note: bootstrap-multiselect exists in the global JS context (imported in base.html) */
+
 
 
 /*
@@ -30994,7 +31114,6 @@ function (_React$Component) {
       // these do not trigger any bs-multiselect callbacks
       if (this.props.forceEmptySelect) {
         this.$el.val('');
-        this.$el.multiselect('refresh');
       }
     }
   }, {
@@ -31019,22 +31138,30 @@ function (_React$Component) {
 
       this.$el = jquery__WEBPACK_IMPORTED_MODULE_1___default()(this.el); // initial setup of BS multiselect
 
-      this.$el.multiselect(multiSelectOptions); // set up options and selection
+      this.$el.multiselect(multiSelectOptions); // set the selection and options
 
       this.componentDidUpdate();
     }
   }, {
     key: "componentDidUpdate",
-    value: function componentDidUpdate() {
-      var options = this.props.options;
-      var selected = this.props.selected; // set options list
+    value: function componentDidUpdate(prevProps) {
+      var _this$props = this.props,
+          options = _this$props.options,
+          selected = _this$props.selected; // Setting the options clears the filter search field which is not desired behavior
+      // As such, limit setting the options unless they really have changed
+      // Hopefully this deep check isn't too slow for a large number of options
 
-      this.$el.multiselect('dataprovider', options);
+      if (!prevProps || !react_fast_compare__WEBPACK_IMPORTED_MODULE_2___default()(prevProps.options, options)) {
+        this.$el.multiselect('dataprovider', options);
+      }
+
       this.$el.multiselect('select', selected);
 
       if (selected.length === 0) {
         this.clearInternalSelection();
       }
+
+      this.$el.multiselect('refresh');
     }
   }, {
     key: "componentWillUnmount",
@@ -40211,4 +40338,4 @@ module.exports = g;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=program_page-90b61854b0376aa09af3.js.map
+//# sourceMappingURL=program_page-ca459196a4944af00646.js.map

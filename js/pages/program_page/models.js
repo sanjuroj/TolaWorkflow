@@ -131,6 +131,11 @@ export class ProgramPageStore {
     deleteResultsHTML(indicatorId) {
         this.resultsMap.delete(indicatorId);
     }
+
+    @action
+    deleteAllResultsHTML() {
+        this.resultsMap.clear();
+    }
 }
 
 export class ProgramPageUIStore {

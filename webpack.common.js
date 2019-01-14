@@ -8,7 +8,8 @@ const webpack = require('webpack');
 module.exports = {
 
     entry: {
-        program_page: './js/pages/program_page/index.js' ,
+        program_page: './js/pages/program_page/index.js',
+        tola_management_user: './js/pages/tola_management_pages/user/index.js'
     },
 
     output: {
@@ -43,7 +44,11 @@ module.exports = {
     },
 
     resolve: {
-        extensions: ['*', '.js', '.jsx']
+        extensions: ['*', '.js', '.jsx'],
+        modules: [
+            path.resolve(__dirname, "js"),
+            'node_modules'
+        ],
     },
 
     plugins: [

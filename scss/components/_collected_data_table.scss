@@ -44,6 +44,11 @@
     justify-content: space-between;
     align-items: center;
 }
+.cd-actions__message {}
+.cd-actions__button {
+    margin-left: $grid-gutter-width/2;
+    white-space: nowrap;
+}
 
 // Potentially global styles
 .disable-span {

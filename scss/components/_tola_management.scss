@@ -1,0 +1,54 @@
+#user-management-index-view {
+    .td--stretch {
+        display: flex;
+        justify-content: space-around;
+
+        div {
+            width: 1rem;
+        }
+    }
+
+    .icon__clickable {
+        cursor: pointer;
+        color: darkblue;
+    }
+
+    .filter-buttons {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .list-controls {
+        display: flex;
+        justify-content: space-between;
+
+        .selector {
+            min-width: 10em;
+        }
+
+        .bulk-controls {
+            display: flex;
+        }
+    }
+
+    .user-editor__navigation {
+        background-color: #eee;
+
+        .list-group-item {
+            cursor: pointer;
+            color: darkblue;
+            background-color: transparent;
+            border: none;
+        }
+
+        .list-group-item.selected {
+            color: #888;
+            cursor: default;
+        }
+    }
+}
+
+.list-metadata {
+    display: flex;
+    justify-content: space-between;
+}

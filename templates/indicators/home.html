@@ -15,9 +15,9 @@
     <span class="caret"></span>
     </button>
     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="/indicators/home/0/0/0/"> {% trans "-- All --" %}</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="/"> {% trans "-- All --" %}</a></li>
     {% for program in getPrograms %}
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="/indicators/home/{{ program.id }}/0/0/">{{ program.gaitid}} - {{ program.name }}</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="/program/{{ program.id }}/0/0/">{{ program.gaitid}} - {{ program.name }}</a></li>
     {% endfor %}
     </ul>
     <a href="/indicators/indicator" class="btn btn-large btn-success">{% trans "New Indicator" %}</a>

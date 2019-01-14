@@ -106,7 +106,6 @@ SECRET_KEY = app_settings['SECRET_KEY']
 
 LOGGING['handlers']['file']['filename'] = app_settings['LOGFILE']
 
-
 # use webpack dev server
 WEBPACK_LOADER = {
     'DEFAULT': {

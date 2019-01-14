@@ -30,6 +30,7 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import list_route
 from rest_framework.pagination import PageNumberPagination
 import django_filters
 
@@ -92,6 +93,17 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    # @list_route(methods=["get"])
+    # def full_users(self, request):
+    #     full_users = TolaUser.objects.all()
+    #     page = self.paginate_queryset(full_users)
+    #     if page is not None:
+    #         serializer = TolaUserSerializer(page, many=True, context={"request": request})
+    #         return self.get_paginated_response(serializer.data)
+
+    #     serializer = TolaUserSerializer(full_users, many=True, context={"request": request})
+    #     return Response(serializer.data)
 
 
 class ProgramViewSet(viewsets.ModelViewSet):

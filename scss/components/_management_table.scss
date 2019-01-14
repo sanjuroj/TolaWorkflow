@@ -1,0 +1,23 @@
+.mgmt-table {
+    width: 100%;
+    border: 1px solid #ddd;
+
+    .mgmt-table__head {
+    }
+
+    .mgmt-table__body {
+    }
+
+    .mgmt-table__row {
+        display: flex;
+        padding: 10px 0;
+
+        &:hover {
+            background-color: #eee;
+        }
+    }
+
+    .mgmt-table__col {
+        flex: 1;
+    }
+}

@@ -6,9 +6,6 @@
     content: none;
   }
 }
-body {
-    background-color: $gray-150;
-}
 .dataTables_wrapper {
     &.container-fluid {
       padding-right: 0px !important;
@@ -204,69 +201,8 @@ select.listoption_filters {
   -moz-appearance: none;
 }
 
-// Indicator periodic target creation
-#indicator_form .tab-content.panel-body,
-#indicator_modal_body .tab-content.panel-body,
-#indicator_modal_body {
-  padding-bottom: 0px;
-}
 
-.periodic-target,
-#pt_sum_targets {
-  border-bottom: 1px solid $gray-300;
-  border-top: 1px solid $gray-300;
-  background-color: $white;
-}
-
-#periodic-targets-tablediv .pt-delete-row {
-  padding: 1px 0px 1px 10px;
-  vertical-align: middle;
-  border: none;
-}
-
-#indicator_modal_body {
-    .tab-content {
-        background-color: $white;
-    }
-    .form-row > label{
-        font-weight: bold;
-    }
-    .select2-selection {
-        border-radius: 0px;
-        border-color: $gray-500;
-    }
-    .select2-container--focus .select2-selection {
-        border-color: $blue-400;
-        outline: 0;
-        box-shadow: 0 0 0 0.2rem rgba(51, 102, 204, .40);
-    }
-    // This helps with the predictability of spacing between
-    // inputs on the indicator setup page/modal
-    // TODO: this is crazy brittle
-    .div-input-container > textarea,
-    .div-input-container > input,
-    .div-input-container > select,
-    .div-input-container > .inputs-in-a-box,
-    .div-input-container .select2 {
-        max-height: 100%
-    }
-}
-@media (max-width: 575px) { // TODO: breakpoint !
-    #indicator_modal_body .form-row > label{
-        text-align: left;
-    }
-}
-
-// In each case, the hieght of these divs changes when the has-error class is
-// applied.  This keeps the inputs from getting taller when there is an error.
-//#div_id_name, // #div_id_name is now a textarea field per ticket #926
-#div_id_target_frequency,
-#div_id_target_frequency .div-input-container,
-#id_baseline,
-#div_id_target_frequency_custom,
-#div_id_target_frequency_num_periods {
-    height: 2.25rem;
-}
+// indicators, unsorted
 #div_id_unit_of_measure_type_0 {
     margin-left: 2px;
 }
@@ -277,24 +213,6 @@ select.listoption_filters {
     font-size: 1rem;
     color: $gray-700;
     font-weight: bold;
-}
-// Don't define border property here.  Assigning here prevents red border from
-// being applied when there is no value
-.periodic-target .input-value {
-    margin: 10px 10px 10px 6px;
-    padding-right: 10px;
-    text-align: right;
-    width: 150px;
-    display: table-cell;
-    .input-text {
-        padding-right: 2px;
-        text-align: left;
-        box-shadow: none;
-        display: table-cell;
-    }
-    .controls input::placeholder {
-        color: $gray-500;
-    }
 }
 
 .lop-display {
@@ -321,7 +239,6 @@ select.listoption_filters {
 #id_div_is_cumulative_section3 {
     display: none;
 }
-// END Indicator periodic target creation
 
 
 
