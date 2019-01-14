@@ -435,6 +435,13 @@ class Program(models.Model):
         return True
 
     @property
+    def has_ended(self):
+        try:
+            return self.reporting_period_end < timezone.localdate()
+        except TypeError: # esp. if there's no reporting dates
+            return False
+
+    @property
     def get_indicators_in_need_of_targetperiods_fixing(self):
         indicators = Indicator.objects.filter(program__in=[self.pk]) \
             .annotate(minstarts=Min('periodictargets__start_date')) \

@@ -185,3 +185,10 @@ body > .container {
 .form-check-input {
     width: auto !important; // fixes bug in latest Chrome + pre-Mojave macs ?
 }
+
+// pointer cursor for popover span trigger
+span[data-toggle="popover"] {
+    &:hover {
+        cursor: pointer;
+    }
+}

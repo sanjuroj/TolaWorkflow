@@ -342,7 +342,8 @@ class TestSingleReportingIndicator(ReportingIndicatorBase):
             self.indicator.target_frequency = frequency
             self.indicator.save()
             self.load_targets()
-            self.load_data()
+            for target in self.targets:
+                self.load_data(indicator=target.indicator, target=target)
             program = self.get_annotated_program()
             self.assertEqual(program.scope_counts['nonreporting_count'], 0)
             self.assertEqual(program.scope_counts['indicator_count'], 1)
@@ -396,7 +397,9 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
                 program=self.program
             )
             self.load_targets(indicator=indicator)
-            self.load_data(indicator=indicator)
+            #self.load_data(indicator=indicator)
+        for target in self.targets:
+            self.load_data(indicator=target.indicator, target=target)
         program = self.get_annotated_program()
         self.assertEqual(program.scope_counts['nonreporting_count'], 0)
         self.assertEqual(program.scope_counts['indicator_count'], len(self.TIME_AWARE_FREQUENCIES))

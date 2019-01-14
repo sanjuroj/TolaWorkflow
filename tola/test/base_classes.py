@@ -120,22 +120,20 @@ class IndicatorDetailsMixin(TestBase):
         scenario_sums = self.scenario.indicators[0].collected_data_sum_by_periodic_target
         response_sums = []
         for pt in self.response.context['periodictargets']:
-            if self.scenario.indicators[0].unit_of_measure_type == Indicator.NUMBER:
-                if self.scenario.indicators[0].is_cumulative:
-                    response_sums.append(pt.cumulative_sum)
-                else:
-                    response_sums.append(pt.achieved_sum)
-            else:
-                response_sums.append(pt.last_data_row)
-
-        self.assertEqual(scenario_sums, response_sums)
+            response_sums.append(pt.actual)
+        for expected, received in zip(scenario_sums, response_sums):
+            self.assertAlmostEqual(expected, received, 2)
 
     def test_lop_row_target_value_correct(self):
         response_lop_target = self.response.context['indicator'].lop_target_display
-        self.assertEqual(unicode(self.scenario.indicators[0].lop_target), response_lop_target)
+        expected = unicode(self.scenario.indicators[0].lop_target)
+        uom = getattr(self.scenario.indicators[0], 'unit_of_measure_type', Indicator.NUMBER)
+        if uom == Indicator.PERCENTAGE:
+            expected = u'{0}%'.format(expected)
+        self.assertEqual(expected, response_lop_target)
 
     def test_lop_row_actual_value_correct(self):
-        response_value = self.response.context.pop()['grand_achieved_sum']
+        response_value = self.response.context['indicator'].lop_actual
         scenario_value = decimalize(self.scenario.indicators[0].collected_data_sum)
         self.assertEqual(scenario_value, response_value)
 

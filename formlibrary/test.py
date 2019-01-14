@@ -1,3 +1,4 @@
+import unittest
 from django.test import TestCase
 from django.utils import timezone
 from workflow.models import Program, Country, Province,ProjectAgreement, Sector, ProjectType, SiteProfile, Office
@@ -39,7 +40,7 @@ class TrainingAttendanceTestCase(TestCase):
         get_training = TrainingAttendance.objects.get(training_name="testtraining")
         self.assertEqual(TrainingAttendance.objects.filter(id=get_training.id).count(), 1)
 
-
+@unittest.skip('Slow test for unused portion of the app')
 class DistributionTestCase(TestCase):
 
     fixtures = ['fixtures/projecttype.json','fixtures/sectors.json']
