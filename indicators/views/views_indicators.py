@@ -43,7 +43,7 @@ from ..models import (
     CollectedData, IndicatorType, Level, ExternalServiceRecord,
     ExternalService, TolaTable, PinnedReport
 )
-from indicators.queries import ProgramWithMetrics, IPTTIndicator, ResultsIndicator
+from indicators.queries import ProgramWithMetrics, ResultsIndicator
 from .views_reports import IPTT_ReportView
 
 

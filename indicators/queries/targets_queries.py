@@ -126,6 +126,13 @@ def target_percent_met_annotation():
     return models.Case(
         models.When(
             models.Q(
+                models.Q(target=0) &
+                models.Q(actual__isnull=False)
+            ),
+            then=models.Value(0)
+        ),
+        models.When(
+            models.Q(
                 models.Q(target__isnull=True) &
                 models.Q(actual__isnull=True)
             ),

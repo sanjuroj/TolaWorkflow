@@ -60,10 +60,13 @@ def add_results_for_targets(targets, values):
         ))
     return results
 
+def get_next_date_yearly(_, date):
+    return datetime.date(date.year + 1, date.month, 1)
+
 def get_next_date_monthly(_, date):
-        if date.month > 11:
-            return datetime.date(date.year + 1, date.month - 11, 1)
-        return datetime.date(date.year, date.month + 1, 1)
+    if date.month > 11:
+        return datetime.date(date.year + 1, date.month - 11, 1)
+    return datetime.date(date.year, date.month + 1, 1)
 
 class TestAnnualNoncumulativeNumeric(test.TestCase):
     is_cumulative = False
@@ -261,6 +264,11 @@ class ScenarioBuilderMixin:
         self.program = self.get_program()
         self.indicator = self.get_indicator()
         self.targets, self.results = self.get_targets()
+        if self.is_cumulative and self.unit_of_measure_type == Indicator.NUMBER:
+            self.expected_result_values = [
+                sum(self.result_values[:count+1]) for count in range(len(self.result_values))
+                ]
+        self.assertEqual(len(self.expected_result_values), len(self.result_values))
         self.results_indicator = ResultsIndicator.results_view.get(pk=self.indicator.pk)
 
     def get_program(self):
@@ -275,7 +283,8 @@ class ScenarioBuilderMixin:
             target_frequency=self.target_frequency,
             unit_of_measure_type=self.unit_of_measure_type,
             direction_of_change=self.direction_of_change,
-            is_cumulative=self.is_cumulative
+            is_cumulative=self.is_cumulative,
+            lop_target=self.lop_target
         )
 
     def get_targets(self):
@@ -307,22 +316,7 @@ class ScenarioBuilderMixin:
             next_date = self.next_date_func(start_date)
         return targets, results
 
-class TestMonthlyDecreaseCumulative(test.TestCase, ScenarioBuilderMixin):
-    """built to deal with a weird failing edge case"""
-    program_dates = [datetime.date(2017, 6, 1), datetime.date(2020, 1, 31)]
-    unit_of_measure_type = Indicator.NUMBER
-    direction_of_change = Indicator.DIRECTION_OF_CHANGE_NEGATIVE
-    target_frequency = Indicator.MONTHLY
-    is_cumulative = True
-    target_values = range(500, 180, -10)
-    result_values = range(400, 628, 12)
-    expected_result_values = []
-    next_date_func = get_next_date_monthly
-
-    def setUp(self):
-        self.do_setup()
-        self.expected_result_values = [sum(self.result_values[:count+1]) for count in range(len(self.result_values))]
-
+class ResultsTestBase:
     def test_result_rows_target_values(self):
         for expected, pt_row in zip(self.target_values, self.results_indicator.annotated_targets):
             self.assertEqual(expected, pt_row.target)
@@ -333,8 +327,51 @@ class TestMonthlyDecreaseCumulative(test.TestCase, ScenarioBuilderMixin):
 
     def test_result_rows_percents_values(self):
         for count, pt_row in enumerate(self.results_indicator.annotated_targets):
-            if count < len(self.expected_result_values):
+            if count < len(self.expected_result_values) and self.target_values[count] == 0:
+                expected = 0
+            elif count < len(self.expected_result_values):
                 expected = round(float(self.expected_result_values[count])/self.target_values[count], 2)
             else:
                 expected = None
             self.assertAlmostEqual(expected, pt_row.percent_met, 2)
+
+    def test_lop_values(self):
+        self.assertEqual(self.expected_lop_target, self.results_indicator.lop_target_active)
+        self.assertEqual(self.expected_lop_actual, self.results_indicator.lop_actual)
+        self.assertAlmostEqual(self.expected_lop_percent_met, self.results_indicator.lop_percent_met, 2)
+
+class TestMonthlyDecreaseCumulative(test.TestCase, ResultsTestBase, ScenarioBuilderMixin):
+    """built to deal with a weird failing edge case"""
+    program_dates = [datetime.date(2017, 6, 1), datetime.date(2020, 1, 31)]
+    unit_of_measure_type = Indicator.NUMBER
+    direction_of_change = Indicator.DIRECTION_OF_CHANGE_NEGATIVE
+    target_frequency = Indicator.MONTHLY
+    is_cumulative = True
+    lop_target = 12000
+    target_values = range(500, 180, -10)
+    result_values = range(400, 628, 12)
+    expected_result_values = []
+    expected_lop_target = 12000
+    expected_lop_actual = 9652
+    expected_lop_percent_met = 0.80
+    next_date_func = get_next_date_monthly
+
+    def setUp(self):
+        self.do_setup()
+
+class TestAnnualIncreasePercentage(test.TestCase, ResultsTestBase, ScenarioBuilderMixin):
+    program_dates = [datetime.date(2017, 1, 1), datetime.date(2020, 12, 31)]
+    unit_of_measure_type = Indicator.PERCENTAGE
+    target_frequency = Indicator.ANNUAL
+    is_cumulative = False
+    lop_target = 30
+    target_values = [50, 0, 90, 20]
+    result_values = [45, 5, 0]
+    expected_result_values = [45, 5, 0]
+    expected_lop_target = 30
+    expected_lop_actual = 0
+    expected_lop_percent_met = 0
+    next_date_func = get_next_date_yearly
+
+    def setUp(self):
+        self.do_setup()
