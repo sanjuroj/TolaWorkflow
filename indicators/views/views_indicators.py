@@ -1440,6 +1440,7 @@ class ProgramPage(ListView):
         #was this for eventually showing more than one program?  Because pk already limits to 1:
         #program = ProgramWithMetrics.with_metrics.get(pk=program_id, funding_status="Funded", country__in=countries)
         program = ProgramWithMetrics.program_page.get(pk=program_id)
+        program.indicator_filters = {}
         if self.metrics:
             json_context = {
                 'metrics': program.metrics,
@@ -1457,9 +1458,8 @@ class ProgramPage(ListView):
             indicator_filter_id = self.kwargs['indicator_id']
             program.indicator_filters['id'] = indicator_filter_id
             indicator_filter_name = program.annotated_indicators.first()
-
-        indicators = program.annotated_indicators\
-            .annotate(target_period_last_end_date=Max('periodictargets__end_date'))
+        indicators = program.annotated_indicators.annotate(
+            target_period_last_end_date=Max('periodictargets__end_date'))
         # indicator_count = program.indicator_count
         site_count = len(program.get_sites())
 
