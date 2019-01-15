@@ -797,9 +797,20 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                     start_date = datetime.strftime(period['start'], '%b %d, %Y')
                     end_date = datetime.strftime(period['end'], '%b %d, %Y')
 
+                    # this is sometimes unicode (or a lazy eval proxy, see below) and sometimes a str...
+                    period_name = period['name']
+                    if isinstance(period_name, str):
+                        # it's not strictly necessary to convert to unicode here, but do it for kicks
+                        period_name = period_name.decode('utf-8')
+                    else:
+                        # You might think that this should check for unicode, but at this point, it's probably a
+                        # <class 'django.utils.functional.__proxy__'> which is a return val of ugettext_lazy()
+                        # Force lazy translation to unicode, or else openpyxl will crash on write
+                        period_name = unicode(period_name)
+
                     # process period name
                     ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col + 2)
-                    ws.cell(row=2, column=col).value = unicode(period['name'])
+                    ws.cell(row=2, column=col).value = period_name
                     ws.cell(row=2, column=col).alignment = alignment
                     ws.cell(row=2, column=col).font = headers_font
 
@@ -812,7 +823,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                     start_date = ''
                     end_date = ''
                     ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col + 2)
-                    ws.cell(row=3, column=col).value = unicode(period['name'])
+                    ws.cell(row=3, column=col).value = period_name
                     ws.cell(row=3, column=col).alignment = alignment
                     ws.cell(row=3, column=col).font = headers_font
 
