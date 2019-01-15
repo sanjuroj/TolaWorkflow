@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load l10n %}
 <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
 <script src="https://maps.google.com/maps/api/js?v=3.2&key=AIzaSyCcix2ucURnpMK9lWrcBtqlR6jc2qaVanQ&sensor=false"></script>
 <script src="{{ STATIC_URL }}js/leaflet-google.js"></script>
@@ -9,11 +10,14 @@
     var country=[];
     var country_lat=[];
     var country_long=[];
+{% localize off %}
+{# localization takes decimal numbers from e.g. "1.012" to "1,012" which breaks maps API functionality #}
     {% for item in country %}
         country[{{forloop.counter}}] = "{{ item.country }}";
         country_lat[{{forloop.counter}}] = "{{ item.latitude }}";
         country_long[{{forloop.counter}}] = "{{ item.longitude }}";
     {% endfor %}
+{% endlocalize %}
 
 
     var osmLink = '<a href="https://openstreetmap.org">OpenStreetMap</a>',
@@ -179,7 +183,7 @@
       html:'<div class="map-marker indicator"></div>',
       iconSize: [0,0]
     });
-
+{% localize off %}
     {% for item in getSiteProfile %}
         {% if item.status == 1 %}
         L.marker([{{ item.latitude }}, {{ item.longitude }}], {icon: projectIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>{% trans "Project Site"|escapejs %}<br><a href='/workflow/siteprofile_update/{{ item.id }}'>{{ item.name }}</a> <br/>{% trans "Province"|escapejs %}: {{ item.province }} <br/>{% trans "District"|escapejs %}: {{ item.district }} <br/> {% trans "Village"|escapejs %}: {{ item.village }} <br/> ");
@@ -193,6 +197,6 @@
             {% endif %}
         {%   endfor %}
     {% endif %}
-
+{% endlocalize %}
 
 </script>
