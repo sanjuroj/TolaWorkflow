@@ -30,7 +30,10 @@ def getCountry(user):
         Returns the object the view is displaying.
         """
         # get users country from django cosign module
-        return user.tola_user.countries.all()
+        if user.is_authenticated():
+            return user.tola_user.countries.all()
+        else:
+            return Country.objects.none()
 
 def emailGroup(country,group,link,subject,message,submiter=None):
         #email incident to admins in each country assoicated with the projects program
