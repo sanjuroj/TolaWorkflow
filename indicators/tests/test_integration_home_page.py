@@ -97,37 +97,3 @@ class TestHomepageViewContext(test.TestCase):
         self.assertEqual(indicator_counts[two_id], 2)
         self.assertEqual(indicator_counts[one_id], 1)
         self.assertEqual(indicator_counts[zero_id], 0)
-
-    def test_template_renders_no_program_links_for_zero_indicator_programs(self):
-        """per github ticket #855"""
-        active_country = w_factories.CountryFactory(
-            country="Active",
-            code="AT",
-        )
-        self.tola_user.active_country = active_country
-        self.tola_user.save()
-        two_id, one_id, zero_id = get_programs_for_country(active_country)
-        response = self.client.get('/')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.context['programs']), 3)
-        soup = BeautifulSoup(response.content, features="lxml")
-        program_list = soup.find("section", class_="home__program-list")
-        articles = program_list.find_all("article", class_="program-list__program")
-        self.assertEqual(len(articles), 3)
-        link_ids = []
-        for article in articles:
-            link = article.find('h4').find('a')
-            if link:
-                href = link.attrs['href']
-                pk = int(href.lstrip('/program/')[:-5])
-                link_ids.append(pk)
-            text_list = article.find('ul', class_='nav--text-list')
-            if link:
-                self.assertIsNotNone(text_list)
-                self.assertEqual(len(text_list.find_all('li')), 2)
-            else:
-                self.assertIsNone(text_list)
-        self.assertEqual(set(link_ids), set([two_id, one_id]))
-        self.assertIsNone(
-            soup.find(href='/program/{0}/0/0/'.format(zero_id))
-        )

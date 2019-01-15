@@ -3,7 +3,7 @@ import dateutil
 import datetime
 
 from admin_report.mixins import ChartReportAdmin
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.models import User
 
 from import_export import resources, fields
@@ -14,7 +14,7 @@ from tola.util import getCountry, get_GAIT_data
 from .models import (
     Documentation, ProjectAgreement, ProjectComplete, ProjectType, Country, SiteProfile,
     Office, Program, TolaUser, District, Province, ProfileType, AdminLevelThree, TolaUserProxy,
-    Organization, Village, Sector, Capacity, Evaluate, Benchmarks, Budget, Template, Monitor,
+    Organization, Village, VillageAdmin, Sector, Capacity, Evaluate, Benchmarks, Budget, Template, Monitor,
     ApprovalAuthority, Checklist, ChecklistItem, Stakeholder, Contact, StakeholderType, TolaSites, FormGuidance,
     TolaBookmarks,
     OrganizationAdmin, ProvinceAdmin, AdminLevelThreeAdmin,
@@ -215,6 +215,8 @@ class ProgramAdmin(admin.ModelAdmin):
                 else:
                     next_month = obj.end_date.replace(day=28) + datetime.timedelta(days=4)
                     obj.reporting_period_end = obj.end_date - datetime.timedelta(days=next_month.day)
+        else:
+            messages.add_message(request, messages.ERROR, 'Error pulling data from GAIT server for ID {gait_id} during Program creation.'.format(gait_id=obj.gaitid))
 
         super(ProgramAdmin, self).save_model(request, obj, form, change)
 
@@ -272,7 +274,7 @@ admin.site.register(Province, ProvinceAdmin)
 admin.site.register(Office, OfficeAdmin)
 admin.site.register(District, DistrictAdmin)
 admin.site.register(AdminLevelThree, AdminLevelThreeAdmin)
-admin.site.register(Village)
+admin.site.register(Village, VillageAdmin)
 admin.site.register(Program, ProgramAdmin)
 admin.site.register(Sector)
 admin.site.register(ProjectAgreement, ProjectAgreementAdmin)
