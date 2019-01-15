@@ -7933,16 +7933,20 @@ function (_React$Component3) {
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
           className: "fas fa-cog"
-        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.level), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.unit_of_measure), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.level ? indicator.level.name : ''), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.unit_of_measure), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "text-right"
         }, indicator.baseline_display), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "text-right"
-        }, indicator.lop_target_display)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
-          className: "indicators-list__row indicators-list__indicator-body hiddenRow"
+        }, indicator.lop_target_display)), resultsExist && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+          className: "indicators-list__row indicators-list__indicator-body"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           colSpan: "6",
-          className: "p-0 bg-blue border-0"
-        }, resultsExist && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          ref: function ref(el) {
+            return $(el).find('[data-toggle="popover"]').popover({
+              html: true
+            });
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           dangerouslySetInnerHTML: {
             __html: resultsStr
           }
@@ -40352,4 +40356,4 @@ module.exports = g;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=program_page-1af32e64ede3428e7c1a.js.map
+//# sourceMappingURL=program_page-a9be92dbf69606480af0.js.map
