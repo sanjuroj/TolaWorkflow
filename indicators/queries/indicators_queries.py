@@ -123,6 +123,9 @@ class ResultsIndicator(Indicator):
         targets = tq.ResultsTarget.objects.filter(indicator=self)
         return targets.with_annotations()
 
+    @property
+    def results_without_targets(self):
+        return self.collecteddata_set.filter(periodic_target=None)
 
 # utils:
 

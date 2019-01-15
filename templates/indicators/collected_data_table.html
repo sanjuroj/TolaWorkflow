@@ -101,7 +101,7 @@
         </tr>
         {% endfor %}{# for item in periodictargets #}
 
-        {% for coldata in collecteddata_without_periodictargets %}
+        {% for coldata in indicator.results_without_targets %}
         <tr>
             <td></td>
             <td></td>
@@ -152,7 +152,7 @@
         </tr>
         {% endfor %}{# for coldata in collecteddata_without_periodictargets #}
 
-        {% if collecteddata_without_periodictargets.count %}
+        {% if indicator.results_without_targets.count %}
             {% if indicator.target_frequency == None %}
                 {% assign err 'Error_1' %}
             {% elif indicator.target_frequency == 2 or indicator.target_frequency == 8 %}
