@@ -10,11 +10,14 @@
     var country=[];
     var country_lat=[];
     var country_long=[];
+{% localize off %}
+{# localization takes decimal numbers from e.g. "1.012" to "1,012" which breaks maps API functionality #}
     {% for item in country %}
         country[{{forloop.counter}}] = "{{ item.country }}";
         country_lat[{{forloop.counter}}] = "{{ item.latitude }}";
         country_long[{{forloop.counter}}] = "{{ item.longitude }}";
     {% endfor %}
+{% endlocalize %}
 
 
     var osmLink = '<a href="https://openstreetmap.org">OpenStreetMap</a>',
@@ -184,7 +187,6 @@
     {% for item in getSiteProfile %}
         {% if item.status == 1 %}
         L.marker([{{ item.latitude }}, {{ item.longitude }}], {icon: projectIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>{% trans "Project Site"|escapejs %}<br><a href='/workflow/siteprofile_update/{{ item.id }}'>{{ item.name }}</a> <br/>{% trans "Province"|escapejs %}: {{ item.province }} <br/>{% trans "District"|escapejs %}: {{ item.district }} <br/> {% trans "Village"|escapejs %}: {{ item.village }} <br/> ");
-        console.log("item: latitude: {{ item.latitude }} and longitude: {{ item.longitude }}");
         {% endif %}
     {% endfor %}
 
