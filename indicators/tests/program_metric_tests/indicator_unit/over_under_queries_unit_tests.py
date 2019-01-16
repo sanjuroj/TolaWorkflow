@@ -68,13 +68,13 @@ class TestTargetsActualsOverUnderCorrect(test.TestCase):
         indicator = MetricsIndicator.objects.with_annotations('scope').get(pk=self.indicator.id)
         # both have data, defaults to non_cumulative, so should show sum of both targets:
         self.assertEqual(
-            indicator.lop_target_sum, 1300,
-            "should sum both targets 500 and 800 to get 1300, got {0}".format(indicator.lop_target_sum)
+            indicator.lop_target_progress, 1300,
+            "should sum both targets 500 and 800 to get 1300, got {0}".format(indicator.lop_target_progress)
         )
         # both have data and targets, defaults to non_cumulative, should show sum of both data:
         self.assertEqual(
-            indicator.lop_actual_sum, 1300,
-            "should sum both data 350 and 950 to get 1300, got {0}".format(indicator.lop_actual_sum)
+            indicator.lop_actual_progress, 1300,
+            "should sum both data 350 and 950 to get 1300, got {0}".format(indicator.lop_actual_progress)
         )
         self.assertEqual(
             indicator.over_under, 0,
@@ -85,13 +85,13 @@ class TestTargetsActualsOverUnderCorrect(test.TestCase):
         indicator = MetricsIndicator.objects.with_annotations('scope').get(pk=self.indicator.id)
         # both have data, set to cumulative, so should show latest (endline) target:
         self.assertEqual(
-            indicator.lop_target_sum, 800,
-            "should show latest target (800), got {0}".format(indicator.lop_target_sum)
+            indicator.lop_target_progress, 800,
+            "should show latest target (800), got {0}".format(indicator.lop_target_progress)
         )
         # both have data and targets, defaults to non_cumulative, should show sum of both data:
         self.assertEqual(
-            indicator.lop_actual_sum, 1300,
-            "should show all data (1300), got {0}".format(indicator.lop_actual_sum)
+            indicator.lop_actual_progress, 1300,
+            "should show all data (1300), got {0}".format(indicator.lop_actual_progress)
         )
         self.assertEqual(
             indicator.over_under, 1,
@@ -131,12 +131,12 @@ class TestTargetsActualsOverUnderCorrect(test.TestCase):
         indicator = MetricsIndicator.objects.with_annotations('scope').get(pk=self.indicator.id)
         # both have data, defaults to non_cumulative, so should show sum of both targets:
         self.assertEqual(
-            indicator.lop_target_sum, 500,
-            "should not sum targets (no data for endline) expecting 500, got {0}".format(indicator.lop_target_sum)
+            indicator.lop_target_progress, 500,
+            "should not sum targets (no data for endline) expecting 500, got {0}".format(indicator.lop_target_progress)
         )
         self.assertEqual(
-            indicator.lop_actual_sum, 350,
-            "should show only data, 350 got {0}".format(indicator.lop_actual_sum)
+            indicator.lop_actual_progress, 350,
+            "should show only data, 350 got {0}".format(indicator.lop_actual_progress)
         )
         self.assertEqual(
             indicator.over_under, -1,
@@ -153,8 +153,8 @@ class TestTargetsActualsOverUnderCorrect(test.TestCase):
         self.indicator.save()
         indicator = MetricsIndicator.objects.with_annotations('scope').get(pk=self.indicator.id)
         self.assertEqual(
-            indicator.lop_target_sum, 500,
-            "should not take endline target (no data`) expecting 500, got {0}".format(indicator.lop_target_sum)
+            indicator.lop_target_progress, 500,
+            "should not take endline target (no data`) expecting 500, got {0}".format(indicator.lop_target_progress)
         )
 
 
@@ -184,13 +184,13 @@ class TestTargetsActualsOverUnderCorrect(test.TestCase):
         indicator = MetricsIndicator.objects.with_annotations('scope').get(pk=self.indicator.id)
         # both have data, defaults to non_cumulative, so should show sum of both targets:
         self.assertEqual(
-            indicator.lop_target_sum, 500,
+            indicator.lop_target_progress, 500,
             "should not sum targets (no data for second target) expecting 500, got {0}".format(
-                indicator.lop_target_sum)
+                indicator.lop_target_progress)
         )
         self.assertEqual(
-            indicator.lop_actual_sum, 350,
-            "should show only data, 350 got {0}".format(indicator.lop_actual_sum)
+            indicator.lop_actual_progress, 350,
+            "should show only data, 350 got {0}".format(indicator.lop_actual_progress)
         )
         self.assertEqual(
             indicator.over_under, -1,
@@ -205,12 +205,12 @@ class TestTargetsActualsOverUnderCorrect(test.TestCase):
         self.data.append(data_2)
         indicator = MetricsIndicator.objects.with_annotations('scope').get(pk=self.indicator.id)
         self.assertEqual(
-            indicator.lop_target_sum, 1300,
-            "expected sum of targets (both have data) 1300, got {0}".format(indicator.lop_target_sum)
+            indicator.lop_target_progress, 1300,
+            "expected sum of targets (both have data) 1300, got {0}".format(indicator.lop_target_progress)
         )
         self.assertEqual(
-            indicator.lop_actual_sum, 1300,
-            "expecting sum of data 1300, got {0}".format(indicator.lop_actual_sum)
+            indicator.lop_actual_progress, 1300,
+            "expecting sum of data 1300, got {0}".format(indicator.lop_actual_progress)
         )
         self.assertEqual(
             indicator.over_under, 0,
@@ -220,6 +220,7 @@ class TestTargetsActualsOverUnderCorrect(test.TestCase):
         self.indicator.save()
         indicator = MetricsIndicator.objects.with_annotations('scope').get(pk=self.indicator.id)
         self.assertEqual(
-            indicator.lop_target_sum, 800,
-            "expected most recent target for non-cumulative indicator 800, got {0}".format(indicator.lop_target_sum)
+            indicator.lop_target_progress, 800,
+            "expected most recent target for non-cumulative indicator 800, got {0}".format(
+                indicator.lop_target_progress)
         )

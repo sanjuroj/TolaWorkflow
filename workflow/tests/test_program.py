@@ -53,9 +53,10 @@ class TestProgramGeneratePeriods(TestCase):
         )
         periods = [x for x in program.get_periods_for_frequency(scenario['frequency'])]
         self.assertEqual(len(periods), len(scenario['expected_names']))
-        for x, name in enumerate(scenario['expected_names']):
-            if name:
-                self.assertEqual(periods[x]['name'], name)
+        # testing name tests a deprecated functionality (internationalization precludes storing names in DB):
+        # for x, name in enumerate(scenario['expected_names']):
+        #     if name:
+        #         self.assertEqual(periods[x]['name'], name)
         for x, start in enumerate(scenario['expected_starts']):
             if start:
                 self.assertEqual(periods[x]['start'], start)

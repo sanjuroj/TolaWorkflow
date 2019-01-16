@@ -113,6 +113,7 @@
 
                     <div class="form-group" id="div_id_definition">
                         <label for="id_definition" class="">{{ form.definition.label }} </label>
+                        {% render_field form.definition class+="form-control" %}
                         <small class="form-text text-muted">{{ form.definition.help_text }}</small>
                         <span id="validation_id_definition" class="has-error"></span>
                     </div>
@@ -382,12 +383,12 @@
 
         </div>
 
-    </div> <!-- modal body -->
-    <div class="modal-footer justify-content-between p-4" style="background-color: #DBDCDE;">
+    </div> <!-- /#indicator_modal_body -->
+    <div class="form-actions">
         <div>
             <!-- <input type="submit" class="btn btn-primary" value="Save changes"> -->
             <input type="submit" name="submit" value="{% trans 'Save changes' %}" class="btn btn-primary" id="submit-id-submit">
-            <input type="reset" class="btn btn-secondary" value="{% trans 'Reset' %}">
+            <input type="reset" class="btn btn-inverse" value="{% trans 'Reset' %}">
         </div>
         <div class="text-muted">{% include "form_guidance.html" %}</div>
     </div>
@@ -397,32 +398,15 @@
 
     /*
     Adds/removes the percent symbol to the LOP_TARGET and BASELINE fields
-    if the UNIT_OF_MEASURE_TYPE is set to Number (#)
-    params:
-        - unit_of_measure_type:
-            1 = Number (#)
-            2 = Percentage (%)
     */
-    function togglePercentSymbol(unit_of_measure_type){
-        var unit_of_measure_type = parseInt(unit_of_measure_type);
+    function togglePercentSymbol(){
+        // toggle % sign on sum values
+        $(".periodic-targets__sum__value").toggleClass('input-symbol-percent')
 
-        if (unit_of_measure_type == 2) { // 2 is for percent option
-            $("#span_id_lop_target").addClass('input-symbol-percent')
-            $("#span_id_baseline").addClass('input-symbol-percent');
-
-            // add the % sign to target values
-            $("#periodic_targets_table input[data-periodictarget]").each(function(index, element) {
-                $(element).parent().addClass('input-symbol-percent');
-            });
-        } else {
-            $("#span_id_lop_target").removeClass('input-symbol-percent')
-            $("#span_id_baseline").removeClass('input-symbol-percent');
-
-            // remove the % sign from target values
-            $("#periodic_targets_table input[data-periodictarget]").each(function(index, element) {
-                $(element).parent().removeClass('input-symbol-percent');
-            });
-        }
+        // toggle % sign to target inputs
+        $("#periodic_targets_table input[data-periodictarget]").each(function(index, element) {
+            $(element).parent().toggleClass('input-symbol-percent');
+        });
     }
 
     /*
@@ -456,13 +440,13 @@
     function show_hide_cummulative_inputs(type) {
         //d-flex overrides display settings, so we need to apply and unapply depending on visibility
         if (type == 'number') {
-            $("#id_span_is_cumulative_header").text("{% trans 'OPTIONS FOR NUMBER (#) INDICATORS'|escapejs %}");
+            $("#id_span_is_cumulative_header").text("{% trans 'Options for number (#) indicators'|escapejs %}");
             $("#id_div_is_cumulative_section1").show();
             $("#id_div_is_cumulative_section2").show();
             $("#id_div_is_cumulative_section3").hide();
         }
         else {
-            $("#id_span_is_cumulative_header").text("{% trans 'PERCENTAGE (%) INDICATORS'|escapejs %}");
+            $("#id_span_is_cumulative_header").text("{% trans 'Percentage (%) indicators'|escapejs %}");
             $("#id_div_is_cumulative_section3").show();
             $("#id_div_is_cumulative_section1").hide();
             $("#id_div_is_cumulative_section2").hide();
@@ -538,7 +522,6 @@
 
     $( document ).ready(function() {
         var unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
-        togglePercentSymbol(unit_of_measure_type);
         if (unit_of_measure_type == 2){
             show_hide_cummulative_inputs('percent')
         }
@@ -556,7 +539,7 @@
     */
     $("#indicator_modal_content, #indicator_form").on("change", ":input[name='unit_of_measure_type']", function(e){
         var unit_of_measure_type = parseInt(e.target.value);
-        togglePercentSymbol(unit_of_measure_type);
+        togglePercentSymbol();
         toggleCummulativeOptions(unit_of_measure_type);
         updateAggregateRowValueAndLabel();
     });
@@ -580,6 +563,27 @@
     $("#indicator_modal_content, #indicator_form").on("change", ":input[type='radio'][name='is_cumulative']", function(e){
         updateAggregateRowValueAndLabel(e.target.value);
     });
+
+    /*
+    Use BS multiselect widget where needed
+    */
+    var multiselectOptions = {
+      includeSelectAllOption: true,
+      enableFiltering: true,
+      enableCaseInsensitiveFiltering: true,
+      numberDisplayed: 1,
+      maxHeight: 320,
+      buttonClass: 'btn form-control',
+      templates: {
+        filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
+        filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
+      }
+    };
+
+    $('#id_objectives').multiselect(multiselectOptions);
+    $('#id_disaggregation').multiselect(multiselectOptions);
+    $('#id_indicator_type').multiselect(multiselectOptions);
+    $('#id_strategic_objectives').multiselect(multiselectOptions);
 
     /*
     var alerts = {};

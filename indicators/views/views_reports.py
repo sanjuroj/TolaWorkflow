@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ View functions for generating IPTT Reports (HTML and Excel)"""
 
 import bisect
@@ -448,11 +449,11 @@ class IPTT_Mixin(object):
                 else:
                     ind['lop_target'] = formatFloat(lop_target)
             except (ValueError, TypeError):
-                lop_target = ''
+                lop_target = '—'
                 ind['lop_target'] = lop_target
 
             # process lop_actual
-            lop_actual = ''
+            lop_actual = u'—'
             percent = ''
             if ind['unit_of_measure_type'] == Indicator.NUMBER:
                 if ind['actualsum'] is not None:
@@ -464,13 +465,13 @@ class IPTT_Mixin(object):
             try:
                 ind['lop_actual'] = u"{}{}".format(formatFloat(lop_actual), percent)
             except TypeError:
-                ind['lop_actual'] = ''
+                ind['lop_actual'] = u'—'
 
             # process lop_percent_met
             try:
                 ind['lop_percent_met'] = u"{}%".format(formatFloat(round(lop_actual / lop_target * 100)))
             except TypeError:
-                ind['lop_percent_met'] = ''
+                ind['lop_percent_met'] = _('N/A')
             except ZeroDivisionError:
                 ind['lop_percent_met'] = _('N/A')
 
@@ -507,7 +508,7 @@ class IPTT_Mixin(object):
                     if actual_val is not None and actual_val != '':
                         ind[actual] = u"{}{}".format(formatFloat(actual_val), percent_sign)
                     else:
-                        ind[actual] = ''
+                        ind[actual] = u'—'
 
                     if reporttype == self.REPORT_TYPE_TARGETPERIODS:
                         # process target_period target value
@@ -764,9 +765,20 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                     start_date = datetime.strftime(period['start'], '%b %d, %Y')
                     end_date = datetime.strftime(period['end'], '%b %d, %Y')
 
+                    # this is sometimes unicode (or a lazy eval proxy, see below) and sometimes a str...
+                    period_name = period['name']
+                    if isinstance(period_name, str):
+                        # it's not strictly necessary to convert to unicode here, but do it for kicks
+                        period_name = period_name.decode('utf-8')
+                    else:
+                        # You might think that this should check for unicode, but at this point, it's probably a
+                        # <class 'django.utils.functional.__proxy__'> which is a return val of ugettext_lazy()
+                        # Force lazy translation to unicode, or else openpyxl will crash on write
+                        period_name = unicode(period_name)
+
                     # process period name
                     ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col + 2)
-                    ws.cell(row=2, column=col).value = unicode(period['name'])
+                    ws.cell(row=2, column=col).value = period_name
                     ws.cell(row=2, column=col).alignment = alignment
                     ws.cell(row=2, column=col).font = headers_font
 
@@ -779,7 +791,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                     start_date = ''
                     end_date = ''
                     ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col + 2)
-                    ws.cell(row=3, column=col).value = unicode(period['name'])
+                    ws.cell(row=3, column=col).value = period_name
                     ws.cell(row=3, column=col).alignment = alignment
                     ws.cell(row=3, column=col).font = headers_font
 
@@ -1008,7 +1020,7 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
         # If program period is set in the future, do not run report
         program = context['program']
         if not program.has_started:
-            messages.error(self.request, _('IPTT report can not be run on a program with a reporting period set in the future.'))
+            messages.error(self.request, _('IPTT report cannot be run on a program with a reporting period set in the future.'))
             return HttpResponseRedirect(reverse_lazy('program_page', args=(program.id, 0, 0)))
 
         form_kwargs = {'request': request, 'program': context['program']}

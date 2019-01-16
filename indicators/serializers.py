@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from workflow.models import Program
-from indicators.models import PeriodicTarget, Result, Indicator
+from indicators.models import PeriodicTarget, Result, Indicator, Level
 from django.db.models import Sum
 
 class ResultSerializer(serializers.ModelSerializer):
@@ -37,6 +37,18 @@ class PeriodictargetSerializer(serializers.ModelSerializer):
                   'cumulative_sum')
 
 
+class LevelSerializer(serializers.ModelSerializer):
+    """
+    Level serializer for Program Page
+    """
+    class Meta:
+        model = Level
+        fields = [
+            'id',
+            'name'
+        ]
+
+
 class IndicatorSerializer(serializers.ModelSerializer):
     """
     Serializer specific to the Program Page
@@ -46,6 +58,8 @@ class IndicatorSerializer(serializers.ModelSerializer):
     results_count = serializers.IntegerField()
     results_with_evidence_count = serializers.IntegerField()
     over_under = serializers.IntegerField()
+    target_period_last_end_date = serializers.DateField()
+    level = LevelSerializer(read_only=True)
 
     class Meta:
         model = Indicator
@@ -67,8 +81,8 @@ class IndicatorSerializer(serializers.ModelSerializer):
             'all_targets_defined',  # whether all targets are defined for this indicator
             'results_count',
             'results_with_evidence_count',
-            #  indicator progress towards targets (1: over, 0: within 15% of target, -1: under, "None": non reporting:
-            'over_under',
+            'target_period_last_end_date', # last end date of last target period, for time-aware indicators
+            'over_under',  # indicator progress towards targets (1: over, 0: within 15% of target, -1: under, "None": non reporting
         ]
 
 
@@ -81,4 +95,5 @@ class ProgramSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'does_it_need_additional_target_periods',
+            'reporting_period_end',
         ]

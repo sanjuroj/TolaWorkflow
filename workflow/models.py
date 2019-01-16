@@ -127,9 +127,9 @@ class Country(models.Model):
 
 
 TITLE_CHOICES = (
-    (_('mr'), _('Mr.')),
-    (_('mrs'), _('Mrs.')),
-    (_('ms'), _('Ms.')),
+    ('mr', _('Mr.')),
+    ('mrs', _('Mrs.')),
+    ('ms', _('Ms.')),
 )
 
 
@@ -435,6 +435,13 @@ class Program(models.Model):
         return True
 
     @property
+    def has_ended(self):
+        try:
+            return self.reporting_period_end < timezone.localdate()
+        except TypeError: # esp. if there's no reporting dates
+            return False
+
+    @property
     def get_indicators_in_need_of_targetperiods_fixing(self):
         indicators = Indicator.objects.filter(program__in=[self.pk]) \
             .annotate(minstarts=Min('periodictargets__start_date')) \
@@ -590,8 +597,10 @@ class Village(models.Model):
 
 class VillageAdmin(admin.ModelAdmin):
     list_display = ('name', 'district', 'create_date', 'edit_date')
-    list_filter = ('district__province__country__country','district')
+    search_fields = ('name', 'admin_3__name')
+    list_filter = ('admin_3__district__province__country__country',)
     display = 'Admin Level 4'
+
 
 class Office(models.Model):
     name = models.CharField(_("Office Name"), max_length=255, blank=True)
@@ -1291,7 +1300,7 @@ class ProjectComplete(models.Model):
         _("CommunityHandover/Sustainability Maintenance Plan"),
         help_text=_('Check box if it was completed'), default=None)
     capacity_built = models.TextField(
-        _("Describe how sustainability was ensured for this project?"), max_length=755, blank=True, null=True)
+        _("Describe how sustainability was ensured for this project"), max_length=755, blank=True, null=True)
     quality_assured = models.TextField(
         _("How was quality assured for this project"), max_length=755, blank=True, null=True)
     issues_and_challenges = models.TextField(

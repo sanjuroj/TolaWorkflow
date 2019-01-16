@@ -20,17 +20,17 @@
                         notifyError("{% trans 'Server Error' %}", "{% trans 'Error reaching DIG service for list of indicators' %}");
                         return;
                     }
-    
+
                     var options = '<option value="">--Indicator--</option>';
                     for (var i = 0; i < service.length; i++) {
                         options += '<option value="' + service[i].nid + '">' + service[i].type + ' - ' + service[i].level + ' - ' + service[i].title + '</option>';
                     }
-    
+
                     $(dropdown_id).html(options);
                     $(dropdown_id + ":first").attr('selected', 'selected');
                 });
             }
-    
+
             // page-specific-action call if a page has implemented the 'country_dropdown_has_changed' function
             if(typeof services_dropdown_has_changed != 'undefined') services_dropdown_has_changed(selected_service);
         }
@@ -57,7 +57,7 @@
                 }
             });
         });
-        
+
     </script>
 
 {% endblock %}
@@ -107,14 +107,14 @@
                   <option value=""> {% trans "-- select --" %} </option>
               </select>
           </div>
-          
+
           <div class="form-group" id="name-form-group">
               <label for="name"><b>{% trans "Indicator" %}</b></label>
               <input type="text" class="form-control" name="name" id="name" required >
           </div>
 
             <input name="program" type="hidden" value="{{ program.id }}">
-            <div class="form-actions d-flex bg-gray-lighter p-4 justify-content-between">
+            <div class="form-actions">
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">{% trans "Save changes" %}</button>
                 </div>
