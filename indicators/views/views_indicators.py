@@ -1449,6 +1449,8 @@ class ProgramPage(ListView):
     def get(self, request, *args, **kwargs):
         # countries = request.user.tola_user.countries.all()
         program_id = int(self.kwargs['program_id'])
+        if request.user.is_anonymous or not request.user.tola_user.has_access(program_id=program_id):
+            return HttpResponseRedirect('/')
         unannotated_program = Program.objects.only(
             'reporting_period_start', 'reporting_period_end',
             'start_date', 'end_date'

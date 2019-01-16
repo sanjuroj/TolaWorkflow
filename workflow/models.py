@@ -185,6 +185,14 @@ class TolaUser(models.Model):
         self.active_country = country
         super(TolaUser, self).save()
 
+    # generic has access function (countries, programs, etc.?  currently program_id implemented):
+    def has_access(self, **kwargs):
+        if 'program_id' in kwargs:
+            return Program.objects.filter(
+                country__in=self.countries.all()
+                ).filter(pk=kwargs.get('program_id')).exists()
+        return False
+
 
 class TolaBookmarks(models.Model):
     user = models.ForeignKey(TolaUser, related_name='tolabookmark', verbose_name=_("User"))
