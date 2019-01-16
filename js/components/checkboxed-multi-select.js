@@ -1,6 +1,7 @@
 import React from 'react'
 import Select, {components} from 'react-select'
 import {VirtualizedMenuList as MenuList} from './virtualized-react-select'
+import {observer} from 'mobx-react'
 
 const Option = props => {
     return (components.Option &&
@@ -19,7 +20,7 @@ const Option = props => {
     )
 }
 
-const CheckboxedMultiSelect = props => (
+const CheckboxedMultiSelect = observer(props => (
       <Select
         isMulti={true}
         closeMenuOnSelect={false}
@@ -29,6 +30,6 @@ const CheckboxedMultiSelect = props => (
             Option
         }}
         {...props} />
-)
+))
 
 export default CheckboxedMultiSelect

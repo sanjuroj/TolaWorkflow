@@ -9,6 +9,53 @@ import EditUserPrograms from './components/edit_user_programs'
 import EditUserHistory from './components/edit_user_history'
 import Pagination from 'components/pagination'
 
+const UserFilter = observer(({store, userListing}) => {
+    return <div className="form-group">
+        <label htmlFor="users_filter">Users</label>
+        <CheckboxedMultiSelect
+            value={store.filters.user}
+            options={userListing}
+            onChange={(e) => store.changeUserFilter(e)}
+            placeholder="None Selected"
+            id="users_filter" />
+    </div>
+})
+
+const CountryFilter = observer(({store, countryListing}) => {
+    return <div className="form-group">
+        <label htmlFor="countries_permitted_filter">Countries Permitted</label>
+        <CheckboxedMultiSelect
+            value={store.filters.countries}
+            options={countryListing}
+            onChange={(e) => store.changeCountryFilter(e)}
+            placeholder="None Selected"
+            id="countries_permitted_filter" />
+    </div>
+})
+
+const BaseCountryFilter = observer(({store, countryListing}) => {
+    return <div className="form-group">
+        <label htmlFor="base_country_filter">Base Country</label>
+        <CheckboxedMultiSelect
+            value={store.filters.base_countries}
+            options={countryListing}
+            onChange={(e) => store.changeBaseCountryFilter(e)}
+            placeholder="None Selected"
+            id="base_country_filter" />
+    </div>
+})
+
+const ProgramFilter = observer(({store, programListing}) => {
+    return <div className="form-group">
+        <label htmlFor="programs_filter">Programs</label>
+        <CheckboxedMultiSelect
+            value={store.filters.programs}
+            options={programListing}
+            onChange={(e) => store.changeProgramFilter(e)}
+            placeholder="None Selected"
+            id="programs_filter" />
+    </div>
+})
 
 export const IndexView = observer(
     ({store}) => {
@@ -22,26 +69,9 @@ export const IndexView = observer(
 
         return <div id="user-management-index-view" className="container-fluid row">
             <div className="col col-sm-3 filter-section">
-                <div className="form-group">
-                    <label htmlFor="countries_permitted_filter">Countries Permitted</label>
-                    <Select
-                    value={store.filters.countries}
-                    options={countries_listing}
-                    onChange={(e) => store.changeCountryFilter(e)}
-                    isMulti={true}
-                    placeholder="None Selected"
-                    id="countries_permitted_filter" />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="base_country_filter">Base Country</label>
-                    <Select
-                    value={store.filters.base_countries}
-                    options={countries_listing}
-                    onChange={(e) => store.changeBaseCountryFilter(e)}
-                    isMulti={true}
-                    placeholder="None Selected"
-                    id="base_country_filter" />
-                </div>
+                <CountryFilter store={store} countryListing={countries_listing} />
+                <BaseCountryFilter store={store} countryListing={countries_listing} />
+                <ProgramFilter store={store} programListing={program_listing} />
                 <div className="form-group">
                     <label htmlFor="organization_filter">Organization</label>
                     <Select
@@ -51,16 +81,6 @@ export const IndexView = observer(
                     isMulti={true}
                     placeholder="None Selected"
                     id="organization_filter" />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="programs_filter">Programs</label>
-                    <Select
-                    value={store.filters.programs}
-                    options={program_listing}
-                    onChange={(e) => store.changeProgramFilter(e)}
-                    isMulti={true}
-                    placeholder="None Selected"
-                    id="programs_filter" />
                 </div>
                 <div className="form-group">
                     <label htmlFor="status_filter">Status</label>
@@ -80,15 +100,7 @@ export const IndexView = observer(
                     placeholder="None Selected"
                     id="admin_role_filter" />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="users_filter">Users</label>
-                    <CheckboxedMultiSelect
-                    value={store.filters.users}
-                    options={user_listing}
-                    onChange={(e) => store.changeUserFilter(e)}
-                    placeholder="None Selected"
-                    id="users_filter" />
-                </div>
+                <UserFilter store={store} userListing={user_listing} />
                 <div className="filter-buttons">
                     <button className="btn btn-primary" onClick={() => store.fetchUsers()}>Apply</button>
                     <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>Reset</button>
@@ -139,8 +151,10 @@ export const IndexView = observer(
                                             organizations={store.available_organizations} />}
                                         ProgramSection={() =>
                                             <EditUserPrograms
+                                            store={store}
                                             user={data}
-                                            programsByCountry={programs_by_country_listing}/>}
+                                            programsByCountry={programs_by_country_listing}
+                                            onSave={(new_program_data) => console.log(new_program_data)}/>}
                                         HistorySection={() => <EditUserHistory />}
                                     />
                                 </Wrapper>

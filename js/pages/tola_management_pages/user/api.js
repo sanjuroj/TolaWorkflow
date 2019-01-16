@@ -16,11 +16,26 @@ export const fetchUsersWithFilter = (page, filters) => api.get('/api/tola_manage
     }
 })
 
+export const fetchEditingTarget = (user_id) => api.get(`/api/tola_management/user/${user_id}/program_access`).then(response => {
+    const data = response.data
+
+    return {
+        country_access: data.country_access.reduce((xs, x) => {
+            xs[x] = true
+            return xs
+        },{}),
+        program_access: data.program_access.reduce((xs, x) => {
+            xs[x] = true
+            return xs
+        },{})
+    }
+})
+
 export const saveUser = (data) => api.post(`/api/tola_managment/user/${data.id}/update_user`, data).then((response) => {
-    return response.data
 })
 
 export default {
     fetchUsersWithFilter,
-    saveUser
+    saveUser,
+    fetchEditingTarget
 }

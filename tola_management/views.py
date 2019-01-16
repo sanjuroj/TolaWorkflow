@@ -31,13 +31,19 @@ from workflow.models import (
 
 def get_programs_for_user_queryset(user_id):
     return Program.objects.raw("""
-        SELECT wp.id, wp.name, wc.id country_id, wc.country country_name
-        FROM workflow_program wp
-        INNER JOIN workflow_program_user_access wpuc ON wp.id = wpuc.program_id
-        INNER JOIN workflow_program_country wpc ON wp.id = wpc.program_id
-        INNER JOIN workflow_tolauser_countries wtc ON wtc.country_id = wpc.country_id
-        INNER JOIN workflow_country wc ON wpc.country_id = wc.id
-        WHERE wtc.tolauser_id = %s OR wpuc.tolauser_id = %s
+            SELECT wp.id, wp.name, wc.id AS country_id, wc.country AS country_name
+            FROM workflow_program wp
+            INNER JOIN workflow_program_user_access wpuc ON wp.id = wpuc.program_id
+            INNER JOIN workflow_program_country wpc ON wp.id = wpc.program_id
+            INNER JOIN workflow_country wc ON wpc.country_id = wc.id
+            WHERE wpuc.tolauser_id = %s
+        UNION DISTINCT
+            SELECT wp.id, wp.name, wc.id AS country_id, wc.country AS country_name
+            FROM workflow_program wp
+            INNER JOIN workflow_program_country wpc ON wp.id = wpc.program_id
+            INNER JOIN workflow_country wc ON wpc.country_id = wc.id
+            INNER JOIN workflow_tolauser_countries wtc ON wtc.country_id = wpc.country_id
+            WHERE wtc.tolauser_id = %s
     """, [user_id, user_id])
 
 def get_user_page_context(request):
@@ -221,13 +227,19 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @list_route(methods=['post'], url_path='create_user', url_name='create_user')
-    def create_user(self, request):
+    def create(self, request):
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         return Response({
             'status': True
         })
 
-    @detail_route(methods=['post'], url_path='update_user', url_name='update_user')
-    def update_user(self, request, pk=None):
+    def update(self, request, pk=None):
         print("??????????????????????????????????????")
+
+    @detail_route(methods=['get'])
+    def program_access(self, request, pk=None):
+        user = TolaUser.objects.get(pk=pk)
+        return Response({
+            "country_access": [country.id for country in user.countries.all()],
+            "program_access": [program.id for program in user.program_access.all()]
+        })

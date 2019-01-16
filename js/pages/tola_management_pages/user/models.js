@@ -10,7 +10,10 @@ export class UserStore {
     @observable total_pages = null
     @observable bulk_targets = new Map()
     @observable bulk_targets_all = false
+
+    @observable fetching_editing_target = false
     @observable editing_target = null
+    @observable editing_target_data = null
 
     //filter options
     @observable available_countries = []
@@ -128,7 +131,7 @@ export class UserStore {
     }
 
     @action
-    changeBaseCountryFilter(countries) {
+    changeBaseCountryFilter(base_countries) {
         this.filters.base_countries = base_countries
     }
 
@@ -160,9 +163,14 @@ export class UserStore {
     @action
     toggleEditingTarget(user_id) {
         if(this.editing_target == user_id) {
-            this.editing_target = false;
+            this.editing_target = false
         } else {
-            this.editing_target = user_id;
+            this.editing_target = user_id
+            this.fetching_editing_target = true
+            api.fetchEditingTarget(user_id).then(result => {
+                this.fetching_editing_target = false
+                this.editing_target_data = result
+            })
         }
     }
 

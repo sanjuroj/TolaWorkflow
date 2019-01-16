@@ -2,3 +2,4 @@
 // but "global" JS might live here in the future
 
 import '../scss/tola.scss';
+import 'react-virtualized/styles.css'

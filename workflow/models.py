@@ -364,7 +364,7 @@ class Program(models.Model):
     edit_date = models.DateTimeField(null=True, blank=True)
     budget_check = models.BooleanField(_("Enable Approval Authority"), default=False)
     country = models.ManyToManyField(Country, verbose_name=_("Country"))
-    user_access = models.ManyToManyField(TolaUser, blank=True)
+    user_access = models.ManyToManyField(TolaUser, blank=True, related_name="program_access")
     public_dashboard = models.BooleanField(_("Enable Public Dashboard"), default=False)
     start_date = models.DateField(_("Program Start Date"), null=True, blank=True)
     end_date = models.DateField(_("Program End Date"), null=True, blank=True)
