@@ -27,7 +27,11 @@ class GaugeTank extends React.Component {
 
         const isHighlighted = filterType === currentIndicatorFilter;
 
-        const unfilledPercent = allIndicatorsLength > 0 ? Math.round((filteredIndicatorsLength / allIndicatorsLength) * 100) : 100;
+        // Gauge should only show 100%/0% if filtered == all/0 (absolute 100%, not rounding to 100%)
+        // to accomplish this, added a Math.max and Math.min to prevent rounding to absolute values:
+        const unfilledPercent = (allIndicatorsLength <= 0 || allIndicatorsLength == filteredIndicatorsLength) ? 100 :
+            (filteredIndicatorsLength == 0 ? 0 :
+                Math.max(1, Math.min(Math.round((filteredIndicatorsLength / allIndicatorsLength) * 100), 99)));
         const filledPercent = 100 - unfilledPercent;
 
         return <div className={classNames('gauge', 'filter-trigger', {'is-highlighted': isHighlighted})}
@@ -62,12 +66,12 @@ class GaugeTank extends React.Component {
                     }
                 </div>
             </div>
+            { unfilledPercent > 0 &&
             <div className="gauge__cta">
-                { unfilledPercent > 0 &&
-                    <span className="btn-link btn-inline"><i className="fas fa-exclamation-triangle text-warning"/> {cta}</span>
-                }
+                <span className="btn-link btn-inline"><i className="fas fa-exclamation-triangle text-warning"/> {cta}</span>
                 &nbsp;
             </div>
+            }
         </div>;
     }
 }
@@ -113,8 +117,11 @@ class GaugeBand extends React.Component {
         const highCount = indicatorStore.getIndicatorsAboveTarget.length;
         const lowCount = indicatorStore.getIndicatorsBelowTarget.length;
         const onTargetCount = indicatorStore.getIndicatorsOnTarget.length;
-
-        const makePercent = totalIndicatorCount > 0 ? (x) => Math.round((x / totalIndicatorCount) * 100) : (x) => 0;
+        
+        //100 and 0 should only represent absolute "all" and "none" values respectively (no round to 100 or to 0)
+        const makePercent = totalIndicatorCount > 0 ?
+            (x) => (x == totalIndicatorCount ? 100 :
+                    (x == 0 ? 0 : Math.max(1, Math.min(Math.round((x / totalIndicatorCount) * 100), 99)))) : (x) => 0;
 
         const percentHigh = makePercent(highCount);
         const percentOnTarget = makePercent(onTargetCount);
@@ -200,7 +207,7 @@ class GaugeBand extends React.Component {
                     <span className="text-muted">
                         {
                             /* # Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
-                            interpolate(gettext('%s% unavailable'), [percentNonReporting])
+                            interpolate(gettext('%s%% unavailable'), [percentNonReporting])
                         }
                     </span>
                     {' '}
@@ -235,7 +242,7 @@ class GaugeBand extends React.Component {
                        data-trigger="focus"
                        data-content={
                            /* # Translators: Help text explaining what an "on track" indicator is. */
-                           gettext('The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is 110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a decreasing direction of change, then “above” and “below” are switched. In that case, if your target is 100 and your result is 200, your indicator is 50% below target and not on track.')
+                           gettext("The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is 110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a decreasing direction of change, then “above” and “below” are switched. In that case, if your target is 100 and your result is 200, your indicator is 50% below target and not on track.<br><br><a href='https://docs.google.com/document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our documentation for more information.</a>")
                        }
                        onClick={e => e.preventDefault()}
                     ><i className="far fa-question-circle"/></a>
@@ -311,9 +318,7 @@ export const ProgramMetrics = observer(function (props) {
     // Do not display on pages with no indicators
     if (indicators.length === 0) return null;
 
-    return <aside className="program__status">
-        <h2>{gettext("Program metrics")}</h2>
-        <div className="status__gauges">
+    return <div className="status__gauges">
 
             <GaugeBand currentIndicatorFilter={currentIndicatorFilter}
                        indicatorOnScopeMargin={indicatorOnScopeMargin}
@@ -349,5 +354,4 @@ export const ProgramMetrics = observer(function (props) {
                        />
 
         </div>
-    </aside>
 });

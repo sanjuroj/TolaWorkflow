@@ -817,6 +817,22 @@ class PeriodicTarget(models.Model):
         )
 
     @property
+    def has_ended(self):
+        """ returns whether the target period is considered 'ended" for purposes of aggregating e.g. in gauges """
+        try:
+            if self.indicator.is_target_frequency_time_aware: # for annual, semi/tri-annual, quarterly, monthly
+                return self.end_date < timezone.localdate()
+            elif self.indicator.target_frequency == Indicator.LOP: # LOP target ends when the program does
+                return self.indicator.program.reporting_period_end < timezone.localdate()
+            elif self.indicator.target_frequency in (Indicator.EVENT, Indicator.MID_END):
+                # these are always included in aggregated results so they are always considered "ended"
+                return True
+            else:
+                return False
+        except TypeError: # some edge cases for time-aware targets created without dates
+                return False
+
+    @property
     def period_name(self):
         """returns a period name translated to the local language.
             - LOP target: see target definition above,
@@ -856,8 +872,8 @@ class PeriodicTarget(models.Model):
             # e.g "Year 1 (date - date)" or "Quarter 2 (date - date)"
             return u"{period_name} ({start_date} - {end_date})".format(
                 period_name=period_name,
-                start_date=l10n_date_medium(self.start_date),
-                end_date=l10n_date_medium(self.end_date)
+                start_date=l10n_date_medium(self.start_date).decode('utf-8'),
+                end_date=l10n_date_medium(self.end_date).decode('utf-8'),
             )
         elif period_name:
             # if no date for some reason but time-based frequency:
@@ -867,7 +883,34 @@ class PeriodicTarget(models.Model):
 
     @classmethod
     def generate_for_frequency(cls, frequency):
-        """ returns a generator function to yield periods based on start and end dates for a given frequency"""
+        """
+        Returns a generator function to yield periods based on start and end dates for a given frequency
+
+        WARNING: This function as it stands can return either a str() or a unicode() depending on the `frequency`
+
+        It returns a str() in the case of:
+
+            * ANNUAL
+            * MONTHLY
+            * SEMI_ANNUAL_PERIOD
+            * TRI_ANNUAL_PERIOD
+            * QUARTERLY_PERIOD
+
+        It returns unicode() in the case of:
+
+            * LOP_PERIOD
+            * MID_END
+
+        It's unclear how some of these ''.format() works, as some params are gettext_lazy() (unicode) values containing
+        non-ASCII chars being plugged into a non-unicode string. This normally crashes but for some reason it works here.
+
+        An example of something that crashes in the REPL but seemingly works here when using ugettext_lazy():
+
+            '{year}'.format(year=u'Año')
+
+        It's my hope one day to find out how this works, but for now I would be happy with this just returning unicode
+        for all cases as a consolation prize
+        """
         months_per_period = {
             Indicator.SEMI_ANNUAL: 6,
             Indicator.TRI_ANNUAL: 4,
@@ -888,6 +931,9 @@ class PeriodicTarget(models.Model):
                 # TODO: strftime() does not work with Django i18n and will not give you localized month names
                 # Could be: name_func = lambda start, count: cls.generate_monthly_period_name(start)
                 # the above breaks things in other places though due to unicode encoding/decoding errors
+                # UPDATE: Turns out the below still translates... strftime() still returns an english
+                # month name, but since month names are translated elsewhere in the app, the _() turns it into
+                # the correct language
                 name_func = lambda start, count: '{month_name} {year}'.format(
                     month_name=_(start.strftime('%B')),
                     year=start.strftime('%Y')

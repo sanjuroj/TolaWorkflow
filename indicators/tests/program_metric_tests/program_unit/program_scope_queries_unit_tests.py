@@ -103,7 +103,7 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
             indicator=time_indicator,
             periodic_target=time_target_2,
             date_collected=time_target_2.start_date + datetime.timedelta(days=2),
-            achieved=600
+            achieved=400
         )
         self.data.extend([data_1, data_2])
         return [lop_indicator, time_indicator]
@@ -158,13 +158,13 @@ class TestProgramReportingingCounts (test.TransactionTestCase):
             indicator=midend_indicator,
             period=PeriodicTarget.MIDLINE,
             customsort=0,
-            target=500
+            target=800
         )
         end_target = i_factories.PeriodicTargetFactory(
             indicator=midend_indicator,
             period=PeriodicTarget.ENDLINE,
             customsort=1,
-            target=800
+            target=500
         )
         self.targets.extend([mid_target, end_target])
         mid_data_1 = self.get_base_data(midend_indicator, mid_target)

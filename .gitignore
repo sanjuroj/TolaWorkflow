@@ -55,3 +55,4 @@ node_modules
 webpack-stats-local.json
 .vagrant
 site.retry
+.eslintrc.yml
