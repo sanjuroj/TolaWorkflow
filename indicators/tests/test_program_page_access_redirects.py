@@ -6,28 +6,27 @@ from factories import (
 )
 from django.shortcuts import reverse
 
+
 class TestProgramPageRedirects(test.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super(TestProgramPageRedirects, cls).setUpClass()
-        cls.country_a = w_factories.CountryFactory(
+    def setUp(self):
+        self.country_a = w_factories.CountryFactory(
             country="Test A",
             code="TA"
         )
-        cls.country_b = w_factories.CountryFactory(
+        self.country_b = w_factories.CountryFactory(
             code="TB"
         )
-        cls.program_a = w_factories.ProgramFactory()
-        cls.program_a.country.set([cls.country_a])
-        cls.program_a.save()
-        cls.program_b = w_factories.ProgramFactory()
-        cls.program_b.country.set([cls.country_b])
-        cls.program_b.save()
-        cls.tola_user = w_factories.TolaUserFactory()
-        cls.tola_user.countries.set([cls.country_a])
-        cls.tola_user.save()
-        cls.user = cls.tola_user.user
-        cls.client = test.Client()
+        self.program_a = w_factories.ProgramFactory()
+        self.program_a.country.set([self.country_a])
+        self.program_a.save()
+        self.program_b = w_factories.ProgramFactory()
+        self.program_b.country.set([self.country_b])
+        self.program_b.save()
+        self.tola_user = w_factories.TolaUserFactory()
+        self.tola_user.countries.set([self.country_a])
+        self.tola_user.save()
+        self.user = self.tola_user.user
+        self.client = test.Client()
 
     def test_unit_test_user_has_access_to_program_in_country(self):
         self.assertTrue(self.tola_user.has_access(program_id=self.program_a.pk))
