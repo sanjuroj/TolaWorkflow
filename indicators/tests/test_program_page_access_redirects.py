@@ -34,7 +34,7 @@ class TestProgramPageRedirects(test.TestCase):
 
     def test_user_is_able_to_access_program_in_country(self):
         """User should get a program page back for a program in one of their countries"""
-        self.client.force_login(user=self.user)
+        self.client.force_login(self.user)
         url = reverse('program_page', kwargs={'program_id': self.program_a.id,
                                               'indicator_id': 0,
                                               'type_id': 0})
@@ -46,7 +46,7 @@ class TestProgramPageRedirects(test.TestCase):
 
     def test_user_is_redirected_from_program_not_in_country(self):
         """User should be redirected to home page for a program not in one of their countries"""
-        self.client.force_login(user=self.user)
+        self.client.force_login(self.user)
         url = reverse('program_page', kwargs={'program_id': self.program_b.id,
                                               'indicator_id': 0,
                                               'type_id': 0})
