@@ -157,7 +157,8 @@ class TolaUser(models.Model):
         ordering = ('name',)
 
     def __unicode__(self):
-        return self.name
+        # Returning None breaks the Django Admin on models with a FK to TolaUser
+        return self.name or u''
 
     @property
     def countries_list(self):
