@@ -156,6 +156,10 @@ class DisaggregationLabel(models.Model):
     def __unicode__(self):
         return self.label
 
+    @classmethod
+    def get_standard_labels(cls):
+        return cls.objects.filter(disaggregation_type__standard=True)
+
 
 class DisaggregationValue(models.Model):
     disaggregation_label = models.ForeignKey(

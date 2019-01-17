@@ -1,7 +1,17 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block page_title %}{% trans "Collected Indicator Data" %} {% endblock %}
+{# called by indicators.views.views_indicators.ResultCreate and indicators.views.views_indicators.ResultUpdate #}
+
+{% block bread_crumb %}
+<ol class="breadcrumb">
+  <li><a href="{% url 'program_page' indicator.program.id %}">{% trans "Program" %}</a></li>
+  <li><a href="{% url 'program_page' indicator.program.id indicator.id %}">{% trans "Indicator" %}</a></li>
+  <li class="active">{% trans "Result" %}</li>
+</ol>
+{% endblock %}
+
+{% block page_title %}{% trans "Result" %} {% endblock %}
 
 {% block content %}
     {% include "form_guidance.html" %}
@@ -46,8 +56,14 @@
         {% endfor %}
     {% endif %}
 	{% csrf_token %}
-    {% load crispy_forms_tags %}
-    {% crispy form %}
+    {% include 'indicators/results/result_form_common_fields.html' %}
+    <div id="evidence_subform">
+        <h2>{% trans "Evidence" %}</h2>
+        <h3 class="no-bold">
+            {% trans 'Link this result to a record or folder of records that serves as evidence' %}
+        </h3>
+        {% include 'indicators/results/result_form_evidence_fields.html' %}
+    </div>
 
     <!-- Modal -->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
