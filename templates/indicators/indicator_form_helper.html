@@ -186,13 +186,13 @@
                                 <!-- {% render_field form.lop_target class+="form-control" %} -->
                                 <span id="span_{{ form.lop_target.id_for_label }}">
                                     <input type="number"
-                                            name="{{ form.lop_target.name }}"
-                                            id="{{ form.lop_target.id_for_label }}"
-                                            class="form-control"
-                                            min="1"
-                                            {% if form.lop_target.value != None %} value="{{ form.lop_target.value|stringformat:'s' }}"{% endif %}
-                                            required
-                                            onblur="this.checkValidity();">
+                                        name="{{ form.lop_target.name }}"
+                                        id="{{ form.lop_target.id_for_label }}"
+                                        class="form-control"
+                                        min="1"
+                                        {% if form.lop_target.value != None %} value="{{ form.lop_target.value|stringformat:'s' }}"{% endif %}
+                                        required
+                                        onblur="this.checkValidity();">
                                 </span>
                                 <small class="form-text text-muted">{{ form.lop_target.help_text }}</small>
                                 <span id="validation_id_lop_target" class="has-error"></span>
@@ -397,11 +397,17 @@
 <script>
 
     /*
-    Adds/removes the percent symbol to the LOP_TARGET and BASELINE fields
+    Adds/removes the percent symbol in several places
     */
     function togglePercentSymbol(){
         // toggle % sign on sum values
         $(".periodic-targets__sum__value").toggleClass('input-symbol-percent')
+
+        // toggle % sign on LoP target input
+        $("#span_id_lop_target").toggleClass('input-symbol-percent')
+
+        // toggle % sign on baseline input
+        $("#span_id_baseline").toggleClass('input-symbol-percent')
 
         // toggle % sign to target inputs
         $("#periodic_targets_table input[data-periodictarget]").each(function(index, element) {
@@ -513,17 +519,20 @@
             $("#id_span_label_targets_sum").text("{% trans 'Sum of targets'|escapejs %}");
             $("#id_span_targets_sum").text(targetsSum);
             $("#id_span_targtsaggregate_percent_sign").text("");
-            $("#id_span_loptarget_percent_sign").text("");
+            $("#id_span_loptarget_percent_sign").text(""); // May be absent now?
         }
         else{
-            $("#id_span_loptarget_percent_sign").text("%");
+            $("#id_span_loptarget_percent_sign").text("%"); // May be absent now?
         }
     }
 
     $( document ).ready(function() {
         var unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
+        console.log(unit_of_measure_type);
         if (unit_of_measure_type == 2){
             show_hide_cummulative_inputs('percent')
+            $('#span_id_lop_target').addClass('input-symbol-percent');
+            $('#span_id_baseline').addClass('input-symbol-percent');
         }
         else {
             show_hide_cummulative_inputs('number')
