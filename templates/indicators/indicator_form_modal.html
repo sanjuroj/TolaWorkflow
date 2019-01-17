@@ -3,12 +3,6 @@
 <script type="text/javascript">
     //Searchable select option for service indicator
     $(document).ready(function() {
-        /* add select2 js library to the indicator select box */
-        // $("#id_program").select2().on("select2:selecting select2:unselecting", function(e) {
-        //     e.preventDefault();
-        // });
-        $("#id_strategic_objectives").select2({width: "100%"});
-
         var targetsonly = `{{targetsonly|safe}}`;
         var targetsactive = `{{targetsactive|safe}}`;
         if (targetsonly == 'True') {

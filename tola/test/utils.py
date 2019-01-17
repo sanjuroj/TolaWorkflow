@@ -1,4 +1,5 @@
 import time
+import datetime
 from decimal import Decimal, ROUND_HALF_UP
 
 from factory import Sequence
@@ -49,7 +50,10 @@ class IndicatorValues(object):
     @property
     def result_sum(self):
         # For program total or program-to-date, calculation is same if indicator is cumulative or not.
-        return sum([pt_values.result_sum for pt_values in self.periodic_targets])
+        if self.unit_of_measure_type == Indicator.NUMBER:
+            return sum([pt_values.result_sum for pt_values in self.periodic_targets])
+        else:
+            return self.periodic_targets[-1].results[-1]
 
     @property
     def result_sets(self):
@@ -126,6 +130,7 @@ def instantiate_scenario(program_id, scenario, existing_indicator_ids=None):
             indicator = IndicatorFactory(
                 program=program,
                 is_cumulative=indicator_value_set.is_cumulative,
+                unit_of_measure_type=indicator_value_set.unit_of_measure_type,
                 direction_of_change=indicator_value_set.direction_of_change,
                 target_frequency=indicator_value_set.target_frequency,
                 lop_target=indicator_value_set.lop_target,)
@@ -147,8 +152,12 @@ def instantiate_scenario(program_id, scenario, existing_indicator_ids=None):
             except KeyError:
                 evidence_values = []
             for j, res_value in enumerate(indicator_value_set.periodic_targets[i].results):
+                dc = pt.start_date
+                if dc is None:
+                    dc = pt.indicator.program.reporting_period_start
+                dc = dc + datetime.timedelta(days=j)
                 res = ResultFactory(
-                    periodic_target=pt, indicator=indicator, program=program, achieved=res_value, )
+                    periodic_target=pt, indicator=indicator, program=program, achieved=res_value, date_collected=dc)
                 if evidence_values and evidence_values[j]:
                     res.evidence = DocumentationFactory()
                     res.save()
@@ -207,6 +216,10 @@ def decimalize(number):
 
 class TimedTestResult(ut_runner.TextTestResult):
     SLOW_TEST_THRESHOLD = 2
+    
+    def __init__(self, *args, **kwargs):
+        super(TimedTestResult, self).__init__(*args, **kwargs)
+        self.test_timings = []
 
     def startTest(self, test):
         self._started_at = time.time()
@@ -216,18 +229,27 @@ class TimedTestResult(ut_runner.TextTestResult):
         elapsed = time.time() - self._started_at
         name = self.getDescription(test)
         if elapsed > self.SLOW_TEST_THRESHOLD:
-            self.stream.write(
-                "\n{} ({:.03}s)\n".format(
-                    name, elapsed)
-                )
+             msg = "{} ({:.03}s)".format(name, elapsed)
+             self.test_timings.append(msg)
         super(TimedTestResult, self).addSuccess(test)
+
+    def slowTests(self):
+        return len(self.test_timings) > 0
 
     def getTestTimings(self):
         return self.test_timings
 
 class TimedTestRunner(runner.DiscoverRunner):
 
-    def get_test_runner_kwargs(self):
-        kwargs = super(TimedTestRunner, self).get_test_runner_kwargs()
-        kwargs['resultclass'] = TimedTestResult
-        return kwargs
+    def get_resultclass(self):
+        return TimedTestResult
+
+    def run_suite(self, suite, **kwargs):
+        result = super(TimedTestRunner, self).run_suite(suite, **kwargs)
+        if result.slowTests():
+            result.stream.writeln(
+                "Slow Tests (greater than {0}s):".format(result.SLOW_TEST_THRESHOLD)
+            )
+            for msg in result.getTestTimings():
+                result.stream.writeln(msg)
+        return result

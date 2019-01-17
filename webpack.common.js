@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-// const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 // To find which plugin(s) is causing DeprecationWarning(s)
 // process.traceDeprecation = true;
@@ -8,6 +8,7 @@ const webpack = require('webpack');
 module.exports = {
 
     entry: {
+        base: './js/base.js',
         program_page: './js/pages/program_page/index.js' ,
         document_list: './js/pages/document_list/index.js' ,
     },
@@ -27,19 +28,23 @@ module.exports = {
                 },
 
             },
-            // {
-            //     test: /\.css$/,
-            //     use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader']
-            // },
-            // {
-            //     test: /\.(eot|woff|woff2|ttf|svg|png|jpg)?$/,
-            //     use: [{
-            //         loader: 'file-loader',
-            //         options: {
-            //             name: '[name]-[hash].[ext]'
-            //         }
-            //     }]
-            // }
+            {
+                test: /\.s?[ac]ss$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {loader: 'css-loader', options: {url: true, sourceMap: true}},
+                    {loader: 'sass-loader', options: {sourceMap: true}}
+                ],
+            },
+            {
+                test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)$/,
+                use: [{
+                    loader: 'file-loader',
+                    options: {
+                        name: '[name]-[hash].[ext]'
+                    }
+                }]
+            }
         ]
     },
 
@@ -52,7 +57,7 @@ module.exports = {
         new webpack.HashedModuleIdsPlugin(),
 
         // css to their own files
-        // new MiniCssExtractPlugin({filename: '[name]-[contenthash].css', allChunks: true}),
+        new MiniCssExtractPlugin({filename: '[name]-[contenthash].css'}),
 
         // new webpack.ProvidePlugin({
         //     jQuery: 'jquery',
