@@ -8,16 +8,17 @@ export default class EditUserProfile extends React.Component {
         super(props)
         const {userData} = props
         const organization_listing = props.organizations.map(org => ({value: org.id, label: org.name}))
-        const selected_organization = organization_listing.find(o => o.label == userData.organization_name)
+        const selected_organization = organization_listing.find(o => o.value == userData.organization_id)
         const user_data = {
             id: userData.id,
-            full_name: userData.name,
+            full_name: userData.name || '',
             organization: selected_organization?selected_organization:null,
-            mode_of_address: '',
-            title: '',
-            email: '',
-            phone: '',
-            mode_of_contact: '',
+            mode_of_address: userData.mode_of_address || '',
+            title: userData.title || '',
+            email: userData.email || '',
+            phone: userData.phone_number || '',
+            mode_of_contact: userData.mode_of_contact || '',
+            is_active: userData.is_active
         }
         this.state = {
             original_user_data: user_data,
@@ -30,12 +31,13 @@ export default class EditUserProfile extends React.Component {
     saveForm(e) {
         e.preventDefault()
         const ud = this.state.managed_user_data
-        const marshalledUserData = {
+        const marshalled_user_data = {
             ...ud,
             name: ud.full_name,
             organization_id: (ud.organization)?ud.organization.value:null,
+            phone_number: ud.phone
         }
-        this.props.onSave(marshalledUserData)
+        this.props.onSave(marshalled_user_data)
     }
 
     updateFullName(new_full_name) {

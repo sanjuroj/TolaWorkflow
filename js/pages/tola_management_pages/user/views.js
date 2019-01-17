@@ -59,13 +59,10 @@ const ProgramFilter = observer(({store, programListing}) => {
 
 export const IndexView = observer(
     ({store}) => {
-        const countries_listing = store.available_countries.map(country => ({value: country.id, label: country.country}))
-        const organization_listing = store.available_organizations.map(org => ({value: org.id, label: org.name}))
-        const program_listing = Object.entries(store.available_programs).map(([k, program]) => ({value: program.id, label: program.name}))
-        const user_listing = store.available_users.map(user => ({value: user.id, label: user.name}))
-        const programs_by_country_listing = Object.entries(store.programs_by_country).map(
-            ([k, country]) => ({...country, programs: country.programs.map(program_id => store.available_programs[program_id])})
-        )
+        const countries_listing = Object.entries(store.countries).map(([id, country]) => ({value: country.id, label: country.name}))
+        const organization_listing = store.organizations.map(org => ({value: org.id, label: org.name}))
+        const program_listing = Object.entries(store.programs).map(([id, program]) => ({value: program.id, label: program.name}))
+        const user_listing = store.users.map(user => ({value: user.id, label: user.name}))
 
         return <div id="user-management-index-view" className="container-fluid row">
             <div className="col col-sm-3 filter-section">
@@ -121,7 +118,7 @@ export const IndexView = observer(
                 </div>
                 <div className="list-table row">
                     <ManagementTable
-                        data={store.users}
+                        data={store.users_listing}
                         keyField="id"
                         HeaderRow={({Col, Row}) =>
                             <Row>
@@ -147,15 +144,14 @@ export const IndexView = observer(
                                         ProfileSection={() =>
                                             <EditUserProfile
                                             userData={data}
-                                            onSave={(new_user_data) => store.saveUserEdit(new_user_data)}
-                                            organizations={store.available_organizations} />}
+                                            onSave={(new_user_data) => store.saveUserProfile(data.id, new_user_data)}
+                                            organizations={store.organizations} />}
                                         ProgramSection={() =>
                                             <EditUserPrograms
                                             store={store}
                                             user={data}
-                                            programsByCountry={programs_by_country_listing}
-                                            onSave={(new_program_data) => console.log(new_program_data)}/>}
-                                        HistorySection={() => <EditUserHistory />}
+                                            onSave={(new_program_data) => store.saveUserPrograms(data.id, new_program_data)}/>}
+                                        HistorySection={() => <EditUserHistory userData={data} onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>}
                                     />
                                 </Wrapper>
                             }>

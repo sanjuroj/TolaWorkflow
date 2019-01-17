@@ -151,6 +151,9 @@ class TolaUser(models.Model):
     privacy_disclaimer_accepted = models.BooleanField(default=False)
     create_date = models.DateTimeField(null=True, blank=True)
     edit_date = models.DateTimeField(null=True, blank=True)
+    mode_of_address = models.CharField(blank=True, null=True, max_length=255)
+    mode_of_contact = models.CharField(blank=True, null=True, max_length=255)
+    phone_number = models.CharField(blank=True, null=True, max_length=50)
 
     class Meta:
         verbose_name = _("Tola User")
