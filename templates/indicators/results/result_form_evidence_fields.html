@@ -4,21 +4,15 @@
 {# TODO: add buttons to view link, JS validation of link/name, lookup from drive/toladata #}
 <fieldset>
     <div class="form-group" id="div_id_record_name">
-        <label for="id_record_name" class="label--required">{{ form.record_name.label }}</label>
+        <label for="id_record_name">{{ form.record_name.label }}</label>
         {% render_field form.record_name class+="form-control" %}
         <small class="form-text text-muted">{{ form.record_name.help_text }}</small>
         <span id="validation_id_record_name" class="has-error"></span>
     </div>
     <div class="form-group" id="div_id_record_url">
-        <label for="id_record_url" class="label--required">{{ form.record_url.label }}</label>
-        {% render_field form.record_url class+="form-control" %}
-        <small class="form-text text-muted">{{ form.record_url.help_text }}</small>
-        <span id="validation_id_record_url" class="has-error"></span>
-    </div>
-    <div class="form-group" id="div_id_record_description">
-        <label for="id_record_description">{{ form.record_description.label }}</label>
-        {% render_field form.record_description class+="form-control" %}
-        <small class="form-text text-muted">{{ form.record_description.help_text }}</small>
-        <span id="validation_id_record_description" class="has-error"></span>
+        <label for="id_record_url">{{ form.evidence_url.label }}</label>
+        {% render_field form.evidence_url class+="form-control" %}
+        <small class="form-text text-muted">{{ form.evidence_url.help_text }}</small>
+        <span id="validation_id_evidence_url" class="has-error"></span>
     </div>
 </fieldset>

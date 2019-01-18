@@ -34,7 +34,7 @@
                 createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, "#modalmessages");
             })
         .fail(function(error){
-            createAlert("danger", "{% trans 'Could not save form.'|escapejs %}"  + error, true, "#modalmessages");
+            createAlert("danger", "{% trans 'Could not save form.'|escapejs %}", true, "#modalmessages");
         });
         $('#indicator_collecteddata_div').animate({ scrollTop: 0 }, 'slow');
     });

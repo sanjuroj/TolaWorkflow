@@ -22,8 +22,6 @@ from django.urls import reverse
 from django.http import Http404
 from django import test
 
-class MockObject(object):
-    pass
 
 class TestResultCreateUpdate404(test.TestCase):
     def setUp(self):
@@ -59,6 +57,7 @@ class TestResultCreateUpdate404(test.TestCase):
         with self.assertRaises(Http404):
             ResultUpdate.as_view()(request, **kwargs)
 
+
 class TestUpdateFormInitialValues(test.TestCase):
     def setUp(self):
         self.program = w_factories.ProgramFactory()
@@ -66,11 +65,12 @@ class TestUpdateFormInitialValues(test.TestCase):
             program=self.program,
             target_frequency=Indicator.ANNUAL
         )
-        self.evidence = w_factories.DocumentationFactory()
         self.result = i_factories.ResultFactory(
             indicator=self.indicator,
-            evidence=self.evidence
         )
+        self.result.record_name = 'record name'
+        self.result.evidence_url = 'evidence url'
+
         self.blank_result = i_factories.ResultFactory(
             indicator=self.indicator
         )
@@ -78,39 +78,31 @@ class TestUpdateFormInitialValues(test.TestCase):
         self.user = self.tola_user.user
 
     def test_initial_values(self):
-        mockrequest = MockObject()
-        mockrequest.user = self.user
-        form = ResultForm(request=mockrequest, indicator=self.indicator, instance=self.result)
+        form = ResultForm(user=self.user, indicator=self.indicator, program=self.program, instance=self.result)
         self.assertEqual(form['achieved'].value(), self.result.achieved)
-        self.assertEqual(form['evidence'].value(), self.evidence.id)
         self.assertEqual(form['target_frequency'].value(), Indicator.ANNUAL)
         self.assertEqual(form['indicator'].value(), self.indicator.id)
         self.assertEqual(form['date_collected'].value(), self.result.date_collected)
         self.assertEqual(form['submitted_by'].value(), self.tola_user.display_with_organization)
-        self.assertEqual(form['record_name'].value(), self.evidence.name)
-        self.assertEqual(form['record_url'].value(), self.evidence.url)
-        self.assertEqual(form['record_description'].value(), self.evidence.description)
+        self.assertEqual(form['record_name'].value(), 'record name')
+        self.assertEqual(form['evidence_url'].value(), 'evidence url')
 
     def test_initial_values_no_evidence(self):
-        mockrequest = MockObject()
-        mockrequest.user = self.user
-        form = ResultForm(request=mockrequest, indicator=self.indicator, instance=self.blank_result)
+        form = ResultForm(user=self.user, indicator=self.indicator, program=self.program, instance=self.blank_result)
         self.assertEqual(form['achieved'].value(), self.result.achieved)
-        self.assertEqual(form['evidence'].value(), None)
         self.assertEqual(form['target_frequency'].value(), Indicator.ANNUAL)
         self.assertEqual(form['indicator'].value(), self.indicator.id)
-        self.assertEqual(form['record_name'].value(), None)
-        self.assertEqual(form['record_url'].value(), None)
-        self.assertEqual(form['record_description'].value(), None)
+        self.assertEqual(form['record_name'].value(), '')
+        self.assertEqual(form['evidence_url'].value(), '')
 
     def test_create_form_initial_values(self):
-        mockrequest = MockObject()
-        mockrequest.user = self.user
-        form = ResultForm(request=mockrequest, indicator=self.indicator)
+        form = ResultForm(user=self.user, indicator=self.indicator, program=self.program)
         self.assertEqual(form['indicator'].value(), self.indicator.id)
         self.assertEqual(form['program'].value(), self.program.id)
         self.assertEqual(form['achieved'].value(), None)
-        self.assertEqual(form['evidence'].value(), None)
+        self.assertEqual(form['record_name'].value(), None)
+        self.assertEqual(form['evidence_url'].value(), None)
+
 
 class TestCreateValidation(test.TestCase):
     def setUp(self):
@@ -119,14 +111,14 @@ class TestCreateValidation(test.TestCase):
             program=self.program,
             target_frequency=Indicator.LOP
         )
-        self.evidence = w_factories.DocumentationFactory(
-            program=self.program,
-            name="test 1"
-        )
         self.tola_user = w_factories.TolaUserFactory()
         self.user = self.tola_user.user
-        self.mockrequest = MockObject()
-        self.mockrequest.user = self.user
+
+        self.form_kwargs = {
+            'user': self.user,
+            'indicator': self.indicator,
+            'program': self.program,
+        }
 
     def test_good_data_validates(self):
         minimal_data = {
@@ -135,7 +127,7 @@ class TestCreateValidation(test.TestCase):
             'indicator': self.indicator.id,
             'program': self.program.id,
         }
-        form = ResultForm(minimal_data, request=self.mockrequest, indicator=self.indicator)
+        form = ResultForm(minimal_data, **self.form_kwargs)
         self.assertTrue(form.is_valid(), "errors {0}".format(form.errors))
         new_result = form.save()
         self.assertIsNotNone(new_result.id)
@@ -150,16 +142,14 @@ class TestCreateValidation(test.TestCase):
             'indicator': self.indicator.id,
             'program': self.program.id,
             'record_name': 'new record',
-            'record_url': 'http://google.com',
-            'record_description': 'new description'
+            'evidence_url': 'http://google.com',
         }
-        form = ResultForm(minimal_data, request=self.mockrequest, indicator=self.indicator)
+        form = ResultForm(minimal_data, **self.form_kwargs)
         self.assertTrue(form.is_valid(), "errors {0}".format(form.errors))
         new_result = form.save()
         self.assertIsNotNone(new_result.id)
         db_result = Result.objects.get(pk=new_result.id)
-        self.assertIsNotNone(db_result.evidence)
-        self.assertEqual(db_result.evidence.name, 'new record')
+        self.assertEqual(db_result.record_name, 'new record')
 
     def test_good_data_updating_evidence_validates(self):
         minimal_data = {
@@ -167,28 +157,27 @@ class TestCreateValidation(test.TestCase):
             'achieved': '30',
             'indicator': self.indicator.id,
             'program': self.program.id,
-            'evidence': self.evidence.id
+            'record_name': 'existing record',
+            'evidence_url': 'http://google.com',
         }
-        form = ResultForm(minimal_data, request=self.mockrequest, indicator=self.indicator)
+        form = ResultForm(minimal_data, **self.form_kwargs)
         self.assertTrue(form.is_valid(), "errors {0}".format(form.errors))
         new_result = form.save()
         self.assertIsNotNone(new_result.id)
         db_result = Result.objects.get(pk=new_result.id)
-        self.assertIsNotNone(db_result.evidence)
-        self.assertEqual(db_result.evidence.name, 'test 1')
+        self.assertEqual(db_result.record_name, 'existing record')
+        self.assertEqual(db_result.evidence_url, 'http://google.com')
 
-    def test_adding_record_without_name_fails_validation(self):
+    def test_adding_record_without_name_passes_validation(self):
         bad_data = {
             'date_collected': '2016-03-31',
             'achieved': '30',
             'indicator': self.indicator.id,
             'program': self.program.id,
-            'record_url': 'http://google.com',
-            'record_description': 'new description'
+            'evidence_url': 'http://google.com',
         }
-        form = ResultForm(bad_data, request=self.mockrequest, indicator=self.indicator)
-        self.assertFalse(form.is_valid())
-        self.assertIn('record_name', form.errors)
+        form = ResultForm(bad_data, **self.form_kwargs)
+        self.assertTrue(form.is_valid())
 
     def test_adding_record_without_url_fails_validation(self):
         bad_data = {
@@ -197,9 +186,7 @@ class TestCreateValidation(test.TestCase):
             'indicator': self.indicator.id,
             'program': self.program.id,
             'record_name': 'new record',
-            'record_description': 'new description'
         }
-        form = ResultForm(bad_data, request=self.mockrequest, indicator=self.indicator)
+        form = ResultForm(bad_data, **self.form_kwargs)
         self.assertFalse(form.is_valid())
-        self.assertIn('record_url', form.errors)
-        
+        self.assertIn('evidence_url', form.errors)

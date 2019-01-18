@@ -111,7 +111,7 @@ class ResultForm(forms.ModelForm):
         model = Result
         exclude = ['create_date', 'edit_date']
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
+            'comments': forms.Textarea(attrs={'rows': 4}),
             'program': forms.HiddenInput(),
             'indicator': forms.HiddenInput(),
             'evidence': forms.HiddenInput()
@@ -119,8 +119,9 @@ class ResultForm(forms.ModelForm):
         labels = {
             'site': _('Site'),
             'achieved': _('Actual value'),
-            'periodic_target': _('Measure against target*'),
+            'periodic_target': _('Measure against target'),
             'complete': _('Project'),
+            'evidence_url': _('Link to file or folder'),
         }
 
     target_frequency = forms.CharField(
@@ -140,30 +141,17 @@ class ResultForm(forms.ModelForm):
         label=_('Submitted by'),
         required=False
     )
-    record_name = forms.CharField(
-        label=_('Record name'),
-        required=False
-    )
-    record_url = forms.URLField(
-        label=_('Link to file or folder'),
-        required=False
-    )
-    record_description = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 4}),
-        label=_('Description'),
-        required=False
-    )
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request')
+        self.user = kwargs.pop('user')
         self.indicator = kwargs.pop('indicator')
+        self.program = kwargs.pop('program')
         super(ResultForm, self).__init__(*args, **kwargs)
 
         self.set_initial_querysets()
         self.set_periodic_target_widget()
-        self.set_evidence_fields()
         self.fields['target_frequency'].initial = self.indicator.target_frequency
-        self.fields['submitted_by'].initial = self.request.user.tola_user.display_with_organization
+        self.fields['submitted_by'].initial = self.user.tola_user.display_with_organization
         self.fields['indicator'].initial = self.indicator.id
         self.fields['program'].initial = self.indicator.program.id
 
@@ -173,13 +161,13 @@ class ResultForm(forms.ModelForm):
         self.fields['evidence'].queryset = Documentation.objects\
             .filter(program=self.indicator.program)
         # only display Project field to existing users
-        if not self.request.user.tola_user.allow_projects_access:
+        if not self.user.tola_user.allow_projects_access:
             self.fields.pop('complete')
         else:
             # provide only in-program projects for the complete queryset:
             self.fields['complete'].queryset = ProjectComplete.objects.filter(program=self.program)
         self.fields['site'].queryset = SiteProfile.objects.filter(
-            country__in=getCountry(self.request.user)
+            country__in=getCountry(self.user)
         )
 
     def set_periodic_target_widget(self):
@@ -198,12 +186,6 @@ class ResultForm(forms.ModelForm):
             choices.append((pt.id, str(pt)))
         self.fields['periodic_target'].widget = DataAttributesSelect(data=data, choices=choices)
 
-    def set_evidence_fields(self):
-        if self.instance and self.instance.evidence:
-            self.fields['record_name'].initial = self.instance.evidence.name
-            self.fields['record_url'].initial = self.instance.evidence.url
-            self.fields['record_description'].initial = self.instance.evidence.description
-
     def clean_date_collected(self):
         date_collected = self.cleaned_data['date_collected']
         date_collected = datetime.strftime(date_collected, '%Y-%m-%d')
@@ -212,33 +194,12 @@ class ResultForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(ResultForm, self).clean()
         record_name = cleaned_data.get('record_name')
-        record_url = cleaned_data.get('record_url')
-        record_description = cleaned_data.get('record_description')
-        if any([record_name, record_url, record_description]):
-            if not record_name:
-                msg = forms.ValidationError(_('This field is required'))
-                self.add_error('record_name', msg)
-            if not record_url:
-                msg = forms.ValidationError(_('This field is required'))
-                self.add_error('record_url', msg)
+        evidence_url = cleaned_data.get('evidence_url')
 
-    def save(self, commit=True):
-        instance = super(ResultForm, self).save(commit=False)
-        evidence_id = self.cleaned_data.get('evidence')
-        if not evidence_id:
-            if self.cleaned_data.get('record_name'):
-                new_evidence = Documentation(
-                    name=self.cleaned_data.get('record_name'),
-                    url=self.cleaned_data.get('record_url'),
-                    description=self.cleaned_data.get('record_description'),
-                    program=self.cleaned_data.get('program')
-                )
-                if commit:
-                    new_evidence.save()
-                    instance.evidence = new_evidence
-        if commit:
-            instance.save()
-        return instance
+        if record_name and not evidence_url:
+            msg = forms.ValidationError(_('URL required if record name is set'))
+            self.add_error('evidence_url', msg)
+
 
 
 

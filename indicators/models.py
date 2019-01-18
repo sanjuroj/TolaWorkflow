@@ -1019,17 +1019,12 @@ class Result(models.Model):
         verbose_name=_("Actual"), max_digits=20, decimal_places=2,
         help_text=" ")
 
-    # cumulative_achieved = models.DecimalField(
-    #     verbose_name=_('Cumulative Actuals'), max_digits=20, decimal_places=2,
-    #     null=True, blank=True, help_text=" ")
-
     disaggregation_value = models.ManyToManyField(
         DisaggregationValue, blank=True, help_text=" ",
         verbose_name=_("Disaggregation Value")
     )
 
-    description = models.TextField(
-        _("Remarks/comments"), blank=True, null=True, help_text=" ")
+    comments = models.TextField(_("Comments"), blank=True, default='')
 
     indicator = models.ForeignKey(
         Indicator, help_text=" ", verbose_name=_("Indicator"),
@@ -1053,10 +1048,6 @@ class Result(models.Model):
     date_collected = models.DateField(
         null=True, blank=True, help_text=" ", verbose_name=_("Date collected"))
 
-    comment = models.TextField(
-        _("Comment/Explanation"), max_length=255, blank=True, null=True,
-        help_text=" ")
-
     # Deprecated - see evidence_name/evidence_url
     evidence = models.ForeignKey(
         Documentation, null=True, blank=True, on_delete=models.SET_NULL,
@@ -1075,12 +1066,13 @@ class Result(models.Model):
         verbose_name=_("Would you like to update the achieved total with the \
         row count from TolaTables?"), default=False, help_text=" ")
 
-    evidence_name = models.CharField(max_length=135, blank=True)
+    record_name = models.CharField(max_length=135, blank=True)
     evidence_url = models.CharField(max_length=255, blank=True)
 
     create_date = models.DateTimeField(null=True, blank=True, help_text=" ")
     edit_date = models.DateTimeField(null=True, blank=True, help_text=" ")
     site = models.ManyToManyField(SiteProfile, blank=True, help_text=" ")
+
     history = HistoricalRecords()
     objects = ResultManager()
 

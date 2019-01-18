@@ -10,4 +10,4 @@ Scenarios:
 """
 
 create_url = 'result_add'
-udpate_url = 'result_update'
+update_url = 'result_update'

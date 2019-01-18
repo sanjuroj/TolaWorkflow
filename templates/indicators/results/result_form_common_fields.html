@@ -39,11 +39,11 @@
         <small class="form-text text-muted">{{ form.submitted_by.help_text }}</small>
         <span id="validation_id_submitted_by" class="has-error"></span>
     </div>
-    <div class="form-group" id="div_id_description">
-        <label for="id_description">{{ form.description.label }}</label>
-        {% render_field form.description class+="form-control" %}
-        <small class="form-text text-muted">{{ form.description.help_text }}</small>
-        <span id="validation_id_description" class="has-error"></span>
+    <div class="form-group" id="div_id_comments">
+        <label for="id_comments">{{ form.comments.label }}</label>
+        {% render_field form.comments class+="form-control" %}
+        <small class="form-text text-muted">{{ form.comments.help_text }}</small>
+        <span id="validation_id_comments" class="has-error"></span>
     </div>
     <!-- only displayed to users with projects activated: -->
     <div class="form-group" id="div_id_complete">
