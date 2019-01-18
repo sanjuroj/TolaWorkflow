@@ -376,8 +376,8 @@ def program_evidence_annotation():
     """annotates a program with the count of results for any of the program's indicators which have evidence"""
     rs = Result.objects.filter(
         indicator__program_id=models.OuterRef('pk')
-    ).filter(
-        models.Q(evidence__isnull=False) | models.Q(tola_table__isnull=False)
+    ).exclude(
+        evidence_url=''
     ).order_by().values('indicator__program').annotate(evidence_count=models.Count('pk')).values('evidence_count')[:1]
     return models.functions.Coalesce(
         models.Subquery(
