@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load static %}
+{% load render_bundle from webpack_loader %}
 {% load group_tag menu_tag %}
 {% load i18n %}
 {% load render_bundle from webpack_loader %}
@@ -85,7 +86,7 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarBrowse" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Browse" %}</a>
                                 <div class="dropdown-menu" aria-labelledby="navbarBrowse">
-                                    <a class="dropdown-item" href="/workflow/documentation_list/0/0/">{% trans "Documents" %}</a>
+                                    <a class="dropdown-item" href="/workflow/documentation_list/">{% trans "Documents" %}</a>
                                     {% if user.tola_user.allow_projects_access %}
                                     <a class="dropdown-item" href="/workflow/dashboard/0/">{% trans "Projects" %}</a>
                                     {% endif %}
@@ -242,7 +243,9 @@
         {% get_current_language as LANGUAGE_CODE %}
 
         <script type="text/javascript">
+            // This is now referenced in other JS, not just here in the date picker!
             var userLang = "{{ LANGUAGE_CODE }}";
+
             $(document).ready(function() {
                 $.datepicker.setDefaults( $.datepicker.regional[ userLang ] );
             });
@@ -267,6 +270,10 @@
 
         <!-- Django i18n tools and translations -->
         <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
+
+        {# Webpack runtime and vendor bundles, shared across all pages using webpack #}
+        {% render_bundle 'runtime' %}
+        {% render_bundle 'vendors' %}
 
         {% block extra_js_in_body %}
         {% endblock %}

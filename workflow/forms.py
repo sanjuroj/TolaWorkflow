@@ -400,7 +400,7 @@ class ProjectAgreementForm(forms.ModelForm):
                                   </table>
                               {% endif %}
                               <div class="panel-footer">
-                                <a onclick="newPopup('/workflow/documentation_list/0/{{ pk }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
+                                <a onclick="newPopup('/workflow/documentation_list/?project_id={{ pk }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
                               </div>
                             </div>
                              """),
@@ -657,7 +657,7 @@ class ProjectAgreementSimpleForm(forms.ModelForm):
                                   </table>
                               {% endif %}
                               <div class="panel-footer">
-                                <a onclick="newPopup('/workflow/documentation_list/0/{{ pk }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
+                                <a onclick="newPopup('/workflow/documentation_list/?project_id={{ pk }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
                               </div>
                             </div>
                              """),
@@ -996,7 +996,7 @@ class ProjectCompleteForm(forms.ModelForm):
                               </table>
                           {% endif %}
                           <div class="panel-footer">
-                            <a onclick="newPopup('/workflow/documentation_list/0/{{ id }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
+                            <a onclick="newPopup('/workflow/documentation_list/?project_id={{ id }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
                           </div>
                         </div>
                          """),
@@ -1245,7 +1245,7 @@ class ProjectCompleteSimpleForm(forms.ModelForm):
                                 </table>
                             {% endif %}
                             <div class="panel-footer">
-                                <a onclick="newPopup('/workflow/documentation_list/0/{{ id }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
+                                <a onclick="newPopup('/workflow/documentation_list/?project_id={{ id }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
                             </div>
                         </div>
                     """),
