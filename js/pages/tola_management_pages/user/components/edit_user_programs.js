@@ -22,7 +22,7 @@ const denormalize = (countries, programs, access_listing) => {
     return Object.entries(countries).map(([id, country]) => ({
         id: country.id,
         name: country.name,
-        has_access: access_listing && access_listing['country'][country.id] || false,
+        has_access: access_listing && access_listing.country[country.id] || false,
         permissions: {
             options: country_options,
             permission_level: country_options[0]
@@ -33,7 +33,7 @@ const denormalize = (countries, programs, access_listing) => {
             return {
                 id: program.id,
                 name: program.name,
-                has_access: access_listing && access_listing['country'][country.id] || access_listing['program'][program.id] || false,
+                has_access: access_listing && access_listing.country[country.id] || access_listing.program[program.id] || false,
                 permissions: {
                     options: program_options,
                     permission_level: program_options[0]
@@ -70,24 +70,24 @@ export default class EditUserPrograms extends React.Component {
     constructor(props) {
         super(props)
         const {store} = props
-        const denormalized = denormalize(store.countries, store.programs, store.editing_target_data)
+        const denormalized = denormalize(store.countries, store.programs, store.editing_target_data.programs)
         const filtered_countries = apply_filter('', denormalized)
         this.state = {
             filter_string: '',
             filtered_countries: filtered_countries,
             flattened_programs: flatten_programs(filtered_countries),
-            original_user_program_access: props.store.editing_target_data,
-            user_program_access: props.store.editing_target_data
+            original_user_program_access: props.store.editing_target_data.programs,
+            user_program_access: props.store.editing_target_data.programs
         }
     }
 
     componentWillReceiveProps(next_props) {
-        const denormalized = denormalize(next_props.store.countries, next_props.store.programs, store.editing_target_data)
+        const denormalized = denormalize(next_props.store.countries, next_props.store.programs, store.editing_target_data.programs)
         const filtered_countries = apply_filter(this.state.filter_string, denormalized)
         this.setState({
             filtered_countries: filtered_countries,
             flattened_programs: flatten_programs(filtered_countries),
-            original_user_program_access: next_props.store.editing_target_data,
+            original_user_program_access: next_props.store.editing_target_data.programs,
         })
     }
 
@@ -158,6 +158,14 @@ export default class EditUserPrograms extends React.Component {
         })
     }
 
+    changeCountryRole(country_id, new_val) {
+
+    }
+
+    changeProgramRole(program_id, new_val) {
+
+    }
+
     updateProgramFilter(val) {
         const denormalized = denormalize(this.props.store.countries, this.props.store.programs, this.state.user_program_access)
         const filtered_countries = apply_filter(val, denormalized)
@@ -184,7 +192,7 @@ export default class EditUserPrograms extends React.Component {
                 </div>
                 <div className="row">
                     <div className="col">
-                        <div style={{height: `30vh`}}>
+                        <div className="virtualized-table__wrapper">
                             <AutoSizer>
                                 {({height, width}) =>
                                     <Table
@@ -220,7 +228,12 @@ export default class EditUserPrograms extends React.Component {
                                         flexGrow={1}
                                         dataKey="permissions"
                                         label="Roles and Permissions"
-                                        cellRenderer={({cellData}) => <Select options={cellData.options} value={cellData.permission_level} /> }/>
+                                        cellDataGetter={({rowData}) => ({id: rowData.id, permissions: rowData.permissions, action: (rowData.type == "country")?this.changeCountryRole.bind(this):this.changeProgramRole.bind(this)})}
+                                        cellRenderer={({cellData}) =>
+                                            <select value={cellData.permissions.permission_level.value} onChange={(val) => cellData.action(cellData.id, val)} >
+                                                {cellData.permissions.options.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+                                            </select>
+                                        }/>
 
                                     </Table>
                                 }

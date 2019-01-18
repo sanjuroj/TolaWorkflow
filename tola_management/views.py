@@ -86,7 +86,7 @@ def app_host_page(request, react_app_page):
 class UserAdminSerializer(Serializer):
     id = IntegerField()
     name = CharField(max_length=100)
-    organization_name = CharField(max_length=255, allow_blank=True, required=False)
+    organization_name = CharField(max_length=255, allow_null=True, allow_blank=True, required=False)
     email = CharField(max_length=255)
     phone_number = CharField(max_length=50, allow_null=True, allow_blank=True, required=False)
     mode_of_address = CharField(max_length=255, allow_null=True, allow_blank=True, required=False)
@@ -289,7 +289,11 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+    @detail_route(methods=['get'])
+    def history(self, request, pk=None):
+        user = TolaUser.objects.get(pk=pk)
+        history_log = UserManagementAuditLog.objects.filter(modified_user=user).select_related('admin_user').order_by('-date')
+        return Response([{"date": entry.date, "admin_name": entry.admin_user.name, "change_type": entry.change_type, "previous": entry.previous_entry, "new": entry.new_entry} for entry in history_log])
 
     @detail_route(methods=['get', 'put'])
     def program_access(self, request, pk=None):

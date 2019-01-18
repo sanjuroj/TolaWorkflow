@@ -112,7 +112,7 @@ export default class EditUserProfile extends React.Component {
     render() {
         const ud = this.state.managed_user_data
         return (
-            <div className="edit-user-profile">
+            <div className="edit-user-profile container">
                 <form className="form">
                     <div className="form-group">
                         <label htmlFor="user-full-name-input">Full name<span className="required">*</span></label>

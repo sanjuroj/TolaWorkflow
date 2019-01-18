@@ -151,7 +151,11 @@ export const IndexView = observer(
                                             store={store}
                                             user={data}
                                             onSave={(new_program_data) => store.saveUserPrograms(data.id, new_program_data)}/>}
-                                        HistorySection={() => <EditUserHistory userData={data} onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>}
+                                        HistorySection={() =>
+                                            <EditUserHistory
+                                            userData={data}
+                                            history={store.editing_target_data.history}
+                                            onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>}
                                     />
                                 </Wrapper>
                             }>

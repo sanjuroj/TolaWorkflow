@@ -15,7 +15,13 @@ export class UserStore {
 
     @observable fetching_editing_target = false
     @observable editing_target = null
-    @observable editing_target_data = null
+    @observable editing_target_data = {
+        programs: {
+            country: {},
+            program: {}
+        },
+        history: []
+    }
 
     //filter options
     @observable countries = []
@@ -167,9 +173,12 @@ export class UserStore {
         } else {
             this.editing_target = user_id
             this.fetching_editing_target = true
-            api.fetchUserProgramAccess(user_id).then(result => {
+            Promise.all([api.fetchUserProgramAccess(user_id), api.fetchUserHistory(user_id)]).then(([program_data, history_data]) => {
                 this.fetching_editing_target = false
-                this.editing_target_data = result
+                this.editing_target_data = {
+                    programs: program_data,
+                    history: history_data
+                }
             })
         }
     }

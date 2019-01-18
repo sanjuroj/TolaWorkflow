@@ -188,7 +188,6 @@ class TolaUser(models.Model):
         self.active_country = country
         super(TolaUser, self).save()
 
-
 class TolaBookmarks(models.Model):
     user = models.ForeignKey(TolaUser, related_name='tolabookmark', verbose_name=_("User"))
     name = models.CharField(_("Name"), blank=True, null=True, max_length=255)
@@ -1617,6 +1616,27 @@ class LoggedUser(models.Model):
     # user_logged_in.connect(login_user)
     # user_logged_out.connect(logout_user)
 
+COUNTRY_ROLE_CHOICES = (
+    ('user', 'User'),
+    ('basic_admin', 'Basic Admin'),
+    ('super_admin', 'Super Admin')
+)
+
+class TolaUserCountryRoles(models.Model):
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name="user_roles")
+    user = models.ForeignKey(TolaUser, on_delete=models.CASCADE, related_name="country_roles")
+    role = models.CharField(max_length=100, choices=COUNTRY_ROLE_CHOICES)
+
+PROGRAM_ROLE_CHOICES = (
+    ('low', 'Low'),
+    ('medium', 'Medium'),
+    ('high', 'High')
+)
+
+class TolaUserProgramRoles(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name="user_roles")
+    user = models.ForeignKey(TolaUser, on_delete=models.CASCADE, related_name="program_roles")
+    role = models.CharField(max_length=100, choices=PROGRAM_ROLE_CHOICES)
 
 def get_user_country(request):
 
