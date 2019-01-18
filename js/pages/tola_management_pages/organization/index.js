@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import eventBus from '../../../eventbus';
 import {OrganizationStore} from './models';
 import {IndexView} from './views';
 

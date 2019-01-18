@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import {fetchOrganizationsWithFilter} from './api';
+import { fetchOrganizationsWithFilter } from './api';
 
 export class OrganizationStore {
     @observable organizations = [];
@@ -11,7 +11,7 @@ export class OrganizationStore {
     @action
     async fetchOrganizations() {
         this.fetching = true
-        this.organizations = await fetchOrganizationsWithFilter()
-        // this.organizations = ['cats', 'america', 'coffee']
+        // this.organizations = await fetchOrganizationsWithFilter()
+        this.organizations = ['cats', 'america', 'coffee']
     }
 }
