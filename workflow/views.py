@@ -1,6 +1,7 @@
 import operator
 import unicodedata
 
+from django.utils.translation import gettext as _
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -55,7 +56,7 @@ APPROVALS = (
     ('rejected', 'rejected'),
 )
 
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 from dateutil import parser
 from django.core.serializers.json import DjangoJSONEncoder
@@ -2500,17 +2501,45 @@ def reportingperiod_update(request, pk):
     dated = parser.parse(request.POST['reporting_period_end'])
 
     # In some cases the start date input will be disabled and won't come through POST
+    reporting_period_start = False
+    reporting_period_end = False
     try:
-        program.reporting_period_start = parser.parse(request.POST['reporting_period_start'])
+        reporting_period_start = parser.parse(request.POST['reporting_period_start'])
     except MultiValueDictKeyError as e:
         pass
-    program.reporting_period_end = parser.parse(request.POST['reporting_period_end'])
-    program.save()
+    reporting_period_end = parser.parse(request.POST['reporting_period_end'])
+    success = True
+    failmsg = []
+    failfields = []
+    if reporting_period_start:
+        if reporting_period_start.day != 1:
+            success = False
+            failmsg.append(_('Reporting period must start on the first of the month'))
+            failfields.append('reporting_period_start')
+        else:
+            program.reporting_period_start = reporting_period_start
+    if reporting_period_end:
+        next_day = reporting_period_end + timedelta(days=1)
+        if next_day.day != 1:
+            success = False
+            failmsg.append(_('Reporting period must end on the last day of the month'))
+            failfields.append('reporting_period_end')
+        else:
+            program.reporting_period_end = reporting_period_end
+    else:
+        success = False
+        failmsg.append(_('You must select a reporting period end date'))
+        failfields.append('reporting_period_end')
+    if success:
+        program.save()
     return JsonResponse({
-        'msg': 'success',
+        'msg': 'success' if success else 'fail',
+        'failmsg': failmsg,
+        'failfields': failfields,
         'program_id': pk,
         'rptstart': program.reporting_period_start,
-        'rptend': program.reporting_period_end, })
+        'rptend': program.reporting_period_end, },
+        status=200 if success else 422)
 
 
 @api_view(['GET'])

@@ -393,23 +393,26 @@
         }
         else{
              reporting_period_submitting = true;
-            $.post($(this).attr('action'), $(this).serialize(), function(data){
-
-                $('#id_reporting_period_modal').modal("hide")
-                // var program_id = data.program_id;
-                // var modalLink = $(`a[data-program="${program_id}"]`);
-                // modalLink.data("rptstart", data.rptstart);
-                // modalLink.data("rptend", data.rptend);
-                // createAlert(
-                //   "success",
-                //   "{% trans 'Success. Reporting period changes were saved.'|escapejs %}",
-                //   true,
-                //   "#div-id-reportingperiod-alert");
-
+            $.post({
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function(data){
+                    $('#id_reporting_period_modal').modal("hide")
+                    },
+                suppressErrors: true
             }).fail(function(data) {
+                let msg = "{% trans 'There was a problem saving your changes.'|escapejs %}";
+                if (typeof(data.responseJSON.failmsg) !== 'undefined') {
+                    msg = data.responseJSON.failmsg;
+                }
+                if (typeof(data.responseJSON.failfields) !== 'undefined' && data.responseJSON.failfields.length > 0) {
+                    for (let i = 0; i<data.responseJSON.failfields.length; i++) {
+                        $('[name="' + data.responseJSON.failfields[i] + '"]').addClass('is-invalid');
+                    }
+                }
                 createAlert(
                   "danger",
-                  "{% trans 'There was a problem saving your changes.'|escapejs %}",
+                  msg,
                   false,
                   "#div-id-reportingperiod-alert");
             });
