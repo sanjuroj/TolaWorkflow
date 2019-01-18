@@ -105,19 +105,21 @@ class ReportingIndicatorBase(test.TestCase):
     def load_targets(self, indicator=None, targets=None):
         indicator = self.indicator if indicator is None else indicator
         target_frequency = indicator.target_frequency
+        loaded_targets = []
         if target_frequency == Indicator.MID_END:
             targets = [500, 800] if targets is None else targets
-            self.load_target(indicator, targets[0], period=PeriodicTarget.MIDLINE)
-            self.load_target(indicator, targets[1], period=PeriodicTarget.ENDLINE)
+            loaded_targets.append(self.load_target(indicator, targets[0], period=PeriodicTarget.MIDLINE))
+            loaded_targets.append(self.load_target(indicator, targets[1], period=PeriodicTarget.ENDLINE))
         elif target_frequency == Indicator.EVENT:
             targets = [1200,] if targets is None else targets
             for target in targets:
-                self.load_target(indicator, target)
+                loaded_targets.append(self.load_target(indicator, target))
         elif target_frequency in self.TIME_AWARE_FREQUENCIES:
             dates = self.get_time_aware_dates(target_frequency)
             targets = [400]*len(dates) if targets is None else targets
             for target, start_date in zip(targets, dates):
-                self.load_target(indicator, target, start_date=start_date)
+                loaded_targets.append(self.load_target(indicator, target, start_date=start_date))
+        return loaded_targets
 
     def get_closed_program(self):
         self.program = w_factories.ProgramFactory(
@@ -266,8 +268,9 @@ class TestSingleNonReportingIndicator(ReportingIndicatorBase):
             self.load_base_indicator()
             self.indicator.target_frequency = frequency
             self.indicator.save()
-            self.load_targets()
-            self.load_data(date=datetime.date.today()-datetime.timedelta(days=1))
+            targets = self.load_targets()
+            for target in targets:
+                self.load_data(date=datetime.date.today()-datetime.timedelta(days=1), target=target)
             program = self.get_annotated_program()
             self.assertEqual(
                 program.scope_counts['nonreporting_count'], 1,
@@ -341,8 +344,9 @@ class TestSingleReportingIndicator(ReportingIndicatorBase):
             self.load_base_indicator()
             self.indicator.target_frequency = frequency
             self.indicator.save()
-            self.load_targets()
-            self.load_data()
+            targets = self.load_targets()
+            for target in targets:
+                self.load_data(target=target)
             program = self.get_annotated_program()
             self.assertEqual(program.scope_counts['nonreporting_count'], 0)
             self.assertEqual(program.scope_counts['indicator_count'], 1)
@@ -395,8 +399,42 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
                 target_frequency=frequency,
                 program=self.program
             )
-            self.load_targets(indicator=indicator)
-            self.load_data(indicator=indicator)
+            targets = self.load_targets(indicator=indicator)
+            for target in targets:
+                self.load_data(indicator=indicator, target=target)
         program = self.get_annotated_program()
         self.assertEqual(program.scope_counts['nonreporting_count'], 0)
         self.assertEqual(program.scope_counts['indicator_count'], len(self.TIME_AWARE_FREQUENCIES))
+
+class TestProgramReportingPeriodCorrect(test.TestCase):
+    def test_reporting_period_correct_shows_correct(self):
+        program = w_factories.ProgramFactory(
+            reporting_period_start=datetime.date(2015, 1, 1),
+            reporting_period_end=datetime.date(2017, 2, 28)
+        )
+        homepage_program = ProgramWithMetrics.home_page.with_annotations().get(pk=program.pk)
+        self.assertTrue(homepage_program.reporting_period_correct)
+
+    def test_reporting_period_bad_start_shows_incorrect(self):
+        program = w_factories.ProgramFactory(
+            reporting_period_start=datetime.date(2015, 1, 15),
+            reporting_period_end=datetime.date(2017, 2, 28)
+        )
+        homepage_program = ProgramWithMetrics.home_page.with_annotations().get(pk=program.pk)
+        self.assertFalse(homepage_program.reporting_period_correct)
+
+    def test_reporting_period_bad_end_shows_incorrect(self):
+        program = w_factories.ProgramFactory(
+            reporting_period_start=datetime.date(2015, 1, 1),
+            reporting_period_end=datetime.date(2017, 2, 15)
+        )
+        homepage_program = ProgramWithMetrics.home_page.with_annotations().get(pk=program.pk)
+        self.assertFalse(homepage_program.reporting_period_correct)
+
+    def test_reporting_period_bad_both_shows_incorrect(self):
+        program = w_factories.ProgramFactory(
+            reporting_period_start=datetime.date(2015, 1, 15),
+            reporting_period_end=datetime.date(2017, 2, 15)
+        )
+        homepage_program = ProgramWithMetrics.home_page.with_annotations().get(pk=program.pk)
+        self.assertFalse(homepage_program.reporting_period_correct)
