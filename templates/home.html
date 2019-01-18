@@ -70,17 +70,13 @@
                         </ul>
                     {% endif %}
                 </div>
-                {% if program.reporting_period_start and program.reporting_period_end and program.reporting_period_correct %}
+                {% if program.reporting_period_start and program.reporting_period_end %}
                     {% program_complete %}
                 {% endif %}
             </div>
             <div class="card-body">
-                {% if not program.reporting_period_start or not program.reporting_period_end or not program.reporting_period_correct %}
-                    {% if not program.reporting_period_correct %}
-                    <p>{% trans "There is a problem with your program's" %}
-                    {% else %}
+                {% if not program.reporting_period_start or not program.reporting_period_end %}
                     <p>{% trans "Before adding indicators and performance results, we need to know your program's" %}
-                    {% endif %}
                         <a
                             id="id_link_reporting_period_{{ program.id }}"
                             class=""
