@@ -127,9 +127,9 @@ class Country(models.Model):
 
 
 TITLE_CHOICES = (
-    (_('mr'), _('Mr.')),
-    (_('mrs'), _('Mrs.')),
-    (_('ms'), _('Ms.')),
+    ('mr', _('Mr.')),
+    ('mrs', _('Mrs.')),
+    ('ms', _('Ms.')),
 )
 
 
@@ -151,6 +151,9 @@ class TolaUser(models.Model):
     privacy_disclaimer_accepted = models.BooleanField(default=False)
     create_date = models.DateTimeField(null=True, blank=True)
     edit_date = models.DateTimeField(null=True, blank=True)
+    mode_of_address = models.CharField(blank=True, null=True, max_length=255)
+    mode_of_contact = models.CharField(blank=True, null=True, max_length=255)
+    phone_number = models.CharField(blank=True, null=True, max_length=50)
 
     class Meta:
         verbose_name = _("Tola User")
@@ -184,7 +187,6 @@ class TolaUser(models.Model):
     def update_active_country(self, country):
         self.active_country = country
         super(TolaUser, self).save()
-
 
 class TolaBookmarks(models.Model):
     user = models.ForeignKey(TolaUser, related_name='tolabookmark', verbose_name=_("User"))
@@ -364,7 +366,7 @@ class Program(models.Model):
     edit_date = models.DateTimeField(null=True, blank=True)
     budget_check = models.BooleanField(_("Enable Approval Authority"), default=False)
     country = models.ManyToManyField(Country, verbose_name=_("Country"))
-    user_access = models.ManyToManyField(TolaUser, blank=True)
+    user_access = models.ManyToManyField(TolaUser, blank=True, related_name="program_access")
     public_dashboard = models.BooleanField(_("Enable Public Dashboard"), default=False)
     start_date = models.DateField(_("Program Start Date"), null=True, blank=True)
     end_date = models.DateField(_("Program End Date"), null=True, blank=True)
@@ -433,6 +435,13 @@ class Program(models.Model):
                 min_starts.first() != self.reporting_period_start):
             return False
         return True
+
+    @property
+    def has_ended(self):
+        try:
+            return self.reporting_period_end < timezone.localdate()
+        except TypeError: # esp. if there's no reporting dates
+            return False
 
     @property
     def get_indicators_in_need_of_targetperiods_fixing(self):
@@ -590,8 +599,10 @@ class Village(models.Model):
 
 class VillageAdmin(admin.ModelAdmin):
     list_display = ('name', 'district', 'create_date', 'edit_date')
-    list_filter = ('district__province__country__country','district')
+    search_fields = ('name', 'admin_3__name')
+    list_filter = ('admin_3__district__province__country__country',)
     display = 'Admin Level 4'
+
 
 class Office(models.Model):
     name = models.CharField(_("Office Name"), max_length=255, blank=True)
@@ -1291,7 +1302,7 @@ class ProjectComplete(models.Model):
         _("CommunityHandover/Sustainability Maintenance Plan"),
         help_text=_('Check box if it was completed'), default=None)
     capacity_built = models.TextField(
-        _("Describe how sustainability was ensured for this project?"), max_length=755, blank=True, null=True)
+        _("Describe how sustainability was ensured for this project"), max_length=755, blank=True, null=True)
     quality_assured = models.TextField(
         _("How was quality assured for this project"), max_length=755, blank=True, null=True)
     issues_and_challenges = models.TextField(
@@ -1605,6 +1616,27 @@ class LoggedUser(models.Model):
     # user_logged_in.connect(login_user)
     # user_logged_out.connect(logout_user)
 
+COUNTRY_ROLE_CHOICES = (
+    ('user', 'User'),
+    ('basic_admin', 'Basic Admin'),
+    ('super_admin', 'Super Admin')
+)
+
+class TolaUserCountryRoles(models.Model):
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name="user_roles")
+    user = models.ForeignKey(TolaUser, on_delete=models.CASCADE, related_name="country_roles")
+    role = models.CharField(max_length=100, choices=COUNTRY_ROLE_CHOICES)
+
+PROGRAM_ROLE_CHOICES = (
+    ('low', 'Low'),
+    ('medium', 'Medium'),
+    ('high', 'High')
+)
+
+class TolaUserProgramRoles(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name="user_roles")
+    user = models.ForeignKey(TolaUser, on_delete=models.CASCADE, related_name="program_roles")
+    role = models.CharField(max_length=100, choices=PROGRAM_ROLE_CHOICES)
 
 def get_user_country(request):
 

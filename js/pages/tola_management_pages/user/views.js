@@ -9,39 +9,66 @@ import EditUserPrograms from './components/edit_user_programs'
 import EditUserHistory from './components/edit_user_history'
 import Pagination from 'components/pagination'
 
+const UserFilter = observer(({store, userListing}) => {
+    return <div className="form-group">
+        <label htmlFor="users_filter">Users</label>
+        <CheckboxedMultiSelect
+            value={store.filters.user}
+            options={userListing}
+            onChange={(e) => store.changeUserFilter(e)}
+            placeholder="None Selected"
+            id="users_filter" />
+    </div>
+})
+
+const CountryFilter = observer(({store, countryListing}) => {
+    return <div className="form-group">
+        <label htmlFor="countries_permitted_filter">Countries Permitted</label>
+        <CheckboxedMultiSelect
+            value={store.filters.countries}
+            options={countryListing}
+            onChange={(e) => store.changeCountryFilter(e)}
+            placeholder="None Selected"
+            id="countries_permitted_filter" />
+    </div>
+})
+
+const BaseCountryFilter = observer(({store, countryListing}) => {
+    return <div className="form-group">
+        <label htmlFor="base_country_filter">Base Country</label>
+        <CheckboxedMultiSelect
+            value={store.filters.base_countries}
+            options={countryListing}
+            onChange={(e) => store.changeBaseCountryFilter(e)}
+            placeholder="None Selected"
+            id="base_country_filter" />
+    </div>
+})
+
+const ProgramFilter = observer(({store, programListing}) => {
+    return <div className="form-group">
+        <label htmlFor="programs_filter">Programs</label>
+        <CheckboxedMultiSelect
+            value={store.filters.programs}
+            options={programListing}
+            onChange={(e) => store.changeProgramFilter(e)}
+            placeholder="None Selected"
+            id="programs_filter" />
+    </div>
+})
 
 export const IndexView = observer(
     ({store}) => {
-        const countries_listing = store.available_countries.map(country => ({value: country.id, label: country.country}))
-        const organization_listing = store.available_organizations.map(org => ({value: org.id, label: org.name}))
-        const program_listing = Object.entries(store.available_programs).map(([k, program]) => ({value: program.id, label: program.name}))
-        const user_listing = store.available_users.map(user => ({value: user.id, label: user.name}))
-        const programs_by_country_listing = Object.entries(store.programs_by_country).map(
-            ([k, country]) => ({...country, programs: country.programs.map(program_id => store.available_programs[program_id])})
-        )
+        const countries_listing = Object.entries(store.countries).map(([id, country]) => ({value: country.id, label: country.name}))
+        const organization_listing = store.organizations.map(org => ({value: org.id, label: org.name}))
+        const program_listing = Object.entries(store.programs).map(([id, program]) => ({value: program.id, label: program.name}))
+        const user_listing = store.users.map(user => ({value: user.id, label: user.name}))
 
         return <div id="user-management-index-view" className="container-fluid row">
             <div className="col col-sm-3 filter-section">
-                <div className="form-group">
-                    <label htmlFor="countries_permitted_filter">Countries Permitted</label>
-                    <Select
-                    value={store.filters.countries}
-                    options={countries_listing}
-                    onChange={(e) => store.changeCountryFilter(e)}
-                    isMulti={true}
-                    placeholder="None Selected"
-                    id="countries_permitted_filter" />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="base_country_filter">Base Country</label>
-                    <Select
-                    value={store.filters.base_countries}
-                    options={countries_listing}
-                    onChange={(e) => store.changeBaseCountryFilter(e)}
-                    isMulti={true}
-                    placeholder="None Selected"
-                    id="base_country_filter" />
-                </div>
+                <CountryFilter store={store} countryListing={countries_listing} />
+                <BaseCountryFilter store={store} countryListing={countries_listing} />
+                <ProgramFilter store={store} programListing={program_listing} />
                 <div className="form-group">
                     <label htmlFor="organization_filter">Organization</label>
                     <Select
@@ -51,16 +78,6 @@ export const IndexView = observer(
                     isMulti={true}
                     placeholder="None Selected"
                     id="organization_filter" />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="programs_filter">Programs</label>
-                    <Select
-                    value={store.filters.programs}
-                    options={program_listing}
-                    onChange={(e) => store.changeProgramFilter(e)}
-                    isMulti={true}
-                    placeholder="None Selected"
-                    id="programs_filter" />
                 </div>
                 <div className="form-group">
                     <label htmlFor="status_filter">Status</label>
@@ -80,15 +97,7 @@ export const IndexView = observer(
                     placeholder="None Selected"
                     id="admin_role_filter" />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="users_filter">Users</label>
-                    <CheckboxedMultiSelect
-                    value={store.filters.users}
-                    options={user_listing}
-                    onChange={(e) => store.changeUserFilter(e)}
-                    placeholder="None Selected"
-                    id="users_filter" />
-                </div>
+                <UserFilter store={store} userListing={user_listing} />
                 <div className="filter-buttons">
                     <button className="btn btn-primary" onClick={() => store.fetchUsers()}>Apply</button>
                     <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>Reset</button>
@@ -104,12 +113,13 @@ export const IndexView = observer(
                         <button className="btn btn-outline-primary">Apply</button>
                     </div>
                     <div>
-                        <button className="btn btn-primary"><i className="fa fa-plus-circle"></i>Add User</button>
+                        <button className="btn btn-primary" onClick={() => store.createUser()}><i className="fa fa-plus-circle"></i>Add User</button>
                     </div>
                 </div>
                 <div className="list-table row">
                     <ManagementTable
-                        data={store.users}
+                        newData={store.new_user}
+                        data={store.users_listing}
                         keyField="id"
                         HeaderRow={({Col, Row}) =>
                             <Row>
@@ -135,13 +145,18 @@ export const IndexView = observer(
                                         ProfileSection={() =>
                                             <EditUserProfile
                                             userData={data}
-                                            onSave={(new_user_data) => store.saveUserEdit(new_user_data)}
-                                            organizations={store.available_organizations} />}
+                                            onSave={(new_user_data) => store.saveUserProfile(data.id, new_user_data)}
+                                            organizations={store.organizations} />}
                                         ProgramSection={() =>
                                             <EditUserPrograms
+                                            store={store}
                                             user={data}
-                                            programsByCountry={programs_by_country_listing}/>}
-                                        HistorySection={() => <EditUserHistory />}
+                                            onSave={(new_program_data) => store.saveUserPrograms(data.id, new_program_data)}/>}
+                                        HistorySection={() =>
+                                            <EditUserHistory
+                                            userData={data}
+                                            history={store.editing_target_data.history}
+                                            onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>}
                                     />
                                 </Wrapper>
                             }>
@@ -153,8 +168,8 @@ export const IndexView = observer(
                                         </div>
                                     </div>
                                 </Col>
-                                <Col size="2">{data.name}</Col>
-                                <Col>{data.organization_name}</Col>
+                                <Col size="2">{data.name || "---"}</Col>
+                                <Col>{data.organization_name || "---"}</Col>
                                 <Col><a href="">{data.user_programs} programs</a></Col>
                                 <Col size="0.5">{data.is_admin?'Yes':'No'}</Col>
                                 <Col size="0.25">{data.is_active?'Active':'Inactive'}</Col>

@@ -20,6 +20,7 @@ def convert2dateobject(value):
     except Exception:
         return value
 
+
 @register.filter
 def concat_string(value1, value2):
     """
@@ -28,11 +29,47 @@ def concat_string(value1, value2):
     """
     return "%s%s" % (value1, value2)
 
+
 @register.filter('jsonify')
 def jsonify(object):
     if isinstance(object, QuerySet):
         return serialize('json', object)
     return simplejson.dumps(object)
+
+
+@register.filter
+def and_only(value1, value2):
+    """
+    Returns "and" if both values are true.
+    Useful inside {% blocktrans %}
+    Usage: {{ value1|and_only:value2 }}
+    """
+    return _("and") if (value1 and value2) else ""
+
+
+@register.filter
+def or_only(value1, value2):
+    """
+    Returns "or" if either value is true
+    Useful inside {% blocktrans %}
+    Usage: {{ value1|or_only:value2 }}
+    """
+    return _("or") if (value1 or value2) else ""
+
+
+@register.filter
+def and_or(value1, value2):
+    """
+    Returns "or" if either value is true, returns "and" if both values are true
+    Useful inside {% blocktrans %}
+    Usage: {{ value1|and_or:value2 }}
+    """
+    result = ""
+    if (value1 and value2):
+        result = _("and")
+    elif (value1 or value2):
+        result = _("or")
+    return result
 
 
 @register.filter('symbolize_change')
@@ -122,6 +159,20 @@ def make_percent(numerator, denominator):
         return 100
     return max(1, min(99, int(round(float(numerator*100)/denominator))))
 
+@register.inclusion_tag('indicators/tags/target-percent-met.html', takes_context=True)
+def target_percent_met(context, percent_met, has_ended):
+    margin = Indicator.ONSCOPE_MARGIN
+    on_track = None
+    if percent_met:
+        on_track = abs(1-percent_met) <= margin
+        percent_met = percent_met*100
+    return {
+        'on_track': on_track,
+        'percent_met': percent_met,
+        'has_ended': has_ended
+    }
+
+
 @register.inclusion_tag('indicators/tags/gauge-tank.html', takes_context=True)
 def gauge_tank(context, metric, has_filters=True):
     labels = {
@@ -136,7 +187,7 @@ def gauge_tank(context, metric, has_filters=True):
             # Translators: a label in a graphic. Example: 31% have missing targets
             'filter_title': _('have missing targets'),
             'empty': _('No targets'),
-            'help_text': _(''), # currently unused
+            'help_text': '', # currently unused
             'data_target': 'defined-targets',
         },
         'reported_results' : {
@@ -150,7 +201,7 @@ def gauge_tank(context, metric, has_filters=True):
             # Translators: a label in a graphic. Example: 31% have missing results
             'filter_title': _('have missing results'),
             'empty': _('No results'),
-            'help_text': _(''), # currently unused
+            'help_text': '', # currently unused
             'data_target': 'reported-results',
         },
         'results_evidence': {
@@ -164,7 +215,7 @@ def gauge_tank(context, metric, has_filters=True):
             # Translators: a label in a graphic. Example: 31% have missing evidence
             'filter_title': _('have missing evidence'),
             'empty': _('No evidence'),
-            'help_text': _(''), # currently unused
+            'help_text': '', # currently unused
             'data_target': 'has-evidence',
         },
     }

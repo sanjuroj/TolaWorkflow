@@ -1,6 +1,6 @@
 import {api} from '../../../api';
 
-export const fetchUsersWithFilter = (page, filters) => api.get('/api/tola_management/user/', {params: {page: page, ...filters}}).then(response => {
+export const fetchUsersWithFilter = (page, filters) => api.get('/tola_management/user/', {params: {page: page, ...filters}}).then(response => {
     let data = response.data
 
     let total_results_count = data.count
@@ -16,11 +16,21 @@ export const fetchUsersWithFilter = (page, filters) => api.get('/api/tola_manage
     }
 })
 
-export const saveUser = (data) => api.post(`/api/tola_managment/user/${data.id}/update_user`, data).then((response) => {
-    return response.data
+export const saveUserProfile = (user_id, data) => api.put(`/tola_management/user/${user_id}/`, data).then((response) => {
 })
+
+export const fetchUserProgramAccess = (user_id) => api.get(`/tola_management/user/${user_id}/program_access/`).then(response => response.data)
+
+export const saveUserPrograms = (user_id, data) => api.put(`/tola_management/user/${user_id}/program_access/`, data).then(response => {
+
+})
+
+export const fetchUserHistory = (user_id) => api.get(`/tola_management/user/${user_id}/history/`).then(response => response.data)
 
 export default {
     fetchUsersWithFilter,
-    saveUser
+    saveUserProfile,
+    fetchUserProgramAccess,
+    saveUserPrograms,
+    fetchUserHistory
 }

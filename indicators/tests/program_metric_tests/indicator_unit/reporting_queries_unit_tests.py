@@ -335,7 +335,8 @@ class TestSingleReportingIndicator(ReportingIndicatorBase):
             self.indicator.target_frequency = frequency
             self.indicator.save()
             self.load_targets()
-            self.load_data()
+            for target in self.targets:
+                self.load_data(indicator=target.indicator, target=target)
             indicator = self.get_annotated_indicator()
             self.assertTrue(indicator.reporting)
             for target in self.targets:
@@ -387,6 +388,7 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
                 program=self.program
             )
             self.load_targets(indicator=indicator)
-            self.load_data(indicator=indicator)
+        for target in self.targets:
+            self.load_data(indicator=target.indicator, target=target)
         for indicator in MetricsIndicator.objects.with_annotations('reporting').all():
             self.assertTrue(indicator.reporting)
