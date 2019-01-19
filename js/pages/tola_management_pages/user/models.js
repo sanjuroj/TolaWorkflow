@@ -23,6 +23,8 @@ export class UserStore {
         history: []
     }
 
+    @observable new_user = null
+
     //filter options
     @observable countries = []
     @observable organizations = []
@@ -186,6 +188,20 @@ export class UserStore {
     @action
     updateActiveEditPage(section_name) {
         this.active_edit_page = section_name
+    }
+
+    @action
+    createUser() {
+        this.new_user = {
+            id: "new",
+            name: "",
+            email: "",
+            phone_number: "",
+            organization_id: null,
+            mode_of_address: "",
+            mode_of_contact: "",
+            title: ""
+        }
     }
 
     @action

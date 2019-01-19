@@ -113,11 +113,12 @@ export const IndexView = observer(
                         <button className="btn btn-outline-primary">Apply</button>
                     </div>
                     <div>
-                        <button className="btn btn-primary"><i className="fa fa-plus-circle"></i>Add User</button>
+                        <button className="btn btn-primary" onClick={() => store.createUser()}><i className="fa fa-plus-circle"></i>Add User</button>
                     </div>
                 </div>
                 <div className="list-table row">
                     <ManagementTable
+                        newData={store.new_user}
                         data={store.users_listing}
                         keyField="id"
                         HeaderRow={({Col, Row}) =>
@@ -167,8 +168,8 @@ export const IndexView = observer(
                                         </div>
                                     </div>
                                 </Col>
-                                <Col size="2">{data.name}</Col>
-                                <Col>{data.organization_name}</Col>
+                                <Col size="2">{data.name || "---"}</Col>
+                                <Col>{data.organization_name || "---"}</Col>
                                 <Col><a href="">{data.user_programs} programs</a></Col>
                                 <Col size="0.5">{data.is_admin?'Yes':'No'}</Col>
                                 <Col size="0.25">{data.is_active?'Active':'Inactive'}</Col>

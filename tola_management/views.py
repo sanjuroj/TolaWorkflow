@@ -312,8 +312,8 @@ class UserAdminViewSet(viewsets.ModelViewSet):
             country_data = request.data["country"]
             added_countries = []
             removed_countries = []
-            for country_id, has_access in country_data.iteritems():
-                if has_access:
+            for country_id, permissions in country_data.iteritems():
+                if permissions.has_access:
                     added_countries.append(country_id)
                 else:
                     removed_countries.append(country_id)
@@ -324,7 +324,7 @@ class UserAdminViewSet(viewsets.ModelViewSet):
             program_data = request.data["program"]
             added_programs = []
             removed_programs = []
-            for program_id, has_access in program_data.iteritems():
+            for program_id, permissions in program_data.iteritems():
                 if has_access:
                     added_programs.append(program_id)
                 else:
@@ -342,11 +342,23 @@ class UserAdminViewSet(viewsets.ModelViewSet):
 
             country_access = {}
             for country in user.countries.all():
-                country_access[country.id] = True
+                country_access[country.id] = {
+                    "has_access": True
+                }
+
+            for country_role in user.country_roles.all():
+                if country_role.country.id in country_access:
+                    country_access[country_role.country.id]["role"] = country_role.role
 
             program_access = {}
             for program in user.program_access.all():
-                program_access[program.id] = True
+                program_access[program.id] = {
+                    "has_access": True
+                }
+
+            for program_role in user.program_roles.all():
+                if program_role.program.id in program_access:
+                    program_access[program_role.program.id]["role"] = program_role.role
 
             return Response({
                 "country": country_access,

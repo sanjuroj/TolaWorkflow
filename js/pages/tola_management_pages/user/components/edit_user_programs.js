@@ -22,10 +22,10 @@ const denormalize = (countries, programs, access_listing) => {
     return Object.entries(countries).map(([id, country]) => ({
         id: country.id,
         name: country.name,
-        has_access: access_listing && access_listing.country[country.id] || false,
+        has_access: access_listing && access_listing.country[country.id] && access_listing.country[country.id].has_access || false,
         permissions: {
             options: country_options,
-            permission_level: country_options[0]
+            permission_level: (access_listing && access_listing.country[country.id] && access_listing.country[country.id].role) || country_options[0]
         },
         type: "country",
         programs: country.programs.map(program_id => {
@@ -33,10 +33,10 @@ const denormalize = (countries, programs, access_listing) => {
             return {
                 id: program.id,
                 name: program.name,
-                has_access: access_listing && access_listing.country[country.id] || access_listing.program[program.id] || false,
+                has_access: access_listing && (access_listing.country[country.id] && access_listing.country[country.id].has_access) || (access_listing.program[program.id] && access_listing.program[program.id].has_access) || false,
                 permissions: {
                     options: program_options,
-                    permission_level: program_options[0]
+                    permission_level: (access_listing && access_listing.country[country.id] && access_listing.country[country.id].role) || program_options[0]
                 },
                 type: "program"
             }
@@ -82,7 +82,7 @@ export default class EditUserPrograms extends React.Component {
     }
 
     componentWillReceiveProps(next_props) {
-        const denormalized = denormalize(next_props.store.countries, next_props.store.programs, store.editing_target_data.programs)
+        const denormalized = denormalize(next_props.store.countries, next_props.store.programs, next_props.store.editing_target_data.programs)
         const filtered_countries = apply_filter(this.state.filter_string, denormalized)
         this.setState({
             filtered_countries: filtered_countries,
