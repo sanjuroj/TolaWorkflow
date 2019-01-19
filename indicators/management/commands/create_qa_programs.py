@@ -101,10 +101,6 @@ class Command(BaseCommand):
              'direction': Indicator.DIRECTION_OF_CHANGE_NONE, 'null_level': None},
         ]
 
-        short_null_levels = [
-            None, None, 'targets', 'targets', None, 'results', 'evidence', 'evidence', 'targets', None
-        ]
-
         # Create programs for specific people
 
         if options['names']:
@@ -202,6 +198,10 @@ class Command(BaseCommand):
         # print 'Creating null program with no evidence'
         # null_id = self.create_program(main_start_date, main_end_date, country, 'QA Program --- No Evidence Here')
         # self.create_full_indicator_set(null_id, null_level=self.NULL_LEVELS['EVIDENCE'])
+
+        short_null_levels = [
+            None, None, 'results', 'targets', None, 'results', 'evidence', 'evidence', 'targets', None
+        ]
 
         short_programs = [
             ('QA Program - PaQ', False),
@@ -333,8 +333,8 @@ class Command(BaseCommand):
         # Keep track of results and evidence created across the whole programs so we can skip them periodically
         result_count = 0
         evidence_count = 0
-        result_skip_mod = 5
-        evidence_skip_mod = 5
+        result_skip_mod = 2
+        evidence_skip_mod = 2
 
         for n, params in enumerate(param_sets):
 
@@ -398,12 +398,12 @@ class Command(BaseCommand):
                         target_start = 500
                         target_increment = -int(math.floor((target_start/len(periodic_targets))/10)*10)
                         achieved_start = 400
-                        achieved_increment = -(target_increment-2)
+                        achieved_increment = target_increment-2
                     else:
                         target_start = 500
                         target_increment = -int(math.floor((target_start/len(periodic_targets))/10)*10)
                         achieved_start = 400
-                        achieved_increment = -(target_increment-2)
+                        achieved_increment = target_increment-2
             else:
                 if params['direction'] == Indicator.DIRECTION_OF_CHANGE_POSITIVE:
                     # Don't need to check cumulative because we don't really handle it
@@ -436,15 +436,11 @@ class Command(BaseCommand):
 
                 # Skip creating a result if the null_level is result or if
                 # the number of results has reached the arbitrary skip point.
-                # print 'rcount {}'.format(result_count)
-
                 # Testing if i is 0 to advance the count because the first period doesn't
-                # constitute a skipable period.
+                # constitute a skipable period, it should always be populated (by request of testers).
                 if i != 0:
                     result_count += 1
                 if result_count % result_skip_mod == result_skip_mod - 1 and i != 0:
-                    # print 'skipping result for {}, {}, {} '.format(
-                    #     program.name, indicator.name, params)
                     continue
                 if params['null_level'] == 'results':
                     continue
@@ -473,8 +469,6 @@ class Command(BaseCommand):
 
                 evidence_count += 1
                 if evidence_count % evidence_skip_mod == evidence_skip_mod - 1:
-                    # print 'skipping evidence for {}, {}, {} '.format(
-                    #     program.name, indicator.name, params)
                     continue
                 if params['null_level'] == 'evidence':
                     continue
@@ -486,7 +480,7 @@ class Command(BaseCommand):
                 if i == 0:
                     document2 = Documentation.objects.create(
                         program=program, name='Doc for CDid {}'.format(cd.id), url='http://my/doc/here/')
-                    cd2.evidence = document
+                    cd2.evidence = document2
                     cd2.save()
 
             indicator.lop_target = lop_target
