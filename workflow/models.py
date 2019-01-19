@@ -151,6 +151,9 @@ class TolaUser(models.Model):
     privacy_disclaimer_accepted = models.BooleanField(default=False)
     create_date = models.DateTimeField(null=True, blank=True)
     edit_date = models.DateTimeField(null=True, blank=True)
+    mode_of_address = models.CharField(blank=True, null=True, max_length=255)
+    mode_of_contact = models.CharField(blank=True, null=True, max_length=255)
+    phone_number = models.CharField(blank=True, null=True, max_length=50)
 
     class Meta:
         verbose_name = _("Tola User")
@@ -184,7 +187,6 @@ class TolaUser(models.Model):
     def update_active_country(self, country):
         self.active_country = country
         super(TolaUser, self).save()
-
 
 class TolaBookmarks(models.Model):
     user = models.ForeignKey(TolaUser, related_name='tolabookmark', verbose_name=_("User"))
@@ -364,7 +366,7 @@ class Program(models.Model):
     edit_date = models.DateTimeField(null=True, blank=True)
     budget_check = models.BooleanField(_("Enable Approval Authority"), default=False)
     country = models.ManyToManyField(Country, verbose_name=_("Country"))
-    user_access = models.ManyToManyField(TolaUser, blank=True)
+    user_access = models.ManyToManyField(TolaUser, blank=True, related_name="program_access")
     public_dashboard = models.BooleanField(_("Enable Public Dashboard"), default=False)
     start_date = models.DateField(_("Program Start Date"), null=True, blank=True)
     end_date = models.DateField(_("Program End Date"), null=True, blank=True)
@@ -1614,6 +1616,27 @@ class LoggedUser(models.Model):
     # user_logged_in.connect(login_user)
     # user_logged_out.connect(logout_user)
 
+COUNTRY_ROLE_CHOICES = (
+    ('user', 'User'),
+    ('basic_admin', 'Basic Admin'),
+    ('super_admin', 'Super Admin')
+)
+
+class TolaUserCountryRoles(models.Model):
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name="user_roles")
+    user = models.ForeignKey(TolaUser, on_delete=models.CASCADE, related_name="country_roles")
+    role = models.CharField(max_length=100, choices=COUNTRY_ROLE_CHOICES)
+
+PROGRAM_ROLE_CHOICES = (
+    ('low', 'Low'),
+    ('medium', 'Medium'),
+    ('high', 'High')
+)
+
+class TolaUserProgramRoles(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name="user_roles")
+    user = models.ForeignKey(TolaUser, on_delete=models.CASCADE, related_name="program_roles")
+    role = models.CharField(max_length=100, choices=PROGRAM_ROLE_CHOICES)
 
 def get_user_country(request):
 

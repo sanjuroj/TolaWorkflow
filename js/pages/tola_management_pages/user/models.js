@@ -2,22 +2,35 @@ import { observable, computed, action } from "mobx";
 import api from './api';
 
 export class UserStore {
-    @observable users = []
+    @observable users_listing = []
     @observable users_count = null
-    @observable fetching = false
-    @observable saving = false
+    @observable fetching_users_listing = false
     @observable current_page = 0
     @observable total_pages = null
     @observable bulk_targets = new Map()
     @observable bulk_targets_all = false
+
+    @observable saving_user_profile = false
+    @observable saving_user_programs = false
+
+    @observable fetching_editing_target = false
     @observable editing_target = null
+    @observable editing_target_data = {
+        programs: {
+            country: {},
+            program: {}
+        },
+        history: []
+    }
+
+    @observable new_user = null
 
     //filter options
-    @observable available_countries = []
-    @observable available_organizations = []
-    @observable available_programs = {}
-    @observable programs_by_country = {}
-    @observable available_users = []
+    @observable countries = []
+    @observable organizations = []
+    @observable programs = {}
+    @observable users = []
+
     user_status_options = [
         {value: 1, label: 'Active'},
         {value: 0, label: 'Inactive'}
@@ -42,14 +55,12 @@ export class UserStore {
         countries,
         organizations,
         programs,
-        programs_by_country,
         users,
     ) {
-        this.available_countries = countries
-        this.available_organizations = organizations
-        this.available_programs = programs
-        this.programs_by_country = programs_by_country
-        this.available_users = users.filter(user => user.name)
+        this.countries = countries
+        this.organizations = organizations
+        this.programs = programs
+        this.users = users.filter(user => user.name)
         this.fetchUsers()
     }
 
@@ -85,10 +96,10 @@ export class UserStore {
 
     @action
     fetchUsers() {
-        this.fetching = true
+        this.fetching_users_listing = true
         api.fetchUsersWithFilter(this.current_page + 1, this.marshalFilters(this.filters)).then(results => {
-            this.fetching = false
-            this.users = results.users
+            this.fetching_users_listing = false
+            this.users_listing = results.users
             this.bulk_targets = new Map(this.users.map(user => [user.id, false]))
             this.users_count = results.total_users
             this.total_pages = results.total_pages
@@ -128,7 +139,7 @@ export class UserStore {
     }
 
     @action
-    changeBaseCountryFilter(countries) {
+    changeBaseCountryFilter(base_countries) {
         this.filters.base_countries = base_countries
     }
 
@@ -160,9 +171,17 @@ export class UserStore {
     @action
     toggleEditingTarget(user_id) {
         if(this.editing_target == user_id) {
-            this.editing_target = false;
+            this.editing_target = false
         } else {
-            this.editing_target = user_id;
+            this.editing_target = user_id
+            this.fetching_editing_target = true
+            Promise.all([api.fetchUserProgramAccess(user_id), api.fetchUserHistory(user_id)]).then(([program_data, history_data]) => {
+                this.fetching_editing_target = false
+                this.editing_target_data = {
+                    programs: program_data,
+                    history: history_data
+                }
+            })
         }
     }
 
@@ -172,16 +191,40 @@ export class UserStore {
     }
 
     @action
-    saveUserEdit(new_user_data) {
-        const user_idx = this.users.findIndex(u => u.id == new_user_data.id)
+    createUser() {
+        this.new_user = {
+            id: "new",
+            name: "",
+            email: "",
+            phone_number: "",
+            organization_id: null,
+            mode_of_address: "",
+            mode_of_contact: "",
+            title: ""
+        }
+    }
 
+    @action
+    saveUserProfile(user_id, new_user_data) {
+        const user_idx = this.users_listing.findIndex(u => u.id == new_user_data.id)
         if(user_idx !== -1) {
-            this.users[user_idx] = new_user_data
-            this.saving = true
-            api.saveUser(new_user_data).then(result => {
-                this.saving = false
+            this.saving_user_profile = true
+            api.saveUserProfile(user_id, new_user_data).then(result => {
+                this.saving_user_profile = false
+                this.users_listing[user_idx] = {
+                    ...this.users_listing[user_idx],
+                    ...new_user_data
+                }
             })
         }
+    }
+
+    @action
+    saveUserPrograms(user_id, new_user_programs_data) {
+        this.save_user_programs = true
+        api.saveUserPrograms(user_id, new_user_programs_data).then(result => {
+            this.save_user_programs = false
+        })
     }
 
     @action
