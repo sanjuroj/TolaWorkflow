@@ -73,12 +73,34 @@ def get_user_page_context(request):
         "users": list(TolaUser.objects.all().values())
     }
 
+def get_organization_page_context(request):
+    countries = {}
+    for country in Country.objects.all():
+        countries[country.id] = {"id": country.id, "name": country.country, "programs": []}
+
+    programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
+    programs = {}
+    for program in list(programs_qs):
+        programs[program.id] = {"id": program.id, "name": program.name, "country_id": program.country_id}
+
+    organizations = {}
+    for o in Organization.objects.all():
+        organizations[o.id] = {"id": o.id, "name": o.name}
+
+    return {
+        "countries": countries,
+        "programs": programs,
+        "organizations": organizations
+    }
+
 # Create your views here.
 @login_required(login_url='/accounts/login/')
 def app_host_page(request, react_app_page):
     js_context = {}
     if react_app_page == 'user':
         js_context = get_user_page_context(request)
+    elif react_app_page == 'organization':
+        js_context = get_organization_page_context(request)
 
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
     return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "report_wide": True})
@@ -365,140 +387,111 @@ class UserAdminViewSet(viewsets.ModelViewSet):
                 "program": program_access
             })
 
+
+class OrganizationAdminSerializer(Serializer):
+    id = IntegerField()
+    name = CharField(max_length=100)
+    program_count = IntegerField(required=False)
+    user_count = IntegerField(required=False)
+    is_active = BooleanField()
+
+    class Meta:
+        fields = (
+            'id',
+            'name',
+            'program_count',
+            'user_count',
+            'is_active',
+        )
+
 class OrganizationAdminViewSet(viewsets.ModelViewSet):
-    serializer_class = UserAdminSerializer
+    serializer_class = OrganizationAdminSerializer
     pagination_class = SmallResultsSetPagination
 
     def get_queryset(self):
         req = self.request
 
-    #     params = []
+        params = []
 
-    #     country_join = ''
-    #     country_where = ''
-    #     if req.GET.getlist('countries[]'):
-    #         params.extend(req.GET.getlist('countries[]'))
-    #         params.extend(req.GET.getlist('countries[]'))
+        country_where = ''
+        if req.GET.getlist('countries[]'):
+            params.extend(req.GET.getlist('countries[]'))
 
-    #         #create placeholders for multiple countries and strip the trailing comma
-    #         in_param_string = ('%s,'*len(req.GET.getlist('countries[]')))[:-1]
+            #create placeholders for multiple countries and strip the trailing comma
+            in_param_string = ('%s,'*len(req.GET.getlist('countries[]')))[:-1]
 
-    #         country_join = 'INNER JOIN workflow_tolauser_countries wtuc ON wtuc.tolauser_id = wtu.id'
-    #         country_where = 'AND (wtuc.country_id IN ({}) OR wtu.country_id IN ({}))'.format(in_param_string, in_param_string)
+            country_where = 'AND wtu.country_id IN ({})'.format(in_param_string)
 
-    #     base_country_where = ''
-    #     if req.GET.getlist('base_countries[]'):
-    #         params.extend(req.GET.getlist('base_countries[]'))
+        program_where = ''
+        if req.GET.getlist('programs[]'):
+            params.extend(req.GET.getlist('programs[]'))
 
-    #         #create placeholders for multiple countries and strip the trailing comma
-    #         in_param_string = ('%s,'*len(req.GET.getlist('base_countries[]')))[:-1]
+            #create placeholders for multiple programs and strip the trailing comma
+            in_param_string = ('%s,'*len(req.GET.getlist('programs[]')))[:-1]
 
-    #         base_country_where = 'AND wtu.country_id IN ({})'.format(in_param_string)
+            program_where = 'AND (pz.program_id IN ({}))'.format(in_param_string)
 
-    #     program_join = ''
-    #     program_where = ''
-    #     if req.GET.getlist('programs[]'):
-    #         params.extend(req.GET.getlist('programs[]'))
+        organization_where = ''
+        if req.GET.getlist('organizations[]'):
+            params.extend(req.GET.getlist('organizations[]'))
 
-    #         #create placeholders for multiple programs and strip the trailing comma
-    #         in_param_string = ('%s,'*len(req.GET.getlist('programs[]')))[:-1]
+            #create placeholders for multiple programs and strip the trailing comma
+            in_param_string = ('%s,'*len(req.GET.getlist('organizations[]')))[:-1]
 
-    #         program_join = """
-    #             INNER JOIN (
-    #                     SELECT
-    #                         wpua.tolauser_id,
-    #                         wpua.program_id
-    #                     FROM workflow_program_user_access wpua
-    #                 UNION DISTINCT
-    #                     SELECT
-    #                         wtuc.tolauser_id,
-    #                         wpc.program_id
-    #                     FROM workflow_tolauser_countries wtuc
-    #                     INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
-    #             ) pz ON pz.tolauser_id = wtu.id
-    #         """
-    #         program_where = 'AND (pz.program_id IN ({}))'.format(in_param_string)
+            organization_where = 'AND (wo.id IN ({}))'.format(in_param_string)
 
-    #     user_status_where = ''
-    #     if req.GET.get('user_status'):
-    #         params.append(req.GET.get('user_status'))
+        organization_status_where = ''
+        if req.GET.get('organization_status'):
+            params.append(req.GET.get('organization_status'))
 
-    #         user_status_where = 'AND au.is_active = %s'
+            user_status_where = 'AND au.is_active = %s'
 
-    #     admin_role_where = ''
-    #     if req.GET.get('admin_role'):
-    #         params.append(req.GET.get('admin_role'))
+        return Organization.objects.raw("""
+            SELECT
+                wo.id,
+                wo.name,
+                COUNT(DISTINCT wtu.id) AS user_count,
+                COUNT(DISTINCT pz.program_id) AS program_count,
+                1 AS is_active
+            FROM workflow_organization wo
+            LEFT JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
+            LEFT JOIN (
+                    SELECT
+                        wpua.tolauser_id,
+                        wpua.program_id
+                    FROM workflow_program_user_access wpua
+                UNION DISTINCT
+                    SELECT
+                        wtuc.tolauser_id,
+                        wpc.program_id
+                    FROM workflow_tolauser_countries wtuc
+                    INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
+            ) pz ON pz.tolauser_id = wtu.id
+            WHERE
+                1=1
+                {program_where}
+                {country_where}
+                {organization_where}
+            GROUP BY wo.id
+        """.format(
+            program_where=program_where,
+            country_where=country_where,
+            organization_where=organization_where
+        ), params)
 
-    #         admin_role_where = 'AND au.is_staff = %s'
+    def list(self, request):
+        queryset = self.get_queryset()
 
-    #     users_where = ''
-    #     if req.GET.getlist('users[]'):
-    #         params.extend(req.GET.getlist('users[]'))
+        #TODO write a more performant paginator, rather than converting the
+        #query to a list. For now, we're extremely performant with about 1000
+        #rows, so just convert to a list and paginate that way
+        page = self.paginate_queryset(list(queryset))
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
-    #         #create placeholders for multiple countries and strip the trailing comma
-    #         in_param_string = ('%s,'*len(req.GET.getlist('users[]')))[:-1]
-
-    #         users_where = 'AND wtu.id IN ({})'.format(in_param_string)
-
-    #     return TolaUser.objects.raw("""
-    #         SELECT
-    #             wtu.id,
-    #             au.is_active AS is_active,
-    #             au.is_staff AS is_admin,
-    #             wtu.name,
-    #             wo.name AS organization_name,
-    #             wo.id AS organization_id,
-    #             COUNT(z.program_id) AS user_programs
-    #         FROM workflow_tolauser wtu
-    #         INNER JOIN auth_user au ON wtu.user_id = au.id
-    #         {country_join}
-    #         LEFT JOIN (
-    #                 SELECT
-    #                     wpua.tolauser_id,
-    #                     wpua.program_id
-    #                 FROM workflow_program_user_access wpua
-    #             UNION DISTINCT
-    #                 SELECT
-    #                     wtuc.tolauser_id,
-    #                     wpc.program_id
-    #                 FROM workflow_tolauser_countries wtuc
-    #                 INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
-    #         ) z ON z.tolauser_id = wtu.id
-    #         {program_join}
-    #         LEFT JOIN workflow_organization wo ON wtu.organization_id = wo.id
-    #         WHERE
-    #             1=1
-    #             {country_where}
-    #             {base_country_where}
-    #             {program_where}
-    #             {user_status_where}
-    #             {admin_role_where}
-    #             {users_where}
-    #         GROUP BY wtu.id
-    #     """.format(
-    #         country_join=country_join,
-    #         country_where=country_where,
-    #         base_country_where=base_country_where,
-    #         program_join=program_join,
-    #         program_where=program_where,
-    #         user_status_where=user_status_where,
-    #         admin_role_where=admin_role_where,
-    #         users_where=users_where
-    #     ), params)
-
-    # def list(self, request):
-    #     queryset = self.get_queryset()
-
-    #     #TODO write a more performant paginator, rather than converting the
-    #     #query to a list. For now, we're extremely performant with about 1000
-    #     #rows, so just convert to a list and paginate that way
-    #     page = self.paginate_queryset(list(queryset))
-    #     if page is not None:
-    #         serializer = self.get_serializer(page, many=True)
-    #         return self.get_paginated_response(serializer.data)
-
-    #     serializer = self.get_serializer(queryset, many=True)
-    #     return Response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     # @list_route(methods=['post'], url_path='create_user', url_name='create_user')
     # def create_user(self, request):
