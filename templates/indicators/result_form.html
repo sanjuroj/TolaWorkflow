@@ -55,12 +55,12 @@
             </div>
         {% endfor %}
     {% endif %}
-	{% csrf_token %}
+    {% csrf_token %}
     {% include 'indicators/results/result_form_common_fields.html' %}
     <div id="evidence_subform">
         <h2>{% trans "Evidence" %}</h2>
         <h3 class="no-bold">
-            {% trans 'Link this result to a record or folder of records that serves as evidence' %}
+            {% trans 'Link this result to a record or folder of records that serves as evidence.' %}
         </h3>
         {% include 'indicators/results/result_form_evidence_fields.html' %}
     </div>
