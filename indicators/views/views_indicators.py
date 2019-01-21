@@ -897,69 +897,6 @@ def merge_two_dicts(x, y):
     return z
 
 
-def result_import(request):
-    """
-    Import resuts from Tola Tables
-    """
-    owner = request.user
-
-    # get the TolaTables URL and token from the sites object
-    service = TolaSites.objects.get(site_id=1)
-
-    # add filter to get just the users tables only
-    user_filter_url = "%s&owner__username=%s" \
-                      % (service.tola_tables_url, str(owner))
-
-    shared_filter_url = "%s&shared__username=%s" \
-                        % (service.tola_tables_url, str(owner))
-
-    user_json = get_table(user_filter_url)
-    shared_json = get_table(shared_filter_url)
-
-    if type(shared_json) is not dict:
-        data = user_json + shared_json
-    else:
-        data = user_json
-
-    if request.method == 'POST':
-        id = request.POST['service_table']
-        filter_url = service.tola_tables_url + "&id=" + id
-        data = get_table(filter_url)
-
-        # Get Data Info
-        for item in data:
-            name = item['name']
-            url = item['data']
-            remote_owner = item['owner']['username']
-
-        # send table ID to count items in data
-        count = getTableCount(url, id)
-
-        # get the users country
-        countries = getCountry(request.user)
-        check_for_existence = TolaTable.objects.filter(name=name, owner=owner)
-        if check_for_existence:
-            result = check_for_existence[0].id
-        else:
-            create_table = TolaTable.objects.create(
-                name=name, owner=owner, remote_owner=remote_owner, table_id=id,
-                url=url, unique_count=count)
-
-            create_table.country.add(countries[0].id)
-            create_table.save()
-            result = create_table.id
-
-        # send result back as json
-        message = result
-        return HttpResponse(json.dumps(message),
-                            content_type='application/json')
-
-    # send the keys and vars from the json data to the template along
-    # with submitted feed info and silos for new form
-    return render(request, "indicators/result_import.html",
-                  {'getTables': data})
-
-
 def service_json(request, service):
     """
     For populating service indicators in dropdown

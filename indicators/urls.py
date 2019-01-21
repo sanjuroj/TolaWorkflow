@@ -11,7 +11,6 @@ from .views.views_indicators import (
     IndicatorExport,
     IndicatorReportData,
     ResultReportData,
-    result_import,
     service_json,
     PeriodicTargetView,
     PeriodicTargetDeleteView,
@@ -57,8 +56,6 @@ urlpatterns = [
 
      url(r'^result_add/(?P<program>\d+)/(?P<indicator>\d+)/$',
         ResultCreate.as_view(), name='result_add'),
-
-    url(r'^result_import/$', result_import, name='result_import'),
 
     url(r'^result_update/(?P<pk>\d+)/$', ResultUpdate.as_view(), name='result_update'),
 

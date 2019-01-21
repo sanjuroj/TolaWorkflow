@@ -6,16 +6,6 @@
         $(document).ready(function() {
             /* add select2 js library to the indicator select box */
             $("#id_site").select2();
-            //$("#id_tola_table").select2();
-            //$("#id_evidence").select2();
-            $("#id_agreement").select2();
-
-            //$('#tolatablemodal').on('hidden.bs.modal', function (e) {
-            //    var sel = $("#service_table option:selected");
-            //    $("#id_tola_table").append($("<option></option>")
-            //                .attr("value", sel.val())
-            //                .text(sel.text()));
-            //});
 
             // rotate disaggregation toggle
             // TODO: this is overly specific
@@ -76,15 +66,6 @@
             }
         });
 
-        /*
-        *  Open the TolaTables import modal when a user clicks "Import evidence from TolaTables"
-        */
-        $("#tolaTablesLink").on("click", function(e){
-            e.preventDefault();
-            $("#tolatablemodal .modal-content").load('/indicators/result_import/');
-            $("#tolatablemodal").modal("show");
-        });
-
         $(document).on('hidden.bs.modal', '.modal', function () {
             $('.modal:visible').length && $(document.body).addClass('modal-open');
         });
@@ -127,7 +108,6 @@
         </div>
         <fieldset class="pb-2 pt-2">
             <strong>
-
                 <a
                     {% if id %}
                         href="{% url 'result_delete' id %}"
