@@ -674,9 +674,7 @@ class PeriodicTargetDeleteView(DeleteView):
 
 class ResultFormMixin(object):
     def get_template_names(self):
-        if self.request.is_ajax():
-            return 'indicators/result_form_modal.html'
-        return 'indicators/result_form.html'
+        return 'indicators/result_form_modal.html'
 
     def form_invalid(self, form):
         if self.request.is_ajax():
@@ -686,7 +684,7 @@ class ResultFormMixin(object):
 
 
 class ResultCreate(ResultFormMixin, CreateView):
-    """Create new Result called by result_add as modal (if ajax) or full page (non-ajax)"""
+    """Create new Result called by result_add as modal"""
     model = Result
     form_class = ResultForm
 
@@ -765,7 +763,7 @@ class ResultCreate(ResultFormMixin, CreateView):
 
 
 class ResultUpdate(ResultFormMixin, UpdateView):
-    """Update Result view called by result_update as modal (if ajax) or full page (non-ajax)"""
+    """Update Result view called by result_update as modal"""
     model = Result
     form_class = ResultForm
 
