@@ -76,6 +76,13 @@ class Organization(models.Model):
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
+    primary_address = models.CharField(_("Primary Address"), blank=True, null=True, max_length=255)
+    primary_contact_name = models.CharField(_("Primary Contact Name"), blank=True, null=True, max_length=255)
+    primary_contact_email = models.CharField(_("Primary Contact Email"), blank=True, null=True, max_length=255)
+    primary_contact_phone = models.CharField(_("Primary Contact Phone"), blank=True, null=True, max_length=255)
+    mode_of_contact = models.CharField(_("Primary Mode of Contact"), blank=True, null=True, max_length=255)
+    is_active = models.BooleanField(default=1)
+
     class Meta:
         ordering = ('name',)
         verbose_name_plural = _("Organizations")

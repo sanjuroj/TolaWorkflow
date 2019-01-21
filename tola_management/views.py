@@ -389,16 +389,26 @@ class UserAdminViewSet(viewsets.ModelViewSet):
 
 
 class OrganizationAdminSerializer(Serializer):
-    id = IntegerField()
+    id = IntegerField(allow_null=True, required=False)
     name = CharField(max_length=100)
-    program_count = IntegerField(required=False)
-    user_count = IntegerField(required=False)
+    primary_address = CharField(max_length=255)
+    primary_contact_name = CharField(max_length=255)
+    primary_contact_email = CharField(max_length=255)
+    primary_contact_phone = CharField(max_length=255)
+    mode_of_contact = CharField(required=False, allow_null=True, allow_blank=True, max_length=255)
+    program_count = IntegerField(allow_null=True, required=False)
+    user_count = IntegerField(allow_null=True, required=False)
     is_active = BooleanField()
 
     class Meta:
         fields = (
             'id',
             'name',
+            'primary_address',
+            'primary_contact_name',
+            'primary_contact_email',
+            'primary_contact_phone',
+            'mode_of_contact',
             'program_count',
             'user_count',
             'is_active',
@@ -450,9 +460,14 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
             SELECT
                 wo.id,
                 wo.name,
+                wo.primary_address,
+                wo.primary_contact_name,
+                wo.primary_contact_email,
+                wo.primary_contact_phone,
+                wo.mode_of_contact,
                 COUNT(DISTINCT wtu.id) AS user_count,
                 COUNT(DISTINCT pz.program_id) AS program_count,
-                1 AS is_active
+                wo.is_active
             FROM workflow_organization wo
             LEFT JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
             LEFT JOIN (
@@ -493,13 +508,29 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    # @list_route(methods=['post'], url_path='create_user', url_name='create_user')
-    # def create_user(self, request):
-    #     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    #     return Response({
-    #         'status': True
-    #     })
+    def create(self, request):
+        request.data["id"] = None
+        serializer = OrganizationAdminSerializer(data=request.data)
+        if(serializer.is_valid()):
+            d = serializer.validated_data
 
-    # @detail_route(methods=['post'], url_path='update_user', url_name='update_user')
-    # def update_user(self, request, pk=None):
-    #     print("??????????????????????????????????????")
+            new_org = Organization(
+                name=d["name"],
+                primary_address=d["primary_address"],
+                primary_contact_name=d["primary_contact_name"],
+                primary_contact_email=d["primary_contact_email"],
+                primary_contact_phone=d["primary_contact_phone"],
+                mode_of_contact=d["mode_of_contact"],
+                is_active=True
+            )
+
+            new_org.save()
+            new_serializer = self.get_serializer(new_org, many=False)
+            return Response(new_serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+    def update(self, request, pk=None):
+        pass

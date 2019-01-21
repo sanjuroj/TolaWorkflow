@@ -5,6 +5,10 @@ import ManagementTable from 'components/management-table'
 import Pagination from 'components/pagination'
 import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
 
+import OrganizationEditor from './components/organization_editor'
+import EditOrganizationProfile from './components/edit_organization_profile'
+import EditOrganizationHistory from './components/edit_organization_history'
+
 const CountryFilter = observer(({store, countryListing}) => {
     return <div className="form-group">
         <label htmlFor="countries_permitted_filter">Countries</label>
@@ -52,6 +56,15 @@ export const IndexView = observer(
                 <CountryFilter store={store} countryListing={countries_listing} />
                 <ProgramFilter store={store} programListing={program_listing} />
                 <OrganizationFilter store={store} organizationListing={organization_listing} />
+                <div className="form-group">
+                    <label htmlFor="status_filter">Status</label>
+                    <Select
+                    value={store.filters.organization_status}
+                    options={store.organization_status_options}
+                    onChange={(e) => store.changeOrganizationStatusFilter(e)}
+                    placeholder="None Selected"
+                    id="status_filter" />
+                </div>
                 <div className="filter-buttons">
                     <button className="btn btn-primary" onClick={() => store.fetchOrganizations()}>Apply</button>
                     <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>Reset</button>
@@ -93,6 +106,20 @@ export const IndexView = observer(
                             expanded={data.id == store.editing_target}
                             Expando={({Wrapper}) =>
                                 <Wrapper>
+                                    <OrganizationEditor
+                                        new={data.id == 'new'}
+                                        ProfileSection={() =>
+                                            <EditOrganizationProfile
+                                            new={data.id == 'new'}
+                                            organizationData={data}
+                                            countryListing={countries_listing}
+                                            onSave={(new_organization_data) => store.updateOrganizationProfile(data.id, new_organization_data)}
+                                            onSaveNew={(new_organization_data) => store.saveNewOrganization(new_organization_data)}
+                                            onSaveNewAndAddAnother={(new_organization_data) => store.saveNewOrganizationAndAddAnother(new_organization_data)} />}
+                                        HistorySection={() =>
+                                            <EditOrganizationHistory
+                                            onSave={(new_data) => store.saveOrganizationProfile(data.id, new_data)}/>}
+                                    />
                                 </Wrapper>
                             }>
                                 <Col size="0.5">
@@ -104,7 +131,7 @@ export const IndexView = observer(
                                     </div>
                                 </Col>
                                 <Col size="2">{data.name || "---"}</Col>
-                                <Col size="1"><a href="">{data.program_count || "---"} programs</a></Col>
+                                <Col size="1"><a href="">{data.program_count} programs</a></Col>
                                 <Col size="1"><a href="">{data.user_count} users</a></Col>
                                 <Col size="0.25">{data.is_active?'Active':'Inactive'}</Col>
                             </Row>

@@ -6,6 +6,7 @@ export class OrganizationStore {
     @observable organizations_count = 0
     @observable total_pagees = 0
     @observable fetching = false
+    @observable fetching_editing_target = false
     @observable editing_target = null
     @observable current_page = 0
 
@@ -23,6 +24,11 @@ export class OrganizationStore {
         sectors: [],
         organization_status: '',
     }
+
+    organization_status_options = [
+        {value: 1, label: 'Active'},
+        {value: 0, label: 'Inactive'}
+    ]
 
     constructor(countries, programs, organizations) {
         this.fetchOrganizations()
@@ -56,7 +62,44 @@ export class OrganizationStore {
 
     @action
     createOrganization() {
+        if(this.editing_target == 'new') {
+            this.organizations.shift()
+        }
+        const new_organization = {
+            id: "new",
+            name: "",
+            program_count: 0,
+            user_count: 0,
+            is_active: false
+        }
+        this.organizations.unshift(new_organization)
+        this.editing_target = new_organization.id
+    }
 
+    @action
+    updateOrganizationProfile(id, new_data) {
+        this.saving = true
+        api.updateOrganization(id, new_data).then(result => {
+            this.saving = false
+        })
+    }
+
+    @action
+    saveNewOrganization(new_data) {
+        this.saving = true
+        api.createOrganization(new_data).then(result => {
+            this.saving = false
+
+        })
+    }
+
+    @action
+    saveNewOrganizationAndAddAnother(new_data) {
+        this.saving = true
+        api.createOrganization(new_data).then(result => {
+            this.saving = false
+
+        })
     }
 
     @action
@@ -72,6 +115,11 @@ export class OrganizationStore {
     @action
     changeOrganizationFilter(organizations) {
         this.filters.organizations = organizations
+    }
+
+    @action
+    changeOrganizationStatusFilter(status) {
+        this.filters.organization_status = status
     }
 
     @action
@@ -91,6 +139,29 @@ export class OrganizationStore {
             this.bulk_targets.forEach((val, key, map) => {
                 map.set(key, false)
             })
+        }
+    }
+
+    @action
+    toggleEditingTarget(organization_id) {
+        if(this.editing_target == 'new') {
+            this.organizations.shift()
+        }
+
+        if(this.editing_target == organization_id) {
+            this.editing_target = false
+        } else {
+            this.editing_target = organization_id
+            this.fetching_editing_target = true
+            if(!this.editing_target == 'new') {
+                // Promise.all([api.fetchUserProgramAccess(user_id), api.fetchUserHistory(user_id)]).then(([program_data, history_data]) => {
+                //     this.fetching_editing_target = false
+                //     this.editing_target_data = {
+                //         programs: program_data,
+                //         history: history_data
+                //     }
+                // })
+            }
         }
     }
 

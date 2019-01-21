@@ -142,6 +142,7 @@ export const IndexView = observer(
                             Expando={({Wrapper}) =>
                                 <Wrapper>
                                     <UserEditor
+                                        new={data.id == 'new'}
                                         ProfileSection={() =>
                                             <EditUserProfile
                                             userData={data}
