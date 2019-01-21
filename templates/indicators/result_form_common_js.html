@@ -5,14 +5,13 @@
     // Intercept CollectedDataUpdate form submission and then use ajax to submit it.
     $("#indicator_collecteddata_div").on("submit", "#result_update_form", function(e){
         e.preventDefault();
-        var isFormValid = true;
+        {#let isFormValid = true;#}
         $("#modalmessages").empty();
-        pts_valid = validatePeriodicTarget();
-        datecollected_valid = validateDateCollected();
-        achieved_valid = validate_achieved();
-        // if (pts_valid == false || datecollected_valid == false || achieved_valid == false) {
-        //     return false;
-        // }
+        let pts_valid = validatePeriodicTarget();
+        let datecollected_valid = validateDateCollected();
+        let achieved_valid = validate_achieved();
+        let evidenceValid = validateEvidence();
+
         if ($("#result_update_form div").hasClass('has-error')) {
             createAlert("danger", "{% trans 'Please complete all required fields.'|escapejs %}", true, "#modalmessages");
             $('#indicator_collecteddata_div').animate({ scrollTop: 0 }, 'slow');
@@ -24,8 +23,8 @@
         $(this.date_collected).val(date_collected_db_format);
         */
 
-        var form_url = $(this).attr('action');
-        var form_data = $(this).serialize();
+        let form_url = $(this).attr('action');
+        let form_data = $(this).serialize();
         // mark that the form data has changed so that when the modal is closed the list view can be updated
         $(this).data('recordchanged', true);
         $.post(form_url, form_data,
@@ -113,12 +112,12 @@
     }
 
     function validateDateCollected(){
-        var program_id = $("#id_program").val();
-        var reporting_period_id = `#id_link_reporting_period_${program_id}`;
-        var start_date = new Date($(reporting_period_id).data("rptstart"));
-        var end_date = new Date($(reporting_period_id).data("rptend"));
-        var field = $("#id_date_collected").val();
-        var date_collected = new Date(field);
+        let program_id = $("#id_program").val();
+        let reporting_period_id = `#id_link_reporting_period_${program_id}`;
+        let start_date = new Date($(reporting_period_id).data("rptstart"));
+        let end_date = new Date($(reporting_period_id).data("rptend"));
+        let field = $("#id_date_collected").val();
+        let date_collected = new Date(field);
         if ($.isEmptyObject(field)) {
             $("#div_id_date_collected").addClass('has-error');
             $("#id_date_collected").addClass('is-invalid');
@@ -132,7 +131,7 @@
             $("#hint_id_date_collected").html(`{% trans 'Please select a date between'|escapejs %} ${formatDate(start_date)} {% trans "and" %} ${formatDate(end_date)}.`);
             return false;
         } else {
-            var val = formatDate(field);
+            let val = formatDate(field);
             $("#id_date_collected").val(val);
             $("#div_id_date_collected").removeClass('has-error');
             $("#hint_id_date_collected").text(" ");
@@ -146,14 +145,14 @@
         //   [^)]+ : match one or more non ) characters
         //   )     : end capturing group
         //   \)    : match closing parentheses
-        var regExp = /\(([^)]+)\)/;
-        var matchFound = false
-        var target_frequency = $("#id_target_frequency").val();
+        let regExp = /\(([^)]+)\)/;
+        let matchFound = false
+        let target_frequency = $("#id_target_frequency").val();
         if (target_frequency == 1 || target_frequency == 2 || target_frequency == 8) {
             return true;
         }
         $("#id_periodic_target option").each(function() {
-            var pt_date_range;
+            let pt_date_range;
             if (target_frequency == 7) {
                 //monthly indicators do not follow the <name> (<date> <date>) model
                 pt_date_range = this.text;
@@ -164,9 +163,9 @@
                 return;
             }
             try {
-                var start_date = new Date($(this).data("start"));
-                var end_date = new Date($(this).data("end"));
-                var collected_date = new Date($("#id_date_collected").val().trim());
+                let start_date = new Date($(this).data("start"));
+                let end_date = new Date($(this).data("end"));
+                let collected_date = new Date($("#id_date_collected").val().trim());
                 if (collected_date >= start_date && collected_date <= end_date) {
                     // deselect the currently selected option
                     $("#id_periodic_target option:selected").attr("selected", false);
@@ -200,7 +199,26 @@
         return matchFound;
     }
 
+    // Do not allow record name without also an evidenc eURL
+    function validateEvidence() {
+        let recordName = $('#id_record_name').val();
+        let evidenceURL = $('#id_evidence_url').val();
 
+        if (recordName && ! evidenceURL) {
+            $("#div_id_record_name").addClass('has-error');
+            $("#id_record_name").addClass('is-invalid');
+            $("#validation_id_record_name").html("<small>{% trans 'Link to file or folder must not be empty if record name is set.'|escapejs %}</small>");
+            return false;
+        } else {
+            $("#div_id_record_name").removeClass('has-error');
+            $("#id_record_name").removeClass('is-invalid');
+            $("#validation_id_record_name").text(" ");
+        }
+
+        return true;
+    }
+
+    // called from result_form_modal.html
     function lockPeriodicTargetDropdown(){
         $("#id_periodic_target option:not(:selected)").attr("disabled", true);
         $("#id_periodic_target").attr("readonly", true);

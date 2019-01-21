@@ -1,6 +1,14 @@
 {% load widget_tweaks %}
 {% load i18n %}
+
 {# called by indicators.views.views_indicators.ResultCreate and indicators.views.views_indicators.ResultUpdate #}
+
+{# There are several files that make up the functionality of this form including: #}
+{# result_form_evidence_fields.html #}
+{# result_form_disaggregation_fields.html #}
+{# result_form_common_fields.html #}
+{# result_form_common_js.html #}
+
 {% block content %}
     <script type="text/javascript">
         $(document).ready(function() {
@@ -88,7 +96,7 @@
             {{ hidden_field }}
         {% endfor %}
 
-        <h2>{%  trans 'Result' %}</h2>
+        <h2>{% trans 'Result' %}</h2>
         <h3 class="no-bold">
           {% if object %}
               {% if object.indicator.level %}{{ object.indicator.level }} {% trans "indicator" %}: {% endif %}
