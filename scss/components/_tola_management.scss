@@ -31,20 +31,26 @@
         }
     }
 
-    .user-editor__navigation {
-        background-color: #eee;
+}
 
-        .list-group-item {
-            cursor: pointer;
-            color: darkblue;
-            background-color: transparent;
-            border: none;
-        }
+.editor__navigation {
+    background-color: #eee;
 
-        .list-group-item.selected {
-            color: #888;
-            cursor: default;
-        }
+    .list-group-item {
+        cursor: pointer;
+        color: #888;
+        background-color: transparent;
+        border: none;
+    }
+
+    .list-group-item.selected {
+        color: darkblue;
+        cursor: default;
+    }
+
+    .list-group-item.disabled {
+        cursor: default;
+        color: #888;
     }
 }
 
