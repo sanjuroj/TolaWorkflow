@@ -73,12 +73,34 @@ def get_user_page_context(request):
         "users": list(TolaUser.objects.all().values())
     }
 
+def get_organization_page_context(request):
+    countries = {}
+    for country in Country.objects.all():
+        countries[country.id] = {"id": country.id, "name": country.country, "programs": []}
+
+    programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
+    programs = {}
+    for program in list(programs_qs):
+        programs[program.id] = {"id": program.id, "name": program.name, "country_id": program.country_id}
+
+    organizations = {}
+    for o in Organization.objects.all():
+        organizations[o.id] = {"id": o.id, "name": o.name}
+
+    return {
+        "countries": countries,
+        "programs": programs,
+        "organizations": organizations
+    }
+
 # Create your views here.
 @login_required(login_url='/accounts/login/')
 def app_host_page(request, react_app_page):
     js_context = {}
     if react_app_page == 'user':
         js_context = get_user_page_context(request)
+    elif react_app_page == 'organization':
+        js_context = get_organization_page_context(request)
 
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
     return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "report_wide": True})
@@ -364,3 +386,151 @@ class UserAdminViewSet(viewsets.ModelViewSet):
                 "country": country_access,
                 "program": program_access
             })
+
+
+class OrganizationAdminSerializer(Serializer):
+    id = IntegerField(allow_null=True, required=False)
+    name = CharField(max_length=100)
+    primary_address = CharField(max_length=255)
+    primary_contact_name = CharField(max_length=255)
+    primary_contact_email = CharField(max_length=255)
+    primary_contact_phone = CharField(max_length=255)
+    mode_of_contact = CharField(required=False, allow_null=True, allow_blank=True, max_length=255)
+    program_count = IntegerField(allow_null=True, required=False)
+    user_count = IntegerField(allow_null=True, required=False)
+    is_active = BooleanField()
+
+    class Meta:
+        fields = (
+            'id',
+            'name',
+            'primary_address',
+            'primary_contact_name',
+            'primary_contact_email',
+            'primary_contact_phone',
+            'mode_of_contact',
+            'program_count',
+            'user_count',
+            'is_active',
+        )
+
+class OrganizationAdminViewSet(viewsets.ModelViewSet):
+    serializer_class = OrganizationAdminSerializer
+    pagination_class = SmallResultsSetPagination
+
+    def get_queryset(self):
+        req = self.request
+
+        params = []
+
+        country_where = ''
+        if req.GET.getlist('countries[]'):
+            params.extend(req.GET.getlist('countries[]'))
+
+            #create placeholders for multiple countries and strip the trailing comma
+            in_param_string = ('%s,'*len(req.GET.getlist('countries[]')))[:-1]
+
+            country_where = 'AND wtu.country_id IN ({})'.format(in_param_string)
+
+        program_where = ''
+        if req.GET.getlist('programs[]'):
+            params.extend(req.GET.getlist('programs[]'))
+
+            #create placeholders for multiple programs and strip the trailing comma
+            in_param_string = ('%s,'*len(req.GET.getlist('programs[]')))[:-1]
+
+            program_where = 'AND (pz.program_id IN ({}))'.format(in_param_string)
+
+        organization_where = ''
+        if req.GET.getlist('organizations[]'):
+            params.extend(req.GET.getlist('organizations[]'))
+
+            #create placeholders for multiple programs and strip the trailing comma
+            in_param_string = ('%s,'*len(req.GET.getlist('organizations[]')))[:-1]
+
+            organization_where = 'AND (wo.id IN ({}))'.format(in_param_string)
+
+        organization_status_where = ''
+        if req.GET.get('organization_status'):
+            params.append(req.GET.get('organization_status'))
+
+            user_status_where = 'AND au.is_active = %s'
+
+        return Organization.objects.raw("""
+            SELECT
+                wo.id,
+                wo.name,
+                wo.primary_address,
+                wo.primary_contact_name,
+                wo.primary_contact_email,
+                wo.primary_contact_phone,
+                wo.mode_of_contact,
+                COUNT(DISTINCT wtu.id) AS user_count,
+                COUNT(DISTINCT pz.program_id) AS program_count,
+                wo.is_active
+            FROM workflow_organization wo
+            LEFT JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
+            LEFT JOIN (
+                    SELECT
+                        wpua.tolauser_id,
+                        wpua.program_id
+                    FROM workflow_program_user_access wpua
+                UNION DISTINCT
+                    SELECT
+                        wtuc.tolauser_id,
+                        wpc.program_id
+                    FROM workflow_tolauser_countries wtuc
+                    INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
+            ) pz ON pz.tolauser_id = wtu.id
+            WHERE
+                1=1
+                {program_where}
+                {country_where}
+                {organization_where}
+            GROUP BY wo.id
+        """.format(
+            program_where=program_where,
+            country_where=country_where,
+            organization_where=organization_where
+        ), params)
+
+    def list(self, request):
+        queryset = self.get_queryset()
+
+        #TODO write a more performant paginator, rather than converting the
+        #query to a list. For now, we're extremely performant with about 1000
+        #rows, so just convert to a list and paginate that way
+        page = self.paginate_queryset(list(queryset))
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request):
+        request.data["id"] = None
+        serializer = OrganizationAdminSerializer(data=request.data)
+        if(serializer.is_valid()):
+            d = serializer.validated_data
+
+            new_org = Organization(
+                name=d["name"],
+                primary_address=d["primary_address"],
+                primary_contact_name=d["primary_contact_name"],
+                primary_contact_email=d["primary_contact_email"],
+                primary_contact_phone=d["primary_contact_phone"],
+                mode_of_contact=d["mode_of_contact"],
+                is_active=True
+            )
+
+            new_org.save()
+            new_serializer = self.get_serializer(new_org, many=False)
+            return Response(new_serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+    def update(self, request, pk=None):
+        pass
