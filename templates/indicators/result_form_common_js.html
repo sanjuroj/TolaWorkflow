@@ -1,6 +1,20 @@
 {% load i18n %}
 
+{% include 'gdrive_picker_js.html' %}
+
 <script>
+    // gdrive picker
+    function filePickerCallback(fileName, url) {
+        // TODO: Write this when a test env is figured out
+        console.log(fileName);
+        console.log(url);
+    }
+
+    $("#indicator_collecteddata_div").on('click', '#id_browse_google_drive', function(e) {
+        e.preventDefault();
+
+        gdriveFilePicker(filePickerCallback);
+    });
 
     // Intercept CollectedDataUpdate form submission and then use ajax to submit it.
     $("#indicator_collecteddata_div").on("submit", "#result_update_form", function(e){
