@@ -77,6 +77,9 @@
                     $("#id_periodic_target").attr("readonly", false);
                 }
             }
+
+            // initial state of view button
+            $('#id_view_evidence_button').prop('disabled', ! evidenceURLHasValue());
         });
 
         $(document).on('hidden.bs.modal', '.modal', function () {

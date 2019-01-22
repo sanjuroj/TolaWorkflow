@@ -11,7 +11,16 @@
     </div>
     <div class="form-group" id="div_id_evidence_url">
         <label for="id_record_url">{{ form.evidence_url.label }}</label>
-        {% render_field form.evidence_url class+="form-control" %}
+        <div class="container">
+            <div class="row">
+                <div class="col-md-11">
+                    {% render_field form.evidence_url class+="form-control" %}
+                </div>
+                <div class="col-md-1">
+                    <button type="button" id="id_view_evidence_button" class="btn btn-sm btn-secondary">{% trans 'view' %}</button>
+                </div>
+            </div>
+        </div>
         <small class="form-text text-muted">{{ form.evidence_url.help_text }}</small>
         <span id="validation_id_evidence_url" class="has-error"></span>
         <div class="text-right">

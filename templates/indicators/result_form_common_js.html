@@ -16,6 +16,22 @@
         gdriveFilePicker(filePickerCallback);
     });
 
+    // view evidence
+    $("#indicator_collecteddata_div").on('click', '#id_view_evidence_button', function() {
+        let url = $('#id_evidence_url').val();
+        window.open(url, '_blank')
+    });
+
+    function evidenceURLHasValue() {
+        // Does it have a value, and does it kinda look like a URL?
+        let val = $('#id_evidence_url').val();
+        return val.match(/^http(s)?:\/\/.+/)
+    }
+
+    $("#indicator_collecteddata_div").on('change keyup paste', '#id_evidence_url', function () {
+        $('#id_view_evidence_button').prop('disabled', ! evidenceURLHasValue());
+    });
+
     // Intercept CollectedDataUpdate form submission and then use ajax to submit it.
     $("#indicator_collecteddata_div").on("submit", "#result_update_form", function(e){
         e.preventDefault();
