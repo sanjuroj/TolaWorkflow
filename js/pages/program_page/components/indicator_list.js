@@ -146,6 +146,8 @@ class IndicatorListTable extends React.Component {
 
     render() {
         const indicators = this.props.indicators;
+        const program = this.props.program;
+        const programReportingPeriodEndDate = new Date(program.reporting_period_end);
         const resultsMap = this.props.resultsMap;
 
         return <table className="table indicators-list">
@@ -164,6 +166,8 @@ class IndicatorListTable extends React.Component {
             {indicators.map(indicator => {
                 const resultsExist = resultsMap.has(indicator.id);
                 const resultsStr = resultsMap.get(indicator.id);
+                const targetPeriodLastEndDate = indicator.target_period_last_end_date ? new Date(indicator.target_period_last_end_date) : null;
+                // ^^^ Because calling Date() on null returns the current date, and we actually need null!
 
                 return <React.Fragment key={indicator.id}>
                     <tr className={classNames("indicators-list__row", "indicators-list__indicator-header", {
@@ -176,45 +180,42 @@ class IndicatorListTable extends React.Component {
                                onClick={(e) => this.onIndicatorResultsToggleClick(e, indicator.id)}
                             >
                                 <FontAwesomeIcon icon={resultsExist ? 'caret-down' : 'caret-right'} />
-                                <strong>{indicator.number}</strong>
+                                <strong>{indicator.number}</strong>&nbsp;
                                 <span className="indicator_name">{indicator.name}</span>
                             </a>
 
                             {indicator.key_performance_indicator &&
                             <span className="badge">KPI</span>
                             }
-
-                            {/* this seems to be copy n pasted from the indicator list view, but not set in the program view */}
-                            {/* it's unclear if this is even part of the spec for program page */}
-
-                            {/*{program && program.reporting_period_end > indicator.target_period_last_end_date &&*/}
-                            {/*<a href={`/indicators/indicator_update/${indicator.id}/`}*/}
-                               {/*className="indicator-link color-red missing_targets"*/}
-                               {/*data-toggle="modal" data-target="#indicator_modal_div"*/}
-                               {/*data-tab="targets">*/}
-                                {/*<i className="fas fa-bullseye"/> Missing targets*/}
-                            {/*</a>*/}
-                            {/*}*/}
+    
+                            {targetPeriodLastEndDate && programReportingPeriodEndDate > targetPeriodLastEndDate &&
+                            <a href={`/indicators/indicator_update/${indicator.id}/`}
+                               className="indicator-link color-red missing_targets"
+                               data-toggle="modal" data-target="#indicator_modal_div"
+                               data-tab="targets">
+                                <i className="fas fa-bullseye"/> Missing targets
+                            </a>
+                            }
                         </td>
                         <td>
                             <a href="#" className="indicator-link"
                                onClick={(e) => this.onIndicatorUpdateClick(e, indicator.id)}><i
                                 className="fas fa-cog"/></a>
                         </td>
-                        <td>{indicator.level}</td>
+                        <td>{indicator.level ? indicator.level.name : ''}</td>
                         <td>{indicator.unit_of_measure}</td>
                         <td className="text-right">{indicator.baseline_display}</td>
                         <td className="text-right">{indicator.lop_target_display}</td>
                     </tr>
-
-                    <tr className="indicators-list__row indicators-list__indicator-body hiddenRow">
-                        <td colSpan="6" className="p-0 bg-blue border-0">
+        
+                    {resultsExist &&
+                    <tr className="indicators-list__row indicators-list__indicator-body">
+                        <td colSpan="6" ref={el => $(el).find('[data-toggle="popover"]').popover({html:true})}>
                             {/* collected_data_table.html container */}
-                            {resultsExist &&
                                 <div dangerouslySetInnerHTML={{__html: resultsStr}} />
-                            }
                         </td>
                     </tr>
+                    }
                 </React.Fragment>
 
             })}
@@ -256,6 +257,6 @@ export const IndicatorList = observer(function (props) {
             </div>
         }
 
-        <IndicatorListTable indicators={filteredIndicators} resultsMap={resultsMap} />
+        <IndicatorListTable indicators={filteredIndicators} resultsMap={resultsMap} program={program} />
     </React.Fragment>
 });
