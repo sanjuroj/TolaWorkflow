@@ -12,6 +12,7 @@ from factories import (
 from indicators.models import Indicator
 from workflow.views import reportingperiod_update
 from workflow.models import Program
+from tola import util
 
 class TestReportingPeriodDatesValidate(test.TestCase):
     def setUp(self):
@@ -235,3 +236,60 @@ class TestReportingPeriodDatesValidate(test.TestCase):
         refreshed = Program.objects.get(pk=program.pk)
         self.assertEqual(refreshed.reporting_period_start, datetime.date(2015, 1, 1))
         self.assertEqual(refreshed.reporting_period_end, datetime.date(2017, 10, 31))
+
+sample_response = {
+    u'end_date': u'2019-12-14',
+    u'countries': u'Afghanistan',
+    u'hq_admin': u'Portland',
+    u'granttitle': u'Humanitarian Assistance for Protracted IDPs and Returnees in Western Afghanistan',
+    u'creation_date': u'2017-08-21',
+    u'start_date': u'2018-06-15',
+    u'cost_center': u'33224',
+    u'donor': u'United States Agency for International Development (USAID)',
+    u'gaitid': u'8018',
+    u'amount_usd': u'2000000.00',
+    u'funding_status': u'Funded'
+}
+
+class TestGaitDateToReportingDates(test.TestCase):
+    def test_gait_date_to_start_and_end_dates(self):
+        dates = util.get_dates_from_gait_response(sample_response)
+        self.assertEqual(dates['start_date'], datetime.date(2018, 6, 15))
+        self.assertEqual(dates['end_date'], datetime.date(2019, 12, 14))
+
+    def test_start_date_to_reporting_date(self):
+        program = w_factories.ProgramFactory(
+            start_date=datetime.date(2018, 6, 15),
+            end_date=datetime.date(2019, 12, 14)
+        )
+        reporting_dates = util.get_reporting_dates(program)
+        self.assertEqual(reporting_dates['reporting_period_start'], datetime.date(2018, 6, 1))
+        self.assertEqual(reporting_dates['reporting_period_end'], datetime.date(2019, 12, 31))
+
+    def test_various_start_date_conversions(self):
+        for start, reporting in [
+            (datetime.date(2014, 1, 1), datetime.date(2014, 1, 1)),
+            (datetime.date(2015, 10, 13), datetime.date(2015, 10, 1)),
+            (datetime.date(2016, 10, 30), datetime.date(2016, 10, 1)),
+            (datetime.date(2017, 12, 31), datetime.date(2017, 12, 1))
+        ]:
+            program = w_factories.ProgramFactory(
+                start_date=start,
+                end_date=datetime.date(2019, 12, 31)
+            )
+            reporting_dates = util.get_reporting_dates(program)
+            self.assertEqual(reporting_dates['reporting_period_start'], reporting)
+
+    def test_various_end_date_conversions(self):
+        for end, reporting in [
+            (datetime.date(2014, 1, 1), datetime.date(2014, 1, 31)),
+            (datetime.date(2015, 10, 13), datetime.date(2015, 10, 31)),
+            (datetime.date(2016, 10, 30), datetime.date(2016, 10, 31)),
+            (datetime.date(2017, 12, 31), datetime.date(2017, 12, 31))
+        ]:
+            program = w_factories.ProgramFactory(
+                start_date=datetime.date(2013, 1, 1),
+                end_date=end
+            )
+            reporting_dates = util.get_reporting_dates(program)
+            self.assertEqual(reporting_dates['reporting_period_end'], reporting)
