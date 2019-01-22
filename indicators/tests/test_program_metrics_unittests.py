@@ -23,7 +23,9 @@ from program_metric_tests.program_unit.program_reporting_count_unit_tests import
     TestSingleNonReportingIndicator,
     TestSingleReportingIndicator,
     TestMixedReportingAndNonIndicators,
-    TestProgramReportingPeriodCorrect
+    TestProgramReportingPeriodCorrect,
+    TestProgramHasTimeAwareIndicators,
+    TestProgramLastTimeAwareStartDate
 )
 
 from program_metric_tests.program_unit.program_scope_queries_unit_tests import (

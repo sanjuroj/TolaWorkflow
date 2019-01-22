@@ -438,3 +438,126 @@ class TestProgramReportingPeriodCorrect(test.TestCase):
         )
         homepage_program = ProgramWithMetrics.home_page.with_annotations().get(pk=program.pk)
         self.assertFalse(homepage_program.reporting_period_correct)
+
+class TestProgramHasTimeAwareIndicators(test.TestCase):
+    def test_program_with_no_indicators_returns_false(self):
+        program = w_factories.ProgramFactory(
+            reporting_period_start=datetime.date(2015, 1, 1),
+            reporting_period_end=datetime.date(2017, 2, 28)
+        )
+        self.assertFalse(program.has_time_aware_targets)
+
+    def test_program_with_non_time_aware_indicators_returns_false(self):
+        for frequency in [Indicator.LOP, Indicator.MID_END, Indicator.EVENT]:
+            program = w_factories.ProgramFactory(
+                reporting_period_start=datetime.date(2015, 1, 1),
+                reporting_period_end=datetime.date(2017, 2, 28)
+            )
+            i_factories.IndicatorFactory(
+                target_frequency=frequency,
+                program=program
+            )
+            self.assertFalse(program.has_time_aware_targets)
+
+    def test_program_with_time_aware_indicators_returns_true(self):
+        for frequency in Indicator.TIME_AWARE_TARGET_FREQUENCIES:
+            program = w_factories.ProgramFactory(
+                reporting_period_start=datetime.date(2015, 1, 1),
+                reporting_period_end=datetime.date(2017, 12, 31)
+            )
+            i_factories.IndicatorFactory(
+                target_frequency=frequency,
+                program=program
+            )
+            self.assertTrue(program.has_time_aware_targets)
+
+    def test_program_with_all_time_aware_indicators_returns_true(self):
+        program = w_factories.ProgramFactory(
+            reporting_period_start=datetime.date(2015, 1, 1),
+            reporting_period_end=datetime.date(2017, 12, 31)
+        )
+        for frequency in Indicator.TIME_AWARE_TARGET_FREQUENCIES:
+            i_factories.IndicatorFactory(
+                target_frequency=frequency,
+                program=program
+            )
+        self.assertTrue(program.has_time_aware_targets)
+
+    def test_program_with_all_indicators_returns_true(self):
+        program = w_factories.ProgramFactory(
+            reporting_period_start=datetime.date(2015, 1, 1),
+            reporting_period_end=datetime.date(2017, 12, 31)
+        )
+        for frequency, _ in Indicator.TARGET_FREQUENCIES:
+            i_factories.IndicatorFactory(
+                target_frequency=frequency,
+                program=program
+            )
+        self.assertTrue(program.has_time_aware_targets)
+
+class TestProgramLastTimeAwareStartDate(test.TestCase):
+    def test_no_time_aware_indicators_returns_none(self):
+        program = w_factories.ProgramFactory(
+            reporting_period_start=datetime.date(2015, 1, 1),
+            reporting_period_end=datetime.date(2017, 12, 31)
+        )
+        self.assertIsNone(program.last_time_aware_indicator_start_date)
+
+    def test_program_with_non_time_aware_indicators_returns_none(self):
+        for frequency in [Indicator.LOP, Indicator.MID_END, Indicator.EVENT]:
+            program = w_factories.ProgramFactory(
+                reporting_period_start=datetime.date(2015, 1, 1),
+                reporting_period_end=datetime.date(2017, 12, 31)
+            )
+            i_factories.IndicatorFactory(
+                target_frequency=frequency,
+                program=program
+            )
+            self.assertIsNone(program.last_time_aware_indicator_start_date)
+
+    def test_program_with_annual_indicator_returns_correct_date(self):
+        program = w_factories.ProgramFactory(
+            reporting_period_start=datetime.date(2015, 1, 1),
+            reporting_period_end=datetime.date(2017, 12, 31)
+        )
+        indicator = i_factories.IndicatorFactory(
+            target_frequency=Indicator.ANNUAL,
+            program=program
+        )
+        for start, end in [(datetime.date(2015, 1, 1), datetime.date(2015, 12, 31)),
+                           (datetime.date(2016, 1, 1), datetime.date(2016, 12, 31)),
+                           (datetime.date(2017, 1, 1), datetime.date(2017, 12, 31))]:
+            i_factories.PeriodicTargetFactory(
+                indicator=indicator,
+                start_date=start,
+                end_date=end
+            )
+        self.assertEqual(program.last_time_aware_indicator_start_date, datetime.date(2017, 1, 1))
+
+    def test_program_with_multiple_indicators_returns_correct_date(self):
+        program = w_factories.ProgramFactory(
+            reporting_period_start=datetime.date(2015, 1, 1),
+            reporting_period_end=datetime.date(2015, 12, 31)
+        )
+        indicator1 = i_factories.IndicatorFactory(
+            target_frequency=Indicator.ANNUAL,
+            program=program
+        )
+        i_factories.PeriodicTargetFactory(
+            indicator=indicator1,
+            start_date=datetime.date(2015, 1, 1),
+            end_date=datetime.date(2015, 12, 31)
+        )
+        indicator2 = i_factories.IndicatorFactory(
+            target_frequency=Indicator.TRI_ANNUAL,
+            program=program
+        )
+        for start, end in [(datetime.date(2015, 1, 1), datetime.date(2015, 4, 30)),
+                           (datetime.date(2015, 5, 1), datetime.date(2015, 8, 31)),
+                           (datetime.date(2015, 9, 1), datetime.date(2015, 12, 31))]:
+            i_factories.PeriodicTargetFactory(
+                indicator=indicator2,
+                start_date=start,
+                end_date=end
+            )
+        self.assertEqual(program.last_time_aware_indicator_start_date, datetime.date(2015, 9, 1))
