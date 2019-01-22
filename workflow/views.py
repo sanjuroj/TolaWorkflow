@@ -2487,6 +2487,13 @@ def reportingperiod_update(request, pk):
             success = False
             failmsg.append(_('Reporting period must start on the first of the month'))
             failfields.append('reporting_period_start')
+        elif reporting_period_start.date() == program.reporting_period_start:
+            pass
+        elif program.has_time_aware_targets:
+            success = False
+            failmsg.append(
+                _('Reporting period start date cannot be changed while time-aware periodic targets are in place')
+            )
         else:
             program.reporting_period_start = reporting_period_start
     if reporting_period_end:
@@ -2495,8 +2502,20 @@ def reportingperiod_update(request, pk):
             success = False
             failmsg.append(_('Reporting period must end on the last day of the month'))
             failfields.append('reporting_period_end')
+        elif reporting_period_end.date() == program.reporting_period_end:
+            pass
+        elif (program.last_time_aware_indicator_start_date and
+              reporting_period_end.date() < program.last_time_aware_indicator_start_date):
+            success = False
+            failmsg.append(_('Reporting period must end after the start of the last target period'))
+            failfields.append('reporting_period_end')
         else:
             program.reporting_period_end = reporting_period_end
+        if reporting_period_start and reporting_period_start >= reporting_period_end:
+            success = False
+            failmsg.append(_('Reporting period must start before reporting period ends'))
+            failfields.append('reporting_period_start')
+            failfields.append('reporting_period_end')
     else:
         success = False
         failmsg.append(_('You must select a reporting period end date'))
