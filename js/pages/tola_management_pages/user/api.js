@@ -27,10 +27,15 @@ export const saveUserPrograms = (user_id, data) => api.put(`/tola_management/use
 
 export const fetchUserHistory = (user_id) => api.get(`/tola_management/user/${user_id}/history/`).then(response => response.data)
 
+export const createUser = (new_user_data) => api.post(`/tola_management/user/`).then(response => {
+
+})
+
 export default {
     fetchUsersWithFilter,
     saveUserProfile,
     fetchUserProgramAccess,
     saveUserPrograms,
-    fetchUserHistory
+    fetchUserHistory,
+    createUser
 }

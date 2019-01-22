@@ -145,8 +145,11 @@ export const IndexView = observer(
                                         new={data.id == 'new'}
                                         ProfileSection={() =>
                                             <EditUserProfile
+                                            new={data.id == 'new'}
                                             userData={data}
-                                            onSave={(new_user_data) => store.saveUserProfile(data.id, new_user_data)}
+                                            onUpdate={(new_user_data) => store.updateUserProfile(data.id, new_user_data)}
+                                            onCreate={(new_user_data) => store.saveNewUser(new_user_data)}
+                                            onCreateAndAddAnother={(new_user_data) => store.saveNewUserAndAddAnother(new_user_data)}
                                             organizations={store.organizations} />}
                                         ProgramSection={() =>
                                             <EditUserPrograms

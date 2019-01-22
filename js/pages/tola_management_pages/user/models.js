@@ -170,6 +170,10 @@ export class UserStore {
 
     @action
     toggleEditingTarget(user_id) {
+        if(this.editing_target == 'new') {
+            this.users_listing.shift()
+        }
+
         if(this.editing_target == user_id) {
             this.editing_target = false
         } else {
@@ -192,7 +196,10 @@ export class UserStore {
 
     @action
     createUser() {
-        this.new_user = {
+        if(this.editing_target == 'new') {
+            this.users_listing.shift()
+        }
+        let new_user = {
             id: "new",
             name: "",
             email: "",
@@ -200,12 +207,15 @@ export class UserStore {
             organization_id: null,
             mode_of_address: "",
             mode_of_contact: "",
-            title: ""
+            title: "",
+            user_programs: 0,
         }
+        this.users_listing.unshift(new_user)
+        this.editing_target = 'new'
     }
 
     @action
-    saveUserProfile(user_id, new_user_data) {
+    updateUserProfile(user_id, new_user_data) {
         const user_idx = this.users_listing.findIndex(u => u.id == new_user_data.id)
         if(user_idx !== -1) {
             this.saving_user_profile = true
@@ -217,6 +227,23 @@ export class UserStore {
                 }
             })
         }
+    }
+
+    @action
+    saveNewUser(new_user_data) {
+        this.saving_user_profile = true
+        api.createUser(new_user_data).then(result => {
+            this.saving_user_profile = false
+        })
+    }
+
+    @action
+    saveNewUserAndAddAnother(new_user_data) {
+        this.saving_user_profile = true
+        api.createUser(new_user_data).then(result => {
+            this.saving_user_profile = false
+            this.createUser()
+        })
     }
 
     @action

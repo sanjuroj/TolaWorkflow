@@ -28,7 +28,7 @@ export default class EditUserProfile extends React.Component {
     }
 
 
-    saveForm(e) {
+    save(e) {
         e.preventDefault()
         const ud = this.state.managed_user_data
         const marshalled_user_data = {
@@ -37,7 +37,31 @@ export default class EditUserProfile extends React.Component {
             organization_id: (ud.organization)?ud.organization.value:null,
             phone_number: ud.phone
         }
-        this.props.onSave(marshalled_user_data)
+        this.props.onUpdate(marshalled_user_data)
+    }
+
+    saveNew(e) {
+        e.preventDefault()
+        const ud = this.state.managed_user_data
+        const marshalled_user_data = {
+            ...ud,
+            name: ud.full_name,
+            organization_id: (ud.organization)?ud.organization.value:null,
+            phone_number: ud.phone
+        }
+        this.props.onCreate(marshalled_user_data)
+    }
+
+    saveNewAndAddAnother(e) {
+        e.preventDefault()
+        const ud = this.state.managed_user_data
+        const marshalled_user_data = {
+            ...ud,
+            name: ud.full_name,
+            organization_id: (ud.organization)?ud.organization.value:null,
+            phone_number: ud.phone
+        }
+        this.props.onCreateAndAddAnother(marshalled_user_data)
     }
 
     updateFullName(new_full_name) {
@@ -178,10 +202,19 @@ export default class EditUserProfile extends React.Component {
                             className="form-control"
                             id="user-mode-of-contact-input" />
                     </div>
+                    {this.props.new &&
                     <div className="form-group">
-                        <button className="btn btn-primary" onClick={(e) => this.saveForm(e)}>Save</button>
+                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>Save</button>
+                        <button className="btn btn-primary" onClick={(e) => this.saveNewAndAddAnother(e)}>Save And Add Another</button>
                         <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Reset</button>
                     </div>
+                    }
+                    {!this.props.new &&
+                    <div className="form-group">
+                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>Save</button>
+                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Reset</button>
+                    </div>
+                    }
                 </form>
             </div>
         )

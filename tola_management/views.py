@@ -276,7 +276,20 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        request.data["id"] = None
+        serializer = UserAdminSerializer(data=request.data)
+        if(serializer.is_valid()):
+            d = serializer.validated_data
+
+            new_user = TolaUser(
+                name=d["name"],
+            )
+
+            new_user.save()
+            new_serializer = self.get_serializer(new_user, many=False)
+            return Response(new_serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk=None):
         user = TolaUser.objects.get(pk=pk)
@@ -529,8 +542,6 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
             return Response(new_serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
     def update(self, request, pk=None):
         pass
