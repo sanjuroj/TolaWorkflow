@@ -403,6 +403,9 @@ class Indicator(models.Model):
         (MONTHLY, _('Monthly')),
         (EVENT, _('Event'))
     )
+    TIME_AWARE_TARGET_FREQUENCIES = (
+        ANNUAL, SEMI_ANNUAL, TRI_ANNUAL, QUARTERLY, MONTHLY
+    )
 
     NUMBER = 1
     PERCENTAGE = 2
