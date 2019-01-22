@@ -408,6 +408,20 @@ class Indicator(models.Model):
         (EVENT, _('Event'))
     )
 
+    REGULAR_TARGET_FREQUENCIES = (
+        ANNUAL,
+        SEMI_ANNUAL,
+        TRI_ANNUAL,
+        QUARTERLY,
+        MONTHLY,
+    )
+
+    IRREGULAR_TARGET_REQUENCIES = (
+        LOP,
+        MID_END,
+        EVENT,
+    )
+
     NUMBER = 1
     PERCENTAGE = 2
     UNIT_OF_MEASURE_TYPES = (
@@ -734,6 +748,49 @@ class Indicator(models.Model):
                 return u"{0}%".format(lop_stripped)
             return lop_stripped
         return self.lop_target
+
+    def current_periodic_target(self, date_=None):
+        """
+        Return the periodic target with start/end date containing localdate() or specified date
+
+        :return: A PeriodicTarget with start_date and end_date containing now(), or None
+        if no PeriodicTargets are found matching that criteria such as MIDLINE/ENDLINE
+        """
+        today = date_ or timezone.localdate()
+        return self.periodictargets.filter(start_date__lte=today, end_date__gte=today).first()
+
+    def valid_result_date_range(self, date_=None):
+        """
+        Return a start date and end date that results can be added to, relative to today or a specified date
+
+        Results can only be added if the program has started, so if the program is in the future, None is returned
+
+        :return: Tuple containing start date and end date, or None if no valid dates
+        """
+        today = date_ or timezone.localdate()
+        start_date = self.program.reporting_period_start
+
+        # If program hasn't started, no dates are valid
+        if today < start_date:
+            return None
+
+        end_date = self.program.reporting_period_end
+
+        # Different rules depending on type of indicator
+        if self.target_frequency in self.REGULAR_TARGET_FREQUENCIES:
+            # Allow to the end of the current periodic target
+            # There's a reason why we allow results in the future here, I just don't know what that reason is
+            current_periodic_period = self.current_periodic_target(today)
+            if current_periodic_period:
+                end_date = current_periodic_period.end_date
+        elif self.target_frequency in self.IRREGULAR_TARGET_REQUENCIES:
+            # Don't allow future results in this case
+            if today < self.program.reporting_period_end:
+                end_date = today
+        else:
+            raise ValueError('Indicator target_frequency contains invalid value {}'.format(self.target_frequency))
+
+        return start_date, end_date
 
     @cached_property
     def cached_data_count(self):
