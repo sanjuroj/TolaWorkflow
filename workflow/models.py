@@ -157,7 +157,8 @@ class TolaUser(models.Model):
         ordering = ('name',)
 
     def __unicode__(self):
-        return self.name
+        # Returning None breaks the Django Admin on models with a FK to TolaUser
+        return self.name or u''
 
     @property
     def countries_list(self):
@@ -184,6 +185,14 @@ class TolaUser(models.Model):
     def update_active_country(self, country):
         self.active_country = country
         super(TolaUser, self).save()
+
+    # generic has access function (countries, programs, etc.?  currently program_id implemented):
+    def has_access(self, **kwargs):
+        if 'program_id' in kwargs:
+            return Program.objects.filter(
+                country__in=self.countries.all()
+                ).filter(pk=kwargs.get('program_id')).exists()
+        return False
 
 
 class TolaBookmarks(models.Model):
@@ -433,6 +442,13 @@ class Program(models.Model):
                 min_starts.first() != self.reporting_period_start):
             return False
         return True
+
+    @property
+    def has_ended(self):
+        try:
+            return self.reporting_period_end < timezone.localdate()
+        except TypeError: # esp. if there's no reporting dates
+            return False
 
     @property
     def get_indicators_in_need_of_targetperiods_fixing(self):

@@ -66,12 +66,12 @@ class GaugeTank extends React.Component {
                     }
                 </div>
             </div>
+            { unfilledPercent > 0 &&
             <div className="gauge__cta">
-                { unfilledPercent > 0 &&
-                    <span className="btn-link btn-inline"><i className="fas fa-exclamation-triangle text-warning"/> {cta}</span>
-                }
+                <span className="btn-link btn-inline"><i className="fas fa-exclamation-triangle text-warning"/> {cta}</span>
                 &nbsp;
             </div>
+            }
         </div>;
     }
 }
@@ -242,7 +242,7 @@ class GaugeBand extends React.Component {
                        data-trigger="focus"
                        data-content={
                            /* # Translators: Help text explaining what an "on track" indicator is. */
-                           gettext('The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is 110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a decreasing direction of change, then “above” and “below” are switched. In that case, if your target is 100 and your result is 200, your indicator is 50% below target and not on track.')
+                           gettext("The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is 110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a decreasing direction of change, then “above” and “below” are switched. In that case, if your target is 100 and your result is 200, your indicator is 50% below target and not on track.<br><br><a href='https://docs.google.com/document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our documentation for more information.</a>")
                        }
                        onClick={e => e.preventDefault()}
                     ><i className="far fa-question-circle"/></a>
@@ -318,9 +318,7 @@ export const ProgramMetrics = observer(function (props) {
     // Do not display on pages with no indicators
     if (indicators.length === 0) return null;
 
-    return <aside className="program__status">
-        <h2>{gettext("Program metrics")}</h2>
-        <div className="status__gauges">
+    return <div className="status__gauges">
 
             <GaugeBand currentIndicatorFilter={currentIndicatorFilter}
                        indicatorOnScopeMargin={indicatorOnScopeMargin}
@@ -356,5 +354,4 @@ export const ProgramMetrics = observer(function (props) {
                        />
 
         </div>
-    </aside>
 });

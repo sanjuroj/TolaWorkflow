@@ -2378,34 +2378,6 @@ def district_json(request, district):
     return HttpResponse(adminthree_json, content_type="application/json")
 
 
-def import_service(service_id=1, deserialize=True):
-    """
-    Import a indicators from a web service (the dig only for now)
-    """
-    service = ExternalService.objects.all().filter(id=service_id)
-
-    response = requests.get(service.feed_url)
-    get_json = json.loads(response.content)
-
-    if deserialize == True:
-        data = json.load(get_json) # deserialises it
-    else:
-    #send json data back not deserialized data
-        data = get_json
-    #debug the json data string uncomment dump and print
-    data2 = json.dumps(data) # json formatted string
-
-    return data
-
-
-def service_json(request, service):
-    """
-    For populating service indicators in dropdown
-    """
-    service_indicators = import_service(service,deserialize=False)
-    return HttpResponse(service_indicators, content_type="application/json")
-
-
 def export_stakeholders_list(request, **kwargs):
 
     program_id = int(kwargs['program_id'])
@@ -2498,7 +2470,6 @@ class DocumentationListObjects(View, AjaxableResponseMixin):
 
 def reportingperiod_update(request, pk):
     program = Program.objects.get(pk=pk)
-    dated = parser.parse(request.POST['reporting_period_end'])
 
     # In some cases the start date input will be disabled and won't come through POST
     reporting_period_start = False

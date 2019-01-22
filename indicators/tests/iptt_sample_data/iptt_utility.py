@@ -81,6 +81,8 @@ def process_table(mainsoup, timeperiods=False):
                 #'target': target, 'actual': actual, 'met': met}
             for key in ['actual'] if (timeperiods and c > 0) else ['target', 'actual', 'met']:
                 indicator_range[key] = nonestr(indic_row.td.extract().get_text().strip())
+                if indicator_range[key] == u'\u2014':
+                    indicator_range[key] = None
             indicators[k]['ranges'].append(indicator_range)
     return {
         'info': info,
