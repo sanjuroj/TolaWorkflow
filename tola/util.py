@@ -2,6 +2,8 @@ import unicodedata
 import json
 import logging
 import requests
+import dateutil
+import datetime
 
 from workflow.models import Country, TolaUser, TolaSites
 from django.contrib.auth.models import User
@@ -151,3 +153,35 @@ def get_GAIT_data(gait_ids):
     except requests.exceptions.RequestException as e:
         logger.exception('Error reaching GAIT service')
         return []
+
+def get_dates_from_gait_response(gait_response):
+    """take a gait response (from get_GAIT_data) and parse out start and end dates, return dict"""
+    try:
+        start_date = dateutil.parser.parse(gait_response['start_date']).date()
+    except ValueError, TypeError:
+        start_date = None
+    try:
+        end_date = dateutil.parser.parse(gait_response['end_date']).date()
+    except ValueError, TypeError:
+        end_date = None
+    return {
+        'start_date': start_date,
+        'end_date': end_date
+    }
+
+def get_reporting_dates(program):
+    """takes a program with start and end dates and returns default reporting_period start and end dates"""
+    if program.start_date is None:
+        reporting_period_start = None
+    else:
+        reporting_period_start = datetime.date(program.start_date.year, program.start_date.month, 1)
+    if program.end_date is None:
+        reporting_period_end = None
+    else:
+        next_month = datetime.date(program.end_date.year, program.end_date.month, 28) + datetime.timedelta(days=4)
+        beginning_of_next_month = datetime.date(next_month.year, next_month.month, 1)
+        reporting_period_end = beginning_of_next_month - datetime.timedelta(days=1)
+    return {
+        'reporting_period_start': reporting_period_start,
+        'reporting_period_end': reporting_period_end
+    }
