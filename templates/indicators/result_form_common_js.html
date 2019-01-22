@@ -25,7 +25,7 @@
     function evidenceURLHasValue() {
         // Does it have a value, and does it kinda look like a URL?
         let val = $('#id_evidence_url').val();
-        return val.match(/^http(s)?:\/\/.+/)
+        return val.match(/^(http(s)?|file):\/\/.+/)
     }
 
     $("#indicator_collecteddata_div").on('change keyup paste', '#id_evidence_url', function () {
