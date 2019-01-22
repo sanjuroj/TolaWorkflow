@@ -159,10 +159,12 @@ def make_percent(numerator, denominator):
         return 100
     return max(1, min(99, int(round(float(numerator*100)/denominator))))
 
+
 @register.inclusion_tag('indicators/tags/target-percent-met.html', takes_context=True)
 def target_percent_met(context, percent_met, has_ended):
     margin = Indicator.ONSCOPE_MARGIN
     on_track = None
+    # TODO: in some cases 85% or 115% will be yellow, in others it will be green
     if percent_met:
         on_track = abs(1-percent_met) <= margin
         percent_met = percent_met*100
