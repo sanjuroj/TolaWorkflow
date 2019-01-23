@@ -15,6 +15,9 @@ from tola_management.views import (
     UserAdminViewSet,
     OrganizationAdminViewSet
 )
+from tola_management.resources import (
+    ProgramAdminViewSet,
+)
 from django.conf.urls import include, url
 # Import i18n_patterns
 from django.views.i18n import JavaScriptCatalog
@@ -80,6 +83,7 @@ router.register(r'programtargetfrequencies', ProgramTargetFrequencies, base_name
 #tola admin
 router.register(r'tola_management/user', UserAdminViewSet, base_name='tolamanagementuser')
 router.register(r'tola_management/organization', OrganizationAdminViewSet, base_name='tolamanagementorganization')
+router.register(r'tola_management/program', ProgramAdminViewSet, base_name='tolamanagementprograms')
 
 urlpatterns = [
                 url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
