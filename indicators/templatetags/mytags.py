@@ -164,10 +164,10 @@ def make_percent(numerator, denominator):
 def target_percent_met(context, percent_met, has_ended):
     margin = Indicator.ONSCOPE_MARGIN
     on_track = None
-    # TODO: in some cases 85% or 115% will be yellow, in others it will be green
     if percent_met:
-        on_track = abs(1-percent_met) <= margin
-        percent_met = percent_met*100
+        # prevents displaying "85%" as yellow or green when percent_met = 84.9 or 85.1
+        percent_met = int(percent_met * 100)
+        on_track = (1 - margin) * 100 <= percent_met <= (1 + margin) * 100
     return {
         'on_track': on_track,
         'percent_met': percent_met,
