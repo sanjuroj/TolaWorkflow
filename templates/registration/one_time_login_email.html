@@ -1,0 +1,11 @@
+{% load i18n %}{% autoescape off %}
+
+<p> {% blocktrans %}You're receiving this email because a user account was created for you on Mercy Corps' Tola Activity application.{% endblocktrans %} </p>
+
+<p> {% trans "Please click the following link and choose a new password or connect your social account:" %} <a href="{{one_time_link}}">{{one_time_link}}</a> </p>
+
+<p> {% trans "Your username is:" %} {{ user.get_username }} </p>
+
+<p> {% blocktrans %}The Mercy Corps team{% endblocktrans %} </p>
+
+{% endautoescape %}

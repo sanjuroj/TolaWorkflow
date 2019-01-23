@@ -32,7 +32,7 @@ from indicators.views.views_indicators import ProgramPage
 from django.contrib import admin
 admin.autodiscover()
 admin.site.site_header = 'Tola Activity administration'
-from workflow.views import dated_target_info
+from workflow.views import dated_target_info, OneTimeRegistrationView
 
 #REST FRAMEWORK
 router = routers.DefaultRouter()
@@ -141,6 +141,7 @@ urlpatterns = [
                 # accounts
                 url(r'^accounts/profile/$', views.profile, name='profile'),
                 url(r'^accounts/register/$', views.register, name='register'),
+                url(r'^accounts/one_time_registration/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', OneTimeRegistrationView.as_view(),name='one_time_registration'),
 
                 #bookmarks
                 url(r'^bookmark_list', BookmarkList.as_view(), name='bookmark_list'),

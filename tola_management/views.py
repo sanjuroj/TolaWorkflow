@@ -2,15 +2,30 @@
 from __future__ import unicode_literals
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
+from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.tokens import default_token_generator
+from django.template import loader
 from django.shortcuts import render
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.urls import reverse
+from django.conf import settings
 import json
 
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.generics import ListAPIView
-from rest_framework.serializers import Serializer, CharField, IntegerField, PrimaryKeyRelatedField, BooleanField
+from rest_framework.serializers import (
+    Serializer,
+    CharField,
+    IntegerField,
+    PrimaryKeyRelatedField,
+    BooleanField
+)
 from rest_framework.response import Response
 from rest_framework import viewsets, mixins, pagination, status
+
+from django.contrib.auth.models import User,Group
 
 from feed.views import (
     TolaUserViewSet, OrganizationViewSet, SmallResultsSetPagination
@@ -106,7 +121,7 @@ def app_host_page(request, react_app_page):
     return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "report_wide": True})
 
 class UserAdminSerializer(Serializer):
-    id = IntegerField()
+    id = IntegerField(allow_null=True, required=False)
     name = CharField(max_length=100)
     organization_name = CharField(max_length=255, allow_null=True, allow_blank=True, required=False)
     email = CharField(max_length=255)
@@ -277,17 +292,46 @@ class UserAdminViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         request.data["id"] = None
+        request.data["is_active"] = True
         serializer = UserAdminSerializer(data=request.data)
         if(serializer.is_valid()):
             d = serializer.validated_data
 
+            #create auth user
+            new_django_user = User(
+                username=d["email"],
+                email=d["email"],
+                is_active=d["is_active"]
+            )
+            new_django_user.save()
+
+            #create tola user
+            organization = Organization.objects.get(pk=d["organization_id"])
             new_user = TolaUser(
                 name=d["name"],
+                organization=organization,
+                user=new_django_user,
+                mode_of_address=d["mode_of_address"],
+                mode_of_contact=d["mode_of_contact"],
+                phone_number=d["phone_number"],
+                title=d["title"]
             )
-
             new_user.save()
-            new_serializer = self.get_serializer(new_user, many=False)
-            return Response(new_serializer.data)
+
+            uid = urlsafe_base64_encode(force_bytes(new_django_user.pk))
+            token = default_token_generator.make_token(new_django_user)
+            one_time_url = request.build_absolute_uri(reverse('one_time_registration', kwargs={"uidb64": uid, "token": token}))
+            #fire off registration link email
+            c = {
+                'one_time_link': one_time_url,
+                'user': new_django_user,
+                }
+            subject='Mercy Corps - Tola New Account Registration'
+            email_template_name='registration/one_time_login_email.html'
+            email = loader.render_to_string(email_template_name, c)
+            send_mail(subject, email, settings.DEFAULT_FROM_EMAIL, [new_django_user.email], fail_silently=False, html_message=email)
+
+            return Response({})
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

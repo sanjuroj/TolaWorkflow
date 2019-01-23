@@ -1,7 +1,7 @@
 import operator
 import unicodedata
 
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from .models import Program, Country, Province, AdminLevelThree, District, ProjectAgreement, ProjectComplete, SiteProfile, \
@@ -12,10 +12,29 @@ from indicators.models import Result, ExternalService
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.urls import reverse
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_decode
 
-from .forms import ProjectAgreementForm, ProjectAgreementSimpleForm, ProjectAgreementCreateForm, ProjectCompleteForm, ProjectCompleteSimpleForm, ProjectCompleteCreateForm, DocumentationForm, \
-    SiteProfileForm, MonitorForm, BenchmarkForm, BudgetForm, FilterForm, \
-    QuantitativeOutputsForm, ChecklistItemForm, StakeholderForm, ContactForm
+from .forms import (
+    ProjectAgreementForm,
+    ProjectAgreementSimpleForm,
+    ProjectAgreementCreateForm,
+    ProjectCompleteForm,
+    ProjectCompleteSimpleForm,
+    ProjectCompleteCreateForm,
+    DocumentationForm,
+    SiteProfileForm,
+    MonitorForm,
+    BenchmarkForm,
+    BudgetForm,
+    FilterForm,
+    QuantitativeOutputsForm,
+    ChecklistItemForm,
+    StakeholderForm,
+    ContactForm,
+    OneTimeRegistrationForm
+)
 
 import pytz # TODO: not used, keeping this import for potential regressions
 
@@ -2495,3 +2514,33 @@ def dated_target_info(request, pk):
     return Response({
         'max_start_date': Program.objects.filter(id=pk).annotate(
             ptd=Max('indicator__periodictargets__start_date')).values_list('ptd', flat=True)[0]})
+
+class OneTimeRegistrationView(FormView):
+    """
+    View that checks the hash in a password reset link and presents a
+    form for entering a new password.
+    """
+    template_name = "registration/one_time_registration_form.html"
+    success_url = '/'
+    form_class = OneTimeRegistrationForm
+
+    def post(self, request, uidb64=None, token=None, *arg, **kwargs):
+        UserModel = get_user_model()
+        form = self.form_class(request.POST)
+        assert uidb64 is not None and token is not None  # checked by URLconf
+        try:
+            uid = urlsafe_base64_decode(uidb64)
+            user = UserModel._default_manager.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
+            user = None
+
+        if user is not None and default_token_generator.check_token(user, token):
+            if form.is_valid():
+                new_password= form.cleaned_data['new_password2']
+                user.set_password(new_password)
+                user.save()
+                return self.form_valid(form)
+            else:
+                return self.form_invalid(form)
+        else:
+            return self.form_invalid(form)

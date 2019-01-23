@@ -199,6 +199,7 @@ export class UserStore {
         if(this.editing_target == 'new') {
             this.users_listing.shift()
         }
+
         let new_user = {
             id: "new",
             name: "",
