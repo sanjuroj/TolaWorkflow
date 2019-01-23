@@ -231,6 +231,13 @@ export class UserStore {
     }
 
     @action
+    resendRegistrationEmail(user_id) {
+        api.resendRegistrationEmail(user_id).then(result => {
+            console.log(result)
+        })
+    }
+
+    @action
     saveNewUser(new_user_data) {
         this.saving_user_profile = true
         api.createUser(new_user_data).then(result => {

@@ -31,11 +31,14 @@ export const createUser = (new_user_data) => api.post(`/tola_management/user/`, 
 
 })
 
+export const resendRegistrationEmail = (user_id) => api.post(`/tola_management/user/${user_id}/resend_registration_email/`, {}).then(response => response.data)
+
 export default {
     fetchUsersWithFilter,
     saveUserProfile,
     fetchUserProgramAccess,
     saveUserPrograms,
     fetchUserHistory,
-    createUser
+    createUser,
+    resendRegistrationEmail
 }

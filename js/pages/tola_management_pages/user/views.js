@@ -160,6 +160,7 @@ export const IndexView = observer(
                                             <EditUserHistory
                                             userData={data}
                                             history={store.editing_target_data.history}
+                                            onResendRegistrationEmail={() => store.resendRegistrationEmail(data.id)}
                                             onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>}
                                     />
                                 </Wrapper>

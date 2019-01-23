@@ -108,6 +108,17 @@ def get_organization_page_context(request):
         "organizations": organizations
     }
 
+def send_new_user_registration_email(user, request):
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    one_time_url = request.build_absolute_uri(reverse('one_time_registration', kwargs={"uidb64": uid, "token": token}))
+    #fire off registration link email
+    c = {'one_time_link': one_time_url, 'user': user}
+    subject='Mercy Corps - Tola New Account Registration'
+    email_template_name='registration/one_time_login_email.html'
+    email = loader.render_to_string(email_template_name, c)
+    send_mail(subject, email, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False, html_message=email)
+
 # Create your views here.
 @login_required(login_url='/accounts/login/')
 def app_host_page(request, react_app_page):
@@ -318,18 +329,7 @@ class UserAdminViewSet(viewsets.ModelViewSet):
             )
             new_user.save()
 
-            uid = urlsafe_base64_encode(force_bytes(new_django_user.pk))
-            token = default_token_generator.make_token(new_django_user)
-            one_time_url = request.build_absolute_uri(reverse('one_time_registration', kwargs={"uidb64": uid, "token": token}))
-            #fire off registration link email
-            c = {
-                'one_time_link': one_time_url,
-                'user': new_django_user,
-                }
-            subject='Mercy Corps - Tola New Account Registration'
-            email_template_name='registration/one_time_login_email.html'
-            email = loader.render_to_string(email_template_name, c)
-            send_mail(subject, email, settings.DEFAULT_FROM_EMAIL, [new_django_user.email], fail_silently=False, html_message=email)
+            send_new_user_registration_email(new_django_user, request)
 
             return Response({})
         else:
@@ -367,6 +367,12 @@ class UserAdminViewSet(viewsets.ModelViewSet):
             return Response({}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['post'])
+    def resend_registration_email(self, request, pk=None):
+        tola_user = TolaUser.objects.get(pk=pk)
+        send_new_user_registration_email(tola_user.user, request)
+        return Response({})
 
     @detail_route(methods=['get'])
     def history(self, request, pk=None):
