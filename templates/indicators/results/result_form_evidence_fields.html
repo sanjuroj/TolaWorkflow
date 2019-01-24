@@ -5,12 +5,32 @@
 <fieldset>
     <div class="form-group" id="div_id_record_name">
         <label for="id_record_name">{{ form.record_name.label }}</label>
+
+        <a href="#"
+           tabindex="0"
+           data-toggle="popover"
+           data-placement="right"
+           data-trigger="focus"
+           data-content="{% trans 'Give your record a short name that is easy to remember.' %}">
+            <i class="far fa-question-circle"></i>
+        </a>
+
         {% render_field form.record_name class+="form-control" %}
         <small class="form-text text-muted">{{ form.record_name.help_text }}</small>
         <span id="validation_id_record_name" class="has-error"></span>
     </div>
     <div class="form-group" id="div_id_evidence_url">
         <label for="id_record_url">{{ form.evidence_url.label }}</label>
+
+        <a href="#"
+           tabindex="0"
+           data-toggle="popover"
+           data-placement="right"
+           data-trigger="focus"
+           data-content="{% trans 'Provide a link to a file or folder in Google Drive or another shared network drive. Please be aware that TolaActivity does not store a copy of your record, <i>so you should not link to something on your personal computer, as no one else will be able to access it.</i>' %}">
+            <i class="far fa-question-circle"></i>
+        </a>
+
         <div class="container">
             <div class="row">
                 <div class="col-md-11">

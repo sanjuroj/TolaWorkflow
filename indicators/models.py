@@ -670,9 +670,15 @@ class Indicator(models.Model):
 
     @property
     def is_target_frequency_time_aware(self):
-        return self.target_frequency in (self.ANNUAL, self.SEMI_ANNUAL,
-                                         self.TRI_ANNUAL, self.QUARTERLY,
-                                         self.MONTHLY)
+        return self.target_frequency in self.REGULAR_TARGET_FREQUENCIES
+
+    @property
+    def is_target_frequency_not_time_aware(self):
+        return self.target_frequency in self.IRREGULAR_TARGET_REQUENCIES
+
+    @property
+    def is_target_frequency_lop(self):
+        return self.target_frequency == self.LOP
 
     @property
     def just_created(self):

@@ -89,6 +89,9 @@
 
             // initial state of view button
             $('#id_view_evidence_button').prop('disabled', ! evidenceURLHasValue());
+
+            // make tooltips work
+            $('#result_update_form [data-toggle="popover"]').popover({html: true}).click(function(e) {e.preventDefault();});
         });
     </script>
 
