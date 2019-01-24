@@ -51,7 +51,7 @@
             <div class="card-header">
                 <div class="program-header__info">
                     <h3>{% if program.indicator_count %}
-                        <a href="{% url "program_page" program.id 0 0 %}" class="text-dark">{{ program.name }}</a>
+                        <a href="{% url "program_page" program.id %}" class="text-dark">{{ program.name }}</a>
                         {% else %}
                         {{ program.name }}
                         {% endif %}
@@ -59,7 +59,7 @@
                     {% if program.indicator_count and program.reporting_period_start and program.reporting_period_end %}
                         <ul class="nav nav--text-list">
                             <li class="nav-item">
-                                <small><a href="{% url "program_page" program.id 0 0 %}" class="">{% trans "Program page" %}</a></small>
+                                <small><a href="{% url "program_page" program.id %}" class="">{% trans "Program page" %}</a></small>
                             </li>
                             {% if program.has_started %}
                             <li class="nav-item">
@@ -104,7 +104,7 @@
                         <i class="gauge__icon gauge__icon--error fas fa-frown"></i>
                     </div>
                     <h4>All indicators are missing targets.</h4>
-                    <p>Visit the <a href="{% url "program_page" program.id 0 0 %}">Program page</a> to set up targets.
+                    <p>Visit the <a href="{% url "program_page" program.id %}">Program page</a> to set up targets.
                 {% else %}
                     <div class="status__gauges">
                         {% gauge_band False %}

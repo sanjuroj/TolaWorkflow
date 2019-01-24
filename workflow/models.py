@@ -16,6 +16,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from simple_history.models import HistoricalRecords
 from django.contrib.sessions.models import Session
+from django.urls import reverse
 
 try:
     from django.utils import timezone
@@ -404,6 +405,13 @@ class Program(models.Model):
     # displayed in admin templates
     def __unicode__(self):
         return self.name
+    
+    @property
+    def program_page_url(self):
+        """used in place of get_absolute_url() because program page isn't strictly an absolute url (no editing) but
+            gives a single point of reference on the model for the program page url, used in linking in various places
+        """
+        return reverse('program_page', kwargs={'program_id': self.pk})
 
     def get_sites(self):
         indicator_ids = Indicator.objects.filter(program__in=[self.id]).values_list('id')
