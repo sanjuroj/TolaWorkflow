@@ -152,6 +152,14 @@ def js(obj):
     """
     return mark_safe(jsonify(obj))
 
+@register.filter('trailingzero')
+def strip_trailing_zero(value):
+    """Like builtin "floatformat" but strips trailing zeros from the right (12.5 does not become 12.50)"""
+    value = str(value)
+    if "." in value:
+        return value.rstrip("0").rstrip(".")
+
+
 def make_percent(numerator, denominator):
     if denominator == 0 or numerator == 0:
         return 0
