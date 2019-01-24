@@ -126,7 +126,7 @@
             </td>
             <td class="collected-data__result--value bg-danger-lighter">
                     {% with achieved=coldata.achieved|floatformat:"-2" %}
-                    {{ achieved }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                    {{ achieved|trailingzero }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                     {% endwith %}
             </td>
             <td class="td--stretch">
