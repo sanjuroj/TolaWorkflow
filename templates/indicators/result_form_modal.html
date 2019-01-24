@@ -46,7 +46,16 @@
             });
             */
 
-            $('.datepicker').datepicker({dateFormat: "yy-mm-dd"});
+            let program_id = $("#id_program").val();
+            let reporting_period_id = `#id_link_reporting_period_${program_id}`;
+            let program_start_date_str = $(reporting_period_id).data("rptstart");
+            let program_end_date_str = localdate() < localDateFromISOStr($(reporting_period_id).data("rptend")) ? localdate() : $(reporting_period_id).data("rptend");
+
+            $('.datepicker').datepicker({
+                dateFormat: "yy-mm-dd",
+                minDate: program_start_date_str,
+                maxDate: program_end_date_str
+            });
             let id_date_collected = $("#id_date_collected");
             if (id_date_collected.val() != '') {
                 id_date_collected.val(formatDate(id_date_collected.val())); // This control needs to receive an ISO date

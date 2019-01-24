@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import partial
 
 from workflow.models import (
@@ -188,7 +188,31 @@ class ResultForm(forms.ModelForm):
 
     def clean_date_collected(self):
         date_collected = self.cleaned_data['date_collected']
-        date_collected = datetime.strftime(date_collected, '%Y-%m-%d')
+
+        # Date can't be before program start
+        if date_collected < self.program.reporting_period_start:
+            raise ValidationError(
+                _("You can begin entering results on {program_start_date}, the program start date").format(
+                    program_start_date=self.program.reporting_period_start))
+
+        # Date must be before program end date
+        if date_collected > self.program.reporting_period_end:
+            raise ValidationError(_("Please select a date between {program_start_date} and {program_end_date}").format(
+                program_start_date=self.program.reporting_period_start,
+                program_end_date=self.program.reporting_period_end,
+            ))
+
+        # Date must be before "today" with some wiggle room to account for timezone differences
+        # Assume a user can only be 1 day in the future
+        # Fun fact: If our server was in the right time zone, the user could be 2 days ahead!
+        # https://www.timeanddate.com/time/dateline.html
+        today = timezone.localdate() + timedelta(days=1)
+        if date_collected > today:
+            raise ValidationError(_("Please select a date between {program_start_date} and {todays_date}").format(
+                program_start_date=self.program.reporting_period_start,
+                todays_date=today,
+            ))
+
         return date_collected
 
     def clean(self):

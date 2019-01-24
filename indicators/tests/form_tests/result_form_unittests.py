@@ -106,7 +106,10 @@ class TestUpdateFormInitialValues(test.TestCase):
 
 class TestCreateValidation(test.TestCase):
     def setUp(self):
-        self.program = w_factories.ProgramFactory()
+        self.program = w_factories.ProgramFactory(
+            reporting_period_start=datetime.date(2016, 1, 1),
+            reporting_period_end=datetime.date(2016, 12, 31),
+        )
         self.indicator = i_factories.IndicatorFactory(
             program=self.program,
             target_frequency=Indicator.LOP
@@ -122,7 +125,7 @@ class TestCreateValidation(test.TestCase):
 
     def test_good_data_validates(self):
         minimal_data = {
-            'date_collected': '2016-03-31',
+            'date_collected': '2016-01-01',
             'achieved': '30',
             'indicator': self.indicator.id,
             'program': self.program.id,
@@ -132,7 +135,7 @@ class TestCreateValidation(test.TestCase):
         new_result = form.save()
         self.assertIsNotNone(new_result.id)
         db_result = Result.objects.get(pk=new_result.id)
-        self.assertEqual(db_result.date_collected, datetime.date(2016, 3, 31))
+        self.assertEqual(db_result.date_collected, datetime.date(2016, 1, 1))
         self.assertEqual(db_result.achieved, 30)
 
     def test_good_data_with_evidence_validates(self):
@@ -190,3 +193,27 @@ class TestCreateValidation(test.TestCase):
         form = ResultForm(bad_data, **self.form_kwargs)
         self.assertFalse(form.is_valid())
         self.assertIn('evidence_url', form.errors)
+
+    # date_collected validation
+
+    def test_collected_date_before_program_start(self):
+        minimal_data = {
+            'date_collected': '2015-12-31',
+            'achieved': '30',
+            'indicator': self.indicator.id,
+            'program': self.program.id,
+        }
+        form = ResultForm(minimal_data, **self.form_kwargs)
+        self.assertFalse(form.is_valid())
+        self.assertIn('date_collected', form.errors)
+
+    def test_collected_date_after_program_end(self):
+        minimal_data = {
+            'date_collected': '2017-1-1',
+            'achieved': '30',
+            'indicator': self.indicator.id,
+            'program': self.program.id,
+        }
+        form = ResultForm(minimal_data, **self.form_kwargs)
+        self.assertFalse(form.is_valid())
+        self.assertIn('date_collected', form.errors)
