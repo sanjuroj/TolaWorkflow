@@ -219,6 +219,11 @@ def gauge_tank(context, metric, has_filters=True):
             'data_target': 'has-evidence',
         },
     }
+    routes = {
+        'targets_defined': 'targets',
+        'reported_results': 'results',
+        'results_evidence': 'evidence',
+    }
     program = context['program']
     filled_value = program.metrics[metric]
     results_count = program.metrics['results_count']
@@ -226,11 +231,16 @@ def gauge_tank(context, metric, has_filters=True):
     unfilled_value = indicator_count - filled_value
     filter_title_count = program.metrics['needs_evidence'] if metric == 'results_evidence' else unfilled_value
     denominator = results_count if metric == 'results_evidence' else indicator_count
-    #filled_percent = int(round(float(filled_value*100)/denominator)) if denominator > 0 else 0
+    # if has_filters is false this is from the homepage, so needs hardcoded url filters based on the program url:
+    program_url = False if has_filters else '{base}#/{route}/'.format(
+            base=program.program_page_url,
+            route=routes[metric]
+        )
     filled_percent = make_percent(filled_value, denominator)
     tick_count = 10
     return {
         'program': program,
+        'program_url': program_url,
         'title': labels[metric]['title'],
         'data_target': labels[metric]['data_target'],
         'id_tag': metric,
@@ -303,10 +313,9 @@ def gauge_band(context, has_filters=True):
     scope_counts = program.scope_counts
     denominator = scope_counts['indicator_count']
     results_count = program.metrics['results_count']
-    #if denominator == 0:
-    #    make_percent = lambda x: 0
-    #else:
-    #    make_percent = lambda x: 100 if x == denominator else max(int(round(float(x*100)/denominator)), 99)
+    # program url is only used on the home page (which is served up with has_filters = false
+    #  because it does not filter in React on the home page, it links to the program page with filter in place)
+    program_url = False if has_filters else program.program_page_url
 
     scope_percents = {
         'high': make_percent(scope_counts['high'], denominator),
@@ -321,6 +330,7 @@ def gauge_band(context, has_filters=True):
         'ticks': list(range(1, 11)),
         'margin': int(Indicator.ONSCOPE_MARGIN * 100),
         'has_filters': has_filters,
+        'program_url': program_url,
         'results_count': results_count,
     }
 
