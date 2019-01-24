@@ -792,7 +792,7 @@ class ResultCreate(CreateView):
             return HttpResponse(data)
 
         messages.success(self.request, _('Success, Data Created!'))
-        redirect_url = reverse_lazy('program_page', args=(self.kwargs['program'], 0, 0))
+        redirect_url = reverse_lazy('program_page', args=(self.kwargs['program']))
         return HttpResponseRedirect(redirect_url)
 
 
@@ -912,7 +912,7 @@ class ResultUpdate(UpdateView):
             return HttpResponse(data)
 
         messages.success(self.request, _('Success, Data Updated!'))
-        redirect_url = reverse_lazy('program_page', args=(getIndicator.program.id, 0, 0))
+        redirect_url = reverse_lazy('program_page', args=(getIndicator.program.id))
 
         return HttpResponseRedirect(redirect_url)
 
@@ -1390,14 +1390,6 @@ class ProgramPage(ListView):
             return render(
                 request, 'indicators/program_setup_incomplete.html', context
                 )
-        #indicator_filters = {'program__id': program_id}
-        # indicator_filters = {}
-        type_filter_id = None
-        indicator_filter_id = None
-        type_filter_name = None
-        indicator_filter_name = None
-        #was this for eventually showing more than one program?  Because pk already limits to 1:
-        #program = ProgramWithMetrics.with_metrics.get(pk=program_id, funding_status="Funded", country__in=countries)
         program = ProgramWithMetrics.program_page.get(pk=program_id)
         program.indicator_filters = {}
         if self.metrics:
@@ -1407,20 +1399,8 @@ class ProgramPage(ListView):
             }
             return JsonResponse(json_context)
 
-
-        if int(self.kwargs['type_id']):
-            type_filter_id = self.kwargs['type_id']
-            type_filter_name = IndicatorType.objects.get(id=type_filter_id)
-            program.indicator_filters['indicator_type'] = type_filter_id
-
-        if int(self.kwargs['indicator_id']):
-            indicator_filter_id = self.kwargs['indicator_id']
-            program.indicator_filters['id'] = indicator_filter_id
-            indicator_filter_name = program.annotated_indicators.first()
-
         indicators = program.annotated_indicators\
             .annotate(target_period_last_end_date=Max('periodictargets__end_date')).select_related('level')
-        # indicator_count = program.indicator_count
         site_count = len(program.get_sites())
 
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
@@ -1435,10 +1415,6 @@ class ProgramPage(ListView):
         c_data = {
             'program': program,
             'site_count': site_count,
-            'indicator_filter_id': indicator_filter_id,
-            'indicator_filter_name': indicator_filter_name,
-            'type_filter_id': type_filter_id,
-            'type_filter_name': type_filter_name,
             'percent_complete': program.percent_complete,
             'pinned_reports': pinned_reports,
             'js_context': js_context,
