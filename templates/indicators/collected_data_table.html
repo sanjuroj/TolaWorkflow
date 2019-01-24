@@ -107,11 +107,12 @@
             <td></td>
             <td class="text-right">
                 {% with achieved=coldata.achieved|floatformat:"-2" %}
-                {% if indicator.unit_of_measure_type == 1 %}
-                    {{ achieved|trailingzero }}
-                {% else %}
-                    {{ achieved|trailingzero }}%
-                {% endif %}
+                    {% if indicator.unit_of_measure_type == 1 %}
+                        {{ achieved|trailingzero }}
+                    {% else %}
+                        {{ achieved|trailingzero }}%
+                    {% endif %}
+                {% endwith %}
             </td>
             <td class="text-right"></td>
             <td class="collected-data__result--date bg-danger-lighter">
