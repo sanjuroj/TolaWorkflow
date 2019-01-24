@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-03 15:28-0800\n"
-"PO-Revision-Date: 2019-01-04 19:17-0800\n"
+"POT-Creation-Date: 2019-01-23 15:39-0800\n"
+"PO-Revision-Date: 2019-01-23 15:42-0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.2.1\n"
 
 #. Translators: The number of indicators that do not have targets defined on them
 #: js/pages/program_page/components/indicator_list.js:20
@@ -75,27 +75,27 @@ msgstr "Ajouter un indicateur"
 msgid "Find an indicator:"
 msgstr "Trouver un indicateur :"
 
-#: js/pages/program_page/components/indicator_list.js:154
+#: js/pages/program_page/components/indicator_list.js:156
 msgid "Indicator"
 msgstr "Indicateur"
 
-#: js/pages/program_page/components/indicator_list.js:156
+#: js/pages/program_page/components/indicator_list.js:158
 msgid "Level"
 msgstr "Niveau"
 
-#: js/pages/program_page/components/indicator_list.js:157
+#: js/pages/program_page/components/indicator_list.js:159
 msgid "Unit of measure"
 msgstr "Unité de mesure"
 
-#: js/pages/program_page/components/indicator_list.js:158
+#: js/pages/program_page/components/indicator_list.js:160
 msgid "Baseline"
 msgstr "Base de référence"
 
-#: js/pages/program_page/components/indicator_list.js:159
+#: js/pages/program_page/components/indicator_list.js:161
 msgid "Target"
 msgstr "Cible"
 
-#: js/pages/program_page/components/indicator_list.js:255
+#: js/pages/program_page/components/indicator_list.js:256
 msgid ""
 "Some indicators have missing targets. To enter these values, click the "
 "target icon near the indicator name."
@@ -161,15 +161,19 @@ msgid ""
 "on track.  <br><br>Please note that if your indicator has a decreasing "
 "direction of change, then “above” and “below” are switched. In that case, if "
 "your target is 100 and your result is 200, your indicator is 50% below "
-"target and not on track."
+"target and not on track.<br><br><a href='https://docs.google.com/document/"
+"d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our "
+"documentation for more information.</a>"
 msgstr ""
-"La valeur réelle correspond à la valeur cible, plus ou moins 15%% . Donc, si "
-"votre cible est 100 et votre résultat est 110, l'indicateur est 10%% au-"
-"dessus de la cible et sur la bonne voie.  <br><br>Veuillez noter que si le "
-"sens de changement de votre indicateur est décroissant, les indicateurs \"au-"
-"dessus\" et \"en dessous\" sont alors inversés. Dans ce cas, si votre cible "
-"est 100 et votre résultat est 200, votre indicateur est 50%% en dessous de "
-"la cible et non sur la bonne voie."
+"La valeur réelle correspond à la valeur cible, plus ou moins 15%. Donc, si "
+"votre cible est 100 et votre résultat 110, l'indicateur est 10% au-dessus de "
+"la cible et sur la bonne voie.  <br><br>Veuillez noter que si le sens de "
+"changement de votre indicateur est décroissant, les indicateurs « au-dessus "
+"» et «  en dessous » sont alors inversés. Dans ce cas, si votre cible est "
+"100 et votre résultat 200, votre indicateur est 50% en dessous de la cible "
+"et pas en bonne voie.<br><br><a href='https://docs.google.com/document/"
+"d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>Consultez "
+"notre documentation pour plus d’informations.</a>"
 
 #. Translators: title of a graphic showing indicators with targets */
 #: js/pages/program_page/components/program_metrics.js:275
@@ -240,10 +244,6 @@ msgstr "Ajouter les preuves manquantes"
 msgid "No evidence"
 msgstr "Aucune preuve"
 
-#: js/pages/program_page/components/program_metrics.js:322
-msgid "Program metrics"
-msgstr "Métriques du programme"
-
 #: js/pages/program_page/pinned_reports.js:9
 msgid ""
 "Warning: This action cannot be undone. Are you sure you want to delete this "
@@ -251,6 +251,25 @@ msgid ""
 msgstr ""
 "Attention : Cette action ne peut pas être annulée. Êtes-vous sûr de vouloir "
 "supprimer ce rapport épinglé ?"
+
+#~ msgid ""
+#~ "The actual value matches the target value, plus or minus 15%. So if your "
+#~ "target is 100 and your result is 110, the indicator is 10% above target "
+#~ "and on track.  <br><br>Please note that if your indicator has a "
+#~ "decreasing direction of change, then “above” and “below” are switched. In "
+#~ "that case, if your target is 100 and your result is 200, your indicator "
+#~ "is 50% below target and not on track."
+#~ msgstr ""
+#~ "La valeur réelle correspond à la valeur cible, plus ou moins 15%% . Donc, "
+#~ "si votre cible est 100 et votre résultat est 110, l'indicateur est 10%% "
+#~ "au-dessus de la cible et sur la bonne voie.  <br><br>Veuillez noter que "
+#~ "si le sens de changement de votre indicateur est décroissant, les "
+#~ "indicateurs \"au-dessus\" et \"en dessous\" sont alors inversés. Dans ce "
+#~ "cas, si votre cible est 100 et votre résultat est 200, votre indicateur "
+#~ "est 50%% en dessous de la cible et non sur la bonne voie."
+
+#~ msgid "Program metrics"
+#~ msgstr "Métriques du programme"
 
 #~ msgid ""
 #~ "IPTT report can not be run on a program with a reporting period set in "
@@ -336,25 +355,6 @@ msgstr ""
 #~ msgid "Reports will be available after the program start date."
 #~ msgstr ""
 #~ "Les rapports seront disponibles après la date de début du programme."
-
-#~ msgid ""
-#~ "The actual value matches the target value, plus or minus 15%%. So if your "
-#~ "target is 100 and your result is 110, the indicator is 10%% above target "
-#~ "and on track.  <br><br>Please note that if your indicator has a "
-#~ "decreasing direction of change, then \"above\"  and \"below\"  are "
-#~ "switched. In that case, if your target is 100 and your result is 200, "
-#~ "your indicator is 50%% below target and not on track.<br><br><a "
-#~ "href='https://docs.google.com/document/"
-#~ "d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our "
-#~ "documentation for more information.</a>"
-#~ msgstr ""
-#~ "La valeur réelle correspond à la valeur cible, plus ou moins 15%. Donc, "
-#~ "si votre cible est 100 et votre résultat 110, l'indicateur est 10% au-"
-#~ "dessus de la cible et sur la bonne voie.  <br><br>Veuillez noter que si "
-#~ "le sens de changement de votre indicateur est décroissant, les "
-#~ "indicateurs « au-dessus » et «  en dessous » sont alors inversés. Dans ce "
-#~ "cas, si votre cible est 100 et votre résultat 200, votre indicateur est "
-#~ "50% en dessous de la cible et pas en bonne voie."
 
 #~ msgid ""
 #~ "Unavailable until the first target period ends with results reported."
