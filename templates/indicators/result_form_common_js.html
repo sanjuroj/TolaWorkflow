@@ -5,9 +5,9 @@
 <script>
     // gdrive picker
     function filePickerCallback(fileName, url) {
-        // TODO: Write this when a test env is figured out
-        console.log(fileName);
-        console.log(url);
+        document.getElementById('id_evidence_url').value = url;
+        document.getElementById('id_record_name').value = fileName;
+        validateEvidence();
     }
 
     $("#indicator_collecteddata_div").on('click', '#id_browse_google_drive', function(e) {
