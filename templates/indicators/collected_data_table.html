@@ -64,8 +64,8 @@
                     </a>
                     {% endif %}
                 <td class="collected-data__result--value {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
-                    {% with achieved=cdata.achieved|floatformat:"-2" %}
-                    {{ achieved }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                    {% with achieved=cdata.achieved|floatformat:"2" %}
+                    {{ achieved|trailingzero }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                     {% endwith %}
                 </td>
                 <td class="td--stretch">
@@ -106,10 +106,11 @@
             <td></td>
             <td></td>
             <td class="text-right">
+                {% with achieved=coldata.achieved|floatformat:"-2" %}
                 {% if indicator.unit_of_measure_type == 1 %}
-                    {{ coldata.achieved|floatformat:"-2" }}
+                    {{ achieved|trailingzero }}
                 {% else %}
-                    {{ coldata.achieved|floatformat:"-2" }}%
+                    {{ achieved|trailingzero }}%
                 {% endif %}
             </td>
             <td class="text-right"></td>
