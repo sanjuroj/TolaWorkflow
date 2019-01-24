@@ -158,6 +158,7 @@ def strip_trailing_zero(value):
     value = str(value)
     if "." in value:
         return value.rstrip("0").rstrip(".")
+    return value
 
 
 def make_percent(numerator, denominator):
