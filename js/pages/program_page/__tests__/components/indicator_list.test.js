@@ -5,7 +5,7 @@ import {ProgramPageStore, ProgramPageUIStore} from "../../models";
 
 import jsContext from '../fixtures/jsContext';
 
-import '../test_helpers/django_i18n_stubs';
+import '../../../../test_helpers/django_i18n_stubs';
 
 const rootStore = new ProgramPageStore(jsContext.indicators, jsContext.program);
 const uiStore = new ProgramPageUIStore();
