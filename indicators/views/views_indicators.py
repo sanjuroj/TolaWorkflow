@@ -639,8 +639,7 @@ class IndicatorDelete(DeleteView):
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_success_url(self):
-        return reverse_lazy('program_page',
-                            kwargs={'program_id': self.object.program_id, 'indicator_id': 0, 'type_id': 0})
+        return self.object.program.program_page_url
 
 
 class PeriodicTargetDeleteView(DeleteView):
@@ -792,7 +791,7 @@ class ResultCreate(CreateView):
             return HttpResponse(data)
 
         messages.success(self.request, _('Success, Data Created!'))
-        redirect_url = reverse_lazy('program_page', args=(self.kwargs['program']))
+        redirect_url = new.indicator.program.program_page_url
         return HttpResponseRedirect(redirect_url)
 
 
@@ -912,7 +911,7 @@ class ResultUpdate(UpdateView):
             return HttpResponse(data)
 
         messages.success(self.request, _('Success, Data Updated!'))
-        redirect_url = reverse_lazy('program_page', args=(getIndicator.program.id))
+        redirect_url = getIndicator.program.program_page_url
 
         return HttpResponseRedirect(redirect_url)
 
@@ -926,8 +925,7 @@ class ResultDelete(DeleteView):
             request, *args, **kwargs)
 
     def get_success_url(self):
-        return reverse_lazy('program_page',
-                            kwargs={'program_id': self.object.program_id, 'indicator_id': 0, 'type_id': 0})
+        return self.object.program.program_page_url
 
 
 def getTableCount(url, table_id):

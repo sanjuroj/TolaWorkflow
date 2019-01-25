@@ -275,7 +275,7 @@ class TestPinnedReportListInProgramView(PinnedReportTestCase):
     """
 
     def test_program_view_no_pinned_reports(self):
-        response = self.client.get(reverse('program_page', args=(self.program.id, 0, 0)))
+        response = self.client.get(self.program.program_page_url)
 
         self.assertEqual(response.status_code, 200)
         pinned_reports = response.context['pinned_reports']
@@ -296,7 +296,7 @@ class TestPinnedReportListInProgramView(PinnedReportTestCase):
             program=self.program,
         )
 
-        response = self.client.get(reverse('program_page', args=(self.program.id, 0, 0)))
+        response = self.client.get(self.program.program_page_url)
 
         self.assertEqual(response.status_code, 200)
         pinned_reports = response.context['pinned_reports']
@@ -316,7 +316,7 @@ class TestPinnedReportListInProgramView(PinnedReportTestCase):
         self.tola_user.language = 'es'
         self.tola_user.save()
 
-        response = self.client.get(reverse('program_page', args=(self.program.id, 0, 0)))
+        response = self.client.get(self.program.program_page_url)
 
         self.assertEqual(response.status_code, 200)
 
@@ -326,7 +326,7 @@ class TestPinnedReportListInProgramView(PinnedReportTestCase):
         pr.query_string = 'timeperiods=3&numrecentperiods=&timeframe=1'
         pr.save()
 
-        response = self.client.get(reverse('program_page', args=(self.program.id, 0, 0)))
+        response = self.client.get(self.program.program_page_url)
 
         self.assertEqual(response.status_code, 200)
 
