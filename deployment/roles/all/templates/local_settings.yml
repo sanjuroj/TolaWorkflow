@@ -15,19 +15,19 @@ ALLOWED_HOSTS:
  - "tola-activity-demo.example.org"
  - "tola-activity.example.org"
  - "tola-tables.example.org"
-{% if is_vagrant is defined and is_vagrant %}
- - "local.tolaactivity.com"
+{% if hostname is defined and hostname %}
+ - "{{hostname}}"
 {% endif %}
 
-EMAIL_USE_TLS: True
-EMAIL_HOST: 'smtp.gmail.com'
-EMAIL_PORT: 587
-EMAIL_HOST_USER: 'sys@example.org'
-EMAIL_HOST_PASSWORD: 'XXXXXXXXXXXX'
-DEFAULT_FROM_EMAIL: 'sys@example.org'
-SERVER_EMAIL: "tola@example.org"
-EMAIL_BACKEND: "django.core.mail.backends.filebased.EmailBackend"
-EMAIL_FILE_PATH: "/tmp/tola-messages"
+EMAIL_USE_TLS: {{mail.use_tls}}
+EMAIL_HOST: "{{mail.host}}"
+EMAIL_PORT: {{mail.port}}
+EMAIL_HOST_USER: "{{mail.username}}"
+EMAIL_HOST_PASSWORD: "{{mail.password}}"
+DEFAULT_FROM_EMAIL: "{{mail.default_from}}"
+SERVER_EMAIL: "{{mail.server_email}}"
+EMAIL_BACKEND: "{{mail.django_email_backend}}"
+EMAIL_FILE_PATH: "{{mail.filepath}}"
 
 DEV_APPS:
  - 'debug_toolbar'

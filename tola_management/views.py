@@ -125,6 +125,34 @@ def get_organization_page_context(request):
         "organizations": organizations
     }
 
+def get_program_page_context(request):
+    countries = {
+        country.id : {
+            'id': country.id,
+            'name': country.country,
+        } for country in Country.objects.all()
+    }
+
+    organizations = {
+        organization.id : {
+            'id': organization.id,
+            'name': organization.name,
+        } for organization in Organization.objects.all()
+    }
+
+    programs = [
+        {
+            'id': program.id,
+            'name': program.name,
+        } for program in Program.objects.all()
+    ]
+
+    return {
+        'countries': countries,
+        'organizations': organizations,
+        'programs': programs,
+    }
+	
 def send_new_user_registration_email(user, request):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
@@ -144,6 +172,8 @@ def app_host_page(request, react_app_page):
         js_context = get_user_page_context(request)
     elif react_app_page == 'organization':
         js_context = get_organization_page_context(request)
+    elif react_app_page == 'program':
+        js_context = get_program_page_context(request)
 
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
     return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "report_wide": True})
