@@ -12,31 +12,40 @@ const program_options = [
 const country_options = [
     {value: 'user', label: 'User'},
     {value: 'basic_admin', label: 'Basic Admin'},
-    {value: 'super_admin', label: 'Super Admin'},
 ]
 
 //we need to flatten the country -> program heirarchy to support the virtualized table
 const flatten_programs = (countries, programs, access) => countries.flatMap(country => [country, ...country.programs])
 
-const denormalize = (countries, programs, access_listing) => {
-    return Object.entries(countries).map(([id, country]) => ({
+const denormalize = (store, access_listing) => {
+    return Object.entries(store.countries).map(([id, country]) => ({
         id: country.id,
         name: country.name,
         has_access: access_listing && access_listing.country[country.id] && access_listing.country[country.id].has_access || false,
         permissions: {
             options: country_options,
-            permission_level: (access_listing && access_listing.country[country.id] && access_listing.country[country.id].role) || country_options[0]
+            permission_level: (access_listing && access_listing.country[country.id] && access_listing.country[country.id].permission_level) || country_options[0].value,
+            admin_access: store.current_user_is_super_admin
         },
         type: "country",
         programs: country.programs.map(program_id => {
-            const program = programs[program_id]
+            const program = store.programs[program_id]
+
+            const has_access =
+                access_listing
+                && (access_listing.country[country.id] && access_listing.country[country.id].has_access)
+                || (access_listing.program[program.id] && access_listing.program[program.id].has_access)
+                || false
+
+            const permission_level = (access_listing && access_listing.program[program.id] && access_listing.program[program.id].permission_level) || program_options[0].value
             return {
                 id: program.id,
                 name: program.name,
-                has_access: access_listing && (access_listing.country[country.id] && access_listing.country[country.id].has_access) || (access_listing.program[program.id] && access_listing.program[program.id].has_access) || false,
+                has_access: has_access,
                 permissions: {
                     options: program_options,
-                    permission_level: (access_listing && access_listing.country[country.id] && access_listing.country[country.id].role) || program_options[0]
+                    permission_level: permission_level,
+                    admin_access: store.current_user_country_roles[country.id] == 'basic_admin'
                 },
                 type: "program"
             }
@@ -70,7 +79,10 @@ export default class EditUserPrograms extends React.Component {
     constructor(props) {
         super(props)
         const {store} = props
-        const denormalized = denormalize(store.countries, store.programs, store.editing_target_data.programs)
+        const denormalized = denormalize(
+            store,
+            store.editing_target_data.programs,
+        )
         const filtered_countries = apply_filter('', denormalized)
         this.state = {
             filter_string: '',
@@ -82,7 +94,10 @@ export default class EditUserPrograms extends React.Component {
     }
 
     componentWillReceiveProps(next_props) {
-        const denormalized = denormalize(next_props.store.countries, next_props.store.programs, next_props.store.editing_target_data.programs)
+        const denormalized = denormalize(
+            next_props.store,
+            next_props.store.editing_target_data.programs,
+        )
         const filtered_countries = apply_filter(this.state.filter_string, denormalized)
         this.setState({
             filtered_countries: filtered_countries,
@@ -96,7 +111,10 @@ export default class EditUserPrograms extends React.Component {
     }
 
     resetForm() {
-        const denormalized = denormalize(this.props.store.countries, this.props.store.programs, this.state.original_user_program_access)
+        const denormalized = denormalize(
+            this.props.store,
+            this.state.original_user_program_access,
+        )
         const filtered_countries = apply_filter(this.state.filter_string, denormalized)
         this.setState({
             filtered_countries: filtered_countries,
@@ -108,24 +126,37 @@ export default class EditUserPrograms extends React.Component {
 
     toggleProgramAccess(program_id) {
         const changed_program = this.props.store.programs[program_id]
-        const country_access = this.state.user_program_access.country[changed_program.country_id]
+        const country_permissions = this.state.user_program_access.country[changed_program.country_id]
         const new_user_program_access = {
             country: {
                 ...this.state.user_program_access.country,
                 //it's either already false, or will be after this program has changed
-                [changed_program.country_id]: false
+                [changed_program.country_id]: {
+                    ...country_permissions,
+                    has_access: false
+                }
             },
             program: Object.entries(this.props.store.programs).reduce((xs, [id, program]) => {
+                const program_permissions = this.state.user_program_access.program[program.id]
+                const has_access = program_permissions && program_permissions.has_access
                 if(id == changed_program.id) {
-                    xs[id] = !(this.state.user_program_access.program[program.id] || country_access)
+                    xs[id] = {
+                        ...program,
+                        has_access: !(has_access || (country_permissions && country_permissions.has_access))
+                    }
                 } else {
-                    xs[id] = (changed_program.country_id == program.country_id && country_access) || this.state.user_program_access.program[program.id]
+                    xs[id] = {
+                        ...program,
+                        has_access: (changed_program.country_id == program.country_id && country_permissions.has_access) || has_access
+                    }
                 }
                 return xs
             },{})
         }
 
-        const denormalized = denormalize(this.props.store.countries, this.props.store.programs, new_user_program_access)
+        const denormalized = denormalize(
+            this.props.store,
+            new_user_program_access)
         const filtered_countries = apply_filter(this.state.filter_string, denormalized)
 
         this.setState({
@@ -136,19 +167,28 @@ export default class EditUserPrograms extends React.Component {
     }
 
     toggleCountryAccess(country_id) {
+        const country_permissions = this.state.user_program_access.country[country_id]
+
         const new_user_program_access = {
             country: {
                 ...this.state.user_program_access.country,
-                [country_id]: !this.state.user_program_access.country[country_id]
+                [country_id]: {
+                    ...country_permissions,
+                    has_access: !(country_permissions && country_permissions.has_access)
+                }
             },
             //remove all program access if they have been granted access to a country
             program: Object.entries(this.props.store.programs).reduce((xs, [id, program]) => {
-                xs[id] = program.country_id != country_id && this.state.user_program_access.program[program.id]
+                const program_permissions = this.state.user_program_access.program[program.id]
+                xs[id] = {
+                    ...program_permissions,
+                    has_access: program.country_id != country_id && (program_permissions && program_permissions.has_access)
+                }
                 return xs
             },{})
         }
 
-        const denormalized = denormalize(this.props.store.countries, this.props.store.programs, new_user_program_access)
+        const denormalized = denormalize(this.props.store, new_user_program_access)
         const filtered_countries = apply_filter(this.state.filter_string, denormalized)
 
         this.setState({
@@ -159,15 +199,55 @@ export default class EditUserPrograms extends React.Component {
     }
 
     changeCountryRole(country_id, new_val) {
+        const country_permissions = this.state.user_program_access.country[country_id]
 
+        const new_user_program_access = {
+            ...this.state.user_program_access,
+            country: {
+                ...this.state.user_program_access.country,
+                [country_id]: {
+                    ...country_permissions,
+                    permission_level: new_val
+                }
+            },
+        }
+
+        const denormalized = denormalize(this.props.store, new_user_program_access)
+        const filtered_countries = apply_filter(this.state.filter_string, denormalized)
+
+        this.setState({
+            filtered_countries: filtered_countries,
+            flattened_programs: flatten_programs(filtered_countries),
+            user_program_access: new_user_program_access
+        })
     }
 
     changeProgramRole(program_id, new_val) {
+        const program_permissions = this.state.user_program_access.program[program_id]
 
+        const new_user_program_access = {
+            ...this.state.user_program_access,
+            program: {
+                ...this.state.user_program_access.program,
+                [program_id]: {
+                    ...program_permissions,
+                    permission_level: new_val
+                }
+            },
+        }
+
+        const denormalized = denormalize(this.props.store, new_user_program_access)
+        const filtered_countries = apply_filter(this.state.filter_string, denormalized)
+
+        this.setState({
+            filtered_countries: filtered_countries,
+            flattened_programs: flatten_programs(filtered_countries),
+            user_program_access: new_user_program_access
+        })
     }
 
     updateProgramFilter(val) {
-        const denormalized = denormalize(this.props.store.countries, this.props.store.programs, this.state.user_program_access)
+        const denormalized = denormalize(this.props.store, this.state.user_program_access)
         const filtered_countries = apply_filter(val, denormalized)
 
         this.setState({
@@ -228,9 +308,17 @@ export default class EditUserPrograms extends React.Component {
                                         flexGrow={1}
                                         dataKey="permissions"
                                         label="Roles and Permissions"
-                                        cellDataGetter={({rowData}) => ({id: rowData.id, permissions: rowData.permissions, action: (rowData.type == "country")?this.changeCountryRole.bind(this):this.changeProgramRole.bind(this)})}
+                                        cellDataGetter={({rowData}) => ({
+                                            id: rowData.id,
+                                            permissions: rowData.permissions,
+                                            type: rowData.type,
+                                            action: (rowData.type == "country")?this.changeCountryRole.bind(this):this.changeProgramRole.bind(this)
+                                        })}
                                         cellRenderer={({cellData}) =>
-                                            <select value={cellData.permissions.permission_level.value} onChange={(val) => cellData.action(cellData.id, val)} >
+                                            <select
+                                            disabled={!cellData.permissions.admin_access}
+                                            value={cellData.permissions.permission_level}
+                                            onChange={(e) => cellData.action(cellData.id, e.target.value)}>
                                                 {cellData.permissions.options.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
                                             </select>
                                         }/>

@@ -6,13 +6,21 @@ export class VirtualizedMenuList extends React.PureComponent {
         super(props)
         this.cache = new CellMeasurerCache({
             fixedWidth: true,
-            defaultHeight: 35
-        });
+            defaultHeight: 35,
+        })
+        this.filter_val = ""
     }
 
     render() {
-        const {options, children, maxHeight, getValue} = this.props
+        const {options, children, maxHeight, getValue, selectProps} = this.props
         const rowCount = children.length || 0
+
+        //gotta be a way to improve this. it's ok after the first couple of
+        //characters search, but it's slow prior to that
+        if(selectProps.inputValue !== this.filter_val) {
+            this.filter_val = selectProps.inputValue
+            this.cache.clearAll()
+        }
 
         return (
             <div style={{display: "flex", height: `100vh`, maxHeight: maxHeight+"px"}}>

@@ -22,12 +22,12 @@
         display: flex;
         justify-content: space-between;
 
-        .selector {
-            min-width: 10em;
-        }
-
         .bulk-controls {
             display: flex;
+
+            .bulk-select {
+                width: 14vw;
+            }
         }
     }
 

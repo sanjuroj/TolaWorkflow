@@ -28,7 +28,9 @@ from rest_framework import viewsets, mixins, pagination, status
 from django.contrib.auth.models import User,Group
 
 from feed.views import (
-    TolaUserViewSet, OrganizationViewSet, SmallResultsSetPagination
+    TolaUserViewSet,
+    OrganizationViewSet,
+    SmallResultsSetPagination
 )
 
 from feed.serializers import (
@@ -39,7 +41,11 @@ from workflow.models import (
     TolaUser,
     Organization,
     Program,
-    Country
+    Country,
+    TolaUserCountryRoles,
+    TolaUserProgramRoles,
+    COUNTRY_ROLE_CHOICES,
+    PROGRAM_ROLE_CHOICES
 )
 
 from .models import (
@@ -81,11 +87,22 @@ def get_user_page_context(request):
         programs[program.id] = {"id": program.id, "name": program.name, "country_id": program.country_id}
         countries[program.country_id]["programs"].append(program.id)
 
+    program_roles = {}
+    for role in list(request.user.tola_user.program_roles.all()):
+        program_roles[role.program_id] = {"id": role.program_id, "role": role.role}
+
+    country_roles = {}
+    for role in list(request.user.tola_user.country_roles.all()):
+        country_roles[role.country_id] = {"id": role.country_id, "role": role.role}
+
     return {
         "countries": countries,
         "organizations": list(Organization.objects.all().values()),
         "programs": programs,
-        "users": list(TolaUser.objects.all().values())
+        "users": list(TolaUser.objects.all().values()),
+        "program_roles": program_roles,
+        "country_roles": country_roles,
+        "is_superuser": request.user.is_superuser
     }
 
 def get_organization_page_context(request):
@@ -398,10 +415,19 @@ class UserAdminViewSet(viewsets.ModelViewSet):
             added_countries = []
             removed_countries = []
             for country_id, permissions in country_data.iteritems():
-                if permissions.has_access:
+                if "has_access" in permissions and permissions["has_access"]:
                     added_countries.append(country_id)
                 else:
                     removed_countries.append(country_id)
+
+                if "permission_level" in permissions:
+                    TolaUserCountryRoles.objects.update_or_create(
+                        user_id=user.id,
+                        country_id=country_id,
+                        defaults={
+                            "role": permissions["permission_level"],
+                        }
+                    )
 
             user.countries.add(*list(Country.objects.filter(pk__in=added_countries)))
             user.countries.remove(*list(Country.objects.filter(pk__in=removed_countries)))
@@ -410,10 +436,19 @@ class UserAdminViewSet(viewsets.ModelViewSet):
             added_programs = []
             removed_programs = []
             for program_id, permissions in program_data.iteritems():
-                if has_access:
+                if "has_access" in permissions and permissions["has_access"]:
                     added_programs.append(program_id)
                 else:
                     removed_programs.append(program_id)
+
+                if "permission_level" in permissions:
+                    TolaUserProgramRoles.objects.update_or_create(
+                        user_id=user.id,
+                        program_id=program_id,
+                        defaults={
+                            "role": permissions["permission_level"],
+                        }
+                    )
 
             user.program_access.add(*list(Program.objects.filter(pk__in=added_programs)))
             user.program_access.remove(*list(Program.objects.filter(pk__in=removed_programs)))
@@ -433,7 +468,7 @@ class UserAdminViewSet(viewsets.ModelViewSet):
 
             for country_role in user.country_roles.all():
                 if country_role.country.id in country_access:
-                    country_access[country_role.country.id]["role"] = country_role.role
+                    country_access[country_role.country.id]["permission_level"] = country_role.role
 
             program_access = {}
             for program in user.program_access.all():
@@ -443,12 +478,26 @@ class UserAdminViewSet(viewsets.ModelViewSet):
 
             for program_role in user.program_roles.all():
                 if program_role.program.id in program_access:
-                    program_access[program_role.program.id]["role"] = program_role.role
+                    program_access[program_role.program.id]["permission_level"] = program_role.role
 
             return Response({
                 "country": country_access,
                 "program": program_access
             })
+
+    @list_route(methods=["post"])
+    def bulk_update_status(self, request):
+        User.objects.filter(pk__in=request.data["user_ids"]).update(is_active=bool(request.data["new_status"]))
+        return Response({})
+
+
+    @list_route(methods=["post"])
+    def bulk_add_programs(self, request):
+        pass
+
+    @list_route(methods=["post"])
+    def bulk_remove_programs(self, request):
+        pass
 
 
 class OrganizationAdminSerializer(Serializer):
@@ -496,13 +545,41 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
             country_where = 'AND wtu.country_id IN ({})'.format(in_param_string)
 
         program_where = ''
+        program_join = ''
         if req.GET.getlist('programs[]'):
             params.extend(req.GET.getlist('programs[]'))
 
             #create placeholders for multiple programs and strip the trailing comma
             in_param_string = ('%s,'*len(req.GET.getlist('programs[]')))[:-1]
 
-            program_where = 'AND (pz.program_id IN ({}))'.format(in_param_string)
+            program_join = """
+                LEFT JOIN (
+                    SELECT
+                        wo.id AS organization_id,
+                        pz.program_id AS program_id
+                    FROM workflow_organization wo
+                    INNER JOIN workflow_tolauser wtu ON wo.id = wtu.organization_id
+                    INNER JOIN (
+                        SELECT MAX(tu_p.tolauser_id) as tolauser_id, tu_p.program_id
+                        FROM (
+                                SELECT
+                                    wpua.tolauser_id,
+                                    wpua.program_id
+                                FROM workflow_program_user_access wpua
+                            UNION DISTINCT
+                                SELECT
+                                    wtuc.tolauser_id,
+                                    wpc.program_id
+                                FROM workflow_tolauser_countries wtuc
+                                INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
+                        ) tu_p
+                        GROUP BY tu_p.program_id
+                    ) pz ON pz.tolauser_id = wtu.id
+                    GROUP BY wo.id, pz.program_id
+                ) pzz ON pzz.organization_id = wo.id
+            """
+
+            program_where = 'AND (pzz.program_id IN ({}))'.format(in_param_string)
 
         organization_where = ''
         if req.GET.getlist('organizations[]'):
@@ -533,18 +610,31 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
                 wo.is_active
             FROM workflow_organization wo
             LEFT JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
+            {program_join}
             LEFT JOIN (
-                    SELECT
-                        wpua.tolauser_id,
-                        wpua.program_id
-                    FROM workflow_program_user_access wpua
-                UNION DISTINCT
-                    SELECT
-                        wtuc.tolauser_id,
-                        wpc.program_id
-                    FROM workflow_tolauser_countries wtuc
-                    INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
-            ) pz ON pz.tolauser_id = wtu.id
+                SELECT
+                    wo.id AS organization_id,
+                    pz.program_id AS program_id
+                FROM workflow_organization wo
+                INNER JOIN workflow_tolauser wtu ON wo.id = wtu.organization_id
+                INNER JOIN (
+                    SELECT MAX(tu_p.tolauser_id) as tolauser_id, tu_p.program_id
+                    FROM (
+                            SELECT
+                                wpua.tolauser_id,
+                                wpua.program_id
+                            FROM workflow_program_user_access wpua
+                        UNION DISTINCT
+                            SELECT
+                                wtuc.tolauser_id,
+                                wpc.program_id
+                            FROM workflow_tolauser_countries wtuc
+                            INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
+                    ) tu_p
+                    GROUP BY tu_p.program_id
+                ) pz ON pz.tolauser_id = wtu.id
+                GROUP BY wo.id, pz.program_id
+            ) pz ON pz.organization_id = wo.id
             WHERE
                 1=1
                 {program_where}
@@ -553,6 +643,7 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
             GROUP BY wo.id
         """.format(
             program_where=program_where,
+            program_join=program_join,
             country_where=country_where,
             organization_where=organization_where
         ), params)
