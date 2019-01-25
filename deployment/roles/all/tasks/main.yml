@@ -31,6 +31,7 @@
       - libcairo2-dev
       - libpango1.0-dev
       - uwsgi-plugin-python
+      - apt-transport-https
     state: present
   tags:
     - provision
@@ -112,6 +113,14 @@
   pip:
     name: google-api-python-client
     state: latest
+
+- name: create config folder
+  become: yes
+  file:
+    path: "{{app_dir}}/config"
+    owner: "{{app_user}}"
+    group: "{{app_user}}"
+    state: directory
 
 - name: Push local_settings.py
   become: yes

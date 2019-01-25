@@ -8,6 +8,7 @@ import EditUserProfile from './components/edit_user_profile'
 import EditUserPrograms from './components/edit_user_programs'
 import EditUserHistory from './components/edit_user_history'
 import Pagination from 'components/pagination'
+import LoadingSpinner from 'components/loading-spinner'
 
 const UserFilter = observer(({store, userListing}) => {
     return <div className="form-group">
@@ -224,81 +225,83 @@ export const IndexView = observer(
                 </div>
             </div>
             <div className="col col-sm-9 list-section">
-                <div className="list-controls row">
+                <div className="list-controls">
                     <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div>
                         <button className="btn btn-primary" onClick={() => store.createUser()}><i className="fa fa-plus-circle"></i>Add User</button>
                     </div>
                 </div>
-                <div className="list-table row">
-                    <ManagementTable
-                        newData={store.new_user}
-                        data={store.users_listing}
-                        keyField="id"
-                        HeaderRow={({Col, Row}) =>
-                            <Row>
-                                <Col size="0.5">
-                                    <div className="td--stretch">
-                                        <input type="checkbox" checked={store.bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
-                                        <div></div>
-                                    </div>
-                                </Col>
-                                <Col size="2">User</Col>
-                                <Col>Organization</Col>
-                                <Col>Programs</Col>
-                                <Col size="0.5">Admin Role</Col>
-                                <Col size="0.25">Status</Col>
-                            </Row>
-                        }
-                        Row={({Col, Row, data}) =>
-                            <Row
-                            expanded={data.id == store.editing_target}
-                            Expando={({Wrapper}) =>
-                                <Wrapper>
-                                    <UserEditor
-                                        new={data.id == 'new'}
-                                        ProfileSection={() =>
-                                            <EditUserProfile
-                                            new={data.id == 'new'}
-                                            userData={data}
-                                            onUpdate={(new_user_data) => store.updateUserProfile(data.id, new_user_data)}
-                                            onCreate={(new_user_data) => store.saveNewUser(new_user_data)}
-                                            onCreateAndAddAnother={(new_user_data) => store.saveNewUserAndAddAnother(new_user_data)}
-                                            organizations={store.organizations} />}
-                                        ProgramSection={() =>
-                                            <EditUserPrograms
-                                            store={store}
-                                            user={data}
-                                            adminUserProgramRoles={store.current_user_program_roles}
-                                            adminUserCountryRoles={store.current_user_country_roles}
-                                            onSave={(new_program_data) => store.saveUserPrograms(data.id, new_program_data)}/>}
-                                        HistorySection={() =>
-                                            <EditUserHistory
-                                            userData={data}
-                                            history={store.editing_target_data.history}
-                                            onResendRegistrationEmail={() => store.resendRegistrationEmail(data.id)}
-                                            onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>}
-                                    />
-                                </Wrapper>
-                            }>
-                                <Col size="0.5">
-                                    <div className="td--stretch">
-                                        <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
-                                        <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                            <i className="fa fa-user"></i>
+                <LoadingSpinner isLoading={store.fetching_users_listing || store.applying_bulk_updates}>
+                    <div className="list-table">
+                        <ManagementTable
+                            newData={store.new_user}
+                            data={store.users_listing}
+                            keyField="id"
+                            HeaderRow={({Col, Row}) =>
+                                <Row>
+                                    <Col size="0.5">
+                                        <div className="td--stretch">
+                                            <input type="checkbox" checked={store.bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
+                                            <div></div>
                                         </div>
-                                    </div>
-                                </Col>
-                                <Col size="2">{data.name || "---"}</Col>
-                                <Col>{data.organization_name || "---"}</Col>
-                                <Col><a href="">{data.user_programs} programs</a></Col>
-                                <Col size="0.5">{data.is_admin?'Yes':'No'}</Col>
-                                <Col size="0.25">{data.is_active?'Active':'Inactive'}</Col>
-                            </Row>
-                        }
-                    />
-                </div>
-                <div className="list-metadata row">
+                                    </Col>
+                                    <Col size="2">User</Col>
+                                    <Col>Organization</Col>
+                                    <Col>Programs</Col>
+                                    <Col size="0.5">Admin Role</Col>
+                                    <Col size="0.25">Status</Col>
+                                </Row>
+                            }
+                            Row={({Col, Row, data}) =>
+                                <Row
+                                expanded={data.id == store.editing_target}
+                                Expando={({Wrapper}) =>
+                                    <Wrapper>
+                                        <UserEditor
+                                            new={data.id == 'new'}
+                                            ProfileSection={() =>
+                                                <EditUserProfile
+                                                new={data.id == 'new'}
+                                                userData={data}
+                                                onUpdate={(new_user_data) => store.updateUserProfile(data.id, new_user_data)}
+                                                onCreate={(new_user_data) => store.saveNewUser(new_user_data)}
+                                                onCreateAndAddAnother={(new_user_data) => store.saveNewUserAndAddAnother(new_user_data)}
+                                                organizations={store.organizations} />}
+                                            ProgramSection={() =>
+                                                <EditUserPrograms
+                                                store={store}
+                                                user={data}
+                                                adminUserProgramRoles={store.current_user_program_roles}
+                                                adminUserCountryRoles={store.current_user_country_roles}
+                                                onSave={(new_program_data) => store.saveUserPrograms(data.id, new_program_data)}/>}
+                                            HistorySection={() =>
+                                                <EditUserHistory
+                                                userData={data}
+                                                history={store.editing_target_data.history}
+                                                onResendRegistrationEmail={() => store.resendRegistrationEmail(data.id)}
+                                                onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>}
+                                        />
+                                    </Wrapper>
+                                }>
+                                    <Col size="0.5">
+                                        <div className="td--stretch">
+                                            <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
+                                            <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
+                                                <i className="fa fa-user"></i>
+                                            </div>
+                                        </div>
+                                    </Col>
+                                    <Col size="2">{data.name || "---"}</Col>
+                                    <Col>{data.organization_name || "---"}</Col>
+                                    <Col><a href="">{data.user_programs} programs</a></Col>
+                                    <Col size="0.5">{data.is_admin?'Yes':'No'}</Col>
+                                    <Col size="0.25">{data.is_active?'Active':'Inactive'}</Col>
+                                </Row>
+                            }
+                        />
+                    </div>
+                </LoadingSpinner>
+                <div className="list-metadata">
                     <div id="users-count">{store.users_count?`${store.users_count} users`:`--`}</div>
                     <div id ="pagination-controls">
                         {store.total_pages &&
