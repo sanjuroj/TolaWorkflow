@@ -1021,7 +1021,7 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
         program = context['program']
         if not program.has_started:
             messages.error(self.request, _('IPTT report cannot be run on a program with a reporting period set in the future.'))
-            return HttpResponseRedirect(reverse_lazy('program_page', args=(program.id)))
+            return HttpResponseRedirect(program.program_page_url)
 
         form_kwargs = {'request': request, 'program': context['program']}
         context['form'] = IPTTReportFilterForm(initial=self.filter_form_initial_data, **form_kwargs)
