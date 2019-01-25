@@ -126,9 +126,9 @@ class TestMultipleLOPIndicatorsIPTTResponse(iptt_utility.TestIPTTTargetPeriodsRe
         super(TestMultipleLOPIndicatorsIPTTResponse, self).setUp()
         self.indicators = [
             self.get_indicator_by_frequency(self.indicator_frequency, baseline=self.indic1_baseline,
-                                            lop_target=self.indic1_target),
+                                            lop_target=self.indic1_target, number='1'),
             self.get_indicator_by_frequency(self.indicator_frequency, baseline=self.indic2_baseline,
-                                            lop_target=self.indic2_target)
+                                            lop_target=self.indic2_target, number='2')
             ]
         self.data = [[], []]
 
