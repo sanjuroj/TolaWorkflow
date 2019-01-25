@@ -13,7 +13,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse_lazy
 from django.db import connection
 from django.db.models import (
-    Count, Min, Q, Sum, Avg, Max, DecimalField, OuterRef, Subquery
+    Count, Min, Q, Sum, Avg, Max
 )
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, render_to_response
@@ -34,7 +34,7 @@ from indicators.serializers import IndicatorSerializer, ProgramSerializer
 from workflow.forms import FilterForm
 from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
-    Program, Country, Sector, TolaSites, FormGuidance
+    Program, Sector, TolaSites, FormGuidance
 )
 from ..export import IndicatorResource, ResultResource
 from ..forms import IndicatorForm, ResultForm
@@ -352,12 +352,12 @@ def handleDataCollectedRecords(indicatr, lop, existing_target_frequency,
 
 def reset_indicator_target_frequency(ind):
     if ind.target_frequency and ind.target_frequency != 1 and \
-            not ind.periodictargets.count():
-                ind.target_frequency = None
-                ind.target_frequency_start = None
-                ind.target_frequency_num_periods = 1
-                ind.save()
-                return True
+        not ind.periodictargets.count():
+            ind.target_frequency = None
+            ind.target_frequency_start = None
+            ind.target_frequency_num_periods = 1
+            ind.save()
+            return True
     return False
 
 
