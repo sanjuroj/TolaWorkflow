@@ -2,18 +2,35 @@
 from __future__ import unicode_literals
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
+from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.tokens import default_token_generator
+from django.template import loader
 from django.shortcuts import render
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.urls import reverse
+from django.conf import settings
 import json
 
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.generics import ListAPIView
-from rest_framework.serializers import Serializer, CharField, IntegerField, PrimaryKeyRelatedField, BooleanField
+from rest_framework.serializers import (
+    Serializer,
+    CharField,
+    IntegerField,
+    PrimaryKeyRelatedField,
+    BooleanField
+)
 from rest_framework.response import Response
 from rest_framework import viewsets, mixins, pagination, status
 
+from django.contrib.auth.models import User,Group
+
 from feed.views import (
-    TolaUserViewSet, OrganizationViewSet, SmallResultsSetPagination
+    TolaUserViewSet,
+    OrganizationViewSet,
+    SmallResultsSetPagination
 )
 
 from feed.serializers import (
@@ -24,7 +41,11 @@ from workflow.models import (
     TolaUser,
     Organization,
     Program,
-    Country
+    Country,
+    TolaUserCountryRoles,
+    TolaUserProgramRoles,
+    COUNTRY_ROLE_CHOICES,
+    PROGRAM_ROLE_CHOICES
 )
 
 from .models import (
@@ -66,11 +87,22 @@ def get_user_page_context(request):
         programs[program.id] = {"id": program.id, "name": program.name, "country_id": program.country_id}
         countries[program.country_id]["programs"].append(program.id)
 
+    program_roles = {}
+    for role in list(request.user.tola_user.program_roles.all()):
+        program_roles[role.program_id] = {"id": role.program_id, "role": role.role}
+
+    country_roles = {}
+    for role in list(request.user.tola_user.country_roles.all()):
+        country_roles[role.country_id] = {"id": role.country_id, "role": role.role}
+
     return {
         "countries": countries,
         "organizations": list(Organization.objects.all().values()),
         "programs": programs,
-        "users": list(TolaUser.objects.all().values())
+        "users": list(TolaUser.objects.all().values()),
+        "program_roles": program_roles,
+        "country_roles": country_roles,
+        "is_superuser": request.user.is_superuser
     }
 
 def get_organization_page_context(request):
@@ -93,6 +125,17 @@ def get_organization_page_context(request):
         "organizations": organizations
     }
 
+def send_new_user_registration_email(user, request):
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    one_time_url = request.build_absolute_uri(reverse('one_time_registration', kwargs={"uidb64": uid, "token": token}))
+    #fire off registration link email
+    c = {'one_time_link': one_time_url, 'user': user}
+    subject='Mercy Corps - Tola New Account Registration'
+    email_template_name='registration/one_time_login_email.html'
+    email = loader.render_to_string(email_template_name, c)
+    send_mail(subject, email, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False, html_message=email)
+
 # Create your views here.
 @login_required(login_url='/accounts/login/')
 def app_host_page(request, react_app_page):
@@ -106,7 +149,7 @@ def app_host_page(request, react_app_page):
     return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "report_wide": True})
 
 class UserAdminSerializer(Serializer):
-    id = IntegerField()
+    id = IntegerField(allow_null=True, required=False)
     name = CharField(max_length=100)
     organization_name = CharField(max_length=255, allow_null=True, allow_blank=True, required=False)
     email = CharField(max_length=255)
@@ -276,7 +319,38 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        request.data["id"] = None
+        request.data["is_active"] = True
+        serializer = UserAdminSerializer(data=request.data)
+        if(serializer.is_valid()):
+            d = serializer.validated_data
+
+            #create auth user
+            new_django_user = User(
+                username=d["email"],
+                email=d["email"],
+                is_active=d["is_active"]
+            )
+            new_django_user.save()
+
+            #create tola user
+            organization = Organization.objects.get(pk=d["organization_id"])
+            new_user = TolaUser(
+                name=d["name"],
+                organization=organization,
+                user=new_django_user,
+                mode_of_address=d["mode_of_address"],
+                mode_of_contact=d["mode_of_contact"],
+                phone_number=d["phone_number"],
+                title=d["title"]
+            )
+            new_user.save()
+
+            send_new_user_registration_email(new_django_user, request)
+
+            return Response({})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk=None):
         user = TolaUser.objects.get(pk=pk)
@@ -311,6 +385,12 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @detail_route(methods=['post'])
+    def resend_registration_email(self, request, pk=None):
+        tola_user = TolaUser.objects.get(pk=pk)
+        send_new_user_registration_email(tola_user.user, request)
+        return Response({})
+
     @detail_route(methods=['get'])
     def history(self, request, pk=None):
         user = TolaUser.objects.get(pk=pk)
@@ -335,10 +415,19 @@ class UserAdminViewSet(viewsets.ModelViewSet):
             added_countries = []
             removed_countries = []
             for country_id, permissions in country_data.iteritems():
-                if permissions.has_access:
+                if "has_access" in permissions and permissions["has_access"]:
                     added_countries.append(country_id)
                 else:
                     removed_countries.append(country_id)
+
+                if "permission_level" in permissions:
+                    TolaUserCountryRoles.objects.update_or_create(
+                        user_id=user.id,
+                        country_id=country_id,
+                        defaults={
+                            "role": permissions["permission_level"],
+                        }
+                    )
 
             user.countries.add(*list(Country.objects.filter(pk__in=added_countries)))
             user.countries.remove(*list(Country.objects.filter(pk__in=removed_countries)))
@@ -347,10 +436,19 @@ class UserAdminViewSet(viewsets.ModelViewSet):
             added_programs = []
             removed_programs = []
             for program_id, permissions in program_data.iteritems():
-                if has_access:
+                if "has_access" in permissions and permissions["has_access"]:
                     added_programs.append(program_id)
                 else:
                     removed_programs.append(program_id)
+
+                if "permission_level" in permissions:
+                    TolaUserProgramRoles.objects.update_or_create(
+                        user_id=user.id,
+                        program_id=program_id,
+                        defaults={
+                            "role": permissions["permission_level"],
+                        }
+                    )
 
             user.program_access.add(*list(Program.objects.filter(pk__in=added_programs)))
             user.program_access.remove(*list(Program.objects.filter(pk__in=removed_programs)))
@@ -370,7 +468,7 @@ class UserAdminViewSet(viewsets.ModelViewSet):
 
             for country_role in user.country_roles.all():
                 if country_role.country.id in country_access:
-                    country_access[country_role.country.id]["role"] = country_role.role
+                    country_access[country_role.country.id]["permission_level"] = country_role.role
 
             program_access = {}
             for program in user.program_access.all():
@@ -380,12 +478,26 @@ class UserAdminViewSet(viewsets.ModelViewSet):
 
             for program_role in user.program_roles.all():
                 if program_role.program.id in program_access:
-                    program_access[program_role.program.id]["role"] = program_role.role
+                    program_access[program_role.program.id]["permission_level"] = program_role.role
 
             return Response({
                 "country": country_access,
                 "program": program_access
             })
+
+    @list_route(methods=["post"])
+    def bulk_update_status(self, request):
+        User.objects.filter(pk__in=request.data["user_ids"]).update(is_active=bool(request.data["new_status"]))
+        return Response({})
+
+
+    @list_route(methods=["post"])
+    def bulk_add_programs(self, request):
+        pass
+
+    @list_route(methods=["post"])
+    def bulk_remove_programs(self, request):
+        pass
 
 
 class OrganizationAdminSerializer(Serializer):
@@ -433,13 +545,41 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
             country_where = 'AND wtu.country_id IN ({})'.format(in_param_string)
 
         program_where = ''
+        program_join = ''
         if req.GET.getlist('programs[]'):
             params.extend(req.GET.getlist('programs[]'))
 
             #create placeholders for multiple programs and strip the trailing comma
             in_param_string = ('%s,'*len(req.GET.getlist('programs[]')))[:-1]
 
-            program_where = 'AND (pz.program_id IN ({}))'.format(in_param_string)
+            program_join = """
+                LEFT JOIN (
+                    SELECT
+                        wo.id AS organization_id,
+                        pz.program_id AS program_id
+                    FROM workflow_organization wo
+                    INNER JOIN workflow_tolauser wtu ON wo.id = wtu.organization_id
+                    INNER JOIN (
+                        SELECT MAX(tu_p.tolauser_id) as tolauser_id, tu_p.program_id
+                        FROM (
+                                SELECT
+                                    wpua.tolauser_id,
+                                    wpua.program_id
+                                FROM workflow_program_user_access wpua
+                            UNION DISTINCT
+                                SELECT
+                                    wtuc.tolauser_id,
+                                    wpc.program_id
+                                FROM workflow_tolauser_countries wtuc
+                                INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
+                        ) tu_p
+                        GROUP BY tu_p.program_id
+                    ) pz ON pz.tolauser_id = wtu.id
+                    GROUP BY wo.id, pz.program_id
+                ) pzz ON pzz.organization_id = wo.id
+            """
+
+            program_where = 'AND (pzz.program_id IN ({}))'.format(in_param_string)
 
         organization_where = ''
         if req.GET.getlist('organizations[]'):
@@ -470,18 +610,31 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
                 wo.is_active
             FROM workflow_organization wo
             LEFT JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
+            {program_join}
             LEFT JOIN (
-                    SELECT
-                        wpua.tolauser_id,
-                        wpua.program_id
-                    FROM workflow_program_user_access wpua
-                UNION DISTINCT
-                    SELECT
-                        wtuc.tolauser_id,
-                        wpc.program_id
-                    FROM workflow_tolauser_countries wtuc
-                    INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
-            ) pz ON pz.tolauser_id = wtu.id
+                SELECT
+                    wo.id AS organization_id,
+                    pz.program_id AS program_id
+                FROM workflow_organization wo
+                INNER JOIN workflow_tolauser wtu ON wo.id = wtu.organization_id
+                INNER JOIN (
+                    SELECT MAX(tu_p.tolauser_id) as tolauser_id, tu_p.program_id
+                    FROM (
+                            SELECT
+                                wpua.tolauser_id,
+                                wpua.program_id
+                            FROM workflow_program_user_access wpua
+                        UNION DISTINCT
+                            SELECT
+                                wtuc.tolauser_id,
+                                wpc.program_id
+                            FROM workflow_tolauser_countries wtuc
+                            INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
+                    ) tu_p
+                    GROUP BY tu_p.program_id
+                ) pz ON pz.tolauser_id = wtu.id
+                GROUP BY wo.id, pz.program_id
+            ) pz ON pz.organization_id = wo.id
             WHERE
                 1=1
                 {program_where}
@@ -490,6 +643,7 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
             GROUP BY wo.id
         """.format(
             program_where=program_where,
+            program_join=program_join,
             country_where=country_where,
             organization_where=organization_where
         ), params)
@@ -529,8 +683,6 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
             return Response(new_serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
     def update(self, request, pk=None):
         pass

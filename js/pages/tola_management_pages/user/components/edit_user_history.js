@@ -27,6 +27,10 @@ export class EditUserHistory extends React.Component {
         })
     }
 
+    onResendRegistrationEmail() {
+        this.props.onResendRegistrationEmail()
+    }
+
     onReset() {
         this.setState({
             user_data: this.state.original_user_data
@@ -41,6 +45,11 @@ export class EditUserHistory extends React.Component {
             <div className="row">
                 <div className="col">
                     <Select options={status_options} value={selected} onChange={(new_value) => this.onChange(new_value)} />
+                </div>
+            </div>
+            <div className="row">
+                <div className="col">
+                    <button className="btn btn-secondary" onClick={() => this.onResendRegistrationEmail()}>Resend Registration Email</button>
                 </div>
             </div>
             <div className="row">

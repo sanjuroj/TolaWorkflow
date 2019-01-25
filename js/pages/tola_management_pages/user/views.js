@@ -57,12 +57,132 @@ const ProgramFilter = observer(({store, programListing}) => {
     </div>
 })
 
+class SetUserStatusBulkAction extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            value: []
+        }
+    }
+
+    onChange(new_val) {
+        this.setState({
+            value: new_val
+        })
+    }
+
+    onApply() {
+        this.props.onApply(this.state.value)
+    }
+
+    render() {
+        return <Select options={this.props.options} value={this.state.value} onChange={(val) => this.onChange(val)} />
+    }
+}
+
+class UpdateProgramsBulkAction extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            values: []
+        }
+    }
+
+    onChange(new_vals) {
+        this.setState({
+            values: new_vals
+        })
+    }
+
+    render() {
+        return <CheckboxedMultiSelect options={this.props.options} value={this.state.values} onChange={(val) => this.onChange(val)} />
+    }
+}
+
+class BulkActions extends React.Component {
+    constructor(props) {
+        super(props)
+        this.active_child = React.createRef()
+        this.state = {
+            current_action: null,
+            current_vals: []
+        }
+    }
+
+    onActionChanged(new_action) {
+        this.setState({
+            current_action: new_action.value
+        })
+    }
+
+    onChange(vals) {
+        this.setState({
+            current_vals: vals
+        })
+    }
+
+    onApply() {
+        const selected = this.props.secondaryOptions[this.state.current_action]
+        if(selected) {
+            selected.onApply(this.state.current_vals)
+        }
+    }
+
+    render() {
+        const selected = this.props.secondaryOptions[this.state.current_action]
+        const SecondaryComponent = selected && selected.component
+        return <div className="bulk-controls">
+            <div className="bulk-select">
+                <Select
+                className="bulk-select"
+                placeholder="Bulk Actions"
+                value={this.props.primaryOptions.find((o) => o.value == this.state.current_action)}
+                options={this.props.primaryOptions} onChange={(val) => this.onActionChanged(val)} />
+            </div>
+            {selected &&
+            <div className="bulk-select">
+                <SecondaryComponent value={this.state.current_vals} onChange={(vals) => this.onChange(vals)}/>
+            </div>
+            }
+            {!selected &&
+            <div className="bulk-select">
+                <Select className="bulk-select" placeholder="---"/>
+            </div>
+            }
+            <button className="btn btn-secondary" disabled={!this.state.current_action} onClick={() => this.onApply()}>Apply</button>
+        </div>
+    }
+}
+
 export const IndexView = observer(
     ({store}) => {
         const countries_listing = Object.entries(store.countries).map(([id, country]) => ({value: country.id, label: country.name}))
         const organization_listing = store.organizations.map(org => ({value: org.id, label: org.name}))
         const program_listing = Object.entries(store.programs).map(([id, program]) => ({value: program.id, label: program.name}))
         const user_listing = store.users.map(user => ({value: user.id, label: user.name}))
+
+
+        const bulk_actions = {
+            primary_options: [
+                {label: 'Set account status', value: 'set_account_status'},
+                {label: 'Add to program', value: 'add_to_program'},
+                {label: 'Remove from program', value: 'remove_from_program'},
+            ],
+            secondary_options: {
+                set_account_status: {
+                    component: (props) => <Select options={store.user_status_options} {...props} />,
+                    onApply: (option) => store.bulkUpdateUserStatus(option.value)
+                },
+                add_to_program: {
+                    component: (props) => <CheckboxedMultiSelect options={program_listing} {...props} />,
+                    onApply: (vals) => store.bulkAddPrograms(vals.map(option => option.value))
+                },
+                remove_from_program: {
+                    component: (props) => <CheckboxedMultiSelect options={program_listing} {...props} />,
+                    onApply: (vals) => store.bulkRemovePrograms(vals.map(option => option.value))
+                },
+            }
+        }
 
         return <div id="user-management-index-view" className="container-fluid row">
             <div className="col col-sm-3 filter-section">
@@ -105,13 +225,7 @@ export const IndexView = observer(
             </div>
             <div className="col col-sm-9 list-section">
                 <div className="list-controls row">
-                    <div className="bulk-controls">
-                        <Select className="selector" placeholder="Bulk Actions">
-                        </Select>
-                        <Select className="selector" placeholder="---">
-                        </Select>
-                        <button className="btn btn-outline-primary">Apply</button>
-                    </div>
+                    <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div>
                         <button className="btn btn-primary" onClick={() => store.createUser()}><i className="fa fa-plus-circle"></i>Add User</button>
                     </div>
@@ -145,18 +259,24 @@ export const IndexView = observer(
                                         new={data.id == 'new'}
                                         ProfileSection={() =>
                                             <EditUserProfile
+                                            new={data.id == 'new'}
                                             userData={data}
-                                            onSave={(new_user_data) => store.saveUserProfile(data.id, new_user_data)}
+                                            onUpdate={(new_user_data) => store.updateUserProfile(data.id, new_user_data)}
+                                            onCreate={(new_user_data) => store.saveNewUser(new_user_data)}
+                                            onCreateAndAddAnother={(new_user_data) => store.saveNewUserAndAddAnother(new_user_data)}
                                             organizations={store.organizations} />}
                                         ProgramSection={() =>
                                             <EditUserPrograms
                                             store={store}
                                             user={data}
+                                            adminUserProgramRoles={store.current_user_program_roles}
+                                            adminUserCountryRoles={store.current_user_country_roles}
                                             onSave={(new_program_data) => store.saveUserPrograms(data.id, new_program_data)}/>}
                                         HistorySection={() =>
                                             <EditUserHistory
                                             userData={data}
                                             history={store.editing_target_data.history}
+                                            onResendRegistrationEmail={() => store.resendRegistrationEmail(data.id)}
                                             onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>}
                                     />
                                 </Wrapper>

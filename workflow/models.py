@@ -1626,13 +1626,14 @@ class LoggedUser(models.Model):
 COUNTRY_ROLE_CHOICES = (
     ('user', 'User'),
     ('basic_admin', 'Basic Admin'),
-    ('super_admin', 'Super Admin')
 )
 
 class TolaUserCountryRoles(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name="user_roles")
     user = models.ForeignKey(TolaUser, on_delete=models.CASCADE, related_name="country_roles")
     role = models.CharField(max_length=100, choices=COUNTRY_ROLE_CHOICES)
+    class Meta:
+        unique_together = (('country', 'user'),)
 
 PROGRAM_ROLE_CHOICES = (
     ('low', 'Low'),
@@ -1644,6 +1645,8 @@ class TolaUserProgramRoles(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name="user_roles")
     user = models.ForeignKey(TolaUser, on_delete=models.CASCADE, related_name="program_roles")
     role = models.CharField(max_length=100, choices=PROGRAM_ROLE_CHOICES)
+    class Meta:
+        unique_together = (('program', 'user'),)
 
 def get_user_country(request):
 
