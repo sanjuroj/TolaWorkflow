@@ -852,9 +852,10 @@ class ResultDelete(DeleteView):
         return super(ResultDelete, self).dispatch(
             request, *args, **kwargs)
 
-    def get_success_url(self):
-        return reverse_lazy('program_page',
-                            kwargs={'program_id': self.object.program_id, 'indicator_id': 0, 'type_id': 0})
+    def delete(self, request, *args, **kwargs):
+        self.get_object().delete()
+        payload = {'delete': 'ok'}
+        return JsonResponse(payload)
 
 
 def getTableCount(url, table_id):

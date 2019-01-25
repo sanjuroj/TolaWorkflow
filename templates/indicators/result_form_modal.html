@@ -130,19 +130,15 @@
             </h3>
             {% include 'indicators/results/result_form_evidence_fields.html' %}
         </div>
+        {% if object.indicator %}
         <fieldset class="pb-2 pt-2">
             <strong>
-                <a
-                    {% if id %}
-                        href="{% url 'result_delete' id %}"
-                    {% else %}
-                        href="#" data-dismiss="modal"
-                    {% endif %}
-                    class="text-danger float-right">
-                    <i class="fas fa-trash-alt"></i> {% trans "Delete results" %}
+                <a href="#" id="id_delete_result_btn" data-result-id="{{ object.id }}" class="text-danger float-right">
+                    <i class="fas fa-trash-alt"></i> {% trans "Delete result" %}
                 </a>
             </strong>
         </fieldset>
+        {% endif %}
         <div class="form-actions">
             <div>
                 <input type="submit" name="submit" value="{% trans 'Save changes' %}" class="btn btn-primary" id="submit-id-submit">

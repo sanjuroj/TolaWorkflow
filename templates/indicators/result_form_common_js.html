@@ -82,6 +82,58 @@
         validate_achieved();
     });
 
+    // on delete button
+    $("#indicator_collecteddata_div").on("click", "#id_delete_result_btn", function(e) {
+        let resultId = $('#id_delete_result_btn').data('result-id');
+
+        PNotify.alert({
+            text: "{% trans 'This action cannot be undone. Are you sure you want to delete this result?' %}",
+            title: "{% trans 'Warning' %}",
+            icon: 'fa fa-exclamation-circle',
+            hide: false,
+            type: 'error',
+            stack: {
+                'modal': true,
+                'overlayClose': true,
+                'dir1': 'down',
+                {#'dir1': 'right',#}
+                {#'dir2': 'up',#}
+                'firstpos1': 25,
+                {#'firstpos2': 75,#}
+                {#'push': 'top',#}
+                {#'context': document.getElementById('result_update_form')#}
+            },
+            modules: {
+                Confirm: {
+                    confirm: true,
+                    buttons: [
+                        {
+                            text: "{% trans 'Delete result' %}",
+                            primary: true,
+                            click: function (notice) {
+                                notice.close();
+
+                                // Mark the record being changed so results table is reloaded on modal close
+                                $('#indicator_collecteddata_div form').data('recordchanged', true);
+
+                                $.post("/indicators/result_delete/" + resultId + "/", function (data) {
+                                    // Close modal
+                                    $('#indicator_collecteddata_div').modal('hide')
+                                });
+                            }
+                        },
+                        {
+                            text: "{% trans 'Cancel' %}",
+                            click: function (notice) {
+                                notice.close();
+                            }
+                        }
+                    ]
+                }
+            }
+        });
+    });
+
 
     function validatePeriodicTarget(onlyPeriodic = false) {
         const programId = $("#id_program").val();
