@@ -286,7 +286,8 @@ class WithMetricsIndicatorManager(IPTTIndicatorManager):
         data_with_evidence = Result.objects.filter(
             models.Q(indicator_id=models.OuterRef('pk')) |
             models.Q(periodic_target__indicator_id=models.OuterRef('pk')),
-            models.Q(evidence__isnull=False) | models.Q(tola_table__isnull=False)
+        ).exclude(
+            evidence_url=''
         ).order_by().values('indicator_id')
         qs = qs.annotate(
             evidence_count=models.functions.Coalesce(

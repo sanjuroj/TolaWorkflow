@@ -13,6 +13,7 @@ import isEqual from 'react-fast-compare';
     - onSelectCb: a callback function that takes a list of selected values
     - isMultiSelect: boolean - is a multi-select?
     - forceEmptySelect: boolean - in single select, force "None selected" even if empty option is not provided
+    - nonSelectText: string - the text to display on an empty selection
  */
 export class Select extends React.Component {
     constructor(props) {
@@ -39,9 +40,10 @@ export class Select extends React.Component {
     }
 
     componentDidMount() {
-        const options = this.props.options;
+        const {nonSelectText} = this.props;
 
         const multiSelectOptions = {
+            nonSelectedText: nonSelectText,
             includeSelectAllOption: true,
             enableFiltering: true,
             enableCaseInsensitiveFiltering: true,

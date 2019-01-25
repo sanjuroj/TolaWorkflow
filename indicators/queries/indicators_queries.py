@@ -183,8 +183,8 @@ def indicator_results_evidence_annotation():
         models.Subquery(
             Result.objects.filter(
                 indicator=models.OuterRef('pk')
-                ).filter(
-                    models.Q(evidence__isnull=False) | models.Q(tola_table__isnull=False)
+                ).exclude(
+                    evidence_url=''
                 ).order_by().values('indicator').annotate(
                     total_results=models.Count('id')
                 ).values('total_results')[:1],
