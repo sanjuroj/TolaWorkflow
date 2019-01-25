@@ -169,6 +169,7 @@ export default class EditUserProfile extends React.Component {
                     <div className="form-group">
                         <label htmlFor="user-title-input">Title</label>
                         <input
+                            maxLength="3"
                             type="text"
                             value={ud.title}
                             onChange={(e) => this.updateTitle(e.target.value)}
