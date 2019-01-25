@@ -1,20 +1,92 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import eventBus from '../../eventbus';
+import createRouter from 'router5';
+import browserPlugin from 'router5-plugin-browser';
 
 import {IndicatorList} from './components/indicator_list';
 import {ProgramMetrics} from './components/program_metrics';
-import {ProgramPageStore, ProgramPageUIStore} from './models';
+import {ProgramPageStore, ProgramPageUIStore, IndicatorFilterType} from './models';
 
 import './pinned_reports';
 
-// console.log(jsContext);
 
 /*
  * Model/Store setup
  */
 const rootStore = new ProgramPageStore(jsContext.indicators, jsContext.program);
 const uiStore = new ProgramPageUIStore();
+
+/*
+ * Routes setup:
+ */
+
+const routes = [
+    { name: 'all', path: '/', filterType: IndicatorFilterType.noFilter },
+    { name: 'targets', path: '/targets', filterType: IndicatorFilterType.missingTarget },
+    { name: 'results', path: '/results', filterType: IndicatorFilterType.missingResults },
+    { name: 'evidence', path: '/evidence', filterType: IndicatorFilterType.missingEvidence },
+    { name: 'scope', path: '/scope' },
+    { name: 'scope.on', path: '/on', filterType: IndicatorFilterType.onTarget },
+    { name: 'scope.above', path: '/above', filterType: IndicatorFilterType.aboveTarget },
+    { name: 'scope.below', path: '/below', filterType: IndicatorFilterType.belowTarget }
+];
+
+var routeLookup = {};
+var routeNameLookup = {};
+
+/* generate a route map to lookup route name from filtertype (events bubbling up from gauge bands) and also
+ * generate a lookup to get filtertype from route name (for url-based filtering)
+ */
+for (let i=0; i<routes.length; i++) {
+    if (routes[i].name == 'scope') {
+        routeLookup[routes[i].name] = null;
+    } else {
+        routeLookup[routes[i].name] = routes[i].filterType;
+        routeNameLookup[routes[i].filterType] = routes[i].name;
+    }
+}
+
+
+const router = createRouter(routes, {
+    defaultRoute: 'all', //unrouted: show all indicators
+    defaultParams: {},
+    trailingSlashMode: 'always'
+});
+
+const routeToEventBus = (routeName) => {
+    if (!routeLookup.hasOwnProperty(routeName)) {
+        console.log('no filter for name', routeName);
+    } else {
+        let filterType = routeLookup[routeName];
+        eventBus.emit('apply-gauge-tank-filter', filterType);
+    }
+}
+
+const onNavigation = (navRoutes) => {
+    if (navRoutes.route.name == 'scope') {
+        router.navigate('scope.on', {}, {replace: true});
+    } else {
+        routeToEventBus(navRoutes.route.name);
+    }
+    
+};
+
+router.usePlugin(browserPlugin({useHash: true, base:'/program/'+jsContext.program.id+'/'}));
+router.subscribe(onNavigation);
+router.start();
+
+/* function to pass into gauge band elements to handle clicking a filter or show all
+ */
+const filterClickToRoute = (filterType = 0) => {
+    if (routeNameLookup.hasOwnProperty(filterType)) {
+        router.navigate(routeNameLookup[filterType]);
+    } else {
+        //how do we handle js errors?
+        console.log("attempted to find (and failed) filter type", filterType);
+    }
+}
+
 
 /*
  * Event Handlers
@@ -90,13 +162,19 @@ eventBus.on('close-all-indicators', () => {
  * React components on page
  */
 
-ReactDOM.render(<IndicatorList rootStore={rootStore} uiStore={uiStore}/>,
+ReactDOM.render(<IndicatorList rootStore={rootStore} uiStore={uiStore}
+                               showAllClickHandler={filterClickToRoute} />,
     document.querySelector('#indicator-list-react-component'));
 
 ReactDOM.render(<ProgramMetrics rootStore={rootStore}
                                 uiStore={uiStore}
-                                indicatorOnScopeMargin={jsContext.indicator_on_scope_margin}/>,
+                                indicatorOnScopeMargin={jsContext.indicator_on_scope_margin}
+                                filterClickHandler={filterClickToRoute} />,
     document.querySelector('#program-metrics-react-component'));
+
+
+//fire initial filters:
+routeToEventBus(router.getState().name);
 
 /*
  * Copied and modified JS from indicator_list_modals.js to allow modals to work
