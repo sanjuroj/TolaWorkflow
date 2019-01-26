@@ -105,14 +105,14 @@ class TestSingleLOPIndicatorIPTTResponse(iptt_utility.TestIPTTTargetPeriodsRepor
     def test_indicator_lop_pct_single_data_point(self):
         self.add_collected_data(49.5)
         lop_result = self.get_lop_result()
-        self.assertEqual(lop_result['met'], "50%",
+        self.assertEqual(lop_result['met'], "50.0%",
                          self.format_assert_message("Expected 50% met (49.5/99), got {0}".format(lop_result['met'])))
 
     def test_indicator_lop_pct_multiple_data_points(self):
         for point in [80, 10, 4, 3, 1, 1]:
             self.add_collected_data(point)
         lop_result = self.get_lop_result()
-        self.assertEqual(lop_result['met'], "100%",
+        self.assertEqual(lop_result['met'], "100.0%",
                          self.format_assert_message("Expected 100% met (99/99), got {0}".format(lop_result['met'])))
 
 class TestMultipleLOPIndicatorsIPTTResponse(iptt_utility.TestIPTTTargetPeriodsReportResponseBase):
@@ -165,7 +165,7 @@ class TestMultipleLOPIndicatorsIPTTResponse(iptt_utility.TestIPTTTargetPeriodsRe
         self.add_collected_data(40, 0)
         self.add_collected_data(100, 1)
         expected = [40, 100]
-        expected_pct = ["20%", "10%"]
+        expected_pct = ["20.0%", "10.0%"]
         for c, lop_result in enumerate(self.get_lop_result()):
             self.assertEqual(int(lop_result['actual']), expected[c],
                              self.format_assert_message("expected lop actual {0} for indicator {1}, got {2}".format(
@@ -178,7 +178,7 @@ class TestMultipleLOPIndicatorsIPTTResponse(iptt_utility.TestIPTTTargetPeriodsRe
 
     def test_indicator_sums_and_percents_multiple_data_points(self):
         expected = [180, 1400]
-        expected_pct = ["90%", "140%"]
+        expected_pct = ["90.0%", "140.0%"]
         values = [
             [90, 40, 50],
             [100, 100, 100, 50, 50, 50, 50, 425, 475]

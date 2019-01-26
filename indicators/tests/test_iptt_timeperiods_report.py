@@ -6,7 +6,7 @@ args for iptt_report view:
 timeperiods: indicator.<frequency_type>
 numrecentperiods: most recent # or blank if show all
 timeframe: 1 for show all and 2 for recents or blank for time periods
-start_period: %Y-%m-%d or missing for show all or recents
+start_period: Y-%m-%d or missing for show all or recents
 end_period: %Y-%m-%d or missing for show all or recents
 
 """
