@@ -152,7 +152,7 @@ def get_program_page_context(request):
         'organizations': organizations,
         'programs': programs,
     }
-	
+
 def send_new_user_registration_email(user, request):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
@@ -517,17 +517,31 @@ class UserAdminViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=["post"])
     def bulk_update_status(self, request):
-        User.objects.filter(pk__in=request.data["user_ids"]).update(is_active=bool(request.data["new_status"]))
+
+        tola_users = TolaUser.objects.filter(pk__in=request.data["user_ids"])
+        User.objects.filter(pk__in=[t_user.user_id for t_user in tola_users]).update(is_active=bool(request.data["new_status"]))
         return Response({})
 
 
     @list_route(methods=["post"])
     def bulk_add_programs(self, request):
-        pass
+        added_programs = request.data["added_programs"]
+
+        for user_id in request.data["user_ids"]:
+            user = TolaUser.objects.get(pk=user_id)
+            user.program_access.add(*list(Program.objects.filter(pk__in=added_programs)))
+
+        return Response({})
 
     @list_route(methods=["post"])
     def bulk_remove_programs(self, request):
-        pass
+        removed_programs = request.data["removed_programs"]
+
+        for user_id in request.data["user_ids"]:
+            user = TolaUser.objects.get(pk=user_id)
+            user.program_access.remove(*list(Program.objects.filter(pk__in=removed_programs)))
+
+        return Response({})
 
 
 class OrganizationAdminSerializer(Serializer):
