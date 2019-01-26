@@ -9,9 +9,14 @@ export class UserStore {
     @observable total_pages = null
     @observable bulk_targets = new Map()
     @observable bulk_targets_all = false
+    @observable applying_bulk_updates = false
 
     @observable saving_user_profile = false
     @observable saving_user_programs = false
+
+    @observable current_user_program_roles = {}
+    @observable current_user_country_roles = {}
+    @observable current_user_is_super_admin = false
 
     @observable fetching_editing_target = false
     @observable editing_target = null
@@ -56,11 +61,17 @@ export class UserStore {
         organizations,
         programs,
         users,
+        current_user_program_roles,
+        current_user_country_roles,
+        is_super_admin
     ) {
         this.countries = countries
         this.organizations = organizations
         this.programs = programs
         this.users = users.filter(user => user.name)
+        this.current_user_program_roles = current_user_program_roles
+        this.current_user_country_roles = current_user_country_roles
+        this.current_user_is_super_admin = is_super_admin
         this.fetchUsers()
     }
 
@@ -92,6 +103,12 @@ export class UserStore {
             }
             return xs
         }, {})
+    }
+
+    getSelectedBulkTargetIDs() {
+        return [...this.bulk_targets.entries()]
+            .filter(([_, selected]) => selected)
+            .map(([user_id, _]) => user_id)
     }
 
     @action
@@ -170,6 +187,10 @@ export class UserStore {
 
     @action
     toggleEditingTarget(user_id) {
+        if(this.editing_target == 'new') {
+            this.users_listing.shift()
+        }
+
         if(this.editing_target == user_id) {
             this.editing_target = false
         } else {
@@ -192,7 +213,11 @@ export class UserStore {
 
     @action
     createUser() {
-        this.new_user = {
+        if(this.editing_target == 'new') {
+            this.users_listing.shift()
+        }
+
+        let new_user = {
             id: "new",
             name: "",
             email: "",
@@ -200,12 +225,15 @@ export class UserStore {
             organization_id: null,
             mode_of_address: "",
             mode_of_contact: "",
-            title: ""
+            title: "",
+            user_programs: 0,
         }
+        this.users_listing.unshift(new_user)
+        this.editing_target = 'new'
     }
 
     @action
-    saveUserProfile(user_id, new_user_data) {
+    updateUserProfile(user_id, new_user_data) {
         const user_idx = this.users_listing.findIndex(u => u.id == new_user_data.id)
         if(user_idx !== -1) {
             this.saving_user_profile = true
@@ -220,10 +248,67 @@ export class UserStore {
     }
 
     @action
+    resendRegistrationEmail(user_id) {
+        api.resendRegistrationEmail(user_id).then(result => {
+            console.log(result)
+        })
+    }
+
+    @action
+    saveNewUser(new_user_data) {
+        this.saving_user_profile = true
+        api.createUser(new_user_data).then(result => {
+            this.saving_user_profile = false
+        })
+    }
+
+    @action
+    saveNewUserAndAddAnother(new_user_data) {
+        this.saving_user_profile = true
+        api.createUser(new_user_data).then(result => {
+            this.saving_user_profile = false
+            this.createUser()
+        })
+    }
+
+    @action
     saveUserPrograms(user_id, new_user_programs_data) {
         this.save_user_programs = true
         api.saveUserPrograms(user_id, new_user_programs_data).then(result => {
             this.save_user_programs = false
+        })
+    }
+
+    @action
+    bulkUpdateUserStatus(new_status) {
+        this.applying_bulk_updates = true
+        api.bulkUpdateUserStatus(
+            this.getSelectedBulkTargetIDs(),
+            new_status
+        ).then(result => {
+            this.applying_bulk_updates = false
+        })
+    }
+
+    @action
+    bulkAddPrograms(added_programs) {
+        this.applying_bulk_updates = true
+        api.bulkAddPrograms(
+            this.getSelectedBulkTargetIDs(),
+            added_programs
+        ).then(result => {
+            this.applying_bulk_updates = false
+        })
+    }
+
+    @action
+    bulkRemovePrograms(removed_programs) {
+        this.applying_bulk_updates = true
+        api.bulkRemovePrograms(
+            this.getSelectedBulkTargetIDs(),
+            removed_programs
+        ).then(result => {
+            this.applying_bulk_updates = false
         })
     }
 

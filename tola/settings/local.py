@@ -82,15 +82,15 @@ OFFLINE_MODE = app_settings['OFFLINE_MODE']
 NON_LDAP = app_settings['NON_LDAP']
 
 ########## EMAIL SETTINGS
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
+EMAIL_USE_TLS = app_settings.get('EMAIL_USE_TLS', True)
+EMAIL_HOST = app_settings.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = app_settings.get('EMAIL_PORT', 587)
 EMAIL_HOST_USER = app_settings['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = app_settings['EMAIL_HOST_PASSWORD']
-DEFAULT_FROM_EMAIL = 'systems@mercycorps.org'
+DEFAULT_FROM_EMAIL = app_settings.get('DEFAULT_FROM_EMAIL', 'systems@mercycorps.org')
 SERVER_EMAIL = app_settings['SERVER_EMAIL']
 #DEFAULT_TO_EMAIL = 'to email'
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = app_settings.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
 
 
 CORS_ORIGIN_ALLOW_ALL = True
