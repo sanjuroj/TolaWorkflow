@@ -88,7 +88,21 @@ def target_actual_annotation():
     """
     return models.Case(
         models.When(
-            indicator__unit_of_measure_type=Indicator.PERCENTAGE,
+            models.Q(
+                models.Q(indicator__unit_of_measure_type=Indicator.PERCENTAGE) &
+                models.Q(indicator__target_frequency__in=[f[0] for f in utils.TIME_AWARE_FREQUENCIES])
+            ),
+            then=models.Subquery(
+                CollectedData.objects.filter(
+                    periodic_target=models.OuterRef('pk')
+                ).order_by('-date_collected').values('achieved')[:1],
+            )
+        ),
+        models.When(
+            models.Q(
+                models.Q(indicator__unit_of_measure_type=Indicator.PERCENTAGE) &
+                ~models.Q(indicator__target_frequency__in=[f[0] for f in utils.TIME_AWARE_FREQUENCIES])
+            ),
             then=models.Subquery(
                 CollectedData.objects.filter(
                     periodic_target=models.OuterRef('pk')
@@ -99,12 +113,29 @@ def target_actual_annotation():
             models.Q(
                 models.Q(indicator__unit_of_measure_type=Indicator.NUMBER) &
                 models.Q(indicator__is_cumulative=True) &
+                models.Q(indicator__target_frequency__in=[f[0] for f in utils.TIME_AWARE_FREQUENCIES]) &
                 models.Q(results_count__gt=0)
                 ),
             then=models.Subquery(
                 CollectedData.objects.filter(
                     models.Q(indicator=models.OuterRef('indicator')) &
                     models.Q(periodic_target__end_date__lte=models.OuterRef('end_date'))
+                ).order_by().values('indicator').annotate(
+                    achieved_sum=models.Sum('achieved')
+                ).values('achieved_sum')[:1]
+            )
+        ),
+        models.When(
+            models.Q(
+                models.Q(indicator__unit_of_measure_type=Indicator.NUMBER) &
+                models.Q(indicator__is_cumulative=True) &
+                ~models.Q(indicator__target_frequency__in=[f[0] for f in utils.TIME_AWARE_FREQUENCIES]) &
+                models.Q(results_count__gt=0)
+                ),
+            then=models.Subquery(
+                CollectedData.objects.filter(
+                    models.Q(indicator=models.OuterRef('indicator')) &
+                    models.Q(periodic_target__customsort__lte=models.OuterRef('customsort'))
                 ).order_by().values('indicator').annotate(
                     achieved_sum=models.Sum('achieved')
                 ).values('achieved_sum')[:1]
