@@ -16,7 +16,7 @@ from django.db.models import (
     Count, Min, Q, Sum, Avg, Max, DecimalField, OuterRef, Subquery
 )
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -669,80 +669,46 @@ class PeriodicTargetDeleteView(DeleteView):
         return JsonResponse(
             {"status": "success", "msg": "Periodic Target deleted\
              successfully.", "targets_sum": targets_sum}
-        )
+            )
 
 
-class ResultCreate(CreateView):
+class ResultFormMixin(object):
+    def get_template_names(self):
+        return 'indicators/result_form_modal.html'
+
+    def form_invalid(self, form):
+        if self.request.is_ajax():
+            return JsonResponse(form.errors, status=400)
+        messages.error(self.request, 'Invalid Form', fail_silently=False)
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class ResultCreate(ResultFormMixin, CreateView):
+    """Create new Result called by result_add as modal"""
     model = Result
     form_class = ResultForm
 
-    def get_template_names(self):
-        if self.request.is_ajax():
-            return 'indicators/result_form_modal.html'
-        return 'indicators/result_form.html'
-
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
-        try:
-            self.guidance = FormGuidance.objects.get(form="Result")
-        except FormGuidance.DoesNotExist:
-            self.guidance = None
-        return super(ResultCreate, self).dispatch(
-            request, *args, **kwargs)
+        self.indicator = get_object_or_404(Indicator, pk=self.kwargs['indicator'])
+        return super(ResultCreate, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        disaggregation_labels = DisaggregationLabel.objects.filter(disaggregation_type__indicator=self.indicator.id)
+        standard_disaggregation_labels = DisaggregationLabel.get_standard_labels()
+
         context = super(ResultCreate, self).get_context_data(**kwargs)
-        try:
-            getDisaggregationLabel = DisaggregationLabel.objects.filter(
-                disaggregation_type__indicator__id=self.kwargs['indicator'])
-
-            getDisaggregationLabelStandard = DisaggregationLabel.objects \
-                .filter(disaggregation_type__standard=True)
-
-        except DisaggregationLabel.DoesNotExist:
-            getDisaggregationLabelStandard = None
-            getDisaggregationLabel = None
-
-        # set values to None so the form doesn't display empty fields for
-        # previous entries
-        getDisaggregationValue = None
-        indicator = Indicator.objects.get(pk=self.kwargs.get('indicator'))
-
-        context.update({'getDisaggregationValue': getDisaggregationValue})
-        context.update({'getDisaggregationLabel': getDisaggregationLabel})
-        context.update({'getDisaggregationLabelStandard':
-                        getDisaggregationLabelStandard})
-
-        context.update({'indicator_id': self.kwargs['indicator']})
-        context.update({'indicator': indicator})
-        context.update({'program_id': self.kwargs['program']})
+        context['indicator'] = self.indicator
+        context['disaggregation_labels'] = disaggregation_labels
+        context['standard_disaggregation_labels'] = standard_disaggregation_labels
         return context
 
-    def get_initial(self):
-        initial = {
-            'indicator': self.kwargs['indicator'],
-            'program': self.kwargs['program'],
-        }
-        return initial
-
-    # add the request to the kwargs
     def get_form_kwargs(self):
         kwargs = super(ResultCreate, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        kwargs['program'] = self.kwargs['program']
-        kwargs['indicator'] = self.kwargs['indicator']
-        kwargs['tola_table'] = None
+        kwargs['user'] = self.request.user
+        kwargs['indicator'] = self.indicator
+        kwargs['program'] = self.indicator.program
         return kwargs
-
-    def form_invalid(self, form):
-        # this is not receiving a valid date
-        if self.request.is_ajax():
-            print(".....%s....." % form.errors)
-            return HttpResponse(status=400)
-        else:
-            messages.error(self.request, _('Invalid Form'), fail_silently=False)
-            print(".....%s....." % form.errors)
-            return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form):
         indicator = self.request.POST['indicator']
@@ -796,76 +762,37 @@ class ResultCreate(CreateView):
         return HttpResponseRedirect(redirect_url)
 
 
-class ResultUpdate(UpdateView):
+class ResultUpdate(ResultFormMixin, UpdateView):
+    """Update Result view called by result_update as modal"""
     model = Result
     form_class = ResultForm
 
-    def get_template_names(self):
-        if self.request.is_ajax():
-            return 'indicators/result_form_modal.html'
-        return 'indicators/result_form.html'
-
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
-        try:
-            self.guidance = FormGuidance.objects.get(form="Result")
-        except FormGuidance.DoesNotExist:
-            self.guidance = None
-        return super(ResultUpdate, self).dispatch(
-            request, *args, **kwargs)
+        self.result = get_object_or_404(Result, pk=self.kwargs.get('pk'))
+        self.indicator = self.result.indicator
+        return super(ResultUpdate, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        disaggregation_values = DisaggregationValue.objects.filter(
+            result=self.result).exclude(
+            disaggregation_label__disaggregation_type__standard=True)
+
+        standard_disaggregation_values = DisaggregationValue.objects.filter(
+            result=self.result).filter(
+            disaggregation_label__disaggregation_type__standard=True)
+
         context = super(ResultUpdate, self).get_context_data(**kwargs)
-        getIndicator = Result.objects.get(id=self.kwargs['pk'])
-
-        try:
-            getDisaggregationLabel = DisaggregationLabel.objects.filter(
-                disaggregation_type__indicator__id=getIndicator.indicator_id)
-
-            getDisaggregationLabelStandard = DisaggregationLabel.objects \
-                .filter(disaggregation_type__standard=True)
-
-        except DisaggregationLabel.DoesNotExist:
-            getDisaggregationLabel = None
-            getDisaggregationLabelStandard = None
-
-        try:
-            getDisaggregationValue = DisaggregationValue.objects \
-                .filter(result=self.kwargs['pk']) \
-                .exclude(disaggregation_label__disaggregation_type__standard=True)
-
-            getDisaggregationValueStandard = DisaggregationValue.objects \
-                .filter(result=self.kwargs['pk']) \
-                .filter(disaggregation_label__disaggregation_type__standard=True)
-
-        except DisaggregationLabel.DoesNotExist:
-            getDisaggregationValue = None
-            getDisaggregationValueStandard = None
-
-        context.update({'getDisaggregationLabelStandard': getDisaggregationLabelStandard})
-        context.update({'getDisaggregationValueStandard': getDisaggregationValueStandard})
-        context.update({'getDisaggregationValue': getDisaggregationValue})
-        context.update({'getDisaggregationLabel': getDisaggregationLabel})
-        context.update({'id': self.kwargs['pk']})
-        context.update({'indicator_id': getIndicator.indicator_id})
-        context.update({'indicator': getIndicator})
+        context['indicator'] = self.indicator
+        context['disaggregation_values'] = disaggregation_values
+        context['standard_disaggregation_values'] = standard_disaggregation_values
         return context
 
-    def form_invalid(self, form):
-        messages.error(self.request, 'Invalid Form', fail_silently=False)
-        return self.render_to_response(self.get_context_data(form=form))
-
-    # add the request to the kwargs
     def get_form_kwargs(self):
-        get_data = Result.objects.get(id=self.kwargs['pk'])
         kwargs = super(ResultUpdate, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        kwargs['program'] = get_data.program
-        kwargs['indicator'] = get_data.indicator
-        if get_data.tola_table:
-            kwargs['tola_table'] = get_data.tola_table.id
-        else:
-            kwargs['tola_table'] = None
+        kwargs['user'] = self.request.user
+        kwargs['indicator'] = self.indicator
+        kwargs['program'] = self.indicator.program
         return kwargs
 
     def form_valid(self, form):
@@ -925,9 +852,10 @@ class ResultDelete(DeleteView):
         return super(ResultDelete, self).dispatch(
             request, *args, **kwargs)
 
-    def get_success_url(self):
-        return reverse_lazy('program_page',
-                            kwargs={'program_id': self.object.program_id, 'indicator_id': 0, 'type_id': 0})
+    def delete(self, request, *args, **kwargs):
+        self.get_object().delete()
+        payload = {'delete': 'ok'}
+        return JsonResponse(payload)
 
 
 def getTableCount(url, table_id):
@@ -966,69 +894,6 @@ def merge_two_dicts(x, y):
     z = x.copy()
     z.update(y)
     return z
-
-
-def result_import(request):
-    """
-    Import resuts from Tola Tables
-    """
-    owner = request.user
-
-    # get the TolaTables URL and token from the sites object
-    service = TolaSites.objects.get(site_id=1)
-
-    # add filter to get just the users tables only
-    user_filter_url = "%s&owner__username=%s" \
-                      % (service.tola_tables_url, str(owner))
-
-    shared_filter_url = "%s&shared__username=%s" \
-                        % (service.tola_tables_url, str(owner))
-
-    user_json = get_table(user_filter_url)
-    shared_json = get_table(shared_filter_url)
-
-    if type(shared_json) is not dict:
-        data = user_json + shared_json
-    else:
-        data = user_json
-
-    if request.method == 'POST':
-        id = request.POST['service_table']
-        filter_url = service.tola_tables_url + "&id=" + id
-        data = get_table(filter_url)
-
-        # Get Data Info
-        for item in data:
-            name = item['name']
-            url = item['data']
-            remote_owner = item['owner']['username']
-
-        # send table ID to count items in data
-        count = getTableCount(url, id)
-
-        # get the users country
-        countries = getCountry(request.user)
-        check_for_existence = TolaTable.objects.filter(name=name, owner=owner)
-        if check_for_existence:
-            result = check_for_existence[0].id
-        else:
-            create_table = TolaTable.objects.create(
-                name=name, owner=owner, remote_owner=remote_owner, table_id=id,
-                url=url, unique_count=count)
-
-            create_table.country.add(countries[0].id)
-            create_table.save()
-            result = create_table.id
-
-        # send result back as json
-        message = result
-        return HttpResponse(json.dumps(message),
-                            content_type='application/json')
-
-    # send the keys and vars from the json data to the template along
-    # with submitted feed info and silos for new form
-    return render(request, "indicators/result_import.html",
-                  {'getTables': data})
 
 
 def service_json(request, service):
@@ -1407,14 +1272,14 @@ class ProgramPage(ListView):
             }
             return JsonResponse(json_context)
 
-
-        if int(self.kwargs['type_id']):
-            type_filter_id = self.kwargs['type_id']
+        type_id = self.kwargs.get('type_id', 0)
+        if type_id is not None and int(type_id):
+            type_filter_id = int(type_id)
             type_filter_name = IndicatorType.objects.get(id=type_filter_id)
             program.indicator_filters['indicator_type'] = type_filter_id
-
-        if int(self.kwargs['indicator_id']):
-            indicator_filter_id = self.kwargs['indicator_id']
+        indicator_id = self.kwargs.get('indicator_id', 0)
+        if indicator_id is not None and int(indicator_id):
+            indicator_filter_id = int(indicator_id)
             program.indicator_filters['id'] = indicator_filter_id
             indicator_filter_name = program.annotated_indicators.first()
 

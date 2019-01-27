@@ -104,6 +104,38 @@ function formatDate(dateString, day=0) {
     }
 }
 
+// "2017-01-01" -> Date with local timezone (not UTC)
+function localDateFromISOStr(dateStr) {
+    let dateInts = dateStr.split('-').map(function(x) {return parseInt(x)});
+    return new Date(dateInts[0], dateInts[1]-1, dateInts[2]);
+}
+
+// Return Date() with local timezone at midnight
+function localdate() {
+    let today = new Date();
+    today.setHours(0,0,0,0);
+    return today;
+}
+
+const n = "numeric",
+    s = "short",
+    l = "long",
+    d2 = "2-digit";
+
+
+const DATE_MED = {
+    year: n,
+    month: s,
+    day: n
+};
+
+// Date() -> "Oct 2, 2018" (localized)
+// JS equiv of the Django template filter:   |date:"MEDIUM_DATE_FORMAT"
+function mediumDateFormatStr(date) {
+    const languageCode = window.userLang; // set in base.html by Django
+    return new Intl.DateTimeFormat(languageCode, DATE_MED).format(date);
+}
+
 
 $(function() {
      // Javascript to enable link to tab

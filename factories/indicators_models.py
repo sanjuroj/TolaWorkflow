@@ -86,7 +86,7 @@ class ResultFactory(DjangoModelFactory):
 
     program = SubFactory(ProgramFactory)
     indicator = SubFactory(IndicatorFactory)
-    description = Sequence(lambda n: 'Data description {0}'.format(n))
+    comments = Sequence(lambda n: 'Data description {0}'.format(n))
     achieved = 10
 
     @post_generation
