@@ -123,11 +123,12 @@
           {% endif %}
         </h3>
         {% include 'indicators/results/result_form_common_fields.html' %}
-        <div id="evidence_subform">
-            <h2>{% trans "Evidence" %}</h2>
-            <h3 class="no-bold">
+        <div id="evidence_subform" class="card card-body bg-medium border-0">
+
+            <h3>{% trans "Evidence" %}</h3>
+            <p>
                 {% trans 'Link this result to a record or folder of records that serves as evidence.' %}
-            </h3>
+            </p>
             {% include 'indicators/results/result_form_evidence_fields.html' %}
         </div>
         {% if object.indicator %}

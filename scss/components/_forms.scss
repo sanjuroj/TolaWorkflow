@@ -7,3 +7,11 @@
         content: "*";
     }
 }
+.input--inline {
+    // subclass form-group or input for inline form elements inside a d-flex container
+    margin-right: $grid-gutter-width/2;
+    &:last-child {
+        margin-right: 0;
+    }
+}
+

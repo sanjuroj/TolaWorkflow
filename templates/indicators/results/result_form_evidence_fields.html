@@ -31,20 +31,13 @@
             <i class="far fa-question-circle"></i>
         </a>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-md-11">
-                    {% render_field form.evidence_url class+="form-control" %}
-                </div>
-                <div class="col-md-1">
-                    <button type="button" id="id_view_evidence_button" class="btn btn-sm btn-secondary">{% trans 'view' %}</button>
-                </div>
-            </div>
+        <div class="d-flex">
+            {% render_field form.evidence_url class+="form-control input--inline" %}
+            <button type="button" id="id_view_evidence_button" class="btn btn-sm btn-secondary input--inline">{% trans 'view' %}</button>
         </div>
+        <a href="#" id="id_browse_google_drive">Browse Google Drive</a>
         <small class="form-text text-muted">{{ form.evidence_url.help_text }}</small>
+
         <span id="validation_id_evidence_url" class="has-error"></span>
-        <div class="text-right">
-            <a href="#" id="id_browse_google_drive">Browse Google Drive</a>
-        </div>
     </div>
 </fieldset>

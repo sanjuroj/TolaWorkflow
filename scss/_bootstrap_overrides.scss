@@ -85,6 +85,11 @@ body > .container {
 .btn-link {
     font-weight: bold;
 }
+.btn-toggle {
+    // usually used with .btn-link
+    padding-left: 0;
+    padding-right: 0;
+}
 
 .btn-danger.btn-link {
     // special danger links for remove actions
