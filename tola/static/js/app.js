@@ -424,6 +424,7 @@ $(document).ready(function() {
 /*
 * CUSTOM DASHBOARD
 */
+// COMMENTING OUT THE CUSTOM DASHBOARD BECAUSE NO ONE IS USING IT
 
     // on change to Step 2, selector, save change to db
     // on change to Step 3, selector, save change to db
@@ -495,6 +496,7 @@ $(document).ready(function() {
         indicator_id = location.hash.split('-')
         //loadIndicators(indicator_id[1])
     }
+
 });
 
 /*
