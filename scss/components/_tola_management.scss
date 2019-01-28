@@ -1,23 +1,4 @@
 #user-management-index-view {
-    .td--stretch {
-        display: flex;
-        justify-content: space-around;
-
-        div {
-            width: 1rem;
-        }
-    }
-
-    .icon__clickable {
-        cursor: pointer;
-        color: darkblue;
-    }
-
-    .filter-buttons {
-        display: flex;
-        justify-content: space-around;
-    }
-
     .list-controls {
         display: flex;
         justify-content: space-between;
@@ -31,6 +12,32 @@
         }
     }
 
+}
+
+#organization-management-index-view {
+    .list-controls {
+        display: flex;
+        justify-content: end;
+    }
+}
+
+.td--stretch {
+    display: flex;
+    justify-content: space-around;
+
+    div {
+        width: 1rem;
+    }
+}
+
+.icon__clickable {
+    cursor: pointer;
+    color: darkblue;
+}
+
+.filter-buttons {
+    display: flex;
+    justify-content: space-around;
 }
 
 /* Safari */
