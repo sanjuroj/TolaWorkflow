@@ -13,7 +13,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse_lazy
 from django.db import connection
 from django.db.models import (
-    Count, Min, Q, Sum, Avg, Max, DecimalField, OuterRef, Subquery
+    Count, Min, Q, Sum, Avg, Max
 )
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, render_to_response, get_object_or_404
@@ -34,7 +34,7 @@ from indicators.serializers import IndicatorSerializer, ProgramSerializer
 from workflow.forms import FilterForm
 from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
-    Program, Country, Sector, TolaSites, FormGuidance
+    Program, Sector, TolaSites, FormGuidance
 )
 from ..export import IndicatorResource, ResultResource
 from ..forms import IndicatorForm, ResultForm
@@ -352,12 +352,12 @@ def handleDataCollectedRecords(indicatr, lop, existing_target_frequency,
 
 def reset_indicator_target_frequency(ind):
     if ind.target_frequency and ind.target_frequency != 1 and \
-            not ind.periodictargets.count():
-                ind.target_frequency = None
-                ind.target_frequency_start = None
-                ind.target_frequency_num_periods = 1
-                ind.save()
-                return True
+        not ind.periodictargets.count():
+            ind.target_frequency = None
+            ind.target_frequency_start = None
+            ind.target_frequency_num_periods = 1
+            ind.save()
+            return True
     return False
 
 
@@ -639,8 +639,7 @@ class IndicatorDelete(DeleteView):
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_success_url(self):
-        return reverse_lazy('program_page',
-                            kwargs={'program_id': self.object.program_id, 'indicator_id': 0, 'type_id': 0})
+        return self.object.program.program_page_url
 
 
 class PeriodicTargetDeleteView(DeleteView):
@@ -758,7 +757,7 @@ class ResultCreate(ResultFormMixin, CreateView):
             return HttpResponse(data)
 
         messages.success(self.request, _('Success, Data Created!'))
-        redirect_url = reverse_lazy('program_page', args=(self.kwargs['program'], 0, 0))
+        redirect_url = new.indicator.program.program_page_url
         return HttpResponseRedirect(redirect_url)
 
 
@@ -839,7 +838,7 @@ class ResultUpdate(ResultFormMixin, UpdateView):
             return HttpResponse(data)
 
         messages.success(self.request, _('Success, Data Updated!'))
-        redirect_url = reverse_lazy('program_page', args=(getIndicator.program.id, 0, 0))
+        redirect_url = getIndicator.program.program_page_url
 
         return HttpResponseRedirect(redirect_url)
 
@@ -856,6 +855,9 @@ class ResultDelete(DeleteView):
         self.get_object().delete()
         payload = {'delete': 'ok'}
         return JsonResponse(payload)
+
+    def get_success_url(self):
+        return self.object.program.program_page_url
 
 
 def getTableCount(url, table_id):
@@ -1255,14 +1257,6 @@ class ProgramPage(ListView):
             return render(
                 request, 'indicators/program_setup_incomplete.html', context
                 )
-        #indicator_filters = {'program__id': program_id}
-        # indicator_filters = {}
-        type_filter_id = None
-        indicator_filter_id = None
-        type_filter_name = None
-        indicator_filter_name = None
-        #was this for eventually showing more than one program?  Because pk already limits to 1:
-        #program = ProgramWithMetrics.with_metrics.get(pk=program_id, funding_status="Funded", country__in=countries)
         program = ProgramWithMetrics.program_page.get(pk=program_id)
         program.indicator_filters = {}
         if self.metrics:
@@ -1272,20 +1266,8 @@ class ProgramPage(ListView):
             }
             return JsonResponse(json_context)
 
-        type_id = self.kwargs.get('type_id', 0)
-        if type_id is not None and int(type_id):
-            type_filter_id = int(type_id)
-            type_filter_name = IndicatorType.objects.get(id=type_filter_id)
-            program.indicator_filters['indicator_type'] = type_filter_id
-        indicator_id = self.kwargs.get('indicator_id', 0)
-        if indicator_id is not None and int(indicator_id):
-            indicator_filter_id = int(indicator_id)
-            program.indicator_filters['id'] = indicator_filter_id
-            indicator_filter_name = program.annotated_indicators.first()
-
         indicators = program.annotated_indicators\
             .annotate(target_period_last_end_date=Max('periodictargets__end_date')).select_related('level')
-        # indicator_count = program.indicator_count
         site_count = len(program.get_sites())
 
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
@@ -1300,10 +1282,6 @@ class ProgramPage(ListView):
         c_data = {
             'program': program,
             'site_count': site_count,
-            'indicator_filter_id': indicator_filter_id,
-            'indicator_filter_name': indicator_filter_name,
-            'type_filter_id': type_filter_id,
-            'type_filter_name': type_filter_name,
             'percent_complete': program.percent_complete,
             'pinned_reports': pinned_reports,
             'js_context': js_context,

@@ -7,16 +7,12 @@ import {IndicatorFilterType} from "../models";
 
 @observer
 class GaugeTank extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.onGuageClick = this.onGuageClick.bind(this);
-    }
-
-    onGuageClick() {
+    
+    handleClick = (e) => {
+        e.preventDefault();
         eventBus.emit('apply-gauge-tank-filter', this.props.filterType);
     }
-
+    
     render() {
         const tickCount = 10;
 
@@ -35,7 +31,7 @@ class GaugeTank extends React.Component {
         const filledPercent = 100 - unfilledPercent;
 
         return <div className={classNames('gauge', 'filter-trigger', {'is-highlighted': isHighlighted})}
-                    onClick={this.onGuageClick}>
+                    onClick={this.handleClick} >
             <h6 className="gauge__title">{title}</h6>
             <div className="gauge__overview">
                 <div
@@ -87,9 +83,12 @@ class GaugeBand extends React.Component {
             IndicatorFilterType.belowTarget,
             IndicatorFilterType.onTarget,
         ]);
-
-        this.onFilterLinkClick = this.onFilterLinkClick.bind(this);
     }
+    
+    onFilterLinkClick = (e) => {
+        e.preventDefault();
+        eventBus.emit('apply-gauge-tank-filter', parseInt(e.target.getAttribute('data-filter-type')));
+    };
 
     componentDidUpdate() {
         // Enable popovers after update (they break otherwise)
@@ -98,10 +97,6 @@ class GaugeBand extends React.Component {
         });
     }
 
-    onFilterLinkClick(e, filterType) {
-        e.preventDefault();
-        eventBus.emit('apply-gauge-tank-filter', filterType);
-    }
 
     render() {
         const tickCount = 10;
@@ -207,7 +202,7 @@ class GaugeBand extends React.Component {
                     <span className="text-muted">
                         {
                             /* # Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
-                            interpolate(gettext('%s%% unavailable'), [percentNonReporting])
+                            interpolate(gettext('%s% unavailable'), [percentNonReporting])
                         }
                     </span>
                     {' '}
@@ -225,14 +220,16 @@ class GaugeBand extends React.Component {
                 </div>
                 <div className="gauge__label">
                     <span className="gauge__value--above filter-trigger--band"
-                          onClick={e => this.onFilterLinkClick(e, IndicatorFilterType.aboveTarget)}
-                          dangerouslySetInnerHTML={aboveTargetMarkup()}>
+                          data-filter-type={ IndicatorFilterType.aboveTarget }
+                          onClick={ this.onFilterLinkClick }
+                          dangerouslySetInnerHTML={ aboveTargetMarkup() }>
                     </span>
                 </div>
                 <div className="gauge__label">
                     <span className="gauge__value filter-trigger--band"
-                          onClick={e => this.onFilterLinkClick(e, IndicatorFilterType.onTarget)}
-                          dangerouslySetInnerHTML={onTargetMarkup()}>
+                          data-filter-type={ IndicatorFilterType.onTarget }
+                          onClick={ this.onFilterLinkClick }
+                          dangerouslySetInnerHTML={ onTargetMarkup() }>
                     </span>
                     {' '}
                     <a href="#"
@@ -249,7 +246,8 @@ class GaugeBand extends React.Component {
                 </div>
                 <div className="gauge__label">
                     <span className="gauge__value--below filter-trigger--band"
-                          onClick={e => this.onFilterLinkClick(e, IndicatorFilterType.belowTarget)}
+                          data-filter-type={ IndicatorFilterType.belowTarget }
+                          onClick={ this.onFilterLinkClick }
                           dangerouslySetInnerHTML={belowTargetMarkup()}>
                     </span>
                 </div>
@@ -330,8 +328,8 @@ export const ProgramMetrics = observer(function (props) {
 
                        allIndicatorsLength={indicators.length}
                        filteredIndicatorsLength={indicatorStore.getIndicatorsNeedingTargets.length}
-
                        {...targetLabels}
+
                        />
 
             <GaugeTank filterType={IndicatorFilterType.missingResults}
@@ -339,13 +337,12 @@ export const ProgramMetrics = observer(function (props) {
 
                        allIndicatorsLength={indicators.length}
                        filteredIndicatorsLength={indicatorStore.getIndicatorsNeedingResults.length}
-
                        {...resultsLabels}
+                       
                        />
 
             <GaugeTank filterType={IndicatorFilterType.missingEvidence}
                        currentIndicatorFilter={currentIndicatorFilter}
-
                        // The names below are misleading as this gauge is measuring *results*, not indicators
                        allIndicatorsLength={indicatorStore.getTotalResultsCount}
                        filteredIndicatorsLength={indicatorStore.getTotalResultsCount - indicatorStore.getTotalResultsWithEvidenceCount}

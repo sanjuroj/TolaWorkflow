@@ -9,7 +9,7 @@
 
 {% block content %}
 
-<h3><a href="{% url 'program_page' getProgram.id 0 0 %}">{{ getProgram.gaitid }} - {{ getProgram.name }}</a></h3>
+<h3><a href="{{ getProgram.program_page_url }}">{{ getProgram.gaitid }} - {{ getProgram.name }}</a></h3>
 
     <!-- Table -->
     <!--

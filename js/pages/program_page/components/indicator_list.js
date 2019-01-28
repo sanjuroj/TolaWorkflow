@@ -53,13 +53,10 @@ function getStatusIndicatorString(filterType, indicatorCount) {
 class StatusHeader extends React.Component {
     constructor(props) {
         super(props);
-
-        this.onShowAllClick = this.onShowAllClick.bind(this);
-    }
-
-    onShowAllClick(e) {
-        e.preventDefault();
-        eventBus.emit('clear-all-indicator-filters');
+        this.onShowAllClick = (e) => {
+            e.preventDefault();
+            eventBus.emit('clear-all-indicator-filters');
+            };
     }
 
     render() {
@@ -232,7 +229,6 @@ export const IndicatorList = observer(function (props) {
     const resultsMap = props.rootStore.resultsMap;
     const currentIndicatorFilter = props.uiStore.currentIndicatorFilter;
     const selectedIndicatorIds = props.uiStore.selectedIndicatorIds;
-
     // Either a gas gauge filter is applied, or an indicator has been selected, but not both
 
     // apply gas gauge filter
@@ -246,7 +242,7 @@ export const IndicatorList = observer(function (props) {
         <StatusHeader indicatorCount={filteredIndicators.length}
                       programId={program.id}
                       currentIndicatorFilter={currentIndicatorFilter}
-                      filterApplied={currentIndicatorFilter || selectedIndicatorIds.length > 0}/>
+                      filterApplied={currentIndicatorFilter || selectedIndicatorIds.length > 0} />
 
         <IndicatorFilter uiStore={props.uiStore} rootStore={props.rootStore} />
 

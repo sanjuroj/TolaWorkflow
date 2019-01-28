@@ -2,6 +2,7 @@ import { observable, computed, action } from "mobx";
 
 // Types of filters available on the program page
 export const IndicatorFilterType = Object.freeze({
+    noFilter: 0,
     missingTarget: 1,
     missingResults: 2,
     missingEvidence: 3,
@@ -10,6 +11,7 @@ export const IndicatorFilterType = Object.freeze({
     belowTarget: 6,
     onTarget: 7,
 });
+
 
 export class IndicatorStore {
     @observable indicators = [];
@@ -91,6 +93,7 @@ export class IndicatorStore {
             case IndicatorFilterType.onTarget:
                 indicators = this.getIndicatorsOnTarget;
                 break;
+            case IndicatorFilterType.noFilter:
             default:
                 indicators = this.indicators;
         }

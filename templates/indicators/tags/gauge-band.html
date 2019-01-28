@@ -37,19 +37,23 @@
                            ><i class="far fa-question-circle"></i></a>
                     </div>
                     <div class="gauge__label">
-                        <span class="gauge__value--above">
+                        <span class="gauge__value--above filter-trigger--band">
+                            {% if program_url %} <a href="{{ program_url }}#/scope/above/">{% endif %}
                             {% comment %}Translators: variable {{ high }} shows what percentage of indicators are a certain percentage above target. Example: 31% are >15% above target{% endcomment %}
                             {% blocktrans with scope_percents.high as high %}
                                 <strong>{{ high }}%</strong> are &gt;{{ margin }}% above target
                             {% endblocktrans %}
+                            {% if program_url %}</a>{% endif %}
                         </span>
                     </div>
                     <div class="gauge__label">
-                        <span class="gauge__value">
+                        <span class="gauge__value filter-trigger--band">
+                            {% if program_url %} <a href="{{ program_url }}#/scope/on/">{% endif %}
                             {% comment %}Translators: variable {{ on_scope }} shows what percentage of indicators are within a set range of target. Example: 31%  are on track{% endcomment %}
                             {% blocktrans with scope_percents.on_scope as on_scope %}
                                 <strong>{{ on_scope }}%</strong> are on track
                             {% endblocktrans %}
+                            {% if program_url %}</a>{% endif %}
                         </span>
                         <a href="#"
                            tabindex="0"
@@ -61,11 +65,13 @@
                            ><i class="far fa-question-circle"></i></a>
                     </div>
                     <div class="gauge__label">
-                        <span class="gauge__value--below">
+                        <span class="gauge__value--below filter-trigger--band">
+                            {% if program_url %} <a href="{{ program_url }}#/scope/below/">{% endif %}
                             {% comment %}Translators: variable {{ low }} shows what percentage of indicators are a certain percentage below target. The variable {{ margin }} is that percentage. Example: 31% are >15% below target{% endcomment %}
                             {% blocktrans with scope_percents.low as low %}
                                 <strong>{{ low }}%</strong> are &gt;{{ margin }}% below target
                             {% endblocktrans %}
+                            {% if program_url %}</a>{% endif %}
                         </span>
                     </div>
                 </div>
@@ -95,4 +101,3 @@
         {% endif %}
     </div>
 </div>
-

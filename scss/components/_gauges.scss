@@ -144,6 +144,11 @@
         background: $yellow-100;
         cursor: pointer;
     }
+    // on homepage, filter triggers are links but should not get link styling (hover styling is better)
+    a {
+        color: inherit;
+        text-decoration: inherit;
+    }
 }
 
 // State
