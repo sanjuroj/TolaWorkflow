@@ -97,6 +97,14 @@ class IndicatorFilterSelect extends React.Component {
             selectedValue = indicatorOptions.find(p => p.value === selectedIndicatorId);
         }
 
+        // Force the menu closed when the Select widget is also disabled
+        // otherwise the menu remains open and is not closeable since the widget
+        // no longer accepts mouse clicks
+        let menuIsOpen = undefined;
+        if (! selectedProgramId) {
+            menuIsOpen = false;
+        }
+
         return <Select
             isDisabled={! selectedProgramId}
             options={indicatorOptions}
@@ -104,6 +112,7 @@ class IndicatorFilterSelect extends React.Component {
             isClearable={true}
             placeholder={gettext('Filter by indicator')}
             onChange={this.onSelection}
+            menuIsOpen={menuIsOpen}
         />
     }
 }
