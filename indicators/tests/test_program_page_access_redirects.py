@@ -34,9 +34,7 @@ class TestProgramPageRedirects(test.TestCase):
     def test_user_is_able_to_access_program_in_country(self):
         """User should get a program page back for a program in one of their countries"""
         self.client.force_login(self.user)
-        url = reverse('program_page', kwargs={'program_id': self.program_a.id,
-                                              'indicator_id': 0,
-                                              'type_id': 0})
+        url = reverse('program_page', kwargs={'program_id': self.program_a.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -46,21 +44,15 @@ class TestProgramPageRedirects(test.TestCase):
     def test_user_is_redirected_from_program_not_in_country(self):
         """User should be redirected to home page for a program not in one of their countries"""
         self.client.force_login(self.user)
-        url = reverse('program_page', kwargs={'program_id': self.program_b.id,
-                                              'indicator_id': 0,
-                                              'type_id': 0})
+        url = reverse('program_page', kwargs={'program_id': self.program_b.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
 
     def test_anonymous_user_is_redirected_from_program_page(self):
         """Anonymous user should be redirected to home page for any program page"""
-        url = reverse('program_page', kwargs={'program_id': self.program_a.id,
-                                              'indicator_id': 0,
-                                              'type_id': 0})
+        url = reverse('program_page', kwargs={'program_id': self.program_a.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        url = reverse('program_page', kwargs={'program_id': self.program_b.id,
-                                              'indicator_id': 0,
-                                              'type_id': 0})
+        url = reverse('program_page', kwargs={'program_id': self.program_b.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
