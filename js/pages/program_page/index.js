@@ -66,10 +66,7 @@ const routeToEventBus = (routeName) => {
 const onNavigation = (navRoutes) => {
     if (navRoutes.route.name == 'scope') {
         router.navigate('scope.on', {}, {replace: true});
-    } else {
-        routeToEventBus(navRoutes.route.name);
     }
-    
 };
 
 router.usePlugin(browserPlugin({useHash: true, base:'/program/'+jsContext.program.id+'/'}));
@@ -126,16 +123,26 @@ eventBus.on('reload-indicator', indicatorId => {
 
 // apply a gas gauge filter. Takes in IndicatorFilterType enum value
 eventBus.on('apply-gauge-tank-filter', indicatorFilter => {
+
     // reset all filters
     eventBus.emit('clear-all-indicator-filters');
 
     eventBus.emit('close-all-indicators');
+    
+    // update navigation element:
+    if (routeNameLookup.hasOwnProperty(indicatorFilter)) {
+        router.navigate(routeNameLookup[indicatorFilter]);
+    } else {
+        //how do we handle js errors?
+        console.log("attempted to find (and failed) filter type", indicatorFilter);
+    }
 
     uiStore.setIndicatorFilter(indicatorFilter);
 });
 
 // clear all gas tank and indicator select filters
 eventBus.on('clear-all-indicator-filters', () => {
+    router.navigate('all');
     uiStore.clearIndicatorFilter();
     eventBus.emit('select-indicators-to-filter', []);
     eventBus.emit('close-all-indicators');
@@ -162,14 +169,12 @@ eventBus.on('close-all-indicators', () => {
  * React components on page
  */
 
-ReactDOM.render(<IndicatorList rootStore={rootStore} uiStore={uiStore}
-                               showAllClickHandler={filterClickToRoute} />,
+ReactDOM.render(<IndicatorList rootStore={rootStore} uiStore={uiStore} />,
     document.querySelector('#indicator-list-react-component'));
 
 ReactDOM.render(<ProgramMetrics rootStore={rootStore}
                                 uiStore={uiStore}
-                                indicatorOnScopeMargin={jsContext.indicator_on_scope_margin}
-                                filterClickHandler={filterClickToRoute} />,
+                                indicatorOnScopeMargin={jsContext.indicator_on_scope_margin} />,
     document.querySelector('#program-metrics-react-component'));
 
 

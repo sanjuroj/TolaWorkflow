@@ -10,7 +10,7 @@ class GaugeTank extends React.Component {
     
     handleClick = (e) => {
         e.preventDefault();
-        this.props.clickHandler(this.props.filterType);
+        eventBus.emit('apply-gauge-tank-filter', this.props.filterType);
     }
     
     render() {
@@ -87,7 +87,7 @@ class GaugeBand extends React.Component {
     
     onFilterLinkClick = (e) => {
         e.preventDefault();
-        this.props.clickHandler(e.target.getAttribute('data-filter-type'));
+        eventBus.emit('apply-gauge-tank-filter', parseInt(e.target.getAttribute('data-filter-type')));
     };
 
     componentDidUpdate() {
@@ -256,8 +256,7 @@ class GaugeBand extends React.Component {
     }
 }
 
-/* Props include filterClickHandler function to apply filters when clicked
- */
+
 export const ProgramMetrics = observer(function (props) {
     // const program = props.rootStore.program;
     const indicatorStore = props.rootStore.indicatorStore;
@@ -266,8 +265,6 @@ export const ProgramMetrics = observer(function (props) {
     const currentIndicatorFilter = props.uiStore.currentIndicatorFilter;
 
     const indicatorOnScopeMargin = this.props.indicatorOnScopeMargin;
-    var filterClickHandler = props.filterClickHandler;
-    if (typeof(filterClickHandler) === 'undefined') {filterClickHandler = () => false;}
 
     // Use objs for labels below to allow for translator notes to be added
 
@@ -324,7 +321,6 @@ export const ProgramMetrics = observer(function (props) {
             <GaugeBand currentIndicatorFilter={currentIndicatorFilter}
                        indicatorOnScopeMargin={indicatorOnScopeMargin}
                        indicatorStore={indicatorStore}
-                       clickHandler={filterClickHandler}
             />
 
             <GaugeTank filterType={IndicatorFilterType.missingTarget}
@@ -332,7 +328,6 @@ export const ProgramMetrics = observer(function (props) {
 
                        allIndicatorsLength={indicators.length}
                        filteredIndicatorsLength={indicatorStore.getIndicatorsNeedingTargets.length}
-                       clickHandler={filterClickHandler}
                        {...targetLabels}
 
                        />
@@ -342,14 +337,12 @@ export const ProgramMetrics = observer(function (props) {
 
                        allIndicatorsLength={indicators.length}
                        filteredIndicatorsLength={indicatorStore.getIndicatorsNeedingResults.length}
-                       clickHandler={filterClickHandler}
                        {...resultsLabels}
                        
                        />
 
             <GaugeTank filterType={IndicatorFilterType.missingEvidence}
                        currentIndicatorFilter={currentIndicatorFilter}
-                       clickHandler={filterClickHandler}
                        // The names below are misleading as this gauge is measuring *results*, not indicators
                        allIndicatorsLength={indicatorStore.getTotalResultsCount}
                        filteredIndicatorsLength={indicatorStore.getTotalResultsCount - indicatorStore.getTotalResultsWithEvidenceCount}
