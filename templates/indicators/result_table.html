@@ -103,7 +103,7 @@
                     </td>
                     {% empty %}
                     <td class="collected-data__result--nodata" colspan="2">
-                        {% trans "No data collected" %}
+                        {% trans "No results reported" %}
                     </td>
                     <td></td>
                     {% if pt.result_set.count > 1 %}
@@ -242,7 +242,7 @@
             {% endif %}
         </div>
         <div class="cd-actions__button{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
-            <a href="{% url 'result_add' program_id indicator.id %}" class="btn-link btn-add collected-data__link"><i class="fas fa-plus-circle"></i> {% trans "Add results" %}</a>
+            <a href="{% url 'result_add' program_id indicator.id %}" class="btn-link btn-add collected-data__link"><i class="fas fa-plus-circle"></i> {% trans "Add result" %}</a>
         </div>
     </div>
     {% else %}
