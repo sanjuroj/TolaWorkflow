@@ -16,7 +16,7 @@ from django.db.models import (
     Count, Min, Q, Sum, Avg, Max
 )
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, render_to_response, get_object_or_404
+from django.shortcuts import render, render_to_response, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -1236,6 +1236,14 @@ def dictfetchall(cursor):
         for row in cursor.fetchall()
     ]
 
+
+def old_program_page(request, program_id, indicator_id, indicator_type_id):
+    """ redirect for old /program/<program_id>/<indicator_id>/<indicator_type_id>/ urls to new program page url"""
+    program = get_object_or_404(Program, pk=program_id)
+    if indicator_id != 0 or indicator_type_id != 0:
+        logger.warn('attempt to access program page with filters indicator id {0} and indicator type id {1}'.format(
+            indicator_id, indicator_type_id))
+    return redirect(program.program_page_url, permanent=True)
 
 class ProgramPage(ListView):
     model = Indicator
