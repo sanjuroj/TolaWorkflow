@@ -23,12 +23,11 @@
     <div class="program-page__sidebar">
         <section class="sidebar__detail">
             <h3>{% trans "Program details" %}</h3>
-            <p><a href="{% url 'programIndicatorReport' program.id %}">{% trans "Indicator Plan" %}</a></p>
-        </section>
-        <section class="sidebar__detail">
-            <h3>{% trans "Documents" %}</h3>
-            <p><a href="{% url 'documentation_list' %}?program_id={{ program.id }}">{% trans "View program documents" %}</a></p>
-            <a href="{% url 'documentation_add' %}?program_id={{ program.id }}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add document" %}</a>
+            <p><a href="{% url 'programIndicatorReport' program.id %}">{% trans "Indicator plan" %}</a></p>
+            {% if program.gait_url %}
+                {% comment %}Translators: GAIT is the Grant and Award Information Tracker system used by MercyCorps {% endcomment %}
+                <p><a href="{{ program.gait_url }}">{% trans "View program in GAIT" %}</a></p>
+            {% endif %}
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Sites" %}</h3>
