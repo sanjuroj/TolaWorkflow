@@ -17,6 +17,7 @@ from rest_framework.decorators import list_route, detail_route
 from rest_framework.generics import ListAPIView
 from rest_framework.serializers import (
     Serializer,
+    ModelSerializer,
     CharField,
     IntegerField,
     PrimaryKeyRelatedField,
@@ -44,6 +45,7 @@ from workflow.models import (
     Country,
     TolaUserCountryRoles,
     TolaUserProgramRoles,
+    Sector,
     COUNTRY_ROLE_CHOICES,
     PROGRAM_ROLE_CHOICES
 )
@@ -106,10 +108,6 @@ def get_user_page_context(request):
     }
 
 def get_organization_page_context(request):
-    countries = {}
-    for country in Country.objects.all():
-        countries[country.id] = {"id": country.id, "name": country.country, "programs": []}
-
     programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
     programs = {}
     for program in list(programs_qs):
@@ -119,10 +117,14 @@ def get_organization_page_context(request):
     for o in Organization.objects.all():
         organizations[o.id] = {"id": o.id, "name": o.name}
 
+    sectors = {}
+    for sector in Sector.objects.all():
+        sectors[sector.id] = {"id": sector.id, "name": sector.sector}
+
     return {
-        "countries": countries,
         "programs": programs,
-        "organizations": organizations
+        "organizations": organizations,
+        "sectors": sectors
     }
 
 def get_program_page_context(request):
@@ -570,11 +572,54 @@ class OrganizationAdminSerializer(Serializer):
             'is_active',
         )
 
+class SectorSerializer(ModelSerializer):
+    id = IntegerField(required=False)
+
+    class Meta:
+        model = Sector
+        fields = "__all__"
+
+class OrganizationSerializer(ModelSerializer):
+    id = IntegerField(allow_null=True, required=False)
+    name = CharField(required=True)
+    primary_address = CharField(required=True)
+    primary_contact_name = CharField(required=True)
+    primary_contact_email = CharField(required=True)
+    primary_contact_phone = CharField(required=True)
+    sectors = SectorSerializer(many=True, default={})
+
+    def update(self, instance, validated_data):
+        sectors = validated_data.pop('sectors')
+        print(sectors)
+        instance.sectors.add(*[sector["id"] for sector in sectors])
+        return super(OrganizationSerializer, self).update(instance, validated_data)
+
+    def create(self, validated_data):
+        sectors = validated_data.pop('sectors')
+        org = Organization.objects.create(**validated_data)
+        org.sectors.add(*[sector["id"] for sector in sectors])
+        return org
+
+    class Meta:
+        model = Organization
+        fields = (
+            'id',
+            'name',
+            'primary_address',
+            'primary_contact_name',
+            'primary_contact_email',
+            'primary_contact_phone',
+            'mode_of_contact',
+            'is_active',
+            'sectors'
+        )
+
 class OrganizationAdminViewSet(viewsets.ModelViewSet):
-    serializer_class = OrganizationAdminSerializer
+    serializer_class = OrganizationSerializer
+    queryset = Organization.objects.all()
     pagination_class = SmallResultsSetPagination
 
-    def get_queryset(self):
+    def get_listing_queryset(self):
         req = self.request
 
         params = []
@@ -640,6 +685,17 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
 
             user_status_where = 'AND au.is_active = %s'
 
+        sector_join = ''
+        sector_where = ''
+        if req.GET.get('sectors[]'):
+            params.extend(req.GET.getlist('sectors[]'))
+
+            #create placeholders for multiple programs and strip the trailing comma
+            in_param_string = ('%s,'*len(req.GET.getlist('sectors[]')))[:-1]
+            sector_join = 'INNER JOIN workflow_organization_sectors wos ON wos.organization_id = wo.id'
+
+            sector_where = 'AND (wos.sector_id IN ({}))'.format(in_param_string)
+
         return Organization.objects.raw("""
             SELECT
                 wo.id,
@@ -654,7 +710,71 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
                 wo.is_active
             FROM workflow_organization wo
             LEFT JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
+            LEFT JOIN (
+                SELECT
+                    wo.id AS organization_id,
+                    pz.program_id AS program_id
+                FROM workflow_organization wo
+                INNER JOIN workflow_tolauser wtu ON wo.id = wtu.organization_id
+                INNER JOIN (
+                    SELECT MAX(tu_p.tolauser_id) as tolauser_id, tu_p.program_id
+                    FROM (
+                            SELECT
+                                wpua.tolauser_id,
+                                wpua.program_id
+                            FROM workflow_program_user_access wpua
+                        UNION DISTINCT
+                            SELECT
+                                wtuc.tolauser_id,
+                                wpc.program_id
+                            FROM workflow_tolauser_countries wtuc
+                            INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
+                    ) tu_p
+                    GROUP BY tu_p.program_id
+                ) pz ON pz.tolauser_id = wtu.id
+                GROUP BY wo.id, pz.program_id
+            ) pz ON pz.organization_id = wo.id
             {program_join}
+            {sector_join}
+            WHERE
+                1=1
+                {program_where}
+                {country_where}
+                {organization_where}
+                {sector_where}
+            GROUP BY wo.id
+        """.format(
+            program_where=program_where,
+            program_join=program_join,
+            country_where=country_where,
+            organization_where=organization_where,
+            sector_join=sector_join,
+            sector_where=sector_where
+        ), params)
+
+    def list(self, request):
+        queryset = self.get_listing_queryset()
+
+        page = self.paginate_queryset(list(queryset))
+        if page is not None:
+            serializer = OrganizationAdminSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = OrganizationAdminSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @detail_route(methods=["get"])
+    def aggregate_data(self, request, pk=None):
+        if not pk:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+        result = list(Organization.objects.raw("""
+            SELECT
+                wo.id,
+                COUNT(DISTINCT wtu.id) AS user_count,
+                COUNT(DISTINCT pz.program_id) AS program_count
+            FROM workflow_organization wo
+            LEFT JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
             LEFT JOIN (
                 SELECT
                     wo.id AS organization_id,
@@ -680,53 +800,14 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
                 GROUP BY wo.id, pz.program_id
             ) pz ON pz.organization_id = wo.id
             WHERE
-                1=1
-                {program_where}
-                {country_where}
-                {organization_where}
+                wo.id = %s
             GROUP BY wo.id
-        """.format(
-            program_where=program_where,
-            program_join=program_join,
-            country_where=country_where,
-            organization_where=organization_where
-        ), params)
+        """, [pk]))
 
-    def list(self, request):
-        queryset = self.get_queryset()
+        if len(result) < 1:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
 
-        #TODO write a more performant paginator, rather than converting the
-        #query to a list. For now, we're extremely performant with about 1000
-        #rows, so just convert to a list and paginate that way
-        page = self.paginate_queryset(list(queryset))
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request):
-        request.data["id"] = None
-        serializer = OrganizationAdminSerializer(data=request.data)
-        if(serializer.is_valid()):
-            d = serializer.validated_data
-
-            new_org = Organization(
-                name=d["name"],
-                primary_address=d["primary_address"],
-                primary_contact_name=d["primary_contact_name"],
-                primary_contact_email=d["primary_contact_email"],
-                primary_contact_phone=d["primary_contact_phone"],
-                mode_of_contact=d["mode_of_contact"],
-                is_active=True
-            )
-
-            new_org.save()
-            new_serializer = self.get_serializer(new_org, many=False)
-            return Response(new_serializer.data)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def update(self, request, pk=None):
-        pass
+        return Response({
+            "user_count": result[0].user_count,
+            "program_count": result[0].program_count
+        })

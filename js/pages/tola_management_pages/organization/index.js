@@ -6,11 +6,10 @@ import {IndexView} from './views';
 /*
  * Model/Store setup
  */
-console.log(jsContext)
 const store = new OrganizationStore(
-    jsContext.countries,
     jsContext.programs,
-    jsContext.organizations
+    jsContext.organizations,
+    jsContext.sectors
 );
 
 ReactDOM.render(

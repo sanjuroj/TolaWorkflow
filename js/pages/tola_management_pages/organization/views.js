@@ -9,53 +9,51 @@ import OrganizationEditor from './components/organization_editor'
 import EditOrganizationProfile from './components/edit_organization_profile'
 import EditOrganizationHistory from './components/edit_organization_history'
 
-const CountryFilter = observer(({store, countryListing}) => {
-    return <div className="form-group">
-        <label htmlFor="countries_permitted_filter">Countries</label>
-        <CheckboxedMultiSelect
-            value={store.filters.countries}
-            options={countryListing}
-            onChange={(e) => store.changeCountryFilter(e)}
-            placeholder="None Selected"
-            id="countries_permitted_filter" />
-    </div>
-})
+import LoadingSpinner from 'components/loading-spinner'
 
-const ProgramFilter = observer(({store, programListing}) => {
+const ProgramFilter = observer(({store, selections}) => {
     return <div className="form-group">
         <label htmlFor="programs_filter">Programs</label>
         <CheckboxedMultiSelect
             value={store.filters.programs}
-            options={programListing}
+            options={selections}
             onChange={(e) => store.changeProgramFilter(e)}
             placeholder="None Selected"
             id="programs_filter" />
     </div>
 })
 
-const OrganizationFilter = observer(({store, organizationListing}) => {
+const OrganizationFilter = observer(({store, selections}) => {
     return <div className="form-group">
         <label htmlFor="organizations_filter">Organizations</label>
         <CheckboxedMultiSelect
             value={store.filters.organizations}
-            options={organizationListing}
+            options={selections}
             onChange={(e) => store.changeOrganizationFilter(e)}
             placeholder="None Selected"
             id="organization_filter" />
     </div>
 })
 
+const SectorFilter = observer(({store, selections}) => {
+    return <div className="form-group">
+        <label htmlFor="sector_filter">Sectors</label>
+        <CheckboxedMultiSelect
+            value={store.filters.sectors}
+            options={selections}
+            onChange={(e) => store.changeSectorFilter(e)}
+            placeholder="None Selected"
+            id="sector_filter" />
+    </div>
+})
+
 export const IndexView = observer(
     ({store}) => {
-        const countries_listing = Object.entries(store.available_countries).map(([id, country]) => ({value: country.id, label: country.name}))
-        const organization_listing = Object.entries(store.available_organizations).map(([id, org]) => ({value: org.id, label: org.name}))
-        const program_listing = Object.entries(store.available_programs).map(([id, program]) => ({value: program.id, label: program.name}))
-
-        return <div id="user-management-index-view" className="container-fluid row">
+        return <div id="organization-management-index-view" className="container-fluid row">
             <div className="col col-sm-3 filter-section">
-                <CountryFilter store={store} countryListing={countries_listing} />
-                <ProgramFilter store={store} programListing={program_listing} />
-                <OrganizationFilter store={store} organizationListing={organization_listing} />
+                <SectorFilter store={store} selections={store.sector_selections} />
+                <ProgramFilter store={store} selections={store.program_selections} />
+                <OrganizationFilter store={store} selections={store.organization_selections} />
                 <div className="form-group">
                     <label htmlFor="status_filter">Status</label>
                     <Select
@@ -72,26 +70,18 @@ export const IndexView = observer(
             </div>
             <div className="col col-sm-9 list-section">
                 <div className="list-controls row">
-                    <div className="bulk-controls">
-                        <Select className="selector" placeholder="Bulk Actions">
-                        </Select>
-                        <Select className="selector" placeholder="---">
-                        </Select>
-                        <button className="btn btn-outline-primary">Apply</button>
-                    </div>
                     <div>
                         <button className="btn btn-primary" onClick={() => store.createOrganization()}><i className="fa fa-plus-circle"></i>Add Organization</button>
                     </div>
                 </div>
                 <div className="list-table row">
                     <ManagementTable
-                        data={store.organizations}
+                        data={store.organizations_listing.map(id => store.organizations[id])}
                         keyField="id"
                         HeaderRow={({Col, Row}) =>
                             <Row>
-                                <Col size="0.5">
+                                <Col size="0.15">
                                     <div className="td--stretch">
-                                        <input type="checkbox" checked={store.bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
                                         <div></div>
                                     </div>
                                 </Col>
@@ -108,23 +98,27 @@ export const IndexView = observer(
                                 <Wrapper>
                                     <OrganizationEditor
                                         new={data.id == 'new'}
-                                        ProfileSection={() =>
-                                            <EditOrganizationProfile
-                                            new={data.id == 'new'}
-                                            organizationData={data}
-                                            countryListing={countries_listing}
-                                            onSave={(new_organization_data) => store.updateOrganizationProfile(data.id, new_organization_data)}
-                                            onSaveNew={(new_organization_data) => store.saveNewOrganization(new_organization_data)}
-                                            onSaveNewAndAddAnother={(new_organization_data) => store.saveNewOrganizationAndAddAnother(new_organization_data)} />}
+                                        ProfileSection={observer(() =>
+                                            <LoadingSpinner isLoading={store.fetching_editing_target || store.saving}>
+                                                <EditOrganizationProfile
+                                                new={data.id == 'new'}
+                                                sectorSelections={store.sector_selections}
+                                                organizationData={store.editing_target_data}
+                                                errors={store.editing_errors}
+                                                key={store.editing_target_data.id}
+                                                onSave={(new_organization_data) => store.updateOrganizationProfile(data.id, new_organization_data)}
+                                                onSaveNew={(new_organization_data) => store.saveNewOrganization(new_organization_data)}
+                                                onSaveNewAndAddAnother={(new_organization_data) => store.saveNewOrganizationAndAddAnother(new_organization_data)} />
+                                            </LoadingSpinner>
+                                        )}
                                         HistorySection={() =>
                                             <EditOrganizationHistory
                                             onSave={(new_data) => store.saveOrganizationProfile(data.id, new_data)}/>}
                                     />
                                 </Wrapper>
                             }>
-                                <Col size="0.5">
+                                <Col size="0.15">
                                     <div className="td--stretch">
-                                        <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
                                         <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
                                             <i className="fa fa-users"></i>
                                         </div>
