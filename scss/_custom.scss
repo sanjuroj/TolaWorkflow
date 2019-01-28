@@ -331,3 +331,15 @@ select.listoption_filters {
     float: right;
     margin-left: $grid-gutter-width/2;
 }
+
+
+// GDRive file picker modal
+// ensure the modal lives on top of the BS modal
+
+.picker-dialog-bg {
+    z-index: 20000 !important;
+}
+
+.picker-dialog {
+    z-index: 20001 !important;
+}

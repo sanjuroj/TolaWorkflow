@@ -7,7 +7,8 @@
     function filePickerCallback(fileName, url) {
         document.getElementById('id_evidence_url').value = url;
         document.getElementById('id_record_name').value = fileName;
-        validateEvidence();
+        validateEvidence()
+        setViewButtonDisabledState();
     }
 
     $("#indicator_collecteddata_div").on('click', '#id_browse_google_drive', function(e) {
@@ -22,14 +23,15 @@
         window.open(url, '_blank')
     });
 
-    function evidenceURLHasValue() {
+    function setViewButtonDisabledState() {
         // Does it have a value, and does it kinda look like a URL?
         let val = $('#id_evidence_url').val();
-        return val.match(/^(http(s)?|file):\/\/.+/)
+        let evidenceURLHasValue = val.match(/^(http(s)?|file):\/\/.+/);
+        $('#id_view_evidence_button').prop('disabled', ! evidenceURLHasValue);
     }
 
     $("#indicator_collecteddata_div").on('change keyup paste', '#id_evidence_url', function () {
-        $('#id_view_evidence_button').prop('disabled', ! evidenceURLHasValue());
+        setViewButtonDisabledState();
     });
 
     // Intercept CollectedDataUpdate form submission and then use ajax to submit it.
