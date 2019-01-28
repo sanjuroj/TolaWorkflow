@@ -16,7 +16,7 @@ from .views.views_indicators import (
     PeriodicTargetDeleteView,
     result_view,
     program_indicators_json,
-    programIndicatorReport,
+    indicator_plan,
     indicator_report,
     IndicatorReport,
     IndicatorDataExport,
@@ -74,7 +74,7 @@ urlpatterns = [
     url(r'^report_table/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$',
         IndicatorReport.as_view(), name='indicator_table'),
 
-    url(r'^program_report/(?P<program>\d+)/$', programIndicatorReport, name='programIndicatorReport'),
+    url(r'^indicator_plan/(?P<program_id>\d+)/$', indicator_plan, name='indicator_plan'),
 
 
     url(r'^export/(?P<id>\d+)/(?P<program>\d+)/(?P<indicator_type>\d+)/$',

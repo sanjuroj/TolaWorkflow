@@ -9,7 +9,7 @@
 
 {% block content %}
 
-<h3><a href="{{ getProgram.program_page_url }}">{{ getProgram.gaitid }} - {{ getProgram.name }}</a></h3>
+<h3><a href="{{ program.program_page_url }}">{{ program.gaitid }} - {{ program.name }}</a></h3>
 
     <!-- Table -->
     <!--
@@ -38,7 +38,7 @@
             <th>{% trans "Reporting Frequency" %}</th>
             <th>{% trans "Comments" %}</th>
         </tr>
-        {% for indicator in getIndicators %}
+        {% for indicator in indicators %}
         <tr>
             <td>{{ indicator.indicator_types }}</td>
             <td>{{ indicator.levels }}</td>
@@ -66,6 +66,6 @@
 
 <br/>
 
-<button type="submit" class="btn btn-success" onClick="location.href='/indicators/export/0/{{ getProgram.id }}/0/'">{% trans "Export All" %}</button>
+<button type="submit" class="btn btn-success" onClick="location.href='/indicators/export/0/{{ program.id }}/0/'">{% trans "Export All" %}</button>
 
 {% endblock content %}

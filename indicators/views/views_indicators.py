@@ -1053,44 +1053,22 @@ class IndicatorReport(View, AjaxableResponseMixin):
         return JsonResponse(get_indicators, safe=False)
 
 
-def programIndicatorReport(request, program=0):
+def indicator_plan(request, program_id):
     """
     This is the GRID report or indicator plan for a program.
     Shows a simple list of indicators sorted by level
     and number. Lives in the "Indicator" home page as a link.
     """
-    program = int(program)
-    countries = getCountry(request.user)
-    getPrograms = Program.objects.filter(funding_status="Funded",
-                                         country__in=countries).distinct()
+    program = get_object_or_404(Program, id=program_id)
 
-    getIndicators = Indicator.objects.filter(program__id=program) \
+    indicators = Indicator.objects.filter(program=program) \
         .select_related().order_by('level', 'number')
 
-    getProgram = Program.objects.get(id=program)
-
-    getIndicatorTypes = IndicatorType.objects.all()
-
-    if request.method == "GET" and "search" in request.GET:
-        # list1 = list()
-        # for obj in filtered:
-        #    list1.append(obj)
-        getIndicators = Indicator.objects.filter(
-            Q(indicator_type__icontains=request.GET["search"]) |
-            Q(name__icontains=request.GET["search"]) |
-            Q(number__icontains=request.GET["search"]) |
-            Q(definition__startswith=request.GET["search"])) \
-            .filter(program__id=program) \
-            .select_related() \
-            .order_by('level', 'number')
-
-    # send the keys and vars from the json data to the template along with
-    # submitted feed info and silos for new form
-    return render(request, "indicators/grid_report.html",
-                  {'getIndicators': getIndicators, 'getPrograms': getPrograms,
-                   'getProgram': getProgram, 'form': FilterForm(),
-                   'helper': FilterForm.helper,
-                   'getIndicatorTypes': getIndicatorTypes})
+    return render(request, "indicators/grid_report.html", {
+        'indicators': indicators,
+        'program': program, 'form': FilterForm(),
+        'helper': FilterForm.helper,
+    })
 
 
 class IndicatorReportData(View, AjaxableResponseMixin):
@@ -1530,7 +1508,7 @@ class IndicatorExport(View):
         indicator = IndicatorResource().export(queryset)
         response = HttpResponse(
             indicator.csv, content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=indicator.csv'
+        response['Content-Disposition'] = 'attachment; filename=indicator_plan.csv'
         return response
 
 
