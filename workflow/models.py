@@ -438,7 +438,8 @@ class Program(models.Model):
             gaitid = int(self.gaitid)
         except ValueError:
             gaitid = False
-        if gaitid and gaitid != 0:
+        if gaitid and gaitid != 0 and len(str(gaitid)) > 2 and len(str(gaitid)) < 5:
+            # gaitid exists, is numeric, is nonzero, and is a 3 or 4 digit number:
             return 'https://gait.mercycorps.org/editgrant.vm?GrantID={gaitid}'.format(
                 gaitid=gaitid)
         return None
