@@ -93,15 +93,15 @@
             hide: false,
             type: 'error',
             stack: {
-                'modal': true,
+                {#'modal': true,#}
                 'overlayClose': true,
-                'dir1': 'down',
-                {#'dir1': 'right',#}
-                {#'dir2': 'up',#}
-                'firstpos1': 25,
-                {#'firstpos2': 75,#}
+                {#'dir1': 'down',#}
+                'dir1': 'right',
+                'dir2': 'up',
+                'firstpos1': 0,
+                'firstpos2': 0,
                 {#'push': 'top',#}
-                {#'context': document.getElementById('result_update_form')#}
+                'context': document.getElementById('result_update_form')
             },
             modules: {
                 Confirm: {
