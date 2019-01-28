@@ -203,6 +203,18 @@ class ProgramWithMetrics(Program):
             ),
         }
 
+    @property
+    def reporting_period_correct(self):
+        """a bug allowed reporting period dates not on the first/last of the month into the db, this lets us check and
+        advise users to handle it"""
+        if not self.reporting_period_start or not self.reporting_period_end or self.reporting_period_start.day != 1:
+            return False
+        next_day = self.reporting_period_end + datetime.timedelta(days=1)
+        if next_day.day != 1:
+            return False
+        return True
+
+
     @cached_property
     def all_targets_defined_for_all_indicators(self):
         """note: we define a program with 0 indicators as _not_ having all targets defined"""

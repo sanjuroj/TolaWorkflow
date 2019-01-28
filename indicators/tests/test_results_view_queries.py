@@ -1,4 +1,4 @@
-""" Tests of the periodic target summaries available at collected data view (now result view) summing target values
+""" Tests of the periodic target summaries available at result view summing target values
 and determining if periodic targets' periods are complete
 
 Indicator should have the following attributes:

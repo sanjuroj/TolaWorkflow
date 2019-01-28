@@ -469,7 +469,7 @@ class IPTT_Mixin(object):
 
             # process lop_percent_met
             try:
-                ind['lop_percent_met'] = u"{}%".format(formatFloat(round(lop_actual / lop_target * 100)))
+                ind['lop_percent_met'] = lop_actual / lop_target * 100
             except TypeError:
                 ind['lop_percent_met'] = _('N/A')
             except ZeroDivisionError:
@@ -533,13 +533,13 @@ class IPTT_Mixin(object):
                             if ind['unit_of_measure_type'] == Indicator.NUMBER:
                                 if ind['is_cumulative'] is True:
                                     rsum = float(ind[u"{}_rsum".format(sequence_count)])
-                                    percent_met_val = formatFloat(round(rsum / target * 100))
+                                    percent_met_val = rsum / target * 100
                                 else:
                                     percent_met_val = formatFloat(round(float(ind[u"{}_sum".format(sequence_count)]) / target * 100))
-                                ind[percent_met] = u"{}%".format(percent_met_val)
+                                ind[percent_met] = percent_met_val
                             elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
                                 percent_met_val = formatFloat(round(float(ind[u"{}_last".format(sequence_count)]) / target * 100))
-                                ind[percent_met] = u"{}%".format(percent_met_val)
+                                ind[percent_met] = percent_met_val
                         except (TypeError, KeyError):
                             ind[percent_met] = ''
                         except ZeroDivisionError:
