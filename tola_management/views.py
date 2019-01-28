@@ -180,7 +180,7 @@ def app_host_page(request, react_app_page):
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
     return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "report_wide": True})
 
-class UserAdminSerializer(Serializer):
+class UserAdminReportSerializer(Serializer):
     id = IntegerField(allow_null=True, required=False)
     name = CharField(max_length=100)
     organization_name = CharField(max_length=255, allow_null=True, allow_blank=True, required=False)
@@ -210,11 +210,86 @@ class UserAdminSerializer(Serializer):
             'email'
         )
 
+class UserAdminSerializer(ModelSerializer):
+    id = IntegerField(allow_null=True, required=False)
+
+    def create(self, validated_data):
+        request.data["id"] = None
+        request.data["is_active"] = True
+        serializer = UserAdminSerializer(data=request.data)
+        if(serializer.is_valid()):
+            d = serializer.validated_data
+
+            #create auth user
+            new_django_user = User(
+                username=d["email"],
+                email=d["email"],
+                is_active=d["is_active"]
+            )
+            new_django_user.save()
+
+            #create tola user
+            organization = Organization.objects.get(pk=d["organization_id"])
+            new_user = TolaUser(
+                name=d["name"],
+                organization=organization,
+                user=new_django_user,
+                mode_of_address=d["mode_of_address"],
+                mode_of_contact=d["mode_of_contact"],
+                phone_number=d["phone_number"],
+                title=d["title"]
+            )
+            new_user.save()
+
+            send_new_user_registration_email(new_django_user, request)
+
+            return Response({})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, instance, validated_data):
+        user = TolaUser.objects.get(pk=pk)
+
+        if not user:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserAdminSerializer(data=request.data)
+        if(serializer.is_valid()):
+            data = serializer.validated_data
+            audit_entry = UserManagementAuditLog()
+            audit_entry.change_type = 'user_profile_modified'
+            audit_entry.previous_entry = serializers.serialize('json', [user])
+
+            user.name = data["name"]
+            user.email = data["email"]
+            user.organization = Organization.objects.get(pk=data["organization_id"])
+            user.mode_of_address = data["mode_of_address"]
+            user.mode_of_contact = data["mode_of_contact"]
+            user.title = data["title"]
+            user.phone_number = data["phone_number"]
+            user.save()
+            user.user.is_active = data["is_active"]
+            user.user.save()
+
+            audit_entry.new_entry = serializers.serialize('json', [user])
+            audit_entry.admin_user = request.user.tola_user
+            audit_entry.modified_user = user
+            audit_entry.save()
+
+            return Response({}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    class Meta:
+        model = TolaUser
+
+
 class UserAdminViewSet(viewsets.ModelViewSet):
-    serializer_class = UserAdminSerializer
+    serializer_class = UserAdminReportSerializer
     pagination_class = SmallResultsSetPagination
 
-    def get_queryset(self):
+    def get_list_queryset(self):
         req = self.request
 
         params = []
@@ -337,17 +412,17 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         ), params)
 
     def list(self, request):
-        queryset = self.get_queryset()
+        queryset = self.get_list_queryset()
 
         #TODO write a more performant paginator, rather than converting the
         #query to a list. For now, we're extremely performant with about 1000
         #rows, so just convert to a list and paginate that way
         page = self.paginate_queryset(list(queryset))
         if page is not None:
-            serializer = self.get_serializer(page, many=True)
+            serializer = UserAdminReportSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(queryset, many=True)
+        serializer = UserAdminReportSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def create(self, request):
@@ -544,6 +619,40 @@ class UserAdminViewSet(viewsets.ModelViewSet):
             user.program_access.remove(*list(Program.objects.filter(pk__in=removed_programs)))
 
         return Response({})
+
+    @detail_route(methods=["get"])
+    def aggregate_data(self, request, pk=None):
+        if not pk:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+        result = TolaUser.objects.raw("""
+            SELECT
+                COUNT(z.program_id) AS user_programs
+            FROM workflow_tolauser wtu
+            LEFT JOIN (
+                    SELECT
+                        wpua.tolauser_id,
+                        wpua.program_id
+                    FROM workflow_program_user_access wpua
+                UNION DISTINCT
+                    SELECT
+                        wtuc.tolauser_id,
+                        wpc.program_id
+                    FROM workflow_tolauser_countries wtuc
+                    INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
+            ) z ON z.tolauser_id = wtu.id
+            WHERE
+                wtu.id = %s
+            GROUP BY wtu.id
+        """, [pk])
+
+        if len(result) < 1:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response({
+            "program_count": result[0].user_programs
+        })
+
 
 
 class OrganizationAdminSerializer(Serializer):
