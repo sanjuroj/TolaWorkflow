@@ -65,8 +65,29 @@ class TolaSitesAdmin(admin.ModelAdmin):
     search_fields = ('name','agency_name')
 
 
+class Sector(models.Model):
+    sector = models.CharField(_("Sector Name"), max_length=255, blank=True)
+    create_date = models.DateTimeField(null=True, blank=True)
+    edit_date = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name=_("Sector")
+        ordering = ('sector',)
+
+    # on save add create date or update edit date
+    def save(self, *args, **kwargs):
+        if self.create_date == None:
+            self.create_date = timezone.now()
+        self.edit_date = timezone.now()
+        super(Sector, self).save()
+
+    # displayed in admin templates
+    def __unicode__(self):
+        return self.sector
+
+
 class Organization(models.Model):
-    name = models.CharField(_("Organization Name"), max_length=255, blank=True, default="TolaData")
+    name = models.CharField(_("Organization Name"), max_length=255, blank=False, default="TolaData")
     description = models.TextField(_("Description/Notes"), max_length=765, null=True, blank=True)
     organization_url = models.CharField(_("Organization url"), blank=True, null=True, max_length=255)
     level_1_label = models.CharField(_("Project/Program Organization Level 1 label"), default="Program", max_length=255, blank=True)
@@ -76,12 +97,13 @@ class Organization(models.Model):
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
-    primary_address = models.CharField(_("Primary Address"), blank=True, null=True, max_length=255)
-    primary_contact_name = models.CharField(_("Primary Contact Name"), blank=True, null=True, max_length=255)
-    primary_contact_email = models.CharField(_("Primary Contact Email"), blank=True, null=True, max_length=255)
-    primary_contact_phone = models.CharField(_("Primary Contact Phone"), blank=True, null=True, max_length=255)
+    primary_address = models.CharField(_("Primary Address"), blank=False, null=True, max_length=255)
+    primary_contact_name = models.CharField(_("Primary Contact Name"), blank=False, null=True, max_length=255)
+    primary_contact_email = models.CharField(_("Primary Contact Email"), blank=False, null=True, max_length=255)
+    primary_contact_phone = models.CharField(_("Primary Contact Phone"), blank=False, null=True, max_length=255)
     mode_of_contact = models.CharField(_("Primary Mode of Contact"), blank=True, null=True, max_length=255)
     is_active = models.BooleanField(default=1)
+    sectors = models.ManyToManyField(Sector, related_name="organizations")
 
     class Meta:
         ordering = ('name',)
@@ -264,27 +286,6 @@ class FormGuidance(models.Model):
 class FormGuidanceAdmin(admin.ModelAdmin):
     list_display = ( 'form', 'guidance', 'guidance_link', 'create_date',)
     display = 'Form Guidance'
-
-
-class Sector(models.Model):
-    sector = models.CharField(_("Sector Name"), max_length=255, blank=True)
-    create_date = models.DateTimeField(null=True, blank=True)
-    edit_date = models.DateTimeField(null=True, blank=True)
-
-    class Meta:
-        verbose_name=_("Sector")
-        ordering = ('sector',)
-
-    # on save add create date or update edit date
-    def save(self, *args, **kwargs):
-        if self.create_date == None:
-            self.create_date = timezone.now()
-        self.edit_date = timezone.now()
-        super(Sector, self).save()
-
-    # displayed in admin templates
-    def __unicode__(self):
-        return self.sector
 
 
 class SectorAdmin(admin.ModelAdmin):
