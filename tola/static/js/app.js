@@ -424,7 +424,6 @@ $(document).ready(function() {
 /*
 * CUSTOM DASHBOARD
 */
-// COMMENTING OUT THE CUSTOM DASHBOARD BECAUSE NO ONE IS USING IT
 
     // on change to Step 2, selector, save change to db
     // on change to Step 3, selector, save change to db
@@ -433,68 +432,69 @@ $(document).ready(function() {
     /*
      * UPDATE BUDGET TOTAL
     */
-//    function updateBudget()
-//    {
-//        var mc_budget = parseFloat($("#mc_budget").val());
-//        var other_bidget = parseFloat($("#other_budget").val());
-//        var total = mc_budget + other_budget;
-//        var total = total.toFixed(2);
-//        $("#total_budget").val(total);
-//    }
-//    $(document).on("change, keyup", "#mc_budget", updateBudget);
-//    $(document).on("change, keyup", "#other_budget", updateBudget);
-//
-//    /*
-//     * Calculate Total Indirect Beneficiaries
-//    */
-//    function updateBens()
-//    {
-//        var direct_bens = parseFloat($("#id_estimated_num_direct_beneficiaries").val());
-//        var avg_houshold_size = parseFloat($("#id_average_household_size").val());
-//        var total = direct_bens * avg_houshold_size;
-//        var total = total.toFixed(2);
-//        $("#id_estimated_num_indirect_beneficiaries").val(total);
-//    }
-//    $(document).on("change, keyup", "#id_estimated_num_direct_beneficiaries", updateBens);
-//    $(document).on("change, keyup", "#id_average_household_size", updateBens);
-//
-//    /*
-//     * Trained TOTAL
-//    */
-//    function updateTrained()
-//    {
-//        var male = parseFloat($("#id_estimate_male_trained").val());
-//        var female = parseFloat($("#id_estimate_female_trained").val());
-//        var total = male + female;
-//        var total = total.toFixed(0);
-//        $("#id_estimate_total_trained").val(total);
-//    }
-//    $(document).on("change, keyup", "#id_estimate_male_trained", updateTrained);
-//    $(document).on("change, keyup", "#id_estimate_female_trained", updateTrained);
-//
-//    /*
-//     * CFW Workers TOTAL
-//    */
-//    function updateCFW()
-//    {
-//        var male = parseFloat($("#id_cfw_estimate_male").val());
-//        var female = parseFloat($("#id_cfw_estimate_female").val());
-//        var total = male + female;
-//        var total = total.toFixed(0);
-//        $("#id_cfw_estimate_total").val(total);
-//    }
-//    $(document).on("change, keyup", "#id_cfw_estimate_male", updateCFW);
-//    $(document).on("change, keyup", "#id_cfw_estimate_female", updateCFW);
-//
-//    /*
-//    * Expand accordion down to location hash and then load collected data
-//    */
-//    if(location.hash != null && location.hash != ""){
-//        $('.collapse').removeClass('in');
-//        $(location.hash + '.collapse').collapse('show');
-//        indicator_id = location.hash.split('-')
-//        //loadIndicators(indicator_id[1])
-//    }
+    function updateBudget()
+    {
+        var mc_budget = parseFloat($("#mc_budget").val());
+        var other_bidget = parseFloat($("#other_budget").val());
+        var total = mc_budget + other_budget;
+        var total = total.toFixed(2);
+        $("#total_budget").val(total);
+    }
+    $(document).on("change, keyup", "#mc_budget", updateBudget);
+    $(document).on("change, keyup", "#other_budget", updateBudget);
+
+    /*
+     * Calculate Total Indirect Beneficiaries
+    */
+    function updateBens()
+    {
+        var direct_bens = parseFloat($("#id_estimated_num_direct_beneficiaries").val());
+        var avg_houshold_size = parseFloat($("#id_average_household_size").val());
+        var total = direct_bens * avg_houshold_size;
+        var total = total.toFixed(2);
+        $("#id_estimated_num_indirect_beneficiaries").val(total);
+    }
+    $(document).on("change, keyup", "#id_estimated_num_direct_beneficiaries", updateBens);
+    $(document).on("change, keyup", "#id_average_household_size", updateBens);
+
+    /*
+     * Trained TOTAL
+    */
+    function updateTrained()
+    {
+        var male = parseFloat($("#id_estimate_male_trained").val());
+        var female = parseFloat($("#id_estimate_female_trained").val());
+        var total = male + female;
+        var total = total.toFixed(0);
+        $("#id_estimate_total_trained").val(total);
+    }
+    $(document).on("change, keyup", "#id_estimate_male_trained", updateTrained);
+    $(document).on("change, keyup", "#id_estimate_female_trained", updateTrained);
+
+    /*
+     * CFW Workers TOTAL
+    */
+    function updateCFW()
+    {
+        var male = parseFloat($("#id_cfw_estimate_male").val());
+        var female = parseFloat($("#id_cfw_estimate_female").val());
+        var total = male + female;
+        var total = total.toFixed(0);
+        $("#id_cfw_estimate_total").val(total);
+    }
+    $(document).on("change, keyup", "#id_cfw_estimate_male", updateCFW);
+    $(document).on("change, keyup", "#id_cfw_estimate_female", updateCFW);
+
+    /*
+    * Expand accordion down to location hash and then load collected data
+    * clause pathname !== program/* to prevent this from interfering with react browserify hash usage on program page
+    */
+    if(location.hash != null && location.hash != "" && location.pathname.split('/')[1] !== 'program'){
+        $('.collapse').removeClass('in');
+        $(location.hash + '.collapse').collapse('show');
+        indicator_id = location.hash.split('-')
+        //loadIndicators(indicator_id[1])
+    }
 });
 
 /*
