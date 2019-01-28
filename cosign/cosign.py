@@ -156,7 +156,7 @@ class CosignBackend(RemoteUserBackend):
                     ldap_info['country_id'] = 'XX'
 
                 if entry.get('cn'):
-                    ldap_info['full_name'] = entry['cn'][0]
+                    ldap_info['full_name'] = entry['cn'][0].decode('iso-8859-1').encode('utf-8')
                 else:
                     ldap_info['full_name'] = ''
 

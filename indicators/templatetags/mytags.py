@@ -152,6 +152,15 @@ def js(obj):
     """
     return mark_safe(jsonify(obj))
 
+@register.filter('trailingzero')
+def strip_trailing_zero(value):
+    """Like builtin "floatformat" but strips trailing zeros from the right (12.5 does not become 12.50)"""
+    value = str(value)
+    if "." in value:
+        return value.rstrip("0").rstrip(".")
+    return value
+
+
 def make_percent(numerator, denominator):
     if denominator == 0 or numerator == 0:
         return 0
@@ -159,13 +168,14 @@ def make_percent(numerator, denominator):
         return 100
     return max(1, min(99, int(round(float(numerator*100)/denominator))))
 
+
 @register.inclusion_tag('indicators/tags/target-percent-met.html', takes_context=True)
 def target_percent_met(context, percent_met, has_ended):
     margin = Indicator.ONSCOPE_MARGIN
     on_track = None
     if percent_met:
-        on_track = abs(1-percent_met) <= margin
-        percent_met = percent_met*100
+        percent_met = percent_met * 100
+        on_track = (1 - margin) * 100 <= percent_met <= (1 + margin) * 100
     return {
         'on_track': on_track,
         'percent_met': percent_met,

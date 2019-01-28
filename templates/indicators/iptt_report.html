@@ -126,7 +126,7 @@
               </td>
 
               <td class="td-no-side-borders" align="right">
-                {{ indicator.lop_percent_met }}
+                {{ indicator.lop_percent_met|floatformat:"1" }}%
               </td>
               {% if reporttype == 'targetperiods' %}
                 {% for date_range in report_date_ranges %}
@@ -142,7 +142,7 @@
                   </td>
                   <td align="right" class="border-left-0">
                     {% with forloop.counter0|concat_string:"_percent_met" as percent_met %}
-                      {{ indicator|hash:percent_met }}
+                      {{ indicator|hash:percent_met|floatformat:"1" }}%
                     {% endwith %}
                   </td>
                 {% endfor %}
