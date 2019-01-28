@@ -12,6 +12,7 @@ const initialData = {
     countries: jsContext.countries,
     organizations: jsContext.organizations,
     allPrograms: jsContext.programs,
+    sectors: jsContext.sectors,
 }
 const store = new ProgramStore(
     api,

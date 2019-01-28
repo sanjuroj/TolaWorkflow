@@ -42,6 +42,7 @@ from workflow.models import (
     TolaUser,
     Organization,
     Program,
+    Sector,
     Country,
     TolaUserCountryRoles,
     TolaUserProgramRoles,
@@ -149,10 +150,19 @@ def get_program_page_context(request):
         } for program in Program.objects.all()
     ]
 
+    # excluding sectors with no name (sector) set.
+    sectors = [
+        {
+            'id': sector.id,
+            'name': sector.sector,
+        } for sector in Sector.objects.all() if sector.sector
+    ]
+
     return {
         'countries': countries,
         'organizations': organizations,
         'programs': programs,
+        'sectors': sectors,
     }
 
 def send_new_user_registration_email(user, request):

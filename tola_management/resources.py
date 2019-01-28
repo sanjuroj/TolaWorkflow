@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from django.db.models import Value, Count, F, OuterRef, Subquery
+from django.db.models import Q
 from django.db.models import CharField as DBCharField
 from django.db.models import IntegerField as DBIntegerField
 from rest_framework import viewsets
@@ -81,6 +82,20 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         programParam = params.get('programs')
         if programParam:
             queryset = queryset.filter(id=programParam)
+
+        countryFilter = params.getlist('countries[]')
+        if countryFilter:
+            queryset = queryset.filter(country__in=countryFilter)
+
+        sectorFilter = params.getlist('sectors[]')
+        if sectorFilter:
+            queryset = queryset.filter(sector__in=sectorFilter)
+
+        organizationFilter = params.getlist('organizations[]')
+        if organizationFilter:
+            queryset = queryset.filter(
+                Q(user_access__organization__in=organizationFilter) | Q(country__users__organization__in=organizationFilter)
+            ).distinct()
 
         return queryset
 
