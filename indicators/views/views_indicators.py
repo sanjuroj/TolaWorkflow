@@ -31,7 +31,6 @@ from feed.serializers import FlatJsonSerializer
 from util import getCountry, group_excluded, get_table
 
 from indicators.serializers import IndicatorSerializer, ProgramSerializer
-from workflow.forms import FilterForm
 from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
     Program, Sector, TolaSites, FormGuidance
@@ -45,7 +44,7 @@ from ..models import (
 )
 from indicators.queries import ProgramWithMetrics, ResultsIndicator
 from .views_reports import IPTT_ReportView
-
+import indicators.indicator_plan as ip
 
 logger = logging.getLogger(__name__)
 
@@ -1061,13 +1060,12 @@ def indicator_plan(request, program_id):
     """
     program = get_object_or_404(Program, id=program_id)
 
-    indicators = Indicator.objects.filter(program=program) \
-        .select_related().order_by('level', 'number')
+    indicators = ip.indicator_queryset(program_id)
 
-    return render(request, "indicators/grid_report.html", {
-        'indicators': indicators,
-        'program': program, 'form': FilterForm(),
-        'helper': FilterForm.helper,
+    return render(request, "indicators/indicator_plan.html", {
+        'program': program,
+        'column_names': ip.column_names(),
+        'rows': [ip.row(i) for i in indicators]
     })
 
 
@@ -1493,18 +1491,7 @@ class IndicatorExport(View):
     """
 
     def get(self, request, *args, **kwargs):
-        if int(kwargs['id']) == 0:
-            del kwargs['id']
-        if int(kwargs['indicator_type']) == 0:
-            del kwargs['indicator_type']
-        if int(kwargs['program']) == 0:
-            del kwargs['program']
-
-        countries = getCountry(request.user)
-        queryset = Indicator.objects \
-            .filter(**kwargs) \
-            .filter(program__country__in=countries)
-
+        queryset = ip.indicator_queryset(kwargs['program'])
         indicator = IndicatorResource().export(queryset)
         response = HttpResponse(
             indicator.csv, content_type='application/ms-excel')
