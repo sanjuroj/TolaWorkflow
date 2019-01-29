@@ -7868,6 +7868,8 @@ function (_React$Component3) {
       var _this3 = this;
 
       var indicators = this.props.indicators;
+      var program = this.props.program;
+      var programReportingPeriodEndDate = new Date(program.reporting_period_end);
       var resultsMap = this.props.resultsMap;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
         className: "table indicators-list"
@@ -7894,6 +7896,8 @@ function (_React$Component3) {
       }, gettext("Target")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, indicators.map(function (indicator) {
         var resultsExist = resultsMap.has(indicator.id);
         var resultsStr = resultsMap.get(indicator.id);
+        var targetPeriodLastEndDate = indicator.target_period_last_end_date ? new Date(indicator.target_period_last_end_date) : null; // ^^^ Because calling Date() on null returns the current date, and we actually need null!
+
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, {
           key: indicator.id
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
@@ -7909,11 +7913,19 @@ function (_React$Component3) {
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
           icon: resultsExist ? 'caret-down' : 'caret-right'
-        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, indicator.number), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, indicator.number), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "indicator_name"
         }, indicator.name)), indicator.key_performance_indicator && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "badge"
-        }, "KPI")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        }, "KPI"), targetPeriodLastEndDate && programReportingPeriodEndDate > targetPeriodLastEndDate && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          href: "/indicators/indicator_update/".concat(indicator.id, "/"),
+          className: "indicator-link color-red missing_targets",
+          "data-toggle": "modal",
+          "data-target": "#indicator_modal_div",
+          "data-tab": "targets"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "fas fa-bullseye"
+        }), " Missing targets")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
           href: "#",
           className: "indicator-link",
           onClick: function onClick(e) {
@@ -7921,16 +7933,20 @@ function (_React$Component3) {
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
           className: "fas fa-cog"
-        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.level), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.unit_of_measure), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.level ? indicator.level.name : ''), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.unit_of_measure), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "text-right"
         }, indicator.baseline_display), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "text-right"
-        }, indicator.lop_target_display)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
-          className: "indicators-list__row indicators-list__indicator-body hiddenRow"
+        }, indicator.lop_target_display)), resultsExist && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+          className: "indicators-list__row indicators-list__indicator-body"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           colSpan: "6",
-          className: "p-0 bg-blue border-0"
-        }, resultsExist && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          ref: function ref(el) {
+            return $(el).find('[data-toggle="popover"]').popover({
+              html: true
+            });
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           dangerouslySetInnerHTML: {
             __html: resultsStr
           }
@@ -7974,7 +7990,8 @@ var IndicatorList = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(
     className: "fas fa-bullseye"
   }), "\xA0", gettext('Some indicators have missing targets. To enter these values, click the target icon near the indicator name.')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorListTable, {
     indicators: filteredIndicators,
-    resultsMap: resultsMap
+    resultsMap: resultsMap,
+    program: program
   }));
 });
 
@@ -32940,9 +32957,9 @@ function (_React$Component) {
         className: "gauge__label"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "text-danger"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, emptyLabel))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, emptyLabel))))), unfilledPercent > 0 && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "gauge__cta"
-      }, unfilledPercent > 0 && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "btn-link btn-inline"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-exclamation-triangle text-warning"
@@ -33152,7 +33169,7 @@ function (_React$Component2) {
         "data-trigger": "focus",
         "data-content":
         /* # Translators: Help text explaining what an "on track" indicator is. */
-        gettext('The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is 110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a decreasing direction of change, then “above” and “below” are switched. In that case, if your target is 100 and your result is 200, your indicator is 50% below target and not on track.'),
+        gettext("The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is 110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a decreasing direction of change, then “above” and “below” are switched. In that case, if your target is 100 and your result is 200, your indicator is 50% below target and not on track.<br><br><a href='https://docs.google.com/document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our documentation for more information.</a>"),
         onClick: function onClick(e) {
           return e.preventDefault();
         }
@@ -33218,9 +33235,7 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
   }; // Do not display on pages with no indicators
 
   if (indicators.length === 0) return null;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("aside", {
-    className: "program__status"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, gettext("Program metrics")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "status__gauges"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(GaugeBand, {
     currentIndicatorFilter: currentIndicatorFilter,
@@ -33242,7 +33257,7 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
     ,
     allIndicatorsLength: indicatorStore.getTotalResultsCount,
     filteredIndicatorsLength: indicatorStore.getTotalResultsCount - indicatorStore.getTotalResultsWithEvidenceCount
-  }, evidenceLabels))));
+  }, evidenceLabels)));
 });
 
 /***/ }),
@@ -40341,4 +40356,4 @@ module.exports = g;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=program_page-76760f61b4229b46c29b.js.map
+//# sourceMappingURL=program_page-a9be92dbf69606480af0.js.map

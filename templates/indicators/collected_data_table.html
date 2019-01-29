@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n mytags %}
 {% load assign %}
 
 <script type="text/javascript">
@@ -28,57 +28,38 @@
                 <th class="td--stretch">{% trans "Evidence" %}</th>
             </tr>
         </thead>
-        {% for item in periodictargets %}
+        {% for pt in periodictargets %}
         <tr class="collected-data__row--main">
-            {% ifchanged item %}
-            {% with dataCount=item.collecteddata_set.count %}
-            <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-nowrap">
+            {% ifchanged pt %}
+            <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="text-nowrap">
                 {# note ".period" is deprecated, and .period_name should be used instead #}
-                <strong class="text-uppercase">{{ item.period_name }}</strong><br>
+                <strong class="text-uppercase">{{ pt.period_name }}</strong><br>
                 <small>
-                    {{ item.start_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
-                    {% if item.start_date %} - {% endif %}
-                    {{ item.end_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                    {{ pt.start_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                    {% if pt.start_date %} - {% endif %}
+                    {{ pt.end_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                 </small>
             </td>
-            <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right">
-                {{ item.target|floatformat:"-2" }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+            <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="text-right">
+                {% if pt.target is not None %}
+                    {% with target=pt.target|floatformat:"-2" %}
+                        {{ target|trailingzero }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                    {% endwith %}
+                {% else %}—{% endif %}
             </td>
-            <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right">
-                {% if indicator.unit_of_measure_type == 1 %}
-                    {% if indicator.is_cumulative == True %}
-                        {{ item.cumulative_sum|floatformat:"-2" }}
-                    {% else %}
-                        {{ item.achieved_sum|floatformat:"-2" }}
-                    {% endif %}
-                {% else %}
-                    {% if item.last_data_row %}
-                        {{ item.last_data_row|floatformat:"-2" }}%
-                    {% endif %}
-                {% endif %}
+            <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="text-right">
+                {% if pt.actual is not None %}
+                    {% with actual=pt.actual|floatformat:"-2" %}
+                        {{ actual|trailingzero }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                    {% endwith %}
+                {% else %}—{% endif %}
             </td>
-            <td {% if dataCount %} rowspan="{{ dataCount }}" {% endif %} class="text-right td--pad">
-                {% if item.target %}
-                    {% if indicator.unit_of_measure_type == 1 %}
-                        {% if indicator.is_cumulative == True %}
-                            {% widthratio item.cumulative_sum item.target 100 as percent_met %}
-                            {% if percent_met %} {{ percent_met }}% {% endif %}
-                        {% else %}
-                            {% widthratio item.achieved_sum item.target 100 as percent_met %}
-                            {% if percent_met %} {{ percent_met }}% {% endif %}
-                        {% endif %}
-                    {% else %}
-                        {% widthratio item.last_data_row item.target 100 as percent_met %}
-                        {% if percent_met %} {{ percent_met }}% {% endif %}
-                    {% endif %}
-                {% else %}
-                    {% trans 'N/A' %}
-                {% endif %}
+            <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="text-right td--pad">
+                {% target_percent_met pt.percent_met pt.is_complete %}
             </td>
-            {% endwith %}
             {% endifchanged %}
 
-            {% for cdata in item.getcollected_data %}
+            {% for cdata in pt.getcollected_data %}
             {% if not forloop.first %}<tr class="collected-data__row--supplemental">{% endif %}
                 <td class="collected-data__result--date {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
                     {% if is_editable is False %}
@@ -91,8 +72,8 @@
                     </a>
                     {% endif %}
                 <td class="collected-data__result--value {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
-                    {% with achieved=cdata.achieved|floatformat:"-2" %}
-                    {{ achieved }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                    {% with achieved=cdata.achieved|floatformat:"2" %}
+                    {{ achieved|trailingzero }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                     {% endwith %}
                 </td>
                 <td class="td--stretch">
@@ -121,23 +102,25 @@
                     {% trans "No data collected" %}
                 </td>
                 <td></td>
-                {% if item.collecteddata_set.count > 1 %}
+                {% if pt.collecteddata_set.count > 1 %}
             </tr>
             {% endif %}
             {% endfor %}{# for cdata in item.getcollected_data #}
         </tr>
         {% endfor %}{# for item in periodictargets #}
 
-        {% for coldata in collecteddata_without_periodictargets %}
+        {% for coldata in indicator.results_without_targets %}
         <tr>
             <td></td>
             <td></td>
             <td class="text-right">
-                {% if indicator.unit_of_measure_type == 1 %}
-                    {{ coldata.achieved|floatformat:"-2" }}
-                {% else %}
-                    {{ coldata.achieved|floatformat:"-2" }}%
-                {% endif %}
+                {% with achieved=coldata.achieved|floatformat:"-2" %}
+                    {% if indicator.unit_of_measure_type == 1 %}
+                        {{ achieved|trailingzero }}
+                    {% else %}
+                        {{ achieved|trailingzero }}%
+                    {% endif %}
+                {% endwith %}
             </td>
             <td class="text-right"></td>
             <td class="collected-data__result--date bg-danger-lighter">
@@ -151,7 +134,7 @@
             </td>
             <td class="collected-data__result--value bg-danger-lighter">
                     {% with achieved=coldata.achieved|floatformat:"-2" %}
-                    {{ achieved }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                        {{ achieved|trailingzero }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                     {% endwith %}
             </td>
             <td class="td--stretch">
@@ -179,7 +162,7 @@
         </tr>
         {% endfor %}{# for coldata in collecteddata_without_periodictargets #}
 
-        {% if collecteddata_without_periodictargets.count %}
+        {% if indicator.results_without_targets.count %}
             {% if indicator.target_frequency == None %}
                 {% assign err 'Error_1' %}
             {% elif indicator.target_frequency == 2 or indicator.target_frequency == 8 %}
@@ -194,27 +177,19 @@
             <td class="text-right">
                 <strong>
                     {% with lop=indicator.lop_target|floatformat:"-2" %}
-                    {{ lop }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                        {{ lop|trailingzero }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                     {% endwith %}
                 </strong>
             </td>
             <td class="text-right">
                 <strong>
-                    {% if indicator.unit_of_measure_type == 1 %}
-                        {{ grand_achieved_sum|floatformat:"-2" }}
-                    {% elif indicator.unit_of_measure_type == 2 %}
-                        {{ last_data_record_value|floatformat:"-2" }}%
-                    {% endif %}
+                    {% with actual=indicator.lop_actual|floatformat:"-2"  %}
+                        {{ actual|trailingzero }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                    {% endwith %}
                 </strong>
             </td>
             <td class="text-right">
-                <strong>
-                    {% if indicator.unit_of_measure_type == 1 %}
-                        {% widthratio grand_achieved_sum indicator.lop_target 100 %}%
-                    {% elif indicator.unit_of_measure_type == 2 %}
-                        {% widthratio last_data_record_value indicator.lop_target 100 %}%
-                    {% endif %}
-                </strong>
+                {% target_percent_met indicator.lop_percent_met indicator.is_complete %}
             </td>
             <td colspan="3" class="">
                 <div class="help-text">

@@ -361,7 +361,7 @@ class ProjectAgreementForm(forms.ModelForm):
                         Submit('submit', 'Save changes', css_class=''),
                         Reset('reset', 'Reset', css_class='')
                     ),
-                    css_class='form-actions bg-gray-lighter p-4 justify-content-between',
+                    css_class='form-actions',
                 ),
 
 
@@ -619,7 +619,7 @@ class ProjectAgreementSimpleForm(forms.ModelForm):
                         Submit('submit', 'Save changes', css_class=''),
                         Reset('reset', 'Reset', css_class='')
                     ),
-                    css_class='form-actions bg-gray-lighter p-4 justify-content-between',
+                    css_class='form-actions',
                 ),
 
 
@@ -959,7 +959,7 @@ class ProjectCompleteForm(forms.ModelForm):
                     Submit('submit', 'Save changes', css_class=''),
                     Reset('reset', 'Reset', css_class='')
                 ),
-                css_class='form-actions bg-gray-lighter p-4 justify-content-between',
+                css_class='form-actions',
             ),
 
 
@@ -1210,7 +1210,7 @@ class ProjectCompleteSimpleForm(forms.ModelForm):
                     Submit('submit', 'Save changes', css_class=''),
                     Reset('reset', 'Reset', css_class='')
                 ),
-                css_class='form-actions bg-gray-lighter p-4 justify-content-between',
+                css_class='form-actions',
             ),
             Fieldset(
                 '',
@@ -1364,7 +1364,7 @@ class SiteProfileForm(forms.ModelForm):
                     Submit('submit', 'Save changes', css_class=''),
                     Reset('reset', 'Reset', css_class='')
                 ),
-                css_class='form-actions bg-gray-lighter p-4 justify-content-between',
+                css_class='form-actions',
             ),
 
              HTML("""
@@ -1437,7 +1437,7 @@ class DocumentationForm(forms.ModelForm):
                 'project','program',
 
             FormActions(
-                Submit('submit', 'Save', css_class='btn-default'),
+                Submit('submit', 'Save', css_class='btn-primary'),
                 Reset('reset', 'Reset', css_class='btn-inverse')
             )
         )
@@ -1485,7 +1485,7 @@ class QuantitativeOutputsForm(forms.ModelForm):
                 else:
                     selected = ""
                 # pt.period is deprecated, transition to pt.period_name
-                options += "<option value=%s %s>%s</option>" % (pt.id, selected, pt.period) 
+                options += "<option value=%s %s>%s</option>" % (pt.id, selected, pt.period)
         self.helper.layout = Layout(
             'indicator',
             'periodic_target',
@@ -1683,7 +1683,7 @@ class StakeholderForm(forms.ModelForm):
                     Submit('submit', 'Save changes', css_class=''),
                     Reset('reset', 'Reset', css_class='')
                 ),
-                css_class='form-actions bg-gray-lighter p-4 justify-content-between',
+                css_class='form-actions',
             ),
         )
         super(StakeholderForm, self).__init__(*args, **kwargs)

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ View functions for generating IPTT Reports (HTML and Excel)"""
 
 import bisect
@@ -480,11 +481,11 @@ class IPTT_Mixin(object):
                 else:
                     ind['lop_target'] = formatFloat(lop_target)
             except (ValueError, TypeError):
-                lop_target = ''
+                lop_target = '—'
                 ind['lop_target'] = lop_target
 
             # process lop_actual
-            lop_actual = ''
+            lop_actual = u'—'
             percent = ''
             if ind['unit_of_measure_type'] == Indicator.NUMBER:
                 if ind['actualsum'] is not None:
@@ -496,13 +497,13 @@ class IPTT_Mixin(object):
             try:
                 ind['lop_actual'] = u"{}{}".format(formatFloat(lop_actual), percent)
             except TypeError:
-                ind['lop_actual'] = ''
+                ind['lop_actual'] = u'—'
 
             # process lop_percent_met
             try:
-                ind['lop_percent_met'] = u"{}%".format(formatFloat(round(lop_actual / lop_target * 100)))
+                ind['lop_percent_met'] = lop_actual / lop_target * 100
             except TypeError:
-                ind['lop_percent_met'] = ''
+                ind['lop_percent_met'] = _('N/A')
             except ZeroDivisionError:
                 ind['lop_percent_met'] = _('N/A')
 
@@ -539,7 +540,7 @@ class IPTT_Mixin(object):
                     if actual_val is not None and actual_val != '':
                         ind[actual] = u"{}{}".format(formatFloat(actual_val), percent_sign)
                     else:
-                        ind[actual] = ''
+                        ind[actual] = u'—'
 
                     if reporttype == self.REPORT_TYPE_TARGETPERIODS:
                         # process target_period target value
@@ -564,13 +565,13 @@ class IPTT_Mixin(object):
                             if ind['unit_of_measure_type'] == Indicator.NUMBER:
                                 if ind['is_cumulative'] is True:
                                     rsum = float(ind[u"{}_rsum".format(sequence_count)])
-                                    percent_met_val = formatFloat(round(rsum / target * 100))
+                                    percent_met_val = rsum / target * 100
                                 else:
                                     percent_met_val = formatFloat(round(float(ind[u"{}_sum".format(sequence_count)]) / target * 100))
-                                ind[percent_met] = u"{}%".format(percent_met_val)
+                                ind[percent_met] = percent_met_val
                             elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
                                 percent_met_val = formatFloat(round(float(ind[u"{}_last".format(sequence_count)]) / target * 100))
-                                ind[percent_met] = u"{}%".format(percent_met_val)
+                                ind[percent_met] = percent_met_val
                         except (TypeError, KeyError):
                             ind[percent_met] = ''
                         except ZeroDivisionError:

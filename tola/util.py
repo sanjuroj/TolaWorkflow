@@ -1,7 +1,9 @@
 import unicodedata
 import json
-import sys
+import logging
 import requests
+import dateutil
+import datetime
 
 from workflow.models import Country, TolaUser, TolaSites
 from django.contrib.auth.models import User
@@ -9,6 +11,7 @@ from django.core.mail import send_mail, mail_admins, mail_managers, EmailMessage
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import user_passes_test
 
+logger = logging.getLogger(__name__)
 
 #CREATE NEW DATA DICTIONARY OBJECT
 def siloToDict(silo):
@@ -143,5 +146,42 @@ def get_GAIT_data(gait_ids):
         except ValueError:
             pass
     base_url = 'https://mcapi.mercycorps.org/gaitprogram/?gaitids='
-    response = requests.get(base_url + ','.join(cleaned_ids))
-    return json.loads(response.content)
+
+    try:
+        response = requests.get(base_url + ','.join(cleaned_ids))
+        return json.loads(response.content)
+    except requests.exceptions.RequestException as e:
+        logger.exception('Error reaching GAIT service')
+        return []
+
+def get_dates_from_gait_response(gait_response):
+    """take a gait response (from get_GAIT_data) and parse out start and end dates, return dict"""
+    try:
+        start_date = dateutil.parser.parse(gait_response['start_date']).date()
+    except ValueError, TypeError:
+        start_date = None
+    try:
+        end_date = dateutil.parser.parse(gait_response['end_date']).date()
+    except ValueError, TypeError:
+        end_date = None
+    return {
+        'start_date': start_date,
+        'end_date': end_date
+    }
+
+def get_reporting_dates(program):
+    """takes a program with start and end dates and returns default reporting_period start and end dates"""
+    if program.start_date is None:
+        reporting_period_start = None
+    else:
+        reporting_period_start = datetime.date(program.start_date.year, program.start_date.month, 1)
+    if program.end_date is None:
+        reporting_period_end = None
+    else:
+        next_month = datetime.date(program.end_date.year, program.end_date.month, 28) + datetime.timedelta(days=4)
+        beginning_of_next_month = datetime.date(next_month.year, next_month.month, 1)
+        reporting_period_end = beginning_of_next_month - datetime.timedelta(days=1)
+    return {
+        'reporting_period_start': reporting_period_start,
+        'reporting_period_end': reporting_period_end
+    }

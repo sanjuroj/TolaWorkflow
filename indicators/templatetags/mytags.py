@@ -20,6 +20,7 @@ def convert2dateobject(value):
     except Exception:
         return value
 
+
 @register.filter
 def concat_string(value1, value2):
     """
@@ -28,11 +29,47 @@ def concat_string(value1, value2):
     """
     return "%s%s" % (value1, value2)
 
+
 @register.filter('jsonify')
 def jsonify(object):
     if isinstance(object, QuerySet):
         return serialize('json', object)
     return simplejson.dumps(object)
+
+
+@register.filter
+def and_only(value1, value2):
+    """
+    Returns "and" if both values are true.
+    Useful inside {% blocktrans %}
+    Usage: {{ value1|and_only:value2 }}
+    """
+    return _("and") if (value1 and value2) else ""
+
+
+@register.filter
+def or_only(value1, value2):
+    """
+    Returns "or" if either value is true
+    Useful inside {% blocktrans %}
+    Usage: {{ value1|or_only:value2 }}
+    """
+    return _("or") if (value1 or value2) else ""
+
+
+@register.filter
+def and_or(value1, value2):
+    """
+    Returns "or" if either value is true, returns "and" if both values are true
+    Useful inside {% blocktrans %}
+    Usage: {{ value1|and_or:value2 }}
+    """
+    result = ""
+    if (value1 and value2):
+        result = _("and")
+    elif (value1 or value2):
+        result = _("or")
+    return result
 
 
 @register.filter('symbolize_change')
@@ -115,12 +152,36 @@ def js(obj):
     """
     return mark_safe(jsonify(obj))
 
+@register.filter('trailingzero')
+def strip_trailing_zero(value):
+    """Like builtin "floatformat" but strips trailing zeros from the right (12.5 does not become 12.50)"""
+    value = str(value)
+    if "." in value:
+        return value.rstrip("0").rstrip(".")
+    return value
+
+
 def make_percent(numerator, denominator):
     if denominator == 0 or numerator == 0:
         return 0
     if numerator == denominator:
         return 100
     return max(1, min(99, int(round(float(numerator*100)/denominator))))
+
+
+@register.inclusion_tag('indicators/tags/target-percent-met.html', takes_context=True)
+def target_percent_met(context, percent_met, has_ended):
+    margin = Indicator.ONSCOPE_MARGIN
+    on_track = None
+    if percent_met:
+        percent_met = percent_met * 100
+        on_track = (1 - margin) * 100 <= percent_met <= (1 + margin) * 100
+    return {
+        'on_track': on_track,
+        'percent_met': percent_met,
+        'has_ended': has_ended
+    }
+
 
 @register.inclusion_tag('indicators/tags/gauge-tank.html', takes_context=True)
 def gauge_tank(context, metric, has_filters=True):

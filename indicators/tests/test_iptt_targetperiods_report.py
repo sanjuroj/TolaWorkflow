@@ -97,7 +97,7 @@ class TestMonthlyTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                          self.format_assert_message(
                              "second monthly indicator {0}\n expected 11 for actual, got {1}".format(
                                  ranges[1], ranges[1]['actual'])))
-        self.assertEqual(ranges[2]['met'], "75%",
+        self.assertEqual(ranges[2]['met'], "75.0%",
                          self.format_assert_message(
                              "third monthly indicator {0}\n expected 75% for met (12/16) got {1}".format(
                                  ranges[2], ranges[2]['met'])))
@@ -120,7 +120,7 @@ class TestMonthlyTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                          self.format_assert_message(
                              "eigth monthly indicator {0}\n expected 135 for actual, got {1}".format(
                                  ranges[8], ranges[8]['actual'])))
-        self.assertEqual(ranges[5]['met'], "90%",
+        self.assertEqual(ranges[5]['met'], "90.0%",
                          self.format_assert_message(
                              "sixth monthly indicator {0}\n expected 90% for met (90/100) got {1}".format(
                                  ranges[5], ranges[5]['met'])))
@@ -167,7 +167,7 @@ class TestAnnualTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                          self.format_assert_message(
                              "second yearly indicator {0}\n expected 500 for actual, got {1}".format(
                                  ranges[1], ranges[1]['actual'])))
-        self.assertEqual(ranges[2]['met'], "150%",
+        self.assertEqual(ranges[2]['met'], "150.0%",
                          self.format_assert_message(
                              "third yearly indicator {0}\n expected 150% for met (300/200) got {1}".format(
                                  ranges[2], ranges[2]['met'])))
@@ -190,7 +190,7 @@ class TestAnnualTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                          self.format_assert_message(
                              "fifth yearly indicator {0}\n expected 150 for actual, got {1}".format(
                                  ranges[4], ranges[4]['actual'])))
-        self.assertEqual(ranges[1]['met'], "60%",
+        self.assertEqual(ranges[1]['met'], "60.0%",
                          self.format_assert_message(
                              "second yearly indicator {0}\n expected 60% for met (60/100) got {1}".format(
                                  ranges[1], ranges[1]['met'])))
@@ -240,7 +240,7 @@ class TestMidEndTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                          self.format_assert_message(
                              "single end indicator {0}\n expected 500 for actual, got {1}".format(
                                  ranges[1], ranges[1]['actual'])))
-        self.assertEqual(ranges[0]['met'], "80%",
+        self.assertEqual(ranges[0]['met'], "80.0%",
                          self.format_assert_message(
                              "single mid indicator {0}\n expected 80% for met (800/1000) got {1}".format(
                                  ranges[0], ranges[0]['met'])))
@@ -261,7 +261,7 @@ class TestMidEndTargetPeriodsIPTTBase(TestPeriodicTargetsBase):
                          self.format_assert_message(
                              "single end indicator {0}\n expected 1000 for actual, got {1}".format(
                                  ranges[1], ranges[1]['actual'])))
-        self.assertEqual(ranges[0]['met'], "63%",
+        self.assertEqual(ranges[0]['met'], "63.0%",
                          self.format_assert_message(
                              "single mid indicator {0}\n expected 63% for met (1000/1600 rounded) got {1}".format(
                                  ranges[0], ranges[0]['met'])))

@@ -1,6 +1,7 @@
 import operator
 import unicodedata
 
+from django.utils.translation import gettext as _
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -55,7 +56,7 @@ APPROVALS = (
     ('rejected', 'rejected'),
 )
 
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 from dateutil import parser
 from django.core.serializers.json import DjangoJSONEncoder
@@ -2377,34 +2378,6 @@ def district_json(request, district):
     return HttpResponse(adminthree_json, content_type="application/json")
 
 
-def import_service(service_id=1, deserialize=True):
-    """
-    Import a indicators from a web service (the dig only for now)
-    """
-    service = ExternalService.objects.all().filter(id=service_id)
-
-    response = requests.get(service.feed_url)
-    get_json = json.loads(response.content)
-
-    if deserialize == True:
-        data = json.load(get_json) # deserialises it
-    else:
-    #send json data back not deserialized data
-        data = get_json
-    #debug the json data string uncomment dump and print
-    data2 = json.dumps(data) # json formatted string
-
-    return data
-
-
-def service_json(request, service):
-    """
-    For populating service indicators in dropdown
-    """
-    service_indicators = import_service(service,deserialize=False)
-    return HttpResponse(service_indicators, content_type="application/json")
-
-
 def export_stakeholders_list(request, **kwargs):
 
     program_id = int(kwargs['program_id'])
@@ -2497,20 +2470,66 @@ class DocumentationListObjects(View, AjaxableResponseMixin):
 
 def reportingperiod_update(request, pk):
     program = Program.objects.get(pk=pk)
-    dated = parser.parse(request.POST['reporting_period_end'])
 
     # In some cases the start date input will be disabled and won't come through POST
+    reporting_period_start = False
+    reporting_period_end = False
     try:
-        program.reporting_period_start = parser.parse(request.POST['reporting_period_start'])
+        reporting_period_start = parser.parse(request.POST['reporting_period_start'])
     except MultiValueDictKeyError as e:
         pass
-    program.reporting_period_end = parser.parse(request.POST['reporting_period_end'])
-    program.save()
+    reporting_period_end = parser.parse(request.POST['reporting_period_end'])
+    success = True
+    failmsg = []
+    failfields = []
+    if reporting_period_start:
+        if reporting_period_start.day != 1:
+            success = False
+            failmsg.append(_('Reporting period must start on the first of the month'))
+            failfields.append('reporting_period_start')
+        elif reporting_period_start.date() == program.reporting_period_start:
+            pass
+        elif program.has_time_aware_targets:
+            success = False
+            failmsg.append(
+                _('Reporting period start date cannot be changed while time-aware periodic targets are in place')
+            )
+        else:
+            program.reporting_period_start = reporting_period_start
+    if reporting_period_end:
+        next_day = reporting_period_end + timedelta(days=1)
+        if next_day.day != 1:
+            success = False
+            failmsg.append(_('Reporting period must end on the last day of the month'))
+            failfields.append('reporting_period_end')
+        elif reporting_period_end.date() == program.reporting_period_end:
+            pass
+        elif (program.last_time_aware_indicator_start_date and
+              reporting_period_end.date() < program.last_time_aware_indicator_start_date):
+            success = False
+            failmsg.append(_('Reporting period must end after the start of the last target period'))
+            failfields.append('reporting_period_end')
+        else:
+            program.reporting_period_end = reporting_period_end
+        if reporting_period_start and reporting_period_start >= reporting_period_end:
+            success = False
+            failmsg.append(_('Reporting period must start before reporting period ends'))
+            failfields.append('reporting_period_start')
+            failfields.append('reporting_period_end')
+    else:
+        success = False
+        failmsg.append(_('You must select a reporting period end date'))
+        failfields.append('reporting_period_end')
+    if success:
+        program.save()
     return JsonResponse({
-        'msg': 'success',
+        'msg': 'success' if success else 'fail',
+        'failmsg': failmsg,
+        'failfields': failfields,
         'program_id': pk,
         'rptstart': program.reporting_period_start,
-        'rptend': program.reporting_period_end, })
+        'rptend': program.reporting_period_end, },
+        status=200 if success else 422)
 
 
 @api_view(['GET'])

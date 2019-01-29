@@ -37,12 +37,7 @@
                            ><i class="far fa-question-circle"></i></a>
                     </div>
                     <div class="gauge__label">
-                        <span class="gauge__value--above {% if has_filters %}filter-trigger--band{% endif %}"
-                            data-target="over-under"
-                            data-over-under-filter="1"
-                            {% comment %}Translators: variable {{ filter_title_count }} shows what number of indicators are a certain percentage above target. The variable {{ margin }} is that percentage. Example: 3 indicators are >15% above target{% endcomment %}
-                            data-list-title="{% blocktrans count filter_title_count=scope_counts.high %}{{ filter_title_count }} indicator is &gt;15% above target{% plural %}{{ filter_title_count }} indicators are &gt;15% above target{% endblocktrans %}"
-                            >
+                        <span class="gauge__value--above">
                             {% comment %}Translators: variable {{ high }} shows what percentage of indicators are a certain percentage above target. Example: 31% are >15% above target{% endcomment %}
                             {% blocktrans with scope_percents.high as high %}
                                 <strong>{{ high }}%</strong> are &gt;{{ margin }}% above target
@@ -50,12 +45,7 @@
                         </span>
                     </div>
                     <div class="gauge__label">
-                        <span class="gauge__value {% if has_filters %}filter-trigger--band{% endif %}"
-                            data-target="over-under"
-                            data-over-under-filter="0"
-                            {% comment %}Translators: variable {{ filter_title_count }} shows what number of indicators are within a set range of target. Example: 3 indicators are on track{% endcomment %}
-                            data-list-title="{% blocktrans count filter_title_count=scope_counts.on_scope %}{{ filter_title_count }} indicator is on track{% plural %}{{ filter_title_count }} indicators are on track{% endblocktrans %}"
-                            >
+                        <span class="gauge__value">
                             {% comment %}Translators: variable {{ on_scope }} shows what percentage of indicators are within a set range of target. Example: 31%  are on track{% endcomment %}
                             {% blocktrans with scope_percents.on_scope as on_scope %}
                                 <strong>{{ on_scope }}%</strong> are on track
@@ -71,12 +61,7 @@
                            ><i class="far fa-question-circle"></i></a>
                     </div>
                     <div class="gauge__label">
-                        <span class="gauge__value--below {% if has_filters %}filter-trigger--band{% endif %}"
-                            data-target="over-under"
-                            data-over-under-filter="-1"
-                            {% comment %}Translators: variable {{ filter_title_count }} shows what number of indicators are a certain percentage below target. The variable {{ margin }} is that percentage. Example: 3 indicators are >15% below target{% endcomment %}
-                            data-list-title="{% blocktrans count filter_title_count=scope_counts.low %}{{ filter_title_count }} indicator is &gt;15% below target{% plural %}{{ filter_title_count }} indicators are &gt;15% below target{% endblocktrans %}"
-                            >
+                        <span class="gauge__value--below">
                             {% comment %}Translators: variable {{ low }} shows what percentage of indicators are a certain percentage below target. The variable {{ margin }} is that percentage. Example: 31% are >15% below target{% endcomment %}
                             {% blocktrans with scope_percents.low as low %}
                                 <strong>{{ low }}%</strong> are &gt;{{ margin }}% below target
