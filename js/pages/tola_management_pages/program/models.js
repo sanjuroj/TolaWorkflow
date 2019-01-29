@@ -1,4 +1,5 @@
 import { observable, computed, action } from "mobx";
+import { AST_Null } from "terser";
 
 export class ProgramStore {
 
@@ -26,6 +27,11 @@ export class ProgramStore {
     @observable total_pages = null
     @observable bulk_targets = new Map()
     @observable bulk_targets_all = false
+
+    @observable editing_target = null
+    @observable fetching_editing_target = false
+    @observable editing_target_data = {
+    }
 
     constructor(
         api,
@@ -86,6 +92,45 @@ export class ProgramStore {
             programs: [],
         }
         this.filters = Object.assign(this.filters, clearFilters);
+    }
+
+    @action
+    toggleEditingTarget(id) {
+        if(this.editing_target == 'new') {
+            this.programs.shift()
+        }
+
+        if(this.editing_target == id) {
+            this.editing_target = false
+        } else {
+            this.editing_target = id
+            this.fetching_editing_target = true
+            // fetch data for the program editor
+            /*
+            this.fetching_editing_target = true
+            this.fetchProgramData(id)
+            */
+        }
+    }
+
+    @action
+    createProgram() {
+        if(this.editing_target == 'new') {
+            this.programs.shift()
+        }
+
+        let new_program_data = {
+            id: "new",
+            name: "",
+            gaitid: "",
+            fundcode: "",
+            funding_status: "",
+            description: "",
+            countries: [],
+            sectors: [],
+        }
+        this.programs.unshift(new_program_data)
+        this.editing_target = 'new'
     }
 
 }

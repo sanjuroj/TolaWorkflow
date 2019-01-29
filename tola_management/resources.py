@@ -34,17 +34,27 @@ class Paginator(SmallResultsSetPagination):
         ]))
         return response
 
+class NestedSectorSerializer(Serializer):
+    def to_representation(self, sector):
+        return sector.id
+
+class NestedCountrySerializer(Serializer):
+    def to_representation(self, country):
+        return country.id
+
 class ProgramAdminSerializer(Serializer):
     id = IntegerField()
     name = CharField(max_length=255)
     funding_status = CharField()
+    gaitid = CharField()
+    description = CharField()
+    sector = NestedSectorSerializer(many=True)
+    country = NestedSectorSerializer(many=True)
 
     class Meta:
         fields = (
             'id',
             'name',
-            'organization',
-            'organization_count',
             'funding_status',
         )
 

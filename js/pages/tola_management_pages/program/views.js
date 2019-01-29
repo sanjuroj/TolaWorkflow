@@ -4,6 +4,8 @@ import Select from 'react-select'
 import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
 import ManagementTable from 'components/management-table'
 import Pagination from 'components/pagination'
+import ProgramEditor from './components/program_editor'
+import EditProgramProfile from './components/edit_program_profile'
 
 const CountryFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
@@ -101,7 +103,7 @@ export const IndexView = observer(
                         <button className="btn btn-outline-primary">Apply</button>
                     </div>
                     <div>
-                        <button className="btn btn-primary" onClick={() => console.log('add a program')}><i className="fa fa-plus-circle"></i>Add Program</button>
+                        <button className="btn btn-primary" onClick={() => store.createProgram()}><i className="fa fa-plus-circle"></i>Add Program</button>
                     </div>
                 </div>
                 <div className="list-table row">
@@ -128,30 +130,24 @@ export const IndexView = observer(
                             expanded={data.id == store.editing_target}
                             Expando={({Wrapper}) =>
                                 <Wrapper>
-                                    {/*
                                     <ProgramEditor
                                         new={data.id == 'new'}
                                         ProfileSection={() =>
                                             <EditProgramProfile
-                                            new={data.id == 'new'}
-                                            userData={data}
-                                            onUpdate={(new_user_data) => store.updateUserProfile(data.id, new_user_data)}
-                                            onCreate={(new_user_data) => store.saveNewUser(new_user_data)}
-                                            onCreateAndAddAnother={(new_user_data) => store.saveNewUserAndAddAnother(new_user_data)}
-                                            organizations={store.organizations} />}
-                                        HistorySection={() =>
-                                            <ProgramHistory
-                                            userData={data}
-                                            history={store.editing_target_data.history}
-                                            onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>}
+                                                new={data.id == 'new'}
+                                                program_data={data}
+                                                onUpdate={(new_program_data) => console.log('update program')}
+                                                onCreate={(new_program_data) => console.log('create new program')}
+                                                sectorOptions={sectorFilterOptions}
+                                                countryOptions={countryFilterOptions}
+                                            />}
                                     />
-                                    */}
                                 </Wrapper>
                             }>
                                 <Col size="0.5">
                                     <div className="td--stretch">
                                         <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => console.log(`select this for bulk action: ${data.id}`) }/>
-                                        <div className="icon__clickable" onClick={() => console.log(`edit this one: ${data.id}`)} >
+                                        <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
                                             <i className="fa fa-cog"></i>
                                         </div>
                                     </div>
