@@ -1487,15 +1487,15 @@ class TVAReport(TemplateView):
 
 class IndicatorExport(View):
     """
-    Export all indicators to a CSV file
+    Export all indicators to an XLS file
     """
-
     def get(self, request, *args, **kwargs):
         queryset = ip.indicator_queryset(kwargs['program'])
-        indicator = IndicatorResource().export(queryset)
-        response = HttpResponse(
-            indicator.csv, content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=indicator_plan.csv'
+        wb = ip.create_workbook(queryset)
+
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format('indicator_plan.xlsx')
+        wb.save(response)
         return response
 
 
