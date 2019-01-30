@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import { AST_Null } from "terser";
+
 
 export class ProgramStore {
 
@@ -32,6 +32,10 @@ export class ProgramStore {
     @observable fetching_editing_target = false
     @observable editing_target_data = {
     }
+
+    @observable bulk_targets = new Map()
+    @observable applying_bulk_updates = false
+    @observable bulk_targets_all = false
 
     constructor(
         api,
@@ -74,6 +78,8 @@ export class ProgramStore {
             return
         }
         this.current_page = page.selected
+        this.bulk_targets = new Map()
+        this.bulk_targets_all = false;
         this.fetchPrograms()
     }
 
@@ -131,6 +137,25 @@ export class ProgramStore {
         }
         this.programs.unshift(new_program_data)
         this.editing_target = 'new'
+    }
+
+    @action
+    toggleBulkTarget(target_id) {
+        this.bulk_targets.set(target_id, !this.bulk_targets.get(target_id))
+    }
+
+    @action
+    toggleBulkTargetsAll() {
+        this.bulk_targets_all = !this.bulk_targets_all
+        this.bulk_targets = new Map(this.programs.map(program => [program.id, this.bulk_targets_all]))
+    }
+
+    @action
+    bulkUpdateProgramStatus(new_status) {
+        let ids = Array.from(this.bulk_targets.entries()).filter(([id, targeted]) => targeted).map(([id, targeted]) => id)
+        if (ids.length && new_status) {
+            this.api.updateProgramFundingStatusBulk(ids, new_status)
+        }
     }
 
 }

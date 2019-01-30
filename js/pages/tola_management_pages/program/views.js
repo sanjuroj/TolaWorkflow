@@ -73,6 +73,62 @@ const ProgramFilter = observer(({store, filterOptions}) => {
 })
 
 
+class BulkActions extends React.Component {
+    constructor(props) {
+        super(props)
+        this.active_child = React.createRef()
+        this.state = {
+            current_action: null,
+            current_vals: []
+        }
+    }
+
+    onActionChanged(new_action) {
+        this.setState({
+            current_action: new_action.value
+        })
+    }
+
+    onChange(vals) {
+        this.setState({
+            current_vals: vals
+        })
+    }
+
+    onApply() {
+        const selected = this.props.secondaryOptions[this.state.current_action]
+        if(selected) {
+            selected.onApply(this.state.current_vals)
+        }
+    }
+
+    render() {
+        const selected = this.props.secondaryOptions[this.state.current_action]
+        const SecondaryComponent = selected && selected.component
+        return <div className="bulk-controls">
+            <div className="bulk-select">
+                <Select
+                className="bulk-select"
+                placeholder="Bulk Actions"
+                value={this.props.primaryOptions.find((o) => o.value == this.state.current_action)}
+                options={this.props.primaryOptions} onChange={(val) => this.onActionChanged(val)} />
+            </div>
+            {selected &&
+            <div className="bulk-select">
+                <SecondaryComponent value={this.state.current_vals} onChange={(vals) => this.onChange(vals)}/>
+            </div>
+            }
+            {!selected &&
+            <div className="bulk-select">
+                <Select className="bulk-select" placeholder="---"/>
+            </div>
+            }
+            <button className="btn btn-secondary" disabled={!this.state.current_action} onClick={() => this.onApply()}>Apply</button>
+        </div>
+    }
+}
+
+
 export const IndexView = observer(
     ({store}) => {
 
@@ -80,6 +136,22 @@ export const IndexView = observer(
         const organizationFilterOptions = Object.entries(store.organizations).map(([id, org]) => ({value: org.id, label: org.name}))
         const sectorFilterOptions = store.sectors.map(x => ({value: x.id, label: x.name}))
         const programFilterOptions = Object.entries(store.allPrograms).map(([id, program]) => ({value: program.id, label: program.name}))
+        const bulkProgramStatusOptions = [
+            {value: 'Funded', label: 'Funded'},
+            {value: 'Completed', label: 'Completed'},
+        ]
+
+        const bulk_actions = {
+            primary_options: [
+                {label: 'Set program status', value: 'set_program_status'},
+            ],
+            secondary_options: {
+                set_program_status: {
+                    component: (props) => <Select options={bulkProgramStatusOptions} {...props} />,
+                    onApply: (option) => store.bulkUpdateProgramStatus(option.value)
+                },
+            }
+        }
 
         return <div id="user-management-index-view" className="container-fluid row">
             <div className="col col-sm-3 filter-section">
@@ -94,14 +166,8 @@ export const IndexView = observer(
                 </div>
             </div>
             <div className="col col-sm-9 list-section">
-                <div className="list-controls row">
-                    <div className="bulk-controls">
-                        <Select className="selector" placeholder="Bulk Actions">
-                        </Select>
-                        <Select className="selector" placeholder="---">
-                        </Select>
-                        <button className="btn btn-outline-primary">Apply</button>
-                    </div>
+                <div className="list-controls">
+                    <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div>
                         <button className="btn btn-primary" onClick={() => store.createProgram()}><i className="fa fa-plus-circle"></i>Add Program</button>
                     </div>
@@ -115,7 +181,7 @@ export const IndexView = observer(
                             <Row>
                                 <Col size="0.5">
                                     <div className="td--stretch">
-                                        <input type="checkbox" checked={store.bulk_targets_all} onChange={() => console.log('select all for bulk action')}/>
+                                        <input type="checkbox" checked={store.bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
                                         <div></div>
                                     </div>
                                 </Col>
@@ -146,7 +212,7 @@ export const IndexView = observer(
                             }>
                                 <Col size="0.5">
                                     <div className="td--stretch">
-                                        <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => console.log(`select this for bulk action: ${data.id}`) }/>
+                                        <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
                                         <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
                                             <i className="fa fa-cog"></i>
                                         </div>

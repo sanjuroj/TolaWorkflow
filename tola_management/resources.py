@@ -5,6 +5,8 @@ from django.db.models import CharField as DBCharField
 from django.db.models import IntegerField as DBIntegerField
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework import status as httpstatus
+from rest_framework.decorators import list_route
 from rest_framework.serializers import (
     Serializer,
     CharField,
@@ -79,6 +81,7 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
     pagination_class = Paginator
 
     def get_queryset(self):
+        #TODO: filter by logged in user
         params = self.request.query_params
 
         queryset = Program.objects.all()
@@ -117,3 +120,14 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @list_route(methods=["post"])
+    def bulk_update_status(self, request):
+        ids = request.data.get("ids")
+        new_funding_status = request.data.get("funding_status")
+        new_funding_status = new_funding_status if new_funding_status in ["Completed", "Funded"] else None
+        if new_funding_status:
+            to_update = Program.objects.filter(pk__in=ids)
+            to_update.update(funding_status=new_funding_status)
+            return Response({})
+        return Response({}, status=httpstatus.HTTP_400_BAD_REQUEST)
