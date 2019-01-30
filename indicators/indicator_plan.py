@@ -269,7 +269,7 @@ def create_workbook(indicators):
 
     # Title
     col_num = START_COLUMN
-    cell = ws.cell(row_num, col_num, _('Performance Monitoring Plan').encode('utf-8'))
+    cell = ws.cell(row_num, col_num, _('Indicator plan').encode('utf-8'))
     _apply_title_styling(cell)
     ws.merge_cells(start_row=row_num, start_column=col_num, end_row=row_num, end_column=col_num + len(COLUMNS)-1)
     row_num += 1
