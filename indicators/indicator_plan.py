@@ -17,12 +17,17 @@ TARGETS = _('Targets')
 DATA_ACQUISITION = _('Data Acquisition')
 ANALYSES_AND_REPORTING = _('Analyses and Reporting')
 
+# XLS cell widths
+LARGE_CELL = 40
+MEDIUM_CELL = 20
+
 # fields are either an Indicator attribute name (as str), or a callable
 COLUMNS = [
     {
         'name': _('Level'),
         'category': PERFORMANCE_INDICATOR,
-        'field': 'level',
+        'field': lambda i: i.level.name if i.level else None,
+        'cell_width': 10,
     },
     {
         'name': _('No.'),
@@ -33,27 +38,32 @@ COLUMNS = [
         'name': _('Performance Indicator'),
         'category': PERFORMANCE_INDICATOR,
         'field': 'name',
+        'cell_width': LARGE_CELL,
     },
     {
         'name': _('Indicator Source'),
         'category': PERFORMANCE_INDICATOR,
         'field': 'source',
+        'cell_width': MEDIUM_CELL,
     },
     {
         'name': _('Indicator Definition'),
         'category': PERFORMANCE_INDICATOR,
         'field': 'definition',
+        'cell_width': LARGE_CELL,
     },
     {
         'name': _('Disaggregation'),
         'category': PERFORMANCE_INDICATOR,
         'field': 'disaggregations',
+        'cell_width': MEDIUM_CELL,
     },
 
     {
         'name': _('Unit of Measure'),
         'category': TARGETS,
         'field': 'unit_of_measure',
+        'cell_width': MEDIUM_CELL,
     },
     {
         'name': _('Direction of Change'),
@@ -84,68 +94,81 @@ COLUMNS = [
         'name': _('Rationale for target'),
         'category': TARGETS,
         'field': 'rationale_for_target',
+        'cell_width': MEDIUM_CELL,
     },
     {
         'name': _('Target frequency'),
         'category': TARGETS,
         'field': lambda i: i.get_target_frequency_display(),
+        'cell_width': MEDIUM_CELL,
     },
 
     {
         'name': _('Means of Verification'),
         'category': DATA_ACQUISITION,
         'field': 'means_of_verification',
+        'cell_width': MEDIUM_CELL,
     },
     {
         'name': _('Data collection method'),
         'category': DATA_ACQUISITION,
         'field': 'data_collection_method',
+        'cell_width': MEDIUM_CELL,
     },
     {
         'name': _('Frequency of data collection'),
         'category': DATA_ACQUISITION,
-        'field': 'data_collection_frequency',
+        'field': lambda i: i.data_collection_frequency.frequency if i.data_collection_frequency else None,
+        'cell_width': MEDIUM_CELL,
     },
     {
         'name': _('Data points'),
         'category': DATA_ACQUISITION,
         'field': 'data_points',
+        'cell_width': MEDIUM_CELL,
     },
     {
         'name': _('Responsible person(s) & team'),
         'category': DATA_ACQUISITION,
         'field': 'responsible_person',
+        'cell_width': MEDIUM_CELL,
     },
 
     {
         'name': _('Method of analysis'),
         'category': ANALYSES_AND_REPORTING,
         'field': 'method_of_analysis',
+        'cell_width': MEDIUM_CELL,
     },
     {
         'name': _('Information use'),
         'category': ANALYSES_AND_REPORTING,
         'field': 'information_use',
+        'cell_width': MEDIUM_CELL,
     },
     {
         'name': _('Frequency of reporting'),
         'category': ANALYSES_AND_REPORTING,
-        'field': 'reporting_frequency',
+        'field': lambda i: i.reporting_frequency.frequency if i.reporting_frequency else None,
+        'cell_width': MEDIUM_CELL,
     },
     {
         'name': _('Quality Assurance Measures'),
         'category': ANALYSES_AND_REPORTING,
         'field': 'quality_assurance',
+        'cell_width': MEDIUM_CELL,
     },
     {
         'name': _('Data Issues'),
         'category': ANALYSES_AND_REPORTING,
         'field': 'data_issues',
+        'cell_width': MEDIUM_CELL,
     },
     {
         'name': _('Comments'),
         'category': ANALYSES_AND_REPORTING,
         'field': 'comments',
+        'cell_width': MEDIUM_CELL,
     },
 ]
 
@@ -194,18 +217,16 @@ TAN = 'dad6cb'
 WHITE = 'ffffff'
 BLACK = '000000'
 
-LABEL_FONT_SIZE = 13
-
 
 def _apply_title_styling(cell):
-    cell.font = Font(bold=True, color=WHITE, size=LABEL_FONT_SIZE)
+    cell.font = Font(bold=True, color=WHITE, size=13)
     cell.fill = PatternFill(fill_type='solid', start_color=DARK_RED, end_color=DARK_RED)
     cell.alignment = Alignment(horizontal="center", vertical="center")
     return cell
 
 
 def _apply_label_styling(cell):
-    cell.font = Font(bold=True, size=LABEL_FONT_SIZE)
+    cell.font = Font(bold=True, size=10)
     cell.fill = PatternFill(fill_type='solid', start_color=TAN, end_color=TAN)
     cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
     bd = Side(style='thin', color=BLACK)
@@ -213,9 +234,19 @@ def _apply_label_styling(cell):
     return cell
 
 
-def _set_column_widths(ws):
-    ws.column_dimensions[get_column_letter(4)].width = 50
+def _apply_body_styling(cell):
+    cell.font = Font(size=10)
+    bd = Side(style='thin', color=BLACK)
+    cell.border = Border(left=bd, top=bd, right=bd, bottom=bd)
+    return cell
 
+
+def _set_column_widths(ws, col_num, width):
+    ws.column_dimensions[get_column_letter(col_num)].width = width
+
+
+def _set_row_height(ws, row_num, height):
+    ws.row_dimensions[row_num].height = height
 
 def create_workbook(indicators):
     """
@@ -225,38 +256,72 @@ def create_workbook(indicators):
     ws = wb.active
     ws.title = _('Full PMP')
 
-    row = START_ROW
-    col = START_COLUMN
+    row_num = START_ROW
+    col_num = START_COLUMN
 
-    _set_column_widths(ws)
+    # Set widths of columns
+    _set_column_widths(ws, 1, 3)  # spacer col
+    for col in COLUMNS:
+        width = col.get('cell_width')
+        if width:
+            _set_column_widths(ws, col_num, width)
+        col_num += 1
 
     # Title
-    cell = ws.cell(row, col, _('Performance Monitoring Plan').encode('utf-8'))
+    col_num = START_COLUMN
+    cell = ws.cell(row_num, col_num, _('Performance Monitoring Plan').encode('utf-8'))
     _apply_title_styling(cell)
-    ws.merge_cells(start_row=row, start_column=col, end_row=row, end_column=col + len(COLUMNS)-1)
-    row += 1
+    ws.merge_cells(start_row=row_num, start_column=col_num, end_row=row_num, end_column=col_num + len(COLUMNS)-1)
+    row_num += 1
 
     # Category groupings
-    col = START_COLUMN
+    col_num = START_COLUMN
     for category_name, columns in columns_by_category():
         num_columns = len(list(columns))
-        cell = ws.cell(row, col, category_name.encode('utf-8'))
-        ws.merge_cells(start_row=row, start_column=col, end_row=row, end_column=col + num_columns-1)
+        cell = ws.cell(row_num, col_num, category_name.encode('utf-8'))
+        ws.merge_cells(start_row=row_num, start_column=col_num, end_row=row_num, end_column=col_num + num_columns-1)
         _apply_label_styling(cell)
-        col += num_columns
-    row += 1
+        col_num += num_columns
+    row_num += 1
 
     # Column names
-    col = START_COLUMN
+    col_num = START_COLUMN
     for column_name in column_names():
-        cell = ws.cell(row, col, column_name.encode('utf-8'))
+        cell = ws.cell(row_num, col_num, column_name.encode('utf-8'))
         _apply_label_styling(cell)
-        col += 1
-    row += 1
+        col_num += 1
+    row_num += 1
 
     # rows
+    col_num = START_COLUMN
+    for level, level_indicators in groupby(indicators, lambda i: i.level):
+        for indicator in level_indicators:
+            for i, val in enumerate(row(indicator)):
+                cell = ws.cell(row_num, col_num, val)
+                if i == 0:
+                    # first column has different styling
+                    _apply_label_styling(cell)
+                else:
+                    _apply_body_styling(cell)
+                col_num += 1
+            col_num = START_COLUMN
+            row_num += 1
 
-    # fix?
+        # spacer row
+        for i in range(len(COLUMNS)):
+            cell = ws.cell(row_num, col_num, '')
+            _apply_label_styling(cell)
+            _set_row_height(ws, row_num, 5)
+            col_num += 1
+
+        col_num = START_COLUMN
+        row_num += 1
+
+    # delete last space row
+    ws.delete_rows(row_num-1)
+    _set_row_height(ws, row_num-1, None)
+
+    # fix issue with borders applied to multi-column cells
     update_borders(wb)
 
     return wb
@@ -300,6 +365,5 @@ def update_style(ws, cell_range):
 def update_borders(wb):
     for sheet in wb.sheetnames:
         ws = wb[sheet]
-        print ws.merge_cells
-        for each_range in ws.merged_cell_ranges:
+        for each_range in ws.merged_cells.ranges:
             update_style(ws, each_range)
