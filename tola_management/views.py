@@ -286,7 +286,7 @@ class UserAdminSerializer(ModelSerializer):
 
 
 class UserAdminViewSet(viewsets.ModelViewSet):
-    serializer_class = UserAdminReportSerializer
+    serializer_class = UserAdminSerializer
     pagination_class = SmallResultsSetPagination
 
     def get_list_queryset(self):
@@ -338,6 +338,12 @@ class UserAdminViewSet(viewsets.ModelViewSet):
                 ) pz ON pz.tolauser_id = wtu.id
             """
             program_where = 'AND (pz.program_id IN ({}))'.format(in_param_string)
+
+        organization_where = ''
+        if req.GET.get('organizations[]'):
+            params.append(req.GET.get('organizations[]'))
+
+            organization_where = 'AND wtu.organization_id = %s'
 
         user_status_where = ''
         if req.GET.get('user_status'):
@@ -396,6 +402,7 @@ class UserAdminViewSet(viewsets.ModelViewSet):
                 {country_where}
                 {base_country_where}
                 {program_where}
+                {organization_where}
                 {user_status_where}
                 {admin_role_where}
                 {users_where}
@@ -406,6 +413,7 @@ class UserAdminViewSet(viewsets.ModelViewSet):
             base_country_where=base_country_where,
             program_join=program_join,
             program_where=program_where,
+            organization_where=organization_where,
             user_status_where=user_status_where,
             admin_role_where=admin_role_where,
             users_where=users_where
@@ -424,73 +432,6 @@ class UserAdminViewSet(viewsets.ModelViewSet):
 
         serializer = UserAdminReportSerializer(queryset, many=True)
         return Response(serializer.data)
-
-    def create(self, request):
-        request.data["id"] = None
-        request.data["is_active"] = True
-        serializer = UserAdminSerializer(data=request.data)
-        if(serializer.is_valid()):
-            d = serializer.validated_data
-
-            #create auth user
-            new_django_user = User(
-                username=d["email"],
-                email=d["email"],
-                is_active=d["is_active"]
-            )
-            new_django_user.save()
-
-            #create tola user
-            organization = Organization.objects.get(pk=d["organization_id"])
-            new_user = TolaUser(
-                name=d["name"],
-                organization=organization,
-                user=new_django_user,
-                mode_of_address=d["mode_of_address"],
-                mode_of_contact=d["mode_of_contact"],
-                phone_number=d["phone_number"],
-                title=d["title"]
-            )
-            new_user.save()
-
-            send_new_user_registration_email(new_django_user, request)
-
-            return Response({})
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def update(self, request, pk=None):
-        user = TolaUser.objects.get(pk=pk)
-
-        if not user:
-            return Response({}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = UserAdminSerializer(data=request.data)
-        if(serializer.is_valid()):
-            data = serializer.validated_data
-            audit_entry = UserManagementAuditLog()
-            audit_entry.change_type = 'user_profile_modified'
-            audit_entry.previous_entry = serializers.serialize('json', [user])
-
-            user.name = data["name"]
-            user.email = data["email"]
-            user.organization = Organization.objects.get(pk=data["organization_id"])
-            user.mode_of_address = data["mode_of_address"]
-            user.mode_of_contact = data["mode_of_contact"]
-            user.title = data["title"]
-            user.phone_number = data["phone_number"]
-            user.save()
-            user.user.is_active = data["is_active"]
-            user.user.save()
-
-            audit_entry.new_entry = serializers.serialize('json', [user])
-            audit_entry.admin_user = request.user.tola_user
-            audit_entry.modified_user = user
-            audit_entry.save()
-
-            return Response({}, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['post'])
     def resend_registration_email(self, request, pk=None):

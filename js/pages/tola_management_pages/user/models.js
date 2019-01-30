@@ -2,6 +2,7 @@ import { observable, computed, action } from "mobx";
 import api from './api';
 
 export class UserStore {
+    @observable users = {}
     @observable users_listing = []
     @observable users_count = null
     @observable fetching_users_listing = false
@@ -34,7 +35,12 @@ export class UserStore {
     @observable countries = []
     @observable organizations = []
     @observable programs = {}
-    @observable users = []
+    @observable available_users = []
+
+    @observable countries_selections = []
+    @observable organization_selections = []
+    @observable program_selections = []
+    @observable user_selections = []
 
     user_status_options = [
         {value: 1, label: 'Active'},
@@ -68,7 +74,13 @@ export class UserStore {
         this.countries = countries
         this.organizations = organizations
         this.programs = programs
-        this.users = users.filter(user => user.name)
+        this.available_users = users.filter(user => user.name)
+
+        this.countries_selections = Object.entries(countries).map(([id, country]) => ({value: country.id, label: country.name}))
+        this.organization_selections = organizations.map(org => ({value: org.id, label: org.name}))
+        this.program_selections = Object.entries(programs).map(([id, program]) => ({value: program.id, label: program.name}))
+        this.user_selections = this.available_users.map(user => ({value: user.id, label: user.name}))
+
         this.current_user_program_roles = current_user_program_roles
         this.current_user_country_roles = current_user_country_roles
         this.current_user_is_super_admin = is_super_admin
@@ -116,7 +128,11 @@ export class UserStore {
         this.fetching_users_listing = true
         api.fetchUsersWithFilter(this.current_page + 1, this.marshalFilters(this.filters)).then(results => {
             this.fetching_users_listing = false
-            this.users_listing = results.users
+            this.users = results.users.reduce((xs, x) => {
+                xs[x.id] = x
+                return xs
+            }, {})
+            this.users_listing = results.users.map(u => u.id)
             this.bulk_targets = new Map(this.users.map(user => [user.id, false]))
             this.users_count = results.total_users
             this.total_pages = results.total_pages

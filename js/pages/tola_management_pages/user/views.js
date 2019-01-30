@@ -10,48 +10,48 @@ import EditUserHistory from './components/edit_user_history'
 import Pagination from 'components/pagination'
 import LoadingSpinner from 'components/loading-spinner'
 
-const UserFilter = observer(({store, userListing}) => {
+const UserFilter = observer(({store, selections}) => {
     return <div className="form-group">
         <label htmlFor="users_filter">Users</label>
         <CheckboxedMultiSelect
             value={store.filters.user}
-            options={userListing}
+            options={selections}
             onChange={(e) => store.changeUserFilter(e)}
             placeholder="None Selected"
             id="users_filter" />
     </div>
 })
 
-const CountryFilter = observer(({store, countryListing}) => {
+const CountryFilter = observer(({store, selections}) => {
     return <div className="form-group">
         <label htmlFor="countries_permitted_filter">Countries Permitted</label>
         <CheckboxedMultiSelect
             value={store.filters.countries}
-            options={countryListing}
+            options={selections}
             onChange={(e) => store.changeCountryFilter(e)}
             placeholder="None Selected"
             id="countries_permitted_filter" />
     </div>
 })
 
-const BaseCountryFilter = observer(({store, countryListing}) => {
+const BaseCountryFilter = observer(({store, selections}) => {
     return <div className="form-group">
         <label htmlFor="base_country_filter">Base Country</label>
         <CheckboxedMultiSelect
             value={store.filters.base_countries}
-            options={countryListing}
+            options={selections}
             onChange={(e) => store.changeBaseCountryFilter(e)}
             placeholder="None Selected"
             id="base_country_filter" />
     </div>
 })
 
-const ProgramFilter = observer(({store, programListing}) => {
+const ProgramFilter = observer(({store, selections}) => {
     return <div className="form-group">
         <label htmlFor="programs_filter">Programs</label>
         <CheckboxedMultiSelect
             value={store.filters.programs}
-            options={programListing}
+            options={selections}
             onChange={(e) => store.changeProgramFilter(e)}
             placeholder="None Selected"
             id="programs_filter" />
@@ -157,12 +157,6 @@ class BulkActions extends React.Component {
 
 export const IndexView = observer(
     ({store}) => {
-        const countries_listing = Object.entries(store.countries).map(([id, country]) => ({value: country.id, label: country.name}))
-        const organization_listing = store.organizations.map(org => ({value: org.id, label: org.name}))
-        const program_listing = Object.entries(store.programs).map(([id, program]) => ({value: program.id, label: program.name}))
-        const user_listing = store.users.map(user => ({value: user.id, label: user.name}))
-
-
         const bulk_actions = {
             primary_options: [
                 {label: 'Set account status', value: 'set_account_status'},
@@ -187,14 +181,14 @@ export const IndexView = observer(
 
         return <div id="user-management-index-view" className="container-fluid row">
             <div className="col col-sm-3 filter-section">
-                <CountryFilter store={store} countryListing={countries_listing} />
-                <BaseCountryFilter store={store} countryListing={countries_listing} />
-                <ProgramFilter store={store} programListing={program_listing} />
+                <CountryFilter store={store} selections={store.countries_selections} />
+                <BaseCountryFilter store={store} selections={store.countries_selections} />
+                <ProgramFilter store={store} selections={store.program_selections} />
                 <div className="form-group">
                     <label htmlFor="organization_filter">Organization</label>
                     <Select
                     value={store.filters.organizations}
-                    options={organization_listing}
+                    options={store.organization_selections}
                     onChange={(e) => store.changeOrganizationFilter(e)}
                     isMulti={true}
                     placeholder="None Selected"
@@ -218,7 +212,7 @@ export const IndexView = observer(
                     placeholder="None Selected"
                     id="admin_role_filter" />
                 </div>
-                <UserFilter store={store} userListing={user_listing} />
+                <UserFilter store={store} selections={store.user_selections} />
                 <div className="filter-buttons">
                     <button className="btn btn-primary" onClick={() => store.fetchUsers()}>Apply</button>
                     <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>Reset</button>
@@ -235,7 +229,7 @@ export const IndexView = observer(
                     <div className="list-table">
                         <ManagementTable
                             newData={store.new_user}
-                            data={store.users_listing}
+                            data={store.users_listing.map(id => store.users[id])}
                             keyField="id"
                             HeaderRow={({Col, Row}) =>
                                 <Row>
