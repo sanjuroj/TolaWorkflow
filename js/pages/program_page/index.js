@@ -104,6 +104,8 @@ eventBus.on('open-indicator-update-modal', (indicatorId) => {
 
 // get results html blob for indicator
 eventBus.on('load-indicator-results', (indicatorId) => {
+    if (!indicatorId) return;
+
     let url = `/indicators/result_table/${indicatorId}/${rootStore.program.id}/`;
 
     $.get(url, function (data) {
@@ -144,19 +146,19 @@ eventBus.on('apply-gauge-tank-filter', indicatorFilter => {
 eventBus.on('clear-all-indicator-filters', () => {
     router.navigate('all');
     uiStore.clearIndicatorFilter();
-    eventBus.emit('select-indicators-to-filter', []);
+    eventBus.emit('select-indicators-to-filter', null);
     eventBus.emit('close-all-indicators');
 });
 
 // filter down by selecting individual indicator
-eventBus.on('select-indicators-to-filter', (selectedIndicatorIds) => {
+eventBus.on('select-indicators-to-filter', (selectedIndicatorId) => {
     // clear gauge tank filters
     uiStore.clearIndicatorFilter();
 
-    uiStore.setSelectedIndicatorIds(selectedIndicatorIds);
+    uiStore.setSelectedIndicatorId(selectedIndicatorId);
 
     // Open up results pane as well
-    selectedIndicatorIds.forEach(id => eventBus.emit('load-indicator-results', id));
+    eventBus.emit('load-indicator-results', selectedIndicatorId);
 });
 
 // close all expanded indicators in the table

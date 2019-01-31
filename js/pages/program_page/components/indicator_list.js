@@ -7,7 +7,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons'
 import {IndicatorFilterType} from "../models";
-import {Select} from '../../../components/bootstrap_multiselect';
+import Select from 'react-select';
+
 
 library.add(faCaretDown, faCaretRight);
 
@@ -88,9 +89,17 @@ class StatusHeader extends React.Component {
 
 @observer
 class IndicatorFilter extends React.Component{
+    onSelection = (selectedObject) => {
+        let selectedIndicatorId = selectedObject ? selectedObject.value : null;
+
+        if (selectedIndicatorId) {
+            eventBus.emit('select-indicators-to-filter', selectedIndicatorId);
+        }
+    };
+
     render() {
         const indicators = this.props.rootStore.indicatorStore.indicators;
-        const selectedIndicatorIds = this.props.uiStore.selectedIndicatorIds;
+        const selectedIndicatorId = this.props.uiStore.selectedIndicatorId;
 
         const indicatorSelectOptions = indicators.map(i => {
             return {
@@ -99,15 +108,23 @@ class IndicatorFilter extends React.Component{
             }
         });
 
+        let selectedValue = null;
+        if (selectedIndicatorId) {
+            selectedValue = indicatorSelectOptions.find(i => i.value === selectedIndicatorId);
+        }
+
         return <nav className="list__filters list__filters--inline-label" id="id_div_indicators">
             <label className="filters__label">
                 {gettext("Find an indicator:")}
             </label>
             <div className="filters__control">
-                <Select forceEmptySelect={true}
-                        options={indicatorSelectOptions}
-                        selected={selectedIndicatorIds}
-                        onSelectCb={(selectedIndicatorIds) => eventBus.emit('select-indicators-to-filter', selectedIndicatorIds)} />
+                <Select
+                    options={indicatorSelectOptions}
+                    value={selectedValue}
+                    isClearable={false}
+                    placeholder={gettext('None')}
+                    onChange={this.onSelection}
+                />
             </div>
         </nav>;
     }
@@ -228,21 +245,21 @@ export const IndicatorList = observer(function (props) {
     // const indicators = props.rootStore.indicatorStore.indicators;
     const resultsMap = props.rootStore.resultsMap;
     const currentIndicatorFilter = props.uiStore.currentIndicatorFilter;
-    const selectedIndicatorIds = props.uiStore.selectedIndicatorIds;
+    const selectedIndicatorId = props.uiStore.selectedIndicatorId;
     // Either a gas gauge filter is applied, or an indicator has been selected, but not both
 
     // apply gas gauge filter
     let filteredIndicators = indicatorStore.filterIndicators(currentIndicatorFilter);
 
-    if (selectedIndicatorIds.length > 0) {
-        filteredIndicators = filteredIndicators.filter((i) => selectedIndicatorIds.indexOf(i.id) > -1);
+    if (selectedIndicatorId) {
+        filteredIndicators = filteredIndicators.filter((i) => i.id == selectedIndicatorId);
     }
 
     return <React.Fragment>
         <StatusHeader indicatorCount={filteredIndicators.length}
                       programId={program.id}
                       currentIndicatorFilter={currentIndicatorFilter}
-                      filterApplied={currentIndicatorFilter || selectedIndicatorIds.length > 0} />
+                      filterApplied={currentIndicatorFilter || selectedIndicatorId} />
 
         <IndicatorFilter uiStore={props.uiStore} rootStore={props.rootStore} />
 
