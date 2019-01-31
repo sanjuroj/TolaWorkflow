@@ -1,5 +1,6 @@
 from collections import OrderedDict
-from django.db.models import Value
+from django.db.models import Value, Count, F, OuterRef, Subquery
+from django.db.models import Q
 from django.db.models import CharField as DBCharField
 from django.db.models import IntegerField as DBIntegerField
 from rest_framework import viewsets
@@ -17,6 +18,8 @@ from feed.views import SmallResultsSetPagination
 
 from workflow.models import (
     Program,
+    TolaUser,
+    Organization,
 )
 
 
@@ -34,9 +37,6 @@ class Paginator(SmallResultsSetPagination):
 class ProgramAdminSerializer(Serializer):
     id = IntegerField()
     name = CharField(max_length=255)
-    organization = CharField()
-    organization_count = HiddenField(default=1)
-    user_count = IntegerField()
     funding_status = CharField()
 
     class Meta:
@@ -48,6 +48,21 @@ class ProgramAdminSerializer(Serializer):
             'funding_status',
         )
 
+    def to_representation(self, program):
+        ret = super(ProgramAdminSerializer, self).to_representation(program)
+        # Some n+1 queries here. If this is slow, Fix in queryset either either with rawsql or remodel.
+        user_query1 = TolaUser.objects.filter(program_access__id=program.id).select_related('organization')
+        user_query2 = TolaUser.objects.filter(countries__program=program.id).select_related('organization').distinct()
+        program_users = user_query1.union(user_query2)
+
+        organizations = set([tu.organization_id for tu in program_users if tu.organization_id])
+        organization_count = len(organizations)
+
+        ret['program_users'] = len(program_users)
+        ret['organizations'] = organization_count
+        ret['onlyOrganizationId'] = organizations.pop() if organization_count > 0 else None
+        return ret
+
 
 class ProgramAdminViewSet(viewsets.ModelViewSet):
     serializer_class = ProgramAdminSerializer
@@ -56,11 +71,7 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         params = self.request.query_params
 
-        queryset = Program.objects.annotate(
-            organization=Value('Mercy Corps', output_field=DBCharField()),
-            user_count = Value('0', output_field=DBIntegerField()),
-        )
-
+        queryset = Program.objects.all()
 
         programStatus = params.get('programStatus')
         if programStatus == 'Active':
@@ -71,6 +82,20 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         programParam = params.get('programs')
         if programParam:
             queryset = queryset.filter(id=programParam)
+
+        countryFilter = params.getlist('countries[]')
+        if countryFilter:
+            queryset = queryset.filter(country__in=countryFilter)
+
+        sectorFilter = params.getlist('sectors[]')
+        if sectorFilter:
+            queryset = queryset.filter(sector__in=sectorFilter)
+
+        organizationFilter = params.getlist('organizations[]')
+        if organizationFilter:
+            queryset = queryset.filter(
+                Q(user_access__organization__in=organizationFilter) | Q(country__users__organization__in=organizationFilter)
+            ).distinct()
 
         return queryset
 
