@@ -46,9 +46,9 @@ class NestedCountrySerializer(Serializer):
 
 class ProgramAdminSerializer(Serializer):
     id = IntegerField()
-    name = CharField(max_length=255)
-    funding_status = CharField()
-    gaitid = CharField()
+    name = CharField(required=True, max_length=255)
+    funding_status = CharField(required=True)
+    gaitid = CharField(required=True)
     description = CharField()
     sector = NestedSectorSerializer(many=True)
     country = NestedSectorSerializer(many=True)
@@ -120,6 +120,14 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    def create(self, validated_data):
+        return Response({'d': validated_data})
+
+
+    def update(self, instance, validated_data):
+        return Response({'d': validated_data})
+
 
     @list_route(methods=["post"])
     def bulk_update_status(self, request):
