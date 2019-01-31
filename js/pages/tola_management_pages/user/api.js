@@ -16,7 +16,10 @@ export const fetchUsersWithFilter = (page, filters) => api.get('/tola_management
     }
 })
 
+export const fetchUser = (user_id) => api.get(`/tola_management/user/${user_id}/`).then(response => response.data)
+
 export const saveUserProfile = (user_id, data) => api.put(`/tola_management/user/${user_id}/`, data).then((response) => {
+    return response.data
 })
 
 export const fetchUserProgramAccess = (user_id) => api.get(`/tola_management/user/${user_id}/program_access/`).then(response => response.data)
@@ -28,7 +31,7 @@ export const saveUserPrograms = (user_id, data) => api.put(`/tola_management/use
 export const fetchUserHistory = (user_id) => api.get(`/tola_management/user/${user_id}/history/`).then(response => response.data)
 
 export const createUser = (new_user_data) => api.post(`/tola_management/user/`, new_user_data).then(response => {
-
+    return response.data
 })
 
 export const resendRegistrationEmail = (user_id) => api.post(`/tola_management/user/${user_id}/resend_registration_email/`, {}).then(response => response.data)
@@ -37,8 +40,11 @@ export const bulkUpdateUserStatus = (user_ids, new_status) => api.post(`/tola_ma
 export const bulkAddPrograms = (user_ids, added_programs) => api.post(`/tola_management/user/bulk_add_programs/`, {user_ids, added_programs}).then(response => response.data)
 export const bulkRemovePrograms = (user_ids, removed_programs) => api.post(`/tola_management/user/bulk_remove_programs/`, {user_ids, removed_programs}).then(response => response.data)
 
+export const fetchUserAggregates = (user_id) => api.get(`/tola_management/user/${user_id}/aggregate_data/`).then(response => response.data)
+
 export default {
     fetchUsersWithFilter,
+    fetchUser,
     saveUserProfile,
     fetchUserProgramAccess,
     saveUserPrograms,
@@ -47,5 +53,6 @@ export default {
     resendRegistrationEmail,
     bulkUpdateUserStatus,
     bulkAddPrograms,
-    bulkRemovePrograms
+    bulkRemovePrograms,
+    fetchUserAggregates
 }

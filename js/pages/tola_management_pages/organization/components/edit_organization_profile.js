@@ -118,7 +118,7 @@ export default class EditOrganizationProfile extends React.Component {
                             id="organization-name-input"
                             required />
                         {errors.name &&
-                        <div class="invalid-feedback">
+                        <div className="invalid-feedback">
                             {errors.name}
                         </div>
                         }
