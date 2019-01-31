@@ -35,7 +35,7 @@ export class OrganizationStore {
     sector_selections = []
 
     @observable editing_target = null
-    @observable editing_target_data = default_organization
+    @observable editing_target_data = {...default_organization}
     @observable editing_errors = {}
 
     @observable filters = {
@@ -121,7 +121,7 @@ export class OrganizationStore {
         }
         this.organizations["new"] = new_organization
         this.editing_target = new_organization.id
-        this.editing_target_data = default_organization
+        this.editing_target_data = {...default_organization}
     }
 
     @action
@@ -131,7 +131,7 @@ export class OrganizationStore {
             this.saving = false
             this.updateLocalOrganization(id, updated_data, aggregates)
             this.editing_target = null
-            this.editing_target_data = default_organization
+            this.editing_target_data = {...default_organization}
             this.onSaveSuccessHandler()
         })).catch((errors) => {
             this.saving = false
@@ -151,7 +151,7 @@ export class OrganizationStore {
             delete this.organizations["new"]
             this.organizations_listing.unshift(result.id)
             this.editing_target = null
-            this.editing_target_data = default_organization
+            this.editing_target_data = {...default_organization}
             this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]))
             this.onSaveSuccessHandler()
         }).catch(error => {
@@ -172,8 +172,9 @@ export class OrganizationStore {
             delete this.organizations["new"]
             this.organizations_listing.unshift(result.id)
             this.editing_target = null
-            this.editing_target_data = default_organization
+            this.editing_target_data = {...default_organization}
             this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]))
+            this.onSaveSuccessHandler()
         }).catch(error => {
             this.saving = false
             this.onSaveErrorHandler()
@@ -231,7 +232,7 @@ export class OrganizationStore {
 
     @action
     toggleEditingTarget(organization_id) {
-        this.editing_target_data = default_organization
+        this.editing_target_data = {...default_organization}
 
         if(this.editing_target == "new") {
             this.organizations_listing.shift()
