@@ -81,10 +81,15 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
     pagination_class = Paginator
 
     def get_queryset(self):
-        #TODO: filter by logged in user
+        viewing_user = self.request.user
         params = self.request.query_params
 
         queryset = Program.objects.all()
+
+        if not viewing_user.is_superuser:
+            queryset = queryset.filter(
+                Q(user_access__id=viewing_user.id) | Q(country__users__id=viewing_user.id)
+            )
 
         programStatus = params.get('programStatus')
         if programStatus == 'Active':
@@ -108,9 +113,9 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         if organizationFilter:
             queryset = queryset.filter(
                 Q(user_access__organization__in=organizationFilter) | Q(country__users__organization__in=organizationFilter)
-            ).distinct()
+            )
 
-        return queryset
+        return queryset.distinct()
 
     def list(self, request):
         queryset = self.get_queryset()
