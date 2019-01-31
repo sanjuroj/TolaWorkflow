@@ -210,82 +210,90 @@ class UserAdminReportSerializer(Serializer):
             'email'
         )
 
+class AuthUserSerializer(ModelSerializer):
+    email = CharField(max_length=255, required=True)
+    class Meta:
+        model = User
+        fields = ('is_staff', 'is_superuser', 'is_active', 'email')
+
 class UserAdminSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
+    name = CharField(max_length=255, required=True)
+    organization_id = IntegerField(required=True)
+    user = AuthUserSerializer()
 
     def create(self, validated_data):
-        request.data["id"] = None
-        request.data["is_active"] = True
-        serializer = UserAdminSerializer(data=request.data)
-        if(serializer.is_valid()):
-            d = serializer.validated_data
+        validated_data["is_active"] = True
 
-            #create auth user
-            new_django_user = User(
-                username=d["email"],
-                email=d["email"],
-                is_active=d["is_active"]
-            )
-            new_django_user.save()
+        auth_user_data = validated_data.pop('user')
 
-            #create tola user
-            organization = Organization.objects.get(pk=d["organization_id"])
-            new_user = TolaUser(
-                name=d["name"],
-                organization=organization,
-                user=new_django_user,
-                mode_of_address=d["mode_of_address"],
-                mode_of_contact=d["mode_of_contact"],
-                phone_number=d["phone_number"],
-                title=d["title"]
-            )
-            new_user.save()
+        #create auth user
+        new_django_user = User(
+            username=auth_user_data["email"],
+            email=auth_user_data["email"],
+            is_active=auth_user_data["is_active"]
+        )
+        new_django_user.save()
 
-            send_new_user_registration_email(new_django_user, request)
+        #create tola user
+        new_user = TolaUser(
+            name=validated_data["name"],
+            organization_id=validated_data["organization_id"],
+            user=new_django_user,
+            mode_of_address=validated_data["mode_of_address"],
+            mode_of_contact=validated_data["mode_of_contact"],
+            phone_number=validated_data["phone_number"],
+            title=validated_data["title"]
+        )
+        new_user.save()
 
-            return Response({})
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        send_new_user_registration_email(new_django_user, self.context["request"])
+
+        return new_user
 
     def update(self, instance, validated_data):
-        user = TolaUser.objects.get(pk=pk)
+        user = instance
 
-        if not user:
-            return Response({}, status=status.HTTP_404_NOT_FOUND)
+        auth_user_data = validated_data.pop('user')
 
-        serializer = UserAdminSerializer(data=request.data)
-        if(serializer.is_valid()):
-            data = serializer.validated_data
-            audit_entry = UserManagementAuditLog()
-            audit_entry.change_type = 'user_profile_modified'
-            audit_entry.previous_entry = serializers.serialize('json', [user])
+        audit_entry = UserManagementAuditLog()
+        audit_entry.change_type = 'user_profile_modified'
+        audit_entry.previous_entry = serializers.serialize('json', [user])
 
-            user.name = data["name"]
-            user.email = data["email"]
-            user.organization = Organization.objects.get(pk=data["organization_id"])
-            user.mode_of_address = data["mode_of_address"]
-            user.mode_of_contact = data["mode_of_contact"]
-            user.title = data["title"]
-            user.phone_number = data["phone_number"]
-            user.save()
-            user.user.is_active = data["is_active"]
-            user.user.save()
+        user.name = validated_data["name"]
+        user.organization_id = validated_data["organization_id"]
+        user.mode_of_address = validated_data["mode_of_address"]
+        user.mode_of_contact = validated_data["mode_of_contact"]
+        user.title = validated_data["title"]
+        user.phone_number = validated_data["phone_number"]
+        user.save()
 
-            audit_entry.new_entry = serializers.serialize('json', [user])
-            audit_entry.admin_user = request.user.tola_user
-            audit_entry.modified_user = user
-            audit_entry.save()
+        user.user.email = auth_user_data["email"]
+        user.user.is_active = auth_user_data["is_active"]
+        user.user.save()
 
-            return Response({}, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        audit_entry.new_entry = serializers.serialize('json', [user])
+        audit_entry.admin_user = self.context["request"].user.tola_user
+        audit_entry.modified_user = user
+        audit_entry.save()
+        return user
 
     class Meta:
         model = TolaUser
+        fields = (
+            'id',
+            'user',
+            'title',
+            'name',
+            'organization_id',
+            'mode_of_address',
+            'mode_of_contact',
+            'phone_number',
+        )
 
 
 class UserAdminViewSet(viewsets.ModelViewSet):
+    queryset = TolaUser.objects.all()
     serializer_class = UserAdminSerializer
     pagination_class = SmallResultsSetPagination
 
@@ -566,8 +574,9 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         if not pk:
             return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
-        result = TolaUser.objects.raw("""
+        result = list(TolaUser.objects.raw("""
             SELECT
+                wtu.id,
                 COUNT(z.program_id) AS user_programs
             FROM workflow_tolauser wtu
             LEFT JOIN (
@@ -585,7 +594,7 @@ class UserAdminViewSet(viewsets.ModelViewSet):
             WHERE
                 wtu.id = %s
             GROUP BY wtu.id
-        """, [pk])
+        """, [pk]))
 
         if len(result) < 1:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
@@ -640,7 +649,6 @@ class OrganizationSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         sectors = validated_data.pop('sectors')
-        print(sectors)
         instance.sectors.add(*[sector["id"] for sector in sectors])
         return super(OrganizationSerializer, self).update(instance, validated_data)
 

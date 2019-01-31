@@ -228,7 +228,6 @@ export const IndexView = observer(
                 <LoadingSpinner isLoading={store.fetching_users_listing || store.applying_bulk_updates}>
                     <div className="list-table">
                         <ManagementTable
-                            newData={store.new_user}
                             data={store.users_listing.map(id => store.users[id])}
                             keyField="id"
                             HeaderRow={({Col, Row}) =>
@@ -251,30 +250,35 @@ export const IndexView = observer(
                                 expanded={data.id == store.editing_target}
                                 Expando={({Wrapper}) =>
                                     <Wrapper>
-                                        <UserEditor
-                                            new={data.id == 'new'}
-                                            ProfileSection={() =>
-                                                <EditUserProfile
+                                        <LoadingSpinner isLoading={store.fetching_editing_target}>
+                                            <UserEditor
                                                 new={data.id == 'new'}
-                                                userData={data}
-                                                onUpdate={(new_user_data) => store.updateUserProfile(data.id, new_user_data)}
-                                                onCreate={(new_user_data) => store.saveNewUser(new_user_data)}
-                                                onCreateAndAddAnother={(new_user_data) => store.saveNewUserAndAddAnother(new_user_data)}
-                                                organizations={store.organizations} />}
-                                            ProgramSection={() =>
-                                                <EditUserPrograms
-                                                store={store}
-                                                user={data}
-                                                adminUserProgramRoles={store.current_user_program_roles}
-                                                adminUserCountryRoles={store.current_user_country_roles}
-                                                onSave={(new_program_data) => store.saveUserPrograms(data.id, new_program_data)}/>}
-                                            HistorySection={() =>
-                                                <EditUserHistory
-                                                userData={data}
-                                                history={store.editing_target_data.history}
-                                                onResendRegistrationEmail={() => store.resendRegistrationEmail(data.id)}
-                                                onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>}
-                                        />
+                                                ProfileSection={observer(() =>
+                                                    <EditUserProfile
+                                                        new={data.id == 'new'}
+                                                        userData={store.editing_target_data.profile}
+                                                        errors={store.editing_errors}
+                                                        key={store.editing_target_data.profile.id}
+                                                        onUpdate={(new_user_data) => store.updateUserProfile(data.id, new_user_data)}
+                                                        onCreate={(new_user_data) => store.saveNewUser(new_user_data)}
+                                                        onCreateAndAddAnother={(new_user_data) => store.saveNewUserAndAddAnother(new_user_data)}
+                                                        organizations={store.organizations} />
+                                                )}
+                                                ProgramSection={() =>
+                                                    <EditUserPrograms
+                                                        store={store}
+                                                            user={data}
+                                                            adminUserProgramRoles={store.current_user_program_roles}
+                                                            adminUserCountryRoles={store.current_user_country_roles}
+                                                            onSave={(new_program_data) => store.saveUserPrograms(data.id, new_program_data)}/>}
+                                                HistorySection={() =>
+                                                    <EditUserHistory
+                                                        userData={data}
+                                                                history={store.editing_target_data.history}
+                                                                onResendRegistrationEmail={() => store.resendRegistrationEmail(data.id)}
+                                                                onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>}
+                                            />
+                                        </LoadingSpinner>
                                     </Wrapper>
                                 }>
                                     <Col size="0.5">

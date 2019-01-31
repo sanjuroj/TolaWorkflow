@@ -9,20 +9,10 @@ export default class EditUserProfile extends React.Component {
         const {userData} = props
         const organization_listing = props.organizations.map(org => ({value: org.id, label: org.name}))
         const selected_organization = organization_listing.find(o => o.value == userData.organization_id)
-        const user_data = {
-            id: userData.id,
-            full_name: userData.name || '',
-            organization: selected_organization?selected_organization:null,
-            mode_of_address: userData.mode_of_address || '',
-            title: userData.title || '',
-            email: userData.email || '',
-            phone: userData.phone_number || '',
-            mode_of_contact: userData.mode_of_contact || '',
-            is_active: userData.is_active
-        }
         this.state = {
-            original_user_data: user_data,
-            managed_user_data: user_data,
+            original_user_data: {...userData},
+            managed_user_data: {...userData},
+            selected_organization,
             organization_listing
         }
     }
@@ -30,45 +20,24 @@ export default class EditUserProfile extends React.Component {
 
     save(e) {
         e.preventDefault()
-        const ud = this.state.managed_user_data
-        const marshalled_user_data = {
-            ...ud,
-            name: ud.full_name,
-            organization_id: (ud.organization)?ud.organization.value:null,
-            phone_number: ud.phone
-        }
-        this.props.onUpdate(marshalled_user_data)
+        this.props.onUpdate(this.state.managed_user_data)
     }
 
     saveNew(e) {
         e.preventDefault()
-        const ud = this.state.managed_user_data
-        const marshalled_user_data = {
-            ...ud,
-            name: ud.full_name,
-            organization_id: (ud.organization)?ud.organization.value:null,
-            phone_number: ud.phone
-        }
-        this.props.onCreate(marshalled_user_data)
+        this.props.onCreate(this.state.managed_user_data)
     }
 
     saveNewAndAddAnother(e) {
         e.preventDefault()
-        const ud = this.state.managed_user_data
-        const marshalled_user_data = {
-            ...ud,
-            name: ud.full_name,
-            organization_id: (ud.organization)?ud.organization.value:null,
-            phone_number: ud.phone
-        }
-        this.props.onCreateAndAddAnother(marshalled_user_data)
+        this.props.onCreateAndAddAnother(this.state.managed_user_data)
     }
 
     updateFullName(new_full_name) {
         this.setState({
             managed_user_data: {
                 ...this.state.managed_user_data,
-                full_name: new_full_name,
+                name: new_full_name,
             }
         })
     }
@@ -86,8 +55,9 @@ export default class EditUserProfile extends React.Component {
         this.setState({
             managed_user_data: {
                 ...this.state.managed_user_data,
-                organization: new_option,
-            }
+                organization_id: new_option.value,
+            },
+            selected_organization: new_option
         })
     }
 
@@ -104,7 +74,10 @@ export default class EditUserProfile extends React.Component {
         this.setState({
             managed_user_data: {
                 ...this.state.managed_user_data,
-                email: new_email,
+                user: {
+                    ...this.state.managed_user_data.user,
+                    email: new_email,
+                }
             }
         })
     }
@@ -128,25 +101,39 @@ export default class EditUserProfile extends React.Component {
     }
 
     resetForm() {
+        const selected_organization = this.state.organization_listing.find(o => o.value == this.state.original_user_data.organization_id)
         this.setState({
-            managed_user_data: this.state.original_user_data
+            managed_user_data: this.state.original_user_data,
+            selected_organization
         })
     }
 
     render() {
         const ud = this.state.managed_user_data
+        const e = this.props.errors
+        const error_classes = {
+            name: (e.name)?'is-invalid':'',
+            email: (e.user && e.user.email)?'is-invalid':'',
+            organization: (e.organization_id)?'is-invalid':''
+        }
+        console.log(error_classes)
         return (
             <div className="edit-user-profile container">
                 <form className="form">
                     <div className="form-group">
                         <label htmlFor="user-full-name-input">Full name<span className="required">*</span></label>
                         <input
+                            className={"form-control "+error_classes.name}
                             type="text"
-                            value={ud.full_name}
+                            value={ud.name}
                             onChange={(e) => this.updateFullName(e.target.value) }
-                            className="form-control"
                             id="user-full-name-input"
                             required />
+                        {e.name &&
+                        <div className="invalid-feedback">
+                            {e.name}
+                        </div>
+                        }
                     </div>
                     <div className="form-group">
                         <label htmlFor="user-mode-of-address-input">Preferred Mode Of Address</label>
@@ -160,11 +147,17 @@ export default class EditUserProfile extends React.Component {
                     <div className="form-group">
                         <label htmlFor="user-organization-input">Organization<span className="required">*</span></label>
                         <Select
-                            value={ud.organization}
+                            className={"form-control "+error_classes.organization}
+                            value={this.state.selected_organization}
                             options={this.state.organization_listing}
                             onChange={(e) => this.updateOrganization(e)}
                             placeholder="None Selected"
                             id="user-organization-input" />
+                        {e.organization_id &&
+                        <div className="invalid-feedback">
+                            {e.organization_id}
+                        </div>
+                        }
                     </div>
                     <div className="form-group">
                         <label htmlFor="user-title-input">Title</label>
@@ -179,11 +172,16 @@ export default class EditUserProfile extends React.Component {
                     <div className="form-group">
                         <label htmlFor="user-email-input">Email<span className="required">*</span></label>
                         <input
+                            className={"form-control "+error_classes.email}
                             type="email"
-                            value={ud.email}
+                            value={ud.user.email}
                             onChange={(e) => this.updateEmail(e.target.value)}
-                            className="form-control"
                             id="user-email-input" />
+                        {e.user && e.user.email &&
+                        <div className="invalid-feedback">
+                            {e.user.email}
+                        </div>
+                        }
                     </div>
                     <div className="form-group">
                         <label htmlFor="user-phone-input">Phone</label>
