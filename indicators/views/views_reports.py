@@ -1026,10 +1026,6 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
         form_kwargs = {'request': request, 'program': context['program']}
         context['form'] = IPTTReportFilterForm(initial=self.filter_form_initial_data, **form_kwargs)
 
-        context['report_wide'] = True
-        if context.get('redirect', None):
-            return HttpResponseRedirect(reverse_lazy('iptt_quickstart'))
-
         # Data used by JS
         context['js_context'] = {
             'program_id': context['program'].id,

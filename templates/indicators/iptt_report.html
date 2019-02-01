@@ -5,6 +5,7 @@
 {% block title %}{% trans "Indicator Performance Tracking Table" %}{% endblock %}
 {% block page_title %}{% endblock %}
 {% block bodyclasses %}page_iptt_table{% endblock %}
+{% block mainclasses %}region--full-bleed{% endblock %}
 
 {% block content %}
   <div class="sidebar_wrapper">
@@ -19,12 +20,12 @@
   </div>
   <main class="iptt_table_wrapper">
     <div id="id_div_top_iptt_report">
-        <div class="d-flex justify-content-between">
-            <div id="id_span_iptt_date_range">
+        <div class="page-subheader">
+            <div id="id_span_iptt_date_range" class="subheader__title">
               <h2 class="pt-3">{% trans "Indicator Performance Tracking Table" %}</h2>
               <h4 class="pb-3">{{ report_start_date|date:"MEDIUM_DATE_FORMAT" }} - {{ report_end_date_actual|date:"MEDIUM_DATE_FORMAT" }}</h4>
             </div>
-            <div class="p-3">
+            <div class="subheader__actions">
               <button type="button"
                       id="id_button_pin"
                       class="btn btn-sm btn-secondary">

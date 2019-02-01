@@ -31,7 +31,6 @@ from feed.serializers import FlatJsonSerializer
 from util import getCountry, group_excluded, get_table
 
 from indicators.serializers import IndicatorSerializer, ProgramSerializer
-from workflow.forms import FilterForm
 from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
     Program, Sector, TolaSites, FormGuidance
@@ -45,7 +44,7 @@ from ..models import (
 )
 from indicators.queries import ProgramWithMetrics, ResultsIndicator
 from .views_reports import IPTT_ReportView
-
+import indicators.indicator_plan as ip
 
 logger = logging.getLogger(__name__)
 
@@ -1053,44 +1052,21 @@ class IndicatorReport(View, AjaxableResponseMixin):
         return JsonResponse(get_indicators, safe=False)
 
 
-def programIndicatorReport(request, program=0):
+def indicator_plan(request, program_id):
     """
     This is the GRID report or indicator plan for a program.
     Shows a simple list of indicators sorted by level
     and number. Lives in the "Indicator" home page as a link.
     """
-    program = int(program)
-    countries = getCountry(request.user)
-    getPrograms = Program.objects.filter(funding_status="Funded",
-                                         country__in=countries).distinct()
+    program = get_object_or_404(Program, id=program_id)
 
-    getIndicators = Indicator.objects.filter(program__id=program) \
-        .select_related().order_by('level', 'number')
+    indicators = ip.indicator_queryset(program_id)
 
-    getProgram = Program.objects.get(id=program)
-
-    getIndicatorTypes = IndicatorType.objects.all()
-
-    if request.method == "GET" and "search" in request.GET:
-        # list1 = list()
-        # for obj in filtered:
-        #    list1.append(obj)
-        getIndicators = Indicator.objects.filter(
-            Q(indicator_type__icontains=request.GET["search"]) |
-            Q(name__icontains=request.GET["search"]) |
-            Q(number__icontains=request.GET["search"]) |
-            Q(definition__startswith=request.GET["search"])) \
-            .filter(program__id=program) \
-            .select_related() \
-            .order_by('level', 'number')
-
-    # send the keys and vars from the json data to the template along with
-    # submitted feed info and silos for new form
-    return render(request, "indicators/grid_report.html",
-                  {'getIndicators': getIndicators, 'getPrograms': getPrograms,
-                   'getProgram': getProgram, 'form': FilterForm(),
-                   'helper': FilterForm.helper,
-                   'getIndicatorTypes': getIndicatorTypes})
+    return render(request, "indicators/indicator_plan.html", {
+        'program': program,
+        'column_names': ip.column_names(),
+        'rows': [ip.row(i) for i in indicators]
+    })
 
 
 class IndicatorReportData(View, AjaxableResponseMixin):
@@ -1511,26 +1487,15 @@ class TVAReport(TemplateView):
 
 class IndicatorExport(View):
     """
-    Export all indicators to a CSV file
+    Export all indicators to an XLS file
     """
-
     def get(self, request, *args, **kwargs):
-        if int(kwargs['id']) == 0:
-            del kwargs['id']
-        if int(kwargs['indicator_type']) == 0:
-            del kwargs['indicator_type']
-        if int(kwargs['program']) == 0:
-            del kwargs['program']
+        queryset = ip.indicator_queryset(kwargs['program'])
+        wb = ip.create_workbook(queryset)
 
-        countries = getCountry(request.user)
-        queryset = Indicator.objects \
-            .filter(**kwargs) \
-            .filter(program__country__in=countries)
-
-        indicator = IndicatorResource().export(queryset)
-        response = HttpResponse(
-            indicator.csv, content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=indicator.csv'
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format('indicator_plan.xlsx')
+        wb.save(response)
         return response
 
 
