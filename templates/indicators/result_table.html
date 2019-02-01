@@ -31,14 +31,16 @@
         {% for pt in periodictargets %}
         <tr class="collected-data__row--main">
             {% ifchanged pt %}
-            <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="text-nowrap">
+            <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="">
                 {# note ".period" is deprecated, and .period_name should be used instead #}
-                <strong class="text-uppercase">{{ pt.period_name }}</strong><br>
-                <small>
-                    {{ pt.start_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
-                    {% if pt.start_date %} - {% endif %}
-                    {{ pt.end_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
-                </small>
+                <div><strong class="text-uppercase">{{ pt.period_name }}</strong></div>
+                <div class="text-nowrap">
+                    <small>
+                        {{ pt.start_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                        {% if pt.start_date %} - {% endif %}
+                        {{ pt.end_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                    </small>
+                </div>
             </td>
             <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="text-right">
                 {% if pt.target is not None %}
@@ -76,7 +78,7 @@
                             {{ achieved|trailingzero }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                         {% endwith %}
                     </td>
-                    <td class="td--stretch">
+                    <td class="td--stretch collected-data__result--url">
 {#                        {% if cdata.evidence %}#}
 {#                            {% if cdata.evidence.url %}<a href="{{cdata.evidence.url}}" target="_blank">{% endif %}#}
 {#                            {{ cdata.evidence|default_if_none:"" }}#}
