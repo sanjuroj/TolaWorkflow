@@ -35,19 +35,19 @@ COLUMNS = [
         'field': 'number',
     },
     {
-        'name': _('Performance Indicator'),
+        'name': _('Performance indicator'),
         'category': PERFORMANCE_INDICATOR,
         'field': 'name',
         'cell_width': LARGE_CELL,
     },
     {
-        'name': _('Indicator Source'),
+        'name': _('Indicator source'),
         'category': PERFORMANCE_INDICATOR,
         'field': 'source',
         'cell_width': MEDIUM_CELL,
     },
     {
-        'name': _('Indicator Definition'),
+        'name': _('Indicator definition'),
         'category': PERFORMANCE_INDICATOR,
         'field': 'definition',
         'cell_width': LARGE_CELL,
@@ -60,13 +60,13 @@ COLUMNS = [
     },
 
     {
-        'name': _('Unit of Measure'),
+        'name': _('Unit of measure'),
         'category': TARGETS,
         'field': 'unit_of_measure',
         'cell_width': MEDIUM_CELL,
     },
     {
-        'name': _('Direction of Change'),
+        'name': _('Direction of change'),
         'category': TARGETS,
         'field': lambda i: i.get_direction_of_change_display(),
     },
@@ -81,12 +81,12 @@ COLUMNS = [
         'field': lambda i: 'C' if i.is_cumulative else 'NC',
     },
     {
-        'name': _('Baseline Value'),
+        'name': _('Baseline value'),
         'category': TARGETS,
         'field': 'baseline',
     },
     {
-        'name': _('LOP Target'),
+        'name': _('LOP target'),
         'category': TARGETS,
         'field': 'lop_target',
     },
@@ -104,7 +104,7 @@ COLUMNS = [
     },
 
     {
-        'name': _('Means of Verification'),
+        'name': _('Means of verification'),
         'category': DATA_ACQUISITION,
         'field': 'means_of_verification',
         'cell_width': MEDIUM_CELL,
@@ -153,13 +153,13 @@ COLUMNS = [
         'cell_width': MEDIUM_CELL,
     },
     {
-        'name': _('Quality Assurance Measures'),
+        'name': _('Quality assurance measures'),
         'category': ANALYSES_AND_REPORTING,
         'field': 'quality_assurance',
         'cell_width': MEDIUM_CELL,
     },
     {
-        'name': _('Data Issues'),
+        'name': _('Data issues'),
         'category': ANALYSES_AND_REPORTING,
         'field': 'data_issues',
         'cell_width': MEDIUM_CELL,
@@ -254,7 +254,7 @@ def create_workbook(indicators):
     """
     wb = Workbook()
     ws = wb.active
-    ws.title = _('Full PMP')
+    ws.title = _('Indicator plan')
 
     row_num = START_ROW
     col_num = START_COLUMN
