@@ -1,8 +1,7 @@
 from rest_framework import serializers
 
 from workflow.models import Program
-from indicators.models import PeriodicTarget, Result, Indicator, Level
-from django.db.models import Sum
+from indicators.models import Indicator, Level
 
 
 class LevelSerializer(serializers.ModelSerializer):

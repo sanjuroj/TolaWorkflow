@@ -10,13 +10,16 @@ class GaugeTank extends React.Component {
     
     handleClick = (e) => {
         e.preventDefault();
-        eventBus.emit('nav-apply-gauge-tank-filter', this.props.filterType);
+
+        if (! this.props.disabled) {
+            eventBus.emit('nav-apply-gauge-tank-filter', this.props.filterType);
+        }
     };
     
     render() {
         const tickCount = 10;
 
-        const {allIndicatorsLength, filteredIndicatorsLength, title, filledLabel, unfilledLabel, cta, emptyLabel} = this.props;
+        const {allIndicatorsLength, filteredIndicatorsLength, title, filledLabel, unfilledLabel, cta, emptyLabel, disabled} = this.props;
 
         const filterType = this.props.filterType;
         const currentIndicatorFilter = this.props.currentIndicatorFilter;
@@ -30,7 +33,7 @@ class GaugeTank extends React.Component {
                 Math.max(1, Math.min(Math.round((filteredIndicatorsLength / allIndicatorsLength) * 100), 99)));
         const filledPercent = 100 - unfilledPercent;
 
-        return <div className={classNames('gauge', 'filter-trigger', {'is-highlighted': isHighlighted})}
+        return <div className={classNames('gauge', {'filter-trigger': !disabled, 'is-highlighted': isHighlighted})}
                     onClick={this.handleClick} >
             <h6 className="gauge__title">{title}</h6>
             <div className="gauge__overview">
@@ -62,7 +65,7 @@ class GaugeTank extends React.Component {
                     }
                 </div>
             </div>
-            { unfilledPercent > 0 &&
+            { unfilledPercent > 0 && !disabled &&
             <div className="gauge__cta">
                 <span className="btn-link btn-inline"><i className="fas fa-exclamation-triangle text-warning"/> {cta}</span>
                 &nbsp;
@@ -313,6 +316,13 @@ export const ProgramMetrics = observer(function (props) {
         emptyLabel: gettext("No evidence"),
     };
 
+    // Are all targets defined for all indicators?
+    // all_targets_defined is an int (1,0) instead of bool
+    const allTargetsDefined = indicators.map(i => i.all_targets_defined === 1).every(b => b);
+
+    // Do any indicators have results?
+    const someResults = indicators.map(i => i.results_count).some(count => count > 0);
+
     // Do not display on pages with no indicators
     if (indicators.length === 0) return null;
 
@@ -337,6 +347,9 @@ export const ProgramMetrics = observer(function (props) {
 
                        allIndicatorsLength={indicators.length}
                        filteredIndicatorsLength={indicatorStore.getIndicatorsNeedingResults.length}
+
+                       disabled={! allTargetsDefined}
+
                        {...resultsLabels}
                        
                        />
@@ -346,6 +359,8 @@ export const ProgramMetrics = observer(function (props) {
                        // The names below are misleading as this gauge is measuring *results*, not indicators
                        allIndicatorsLength={indicatorStore.getTotalResultsCount}
                        filteredIndicatorsLength={indicatorStore.getTotalResultsCount - indicatorStore.getTotalResultsWithEvidenceCount}
+
+                       disabled={! allTargetsDefined || ! someResults}
 
                        {...evidenceLabels}
                        />
