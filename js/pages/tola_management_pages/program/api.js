@@ -20,7 +20,18 @@ export const fetchPrograms = (page, filters) => {
     })
 }
 
+export const updateProgram = (id, data) => api.put(`/tola_management/program/${id}/`, data).then(response => {
+    console.log(response)
+})
+
+export const updateProgramFundingStatusBulk = (ids, funding_status) => {
+    return api.post('/tola_management/program/bulk_update_status/', {ids, funding_status}).then(response => {
+        return response.data
+    })
+}
+
 
 export default {
     fetchPrograms,
+    updateProgramFundingStatusBulk,
 }

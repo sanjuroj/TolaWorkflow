@@ -4,6 +4,8 @@ import Select from 'react-select'
 import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
 import ManagementTable from 'components/management-table'
 import Pagination from 'components/pagination'
+import ProgramEditor from './components/program_editor'
+import EditProgramProfile from './components/edit_program_profile'
 
 const CountryFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
@@ -71,6 +73,62 @@ const ProgramFilter = observer(({store, filterOptions}) => {
 })
 
 
+class BulkActions extends React.Component {
+    constructor(props) {
+        super(props)
+        this.active_child = React.createRef()
+        this.state = {
+            current_action: null,
+            current_vals: []
+        }
+    }
+
+    onActionChanged(new_action) {
+        this.setState({
+            current_action: new_action.value
+        })
+    }
+
+    onChange(vals) {
+        this.setState({
+            current_vals: vals
+        })
+    }
+
+    onApply() {
+        const selected = this.props.secondaryOptions[this.state.current_action]
+        if(selected) {
+            selected.onApply(this.state.current_vals)
+        }
+    }
+
+    render() {
+        const selected = this.props.secondaryOptions[this.state.current_action]
+        const SecondaryComponent = selected && selected.component
+        return <div className="bulk-controls">
+            <div className="bulk-select">
+                <Select
+                className="bulk-select"
+                placeholder="Bulk Actions"
+                value={this.props.primaryOptions.find((o) => o.value == this.state.current_action)}
+                options={this.props.primaryOptions} onChange={(val) => this.onActionChanged(val)} />
+            </div>
+            {selected &&
+            <div className="bulk-select">
+                <SecondaryComponent value={this.state.current_vals} onChange={(vals) => this.onChange(vals)}/>
+            </div>
+            }
+            {!selected &&
+            <div className="bulk-select">
+                <Select className="bulk-select" placeholder="---"/>
+            </div>
+            }
+            <button className="btn btn-secondary" disabled={!this.state.current_action} onClick={() => this.onApply()}>Apply</button>
+        </div>
+    }
+}
+
+
 export const IndexView = observer(
     ({store}) => {
 
@@ -78,6 +136,22 @@ export const IndexView = observer(
         const organizationFilterOptions = Object.entries(store.organizations).map(([id, org]) => ({value: org.id, label: org.name}))
         const sectorFilterOptions = store.sectors.map(x => ({value: x.id, label: x.name}))
         const programFilterOptions = Object.entries(store.allPrograms).map(([id, program]) => ({value: program.id, label: program.name}))
+        const bulkProgramStatusOptions = [
+            {value: 'Funded', label: 'Funded'},
+            {value: 'Completed', label: 'Completed'},
+        ]
+
+        const bulk_actions = {
+            primary_options: [
+                {label: 'Set program status', value: 'set_program_status'},
+            ],
+            secondary_options: {
+                set_program_status: {
+                    component: (props) => <Select options={bulkProgramStatusOptions} {...props} />,
+                    onApply: (option) => store.bulkUpdateProgramStatus(option.value)
+                },
+            }
+        }
 
         return <div id="user-management-index-view" className="container-fluid row">
             <div className="col col-sm-3 filter-section">
@@ -92,16 +166,10 @@ export const IndexView = observer(
                 </div>
             </div>
             <div className="col col-sm-9 list-section">
-                <div className="list-controls row">
-                    <div className="bulk-controls">
-                        <Select className="selector" placeholder="Bulk Actions">
-                        </Select>
-                        <Select className="selector" placeholder="---">
-                        </Select>
-                        <button className="btn btn-outline-primary">Apply</button>
-                    </div>
+                <div className="list-controls">
+                    <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div>
-                        <button className="btn btn-primary" onClick={() => console.log('add a program')}><i className="fa fa-plus-circle"></i>Add Program</button>
+                        <button className="btn btn-primary" onClick={() => store.createProgram()}><i className="fa fa-plus-circle"></i>Add Program</button>
                     </div>
                 </div>
                 <div className="list-table row">
@@ -113,7 +181,7 @@ export const IndexView = observer(
                             <Row>
                                 <Col size="0.5">
                                     <div className="td--stretch">
-                                        <input type="checkbox" checked={store.bulk_targets_all} onChange={() => console.log('select all for bulk action')}/>
+                                        <input type="checkbox" checked={store.bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
                                         <div></div>
                                     </div>
                                 </Col>
@@ -128,30 +196,24 @@ export const IndexView = observer(
                             expanded={data.id == store.editing_target}
                             Expando={({Wrapper}) =>
                                 <Wrapper>
-                                    {/*
                                     <ProgramEditor
                                         new={data.id == 'new'}
                                         ProfileSection={() =>
                                             <EditProgramProfile
-                                            new={data.id == 'new'}
-                                            userData={data}
-                                            onUpdate={(new_user_data) => store.updateUserProfile(data.id, new_user_data)}
-                                            onCreate={(new_user_data) => store.saveNewUser(new_user_data)}
-                                            onCreateAndAddAnother={(new_user_data) => store.saveNewUserAndAddAnother(new_user_data)}
-                                            organizations={store.organizations} />}
-                                        HistorySection={() =>
-                                            <ProgramHistory
-                                            userData={data}
-                                            history={store.editing_target_data.history}
-                                            onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>}
+                                                new={data.id == 'new'}
+                                                program_data={data}
+                                                onUpdate={(new_program_data) => console.log('update program')}
+                                                onCreate={(new_program_data) => console.log('create new program')}
+                                                sectorOptions={sectorFilterOptions}
+                                                countryOptions={countryFilterOptions}
+                                            />}
                                     />
-                                    */}
                                 </Wrapper>
                             }>
                                 <Col size="0.5">
                                     <div className="td--stretch">
-                                        <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => console.log(`select this for bulk action: ${data.id}`) }/>
-                                        <div className="icon__clickable" onClick={() => console.log(`edit this one: ${data.id}`)} >
+                                        <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
+                                        <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
                                             <i className="fa fa-cog"></i>
                                         </div>
                                     </div>

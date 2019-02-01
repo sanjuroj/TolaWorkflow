@@ -15,7 +15,7 @@ from tola_management.views import (
     UserAdminViewSet,
     OrganizationAdminViewSet
 )
-from tola_management.resources import (
+from tola_management.programadmin import (
     ProgramAdminViewSet,
 )
 from django.conf.urls import include, url

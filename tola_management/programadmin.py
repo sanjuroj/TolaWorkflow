@@ -5,6 +5,8 @@ from django.db.models import CharField as DBCharField
 from django.db.models import IntegerField as DBIntegerField
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework import status as httpstatus
+from rest_framework.decorators import list_route
 from rest_framework.serializers import (
     Serializer,
     CharField,
@@ -34,17 +36,27 @@ class Paginator(SmallResultsSetPagination):
         ]))
         return response
 
+class NestedSectorSerializer(Serializer):
+    def to_representation(self, sector):
+        return sector.id
+
+class NestedCountrySerializer(Serializer):
+    def to_representation(self, country):
+        return country.id
+
 class ProgramAdminSerializer(Serializer):
     id = IntegerField()
-    name = CharField(max_length=255)
-    funding_status = CharField()
+    name = CharField(required=True, max_length=255)
+    funding_status = CharField(required=True)
+    gaitid = CharField(required=True)
+    description = CharField()
+    sector = NestedSectorSerializer(many=True)
+    country = NestedSectorSerializer(many=True)
 
     class Meta:
         fields = (
             'id',
             'name',
-            'organization',
-            'organization_count',
             'funding_status',
         )
 
@@ -69,9 +81,15 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
     pagination_class = Paginator
 
     def get_queryset(self):
+        viewing_user = self.request.user
         params = self.request.query_params
 
         queryset = Program.objects.all()
+
+        if not viewing_user.is_superuser:
+            queryset = queryset.filter(
+                Q(user_access__id=viewing_user.id) | Q(country__users__id=viewing_user.id)
+            )
 
         programStatus = params.get('programStatus')
         if programStatus == 'Active':
@@ -95,9 +113,9 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         if organizationFilter:
             queryset = queryset.filter(
                 Q(user_access__organization__in=organizationFilter) | Q(country__users__organization__in=organizationFilter)
-            ).distinct()
+            )
 
-        return queryset
+        return queryset.distinct()
 
     def list(self, request):
         queryset = self.get_queryset()
@@ -107,3 +125,22 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    def create(self, validated_data):
+        return Response({'d': validated_data})
+
+
+    def update(self, instance, validated_data):
+        return Response({'d': validated_data})
+
+
+    @list_route(methods=["post"])
+    def bulk_update_status(self, request):
+        ids = request.data.get("ids")
+        new_funding_status = request.data.get("funding_status")
+        new_funding_status = new_funding_status if new_funding_status in ["Completed", "Funded"] else None
+        if new_funding_status:
+            to_update = Program.objects.filter(pk__in=ids)
+            to_update.update(funding_status=new_funding_status)
+            return Response({})
+        return Response({}, status=httpstatus.HTTP_400_BAD_REQUEST)
