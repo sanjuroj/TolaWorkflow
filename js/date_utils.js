@@ -30,6 +30,13 @@ export function dateFromISOString(isoDateStr) {
     return new Date(isoDateStr);  // modern browsers can just parse it
 }
 
+// "2017-01-01" -> Date with local timezone (not UTC)
+// also lives in app.js (localDateFromISOStr)
+export function localDateFromISOString(dateStr) {
+    let dateInts = dateStr.split('-').map(function(x) {return parseInt(x)});
+    return new Date(dateInts[0], dateInts[1]-1, dateInts[2]);
+}
+
 
 // Date() -> "Oct 2, 2018" (localized)
 // JS equiv of the Django template filter:   |date:"MEDIUM_DATE_FORMAT"

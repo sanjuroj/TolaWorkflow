@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { observer } from "mobx-react"
 import eventBus from '../../../eventbus';
 import {IndicatorFilterType} from "../models";
+import {localDateFromISOString} from "../../../date_utils";
 
 
 @observer
@@ -104,7 +105,7 @@ class GaugeBand extends React.Component {
     render() {
         const tickCount = 10;
 
-        const {indicatorStore} = this.props;
+        const {indicatorStore, program} = this.props;
 
         const currentIndicatorFilter = this.props.currentIndicatorFilter;
 
@@ -128,6 +129,8 @@ class GaugeBand extends React.Component {
 
         const marginPercent = this.props.indicatorOnScopeMargin * 100;
 
+        let programPeriodStartDate = localDateFromISOString(program.reporting_period_start);
+
         // Top level wrapper of component
         let Gauge = (props) => {
             return <div className={classNames('gauge', {'is-highlighted': isHighlighted})} ref={el => this.el = el}>
@@ -140,15 +143,25 @@ class GaugeBand extends React.Component {
 
 
         if (indicatorStore.getTotalResultsCount === 0) {
-            return <Gauge>
-                <div>
-                    {/* # Translators: message describing why this display does not show any data. */}
-                    <p className="text-muted">{gettext("Unavailable until results are reported")}</p>
+            if (new Date() >= programPeriodStartDate) {
+                return <Gauge>
                     <div>
-                        <i className="gauge__icon gauge__icon--error fas fa-frown"/>
+                        {/* # Translators: message describing why this display does not show any data. */}
+                        <p className="text-muted">{gettext("Unavailable until results are reported")}</p>
+                        <div>
+                            <i className="gauge__icon gauge__icon--error fas fa-frown"/>
+                        </div>
                     </div>
-                </div>
-            </Gauge>;
+                </Gauge>;
+            } else {
+                return <Gauge>
+                    <div>
+                        {/* # Translators: message describing why this display does not show any data due to the program having not yet started. */}
+                        <p className="text-muted">{gettext("Unavailable until your first target period ends.")}</p>
+                    </div>
+                </Gauge>;
+            }
+
         }
 
         if (indicatorStore.getIndicatorsReporting.length === 0) {
@@ -261,7 +274,7 @@ class GaugeBand extends React.Component {
 
 
 export const ProgramMetrics = observer(function (props) {
-    // const program = props.rootStore.program;
+    const program = props.rootStore.program;
     const indicatorStore = props.rootStore.indicatorStore;
     const indicators = indicatorStore.indicators;
 
@@ -331,6 +344,7 @@ export const ProgramMetrics = observer(function (props) {
             <GaugeBand currentIndicatorFilter={currentIndicatorFilter}
                        indicatorOnScopeMargin={indicatorOnScopeMargin}
                        indicatorStore={indicatorStore}
+                       program={program}
             />
 
             <GaugeTank filterType={IndicatorFilterType.missingTarget}

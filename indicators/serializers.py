@@ -62,5 +62,6 @@ class ProgramSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'does_it_need_additional_target_periods',
+            'reporting_period_start',
             'reporting_period_end',
         ]

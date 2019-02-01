@@ -4,6 +4,7 @@ from datetime import datetime
 from django.core.serializers import serialize
 from django import template
 from django.db.models import QuerySet
+from django.utils.timezone import localdate
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from indicators.models import Indicator
@@ -326,6 +327,7 @@ def gauge_band(context, has_filters=True):
     # program url is only used on the home page (which is served up with has_filters = false
     #  because it does not filter in React on the home page, it links to the program page with filter in place)
     program_url = False if has_filters else program.program_page_url
+    program_started = localdate() >= program.reporting_period_start
 
     scope_percents = {
         'high': make_percent(scope_counts['high'], denominator),
@@ -342,6 +344,7 @@ def gauge_band(context, has_filters=True):
         'has_filters': has_filters,
         'program_url': program_url,
         'results_count': results_count,
+        'program_started': program_started,
     }
 
 

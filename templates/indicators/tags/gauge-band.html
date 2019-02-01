@@ -92,11 +92,16 @@
             {% endif %}
         {% else %}
         <div>
+            {% if program_started %}
             {# Translators: message describing why this display does not show any data. #}
             <p class="text-muted">{% trans "Unavailable until results are reported." %}</p>
             <div>
                 <i class="gauge__icon gauge__icon--error fas fa-frown"></i>
             </div>
+            {% else %}
+                {# Translators: message describing why this display does not show any data due to the program having not yet started. #}
+                <p class="text-muted">{% trans "Unavailable until your first target period ends." %}</p>
+            {% endif %}
         </div>
         {% endif %}
     </div>
