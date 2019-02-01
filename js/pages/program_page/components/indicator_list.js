@@ -56,8 +56,8 @@ class StatusHeader extends React.Component {
         super(props);
         this.onShowAllClick = (e) => {
             e.preventDefault();
-            eventBus.emit('clear-all-indicator-filters');
-            };
+            eventBus.emit('nav-clear-all-indicator-filters');
+        };
     }
 
     render() {
@@ -93,7 +93,7 @@ class IndicatorFilter extends React.Component{
         let selectedIndicatorId = selectedObject ? selectedObject.value : null;
 
         if (selectedIndicatorId) {
-            eventBus.emit('select-indicators-to-filter', selectedIndicatorId);
+            eventBus.emit('select-indicator-to-filter', selectedIndicatorId);
         }
     };
 

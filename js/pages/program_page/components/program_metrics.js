@@ -10,8 +10,8 @@ class GaugeTank extends React.Component {
     
     handleClick = (e) => {
         e.preventDefault();
-        eventBus.emit('apply-gauge-tank-filter', this.props.filterType);
-    }
+        eventBus.emit('nav-apply-gauge-tank-filter', this.props.filterType);
+    };
     
     render() {
         const tickCount = 10;
@@ -87,7 +87,7 @@ class GaugeBand extends React.Component {
     
     onFilterLinkClick = (e) => {
         e.preventDefault();
-        eventBus.emit('apply-gauge-tank-filter', parseInt(e.target.getAttribute('data-filter-type')));
+        eventBus.emit('nav-apply-gauge-tank-filter', parseInt(e.target.getAttribute('data-filter-type')));
     };
 
     componentDidUpdate() {

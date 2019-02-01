@@ -17,73 +17,6 @@ import './pinned_reports';
 const rootStore = new ProgramPageStore(jsContext.indicators, jsContext.program);
 const uiStore = new ProgramPageUIStore();
 
-/*
- * Routes setup:
- */
-
-const routes = [
-    { name: 'all', path: '/', filterType: IndicatorFilterType.noFilter },
-    { name: 'targets', path: '/targets', filterType: IndicatorFilterType.missingTarget },
-    { name: 'results', path: '/results', filterType: IndicatorFilterType.missingResults },
-    { name: 'evidence', path: '/evidence', filterType: IndicatorFilterType.missingEvidence },
-    { name: 'scope', path: '/scope' },
-    { name: 'scope.on', path: '/on', filterType: IndicatorFilterType.onTarget },
-    { name: 'scope.above', path: '/above', filterType: IndicatorFilterType.aboveTarget },
-    { name: 'scope.below', path: '/below', filterType: IndicatorFilterType.belowTarget }
-];
-
-var routeLookup = {};
-var routeNameLookup = {};
-
-/* generate a route map to lookup route name from filtertype (events bubbling up from gauge bands) and also
- * generate a lookup to get filtertype from route name (for url-based filtering)
- */
-for (let i=0; i<routes.length; i++) {
-    if (routes[i].name == 'scope') {
-        routeLookup[routes[i].name] = null;
-    } else {
-        routeLookup[routes[i].name] = routes[i].filterType;
-        routeNameLookup[routes[i].filterType] = routes[i].name;
-    }
-}
-
-
-const router = createRouter(routes, {
-    defaultRoute: 'all', //unrouted: show all indicators
-    defaultParams: {},
-    trailingSlashMode: 'always'
-});
-
-const routeToEventBus = (routeName) => {
-    if (!routeLookup.hasOwnProperty(routeName)) {
-        console.log('no filter for name', routeName);
-    } else {
-        let filterType = routeLookup[routeName];
-        eventBus.emit('apply-gauge-tank-filter', filterType);
-    }
-}
-
-const onNavigation = (navRoutes) => {
-    if (navRoutes.route.name == 'scope') {
-        router.navigate('scope.on', {}, {replace: true});
-    }
-};
-
-router.usePlugin(browserPlugin({useHash: true, base:'/program/'+jsContext.program.id+'/'}));
-router.subscribe(onNavigation);
-router.start();
-
-/* function to pass into gauge band elements to handle clicking a filter or show all
- */
-const filterClickToRoute = (filterType = 0) => {
-    if (routeNameLookup.hasOwnProperty(filterType)) {
-        router.navigate(routeNameLookup[filterType]);
-    } else {
-        //how do we handle js errors?
-        console.log("attempted to find (and failed) filter type", filterType);
-    }
-}
-
 
 /*
  * Event Handlers
@@ -123,35 +56,31 @@ eventBus.on('reload-indicator', indicatorId => {
     $.get(`/indicators/api/indicator/${indicatorId}`, rootStore.indicatorStore.updateIndicator);
 });
 
+// close all expanded indicators in the table
+eventBus.on('close-all-indicators', () => {
+    rootStore.deleteAllResultsHTML();
+});
+
+// Indicator filters are controlled through routes
+// these should no longer be called directly from components
+
 // apply a gas gauge filter. Takes in IndicatorFilterType enum value
 eventBus.on('apply-gauge-tank-filter', indicatorFilter => {
-
     // reset all filters
     eventBus.emit('clear-all-indicator-filters');
-
-    eventBus.emit('close-all-indicators');
-    
-    // update navigation element:
-    if (routeNameLookup.hasOwnProperty(indicatorFilter)) {
-        router.navigate(routeNameLookup[indicatorFilter]);
-    } else {
-        //how do we handle js errors?
-        console.log("attempted to find (and failed) filter type", indicatorFilter);
-    }
 
     uiStore.setIndicatorFilter(indicatorFilter);
 });
 
 // clear all gas tank and indicator select filters
 eventBus.on('clear-all-indicator-filters', () => {
-    router.navigate('all');
     uiStore.clearIndicatorFilter();
-    eventBus.emit('select-indicators-to-filter', null);
+    eventBus.emit('select-indicator-to-filter', null);
     eventBus.emit('close-all-indicators');
 });
 
 // filter down by selecting individual indicator
-eventBus.on('select-indicators-to-filter', (selectedIndicatorId) => {
+eventBus.on('select-indicator-to-filter', (selectedIndicatorId) => {
     // clear gauge tank filters
     uiStore.clearIndicatorFilter();
 
@@ -159,11 +88,6 @@ eventBus.on('select-indicators-to-filter', (selectedIndicatorId) => {
 
     // Open up results pane as well
     eventBus.emit('load-indicator-results', selectedIndicatorId);
-});
-
-// close all expanded indicators in the table
-eventBus.on('close-all-indicators', () => {
-    rootStore.deleteAllResultsHTML();
 });
 
 
@@ -179,9 +103,6 @@ ReactDOM.render(<ProgramMetrics rootStore={rootStore}
                                 indicatorOnScopeMargin={jsContext.indicator_on_scope_margin} />,
     document.querySelector('#program-metrics-react-component'));
 
-
-//fire initial filters:
-routeToEventBus(router.getState().name);
 
 /*
  * Copied and modified JS from indicator_list_modals.js to allow modals to work
@@ -239,4 +160,50 @@ $('#indicator_collecteddata_div').on('hide.bs.modal', function (e) {
         eventBus.emit('load-indicator-results', indicator_id);
         eventBus.emit('reload-indicator', indicator_id);
     }
+});
+
+
+/*
+ * Routes setup:
+ */
+
+const routes = [
+    { name: 'all', path: '/', filterType: IndicatorFilterType.noFilter },
+    { name: 'targets', path: '/targets', filterType: IndicatorFilterType.missingTarget },
+    { name: 'results', path: '/results', filterType: IndicatorFilterType.missingResults },
+    { name: 'evidence', path: '/evidence', filterType: IndicatorFilterType.missingEvidence },
+    { name: 'scope', path: '/scope', forwardTo: 'scope.on' },
+    { name: 'scope.on', path: '/on', filterType: IndicatorFilterType.onTarget },
+    { name: 'scope.above', path: '/above', filterType: IndicatorFilterType.aboveTarget },
+    { name: 'scope.below', path: '/below', filterType: IndicatorFilterType.belowTarget }
+];
+
+const router = createRouter(routes, {
+    defaultRoute: 'all', //unrouted: show all indicators
+    defaultParams: {},
+    trailingSlashMode: 'always'
+});
+
+const onNavigation = (navRoutes) => {
+    let routeName = navRoutes.route.name;
+    let routeObj = routes.find(r => r.name === routeName);
+
+    eventBus.emit('apply-gauge-tank-filter', routeObj.filterType);
+};
+
+router.usePlugin(browserPlugin({useHash: true, base:'/program/'+jsContext.program.id+'/'}));
+router.subscribe(onNavigation);
+router.start();
+
+
+// nav events
+
+eventBus.on('nav-apply-gauge-tank-filter', indicatorFilter => {
+    // Find route based on filter type and go
+    let routeObj = routes.find(r => r.filterType === indicatorFilter);
+    router.navigate(routeObj.name);
+});
+
+eventBus.on('nav-clear-all-indicator-filters', () => {
+    router.navigate('all')
 });
