@@ -1,4 +1,4 @@
-import { observable, computed, action } from "mobx";
+import { observable, computed, action, runInAction } from "mobx";
 import api from './api';
 
 const default_user = {
@@ -149,17 +149,19 @@ export class UserStore {
     fetchUsers() {
         this.fetching_users_listing = true
         api.fetchUsersWithFilter(this.current_page + 1, this.marshalFilters(this.filters)).then(results => {
-            this.fetching_users_listing = false
-            this.users = results.users.reduce((xs, x) => {
-                xs[x.id] = x
-                return xs
-            }, {})
-            this.users_listing = results.users.map(u => u.id)
-            this.bulk_targets = new Map(this.users.map(user => [user.id, false]))
-            this.users_count = results.total_users
-            this.total_pages = results.total_pages
-            this.next_page = results.next_page
-            this.previous_page = results.previous_page
+            runInAction(() => {
+                this.fetching_users_listing = false
+                this.users = results.users.reduce((xs, x) => {
+                    xs[x.id] = x
+                    return xs
+                }, {})
+                this.users_listing = results.users.map(u => u.id)
+                this.bulk_targets = new Map(this.users.map(user => [user.id, false]))
+                this.users_count = results.total_users
+                this.total_pages = results.total_pages
+                this.next_page = results.next_page
+                this.previous_page = results.previous_page
+            })
         })
     }
 
@@ -238,12 +240,14 @@ export class UserStore {
             this.editing_target = user_id
             this.fetching_editing_target = true
             Promise.all([api.fetchUser(user_id), api.fetchUserProgramAccess(user_id), api.fetchUserHistory(user_id)]).then(([user, program_data, history_data]) => {
-                this.fetching_editing_target = false
-                this.editing_target_data = {
-                    profile: user,
-                    programs: program_data,
-                    history: history_data
-                }
+                runInAction(() => {
+                    this.fetching_editing_target = false
+                    this.editing_target_data = {
+                        profile: user,
+                        programs: program_data,
+                        history: history_data
+                    }
+                })
             })
         }
     }
@@ -278,13 +282,17 @@ export class UserStore {
     updateUserProfile(user_id, new_user_data) {
         this.saving_user_profile = true
         api.saveUserProfile(user_id, new_user_data).then(result => {
-            this.saving_user_profile = false
-            this.users[user_id] = result
             this.onSaveSuccessHandler()
+            runInAction(() => {
+                this.saving_user_profile = false
+                this.users[user_id] = result
+            })
         }).catch(errors => {
-            this.saving_user_profile = false
             this.onSaveErrorHandler()
-            this.editing_errors = errors.response.data
+            runInAction(() => {
+                this.saving_user_profile = false
+                this.editing_errors = errors.response.data
+            })
         })
     }
 
@@ -299,22 +307,26 @@ export class UserStore {
     saveNewUser(new_user_data) {
         this.saving_user_profile = true
         api.createUser(new_user_data).then(result => api.fetchUserAggregates(result.id).then(aggregates => {
-            this.saving_user_profile = false
-            this.users[result.id] = {
-                id: result.id,
-                name: result.name,
-                organization_name: this.organizations.find(o => o.id = result.organization_id).name,
-                user_programs: aggregates.program_count,
-                is_admin: result.user.is_staff,
-                is_active: result.user.is_active
-            }
-            this.users_listing[0] = result.id
-            delete this.users["new"]
             this.onSaveSuccessHandler()
+            runInAction(() => {
+                this.saving_user_profile = false
+                this.users[result.id] = {
+                    id: result.id,
+                    name: result.name,
+                    organization_name: this.organizations.find(o => o.id = result.organization_id).name,
+                    user_programs: aggregates.program_count,
+                    is_admin: result.user.is_staff,
+                    is_active: result.user.is_active
+                }
+                this.users_listing[0] = result.id
+                delete this.users["new"]
+            })
         })).catch(errors => {
-            this.saving_user_profile = false
             this.onSaveErrorHandler()
-            this.editing_errors = errors.response.data
+            runInAction(() => {
+                this.saving_user_profile = false
+                this.editing_errors = errors.response.data
+            })
         })
     }
 
@@ -322,23 +334,27 @@ export class UserStore {
     saveNewUserAndAddAnother(new_user_data) {
         this.saving_user_profile = true
         api.createUser(new_user_data).then(result => api.fetchUserAggregates(result.id).then(aggregates => {
-            this.saving_user_profile = false
-            this.users[result.id] = {
-                id: result.id,
-                name: result.name,
-                organization_name: this.organizations.find(o => o.id = result.organization_id).name,
-                user_programs: aggregates.program_count,
-                is_admin: result.user.is_staff,
-                is_active: result.user.is_active
-            }
-            this.users_listing[0] = result.id
-            delete this.users["new"]
-            this.createUser()
             this.onSaveSuccessHandler()
+            runInAction(() => {
+                this.saving_user_profile = false
+                this.users[result.id] = {
+                    id: result.id,
+                    name: result.name,
+                    organization_name: this.organizations.find(o => o.id = result.organization_id).name,
+                    user_programs: aggregates.program_count,
+                    is_admin: result.user.is_staff,
+                    is_active: result.user.is_active
+                }
+                this.users_listing[0] = result.id
+                delete this.users["new"]
+                this.createUser()
+            })
         })).catch(errors => {
-            this.saving_user_profile = false
             this.onSaveErrorHandler()
-            this.editing_errors = errors.response.data
+            runInAction(() => {
+                this.saving_user_profile = false
+                this.editing_errors = errors.response.data
+            })
         })
     }
 
@@ -346,10 +362,14 @@ export class UserStore {
     saveUserPrograms(user_id, new_user_programs_data) {
         this.save_user_programs = true
         api.saveUserPrograms(user_id, new_user_programs_data).then(result => {
-            this.save_user_programs = false
+            runInAction(() => {
+                this.save_user_programs = false
+            })
             this.onSaveSuccessHandler()
         }).catch(response => {
-            this.save_user_programs = false
+            runInAction(() => {
+                this.save_user_programs = false
+            })
             this.onSaveErrorHandler()
         })
     }
@@ -361,10 +381,14 @@ export class UserStore {
             this.getSelectedBulkTargetIDs(),
             new_status
         ).then(result => {
-            this.applying_bulk_updates = false
+            runInAction(() => {
+                this.applying_bulk_updates = false
+            })
             this.onSaveSuccessHandler()
         }).catch(response => {
-            this.applying_bulk_updates = false
+            runInAction(() => {
+                this.applying_bulk_updates = false
+            })
             this.onSaveErrorHandler()
         })
     }
@@ -376,10 +400,14 @@ export class UserStore {
             this.getSelectedBulkTargetIDs(),
             added_programs
         ).then(result => {
-            this.applying_bulk_updates = false
+            runInAction(() => {
+                this.applying_bulk_updates = false
+            })
             this.onSaveSuccessHandler()
         }).catch(response => {
-            this.applying_bulk_updates = false
+            runInAction(() => {
+                this.applying_bulk_updates = false
+            })
             this.onSaveErrorHandler()
         })
     }
@@ -391,10 +419,14 @@ export class UserStore {
             this.getSelectedBulkTargetIDs(),
             removed_programs
         ).then(result => {
-            this.applying_bulk_updates = false
+            runInAction(() => {
+                this.applying_bulk_updates = false
+            })
             this.onSaveSuccessHandler()
         }).catch(response => {
-            this.applying_bulk_updates = false
+            runInAction(() => {
+                this.applying_bulk_updates = false
+            })
             this.onSaveErrorHandler()
         })
     }
