@@ -29,6 +29,25 @@
             </tr>
         </thead>
         {% for pt in periodictargets %}
+            {% if pt == indicator.current_periodic_target and  indicator.is_target_frequency_time_aware  %}
+            <tr class="collected-data__row--subtotal">
+                {# (show the summary row BEFORE the current period) #}
+                <td class="bg-medium">
+                    <div><em><strong>Program to date</strong></em></div>
+                    <div class="text-nowrap">
+                        <small>
+                            {{ program.reporting_period_start|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                            {% if pt.end_date and program.reporting_period_start %}–{% endif %}
+                            {{ pt.end_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                        </small>
+                    </div>
+                </td>
+                <td class="bg-medium"><strong>{target}</strong></td>
+                <td class="bg-medium"><strong>{actual}</strong></td>
+                <td class="bg-medium"><strong>{percent met}</strong></td>
+                <td colspan="3" class="bg-medium"></td>
+            </tr>
+            {% endif %}
         <tr class="collected-data__row--main">
             {% ifchanged pt %}
             <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="">
