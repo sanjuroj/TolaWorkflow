@@ -29,8 +29,8 @@
             </tr>
         </thead>
         {% for pt in periodictargets %}
-            {% if pt == indicator.current_periodic_target and  indicator.is_target_frequency_time_aware  %}
-            <tr class="collected-data__row--subtotal">
+            {% if pt == indicator.current_periodic_target and indicator.is_target_frequency_time_aware %}
+            <tr class="collected-data__row--subtotal pt-ended">
                 {# (show the summary row BEFORE the current period) #}
                 <td class="bg-medium">
                     <div><em><strong>Program to date</strong></em></div>
@@ -48,7 +48,7 @@
                 <td colspan="3" class="bg-medium"></td>
             </tr>
             {% endif %}
-            <tr class="collected-data__row--main">
+            <tr class="collected-data__row--main{% if pt.has_ended and indicator.is_target_frequency_time_aware %} pt-ended{% endif %}">
                 {% ifchanged pt %}
                 <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="">
                     {# note ".period" is deprecated, and .period_name should be used instead #}

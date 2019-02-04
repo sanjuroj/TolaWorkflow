@@ -34,6 +34,19 @@
 }
 
 .collected-data__row--main {}
+.collected-data__row--subtotal {
+    td {
+        border-bottom: 2px solid $gray-400;
+    }
+}
+.pt-ended { // TODO: not very BEM
+    td:first-child {
+        border-left: 2px solid $gray-400;
+    }
+    td:last-child {
+        border-right: 2px solid $gray-400;
+    }
+}
 .collected-data__row--supplemental {
     td {
         border-top: 1px solid $gray-150;
