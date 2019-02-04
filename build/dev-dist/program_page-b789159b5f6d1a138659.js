@@ -49,8 +49,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 /* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "wHSu");
 /* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../models */ "YVM2");
-/* harmony import */ var _components_bootstrap_multiselect__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../components/bootstrap_multiselect */ "lYLt");
-var _class, _class2, _class3;
+/* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-select */ "y2Vs");
+var _class, _class2, _temp, _class4;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -62,13 +62,13 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 
 
@@ -133,17 +133,16 @@ function (_React$Component) {
     _classCallCheck(this, StatusHeader);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(StatusHeader).call(this, props));
-    _this.onShowAllClick = _this.onShowAllClick.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+
+    _this.onShowAllClick = function (e) {
+      e.preventDefault();
+      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('clear-all-indicator-filters');
+    };
+
     return _this;
   }
 
   _createClass(StatusHeader, [{
-    key: "onShowAllClick",
-    value: function onShowAllClick(e) {
-      e.preventDefault();
-      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('clear-all-indicator-filters');
-    }
-  }, {
     key: "render",
     value: function render() {
       var _this$props = this.props,
@@ -174,28 +173,54 @@ function (_React$Component) {
   return StatusHeader;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class;
 
-var IndicatorFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class2 =
+var IndicatorFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class2 = (_temp =
 /*#__PURE__*/
 function (_React$Component2) {
   _inherits(IndicatorFilter, _React$Component2);
 
   function IndicatorFilter() {
+    var _getPrototypeOf2;
+
+    var _this2;
+
     _classCallCheck(this, IndicatorFilter);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(IndicatorFilter).apply(this, arguments));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this2 = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(IndicatorFilter)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    _this2.onSelection = function (selectedObject) {
+      var selectedIndicatorId = selectedObject ? selectedObject.value : null;
+
+      if (selectedIndicatorId) {
+        _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('select-indicators-to-filter', selectedIndicatorId);
+      }
+    };
+
+    return _this2;
   }
 
   _createClass(IndicatorFilter, [{
     key: "render",
     value: function render() {
       var indicators = this.props.rootStore.indicatorStore.indicators;
-      var selectedIndicatorIds = this.props.uiStore.selectedIndicatorIds;
+      var selectedIndicatorId = this.props.uiStore.selectedIndicatorId;
       var indicatorSelectOptions = indicators.map(function (i) {
         return {
           value: i.id,
           label: i.name
         };
       });
+      var selectedValue = null;
+
+      if (selectedIndicatorId) {
+        selectedValue = indicatorSelectOptions.find(function (i) {
+          return i.value === selectedIndicatorId;
+        });
+      }
+
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("nav", {
         className: "list__filters list__filters--inline-label",
         id: "id_div_indicators"
@@ -203,34 +228,33 @@ function (_React$Component2) {
         className: "filters__label"
       }, gettext("Find an indicator:")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "filters__control"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_bootstrap_multiselect__WEBPACK_IMPORTED_MODULE_8__["Select"], {
-        forceEmptySelect: true,
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_8__["default"], {
         options: indicatorSelectOptions,
-        selected: selectedIndicatorIds,
-        onSelectCb: function onSelectCb(selectedIndicatorIds) {
-          return _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('select-indicators-to-filter', selectedIndicatorIds);
-        }
+        value: selectedValue,
+        isClearable: false,
+        placeholder: gettext('None'),
+        onChange: this.onSelection
       })));
     }
   }]);
 
   return IndicatorFilter;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class2;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class2;
 
-var IndicatorListTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class3 =
+var IndicatorListTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class4 =
 /*#__PURE__*/
 function (_React$Component3) {
   _inherits(IndicatorListTable, _React$Component3);
 
   function IndicatorListTable(props) {
-    var _this2;
+    var _this3;
 
     _classCallCheck(this, IndicatorListTable);
 
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorListTable).call(this, props));
-    _this2.onIndicatorUpdateClick = _this2.onIndicatorUpdateClick.bind(_assertThisInitialized(_assertThisInitialized(_this2)));
-    _this2.onIndicatorResultsToggleClick = _this2.onIndicatorResultsToggleClick.bind(_assertThisInitialized(_assertThisInitialized(_this2)));
-    return _this2;
+    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorListTable).call(this, props));
+    _this3.onIndicatorUpdateClick = _this3.onIndicatorUpdateClick.bind(_assertThisInitialized(_assertThisInitialized(_this3)));
+    _this3.onIndicatorResultsToggleClick = _this3.onIndicatorResultsToggleClick.bind(_assertThisInitialized(_assertThisInitialized(_this3)));
+    return _this3;
   }
 
   _createClass(IndicatorListTable, [{
@@ -254,7 +278,7 @@ function (_React$Component3) {
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       var indicators = this.props.indicators;
       var program = this.props.program;
@@ -298,7 +322,7 @@ function (_React$Component3) {
           href: "#",
           className: "indicator_results_toggle",
           onClick: function onClick(e) {
-            return _this3.onIndicatorResultsToggleClick(e, indicator.id);
+            return _this4.onIndicatorResultsToggleClick(e, indicator.id);
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
           icon: resultsExist ? 'caret-down' : 'caret-right'
@@ -318,7 +342,7 @@ function (_React$Component3) {
           href: "#",
           className: "indicator-link",
           onClick: function onClick(e) {
-            return _this3.onIndicatorUpdateClick(e, indicator.id);
+            return _this4.onIndicatorUpdateClick(e, indicator.id);
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
           className: "fas fa-cog"
@@ -345,7 +369,7 @@ function (_React$Component3) {
   }]);
 
   return IndicatorListTable;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class3;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class4;
 
 var IndicatorList = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(function (props) {
   var program = props.rootStore.program;
@@ -353,14 +377,14 @@ var IndicatorList = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(
 
   var resultsMap = props.rootStore.resultsMap;
   var currentIndicatorFilter = props.uiStore.currentIndicatorFilter;
-  var selectedIndicatorIds = props.uiStore.selectedIndicatorIds; // Either a gas gauge filter is applied, or an indicator has been selected, but not both
+  var selectedIndicatorId = props.uiStore.selectedIndicatorId; // Either a gas gauge filter is applied, or an indicator has been selected, but not both
   // apply gas gauge filter
 
   var filteredIndicators = indicatorStore.filterIndicators(currentIndicatorFilter);
 
-  if (selectedIndicatorIds.length > 0) {
+  if (selectedIndicatorId) {
     filteredIndicators = filteredIndicators.filter(function (i) {
-      return selectedIndicatorIds.indexOf(i.id) > -1;
+      return i.id == selectedIndicatorId;
     });
   }
 
@@ -368,7 +392,7 @@ var IndicatorList = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(
     indicatorCount: filteredIndicators.length,
     programId: program.id,
     currentIndicatorFilter: currentIndicatorFilter,
-    filterApplied: currentIndicatorFilter || selectedIndicatorIds.length > 0
+    filterApplied: currentIndicatorFilter || selectedIndicatorId
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorFilter, {
     uiStore: props.uiStore,
     rootStore: props.rootStore
@@ -417,6 +441,7 @@ function _initializerWarningHelper(descriptor, context) { throw new Error('Decor
  // Types of filters available on the program page
 
 var IndicatorFilterType = Object.freeze({
+  noFilter: 0,
   missingTarget: 1,
   missingResults: 2,
   missingEvidence: 3,
@@ -478,6 +503,7 @@ function () {
           indicators = this.getIndicatorsOnTarget;
           break;
 
+        case IndicatorFilterType.noFilter:
         default:
           indicators = this.indicators;
       }
@@ -627,11 +653,11 @@ function () {
 
     _initializerDefineProperty(this, "currentIndicatorFilter", _descriptor4, this);
 
-    _initializerDefineProperty(this, "selectedIndicatorIds", _descriptor5, this);
+    _initializerDefineProperty(this, "selectedIndicatorId", _descriptor5, this);
 
     this.setIndicatorFilter = this.setIndicatorFilter.bind(this);
     this.clearIndicatorFilter = this.clearIndicatorFilter.bind(this);
-    this.setSelectedIndicatorIds = this.setSelectedIndicatorIds.bind(this);
+    this.setSelectedIndicatorId = this.setSelectedIndicatorId.bind(this);
   }
 
   _createClass(ProgramPageUIStore, [{
@@ -645,9 +671,9 @@ function () {
       this.currentIndicatorFilter = null;
     }
   }, {
-    key: "setSelectedIndicatorIds",
-    value: function setSelectedIndicatorIds(selectedIndicatorIds) {
-      this.selectedIndicatorIds = selectedIndicatorIds;
+    key: "setSelectedIndicatorId",
+    value: function setSelectedIndicatorId(selectedIndicatorId) {
+      this.selectedIndicatorId = selectedIndicatorId;
     }
   }]);
 
@@ -657,14 +683,12 @@ function () {
   enumerable: true,
   writable: true,
   initializer: null
-}), _descriptor5 = _applyDecoratedDescriptor(_class5.prototype, "selectedIndicatorIds", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor5 = _applyDecoratedDescriptor(_class5.prototype, "selectedIndicatorId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
-  initializer: function initializer() {
-    return [];
-  }
-}), _applyDecoratedDescriptor(_class5.prototype, "setIndicatorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "setIndicatorFilter"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "clearIndicatorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "clearIndicatorFilter"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "setSelectedIndicatorIds", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "setSelectedIndicatorIds"), _class5.prototype)), _class5);
+  initializer: null
+}), _applyDecoratedDescriptor(_class5.prototype, "setIndicatorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "setIndicatorFilter"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "clearIndicatorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "clearIndicatorFilter"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "setSelectedIndicatorId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "setSelectedIndicatorId"), _class5.prototype)), _class5);
 
 /***/ }),
 
@@ -682,29 +706,127 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "i8i4");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _eventbus__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../eventbus */ "qtBC");
-/* harmony import */ var _components_indicator_list__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/indicator_list */ "KPAS");
-/* harmony import */ var _components_program_metrics__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/program_metrics */ "rE5y");
-/* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./models */ "YVM2");
-/* harmony import */ var _pinned_reports__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pinned_reports */ "DaGC");
-/* harmony import */ var _pinned_reports__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_pinned_reports__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var router5__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! router5 */ "wgi2");
+/* harmony import */ var router5_plugin_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! router5-plugin-browser */ "0pHI");
+/* harmony import */ var _components_indicator_list__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/indicator_list */ "KPAS");
+/* harmony import */ var _components_program_metrics__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/program_metrics */ "rE5y");
+/* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./models */ "YVM2");
+/* harmony import */ var _pinned_reports__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./pinned_reports */ "DaGC");
+/* harmony import */ var _pinned_reports__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_pinned_reports__WEBPACK_IMPORTED_MODULE_8__);
 
 
 
 
 
 
- // console.log(jsContext);
+
+
 
 /*
  * Model/Store setup
  */
 
-var rootStore = new _models__WEBPACK_IMPORTED_MODULE_5__["ProgramPageStore"](jsContext.indicators, jsContext.program);
-var uiStore = new _models__WEBPACK_IMPORTED_MODULE_5__["ProgramPageUIStore"]();
+var rootStore = new _models__WEBPACK_IMPORTED_MODULE_7__["ProgramPageStore"](jsContext.indicators, jsContext.program);
+var uiStore = new _models__WEBPACK_IMPORTED_MODULE_7__["ProgramPageUIStore"]();
+/*
+ * Routes setup:
+ */
+
+var routes = [{
+  name: 'all',
+  path: '/',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].noFilter
+}, {
+  name: 'targets',
+  path: '/targets',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingTarget
+}, {
+  name: 'results',
+  path: '/results',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingResults
+}, {
+  name: 'evidence',
+  path: '/evidence',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingEvidence
+}, {
+  name: 'scope',
+  path: '/scope'
+}, {
+  name: 'scope.on',
+  path: '/on',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].onTarget
+}, {
+  name: 'scope.above',
+  path: '/above',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].aboveTarget
+}, {
+  name: 'scope.below',
+  path: '/below',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].belowTarget
+}];
+var routeLookup = {};
+var routeNameLookup = {};
+/* generate a route map to lookup route name from filtertype (events bubbling up from gauge bands) and also
+ * generate a lookup to get filtertype from route name (for url-based filtering)
+ */
+
+for (var i = 0; i < routes.length; i++) {
+  if (routes[i].name == 'scope') {
+    routeLookup[routes[i].name] = null;
+  } else {
+    routeLookup[routes[i].name] = routes[i].filterType;
+    routeNameLookup[routes[i].filterType] = routes[i].name;
+  }
+}
+
+var router = Object(router5__WEBPACK_IMPORTED_MODULE_3__["default"])(routes, {
+  defaultRoute: 'all',
+  //unrouted: show all indicators
+  defaultParams: {},
+  trailingSlashMode: 'always'
+});
+
+var routeToEventBus = function routeToEventBus(routeName) {
+  if (!routeLookup.hasOwnProperty(routeName)) {
+    console.log('no filter for name', routeName);
+  } else {
+    var filterType = routeLookup[routeName];
+    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('apply-gauge-tank-filter', filterType);
+  }
+};
+
+var onNavigation = function onNavigation(navRoutes) {
+  if (navRoutes.route.name == 'scope') {
+    router.navigate('scope.on', {}, {
+      replace: true
+    });
+  }
+};
+
+router.usePlugin(Object(router5_plugin_browser__WEBPACK_IMPORTED_MODULE_4__["default"])({
+  useHash: true,
+  base: '/program/' + jsContext.program.id + '/'
+}));
+router.subscribe(onNavigation);
+router.start();
+/* function to pass into gauge band elements to handle clicking a filter or show all
+ */
+
+var filterClickToRoute = function filterClickToRoute() {
+  var filterType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+  if (routeNameLookup.hasOwnProperty(filterType)) {
+    router.navigate(routeNameLookup[filterType]);
+  } else {
+    //how do we handle js errors?
+    console.log("attempted to find (and failed) filter type", filterType);
+  }
+};
 /*
  * Event Handlers
  */
 // open indicator update modal with form loaded from server
+
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('open-indicator-update-modal', function (indicatorId) {
   // Note: depends on indicator_list_modals.html
@@ -716,6 +838,7 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('open-indicator-update-moda
 }); // get results html blob for indicator
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('load-indicator-results', function (indicatorId) {
+  if (!indicatorId) return;
   var url = "/indicators/result_table/".concat(indicatorId, "/").concat(rootStore.program.id, "/");
   $.get(url, function (data) {
     rootStore.addResultsHTML(indicatorId, data);
@@ -733,24 +856,31 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('reload-indicator', functio
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('apply-gauge-tank-filter', function (indicatorFilter) {
   // reset all filters
   _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('clear-all-indicator-filters');
-  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('close-all-indicators');
+  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('close-all-indicators'); // update navigation element:
+
+  if (routeNameLookup.hasOwnProperty(indicatorFilter)) {
+    router.navigate(routeNameLookup[indicatorFilter]);
+  } else {
+    //how do we handle js errors?
+    console.log("attempted to find (and failed) filter type", indicatorFilter);
+  }
+
   uiStore.setIndicatorFilter(indicatorFilter);
 }); // clear all gas tank and indicator select filters
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('clear-all-indicator-filters', function () {
+  router.navigate('all');
   uiStore.clearIndicatorFilter();
-  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('select-indicators-to-filter', []);
+  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('select-indicators-to-filter', null);
   _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('close-all-indicators');
 }); // filter down by selecting individual indicator
 
-_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('select-indicators-to-filter', function (selectedIndicatorIds) {
+_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('select-indicators-to-filter', function (selectedIndicatorId) {
   // clear gauge tank filters
   uiStore.clearIndicatorFilter();
-  uiStore.setSelectedIndicatorIds(selectedIndicatorIds); // Open up results pane as well
+  uiStore.setSelectedIndicatorId(selectedIndicatorId); // Open up results pane as well
 
-  selectedIndicatorIds.forEach(function (id) {
-    return _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('load-indicator-results', id);
-  });
+  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('load-indicator-results', selectedIndicatorId);
 }); // close all expanded indicators in the table
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('close-all-indicators', function () {
@@ -760,15 +890,17 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('close-all-indicators', fun
  * React components on page
  */
 
-react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicator_list__WEBPACK_IMPORTED_MODULE_3__["IndicatorList"], {
+react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicator_list__WEBPACK_IMPORTED_MODULE_5__["IndicatorList"], {
   rootStore: rootStore,
   uiStore: uiStore
 }), document.querySelector('#indicator-list-react-component'));
-react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_program_metrics__WEBPACK_IMPORTED_MODULE_4__["ProgramMetrics"], {
+react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_program_metrics__WEBPACK_IMPORTED_MODULE_6__["ProgramMetrics"], {
   rootStore: rootStore,
   uiStore: uiStore,
   indicatorOnScopeMargin: jsContext.indicator_on_scope_margin
-}), document.querySelector('#program-metrics-react-component'));
+}), document.querySelector('#program-metrics-react-component')); //fire initial filters:
+
+routeToEventBus(router.getState().name);
 /*
  * Copied and modified JS from indicator_list_modals.js to allow modals to work
  * without being completely converted to React
@@ -825,167 +957,6 @@ $('#indicator_collecteddata_div').on('hide.bs.modal', function (e) {
 
 /***/ }),
 
-/***/ "lYLt":
-/*!************************************************!*\
-  !*** ./js/components/bootstrap_multiselect.js ***!
-  \************************************************/
-/*! exports provided: Select */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Select", function() { return Select; });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "xeH2");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react_fast_compare__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-fast-compare */ "bmMU");
-/* harmony import */ var react_fast_compare__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_fast_compare__WEBPACK_IMPORTED_MODULE_2__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-/* React wrappers to bootstrap-multiselect widgets */
-
-/* Note: bootstrap-multiselect exists in the global JS context (imported in base.html) */
-
-
-
-/*
-  Props:
-
-    - options: list of objects with 'value' and 'label' (assumes values are ints!)
-    - selected: single value, or array of values of selected options
-    - onSelectCb: a callback function that takes a list of selected values
-    - isMultiSelect: boolean - is a multi-select?
-    - forceEmptySelect: boolean - in single select, force "None selected" even if empty option is not provided
-    - nonSelectText: string - the text to display on an empty selection
- */
-
-var Select =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(Select, _React$Component);
-
-  function Select(props) {
-    var _this;
-
-    _classCallCheck(this, Select);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Select).call(this, props));
-    _this.onChange = _this.onChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
-    _this.clearInternalSelection = _this.clearInternalSelection.bind(_assertThisInitialized(_assertThisInitialized(_this)));
-    return _this;
-  }
-
-  _createClass(Select, [{
-    key: "onChange",
-    value: function onChange() {
-      var selectedValues = this.$el.find('option:selected').map(function () {
-        return parseInt(jquery__WEBPACK_IMPORTED_MODULE_1___default()(this).val());
-      }).get();
-
-      if (this.props.onSelectCb) {
-        this.props.onSelectCb(selectedValues);
-      }
-    }
-  }, {
-    key: "clearInternalSelection",
-    value: function clearInternalSelection() {
-      // Set "none" selected in single select mode, with no empty option
-      // these do not trigger any bs-multiselect callbacks
-      if (this.props.forceEmptySelect) {
-        this.$el.val('');
-      }
-    }
-  }, {
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      var nonSelectText = this.props.nonSelectText;
-      var multiSelectOptions = {
-        nonSelectedText: nonSelectText,
-        includeSelectAllOption: true,
-        enableFiltering: true,
-        enableCaseInsensitiveFiltering: true,
-        numberDisplayed: 1,
-        maxHeight: 320,
-        buttonClass: 'btn form-control',
-        templates: {
-          filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
-          filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>'
-        },
-        onChange: this.onChange,
-        onSelectAll: this.onChange,
-        onDeselectAll: this.onChange
-      }; // jquery ref to select element
-
-      this.$el = jquery__WEBPACK_IMPORTED_MODULE_1___default()(this.el); // initial setup of BS multiselect
-
-      this.$el.multiselect(multiSelectOptions); // set the selection and options
-
-      this.componentDidUpdate();
-    }
-  }, {
-    key: "componentDidUpdate",
-    value: function componentDidUpdate(prevProps) {
-      var _this$props = this.props,
-          options = _this$props.options,
-          selected = _this$props.selected; // Setting the options clears the filter search field which is not desired behavior
-      // As such, limit setting the options unless they really have changed
-      // Hopefully this deep check isn't too slow for a large number of options
-
-      if (!prevProps || !react_fast_compare__WEBPACK_IMPORTED_MODULE_2___default()(prevProps.options, options)) {
-        this.$el.multiselect('dataprovider', options);
-      }
-
-      this.$el.multiselect('select', selected);
-
-      if (selected.length === 0) {
-        this.clearInternalSelection();
-      }
-
-      this.$el.multiselect('refresh');
-    }
-  }, {
-    key: "componentWillUnmount",
-    value: function componentWillUnmount() {
-      this.$el.multiselect('destroy');
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this2 = this;
-
-      var isMultiSelect = this.props.isMultiSelect ? "multiple" : null;
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
-        className: "form-control",
-        ref: function ref(el) {
-          return _this2.el = el;
-        },
-        multiple: isMultiSelect
-      });
-    }
-  }]);
-
-  return Select;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
-
-/***/ }),
-
 /***/ "qtBC":
 /*!************************!*\
   !*** ./js/eventbus.js ***!
@@ -1021,7 +992,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! mobx-react */ "okNM");
 /* harmony import */ var _eventbus__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../eventbus */ "qtBC");
 /* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../models */ "YVM2");
-var _class, _class2;
+var _class, _temp, _class3, _temp2;
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
@@ -1043,41 +1014,47 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 
 
 
 
 
-
-var GaugeTank = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class =
+var GaugeTank = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class = (_temp =
 /*#__PURE__*/
 function (_React$Component) {
   _inherits(GaugeTank, _React$Component);
 
-  function GaugeTank(props) {
+  function GaugeTank() {
+    var _getPrototypeOf2;
+
     var _this;
 
     _classCallCheck(this, GaugeTank);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(GaugeTank).call(this, props));
-    _this.onGuageClick = _this.onGuageClick.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(GaugeTank)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    _this.handleClick = function (e) {
+      e.preventDefault();
+      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('apply-gauge-tank-filter', _this.props.filterType);
+    };
+
     return _this;
   }
 
   _createClass(GaugeTank, [{
-    key: "onGuageClick",
-    value: function onGuageClick() {
-      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('apply-gauge-tank-filter', this.props.filterType);
-    }
-  }, {
     key: "render",
     value: function render() {
       var tickCount = 10;
@@ -1100,7 +1077,7 @@ function (_React$Component) {
         className: classnames__WEBPACK_IMPORTED_MODULE_1___default()('gauge', 'filter-trigger', {
           'is-highlighted': isHighlighted
         }),
-        onClick: this.onGuageClick
+        onClick: this.handleClick
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h6", {
         className: "gauge__title"
       }, title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -1147,9 +1124,9 @@ function (_React$Component) {
   }]);
 
   return GaugeTank;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class;
 
-var GaugeBand = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class2 =
+var GaugeBand = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class3 = (_temp2 =
 /*#__PURE__*/
 function (_React$Component2) {
   _inherits(GaugeBand, _React$Component2);
@@ -1160,8 +1137,13 @@ function (_React$Component2) {
     _classCallCheck(this, GaugeBand);
 
     _this2 = _possibleConstructorReturn(this, _getPrototypeOf(GaugeBand).call(this, props));
+
+    _this2.onFilterLinkClick = function (e) {
+      e.preventDefault();
+      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('apply-gauge-tank-filter', parseInt(e.target.getAttribute('data-filter-type')));
+    };
+
     _this2.handledFilterTypes = new Set([_models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].aboveTarget, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].belowTarget, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].onTarget]);
-    _this2.onFilterLinkClick = _this2.onFilterLinkClick.bind(_assertThisInitialized(_assertThisInitialized(_this2)));
     return _this2;
   }
 
@@ -1172,12 +1154,6 @@ function (_React$Component2) {
       $(this.el).find('[data-toggle="popover"]').popover({
         html: true
       });
-    }
-  }, {
-    key: "onFilterLinkClick",
-    value: function onFilterLinkClick(e, filterType) {
-      e.preventDefault();
-      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('apply-gauge-tank-filter', filterType);
     }
   }, {
     key: "render",
@@ -1310,7 +1286,7 @@ function (_React$Component2) {
         className: "text-muted"
       },
       /* # Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
-      interpolate(gettext('%s%% unavailable'), [percentNonReporting])), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      interpolate(gettext('%s% unavailable'), [percentNonReporting])), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
         tabIndex: "0",
         "data-toggle": "popover",
@@ -1328,17 +1304,15 @@ function (_React$Component2) {
         className: "gauge__label"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "gauge__value--above filter-trigger--band",
-        onClick: function onClick(e) {
-          return _this3.onFilterLinkClick(e, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].aboveTarget);
-        },
+        "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].aboveTarget,
+        onClick: this.onFilterLinkClick,
         dangerouslySetInnerHTML: aboveTargetMarkup()
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "gauge__label"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "gauge__value filter-trigger--band",
-        onClick: function onClick(e) {
-          return _this3.onFilterLinkClick(e, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].onTarget);
-        },
+        "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].onTarget,
+        onClick: this.onFilterLinkClick,
         dangerouslySetInnerHTML: onTargetMarkup()
       }), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
@@ -1358,16 +1332,15 @@ function (_React$Component2) {
         className: "gauge__label"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "gauge__value--below filter-trigger--band",
-        onClick: function onClick(e) {
-          return _this3.onFilterLinkClick(e, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].belowTarget);
-        },
+        "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].belowTarget,
+        onClick: this.onFilterLinkClick,
         dangerouslySetInnerHTML: belowTargetMarkup()
       }))));
     }
   }]);
 
   return GaugeBand;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class2;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp2)) || _class3;
 
 var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(function (props) {
   // const program = props.rootStore.program;
@@ -1439,18 +1412,7 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
   }, evidenceLabels)));
 });
 
-/***/ }),
-
-/***/ "xeH2":
-/*!*************************!*\
-  !*** external "jQuery" ***!
-  \*************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = jQuery;
-
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-6fabb62ecb6f565e900f.js.map
+//# sourceMappingURL=program_page-b789159b5f6d1a138659.js.map

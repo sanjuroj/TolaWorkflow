@@ -418,6 +418,15 @@ function (_React$Component2) {
         selectedValue = indicatorOptions.find(function (p) {
           return p.value === selectedIndicatorId;
         });
+      } // Force the menu closed when the Select widget is also disabled
+      // otherwise the menu remains open and is not closeable since the widget
+      // no longer accepts mouse clicks
+
+
+      var menuIsOpen = undefined;
+
+      if (!selectedProgramId) {
+        menuIsOpen = false;
       }
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_5__["default"], {
@@ -426,7 +435,8 @@ function (_React$Component2) {
         value: selectedValue,
         isClearable: true,
         placeholder: gettext('Filter by indicator'),
-        onChange: this.onSelection
+        onChange: this.onSelection,
+        menuIsOpen: menuIsOpen
       });
     }
   }]);
@@ -805,4 +815,4 @@ var globalEventBus = nanobus__WEBPACK_IMPORTED_MODULE_0___default()();
 /***/ })
 
 },[["Wr7D","runtime","vendors"]]]);
-//# sourceMappingURL=document_list-50a36bbb5d7fbfe140c3.js.map
+//# sourceMappingURL=document_list-3c92d19255567ddcd69b.js.map
