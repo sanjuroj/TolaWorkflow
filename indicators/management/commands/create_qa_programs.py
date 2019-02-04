@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from indicators.models import Indicator, Result, PeriodicTarget, Level
-from workflow.models import Program, Country, Documentation, Organization
+from workflow.models import Program, Country, Organization
 from indicators.views.views_indicators import generate_periodic_targets
 from indicators.views.views_reports import IPTT_ReportView
 
@@ -446,6 +446,7 @@ class Command(BaseCommand):
                     date_collected = pt.start_date + day_offset
                 else:
                     date_collected = date.today()
+
                 for c in range(results_to_create):
                     rs = Result(
                         periodic_target=pt,
@@ -460,18 +461,16 @@ class Command(BaseCommand):
                     else:
                         achieved_value = int(achieved_value * 1.15)
 
-                evidence_count += 1
-                if params['null_level'] == 'evidence':
-                    continue
-                # TODO: repair this for the Huckleberry Evidence != Documentation world
-                # for ev in range(results_to_create):
-                #     if apply_skips and evidence_count % evidence_skip_mod == int(evidence_skip_mod / 2):
-                #         evidence_count += 1
-                #         continue
-                #     document = Documentation.objects.create(
-                #         program=program, name='Doc for Result id {}'.format(rs.id), url='http://my/doc/here/')
-                #     rs.evidence = document
-                #     rs.save()
+                    evidence_count += 1
+                    if params['null_level'] == 'evidence':
+                        continue
+
+                    if apply_skips and evidence_count % evidence_skip_mod == int(evidence_skip_mod / 2):
+                        evidence_count += 1
+                        continue
+                    rs.record_name = 'Evidence {} for result id {}'.format(evidence_count, rs.id)
+                    rs.evidence_url = 'http://my/evidence/url'
+                    rs.save()
 
             indicator.lop_target = lop_target
             indicator.save()
