@@ -82,19 +82,24 @@
                     </small>
                 </h4>
                 {% if not program.reporting_period_start or not program.reporting_period_end %}
-                    <p>{% trans "Before adding indicators and performance results, we need to know your program's" %}
+                    <p>
+                        {% blocktrans with id=program.id start_date=program.start_date end_date=program.end_date reporting_period_start=program.reporting_period_start reporting_period_end=program.reporting_period_end %}
+                        Before adding indicators and performance results, we need to know your program's
                         <a
-                            id="id_link_reporting_period_{{ program.id }}"
+                            id="id_link_reporting_period_{{ id }}"
                             class=""
                             href="#"
                             data-toggle="modal"
-                            data-program="{{ program.id }}"
-                            data-progstart="{{ program.start_date }}"
-                            data-progend="{{ program.end_date }}"
-                            data-rptstart="{{ program.reporting_period_start }}"
-                            data-rptend="{{ program.reporting_period_end }}"
+                            data-program="{{ id }}"
+                            data-progstart="{{ start_date }}"
+                            data-progend="{{ end_date }}"
+                            data-rptstart="{{ reporting_period_start }}"
+                            data-rptend="{{ reporting_period_end }}"
                             data-target="#id_reporting_period_modal"
-                            >{% trans "reporting start and end dates." %}</a>
+                        >
+                            reporting start and end dates.
+                        </a>
+                        {% endblocktrans %}
                     </p>
                 {% elif program.metrics.indicator_count == 0 %}
                     <h4>{% trans "No indicators have been entered for this program." %}</h4>
