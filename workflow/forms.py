@@ -1700,6 +1700,11 @@ class StakeholderForm(forms.ModelForm):
 
 
 class FilterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        # moving helper button description to init so translations will re-init on reload:
+        self.helper.layout = Layout(FieldWithButtons('search', StrictButton(_('Submit'), type='submit', css_class='btn-primary')))
+        super(FilterForm, self).__init__(*args, **kwargs)
+
     # Search filter
     # string translation doesn't work here
     fields = "search"
@@ -1707,7 +1712,7 @@ class FilterForm(forms.Form):
     helper = FormHelper()
     helper.form_method = 'get'
     helper.form_class = 'form-inline'
-    helper.layout = Layout(FieldWithButtons('search', StrictButton(_('Submit'), type='submit', css_class='btn-primary')))
+
 
 
 class ProjectCompleteTable(forms.ModelForm):
