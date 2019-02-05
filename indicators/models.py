@@ -772,6 +772,13 @@ class Indicator(models.Model):
     def cached_data_count(self):
         return self.result_set.count()
 
+    @property
+    def has_subtotal(self):
+        """
+        Returns true if at least one periodic target has ended
+        """
+        if self.is_target_frequency_time_aware:
+            return self.periodictargets.all().first().end_date < timezone.localdate()
 
 class PeriodicTarget(models.Model):
     LOP_PERIOD = _('Life of Program (LoP) only')

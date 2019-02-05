@@ -1,6 +1,6 @@
 // Collected data table included in the indicator table (& elsewhere?)
 
-$border-summary-row: 2px solid $gray-400;
+$border-summary-row: 2px solid $gray-500;
 $border-main-row: 1px solid $gray-200;
 $border-supplemental-row: 1px solid $gray-150;
 
@@ -25,10 +25,13 @@ $border-supplemental-row: 1px solid $gray-150;
         font-size: $font-size-sm;
         padding: $table-cell-padding-sm;
     }
-    > th {
-    }
     td {
         background: $white;
+    }
+}
+.collected-data-table--has-subtotal {
+    &.table thead th { // crazy specificity! overloads bootstrap
+        border-bottom: $border-summary-row;
     }
 }
 .collected-data__result--date {

@@ -17,10 +17,12 @@
         </button>
     </h3>
     {% if indicator.cached_data_count > 0 or indicator.target_frequency %}
-    <table class="table collected-data-table">
+    <table class="table collected-data-table {% if indicator.has_subtotal %}collected-data-table--has-subtotal{% endif %}">
         <thead>
             <tr class="table-header">
-                <th class="">{% trans "Target period" %}</th>
+                <th class="">
+                    {% trans "Target period" %}
+                </th>
                 <th class="text-right">{% trans "Target" %}</th>
                 <th class="text-right">{% trans "Actual" %}</th>
                 <th class="td--pad text-right">{% trans "% Met" %}</th>
@@ -29,7 +31,7 @@
             </tr>
         </thead>
         {% for pt in periodictargets %}
-            {% if pt == indicator.current_periodic_target and indicator.is_target_frequency_time_aware %}
+            {% if pt == indicator.current_periodic_target and indicator.has_subtotal %}
             <tr class="collected-data__row--subtotal pt-ended">
                 {# show the summary row for previous periods BEFORE the current period #}
                 <td class="bg-medium">
