@@ -87,7 +87,7 @@
                 {% endifchanged %}
 
                 {% for cdata in pt.result_set.all %}
-                    {% if not forloop.first %}<tr class="collected-data__row--supplemental">{% endif %}
+                    {% if not forloop.first %}<tr class="collected-data__row--supplemental{% if pt.has_ended and indicator.is_target_frequency_time_aware %} pt-ended{% endif %}">{% endif %}
                         <td class="collected-data__result--date {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
                             {% if is_editable is False %}
                                 {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}

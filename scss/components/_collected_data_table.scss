@@ -1,4 +1,20 @@
 // Collected data table included in the indicator table (& elsewhere?)
+
+$border-summary-row: 2px solid $gray-400;
+$border-main-row: 1px solid $gray-200;
+$border-supplemental-row: 1px solid $gray-150;
+
+@mixin pt-ended($left: true) {
+    // paints 2px borders on the outside of ended target periods
+    @if ($left) {
+        td:first-child {
+            border-left: $border-summary-row;
+        }
+    }
+    td:last-child {
+        border-right: $border-summary-row;
+    }
+}
 .collected-data-table__wrapper {
     // this div provides a little padding but is probably not necessary
     padding: $grid-gutter-width/2;
@@ -16,11 +32,11 @@
     }
 }
 .collected-data__result--date {
-    border-left: 1px solid $gray-200;
+    border-left: $border-main-row;
     white-space: nowrap;
 }
 .collected-data__result--value {
-    border-right: 1px solid $gray-200;
+    border-right: $border-main-row;
     text-align: right;
     white-space: nowrap;
 }
@@ -28,28 +44,28 @@
     word-break: break-all;
 }
 .collected-data__result--nodata {
-    border-left: 1px solid $gray-200;
-    border-right: 1px solid $gray-200;
+    border-left: $border-main-row;
+    border-right: $border-main-row;
     white-space: nowrap;
 }
 
-.collected-data__row--main {}
-.collected-data__row--subtotal {
-    td {
-        border-bottom: 2px solid $gray-400;
+.collected-data__row--main {
+    &.pt-ended {
+        @include pt-ended();
     }
 }
-.pt-ended { // TODO: not very BEM
-    td:first-child {
-        border-left: 2px solid $gray-400;
-    }
-    td:last-child {
-        border-right: 2px solid $gray-400;
+.collected-data__row--subtotal {
+    @include pt-ended();
+    td {
+        border-bottom: $border-summary-row;
     }
 }
 .collected-data__row--supplemental {
     td {
-        border-top: 1px solid $gray-150;
+        border-top: $border-supplemental-row;
+    }
+    &.pt-ended {
+        @include pt-ended($left: false);
     }
 }
 
