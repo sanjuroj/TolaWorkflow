@@ -33,7 +33,7 @@
             <div class="modal-body" id="indicator_modal_body" style="padding-top:10px">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <span id = "modalmessages"></span>
-                <div id="indicator_collected_data_modal_content"></div>
+                <div id="indicator_results_modal_content"></div>
             </div>
         </div>
     </div>
@@ -149,14 +149,14 @@
     })
 
     // Open the CollectDataUpdate form in a modal
-    $("#div-id-indicator-list").on("click", ".collected-data__link", function(e) {
+    $("#div-id-indicator-list").on("click", ".results__link", function(e) {
         e.preventDefault();
         var url = $(this).attr("href");
         url += "?modal=1";
         $("#indicator_modal_content").empty();
         $("#modalmessages").empty();
 
-        $("#indicator_collected_data_modal_content").load(url);
+        $("#indicator_results_modal_content").load(url);
         $("#indicator_results_div").modal('show');
     });
 

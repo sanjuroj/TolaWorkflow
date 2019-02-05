@@ -189,14 +189,14 @@ routeToEventBus(router.getState().name);
  */
 
 // Open the CollectDataUpdate (update results) form in a modal
-$("#indicator-list-react-component").on("click", ".collected-data__link", function(e) {
+$("#indicator-list-react-component").on("click", ".results__link", function(e) {
     e.preventDefault();
     let url = $(this).attr("href");
     url += "?modal=1";
     $("#indicator_modal_content").empty();
     $("#modalmessages").empty();
 
-    $("#indicator_collected_data_modal_content").load(url);
+    $("#indicator_results_modal_content").load(url);
     $("#indicator_results_div").modal('show');
 });
 
