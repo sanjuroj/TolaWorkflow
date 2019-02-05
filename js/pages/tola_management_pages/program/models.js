@@ -1,4 +1,4 @@
-import { observable, computed, action } from "mobx";
+import { observable, computed, action, runInAction } from "mobx";
 
 
 export class ProgramStore {
@@ -62,12 +62,14 @@ export class ProgramStore {
     fetchPrograms() {
         this.fetching_main_listing = true
         this.api.fetchPrograms(this.current_page + 1, this.marshalFilters(this.filters)).then(results => {
-            this.fetching_main_listing = false
-            this.programs = results.results
-            this.program_count = results.total_results
-            this.total_pages = results.total_pages
-            this.next_page =results.next_page
-            this.previous_page = results.previous_page
+            runInAction(() => {
+                this.fetching_main_listing = false
+                this.programs = results.results
+                this.program_count = results.total_results
+                this.total_pages = results.total_pages
+                this.next_page =results.next_page
+                this.previous_page = results.previous_page
+            })
         })
 
     }
@@ -119,6 +121,25 @@ export class ProgramStore {
         }
     }
 
+    updateLocalPrograms(updated) {
+        this.programs = this.programs.reduce((acc, current) => {
+            if (current.id == updated.id) {
+                acc.push(updated)
+            } else {
+                acc.push(current)
+            }
+            return acc
+        }, [])
+    }
+
+    onSaveSuccessHandler() {
+        PNotify.success({text: "Successfully Saved", delay: 5000})
+    }
+
+    onSaveErrorHandler() {
+        PNotify.error({text: "Saving Failed", delay: 5000})
+    }
+
     @action
     createProgram() {
         if(this.editing_target == 'new') {
@@ -132,11 +153,28 @@ export class ProgramStore {
             fundcode: "",
             funding_status: "",
             description: "",
-            countries: [],
-            sectors: [],
+            country: [],
+            sector: [],
         }
         this.programs.unshift(new_program_data)
         this.editing_target = 'new'
+    }
+
+    @action updateProgram(id, program_data) {
+        this.saving = true
+        this.api.updateProgram(id, program_data).then(response => {
+            runInAction(() => {
+                this.saving = false
+                this.editing_target = false
+                this.updateLocalPrograms(response.data)
+                this.onSaveSuccessHandler()
+            })
+        }).catch((errors) => {
+            runInAction(() => {
+                this.saving = false
+                this.editing_errors = errors.response.data
+            })
+        })
     }
 
     @action

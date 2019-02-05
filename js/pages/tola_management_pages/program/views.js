@@ -172,7 +172,7 @@ export const IndexView = observer(
                         <button className="btn btn-primary" onClick={() => store.createProgram()}><i className="fa fa-plus-circle"></i>Add Program</button>
                     </div>
                 </div>
-                <div className="list-table row">
+                <div className="list-table">
                     <ManagementTable
                         newData={store.new_program}
                         data={store.programs}
@@ -202,7 +202,7 @@ export const IndexView = observer(
                                             <EditProgramProfile
                                                 new={data.id == 'new'}
                                                 program_data={data}
-                                                onUpdate={(new_program_data) => console.log('update program')}
+                                                onUpdate={(id, data) => store.updateProgram(id, data)}
                                                 onCreate={(new_program_data) => console.log('create new program')}
                                                 sectorOptions={sectorFilterOptions}
                                                 countryOptions={countryFilterOptions}

@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status as httpstatus
 from rest_framework.decorators import list_route
 from rest_framework.serializers import (
+    ModelSerializer,
     Serializer,
     CharField,
     IntegerField,
@@ -22,6 +23,8 @@ from workflow.models import (
     Program,
     TolaUser,
     Organization,
+    Country,
+    Sector,
 )
 
 
@@ -40,24 +43,39 @@ class NestedSectorSerializer(Serializer):
     def to_representation(self, sector):
         return sector.id
 
+    def to_internal_value(id, data):
+        sector = Sector.objects.get(pk=data)
+        return sector
+
+
 class NestedCountrySerializer(Serializer):
+
     def to_representation(self, country):
         return country.id
 
-class ProgramAdminSerializer(Serializer):
+    def to_internal_value(id, data):
+        country = Country.objects.get(pk=data)
+        return country
+
+class ProgramAdminSerializer(ModelSerializer):
     id = IntegerField()
     name = CharField(required=True, max_length=255)
     funding_status = CharField(required=True)
     gaitid = CharField(required=True)
-    description = CharField()
-    sector = NestedSectorSerializer(many=True)
-    country = NestedSectorSerializer(many=True)
+    description = CharField(allow_blank=True)
+    sector = NestedSectorSerializer(required=True, many=True)
+    country = NestedCountrySerializer(required=True, many=True)
 
     class Meta:
+        model = Program
         fields = (
             'id',
             'name',
             'funding_status',
+            'gaitid',
+            'description',
+            'sector',
+            'country',
         )
 
     def to_representation(self, program):
@@ -75,6 +93,26 @@ class ProgramAdminSerializer(Serializer):
         ret['onlyOrganizationId'] = organizations.pop() if organization_count > 0 else None
         return ret
 
+    def create(self, validated_data):
+        return Response({'d': validated_data})
+
+    def update(self, instance, validated_data):
+
+        original_countries = instance.country.all()
+        incoming_countries = validated_data.pop('country')
+        added_countries = [x for x in incoming_countries if x not in original_countries]
+        removed_countries = [x for x in original_countries if x not in incoming_countries]
+
+        original_sectors = instance.sector.all()
+        incoming_sectors = validated_data.pop('sector')
+        added_sectors = [x for x in incoming_sectors if x not in original_sectors]
+        removed_sectors = [x for x in original_sectors if x not in incoming_sectors]
+
+        instance.country.remove(*removed_countries)
+        instance.country.add(*added_countries)
+        instance.sector.remove(*removed_sectors)
+        instance.sector.add(*added_sectors)
+        return super(ProgramAdminSerializer, self).update(instance, validated_data)
 
 class ProgramAdminViewSet(viewsets.ModelViewSet):
     serializer_class = ProgramAdminSerializer
@@ -126,12 +164,6 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    def create(self, validated_data):
-        return Response({'d': validated_data})
-
-
-    def update(self, instance, validated_data):
-        return Response({'d': validated_data})
 
 
     @list_route(methods=["post"])

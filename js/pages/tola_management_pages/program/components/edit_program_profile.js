@@ -22,14 +22,17 @@ export default class EditProgramProfile extends React.Component {
 
     save(e) {
         e.preventDefault()
-        const ud = this.state.managed_user_data
+        const program_id = this.props.program_data.id
+        const program_data = this.state.managed_data
+        /*
         const marshalled_user_data = {
             ...ud,
             name: ud.full_name,
             organization_id: (ud.organization)?ud.organization.value:null,
             phone_number: ud.phone
         }
-        this.props.onUpdate(marshalled_user_data)
+        */
+        this.props.onUpdate(program_id, program_data)
     }
 
     saveNew(e) {
@@ -136,7 +139,7 @@ export default class EditProgramProfile extends React.Component {
                     {this.props.new &&
                     <div className="form-group">
                         <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>Save</button>
-                        <button className="btn btn-primary" onClick={(e) => this.saveNewAndAddAnother(e)}>Save And Add Another</button>
+                        {/* <button className="btn btn-primary" onClick={(e) => this.saveNewAndAddAnother(e)}>Save And Add Another</button> */}
                         <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Reset</button>
                     </div>
                     }
