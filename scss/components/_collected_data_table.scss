@@ -60,6 +60,7 @@ $border-supplemental-row: 1px solid $gray-150;
 .collected-data__row--subtotal {
     @include pt-ended();
     td {
+        background-color: $gray-200;
         border-bottom: $border-summary-row;
     }
 }

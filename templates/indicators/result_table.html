@@ -17,12 +17,10 @@
         </button>
     </h3>
     {% if indicator.cached_data_count > 0 or indicator.target_frequency %}
-    <table class="table collected-data-table {% if indicator.has_subtotal %}collected-data-table--has-subtotal{% endif %}">
+    <table class="table collected-data-table {% if indicator.last_ended_periodic_target %}collected-data-table--has-subtotal{% endif %}">
         <thead>
             <tr class="table-header">
-                <th class="">
-                    {% trans "Target period" %}
-                </th>
+                <th class="">{% trans "Target period" %}</th>
                 <th class="text-right">{% trans "Target" %}</th>
                 <th class="text-right">{% trans "Actual" %}</th>
                 <th class="td--pad text-right">{% trans "% Met" %}</th>
@@ -31,26 +29,26 @@
             </tr>
         </thead>
         {% for pt in periodictargets %}
-            {% if pt == indicator.current_periodic_target and indicator.has_subtotal %}
-            <tr class="collected-data__row--subtotal pt-ended">
+            {% if pt == indicator.current_periodic_target and indicator.last_ended_periodic_target %}
+            <tr class="collected-data__row--subtotal">
                 {# show the summary row for previous periods BEFORE the current period #}
-                <td class="bg-medium">
+                <td class="">
                     <div><em><strong>{% trans "Program to date" %}</strong></em></div>
                     <div class="text-nowrap">
                         <small>
                             {{ program.reporting_period_start|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                             {% if pt.end_date and program.reporting_period_start %}–{% endif %}
-                            {{ pt.end_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
+                            {{ indicator.last_ended_periodic_target.end_date|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
                         </small>
                     </div>
                 </td>
-                <td class="bg-medium text-right">
+                <td class="text-right">
                     <strong>{{ indicator.lop_target_progress }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}</strong>
                 </td>
-                <td class="bg-medium text-right">
+                <td class="text-right">
                     <strong>{{ indicator.lop_actual_progress }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}</strong>
                 </td>
-                <td class="bg-medium text-right">
+                <td class="text-right">
                     <strong>{% target_percent_met indicator.lop_percent_met_progress True %}</strong>
                 </td>
                 <td colspan="3" class="bg-medium"></td>
