@@ -58,9 +58,10 @@ class NestedCountrySerializer(Serializer):
         return country
 
 class ProgramAdminSerializer(ModelSerializer):
-    id = IntegerField()
+    id = IntegerField(allow_null=True, required=False)
     name = CharField(required=True, max_length=255)
     funding_status = CharField(required=True)
+    # TODO: add validator. gaitid needs to be unique
     gaitid = CharField(required=True)
     description = CharField(allow_blank=True)
     sector = NestedSectorSerializer(required=True, many=True)
@@ -94,7 +95,12 @@ class ProgramAdminSerializer(ModelSerializer):
         return ret
 
     def create(self, validated_data):
-        return Response({'d': validated_data})
+        country = validated_data.pop('country')
+        sector = validated_data.pop('sector')
+        program = super(ProgramAdminSerializer, self).create(validated_data)
+        program.country.add(*country)
+        program.sector.add(*sector)
+        return program
 
     def update(self, instance, validated_data):
 
@@ -135,9 +141,9 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         elif programStatus == 'Closed':
             queryset = queryset.exclude(funding_status='Funded')
 
-        programParam = params.get('programs')
+        programParam = params.getlist('programs[]')
         if programParam:
-            queryset = queryset.filter(id=programParam)
+            queryset = queryset.filter(pk__in=programParam)
 
         countryFilter = params.getlist('countries[]')
         if countryFilter:

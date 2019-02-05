@@ -24,27 +24,13 @@ export default class EditProgramProfile extends React.Component {
         e.preventDefault()
         const program_id = this.props.program_data.id
         const program_data = this.state.managed_data
-        /*
-        const marshalled_user_data = {
-            ...ud,
-            name: ud.full_name,
-            organization_id: (ud.organization)?ud.organization.value:null,
-            phone_number: ud.phone
-        }
-        */
         this.props.onUpdate(program_id, program_data)
     }
 
     saveNew(e) {
         e.preventDefault()
-        const ud = this.state.managed_user_data
-        const marshalled_user_data = {
-            ...ud,
-            name: ud.full_name,
-            organization_id: (ud.organization)?ud.organization.value:null,
-            phone_number: ud.phone
-        }
-        this.props.onCreate(marshalled_user_data)
+        const program_data = this.state.managed_data
+        this.props.onCreate(program_data)
     }
 
     updateFormField(fieldKey, val) {
@@ -82,7 +68,7 @@ export default class EditProgramProfile extends React.Component {
                         <input
                             type="tel"
                             value={formdata.gaitid}
-                            onChange={(e) => this.updateFormField('gaitId', e.target.value) }
+                            onChange={(e) => this.updateFormField('gaitid', e.target.value) }
                             className="form-control"
                             id="program-gait-input"
                             disabled={!this.props.new}

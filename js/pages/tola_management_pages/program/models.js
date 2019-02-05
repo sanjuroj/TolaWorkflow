@@ -29,9 +29,11 @@ export class ProgramStore {
     @observable bulk_targets_all = false
 
     @observable editing_target = null
+    @observable editing_errors = null
     @observable fetching_editing_target = false
     @observable editing_target_data = {
     }
+    @observable saving = false;
 
     @observable bulk_targets = new Map()
     @observable applying_bulk_updates = false
@@ -158,6 +160,25 @@ export class ProgramStore {
         }
         this.programs.unshift(new_program_data)
         this.editing_target = 'new'
+    }
+
+    @action
+    saveNewProgram(program_data) {
+        program_data.id = null
+        this.saving = true
+        this.api.createProgram(program_data).then(response => {
+            runInAction(()=> {
+                this.saving = false
+                this.editing_target = false
+                this.programs.shift()
+                this.programs.unshift(response.data)
+            })
+        }).catch(error => {
+            runInAction(()=> {
+                this.saving = false
+                this.editing_errors = error.response.data
+            })
+        })
     }
 
     @action updateProgram(id, program_data) {

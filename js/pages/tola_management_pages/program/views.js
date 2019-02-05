@@ -203,7 +203,7 @@ export const IndexView = observer(
                                                 new={data.id == 'new'}
                                                 program_data={data}
                                                 onUpdate={(id, data) => store.updateProgram(id, data)}
-                                                onCreate={(new_program_data) => console.log('create new program')}
+                                                onCreate={(new_program_data) => store.saveNewProgram(new_program_data)}
                                                 sectorOptions={sectorFilterOptions}
                                                 countryOptions={countryFilterOptions}
                                             />}
