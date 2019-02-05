@@ -43,10 +43,22 @@
                     </div>
                 </td>
                 <td class="text-right">
-                    <strong>{{ indicator.lop_target_progress }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}</strong>
+                    <strong>
+                        {% if indicator.lop_target_progress %}
+                            {{ indicator.lop_target_progress }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </strong>
                 </td>
                 <td class="text-right">
-                    <strong>{{ indicator.lop_actual_progress }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}</strong>
+                    <strong>
+                        {% if indicator.lop_actual_progress %}
+                            {{ indicator.lop_actual_progress }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </strong>
                 </td>
                 <td class="text-right">
                     <strong>{% target_percent_met indicator.lop_percent_met_progress True %}</strong>
