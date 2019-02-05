@@ -11,14 +11,14 @@
         setViewButtonDisabledState();
     }
 
-    $("#indicator_collecteddata_div").on('click', '#id_browse_google_drive', function(e) {
+    $("#indicator_results_div").on('click', '#id_browse_google_drive', function(e) {
         e.preventDefault();
 
         gdriveFilePicker(filePickerCallback);
     });
 
     // view evidence
-    $("#indicator_collecteddata_div").on('click', '#id_view_evidence_button', function() {
+    $("#indicator_results_div").on('click', '#id_view_evidence_button', function() {
         let url = $('#id_evidence_url').val();
         window.open(url, '_blank')
     });
@@ -30,12 +30,12 @@
         $('#id_view_evidence_button').prop('disabled', ! evidenceURLHasValue);
     }
 
-    $("#indicator_collecteddata_div").on('change keyup paste', '#id_evidence_url', function () {
+    $("#indicator_results_div").on('change keyup paste', '#id_evidence_url', function () {
         setViewButtonDisabledState();
     });
 
     // Intercept CollectedDataUpdate form submission and then use ajax to submit it.
-    $("#indicator_collecteddata_div").on("submit", "#result_update_form", function(e){
+    $("#indicator_results_div").on("submit", "#result_update_form", function(e){
         e.preventDefault();
         {#let isFormValid = true;#}
         $("#modalmessages").empty();
@@ -46,7 +46,7 @@
 
         if ($("#result_update_form div").hasClass('has-error')) {
             createAlert("danger", "{% trans 'Please complete all required fields.'|escapejs %}", true, "#modalmessages");
-            $('#indicator_collecteddata_div').animate({ scrollTop: 0 }, 'slow');
+            $('#indicator_results_div').animate({ scrollTop: 0 }, 'slow');
             return;
         }
         /*
@@ -67,25 +67,25 @@
         .fail(function(error){
             createAlert("danger", "{% trans 'Could not save form.'|escapejs %}", true, "#modalmessages");
         });
-        $('#indicator_collecteddata_div').animate({ scrollTop: 0 }, 'slow');
+        $('#indicator_results_div').animate({ scrollTop: 0 }, 'slow');
     });
 
 
-    $("#indicator_collecteddata_div").on("change", "#id_date_collected", function(e){
+    $("#indicator_results_div").on("change", "#id_date_collected", function(e){
         validatePeriodicTarget(onlyPeriodic = true);
         validateDateCollected();
     });
 
-    $("#indicator_collecteddata_div").on("change", "#id_periodic_target", function(e){
+    $("#indicator_results_div").on("change", "#id_periodic_target", function(e){
         validatePeriodicTarget();
     });
 
-    $("#indicator_collecteddata_div").on("change", "#id_achieved", function(e){
+    $("#indicator_results_div").on("change", "#id_achieved", function(e){
         validate_achieved();
     });
 
     // on delete button
-    $("#indicator_collecteddata_div").on("click", "#id_delete_result_btn", function(e) {
+    $("#indicator_results_div").on("click", "#id_delete_result_btn", function(e) {
         let resultId = $('#id_delete_result_btn').data('result-id');
 
         PNotify.alert({
@@ -116,11 +116,11 @@
                                 notice.close();
 
                                 // Mark the record being changed so results table is reloaded on modal close
-                                $('#indicator_collecteddata_div form').data('recordchanged', true);
+                                $('#indicator_results_div form').data('recordchanged', true);
 
                                 $.post("/indicators/result_delete/" + resultId + "/", function (data) {
                                     // Close modal
-                                    $('#indicator_collecteddata_div').modal('hide')
+                                    $('#indicator_results_div').modal('hide')
                                 });
                             }
                         },

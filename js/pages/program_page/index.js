@@ -197,7 +197,7 @@ $("#indicator-list-react-component").on("click", ".collected-data__link", functi
     $("#modalmessages").empty();
 
     $("#indicator_collected_data_modal_content").load(url);
-    $("#indicator_collecteddata_div").modal('show');
+    $("#indicator_results_div").modal('show');
 });
 
 // Open the IndicatorUpdate (Add targets btn in results section (HTML)) Form in a modal
@@ -232,7 +232,7 @@ $('#indicator_modal_div').on('hide.bs.modal', function (e) {
 
 // When "add results" modal is closed, the targets data needs refreshing
 // the indicator itself also needs refreshing for the gas tank gauge
-$('#indicator_collecteddata_div').on('hide.bs.modal', function (e) {
+$('#indicator_results_div').on('hide.bs.modal', function (e) {
     let recordchanged = $(this).find('form').data('recordchanged');
     if (recordchanged === true) {
         let indicator_id = $(this).find('form #id_indicator').val();
