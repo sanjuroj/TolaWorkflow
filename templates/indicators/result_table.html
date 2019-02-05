@@ -31,9 +31,9 @@
         {% for pt in periodictargets %}
             {% if pt == indicator.current_periodic_target and indicator.is_target_frequency_time_aware %}
             <tr class="collected-data__row--subtotal pt-ended">
-                {# (show the summary row BEFORE the current period) #}
+                {# show the summary row for previous periods BEFORE the current period #}
                 <td class="bg-medium">
-                    <div><em><strong>Program to date</strong></em></div>
+                    <div><em><strong>{% trans "Program to date" %}</strong></em></div>
                     <div class="text-nowrap">
                         <small>
                             {{ program.reporting_period_start|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
@@ -42,9 +42,15 @@
                         </small>
                     </div>
                 </td>
-                <td class="bg-medium text-right"><strong>{{ indicator.lop_target_progress }}</strong></td>
-                <td class="bg-medium text-right"><strong>{{ indicator.lop_actual_progress }}</strong></td>
-                <td class="bg-medium text-right"><strong>{% target_percent_met indicator.lop_percent_met_progress True %}</strong></td>
+                <td class="bg-medium text-right">
+                    <strong>{{ indicator.lop_target_progress }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}</strong>
+                </td>
+                <td class="bg-medium text-right">
+                    <strong>{{ indicator.lop_actual_progress }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}</strong>
+                </td>
+                <td class="bg-medium text-right">
+                    <strong>{% target_percent_met indicator.lop_percent_met_progress True %}</strong>
+                </td>
                 <td colspan="3" class="bg-medium"></td>
             </tr>
             {% endif %}
