@@ -129,7 +129,10 @@ def indicator_lop_target_progress_annotation():
         models.When(
             models.Q(
                 models.Q(target_frequency__in=[f[0] for f in TIME_AWARE_FREQUENCIES]) &
-                models.Q(is_cumulative=True)
+                models.Q(
+                    models.Q(is_cumulative=True) |
+                    models.Q(unit_of_measure_type=Indicator.PERCENTAGE)
+                    )
                 ),
             then=models.Subquery(
                 PeriodicTarget.objects.filter(
@@ -152,7 +155,10 @@ def indicator_lop_target_progress_annotation():
         models.When(
             models.Q(
                 models.Q(target_frequency__in=[Indicator.MID_END, Indicator.EVENT]) &
-                models.Q(is_cumulative=True)
+                models.Q(
+                    models.Q(is_cumulative=True) |
+                    models.Q(unit_of_measure_type=Indicator.PERCENTAGE)
+                    )
                 ),
             then=models.Subquery(
                 PeriodicTarget.objects.filter(
