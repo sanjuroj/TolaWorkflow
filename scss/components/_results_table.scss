@@ -15,7 +15,7 @@ $border-supplemental-row: 1px solid $gray-150;
         border-right: $border-summary-row;
     }
 }
-.collected-data-table__wrapper {
+.results-table__wrapper {
     // this div provides a little padding but is probably not necessary
     padding: $grid-gutter-width/2;
 }
@@ -29,16 +29,16 @@ $border-supplemental-row: 1px solid $gray-150;
         background: $white;
     }
 }
-.collected-data-table--has-subtotal {
+.results-table--has-subtotal {
     &.table thead th { // crazy specificity! overloads bootstrap
         border-bottom: $border-summary-row;
     }
 }
-.collected-data__result--date {
+.results__result--date {
     border-left: $border-main-row;
     white-space: nowrap;
 }
-.collected-data__result--value {
+.results__result--value {
     border-right: $border-main-row;
     text-align: right;
     white-space: nowrap;
@@ -46,25 +46,25 @@ $border-supplemental-row: 1px solid $gray-150;
 .results__result--url {
     word-break: break-all;
 }
-.collected-data__result--nodata {
+.results__result--nodata {
     border-left: $border-main-row;
     border-right: $border-main-row;
     white-space: nowrap;
 }
 
-.collected-data__row--main {
+.results__row--main {
     &.pt-ended {
         @include pt-ended();
     }
 }
-.collected-data__row--subtotal {
+.results__row--subtotal {
     @include pt-ended();
     td {
         background-color: $gray-200;
         border-bottom: $border-summary-row;
     }
 }
-.collected-data__row--supplemental {
+.results__row--supplemental {
     td {
         border-top: $border-supplemental-row;
     }
