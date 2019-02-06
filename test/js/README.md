@@ -206,7 +206,7 @@ _evidence_ in the conf file, it might look like this:
 ```
         evidence: [
            'tests/attach_evidence.js',
-           'tests/collected_data_form.js',
+           'tests/results_form.js',
            'tests/indicator_evidence_dropdown.js',
            'tests/indicator_evidence_table.js'
         ],

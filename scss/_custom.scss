@@ -285,7 +285,7 @@ select.listoption_filters {
     margin-top: 1rem;
 }
 
-#indicator_collecteddata_content .modal-footer { // overloads selectorin modals.scss
+#indicator_results_content .modal-footer { // overloads selectorin modals.scss
     background-color: $gray-300;
     border-radius: 0 0 0.3rem 0.3rem;
     margin-left: -1rem;

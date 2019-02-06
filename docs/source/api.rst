@@ -32,7 +32,7 @@ Endpoints
  * "village": "http://activity.toladata.io/api/village/",
  * "contact": "http://activity.toladata.io/api/contact/",
  * "documentation": "http://activity.toladata.io/api/documentation/",
- * "collecteddata": "http://activity.toladata.io/api/collecteddata/",
+ * "results": "http://activity.toladata.io/api/results/",
  * "tolatable": "http://activity.toladata.io/api/tolatable/",
  * "disaggregationvalue": "http://activity.toladata.io/api/disaggregationvalue/",
  * "projectagreements": "http://activity.toladata.io/api/projectagreements/",
