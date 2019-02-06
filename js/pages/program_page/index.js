@@ -190,7 +190,7 @@ const onNavigation = (navRoutes) => {
     let params = navRoutes.route.params;
 
     if (routeName === 'indicator') {
-        eventBus.emit('select-indicator-to-filter', params.indicator_id);
+        eventBus.emit('select-indicator-to-filter', parseInt(params.indicator_id));
         return;
     }
 
