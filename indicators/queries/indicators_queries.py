@@ -99,6 +99,16 @@ class ResultsIndicatorQuerySet(models.QuerySet):
         qs = qs.annotate(lop_percent_met=utils.indicator_lop_percent_met_annotation())
         # add is_complete annotation:
         qs = qs.annotate(is_complete=indicator_is_complete_annotation())
+
+        # TODO: these progress annotations are cribbed from MetricsIndicatorQuerySet
+        # Progress on Actual value
+        qs = qs.annotate(lop_actual_progress=utils.indicator_lop_actual_progress_annotation())
+        # Progress on Target value
+        # TODO: this value is always a sum, even for percentage indicators
+        qs = qs.annotate(lop_target_progress=utils.indicator_lop_target_progress_annotation())
+        # Progress on %MET
+        qs = qs.annotate(lop_percent_met_progress=utils.indicator_lop_percent_met_progress_annotation())
+
         return qs
 
 class ResultsIndicatorManager(models.Manager):

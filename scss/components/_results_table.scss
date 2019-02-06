@@ -1,4 +1,20 @@
 // Collected data table included in the indicator table (& elsewhere?)
+
+$border-summary-row: 2px solid $gray-500;
+$border-main-row: 1px solid $gray-200;
+$border-supplemental-row: 1px solid $gray-150;
+
+@mixin pt-ended($left: true) {
+    // paints 2px borders on the outside of ended target periods
+    @if ($left) {
+        td:first-child {
+            border-left: $border-summary-row;
+        }
+    }
+    td:last-child {
+        border-right: $border-summary-row;
+    }
+}
 .results-table__wrapper {
     // this div provides a little padding but is probably not necessary
     padding: $grid-gutter-width/2;
@@ -9,18 +25,21 @@
         font-size: $font-size-sm;
         padding: $table-cell-padding-sm;
     }
-    > th {
-    }
     td {
         background: $white;
     }
 }
+.results-table--has-subtotal {
+    &.table thead th { // crazy specificity! overloads bootstrap
+        border-bottom: $border-summary-row;
+    }
+}
 .results__result--date {
-    border-left: 1px solid $gray-200;
+    border-left: $border-main-row;
     white-space: nowrap;
 }
 .results__result--value {
-    border-right: 1px solid $gray-200;
+    border-right: $border-main-row;
     text-align: right;
     white-space: nowrap;
 }
@@ -28,15 +47,29 @@
     word-break: break-all;
 }
 .results__result--nodata {
-    border-left: 1px solid $gray-200;
-    border-right: 1px solid $gray-200;
+    border-left: $border-main-row;
+    border-right: $border-main-row;
     white-space: nowrap;
 }
 
-.results__row--main {}
+.results__row--main {
+    &.pt-ended {
+        @include pt-ended();
+    }
+}
+.results__row--subtotal {
+    @include pt-ended();
+    td {
+        background-color: $gray-200;
+        border-bottom: $border-summary-row;
+    }
+}
 .results__row--supplemental {
     td {
-        border-top: 1px solid $gray-150;
+        border-top: $border-supplemental-row;
+    }
+    &.pt-ended {
+        @include pt-ended($left: false);
     }
 }
 

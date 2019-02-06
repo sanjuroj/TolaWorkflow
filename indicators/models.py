@@ -768,6 +768,15 @@ class Indicator(models.Model):
         today = date_ or timezone.localdate()
         return self.periodictargets.filter(start_date__lte=today, end_date__gte=today).first()
 
+
+    @property
+    def last_ended_periodic_target(self):
+        """
+        Returns the last periodic target if any, or None
+        """
+        return self.periodictargets.filter(end_date__lte=timezone.localdate()).last()
+
+
     @cached_property
     def cached_data_count(self):
         return self.result_set.count()
