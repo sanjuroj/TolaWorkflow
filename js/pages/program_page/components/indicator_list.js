@@ -93,7 +93,7 @@ class IndicatorFilter extends React.Component{
         let selectedIndicatorId = selectedObject ? selectedObject.value : null;
 
         if (selectedIndicatorId) {
-            eventBus.emit('select-indicator-to-filter', selectedIndicatorId);
+            eventBus.emit('nav-select-indicator-to-filter', selectedIndicatorId);
         }
     };
 

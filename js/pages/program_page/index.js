@@ -175,7 +175,8 @@ const routes = [
     { name: 'scope', path: '/scope', forwardTo: 'scope.on' },
     { name: 'scope.on', path: '/on', filterType: IndicatorFilterType.onTarget },
     { name: 'scope.above', path: '/above', filterType: IndicatorFilterType.aboveTarget },
-    { name: 'scope.below', path: '/below', filterType: IndicatorFilterType.belowTarget }
+    { name: 'scope.below', path: '/below', filterType: IndicatorFilterType.belowTarget },
+    { name: 'indicator', path: '/indicator/:indicator_id<\\d+>', filterType: IndicatorFilterType.noFilter }
 ];
 
 const router = createRouter(routes, {
@@ -186,8 +187,14 @@ const router = createRouter(routes, {
 
 const onNavigation = (navRoutes) => {
     let routeName = navRoutes.route.name;
-    let routeObj = routes.find(r => r.name === routeName);
+    let params = navRoutes.route.params;
 
+    if (routeName === 'indicator') {
+        eventBus.emit('select-indicator-to-filter', params.indicator_id);
+        return;
+    }
+
+    let routeObj = routes.find(r => r.name === routeName);
     eventBus.emit('apply-gauge-tank-filter', routeObj.filterType);
 };
 
@@ -206,4 +213,8 @@ eventBus.on('nav-apply-gauge-tank-filter', indicatorFilter => {
 
 eventBus.on('nav-clear-all-indicator-filters', () => {
     router.navigate('all')
+});
+
+eventBus.on('nav-select-indicator-to-filter', (selectedIndicatorId) => {
+    router.navigate('indicator', {'indicator_id': selectedIndicatorId})
 });
