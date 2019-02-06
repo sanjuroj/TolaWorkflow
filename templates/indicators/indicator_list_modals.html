@@ -27,13 +27,13 @@
 </div>
 
 
-<div id="indicator_collecteddata_div" class="modal fade" role="dialog" aria-labelledby="myLargeModalLabel">
+<div id="indicator_results_div" class="modal fade" role="dialog" aria-labelledby="myLargeModalLabel">
     <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content" id="indicator_collecteddata_content">
+        <div class="modal-content" id="indicator_results_content">
             <div class="modal-body" id="indicator_modal_body" style="padding-top:10px">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <span id = "modalmessages"></span>
-                <div id="indicator_collected_data_modal_content"></div>
+                <div id="indicator_results_modal_content"></div>
             </div>
         </div>
     </div>
@@ -53,22 +53,22 @@
 <script type="text/javascript">
 
     // Modal triggers
-    $("#indicator_collecteddata_div").on("click", "#targetsTabLink", function(e){
+    $("#indicator_results_div").on("click", "#targetsTabLink", function(e){
         e.preventDefault();
         $("#indicator_modal_content").empty();
         $("#modalmessages").empty();
         var url = $(e.target).parent().attr('href');
-        $("#indicator_collecteddata_div").modal('hide');
+        $("#indicator_results_div").modal('hide');
         $("#indicator_modal_content").load(url+"?modal=1&targetsonly=true");
         $("#indicator_modal_div").modal('show');
     });
 
-    $("#indicator_modal_div").on("click", "#backToCollectedDataLink", function(e){
+    $("#indicator_modal_div").on("click", "#backToResultsLink", function(e){
         e.preventDefault();
         $("#indicator_modal_div").modal('hide');
         $("#indicator_modal_content").empty();
         $("#modalmessages").empty();
-        $("#indicator_collecteddata_div").modal('show');
+        $("#indicator_results_div").modal('show');
 
         var url = $(e.target).attr('href') + '?existingTargetsOnly=true';
         $.getJSON(url, function( data ) {
@@ -139,7 +139,7 @@
     });
 
 
-    $('#indicator_collecteddata_div').on('hide.bs.modal', function (e) {
+    $('#indicator_results_div').on('hide.bs.modal', function (e) {
         var recordchanged = $(this).find('form').data('recordchanged');
         if (recordchanged == true) {
             var program_id = $(this).find('form #id_program').val();
@@ -149,15 +149,15 @@
     })
 
     // Open the CollectDataUpdate form in a modal
-    $("#div-id-indicator-list").on("click", ".collected-data__link", function(e) {
+    $("#div-id-indicator-list").on("click", ".results__link", function(e) {
         e.preventDefault();
         var url = $(this).attr("href");
         url += "?modal=1";
         $("#indicator_modal_content").empty();
         $("#modalmessages").empty();
 
-        $("#indicator_collected_data_modal_content").load(url);
-        $("#indicator_collecteddata_div").modal('show');
+        $("#indicator_results_modal_content").load(url);
+        $("#indicator_results_div").modal('show');
     });
 
 

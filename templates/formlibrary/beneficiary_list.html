@@ -94,12 +94,12 @@
                     { title: "Date Created", data: "create_date",
                         "defaultContent": "<i>Not set</i>",
                         "mRender": function (data, record, row) {
-                                return '<a class="collecteddata" name=' + row.id + ' href="#">' + formatDate(row.create_date) + '</a>';
+                                return '<a class="results" name=' + row.id + ' href="#">' + formatDate(row.create_date) + '</a>';
                             }},
                     { title: "Beneficiary Name", data: "beeficiary_name",
                         "defaultContent": "<i>Not set</i>",
                         "mRender": function (data, record, row) {
-                                return '<a class="collecteddata" name=' + row.id + ' href="#">' + row.beneficiary_name + '</a>';
+                                return '<a class="results" name=' + row.id + ' href="#">' + row.beneficiary_name + '</a>';
                             }},
                     { title: "Update/Delete/ ",
                         "mRender": function (data, record, row) {
