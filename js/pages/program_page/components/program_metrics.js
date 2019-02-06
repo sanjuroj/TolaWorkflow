@@ -237,10 +237,10 @@ class GaugeBand extends React.Component {
                      style={{'flexBasis': `${percentBelow}%`}}/>
             </div>
             { gaugeHasErrors ?
-                <div class="gauge__labels">
-                    <div class="gauge__label">
+                <div className="gauge__labels">
+                    <div className="gauge__label">
                         {/* # Translators: message describing why this display does not show any data. # */}
-                        <p class="text-muted">{gettext("Unavailable until the first target period ends with results reported.")}</p>
+                        <p className="text-muted">{gettext("Unavailable until the first target period ends with results reported.")}</p>
                     </div>
                 </div>
             : <GaugeLabels />}
