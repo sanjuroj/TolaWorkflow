@@ -1295,7 +1295,7 @@ class SiteProfileForm(forms.ModelForm):
         exclude = ['create_date', 'edit_date']
 
     map = forms.CharField(widget=GoogleMapsWidget(
-        attrs={'width': 700, 'height': 400, 'longitude': 'longitude', 'latitude': 'latitude','country':'Find a city or village'}), required=False)
+        attrs={'width': 700, 'height': 400, 'longitude': 'longitude', 'latitude': 'latitude','country': _('Find a city or village')}), required=False)
 
     date_of_firstcontact = forms.DateField(widget=DatePicker.DateInput(), required=False)
 
@@ -1306,6 +1306,15 @@ class SiteProfileForm(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
+
+        # needed because HTML template string below =(
+        translations = {
+            'projects_in_this_site': _('Projects in this Site'),
+            'project_name': _('Project Name'),
+            'program': _('Program'),
+            'activity_code': _('Activity Code'),
+            'view': _('View'),
+        }
 
         # get the user object from request to check user permissions
         self.request = kwargs.pop('request')
@@ -1325,35 +1334,35 @@ class SiteProfileForm(forms.ModelForm):
 
             HTML("""<br/>"""),
             TabHolder(
-                Tab('Profile',
-                    Fieldset('Description',
+                Tab(_('Profile'),
+                    Fieldset(_('Description'),
                         'name', 'type', 'office','status',
                     ),
-                    Fieldset('Contact Info',
+                    Fieldset(_('Contact Info'),
                         'contact_leader', 'date_of_firstcontact', 'contact_number', 'num_members',
                     ),
                 ),
-                Tab('Location',
-                    Fieldset('Places',
+                Tab(_('Location'),
+                    Fieldset(_('Places'),
                         'country','province','district','admin_level_three','village', Field('latitude', step="any"), Field('longitude', step="any"),
                     ),
-                    Fieldset('Map',
+                    Fieldset(_('Map'),
                         'map',
                     ),
                 ),
-                Tab('Demographic Information',
-                    Fieldset('Households',
+                Tab(_('Demographic Information'),
+                    Fieldset(_('Households'),
                         'total_num_households','avg_household_size', 'male_0_5', 'female_0_5', 'male_6_9', 'female_6_9',
                         'male_10_14', 'female_10_14','male_15_19', 'female_15_19', 'male_20_24', 'female_20_24', 'male_25_34', 'female_25_34', 'male_35_49', 'female_35_49', 'male_over_50', 'female_over_50', 'total_population',
                     ),
-                    Fieldset('Land',
+                    Fieldset(_('Land'),
                         'classify_land','total_land','total_agricultural_land','total_rainfed_land','total_horticultural_land',
                         'populations_owning_land', 'avg_landholding_size', 'households_owning_livestock','animal_type'
                     ),
-                    Fieldset('Literacy',
+                    Fieldset(_('Literacy'),
                         'literate_males','literate_females','literacy_rate',
                     ),
-                    Fieldset('Demographic Info Data Source',
+                    Fieldset(_('Demographic Info Data Source'),
                              'info_source'
                     ),
                 ),
@@ -1361,8 +1370,8 @@ class SiteProfileForm(forms.ModelForm):
             ),
             Div(
                 FormActions(
-                    Submit('submit', 'Save changes', css_class=''),
-                    Reset('reset', 'Reset', css_class='')
+                    Submit('submit', _('Save changes'), css_class=''),
+                    Reset('reset', _('Reset'), css_class='')
                 ),
                 css_class='form-actions',
             ),
@@ -1371,38 +1380,38 @@ class SiteProfileForm(forms.ModelForm):
                   <div class='card mt-4'>
 
                   <!-- Default panel contents -->
-                  <div class='card-header'><strong>Projects in this Site</strong></div>
+                  <div class='card-header'><strong>{projects_in_this_site}</strong></div>
                   <div class='card-body'>
-                    {% if getProjects %}
+                    {{% if getProjects %}}
                       <!-- Table -->
                       <table class="table">
                        <tr>
-                         <th>Project Name</th>
-                         <th>Program</th>
-                         <th>Activity Code</th>
-                         <th>View</th>
+                         <th>{project_name}</th>
+                         <th>{program}</th>
+                         <th>{activity_code}</th>
+                         <th>{view}</th>
                        </tr>
 
-                    {% for item in getProjects %}
+                    {{% for item in getProjects %}}
                        <tr>
-                        <td>{{ item.project_name }}</td>
-                        <td>{{ item.program.name }}</td>
-                        <td>{{ item.activity_code }}</td>
-                        <td><a target="_new" href='/workflow/projectagreement_detail/{{ item.id }}/'>View</a>
+                        <td>{{{{ item.project_name }}}}</td>
+                        <td>{{{{ item.program.name }}}}</td>
+                        <td>{{{{ item.activity_code }}}}</td>
+                        <td><a target="_new" href='/workflow/projectagreement_detail/{{{{ item.id }}}}/'>{view}</a>
                        </tr>
-                    {% endfor %}
+                    {{% endfor %}}
                      </table>
-                    {% endif %}
+                    {{% endif %}}
                     </div>
                   </div>
-             """),
+             """.format(**translations)),
         )
 
         super(SiteProfileForm, self).__init__(*args, **kwargs)
 
         #override the office queryset to use request.user for country
         countries = getCountry(self.request.user)
-        self.fields['date_of_firstcontact'].label = "Date of First Contact"
+        self.fields['date_of_firstcontact'].label = _("Date of First Contact")
         self.fields['office'].queryset = Office.objects.filter(province__country__in=countries)
         self.fields['province'].queryset = Province.objects.filter(country__in=countries)
         self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
