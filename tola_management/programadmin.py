@@ -6,6 +6,7 @@ from django.db.models import IntegerField as DBIntegerField
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status as httpstatus
+from rest_framework import UniqueValidator
 from rest_framework.decorators import list_route
 from rest_framework.serializers import (
     ModelSerializer,
@@ -61,8 +62,7 @@ class ProgramAdminSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
     name = CharField(required=True, max_length=255)
     funding_status = CharField(required=True)
-    # TODO: add validator. gaitid needs to be unique
-    gaitid = CharField(required=True)
+    gaitid = CharField(required=True, )
     description = CharField(allow_blank=True)
     sector = NestedSectorSerializer(required=True, many=True)
     country = NestedCountrySerializer(required=True, many=True)
