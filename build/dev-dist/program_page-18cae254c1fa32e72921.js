@@ -136,7 +136,7 @@ function (_React$Component) {
 
     _this.onShowAllClick = function (e) {
       e.preventDefault();
-      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('clear-all-indicator-filters');
+      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('nav-clear-all-indicator-filters');
     };
 
     return _this;
@@ -195,7 +195,7 @@ function (_React$Component2) {
       var selectedIndicatorId = selectedObject ? selectedObject.value : null;
 
       if (selectedIndicatorId) {
-        _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('select-indicators-to-filter', selectedIndicatorId);
+        _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('nav-select-indicator-to-filter', selectedIndicatorId);
       }
     };
 
@@ -410,6 +410,60 @@ var IndicatorList = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(
 
 /***/ }),
 
+/***/ "LBcr":
+/*!**************************!*\
+  !*** ./js/date_utils.js ***!
+  \**************************/
+/*! exports provided: dateFromISOString, localDateFromISOString, mediumDateFormatStr */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "dateFromISOString", function() { return dateFromISOString; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "localDateFromISOString", function() { return localDateFromISOString; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mediumDateFormatStr", function() { return mediumDateFormatStr; });
+/*
+  Some nice helper functions to help with date parsing and localization
+
+  In the future it may make sense to use moment.js, luxon, or date-fns,
+  but for now, just get by with the native browser APIs and save some bytes.
+
+  Confusingly, native Date() objects are actually date/time objects.
+
+  Surprisingly, the Django i18n/l10n JS tools do not provide access to the language code
+  of the current language in use.
+ */
+var languageCode = window.userLang; // set in base.html by Django
+
+var n = "numeric",
+    s = "short",
+    l = "long",
+    d2 = "2-digit";
+var DATE_MED = {
+  year: n,
+  month: s,
+  day: n
+}; // Returns native Date()
+
+function dateFromISOString(isoDateStr) {
+  return new Date(isoDateStr); // modern browsers can just parse it
+} // "2017-01-01" -> Date with local timezone (not UTC)
+// also lives in app.js (localDateFromISOStr)
+
+function localDateFromISOString(dateStr) {
+  var dateInts = dateStr.split('-').map(function (x) {
+    return parseInt(x);
+  });
+  return new Date(dateInts[0], dateInts[1] - 1, dateInts[2]);
+} // Date() -> "Oct 2, 2018" (localized)
+// JS equiv of the Django template filter:   |date:"MEDIUM_DATE_FORMAT"
+
+function mediumDateFormatStr(date) {
+  return new Intl.DateTimeFormat(languageCode, DATE_MED).format(date);
+}
+
+/***/ }),
+
 /***/ "YVM2":
 /*!*****************************************!*\
   !*** ./js/pages/program_page/models.js ***!
@@ -469,7 +523,7 @@ function () {
         return e.id === indicator.id;
       });
 
-      if (i > 0) {
+      if (i > -1) {
         this.indicators[i] = indicator;
       }
     }
@@ -729,104 +783,9 @@ __webpack_require__.r(__webpack_exports__);
 var rootStore = new _models__WEBPACK_IMPORTED_MODULE_7__["ProgramPageStore"](jsContext.indicators, jsContext.program);
 var uiStore = new _models__WEBPACK_IMPORTED_MODULE_7__["ProgramPageUIStore"]();
 /*
- * Routes setup:
- */
-
-var routes = [{
-  name: 'all',
-  path: '/',
-  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].noFilter
-}, {
-  name: 'targets',
-  path: '/targets',
-  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingTarget
-}, {
-  name: 'results',
-  path: '/results',
-  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingResults
-}, {
-  name: 'evidence',
-  path: '/evidence',
-  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingEvidence
-}, {
-  name: 'scope',
-  path: '/scope'
-}, {
-  name: 'scope.on',
-  path: '/on',
-  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].onTarget
-}, {
-  name: 'scope.above',
-  path: '/above',
-  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].aboveTarget
-}, {
-  name: 'scope.below',
-  path: '/below',
-  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].belowTarget
-}];
-var routeLookup = {};
-var routeNameLookup = {};
-/* generate a route map to lookup route name from filtertype (events bubbling up from gauge bands) and also
- * generate a lookup to get filtertype from route name (for url-based filtering)
- */
-
-for (var i = 0; i < routes.length; i++) {
-  if (routes[i].name == 'scope') {
-    routeLookup[routes[i].name] = null;
-  } else {
-    routeLookup[routes[i].name] = routes[i].filterType;
-    routeNameLookup[routes[i].filterType] = routes[i].name;
-  }
-}
-
-var router = Object(router5__WEBPACK_IMPORTED_MODULE_3__["default"])(routes, {
-  defaultRoute: 'all',
-  //unrouted: show all indicators
-  defaultParams: {},
-  trailingSlashMode: 'always'
-});
-
-var routeToEventBus = function routeToEventBus(routeName) {
-  if (!routeLookup.hasOwnProperty(routeName)) {
-    console.log('no filter for name', routeName);
-  } else {
-    var filterType = routeLookup[routeName];
-    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('apply-gauge-tank-filter', filterType);
-  }
-};
-
-var onNavigation = function onNavigation(navRoutes) {
-  if (navRoutes.route.name == 'scope') {
-    router.navigate('scope.on', {}, {
-      replace: true
-    });
-  }
-};
-
-router.usePlugin(Object(router5_plugin_browser__WEBPACK_IMPORTED_MODULE_4__["default"])({
-  useHash: true,
-  base: '/program/' + jsContext.program.id + '/'
-}));
-router.subscribe(onNavigation);
-router.start();
-/* function to pass into gauge band elements to handle clicking a filter or show all
- */
-
-var filterClickToRoute = function filterClickToRoute() {
-  var filterType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-
-  if (routeNameLookup.hasOwnProperty(filterType)) {
-    router.navigate(routeNameLookup[filterType]);
-  } else {
-    //how do we handle js errors?
-    console.log("attempted to find (and failed) filter type", filterType);
-  }
-};
-/*
  * Event Handlers
  */
 // open indicator update modal with form loaded from server
-
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('open-indicator-update-modal', function (indicatorId) {
   // Note: depends on indicator_list_modals.html
@@ -851,40 +810,32 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('delete-indicator-results',
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('reload-indicator', function (indicatorId) {
   $.get("/indicators/api/indicator/".concat(indicatorId), rootStore.indicatorStore.updateIndicator);
-}); // apply a gas gauge filter. Takes in IndicatorFilterType enum value
+}); // close all expanded indicators in the table
+
+_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('close-all-indicators', function () {
+  rootStore.deleteAllResultsHTML();
+}); // Indicator filters are controlled through routes
+// these should no longer be called directly from components
+// apply a gas gauge filter. Takes in IndicatorFilterType enum value
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('apply-gauge-tank-filter', function (indicatorFilter) {
   // reset all filters
   _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('clear-all-indicator-filters');
-  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('close-all-indicators'); // update navigation element:
-
-  if (routeNameLookup.hasOwnProperty(indicatorFilter)) {
-    router.navigate(routeNameLookup[indicatorFilter]);
-  } else {
-    //how do we handle js errors?
-    console.log("attempted to find (and failed) filter type", indicatorFilter);
-  }
-
   uiStore.setIndicatorFilter(indicatorFilter);
 }); // clear all gas tank and indicator select filters
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('clear-all-indicator-filters', function () {
-  router.navigate('all');
   uiStore.clearIndicatorFilter();
-  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('select-indicators-to-filter', null);
+  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('select-indicator-to-filter', null);
   _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('close-all-indicators');
 }); // filter down by selecting individual indicator
 
-_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('select-indicators-to-filter', function (selectedIndicatorId) {
+_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('select-indicator-to-filter', function (selectedIndicatorId) {
   // clear gauge tank filters
   uiStore.clearIndicatorFilter();
   uiStore.setSelectedIndicatorId(selectedIndicatorId); // Open up results pane as well
 
   _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('load-indicator-results', selectedIndicatorId);
-}); // close all expanded indicators in the table
-
-_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('close-all-indicators', function () {
-  rootStore.deleteAllResultsHTML();
 });
 /*
  * React components on page
@@ -898,23 +849,21 @@ react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_
   rootStore: rootStore,
   uiStore: uiStore,
   indicatorOnScopeMargin: jsContext.indicator_on_scope_margin
-}), document.querySelector('#program-metrics-react-component')); //fire initial filters:
-
-routeToEventBus(router.getState().name);
+}), document.querySelector('#program-metrics-react-component'));
 /*
  * Copied and modified JS from indicator_list_modals.js to allow modals to work
  * without being completely converted to React
  */
 // Open the CollectDataUpdate (update results) form in a modal
 
-$("#indicator-list-react-component").on("click", ".collected-data__link", function (e) {
+$("#indicator-list-react-component").on("click", ".results__link", function (e) {
   e.preventDefault();
   var url = $(this).attr("href");
   url += "?modal=1";
   $("#indicator_modal_content").empty();
   $("#modalmessages").empty();
-  $("#indicator_collected_data_modal_content").load(url);
-  $("#indicator_collecteddata_div").modal('show');
+  $("#indicator_results_modal_content").load(url);
+  $("#indicator_results_div").modal('show');
 }); // Open the IndicatorUpdate (Add targets btn in results section (HTML)) Form in a modal
 
 $("#indicator-list-react-component").on("click", ".indicator-link[data-tab]", function (e) {
@@ -945,7 +894,7 @@ $('#indicator_modal_div').on('hide.bs.modal', function (e) {
 }); // When "add results" modal is closed, the targets data needs refreshing
 // the indicator itself also needs refreshing for the gas tank gauge
 
-$('#indicator_collecteddata_div').on('hide.bs.modal', function (e) {
+$('#indicator_results_div').on('hide.bs.modal', function (e) {
   var recordchanged = $(this).find('form').data('recordchanged');
 
   if (recordchanged === true) {
@@ -953,6 +902,91 @@ $('#indicator_collecteddata_div').on('hide.bs.modal', function (e) {
     _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('load-indicator-results', indicator_id);
     _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('reload-indicator', indicator_id);
   }
+});
+/*
+ * Routes setup:
+ */
+
+var routes = [{
+  name: 'all',
+  path: '/',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].noFilter
+}, {
+  name: 'targets',
+  path: '/targets',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingTarget
+}, {
+  name: 'results',
+  path: '/results',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingResults
+}, {
+  name: 'evidence',
+  path: '/evidence',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingEvidence
+}, {
+  name: 'scope',
+  path: '/scope',
+  forwardTo: 'scope.on'
+}, {
+  name: 'scope.on',
+  path: '/on',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].onTarget
+}, {
+  name: 'scope.above',
+  path: '/above',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].aboveTarget
+}, {
+  name: 'scope.below',
+  path: '/below',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].belowTarget
+}, {
+  name: 'indicator',
+  path: '/indicator/:indicator_id<\\d+>',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].noFilter
+}];
+var router = Object(router5__WEBPACK_IMPORTED_MODULE_3__["default"])(routes, {
+  defaultRoute: 'all',
+  //unrouted: show all indicators
+  defaultParams: {},
+  trailingSlashMode: 'always'
+});
+
+var onNavigation = function onNavigation(navRoutes) {
+  var routeName = navRoutes.route.name;
+  var params = navRoutes.route.params;
+
+  if (routeName === 'indicator') {
+    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('select-indicator-to-filter', params.indicator_id);
+    return;
+  }
+
+  var routeObj = routes.find(function (r) {
+    return r.name === routeName;
+  });
+  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('apply-gauge-tank-filter', routeObj.filterType);
+};
+
+router.usePlugin(Object(router5_plugin_browser__WEBPACK_IMPORTED_MODULE_4__["default"])({
+  useHash: true,
+  base: '/program/' + jsContext.program.id + '/'
+}));
+router.subscribe(onNavigation);
+router.start(); // nav events
+
+_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('nav-apply-gauge-tank-filter', function (indicatorFilter) {
+  // Find route based on filter type and go
+  var routeObj = routes.find(function (r) {
+    return r.filterType === indicatorFilter;
+  });
+  router.navigate(routeObj.name);
+});
+_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('nav-clear-all-indicator-filters', function () {
+  router.navigate('all');
+});
+_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('nav-select-indicator-to-filter', function (selectedIndicatorId) {
+  router.navigate('indicator', {
+    'indicator_id': selectedIndicatorId
+  });
 });
 
 /***/ }),
@@ -992,6 +1026,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! mobx-react */ "okNM");
 /* harmony import */ var _eventbus__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../eventbus */ "qtBC");
 /* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../models */ "YVM2");
+/* harmony import */ var _date_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../date_utils */ "LBcr");
 var _class, _temp, _class3, _temp2;
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -1028,6 +1063,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var GaugeTank = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class = (_temp =
 /*#__PURE__*/
 function (_React$Component) {
@@ -1048,7 +1084,10 @@ function (_React$Component) {
 
     _this.handleClick = function (e) {
       e.preventDefault();
-      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('apply-gauge-tank-filter', _this.props.filterType);
+
+      if (!_this.props.disabled) {
+        _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('nav-apply-gauge-tank-filter', _this.props.filterType);
+      }
     };
 
     return _this;
@@ -1065,7 +1104,8 @@ function (_React$Component) {
           filledLabel = _this$props.filledLabel,
           unfilledLabel = _this$props.unfilledLabel,
           cta = _this$props.cta,
-          emptyLabel = _this$props.emptyLabel;
+          emptyLabel = _this$props.emptyLabel,
+          disabled = _this$props.disabled;
       var filterType = this.props.filterType;
       var currentIndicatorFilter = this.props.currentIndicatorFilter;
       var isHighlighted = filterType === currentIndicatorFilter; // Gauge should only show 100%/0% if filtered == all/0 (absolute 100%, not rounding to 100%)
@@ -1074,7 +1114,8 @@ function (_React$Component) {
       var unfilledPercent = allIndicatorsLength <= 0 || allIndicatorsLength == filteredIndicatorsLength ? 100 : filteredIndicatorsLength == 0 ? 0 : Math.max(1, Math.min(Math.round(filteredIndicatorsLength / allIndicatorsLength * 100), 99));
       var filledPercent = 100 - unfilledPercent;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: classnames__WEBPACK_IMPORTED_MODULE_1___default()('gauge', 'filter-trigger', {
+        className: classnames__WEBPACK_IMPORTED_MODULE_1___default()('gauge', {
+          'filter-trigger': !disabled,
           'is-highlighted': isHighlighted
         }),
         onClick: this.handleClick
@@ -1113,7 +1154,7 @@ function (_React$Component) {
         className: "gauge__label"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "text-danger"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, emptyLabel))))), unfilledPercent > 0 && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, emptyLabel))))), unfilledPercent > 0 && !disabled && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "gauge__cta"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "btn-link btn-inline"
@@ -1140,7 +1181,7 @@ function (_React$Component2) {
 
     _this2.onFilterLinkClick = function (e) {
       e.preventDefault();
-      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('apply-gauge-tank-filter', parseInt(e.target.getAttribute('data-filter-type')));
+      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('nav-apply-gauge-tank-filter', parseInt(e.target.getAttribute('data-filter-type')));
     };
 
     _this2.handledFilterTypes = new Set([_models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].aboveTarget, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].belowTarget, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].onTarget]);
@@ -1161,7 +1202,9 @@ function (_React$Component2) {
       var _this3 = this;
 
       var tickCount = 10;
-      var indicatorStore = this.props.indicatorStore;
+      var _this$props2 = this.props,
+          indicatorStore = _this$props2.indicatorStore,
+          program = _this$props2.program;
       var currentIndicatorFilter = this.props.currentIndicatorFilter;
       var isHighlighted = this.handledFilterTypes.has(currentIndicatorFilter);
       var totalIndicatorCount = indicatorStore.indicators.length;
@@ -1179,7 +1222,9 @@ function (_React$Component2) {
       var percentOnTarget = makePercent(onTargetCount);
       var percentBelow = makePercent(lowCount);
       var percentNonReporting = makePercent(nonReportingCount);
-      var marginPercent = this.props.indicatorOnScopeMargin * 100; // Top level wrapper of component
+      var marginPercent = this.props.indicatorOnScopeMargin * 100;
+      var programPeriodStartDate = Object(_date_utils__WEBPACK_IMPORTED_MODULE_5__["localDateFromISOString"])(program.reporting_period_start);
+      var gaugeHasErrors = indicatorStore.getIndicatorsReporting.length === 0 || indicatorStore.getTotalResultsCount === 0; // Top level wrapper of component
 
       var Gauge = function Gauge(props) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -1196,32 +1241,67 @@ function (_React$Component2) {
         }, props.children));
       };
 
-      if (indicatorStore.getTotalResultsCount === 0) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Gauge, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
-          className: "text-muted"
-        }, gettext("Unavailable until results are reported")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-          className: "gauge__icon gauge__icon--error fas fa-frown"
-        }))));
-      }
-
-      if (indicatorStore.getIndicatorsReporting.length === 0) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Gauge, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "gauge__graphic gauge__graphic--empty gauge__graphic--performance-band"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "graphic__tick-marks"
-        }, _toConsumableArray(Array(tickCount)).map(function (e, i) {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-            key: i,
-            className: "graphic__tick"
-          });
-        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      var GaugeLabels = function GaugeLabels(props) {
+        // success case
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "gauge__labels"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "gauge__label"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "text-muted"
-        }, gettext("Unavailable until the first target period ends with results reported")))));
-      } // Handle strings containing HTML markup
+        },
+        /* # Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
+        interpolate(gettext('%s% unavailable'), [percentNonReporting])), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          href: "#",
+          tabIndex: "0",
+          "data-toggle": "popover",
+          "data-placement": "right",
+          "data-trigger": "focus",
+          "data-content":
+          /* # Translators: help text for the percentage of indicators with no targets reporting data. */
+          gettext("The indicator has no targets, no completed target periods, or no results reported."),
+          onClick: function onClick(e) {
+            return e.preventDefault();
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "far fa-question-circle"
+        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "gauge__label"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          className: "gauge__value--above filter-trigger--band",
+          "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].aboveTarget,
+          onClick: _this3.onFilterLinkClick,
+          dangerouslySetInnerHTML: aboveTargetMarkup()
+        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "gauge__label"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          className: "gauge__value filter-trigger--band",
+          "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].onTarget,
+          onClick: _this3.onFilterLinkClick,
+          dangerouslySetInnerHTML: onTargetMarkup()
+        }), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          href: "#",
+          tabIndex: "0",
+          "data-toggle": "popover",
+          "data-placement": "right",
+          "data-trigger": "focus",
+          "data-content":
+          /* # Translators: Help text explaining what an "on track" indicator is. */
+          gettext("The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is 110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a decreasing direction of change, then “above” and “below” are switched. In that case, if your target is 100 and your result is 200, your indicator is 50% below target and not on track.<br><br><a href='https://docs.google.com/document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our documentation for more information.</a>"),
+          onClick: function onClick(e) {
+            return e.preventDefault();
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "far fa-question-circle"
+        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "gauge__label"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          className: "gauge__value--below filter-trigger--band",
+          "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].belowTarget,
+          onClick: _this3.onFilterLinkClick,
+          dangerouslySetInnerHTML: belowTargetMarkup()
+        })));
+      }; // Handle strings containing HTML markup
 
 
       var aboveTargetMarkup = function aboveTargetMarkup() {
@@ -1278,64 +1358,13 @@ function (_React$Component2) {
         style: {
           'flexBasis': "".concat(percentBelow, "%")
         }
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      })), gaugeHasErrors ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "gauge__labels"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "gauge__label"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
         className: "text-muted"
-      },
-      /* # Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
-      interpolate(gettext('%s% unavailable'), [percentNonReporting])), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        href: "#",
-        tabIndex: "0",
-        "data-toggle": "popover",
-        "data-placement": "right",
-        "data-trigger": "focus",
-        "data-content":
-        /* # Translators: help text for the percentage of indicators with no targets reporting data. */
-        gettext("The indicator has no targets, no completed target periods, or no results reported."),
-        onClick: function onClick(e) {
-          return e.preventDefault();
-        }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-        className: "far fa-question-circle"
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "gauge__label"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "gauge__value--above filter-trigger--band",
-        "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].aboveTarget,
-        onClick: this.onFilterLinkClick,
-        dangerouslySetInnerHTML: aboveTargetMarkup()
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "gauge__label"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "gauge__value filter-trigger--band",
-        "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].onTarget,
-        onClick: this.onFilterLinkClick,
-        dangerouslySetInnerHTML: onTargetMarkup()
-      }), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        href: "#",
-        tabIndex: "0",
-        "data-toggle": "popover",
-        "data-placement": "right",
-        "data-trigger": "focus",
-        "data-content":
-        /* # Translators: Help text explaining what an "on track" indicator is. */
-        gettext("The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is 110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a decreasing direction of change, then “above” and “below” are switched. In that case, if your target is 100 and your result is 200, your indicator is 50% below target and not on track.<br><br><a href='https://docs.google.com/document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our documentation for more information.</a>"),
-        onClick: function onClick(e) {
-          return e.preventDefault();
-        }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-        className: "far fa-question-circle"
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "gauge__label"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "gauge__value--below filter-trigger--band",
-        "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].belowTarget,
-        onClick: this.onFilterLinkClick,
-        dangerouslySetInnerHTML: belowTargetMarkup()
-      }))));
+      }, gettext("Unavailable until the first target period ends with results reported.")))) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(GaugeLabels, null));
     }
   }]);
 
@@ -1343,7 +1372,7 @@ function (_React$Component2) {
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp2)) || _class3;
 
 var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(function (props) {
-  // const program = props.rootStore.program;
+  var program = props.rootStore.program;
   var indicatorStore = props.rootStore.indicatorStore;
   var indicators = indicatorStore.indicators;
   var currentIndicatorFilter = props.uiStore.currentIndicatorFilter;
@@ -1384,7 +1413,20 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
     unfilledLabel: gettext("no evidence"),
     cta: gettext("Add missing evidence"),
     emptyLabel: gettext("No evidence")
-  }; // Do not display on pages with no indicators
+  }; // Are some targets defined on any indicators?
+  // all_targets_defined is an int (1,0) instead of bool
+
+  var someTargetsDefined = indicators.map(function (i) {
+    return i.all_targets_defined === 1;
+  }).some(function (b) {
+    return b;
+  }); // Do any indicators have results?
+
+  var someResults = indicators.map(function (i) {
+    return i.results_count;
+  }).some(function (count) {
+    return count > 0;
+  }); // Do not display on pages with no indicators
 
   if (indicators.length === 0) return null;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -1392,7 +1434,8 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(GaugeBand, {
     currentIndicatorFilter: currentIndicatorFilter,
     indicatorOnScopeMargin: indicatorOnScopeMargin,
-    indicatorStore: indicatorStore
+    indicatorStore: indicatorStore,
+    program: program
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(GaugeTank, _extends({
     filterType: _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].missingTarget,
     currentIndicatorFilter: currentIndicatorFilter,
@@ -1402,17 +1445,19 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
     filterType: _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].missingResults,
     currentIndicatorFilter: currentIndicatorFilter,
     allIndicatorsLength: indicators.length,
-    filteredIndicatorsLength: indicatorStore.getIndicatorsNeedingResults.length
+    filteredIndicatorsLength: indicatorStore.getIndicatorsNeedingResults.length,
+    disabled: !someTargetsDefined
   }, resultsLabels)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(GaugeTank, _extends({
     filterType: _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].missingEvidence,
     currentIndicatorFilter: currentIndicatorFilter // The names below are misleading as this gauge is measuring *results*, not indicators
     ,
     allIndicatorsLength: indicatorStore.getTotalResultsCount,
-    filteredIndicatorsLength: indicatorStore.getTotalResultsCount - indicatorStore.getTotalResultsWithEvidenceCount
+    filteredIndicatorsLength: indicatorStore.getTotalResultsCount - indicatorStore.getTotalResultsWithEvidenceCount,
+    disabled: !someTargetsDefined || !someResults
   }, evidenceLabels)));
 });
 
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-b789159b5f6d1a138659.js.map
+//# sourceMappingURL=program_page-18cae254c1fa32e72921.js.map

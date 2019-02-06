@@ -199,12 +199,13 @@ function () {
 /*!**************************!*\
   !*** ./js/date_utils.js ***!
   \**************************/
-/*! exports provided: dateFromISOString, mediumDateFormatStr */
+/*! exports provided: dateFromISOString, localDateFromISOString, mediumDateFormatStr */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "dateFromISOString", function() { return dateFromISOString; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "localDateFromISOString", function() { return localDateFromISOString; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mediumDateFormatStr", function() { return mediumDateFormatStr; });
 /*
   Some nice helper functions to help with date parsing and localization
@@ -231,6 +232,14 @@ var DATE_MED = {
 
 function dateFromISOString(isoDateStr) {
   return new Date(isoDateStr); // modern browsers can just parse it
+} // "2017-01-01" -> Date with local timezone (not UTC)
+// also lives in app.js (localDateFromISOStr)
+
+function localDateFromISOString(dateStr) {
+  var dateInts = dateStr.split('-').map(function (x) {
+    return parseInt(x);
+  });
+  return new Date(dateInts[0], dateInts[1] - 1, dateInts[2]);
 } // Date() -> "Oct 2, 2018" (localized)
 // JS equiv of the Django template filter:   |date:"MEDIUM_DATE_FORMAT"
 
@@ -815,4 +824,4 @@ var globalEventBus = nanobus__WEBPACK_IMPORTED_MODULE_0___default()();
 /***/ })
 
 },[["Wr7D","runtime","vendors"]]]);
-//# sourceMappingURL=document_list-3c92d19255567ddcd69b.js.map
+//# sourceMappingURL=document_list-6715dc82009200d5040a.js.map

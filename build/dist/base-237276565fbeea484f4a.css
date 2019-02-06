@@ -8008,38 +8008,60 @@ span[data-toggle="popover"]:hover {
   .periodic-target .input-value .controls input::placeholder {
     color: #b8babd; }
 
-.collected-data-table__wrapper {
+.results-table__wrapper {
   padding: 15px; }
 
-.collected-data-table {
+.results-table {
   background-color: transparent !important; }
-  .collected-data-table th, .collected-data-table td {
+  .results-table th, .results-table td {
     font-size: 0.875rem;
     padding: 0.3rem; }
-  .collected-data-table td {
+  .results-table td {
     background: #fff; }
 
-.collected-data__result--date {
+.results-table--has-subtotal.table thead th {
+  border-bottom: 2px solid #b8babd; }
+
+.results__result--date {
   border-left: 1px solid #ebedf0;
   white-space: nowrap; }
 
-.collected-data__result--value {
+.results__result--value {
   border-right: 1px solid #ebedf0;
   text-align: right;
   white-space: nowrap; }
 
-.collected-data__result--url {
+.results__result--url {
   word-break: break-all; }
 
-.collected-data__result--nodata {
+.results__result--nodata {
   border-left: 1px solid #ebedf0;
   border-right: 1px solid #ebedf0;
   white-space: nowrap; }
 
-.collected-data__row--supplemental td {
+.results__row--main.pt-ended td:first-child {
+  border-left: 2px solid #b8babd; }
+
+.results__row--main.pt-ended td:last-child {
+  border-right: 2px solid #b8babd; }
+
+.results__row--subtotal td:first-child {
+  border-left: 2px solid #b8babd; }
+
+.results__row--subtotal td:last-child {
+  border-right: 2px solid #b8babd; }
+
+.results__row--subtotal td {
+  background-color: #ebedf0;
+  border-bottom: 2px solid #b8babd; }
+
+.results__row--supplemental td {
   border-top: 1px solid #f5f5f5; }
 
-.collected-data-table__actions {
+.results__row--supplemental.pt-ended td:last-child {
+  border-right: 2px solid #b8babd; }
+
+.results-table__actions {
   display: flex;
   justify-content: space-between;
   align-items: center; }
@@ -8470,10 +8492,10 @@ body.page_iptt_table {
 #id_div_top_iptt_report {
   color: #54585a; }
 
-.page_iptt_table .modal-dialog .collected-data__link {
+.page_iptt_table .modal-dialog .results__link {
   display: none; }
 
-.page_iptt_table .modal-dialog .collected-data-table__actions {
+.page_iptt_table .modal-dialog .results-table__actions {
   background: transparent; }
 
 #sidebar {
@@ -8900,7 +8922,7 @@ select.listoption_filters {
   margin-bottom: 1rem;
   margin-top: 1rem; }
 
-#indicator_collecteddata_content .modal-footer {
+#indicator_results_content .modal-footer {
   background-color: #dbdcde;
   border-radius: 0 0 0.3rem 0.3rem;
   margin-left: -1rem;
@@ -8945,5 +8967,3 @@ select.listoption_filters {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-d7cf16db4f63f5218cc7.css.map*/
