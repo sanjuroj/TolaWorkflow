@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { observer } from "mobx-react"
 import eventBus from '../../../eventbus';
 import {IndicatorFilterType} from "../models";
+import {localDateFromISOString} from "../../../date_utils";
 
 
 @observer
@@ -10,13 +11,16 @@ class GaugeTank extends React.Component {
     
     handleClick = (e) => {
         e.preventDefault();
-        eventBus.emit('apply-gauge-tank-filter', this.props.filterType);
-    }
+
+        if (! this.props.disabled) {
+            eventBus.emit('nav-apply-gauge-tank-filter', this.props.filterType);
+        }
+    };
     
     render() {
         const tickCount = 10;
 
-        const {allIndicatorsLength, filteredIndicatorsLength, title, filledLabel, unfilledLabel, cta, emptyLabel} = this.props;
+        const {allIndicatorsLength, filteredIndicatorsLength, title, filledLabel, unfilledLabel, cta, emptyLabel, disabled} = this.props;
 
         const filterType = this.props.filterType;
         const currentIndicatorFilter = this.props.currentIndicatorFilter;
@@ -30,7 +34,7 @@ class GaugeTank extends React.Component {
                 Math.max(1, Math.min(Math.round((filteredIndicatorsLength / allIndicatorsLength) * 100), 99)));
         const filledPercent = 100 - unfilledPercent;
 
-        return <div className={classNames('gauge', 'filter-trigger', {'is-highlighted': isHighlighted})}
+        return <div className={classNames('gauge', {'filter-trigger': !disabled, 'is-highlighted': isHighlighted})}
                     onClick={this.handleClick} >
             <h6 className="gauge__title">{title}</h6>
             <div className="gauge__overview">
@@ -62,7 +66,7 @@ class GaugeTank extends React.Component {
                     }
                 </div>
             </div>
-            { unfilledPercent > 0 &&
+            { unfilledPercent > 0 && !disabled &&
             <div className="gauge__cta">
                 <span className="btn-link btn-inline"><i className="fas fa-exclamation-triangle text-warning"/> {cta}</span>
                 &nbsp;
@@ -87,7 +91,7 @@ class GaugeBand extends React.Component {
     
     onFilterLinkClick = (e) => {
         e.preventDefault();
-        eventBus.emit('apply-gauge-tank-filter', parseInt(e.target.getAttribute('data-filter-type')));
+        eventBus.emit('nav-apply-gauge-tank-filter', parseInt(e.target.getAttribute('data-filter-type')));
     };
 
     componentDidUpdate() {
@@ -101,7 +105,7 @@ class GaugeBand extends React.Component {
     render() {
         const tickCount = 10;
 
-        const {indicatorStore} = this.props;
+        const {indicatorStore, program} = this.props;
 
         const currentIndicatorFilter = this.props.currentIndicatorFilter;
 
@@ -125,6 +129,8 @@ class GaugeBand extends React.Component {
 
         const marginPercent = this.props.indicatorOnScopeMargin * 100;
 
+        let programPeriodStartDate = localDateFromISOString(program.reporting_period_start);
+
         // Top level wrapper of component
         let Gauge = (props) => {
             return <div className={classNames('gauge', {'is-highlighted': isHighlighted})} ref={el => this.el = el}>
@@ -137,15 +143,25 @@ class GaugeBand extends React.Component {
 
 
         if (indicatorStore.getTotalResultsCount === 0) {
-            return <Gauge>
-                <div>
-                    {/* # Translators: message describing why this display does not show any data. */}
-                    <p className="text-muted">{gettext("Unavailable until results are reported")}</p>
+            if (new Date() >= programPeriodStartDate) {
+                return <Gauge>
                     <div>
-                        <i className="gauge__icon gauge__icon--error fas fa-frown"/>
+                        {/* # Translators: message describing why this display does not show any data. */}
+                        <p className="text-muted">{gettext("Unavailable until results are reported")}</p>
+                        <div>
+                            <i className="gauge__icon gauge__icon--error fas fa-frown"/>
+                        </div>
                     </div>
-                </div>
-            </Gauge>;
+                </Gauge>;
+            } else {
+                return <Gauge>
+                    <div>
+                        {/* # Translators: message describing why this display does not show any data due to the program having not yet started. */}
+                        <p className="text-muted">{gettext("Unavailable until your first target period ends.")}</p>
+                    </div>
+                </Gauge>;
+            }
+
         }
 
         if (indicatorStore.getIndicatorsReporting.length === 0) {
@@ -258,7 +274,7 @@ class GaugeBand extends React.Component {
 
 
 export const ProgramMetrics = observer(function (props) {
-    // const program = props.rootStore.program;
+    const program = props.rootStore.program;
     const indicatorStore = props.rootStore.indicatorStore;
     const indicators = indicatorStore.indicators;
 
@@ -313,6 +329,13 @@ export const ProgramMetrics = observer(function (props) {
         emptyLabel: gettext("No evidence"),
     };
 
+    // Are all targets defined for all indicators?
+    // all_targets_defined is an int (1,0) instead of bool
+    const allTargetsDefined = indicators.map(i => i.all_targets_defined === 1).every(b => b);
+
+    // Do any indicators have results?
+    const someResults = indicators.map(i => i.results_count).some(count => count > 0);
+
     // Do not display on pages with no indicators
     if (indicators.length === 0) return null;
 
@@ -321,6 +344,7 @@ export const ProgramMetrics = observer(function (props) {
             <GaugeBand currentIndicatorFilter={currentIndicatorFilter}
                        indicatorOnScopeMargin={indicatorOnScopeMargin}
                        indicatorStore={indicatorStore}
+                       program={program}
             />
 
             <GaugeTank filterType={IndicatorFilterType.missingTarget}
@@ -337,6 +361,9 @@ export const ProgramMetrics = observer(function (props) {
 
                        allIndicatorsLength={indicators.length}
                        filteredIndicatorsLength={indicatorStore.getIndicatorsNeedingResults.length}
+
+                       disabled={! allTargetsDefined}
+
                        {...resultsLabels}
                        
                        />
@@ -346,6 +373,8 @@ export const ProgramMetrics = observer(function (props) {
                        // The names below are misleading as this gauge is measuring *results*, not indicators
                        allIndicatorsLength={indicatorStore.getTotalResultsCount}
                        filteredIndicatorsLength={indicatorStore.getTotalResultsCount - indicatorStore.getTotalResultsWithEvidenceCount}
+
+                       disabled={! allTargetsDefined || ! someResults}
 
                        {...evidenceLabels}
                        />
