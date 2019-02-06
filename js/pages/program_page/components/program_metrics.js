@@ -8,7 +8,7 @@ import {localDateFromISOString} from "../../../date_utils";
 
 @observer
 class GaugeTank extends React.Component {
-    
+
     handleClick = (e) => {
         e.preventDefault();
 
@@ -16,7 +16,7 @@ class GaugeTank extends React.Component {
             eventBus.emit('nav-apply-gauge-tank-filter', this.props.filterType);
         }
     };
-    
+
     render() {
         const tickCount = 10;
 
@@ -88,7 +88,7 @@ class GaugeBand extends React.Component {
             IndicatorFilterType.onTarget,
         ]);
     }
-    
+
     onFilterLinkClick = (e) => {
         e.preventDefault();
         eventBus.emit('nav-apply-gauge-tank-filter', parseInt(e.target.getAttribute('data-filter-type')));
@@ -116,7 +116,7 @@ class GaugeBand extends React.Component {
         const highCount = indicatorStore.getIndicatorsAboveTarget.length;
         const lowCount = indicatorStore.getIndicatorsBelowTarget.length;
         const onTargetCount = indicatorStore.getIndicatorsOnTarget.length;
-        
+
         //100 and 0 should only represent absolute "all" and "none" values respectively (no round to 100 or to 0)
         const makePercent = totalIndicatorCount > 0 ?
             (x) => (x == totalIndicatorCount ? 100 :
@@ -131,6 +131,9 @@ class GaugeBand extends React.Component {
 
         let programPeriodStartDate = localDateFromISOString(program.reporting_period_start);
 
+        let gaugeHasErrors = (indicatorStore.getIndicatorsReporting.length === 0) || (indicatorStore.getTotalResultsCount === 0);
+
+
         // Top level wrapper of component
         let Gauge = (props) => {
             return <div className={classNames('gauge', {'is-highlighted': isHighlighted})} ref={el => this.el = el}>
@@ -141,79 +144,8 @@ class GaugeBand extends React.Component {
             </div>
         };
 
-
-        if (indicatorStore.getTotalResultsCount === 0) {
-            if (new Date() >= programPeriodStartDate) {
-                return <Gauge>
-                    <div>
-                        {/* # Translators: message describing why this display does not show any data. */}
-                        <p className="text-muted">{gettext("Unavailable until results are reported")}</p>
-                        <div>
-                            <i className="gauge__icon gauge__icon--error fas fa-frown"/>
-                        </div>
-                    </div>
-                </Gauge>;
-            } else {
-                return <Gauge>
-                    <div>
-                        {/* # Translators: message describing why this display does not show any data due to the program having not yet started. */}
-                        <p className="text-muted">{gettext("Unavailable until your first target period ends.")}</p>
-                    </div>
-                </Gauge>;
-            }
-
-        }
-
-        if (indicatorStore.getIndicatorsReporting.length === 0) {
-            return <Gauge>
-                <div className="gauge__graphic gauge__graphic--empty gauge__graphic--performance-band">
-                    <div className="graphic__tick-marks">
-                        {[...Array(tickCount)].map((e, i) => <div key={i} className="graphic__tick" />)}
-                    </div>
-                </div>
-                <div className="gauge__labels">
-                    <div className="gauge__label">
-                        {/* # Translators: message describing why this display does not show any data. */}
-                        <p className="text-muted">{gettext("Unavailable until the first target period ends with results reported")}</p>
-                    </div>
-                </div>
-            </Gauge>;
-        }
-
-        // Handle strings containing HTML markup
-
-        const aboveTargetMarkup = () => {
-            /* # Translators: variable %(percentHigh)s shows what percentage of indicators are a certain percentage above target percent %(marginPercent)s. Example: 31% are >15% above target */
-            let s = gettext('<strong>%(percentHigh)s%</strong> are >%(marginPercent)s% above target');
-            return {__html: interpolate(s, {percentHigh, marginPercent}, true)};
-        };
-
-        const onTargetMarkup = () => {
-            /* # Translators: variable %s shows what percentage of indicators are within a set range of target. Example: 31%  are on track */
-            let s = gettext('<strong>%s%</strong> are on track');
-            return {__html: interpolate(s, [percentOnTarget])};
-        };
-
-        const belowTargetMarkup = () => {
-            /* # Translators: variable %(percentBelow)s shows what percentage of indicators are a certain percentage below target. The variable %(marginPercent)s is that percentage. Example: 31% are >15% below target */
-            let s = gettext('<strong>%(percentBelow)s%</strong> are >%(marginPercent)s% below target');
-            return {__html: interpolate(s, {percentBelow, marginPercent}, true)};
-        };
-
-
-        return <Gauge>
-            <div className="gauge__graphic gauge__graphic--performance-band">
-                <div className="graphic__tick-marks">
-                    {[...Array(tickCount)].map((e, i) => <div key={i} className="graphic__tick" />)}
-                </div>
-                <div className="graphic__performance-band--above-target"
-                     style={{'flexBasis': `${percentHigh}%`}}/>
-                <div className="graphic__performance-band--on-target"
-                     style={{'flexBasis': `${percentOnTarget}%`}}/>
-                <div className="graphic__performance-band--below-target"
-                     style={{'flexBasis': `${percentBelow}%`}}/>
-            </div>
-            <div className="gauge__labels">
+        let GaugeLabels = (props) => { // success case
+            return <div className="gauge__labels">
                 <div className="gauge__label">
                     <span className="text-muted">
                         {
@@ -268,6 +200,50 @@ class GaugeBand extends React.Component {
                     </span>
                 </div>
             </div>
+        }
+
+
+        // Handle strings containing HTML markup
+
+        const aboveTargetMarkup = () => {
+            /* # Translators: variable %(percentHigh)s shows what percentage of indicators are a certain percentage above target percent %(marginPercent)s. Example: 31% are >15% above target */
+            let s = gettext('<strong>%(percentHigh)s%</strong> are >%(marginPercent)s% above target');
+            return {__html: interpolate(s, {percentHigh, marginPercent}, true)};
+        };
+
+        const onTargetMarkup = () => {
+            /* # Translators: variable %s shows what percentage of indicators are within a set range of target. Example: 31%  are on track */
+            let s = gettext('<strong>%s%</strong> are on track');
+            return {__html: interpolate(s, [percentOnTarget])};
+        };
+
+        const belowTargetMarkup = () => {
+            /* # Translators: variable %(percentBelow)s shows what percentage of indicators are a certain percentage below target. The variable %(marginPercent)s is that percentage. Example: 31% are >15% below target */
+            let s = gettext('<strong>%(percentBelow)s%</strong> are >%(marginPercent)s% below target');
+            return {__html: interpolate(s, {percentBelow, marginPercent}, true)};
+        };
+
+
+        return <Gauge>
+            <div className="gauge__graphic gauge__graphic--performance-band">
+                <div className="graphic__tick-marks">
+                    {[...Array(tickCount)].map((e, i) => <div key={i} className="graphic__tick" />)}
+                </div>
+                <div className="graphic__performance-band--above-target"
+                     style={{'flexBasis': `${percentHigh}%`}}/>
+                <div className="graphic__performance-band--on-target"
+                     style={{'flexBasis': `${percentOnTarget}%`}}/>
+                <div className="graphic__performance-band--below-target"
+                     style={{'flexBasis': `${percentBelow}%`}}/>
+            </div>
+            { gaugeHasErrors ?
+                <div class="gauge__labels">
+                    <div class="gauge__label">
+                        {/* # Translators: message describing why this display does not show any data. # */}
+                        <p class="text-muted">{gettext("Unavailable until the first target period ends with results reported.")}</p>
+                    </div>
+                </div>
+            : <GaugeLabels />}
         </Gauge>;
     }
 }
@@ -365,7 +341,7 @@ export const ProgramMetrics = observer(function (props) {
                        disabled={! allTargetsDefined}
 
                        {...resultsLabels}
-                       
+
                        />
 
             <GaugeTank filterType={IndicatorFilterType.missingEvidence}
