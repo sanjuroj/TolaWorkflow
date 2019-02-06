@@ -17,7 +17,7 @@
         </button>
     </h3>
     {% if indicator.cached_data_count > 0 or indicator.target_frequency %}
-    <table class="table results-table {% if indicator.last_ended_periodic_target %}results-table--has-subtotal{% endif %}">
+    <table class="table results-table {% if indicator.last_ended_periodic_target and not program.has_ended %}results-table--has-subtotal{% endif %}">
         <thead>
             <tr class="table-header">
                 <th class="">{% trans "Target period" %}</th>
@@ -29,7 +29,7 @@
             </tr>
         </thead>
         {% for pt in periodictargets %}
-            {% if pt == indicator.current_periodic_target and indicator.last_ended_periodic_target %}
+            {% if pt == indicator.current_periodic_target and indicator.last_ended_periodic_target and not program.has_ended %}
             <tr class="results__row--subtotal">
                 {# show the summary row for previous periods BEFORE the current period #}
                 <td class="">
@@ -66,7 +66,7 @@
                 <td colspan="3" class="bg-medium"></td>
             </tr>
             {% endif %}
-            <tr class="results__row--main{% if pt.has_ended and indicator.is_target_frequency_time_aware %} pt-ended{% endif %}">
+            <tr class="results__row--main{% if pt.has_ended and indicator.is_target_frequency_time_aware and not program.has_ended %} pt-ended{% endif %}">
                 {% ifchanged pt %}
                 <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="">
                     {# note ".period" is deprecated, and .period_name should be used instead #}
@@ -99,7 +99,7 @@
                 {% endifchanged %}
 
                 {% for cdata in pt.result_set.all %}
-                    {% if not forloop.first %}<tr class="results__row--supplemental{% if pt.has_ended and indicator.is_target_frequency_time_aware %} pt-ended{% endif %}">{% endif %}
+                    {% if not forloop.first %}<tr class="results__row--supplemental{% if pt.has_ended and indicator.is_target_frequency_time_aware and not program.has_ended %} pt-ended{% endif %}">{% endif %}
                         <td class="results__result--date {% if cdata.periodic_target == None %}bg-danger-lighter{% endif %}">
                             {% if is_editable is False %}
                                 {{ cdata.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
