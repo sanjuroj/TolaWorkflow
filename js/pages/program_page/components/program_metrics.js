@@ -305,9 +305,9 @@ export const ProgramMetrics = observer(function (props) {
         emptyLabel: gettext("No evidence"),
     };
 
-    // Are all targets defined for all indicators?
+    // Are some targets defined on any indicators?
     // all_targets_defined is an int (1,0) instead of bool
-    const allTargetsDefined = indicators.map(i => i.all_targets_defined === 1).every(b => b);
+    const someTargetsDefined = indicators.map(i => i.all_targets_defined === 1).some(b => b);
 
     // Do any indicators have results?
     const someResults = indicators.map(i => i.results_count).some(count => count > 0);
@@ -338,7 +338,7 @@ export const ProgramMetrics = observer(function (props) {
                        allIndicatorsLength={indicators.length}
                        filteredIndicatorsLength={indicatorStore.getIndicatorsNeedingResults.length}
 
-                       disabled={! allTargetsDefined}
+                       disabled={! someTargetsDefined}
 
                        {...resultsLabels}
 
@@ -350,7 +350,7 @@ export const ProgramMetrics = observer(function (props) {
                        allIndicatorsLength={indicatorStore.getTotalResultsCount}
                        filteredIndicatorsLength={indicatorStore.getTotalResultsCount - indicatorStore.getTotalResultsWithEvidenceCount}
 
-                       disabled={! allTargetsDefined || ! someResults}
+                       disabled={! someTargetsDefined || ! someResults}
 
                        {...evidenceLabels}
                        />
