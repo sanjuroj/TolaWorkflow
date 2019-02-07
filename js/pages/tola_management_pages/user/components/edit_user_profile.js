@@ -116,7 +116,6 @@ export default class EditUserProfile extends React.Component {
             email: (e.user && e.user.email)?'is-invalid':'',
             organization: (e.organization_id)?'is-invalid':''
         }
-        console.log(error_classes)
         return (
             <div className="edit-user-profile container">
                 <form className="form">

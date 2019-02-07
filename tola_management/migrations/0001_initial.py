@@ -5,21 +5,6 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 import django.db.models.deletion
 
-def initialize_create(apps, schema_editor):
-    TolaUser = apps.get_model('workflow', 'TolaUser')
-    AuditLog = apps.get_model('tola_management', 'UserManagementAuditLog')
-    orig_user = TolaUser.objects.get(pk=1)
-
-    for u in TolaUser.objects.all():
-        new_log = AuditLog()
-        new_log.modified_user = u
-        new_log.admin_user = orig_user
-        new_log.change_type = "user_created"
-        new_log.previous_entry =  '{"type": "na"}'
-        new_log.new_entry =  '{"type": "na"}'
-        new_log.save()
-        AuditLog.objects.filter(pk=new_log.pk).update(date=u.create_date)
-
 class Migration(migrations.Migration):
 
     initial = True
@@ -40,6 +25,5 @@ class Migration(migrations.Migration):
                 ('admin_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='workflow.TolaUser')),
                 ('modified_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='workflow.TolaUser')),
             ],
-        ),
-        migrations.RunPython(initialize_create)
+        )
     ]
