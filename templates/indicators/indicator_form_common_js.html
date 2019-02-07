@@ -1,7 +1,6 @@
 {% load i18n %}
 
 <script>
-
     // Load Indicators
     function loadIndicators(program, indicator, type){
         $.get('/indicators/program_indicators/' + program + '/' + indicator + '/' + type + '/', function(data){
@@ -119,23 +118,24 @@
             prevDeleteBtn.show();
             return;
         }
-
-        $.post(url)
-            .done(function(data, textStatus, jqXHR){
-                if (data.status == "success") {
-                    currentRow.remove();
-                    prevDeleteBtn.show();
-                    $("#indicator_update_form").data('indicatorchanged', true);
-                    updateAggregateRowValueAndLabel()
-                    if ($('#periodic_targets_table tbody tr.periodic-target').length == 0) {
-                        $("#id_div_periodic_tables_placeholder").empty();
-                        reset_frequency_fields();
-                    }
-                } else {
-                    createAlert("danger", data.msg, true, "#modalmessages");
-                    $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
-                }
-            });
+        create_destructive_changeset_notice("", (rationale) => {
+            $.post(url, {rationale: rationale})
+             .done(function(data, textStatus, jqXHR){
+                 if (data.status == "success") {
+                     currentRow.remove();
+                     prevDeleteBtn.show();
+                     $("#indicator_update_form").data('indicatorchanged', true);
+                     updateAggregateRowValueAndLabel()
+                     if ($('#periodic_targets_table tbody tr.periodic-target').length == 0) {
+                         $("#id_div_periodic_tables_placeholder").empty();
+                         reset_frequency_fields();
+                     }
+                 } else {
+                     createAlert("danger", data.msg, true, "#modalmessages");
+                     $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
+                 }
+             });
+        }, () => {});
     });
 
 
@@ -145,7 +145,11 @@
             showValidations("#alerts");
             return;
         }
-        submitForm(this, false);
+        create_nondestructive_changeset_notice("", (rationale) => {
+            submitForm(this, false, rationale);
+        }, () => {
+
+        });
     });
 
     // Intercept IndicatorUpdate form submission and then use ajax to submit it.
@@ -155,7 +159,11 @@
             showValidations("#modalmessages");
             return;
         }
-        submitForm(this, true);
+        create_nondestructive_changeset_notice("", (rationale) => {
+            submitForm(this, false, rationale);
+        }, () => {
+
+        });
     });
 
 
@@ -176,7 +184,11 @@
         }
         $(this).attr("disabled", true);
 
-        submitForm($("#indicator_update_form"), true);
+        create_nondestructive_changeset_notice("", (rationale) => {
+            submitForm($("#indicator_update_form"), true, rationale);
+        }, () => {
+
+        });
     });
 
     $("#indicator_form").on("click", "#id_create_targets_btn", function(e) {
@@ -189,7 +201,11 @@
 
         // Even though #indicator_form selector catches case when not a modal, pretend like it's a modal
         // The reason being is to not display the link to program page when creating targets, regardless of context
-        submitForm($("#indicator_update_form"), true);
+        create_nondestructive_changeset_notice("", (rationale) => {
+            submitForm($("#indicator_update_form"), true, rationale);
+        }, () => {
+
+        });
     });
 
 
@@ -236,23 +252,19 @@
         var indicator_id = form_url.split('/').slice(-2, -1)[0];
         var dataCountAttribute = $("#periodic_targets_table tr").attr("data-collected-count");
         var msg = '';
-        if (typeof dataCountAttribute !== typeof undefined && dataCountAttribute !== false) {
-            msg = '{% trans "Warning: This action cannot be undone. Any data records assigned to a target will need to be reassigned."|escapejs %} \n\n {% trans "Are you sure you want to remove all targets?"|escapejs %}';
-        } else {
-            msg = '{% trans "Warning: This action cannot be undone. Are you sure you want to remove all targets?"|escapejs %}';
-        }
-        if (!confirm(msg)){
-            return;
-        }
 
-        $.post('/indicators/periodic_target_deleteall/' + indicator_id + '/true/', function(data){
-            var res = $.parseJSON(data);
-            if (res['status'] == 'success') {
-                $("#id_div_periodic_tables_placeholder").empty();
-                reset_frequency_fields();
-                show_hide_frequency_fields();
-                $("#indicator_update_form").data('indicatorchanged', true);
-            }
+        create_destructive_changeset_notice(DELETE_ALL_TARGETS_MESSAGE, (rationale) => {
+            $.post('/indicators/periodic_target_deleteall/' + indicator_id + '/true/', function(data){
+                var res = $.parseJSON(data);
+                if (res['status'] == 'success') {
+                    $("#id_div_periodic_tables_placeholder").empty();
+                    reset_frequency_fields();
+                    show_hide_frequency_fields();
+                    $("#indicator_update_form").data('indicatorchanged', true);
+                }
+
+            });
+        }, () => {
 
         });
     });
@@ -274,7 +286,7 @@
 
     });
 
-    function submitForm(form, isModal) {
+ function submitForm(form, isModal, rationale = '') {
         var numDataPoints = parseInt($("#numDataPoints").text());
         var initalTargetFrequency = parseInt($("#initialTargetFrequencyValue").text());
         var target_frequency = $("#id_target_frequency").val();
@@ -336,6 +348,8 @@
         if (form_data.indexOf('is_cumulative') == -1) {
             form_data += "&is_cumulative=3"
         }
+
+        form_data += "&rationale="+encodeURIComponent(rationale);
         //disable submit button as we are posting and want to prevent double-saves while waiting:
         submitBtnName.attr('disabled', true);
         // adding button to an Object so it is available inside the success callback
@@ -860,4 +874,124 @@
         }
     })
 
+    const DEFAULT_DESTRUCTIVE_MESSAGE = "<span class='text-danger'>This action cannot be undone.</span> Your changes will be recorded in an audit log. Please record your rationale for future reference."
+    const DEFAULT_NONDESTRUCTIVE_MESSAGE = 'Your changes will be recorded in an audit log. Please record your rationale for future reference.'
+    const DELETE_ALL_TARGETS_MESSAGE = "<span class='text-danger'>This action cannot be undone.</span> Any result records already assigned to the targets you are deleting will need to be replaced. Please make sure your results data will not be lost. For future reference, please provide a rationale for deleting these targets."
+
+    const create_changeset_notice = destructive => (message_text, on_submit, on_cancel) => {
+        var inner = '';
+        if(destructive) {
+            if(!message_text) message_text = DEFAULT_DESTRUCTIVE_MESSAGE;
+            inner = `
+                <div class="row">
+                    <div class="col">
+                        <h2 class="text-danger">Warning</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        ${message_text}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <textarea class="form-control" name="rationale"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <input type="submit" class="btn btn-danger" value="Ok">
+                        <input type="button" name="cancel" class="btn btn-secondary" value="Cancel">
+                    </div>
+                </div>
+            `;
+        } else {
+            if(!message_text) message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE;
+            inner = `
+                <div class="row">
+                    <div class="col">
+                        <h2>Share Your Rationale</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        ${message_text}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <textarea class="form-control" name="rationale"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <input type="submit" class="btn btn-primary" value="Ok">
+                        <input type="button" name="cancel" class="btn btn-secondary" value="Cancel">
+                    </div>
+                </div>
+            `;
+        }
+        var notice = PNotify.notice({
+            text: $(`<div><form action="" method="post" class="form container">${inner}</form></div>`).html(),
+            textTrusted: true,
+            icon: false,
+            width: '350px',
+            hide: false,
+            addClass: 'program-page__rationale-form',
+            modules: {
+                Buttons: {
+                    closer: false,
+                    sticker: false
+                }
+            }
+        })
+
+        $(notice.refs.elem).find('form').on('click', '[name=cancel]', function() {
+            var close = true;
+            if(on_cancel) {
+                close = on_cancel()
+                if(close === undefined) {
+                    close = true;
+                }
+            }
+            if(close) {
+                notice.close();
+            }
+        }).submit(function() {
+            var close = true;
+            var textarea = $(this).find('textarea[name="rationale"]')
+            var rationale = textarea.val();
+            var has_results = true;
+            textarea.parent().find('.invalid-feedback').remove();
+            if(has_results && !rationale) {
+                textarea.addClass('is-invalid');
+                textarea.parent().append(`
+                    <div class="invalid-feedback">
+                        Results have been recorded. Rationale is required.
+                    </div>
+                `);
+                return false;
+            } else {
+                textarea.removeClass('is-invalid');
+            }
+            if(on_submit) {
+                close = on_submit(rationale);
+                if(close === undefined) {
+                    close = true;
+                }
+            }
+            if(close) {
+                notice.close();
+            }
+            return false
+        });
+    }
+
+    const create_destructive_changeset_notice = create_changeset_notice(true)
+
+    const create_nondestructive_changeset_notice = create_changeset_notice(false)
 </script>

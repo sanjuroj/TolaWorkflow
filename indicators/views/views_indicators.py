@@ -46,6 +46,10 @@ from ..models import (
 from indicators.queries import ProgramWithMetrics, ResultsIndicator
 from .views_reports import IPTT_ReportView
 
+from tola_management.models import (
+    IndicatorAuditLog
+)
+
 
 logger = logging.getLogger(__name__)
 
@@ -492,6 +496,7 @@ class IndicatorUpdate(UpdateView):
         new_target_frequency = form.cleaned_data.get('target_frequency', None)
         lop = form.cleaned_data.get('lop_target', None)
         program = pk=form.cleaned_data.get('program')
+        rationale = form.cleaned_data.get('rationale')
 
         if periodic_targets == 'generateTargets':
             # handle (delete) association of colelctedData records if necessary
@@ -514,6 +519,10 @@ class IndicatorUpdate(UpdateView):
 
             generatedTargets = generate_periodic_targets(
                 new_target_frequency, start_date, target_frequency_num_periods, event_name)
+
+        #we don't actually do anything with these targets, we're just caching
+        #the old ones on the model before they're updated
+        old_periodic_targets = self.object.periodictargets
 
         if periodic_targets and periodic_targets != 'generateTargets':
             # now create/update periodic targets
@@ -571,8 +580,17 @@ class IndicatorUpdate(UpdateView):
             # for  now do not care about which fields have changed. just indicate that some fields have changed
             update_indicator_row = '1'
 
+        old_indicator_values = indicatr.logged_fields
         # save the indicator form
         self.object = form.save()
+
+        IndicatorAuditLog.log_indicator_updated(
+            self.request.user,
+            self.object,
+            old_indicator_values,
+            self.object.logged_fields,
+            rationale
+        )
 
         # fetch all existing periodic_targets for this indicator
         periodic_targets = PeriodicTarget.objects.filter(indicator=indicatr) \
