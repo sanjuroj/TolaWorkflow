@@ -99,12 +99,6 @@
                 {% elif program.metrics.indicator_count == 0 %}
                     <h4>{% trans "No indicators have been entered for this program." %}</h4>
                     <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
-                {% elif program.metrics.targets_defined == 0 %}
-                    <div class="float--left">
-                        <i class="gauge__icon gauge__icon--error fas fa-frown"></i>
-                    </div>
-                    <h4>{% trans "All indicators are missing targets." %}</h4>
-                    <p>Visit the <a href="{% url "program_page" program.id %}">Program page</a> to set up targets.
                 {% else %}
                     <div class="status__gauges">
                         {% gauge_band False %}
