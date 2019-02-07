@@ -20,23 +20,25 @@
         </div>
     </div>
 
-    <table class="table table-responsive table-striped table-bordered table-hover table-sm text-small">
-        <thead>
-            <tr>
-                {% for name in column_names %}
-                <th class="text-nowrap">{{ name }}</th>
+    <div class="table-responsive ">
+        <table class="table table-striped table-bordered table-hover table-sm text-small">
+            <thead>
+                <tr>
+                    {% for name in column_names %}
+                    <th class="text-nowrap">{{ name }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    {% for val in row %}
+                        <td>{{ val|default_if_none:'' }}</td>
+                    {% endfor %}
+                </tr>
                 {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in rows %}
-            <tr>
-                {% for val in row %}
-                    <td>{{ val|default_if_none:'' }}</td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 
 {% endblock content %}
