@@ -19,7 +19,7 @@
         }
     };
 
-    // Load Collected data
+    // Load Results
     function loadCollected(indicator,program){
         let url = "{% url "result_view" 0 0 %}"
         url = url.replace(/0\/0\//, indicator + "/" + program + "/")

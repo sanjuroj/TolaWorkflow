@@ -5,7 +5,7 @@ import Util from '../lib/testutil'
 import dateFormat from 'dateformat'
 import {expect} from 'chai'
 
-describe("Collected data datepicker", function () {
+describe("Results datepicker", function () {
   // Disable timeouts
   this.timeout(0)
 
