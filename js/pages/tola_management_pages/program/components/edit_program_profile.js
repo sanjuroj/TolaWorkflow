@@ -2,7 +2,21 @@ import React from 'react'
 import Select from 'react-select'
 import { observer } from "mobx-react"
 import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
+import classNames from 'classnames'
 
+
+const ErrorFeedback = observer(({errorMessages}) => {
+    if (!errorMessages) {
+        return null
+    }
+    return (
+    <div className="invalid-feedback">
+        {errorMessages.map((message, index) =>
+            <span key={index}>{message}</span>
+        )}
+    </div>
+    )
+})
 @observer
 export default class EditProgramProfile extends React.Component {
     constructor(props) {
@@ -45,7 +59,12 @@ export default class EditProgramProfile extends React.Component {
         })
     }
 
+    formErrors(fieldKey) {
+        return this.props.errors[fieldKey]
+    }
+
     render() {
+        console.log(this.props.errors)
         const formdata = this.state.managed_data
         const selectedFundingStatus = this.fundingStatusOptions.find(x=> x.value == formdata.funding_status)
         const selectedCountries = formdata.country.map(x=>this.props.countryOptions.find(y=>y.value==x))
@@ -59,9 +78,10 @@ export default class EditProgramProfile extends React.Component {
                             type="text"
                             value={formdata.name}
                             onChange={(e) => this.updateFormField('name', e.target.value) }
-                            className="form-control"
+                            className={classNames('form-control', { 'is-invalid': this.formErrors('name') })}
                             id="program-name-input"
                             required />
+                        <ErrorFeedback errorMessages={this.formErrors('name')} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="program-gait-input">GAIT ID</label>
@@ -69,10 +89,11 @@ export default class EditProgramProfile extends React.Component {
                             type="tel"
                             value={formdata.gaitid}
                             onChange={(e) => this.updateFormField('gaitid', e.target.value) }
-                            className="form-control"
+                            className={classNames('form-control', { 'is-invalid': this.formErrors('gaitid') })}
                             id="program-gait-input"
                             disabled={!this.props.new}
                             />
+                        <ErrorFeedback errorMessages={this.formErrors('gaitid')} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="program-fund-code-input">Fund Code</label>
@@ -80,19 +101,21 @@ export default class EditProgramProfile extends React.Component {
                             type="tel"
                             value=""
                             onChange={(e) => this.updateFormField('fundCode', e.target.value) }
-                            className="form-control"
+                            className={classNames('form-control', { 'is-invalid': this.formErrors('fundCode') })}
                             id="program-fund-code-input"
                             disabled={true}
                             />
+                        <ErrorFeedback errorMessages={this.formErrors('fundCode')} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="program-description-input">Description</label>
                         <textarea
                             value={formdata.description}
                             onChange={(e) => this.updateFormField('description', e.target.value) }
-                            className="form-control"
+                            className={classNames('form-control', { 'is-invalid': this.formErrors('description') })}
                             id="program-description-input"
                             />
+                        <ErrorFeedback errorMessages={this.formErrors('description')} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="program-county-input">Countries<span className="required">*</span></label>
@@ -100,8 +123,10 @@ export default class EditProgramProfile extends React.Component {
                             value={selectedCountries}
                             options={this.props.countryOptions}
                             onChange={(e) => this.updateFormField('country', e.map(x=>x.value)) }
+                            className={classNames('react-select', {'is-invalid': this.formErrors('country')})}
                             id="program-country-input"
                             />
+                        <ErrorFeedback errorMessages={this.formErrors('country')} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="program-sectors-input">Sectors</label>
@@ -109,18 +134,22 @@ export default class EditProgramProfile extends React.Component {
                             value={selectedSectors}
                             options={this.props.sectorOptions}
                             onChange={(e) => this.updateFormField('sector', e.map(x=>x.value)) }
+                            className={classNames('react-select', {'is-invalid': this.formErrors('sector')})}
                             id="program-sectors-input"
                             />
+                        <ErrorFeedback errorMessages={this.formErrors('sector')} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="program-funding-status-input">Funding Status</label>
+                        <label htmlFor="program-funding-status-input">Funding Status*</label>
                         <Select
                             value={selectedFundingStatus}
                             options={this.fundingStatusOptions}
                             onChange={(e) => this.updateFormField('funding_status', e.value) }
                             isSearchable={false}
+                            className={classNames('react-select', {'is-invalid': this.formErrors('funding_status')})}
                             id="program-funding-status-input"
                             />
+                            <ErrorFeedback errorMessages={this.formErrors('funding_status')} />
                     </div>
                     {this.props.new &&
                     <div className="form-group">

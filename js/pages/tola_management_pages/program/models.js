@@ -29,7 +29,7 @@ export class ProgramStore {
     @observable bulk_targets_all = false
 
     @observable editing_target = null
-    @observable editing_errors = null
+    @observable editing_errors = {}
     @observable fetching_editing_target = false
     @observable editing_target_data = {
     }
@@ -175,8 +175,9 @@ export class ProgramStore {
             })
         }).catch(error => {
             runInAction(()=> {
+                let errors = error.response.data
                 this.saving = false
-                this.editing_errors = error.response.data
+                this.editing_errors = errors
             })
         })
     }

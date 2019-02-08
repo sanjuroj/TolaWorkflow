@@ -1,21 +1,16 @@
 from collections import OrderedDict
-from django.db.models import Value, Count, F, OuterRef, Subquery
 from django.db.models import Q
-from django.db.models import CharField as DBCharField
-from django.db.models import IntegerField as DBIntegerField
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status as httpstatus
-from rest_framework import UniqueValidator
+from rest_framework.validators import UniqueValidator
 from rest_framework.decorators import list_route
 from rest_framework.serializers import (
     ModelSerializer,
     Serializer,
     CharField,
     IntegerField,
-    PrimaryKeyRelatedField,
-    BooleanField,
-    HiddenField,
+    ValidationError,
 )
 
 from feed.views import SmallResultsSetPagination
@@ -62,10 +57,16 @@ class ProgramAdminSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
     name = CharField(required=True, max_length=255)
     funding_status = CharField(required=True)
-    gaitid = CharField(required=True, )
+    gaitid = CharField(required=True, validators=[
+        UniqueValidator(queryset=Program.objects.all())
+    ])
     description = CharField(allow_blank=True)
     sector = NestedSectorSerializer(required=True, many=True)
     country = NestedCountrySerializer(required=True, many=True)
+
+    def validate_country(self, values):
+        if not values:
+            raise ValidationError("This field may not be blank.")
 
     class Meta:
         model = Program

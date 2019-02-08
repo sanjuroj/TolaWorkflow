@@ -192,13 +192,13 @@ export const IndexView = observer(
                             </Row>
                         }
                         Row={({Col, Row, data}) =>
-                            <Row
+                        <Row
                             expanded={data.id == store.editing_target}
                             Expando={({Wrapper}) =>
                                 <Wrapper>
                                     <ProgramEditor
                                         new={data.id == 'new'}
-                                        ProfileSection={() =>
+                                        ProfileSection={observer(() =>
                                             <EditProgramProfile
                                                 new={data.id == 'new'}
                                                 program_data={data}
@@ -206,7 +206,8 @@ export const IndexView = observer(
                                                 onCreate={(new_program_data) => store.saveNewProgram(new_program_data)}
                                                 sectorOptions={sectorFilterOptions}
                                                 countryOptions={countryFilterOptions}
-                                            />}
+                                                errors={store.editing_errors}
+                                            />)}
                                     />
                                 </Wrapper>
                             }>
@@ -220,14 +221,14 @@ export const IndexView = observer(
                                 </Col>
                                 <Col size="2">{data.name || "---"}</Col>
                                 <Col>{data.onlyOrganizationId ? store.organizations[data.onlyOrganizationId].name : data.organizations ? data.organizations : "---"}</Col>
-                                <Col>{<a href="">{data.program_users} users</a>}</Col>
-                                <Col>{data.funding_status}</Col>
+                                <Col>{data.program_users ? <a href="">{data.program_users} users</a> : '---'  }</Col>
+                                <Col>{data.funding_status ? data.funding_status : '---'}</Col>
                             </Row>
                         }
                     />
                 </div>
                 <div className="list-metadata row">
-                    <div id="users-count">{store.program_count ? `${store.program_count} programs`:`--`}</div>
+                    <div id="users-count">{store.program_count ? `${store.program_count} programs`:`---`}</div>
                     <div id ="pagination-controls">
                         {store.total_pages &&
                          <Pagination
