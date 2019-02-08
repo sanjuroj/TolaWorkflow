@@ -195,6 +195,7 @@ export class ProgramStore {
             runInAction(() => {
                 this.saving = false
                 this.editing_errors = errors.response.data
+                this.onSaveErrorHandler()
             })
         })
     }
@@ -210,11 +211,37 @@ export class ProgramStore {
         this.bulk_targets = new Map(this.programs.map(program => [program.id, this.bulk_targets_all]))
     }
 
+    postBulkUpdateLocalPrograms(updatedPrograms) {
+        let updatedProgramsById = new Map(updatedPrograms.map(program => [program.id, program]))
+        this.programs = this.programs.reduce((acc, current) => {
+            let updated = updatedProgramsById.get(current.id)
+            if (updated) {
+                acc.push(Object.assign(current, updated))
+            } else {
+                acc.push(current)
+            }
+            return acc
+        }, [])
+    }
+
     @action
     bulkUpdateProgramStatus(new_status) {
         let ids = Array.from(this.bulk_targets.entries()).filter(([id, targeted]) => targeted).map(([id, targeted]) => id)
         if (ids.length && new_status) {
-            this.api.updateProgramFundingStatusBulk(ids, new_status)
+            this.applying_bulk_updates = true
+            this.api.updateProgramFundingStatusBulk(ids, new_status).then(response => {
+                let updatedPrograms = response.data
+                runInAction(() => {
+                    this.postBulkUpdateLocalPrograms(updatedPrograms)
+                    this.applying_bulk_updates = false
+                    this.onSaveSuccessHandler()
+                })
+            }).catch(error => {
+                runInAction(() => {
+                    this.applying_bulk_updates = false
+                    this.onSaveErrorHandler()
+                })
+            })
         }
     }
 

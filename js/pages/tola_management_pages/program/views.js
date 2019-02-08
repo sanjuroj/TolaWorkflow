@@ -6,6 +6,7 @@ import ManagementTable from 'components/management-table'
 import Pagination from 'components/pagination'
 import ProgramEditor from './components/program_editor'
 import EditProgramProfile from './components/edit_program_profile'
+import LoadingSpinner from 'components/loading-spinner'
 
 const CountryFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
@@ -172,61 +173,63 @@ export const IndexView = observer(
                         <button className="btn btn-primary" onClick={() => store.createProgram()}><i className="fa fa-plus-circle"></i>Add Program</button>
                     </div>
                 </div>
-                <div className="list-table">
-                    <ManagementTable
-                        newData={store.new_program}
-                        data={store.programs}
-                        keyField="id"
-                        HeaderRow={({Col, Row}) =>
-                            <Row>
-                                <Col size="0.5">
-                                    <div className="td--stretch">
-                                        <input type="checkbox" checked={store.bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
-                                        <div></div>
-                                    </div>
-                                </Col>
-                                <Col size="2">Program</Col>
-                                <Col>Organizations</Col>
-                                <Col>Users</Col>
-                                <Col>Status</Col>
-                            </Row>
-                        }
-                        Row={({Col, Row, data}) =>
-                        <Row
-                            expanded={data.id == store.editing_target}
-                            Expando={({Wrapper}) =>
-                                <Wrapper>
-                                    <ProgramEditor
-                                        new={data.id == 'new'}
-                                        ProfileSection={observer(() =>
-                                            <EditProgramProfile
-                                                new={data.id == 'new'}
-                                                program_data={data}
-                                                onUpdate={(id, data) => store.updateProgram(id, data)}
-                                                onCreate={(new_program_data) => store.saveNewProgram(new_program_data)}
-                                                sectorOptions={sectorFilterOptions}
-                                                countryOptions={countryFilterOptions}
-                                                errors={store.editing_errors}
-                                            />)}
-                                    />
-                                </Wrapper>
-                            }>
-                                <Col size="0.5">
-                                    <div className="td--stretch">
-                                        <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
-                                        <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                            <i className="fa fa-cog"></i>
+                <LoadingSpinner isLoading={store.fetching_main_listing || store.applying_bulk_updates }>
+                    <div className="list-table">
+                        <ManagementTable
+                            newData={store.new_program}
+                            data={store.programs}
+                            keyField="id"
+                            HeaderRow={({Col, Row}) =>
+                                <Row>
+                                    <Col size="0.5">
+                                        <div className="td--stretch">
+                                            <input type="checkbox" checked={store.bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
+                                            <div></div>
                                         </div>
-                                    </div>
-                                </Col>
-                                <Col size="2">{data.name || "---"}</Col>
-                                <Col>{data.onlyOrganizationId ? store.organizations[data.onlyOrganizationId].name : data.organizations ? data.organizations : "---"}</Col>
-                                <Col>{data.program_users ? <a href="">{data.program_users} users</a> : '---'  }</Col>
-                                <Col>{data.funding_status ? data.funding_status : '---'}</Col>
-                            </Row>
-                        }
-                    />
-                </div>
+                                    </Col>
+                                    <Col size="2">Program</Col>
+                                    <Col>Organizations</Col>
+                                    <Col>Users</Col>
+                                    <Col>Status</Col>
+                                </Row>
+                            }
+                            Row={({Col, Row, data}) =>
+                            <Row
+                                expanded={data.id == store.editing_target}
+                                Expando={({Wrapper}) =>
+                                    <Wrapper>
+                                        <ProgramEditor
+                                            new={data.id == 'new'}
+                                            ProfileSection={observer(() =>
+                                                <EditProgramProfile
+                                                    new={data.id == 'new'}
+                                                    program_data={data}
+                                                    onUpdate={(id, data) => store.updateProgram(id, data)}
+                                                    onCreate={(new_program_data) => store.saveNewProgram(new_program_data)}
+                                                    sectorOptions={sectorFilterOptions}
+                                                    countryOptions={countryFilterOptions}
+                                                    errors={store.editing_errors}
+                                                />)}
+                                        />
+                                    </Wrapper>
+                                }>
+                                    <Col size="0.5">
+                                        <div className="td--stretch">
+                                            <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
+                                            <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
+                                                <i className="fa fa-cog"></i>
+                                            </div>
+                                        </div>
+                                    </Col>
+                                    <Col size="2">{data.name || "---"}</Col>
+                                    <Col>{data.onlyOrganizationId ? store.organizations[data.onlyOrganizationId].name : data.organizations ? data.organizations : "---"}</Col>
+                                    <Col>{data.program_users ? <a href="">{data.program_users} users</a> : '---'  }</Col>
+                                    <Col>{data.funding_status ? data.funding_status : '---'}</Col>
+                                </Row>
+                            }
+                        />
+                    </div>
+                </LoadingSpinner>
                 <div className="list-metadata row">
                     <div id="users-count">{store.program_count ? `${store.program_count} programs`:`---`}</div>
                     <div id ="pagination-controls">

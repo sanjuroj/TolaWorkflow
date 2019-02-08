@@ -181,5 +181,9 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         if new_funding_status:
             to_update = Program.objects.filter(pk__in=ids)
             to_update.update(funding_status=new_funding_status)
-            return Response({})
+            updated = [{
+                'id': p.pk,
+                'funding_status': p.funding_status,
+            } for p in to_update]
+            return Response(updated)
         return Response({}, status=httpstatus.HTTP_400_BAD_REQUEST)
