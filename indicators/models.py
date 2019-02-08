@@ -688,6 +688,28 @@ class Indicator(models.Model):
         return self.SEPARATOR.join([x.disaggregation_type for x in disaggregations])
 
     @property
+    def logged_fields(self):
+        s = self
+        return {
+            "name": s.name,
+            "unit_of_measure": s.unit_of_measure,
+            "unit_of_measure_type": s.unit_of_measure_type,
+            "is_cumulative": s.is_cumulative,
+            "lop_target": s.lop_target,
+            "direction_of_change": s.direction_of_change,
+            "rationale_for_target": s.rationale_for_target,
+            "baseline_value": s.baseline,
+            "baseline_na": s.baseline_na,
+            "targets": [
+                {
+                    "id": t.id,
+                    "value": t.target
+                }
+                for t in s.periodictargets.all()
+            ]
+        }
+
+    @property
     def get_target_frequency_label(self):
         if self.target_frequency:
             return Indicator.TARGET_FREQUENCIES[self.target_frequency-1][1]

@@ -50,6 +50,8 @@ class IndicatorForm(forms.ModelForm):
         widget=forms.RadioSelect(),
     )
 
+    rationale = forms.CharField(required=False)
+
     class Meta:
         model = Indicator
         exclude = ['create_date', 'edit_date']
@@ -102,6 +104,12 @@ class IndicatorForm(forms.ModelForm):
         data = self.cleaned_data['lop_target']
         if data < 0:
             raise forms.ValidationError(_('Please enter a number larger than zero.'))
+        return data
+
+    def clean_rationale(self):
+        data = self.cleaned_data['rationale']
+        if len(self.instance.result_set.all()) > 0 and (not data or len(data) <= 0):
+            raise forms.ValidationError(_('Results have been recorded, rationale is required.'))
         return data
 
 

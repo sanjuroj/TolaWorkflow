@@ -1,4 +1,4 @@
-import { observable, computed, action } from "mobx";
+import { observable, computed, action, runInAction } from "mobx";
 import api from './api';
 
 const default_organization = {
@@ -95,15 +95,17 @@ export class OrganizationStore {
         this.fetching = true
 
         api.fetchOrganizationsWithFilter(this.current_page + 1, this.marshalFilters(this.filters)).then(results => {
-            this.fetching = false
-            this.organizations = results.organizations.reduce((xs, x) => {
-                xs[x.id] = x
-                return xs
-            }, {})
-            this.organizations_listing = results.organizations.map(o => o.id)
-            this.organizations_count = results.total_organizations
-            this.total_pages = results.total_pages
-            this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]))
+            runInAction(() => {
+                this.fetching = false
+                this.organizations = results.organizations.reduce((xs, x) => {
+                    xs[x.id] = x
+                    return xs
+                }, {})
+                this.organizations_listing = results.organizations.map(o => o.id)
+                this.organizations_count = results.total_organizations
+                this.total_pages = results.total_pages
+                this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]))
+            })
         })
     }
 
@@ -128,15 +130,19 @@ export class OrganizationStore {
     updateOrganizationProfile(id, new_data) {
         this.saving = true
         api.updateOrganization(id, new_data).then(updated_data => api.fetchOrganizationAggregates(id).then(aggregates => {
-            this.saving = false
-            this.updateLocalOrganization(id, updated_data, aggregates)
-            this.editing_target = null
-            this.editing_target_data = {...default_organization}
+            runInAction(() => {
+                this.saving = false
+                this.updateLocalOrganization(id, updated_data, aggregates)
+                this.editing_target = null
+                this.editing_target_data = {...default_organization}
+            })
             this.onSaveSuccessHandler()
         })).catch((errors) => {
-            this.saving = false
+            runInAction(() => {
+                this.saving = false
+                this.editing_errors = errors.response.data
+            })
             this.onSaveErrorHandler()
-            this.editing_errors = errors.response.data
         })
     }
 
@@ -145,19 +151,23 @@ export class OrganizationStore {
         this.saving = true
         new_data.is_active = true;
         api.createOrganization(new_data).then(result => {
-            this.saving = false
-            this.updateLocalOrganization(result.id, result, {program_count: 0, user_count: 0})
-            this.organizations_listing.shift()
-            delete this.organizations["new"]
-            this.organizations_listing.unshift(result.id)
-            this.editing_target = null
-            this.editing_target_data = {...default_organization}
-            this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]))
+            runInAction(() => {
+                this.saving = false
+                this.updateLocalOrganization(result.id, result, {program_count: 0, user_count: 0})
+                this.organizations_listing.shift()
+                delete this.organizations["new"]
+                this.organizations_listing.unshift(result.id)
+                this.editing_target = null
+                this.editing_target_data = {...default_organization}
+                this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]))
+            })
             this.onSaveSuccessHandler()
         }).catch(error => {
-            this.saving = false
+            runInAction(() => {
+                this.saving = false
+                this.editing_errors = errors.response.data
+            })
             this.onSaveErrorHandler()
-            this.editing_errors = errors.response.data
         })
     }
 
@@ -166,19 +176,23 @@ export class OrganizationStore {
         this.saving = true
         new_data.is_active = true;
         api.createOrganization(new_data).then(result => {
-            this.saving = false
-            this.updateLocalOrganization(result.id, result, {program_count: 0, user_count: 0})
-            this.organizations_listing.shift()
-            delete this.organizations["new"]
-            this.organizations_listing.unshift(result.id)
-            this.editing_target = null
-            this.editing_target_data = {...default_organization}
-            this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]))
+            runInAction(() => {
+                this.saving = false
+                this.updateLocalOrganization(result.id, result, {program_count: 0, user_count: 0})
+                this.organizations_listing.shift()
+                delete this.organizations["new"]
+                this.organizations_listing.unshift(result.id)
+                this.editing_target = null
+                this.editing_target_data = {...default_organization}
+                this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]))
+            })
             this.onSaveSuccessHandler()
         }).catch(error => {
-            this.saving = false
+            runInAction(() => {
+                this.saving = false
+                this.editing_errors = errors.response.data
+            })
             this.onSaveErrorHandler()
-            this.editing_errors = errors.response.data
         })
     }
 
@@ -210,7 +224,6 @@ export class OrganizationStore {
     @action
     changePage(page) {
         if(this.current_page != page.selected) {
-            console.log(1)
             this.current_page = page.selected
             this.fetchOrganizations()
         }
