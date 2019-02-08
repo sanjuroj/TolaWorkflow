@@ -55,7 +55,7 @@ describe("Collected data datepicker", function () {
       curVal = dp.getValue()
       expect(curVal === '')
 
-      // Manually close the collected data modal
+      // Manually close the results modal
       browser.$('div#indicator_results_div button.close').click()
       Util.waitForAjax()
     })

@@ -72,7 +72,7 @@
                     { title: "Sector", data: "sector__sector"},
                     { title: "Supporting Data", data: "results",
                               "mRender": function (data, type, row) {
-                                return '<a class="results" name=' + row.id + '>Collected Data</a>';
+                                return '<a class="results" name=' + row.id + '>Results</a>';
                               }
                         },
                     { title: "KPI",data: "key_performance_indicator"}
@@ -247,7 +247,7 @@
         };
 
         function show_results_charts(data,filters) {
-            document.getElementById('bar-header').innerHTML = "Collected Data Chart";
+            document.getElementById('bar-header').innerHTML = "Results Chart";
 
             var obj = JSON.parse(data);
 
@@ -394,7 +394,7 @@
             } else if (document.getElementById('report_type').innerHTML.valueOf == "Indicator Report") {
                 // first time do the program report
                 indicator_report(filters);
-            } else if (document.getElementById('report_type').innerHTML.valueOf == "Collected Data Report") {
+            } else if (document.getElementById('report_type').innerHTML.valueOf == "Results Report") {
                 // first time do the program report
                 results_report(filters);
             } else {
