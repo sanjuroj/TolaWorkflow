@@ -6,6 +6,7 @@ import ManagementTable from 'components/management-table'
 import Pagination from 'components/pagination'
 import ProgramEditor from './components/program_editor'
 import EditProgramProfile from './components/edit_program_profile'
+import ProgramHistory from './components/program_history'
 import LoadingSpinner from 'components/loading-spinner'
 
 const CountryFilter = observer(({store, filterOptions}) => {
@@ -209,6 +210,14 @@ export const IndexView = observer(
                                                     sectorOptions={sectorFilterOptions}
                                                     countryOptions={countryFilterOptions}
                                                     errors={store.editing_errors}
+                                                />)}
+                                            HistorySection={observer(() =>
+                                                <ProgramHistory
+                                                    program_data={data}
+                                                    fetching_history={store.fetching_editing_history}
+                                                    history={store.editing_history}
+                                                    saving={store.saving}
+                                                    onSave={(id, data) => store.updateProgram(id, data)}
                                                 />)}
                                         />
                                     </Wrapper>

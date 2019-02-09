@@ -30,10 +30,9 @@ export class ProgramStore {
 
     @observable editing_target = null
     @observable editing_errors = {}
-    @observable fetching_editing_target = false
-    @observable editing_target_data = {
-    }
-    @observable saving = false;
+    @observable fetching_editing_history = true
+    @observable editing_target_history = null
+    @observable saving = false
 
     @observable bulk_targets = new Map()
     @observable applying_bulk_updates = false
@@ -114,12 +113,13 @@ export class ProgramStore {
             this.editing_target = false
         } else {
             this.editing_target = id
-            this.fetching_editing_target = true
-            // fetch data for the program editor
-            /*
-            this.fetching_editing_target = true
-            this.fetchProgramData(id)
-            */
+            this.fetching_editing_history = true
+            this.api.fetchProgramHistory(id).then(resp => {
+                runInAction(() => {
+                    this.fetching_editing_history = false
+                    this.editing_history = resp.data
+                })
+            })
         }
     }
 

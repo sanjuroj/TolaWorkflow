@@ -28,9 +28,12 @@ export const updateProgramFundingStatusBulk = (ids, funding_status) => {
     return api.post('/tola_management/program/bulk_update_status/', {ids, funding_status})
 }
 
+export const fetchProgramHistory = (id) => api.get(`/tola_management/program/${id}/history/`)
+
 
 export default {
     fetchPrograms,
+    fetchProgramHistory,
     createProgram,
     updateProgram,
     updateProgramFundingStatusBulk,

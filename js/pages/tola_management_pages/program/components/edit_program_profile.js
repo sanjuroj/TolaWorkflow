@@ -64,7 +64,6 @@ export default class EditProgramProfile extends React.Component {
     }
 
     render() {
-        console.log(this.props.errors)
         const formdata = this.state.managed_data
         const selectedFundingStatus = this.fundingStatusOptions.find(x=> x.value == formdata.funding_status)
         const selectedCountries = formdata.country.map(x=>this.props.countryOptions.find(y=>y.value==x))
