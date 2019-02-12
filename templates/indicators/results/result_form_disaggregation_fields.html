@@ -2,7 +2,8 @@
 {% load i18n %}
 {# disaggregation fields in result_form_modal.html #}
 {# TODO: update design, test functionality #}
-{% if standard_disaggregation_labels and not getDisaggregationValueStandard %}
+{# values supercede labels, so show labels if not values #}
+{% if standard_disaggregation_labels and not standard_disaggregation_values %}
     <div
         id="disagg_toggle" class="btn btn-toggle btn-link"
         data-toggle="collapse" data-target="#standardDisagg"
@@ -30,43 +31,13 @@
             {% endfor %}
         </table>
     </div>
-{% else %}
-    {% if not standard_disaggregation_labels %}
-        <h4>{% trans "Standard disaggregation levels not entered" %}</h4>
-        <p>{% trans "Standard disaggregations are entered by the administrator for the entire organizations.  If you are not seeing any here, please contact your system administrator." %}</p>
-    {% endif %}
+{% elif not standard_disaggregation_labels and not standard_disaggregation_values %}
+    {# if no standard labels or values exist inform user of setup error #}
+    <h4>{% trans "Standard disaggregation levels not entered" %}</h4>
+    <p>{% trans "Standard disaggregations are entered by the administrator for the entire organizations.  If you are not seeing any here, please contact your system administrator." %}</p>
 {% endif %}
-{% if disaggregation_labels and not disaggregation_values %}
-    <div class="card mt-1">
-        <div class="card-header"
-                data-toggle="collapse"
-                data-target="#newDisagg"
-                aria-expanded="false"
-                aria-controls="newDisagg">
-            {% trans "New disaggregations" %}
-        </div>
-        <div class="card-body collapse" id="newDisagg">
-            <table class="table table-sm table-hover table-striped">
-                <tr>
-                    <th>{% trans "Disaggregation level" %}</th>
-                    <th>{% trans "Actuals" %}</th>
-                </tr>
-            {% for item in disaggregation_labels %}
-                <tr>
-                    <td>{{ item.label }}</td>
-                    <td>
-                        <input type="number" min="0"
-                            class="form-control form-control-sm"
-                            name="{{ item.id }}"
-                            value="">
-                    </td>
-                </tr>
-            {% endfor %}
-            </table>
-        </div>
-    </div>
-{% endif %}
-{% if disaggregation_values %}
+{# values supercede labels so check for values first: #}
+{% if custom_disaggregation_values %}
     <div class="card mt-1">
         <div class="card-header"
                 data-toggle="collapse"
@@ -81,7 +52,7 @@
                     <th>{% trans "Disaggregation level" %}</th>
                     <th>{% trans "Actuals" %}</th>
                 </tr>
-                {% for item in disaggregation_values %}
+                {% for item in custom_disaggregation_values %}
                 <tr>
                     <td>{{ item.disaggregation_label.label }}</td>
                     <td>
@@ -95,7 +66,39 @@
           </table>
         </div>
     </div>
+{% elif custom_disaggregation_labels %}
+{# no custom values check for custom labels #}
+    <div class="card mt-1">
+        <div class="card-header"
+                data-toggle="collapse"
+                data-target="#newDisagg"
+                aria-expanded="false"
+                aria-controls="newDisagg">
+            {% trans "New disaggregations" %}
+        </div>
+        <div class="card-body collapse" id="newDisagg">
+            <table class="table table-sm table-hover table-striped">
+                <tr>
+                    <th>{% trans "Disaggregation level" %}</th>
+                    <th>{% trans "Actuals" %}</th>
+                </tr>
+            {% for item in custom_disaggregation_labels %}
+                <tr>
+                    <td>{{ item.label }}</td>
+                    <td>
+                        <input type="number" min="0"
+                            class="form-control form-control-sm"
+                            name="{{ item.id }}"
+                            value="">
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    </div>
 {% endif %}
+{# no need to msg if no custom labels or values, as this is a normal program setup condition #}
+
 {% if standard_disaggregation_values %}
     <div class="card">
         <div class="card-header"
