@@ -499,6 +499,7 @@ class IndicatorUpdate(UpdateView):
         lop = form.cleaned_data.get('lop_target', None)
         program = pk=form.cleaned_data.get('program')
         rationale = form.cleaned_data.get('rationale')
+        old_indicator_values = indicatr.logged_fields
 
         if periodic_targets == 'generateTargets':
             # handle (delete) association of colelctedData records if necessary
@@ -521,10 +522,6 @@ class IndicatorUpdate(UpdateView):
 
             generatedTargets = generate_periodic_targets(
                 new_target_frequency, start_date, target_frequency_num_periods, event_name)
-
-        #we don't actually do anything with these targets, we're just caching
-        #the old ones on the model before they're updated
-        old_periodic_targets = self.object.periodictargets
 
         if periodic_targets and periodic_targets != 'generateTargets':
             # now create/update periodic targets
@@ -582,9 +579,9 @@ class IndicatorUpdate(UpdateView):
             # for  now do not care about which fields have changed. just indicate that some fields have changed
             update_indicator_row = '1'
 
-        old_indicator_values = indicatr.logged_fields
         # save the indicator form
         self.object = form.save()
+        self.object.refresh_from_db()
 
         ProgramAuditLog.log_indicator_updated(
             self.request.user,
