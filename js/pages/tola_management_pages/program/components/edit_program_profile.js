@@ -5,6 +5,11 @@ import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
 import classNames from 'classnames'
 
 
+ const fundingStatusOptions = [
+    {value: 'Funded', label: 'Funded'},
+    {value: 'Completed', label: 'Completed'},
+]
+
 const ErrorFeedback = observer(({errorMessages}) => {
     if (!errorMessages) {
         return null
@@ -22,10 +27,6 @@ export default class EditProgramProfile extends React.Component {
     constructor(props) {
         super(props)
         const {program_data} = props
-        this.fundingStatusOptions = [
-            {value: 'Funded', label: 'Funded'},
-            {value: 'Complete', label: 'Complete'},
-        ]
 
         this.state = {
             original_data: Object.assign({}, program_data),
@@ -65,7 +66,7 @@ export default class EditProgramProfile extends React.Component {
 
     render() {
         const formdata = this.state.managed_data
-        const selectedFundingStatus = this.fundingStatusOptions.find(x=> x.value == formdata.funding_status)
+        const selectedFundingStatus = fundingStatusOptions.find(x=> x.value == formdata.funding_status)
         const selectedCountries = formdata.country.map(x=>this.props.countryOptions.find(y=>y.value==x))
         const selectedSectors = formdata.sector.map(x=>this.props.sectorOptions.find(y=>y.value==x))
         return (
@@ -142,7 +143,7 @@ export default class EditProgramProfile extends React.Component {
                         <label htmlFor="program-funding-status-input">Funding Status*</label>
                         <Select
                             value={selectedFundingStatus}
-                            options={this.fundingStatusOptions}
+                            options={fundingStatusOptions}
                             onChange={(e) => this.updateFormField('funding_status', e.value) }
                             isSearchable={false}
                             className={classNames('react-select', {'is-invalid': this.formErrors('funding_status')})}
