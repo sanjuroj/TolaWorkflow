@@ -692,12 +692,12 @@ class ResultCreate(ResultFormMixin, CreateView):
         return super(ResultCreate, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        disaggregation_labels = DisaggregationLabel.objects.filter(disaggregation_type__indicator=self.indicator.id)
+        custom_disaggregation_labels = DisaggregationLabel.objects.filter(disaggregation_type__indicator=self.indicator.id)
         standard_disaggregation_labels = DisaggregationLabel.get_standard_labels()
 
         context = super(ResultCreate, self).get_context_data(**kwargs)
         context['indicator'] = self.indicator
-        context['disaggregation_labels'] = disaggregation_labels
+        context['custom_disaggregation_labels'] = custom_disaggregation_labels
         context['standard_disaggregation_labels'] = standard_disaggregation_labels
         return context
 
@@ -772,7 +772,7 @@ class ResultUpdate(ResultFormMixin, UpdateView):
         return super(ResultUpdate, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        disaggregation_values = DisaggregationValue.objects.filter(
+        custom_disaggregation_values = DisaggregationValue.objects.filter(
             result=self.result).exclude(
             disaggregation_label__disaggregation_type__standard=True)
 
@@ -782,7 +782,7 @@ class ResultUpdate(ResultFormMixin, UpdateView):
 
         context = super(ResultUpdate, self).get_context_data(**kwargs)
         context['indicator'] = self.indicator
-        context['disaggregation_values'] = disaggregation_values
+        context['custom_disaggregation_values'] = custom_disaggregation_values
         context['standard_disaggregation_values'] = standard_disaggregation_values
         return context
 
