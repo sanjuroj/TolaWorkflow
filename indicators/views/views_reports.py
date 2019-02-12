@@ -810,29 +810,30 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                     ws.cell(row=3, column=col).alignment = alignment
                     ws.cell(row=3, column=col).font = headers_font
 
-                ws.cell(row=4, column=col).value = _('Target')
+                #ws.cell(row=4, column=col).value = _('Target')
+                set_cell_value(ws.cell(row=4, column=col), _('Target'))
                 ws.cell(row=4, column=col).alignment = alignment_right
-                ws.cell(row=4, column=col + 1).value = _('Actual')
+                set_cell_value(ws.cell(row=4, column=col + 1), _('Actual'))
                 ws.cell(row=4, column=col + 1).alignment = alignment_right
-                ws.cell(row=4, column=col + 2).value = _('% Met')
+                set_cell_value(ws.cell(row=4, column=col + 2), _('% Met'))
                 ws.cell(row=4, column=col + 2).alignment = alignment_right
                 col_offset += 3
             col += 2
         elif data['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
             for period in periods:
                 col = periods_start_col + col_offset
-                ws.cell(row=2, column=col).value = period['name']
+                set_cell_value(ws.cell(row=2, column=col), period['name'])
                 ws.cell(row=2, column=col).alignment = alignment
                 ws.cell(row=2, column=col).font = headers_font
                 ws.column_dimensions[get_column_letter(col)].width = 30
 
                 start_date = unicode(datetime.strftime(period['start'], '%b %d, %Y'))
                 end_date = unicode(datetime.strftime(period['end'], '%b %d, %Y'))
-                ws.cell(row=3, column=col).value = u"{} - {}".format(start_date, end_date)
+                set_cell_value(ws.cell(row=3, column=col), u"{} - {}".format(start_date, end_date))
                 ws.cell(row=3, column=col).alignment = alignment
                 ws.cell(row=3, column=col).font = headers_font
 
-                ws.cell(row=4, column=col).value = u"Actual"
+                set_cell_value(ws.cell(row=4, column=col), _("Actual"))
                 ws.cell(row=4, column=col).alignment = alignment_right
                 col_offset += 1
 
@@ -854,9 +855,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                     value = indicator.get(attribute, u'N/A')
                 except UnicodeDecodeError:
                     value = 'N/A'
-                ws.cell(row=row, column=col+2).value = u'{0}'.format(
-                    value
-                    )
+                set_cell_value(ws.cell(row=row, column=col+2), value)
             for col in [2, 4]:
                 ws.cell(row=row, column=col).alignment = alignment
             for col in [1, 2]:
