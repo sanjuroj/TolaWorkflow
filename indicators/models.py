@@ -19,6 +19,7 @@ import django.template.defaultfilters
 
 
 from simple_history.models import HistoricalRecords
+from safedelete.models import SafeDeleteModel
 
 from workflow.models import (
     Program, Sector, SiteProfile, ProjectAgreement, ProjectComplete, Country,
@@ -384,7 +385,7 @@ class IndicatorManager(models.Manager, IndicatorSortingManagerMixin):
         return IndicatorQuerySet(self.model, using=self._db).select_related('program', 'sector')
 
 
-class Indicator(models.Model):
+class Indicator(SafeDeleteModel):
     LOP = 1
     MID_END = 2
     ANNUAL = 3
@@ -703,7 +704,8 @@ class Indicator(models.Model):
             "targets": [
                 {
                     "id": t.id,
-                    "value": t.target
+                    "value": t.target,
+                    "name": t.period_name
                 }
                 for t in s.periodictargets.all()
             ]
@@ -1131,6 +1133,17 @@ class Result(models.Model):
     def disaggregations(self):
         disaggs = self.disaggregation_value.all()
         return ', '.join([y.disaggregation_label.label + ': ' + y.value for y in disaggs])
+
+    @property
+    def logged_fields(self):
+        return {
+            "id": self.id,
+            "value": self.achieved,
+            "date": self.date_collected,
+            "target": self.periodic_target.period_name,
+            "evidence_name": self.evidence_name,
+            "evidence_url": self.evidence_url
+        }
 
 
 

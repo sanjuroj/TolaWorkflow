@@ -75,13 +75,11 @@
                     </div>
 
                     <div class="form-group text-right" id="div_id_remove_indicator">
-                        <button
-                            type="button"
+                        <a href="/indicators/indicator_delete/{{ indicator.id }}/"
                             id="id_delete_indicator_btn"
-                            onclick='location.href="/indicators/indicator_delete/{{ indicator.id }}"'
                             class="btn btn-sm btn-link btn-danger">
                                 <i class="fas fa-trash-alt"></i> {% trans "Delete this indicator" %}</a>
-                        </button>
+                        </a>
                     </div>
 
                 </fieldset>

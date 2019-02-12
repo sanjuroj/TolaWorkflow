@@ -216,6 +216,7 @@ class ProgramWithMetrics(Program):
     def annotated_indicators(self):
         if self.cached_annotated_indicators is None:
             self.indicator_filters['program'] = self
+            self.indicator_filters['deleted'] = None
             program_page_annotations = ['targets', 'results', 'evidence', 'scope', 'table']
             self.cached_annotated_indicators = iq.MetricsIndicator.objects.filter(
                 **self.indicator_filters

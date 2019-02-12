@@ -165,6 +165,11 @@ def get_program_page_context(request):
         'sectors': sectors,
     }
 
+def get_audit_log_page_context(request, program_id):
+    return {
+        "program_id": program_id
+    }
+
 def send_new_user_registration_email(user, request):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
@@ -189,6 +194,12 @@ def app_host_page(request, react_app_page):
 
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
     return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "report_wide": True})
+
+def audit_log_host_page(request, program_id):
+    js_context = get_audit_log_page_context(request, program_id)
+    json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
+    return render(request, 'react_app_base.html', {"bundle_name": "audit_log", "js_context": json_context, "report_wide": True})
+
 
 class UserAdminReportSerializer(Serializer):
     id = IntegerField(allow_null=True, required=False)

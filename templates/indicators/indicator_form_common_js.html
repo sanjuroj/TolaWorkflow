@@ -93,43 +93,19 @@
         alert('Not implemented yet!');
     });
 
-    $("#indicator_modal_content, #indicator_form").on("click", "a.deletebtn", function(e){
+    $("#indicator_modal_content, #indicator_form").on("click", "#id_delete_indicator_btn", function(e){
         e.preventDefault();
          // $(e.target).closest("tr").prev("tr").find("a").show(); //.css("display", "block");
-        var url = $(this).attr('href');
-        var id = url.split('/')[url.split('/').length - 2];
-        var currentRow = $(e.target).closest("tr");
-        var dataCount = parseInt(currentRow.data("collectedCount"));
-        if ( dataCount != NaN && dataCount > 0) {
-            if (!confirm(`{% trans "Warning: This action cannot be undone. Removing this target means that"|escapejs %} ${dataCount} {% trans "data record/s will no longer have targets associated with them."|escapejs %} \n\n {% trans "Proceed anyway?"|escapejs %}`)) {
-                dataCount = NaN;
-                return;
-            }
-        }
-        var prevDeleteBtn = currentRow.prev("tr").find("a");
-
-        if (id == 'undefined' || id == undefined) {
-            currentRow.remove();
-            if ($('#periodic_targets_table tbody tr.periodic-target').length == 0) {
-                $("#id_div_periodic_tables_placeholder").empty();
-                reset_frequency_fields();
-            }
-            updateAggregateRowValueAndLabel()
-            prevDeleteBtn.show();
-            return;
-        }
-        create_destructive_changeset_notice("", (rationale) => {
+        create_destructive_changeset_notice(DELETE_INDICATOR_MESSAGE, (rationale) => {
+            var url = $(this).attr('href');
             $.post(url, {rationale: rationale})
              .done(function(data, textStatus, jqXHR){
                  if (data.status == "success") {
-                     currentRow.remove();
-                     prevDeleteBtn.show();
-                     $("#indicator_update_form").data('indicatorchanged', true);
-                     updateAggregateRowValueAndLabel()
-                     if ($('#periodic_targets_table tbody tr.periodic-target').length == 0) {
-                         $("#id_div_periodic_tables_placeholder").empty();
-                         reset_frequency_fields();
-                     }
+                     //ugly, but with no way to coordinate with the mobx data
+                     //store, this is probably the only way until the entire
+                     //thing gets replace with react
+                     PNotify.success({text: "Indicator successfully deleted"})
+                     setTimeout(function() { location.reload() }, 1000)
                  } else {
                      createAlert("danger", data.msg, true, "#modalmessages");
                      $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
@@ -137,7 +113,6 @@
              });
         }, () => {});
     });
-
 
     $("#indicator_form").on("submit", "#indicator_update_form", function(e){
         e.preventDefault();
@@ -186,9 +161,7 @@
 
         create_nondestructive_changeset_notice("", (rationale) => {
             submitForm($("#indicator_update_form"), true, rationale);
-        }, () => {
-
-        });
+        }, () => {});
     });
 
     $("#indicator_form").on("click", "#id_create_targets_btn", function(e) {
@@ -203,9 +176,7 @@
         // The reason being is to not display the link to program page when creating targets, regardless of context
         create_nondestructive_changeset_notice("", (rationale) => {
             submitForm($("#indicator_update_form"), true, rationale);
-        }, () => {
-
-        });
+        }, () => {});
     });
 
 
@@ -275,13 +246,17 @@
         var numTargets = $("#periodic_targets_table tbody tr").length-1;
         var form_url = $("#indicator_update_form").attr('action');
         var indicator_id = form_url.split('/').slice(-2, -1)[0]
-        $.get('/indicators/periodic_target_generate/' + indicator_id + '/?numTargets=' + numTargets, function(data){
 
-            var pt = $.parseJSON(data);
-            var isLastIteration = true;
-            var target_frequency = $("#id_target_frequency").val();
-            var markup = createPeriodicTargetRow(pt, target_frequency, isLastIteration);
-            $("#periodic_targets_table tbody tr:nth-last-child(2)").before(markup);
+        create_nondestructive_changeset_notice("", (rationale) => {
+            $.get('/indicators/periodic_target_generate/' + indicator_id + '/?numTargets=' + numTargets, function(data){
+                var pt = $.parseJSON(data);
+                var isLastIteration = true;
+                var target_frequency = $("#id_target_frequency").val();
+                var markup = createPeriodicTargetRow(pt, target_frequency, isLastIteration);
+                $("#periodic_targets_table tbody tr:nth-last-child(2)").before(markup);
+            });
+        }, () => {
+
         });
 
     });
@@ -877,6 +852,7 @@
     const DEFAULT_DESTRUCTIVE_MESSAGE = "<span class='text-danger'>This action cannot be undone.</span> Your changes will be recorded in an audit log. Please record your rationale for future reference."
     const DEFAULT_NONDESTRUCTIVE_MESSAGE = 'Your changes will be recorded in an audit log. Please record your rationale for future reference.'
     const DELETE_ALL_TARGETS_MESSAGE = "<span class='text-danger'>This action cannot be undone.</span> Any result records already assigned to the targets you are deleting will need to be replaced. Please make sure your results data will not be lost. For future reference, please provide a rationale for deleting these targets."
+    const DELETE_INDICATOR_MESSAGE = "<span class='text-danger'>This action cannot be undone.</span> All details about this indicator and results recorded to the indicator will be permanently removed. For future reference, please provide a rationale for deleting this indicator."
 
     const create_changeset_notice = destructive => (message_text, on_submit, on_cancel) => {
         var inner = '';
