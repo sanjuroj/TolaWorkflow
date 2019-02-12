@@ -301,7 +301,7 @@ select.listoption_filters {
 }
 
 // conditional styling to hide modal titles in nonmodal contexts.
-// used on collected data table in IPTT
+// used on results table in IPTT
 .is-shown-in-modals {
     display: none;
     .modal-dialog & {

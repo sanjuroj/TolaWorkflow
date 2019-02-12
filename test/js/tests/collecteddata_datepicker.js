@@ -5,7 +5,7 @@ import Util from '../lib/testutil'
 import dateFormat from 'dateformat'
 import {expect} from 'chai'
 
-describe("Collected data datepicker", function () {
+describe("Results datepicker", function () {
   // Disable timeouts
   this.timeout(0)
 
@@ -55,7 +55,7 @@ describe("Collected data datepicker", function () {
       curVal = dp.getValue()
       expect(curVal === '')
 
-      // Manually close the collected data modal
+      // Manually close the results modal
       browser.$('div#indicator_results_div button.close').click()
       Util.waitForAjax()
     })

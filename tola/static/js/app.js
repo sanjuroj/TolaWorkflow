@@ -491,7 +491,7 @@ $(document).ready(function() {
     $(document).on("change, keyup", "#id_cfw_estimate_female", updateCFW);
 
     /*
-    * Expand accordion down to location hash and then load collected data
+    * Expand accordion down to location hash and then load results
     * clause pathname !== program/* to prevent this from interfering with react browserify hash usage on program page
     */
     if(location.hash != null && location.hash != "" && location.pathname.split('/')[1] !== 'program'){

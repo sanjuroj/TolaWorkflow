@@ -22,7 +22,7 @@ def home(request):
 
 def import_table(request):
     """
-    import collected data from Tola Tables
+    import results from Tola Tables
     """
     owner = request.user
     service = ExternalService.objects.get(name="TolaTables")
