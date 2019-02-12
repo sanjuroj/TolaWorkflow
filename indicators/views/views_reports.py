@@ -410,15 +410,15 @@ class IPTT_Mixin(object):
             running_total = 0
             # process indicator number
             if ind['number'] is None:
-                ind['number'] = ''
+                ind['number'] = u''
 
             # process level
             if ind['lastlevel'] is None:
-                ind['lastlevel'] = ''
+                ind['lastlevel'] = u''
 
             # process unit_of_measure
             if ind['unit_of_measure'] is None:
-                ind['unit_of_measure'] = ''
+                ind['unit_of_measure'] = u''
 
             # process direction_of_change
             ind['direction_of_change'] = symbolize_change(ind['direction_of_change'])
@@ -438,7 +438,7 @@ class IPTT_Mixin(object):
             if ind['baseline_na'] is True:
                 ind['baseline'] = _("N/A")
             elif ind['baseline'] is None:
-                ind['baseline'] = ''
+                ind['baseline'] = u''
             elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
                 ind['baseline'] = u"{0}%".format(ind['baseline'])
             # process lop_target
@@ -449,19 +449,19 @@ class IPTT_Mixin(object):
                 else:
                     ind['lop_target'] = formatFloat(lop_target)
             except (ValueError, TypeError):
-                lop_target = '—'
+                lop_target = u'—'
                 ind['lop_target'] = lop_target
 
             # process lop_actual
             lop_actual = u'—'
-            percent = ''
+            percent = u''
             if ind['unit_of_measure_type'] == Indicator.NUMBER:
                 if ind['actualsum'] is not None:
                     lop_actual = float(ind['actualsum'])
             elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
                 if ind['lastdata'] is not None:
                     lop_actual = float(ind['lastdata'])
-                    percent = "%"
+                    percent = u"%"
             try:
                 ind['lop_actual'] = u"{}{}".format(formatFloat(lop_actual), percent)
             except TypeError:
@@ -498,11 +498,11 @@ class IPTT_Mixin(object):
                             try:
                                 actual_val = ind[u"{}_rsum".format(sequence_count)]
                             except KeyError:
-                                actual_val = ''
+                                actual_val = u''
                         else:  # if it is not set to cumulative then default to non-cumulative even it is it not set
                             actual_val = ind[u"{}_sum".format(sequence_count)]
                     elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
-                        percent_sign = '%'
+                        percent_sign = u'%'
                         actual_val = ind[u"{}_last".format(sequence_count)]
 
                     if actual_val is not None and actual_val != '':
@@ -514,7 +514,7 @@ class IPTT_Mixin(object):
                         # process target_period target value
                         target_key = u"{}_target".format(sequence_count)
                         if ind[target_key] is None:
-                            target_val = ''
+                            target_val = u''
                         else:
                             target_val = formatFloat(float(ind[target_key]))
 
@@ -541,7 +541,7 @@ class IPTT_Mixin(object):
                                 percent_met_val = formatFloat(round(float(ind[u"{}_last".format(sequence_count)]) / target * 100))
                                 ind[percent_met] = percent_met_val
                         except (TypeError, KeyError):
-                            ind[percent_met] = ''
+                            ind[percent_met] = u''
                         except ZeroDivisionError:
                             ind[percent_met] = _("N/A")
         return indicators
@@ -679,8 +679,11 @@ class IPTT_Mixin(object):
 
         self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
         # update the queryset with annotations for timeperiods
+        print "line 682, indicator lop target {0}".format(indicators[0].get('lop_target', "empty"))
         indicators = indicators.annotate(**self.annotations).order_by('lastlevelcustomsort', 'number', 'name')
+        print "line 684, indicator lop target {0}".format(indicators[0].get('lop_target', "empty"))
         indicators = self.prepare_indicators(reporttype, period, periods_date_ranges, indicators)
+        print u'line 686, indicator lop target {0}'.format(indicators[0].get('lop_target', "empty"))
         context['report_end_date_actual'] = report_end_date
         context['report_start_date'] = report_start_date
         context['report_end_date'] = report_end_date
@@ -746,11 +749,11 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
             ws.cell(column=col+1, row=4).value = header
 
         ws.merge_cells(start_row=3, start_column=len(self.headers)+1, end_row=3, end_column=len(self.headers)+3)
-        ws.cell(row=3, column=len(self.headers)+1).value = 'Life of Program'
+        ws.cell(row=3, column=len(self.headers)+1).value = _('Life of Program')
         ws.cell(row=3, column=len(self.headers)+1).alignment = alignment
         ws.cell(row=3, column=len(self.headers)+1).font = headers_font
         for col, header in enumerate(['Target', 'Actual', '% Met']):
-            ws.cell(row=4, column=len(self.headers)+col+1).value = header
+            ws.cell(row=4, column=len(self.headers)+col+1).value = _(header)
             ws.cell(row=4, column=len(self.headers)+col+1).alignment = alignment_right
         periods = data['report_date_ranges']
         col_offset = 0
@@ -762,8 +765,9 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
 
                 # processs period date ranges
                 try:
-                    start_date = datetime.strftime(period['start'], '%b %d, %Y')
-                    end_date = datetime.strftime(period['end'], '%b %d, %Y')
+                    #TODO : use l18n date tools here:
+                    start_date = unicode(datetime.strftime(period['start'], '%b %d, %Y'))
+                    end_date = unicode(datetime.strftime(period['end'], '%b %d, %Y'))
 
                     # this is sometimes unicode (or a lazy eval proxy, see below) and sometimes a str...
                     period_name = period['name']
@@ -783,23 +787,23 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                     ws.cell(row=2, column=col).font = headers_font
 
                     ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col + 2)
-                    ws.cell(row=3, column=col).value = "{} - {}".format(start_date, end_date)
+                    ws.cell(row=3, column=col).value = u"{} - {}".format(start_date, end_date)
                     ws.cell(row=3, column=col).alignment = alignment
                     ws.cell(row=3, column=col).font = headers_font
 
                 except TypeError:
-                    start_date = ''
-                    end_date = ''
+                    start_date = u''
+                    end_date = u''
                     ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col + 2)
                     ws.cell(row=3, column=col).value = period_name
                     ws.cell(row=3, column=col).alignment = alignment
                     ws.cell(row=3, column=col).font = headers_font
 
-                ws.cell(row=4, column=col).value = 'Target'
+                ws.cell(row=4, column=col).value = _('Target')
                 ws.cell(row=4, column=col).alignment = alignment_right
-                ws.cell(row=4, column=col + 1).value = 'Actual'
+                ws.cell(row=4, column=col + 1).value = _('Actual')
                 ws.cell(row=4, column=col + 1).alignment = alignment_right
-                ws.cell(row=4, column=col + 2).value = '% Met'
+                ws.cell(row=4, column=col + 2).value = _('% Met')
                 ws.cell(row=4, column=col + 2).alignment = alignment_right
                 col_offset += 3
             col += 2
@@ -811,13 +815,13 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                 ws.cell(row=2, column=col).font = headers_font
                 ws.column_dimensions[get_column_letter(col)].width = 30
 
-                start_date = datetime.strftime(period['start'], '%b %d, %Y')
-                end_date = datetime.strftime(period['end'], '%b %d, %Y')
-                ws.cell(row=3, column=col).value = "{} - {}".format(start_date, end_date)
+                start_date = unicode(datetime.strftime(period['start'], '%b %d, %Y'))
+                end_date = unicode(datetime.strftime(period['end'], '%b %d, %Y'))
+                ws.cell(row=3, column=col).value = u"{} - {}".format(start_date, end_date)
                 ws.cell(row=3, column=col).alignment = alignment
                 ws.cell(row=3, column=col).font = headers_font
 
-                ws.cell(row=4, column=col).value = "Actual"
+                ws.cell(row=4, column=col).value = u"Actual"
                 ws.cell(row=4, column=col).alignment = alignment_right
                 col_offset += 1
 
@@ -835,8 +839,14 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
             wb.guess_types = False
             ws.cell(row=row, column=1).value = u'{0}'.format(program.id)
             for col, attribute in enumerate(self.indicator_attributes):
+                try:
+                    value = indicator.get(attribute, u'N/A')
+                except UnicodeDecodeError:
+                    print "value for attr {0}".format(attribute)
+                    print value
+                    value = 'N/A'
                 ws.cell(row=row, column=col+2).value = u'{0}'.format(
-                    indicator.get(attribute, 'N/A')
+                    value
                     )
             for col in [2, 4]:
                 ws.cell(row=row, column=col).alignment = alignment
