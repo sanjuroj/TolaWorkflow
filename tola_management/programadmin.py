@@ -1,3 +1,4 @@
+import json
 from collections import OrderedDict
 from django.db.models import Value, Count, F, OuterRef, Subquery
 from django.db.models import Q
@@ -6,14 +7,16 @@ from django.db.models import IntegerField as DBIntegerField
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status as httpstatus
-from rest_framework.decorators import list_route
+from rest_framework.decorators import list_route, detail_route
 from rest_framework.serializers import (
     Serializer,
+    ModelSerializer,
     CharField,
     IntegerField,
     PrimaryKeyRelatedField,
     BooleanField,
     HiddenField,
+    JSONField,
 )
 
 from feed.views import SmallResultsSetPagination
@@ -24,6 +27,13 @@ from workflow.models import (
     Organization,
 )
 
+from indicators.models import (
+    Indicator
+)
+
+from .models import (
+    ProgramAuditLog
+)
 
 class Paginator(SmallResultsSetPagination):
     def get_paginated_response(self , data):
@@ -75,6 +85,41 @@ class ProgramAdminSerializer(Serializer):
         ret['onlyOrganizationId'] = organizations.pop() if organization_count > 0 else None
         return ret
 
+class ProgramAuditLogIndicatorSerializer(ModelSerializer):
+    class Meta:
+        model = Indicator
+        fields = (
+            'number',
+            'name'
+        )
+
+class ProgramAuditLogSerializer(ModelSerializer):
+    id = IntegerField(allow_null=True, required=False)
+    indicator = ProgramAuditLogIndicatorSerializer()
+    user = CharField(source='user.name', read_only=True)
+    organization = CharField(source='organization.name', read_only=True)
+
+    def to_representation(self, instance):
+        ret = super(ProgramAuditLogSerializer, self).to_representation(instance)
+
+        #we need the unescaped entry data
+        ret["previous_entry"] = json.loads(instance.previous_entry) if instance.previous_entry else None
+        ret["new_entry"] = json.loads(instance.new_entry) if instance.new_entry else None
+        return ret
+
+    class Meta:
+        model = ProgramAuditLog
+        fields = (
+            'id',
+            'date',
+            'user',
+            'organization',
+            'indicator',
+            'change_type',
+            'rationale',
+            'previous_entry',
+            'new_entry'
+        )
 
 class ProgramAdminViewSet(viewsets.ModelViewSet):
     serializer_class = ProgramAdminSerializer
@@ -144,3 +189,15 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
             to_update.update(funding_status=new_funding_status)
             return Response({})
         return Response({}, status=httpstatus.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=["get"])
+    def audit_log(self, request, pk=None):
+        program = Program.objects.get(pk=pk)
+
+        queryset = program.audit_logs.all()
+        page = self.paginate_queryset(list(queryset))
+        if page is not None:
+            serializer = ProgramAuditLogSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

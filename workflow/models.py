@@ -466,6 +466,13 @@ class Program(models.Model):
         period_generator = PeriodicTarget.generate_for_frequency(frequency)
         return period_generator(self.reporting_period_start, self.reporting_period_end)
 
+    @property
+    def dates_for_logging(self):
+        return {
+            "start_date": self.reporting_period_start,
+            "end_date": self.reporting_period_end
+        }
+
 
 class ApprovalAuthority(models.Model):
     approval_user = models.ForeignKey(TolaUser,help_text=_('User with Approval Authority'), blank=True, null=True, related_name="auth_approving", verbose_name=_("Tola User"))

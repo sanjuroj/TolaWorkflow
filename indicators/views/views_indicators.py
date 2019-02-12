@@ -47,7 +47,7 @@ from indicators.queries import ProgramWithMetrics, ResultsIndicator
 from .views_reports import IPTT_ReportView
 
 from tola_management.models import (
-    IndicatorAuditLog
+    ProgramAuditLog
 )
 
 
@@ -259,7 +259,9 @@ class IndicatorCreate(CreateView):
         return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form):
-        form.save()
+        rationale = form.cleaned_data.get('rationale')
+        self.object = form.save()
+        ProgramAuditLog.log_indicator_created(self.request.user, self.object, rationale)
         messages.success(self.request, _('Success, Indicator Created!'))
         form = ""
         return self.render_to_response(self.get_context_data(form=form))
@@ -584,7 +586,7 @@ class IndicatorUpdate(UpdateView):
         # save the indicator form
         self.object = form.save()
 
-        IndicatorAuditLog.log_indicator_updated(
+        ProgramAuditLog.log_indicator_updated(
             self.request.user,
             self.object,
             old_indicator_values,
@@ -655,6 +657,25 @@ class IndicatorDelete(DeleteView):
         form.save()
         messages.success(self.request, _('Success, Indicator Deleted!'))
         return self.render_to_response(self.get_context_data(form=form))
+
+    def delete(self, request, *args, **kwargs):
+        if request.is_ajax():
+            if not request.POST.get('rationale'):
+                return JsonResponse(
+                    {"status": "failed", "msg": "Rationale is required"},
+                    status=401
+                )
+
+            indicator = self.get_object()
+            indicator_values = indicator.logged_fields
+            indicator.delete()
+            ProgramAuditLog.log_indicator_deleted(self.request.user, indicator, indicator_values, self.request.POST['rationale'])
+
+            return JsonResponse(
+                {"status": "success", "msg": "Indicator Deleted"}
+            )
+        else:
+            return super(IndicatorDelete, self).delete(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse_lazy('program_page',
@@ -786,6 +807,7 @@ class ResultCreate(CreateView):
             form.instance.achieved = count
 
         new = form.save()
+        ProgramAuditLog.log_result_created(self.request.user, new.indicator, new, form.cleaned_data.get('rationale'))
         process_disaggregation = False
 
         for label in disaggregation_labels:
@@ -1436,8 +1458,10 @@ class ProgramPage(ListView):
             program.indicator_filters['id'] = indicator_filter_id
             indicator_filter_name = program.annotated_indicators.first()
 
-        indicators = program.annotated_indicators\
+        indicators = (
+            program.annotated_indicators
             .annotate(target_period_last_end_date=Max('periodictargets__end_date')).select_related('level')
+        )
         # indicator_count = program.indicator_count
         site_count = len(program.get_sites())
 

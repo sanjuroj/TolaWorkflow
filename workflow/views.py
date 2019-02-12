@@ -69,6 +69,7 @@ from export import ProjectAgreementResource, StakeholderResource
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from tola_management.models import ProgramAuditLog
 
 APPROVALS = (
     ('in_progress',('in progress')),
@@ -2469,6 +2470,7 @@ class StakeholderObjects(View, AjaxableResponseMixin):
 
 def reportingperiod_update(request, pk):
     program = Program.objects.get(pk=pk)
+    old_dates = program.dates_for_logging
 
     # In some cases the start date input will be disabled and won't come through POST
     if 'reporting_period_start' in request.POST:
@@ -2480,7 +2482,12 @@ def reportingperiod_update(request, pk):
     if program.reporting_period_start > program.reporting_period_end:
         return HttpResponse('End date can not come before start date', status=400)
 
+    if not request.POST.get('rationale'):
+        return HttpResponse('Rationale is required', status=400)
+
     program.save()
+
+    program.log_program_dates_updated(request.user, program, old_dates, program.dates_for_logging, request.POST['rationale'])
 
     return JsonResponse({
         'msg': 'success',

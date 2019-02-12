@@ -30,6 +30,9 @@
                       class="btn btn-sm btn-secondary">
                 <i class="fas fa-thumbtack"></i> {% trans "Pin" %}
               </button>
+              <a href="{% url 'tola_management_audit_log' program_id=program.id %}" class="btn btn-sm btn-secondary">
+                  <i class="fas fa-history"></i> {% trans "Change Log" %}
+              </a>
               <a href="{% url 'iptt_excel' program.id reporttype %}?{{ request.GET.urlencode }}" class="btn btn-sm btn-secondary">
                 <i class="fas fa-download"></i> {% trans "Excel" %}
               </a>

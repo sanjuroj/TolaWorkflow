@@ -13,6 +13,7 @@ module.exports = {
         tola_management_user: './js/pages/tola_management_pages/user/index.js',
         tola_management_organization: './js/pages/tola_management_pages/organization/index.js',
         tola_management_program: './js/pages/tola_management_pages/program/index.js',
+        audit_log: './js/pages/tola_management_pages/audit_log/index.js',
         document_list: './js/pages/document_list/index.js' ,
     },
 
