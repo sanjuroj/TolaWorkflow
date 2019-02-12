@@ -679,11 +679,8 @@ class IPTT_Mixin(object):
 
         self.annotations = self._generate_annotations(periods_date_ranges, period, reporttype)
         # update the queryset with annotations for timeperiods
-        print "line 682, indicator lop target {0}".format(indicators[0].get('lop_target', "empty"))
         indicators = indicators.annotate(**self.annotations).order_by('lastlevelcustomsort', 'number', 'name')
-        print "line 684, indicator lop target {0}".format(indicators[0].get('lop_target', "empty"))
         indicators = self.prepare_indicators(reporttype, period, periods_date_ranges, indicators)
-        print u'line 686, indicator lop target {0}'.format(indicators[0].get('lop_target', "empty"))
         context['report_end_date_actual'] = report_end_date
         context['report_start_date'] = report_start_date
         context['report_end_date'] = report_end_date
@@ -692,6 +689,16 @@ class IPTT_Mixin(object):
         context['program'] = self.program
         context['reporttype'] = reporttype
         return context
+
+def set_cell_value(cell, value):
+    if isinstance(value, str):
+        cell.value = value
+    elif isinstance(value, unicode):
+        cell.value = str(value)
+    else:
+        # more catches?
+        cell.value = str(value)
+
 
 
 class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
@@ -749,11 +756,13 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
             ws.cell(column=col+1, row=4).value = header
 
         ws.merge_cells(start_row=3, start_column=len(self.headers)+1, end_row=3, end_column=len(self.headers)+3)
-        ws.cell(row=3, column=len(self.headers)+1).value = _('Life of Program')
+        #ws.cell(row=3, column=len(self.headers)+1).value = str(_('Life of Program'))
+        set_cell_value(ws.cell(row=3, column=len(self.headers)+1), _('Life of Program'))
         ws.cell(row=3, column=len(self.headers)+1).alignment = alignment
         ws.cell(row=3, column=len(self.headers)+1).font = headers_font
         for col, header in enumerate(['Target', 'Actual', '% Met']):
-            ws.cell(row=4, column=len(self.headers)+col+1).value = _(header)
+            #ws.cell(row=4, column=len(self.headers)+col+1).value = _(header)
+            set_cell_value(ws.cell(row=4, column=len(self.headers)+col+1), _(header))
             ws.cell(row=4, column=len(self.headers)+col+1).alignment = alignment_right
         periods = data['report_date_ranges']
         col_offset = 0
@@ -782,12 +791,14 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
 
                     # process period name
                     ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col + 2)
-                    ws.cell(row=2, column=col).value = period_name
+                    #ws.cell(row=2, column=col).value = period_name
+                    set_cell_value(ws.cell(row=2, column=col), period_name)
                     ws.cell(row=2, column=col).alignment = alignment
                     ws.cell(row=2, column=col).font = headers_font
 
                     ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col + 2)
-                    ws.cell(row=3, column=col).value = u"{} - {}".format(start_date, end_date)
+                    #ws.cell(row=3, column=col).value = u"{} - {}".format(start_date, end_date)
+                    set_cell_value(ws.cell(row=3, column=col), u"{} - {}".format(start_date, end_date))
                     ws.cell(row=3, column=col).alignment = alignment
                     ws.cell(row=3, column=col).font = headers_font
 
@@ -842,8 +853,6 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
                 try:
                     value = indicator.get(attribute, u'N/A')
                 except UnicodeDecodeError:
-                    print "value for attr {0}".format(attribute)
-                    print value
                     value = 'N/A'
                 ws.cell(row=row, column=col+2).value = u'{0}'.format(
                     value
