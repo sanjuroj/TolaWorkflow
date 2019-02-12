@@ -26,7 +26,7 @@ export class IndicatorStore {
     @action
     updateIndicator(indicator) {
         let i = this.indicators.findIndex(e => e.id === indicator.id);
-        if (i > 0) {
+        if (i > -1) {
             this.indicators[i] = indicator;
         }
     }

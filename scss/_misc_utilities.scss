@@ -4,25 +4,19 @@
 
 // Font & Type
 // -----------
-// ~14pt from a 16pt reference
-.fontsize-85 {
-    font-size: .85rem;
-}
-// ~20pt from a 16pt reference
-.fontsize-125 {
-    font-size: 1.25rem;
-}
-.fontsize-130 {
-    font-size: 1.3rem;
-}
 .break-word {
     word-break: break-word; /* wraps text in the middle of words */
 }
-.nowrap {
-    white-space: nowrap;
-}
 .no-bold {
     font-weight: $font-weight-normal;
+}
+.text-small {
+    // ~14pt from a 16pt reference
+    font-size: $font-size-sm;
+}
+.text-large {
+    // ~20pt from a 16pt reference
+    font-size: $font-size-lg;
 }
 
 

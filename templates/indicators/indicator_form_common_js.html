@@ -2,6 +2,8 @@
 
 <script>
 
+    /* Dead code (I think)
+
     // Load Indicators
     function loadIndicators(program, indicator, type){
         $.get('/indicators/program_indicators/' + program + '/' + indicator + '/' + type + '/', function(data){
@@ -17,9 +19,9 @@
         }
     };
 
-    // Load Collected data
+    // Load Results
     function loadCollected(indicator,program){
-        let url = "{% url "result_view" 0 0 %})"
+        let url = "{% url "result_view" 0 0 %}"
         url = url.replace(/0\/0\//, indicator + "/" + program + "/")
         var div_name = '#hidden-indicator-' + indicator;
         $(div_name).empty();
@@ -29,6 +31,7 @@
         });
         $("#id_indicator_data_count_btn_"+indicator).blur();
     };
+    */
 
     var validation_msgs = {};
     var mediaSize = window.matchMedia("(max-width: 575px)")
