@@ -94,7 +94,7 @@
                     <h4>{% trans "No indicators have been entered for this program." %}</h4>
                     <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
                 {% else %}
-                    {#{% if program.metrics.targets_defined %}#}
+                    {% if program.metrics.targets_defined %}
                         <h4>
                             {% blocktrans %}
                             Program metrics
@@ -112,14 +112,12 @@
 
                             {% gauge_tank "results_evidence" False %}
                         </div>
-                    {% comment %}    
                     {% else %}
                         {% blocktrans with program.program_page_url as program_page_url %}
                         <h4>All indicators are missing targets.</h4>
                         <p>Visit the <a href="{{ program_page_url }}">Program page</a> to set up targets.</p>
                         {% endblocktrans %}
                     {% endif %}
-                    {% endcomment %}
                 {% endif %}
             </div>
         </article><!--/.program-list__program-->
