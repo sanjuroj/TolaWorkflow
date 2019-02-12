@@ -83,7 +83,8 @@
     state: directory
 
 - name: Sync code up to web servers
-  remote_user: "{{app_user}}"
+  become: yes
+  become_user: "{{app_user}}"
   synchronize: delete=yes src="{{source_dir}}" dest="{{install_dir}}/" owner=no group=no rsync_opts=--exclude-from={{inventory_dir}}/rsync-exclude
   when: is_vagrant is not defined or not is_vagrant
   tags:
@@ -107,6 +108,7 @@
     virtualenv: "{{virtualenv}}"
   tags:
     - virtualenv
+    - deploy
 
 - name: force latest google-api-python-client
   pip:
@@ -165,8 +167,9 @@
    - deploy
 
 - name: Build frontend assets
-  remote_user: "{{app_user}}"
-  shell: "npm run-script build"
+  become: yes
+  become_user: "{{app_user}}"
+  shell: "npm run build:prod"
   args:
     chdir: "{{app_dir}}"
   tags:
