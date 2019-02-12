@@ -116,14 +116,14 @@
                             {% endwith %}
                         </td>
                         <td class="td--stretch results__result--url">
-    {#                        {% if cdata.evidence %}#}
-    {#                            {% if cdata.evidence.url %}<a href="{{cdata.evidence.url}}" target="_blank">{% endif %}#}
-    {#                            {{ cdata.evidence|default_if_none:"" }}#}
-    {#                            {% if cdata.evidence.url %}</a>{% endif %}#}
-    {#                        {% endif %}#}
                             {% if cdata.evidence_url %}
-                                <a href="{{cdata.evidence_url}}" target="_blank">
-                                {{ cdata.evidence_name|default:cdata.evidence_url }}
+                                <a href="{{ cdata.evidence_url }}" target="_blank">
+                                    {# this condition *should* test for strings that are all nonprinting i.e spaces or returns, as well as None or '' #}
+                                    {% if cdata.record_name %}
+                                        {{ cdata.record_name }}
+                                    {% else %}
+                                        {{ cdata.evidence_url }}
+                                    {% endif %}
                                 </a>
                             {% endif %}
                             {% if cdata.complete %}
