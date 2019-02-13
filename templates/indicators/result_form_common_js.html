@@ -308,14 +308,14 @@
         let evidenceURL = $('#id_evidence_url').val();
 
         if (recordName && ! evidenceURL) {
-            $("#div_id_record_name").addClass('has-error');
-            $("#id_record_name").addClass('is-invalid');
-            $("#validation_id_record_name").html("<small>{% trans 'Link to file or folder must not be empty if record name is set.'|escapejs %}</small>");
+            $("#div_id_evidence_url").addClass('has-error');
+            $("#id_evidence_url").addClass('is-invalid');
+            $("#validation_id_evidence_url").html("<small>{% trans 'A link must be included along with the record name.'|escapejs %}</small>");
             return false;
         } else {
-            $("#div_id_record_name").removeClass('has-error');
-            $("#id_record_name").removeClass('is-invalid');
-            $("#validation_id_record_name").text(" ");
+            $("#div_id_evidence_url").removeClass('has-error');
+            $("#id_evidence_url").removeClass('is-invalid');
+            $("#validation_id_evidence_url").text(" ");
         }
 
         return true;
