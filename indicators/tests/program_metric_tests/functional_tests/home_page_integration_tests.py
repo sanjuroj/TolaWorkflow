@@ -42,7 +42,7 @@ class HomePageQueryStressTest(test.TestCase):
                     lop_target=100,
                     program=program
                 )
-                i_factories.CollectedDataFactory(
+                i_factories.ResultFactory(
                     indicator=indicator,
                     achieved=105
                 )
@@ -52,11 +52,10 @@ class HomePageQueryStressTest(test.TestCase):
                     lop_target=100,
                     program=program
                 )
-                evidence = w_factories.DocumentationFactory(program=program)
-                i_factories.CollectedDataFactory(
+                i_factories.ResultFactory(
                     indicator=indicator,
                     achieved=50,
-                    evidence=evidence
+                    evidence_url='http://test_evidence_url'
                 )
             for _ in range(2):
                 indicator = i_factories.IndicatorFactory(

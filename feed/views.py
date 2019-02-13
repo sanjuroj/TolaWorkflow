@@ -6,7 +6,7 @@ from .serializers import (
     ExternalServiceRecordSerializer, ExternalServiceSerializer, StrategicObjectiveSerializer, CapacitySerializer,
     StakeholderTypeSerializer, EvaluateSerializer, ProfileTypeSerializer, ProvinceSerializer, DistrictSerializer,
     AdminLevelThreeSerializer, TolaTableSerializer, DisaggregationValueSerializer, VillageSerializer,
-    ContactSerializer, DocumentationSerializer, CollectedDataSerializer, LoggedUserSerializer,
+    ContactSerializer, DocumentationSerializer, ResultSerializer, LoggedUserSerializer,
     ChecklistSerializer, OrganizationSerializer, SiteProfileLightSerializer, IndicatorIdAndNameSerializer,
     SectorIdAndNameSerializer, ProgramTargetFrequenciesSerializer
 )
@@ -18,7 +18,7 @@ from workflow.models import (
 )
 from indicators.models import (
     Indicator, Objective, ReportingFrequency, TolaUser, IndicatorType, DisaggregationType,
-    Level, ExternalService, ExternalServiceRecord, StrategicObjective, CollectedData, TolaTable,
+    Level, ExternalService, ExternalServiceRecord, StrategicObjective, Result, TolaTable,
     DisaggregationValue, PeriodicTarget
 )
 
@@ -81,7 +81,7 @@ class PogramIndicatorReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
         else:
             queryset = Program.objects.prefetch_related(
                 'indicator_set', 'indicator_set__indicator_type', 'indicator_set__sector', 'indicator_set__level',
-                'indicator_set__collecteddata_set').all()
+                'indicator_set__result_set').all()
         return queryset
 
 
@@ -477,7 +477,7 @@ class DocumentationViewSet(viewsets.ModelViewSet):
     serializer_class = DocumentationSerializer
 
 
-class CollectedDataViewSet(viewsets.ModelViewSet):
+class ResultViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
@@ -485,14 +485,14 @@ class CollectedDataViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         user_countries = getCountry(request.user)
-        queryset = CollectedData.objects.all().filter(program__country__in=user_countries)
+        queryset = Result.objects.all().filter(program__country__in=user_countries)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
     filter_fields = ('indicator__program__country__country', 'indicator__program__name')
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
-    queryset = CollectedData.objects.all()
-    serializer_class = CollectedDataSerializer
+    queryset = Result.objects.all()
+    serializer_class = ResultSerializer
     pagination_class = SmallResultsSetPagination
 
 
@@ -517,7 +517,7 @@ class TolaTableViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(table_id=table_id)
         return queryset
 
-    filter_fields = ('table_id', 'country__country', 'collecteddata__indicator__program__name')
+    filter_fields = ('table_id', 'country__country', 'result__indicator__program__name')
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     serializer_class = TolaTableSerializer
     pagination_class = StandardResultsSetPagination

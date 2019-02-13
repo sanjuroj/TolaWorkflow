@@ -282,12 +282,12 @@ class IPTT_MixinTests(TestCase):
         self.assertIn(data['level'], filters['level__in'])
         self.assertIn(data['sector'], filters['sector__in'])
         self.assertIn(data['ind_type'], filters['indicator_type__in'])
-        self.assertIn(data['site'], filters['collecteddata__site__in'])
+        self.assertIn(data['site'], filters['result__site__in'])
         self.assertIn(data['indicators'], filters['id__in'])
         self.assertEqual(data['level'], *filters['level__in'])
         self.assertEqual(data['sector'], *filters['sector__in'])
         self.assertEqual(data['ind_type'], *filters['indicator_type__in'])
-        self.assertEqual(data['site'], *filters['collecteddata__site__in'])
+        self.assertEqual(data['site'], *filters['result__site__in'])
         self.assertEqual(data['indicators'], *filters['id__in'])
 
         # TODO: Is it possible to make assertions about the filtered report
@@ -377,11 +377,10 @@ class IPTT_ExcelExportTests(TestCase):
             ]:
             self.assertEqual(ws['{0}4'.format(column)].value, header, "{0} != {1} for col {2}".format(
                 ws['{0}4'.format(column)].value, header, column))
-        print "L {0} M {1} N {2} O {3}".format(ws['L2'].value, ws['M2'].value, ws['N2'].value, ws['O2'].value)
         self.assertEqual(ws['N2'].value, 'period_1')
-        self.assertEqual(ws['N3'].value, 'Jan 01, 2015 - Jun 30, 2015')
+        self.assertEqual(ws['N3'].value, 'Jan 1, 2015 - Jun 30, 2015')
         self.assertEqual(ws['O2'].value, 'period_2')
-        self.assertEqual(ws['O3'].value, 'Jul 01, 2015 - Dec 31, 2015')
+        self.assertEqual(ws['O3'].value, 'Jul 1, 2015 - Dec 31, 2015')
         context = {
             'reporttype': 'targetperiods',
             'report_start_date': date(2015, 1, 1),
@@ -429,9 +428,9 @@ class IPTT_ExcelExportTests(TestCase):
             self.assertEqual(ws['{0}4'.format(column)].value, header, "{0} != {1} for col {2}".format(
                 ws['{0}4'.format(column)].value, header, column))
         self.assertEqual(ws['N2'].value, 'period_1')
-        self.assertEqual(ws['N3'].value, 'Jan 01, 2015 - Jun 30, 2015')
+        self.assertEqual(ws['N3'].value, 'Jan 1, 2015 - Jun 30, 2015')
         self.assertEqual(ws['Q2'].value, 'period_2')
-        self.assertEqual(ws['Q3'].value, 'Jul 01, 2015 - Dec 31, 2015')
+        self.assertEqual(ws['Q3'].value, 'Jul 1, 2015 - Dec 31, 2015')
 
 
     def test_add_data(self):
@@ -488,18 +487,18 @@ class IPTT_ExcelExportTests(TestCase):
         ws = wb.active
         context['reporttype'] = 'timeperiods'
         ws = self.view.add_data(wb, ws, context)
-        self.assertEqual(ws['A5'].value, self.program.id)
+        self.assertEqual(str(ws['A5'].value), str(self.program.id))
         for col, key in enumerate(indicator.keys()[:-6]):
             value = ws.cell(row=5, column=col+2).value
-            self.assertEqual(indicator[key], value)
-        self.assertEqual(ws.cell(row=5, column=15).value, u'40')
-        self.assertEqual(ws.cell(row=5, column=16).value, u'80')
+            self.assertEqual(str(indicator[key]), str(value))
+        self.assertEqual(ws.cell(row=5, column=14).value, u'40')
+        self.assertEqual(ws.cell(row=5, column=15).value, u'80')
         context['reporttype'] = 'targetperiods'
         ws = self.view.add_data(wb, ws, context)
-        self.assertEqual(ws['A5'].value, self.program.id)
+        self.assertEqual(str(ws['A5'].value), str(self.program.id))
         for col, key in enumerate(indicator.keys()):
             value = ws.cell(row=5, column=col+2).value
-            self.assertEqual(indicator[key], value)
+            self.assertEqual(str(indicator[key]), str(value))
 
     def test_set_column_widths(self):
         widths = [10, 10, 10, 100, 12, 40, 8, 12]

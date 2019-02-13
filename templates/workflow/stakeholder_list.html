@@ -69,22 +69,22 @@
                 columns: [
                     { title: "Date created", data: "create_date",
                         "mRender": function (data, sector, row) {
-                                return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + formatDate(row.create_date) + '</a>';
+                                return '<a class="results" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + formatDate(row.create_date) + '</a>';
                             },
                         "defaultContent": "<i>Not set</i>"},
                     { title: "Stakeholder name", data: "name",
                         "mRender": function (data, name, row) {
-                                return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + row.name + '</a>';
+                                return '<a class="results" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + row.name + '</a>';
                             },
                         "defaultContent": "<i>Not set</i>"},
                     { title: "Stakeholder type", data: "type__name",
                         "mRender": function (data, type, row) {
-                                return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + row.type__name + '</a>';
+                                return '<a class="results" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + row.type__name + '</a>';
                             },
                         "defaultContent": "<i>Not set</i>"},
                     { title: "Sector", data: "sector__sector",
                             "mRender": function (data, sector, row) {
-                                return '<a class="collecteddata" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + row.sectors__sector + '</a>';
+                                return '<a class="results" name=' + row.id + ' href="/workflow/stakeholder_update/' + row.id + '/">' + row.sectors__sector + '</a>';
                             },
                             "defaultContent": "<i>Not set</i>"
                         },

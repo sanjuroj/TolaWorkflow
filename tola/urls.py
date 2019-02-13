@@ -7,7 +7,7 @@ from feed.views import (
     ExternalServiceViewSet, ExternalServiceRecordViewSet, StrategicObjectiveViewSet, StakeholderViewSet,
     StakeholderTypeViewSet, CapacityViewSet, EvaluateViewSet, ProfileTypeViewSet, ProvinceViewSet,
     DistrictViewSet, AdminLevelThreeViewSet, VillageViewSet, ContactViewSet, DocumentationViewSet,
-    CollectedDataViewSet, TolaTableViewSet, DisaggregationValueViewSet, ProjectAgreementViewSet,
+    ResultViewSet, TolaTableViewSet, DisaggregationValueViewSet, ProjectAgreementViewSet,
     LoggedUserViewSet, ChecklistViewSet, OrganizationViewSet, PogramIndicatorReadOnlyViewSet,
     PeriodicTargetReadOnlyViewSet, ProgramTargetFrequencies
 )
@@ -22,7 +22,7 @@ from rest_framework.authtoken import views as auth_views
 from django.contrib.auth import views as authviews
 
 from tola import views as tolaviews
-from indicators.views.views_indicators import ProgramPage
+from indicators.views.views_indicators import ProgramPage, old_program_page
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -62,7 +62,7 @@ router.register(r'adminlevelthree', AdminLevelThreeViewSet)
 router.register(r'village', VillageViewSet)
 router.register(r'contact', ContactViewSet)
 router.register(r'documentation', DocumentationViewSet)
-router.register(r'collecteddata', CollectedDataViewSet)
+router.register(r'result', ResultViewSet)
 router.register(r'tolatable', TolaTableViewSet, base_name='tolatable')
 router.register(r'disaggregationvalue', DisaggregationValueViewSet)
 router.register(r'projectagreements', ProjectAgreementViewSet)
@@ -97,10 +97,16 @@ urlpatterns = [
 
                 # Site home page
                 url(r'^$', views.index, name='index'),
-
-                # program page
-                url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<type_id>\d+)/$',
+                
+                url(r'^program/(?P<program_id>\d+)/$',
                     ProgramPage.as_view(), name='program_page'),
+                
+                url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<indicator_type_id>\d+)/$',
+                    old_program_page, name='old_program_page'),
+
+                # program page (deprecated - indicator_id and type_id filters unneeded now)
+                # url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<type_id>\d+)/$',
+                #     ProgramPage.as_view(), name='program_page'),
 
                 # program ajax update for metrics
                 url(r'^program/(?P<program_id>\d+)/metrics/$',

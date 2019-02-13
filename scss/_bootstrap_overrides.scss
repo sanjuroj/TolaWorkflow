@@ -20,15 +20,6 @@ body {
 }
 
 
-#nonfooter {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-.report-wide {
-    // margin-top: -16px;    regressions?
-}
-
 #footer {
     bottom: 0px;
     flex-grow: 0;
@@ -84,6 +75,11 @@ body > .container {
 }
 .btn-link {
     font-weight: bold;
+}
+.btn-toggle {
+    // usually used with .btn-link
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .btn-danger.btn-link {

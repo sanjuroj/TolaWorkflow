@@ -1,5 +1,25 @@
 // Page regions and sub-regions
 
+.region--main {
+    // contains most of the page except for top/bottom nav
+    // defined in {% block mainclasses %}
+    // used to be class="container mt-3 mb-3"
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    max-width: map-get($container-max-widths, xl);
+    @include make-container();
+}
+.region--full-width {
+    // removes max-sizes but not margins
+    flex-grow: 1;
+    @include make-container();
+}
+.region--full-bleed {
+    // removes all margins and max-sizes, at all sizes
+    // best used for overriding region--main in {% block mainclasses %}
+    margin: 0;
+}
 .region-header {
     // contains page-title and related elements
     @include media-breakpoint-up(sm) {
@@ -7,4 +27,22 @@
         display: flex;
         justify-content: space-between;
     }
+}
+
+// Sub headers; immediately below a region title
+.page-subheader {
+    // distributes [n] items across a page header e.g. on the IPTT or indicator plan
+    // usual pattern:
+    // -- a title & optional subtitles on the left (.subheader__title)
+    // -- actions on the right (.subheader__actions)
+    align-items: center;
+    display: flex;
+    direction: row;
+    justify-content: space-between;
+    margin-bottom: $grid-gutter-width/2;
+}
+.subheader__title {}
+.subheader__actions {
+    margin-left: $grid-gutter-width/4;
+    margin-right: $grid-gutter-width/4;
 }

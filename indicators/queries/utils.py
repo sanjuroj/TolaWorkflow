@@ -2,7 +2,7 @@
 
 from indicators.models import (
     Indicator,
-    CollectedData,
+    Result,
     PeriodicTarget
 )
 from django.db import models
@@ -63,7 +63,7 @@ def indicator_lop_actual_progress_annotation():
                 models.Q(unit_of_measure_type=Indicator.PERCENTAGE)
                 ),
             then=models.Subquery(
-                CollectedData.objects.filter(
+                Result.objects.filter(
                     indicator=models.OuterRef('pk')
                 ).order_by('-date_collected').values('achieved')[:1]
             )
@@ -77,7 +77,7 @@ def indicator_lop_actual_progress_annotation():
                 models.Q(target_frequency__in=[Indicator.MID_END, Indicator.EVENT])
             ),
             then=models.Subquery(
-                CollectedData.objects.filter(
+                Result.objects.filter(
                     indicator=models.OuterRef('pk')
                 ).order_by().values('indicator').annotate(
                     actual_sum=models.Sum('achieved')
@@ -90,18 +90,18 @@ def indicator_lop_actual_progress_annotation():
                 models.Q(unit_of_measure_type=Indicator.PERCENTAGE)
                 ),
             then=models.Subquery(
-                CollectedData.objects.filter(
+                Result.objects.filter(
                     models.Q(indicator=models.OuterRef('pk')) &
-                    models.Q(periodic_target__end_date__lte=models.functions.Now())
+                    models.Q(periodic_target__end_date__lt=models.functions.Now())
                 ).order_by('-date_collected').values('achieved')[:1]
             )
         ),
         models.When(
             target_frequency__in=[f[0] for f in TIME_AWARE_FREQUENCIES],
             then=models.Subquery(
-                CollectedData.objects.filter(
+                Result.objects.filter(
                     models.Q(indicator=models.OuterRef('pk')) &
-                    models.Q(periodic_target__end_date__lte=models.functions.Now())
+                    models.Q(periodic_target__end_date__lt=models.functions.Now())
                 ).order_by().values('indicator').annotate(
                     actual_sum=models.Sum('achieved')
                 ).values('actual_sum')[:1]
@@ -129,12 +129,15 @@ def indicator_lop_target_progress_annotation():
         models.When(
             models.Q(
                 models.Q(target_frequency__in=[f[0] for f in TIME_AWARE_FREQUENCIES]) &
-                models.Q(is_cumulative=True)
+                models.Q(
+                    models.Q(is_cumulative=True) |
+                    models.Q(unit_of_measure_type=Indicator.PERCENTAGE)
+                    )
                 ),
             then=models.Subquery(
                 PeriodicTarget.objects.filter(
                     models.Q(indicator=models.OuterRef('pk')) &
-                    models.Q(end_date__lte=models.functions.Now())
+                    models.Q(end_date__lt=models.functions.Now())
                 ).order_by('-end_date').values('target')[:1]
             )
         ),
@@ -143,7 +146,7 @@ def indicator_lop_target_progress_annotation():
             then=models.Subquery(
                 PeriodicTarget.objects.filter(
                     models.Q(indicator=models.OuterRef('pk')) &
-                    models.Q(end_date__lte=models.functions.Now())
+                    models.Q(end_date__lt=models.functions.Now())
                 ).order_by().values('indicator').annotate(
                     target_sum=models.Sum('target')
                 ).values('target_sum')[:1]
@@ -152,13 +155,16 @@ def indicator_lop_target_progress_annotation():
         models.When(
             models.Q(
                 models.Q(target_frequency__in=[Indicator.MID_END, Indicator.EVENT]) &
-                models.Q(is_cumulative=True)
+                models.Q(
+                    models.Q(is_cumulative=True) |
+                    models.Q(unit_of_measure_type=Indicator.PERCENTAGE)
+                    )
                 ),
             then=models.Subquery(
                 PeriodicTarget.objects.filter(
                     indicator=models.OuterRef('pk')
                 ).annotate(
-                    has_data=models.Exists(CollectedData.objects.filter(periodic_target=models.OuterRef('pk')))
+                    has_data=models.Exists(Result.objects.filter(periodic_target=models.OuterRef('pk')))
                 ).filter(
                     has_data=True
                 ).order_by('-customsort').values('target')[:1]
@@ -170,7 +176,7 @@ def indicator_lop_target_progress_annotation():
                 PeriodicTarget.objects.filter(
                     indicator=models.OuterRef('pk')
                 ).annotate(
-                    has_data=models.Exists(CollectedData.objects.filter(periodic_target=models.OuterRef('pk')))
+                    has_data=models.Exists(Result.objects.filter(periodic_target=models.OuterRef('pk')))
                 ).filter(
                     has_data=True
                 ).order_by().values('indicator').annotate(
@@ -316,13 +322,13 @@ def indicator_lop_actual_annotation():
         models.When(
             unit_of_measure_type=Indicator.PERCENTAGE,
             then=models.Subquery(
-                CollectedData.objects.filter(
+                Result.objects.filter(
                     indicator=models.OuterRef('pk')
                 ).order_by('-date_collected').values('achieved')[:1]
                 )
             ),
         default=models.Subquery(
-            CollectedData.objects.filter(
+            Result.objects.filter(
                 indicator=models.OuterRef('pk')
             ).order_by().values('indicator').annotate(
                 achieved_sum=models.Sum('achieved')

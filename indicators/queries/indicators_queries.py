@@ -5,7 +5,7 @@
 from indicators.models import (
     Indicator,
     PeriodicTarget,
-    CollectedData,
+    Result,
     IndicatorSortingQSMixin,
     IndicatorSortingManagerMixin
 )
@@ -86,7 +86,7 @@ class MetricsIndicator(Indicator):
     def cached_data_count(self):
         if hasattr(self, 'data_count'):
             return self.data_count
-        return self.collecteddata_set.count()
+        return self.result_set.count()
 
 class ResultsIndicatorQuerySet(models.QuerySet):
     def annotated(self):
@@ -99,6 +99,16 @@ class ResultsIndicatorQuerySet(models.QuerySet):
         qs = qs.annotate(lop_percent_met=utils.indicator_lop_percent_met_annotation())
         # add is_complete annotation:
         qs = qs.annotate(is_complete=indicator_is_complete_annotation())
+
+        # TODO: these progress annotations are cribbed from MetricsIndicatorQuerySet
+        # Progress on Actual value
+        qs = qs.annotate(lop_actual_progress=utils.indicator_lop_actual_progress_annotation())
+        # Progress on Target value
+        # TODO: this value is always a sum, even for percentage indicators
+        qs = qs.annotate(lop_target_progress=utils.indicator_lop_target_progress_annotation())
+        # Progress on %MET
+        qs = qs.annotate(lop_percent_met_progress=utils.indicator_lop_percent_met_progress_annotation())
+
         return qs
 
 class ResultsIndicatorManager(models.Manager):
@@ -125,7 +135,7 @@ class ResultsIndicator(Indicator):
 
     @property
     def results_without_targets(self):
-        return self.collecteddata_set.filter(periodic_target=None)
+        return self.result_set.filter(periodic_target=None)
 
 # utils:
 
@@ -167,7 +177,7 @@ def indicator_results_count_annotation():
     """annotates an indicator queryset with the number of results associated with each indicator"""
     return models.functions.Coalesce(
         models.Subquery(
-            CollectedData.objects.filter(
+            Result.objects.filter(
                 indicator=models.OuterRef('pk')
                 ).order_by().values('indicator').annotate(
                     total_results=models.Count('id')
@@ -181,10 +191,10 @@ def indicator_results_evidence_annotation():
         either a Documentation or TolaTable as evidence"""
     return models.functions.Coalesce(
         models.Subquery(
-            CollectedData.objects.filter(
+            Result.objects.filter(
                 indicator=models.OuterRef('pk')
-                ).filter(
-                    models.Q(evidence__isnull=False) | models.Q(tola_table__isnull=False)
+                ).exclude(
+                    evidence_url=''
                 ).order_by().values('indicator').annotate(
                     total_results=models.Count('id')
                 ).values('total_results')[:1],

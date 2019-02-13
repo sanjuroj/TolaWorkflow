@@ -33,7 +33,6 @@ class ProgramMetricsBase(test.TestCase):
         self.indicators = []
         self.targets = []
         self.data = []
-        self.documents = []
 
     def get_indicator(self, frequency=Indicator.LOP):
         indicator = i_factories.IndicatorFactory(
@@ -44,7 +43,7 @@ class ProgramMetricsBase(test.TestCase):
         return indicator
 
     def add_data(self, indicator=None, target=None):
-        data = i_factories.CollectedDataFactory(
+        data = i_factories.ResultFactory(
             indicator=indicator,
             periodic_target=target,
             date_collected=self.program.reporting_period_start+datetime.timedelta(days=3+2*len(self.data)),
@@ -63,10 +62,8 @@ class ProgramMetricsBase(test.TestCase):
         return target
 
     def add_evidence(self, data):
-        documentation = w_factories.DocumentationFactory()
-        data.evidence = documentation
+        data.evidence_url = 'http://test_evidence_url'
         data.save()
-        self.documents.append(documentation)
 
 
 class TestIndicatorCounts(ProgramMetricsBase):
@@ -397,9 +394,6 @@ class TestProgramWithEvidenceQueries(ProgramMetricsBase):
                 "One indicator with 1 result and 1 evidence should be counted as 1 with evidence, got {0}".format(
                     program.metrics['results_evidence'])
             )
-            for doc in self.documents:
-                doc.delete()
-            self.documents = []
             for datum in self.data:
                 datum.delete()
             self.data = []
@@ -457,7 +451,7 @@ class TestIndicatorReportingEdgeCases(test.TestCase):
         )
 
     def add_result(self, indicator):
-        return i_factories.CollectedDataFactory(
+        return i_factories.ResultFactory(
             indicator=indicator,
             program=self.program,
             achieved=100,
@@ -465,8 +459,7 @@ class TestIndicatorReportingEdgeCases(test.TestCase):
         )
 
     def add_evidence(self, result):
-        document = w_factories.DocumentationFactory()
-        result.evidence = document
+        result.evidence_url = 'http://test_evidence_url'
         result.save()
 
     def results_count_asserts(self, indicator_count, with_results_count, results_count):

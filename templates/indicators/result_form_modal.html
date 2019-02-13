@@ -1,0 +1,150 @@
+{% load widget_tweaks %}
+{% load i18n %}
+
+{# called by indicators.views.views_indicators.ResultCreate and indicators.views.views_indicators.ResultUpdate #}
+
+{# There are several files that make up the functionality of this form including: #}
+{# result_form_evidence_fields.html #}
+{# result_form_disaggregation_fields.html #}
+{# result_form_common_fields.html #}
+{# result_form_common_js.html #}
+{# gdrive_picker_js.html #}
+
+{% block content %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            /* enhanced single select for sites */
+            $("#id_site").select2();
+
+            // rotate disaggregation toggle
+            $('.accordion-toggle').on('click', function(e) {
+                let icon = $(this).find("svg");
+                if (icon.hasClass('fa-caret-right')) {
+                    icon.attr('class', 'fa-caret-down');
+                } else {
+                    icon.attr('class', 'fa-caret-right');
+                }
+            });
+
+            // truncate float and round if whole number
+            let achievedVal = $("#id_achieved").val();
+            if (achievedVal) {
+                let achieved_formatted_value = parseFloat(achievedVal).toFixed(2).replace(/[.,]00$/, "");
+                $("#id_achieved").val(achieved_formatted_value);
+            }
+
+            // prevent triggering of datepicker when label is clicked
+            $('label[for="id_date_collected"]').on('click', function(e) {e.preventDefault();});
+
+            // Repositions the datepicker on large monitors
+            $('#id_date_collected').on('click', function (e) {
+                windowScrollY = $(this).scrollParent().scrollParent().scrollTop(); // how much the window has been scrolled
+                myScrollPositionY = e.pageY; // this element's position relative to top of document
+                myRealPositionY = myScrollPositionY - windowScrollY + 20; // 20px is a slight fudge
+                $('#ui-datepicker-div').css('top', myRealPositionY + 'px');
+            });
+
+            let program_id = $("#id_program").val();
+            let reporting_period_id = `#id_link_reporting_period_${program_id}`;
+            let program_start_date_str = $(reporting_period_id).data("rptstart");
+            let program_end_date_str = localdate() < localDateFromISOStr($(reporting_period_id).data("rptend")) ? localdate() : $(reporting_period_id).data("rptend");
+
+            $('.datepicker').datepicker({
+                dateFormat: "yy-mm-dd",
+                minDate: program_start_date_str,
+                maxDate: program_end_date_str
+            });
+            let id_date_collected = $("#id_date_collected");
+            if (id_date_collected.val() != '') {
+                id_date_collected.val(formatDate(id_date_collected.val())); // This control needs to receive an ISO date
+                // validate upon loading modal
+                validatePeriodicTarget();
+            }
+            // target_frequency is defined in the indicator_list.html file
+            let target_frequency = parseInt('{{object.indicator.target_frequency|safe}}');
+            let collectedRecordId = parseInt('{{object.id|safe}}');
+
+            // if it is a new record and target_frequency is LOP_ONLY then set periodic_target to LOP_ONLY
+            if (isNaN(collectedRecordId)) {
+                target_frequency = parseInt('{{ indicator.target_frequency|safe}}');
+                if (!isNaN(target_frequency) && target_frequency == 1) {
+                    // if target_frequency is 1 (LOP_Only) then there has to be exactly one periodic_target
+                    let pt_id = parseInt('{{ indicator.periodictargets.all.0.id|safe}}');
+                    $("#id_periodic_target").val(pt_id);
+                }
+                if (target_frequency != 1 && target_frequency != 2 && target_frequency != 8) {
+                    lockPeriodicTargetDropdown();
+                }
+            } else {
+                // disable the periodic_target dropdown unless it is set to MIDLINE_ENDLINE or EVENT
+                if (!isNaN(target_frequency) && target_frequency != 2 && target_frequency != 8) {
+                    lockPeriodicTargetDropdown();
+                } else {
+                    $("#id_periodic_target option:not(:selected)").attr("disabled", false);
+                    $("#id_periodic_target").attr("readonly", false);
+                }
+            }
+
+            // initial state of view button
+            setViewButtonDisabledState();
+
+            // make tooltips work
+            $('#result_update_form [data-toggle="popover"]').popover({html: true}).click(function(e) {e.preventDefault();});
+        });
+    </script>
+
+    <form
+        action="{% if object.id %}
+                    {% url 'result_update' object.id %}
+                {% else %}
+                    {% url 'result_add' indicator.program.id indicator.id %}
+                {% endif %}
+                "
+        id="result_update_form"
+        class="form-horizontal"
+        method="post"
+        novalidate>
+        {% csrf_token %}
+
+        {% for hidden_field in form.hidden_fields %}
+            {{ hidden_field }}
+        {% endfor %}
+
+        <h2>{% trans 'Result' %}</h2>
+        <h3 class="no-bold">
+          {% if object %}
+              {% if object.indicator.level %}{{ object.indicator.level }} {% trans "indicator" %}: {% endif %}
+              {{ object.indicator.name }}
+          {% else %}
+              {{ indicator.level }} {% trans "indicator" %}:
+              {{ indicator.name }}
+          {% endif %}
+        </h3>
+        {% include 'indicators/results/result_form_common_fields.html' %}
+        <div id="evidence_subform" class="card card-body bg-medium border-0">
+
+            <h3>{% trans "Evidence" %}</h3>
+            <p>
+                {% trans 'Link this result to a record or folder of records that serves as evidence.' %}
+            </p>
+            {% include 'indicators/results/result_form_evidence_fields.html' %}
+        </div>
+        {% if object.indicator %}
+        <fieldset class="pb-2 pt-2">
+            <strong>
+                <a href="#" id="id_delete_result_btn" data-result-id="{{ object.id }}" class="text-danger float-right">
+                    <i class="fas fa-trash-alt"></i> {% trans "Delete this result" %}
+                </a>
+            </strong>
+        </fieldset>
+        {% endif %}
+        <div class="form-actions">
+            <div>
+                <input type="submit" name="submit" value="{% trans 'Save changes' %}" class="btn btn-primary" id="submit-id-submit">
+                <input type="reset" class="btn btn-inverse" value="{% trans 'Reset' %}">
+            </div>
+          <div>{# help link goes here #}</div>
+        </div>
+    </form>
+
+{% endblock content %}

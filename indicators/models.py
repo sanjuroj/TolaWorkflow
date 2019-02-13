@@ -156,6 +156,10 @@ class DisaggregationLabel(models.Model):
     def __unicode__(self):
         return self.label
 
+    @classmethod
+    def get_standard_labels(cls):
+        return cls.objects.filter(disaggregation_type__standard=True)
+
 
 class DisaggregationValue(models.Model):
     disaggregation_label = models.ForeignKey(
@@ -407,6 +411,20 @@ class Indicator(models.Model):
         ANNUAL, SEMI_ANNUAL, TRI_ANNUAL, QUARTERLY, MONTHLY
     )
 
+    REGULAR_TARGET_FREQUENCIES = (
+        ANNUAL,
+        SEMI_ANNUAL,
+        TRI_ANNUAL,
+        QUARTERLY,
+        MONTHLY,
+    )
+
+    IRREGULAR_TARGET_REQUENCIES = (
+        LOP,
+        MID_END,
+        EVENT,
+    )
+
     NUMBER = 1
     PERCENTAGE = 2
     UNIT_OF_MEASURE_TYPES = (
@@ -655,9 +673,15 @@ class Indicator(models.Model):
 
     @property
     def is_target_frequency_time_aware(self):
-        return self.target_frequency in (self.ANNUAL, self.SEMI_ANNUAL,
-                                         self.TRI_ANNUAL, self.QUARTERLY,
-                                         self.MONTHLY)
+        return self.target_frequency in self.REGULAR_TARGET_FREQUENCIES
+
+    @property
+    def is_target_frequency_not_time_aware(self):
+        return self.target_frequency in self.IRREGULAR_TARGET_REQUENCIES
+
+    @property
+    def is_target_frequency_lop(self):
+        return self.target_frequency == self.LOP
 
     @property
     def just_created(self):
@@ -713,8 +737,8 @@ class Indicator(models.Model):
         return "N/A"
 
     @property
-    def get_collecteddata_average(self):
-        avg = self.collecteddata_set.aggregate(Avg('achieved'))['achieved__avg']
+    def get_result_average(self):
+        avg = self.result_set.aggregate(Avg('achieved'))['achieved__avg']
         return avg
 
     @property
@@ -734,9 +758,28 @@ class Indicator(models.Model):
             return lop_stripped
         return self.lop_target
 
+    def current_periodic_target(self, date_=None):
+        """
+        Return the periodic target with start/end date containing localdate() or specified date
+
+        :return: A PeriodicTarget with start_date and end_date containing now(), or None
+        if no PeriodicTargets are found matching that criteria such as MIDLINE/ENDLINE
+        """
+        today = date_ or timezone.localdate()
+        return self.periodictargets.filter(start_date__lte=today, end_date__gte=today).first()
+
+
+    @property
+    def last_ended_periodic_target(self):
+        """
+        Returns the last periodic target if any, or None
+        """
+        return self.periodictargets.filter(end_date__lte=timezone.localdate()).last()
+
+
     @cached_property
     def cached_data_count(self):
-        return self.collecteddata_set.count()
+        return self.result_set.count()
 
 
 class PeriodicTarget(models.Model):
@@ -846,7 +889,7 @@ class PeriodicTarget(models.Model):
         """
         target_frequency = self.indicator.target_frequency
 
-        # used in the collected data modal to display options in the target period dropdown
+        # used in the result modal to display options in the target period dropdown
         if target_frequency == Indicator.MID_END:
             # midline is the translated "midline" or "endline" based on customsort
             return self.generate_midline_period_name() if self.customsort == 0 else self.generate_endline_period_name()
@@ -868,7 +911,7 @@ class PeriodicTarget(models.Model):
     def __unicode__(self):
         """outputs the period name (see period_name docstring) followed by start and end dates
 
-        used in collect data form"""
+        used in result form"""
         period_name = self.period_name
 
         if period_name and self.start_date and self.end_date:
@@ -883,10 +926,6 @@ class PeriodicTarget(models.Model):
             return unicode(period_name)
 
         return self.period
-
-    @property
-    def getcollected_data(self):
-        return self.collecteddata_set.all().order_by('date_collected')
 
     @classmethod
     def generate_for_frequency(cls, frequency):
@@ -1001,15 +1040,15 @@ class PeriodicTargetAdmin(admin.ModelAdmin):
     list_filter = ('period',)
 
 
-class CollectedDataManager(models.Manager):
+class ResultManager(models.Manager):
     def get_queryset(self):
-        return super(CollectedDataManager, self).get_queryset()\
+        return super(ResultManager, self).get_queryset()\
             .prefetch_related('site', 'disaggregation_value')\
             .select_related('program', 'indicator', 'agreement', 'complete',
                             'evidence', 'tola_table')
 
 
-class CollectedData(models.Model):
+class Result(models.Model):
     data_key = models.UUIDField(
         default=uuid.uuid4, unique=True, help_text=" "),
 
@@ -1022,17 +1061,12 @@ class CollectedData(models.Model):
         verbose_name=_("Actual"), max_digits=20, decimal_places=2,
         help_text=" ")
 
-    # cumulative_achieved = models.DecimalField(
-    #     verbose_name=_('Cumulative Actuals'), max_digits=20, decimal_places=2,
-    #     null=True, blank=True, help_text=" ")
-
     disaggregation_value = models.ManyToManyField(
         DisaggregationValue, blank=True, help_text=" ",
         verbose_name=_("Disaggregation Value")
     )
 
-    description = models.TextField(
-        _("Remarks/comments"), blank=True, null=True, help_text=" ")
+    comments = models.TextField(_("Comments"), blank=True, default='')
 
     indicator = models.ForeignKey(
         Indicator, help_text=" ", verbose_name=_("Indicator"),
@@ -1056,10 +1090,7 @@ class CollectedData(models.Model):
     date_collected = models.DateField(
         null=True, blank=True, help_text=" ", verbose_name=_("Date collected"))
 
-    comment = models.TextField(
-        _("Comment/Explanation"), max_length=255, blank=True, null=True,
-        help_text=" ")
-
+    # Deprecated - see evidence_name/evidence_url
     evidence = models.ForeignKey(
         Documentation, null=True, blank=True, on_delete=models.SET_NULL,
         verbose_name=_("Evidence Document or Link"), help_text=" ")
@@ -1068,22 +1099,28 @@ class CollectedData(models.Model):
         TolaUser, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Originated By"),
         related_name="approving_data", help_text=" ")
 
+    # Deprecated
     tola_table = models.ForeignKey(
         TolaTable, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("TolaTable"), help_text=" ")
 
+    # Deprecated
     update_count_tola_table = models.BooleanField(
         verbose_name=_("Would you like to update the achieved total with the \
         row count from TolaTables?"), default=False, help_text=" ")
 
+    record_name = models.CharField(max_length=135, blank=True)
+    evidence_url = models.CharField(max_length=255, blank=True)
+
     create_date = models.DateTimeField(null=True, blank=True, help_text=" ")
     edit_date = models.DateTimeField(null=True, blank=True, help_text=" ")
     site = models.ManyToManyField(SiteProfile, blank=True, help_text=" ")
+
     history = HistoricalRecords()
-    objects = CollectedDataManager()
+    objects = ResultManager()
 
     class Meta:
         ordering = ('indicator', 'date_collected')
-        verbose_name_plural = "Indicator Output/Outcome Collected Data"
+        verbose_name_plural = "Indicator Output/Outcome Result"
 
     def __unicode__(self):
         return self.description
@@ -1092,23 +1129,10 @@ class CollectedData(models.Model):
         if self.create_date is None:
             self.create_date = timezone.now()
         self.edit_date = timezone.now()
-
-        # if self.achieved is not None:
-        #     # calculate the cumulative sum of achieved value
-        #     total_achieved = CollectedData.objects.filter(
-        #         indicator=self.indicator,
-        #         create_date__lt=self.create_date)\
-        #         .aggregate(Sum('achieved'))['achieved__sum']
-
-        #     if total_achieved is None:
-        #         total_achieved = 0
-
-        #     total_achieved = total_achieved + self.achieved
-        #     self.cumulative_achieved = total_achieved
-        super(CollectedData, self).save()
+        super(Result, self).save()
 
     def achieved_sum(self):
-        achieved = CollectedData.targeted.filter(indicator__id=self)\
+        achieved = Result.targeted.filter(indicator__id=self)\
             .sum('achieved')
         return achieved
 
@@ -1125,27 +1149,11 @@ class CollectedData(models.Model):
         return ', '.join([y.disaggregation_label.label + ': ' + y.value for y in disaggs])
 
 
-# @receiver(post_delete, sender=CollectedData)
-# def model_post_delete(sender, **kwargs):
-#     instance = kwargs.get('instance', None)
-#     # print('Deleted: {}'.format(kwargs['instance'].__dict__))
 
-#     # the cumulative_achieved values need to be recalculated after an a
-#     # CollectedData record is deleted
-#     collecteddata = CollectedData.objects.filter(
-#         indicator=instance.indicator)\
-#         .order_by('id')
-
-#     # by saving each data reecord the cumulative_achieved is recalculated in
-#     # the save method of the CollectedData model class.
-#     for c in collecteddata:
-#         c.save()
-
-
-class CollectedDataAdmin(admin.ModelAdmin):
+class ResultAdmin(admin.ModelAdmin):
     list_display = ('indicator', 'date_collected', 'create_date', 'edit_date')
     list_filter = ['indicator__program__country__country']
-    display = 'Indicator Output/Outcome Collected Data'
+    display = 'Indicator Output/Outcome Result'
 
 
 class PinnedReport(models.Model):

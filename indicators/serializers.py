@@ -1,43 +1,7 @@
-from django.db.models import Sum
-
 from rest_framework import serializers
 
 from workflow.models import Program
-from .models import PeriodicTarget, CollectedData, Indicator, Level
-
-
-class CollecteddataSerializer(serializers.ModelSerializer):
-    cumsum = serializers.SerializerMethodField()
-
-    class Meta:
-        model = CollectedData
-        fields = ('id', 'program', 'indicator', 'periodic_target', 'achieved',
-                  'cumsum', 'date_collected', 'evidence', 'tola_table',
-                  'agreement', 'complete', 'site', 'create_date', 'edit_date')
-
-    def get_cumsum(self, obj):
-      total_achieved = CollectedData.objects.filter(
-                indicator=obj.indicator,
-                create_date__lt=obj.create_date)\
-            .aggregate(Sum('achieved'))['achieved__sum']
-
-      if total_achieved is None:
-            total_achieved = 0
-      total_achieved = total_achieved + obj.achieved
-      return total_achieved
-
-
-class PeriodictargetSerializer(serializers.ModelSerializer):
-    collecteddata_set = CollecteddataSerializer(many=True, read_only=True)
-    collecteddata__achieved__sum = serializers.IntegerField()
-    cumulative_sum = serializers.IntegerField()
-
-    class Meta:
-        model = PeriodicTarget
-        fields = ('id', 'indicator', 'period', 'target', 'start_date',
-                  'end_date', 'customsort', 'create_date', 'edit_date',
-                  'collecteddata_set', 'collecteddata__achieved__sum',
-                  'cumulative_sum')
+from indicators.models import Indicator, Level
 
 
 class LevelSerializer(serializers.ModelSerializer):
@@ -78,7 +42,9 @@ class IndicatorSerializer(serializers.ModelSerializer):
             'just_created',
 
             # DB annotations
-            'reporting',  # whether indicator progress towards targets is reported (min. one target period complete, one result reported)
+            #  whether indicator progress towards targets is reported
+            #  (min. one target period complete, one result reported):
+            'reporting',
             'all_targets_defined',  # whether all targets are defined for this indicator
             'results_count',
             'results_with_evidence_count',
@@ -96,5 +62,6 @@ class ProgramSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'does_it_need_additional_target_periods',
+            'reporting_period_start',
             'reporting_period_end',
         ]
