@@ -37,14 +37,13 @@
             // prevent triggering of datepicker when label is clicked
             $('label[for="id_date_collected"]').on('click', function(e) {e.preventDefault();});
 
-            /*
+            // Repositions the datepicker on large monitors
             $('#id_date_collected').on('click', function (e) {
                 windowScrollY = $(this).scrollParent().scrollParent().scrollTop(); // how much the window has been scrolled
                 myScrollPositionY = e.pageY; // this element's position relative to top of document
                 myRealPositionY = myScrollPositionY - windowScrollY + 20; // 20px is a slight fudge
                 $('#ui-datepicker-div').css('top', myRealPositionY + 'px');
             });
-            */
 
             let program_id = $("#id_program").val();
             let reporting_period_id = `#id_link_reporting_period_${program_id}`;
