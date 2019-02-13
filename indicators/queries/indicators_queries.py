@@ -207,7 +207,8 @@ def indicator_is_complete_annotation():
     """
     return models.Case(
         models.When(
-            models.Q(program__reporting_period_end__lte=models.functions.Now()),
+            # models.Q(program__reporting_period_end__lte=models.functions.Now()),
+            models.Q(program__reporting_period_end__lt=utils.UTCNow()),
             then=models.Value(True)
         ),
         default=models.Value(False),
