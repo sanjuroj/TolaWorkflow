@@ -246,10 +246,10 @@ class ProgramWithMetrics(Program):
     def percent_complete(self):
         if self.reporting_period_end is None or self.reporting_period_start is None:
             return -1 # otherwise the UI might show "None% complete"
-        if self.reporting_period_start > datetime.date.today():
+        if self.reporting_period_start > datetime.datetime.utcnow().date():
             return 0
         total_days = (self.reporting_period_end - self.reporting_period_start).days
-        complete = (datetime.date.today() - self.reporting_period_start).days
+        complete = (datetime.datetime.utcnow().date() - self.reporting_period_start).days
         return int(round(float(complete)*100/total_days)) if complete < total_days else 100
 
     @property
