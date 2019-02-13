@@ -22,7 +22,7 @@ from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.worksheet.cell_range import CellRange
 
 from tola.util import formatFloat
-from tola.l10n_utils import l10n_date_year_month, l10n_date_medium
+from tola.l10n_utils import l10n_date_year_month, l10n_date_medium, l10n_date_long, l10n_number
 from workflow.models import Program
 from ..models import Indicator, Result, Level, PeriodicTarget, PinnedReport
 from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm, PinnedReportForm
@@ -410,15 +410,15 @@ class IPTT_Mixin(object):
             running_total = 0
             # process indicator number
             if ind['number'] is None:
-                ind['number'] = ''
+                ind['number'] = u''
 
             # process level
             if ind['lastlevel'] is None:
-                ind['lastlevel'] = ''
+                ind['lastlevel'] = u''
 
             # process unit_of_measure
             if ind['unit_of_measure'] is None:
-                ind['unit_of_measure'] = ''
+                ind['unit_of_measure'] = u''
 
             # process direction_of_change
             ind['direction_of_change'] = symbolize_change(ind['direction_of_change'])
@@ -438,7 +438,7 @@ class IPTT_Mixin(object):
             if ind['baseline_na'] is True:
                 ind['baseline'] = _("N/A")
             elif ind['baseline'] is None:
-                ind['baseline'] = ''
+                ind['baseline'] = u''
             elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
                 ind['baseline'] = u"{0}%".format(ind['baseline'])
             # process lop_target
@@ -449,19 +449,19 @@ class IPTT_Mixin(object):
                 else:
                     ind['lop_target'] = formatFloat(lop_target)
             except (ValueError, TypeError):
-                lop_target = '—'
+                lop_target = u'—'
                 ind['lop_target'] = lop_target
 
             # process lop_actual
             lop_actual = u'—'
-            percent = ''
+            percent = u''
             if ind['unit_of_measure_type'] == Indicator.NUMBER:
                 if ind['actualsum'] is not None:
                     lop_actual = float(ind['actualsum'])
             elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
                 if ind['lastdata'] is not None:
                     lop_actual = float(ind['lastdata'])
-                    percent = "%"
+                    percent = u"%"
             try:
                 ind['lop_actual'] = u"{}{}".format(formatFloat(lop_actual), percent)
             except TypeError:
@@ -498,11 +498,11 @@ class IPTT_Mixin(object):
                             try:
                                 actual_val = ind[u"{}_rsum".format(sequence_count)]
                             except KeyError:
-                                actual_val = ''
+                                actual_val = u''
                         else:  # if it is not set to cumulative then default to non-cumulative even it is it not set
                             actual_val = ind[u"{}_sum".format(sequence_count)]
                     elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
-                        percent_sign = '%'
+                        percent_sign = u'%'
                         actual_val = ind[u"{}_last".format(sequence_count)]
 
                     if actual_val is not None and actual_val != '':
@@ -514,7 +514,7 @@ class IPTT_Mixin(object):
                         # process target_period target value
                         target_key = u"{}_target".format(sequence_count)
                         if ind[target_key] is None:
-                            target_val = ''
+                            target_val = u''
                         else:
                             target_val = formatFloat(float(ind[target_key]))
 
@@ -541,7 +541,7 @@ class IPTT_Mixin(object):
                                 percent_met_val = formatFloat(round(float(ind[u"{}_last".format(sequence_count)]) / target * 100))
                                 ind[percent_met] = percent_met_val
                         except (TypeError, KeyError):
-                            ind[percent_met] = ''
+                            ind[percent_met] = u''
                         except ZeroDivisionError:
                             ind[percent_met] = _("N/A")
         return indicators
@@ -690,6 +690,20 @@ class IPTT_Mixin(object):
         context['reporttype'] = reporttype
         return context
 
+def set_cell_value(cell, value, percent=False):
+    value = l10n_number(value)
+    if isinstance(value, str):
+        value = value
+    elif isinstance(value, unicode):
+        value = value.encode('utf-8')
+    else:
+        # more catches?
+        value = str(value)
+    if percent and len(value) > 1 and value[-1] != '%' and value not in ['N/A', '—']:
+        value = value + '%'
+    cell.value = value
+
+
 
 class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
     # TODO: should be localize dates in the Excel format
@@ -730,12 +744,12 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         alignment_right = Alignment(horizontal='right')
 
         bgcolor = PatternFill('solid', "EEEEEE")
-        ws['C1'] = "Indicator Performance Tracking Report"
+        set_cell_value(ws['C1'], _("Indicator Performance Tracking Report"))
         ws['C1'].font = report_header_font
         ws.merge_cells('C1:J1')
 
-        ws['C2'] = u"{0} - {1}".format(datetime.strftime(data['report_start_date'], "%b %d, %Y"),
-                                      datetime.strftime(data['report_end_date'], "%b %d, %Y"))
+        set_cell_value(ws['C2'], u"{0} - {1}".format(l10n_date_long(data['report_start_date']),
+                                                     l10n_date_long(data['report_end_date'])))
         ws['C2'].font = report_header_font
         ws.merge_cells('C2:J2')
 
@@ -743,81 +757,53 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         ws['C3'].font = report_header_font
         ws.merge_cells('C3:J3')
         for col, header in enumerate(self.headers):
-            ws.cell(column=col+1, row=4).value = header
+            set_cell_value(ws.cell(column=col+1, row=4), _(header))
 
         ws.merge_cells(start_row=3, start_column=len(self.headers)+1, end_row=3, end_column=len(self.headers)+3)
-        ws.cell(row=3, column=len(self.headers)+1).value = 'Life of Program'
+        #ws.cell(row=3, column=len(self.headers)+1).value = str(_('Life of Program'))
+        set_cell_value(ws.cell(row=3, column=len(self.headers)+1), _('Life of Program'))
         ws.cell(row=3, column=len(self.headers)+1).alignment = alignment
         ws.cell(row=3, column=len(self.headers)+1).font = headers_font
-        for col, header in enumerate(['Target', 'Actual', '% Met']):
-            ws.cell(row=4, column=len(self.headers)+col+1).value = header
+        for col, header in enumerate([_('Target'), _('Actual'), _('% Met')]):
+            #ws.cell(row=4, column=len(self.headers)+col+1).value = _(header)
+            set_cell_value(ws.cell(row=4, column=len(self.headers)+col+1), header)
             ws.cell(row=4, column=len(self.headers)+col+1).alignment = alignment_right
         periods = data['report_date_ranges']
         col_offset = 0
-        col = 0
+        #col = 0
         periods_start_col = len(self.headers) + 4
-        if data['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
-            for period in periods:
-                col = periods_start_col + col_offset
+        #col = len(self.headers) + 4
+        for period in periods:
+            col = periods_start_col + col_offset
+            try:
+                start_date = l10n_date_medium(period['start'])
+                end_date = l10n_date_medium(period['end'])
+            except TypeError:
+                start_date = u''
+                end_date = u''
+            # note: period['name'] comes from the model already translated (no gettext required)
+            set_cell_value(ws.cell(row=2, column=col), period['name'])
+            ws.cell(row=2, column=col).alignment = alignment
+            ws.cell(row=2, column=col).font = headers_font
 
-                # processs period date ranges
-                try:
-                    start_date = datetime.strftime(period['start'], '%b %d, %Y')
-                    end_date = datetime.strftime(period['end'], '%b %d, %Y')
+            set_cell_value(ws.cell(row=3, column=col), u"{} - {}".format(start_date, end_date))
+            ws.cell(row=3, column=col).alignment = alignment
+            ws.cell(row=3, column=col).font = headers_font
+            if data['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
+                ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col + 2)                
+                ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col + 2)
 
-                    # this is sometimes unicode (or a lazy eval proxy, see below) and sometimes a str...
-                    period_name = period['name']
-                    if isinstance(period_name, str):
-                        # it's not strictly necessary to convert to unicode here, but do it for kicks
-                        period_name = period_name.decode('utf-8')
-                    else:
-                        # You might think that this should check for unicode, but at this point, it's probably a
-                        # <class 'django.utils.functional.__proxy__'> which is a return val of ugettext_lazy()
-                        # Force lazy translation to unicode, or else openpyxl will crash on write
-                        period_name = unicode(period_name)
-
-                    # process period name
-                    ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col + 2)
-                    ws.cell(row=2, column=col).value = period_name
-                    ws.cell(row=2, column=col).alignment = alignment
-                    ws.cell(row=2, column=col).font = headers_font
-
-                    ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col + 2)
-                    ws.cell(row=3, column=col).value = "{} - {}".format(start_date, end_date)
-                    ws.cell(row=3, column=col).alignment = alignment
-                    ws.cell(row=3, column=col).font = headers_font
-
-                except TypeError:
-                    start_date = ''
-                    end_date = ''
-                    ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col + 2)
-                    ws.cell(row=3, column=col).value = period_name
-                    ws.cell(row=3, column=col).alignment = alignment
-                    ws.cell(row=3, column=col).font = headers_font
-
-                ws.cell(row=4, column=col).value = 'Target'
+                set_cell_value(ws.cell(row=4, column=col), _('Target'))
                 ws.cell(row=4, column=col).alignment = alignment_right
-                ws.cell(row=4, column=col + 1).value = 'Actual'
+                set_cell_value(ws.cell(row=4, column=col + 1), _('Actual'))
                 ws.cell(row=4, column=col + 1).alignment = alignment_right
-                ws.cell(row=4, column=col + 2).value = '% Met'
+                set_cell_value(ws.cell(row=4, column=col + 2), _('% Met'))
                 ws.cell(row=4, column=col + 2).alignment = alignment_right
                 col_offset += 3
-            col += 2
-        elif data['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
-            for period in periods:
-                col = periods_start_col + col_offset
-                ws.cell(row=2, column=col).value = period['name']
-                ws.cell(row=2, column=col).alignment = alignment
-                ws.cell(row=2, column=col).font = headers_font
+            elif data['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
                 ws.column_dimensions[get_column_letter(col)].width = 30
 
-                start_date = datetime.strftime(period['start'], '%b %d, %Y')
-                end_date = datetime.strftime(period['end'], '%b %d, %Y')
-                ws.cell(row=3, column=col).value = "{} - {}".format(start_date, end_date)
-                ws.cell(row=3, column=col).alignment = alignment
-                ws.cell(row=3, column=col).font = headers_font
-
-                ws.cell(row=4, column=col).value = "Actual"
+                set_cell_value(ws.cell(row=4, column=col), _("Actual"))
                 ws.cell(row=4, column=col).alignment = alignment_right
                 col_offset += 1
 
@@ -834,31 +820,38 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         for indicator in indicators:
             wb.guess_types = False
             ws.cell(row=row, column=1).value = u'{0}'.format(program.id)
+            is_percent = indicator.get('unittype') == '%'
             for col, attribute in enumerate(self.indicator_attributes):
-                ws.cell(row=row, column=col+2).value = u'{0}'.format(
-                    indicator.get(attribute, 'N/A')
-                    )
+                try:
+                    value = indicator.get(attribute, u'N/A')
+                except UnicodeDecodeError:
+                    value = 'N/A'
+                percent = col == 11 or (col == 10 and is_percent)
+                set_cell_value(ws.cell(row=row, column=col+2), value, percent=percent)
             for col in [2, 4]:
                 ws.cell(row=row, column=col).alignment = alignment
             for col in [1, 2]:
                 value = ws.cell(row=row, column=col).value
-                ws.cell(row=row, column=col).value = int(value)
+                set_cell_value(ws.cell(row=row, column=col), int(value))
 
             col_offset = 0
             period_column_start = len(self.indicator_attributes) + 2 # program_id
-            for period in periods:
+            for c, period in enumerate(periods):
                 col = period_column_start + col_offset
                 if context['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
-                    ws.cell(row=row, column=col).value = u'{0}'.format(
-                        indicator.get(u'{0}_period_target'.format(period['customsort'])))
-                    ws.cell(row=row, column=col+1).value = u'{0}'.format(
-                        indicator.get(u'{0}_actual'.format(period['customsort'])))
-                    ws.cell(row=row, column=col+2).value = u'{0}'.format(
-                        indicator.get(u'{0}_percent_met'.format(period['customsort'])))
+                    set_cell_value(ws.cell(row=row, column=col), 
+                                   indicator.get(u'{0}_period_target'.format(period['customsort'])))
+                    set_cell_value(ws.cell(row=row, column=col+1),
+                                           indicator.get(u'{0}_actual'.format(period['customsort'])),
+                                           percent=is_percent)
+                    set_cell_value(ws.cell(row=row, column=col+2),
+                                   indicator.get(u'{0}_percent_met'.format(period['customsort'])),
+                                   percent=True)
                     col_offset += 3
                 elif context['reporttype'] == self.REPORT_TYPE_TIMEPERIODS:
-                    ws.cell(row=row, column=col+1).value = u'{0}'.format(
-                        indicator.get(u'{0}_actual'.format(period['customsort'])))
+                    set_cell_value(ws.cell(row=row, column=col),
+                                   indicator.get(u'{0}_actual'.format(c)),
+                                   percent=is_percent)
                     col_offset += 1
             row += 1
         return ws
