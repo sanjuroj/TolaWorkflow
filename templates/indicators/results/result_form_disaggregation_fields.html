@@ -78,7 +78,7 @@
                     <th>{% trans "Actuals" %}</th>
                 </tr>
                 {% if custom_disaggregation_values %}
-                    {# a user has entered custom disaggregation values, display them instead of labels for new ones #}\
+                    {# a user has entered custom disaggregation values, display them instead of labels for new ones #}
                     {% for item in custom_disaggregation_values %}
                         <tr>
                             <td>{{ item.disaggregation_label.label }}</td>
