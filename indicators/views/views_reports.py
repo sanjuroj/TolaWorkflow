@@ -22,7 +22,7 @@ from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.worksheet.cell_range import CellRange
 
 from tola.util import formatFloat
-from tola.l10n_utils import l10n_date_year_month, l10n_date_medium
+from tola.l10n_utils import l10n_date_year_month, l10n_date_medium, l10n_date_long, l10n_number
 from workflow.models import Program
 from ..models import Indicator, Result, Level, PeriodicTarget, PinnedReport
 from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm, PinnedReportForm
