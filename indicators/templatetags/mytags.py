@@ -246,14 +246,13 @@ def gauge_tank(context, metric, has_filters=True):
     filter_title_count = program.metrics['needs_evidence'] if metric == 'results_evidence' else unfilled_value
     denominator = results_count if metric == 'results_evidence' else indicator_count
     filled_percent = make_percent(filled_value, denominator)
-    filter_active = (
+    filter_active = filled_percent != 100 and (
         metric == 'targets_defined' or (
             metric == 'reported_results' and program.metrics.get('targets_defined', False)
         ) or (
             metric == 'results_evidence' and results_count > 0
         )
     )
-    show_link = filled_percent != 100 and filter_active
     # if has_filters is false this is from the homepage, so needs hardcoded url filters based on the program url:
     program_url = False if (has_filters or not filter_active) else '{base}#/{route}/'.format(
             base=program.program_page_url,
@@ -283,7 +282,6 @@ def gauge_tank(context, metric, has_filters=True):
         'help_text': labels[metric]['help_text'],
         'link_title': labels[metric]['link_title'],
         'filter_active': filter_active,
-        'show_link': show_link
     }
 
 @register.inclusion_tag('indicators/tags/gauge-tank-small.html', takes_context=True)
