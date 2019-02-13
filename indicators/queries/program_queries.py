@@ -65,35 +65,40 @@ class ProgramMetricsQuerySet(models.QuerySet):
             has_annual=models.Exists(annual_targets),
             annual_period=models.Subquery(
                 annual_targets.filter(
-                    end_date__lte=models.functions.Now()
+                    # end_date__lte=models.functions.Now()
+                    end_date__lt=utils.UTCNow()
                 ).order_by('-end_date').values('end_date')[:1],
                 output_field=models.DateField()
             ),
             has_semi_annual=models.Exists(semi_annual_targets),
             semi_annual_period=models.Subquery(
                 semi_annual_targets.filter(
-                    end_date__lte=models.functions.Now()
+                    # end_date__lte=models.functions.Now()
+                    end_date__lt=utils.UTCNow()
                 ).order_by('-end_date').values('end_date')[:1],
                 output_field=models.DateField()
             ),
             has_tri_annual=models.Exists(tri_annual_targets),
             tri_annual_period=models.Subquery(
                 tri_annual_targets.filter(
-                    end_date__lte=models.functions.Now()
+                    # end_date__lte=models.functions.Now()
+                    end_date__lt=utils.UTCNow()
                 ).order_by('-end_date').values('end_date')[:1],
                 output_field=models.DateField()
             ),
             has_quarterly=models.Exists(quarterly_targets),
             quarterly_period=models.Subquery(
                 quarterly_targets.filter(
-                    end_date__lte=models.functions.Now()
+                    # end_date__lte=models.functions.Now()
+                    end_date__lt=utils.UTCNow()
                 ).order_by('-end_date').values('end_date')[:1],
                 output_field=models.DateField()
             ),
             has_monthly=models.Exists(monthly_targets),
             monthly_period=models.Subquery(
                 monthly_targets.filter(
-                    end_date__lte=models.functions.Now()
+                    # end_date__lte=models.functions.Now()
+                    end_date__lt=utils.UTCNow()
                 ).order_by('-end_date').values('end_date')[:1],
                 output_field=models.DateField()
             ),
