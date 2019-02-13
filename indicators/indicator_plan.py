@@ -238,6 +238,7 @@ def _apply_body_styling(cell):
     cell.font = Font(size=10)
     bd = Side(style='thin', color=BLACK)
     cell.border = Border(left=bd, top=bd, right=bd, bottom=bd)
+    cell.alignment = Alignment(wrap_text=True, vertical="top")
     return cell
 
 
