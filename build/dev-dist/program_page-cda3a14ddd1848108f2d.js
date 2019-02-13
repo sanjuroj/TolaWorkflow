@@ -956,7 +956,7 @@ var onNavigation = function onNavigation(navRoutes) {
   var params = navRoutes.route.params;
 
   if (routeName === 'indicator') {
-    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('select-indicator-to-filter', params.indicator_id);
+    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('select-indicator-to-filter', parseInt(params.indicator_id));
     return;
   }
 
@@ -1460,4 +1460,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-18cae254c1fa32e72921.js.map
+//# sourceMappingURL=program_page-cda3a14ddd1848108f2d.js.map

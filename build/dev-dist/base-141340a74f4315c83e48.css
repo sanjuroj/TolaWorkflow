@@ -8655,21 +8655,18 @@ body.page_iptt_table {
   color: #dbdcde;
   line-height: 42px; }
 
-.fontsize-85 {
-  font-size: .85rem; }
-
-.fontsize-125 {
-  font-size: 1.25rem; }
-
-.fontsize-130 {
-  font-size: 1.3rem; }
-
 .break-word {
   word-break: break-word;
   /* wraps text in the middle of words */ }
 
 .no-bold {
   font-weight: 400; }
+
+.text-small {
+  font-size: 0.875rem; }
+
+.text-large {
+  font-size: 1.25rem; }
 
 .color-red {
   color: #c8102e; }
@@ -8967,3 +8964,5 @@ select.listoption_filters {
 
 /* Unsorted custom selectors */
 
+
+/*# sourceMappingURL=base-141340a74f4315c83e48.css.map*/
