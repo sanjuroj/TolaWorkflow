@@ -86,6 +86,8 @@
 
     // on delete button
     $("#indicator_results_div").on("click", "#id_delete_result_btn", function(e) {
+        e.preventDefault();
+
         let resultId = $('#id_delete_result_btn').data('result-id');
 
         PNotify.alert({
