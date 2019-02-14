@@ -16,7 +16,7 @@ from django.db.models import (
     Count, Min, Q, Sum, Avg, Max
 )
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, render_to_response, get_object_or_404, redirect
+from django.shortcuts import render, render_to_response, get_object_or_404, redirect, reverse
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -752,8 +752,12 @@ class ResultCreate(ResultFormMixin, CreateView):
             process_disaggregation = False
 
         if self.request.is_ajax():
-            data = serializers.serialize('json', [new])
-            return HttpResponse(data)
+            #data = serializers.serialize('json', [new])
+            data = {
+                'pk' : new.pk,
+                'url': reverse('result_update', kwargs={'pk': new.pk})
+            }
+            return JsonResponse(data)
 
         messages.success(self.request, _('Success, Data Created!'))
         redirect_url = new.indicator.program.program_page_url
