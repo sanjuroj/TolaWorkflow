@@ -136,11 +136,6 @@ class ResultForm(forms.ModelForm):
         help_text=' ',
         label=_('Result date')
     )
-    submitted_by = forms.CharField(
-        widget=forms.TextInput(attrs={'readonly': True}),
-        label=_('Submitted by'),
-        required=False
-    )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
@@ -151,7 +146,6 @@ class ResultForm(forms.ModelForm):
         self.set_initial_querysets()
         self.set_periodic_target_widget()
         self.fields['target_frequency'].initial = self.indicator.target_frequency
-        self.fields['submitted_by'].initial = self.user.tola_user.display_with_organization
         self.fields['indicator'].initial = self.indicator.id
         self.fields['program'].initial = self.indicator.program.id
 

@@ -40,6 +40,14 @@ class TolaTable(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def table_view_url(self):
+        """
+        The `url` field actually stores the URL used to pull data from the API
+        This `tola_table_url` is the URL users can view
+        """
+        return u'https://tola-tables.mercycorps.org/silo_detail/{}/'.format(self.table_id) if self.table_id else None
+
 
 class TolaTableAdmin(admin.ModelAdmin):
     list_display = ('name', 'country', 'owner', 'url', 'create_date',
