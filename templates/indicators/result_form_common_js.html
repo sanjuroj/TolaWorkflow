@@ -1,6 +1,7 @@
 {% load i18n %}
 
 {% include 'gdrive_picker_js.html' %}
+{% include 'validation_js.html' %}
 
 <script>
     // gdrive picker
@@ -62,7 +63,11 @@
         $.post(form_url, form_data,
             function(response, status, jqXHR) { // success callback
                 $("#modalmessages").empty();
-                createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, "#modalmessages");
+                if ($("#result_update_form div").hasClass('has-warning')) {
+                    createAlert("warning", "{% trans 'Result saved - however please review warnings below.'|escapejs %}", true, "#modalmessages");
+                } else {
+                    createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, "#modalmessages");
+                }
             })
         .fail(function(error){
             createAlert("danger", "{% trans 'Could not save form.'|escapejs %}", true, "#modalmessages");
@@ -308,21 +313,36 @@
     function validateEvidence() {
         let recordName = $('#id_record_name').val();
         let evidenceURL = $('#id_evidence_url').val();
-
         if (recordName && ! evidenceURL) {
             $("#div_id_evidence_url").addClass('has-error');
             $("#id_evidence_url").addClass('is-invalid');
             $("#validation_id_evidence_url").html("<small>{% trans 'A link must be included along with the record name.'|escapejs %}</small>");
             return false;
         } else {
-            $("#div_id_evidence_url").removeClass('has-error');
-            $("#id_evidence_url").removeClass('is-invalid');
-            $("#validation_id_evidence_url").text(" ");
+            let validationResult = isValidURLOrFilePath(evidenceURL);
+            if (validationResult.valid === true) {
+                $("#div_id_evidence_url").removeClass('has-error');
+                $("#div_id_evidence_url").removeClass('has-warning');
+                $("#id_evidence_url").removeClass('is-invalid');
+                $("#validation_id_evidence_url").text("");
+                return true;
+            } else if (validationResult.valid == 'warn') {
+                $("#div_id_evidence_url").removeClass('has-error');
+                $('#id_evidence_url').addClass('is-invalid');
+                $('#div_id_evidence_url').addClass('has-warning');
+                $("#validation_id_evidence_url").html(`<small>${validationResult.message}</small>`);
+                return true;
+            } else if (validationResult.valid === false) {
+                $("#div_id_evidence_url").removeClass('has-error');
+                $('#id_evidence_url').addClass('is-invalid');
+                $('#div_id_evidence_url').addClass('has-error');
+                $("#validation_id_evidence_url").html(`<small>${validationResult.message}</small>`);
+                return false;
+            }
         }
-
         return true;
     }
-
+    
     // called from result_form_modal.html
     function lockPeriodicTargetDropdown(){
         $("#id_periodic_target option:not(:selected)").attr("disabled", true);
