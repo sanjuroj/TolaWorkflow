@@ -322,15 +322,18 @@
             let validationResult = isValidURLOrFilePath(evidenceURL);
             if (validationResult.valid === true) {
                 $("#div_id_evidence_url").removeClass('has-error');
+                $("#div_id_evidence_url").removeClass('has-warning');
                 $("#id_evidence_url").removeClass('is-invalid');
                 $("#validation_id_evidence_url").text("");
                 return true;
             } else if (validationResult.valid == 'warn') {
+                $("#div_id_evidence_url").removeClass('has-error');
                 $('#id_evidence_url').addClass('is-invalid');
                 $('#div_id_evidence_url').addClass('has-warning');
                 $("#validation_id_evidence_url").html(`<small>${validationResult.message}</small>`);
                 return true;
             } else if (validationResult.valid === false) {
+                $("#div_id_evidence_url").removeClass('has-error');
                 $('#id_evidence_url').addClass('is-invalid');
                 $('#div_id_evidence_url').addClass('has-error');
                 $("#validation_id_evidence_url").html(`<small>${validationResult.message}</small>`);
