@@ -28,11 +28,11 @@
                 {% endif %}
             </div>
         </div>
-    {% if program_url and filter_active %}</a>{% endif %}
     {% if filter_active %}
         <div class="gauge__cta">
-            <span class="btn-link btn-inline"><i class="fas fa-exclamation-triangle text-warning"></i>{{ link_title }}</span>
+            <span class="btn-link btn-inline"><i class="fas fa-exclamation-triangle text-warning"></i>&nbsp;{{ link_title }}</span>
             &nbsp;
         </div>
     {% endif %}
+    {% if program_url and filter_active %}</a>{% endif %}
 </div>
