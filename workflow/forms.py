@@ -1462,7 +1462,7 @@ class DocumentationForm(forms.ModelForm):
         self.fields['name'].required = True
         self.fields['url'].required = True
         self.fields['project'].queryset = ProjectAgreement.objects.filter(program__country__in=countries)
-        self.fields['program'].queryset = Program.active_programs.filter(country__in=countries)
+        self.fields['program'].queryset = Program.active_programs.filter(country__in=countries).distinct()
 
         # only display Project field to existing users
         if not self.request.user.tola_user.allow_projects_access:
