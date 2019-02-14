@@ -129,8 +129,8 @@ $border-width:                1px !default;
 $border-color:                $gray-300 !default;
 
 $border-radius:               0;
-$border-radius-lg:            .3rem !default;
-$border-radius-sm:            .2rem !default;
+$border-radius-lg:            $border-radius;
+$border-radius-sm:            $border-radius;
 
 $component-active-color:      $white !default;
 $component-active-bg:         $blue-400;
@@ -253,7 +253,7 @@ $input-btn-focus-color:       rgba($component-active-bg, .25) !default;
 $input-btn-focus-box-shadow:  0 0 0 $input-btn-focus-width $input-btn-focus-color !default;
 
 $input-btn-padding-y-sm:      .25rem !default;
-$input-btn-padding-x-sm:      .5rem !default;
+$input-btn-padding-x-sm:      1rem;
 $input-btn-line-height-sm:    $line-height-sm !default;
 
 $input-btn-padding-y-lg:      .5rem !default;
