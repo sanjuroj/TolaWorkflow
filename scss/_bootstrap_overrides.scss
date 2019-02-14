@@ -181,3 +181,10 @@ span[data-toggle="popover"] {
         cursor: pointer;
     }
 }
+
+// last paragraph in an alert message shouldnt get following margin
+.alert {
+    p:last-of-type {
+        margin-bottom: 0;
+    }
+}
