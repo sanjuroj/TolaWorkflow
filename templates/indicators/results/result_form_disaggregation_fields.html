@@ -24,6 +24,7 @@
             <table class="table table-sm table-hover table-striped">
                 <tr>
                     <th>{% trans "Disaggregation level" %}</th>
+                    {% comment %}Translators: in the sense of "actual values"{% endcomment %}
                     <th>{% trans "Actuals" %}</th>
                 </tr>
                 {% if standard_disaggregation_values %}
@@ -69,12 +70,14 @@
             aria-expanded="false"
             aria-controls="customDisagg">
             <div class="div-expand-symbol"><i class="fas fa-caret-right"></i></div>
+            {% comment %} These are "custom" in the sense that they are specific to this indicator{% endcomment %}
             {% trans "Custom disaggregations" %}
         </div>
         <div class="collapse" id="customDisagg">
             <table class="table table-sm table-hover table-striped">
                 <tr>
                     <th>{% trans "Disaggregation level" %}</th>
+                    {% comment %}Translators: in the sense of "actual values"{% endcomment %}
                     <th>{% trans "Actuals" %}</th>
                 </tr>
                 {% if custom_disaggregation_values %}
