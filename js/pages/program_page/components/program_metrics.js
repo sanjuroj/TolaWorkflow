@@ -11,8 +11,7 @@ class GaugeTank extends React.Component {
 
     handleClick = (e) => {
         e.preventDefault();
-
-        if (! this.props.disabled) {
+        if (! this.props.disabled && this.unfilledPercent != 0) {
             eventBus.emit('nav-apply-gauge-tank-filter', this.props.filterType);
         }
     };
@@ -32,9 +31,10 @@ class GaugeTank extends React.Component {
         const unfilledPercent = (allIndicatorsLength <= 0 || allIndicatorsLength == filteredIndicatorsLength) ? 100 :
             (filteredIndicatorsLength == 0 ? 0 :
                 Math.max(1, Math.min(Math.round((filteredIndicatorsLength / allIndicatorsLength) * 100), 99)));
+        this.unfilledPercent = unfilledPercent;
         const filledPercent = 100 - unfilledPercent;
 
-        return <div className={classNames('gauge', {'filter-trigger': !disabled, 'is-highlighted': isHighlighted})}
+        return <div className={classNames('gauge', {'filter-trigger': unfilledPercent > 0 && !disabled, 'is-highlighted': isHighlighted})}
                     onClick={this.handleClick} >
             <h6 className="gauge__title">{title}</h6>
             <div className="gauge__overview">
