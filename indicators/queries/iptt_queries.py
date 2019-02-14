@@ -6,7 +6,7 @@ from indicators.models import (
     Indicator,
     Level,
     PeriodicTarget,
-    CollectedData,
+    Result,
     IndicatorSortingManagerMixin,
     IndicatorSortingQSMixin
 )
@@ -115,14 +115,14 @@ class NoTargetsIndicatorManager(IPTTIndicatorManager):
                 models.When(
                     unit_of_measure_type=Indicator.PERCENTAGE,
                     then=models.Subquery(
-                        CollectedData.objects.filter(
+                        Result.objects.filter(
                             indicator_id=models.OuterRef('pk'),
                             date_collected__lte=period['end_date']
                         ).order_by('-date_collected').values('achieved')[:1],
                         output_field=models.FloatField()
                     )),
                 default=models.Subquery(
-                    CollectedData.objects.filter(
+                    Result.objects.filter(
                         indicator_id=models.OuterRef('pk'),
                         date_collected__lte=period['end_date']
                     ).filter(
@@ -143,9 +143,9 @@ class NoTargetsIndicatorManager(IPTTIndicatorManager):
 
 
 class WithTargetsIndicatorManager(IPTTIndicatorManager):
-    """Manager for Indicator with PeriodicTargets and CollectedData
+    """Manager for Indicator with PeriodicTargets and Result
 
-    automatically annotates for lop target and actual lop sum of collected data
+    automatically annotates for lop target and actual lop sum of results
     also can self-annotate for periodic target and actual sum
     returns % met for the above"""
 
@@ -157,14 +157,14 @@ class WithTargetsIndicatorManager(IPTTIndicatorManager):
             end_date__gte=models.OuterRef('date_collected')
         ).order_by().values('id')[:1]
         # inner query to collect data annotated by target_id
-        data_with_periods_non_cumulative = CollectedData.objects.filter(
+        data_with_periods_non_cumulative = Result.objects.filter(
             indicator_id=models.OuterRef('indicator_id')
         ).annotate(
             target_id=models.Subquery(target_inner_query)
         ).filter(
             target_id=models.OuterRef('id')
         ).order_by().values('target_id')
-        data_with_periods_cumulative = CollectedData.objects.filter(
+        data_with_periods_cumulative = Result.objects.filter(
             indicator_id=models.OuterRef('indicator_id'),
             date_collected__lte=models.OuterRef('end_date')
         ).order_by().values('indicator_id')
@@ -283,10 +283,11 @@ class WithMetricsIndicatorManager(IPTTIndicatorManager):
 
     def get_evidence_count(self, qs):
         """annotates qs with evidence_count= # of results that have evidence, and all_results_backed_up=Boolean"""
-        data_with_evidence = CollectedData.objects.filter(
+        data_with_evidence = Result.objects.filter(
             models.Q(indicator_id=models.OuterRef('pk')) |
             models.Q(periodic_target__indicator_id=models.OuterRef('pk')),
-            models.Q(evidence__isnull=False) | models.Q(tola_table__isnull=False)
+        ).exclude(
+            evidence_url=''
         ).order_by().values('indicator_id')
         qs = qs.annotate(
             evidence_count=models.functions.Coalesce(
@@ -331,14 +332,14 @@ class WithMetricsIndicatorManager(IPTTIndicatorManager):
         return qs
 
     def get_reported_results(self, qs):
-        collected_data_with_achieved_values = CollectedData.objects.filter(
+        results_with_achieved_values = Result.objects.filter(
             models.Q(indicator_id=models.OuterRef('pk')),
             models.Q(achieved__isnull=False)
         ).order_by().values('indicator_id')
         qs = qs.annotate(
             reported_results=models.functions.Coalesce( # coalesce to return 0 if the subquery is empty (not None)
                 models.Subquery(
-                    collected_data_with_achieved_values.annotate(
+                    results_with_achieved_values.annotate(
                         result_count=models.Count('date_collected')).values('result_count')[:1],
                     output_field=models.IntegerField()
                 ), 0)

@@ -8,7 +8,7 @@ from django.utils import translation
 from indicators.models import Indicator
 from tola.test.base_classes import TestBase
 from factories.workflow_models import SiteProfileFactory, ProgramFactory
-from factories.indicators_models import IndicatorFactory, CollectedDataFactory
+from factories.indicators_models import IndicatorFactory, ResultFactory
 from workflow.models import SiteProfile
 
 
@@ -19,12 +19,12 @@ class TestProgramMethods(TestBase, TestCase):
 
         expected = SiteProfileFactory()
         expected2 = SiteProfileFactory()
-        CollectedDataFactory(
+        ResultFactory(
             indicator=self.indicator, sites=[expected, expected2])
         sites = self.program.get_sites()
 
         IndicatorFactory.create_batch(3)
-        CollectedDataFactory.create_batch(3)
+        ResultFactory.create_batch(3)
         SiteProfileFactory.create_batch(3)
 
         self.assertEqual(len(sites), 2)

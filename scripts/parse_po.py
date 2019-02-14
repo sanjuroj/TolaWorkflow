@@ -155,7 +155,7 @@ def stanza_to_components(stanza):
 
 
 def is_untranslated(stanza):
-    # print '----', stanza, '========'
+    # print '-----', stanza, '========'
     lines = stanza.split('\n')
     for i, line in enumerate(lines):
         if 'msgstr' in line:

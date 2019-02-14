@@ -13,7 +13,7 @@ from indicators.queries import (
 from indicators.models import (
     Indicator,
     PeriodicTarget,
-    CollectedData
+    Result
 )
 from workflow.models import Program
 from django.db import models
@@ -345,7 +345,7 @@ def program_results_annotation(total=True):
     """annotates a program with the count of indicators which have any reported results
         or the count of reported results for the program in total
         Total=True: all results for program, Total=False: number of indicators with results"""
-    data_subquery = CollectedData.objects.filter(
+    data_subquery = Result.objects.filter(
         indicator__program=models.OuterRef('pk')
     ).order_by().values('indicator__program').annotate(
         data_count=models.Count('indicator_id', distinct=total)).values('data_count')[:1]
@@ -386,14 +386,14 @@ def program_all_targets_defined_annotation():
 
 def program_evidence_annotation():
     """annotates a program with the count of results for any of the program's indicators which have evidence"""
-    cd = CollectedData.objects.filter(
+    rs = Result.objects.filter(
         indicator__program_id=models.OuterRef('pk')
-    ).filter(
-        models.Q(evidence__isnull=False) | models.Q(tola_table__isnull=False)
+    ).exclude(
+        evidence_url=''
     ).order_by().values('indicator__program').annotate(evidence_count=models.Count('pk')).values('evidence_count')[:1]
     return models.functions.Coalesce(
         models.Subquery(
-            cd,
+            rs,
             output_field=models.IntegerField()
         ), 0)
 

@@ -16,6 +16,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from simple_history.models import HistoricalRecords
 from django.contrib.sessions.models import Session
+from django.urls import reverse
 
 try:
     from django.utils import timezone
@@ -159,6 +160,12 @@ class TolaUser(models.Model):
     def __unicode__(self):
         # Returning None breaks the Django Admin on models with a FK to TolaUser
         return self.name or u''
+
+    @property
+    def display_with_organization(self):
+        if not self.organization:
+            return str(self)
+        return u'{0} ({1})'.format(self, self.organization)
 
     @property
     def countries_list(self):
@@ -415,14 +422,36 @@ class Program(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def program_page_url(self):
+        """used in place of get_absolute_url() because program page isn't strictly an absolute url (no editing) but
+            gives a single point of reference on the model for the program page url, used in linking in various places
+        """
+        return reverse('program_page', kwargs={'program_id': self.pk})
+
+    @property
+    def gait_url(self):
+        """if program has a gait ID, returns url https://gait.mercycorps.org/editgrant.vm?GrantID=####
+        otherwise returns false
+        """
+        try:
+            gaitid = int(self.gaitid)
+        except ValueError:
+            gaitid = False
+        if gaitid and gaitid != 0 and len(str(gaitid)) > 2 and len(str(gaitid)) < 5:
+            # gaitid exists, is numeric, is nonzero, and is a 3 or 4 digit number:
+            return 'https://gait.mercycorps.org/editgrant.vm?GrantID={gaitid}'.format(
+                gaitid=gaitid)
+        return None
+
     def get_sites(self):
         indicator_ids = Indicator.objects.filter(program__in=[self.id]).values_list('id')
-        collecteddata = CollectedData.objects.filter(indicator__id__in=indicator_ids)
-        return SiteProfile.objects.filter(collecteddata__id__in=collecteddata).distinct()
+        results = Result.objects.filter(indicator__id__in=indicator_ids)
+        return SiteProfile.objects.filter(result__id__in=results).distinct()
 
     @property
     def collected_record_count(self):
-        return Program.objects.filter(pk=self.pk).annotate(num_data=Count('indicator__collecteddata')) \
+        return Program.objects.filter(pk=self.pk).annotate(num_data=Count('indicator__result')) \
                     .values('id', 'num_data')[0]['num_data']
 
     @property
@@ -1656,4 +1685,4 @@ def get_user_country(request):
         return response
 
 # importing at the bottom of the file so that there is not circular imports
-from indicators.models import Indicator, PeriodicTarget, CollectedData
+from indicators.models import Indicator, PeriodicTarget, Result

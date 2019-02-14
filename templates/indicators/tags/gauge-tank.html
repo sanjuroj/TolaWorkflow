@@ -1,30 +1,38 @@
 {% load i18n %}
-<div class="gauge">
-    <h6 class="gauge__title">{% trans title %}</h6>
-    <div class="gauge__overview">
-        <div class="gauge__graphic gauge__graphic--tank{% if filled_percent == 0 %} gauge__graphic--empty{% endif %}">
-            <div class="graphic__tick-marks">
-                {% for i in ticks %}
-                <div class="graphic__tick"></div>
-                {% endfor %}
+<div class="gauge {% if filter_active %}filter-trigger {% endif %}">
+    {% if program_url and filter_active %}<a href="{{ program_url }}">{% endif %}
+        <h6 class="gauge__title">{% trans title %}</h6>
+        <div class="gauge__overview">
+            <div class="gauge__graphic gauge__graphic--tank{% if filled_percent == 0 %} gauge__graphic--empty{% endif %}">
+                <div class="graphic__tick-marks">
+                    {% for i in ticks %}
+                    <div class="graphic__tick"></div>
+                    {% endfor %}
+                </div>
+                <div class="graphic__tank--unfilled" style="flex-basis: {{ unfilled_percent }}%"></div>
+                <div class="graphic__tank--filled" style="flex-basis: {{ filled_percent }}%"></div>
             </div>
-            <div class="graphic__tank--unfilled" style="flex-basis: {{ unfilled_percent }}%"></div>
-            <div class="graphic__tank--filled" style="flex-basis: {{ filled_percent }}%"></div>
+            <div class="gauge__labels">
+                {% if filled_percent > 0 %}
+                <div class="gauge__label text-muted">
+                    {{ unfilled_percent }}% {{ unfilled_label }}
+                    <!-- TOOLTIP -->
+                </div>
+                <div class="gauge__label">
+                    <span class="gauge__value">{{ filled_percent }}% {{ filled_label }}</span>
+                </div>
+                {% else %}
+                <div class="gauge__label">
+                    <span class="text-danger"><strong>{{ empty_label }}</strong></span>
+                </div>
+                {% endif %}
+            </div>
         </div>
-        <div class="gauge__labels">
-            {% if filled_percent > 0 %}
-            <div class="gauge__label text-muted">
-                {{ unfilled_percent }}% {{ unfilled_label }}
-                <!-- TOOLTIP -->
-            </div>
-            <div class="gauge__label">
-                <span class="gauge__value">{{ filled_percent }}% {{ filled_label }}</span>
-            </div>
-            {% else %}
-            <div class="gauge__label">
-                <span class="text-danger"><strong>{{ empty_label }}</strong></span>
-            </div>
-            {% endif %}
+    {% if program_url and filter_active %}</a>{% endif %}
+    {% if show_link %}
+        <div class="gauge__cta">
+            <span class="btn-link btn-inline"><i class="fas fa-exclamation-triangle text-warning"></i>{{ link_title }}</span>
+            &nbsp;
         </div>
-    </div>
+    {% endif %}
 </div>

@@ -9,7 +9,7 @@ from django.core.exceptions import ImproperlyConfigured
 from factories.django_models import UserFactory
 from factories.indicators_models import IndicatorFactory
 from factories.workflow_models import ProgramFactory, TolaUserFactory
-from indicators.models import Indicator
+from indicators.models import Indicator, Program
 from tola.test.utils import instantiate_scenario, decimalize
 
 
@@ -28,6 +28,7 @@ class TestBase(object):
             funding_status='Funded', reporting_period_start='2016-03-01', reporting_period_end='2020-05-01')
         self.program.country.add(self.country)
         self.program.save()
+        self.program = Program.objects.get()  # forces reporting_period_start/end from str to date()
         self.indicator = IndicatorFactory(
             program=self.program, unit_of_measure_type=Indicator.NUMBER, is_cumulative=False,
             direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE, target_frequency=Indicator.ANNUAL)
@@ -67,11 +68,11 @@ class ScenarioBase(TestBase):
         self.assertEqual(scenario_targets, response_targets)
 
     def test_result_set_is_correct(self):
-        scenario_collected_data = self.scenario.indicators[0].collected_data_sets
-        response_collected_data = []
+        scenario_results = self.scenario.indicators[0].result_sets
+        response_results = []
         for pt in self.response.context['periodictargets']:
-            response_collected_data.append(list(pt.getcollected_data.values_list('achieved', flat=True)))
-        self.assertEqual(scenario_collected_data, response_collected_data)
+            response_results.append(list(pt.result_set.all().values_list('achieved', flat=True)))
+        self.assertEqual(scenario_results, response_results)
 
 # TODO: see if there is a way to abstract this better so a new base doesn't need to be created for each URL
 class ScenarioBase2(TestBase):
@@ -102,7 +103,7 @@ class ScenarioBase2(TestBase):
 
 class IndicatorDetailsMixin(TestBase):
 
-    """ Use this mixin to test the correct targets and collected data is returned from a query"""
+    """ Use this mixin to test the correct targets and results are returned from a query"""
 
     def test_periodic_targets_have_correct_targets(self):
         scenario_targets = self.scenario.indicators[0].periodic_target_targets
@@ -110,14 +111,14 @@ class IndicatorDetailsMixin(TestBase):
         self.assertEqual(scenario_targets, response_targets)
 
     def test_result_set_is_correct(self):
-        scenario_collected_data = self.scenario.indicators[0].collected_data_sets
-        response_collected_data = []
+        scenario_results = self.scenario.indicators[0].result_sets
+        response_results = []
         for pt in self.response.context['periodictargets']:
-            response_collected_data.append(list(pt.getcollected_data.values_list('achieved', flat=True)))
-        self.assertEqual(scenario_collected_data, response_collected_data)
+            response_results.append(list(pt.result_set.all().values_list('achieved', flat=True)))
+        self.assertEqual(scenario_results, response_results)
 
     def test_each_periodic_target_result_sum_is_correct(self):
-        scenario_sums = self.scenario.indicators[0].collected_data_sum_by_periodic_target
+        scenario_sums = self.scenario.indicators[0].result_sum_by_periodic_target
         response_sums = []
         for pt in self.response.context['periodictargets']:
             response_sums.append(pt.actual)
@@ -134,7 +135,7 @@ class IndicatorDetailsMixin(TestBase):
 
     def test_lop_row_actual_value_correct(self):
         response_value = self.response.context['indicator'].lop_actual
-        scenario_value = decimalize(self.scenario.indicators[0].collected_data_sum)
+        scenario_value = decimalize(self.scenario.indicators[0].result_sum)
         self.assertEqual(scenario_value, response_value)
 
     @skip('Not implemented yet')

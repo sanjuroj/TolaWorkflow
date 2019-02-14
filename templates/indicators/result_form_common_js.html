@@ -1,0 +1,351 @@
+{% load i18n %}
+
+{% include 'gdrive_picker_js.html' %}
+{% include 'validation_js.html' %}
+
+<script>
+    // gdrive picker
+    function filePickerCallback(fileName, url) {
+        document.getElementById('id_evidence_url').value = url;
+        document.getElementById('id_record_name').value = fileName;
+        validateEvidence()
+        setViewButtonDisabledState();
+    }
+
+    $("#indicator_results_div").on('click', '#id_browse_google_drive', function(e) {
+        e.preventDefault();
+
+        gdriveFilePicker(filePickerCallback);
+    });
+
+    // view evidence
+    $("#indicator_results_div").on('click', '#id_view_evidence_button', function() {
+        let url = $('#id_evidence_url').val();
+        window.open(url, '_blank')
+    });
+
+    function setViewButtonDisabledState() {
+        // Does it have a value, and does it kinda look like a URL?
+        let val = $('#id_evidence_url').val();
+        let evidenceURLHasValue = val.match(/^(http(s)?|file):\/\/.+/);
+        $('#id_view_evidence_button').prop('disabled', ! evidenceURLHasValue);
+    }
+
+    $("#indicator_results_div").on('change keyup paste', '#id_evidence_url', function () {
+        setViewButtonDisabledState();
+    });
+
+    // Intercept ResultsUpdate form submission and then use ajax to submit it.
+    $("#indicator_results_div").on("submit", "#result_update_form", function(e){
+        e.preventDefault();
+        {#let isFormValid = true;#}
+        $("#modalmessages").empty();
+        let pts_valid = validatePeriodicTarget();
+        let datecollected_valid = validateDateCollected();
+        let achieved_valid = validate_achieved();
+        let evidenceValid = validateEvidence();
+
+        if ($("#result_update_form div").hasClass('has-error')) {
+            createAlert("danger", "{% trans 'Please complete all required fields.'|escapejs %}", true, "#modalmessages");
+            $('#indicator_results_div').animate({ scrollTop: 0 }, 'slow');
+            return;
+        }
+        /*
+        var date_collected = new Date($(this.date_collected).val());
+        var date_collected_db_format = date_collected.getFullYear() + '-' + (parseInt(date_collected.getMonth()) + 1) + '-' + date_collected.getDate();
+        $(this.date_collected).val(date_collected_db_format);
+        */
+
+        let form_url = $(this).attr('action');
+        let form_data = $(this).serialize();
+        // mark that the form data has changed so that when the modal is closed the list view can be updated
+        $(this).data('recordchanged', true);
+        $.post(form_url, form_data,
+            function(response, status, jqXHR) { // success callback
+                $("#modalmessages").empty();
+                if ($("#result_update_form div").hasClass('has-warning')) {
+                    createAlert("warning", "{% trans 'Result saved - however please review warnings below.'|escapejs %}", true, "#modalmessages");
+                } else {
+                    createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, "#modalmessages");
+                }
+            })
+        .fail(function(error){
+            createAlert("danger", "{% trans 'Could not save form.'|escapejs %}", true, "#modalmessages");
+        });
+        $('#indicator_results_div').animate({ scrollTop: 0 }, 'slow');
+    });
+
+
+    $("#indicator_results_div").on("change", "#id_date_collected", function(e){
+        validatePeriodicTarget(onlyPeriodic = true);
+        validateDateCollected();
+    });
+
+    $("#indicator_results_div").on("change", "#id_periodic_target", function(e){
+        validatePeriodicTarget();
+    });
+
+    $("#indicator_results_div").on("change", "#id_achieved", function(e){
+        validate_achieved();
+    });
+
+    // on delete button
+    $("#indicator_results_div").on("click", "#id_delete_result_btn", function(e) {
+        e.preventDefault();
+
+        let resultId = $('#id_delete_result_btn').data('result-id');
+
+        PNotify.alert({
+            text: "{% trans 'This action cannot be undone. Are you sure you want to delete this result?' %}",
+            title: "{% trans 'Warning' %}",
+            icon: 'fa fa-exclamation-circle',
+            hide: false,
+            type: 'error',
+            stack: {
+                {#'modal': true,#}
+                'overlayClose': true,
+                {#'dir1': 'down',#}
+                'dir1': 'right',
+                'dir2': 'up',
+                'firstpos1': 0,
+                'firstpos2': 0,
+                {#'push': 'top',#}
+                'context': document.getElementById('result_update_form')
+            },
+            modules: {
+                Confirm: {
+                    confirm: true,
+                    buttons: [
+                        {
+                            text: "{% trans 'Delete result' %}",
+                            primary: true,
+                            click: function (notice) {
+                                notice.close();
+
+                                // Mark the record being changed so results table is reloaded on modal close
+                                $('#indicator_results_div form').data('recordchanged', true);
+
+                                $.post("/indicators/result_delete/" + resultId + "/", function (data) {
+                                    // Close modal
+                                    $('#indicator_results_div').modal('hide')
+                                });
+                            }
+                        },
+                        {
+                            text: "{% trans 'Cancel' %}",
+                            click: function (notice) {
+                                notice.close();
+                            }
+                        }
+                    ]
+                }
+            }
+        });
+    });
+
+
+    function validatePeriodicTarget(onlyPeriodic = false) {
+        const programId = $("#id_program").val();
+        const program_reporting_start = formatDate($(`#id_link_reporting_period_${programId}`).data("rptstart"));
+        const program_reporting_end = formatDate($(`#id_link_reporting_period_${programId}`).data("rptend"));
+
+        if (setPeriodicTargetValue() == false) {
+            // $("#id_periodic_target").val('');
+            if ($("#id_periodic_target option").length <= 1) {
+                $("#hint_id_periodic_target").html("<small>{% trans 'Targets are not set up for this indicator.'|escapejs %} <a id='targetsTabLink' href='/indicators/indicator_update/" + $("#id_indicator").val() + "/'><strong>{% trans 'Start by selecting a target frequency.'|escapejs %}</strong></a></small>");
+            } else if ($("#id_date_collected").val().length > 0) {
+                $("#hint_id_periodic_target").html(`<small>{% trans 'This date falls outside the range of your target periods. Please select a date between '|escapejs %} ${ program_reporting_start } and ${ program_reporting_end } </small>`);
+            }
+
+            $("#div_id_periodic_target").addClass('has-error');
+        } else if ($("#id_periodic_target").val() == '' && onlyPeriodic == false) {
+            // This is triggered with midline/endline or event target frequencies when user tries to
+            // submit data without selecting a target period.
+            $("#hint_id_periodic_target").html("<small>Please select a target.</small>");
+            $("#div_id_periodic_target").addClass('has-error');
+            $("#id_periodic_target").addClass('is-invalid');
+            return false;
+        } else {
+            $("#hint_id_periodic_target").html("");
+            $("#div_id_periodic_target").removeClass('has-error');
+            $("#id_periodic_target").removeClass('is-invalid');
+            return true;
+        }
+    }
+
+
+    function validate_achieved() {
+        const actual = $("#id_achieved");
+        // const regexTest = /^\d{0,8}(\.\d{1,2})?$/;
+        // if (regexTest.test(actual.val()) == false) {
+        //     $("#div_id_achieved").addClass('has-error');
+        //     $("#id_achieved").addClass('is-invalid');
+        //     $("#hint_id_achieved").text("{% trans 'Please enter a number with no letters or symbols.'|escapejs %}");
+        //     return false;
+        // }
+        if (!actual.val() || !$.isNumeric(actual.val()) || actual.val() < 0) {
+            $("#div_id_achieved").addClass('has-error');
+            $("#id_achieved").addClass('is-invalid');
+            $("#hint_id_achieved").text("{% trans 'Please enter a number with no letters or symbols.'|escapejs %}");
+            return false;
+        } else {
+            $("#div_id_achieved").removeClass('has-error');
+            $("#id_achieved").removeClass('is-invalid');
+            $("#hint_id_achieved").text(" ");
+            actual.val(Math.round(actual.val() * 100) / 100);
+            return true;
+        }
+    }
+
+    function validateDateCollected(){
+        // Date()s have timezones, so you must make sure all Date() objs are using the same timezone for comparisions
+        // Since we want to validate with local time, make sure program start/end are also in local time
+
+        let program_id = $("#id_program").val();
+        let reporting_period_id = `#id_link_reporting_period_${program_id}`;
+        let start_date = localDateFromISOStr($(reporting_period_id).data("rptstart"));
+        let end_date = localDateFromISOStr($(reporting_period_id).data("rptend"));
+        let fieldVal = $("#id_date_collected").val();
+        let date_collected = localDateFromISOStr(fieldVal);
+
+        let today = localdate();
+
+        if ($.isEmptyObject(fieldVal)) {
+            $("#div_id_date_collected").addClass('has-error');
+            $("#id_date_collected").addClass('is-invalid');
+            $("#validation_id_date_collected").html("<small>{% trans 'Please complete this field.'|escapejs %}</small>");
+            return false;
+        }
+
+        if (!isDate(fieldVal)) {
+            $("#div_id_date_collected").addClass('has-error');
+            $("#validation_id_date_collected").html("<small>{% trans 'Please enter a valid date.'|escapejs %}</small>");
+            return false;
+        }
+
+        // Don't let user submit if program hasn't started
+        if (today < start_date) {
+            $("#div_id_date_collected").addClass('has-error');
+            $("#validation_id_date_collected").html(`{% trans 'You can begin entering results on'|escapejs %} ${mediumDateFormatStr(start_date)}.`);
+            return false;
+        }
+
+        // Don't let user submit future results
+        if (date_collected > today) {
+            $("#div_id_date_collected").addClass('has-error');
+            $("#validation_id_date_collected").html(`{% trans 'Please select a date between'|escapejs %} ${mediumDateFormatStr(start_date)} {% trans "and" %} ${mediumDateFormatStr(today)}.`);
+            return false;
+        }
+
+        if (date_collected > end_date || date_collected < start_date ) {
+            let display_end_date = today > end_date ? end_date : today;
+
+            $("#div_id_date_collected").addClass('has-error');
+            $("#validation_id_date_collected").html(`{% trans 'Please select a date between'|escapejs %} ${mediumDateFormatStr(start_date)} {% trans "and" %} ${mediumDateFormatStr(display_end_date)}.`);
+            return false;
+        }
+
+        let val = formatDate(fieldVal);
+        $("#id_date_collected").val(val);
+        $("#id_date_collected").removeClass('is-invalid');
+        $("#div_id_date_collected").removeClass('has-error');
+        $("#validation_id_date_collected").text(" ");
+        return true;
+    }
+
+    function setPeriodicTargetValue() {
+        //   \(    : match an opening parentheses
+        //   (     : begin capturing group
+        //   [^)]+ : match one or more non ) characters
+        //   )     : end capturing group
+        //   \)    : match closing parentheses
+        let regExp = /\(([^)]+)\)/;
+        let matchFound = false
+        let target_frequency = $("#id_target_frequency").val();
+        if (target_frequency == 1 || target_frequency == 2 || target_frequency == 8) {
+            return true;
+        }
+        $("#id_periodic_target option").each(function() {
+            let pt_date_range;
+            if (target_frequency == 7) {
+                //monthly indicators do not follow the <name> (<date> <date>) model
+                pt_date_range = this.text;
+            } else {
+                pt_date_range = regExp.exec(this.text);
+            }
+            if (!pt_date_range || pt_date_range == null || pt_date_range == 'null'){
+                return;
+            }
+            let start_date = new Date($(this).data("start"));
+            let end_date = new Date($(this).data("end"));
+            let collected_date = new Date($("#id_date_collected").val().trim());
+            if (collected_date >= start_date && collected_date <= end_date) {
+                // deselect the currently selected option
+                $("#id_periodic_target option:selected").attr("selected", false);
+                // select the correct value
+                $("#id_periodic_target").val(this.value);
+                // set the selected option
+                $("#id_periodic_target option[value=" + this.value + "]").attr('selected', 'selected');
+                // disable all options except the selected option
+                $("#id_periodic_target option:not(:selected)").attr("disabled", true);
+                // enable the selected option
+                $("#id_periodic_target option:selected").attr("disabled", false);
+                matchFound = true;
+                return;
+            }
+        });
+        if (!matchFound) {
+            // deselect the currently selected option
+            $("#id_periodic_target option:selected").attr("selected", false);
+            // change the value to nothing
+            $("#id_periodic_target").val('');
+            // select the nothing option
+            $("#id_periodic_target option[value='']").attr('selected', 'selected');
+            // disable all options except the selected option
+            $("#id_periodic_target option:not(:selected)").attr("disabled", true);
+            // enable the selected option
+            $("#id_periodic_target option:selected").attr("disabled", false);
+        }
+        return matchFound;
+    }
+
+    // Do not allow record name without also an evidenc eURL
+    function validateEvidence() {
+        let recordName = $('#id_record_name').val();
+        let evidenceURL = $('#id_evidence_url').val();
+        if (recordName && ! evidenceURL) {
+            $("#div_id_evidence_url").addClass('has-error');
+            $("#id_evidence_url").addClass('is-invalid');
+            $("#validation_id_evidence_url").html("<small>{% trans 'A link must be included along with the record name.'|escapejs %}</small>");
+            return false;
+        } else {
+            let validationResult = isValidURLOrFilePath(evidenceURL);
+            if (validationResult.valid === true) {
+                $("#div_id_evidence_url").removeClass('has-error');
+                $("#div_id_evidence_url").removeClass('has-warning');
+                $("#id_evidence_url").removeClass('is-invalid');
+                $("#validation_id_evidence_url").text("");
+                return true;
+            } else if (validationResult.valid == 'warn') {
+                $("#div_id_evidence_url").removeClass('has-error');
+                $('#id_evidence_url').addClass('is-invalid');
+                $('#div_id_evidence_url').addClass('has-warning');
+                $("#validation_id_evidence_url").html(`<small>${validationResult.message}</small>`);
+                return true;
+            } else if (validationResult.valid === false) {
+                $("#div_id_evidence_url").removeClass('has-error');
+                $('#id_evidence_url').addClass('is-invalid');
+                $('#div_id_evidence_url').addClass('has-error');
+                $("#validation_id_evidence_url").html(`<small>${validationResult.message}</small>`);
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    // called from result_form_modal.html
+    function lockPeriodicTargetDropdown(){
+        $("#id_periodic_target option:not(:selected)").attr("disabled", true);
+        $("#id_periodic_target").attr("readonly", true);
+    }
+</script>

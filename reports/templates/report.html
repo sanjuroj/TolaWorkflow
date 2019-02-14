@@ -70,9 +70,9 @@
                     { title: "Level", data: "level__name"},
                     { title: "Type", data: "indicator_type__indicator_type"},
                     { title: "Sector", data: "sector__sector"},
-                    { title: "Supporting Data", data: "collecteddata",
+                    { title: "Supporting Data", data: "results",
                               "mRender": function (data, type, row) {
-                                return '<a class="collecteddata" name=' + row.id + '>Collected Data</a>';
+                                return '<a class="results" name=' + row.id + '>Results</a>';
                               }
                         },
                     { title: "KPI",data: "key_performance_indicator"}
@@ -81,15 +81,15 @@
 
             // provide export button url for indicator
             $('#export').click(function(){ do_export(filters,"indicator"); });
-            $('.collecteddata').click(function(){ data_report(filters,this.name); });
+            $('.results').click(function(){ data_report(filters,this.name); });
             $('#program_report').click(function(){ program_report(filters,this.name); });
 
         }
 
 
-        function show_collecteddata_table(collecteddata_data,filters) {
+        function show_results_table(results_data,filters) {
 
-            collecteddata_records = JSON.parse(collecteddata_data);
+            results_records = JSON.parse(results_data);
             //First destroy any old version of the table to refresh anew
             if ( $.fn.dataTable.isDataTable( '#data_table' ) ) {
                 table.destroy();
@@ -103,7 +103,7 @@
 
             table = $('#data_table').DataTable( {
                 retrieve: true,
-                data: collecteddata_records,
+                data: results_records,
                 columns: [
                     { title: "Program", data: "indicator__program__name"},
                     { title: "Indicator Num.", data: "indicator__number"},
@@ -114,7 +114,7 @@
             } );
 
             // provide export button url for indicator
-            $('#export').click(function(){ do_export(filters,"collecteddata"); });
+            $('#export').click(function(){ do_export(filters,"results"); });
 
         }
 
@@ -236,9 +236,9 @@
                     var activePoints = indicatorChart.getSegmentsAtEvent(evt);
                     // add evidence filter if they clicked on that
                     if (activePoints[0].label.indexOf("With Supporting Data") > -1){
-                        filters.collecteddata__isnull="False";
+                        filters.results__isnull="False";
                     } else if (activePoints[0].label.indexOf("Indicators") > -1){
-                        filters.collecteddata__isnull="True";
+                        filters.results__isnull="True";
                     }
                     //console.log("filters:" + JSON.stringify(filters));
                     indicator_report(filters);
@@ -246,8 +246,8 @@
             );
         };
 
-        function show_collecteddata_charts(data,filters) {
-            document.getElementById('bar-header').innerHTML = "Collected Data Chart";
+        function show_results_charts(data,filters) {
+            document.getElementById('bar-header').innerHTML = "Results Chart";
 
             var obj = JSON.parse(data);
 
@@ -331,10 +331,10 @@
             document.getElementById('report_type').innerHTML = "Indicator Data Report";
             $("#bar-chart").show();
             $("#doughnut-chart").hide();
-            $.getJSON("/reports/report_data/collecteddata/", filters, function(data) {
+            $.getJSON("/reports/report_data/results/", filters, function(data) {
                 //console.log(filters);
-                show_collecteddata_table(data['collecteddata'],filters);
-                show_collecteddata_charts(data['collecteddata'],filters);
+                show_results_table(data['results'],filters);
+                show_results_charts(data['results'],filters);
             });
         }
 
@@ -358,8 +358,8 @@
                 new_location='/reports/report_data/project?export=true&' + param_filters;
             } else if (type == "indicator") {
                 new_location='/reports/report_data/indicator?export=true&' + param_filters;
-            } else if (type == "collecteddata") {
-                new_location='/reports/report_data/collecteddata?export=true&' + param_filters;
+            } else if (type == "results") {
+                new_location='/reports/report_data/results?export=true&' + param_filters;
             } else {
                 new_location='/reports/report_data?export=true&' + param_filters ;
             }
@@ -394,9 +394,9 @@
             } else if (document.getElementById('report_type').innerHTML.valueOf == "Indicator Report") {
                 // first time do the program report
                 indicator_report(filters);
-            } else if (document.getElementById('report_type').innerHTML.valueOf == "Collected Data Report") {
+            } else if (document.getElementById('report_type').innerHTML.valueOf == "Results Report") {
                 // first time do the program report
-                collecteddata_report(filters);
+                results_report(filters);
             } else {
                 // first time do the program report
                 program_report(filters);

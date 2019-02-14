@@ -1,5 +1,5 @@
 import django_tables2 as tables
-from models import Indicator, CollectedData
+from models import Indicator, Result
 from django_tables2.utils import A
 
 TEMPLATE = '''
@@ -22,23 +22,23 @@ class IndicatorTable(tables.Table):
                     'method_of_analysis', 'information_use', 'reporting_frequency', 'create_date', 'edit_date')
 
 
-class IndicatorDataTable(tables.Table):
+class IndicatorResultTable(tables.Table):
 
     agreement = tables.LinkColumn('projectagreement_update', args=[A('agreement_id')])
 
     class Meta:
-        model = CollectedData
+        model = Result
         attrs = {"class": "paleblue"}
         fields = ('targeted', 'achieved', 'description', 'indicator', 'agreement', 'complete')
         sequence = ('targeted', 'achieved', 'description', 'indicator', 'agreement', 'complete')
 
 
-class CollectedDataTable(tables.Table):
+class ResultTable(tables.Table):
 
     agreement = tables.LinkColumn('projectagreement_update', args=[A('agreement_id')])
 
     class Meta:
-        model = CollectedData
+        model = Result
         attrs = {"class": "paleblue"}
         fields = ('targeted', 'achieved', 'description', 'indicator', 'sector', 'community', 'agreement', 'complete')
         sequence = ('targeted', 'achieved', 'description', 'indicator', 'sector', 'community', 'agreement', 'complete')

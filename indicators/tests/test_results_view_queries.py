@@ -1,4 +1,4 @@
-""" Tests of the periodic target summaries available at collected data view (now result view) summing target values
+""" Tests of the periodic target summaries available at result view summing target values
 and determining if periodic targets' periods are complete
 
 Indicator should have the following attributes:
@@ -52,7 +52,7 @@ def get_annual_targets(indicator, target_values):
 def add_results_for_targets(targets, values):
     results = []
     for c, value in enumerate(values):
-        results.append(i_factories.CollectedDataFactory(
+        results.append(i_factories.ResultFactory(
             indicator=targets[c].indicator,
             periodic_target=targets[c],
             date_collected=targets[c].start_date,
@@ -191,13 +191,13 @@ class TestMidEndPercent(test.TestCase):
             )
         ]
         results = [
-            i_factories.CollectedDataFactory(
+            i_factories.ResultFactory(
                 indicator=indicator,
                 periodic_target=targets[0],
                 date_collected=datetime.date(2018, 1, 1),
                 achieved=75
             ),
-            i_factories.CollectedDataFactory(
+            i_factories.ResultFactory(
                 indicator=indicator,
                 periodic_target=targets[0],
                 date_collected=datetime.date(2018, 2, 1),
@@ -304,7 +304,7 @@ class ScenarioBuilderMixin:
             targets.append(target)
             if counter < len(self.result_values):
                 results.append(
-                    i_factories.CollectedDataFactory(
+                    i_factories.ResultFactory(
                         indicator=self.indicator,
                         periodic_target=target,
                         date_collected=start_date + datetime.timedelta(days=1),

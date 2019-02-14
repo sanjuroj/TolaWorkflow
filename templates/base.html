@@ -1,7 +1,9 @@
 {% load staticfiles %}
 {% load static %}
+{% load render_bundle from webpack_loader %}
 {% load group_tag menu_tag %}
 {% load i18n %}
+{% load render_bundle from webpack_loader %}
 <!doctype html>
 <html lang="en">
     <head>
@@ -18,11 +20,8 @@
         <!-- Datatables css for HTML tables -->
         <link href="{% static 'css/datatables.min.css' %}" rel="stylesheet" type="text/css">
 
-        <!-- compiled CSS -->
-        <link href="{% static 'css/tola.css' %}?q=pg1116" rel="stylesheet" type="text/css">
-
-        <!-- Custom CSS -->
-        <link href="{% static 'css/app.css' %}?q=pg1116" rel="stylesheet" type="text/css">
+        <!-- compiled webpack CSS -->
+        {% render_bundle 'base' 'css' %}
 
         <!--- Django Tables2 css -->
         <link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}">
@@ -86,7 +85,7 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarBrowse" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Browse" %}</a>
                                 <div class="dropdown-menu" aria-labelledby="navbarBrowse">
-                                    <a class="dropdown-item" href="/workflow/documentation_list/0/0/">{% trans "Documents" %}</a>
+                                    <a class="dropdown-item" href="/workflow/documentation_list/">{% trans "Documents" %}</a>
                                     {% if user.tola_user.allow_projects_access %}
                                     <a class="dropdown-item" href="/workflow/dashboard/0/">{% trans "Projects" %}</a>
                                     {% endif %}
@@ -146,11 +145,7 @@
 
             </div>
         </nav>
-        {% if report_wide %}
-        <div id="nonfooter" class="report-wide">
-        {% else %}
-        <div id="nonfooter" class="container mt-3 mb-3">
-        {% endif %}
+        <div id="nonfooter" class="{% block mainclasses %}region--main{% endblock %}">
             <div id="id_div_breadcrumb">{% block bread_crumb %}{% endblock %}</div>
             <header class="region-header">
                 <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
@@ -239,11 +234,14 @@
 
         <script type="text/javascript" src="{% static "js/PNotify.js" %}"></script>
         <script type="text/javascript" src="{% static "js/PNotifyButtons.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/PNotifyConfirm.js" %}"></script>
 
         {% get_current_language as LANGUAGE_CODE %}
 
         <script type="text/javascript">
+            // This is now referenced in other JS, not just here in the date picker!
             var userLang = "{{ LANGUAGE_CODE }}";
+
             $(document).ready(function() {
                 $.datepicker.setDefaults( $.datepicker.regional[ userLang ] );
             });
@@ -268,6 +266,10 @@
 
         <!-- Django i18n tools and translations -->
         <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
+
+        {# Webpack runtime and vendor bundles, shared across all pages using webpack #}
+        {% render_bundle 'runtime' %}
+        {% render_bundle 'vendors' %}
 
         {% block extra_js_in_body %}
         {% endblock %}

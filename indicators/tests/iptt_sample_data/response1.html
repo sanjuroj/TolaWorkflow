@@ -83,7 +83,7 @@
                             <li class="nav-item dropdown pr-2 mr-3">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarBrowse" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Browse</a>
                                 <div class="dropdown-menu" aria-labelledby="navbarBrowse">
-                                    <a class="dropdown-item" href="/workflow/documentation_list/0/0/">Documents</a>
+                                    <a class="dropdown-item" href="/workflow/documentation_list/">Documents</a>
                                     <a class="dropdown-item" href="/workflow/dashboard/0/">Projects</a>
                                     <a class="dropdown-item" href="/workflow/siteprofile_list/0/0/">Sites</a>
                                     <a class="dropdown-item" href="/workflow/stakeholder_list/0/0">Stakeholders</a>
@@ -1404,11 +1404,11 @@
 
         });
 
-        // Open the Collected Data Records in a modal
+        // Open the Results Records in a modal
         $("#id_div_top_iptt_report").on("click", ".indicator-ajax-popup", function (e) {
           e.preventDefault();
           const indicatorId = $(this).data('indicatorid');
-          const url = `/indicators/collected_data_table/${indicatorId}/0/?edit=false`;
+          const url = `/indicators/results_table/${indicatorId}/0/?edit=false`;
           $("#indicator_modal_content").empty();
           $("#modalmessages").empty();
           $("#indicator_modal_content").load(url);

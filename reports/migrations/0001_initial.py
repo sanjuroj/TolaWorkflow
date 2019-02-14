@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('workflow', '0001_initial'),
-        ('indicators', '0001_initial'),
+        ('indicators', '0001_initial')
     ]
 
     operations = [

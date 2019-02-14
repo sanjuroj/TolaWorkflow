@@ -2,7 +2,7 @@
 
 from indicators.models import (
     PeriodicTarget,
-    CollectedData,
+    Result,
     Indicator
 )
 from indicators.queries import utils
@@ -40,7 +40,7 @@ def target_results_count_annotation():
     """
     return models.functions.Coalesce(
         models.Subquery(
-            CollectedData.objects.filter(
+            Result.objects.filter(
                 periodic_target=models.OuterRef('pk')
                 ).order_by().values('periodic_target').annotate(
                     total_results=models.Count('id')
@@ -93,7 +93,7 @@ def target_actual_annotation():
                 models.Q(indicator__target_frequency__in=[f[0] for f in utils.TIME_AWARE_FREQUENCIES])
             ),
             then=models.Subquery(
-                CollectedData.objects.filter(
+                Result.objects.filter(
                     periodic_target=models.OuterRef('pk')
                 ).order_by('-date_collected').values('achieved')[:1],
             )
@@ -104,7 +104,7 @@ def target_actual_annotation():
                 ~models.Q(indicator__target_frequency__in=[f[0] for f in utils.TIME_AWARE_FREQUENCIES])
             ),
             then=models.Subquery(
-                CollectedData.objects.filter(
+                Result.objects.filter(
                     periodic_target=models.OuterRef('pk')
                 ).order_by('-date_collected').values('achieved')[:1],
             )
@@ -117,7 +117,7 @@ def target_actual_annotation():
                 models.Q(results_count__gt=0)
                 ),
             then=models.Subquery(
-                CollectedData.objects.filter(
+                Result.objects.filter(
                     models.Q(indicator=models.OuterRef('indicator')) &
                     models.Q(periodic_target__end_date__lte=models.OuterRef('end_date'))
                 ).order_by().values('indicator').annotate(
@@ -133,7 +133,7 @@ def target_actual_annotation():
                 models.Q(results_count__gt=0)
                 ),
             then=models.Subquery(
-                CollectedData.objects.filter(
+                Result.objects.filter(
                     models.Q(indicator=models.OuterRef('indicator')) &
                     models.Q(periodic_target__customsort__lte=models.OuterRef('customsort'))
                 ).order_by().values('indicator').annotate(
@@ -142,7 +142,7 @@ def target_actual_annotation():
             )
         ),
         default=models.Subquery(
-            CollectedData.objects.filter(
+            Result.objects.filter(
                 periodic_target=models.OuterRef('pk')
             ).order_by().values('periodic_target').annotate(
                 achieved_sum=models.Sum('achieved')

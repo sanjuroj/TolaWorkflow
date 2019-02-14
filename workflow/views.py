@@ -1,3 +1,4 @@
+import collections
 import operator
 import unicodedata
 
@@ -5,11 +6,13 @@ from django.utils.translation import gettext as _
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
+
+from workflow.serializers import RecordListProgramSerializer, RecordListRecordSerializer
 from .models import Program, Country, Province, AdminLevelThree, District, ProjectAgreement, ProjectComplete, SiteProfile, \
     Documentation, Monitor, Benchmarks, Budget, ApprovalAuthority, Checklist, ChecklistItem, Contact, Stakeholder, FormGuidance, \
     TolaBookmarks, TolaUser
 from formlibrary.models import TrainingAttendance, Distribution
-from indicators.models import CollectedData, ExternalService
+from indicators.models import Result, ExternalService, Indicator
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.urls import reverse
@@ -23,7 +26,7 @@ import pytz # TODO: not used, keeping this import for potential regressions
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.db.models import Count, Q, Max
+from django.db.models import Count, Q, Max, Prefetch
 from tables import ProjectAgreementTable
 from filters import ProjectAgreementFilter
 import json
@@ -308,8 +311,8 @@ class ProjectAgreementUpdate(UpdateView):
 
 
         try:
-            getQuantitative = CollectedData.objects.all().filter(agreement__id=self.kwargs['pk']).order_by('indicator')
-        except CollectedData.DoesNotExist:
+            getQuantitative = Result.objects.all().filter(agreement__id=self.kwargs['pk']).order_by('indicator')
+        except Result.DoesNotExist:
             getQuantitative = None
         context.update({'getQuantitative': getQuantitative})
 
@@ -446,9 +449,9 @@ class ProjectAgreementDetail(DetailView):
         context.update({'getDocuments': getDocuments})
 
         try:
-            getQuantitativeOutputs = CollectedData.objects.all().filter(agreement__id=self.kwargs['pk'])
+            getQuantitativeOutputs = Result.objects.all().filter(agreement__id=self.kwargs['pk'])
 
-        except CollectedData.DoesNotExist:
+        except Result.DoesNotExist:
             getQuantitativeOutputs = None
         context.update({'getQuantitativeOutputs': getQuantitativeOutputs})
 
@@ -587,7 +590,7 @@ class ProjectCompleteCreate(CreateView):
         getAgreement = ProjectAgreement.objects.get(id=self.request.POST['project_agreement'])
 
         #update the quantitative data fields to include the newly created complete
-        CollectedData.objects.filter(agreement__id=getComplete.project_agreement_id).update(complete=getComplete)
+        Result.objects.filter(agreement__id=getComplete.project_agreement_id).update(complete=getComplete)
 
         #update the other budget items
         Budget.objects.filter(agreement__id=getComplete.project_agreement_id).update(complete=getComplete)
@@ -651,8 +654,8 @@ class ProjectCompleteUpdate(UpdateView):
 
         # get Quantitative data
         try:
-            getQuantitative = CollectedData.objects.all().filter(Q(agreement__id=getComplete.project_agreement_id) | Q(complete__id=getComplete.pk)).order_by('indicator')
-        except CollectedData.DoesNotExist:
+            getQuantitative = Result.objects.all().filter(Q(agreement__id=getComplete.project_agreement_id) | Q(complete__id=getComplete.pk)).order_by('indicator')
+        except Result.DoesNotExist:
             getQuantitative = None
         context.update({'getQuantitative': getQuantitative})
 
@@ -788,34 +791,33 @@ class ProjectCompleteImport(ListView):
     template_name = 'workflow/projectcomplete_import.html'
 
 
-class DocumentationList(ListView):
-    """
-    Documentation
-    """
-    model = Documentation
-    template_name = 'workflow/documentation_list.html'
+def documentation_list(request):
+    user_countries = request.user.tola_user.countries.all()
 
-    def get(self, request, *args, **kwargs):
-        program = Program.objects.get(id=self.kwargs['program']) if int(self.kwargs['program']) != 0 else None
+    programs = Program.objects.filter(funding_status="Funded", country__in=user_countries)
 
-        project_agreement_id = self.kwargs['project']
-        countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries)
+    # create a mapping of indicators to documents
+    all_program_results = Result.objects.filter(indicator__program__in=programs, evidence__isnull=False)
+    indicator_to_documents_map = collections.defaultdict(list)
+    for result in all_program_results:
+        indicator_to_documents_map[result.indicator_id].append(result.evidence_id)
 
-        if int(self.kwargs['program']) != 0 & int(self.kwargs['project']) == 0:
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(program__id=self.kwargs['program'])
-        elif int(self.kwargs['project']) != 0:
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(project__id=self.kwargs['project'])
-        else:
-            countries = getCountry(request.user)
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project','project__office').filter(program__country__in=countries)
+    # limit indicators to those with results w/ documents
+    indicators = Indicator.objects.filter(id__in=indicator_to_documents_map.keys()).with_logframe_sorting()
+    programs = programs.prefetch_related(Prefetch('indicator_set', queryset=indicators))
 
-        return render(request, self.template_name, {
-            'program': program,
-            'getPrograms': getPrograms,
-            'getDocumentation': getDocumentation,
-            'project_agreement_id': project_agreement_id
-        })
+    documents = Documentation.objects.all().select_related('project').filter(program__country__in=user_countries)
+
+    js_context = {
+        'allowProjectsAccess': request.user.tola_user.allow_projects_access,
+        'programs': RecordListProgramSerializer(programs, many=True).data,
+        'documents': RecordListRecordSerializer(documents, many=True).data,
+        'indicatorToDocumentsMap': dict(indicator_to_documents_map),
+    }
+
+    return render(request, 'workflow/documentation_list.html', {
+        'js_context': js_context,
+    })
 
 
 class DocumentationAgreementList(AjaxableResponseMixin, CreateView):
@@ -1049,7 +1051,7 @@ class DocumentationDelete(DeleteView):
     Documentation Form
     """
     model = Documentation
-    success_url = '/workflow/documentation_list/0/0/'
+    success_url = '/workflow/documentation_list/'
 
     def form_invalid(self, form):
 
@@ -1068,7 +1070,7 @@ class DocumentationDelete(DeleteView):
 
 class IndicatorDataBySite(ListView):
     template_name = 'workflow/site_indicatordata.html'
-    context_object_name = 'collecteddata'
+    context_object_name = 'result'
 
     def get_context_data(self, **kwargs):
         context = super(IndicatorDataBySite, self).get_context_data(**kwargs)
@@ -1076,7 +1078,7 @@ class IndicatorDataBySite(ListView):
         return context
 
     def get_queryset(self):
-        q = CollectedData.objects.filter(site__id = self.kwargs.get('site_id')).order_by('program', 'indicator')
+        q = Result.objects.filter(site__id = self.kwargs.get('site_id')).order_by('program', 'indicator')
         return q
 
 
@@ -1128,7 +1130,7 @@ class SiteProfileList(ListView):
             getSiteProfile = SiteProfile.objects.prefetch_related(\
                     'country','district','province')\
                 .filter(Q(projectagreement__program__id=program_id)\
-                        | Q(collecteddata__program__id=program_id))\
+                        | Q(result__program__id=program_id))\
                 .distinct()
         else:
             getSiteProfile = SiteProfile.objects.prefetch_related(\
@@ -1193,7 +1195,7 @@ class SiteProfileReport(ListView):
 
         if int(self.kwargs['pk']) == 0:
             getSiteProfile = SiteProfile.objects.all().prefetch_related('country','district','province').filter(country__in=countries).filter(status=1)
-            getSiteProfileIndicator = SiteProfile.objects.all().prefetch_related('country','district','province').filter(Q(collecteddata__program__country__in=countries)).filter(status=1)
+            getSiteProfileIndicator = SiteProfile.objects.all().prefetch_related('country','district','province').filter(Q(result__program__country__in=countries)).filter(status=1)
         else:
             getSiteProfile = SiteProfile.objects.all().prefetch_related('country','district','province').filter(projectagreement__id=self.kwargs['pk']).filter(status=1)
             getSiteProfileIndicator = None
@@ -1841,7 +1843,7 @@ class QuantitativeOutputsCreate(AjaxableResponseMixin, CreateView):
     """
     QuantitativeOutput Form
     """
-    model = CollectedData
+    model = Result
     template_name = 'workflow/quantitativeoutputs_form.html'
 
     # add the request to the kwargs
@@ -1905,7 +1907,7 @@ class QuantitativeOutputsUpdate(AjaxableResponseMixin, UpdateView):
     """
     QuantitativeOutput Form
     """
-    model = CollectedData
+    model = Result
     template_name = 'workflow/quantitativeoutputs_form.html'
 
     # add the request to the kwargs
@@ -1957,7 +1959,7 @@ class QuantitativeOutputsDelete(AjaxableResponseMixin, DeleteView):
     """
     QuantitativeOutput Delete
     """
-    model = CollectedData
+    model = Result
     # success_url = '/'
 
     def get_success_url(self):
@@ -2445,27 +2447,6 @@ class StakeholderObjects(View, AjaxableResponseMixin):
         final_dict = {'getStakeholders': getStakeholders}
 
         return JsonResponse(final_dict, safe=False)
-
-
-class DocumentationListObjects(View, AjaxableResponseMixin):
-
-    def get(self, request, *args, **kwargs):
-        program = Program.objects.get(id=self.kwargs['program']) if int(self.kwargs['program']) != 0 else None
-
-        if int(self.kwargs['program']) != 0 & int(self.kwargs['project']) == 0:
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(program__id=self.kwargs['program']).values('id', 'name', 'project__project_name', 'create_date')
-        elif int(self.kwargs['project']) != 0:
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(project__id=self.kwargs['project']).values('id', 'name', 'project__project_name', 'create_date')
-        else:
-            countries = getCountry(request.user)
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project','project__office').filter(program__country__in=countries).values('id', 'name', 'project__project_name', 'create_date')
-
-        getDocumentation = json.dumps(list(getDocumentation), cls=DjangoJSONEncoder)
-
-        return JsonResponse({
-            'program_name': program.name if program else None,
-            'getDocumentation': getDocumentation,
-        })
 
 
 def reportingperiod_update(request, pk):
