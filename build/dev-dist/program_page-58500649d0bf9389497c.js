@@ -956,7 +956,7 @@ var onNavigation = function onNavigation(navRoutes) {
   var params = navRoutes.route.params;
 
   if (routeName === 'indicator') {
-    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('select-indicator-to-filter', params.indicator_id);
+    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('select-indicator-to-filter', parseInt(params.indicator_id));
     return;
   }
 
@@ -1085,7 +1085,7 @@ function (_React$Component) {
     _this.handleClick = function (e) {
       e.preventDefault();
 
-      if (!_this.props.disabled) {
+      if (!_this.props.disabled && _this.unfilledPercent != 0) {
         _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('nav-apply-gauge-tank-filter', _this.props.filterType);
       }
     };
@@ -1112,10 +1112,11 @@ function (_React$Component) {
       // to accomplish this, added a Math.max and Math.min to prevent rounding to absolute values:
 
       var unfilledPercent = allIndicatorsLength <= 0 || allIndicatorsLength == filteredIndicatorsLength ? 100 : filteredIndicatorsLength == 0 ? 0 : Math.max(1, Math.min(Math.round(filteredIndicatorsLength / allIndicatorsLength * 100), 99));
+      this.unfilledPercent = unfilledPercent;
       var filledPercent = 100 - unfilledPercent;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: classnames__WEBPACK_IMPORTED_MODULE_1___default()('gauge', {
-          'filter-trigger': !disabled,
+          'filter-trigger': unfilledPercent > 0 && !disabled,
           'is-highlighted': isHighlighted
         }),
         onClick: this.handleClick
@@ -1460,4 +1461,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-18cae254c1fa32e72921.js.map
+//# sourceMappingURL=program_page-58500649d0bf9389497c.js.map

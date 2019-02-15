@@ -90,13 +90,6 @@ body > .container {
 }
 
 
-.form-control {
-    color: $black;
-    border-radius: .001rem;
-    border-color: $gray-500;
-    background-color: $white;
-}
-
 .col-form-label { // too much vertical space in block labels
     padding-bottom: calc(0.1rem + 1px);
 }
@@ -106,10 +99,10 @@ body > .container {
   border:1px solid $gray-500;
 }
 
-// Custom color for disabled/readonly elements
-// There is no bootstrap for hook for this?!
+// Custom opacity for disabled/readonly elements
+// hardcoded in BS to opacity: 1
 .form-control:disabled, .form-control[readonly] {
-    color: $gray-600; // TODO
+    opacity: 0.5;
 }
 
 
@@ -186,5 +179,12 @@ body > .container {
 span[data-toggle="popover"] {
     &:hover {
         cursor: pointer;
+    }
+}
+
+// last paragraph in an alert message shouldnt get following margin
+.alert {
+    p:last-of-type {
+        margin-bottom: 0;
     }
 }

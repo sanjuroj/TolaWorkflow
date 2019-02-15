@@ -136,8 +136,7 @@
                                    class="btn-link"><i class="fas fa-clipboard"></i> {% trans "View project" %}</a>
                             {% endif %}
                             {% if cdata.tola_table %}
-                                cdata.tola_table
-                                <a href="{{ cdata.tola_table.detail_url }}" target="_blank">{{ cdata.tola_table }}</a>
+                                <a href="{{ cdata.tola_table.table_view_url }}" target="_blank">{{ cdata.tola_table }}</a>
                             {% endif %}
                         </td>
                         {% empty %}
@@ -200,7 +199,7 @@
                     {% comment {{ result.complete|default_if_none:result.agreement|default_if_none:'' }} %} {% endcomment %}
                 </div>
                 {% if result.tola_table %}
-                <a href="{{ result.tola_table.detail_url }}" target="_blank">{{ result.tola_table }}</a>
+                <a href="{{ result.tola_table.table_view_url }}" target="_blank">{{ result.tola_table }}</a>
                 {% endif %}
             </td>
         </tr>

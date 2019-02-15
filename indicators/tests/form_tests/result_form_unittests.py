@@ -83,7 +83,6 @@ class TestUpdateFormInitialValues(test.TestCase):
         self.assertEqual(form['target_frequency'].value(), Indicator.ANNUAL)
         self.assertEqual(form['indicator'].value(), self.indicator.id)
         self.assertEqual(form['date_collected'].value(), self.result.date_collected)
-        self.assertEqual(form['submitted_by'].value(), self.tola_user.display_with_organization)
         self.assertEqual(form['record_name'].value(), 'record name')
         self.assertEqual(form['evidence_url'].value(), 'evidence url')
 

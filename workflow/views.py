@@ -806,7 +806,8 @@ def documentation_list(request):
     indicators = Indicator.objects.filter(id__in=indicator_to_documents_map.keys()).with_logframe_sorting()
     programs = programs.prefetch_related(Prefetch('indicator_set', queryset=indicators))
 
-    documents = Documentation.objects.all().select_related('project').filter(program__country__in=user_countries)
+    # distinct() needed as a program in multiple countries causes duplicate documents returned
+    documents = Documentation.objects.all().select_related('project').filter(program__country__in=user_countries).distinct()
 
     js_context = {
         'allowProjectsAccess': request.user.tola_user.allow_projects_access,
