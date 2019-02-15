@@ -159,5 +159,7 @@
     state: present
 
 - name: Install package.json packages
+  become: yes
+  become_user: "{{app_user}}"
   npm:
     path: "{{app_dir}}"

@@ -407,27 +407,29 @@
             return;
         }
 
-        reporting_period_submitting = true;
-        $.post($(this).attr('action'), $(this).serialize(), function (data) {
+        create_nondestructive_changeset_notice("", (rationale) => {
+            reporting_period_submitting = true;
+            $.post($(this).attr('action'), $(this).serialize(), function (data) {
 
-            $('#id_reporting_period_modal').modal("hide")
-            // var program_id = data.program_id;
-            // var modalLink = $(`a[data-program="${program_id}"]`);
-            // modalLink.data("rptstart", data.rptstart);
-            // modalLink.data("rptend", data.rptend);
-            // createAlert(
-            //   "success",
-            //   "{% trans 'Success. Reporting period changes were saved.'|escapejs %}",
-            //   true,
-            //   "#div-id-reportingperiod-alert");
+                $('#id_reporting_period_modal').modal("hide")
+                // var program_id = data.program_id;
+                // var modalLink = $(`a[data-program="${program_id}"]`);
+                // modalLink.data("rptstart", data.rptstart);
+                // modalLink.data("rptend", data.rptend);
+                // createAlert(
+                //   "success",
+                //   "{% trans 'Success. Reporting period changes were saved.'|escapejs %}",
+                //   true,
+                //   "#div-id-reportingperiod-alert");
 
-        }).fail(function (data) {
-            createAlert(
-                "danger",
-                "{% trans 'There was a problem saving your changes.'|escapejs %}",
-                false,
-                "#div-id-reportingperiod-alert");
-        });
+            }).fail(function (data) {
+                createAlert(
+                    "danger",
+                    "{% trans 'There was a problem saving your changes.'|escapejs %}",
+                    false,
+                    "#div-id-reportingperiod-alert");
+            });
+        })
 
     });
 

@@ -24,19 +24,25 @@
         $(this.date_collected).val(date_collected_db_format);
         */
 
-        var form_url = $(this).attr('action');
-        var form_data = $(this).serialize();
-        // mark that the form data has changed so that when the modal is closed the list view can be updated
-        $(this).data('recordchanged', true);
-        $.post(form_url, form_data,
-            function(response, status, jqXHR) { // success callback
-                $("#modalmessages").empty();
-                createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, "#modalmessages");
-            })
-        .fail(function(error){
-            createAlert("danger", "{% trans 'Could not save form.'|escapejs %}"  + error, true, "#modalmessages");
+
+        create_nondestructive_changeset_notice("", (rationale) => {
+            var form_url = $(this).attr('action');
+            var form_data = $(this).serialize();
+            form_data += '&rationale='+rationale;
+            // mark that the form data has changed so that when the modal is closed the list view can be updated
+            $(this).data('recordchanged', true);
+            $.post(form_url, form_data,
+                   function(response, status, jqXHR) { // success callback
+                       $("#modalmessages").empty();
+                       createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, "#modalmessages");
+                   })
+             .fail(function(error){
+                 createAlert("danger", "{% trans 'Could not save form.'|escapejs %}"  + error, true, "#modalmessages");
+             });
+            $('#indicator_collecteddata_div').animate({ scrollTop: 0 }, 'slow');
+        }, () => {
+
         });
-        $('#indicator_collecteddata_div').animate({ scrollTop: 0 }, 'slow');
     });
 
 

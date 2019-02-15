@@ -114,7 +114,7 @@ class IndicatorForm(forms.ModelForm):
 
 
 class ResultForm(forms.ModelForm):
-    rationale = forms.CharField(required=True)
+    rationale = forms.CharField(required=False)
 
     class Meta:
         model = Result
