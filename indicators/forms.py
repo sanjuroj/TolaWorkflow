@@ -160,16 +160,16 @@ class ResultForm(forms.ModelForm):
         else:
             # provide only in-program projects for the complete queryset:
             self.fields['complete'].queryset = ProjectComplete.objects.filter(program=self.program)
-        self.fields['site'].queryset = SiteProfile.objects.filter(
-            country__in=getCountry(self.user)
-        )
+        self.fields['site'].queryset = SiteProfile._base_manager.filter(
+            country__in=self.indicator.program.country.all()
+        ).only('id', 'name')
 
     def set_periodic_target_widget(self):
         # Django will deliver localized strings to the template but the form needs to be able to compare the date
         # entered to the start and end dates of each period.  Data attributes (attached to each option element) are
         # used to provide access to the start and end dates in ISO format, since they are easier to compare to than
         # the localized date strings.
-        periodic_targets = PeriodicTarget.objects \
+        periodic_targets = PeriodicTarget.objects.select_related('indicator') \
             .filter(indicator=self.indicator) \
             .order_by('customsort', 'create_date', 'period')
         data = {'data-start': {'': ''}, 'data-end': {'': ''}}
