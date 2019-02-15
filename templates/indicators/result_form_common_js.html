@@ -168,7 +168,7 @@
         } else if ($("#id_periodic_target").val() == '' && onlyPeriodic == false) {
             // This is triggered with midline/endline or event target frequencies when user tries to
             // submit data without selecting a target period.
-            $("#hint_id_periodic_target").html("<small>Please select a target.</small>");
+            $("#hint_id_periodic_target").html("<small>{% trans 'Please select a target.'|escapejs %}</small>");
             $("#div_id_periodic_target").addClass('has-error');
             $("#id_periodic_target").addClass('is-invalid');
             return false;
