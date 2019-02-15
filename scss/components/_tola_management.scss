@@ -1,54 +1,113 @@
 #user-management-index-view {
-    .td--stretch {
-        display: flex;
-        justify-content: space-around;
-
-        div {
-            width: 1rem;
-        }
-    }
-
-    .icon__clickable {
-        cursor: pointer;
-        color: darkblue;
-    }
-
-    .filter-buttons {
-        display: flex;
-        justify-content: space-around;
-    }
-
     .list-controls {
         display: flex;
         justify-content: space-between;
 
-        .selector {
-            min-width: 10em;
-        }
-
         .bulk-controls {
             display: flex;
+
+            .bulk-select {
+                width: 14vw;
+            }
         }
     }
 
-    .user-editor__navigation {
-        background-color: #eee;
+}
 
-        .list-group-item {
-            cursor: pointer;
-            color: darkblue;
-            background-color: transparent;
-            border: none;
+#organization-management-index-view {
+    .list-controls {
+        display: flex;
+        justify-content: end;
+    }
+}
+
+.td--stretch {
+    display: flex;
+    justify-content: space-around;
+
+    div {
+        width: 1rem;
+    }
+}
+
+.icon__clickable {
+    cursor: pointer;
+    color: darkblue;
+}
+
+.filter-buttons {
+    display: flex;
+    justify-content: space-around;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-spinner__container {
+    position: relative;
+    height: auto;
+
+    .loading-spinner__overlay {
+        position: absolute;
+        top:0px;
+        left:0px;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        opacity: .2;
+        z-index: 10;
+
+        .loading-spinner__spinner {
+            position: relative;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 70px;
+            height: 70px;
+            left:50%;
+            top:50%;
+            -webkit-animation: spin 2s linear infinite; /* Safari */
+            animation: spin 2s linear infinite;
         }
 
-        .list-group-item.selected {
-            color: #888;
-            cursor: default;
-        }
+    }
+
+}
+
+.editor__navigation {
+    background-color: #eee;
+
+    .list-group-item {
+        cursor: pointer;
+        color: #888;
+        background-color: transparent;
+        border: none;
+    }
+
+    .list-group-item.selected {
+        color: darkblue;
+        cursor: default;
+    }
+
+    .list-group-item.disabled {
+        cursor: default;
+        color: #888;
     }
 }
 
 .list-metadata {
     display: flex;
     justify-content: space-between;
+}
+
+.virtualized-table__wrapper {
+    height: 50vh;
 }

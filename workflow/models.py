@@ -65,8 +65,29 @@ class TolaSitesAdmin(admin.ModelAdmin):
     search_fields = ('name','agency_name')
 
 
+class Sector(models.Model):
+    sector = models.CharField(_("Sector Name"), max_length=255, blank=True)
+    create_date = models.DateTimeField(null=True, blank=True)
+    edit_date = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name=_("Sector")
+        ordering = ('sector',)
+
+    # on save add create date or update edit date
+    def save(self, *args, **kwargs):
+        if self.create_date == None:
+            self.create_date = timezone.now()
+        self.edit_date = timezone.now()
+        super(Sector, self).save()
+
+    # displayed in admin templates
+    def __unicode__(self):
+        return self.sector
+
+
 class Organization(models.Model):
-    name = models.CharField(_("Organization Name"), max_length=255, blank=True, default="TolaData")
+    name = models.CharField(_("Organization Name"), max_length=255, blank=False, default="TolaData")
     description = models.TextField(_("Description/Notes"), max_length=765, null=True, blank=True)
     organization_url = models.CharField(_("Organization url"), blank=True, null=True, max_length=255)
     level_1_label = models.CharField(_("Project/Program Organization Level 1 label"), default="Program", max_length=255, blank=True)
@@ -75,6 +96,14 @@ class Organization(models.Model):
     level_4_label = models.CharField(_("Project/Program Organization Level 4 label"), default="Activity", max_length=255, blank=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
+
+    primary_address = models.CharField(_("Primary Address"), blank=False, null=True, max_length=255)
+    primary_contact_name = models.CharField(_("Primary Contact Name"), blank=False, null=True, max_length=255)
+    primary_contact_email = models.CharField(_("Primary Contact Email"), blank=False, null=True, max_length=255)
+    primary_contact_phone = models.CharField(_("Primary Contact Phone"), blank=False, null=True, max_length=255)
+    mode_of_contact = models.CharField(_("Primary Mode of Contact"), blank=True, null=True, max_length=255)
+    is_active = models.BooleanField(default=1)
+    sectors = models.ManyToManyField(Sector, related_name="organizations")
 
     class Meta:
         ordering = ('name',)
@@ -127,9 +156,9 @@ class Country(models.Model):
 
 
 TITLE_CHOICES = (
-    (_('mr'), _('Mr.')),
-    (_('mrs'), _('Mrs.')),
-    (_('ms'), _('Ms.')),
+    ('mr', _('Mr.')),
+    ('mrs', _('Mrs.')),
+    ('ms', _('Ms.')),
 )
 
 
@@ -151,6 +180,9 @@ class TolaUser(models.Model):
     privacy_disclaimer_accepted = models.BooleanField(default=False)
     create_date = models.DateTimeField(null=True, blank=True)
     edit_date = models.DateTimeField(null=True, blank=True)
+    mode_of_address = models.CharField(blank=True, null=True, max_length=255)
+    mode_of_contact = models.CharField(blank=True, null=True, max_length=255)
+    phone_number = models.CharField(blank=True, null=True, max_length=50)
 
     class Meta:
         verbose_name = _("Tola User")
@@ -184,7 +216,6 @@ class TolaUser(models.Model):
     def update_active_country(self, country):
         self.active_country = country
         super(TolaUser, self).save()
-
 
 class TolaBookmarks(models.Model):
     user = models.ForeignKey(TolaUser, related_name='tolabookmark', verbose_name=_("User"))
@@ -255,27 +286,6 @@ class FormGuidance(models.Model):
 class FormGuidanceAdmin(admin.ModelAdmin):
     list_display = ( 'form', 'guidance', 'guidance_link', 'create_date',)
     display = 'Form Guidance'
-
-
-class Sector(models.Model):
-    sector = models.CharField(_("Sector Name"), max_length=255, blank=True)
-    create_date = models.DateTimeField(null=True, blank=True)
-    edit_date = models.DateTimeField(null=True, blank=True)
-
-    class Meta:
-        verbose_name=_("Sector")
-        ordering = ('sector',)
-
-    # on save add create date or update edit date
-    def save(self, *args, **kwargs):
-        if self.create_date == None:
-            self.create_date = timezone.now()
-        self.edit_date = timezone.now()
-        super(Sector, self).save()
-
-    # displayed in admin templates
-    def __unicode__(self):
-        return self.sector
 
 
 class SectorAdmin(admin.ModelAdmin):
@@ -364,7 +374,7 @@ class Program(models.Model):
     edit_date = models.DateTimeField(null=True, blank=True)
     budget_check = models.BooleanField(_("Enable Approval Authority"), default=False)
     country = models.ManyToManyField(Country, verbose_name=_("Country"))
-    user_access = models.ManyToManyField(TolaUser, blank=True)
+    user_access = models.ManyToManyField(TolaUser, blank=True, related_name="program_access")
     public_dashboard = models.BooleanField(_("Enable Public Dashboard"), default=False)
     start_date = models.DateField(_("Program Start Date"), null=True, blank=True)
     end_date = models.DateField(_("Program End Date"), null=True, blank=True)
@@ -433,6 +443,13 @@ class Program(models.Model):
                 min_starts.first() != self.reporting_period_start):
             return False
         return True
+
+    @property
+    def has_ended(self):
+        try:
+            return self.reporting_period_end < timezone.localdate()
+        except TypeError: # esp. if there's no reporting dates
+            return False
 
     @property
     def get_indicators_in_need_of_targetperiods_fixing(self):
@@ -590,8 +607,10 @@ class Village(models.Model):
 
 class VillageAdmin(admin.ModelAdmin):
     list_display = ('name', 'district', 'create_date', 'edit_date')
-    list_filter = ('district__province__country__country','district')
+    search_fields = ('name', 'admin_3__name')
+    list_filter = ('admin_3__district__province__country__country',)
     display = 'Admin Level 4'
+
 
 class Office(models.Model):
     name = models.CharField(_("Office Name"), max_length=255, blank=True)
@@ -1291,7 +1310,7 @@ class ProjectComplete(models.Model):
         _("CommunityHandover/Sustainability Maintenance Plan"),
         help_text=_('Check box if it was completed'), default=None)
     capacity_built = models.TextField(
-        _("Describe how sustainability was ensured for this project?"), max_length=755, blank=True, null=True)
+        _("Describe how sustainability was ensured for this project"), max_length=755, blank=True, null=True)
     quality_assured = models.TextField(
         _("How was quality assured for this project"), max_length=755, blank=True, null=True)
     issues_and_challenges = models.TextField(
@@ -1605,6 +1624,30 @@ class LoggedUser(models.Model):
     # user_logged_in.connect(login_user)
     # user_logged_out.connect(logout_user)
 
+COUNTRY_ROLE_CHOICES = (
+    ('user', 'User'),
+    ('basic_admin', 'Basic Admin'),
+)
+
+class TolaUserCountryRoles(models.Model):
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name="user_roles")
+    user = models.ForeignKey(TolaUser, on_delete=models.CASCADE, related_name="country_roles")
+    role = models.CharField(max_length=100, choices=COUNTRY_ROLE_CHOICES)
+    class Meta:
+        unique_together = (('country', 'user'),)
+
+PROGRAM_ROLE_CHOICES = (
+    ('low', 'Low'),
+    ('medium', 'Medium'),
+    ('high', 'High')
+)
+
+class TolaUserProgramRoles(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name="user_roles")
+    user = models.ForeignKey(TolaUser, on_delete=models.CASCADE, related_name="program_roles")
+    role = models.CharField(max_length=100, choices=PROGRAM_ROLE_CHOICES)
+    class Meta:
+        unique_together = (('program', 'user'),)
 
 def get_user_country(request):
 

@@ -43,6 +43,7 @@
         "babel-core": "^7.0.0-bridge.0",
         "babel-jest": "^23.6.0",
         "babel-loader": "^8.0.4",
+        "babel-plugin-transform-runtime": "^6.23.0",
         "bootstrap": "4.0.0",
         "bootstrap-multiselect": "github:davidstutz/bootstrap-multiselect",
         "classnames": "^2.2.6",
@@ -66,8 +67,13 @@
         "pnotify": "^4.0.0-alpha.4",
         "popper.js": "1.12.9",
         "react": "^16.6.0",
+        "react-bootstrap-table-next": "^2.0.0",
+        "react-bootstrap-table2-paginator": "^2.0.0",
         "react-dom": "^16.6.0",
         "react-fast-compare": "^2.0.4",
+        "react-select": "^2.2.0",
+        "router5": "^7.0.1",
+        "router5-plugin-browser": "^7.0.1",
         "sass-loader": "^7.1.0",
         "select2": "4.0.0",
         "style-loader": "^0.23.1",
@@ -83,6 +89,6 @@
         "react-bootstrap-table-next": "^2.0.0",
         "react-paginate": "^6.0.0",
         "react-select": "^2.2.0",
-        "react-window": "^1.5.0"
+        "react-virtualized": "^9.21.0"
     }
 }

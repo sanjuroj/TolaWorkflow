@@ -10,8 +10,10 @@ const store = new UserStore(
     jsContext.countries,
     jsContext.organizations,
     jsContext.programs,
-    jsContext.programs_by_country,
-    jsContext.users
+    jsContext.users,
+    jsContext.program_roles,
+    jsContext.country_roles,
+    jsContext.is_superuser
 );
 
 ReactDOM.render(

@@ -21,6 +21,17 @@ db:
   user: mercy_corps
   password: mercy_corps
 
+mail:
+  use_tls: False,
+  host: 'mailr.one'
+  port: 587
+  username: ''
+  password: ''
+  default_from: 'sys@example.org'
+  server_email: 'tola@example.org'
+  django_email_backend: 'django.core.mail.backends.smtp.EmailBackend'
+  filepath: '/tmp/tola-messages'
+
 global_packages:
   - build-essential
   - vim

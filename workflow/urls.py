@@ -35,8 +35,7 @@ urlpatterns = [
     url(r'^site_projectscomplete/(?P<site_id>\w+)/$', ProjectCompleteBySite.as_view(), name='site_projectscomplete'),
     #url(r'^site_projects/(?P<site_id\w+)/$', ProjectsBySite.as_view(), name='site_projects'),
 
-    url(r'^documentation_list/(?P<program>\w+)/(?P<project>\w+)/$', DocumentationList.as_view(), name='documentation_list'),
-    url(r'^documentation_objects/(?P<program>\w+)/(?P<project>\w+)/$', DocumentationListObjects.as_view(), name='documentation_objects'),
+    url(r'^documentation_list/$', documentation_list, name='documentation_list'),
     url(r'^documentation_add', DocumentationCreate.as_view(), name='documentation_add'),
     url(r'^documentation_agreement_list/(?P<program>\w+)/(?P<project>\w+)/$', DocumentationAgreementList.as_view(), name='documentation_agreement_list'),
     url(r'^documentation_agreement_add/(?P<id>\w+)/$', DocumentationAgreementCreate.as_view(),name='documentation_agreement_add'),
@@ -98,7 +97,6 @@ urlpatterns = [
     url(r'^district/(?P<district>[-\w]+)/district_json/', district_json, name='district_json'),
 
     #ajax calls
-    url(r'^service/(?P<service>[-\w]+)/service_json/', service_json, name='service_json'),
     url(r'^new_bookmark/$', save_bookmark, name='save_bookmark'),
     url(r'^reportingperiod_update/(?P<pk>\w+)$', reportingperiod_update, name='reportingperiod_update'),
 ]

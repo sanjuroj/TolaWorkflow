@@ -44,7 +44,7 @@
                 <input type="checkbox" name="short" id="id_short" checked="checked" onchange="confirmshort();">
                 <label for="detailed">{% trans "Use short form?" %} ({% trans "recommended" %})</label>
             </div>
-            <div class="form-actions bg-gray-lighter p-4 justify-content-between">
+            <div class="form-actions">
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">{% trans "Submit" %}</button>
                 </div>
@@ -134,7 +134,7 @@
                  </li>
             </ul>
         {% endif %}
-        <button class="btn btn-primary" type="button" onclick="location.href='{% url "documentation_list" 0 getAgreement.id %}'">
+        <button class="btn btn-primary" type="button" onclick="location.href='{% url "documentation_list" %}?project_id={{ getAgreement.id }}'">
             Documents <span class="badge">{{ getDocumentCount }}</span>
         </button>
         <button class="btn btn-primary" type="button" onclick="location.href='{% url "siteprofile_list" 0  getAgreement.id %}'">

@@ -1,28 +1,50 @@
+import collections
 import operator
 import unicodedata
 
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
+
+from workflow.serializers import RecordListProgramSerializer, RecordListRecordSerializer
 from .models import Program, Country, Province, AdminLevelThree, District, ProjectAgreement, ProjectComplete, SiteProfile, \
     Documentation, Monitor, Benchmarks, Budget, ApprovalAuthority, Checklist, ChecklistItem, Contact, Stakeholder, FormGuidance, \
     TolaBookmarks, TolaUser
 from formlibrary.models import TrainingAttendance, Distribution
-from indicators.models import Result, ExternalService
+from indicators.models import Result, ExternalService, Indicator
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.urls import reverse
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_decode
 
-from .forms import ProjectAgreementForm, ProjectAgreementSimpleForm, ProjectAgreementCreateForm, ProjectCompleteForm, ProjectCompleteSimpleForm, ProjectCompleteCreateForm, DocumentationForm, \
-    SiteProfileForm, MonitorForm, BenchmarkForm, BudgetForm, FilterForm, \
-    QuantitativeOutputsForm, ChecklistItemForm, StakeholderForm, ContactForm
+from .forms import (
+    ProjectAgreementForm,
+    ProjectAgreementSimpleForm,
+    ProjectAgreementCreateForm,
+    ProjectCompleteForm,
+    ProjectCompleteSimpleForm,
+    ProjectCompleteCreateForm,
+    DocumentationForm,
+    SiteProfileForm,
+    MonitorForm,
+    BenchmarkForm,
+    BudgetForm,
+    FilterForm,
+    QuantitativeOutputsForm,
+    ChecklistItemForm,
+    StakeholderForm,
+    ContactForm,
+    OneTimeRegistrationForm
+)
 
 import pytz # TODO: not used, keeping this import for potential regressions
 
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.db.models import Count, Q, Max
+from django.db.models import Count, Q, Max, Prefetch
 from tables import ProjectAgreementTable
 from filters import ProjectAgreementFilter
 import json
@@ -787,34 +809,33 @@ class ProjectCompleteImport(ListView):
     template_name = 'workflow/projectcomplete_import.html'
 
 
-class DocumentationList(ListView):
-    """
-    Documentation
-    """
-    model = Documentation
-    template_name = 'workflow/documentation_list.html'
+def documentation_list(request):
+    user_countries = request.user.tola_user.countries.all()
 
-    def get(self, request, *args, **kwargs):
-        program = Program.objects.get(id=self.kwargs['program']) if int(self.kwargs['program']) != 0 else None
+    programs = Program.objects.filter(funding_status="Funded", country__in=user_countries)
 
-        project_agreement_id = self.kwargs['project']
-        countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries)
+    # create a mapping of indicators to documents
+    all_program_results = Result.objects.filter(indicator__program__in=programs, evidence__isnull=False)
+    indicator_to_documents_map = collections.defaultdict(list)
+    for result in all_program_results:
+        indicator_to_documents_map[result.indicator_id].append(result.evidence_id)
 
-        if int(self.kwargs['program']) != 0 & int(self.kwargs['project']) == 0:
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(program__id=self.kwargs['program'])
-        elif int(self.kwargs['project']) != 0:
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(project__id=self.kwargs['project'])
-        else:
-            countries = getCountry(request.user)
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project','project__office').filter(program__country__in=countries)
+    # limit indicators to those with results w/ documents
+    indicators = Indicator.objects.filter(id__in=indicator_to_documents_map.keys()).with_logframe_sorting()
+    programs = programs.prefetch_related(Prefetch('indicator_set', queryset=indicators))
 
-        return render(request, self.template_name, {
-            'program': program,
-            'getPrograms': getPrograms,
-            'getDocumentation': getDocumentation,
-            'project_agreement_id': project_agreement_id
-        })
+    documents = Documentation.objects.all().select_related('project').filter(program__country__in=user_countries)
+
+    js_context = {
+        'allowProjectsAccess': request.user.tola_user.allow_projects_access,
+        'programs': RecordListProgramSerializer(programs, many=True).data,
+        'documents': RecordListRecordSerializer(documents, many=True).data,
+        'indicatorToDocumentsMap': dict(indicator_to_documents_map),
+    }
+
+    return render(request, 'workflow/documentation_list.html', {
+        'js_context': js_context,
+    })
 
 
 class DocumentationAgreementList(AjaxableResponseMixin, CreateView):
@@ -1048,7 +1069,7 @@ class DocumentationDelete(DeleteView):
     Documentation Form
     """
     model = Documentation
-    success_url = '/workflow/documentation_list/0/0/'
+    success_url = '/workflow/documentation_list/'
 
     def form_invalid(self, form):
 
@@ -2377,34 +2398,6 @@ def district_json(request, district):
     return HttpResponse(adminthree_json, content_type="application/json")
 
 
-def import_service(service_id=1, deserialize=True):
-    """
-    Import a indicators from a web service (the dig only for now)
-    """
-    service = ExternalService.objects.all().filter(id=service_id)
-
-    response = requests.get(service.feed_url)
-    get_json = json.loads(response.content)
-
-    if deserialize == True:
-        data = json.load(get_json) # deserialises it
-    else:
-    #send json data back not deserialized data
-        data = get_json
-    #debug the json data string uncomment dump and print
-    data2 = json.dumps(data) # json formatted string
-
-    return data
-
-
-def service_json(request, service):
-    """
-    For populating service indicators in dropdown
-    """
-    service_indicators = import_service(service,deserialize=False)
-    return HttpResponse(service_indicators, content_type="application/json")
-
-
 def export_stakeholders_list(request, **kwargs):
 
     program_id = int(kwargs['program_id'])
@@ -2474,43 +2467,27 @@ class StakeholderObjects(View, AjaxableResponseMixin):
         return JsonResponse(final_dict, safe=False)
 
 
-class DocumentationListObjects(View, AjaxableResponseMixin):
-
-    def get(self, request, *args, **kwargs):
-        program = Program.objects.get(id=self.kwargs['program']) if int(self.kwargs['program']) != 0 else None
-
-        if int(self.kwargs['program']) != 0 & int(self.kwargs['project']) == 0:
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(program__id=self.kwargs['program']).values('id', 'name', 'project__project_name', 'create_date')
-        elif int(self.kwargs['project']) != 0:
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project').filter(project__id=self.kwargs['project']).values('id', 'name', 'project__project_name', 'create_date')
-        else:
-            countries = getCountry(request.user)
-            getDocumentation = Documentation.objects.all().prefetch_related('program','project','project__office').filter(program__country__in=countries).values('id', 'name', 'project__project_name', 'create_date')
-
-        getDocumentation = json.dumps(list(getDocumentation), cls=DjangoJSONEncoder)
-
-        return JsonResponse({
-            'program_name': program.name if program else None,
-            'getDocumentation': getDocumentation,
-        })
-
-
 def reportingperiod_update(request, pk):
     program = Program.objects.get(pk=pk)
-    dated = parser.parse(request.POST['reporting_period_end'])
 
     # In some cases the start date input will be disabled and won't come through POST
-    try:
-        program.reporting_period_start = parser.parse(request.POST['reporting_period_start'])
-    except MultiValueDictKeyError as e:
-        pass
-    program.reporting_period_end = parser.parse(request.POST['reporting_period_end'])
+    if 'reporting_period_start' in request.POST:
+        program.reporting_period_start = parser.parse(request.POST['reporting_period_start']).date()
+
+    program.reporting_period_end = parser.parse(request.POST['reporting_period_end']).date()
+
+    # Should never happen w/ front end validation
+    if program.reporting_period_start > program.reporting_period_end:
+        return HttpResponse('End date can not come before start date', status=400)
+
     program.save()
+
     return JsonResponse({
         'msg': 'success',
         'program_id': pk,
         'rptstart': program.reporting_period_start,
-        'rptend': program.reporting_period_end, })
+        'rptend': program.reporting_period_end,
+    })
 
 
 @api_view(['GET'])
@@ -2518,3 +2495,33 @@ def dated_target_info(request, pk):
     return Response({
         'max_start_date': Program.objects.filter(id=pk).annotate(
             ptd=Max('indicator__periodictargets__start_date')).values_list('ptd', flat=True)[0]})
+
+class OneTimeRegistrationView(FormView):
+    """
+    View that checks the hash in a password reset link and presents a
+    form for entering a new password.
+    """
+    template_name = "registration/one_time_registration_form.html"
+    success_url = '/'
+    form_class = OneTimeRegistrationForm
+
+    def post(self, request, uidb64=None, token=None, *arg, **kwargs):
+        UserModel = get_user_model()
+        form = self.form_class(request.POST)
+        assert uidb64 is not None and token is not None  # checked by URLconf
+        try:
+            uid = urlsafe_base64_decode(uidb64)
+            user = UserModel._default_manager.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
+            user = None
+
+        if user is not None and default_token_generator.check_token(user, token):
+            if form.is_valid():
+                new_password= form.cleaned_data['new_password2']
+                user.set_password(new_password)
+                user.save()
+                return self.form_valid(form)
+            else:
+                return self.form_invalid(form)
+        else:
+            return self.form_invalid(form)

@@ -49,9 +49,10 @@
   pk: 1
   fields:
     indicator: 1
+    periodic_target: 1
     date_collected: '2015-05-01'
     achieved: 550
-    evidence: 1
+    evidence_url: 'http://test_evidence_url'
 - model: indicators.indicator
   pk: 2
   fields:
@@ -76,9 +77,10 @@
   pk: 2
   fields:
     indicator: 2
+    periodic_target: 2
     date_collected: '2015-01-10'
     achieved: 450
-    evidence: 2
+    evidence_url: 'http://test_evidence_url_2'
 - model: indicators.result
   pk: 3
   fields:
@@ -105,6 +107,7 @@
   pk: 4
   fields:
     indicator: 3
+    periodic_target: 3
     date_collected: '2015-01-10'
     achieved: 300
 - model: indicators.indicator
@@ -127,6 +130,7 @@
   pk: 5
   fields:
     indicator: 4
+    periodic_target: 4
     date_collected: '2015-01-10'
     achieved: 65
 - model: indicators.indicator
@@ -149,6 +153,7 @@
   pk: 6
   fields:
     indicator: 5
+    periodic_target: 5
     date_collected: '2015-01-10'
     achieved: 82
 - model: indicators.indicator
@@ -171,12 +176,14 @@
   pk: 7
   fields:
     indicator: 6
+    periodic_target: 6
     date_collected: '2015-01-10'
     achieved: 40
 - model: indicators.result
   pk: 8
   fields:
     indicator: 6
+    periodic_target: 6
     date_collected: '2016-01-10'
     achieved: 25
 - model: indicators.indicator
@@ -199,6 +206,7 @@
   pk: 9
   fields:
     indicator: 7
+    periodic_target: 7
     date_collected: '2015-01-10'
     achieved: 8000
 - model: indicators.indicator
@@ -221,6 +229,7 @@
   pk: 10
   fields:
     indicator: 8
+    periodic_target: 8
     date_collected: '2015-01-10'
     achieved: 500
 - model: indicators.indicator
@@ -314,6 +323,7 @@
   pk: 15
   fields:
     indicator: 11
+    periodic_target: 13
     date_collected: '2015-01-04'
     achieved: 25
 - model: indicators.periodictarget
@@ -328,6 +338,7 @@
   pk: 16
   fields:
     indicator: 11
+    periodic_target: 14
     date_collected: '2015-07-04'
     achieved: 35
 - model: indicators.periodictarget
@@ -342,6 +353,7 @@
   pk: 17
   fields:
     indicator: 11
+    periodic_target: 15
     date_collected: '2016-01-04'
     achieved: 45
 - model: indicators.periodictarget
@@ -356,6 +368,7 @@
   pk: 18
   fields:
     indicator: 11
+    periodic_target: 16
     date_collected: '2016-07-04'
     achieved: 55
 - model: indicators.indicator
@@ -379,6 +392,7 @@
   pk: 19
   fields:
     indicator: 12
+    periodic_target: 17
     date_collected: '2015-01-04'
     achieved: 85
 - model: indicators.periodictarget
@@ -393,6 +407,7 @@
   pk: 20
   fields:
     indicator: 12
+    periodic_target: 18
     date_collected: '2015-07-04'
     achieved: 85
 - model: indicators.periodictarget
@@ -407,6 +422,7 @@
   pk: 21
   fields:
     indicator: 12
+    periodic_target: 19
     date_collected: '2016-01-04'
     achieved: 85
 - model: indicators.periodictarget
@@ -421,6 +437,7 @@
   pk: 22
   fields:
     indicator: 12
+    periodic_target: 20
     date_collected: '2016-07-04'
     achieved: 85
 - model: indicators.indicator

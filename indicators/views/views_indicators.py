@@ -43,8 +43,12 @@ from ..models import (
     Result, IndicatorType, Level, ExternalServiceRecord,
     ExternalService, TolaTable, PinnedReport
 )
-from indicators.queries import ProgramWithMetrics, IPTTIndicator
+from indicators.queries import ProgramWithMetrics, ResultsIndicator
 from .views_reports import IPTT_ReportView
+
+from tola_management.models import (
+    IndicatorAuditLog
+)
 
 
 logger = logging.getLogger(__name__)
@@ -492,6 +496,7 @@ class IndicatorUpdate(UpdateView):
         new_target_frequency = form.cleaned_data.get('target_frequency', None)
         lop = form.cleaned_data.get('lop_target', None)
         program = pk=form.cleaned_data.get('program')
+        rationale = form.cleaned_data.get('rationale')
 
         if periodic_targets == 'generateTargets':
             # handle (delete) association of colelctedData records if necessary
@@ -514,6 +519,10 @@ class IndicatorUpdate(UpdateView):
 
             generatedTargets = generate_periodic_targets(
                 new_target_frequency, start_date, target_frequency_num_periods, event_name)
+
+        #we don't actually do anything with these targets, we're just caching
+        #the old ones on the model before they're updated
+        old_periodic_targets = self.object.periodictargets
 
         if periodic_targets and periodic_targets != 'generateTargets':
             # now create/update periodic targets
@@ -571,8 +580,17 @@ class IndicatorUpdate(UpdateView):
             # for  now do not care about which fields have changed. just indicate that some fields have changed
             update_indicator_row = '1'
 
+        old_indicator_values = indicatr.logged_fields
         # save the indicator form
         self.object = form.save()
+
+        IndicatorAuditLog.log_indicator_updated(
+            self.request.user,
+            self.object,
+            old_indicator_values,
+            self.object.logged_fields,
+            rationale
+        )
 
         # fetch all existing periodic_targets for this indicator
         periodic_targets = PeriodicTarget.objects.filter(indicator=indicatr) \
@@ -1045,67 +1063,26 @@ def service_json(request, service):
 
 
 def result_view(request, indicator, program):
-    ind = Indicator.objects.get(pk=indicator)
-    reset_indicator_target_frequency(ind)
+    """Returns the results table for an indicator - used to expand rows on the Program Page"""
+    indicator = ResultsIndicator.results_view.get(pk=indicator)
+    reset_indicator_target_frequency(indicator)
     template_name = 'indicators/result_table.html'
-    program_obj = ind.program
+    program_obj = indicator.program
     program = program_obj.id
-    last_data_record = Result.objects.filter(periodic_target=OuterRef('pk')).order_by('-date_collected', '-pk')
-    periodictargets = PeriodicTarget.objects \
-        .filter(indicator=indicator) \
-        .prefetch_related('result_set') \
-        .annotate(
-            achieved_sum=Sum('result__achieved', output_field=DecimalField()),
-            last_data_row=Subquery(last_data_record.values('achieved')[:1])) \
-        .order_by('customsort')
-
-    # the total of achieved values across all periodic targets of an indicator
-    grand_achieved_sum = 0
-
-    # the last achieved value reported against any target of an indicator
-    last_data_record_value = 0
-
-    # setup cumulative values for achieved across an indicator targets
-    for index, pt in enumerate(periodictargets):
-        if index == 0:
-            last_data_record_value = pt.last_data_row
-            grand_achieved_sum = pt.achieved_sum if pt.achieved_sum is not None else 0
-            if grand_achieved_sum == 0:
-                pt.cumulative_sum = ''
-            else:
-                pt.cumulative_sum = grand_achieved_sum
-        else:
-            try:
-                # update this variable only if there is a data value
-                last_data_record_value = pt.last_data_row if pt.last_data_row is not None else last_data_record_value
-                grand_achieved_sum += pt.achieved_sum
-                if grand_achieved_sum == 0:
-                    pt.cumulative_sum = ''
-                else:
-                    pt.cumulative_sum = grand_achieved_sum
-            except TypeError:
-                pass
-
-    if grand_achieved_sum == 0:
-        grand_achieved_sum = ''
-
-    # show all of the data records that do not yet have periodic_targets
-    # associated with them.
-    results_without_periodictargets = Result.objects \
-        .filter(indicator=indicator, periodic_target__isnull=True)
-
+    periodictargets = indicator.annotated_targets
+    on_track_lower = 100 - 100 * Indicator.ONSCOPE_MARGIN
+    on_track_upper = 100 + 100 * Indicator.ONSCOPE_MARGIN
+    on_track = True if (on_track_lower <= indicator.lop_percent_met <= on_track_upper) else False
     is_editable = False if request.GET.get('edit') == 'false' else True
+
     return render_to_response(
         template_name, {
+            'indicator': indicator,
             'periodictargets': periodictargets,
-            'results_without_periodictargets': results_without_periodictargets,
-            'last_data_record_value': last_data_record_value,
-            'grand_achieved_sum': grand_achieved_sum,
-            'grand_achieved_avg': ind.get_result_average,
-            'indicator': ind,
             'program_id': program,
             'program': program_obj,
-            'is_editable': is_editable
+            'is_editable': is_editable,
+            'on_track': on_track,
         }
     )
 
@@ -1440,6 +1417,7 @@ class ProgramPage(ListView):
         #was this for eventually showing more than one program?  Because pk already limits to 1:
         #program = ProgramWithMetrics.with_metrics.get(pk=program_id, funding_status="Funded", country__in=countries)
         program = ProgramWithMetrics.program_page.get(pk=program_id)
+        program.indicator_filters = {}
         if self.metrics:
             json_context = {
                 'metrics': program.metrics,
@@ -1459,7 +1437,7 @@ class ProgramPage(ListView):
             indicator_filter_name = program.annotated_indicators.first()
 
         indicators = program.annotated_indicators\
-            .annotate(target_period_last_end_date=Max('periodictargets__end_date'))
+            .annotate(target_period_last_end_date=Max('periodictargets__end_date')).select_related('level')
         # indicator_count = program.indicator_count
         site_count = len(program.get_sites())
 
@@ -1756,6 +1734,7 @@ def api_indicator_view(request, indicator_id):
     """
     indicator = Indicator.objects.only('program_id', 'sector_id').get(id=indicator_id)
     program = ProgramWithMetrics.program_page.get(pk=indicator.program_id)
+    program.indicator_filters = {}
 
     indicator = program.annotated_indicators \
         .annotate(target_period_last_end_date=Max('periodictargets__end_date')).get(id=indicator_id)

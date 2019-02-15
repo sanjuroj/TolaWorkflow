@@ -10,7 +10,10 @@ module.exports = {
     entry: {
         base: './js/base.js',
         program_page: './js/pages/program_page/index.js' ,
-        tola_management_user: './js/pages/tola_management_pages/user/index.js'
+        tola_management_user: './js/pages/tola_management_pages/user/index.js',
+        tola_management_organization: './js/pages/tola_management_pages/organization/index.js',
+        tola_management_program: './js/pages/tola_management_pages/program/index.js',
+        document_list: './js/pages/document_list/index.js' ,
     },
 
     output: {
@@ -69,6 +72,23 @@ module.exports = {
         //     jquery: 'jquery',
         // }),
     ],
+
+    optimization: {
+        // split manifest out
+        runtimeChunk: 'single',
+        // splitChunks: {
+        //     chunks: 'initial',
+        // },
+        splitChunks: {
+            cacheGroups: {
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    chunks: 'all'
+                }
+            }
+        },
+    },
 
     externals: {
         jquery: 'jQuery',

@@ -12,7 +12,11 @@ from feed.views import (
     PeriodicTargetReadOnlyViewSet, ProgramTargetFrequencies
 )
 from tola_management.views import (
-    UserAdminViewSet
+    UserAdminViewSet,
+    OrganizationAdminViewSet
+)
+from tola_management.programadmin import (
+    ProgramAdminViewSet,
 )
 from django.conf.urls import include, url
 # Import i18n_patterns
@@ -31,7 +35,7 @@ from indicators.views.views_indicators import ProgramPage
 from django.contrib import admin
 admin.autodiscover()
 admin.site.site_header = 'Tola Activity administration'
-from workflow.views import dated_target_info
+from workflow.views import dated_target_info, OneTimeRegistrationView
 
 #REST FRAMEWORK
 router = routers.DefaultRouter()
@@ -78,6 +82,8 @@ router.register(r'programtargetfrequencies', ProgramTargetFrequencies, base_name
 
 #tola admin
 router.register(r'tola_management/user', UserAdminViewSet, base_name='tolamanagementuser')
+router.register(r'tola_management/organization', OrganizationAdminViewSet, base_name='tolamanagementorganization')
+router.register(r'tola_management/program', ProgramAdminViewSet, base_name='tolamanagementprograms')
 
 urlpatterns = [
                 url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
@@ -139,6 +145,7 @@ urlpatterns = [
                 # accounts
                 url(r'^accounts/profile/$', views.profile, name='profile'),
                 url(r'^accounts/register/$', views.register, name='register'),
+                url(r'^accounts/one_time_registration/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', OneTimeRegistrationView.as_view(),name='one_time_registration'),
 
                 #bookmarks
                 url(r'^bookmark_list', BookmarkList.as_view(), name='bookmark_list'),

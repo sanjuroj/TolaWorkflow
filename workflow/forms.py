@@ -365,7 +365,7 @@ class ProjectAgreementForm(forms.ModelForm):
                         Submit('submit', 'Save changes', css_class=''),
                         Reset('reset', 'Reset', css_class='')
                     ),
-                    css_class='form-actions bg-gray-lighter p-4 justify-content-between',
+                    css_class='form-actions',
                 ),
 
 
@@ -400,7 +400,7 @@ class ProjectAgreementForm(forms.ModelForm):
                                   </table>
                               {% endif %}
                               <div class="panel-footer">
-                                <a onclick="newPopup('/workflow/documentation_list/0/{{ pk }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
+                                <a onclick="newPopup('/workflow/documentation_list/?project_id={{ pk }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
                               </div>
                             </div>
                              """),
@@ -623,7 +623,7 @@ class ProjectAgreementSimpleForm(forms.ModelForm):
                         Submit('submit', 'Save changes', css_class=''),
                         Reset('reset', 'Reset', css_class='')
                     ),
-                    css_class='form-actions bg-gray-lighter p-4 justify-content-between',
+                    css_class='form-actions',
                 ),
 
 
@@ -657,7 +657,7 @@ class ProjectAgreementSimpleForm(forms.ModelForm):
                                   </table>
                               {% endif %}
                               <div class="panel-footer">
-                                <a onclick="newPopup('/workflow/documentation_list/0/{{ pk }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
+                                <a onclick="newPopup('/workflow/documentation_list/?project_id={{ pk }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
                               </div>
                             </div>
                              """),
@@ -963,7 +963,7 @@ class ProjectCompleteForm(forms.ModelForm):
                     Submit('submit', 'Save changes', css_class=''),
                     Reset('reset', 'Reset', css_class='')
                 ),
-                css_class='form-actions bg-gray-lighter p-4 justify-content-between',
+                css_class='form-actions',
             ),
 
 
@@ -996,7 +996,7 @@ class ProjectCompleteForm(forms.ModelForm):
                               </table>
                           {% endif %}
                           <div class="panel-footer">
-                            <a onclick="newPopup('/workflow/documentation_list/0/{{ id }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
+                            <a onclick="newPopup('/workflow/documentation_list/?project_id={{ id }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
                           </div>
                         </div>
                          """),
@@ -1214,7 +1214,7 @@ class ProjectCompleteSimpleForm(forms.ModelForm):
                     Submit('submit', 'Save changes', css_class=''),
                     Reset('reset', 'Reset', css_class='')
                 ),
-                css_class='form-actions bg-gray-lighter p-4 justify-content-between',
+                css_class='form-actions',
             ),
             Fieldset(
                 '',
@@ -1245,7 +1245,7 @@ class ProjectCompleteSimpleForm(forms.ModelForm):
                                 </table>
                             {% endif %}
                             <div class="panel-footer">
-                                <a onclick="newPopup('/workflow/documentation_list/0/{{ id }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
+                                <a onclick="newPopup('/workflow/documentation_list/?project_id={{ id }}','Add documentation'); return false;" href="#" class="btn btn-link btn-add"><i class="fas fa-plus-circle"></i> Add documentation</a>
                             </div>
                         </div>
                     """),
@@ -1368,7 +1368,7 @@ class SiteProfileForm(forms.ModelForm):
                     Submit('submit', 'Save changes', css_class=''),
                     Reset('reset', 'Reset', css_class='')
                 ),
-                css_class='form-actions bg-gray-lighter p-4 justify-content-between',
+                css_class='form-actions',
             ),
 
              HTML("""
@@ -1441,7 +1441,7 @@ class DocumentationForm(forms.ModelForm):
                 'project','program',
 
             FormActions(
-                Submit('submit', 'Save', css_class='btn-default'),
+                Submit('submit', 'Save', css_class='btn-primary'),
                 Reset('reset', 'Reset', css_class='btn-inverse')
             )
         )
@@ -1489,7 +1489,7 @@ class QuantitativeOutputsForm(forms.ModelForm):
                 else:
                     selected = ""
                 # pt.period is deprecated, transition to pt.period_name
-                options += "<option value=%s %s>%s</option>" % (pt.id, selected, pt.period) 
+                options += "<option value=%s %s>%s</option>" % (pt.id, selected, pt.period)
         self.helper.layout = Layout(
             'indicator',
             'periodic_target',
@@ -1687,7 +1687,7 @@ class StakeholderForm(forms.ModelForm):
                     Submit('submit', 'Save changes', css_class=''),
                     Reset('reset', 'Reset', css_class='')
                 ),
-                css_class='form-actions bg-gray-lighter p-4 justify-content-between',
+                css_class='form-actions',
             ),
         )
         super(StakeholderForm, self).__init__(*args, **kwargs)
@@ -1719,3 +1719,27 @@ class ProjectCompleteTable(forms.ModelForm):
     class Meta:
         model = ProjectComplete
         fields = '__all__'
+
+class OneTimeRegistrationForm(forms.Form):
+    """
+    A form that lets a user change set their password without entering the old
+    password
+    """
+    error_messages = {
+        'password_mismatch': ("The two password fields didn't match."),
+        }
+    new_password1 = forms.CharField(label=("New password"),
+                                    widget=forms.PasswordInput)
+    new_password2 = forms.CharField(label=("New password confirmation"),
+                                    widget=forms.PasswordInput)
+
+    def clean_new_password2(self):
+        password1 = self.cleaned_data.get('new_password1')
+        password2 = self.cleaned_data.get('new_password2')
+        if password1 and password2:
+            if password1 != password2:
+                raise forms.ValidationError(
+                    self.error_messages['password_mismatch'],
+                    code='password_mismatch',
+                    )
+        return password2
