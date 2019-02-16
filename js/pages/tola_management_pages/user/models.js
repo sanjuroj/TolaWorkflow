@@ -156,7 +156,8 @@ export class UserStore {
                     return xs
                 }, {})
                 this.users_listing = results.users.map(u => u.id)
-                this.bulk_targets = new Map(this.users.map(user => [user.id, false]))
+                this.bulk_targets_all = false
+                this.bulk_targets = new Map()
                 this.users_count = results.total_users
                 this.total_pages = results.total_pages
                 this.next_page = results.next_page
@@ -175,16 +176,9 @@ export class UserStore {
 
     @action
     toggleBulkTargetsAll() {
-        this.bulk_targets_all = !this.bulk_targets_all;
-        if(this.bulk_targets_all) {
-            this.bulk_targets.forEach((val, key, map) => {
-                map.set(key, true)
-            })
-        } else {
-            this.bulk_targets.forEach((val, key, map) => {
-                map.set(key, false)
-            })
-        }
+        this.bulk_targets_all = !this.bulk_targets_all
+        let user_ids = Object.values(this.users_listing)
+        this.bulk_targets = new Map(user_ids.map(id => [id, this.bulk_targets_all]))
     }
 
     @action
@@ -382,6 +376,10 @@ export class UserStore {
             new_status
         ).then(result => {
             runInAction(() => {
+                result.forEach(updated => {
+                    let user = Object.assign(this.users[updated.id], updated)
+                    this.users[user.id] = user
+                })
                 this.applying_bulk_updates = false
             })
             this.onSaveSuccessHandler()

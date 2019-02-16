@@ -112,7 +112,8 @@ class BulkActions extends React.Component {
 
     onActionChanged(new_action) {
         this.setState({
-            current_action: new_action.value
+            current_action: new_action.value,
+            current_vals: [],
         })
     }
 
@@ -157,6 +158,7 @@ class BulkActions extends React.Component {
 
 export const IndexView = observer(
     ({store}) => {
+        const programOptions = store.program_selections
         const bulk_actions = {
             primary_options: [
                 {label: 'Set account status', value: 'set_account_status'},
@@ -169,11 +171,11 @@ export const IndexView = observer(
                     onApply: (option) => store.bulkUpdateUserStatus(option.value)
                 },
                 add_to_program: {
-                    component: (props) => <CheckboxedMultiSelect options={program_listing} {...props} />,
+                    component: (props) => <CheckboxedMultiSelect options={programOptions} {...props} />,
                     onApply: (vals) => store.bulkAddPrograms(vals.map(option => option.value))
                 },
                 remove_from_program: {
-                    component: (props) => <CheckboxedMultiSelect options={program_listing} {...props} />,
+                    component: (props) => <CheckboxedMultiSelect options={programOptions} {...props} />,
                     onApply: (vals) => store.bulkRemovePrograms(vals.map(option => option.value))
                 },
             }

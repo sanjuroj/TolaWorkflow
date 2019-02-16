@@ -599,8 +599,11 @@ class UserAdminViewSet(viewsets.ModelViewSet):
 
         tola_users = TolaUser.objects.filter(pk__in=request.data["user_ids"])
         User.objects.filter(pk__in=[t_user.user_id for t_user in tola_users]).update(is_active=bool(request.data["new_status"]))
-        return Response({})
-
+        updated = [{
+            'id': tu.id,
+            'is_active': tu.user.is_active,
+        } for tu in tola_users]
+        return Response(updated)
 
     @list_route(methods=["post"])
     def bulk_add_programs(self, request):
