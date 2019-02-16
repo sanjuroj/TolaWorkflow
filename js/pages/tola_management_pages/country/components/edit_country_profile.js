@@ -1,0 +1,116 @@
+import React from 'react'
+import Select from 'react-select'
+import { observer } from "mobx-react"
+import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
+import classNames from 'classnames'
+
+
+const ErrorFeedback = observer(({errorMessages}) => {
+    if (!errorMessages) {
+        return null
+    }
+    return (
+    <div className="invalid-feedback">
+        {errorMessages.map((message, index) =>
+            <span key={index}>{message}</span>
+        )}
+    </div>
+    )
+})
+@observer
+export default class EditCountryProfile extends React.Component {
+    constructor(props) {
+        super(props)
+        const {country_data} = props
+
+        this.state = {
+            original_data: Object.assign({}, country_data),
+            managed_data: Object.assign({}, country_data)
+        }
+    }
+
+
+    save(e) {
+        e.preventDefault()
+        const country_id = this.props.country_data.id
+        const country_data = this.state.managed_data
+        this.props.onUpdate(country_id, country_data)
+    }
+
+    saveNew(e) {
+        e.preventDefault()
+        const country_data = this.state.managed_data
+        this.props.onCreate(country_data)
+    }
+
+    updateFormField(fieldKey, val) {
+        this.setState({
+            managed_data: Object.assign(this.state.managed_data, {[fieldKey]: val})
+        })
+    }
+
+    resetForm() {
+        this.setState({
+            managed_data: Object.assign({}, this.state.original_data)
+        })
+    }
+
+    formErrors(fieldKey) {
+        return this.props.errors[fieldKey]
+    }
+
+    render() {
+        const formdata = this.state.managed_data
+        const selectedOrganization = this.props.organizationOptions.find(x=>x.value==formdata.organization)
+        return (
+            <div className="edit-user-profile container">
+                <form className="form">
+                    <div className="form-group">
+                        <label htmlFor="country-name-input">Country name<span className="required">*</span></label>
+                        <input
+                            type="text"
+                            value={formdata.country}
+                            onChange={(e) => this.updateFormField('country', e.target.value) }
+                            className={classNames('form-control', { 'is-invalid': this.formErrors('country') })}
+                            id="country-name-input"
+                            required />
+                        <ErrorFeedback errorMessages={this.formErrors('country')} />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="country-description-input">Description</label>
+                        <textarea
+                            value={formdata.description}
+                            onChange={(e) => this.updateFormField('description', e.target.value) }
+                            className={classNames('form-control', { 'is-invalid': this.formErrors('description') })}
+                            id="country-description-input"
+                            />
+                        <ErrorFeedback errorMessages={this.formErrors('description')} />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="country-code-input">Country Code</label>
+                        <input
+                            value={formdata.code}
+                            onChange={(e) => this.updateFormField('code', e.target.value) }
+                            className={classNames('form-control', { 'is-invalid': this.formErrors('code') })}
+                            id="country-code-input"
+                            />
+                        <ErrorFeedback errorMessages={this.formErrors('code')} />
+                    </div>
+                    {this.props.new &&
+                    <div className="form-group">
+                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>Save</button>
+                        {/* <button className="btn btn-primary" onClick={(e) => this.saveNewAndAddAnother(e)}>Save And Add Another</button> */}
+                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Reset</button>
+                    </div>
+                    }
+                    {!this.props.new &&
+                    <div className="form-group">
+                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>Save</button>
+                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Reset</button>
+                    </div>
+                    }
+                </form>
+            </div>
+        )
+    }
+}

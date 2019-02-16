@@ -165,6 +165,32 @@ def get_program_page_context(request):
         'sectors': sectors,
     }
 
+def get_country_page_context(request):
+    countries = [{
+        'id': country.id,
+        'country': country.country,
+    } for country in Country.objects.all()]
+
+    organizations = {
+        organization.id : {
+            'id': organization.id,
+            'name': organization.name,
+        } for organization in Organization.objects.all()
+    }
+
+    programs = [
+        {
+            'id': program.id,
+            'name': program.name,
+        } for program in Program.objects.all()
+    ]
+
+    return {
+        'countries': countries,
+        'organizations': organizations,
+        'programs': programs,
+    }
+
 def get_audit_log_page_context(request, program_id):
     return {
         "program_id": program_id
@@ -191,6 +217,9 @@ def app_host_page(request, react_app_page):
         js_context = get_organization_page_context(request)
     elif react_app_page == 'program':
         js_context = get_program_page_context(request)
+    elif react_app_page == 'country':
+        js_context = get_country_page_context(request)
+
 
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
     return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "report_wide": True})
