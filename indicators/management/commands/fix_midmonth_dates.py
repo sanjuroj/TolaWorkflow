@@ -4,7 +4,7 @@ Fixes target periods that were created with mid-month dates.
 import itertools
 
 from django.core.management.base import BaseCommand
-from datetime import timedelta
+from datetime import timedelta, date, timedelta
 import calendar
 
 from django.db import transaction
@@ -72,12 +72,13 @@ class Command(BaseCommand):
         indicators = Indicator.objects.filter(program_id__in=affected_program_ids)
         indicators.prefetch_related('periodictargets')
         oddball_indicators = set()
+        discontinuity_errors = set()
         for indicator in indicators:
+            prior_end = None
             for pt in periodic_targets.filter(indicator__id=indicator.id):
                 if not pt.start_date or not pt.end_date:
                     oddball_indicators.add(indicator)
                     continue
-
                 changed = False
 
                 indicator = pt.indicator
@@ -104,6 +105,13 @@ class Command(BaseCommand):
                         'new_end_date': pt.end_date,
                     })
 
+                    # Check for periods that aren't perfectly consecutive
+                    if prior_end and prior_end + timedelta(days=1) != pt.start_date:
+                        discontinuity_errors.add('{} {}'.format(
+                            indicator.program.name.encode('utf-8'), indicator.name.encode('utf-8')
+                        ))
+                    prior_end = pt.end_date
+
                     if options['execute']:
                         pt.save()
 
@@ -128,6 +136,12 @@ class Command(BaseCommand):
                                                                        pt_log_obj['new_end_date'])
 
         print '\nTotal affected programs count:', len(affected_program_ids)
+
+        print '\n\nDiscontinuous periods found:'
+        if len(discontinuity_errors) > 0:
+            print '\n'.join(discontinuity_errors)
+        else:
+            print 'None'
 
         print '\n\noddball indicators\n'
 
