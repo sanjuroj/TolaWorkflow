@@ -85,6 +85,13 @@ const ResultChangeset = ({data, compareAgainst}) => {
     </div>
 }
 
+const ProgramDatesChangeset = ({data, compareAgainst}) => {
+    return <div>
+        <ChangesetRow data={data} compareAgainst={compareAgainst} field="start_date" name="Start Date" />
+        <ChangesetRow data={data} compareAgainst={compareAgainst} field="end_date" name="End Date" />
+    </div>
+}
+
 const IndicatorChangeset = ({data, compareAgainst}) => {
     const previous_entry_targets_table = (data)?hash_targets(data.targets):{}
     const new_entry_targets_table = (compareAgainst)?hash_targets(compareAgainst.targets):{}
@@ -148,6 +155,8 @@ class ChangesetEntry extends React.Component {
             case 'result_deleted':
                 return <ResultChangeset data={this.props.data} compareAgainst={this.props.compareAgainst} />
                 break;
+            case 'program_dates_changed':
+                return <ProgramDatesChangeset data={this.props.data} compareAgainst={this.props.compareAgainst} />
             case 'rationale':
                 return <div>{this.props.data}</div>
                 break;
