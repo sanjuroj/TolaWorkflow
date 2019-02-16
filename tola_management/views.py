@@ -214,6 +214,7 @@ class UserAdminReportSerializer(Serializer):
     user_programs = IntegerField(required=False)
     is_active = BooleanField()
     is_admin = BooleanField(required=False)
+    is_super = BooleanField(required=False)
 
     class Meta:
         fields = (
@@ -224,6 +225,7 @@ class UserAdminReportSerializer(Serializer):
             'user_programs',
             'is_active',
             'is_admin',
+            'is_super,'
             'title',
             'phone_number',
             'mode_of_address',
@@ -404,6 +406,7 @@ class UserAdminViewSet(viewsets.ModelViewSet):
                 wtu.title,
                 au.is_active AS is_active,
                 au.is_staff AS is_admin,
+                au.is_superuser AS is_super,
                 au.email AS email,
                 wtu.name,
                 wo.name AS organization_name,

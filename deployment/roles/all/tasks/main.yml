@@ -160,7 +160,8 @@
     state: present
 
 - name: Install package.json packages
-  remote_user: "{{app_user}}"
+  become: yes
+  become_user: "{{app_user}}"
   npm:
     path: "{{app_dir}}"
   tags:

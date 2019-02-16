@@ -40,6 +40,22 @@
     justify-content: space-around;
 }
 
+.changeset {
+    .changeset-entry {
+        height: 150px;
+        overflow: hidden;
+
+        &.expanded {
+            height: auto;
+            overflow: visible;
+        }
+    }
+
+    a {
+        cursor: pointer;
+    }
+}
+
 /* Safari */
 @-webkit-keyframes spin {
     0% { -webkit-transform: rotate(0deg); }
