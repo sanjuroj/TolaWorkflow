@@ -1,11 +1,9 @@
 import { observable, computed, action, runInAction } from "mobx";
 
 
-export class ProgramStore {
+export class CountryStore {
 
     //filter options
-    @observable countries_listing = []
-    @observable countries = []
     @observable organizations = {}
     @observable users = []
     @observable sectors = []
@@ -18,10 +16,10 @@ export class ProgramStore {
         programs: [],
     }
 
-    @observable allPrograms = []
-    @observable programs = []
-    @observable program_count = 0
-    @observable new_program = null
+    @observable allCountries = []
+    @observable countries = []
+    @observable country_count = 0
+    @observable new_country = null
     @observable fetching_main_listing = false
     @observable current_page = 0
     @observable total_pages = null
@@ -45,7 +43,7 @@ export class ProgramStore {
         this
         this.api = api
         Object.assign(this, initialData)
-        this.fetchPrograms()
+        this.fetchCountries()
     }
 
     marshalFilters(filters) {
@@ -60,13 +58,13 @@ export class ProgramStore {
     }
 
     @action
-    fetchPrograms() {
+    fetchCountries() {
         this.fetching_main_listing = true
-        this.api.fetchPrograms(this.current_page + 1, this.marshalFilters(this.filters)).then(results => {
+        this.api.fetchCountries(this.current_page + 1, this.marshalFilters(this.filters)).then(results => {
             runInAction(() => {
                 this.fetching_main_listing = false
-                this.programs = results.results
-                this.program_count = results.total_results
+                this.countries = results.results
+                this.country_count = results.total_results
                 this.total_pages = results.total_pages
                 this.next_page =results.next_page
                 this.previous_page = results.previous_page
@@ -83,7 +81,7 @@ export class ProgramStore {
         this.current_page = page.selected
         this.bulk_targets = new Map()
         this.bulk_targets_all = false;
-        this.fetchPrograms()
+        this.fetchCountries()
     }
 
     @action
@@ -106,7 +104,7 @@ export class ProgramStore {
     @action
     toggleEditingTarget(id) {
         if(this.editing_target == 'new') {
-            this.programs.shift()
+            this.countries.shift()
         }
 
         if(this.editing_target == id) {
@@ -114,17 +112,19 @@ export class ProgramStore {
         } else {
             this.editing_target = id
             this.fetching_editing_history = true
-            this.api.fetchProgramHistory(id).then(resp => {
+            /*
+            this.api.fetchCountryHistory(id).then(resp => {
                 runInAction(() => {
                     this.fetching_editing_history = false
                     this.editing_history = resp.data
                 })
             })
+            */
         }
     }
 
-    updateLocalPrograms(updated) {
-        this.programs = this.programs.reduce((acc, current) => {
+    updateLocalList(updated) {
+        this.countries = this.countries.reduce((acc, current) => {
             if (current.id == updated.id) {
                 acc.push(updated)
             } else {
@@ -145,33 +145,29 @@ export class ProgramStore {
     @action
     createProgram() {
         if(this.editing_target == 'new') {
-            this.programs.shift()
+            this.countries.shift()
         }
 
-        let new_program_data = {
+        let new_country_data = {
             id: "new",
-            name: "",
-            gaitid: "",
-            fundcode: "",
-            funding_status: "",
+            country: "",
             description: "",
-            country: [],
-            sector: [],
+            code: "",
         }
-        this.programs.unshift(new_program_data)
+        this.countries.unshift(new_country_data)
         this.editing_target = 'new'
     }
 
     @action
-    saveNewProgram(program_data) {
-        program_data.id = null
+    saveNewCountry(country_data) {
+        country_data.id = null
         this.saving = true
-        this.api.createProgram(program_data).then(response => {
+        this.api.createCountry(country_data).then(response => {
             runInAction(()=> {
                 this.saving = false
                 this.editing_target = false
-                this.programs.shift()
-                this.programs.unshift(response.data)
+                this.countries.shift()
+                this.countries.unshift(response.data)
             })
         }).catch(error => {
             runInAction(()=> {
@@ -182,13 +178,13 @@ export class ProgramStore {
         })
     }
 
-    @action updateProgram(id, program_data) {
+    @action updateCountry(id, country_data) {
         this.saving = true
-        this.api.updateProgram(id, program_data).then(response => {
+        this.api.updateCountry(id, country_data).then(response => {
             runInAction(() => {
                 this.saving = false
                 this.editing_target = false
-                this.updateLocalPrograms(response.data)
+                this.updateLocalList(response.data)
                 this.onSaveSuccessHandler()
             })
         }).catch((errors) => {
@@ -198,51 +194,6 @@ export class ProgramStore {
                 this.onSaveErrorHandler()
             })
         })
-    }
-
-    @action
-    toggleBulkTarget(target_id) {
-        this.bulk_targets.set(target_id, !this.bulk_targets.get(target_id))
-    }
-
-    @action
-    toggleBulkTargetsAll() {
-        this.bulk_targets_all = !this.bulk_targets_all
-        this.bulk_targets = new Map(this.programs.map(program => [program.id, this.bulk_targets_all]))
-    }
-
-    postBulkUpdateLocalPrograms(updatedPrograms) {
-        let updatedProgramsById = new Map(updatedPrograms.map(program => [program.id, program]))
-        this.programs = this.programs.reduce((acc, current) => {
-            let updated = updatedProgramsById.get(current.id)
-            if (updated) {
-                acc.push(Object.assign(current, updated))
-            } else {
-                acc.push(current)
-            }
-            return acc
-        }, [])
-    }
-
-    @action
-    bulkUpdateProgramStatus(new_status) {
-        let ids = Array.from(this.bulk_targets.entries()).filter(([id, targeted]) => targeted).map(([id, targeted]) => id)
-        if (ids.length && new_status) {
-            this.applying_bulk_updates = true
-            this.api.updateProgramFundingStatusBulk(ids, new_status).then(response => {
-                let updatedPrograms = response.data
-                runInAction(() => {
-                    this.postBulkUpdateLocalPrograms(updatedPrograms)
-                    this.applying_bulk_updates = false
-                    this.onSaveSuccessHandler()
-                })
-            }).catch(error => {
-                runInAction(() => {
-                    this.applying_bulk_updates = false
-                    this.onSaveErrorHandler()
-                })
-            })
-        }
     }
 
 }

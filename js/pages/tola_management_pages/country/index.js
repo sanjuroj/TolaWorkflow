@@ -1,0 +1,26 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {CountryStore} from './models';
+import {IndexView} from './views';
+import api from './api';
+
+/*
+ * Model/Store setup
+ */
+
+const initialData = {
+    allCountries: jsContext.countries,
+    organizations: jsContext.organizations,
+    allPrograms: jsContext.programs,
+}
+
+const store = new CountryStore(
+    api,
+    initialData,
+);
+
+
+ReactDOM.render(
+    <IndexView store={store} />,
+    document.querySelector('#app_root')
+);

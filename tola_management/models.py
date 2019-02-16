@@ -3,13 +3,14 @@ from __future__ import unicode_literals
 
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core import serializers
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from workflow.models import (
     TolaUser,
     Organization,
-    Program
+    Program,
 )
 
 from indicators.models import (
@@ -144,3 +145,46 @@ class ProgramAuditLog(models.Model):
                 new_entry=new_entry_json
             )
             new_program_log_entry.save()
+
+
+class ProgramAdminAuditLog(models.Model):
+    date = models.DateTimeField(_('Modification Date'), auto_now_add=True)
+    admin_user = models.ForeignKey(TolaUser, related_name="+")
+    program = models.ForeignKey(Program, related_name="+")
+    change_type = models.CharField(_('Modification Type'), max_length=255)
+    previous_entry = models.TextField()
+    new_entry = models.TextField()
+
+    logged_fields = (
+        'gaitid',
+        'name',
+        'funding_status',
+        'cost_center',
+        'description',
+        'sector',
+        'country',
+    )
+
+    @classmethod
+    def created(cls, program, created_by, entry):
+        new_entry = json.dumps(entry)
+        entry = cls(
+            admin_user=created_by,
+            program=program,
+            change_type="program_created",
+            new_entry=new_entry,
+        )
+        entry.save()
+
+    @classmethod
+    def updated(cls, program, changed_by, old, new):
+        old = json.dumps(old)
+        new = json.dumps(new)
+        entry = cls(
+            admin_user=changed_by,
+            program=program,
+            change_type="program_updated",
+            previous_entry=old,
+            new_entry=new,
+        )
+        entry.save()

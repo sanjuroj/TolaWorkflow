@@ -108,6 +108,7 @@
     virtualenv: "{{virtualenv}}"
   tags:
     - virtualenv
+    - deploy
 
 - name: force latest google-api-python-client
   pip:
@@ -163,3 +164,14 @@
   become_user: "{{app_user}}"
   npm:
     path: "{{app_dir}}"
+  tags:
+   - deploy
+
+- name: Build frontend assets
+  become: yes
+  become_user: "{{app_user}}"
+  shell: "npm run build:prod"
+  args:
+    chdir: "{{app_dir}}"
+  tags:
+   - deploy
