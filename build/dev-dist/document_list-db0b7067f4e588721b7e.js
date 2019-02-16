@@ -233,7 +233,7 @@ var DATE_MED = {
 function dateFromISOString(isoDateStr) {
   return new Date(isoDateStr); // modern browsers can just parse it
 } // "2017-01-01" -> Date with local timezone (not UTC)
-// also lives in app.js (localDateFromISOStr)
+// also lives in base.js (localDateFromISOStr)
 
 function localDateFromISOString(dateStr) {
   var dateInts = dateStr.split('-').map(function (x) {
@@ -824,4 +824,4 @@ var globalEventBus = nanobus__WEBPACK_IMPORTED_MODULE_0___default()();
 /***/ })
 
 },[["Wr7D","runtime","vendors"]]]);
-//# sourceMappingURL=document_list-6715dc82009200d5040a.js.map
+//# sourceMappingURL=document_list-db0b7067f4e588721b7e.js.map
