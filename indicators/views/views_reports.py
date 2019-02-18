@@ -10,7 +10,7 @@ from django.utils import formats, timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
-from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max
+from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max, Value, IntegerField
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, FormView
 from django.utils.translation import ugettext_lazy as _
@@ -256,7 +256,17 @@ class IPTT_Mixin(object):
                         )
                     )
                 i += 1
-
+                annotation_result_count = Sum(
+                    Case(
+                        When(
+                            Q(result__date_collected__gte=start_date) &
+                            Q(result__date_collected__lte=end_date),
+                            then=Value(1)
+                        ),
+                        default=Value(0),
+                        output_field=IntegerField()
+                    )
+                )
                 annotation_last = Max(
                     Case(
                         When(
@@ -292,6 +302,7 @@ class IPTT_Mixin(object):
                 #
                 self.annotations[u"{}_sum".format(sequence_count)] = annotation_sum
                 # self.annotations[u"{}_avg".format(k)] = annotation_avg
+                self.annotations[u"{}_count".format(sequence_count)] = annotation_result_count
                 self.annotations[u"{}_last".format(sequence_count)] = annotation_last
         return self.annotations
 
@@ -497,8 +508,11 @@ class IPTT_Mixin(object):
                         if ind['is_cumulative'] is True:
                             try:
                                 actual_val = ind[u"{}_rsum".format(sequence_count)]
+                                result_count = ind.get(u"{}_count".format(sequence_count), None)
+                                if result_count == 0:
+                                    actual_val = None
                             except KeyError:
-                                actual_val = u''
+                                actual_val = None
                         else:  # if it is not set to cumulative then default to non-cumulative even it is it not set
                             actual_val = ind[u"{}_sum".format(sequence_count)]
                     elif ind['unit_of_measure_type'] == Indicator.PERCENTAGE:
