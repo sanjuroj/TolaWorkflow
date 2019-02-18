@@ -409,7 +409,9 @@
 
         create_nondestructive_changeset_notice("", (rationale) => {
             reporting_period_submitting = true;
-            $.post($(this).attr('action'), $(this).serialize(), function (data) {
+            var data = $(this).serialize()
+            data += '&rationale='+rationale
+            $.post($(this).attr('action'), data, function (data) {
 
                 $('#id_reporting_period_modal').modal("hide")
                 // var program_id = data.program_id;

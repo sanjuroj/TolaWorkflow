@@ -9,7 +9,7 @@ export const fetchProgramAuditLogWithFilter = (program_id, page) => api.get(`/to
     return {
         logs: data.results,
         total_pages: total_pages,
-        total_organizations: total_results_count,
+        total_entries: total_results_count,
         next_page: data.next,
         prev_page: data.previous
     }

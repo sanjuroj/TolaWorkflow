@@ -932,7 +932,9 @@ class ResultUpdate(UpdateView):
                 count = 0
             form.instance.achieved = count
         # save the form then update manytomany relationships
-        form.save()
+        old_values = getResult.logged_fields
+        new = form.save()
+        ProgramAuditLog.log_result_updated(self.request.user, getResult.indicator, old_values, new.logged_fields, form.cleaned_data.get('rationale'))
 
         # Insert or update disagg values
         for label in getDisaggregationLabel:
@@ -961,6 +963,25 @@ class ResultDelete(DeleteView):
     def dispatch(self, request, *args, **kwargs):
         return super(ResultDelete, self).dispatch(
             request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        if request.is_ajax():
+            if not request.POST.get('rationale'):
+                return JsonResponse(
+                    {"status": "failed", "msg": "Rationale is required"},
+                    status=401
+                )
+
+            result = self.get_object()
+            result_values = result.logged_fields
+            result.delete()
+            ProgramAuditLog.log_result_deleted(self.request.user, result.indicator, result_values, self.request.POST['rationale'])
+
+            return JsonResponse(
+                {"status": "success", "msg": "Result Deleted"}
+            )
+        else:
+            return super(ResultDelete, self).delete(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse_lazy('program_page',

@@ -2487,7 +2487,7 @@ def reportingperiod_update(request, pk):
 
     program.save()
 
-    program.log_program_dates_updated(request.user, program, old_dates, program.dates_for_logging, request.POST['rationale'])
+    ProgramAuditLog.log_program_dates_updated(request.user, program, old_dates, program.dates_for_logging, request.POST['rationale'])
 
     return JsonResponse({
         'msg': 'success',

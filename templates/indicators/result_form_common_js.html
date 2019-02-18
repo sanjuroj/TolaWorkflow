@@ -45,6 +45,22 @@
         });
     });
 
+    $('#indicator_collecteddata_div').on('click', '#delete_result_button', function(e) {
+        e.preventDefault();
+        var url = $(this).attr('href')
+        create_destructive_changeset_notice("", (rationale) => {
+            $.post(url, {rationale: rationale},
+                   function(response, status, jqXHR) { // success callback
+                       location.reload()
+                   })
+             .fail(function(error){
+                 createAlert("danger", "{% trans 'Could not save form.'|escapejs %}"  + error, true, "#modalmessages");
+             });
+        }, () => {
+
+        });
+    })
+
 
     $("#indicator_collecteddata_div").on("change", "#id_date_collected", function(e){
         validatePeriodicTarget(onlyPeriodic = true);

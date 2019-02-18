@@ -107,15 +107,15 @@ class ProgramAuditLog(models.Model):
             indicator=indicator,
             change_type="result_deleted",
             rationale=rationale,
-            previous_entry=json.dumps(deleted_indicator_values, cls=DjangoJSONEncoder),
+            previous_entry=json.dumps(deleted_result_values, cls=DjangoJSONEncoder),
             new_entry=None,
         )
         new_program_log_entry.save()
 
     @staticmethod
-    def log_result_updated(user, indicator, old_result_values, new_result_vlaues, rationale):
-        previous_entry_json = json.dumps(old_indicator_values, cls=DjangoJSONEncoder)
-        new_entry_json = json.dumps(new_indicator_values, cls=DjangoJSONEncoder)
+    def log_result_updated(user, indicator, old_result_values, new_result_values, rationale):
+        previous_entry_json = json.dumps(old_result_values, cls=DjangoJSONEncoder)
+        new_entry_json = json.dumps(new_result_values, cls=DjangoJSONEncoder)
         if previous_entry_json != new_entry_json:
             new_program_log_entry = ProgramAuditLog(
                 program=indicator.program,
@@ -135,7 +135,7 @@ class ProgramAuditLog(models.Model):
         new_entry_json = json.dumps(new_dates, cls=DjangoJSONEncoder)
         if previous_entry_json != new_entry_json:
             new_program_log_entry = ProgramAuditLog(
-                program=indicator.program,
+                program=program,
                 user=user.tola_user,
                 organization=user.tola_user.organization,
                 indicator=None,

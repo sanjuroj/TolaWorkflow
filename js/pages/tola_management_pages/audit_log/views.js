@@ -8,19 +8,17 @@ import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
 
 import LoadingSpinner from 'components/loading-spinner'
 
-const map_pretty_change_type = change_type => {
-    switch(change_type){
-    case 'indicator_changed':
-        return 'Indicator changed'
-        break;
-    case 'indicator_created':
-        return 'Indicator created'
-        break;
-    case 'indicator_deleted':
-        return 'Indicator deleted'
-        break;
-    }
+const pretty_change_type = {
+    indicator_changed: 'Indicator changed',
+    indicator_created: 'Indicator created',
+    indicator_deleted: 'Indicator deleted',
+    result_changed: 'Result changed',
+    result_created: 'Result created',
+    result_deleted: 'Result deleted',
+    program_dates_changed: 'Program Dates Changed'
 }
+
+const map_pretty_change_type = change_type => pretty_change_type[change_type]
 
 const is_field_changed = (p, n, field) => {
     if(!p && n) return true
@@ -220,7 +218,16 @@ export const IndexView = observer(
                         />
                     </div>
                 </LoadingSpinner>
-                <div className="list-metadata row">
+                <div className="list-metadata">
+                    <div id="users-count">{store.entries_count?`${store.entries_count} entries`:`--`}</div>
+                    <div id ="pagination-controls">
+                        {store.total_pages &&
+                         <Pagination
+                             pageCount={store.total_pages}
+                             initialPage={store.current_page}
+                             onPageChange={page => store.changePage(page)} />
+                        }
+                    </div>
                 </div>
             </div>
         </div>
