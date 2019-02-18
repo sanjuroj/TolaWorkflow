@@ -88,6 +88,9 @@
             // initial state of view button
             setViewButtonDisabledState();
 
+            // possibly show evidence warnings on results form modal open
+            validateEvidence();
+
             // make tooltips work
             $('#result_update_form [data-toggle="popover"]').popover({html: true}).click(function(e) {e.preventDefault();});
         });
