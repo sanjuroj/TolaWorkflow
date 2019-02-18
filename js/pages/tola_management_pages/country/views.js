@@ -117,7 +117,7 @@ export const IndexView = observer(
                                     </Col>
                                     <Col size="2">{data.country || "---"}</Col>
                                     <Col>{data.organizations ? organizationColumn(data.organizations) : '---'}</Col>
-                                    <Col>{data.programCount ? <a href="">{data.programCount} Programs</a> : "---"}</Col>
+                                    <Col>{data.programCount ? <a href={`/tola_management/program/?countries[]=${data.id}`}>{data.programCount} Programs</a> : "---"}</Col>
                                     <Col>{data.users ? <a href="">{data.users} Users</a> : '---'  }</Col>
                                 </Row>
                             }

@@ -129,6 +129,8 @@ def get_organization_page_context(request):
     }
 
 def get_program_page_context(request):
+    country_filter = request.GET.getlist('countries[]')
+    organization_filter = request.GET.getlist('organizations[]')
     countries = {
         country.id : {
             'id': country.id,
@@ -161,8 +163,10 @@ def get_program_page_context(request):
     return {
         'countries': countries,
         'organizations': organizations,
-        'programs': programs,
+        'allPrograms': programs,
         'sectors': sectors,
+        'country_filter': country_filter,
+        'organization_filter': organization_filter,
     }
 
 def get_country_page_context(request):
@@ -186,6 +190,7 @@ def get_country_page_context(request):
     ]
 
     return {
+
         'countries': countries,
         'organizations': organizations,
         'programs': programs,
