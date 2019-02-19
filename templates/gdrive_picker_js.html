@@ -55,23 +55,32 @@
         }
     }
 
-    // Create and render a Picker object for picking user Photos.
+    // Create and render a Picker object
     function createPicker() {
         if (pickerApiLoaded && oauthToken) {
             let view = new google.picker.DocsView(google.picker.ViewId.DOCS);
             let teamView = new google.picker.DocsView(google.picker.ViewId.DOCS);
+            let ownedByMeView = new google.picker.DocsView(google.picker.ViewId.DOCS);
+
             view.setIncludeFolders(true);
-            // view.setOwnedByMe(true);
             view.setSelectFolderEnabled(true);
             view.setMode("DocsViewMode.LIST");
+
             teamView.setEnableTeamDrives(true);
             teamView.setIncludeFolders(true);
             teamView.setSelectFolderEnabled(true);
             teamView.setMode("DocsViewMode.LIST");
+
+            ownedByMeView.setIncludeFolders(true);
+            ownedByMeView.setOwnedByMe(true);
+            ownedByMeView.setSelectFolderEnabled(true);
+            ownedByMeView.setMode("DocsViewMode.LIST");
+
             picker = new google.picker.PickerBuilder()
             // .enableFeature(google.picker.Feature.NAV_HIDDEN)
                 .enableFeature(google.picker.Feature.SUPPORT_TEAM_DRIVES)
                 .addView(view)
+                .addView(ownedByMeView)
                 .addView(teamView)
                 .setOAuthToken(oauthToken)
                 // .setDeveloperKey(developerKey)
