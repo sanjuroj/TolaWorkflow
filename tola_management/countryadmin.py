@@ -57,10 +57,14 @@ class CountryAdminSerializer(serializers.ModelSerializer):
 
         organizations = set([tu.organization_id for tu in country_users if tu.organization_id])
 
+        # users directly associated with the country (base country)
+        user_count = TolaUser.objects.filter(country=country).count()
+
         program_ids = [program.id for program in Program.objects.filter(country__pk=country.id)]
         program_count = len(program_ids)
         ret['programCount'] = program_count
-        ret['users'] = len(country_users)
+        #ret['users_count'] = len(country_users)
+        ret['user_count'] = user_count
         ret['organizations'] = organizations
         return ret
 

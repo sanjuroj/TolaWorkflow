@@ -153,6 +153,7 @@ export class CountryStore {
             country: "",
             description: "",
             code: "",
+            organizations: [],
         }
         this.countries.unshift(new_country_data)
         this.editing_target = 'new'

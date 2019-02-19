@@ -47,14 +47,6 @@ const ProgramFilter = observer(({store, filterOptions}) => {
 
 export const IndexView = observer(
     ({store}) => {
-        const organizationColumn = (organizations) => {
-            if (organizations.length == 1) {
-                return store.organizations[organizations[0]].name
-            } if (organizations.length) {
-                return `${organizations.length} Organizations`
-            }
-            return '---'
-        }
         const countryFilterOptions = store.allCountries.map(country => {return {value: country.id, label: country.country}})
         const organizationFilterOptions = Object.entries(store.organizations).map(([id, org]) => ({value: org.id, label: org.name}))
         const programFilterOptions = Object.entries(store.allPrograms).map(([id, program]) => ({value: program.id, label: program.name}))
@@ -116,9 +108,9 @@ export const IndexView = observer(
                                         </div>
                                     </Col>
                                     <Col size="2">{data.country || "---"}</Col>
-                                    <Col>{data.organizations ? organizationColumn(data.organizations) : '---'}</Col>
+                                    <Col>{data.organizations.length ? <a href={`/tola_management/organization/?countries[]=${data.id}`}>{data.organizations.length} Organizations</a>: '---'}</Col>
                                     <Col>{data.programCount ? <a href={`/tola_management/program/?countries[]=${data.id}`}>{data.programCount} Programs</a> : "---"}</Col>
-                                    <Col>{data.users ? <a href="">{data.users} Users</a> : '---'  }</Col>
+                                    <Col>{data.user_count ? <a href={`/tola_management/user/?base_countries[]=${data.id}`}>{data.user_count} Users</a> : '---'  }</Col>
                                 </Row>
                             }
                         />
