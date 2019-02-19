@@ -68,7 +68,7 @@
             {% endif %}
             <tr class="results__row--main{% if pt.has_ended and indicator.is_target_frequency_time_aware and not program.has_ended %} pt-ended{% endif %}">
                 {% ifchanged pt %}
-                <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="">
+                <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="results__row__target-period">
                     {# note ".period" is deprecated, and .period_name should be used instead #}
                     <div><strong class="text-uppercase">{{ pt.period_name }}</strong></div>
                     <div class="text-nowrap">
