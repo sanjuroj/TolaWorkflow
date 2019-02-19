@@ -146,13 +146,13 @@ def import_indicator(service=1):
     return response.json()
 
 
-def indicator_create(request, id=0):
+def indicator_create(request, program=0):
     """
     Step one in Indicator creation.
     Passed on to IndicatorCreate to do the creation [or  not]
     """
     get_indicator_types = IndicatorType.objects.all()
-    program = Program.objects.get(pk=id)
+    program = Program.objects.get(pk=program)
     countries = ', '.join(program.country.all().order_by('country').values_list('country', flat=True))
     get_services = ExternalService.objects.all()
 
