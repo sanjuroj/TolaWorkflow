@@ -1,10 +1,14 @@
 // General marker style
+
+$primary-marker-color: $secondary;
+$indicator-marker-color: $primary;
+
 // TODO: use global border-radii
 .map-marker {
     width: 20px;
     height: 20px;
     border-radius: 50% 50% 50% 0;
-    background: rgb(232, 148, 36);
+    background: $primary-marker-color;
     position: absolute;
     transform: rotate(-45deg);
     left: 50%;
@@ -15,7 +19,7 @@
         width: 20px;
         height: 20px;
         border-radius: 50% 50% 50% 0;
-        background: #00cae9;
+        background: $indicator-marker-color;
         position: absolute;
         transform: rotate(-45deg);
         left: 50%;
