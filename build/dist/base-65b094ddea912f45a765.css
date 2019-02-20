@@ -8042,6 +8042,9 @@ span[data-toggle="popover"]:hover {
 .results__row--main.pt-ended td:last-child {
   border-right: 2px solid #b8babd; }
 
+.results__row__target-period {
+  min-width: 240px; }
+
 .results__row--subtotal td:first-child {
   border-left: 2px solid #b8babd; }
 
@@ -8961,5 +8964,3 @@ select.listoption_filters {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-da60840762e556035671.css.map*/
