@@ -9,12 +9,12 @@ import {DocumentListStore, DocumentListUIStore} from './models';
 
 // console.log(jsContext);
 
-const {documents, programs, indicatorToDocumentsMap, allowProjectsAccess} = jsContext;
+const {documents, programs, allowProjectsAccess} = jsContext;
 
 /*
  * Model/Store setup
  */
-const rootStore = new DocumentListStore(documents, programs, indicatorToDocumentsMap, allowProjectsAccess);
+const rootStore = new DocumentListStore(documents, programs, allowProjectsAccess);
 const uiStore = new DocumentListUIStore();
 
 
@@ -23,7 +23,7 @@ const uiStore = new DocumentListUIStore();
  */
 
 const routes = [
-    {name: 'documents', path: '/?program_id&project_id&indicator_id&document_id'},
+    {name: 'documents', path: '/?program_id&project_id&document_id'},
 ];
 
 // When the URL changes due to navigation, back button press, etc
@@ -31,17 +31,10 @@ function onNavigation(navRoutes) {
     let {previousRoute, route} = navRoutes;
     let params = route.params;
 
-    if (params.indicator_id) {
-        uiStore.setSelectedIndicatorId(parseInt(params.indicator_id));
-    } else {
-        uiStore.clearSelectedIndicatorId();
-    }
-
     if (params.program_id) {
         uiStore.setSelectedProgramId(parseInt(params.program_id));
     } else {
         uiStore.clearSelectedProgramId();
-        uiStore.clearSelectedIndicatorId();
     }
 
     if (params.document_id) {
@@ -79,28 +72,13 @@ eventBus.on('program-id-filter-selected', (programId) => {
     }
 });
 
-eventBus.on('indicator-id-filter-selected', (indicatorId) => {
-    const programId = uiStore.selectedProgramId;
-
-    if (indicatorId) {
-        router.navigate('documents', {program_id: programId, indicator_id: indicatorId});
-    } else {
-        router.navigate('documents', {program_id: programId});
-    }
-});
-
 eventBus.on('document-id-filter-selected', (documentId) => {
     const programId = uiStore.selectedProgramId;
-    const indicatorId = uiStore.selectedIndicatorId;
 
     let qs = {};
 
     if (programId) {
         qs.program_id = programId;
-    }
-
-    if (indicatorId) {
-        qs.indicator_id = indicatorId;
     }
 
     if (documentId) {
