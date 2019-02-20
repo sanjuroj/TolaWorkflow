@@ -3,17 +3,17 @@
 
 import bisect
 import csv
-from collections import OrderedDict
-from datetime import datetime, date
+from datetime import date
 from dateutil import rrule, parser
-from django.utils import formats, timezone
-from dateutil.relativedelta import relativedelta
-from datetime import datetime
-from django.core.urlresolvers import reverse_lazy
-from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max, Value, IntegerField
+from django.utils import timezone
+from django.core.urlresolvers import reverse_lazy, reverse
+from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max, Value, IntegerField, Count, Prefetch
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, FormView
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import (
+    ugettext,
+    ugettext_lazy as _
+)
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.contrib import messages
 from openpyxl import Workbook
@@ -22,11 +22,11 @@ from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.worksheet.cell_range import CellRange
 
 from tola.util import formatFloat
-from tola.l10n_utils import l10n_date_year_month, l10n_date_medium, l10n_date_long, l10n_number
+from tola.l10n_utils import l10n_date_medium, l10n_date_long, l10n_number
 from workflow.models import Program
-from ..models import Indicator, Result, Level, PeriodicTarget, PinnedReport
-from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm, PinnedReportForm
-from ..templatetags.mytags import symbolize_change, symbolize_measuretype
+from indicators.models import Indicator, Result, Level, PeriodicTarget, PinnedReport
+from indicators.forms import IPTTReportQuickstartForm, IPTTReportFilterForm, PinnedReportForm
+from indicators.templatetags.mytags import symbolize_change, symbolize_measuretype
 from indicators.queries import IPTTIndicator
 
 
@@ -208,8 +208,6 @@ class IPTT_Mixin(object):
             for sequence_count, date_range in enumerate(timeperiods):
                 start_date = date_range['start']
                 end_date = date_range['end']
-                #start_date = datetime.strftime(v[0], '%Y-%m-%d') # TODO: localize this date
-                #end_date = datetime.strftime(v[1], '%Y-%m-%d') # TODO: localize this date
 
                 last_data_record = Result.objects.filter(
                     indicator=OuterRef('pk'),
@@ -698,7 +696,7 @@ class IPTT_Mixin(object):
         context['report_end_date_actual'] = report_end_date
         context['report_start_date'] = report_start_date
         context['report_end_date'] = report_end_date
-        context['report_date_ranges'] = periods_date_ranges  # collections.OrderedDict
+        context['report_date_ranges'] = periods_date_ranges
         context['indicators'] = indicators  # iterable of dict()
         context['program'] = self.program
         context['reporttype'] = reporttype
@@ -1146,3 +1144,104 @@ def delete_pinned_report(request):
     pinned_report_id = request.POST.get('pinned_report_id')
     PinnedReport.objects.filter(id=pinned_report_id, tola_user_id=request.user.tola_user.id).delete()
     return HttpResponse()
+
+from silk.profiling.profiler import silk_profile
+
+class IPTTQuickstart(TemplateView):
+    template_name = 'indicators/iptt_quickstart.html'
+
+    def get_programs(self, request, frequencies_used):
+        programs = []
+        countries = request.user.tola_user.countries.all()
+        indicator_qs = Indicator.objects.select_related('program').filter(
+            program__funding_status="Funded", program__country__in=countries
+        ).order_by('program__id', 'target_frequency').values('program__id', 'program__name', 'target_frequency').distinct()
+        program = {'id': None}
+        for c, element in enumerate(indicator_qs):
+            if element['program__id'] != program['id']:
+                if c != 0:
+                    programs.append(program)
+                program = {
+                    'name': element['program__name'],
+                    'id': element['program__id'],
+                    'tva_url': reverse('iptt_report', kwargs={'program_id': element['program__id'],
+                                                              'reporttype': 'targetperiods'}),
+                    'timeperiods_url': reverse('iptt_report', kwargs={'program_id': element['program__id'],
+                                                                      'reporttype': 'timeperiods'}),
+                    'frequencies': []
+                }
+            if element['target_frequency'] in frequencies_used and \
+                element['target_frequency'] not in program['frequencies']:
+                program['frequencies'].append(element['target_frequency'])
+        return programs
+
+
+    def get_js_context(self, request):
+        frequencies = {}
+        for frequency, label in Indicator.TARGET_FREQUENCIES:
+            if frequency != Indicator.EVENT:
+                frequencies[frequency] = unicode(label)
+        programs = self.get_programs(request, frequencies)
+        return {
+            'programs': programs,
+            'labels': {
+                'frequencies': frequencies,
+                'mostRecentCount': ugettext('enter a number'),
+                'showAll': ugettext('Show all'),
+                'mostRecent': ugettext('Most recent'),
+                'submit': ugettext('View Report')
+            }
+        }
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+        context['js_context'] = self.get_js_context(request)
+        return self.render_to_response(context)
+
+class IPTTReport(TemplateView):
+    template_name = 'indicators/iptt_report.html'
+    
+    def get_js_context(self, request):
+        return {
+            'programs': [
+                {
+                    'name': 'Test Program 1'
+                },
+            ]
+        }
+
+    def get_params(self, request):
+        params = {}
+        frequency_params = [p for p in ['frequency', 'timeperiods', 'targetperiods'] if p in request.GET]
+        frequency = None
+        if frequency_params:
+            try:
+                frequency = int(request.GET.get(frequency_params[0]))
+            except ValueError:
+                frequency = None
+        params['period'] = frequency if frequency is not None else Indicator.ANNUAL
+        recent_params = [p for p in ['recents', 'numrecentperiods'] if p in request.GET]
+        recent_periods = None
+        if recent_params:
+            try:
+                recent_periods = int(request.GET.get(recent_params[0]))
+            except ValueError:
+                recent_periods = None
+        params['recent_periods'] = recent_periods
+        show_all = None
+        if 'show_all' in request.GET and request.GET.get('show_all') == '1':
+            show_all = True
+        else:
+            print "show all: {0}".format(request.GET.get('show_all'))
+        if show_all is None and 'timeframe' in request.GET and request.GET.get('timeframe') == 1:
+            show_all = True
+        params['show_all'] = show_all
+        return params
+
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+        params = self.get_params(request)
+        context['params'] = params
+        context['js_context'] = self.get_js_context(request)
+        return self.render_to_response(context)

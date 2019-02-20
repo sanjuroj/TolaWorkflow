@@ -29,12 +29,14 @@ from .views.views_indicators import (
 from .views.views_reports import (
     IPTTReportQuickstartView,
     IPTT_ReportView,
+    IPTTReport,
     IPTT_ReportIndicatorsWithVariedStartDate,
     IPTT_ExcelExport,
     create_pinned_report,
     delete_pinned_report,
     IPTT_ExcelExport,
-    IPTT_CSVExport
+    IPTT_CSVExport,
+    IPTTQuickstart
 )
 
 
@@ -95,9 +97,11 @@ urlpatterns = [
         ResultReportData.as_view(),
         name='result_report_data'),
 
-    url(r'^iptt_quickstart/', IPTTReportQuickstartView.as_view(), name='iptt_quickstart'),
-
-    url(r'^iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ReportView.as_view(), name='iptt_report'),
+    #url(r'^iptt_quickstart/', IPTTReportQuickstartView.as_view(), name='iptt_quickstart'),
+    url(r'^iptt_quickstart/', IPTTQuickstart.as_view(), name='iptt_quickstart'),
+    
+    #url(r'^iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ReportView.as_view(), name='iptt_report'),
+    url(r'^iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTTReport.as_view(), name='iptt_report'),
 
     url(r'^iptt_redirect/(?P<program_id>\d+)/$', IPTT_ReportIndicatorsWithVariedStartDate.as_view(),
         name='iptt_redirect'),

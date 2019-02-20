@@ -2,12 +2,25 @@
 {% load widget_tweaks %}
 {% load i18n %}
 {% load mytags %}
+{% load render_bundle from webpack_loader %}
 {% block title %}{% trans "Indicator Performance Tracking Table" %}{% endblock %}
 {% block page_title %}{% endblock %}
 {% block bodyclasses %}page_iptt_table{% endblock %}
 {% block mainclasses %}region--full-bleed{% endblock %}
 
 {% block content %}
+<div class="sidebar_wrapper">
+      <div class="collapse width show" id="sidebar">
+        <div id="iptt-report-filter-form-component"></div>
+      </div>
+      <div class="sidebar-toggle">
+        <a href="#" data-target="#sidebar" data-toggle="collapse" title="Show/hide filters">
+          <i class="fa fa-chevron-left"></i>
+        </a>
+      </div>
+  </div>
+<div id="iptt-report-react-component"></div>
+{% comment %}
   <div class="sidebar_wrapper">
       <div class="collapse width show" id="sidebar">
         {% include 'indicators/iptt_filter_form.html' %}
@@ -224,6 +237,7 @@
       <a href="{{ program.program_page_url }}">{% trans "Visit the program page now." %}</a>
     </p>
   </script>
+  {% endcomment %}
 {% endblock content %}
 
 
@@ -231,6 +245,7 @@
   <script>
     let jsContext = {{ js_context|js }};
   </script>
+  {% render_bundle 'iptt_report' %}
 
   <script>
     // Popover set up for Pin button

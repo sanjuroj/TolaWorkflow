@@ -11,6 +11,8 @@ module.exports = {
         base: './js/base.js',
         program_page: './js/pages/program_page/index.js' ,
         document_list: './js/pages/document_list/index.js' ,
+        iptt_quickstart: './js/pages/iptt_quickstart/index.js',
+        iptt_report: './js/pages/iptt_report/index.js'
     },
 
     output: {
