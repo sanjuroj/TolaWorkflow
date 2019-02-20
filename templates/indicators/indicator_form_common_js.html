@@ -105,7 +105,12 @@
         var currentRow = $(e.target).closest("tr");
         var dataCount = parseInt(currentRow.data("collectedCount"));
         if ( dataCount != NaN && dataCount > 0) {
-            if (!confirm(`{% trans "Warning: This action cannot be undone. Removing this target means that"|escapejs %} ${dataCount} {% trans "data record/s will no longer have targets associated with them."|escapejs %} \n\n {% trans "Proceed anyway?"|escapejs %}`)) {
+            // # Translators: This is a popup warning message that warns users if there is data associated with the thing they are about to delete.
+            let message = ngettext('Warning: This action cannot be undone. Removing this target means that %s data record will no longer have targets associated with it.\n\nProceed anyway?',
+                'Warning: This action cannot be undone. Removing this target means that %s data records will no longer have targets associated with them.\n\nProceed anyway?',
+                dataCount);
+            let interpolated_message = interpolate(message, [dataCount]);
+            if (!confirm(interpolated_message)) {
                 dataCount = NaN;
                 return;
             }
