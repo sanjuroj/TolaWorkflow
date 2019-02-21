@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse_lazy
+from django.core.exceptions import PermissionDenied
 from django.db import connection
 from django.db.models import (
     Count, Min, Q, Sum, Avg, Max, DecimalField, OuterRef, Subquery
@@ -48,6 +49,17 @@ from .views_reports import IPTT_ReportView
 
 from tola_management.models import (
     ProgramAuditLog
+)
+
+from tola_management.permissions import (
+    indicator_pk_adapter,
+    periodic_target_adapter,
+    has_indicator_read_access,
+    has_indicator_write_access,
+    result_pk_adapter,
+    has_result_read_access,
+    has_result_write_access,
+    has_program_read_access
 )
 
 
@@ -146,11 +158,14 @@ def import_indicator(service=1):
     return response.json()
 
 
+@has_indicator_write_access
 def indicator_create(request, program=0):
     """
     Step one in Indicator creation.
     Passed on to IndicatorCreate to do the creation [or  not]
     """
+    if not request.has_write_access:
+        raise PermissionDenied
     get_indicator_types = IndicatorType.objects.all()
     program = Program.objects.get(pk=program)
     countries = ', '.join(program.country.all().order_by('country').values_list('country', flat=True))
@@ -241,7 +256,10 @@ class IndicatorCreate(CreateView):
         return context
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(indicator_pk_adapter(has_indicator_write_access))
     def dispatch(self, request, *args, **kwargs):
+        if not request.has_write_access:
+            raise PermissionDenied
         return super(IndicatorCreate, self).dispatch(request, *args, **kwargs)
 
     # add the request to the kwargs
@@ -267,6 +285,7 @@ class IndicatorCreate(CreateView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
+@method_decorator(periodic_target_adapter(has_indicator_write_access), name='dispatch')
 class PeriodicTargetView(View):
     """
     This view generates periodic targets or deleting them (via POST)
@@ -380,6 +399,7 @@ class IndicatorUpdate(UpdateView):
         return 'indicators/indicator_form.html'
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(indicator_pk_adapter(has_indicator_write_access))
     def dispatch(self, request, *args, **kwargs):
 
         if request.method == 'GET':
@@ -461,6 +481,9 @@ class IndicatorUpdate(UpdateView):
             context['targetsonly'] = True
         elif self.request.GET.get('targetsactive') == 'true':
             context['targetsactive'] = True
+
+        context['readonly'] = not self.request.has_write_access
+
         return context
 
     def get_initial(self):
@@ -643,6 +666,7 @@ class IndicatorDelete(DeleteView):
     form_class = IndicatorForm
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(indicator_pk_adapter(has_indicator_write_access))
     def dispatch(self, request, *args, **kwargs):
         return super(IndicatorDelete, self).dispatch(request, *args, **kwargs)
 
@@ -679,6 +703,7 @@ class IndicatorDelete(DeleteView):
                             kwargs={'program_id': self.object.program_id, 'indicator_id': 0, 'type_id': 0})
 
 
+@method_decorator(periodic_target_adapter(has_indicator_write_access), name='dispatch')
 class PeriodicTargetDeleteView(DeleteView):
     model = PeriodicTarget
 
@@ -718,7 +743,11 @@ class ResultCreate(CreateView):
         return 'indicators/result_form.html'
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(has_result_write_access)
     def dispatch(self, request, *args, **kwargs):
+        if not request.has_write_access:
+            raise PermissionDenied
+
         try:
             self.guidance = FormGuidance.objects.get(form="Result")
         except FormGuidance.DoesNotExist:
@@ -843,6 +872,7 @@ class ResultUpdate(UpdateView):
         return 'indicators/result_form.html'
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(result_pk_adapter(has_result_write_access))
     def dispatch(self, request, *args, **kwargs):
         try:
             self.guidance = FormGuidance.objects.get(form="Result")
@@ -886,6 +916,9 @@ class ResultUpdate(UpdateView):
         context.update({'id': self.kwargs['pk']})
         context.update({'indicator_id': getIndicator.indicator_id})
         context.update({'indicator': getIndicator})
+
+        context.update({'readonly': not self.request.has_write_access})
+
         return context
 
     def form_invalid(self, form):
@@ -903,6 +936,7 @@ class ResultUpdate(UpdateView):
             kwargs['tola_table'] = get_data.tola_table.id
         else:
             kwargs['tola_table'] = None
+
         return kwargs
 
     def form_valid(self, form):
@@ -960,6 +994,7 @@ class ResultDelete(DeleteView):
     model = Result
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(result_pk_adapter(has_result_write_access))
     def dispatch(self, request, *args, **kwargs):
         return super(ResultDelete, self).dispatch(
             request, *args, **kwargs)
@@ -1102,6 +1137,7 @@ def service_json(request, service):
     return JsonResponse(service_indicators, safe=False)
 
 
+@has_result_read_access
 def result_view(request, indicator, program):
     """Returns the results table for an indicator - used to expand rows on the Program Page"""
     indicator = ResultsIndicator.results_view.get(pk=indicator)
@@ -1428,6 +1464,7 @@ def dictfetchall(cursor):
     ]
 
 
+@method_decorator(has_program_read_access, name='dispatch')
 class ProgramPage(ListView):
     model = Indicator
     template_name = 'indicators/program_page.html'

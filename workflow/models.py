@@ -22,7 +22,6 @@ try:
 except ImportError:
     from datetime import datetime as timezone
 
-
 # New user created generate a token
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
@@ -204,6 +203,15 @@ class TolaUser(models.Model):
         if self.country:
             user_country_codes.add(self.country.code)
         return bool(user_country_codes & settings.PROJECTS_ACCESS_WHITELIST_SET)
+
+    @property
+    def has_admin_management_access(self):
+        #circular import avoidance
+        from tola_management.permissions import (
+            user_has_basic_or_super_admin
+        )
+
+        return user_has_basic_or_super_admin(self.user)
 
     # on save add create date or update edit date
     def save(self, *args, **kwargs):

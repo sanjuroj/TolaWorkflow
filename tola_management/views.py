@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.core.exceptions import PermissionDenied
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from django.core.mail import send_mail
@@ -13,6 +14,7 @@ from django.urls import reverse
 from django.conf import settings
 import json
 
+from rest_framework.validators import UniqueValidator
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.generics import ListAPIView
 from rest_framework.serializers import (
@@ -54,6 +56,19 @@ from workflow.models import (
 from .models import (
     UserManagementAuditLog
 )
+
+from .permissions import (
+    user_has_basic_or_super_admin,
+    ActionBasedPermissionsMixin,
+)
+
+def requires_basic_or_super_admin(func):
+    def wrapper(request, *args, **kwargs):
+        if user_has_basic_or_super_admin(request.user):
+            return func(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+    return wrapper
 
 def get_programs_for_user_queryset(user_id):
     return Program.objects.raw("""
@@ -209,6 +224,7 @@ def send_new_user_registration_email(user, request):
 
 # Create your views here.
 @login_required(login_url='/accounts/login/')
+@requires_basic_or_super_admin
 def app_host_page(request, react_app_page):
     js_context = {}
     if react_app_page == 'user':
@@ -263,10 +279,13 @@ class UserAdminReportSerializer(Serializer):
         )
 
 class AuthUserSerializer(ModelSerializer):
-    email = CharField(max_length=255, required=True)
+    id = IntegerField(allow_null=True, required=False)
+    email = CharField(max_length=255, required=True, validators=[
+        UniqueValidator(queryset=User.objects.all())
+    ])
     class Meta:
         model = User
-        fields = ('is_staff', 'is_superuser', 'is_active', 'email')
+        fields = ('id', 'is_staff', 'is_superuser', 'is_active', 'email')
 
 class UserAdminSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
@@ -344,10 +363,11 @@ class UserAdminSerializer(ModelSerializer):
         )
 
 
-class UserAdminViewSet(viewsets.ModelViewSet):
+class UserAdminViewSet(viewsets.ModelViewSet, ActionBasedPermissionsMixin):
     queryset = TolaUser.objects.all()
     serializer_class = UserAdminSerializer
     pagination_class = SmallResultsSetPagination
+    permission_classes = []
 
     def get_list_queryset(self):
         req = self.request
@@ -509,13 +529,14 @@ class UserAdminViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get', 'put'])
     def program_access(self, request, pk=None):
         user = TolaUser.objects.get(pk=pk)
+        admin_user = request.user.tola_user
 
         if request.method == 'PUT':
 
             audit_entry = UserManagementAuditLog()
             audit_entry.change_type = 'user_programs_modified'
             audit_entry.previous_entry = serializers.serialize('json', [user])
-            audit_entry.admin_user = request.user.tola_user
+            audit_entry.admin_user = admin_user
             audit_entry.modified_user = user
 
             audit_entry.previous_entry = json.dumps({"countries": [country.id for country in user.countries.all()], "programs": [program.id for program in user.program_access.all()]}, cls=DjangoJSONEncoder)
@@ -586,8 +607,9 @@ class UserAdminViewSet(viewsets.ModelViewSet):
                 }
 
             for program_role in user.program_roles.all():
-                if program_role.program.id in program_access:
-                    program_access[program_role.program.id]["permission_level"] = program_role.role
+                if program_role.program.id not in program_access:
+                    program_access[program_role.program.id] = {}
+                program_access[program_role.program.id]["permission_level"] = program_role.role
 
             return Response({
                 "country": country_access,

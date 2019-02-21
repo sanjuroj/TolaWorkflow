@@ -83,7 +83,9 @@ class IndicatorForm(forms.ModelForm):
         self.fields['disaggregation'].queryset = DisaggregationType.objects\
             .filter(country__in=countries, standard=False)
         self.fields['program'].queryset = Program.objects.filter(
-            funding_status="Funded", country__in=countries).distinct()
+            Q(country__in=countries) | Q(user_access=self.request.user.tola_user),
+            funding_status="Funded"
+        ).distinct()
         self.fields['program'].disabled = True
         self.fields['objectives'].queryset = Objective.objects.filter(program__id__in=[self.programval.id])
         self.fields['strategic_objectives'].queryset = StrategicObjective.objects.filter(country__in=countries)
@@ -152,6 +154,7 @@ class ResultForm(forms.ModelForm):
         self.program = kwargs.pop('program')
         self.indicator = kwargs.pop('indicator', None)
         self.tola_table = kwargs.pop('tola_table')
+
         super(ResultForm, self).__init__(*args, **kwargs)
 
         # override the program queryset to use request.user for country
