@@ -37,3 +37,8 @@
   border: 0!important;
   display: none;
 }
+
+// bring the z-index down to something sane, to not interfere with BS popovers
+.leaflet-control-container .leaflet-top, .leaflet-bottom {
+    z-index: 10;
+}
