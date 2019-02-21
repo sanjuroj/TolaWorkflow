@@ -118,6 +118,12 @@
           {% endif %}
         </h3>
 
+        {% if readonly %}
+        <div class="alert alert-danger">
+            <strong>You do not have write permissions. Changes you make will not be saved.</strong>
+        </div>
+        {% endif %}
+
         <fieldset>
             <div class="form-row mb-2" id="div_id_program2">
                 <label for="id_program2" class="col-sm-4 col-form-label" align="right">

@@ -18,6 +18,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
+from django.core.exceptions import PermissionDenied
 
 from .forms import (
     ProjectAgreementForm,
@@ -70,6 +71,12 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from tola_management.models import ProgramAuditLog
+from tola_management.permissions import (
+    user_has_program_access,
+    has_site_read_access,
+    has_site_create_access,
+    has_site_write_access
+)
 
 APPROVALS = (
     ('in_progress',('in progress')),
@@ -1124,6 +1131,10 @@ class SiteProfileList(ListView):
     template_name = 'workflow/site_profile_list.html'
 
     def dispatch(self, request, *args, **kwargs):
+
+        if not user_has_program_access(request.user.tola_user, kwargs['program_id']):
+            raise PermissionDenied
+
         if request.GET.has_key('report'):
             template_name = 'workflow/site_profile_report.html'
 
@@ -1201,6 +1212,7 @@ class SiteProfileList(ListView):
                 'user_list': user_list})
 
 
+@method_decorator(has_site_read_access, name='dispatch')
 class SiteProfileReport(ListView):
     """
     SiteProfile Report filtered by project
@@ -1224,6 +1236,7 @@ class SiteProfileReport(ListView):
         return render(request, self.template_name, {'getSiteProfile':getSiteProfile, 'getSiteProfileIndicator':getSiteProfileIndicator,'project_agreement_id': project_agreement_id,'id':id,'country': countries})
 
 
+@method_decorator(has_site_create_access, name='post')
 class SiteProfileCreate(CreateView):
     """
     Using SiteProfile Form, create a new site profile
@@ -1273,6 +1286,7 @@ class SiteProfileCreate(CreateView):
     form_class = SiteProfileForm
 
 
+@method_decorator(has_site_write_access, name='dispatch')
 class SiteProfileUpdate(UpdateView):
     """
     SiteProfile Form Update an existing site profile
@@ -1312,6 +1326,7 @@ class SiteProfileUpdate(UpdateView):
     form_class = SiteProfileForm
 
 
+@method_decorator(has_site_write_access, name='dispatch')
 class SiteProfileDelete(DeleteView):
     """
     SiteProfile Form Delete an existing community

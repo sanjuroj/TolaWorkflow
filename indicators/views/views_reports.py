@@ -14,6 +14,7 @@ from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, FormView
 from django.utils.translation import ugettext_lazy as _
+from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.contrib import messages
 from openpyxl import Workbook
@@ -29,6 +30,9 @@ from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm, PinnedReport
 from ..templatetags.mytags import symbolize_change, symbolize_measuretype
 from indicators.queries import IPTTIndicator
 
+from tola_management.permissions import (
+    has_iptt_read_access,
+)
 
 class IPTT_Mixin(object):
     """
@@ -691,6 +695,7 @@ class IPTT_Mixin(object):
         return context
 
 
+@method_decorator(has_iptt_read_access, name='dispatch')
 class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
     # TODO: should be localize dates in the Excel format
     headers = ['Program ID', 'Indicator ID', 'No.', 'Indicator', 'Level', 'Unit of measure',
@@ -1013,6 +1018,7 @@ class IPTTReportQuickstartView(FormView):
         return self.render_to_response(context)
 
 
+@method_decorator(has_iptt_read_access, name='dispatch')
 class IPTT_ReportView(IPTT_Mixin, TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
@@ -1064,6 +1070,7 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
                                       filterdata.urlencode())
         return HttpResponseRedirect(redirect_url)
 
+@method_decorator(has_iptt_read_access, name='dispatch')
 class IPTT_CSVExport(IPTT_Mixin, TemplateView):
     header_row = ["Program:"]
     subheader_row = ['id', 'number', 'name', 'level_name', 'unit_of_measure', 'unit_of_measure_type',

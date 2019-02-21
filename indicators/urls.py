@@ -40,7 +40,7 @@ from .views.views_reports import (
 
 
 urlpatterns = [
-    url(r'^indicator_create/(?P<id>\d+)/$', indicator_create, name='indicator_create'),
+    url(r'^indicator_create/(?P<program>\d+)/$', indicator_create, name='indicator_create'),
 
     url(r'^indicator_add/(?P<id>\d+)/$', IndicatorCreate.as_view(), name='indicator_add'),
 

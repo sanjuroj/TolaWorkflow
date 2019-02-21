@@ -7,6 +7,12 @@
         class="form-horizontal"
         method="post"
         novalidate>
+
+        {% if readonly %}
+        <div class="alert alert-danger">
+            <strong>You do not have write permissions. Changes you make will not be saved.</strong>
+        </div>
+        {% endif %}
     <div class="indicator-setup tab-set--vertical" id="indicator_modal_body">
 
         {% csrf_token %}
