@@ -41,3 +41,22 @@
     }
     margin-right: $grid-gutter-width;
 }
+.featured-country__map-key {
+    @extend .d-flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+%map-key-box {
+    width: 13px;
+    height: 13px;
+    margin: 0 5px;
+}
+.featured-country__map-key-results-color-box {
+    @extend %map-key-box;
+    background-color: $primary;
+}
+.featured-country__map-key-without-results-color-box {
+    @extend %map-key-box;
+    background-color: $secondary;
+}
+
