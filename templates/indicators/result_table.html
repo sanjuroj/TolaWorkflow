@@ -285,7 +285,10 @@
     </div>
     {% else %}
     <div class="text-danger">
-        <i class="fas fa-bullseye"></i>&nbsp;{% trans "This indicator has no targets." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link btn btn-success"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add targets" %}</a>
+        <i class="fas fa-bullseye"></i>&nbsp;{% trans "This indicator has no targets." %}
+        {% if is_editable is True %}
+        <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link btn btn-success"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add targets" %}</a>
+        {% endif %}
     </div>
     {% endif %}
 </div>
