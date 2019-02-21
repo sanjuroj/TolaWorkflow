@@ -1185,7 +1185,14 @@ class IPTTQuickstart(TemplateView):
         return {
             'programs': programs,
             'labels': {
+                'tvaTitle': ugettext('Periodic targets vs. actuals'),
+                'tvaSubtitle': ugettext('View results organized by target period for indicators that share the same target frequency.'),
+                'timeperiodsTitle': ugettext('Recent progress for all indicators'),
+                'timeperiodsSubtitle': ugettext('View the most recent two months of results. (You can customize your time periods.) This report does not include periodic targets.'),
                 'frequencies': frequencies,
+                'programSelect': ugettext('Program'),
+                'tvaPeriodSelect': ugettext('Target periods'),
+                'timeperiodsPeriodSelect': ugettext('Time periods'),
                 'mostRecentCount': ugettext('enter a number'),
                 'showAll': ugettext('Show all'),
                 'mostRecent': ugettext('Most recent'),
@@ -1201,17 +1208,47 @@ class IPTTQuickstart(TemplateView):
 class IPTTReport(TemplateView):
     template_name = 'indicators/iptt_report.html'
     
-    def get_js_context(self, request):
+    def get_js_context(self, request, params):
+        frequencies = {}
+        for frequency, label in Indicator.TARGET_FREQUENCIES:
+            if frequency != Indicator.EVENT:
+                frequencies[frequency] = unicode(label)
         return {
+            'reportType': params['reporttype'],
+            'frequency': params['frequency'],
+            'program': {
+                'id': 34,
+                'name': 'Test Program 1'
+            },
+            'labels': {
+                'frequencies': frequencies,
+                'tvaPeriodSelect': ugettext('Target Periods'),
+                'timeperiodsPeriodSelect': ugettext('Time periods'),
+                'programSelect': ugettext('Program'),
+                'showAll': ugettext('Show all'),
+                'mostRecent': ugettext('Most recent'),
+            },
             'programs': [
                 {
-                    'name': 'Test Program 1'
+                    'name': 'Test Program 1',
+                    'id': 34,
+                    'tva_url': '/banana',
+                    'timeperiods_url': '/banana2',
+                    'frequencies': [2, 4, 5]
+                },
+                {
+                    'name': 'Test Program 2',
+                    'id': 36,
+                    'tva_url': '/banana',
+                    'timeperiods_url': '/banana2',
+                    'frequencies': [2, 4, 5]
                 },
             ]
         }
 
-    def get_params(self, request):
+    def get_params(self, request, reporttype):
         params = {}
+        params['reporttype'] = reporttype if reporttype is not None else 'targetperiods'
         frequency_params = [p for p in ['frequency', 'timeperiods', 'targetperiods'] if p in request.GET]
         frequency = None
         if frequency_params:
@@ -1219,7 +1256,7 @@ class IPTTReport(TemplateView):
                 frequency = int(request.GET.get(frequency_params[0]))
             except ValueError:
                 frequency = None
-        params['period'] = frequency if frequency is not None else Indicator.ANNUAL
+        params['frequency'] = frequency if frequency is not None else Indicator.ANNUAL
         recent_params = [p for p in ['recents', 'numrecentperiods'] if p in request.GET]
         recent_periods = None
         if recent_params:
@@ -1231,8 +1268,6 @@ class IPTTReport(TemplateView):
         show_all = None
         if 'show_all' in request.GET and request.GET.get('show_all') == '1':
             show_all = True
-        else:
-            print "show all: {0}".format(request.GET.get('show_all'))
         if show_all is None and 'timeframe' in request.GET and request.GET.get('timeframe') == 1:
             show_all = True
         params['show_all'] = show_all
@@ -1241,7 +1276,7 @@ class IPTTReport(TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = {}
-        params = self.get_params(request)
+        params = self.get_params(request, kwargs.get('reporttype'))
         context['params'] = params
-        context['js_context'] = self.get_js_context(request)
+        context['js_context'] = self.get_js_context(request, params)
         return self.render_to_response(context)
