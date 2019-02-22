@@ -5,6 +5,7 @@
 {% block title %}{% trans "Indicator Performance Tracking Table" %}{% endblock %}
 {% block page_title %}{% endblock %}
 {% block bodyclasses %}page_iptt_table{% endblock %}
+{% block mainclasses %}region--full-bleed{% endblock %}
 
 {% block content %}
   <div class="sidebar_wrapper">
@@ -19,12 +20,12 @@
   </div>
   <main class="iptt_table_wrapper">
     <div id="id_div_top_iptt_report">
-        <div class="d-flex justify-content-between">
-            <div id="id_span_iptt_date_range">
+        <div class="page-subheader">
+            <div id="id_span_iptt_date_range" class="subheader__title">
               <h2 class="pt-3">{% trans "Indicator Performance Tracking Table" %}</h2>
               <h4 class="pb-3">{{ report_start_date|date:"MEDIUM_DATE_FORMAT" }} - {{ report_end_date_actual|date:"MEDIUM_DATE_FORMAT" }}</h4>
             </div>
-            <div class="p-3">
+            <div class="subheader__actions">
               <button type="button"
                       id="id_button_pin"
                       class="btn btn-sm btn-secondary">
@@ -129,7 +130,7 @@
               </td>
 
               <td class="td-no-side-borders" align="right">
-                {{ indicator.lop_percent_met }}
+                {{ indicator.lop_percent_met|floatformat:"1" }}%
               </td>
               {% if reporttype == 'targetperiods' %}
                 {% for date_range in report_date_ranges %}
@@ -145,7 +146,7 @@
                   </td>
                   <td align="right" class="border-left-0">
                     {% with forloop.counter0|concat_string:"_percent_met" as percent_met %}
-                      {{ indicator|hash:percent_met }}
+                      {{ indicator|hash:percent_met|floatformat:"1" }}%
                     {% endwith %}
                   </td>
                 {% endfor %}
@@ -190,11 +191,11 @@
 
         });
 
-        // Open the Collected Data Records in a modal
+        // Open the Results Records in a modal
         $("#id_div_top_iptt_report").on("click", ".indicator-ajax-popup", function (e) {
           e.preventDefault();
           const indicatorId = $(this).data('indicatorid');
-          const url = `/indicators/report_table/${indicatorId}/0/?edit=false`;
+          const url = `/indicators/result_table/${indicatorId}/0/?edit=false`;
           $("#indicator_modal_content").empty();
           $("#modalmessages").empty();
           $("#indicator_modal_content").load(url);
@@ -223,7 +224,7 @@
       <span>{% trans "Success! This report is now pinned to the program page." %}</span>
     </p>
     <p>
-      <a href="{% url 'program_page' program.id 0 0 %}">{% trans "Visit the program page now." %}</a>
+      <a href="{{ program.program_page_url }}">{% trans "Visit the program page now." %}</a>
     </p>
   </script>
 {% endblock content %}

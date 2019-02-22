@@ -1,0 +1,49 @@
+{% load widget_tweaks %}
+{% load i18n %}
+{# Evidence sub-form in result_form_modal.html #}
+<fieldset>
+    <div class="form-group" id="div_id_evidence_url">
+        <label for="id_record_url">{{ form.evidence_url.label }}</label>
+
+        <a href="#"
+           tabindex="0"
+           data-toggle="popover"
+           data-placement="right"
+           data-trigger="focus"
+           data-content="{% trans 'Provide a link to a file or folder in Google Drive or another shared network drive. Please be aware that TolaActivity does not store a copy of your record, <i>so you should not link to something on your personal computer, as no one else will be able to access it.</i>' %}">
+            <i class="far fa-question-circle"></i>
+        </a>
+
+        <div class="d-flex">
+            {% render_field form.evidence_url class+="form-control " %}
+            <button type="button" id="id_view_evidence_button" class="btn btn-sm btn-secondary">{% trans 'view' %}</button>
+            <button type="button" id="id_browse_google_drive" class="btn btn-sm btn-link"><i class="fas fa-external-link-alt"></i> {% trans "Browse Google Drive" %}</a>
+        </div>
+
+        <div class="text-right">
+        </div>
+        <div>
+            <small class="form-text text-muted">{{ form.evidence_url.help_text }}</small>
+        </div>
+        <div>
+            <span id="validation_id_evidence_url" class="has-error"></span>
+        </div>
+
+    </div>
+    <div class="form-group" id="div_id_record_name">
+        <label for="id_record_name">{{ form.record_name.label }}</label>
+
+        <a href="#"
+           tabindex="0"
+           data-toggle="popover"
+           data-placement="right"
+           data-trigger="focus"
+           data-content="{% trans 'Give your record a short name that is easy to remember.' %}">
+            <i class="far fa-question-circle"></i>
+        </a>
+
+        {% render_field form.record_name class+="form-control" %}
+        <small class="form-text text-muted">{{ form.record_name.help_text }}</small>
+        <span id="validation_id_record_name" class="has-error"></span>
+    </div>
+</fieldset>

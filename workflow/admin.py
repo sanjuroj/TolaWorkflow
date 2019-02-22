@@ -10,7 +10,8 @@ from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from import_export.admin import ImportExportModelAdmin, ExportMixin
 
-from tola.util import getCountry, get_GAIT_data
+#from tola.util import getCountry, get_GAIT_data
+from tola import util
 from .models import (
     Documentation, ProjectAgreement, ProjectComplete, ProjectType, Country, SiteProfile,
     Office, Program, TolaUser, District, Province, ProfileType, AdminLevelThree, TolaUserProxy,
@@ -103,7 +104,7 @@ class ProjectAgreementAdmin(ImportExportModelAdmin):
         `self.value()`.
         """
         # Filter by logged in users allowable countries
-        user_countries = getCountry(request.user)
+        user_countries = util.getCountry(request.user)
         # if not request.user.user.is_superuser:
         return queryset.filter(country__in=user_countries)
 
@@ -138,7 +139,7 @@ class ProjectCompleteAdmin(ImportExportModelAdmin):
         `self.value()`.
         """
         # Filter by logged in users allowable countries
-        user_countries = getCountry(request.user)
+        user_countries = util.getCountry(request.user)
         # if not request.user.user.is_superuser:
         return queryset.filter(country__in=user_countries)
 
@@ -192,31 +193,25 @@ class ProgramAdmin(admin.ModelAdmin):
     # Non-destructively save the GAIT start and end dates based on the value entered in the ID field.
     # Non-destructively populate the reporting start and end dates based on the GAIT dates.
     def save_model(self, request, obj, form, change):
-        gait_data = get_GAIT_data([obj.gaitid])
+        gait_data = util.get_GAIT_data([obj.gaitid])
         if len(gait_data) == 1:
+            dates = util.get_dates_from_gait_response(gait_data[0])
             if not obj.start_date:
-                try:
-                    obj.start_date = dateutil.parser.parse(gait_data[0]['start_date']).date()
-                except TypeError:
-                    obj.start_date = None
+                obj.start_date = dates['start_date']
 
             if not obj.end_date:
-                try:
-                    obj.end_date = dateutil.parser.parse(gait_data[0]['end_date']).date()
-                except TypeError:
-                    obj.end_date = None
-
+                obj.end_date = dates['end_date']
+            reporting_dates = util.get_reporting_dates(obj)
             if not obj.reporting_period_start:
-                obj.reporting_period_start = obj.start_date
+                obj.reporting_period_start = reporting_dates['reporting_period_start']
 
             if not obj.reporting_period_end:
-                if obj.end_date is None:
-                    obj.reporting_end_date = None
-                else:
-                    next_month = obj.end_date.replace(day=28) + datetime.timedelta(days=4)
-                    obj.reporting_period_end = obj.end_date - datetime.timedelta(days=next_month.day)
+                obj.reporting_period_end = reporting_dates['reporting_period_end']
         else:
-            messages.add_message(request, messages.ERROR, 'Error pulling data from GAIT server for ID {gait_id} during Program creation.'.format(gait_id=obj.gaitid))
+            messages.add_message(
+                request, messages.ERROR,
+                'Error pulling data from GAIT server for ID {gait_id} during Program creation.'.format(
+                    gait_id=obj.gaitid))
 
         super(ProgramAdmin, self).save_model(request, obj, form, change)
 

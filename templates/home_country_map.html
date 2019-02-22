@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load l10n %}
 
 <div id="home_country_map"></div>
 <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
@@ -190,6 +191,8 @@
 
     // Ordering of marker creation affects ordering in menu
 
+    {% localize off %}
+    {# FR renders commas instead of periods for decimals #}
     let sitesWithResults = [
         {% for item in sites_with_results %}
             L.marker([{{ item.latitude }}, {{ item.longitude }}], {icon: indicatorIcon}).addTo(map).bindPopup("" + "<b>{{ item.country }}</b><br/>{% trans 'Site with result' %}<br> <a href='{% url 'siteprofile_update' item.id %}'>{{ item.name }}</a> <br/>ADM1: {{ item.province }} <br/>ADM2: {{ item.district }} <br/> ADM3: {{ item.admin_level_three }} <br/>"),
@@ -203,7 +206,7 @@
         {%   endfor %}
     ];
     let sitesWithoutResultsLayer = L.layerGroup(sitesWithoutResults).addTo(map);
-
+    {% endlocalize %}
 
 
     let overlayMaps = {

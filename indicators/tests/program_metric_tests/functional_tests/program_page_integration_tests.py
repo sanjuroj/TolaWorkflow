@@ -155,7 +155,7 @@ class QueryTestsMixin:
         client.force_login(self.user.user)
         for expected in self.expected_cases:
             program = Program.objects.filter(name=expected['name']).first()
-            response = client.get('/program/{program_id}/0/0/'.format(program_id=program.id))
+            response = client.get(program.program_page_url)
             self.assertEqual(response.status_code, 200)
             program_response_metrics = response.context['program'].metrics
             for key in ['targets_defined', 'reported_results', 'results_evidence', 'indicator_count']:

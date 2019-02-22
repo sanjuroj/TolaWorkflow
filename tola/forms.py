@@ -29,6 +29,7 @@ class ProfileUpdateForm(forms.ModelForm):
             ),
         )
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['language'].label = _('Language')
 
     class Meta:
         model = TolaUser

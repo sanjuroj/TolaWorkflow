@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import partial
 
 from workflow.models import (
@@ -122,69 +122,65 @@ class ResultForm(forms.ModelForm):
         model = Result
         exclude = ['create_date', 'edit_date']
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
+            'comments': forms.Textarea(attrs={'rows': 4}),
+            'program': forms.HiddenInput(),
+            'indicator': forms.HiddenInput(),
+            'evidence': forms.HiddenInput()
+        }
+        labels = {
+            'site': _('Site'),
+            'achieved': _('Actual value'),
+            'periodic_target': _('Measure against target'),
+            'complete': _('Project'),
+            'evidence_url': _('Link to file or folder'),
         }
 
-    def clean_date_collected(self):
-        date_collected = self.cleaned_data['date_collected']
-        date_collected = datetime.strftime(date_collected, '%Y-%m-%d')
-        return date_collected
-
-    program2 = forms.CharField(
-        widget=forms.TextInput(
-            attrs={'readonly': True, 'label': _('Program')}
-        )
+    target_frequency = forms.CharField(
+        widget=forms.HiddenInput(),
+        required=False
     )
-    indicator2 = forms.CharField(
-        widget=forms.TextInput(
-            attrs={'readonly': True, 'label': _('Indicator')}
-        )
-    )
-    target_frequency = forms.CharField()
     date_collected = forms.DateField(
         widget=DatePicker.DateInput(format=locale_format),
         # TODO: this field outputs dates in non-ISO formats in Spanish & French
         localize=True,
         required=True,
+        help_text=' ',
+        label=_('Result date')
     )
 
     def __init__(self, *args, **kwargs):
-        # instance = kwargs.get('instance', None)
-        self.request = kwargs.pop('request')
+        self.user = kwargs.pop('user')
+        self.indicator = kwargs.pop('indicator')
         self.program = kwargs.pop('program')
-        self.indicator = kwargs.pop('indicator', None)
-        self.tola_table = kwargs.pop('tola_table')
-
         super(ResultForm, self).__init__(*args, **kwargs)
 
-        # override the program queryset to use request.user for country
+        self.set_initial_querysets()
+        self.set_periodic_target_widget()
+        self.fields['target_frequency'].initial = self.indicator.target_frequency
+        self.fields['indicator'].initial = self.indicator.id
+        self.fields['program'].initial = self.indicator.program.id
+
+    def set_initial_querysets(self):
+        """populate foreign key fields with limited quersets based on user / country / program"""
+        # provide only in-program Documentation objects for the evidence queryset
         self.fields['evidence'].queryset = Documentation.objects\
-            .filter(program=self.program)
-
-        # override the program queryset to use request.user for country
-        self.fields['complete'].queryset = ProjectComplete.objects\
-            .filter(program=self.program)
-        self.fields['complete'].label = _("Project")
-
+            .filter(program=self.indicator.program)
         # only display Project field to existing users
-        if not self.request.user.tola_user.allow_projects_access:
+        if not self.user.tola_user.allow_projects_access:
             self.fields.pop('complete')
+        else:
+            # provide only in-program projects for the complete queryset:
+            self.fields['complete'].queryset = ProjectComplete.objects.filter(program=self.program)
+        self.fields['site'].queryset = SiteProfile._base_manager.filter(
+            country__in=self.indicator.program.country.all()
+        ).only('id', 'name')
 
-        # override the program queryset to use request.user for country
-        countries = getCountry(self.request.user)
-        # self.fields['program'].queryset = Program.objects\
-        #   .filter(funding_status="Funded", country__in=countries).distinct()
-        try:
-            int(self.program)
-            self.program = Program.objects.get(id=self.program)
-        except TypeError:
-            pass
-
+    def set_periodic_target_widget(self):
         # Django will deliver localized strings to the template but the form needs to be able to compare the date
         # entered to the start and end dates of each period.  Data attributes (attached to each option element) are
         # used to provide access to the start and end dates in ISO format, since they are easier to compare to than
         # the localized date strings.
-        periodic_targets = PeriodicTarget.objects \
+        periodic_targets = PeriodicTarget.objects.select_related('indicator') \
             .filter(indicator=self.indicator) \
             .order_by('customsort', 'create_date', 'period')
         data = {'data-start': {'': ''}, 'data-end': {'': ''}}
@@ -195,31 +191,45 @@ class ResultForm(forms.ModelForm):
             choices.append((pt.id, str(pt)))
         self.fields['periodic_target'].widget = DataAttributesSelect(data=data, choices=choices)
 
-        self.fields['program2'].initial = self.program
-        self.fields['program2'].label = _("Program")
+    def clean_date_collected(self):
+        date_collected = self.cleaned_data['date_collected']
 
-        try:
-            int(self.indicator)
-            self.indicator = Indicator.objects.get(id=self.indicator)
-        except TypeError:
-            pass
+        # Date can't be before program start
+        if date_collected < self.program.reporting_period_start:
+            raise ValidationError(
+                _("You can begin entering results on {program_start_date}, the program start date").format(
+                    program_start_date=self.program.reporting_period_start))
 
-        self.fields['indicator2'].initial = self.indicator.name
-        self.fields['indicator2'].label = _("Indicator")
-        self.fields['program'].widget = forms.HiddenInput()
-        self.fields['indicator'].widget = forms.HiddenInput()
-        self.fields['target_frequency'].initial = self.indicator\
-            .target_frequency
-        self.fields['target_frequency'].widget = forms.HiddenInput()
-        self.fields['site'].queryset = SiteProfile.objects\
-            .filter(country__in=countries)
-        self.fields['site'].label = _('Site')
-        self.fields['tola_table'].queryset = TolaTable.objects\
-            .filter(Q(owner=self.request.user) | Q(id=self.tola_table))
-        self.fields['periodic_target'].label = _('Measure against target*')
-        self.fields['achieved'].label = _('Actual value')
-        self.fields['date_collected'].help_text = ' '
-        self.fields['date_collected'].label = _('Date collected')
+        # Date must be before program end date
+        if date_collected > self.program.reporting_period_end:
+            raise ValidationError(_("Please select a date between {program_start_date} and {program_end_date}").format(
+                program_start_date=self.program.reporting_period_start,
+                program_end_date=self.program.reporting_period_end,
+            ))
+
+        # Date must be before "today" with some wiggle room to account for timezone differences
+        # Assume a user can only be 1 day in the future
+        # Fun fact: If our server was in the right time zone, the user could be 2 days ahead!
+        # https://www.timeanddate.com/time/dateline.html
+        today = timezone.localdate() + timedelta(days=1)
+        if date_collected > today:
+            raise ValidationError(_("Please select a date between {program_start_date} and {todays_date}").format(
+                program_start_date=self.program.reporting_period_start,
+                todays_date=today,
+            ))
+
+        return date_collected
+
+    def clean(self):
+        cleaned_data = super(ResultForm, self).clean()
+        record_name = cleaned_data.get('record_name')
+        evidence_url = cleaned_data.get('evidence_url')
+
+        if record_name and not evidence_url:
+            msg = forms.ValidationError(_('URL required if record name is set'))
+            self.add_error('evidence_url', msg)
+
+
 
 
 class ReportFormCommon(forms.Form):

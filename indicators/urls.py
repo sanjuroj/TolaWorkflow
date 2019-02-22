@@ -11,13 +11,12 @@ from .views.views_indicators import (
     IndicatorExport,
     IndicatorReportData,
     ResultReportData,
-    result_import,
     service_json,
     PeriodicTargetView,
     PeriodicTargetDeleteView,
     result_view,
     program_indicators_json,
-    programIndicatorReport,
+    indicator_plan,
     indicator_report,
     IndicatorReport,
     IndicatorDataExport,
@@ -58,8 +57,6 @@ urlpatterns = [
      url(r'^result_add/(?P<program>\d+)/(?P<indicator>\d+)/$',
         ResultCreate.as_view(), name='result_add'),
 
-    url(r'^result_import/$', result_import, name='result_import'),
-
     url(r'^result_update/(?P<pk>\d+)/$', ResultUpdate.as_view(), name='result_update'),
 
     url(r'^result_delete/(?P<pk>\d+)/$', ResultDelete.as_view(), name='result_delete'),
@@ -77,10 +74,9 @@ urlpatterns = [
     url(r'^report_table/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$',
         IndicatorReport.as_view(), name='indicator_table'),
 
-    url(r'^program_report/(?P<program>\d+)/$', programIndicatorReport, name='programIndicatorReport'),
+    url(r'^indicator_plan/(?P<program_id>\d+)/$', indicator_plan, name='indicator_plan'),
 
-
-    url(r'^export/(?P<id>\d+)/(?P<program>\d+)/(?P<indicator_type>\d+)/$',
+    url(r'^indicator_plan/export/(?P<program>\d+)/$',
         IndicatorExport.as_view(), name='indicator_export'),
 
     url(r'^service/(?P<service>[-\w]+)/service_json/', service_json, name='service_json'),
@@ -93,11 +89,6 @@ urlpatterns = [
 
     url(r'^report_data/(?P<id>\w+)/(?P<program>\d+)/(?P<type>\d+)/$',
         IndicatorReportData.as_view(), name='indicator_report_data'),
-
-    url(r'^report_data/(?P<id>\w+)/(?P<program>\d+)/(?P<indicator_type>\d+)/'
-        r'export/$',
-        IndicatorExport.as_view(),
-        name='indicator_export'),
 
     url(r'^result_report_data/(?P<program>\d+)/(?P<indicator>\d+)/'
         r'(?P<type>\d+)/$',

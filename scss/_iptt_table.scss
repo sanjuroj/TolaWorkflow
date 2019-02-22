@@ -50,10 +50,10 @@ body.page_iptt_table { // body element for extra specificity
 
 // restyle the Results table on the IPTT
 .page_iptt_table .modal-dialog {
-    .collected-data__link {
+    .results__link {
         display: none;
     }
-    .collected-data-table__actions {
+    .results-table__actions {
         background: transparent;
     }
 }

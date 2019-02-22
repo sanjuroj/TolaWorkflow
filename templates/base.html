@@ -3,7 +3,6 @@
 {% load render_bundle from webpack_loader %}
 {% load group_tag menu_tag %}
 {% load i18n %}
-{% load render_bundle from webpack_loader %}
 <!doctype html>
 <html lang="en">
     <head>
@@ -23,31 +22,26 @@
         <!-- compiled webpack CSS -->
         {% render_bundle 'base' 'css' %}
 
-
         <!--- Django Tables2 css -->
         <link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}">
 
         <!-- Hosted Leaflet CSS -->
         <link rel="stylesheet" href="{% static "css/leaflet.css" %}">
 
-        <link rel="stylesheet" href="{% static "css/jquery-ui.min.css" %}?v=ww">
+        <link rel="stylesheet" href="{% static "css/jquery-ui.min.css" %}?q=gp1116">
 
         <script src="{% static "js/jquery.min.js" %}"></script>
 
         {% block extra_css_in_header %}{% endblock %}
         {% block extra_js_in_header %}
         {# TODO: this should be in at least two separate blocks #}
-
-        <!-- App specific Javascript -->
-        <script type="text/javascript" src="{% static 'js/app.js' %}?q=gp1110"></script>
+        {% endblock %}
 
         <!-- Hosted Leaflet -->
         <script src="{% static "js/leaflet.js" %}"></script>
 
         <!-- bootstrap multiselect -->
-        <script type="text/javascript" src="{% static "js/bootstrap-multiselect.js" %}?v=w"></script>
-
-        {% endblock %}
+        <script type="text/javascript" src="{% static "js/bootstrap-multiselect.js" %}?q=gp1116"></script>
 
     </head>
     <body class="{% block bodyclasses %}{% endblock %}">
@@ -157,11 +151,7 @@
 
             </div>
         </nav>
-        {% if report_wide %}
-        <div id="nonfooter" class="report-wide">
-        {% else %}
-        <div id="nonfooter" class="container mt-3 mb-3">
-        {% endif %}
+        <div id="nonfooter" class="{% block mainclasses %}region--main{% endblock %}">
             <div id="id_div_breadcrumb">{% block bread_crumb %}{% endblock %}</div>
             <header class="region-header">
                 <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
@@ -215,7 +205,7 @@
                                     target="_blank">{% trans "Documentation" %}</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="https://thehub.mercycorps.org/page/7271"
+                                    <a href="https://thehub.mercycorps.org/node/7768"
                                     class="nav-link help-link"
                                     target="_blank">{% trans "FAQ" %}</a>
                                 </li>
@@ -250,6 +240,7 @@
 
         <script type="text/javascript" src="{% static "js/PNotify.js" %}"></script>
         <script type="text/javascript" src="{% static "js/PNotifyButtons.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/PNotifyConfirm.js" %}"></script>
 
         {% get_current_language as LANGUAGE_CODE %}
 
@@ -285,6 +276,12 @@
         {# Webpack runtime and vendor bundles, shared across all pages using webpack #}
         {% render_bundle 'runtime' %}
         {% render_bundle 'vendors' %}
+
+        <!-- Global init and functions - what used to be app.js -->
+        {% render_bundle 'base' 'js' %}
+
+        <!-- Projects Javascript -->
+        <script type="text/javascript" src="{% static 'js/projects.js' %}?q=huckleberry"></script>
 
         {% block extra_js_in_body %}
         {% endblock %}
