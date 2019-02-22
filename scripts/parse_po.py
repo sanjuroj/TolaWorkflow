@@ -16,21 +16,22 @@ def main():
         dest='only_new_or_fuzzy',
         help='Export only new and fuzzy translations to .csv file'
     )
+    parser.add_argument('-c', dest='c2p_encoding', default='utf-8-sig', help='csv to po file encoding')
     args = parser.parse_args()
     basedir, filename = os.path.split(args.infilepath)
     match = re.search('(.*)(\.po|\.csv)$', filename)
     if '.po' in args.infilepath:
         po_to_csv(args, basedir, match.group(1))
     elif '.csv' in args.infilepath:
-        csv_to_po(args.infilepath, basedir, match.group(1))
+        csv_to_po(args, basedir, match.group(1))
     else:
         print 'You must provide either a .po file or a .csv file.  Exiting'
         sys.exit()
 
 
-def csv_to_po(infilepath, basedir, basefile):
+def csv_to_po(args, basedir, basefile):
     outfilepath = os.path.join(basedir, basefile + '.po')
-    with io.open(infilepath, 'r', encoding='utf-8-sig') as fh:
+    with io.open(args.infilepath, 'r', encoding=args.c2p_encoding) as fh:
         with open(outfilepath, 'w') as pofile:
             pofile.write(
                 '''

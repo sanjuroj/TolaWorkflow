@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-23 15:39-0800\n"
+"POT-Creation-Date: 2019-02-22 07:09-0800\n"
 "PO-Revision-Date: 2019-01-23 15:42-0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -13,8 +13,52 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
+#: js/pages/document_list/components/document_list.js:59
+#, fuzzy
+#| msgid "Filter by Program"
+msgid "Filter by program"
+msgstr "Filtrer par programme"
+
+#: js/pages/document_list/components/document_list.js:97
+#, fuzzy
+#| msgid "Add document"
+msgid "Find a document"
+msgstr "Ajouter un document"
+
+#: js/pages/document_list/components/document_list.js:118
+msgid "Add document"
+msgstr "Ajouter un document"
+
+#: js/pages/document_list/components/document_list.js:144
+msgid "Document"
+msgstr "Document"
+
+#: js/pages/document_list/components/document_list.js:152
+#, fuzzy
+#| msgid "Date Created"
+msgid "Date added"
+msgstr "Date créée"
+
+#: js/pages/document_list/components/document_list.js:160
+msgid "Project"
+msgstr "Projet"
+
+#: js/pages/document_list/components/document_list.js:171
+msgid "Delete"
+msgstr "Effacer"
+
+#: js/pages/document_list/components/document_list.js:173
+msgid "Edit"
+msgstr "Modifier"
+
+#. Translators: Ex. Showing rows 1 to 50 of 92 */
+#: js/pages/document_list/components/document_list.js:190
+#, python-format
+msgid "Showing rows %(fromCount)s to %(toCount)s of %(totalCount)s"
+msgstr ""
+
 #. Translators: The number of indicators that do not have targets defined on them
-#: js/pages/program_page/components/indicator_list.js:20
+#: js/pages/program_page/components/indicator_list.js:21
 #, python-format
 msgid "%s indicator has missing targets"
 msgid_plural "%s indicators have missing targets"
@@ -22,7 +66,7 @@ msgstr[0] "%s indicateur n'a pas de cibles"
 msgstr[1] "%s indicateurs n'ont pas de cibles"
 
 #. Translators: The number of indicators that no one has entered in any results for
-#: js/pages/program_page/components/indicator_list.js:24
+#: js/pages/program_page/components/indicator_list.js:25
 #, python-format
 msgid "%s indicator has missing results"
 msgid_plural "%s indicators have missing results"
@@ -30,7 +74,7 @@ msgstr[0] "%s indicateur n'a pas de résultats"
 msgstr[1] "%s indicateurs n'ont pas de résultats"
 
 #. Translators: The number of indicators that contain results that are not backed up with evidence
-#: js/pages/program_page/components/indicator_list.js:28
+#: js/pages/program_page/components/indicator_list.js:29
 #, python-format
 msgid "%s indicator has missing evidence"
 msgid_plural "%s indicators have missing evidence"
@@ -38,21 +82,21 @@ msgstr[0] "%s indicateur n'a pas de preuves"
 msgstr[1] "%s indicateurs n'ont pas de preuves"
 
 #. Translators: shows what number of indicators are a certain percentage above target. Example: 3 indicators are >15% above target
-#: js/pages/program_page/components/indicator_list.js:32
+#: js/pages/program_page/components/indicator_list.js:33
 msgid "%s indicator is >15% above target"
 msgid_plural "%s indicators are >15% above target"
 msgstr[0] "%s indicateur est >15% au-dessus de la cible"
 msgstr[1] "%s indicateurs sont >15% au-dessus de la cible"
 
 #. Translators: shows what number of indicators are a certain percentage below target. Example: 3 indicators are >15% below target
-#: js/pages/program_page/components/indicator_list.js:36
+#: js/pages/program_page/components/indicator_list.js:37
 msgid "%s indicator is >15% below target"
 msgid_plural "%s indicators are >15% below target"
 msgstr[0] "%s indicateur est >15% en dessous de la cible"
 msgstr[1] "%s indicateurs sont >15% en dessous de la cible"
 
 #. Translators: shows what number of indicators are within a set range of target. Example: 3 indicators are on track
-#: js/pages/program_page/components/indicator_list.js:40
+#: js/pages/program_page/components/indicator_list.js:41
 #, python-format
 msgid "%s indicator is on track"
 msgid_plural "%s indicators are on track"
@@ -60,42 +104,46 @@ msgstr[0] "%s indicateur est en bonne voie"
 msgstr[1] "%s Indicateurs sont en bonne voie"
 
 #. Translators: the number of indicators in a list. Example: 3 indicators
-#: js/pages/program_page/components/indicator_list.js:45
+#: js/pages/program_page/components/indicator_list.js:46
 #, python-format
 msgid "%s indicator"
 msgid_plural "%s indicators"
 msgstr[0] "%s indicateur"
 msgstr[1] "%s indicateurs"
 
-#: js/pages/program_page/components/indicator_list.js:85
+#: js/pages/program_page/components/indicator_list.js:83
 msgid "Add indicator"
 msgstr "Ajouter un indicateur"
 
-#: js/pages/program_page/components/indicator_list.js:107
+#: js/pages/program_page/components/indicator_list.js:118
 msgid "Find an indicator:"
 msgstr "Trouver un indicateur :"
 
-#: js/pages/program_page/components/indicator_list.js:156
+#: js/pages/program_page/components/indicator_list.js:125
+msgid "None"
+msgstr ""
+
+#: js/pages/program_page/components/indicator_list.js:170
 msgid "Indicator"
 msgstr "Indicateur"
 
-#: js/pages/program_page/components/indicator_list.js:158
+#: js/pages/program_page/components/indicator_list.js:172
 msgid "Level"
 msgstr "Niveau"
 
-#: js/pages/program_page/components/indicator_list.js:159
+#: js/pages/program_page/components/indicator_list.js:173
 msgid "Unit of measure"
 msgstr "Unité de mesure"
 
-#: js/pages/program_page/components/indicator_list.js:160
+#: js/pages/program_page/components/indicator_list.js:174
 msgid "Baseline"
 msgstr "Base de référence"
 
-#: js/pages/program_page/components/indicator_list.js:161
+#: js/pages/program_page/components/indicator_list.js:175
 msgid "Target"
 msgstr "Cible"
 
-#: js/pages/program_page/components/indicator_list.js:256
+#: js/pages/program_page/components/indicator_list.js:269
 msgid ""
 "Some indicators have missing targets. To enter these values, click the "
 "target icon near the indicator name."
@@ -103,49 +151,18 @@ msgstr ""
 "Certains indicateurs ont des cibles manquantes. Pour entrer ces valeurs, "
 "cliquez sur l'icône de la cible près du nom de l'indicateur."
 
-#: js/pages/program_page/components/program_metrics.js:136
+#: js/pages/program_page/components/program_metrics.js:140
 msgid "Indicators on track"
 msgstr "Indicateurs en bonne voie"
 
-#. Translators: message describing why this display does not show any data. */}
-#: js/pages/program_page/components/program_metrics.js:148
-msgid "Unavailable until results are reported"
-msgstr "Indisponible jusqu'à ce que les résultats soient rapportés"
-
-#. Translators: message describing why this display does not show any data. */}
-#: js/pages/program_page/components/program_metrics.js:166
-msgid "Unavailable until the first target period ends with results reported"
-msgstr ""
-"Indisponible jusqu'à la fin de la première période cible avec publication "
-"des résultats"
-
-#. Translators: variable %(percentHigh)s shows what percentage of indicators are a certain percentage above target percent %(marginPercent)s. Example: 31% are >15% above target */
-#: js/pages/program_page/components/program_metrics.js:176
-msgid "<strong>%(percentHigh)s%</strong> are >%(marginPercent)s% above target"
-msgstr ""
-"<strong>%(percentHigh)s%</strong> sont >%(marginPercent)s% au-dessus de la "
-"cible"
-
-#. Translators: variable %s shows what percentage of indicators are within a set range of target. Example: 31%  are on track */
-#: js/pages/program_page/components/program_metrics.js:182
-msgid "<strong>%s%</strong> are on track"
-msgstr "<strong>%s%</strong> sont en bonne voie"
-
-#. Translators: variable %(percentBelow)s shows what percentage of indicators are a certain percentage below target. The variable %(marginPercent)s is that percentage. Example: 31% are >15% below target */
-#: js/pages/program_page/components/program_metrics.js:188
-msgid "<strong>%(percentBelow)s%</strong> are >%(marginPercent)s% below target"
-msgstr ""
-"<strong>%(percentBelow)s%</strong> sont >%(marginPercent)s% en dessous de la "
-"cible"
-
-#. Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
-#: js/pages/program_page/components/program_metrics.js:210
-#, python-format
+#: js/pages/program_page/components/program_metrics.js:154
+#, fuzzy, python-format
+#| msgid "%s%% unavailable"
 msgid "%s%% unavailable"
 msgstr "%s%% indisponible"
 
 #. Translators: help text for the percentage of indicators with no targets reporting data. */
-#: js/pages/program_page/components/program_metrics.js:221
+#: js/pages/program_page/components/program_metrics.js:165
 msgid ""
 "The indicator has no targets, no completed target periods, or no results "
 "reported."
@@ -154,7 +171,7 @@ msgstr ""
 "résultats rapportés."
 
 #. Translators: Help text explaining what an "on track" indicator is. */
-#: js/pages/program_page/components/program_metrics.js:245
+#: js/pages/program_page/components/program_metrics.js:191
 msgid ""
 "The actual value matches the target value, plus or minus 15%. So if your "
 "target is 100 and your result is 110, the indicator is 10% above target and "
@@ -175,72 +192,98 @@ msgstr ""
 "d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>Consultez "
 "notre documentation pour plus d’informations.</a>"
 
+#. Translators: variable %(percentHigh)s shows what percentage of indicators are a certain percentage above target percent %(marginPercent)s. Example: 31% are >15% above target */
+#: js/pages/program_page/components/program_metrics.js:211
+msgid "<strong>%(percentHigh)s%</strong> are >%(marginPercent)s% above target"
+msgstr ""
+"<strong>%(percentHigh)s%</strong> sont >%(marginPercent)s% au-dessus de la "
+"cible"
+
+#. Translators: variable %s shows what percentage of indicators are within a set range of target. Example: 31%  are on track */
+#: js/pages/program_page/components/program_metrics.js:217
+msgid "<strong>%s%</strong> are on track"
+msgstr "<strong>%s%</strong> sont en bonne voie"
+
+#. Translators: variable %(percentBelow)s shows what percentage of indicators are a certain percentage below target. The variable %(marginPercent)s is that percentage. Example: 31% are >15% below target */
+#: js/pages/program_page/components/program_metrics.js:223
+msgid "<strong>%(percentBelow)s%</strong> are >%(marginPercent)s% below target"
+msgstr ""
+"<strong>%(percentBelow)s%</strong> sont >%(marginPercent)s% en dessous de la "
+"cible"
+
+#. Translators: message describing why this display does not show any data. # */}
+#: js/pages/program_page/components/program_metrics.js:244
+msgid "Unavailable until the first target period ends with results reported."
+msgstr ""
+"Indisponible jusqu'à la fin de la première période cible avec publication "
+"des résultats."
+
 #. Translators: title of a graphic showing indicators with targets */
-#: js/pages/program_page/components/program_metrics.js:275
+#: js/pages/program_page/components/program_metrics.js:266
 msgid "Indicators with targets"
 msgstr "Indicateurs avec cibles"
 
 #. Translators: a label in a graphic. Example: 31% have targets */
-#: js/pages/program_page/components/program_metrics.js:278
+#: js/pages/program_page/components/program_metrics.js:269
 msgid "have targets"
 msgstr "ont des cibles"
 
 #. Translators: a label in a graphic. Example: 31% no targets */
-#: js/pages/program_page/components/program_metrics.js:281
+#: js/pages/program_page/components/program_metrics.js:272
 msgid "no targets"
 msgstr "pas de cibles"
 
-#: js/pages/program_page/components/program_metrics.js:283
+#: js/pages/program_page/components/program_metrics.js:274
 msgid "Add missing targets"
 msgstr "Ajouter les cibles manquantes"
 
-#: js/pages/program_page/components/program_metrics.js:285
+#: js/pages/program_page/components/program_metrics.js:276
 msgid "No targets"
 msgstr "Pas de cibles"
 
 #. Translators: title of a graphic showing indicators with results */
-#: js/pages/program_page/components/program_metrics.js:290
+#: js/pages/program_page/components/program_metrics.js:281
 msgid "Indicators with results"
 msgstr "Indicateurs avec résultats"
 
 #. Translators: a label in a graphic. Example: 31% have results */
-#: js/pages/program_page/components/program_metrics.js:293
+#: js/pages/program_page/components/program_metrics.js:284
 msgid "have results"
 msgstr "ont des résultats"
 
 #. Translators: a label in a graphic. Example: 31% no results */
-#: js/pages/program_page/components/program_metrics.js:296
+#: js/pages/program_page/components/program_metrics.js:287
 msgid "no results"
 msgstr "aucun résultat"
 
-#: js/pages/program_page/components/program_metrics.js:298
+#: js/pages/program_page/components/program_metrics.js:289
 msgid "Add missing results"
 msgstr "Ajouter les résultats manquants"
 
-#: js/pages/program_page/components/program_metrics.js:300
+#: js/pages/program_page/components/program_metrics.js:291
 msgid "No results"
 msgstr "Aucun résultat"
 
 #. Translators: title of a graphic showing results with evidence */
-#: js/pages/program_page/components/program_metrics.js:305
+#: js/pages/program_page/components/program_metrics.js:296
 msgid "Results with evidence"
 msgstr "Résultats avec preuves"
 
 #. Translators: a label in a graphic. Example: 31% have evidence */
-#: js/pages/program_page/components/program_metrics.js:308
+#: js/pages/program_page/components/program_metrics.js:299
 msgid "have evidence"
 msgstr "ont des preuves"
 
 #. Translators: a label in a graphic. Example: 31% no evidence */
-#: js/pages/program_page/components/program_metrics.js:311
+#: js/pages/program_page/components/program_metrics.js:302
 msgid "no evidence"
 msgstr "aucune preuve"
 
-#: js/pages/program_page/components/program_metrics.js:313
+#: js/pages/program_page/components/program_metrics.js:304
 msgid "Add missing evidence"
 msgstr "Ajouter les preuves manquantes"
 
-#: js/pages/program_page/components/program_metrics.js:315
+#: js/pages/program_page/components/program_metrics.js:306
 msgid "No evidence"
 msgstr "Aucune preuve"
 
@@ -251,6 +294,40 @@ msgid ""
 msgstr ""
 "Attention : Cette action ne peut pas être annulée. Êtes-vous sûr de vouloir "
 "supprimer ce rapport épinglé ?"
+
+#: templates/home.html:3 templates/home.html:4
+msgid "No active country"
+msgstr "Aucun pays actif"
+
+#. Translators: This is a popup warning message that warns users if there is data associated with the thing they are about to delete.
+#: templates/indicators/indicator_form_common_js.html:109
+#, fuzzy, python-format
+#| msgid ""
+#| "Warning: This action cannot be undone. Removing this target means that"
+msgid ""
+"Warning: This action cannot be undone. Removing this target means that %s "
+"data record will no longer have targets associated with it.\n"
+"\n"
+"Proceed anyway?"
+msgid_plural ""
+"Warning: This action cannot be undone. Removing this target means that %s "
+"data records will no longer have targets associated with them.\n"
+"\n"
+"Proceed anyway?"
+msgstr[0] ""
+"Attention : Cette action ne peut pas être annulée. Supprimer cette cible "
+"signifie que"
+msgstr[1] ""
+"Attention : Cette action ne peut pas être annulée. Supprimer cette cible "
+"signifie que"
+
+#~ msgid "Unavailable until results are reported"
+#~ msgstr "Indisponible jusqu'à ce que les résultats soient rapportés"
+
+#~ msgid "Unavailable until the first target period ends with results reported"
+#~ msgstr ""
+#~ "Indisponible jusqu'à la fin de la première période cible avec publication "
+#~ "des résultats"
 
 #~ msgid ""
 #~ "The actual value matches the target value, plus or minus 15%. So if your "
@@ -356,12 +433,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Les rapports seront disponibles après la date de début du programme."
 
-#~ msgid ""
-#~ "Unavailable until the first target period ends with results reported."
-#~ msgstr ""
-#~ "Indisponible jusqu'à la fin de la première période cible avec publication "
-#~ "des résultats."
-
 #~ msgid "Unavailable until results are reported."
 #~ msgstr "Indisponible jusqu'à ce que les résultats soient rapportés."
 
@@ -386,9 +457,6 @@ msgstr ""
 
 #~ msgid "Program"
 #~ msgstr "Programme"
-
-#~ msgid "Project"
-#~ msgstr "Projet"
 
 #~ msgid "Site"
 #~ msgstr "Site"
@@ -984,9 +1052,6 @@ msgstr ""
 #~ msgid "Help"
 #~ msgstr "Aide"
 
-#~ msgid "No active country"
-#~ msgstr "Aucun pays actif"
-
 #~ msgid "change country"
 #~ msgstr "changer de pays"
 
@@ -1069,9 +1134,6 @@ msgstr ""
 
 #~ msgid "All"
 #~ msgstr "Tout"
-
-#~ msgid "Filter by Program"
-#~ msgstr "Filtrer par programme"
 
 #~ msgid "Add project"
 #~ msgstr "Ajouter un projet"
@@ -1392,15 +1454,6 @@ msgstr ""
 #~ msgid "New Indicator"
 #~ msgstr "Nouvel indicateur"
 
-#~ msgid "Date Created"
-#~ msgstr "Date créée"
-
-#~ msgid "Edit"
-#~ msgstr "Modifier"
-
-#~ msgid "Delete"
-#~ msgstr "Effacer"
-
 #~ msgid "No Indicators"
 #~ msgstr "Aucun indicateur"
 
@@ -1438,12 +1491,6 @@ msgstr ""
 
 #~ msgid "Indicator setup"
 #~ msgstr "Configuration de l'indicateur"
-
-#~ msgid ""
-#~ "Warning: This action cannot be undone. Removing this target means that"
-#~ msgstr ""
-#~ "Attention : Cette action ne peut pas être annulée. Supprimer cette cible "
-#~ "signifie que"
 
 #~ msgid "data record/s will no longer have targets associated with them."
 #~ msgstr "les enregistrements de données n'auront plus de cibles associées."
@@ -1850,9 +1897,6 @@ msgstr ""
 #~ msgid "View program documents"
 #~ msgstr "Afficher les documents du programme"
 
-#~ msgid "Add document"
-#~ msgstr "Ajouter un document"
-
 #~ msgid "View program sites"
 #~ msgstr "Afficher les sites du programme"
 
@@ -2079,9 +2123,6 @@ msgstr ""
 
 #~ msgid "Confirm"
 #~ msgstr "Confirmer"
-
-#~ msgid "Document"
-#~ msgstr "Document"
 
 #~ msgid ""
 #~ "Warning: The file you are linking to should be on external storage. The "

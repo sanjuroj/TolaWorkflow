@@ -150,7 +150,7 @@ class GaugeBand extends React.Component {
                     <span className="text-muted">
                         {
                             /* # Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
-                            interpolate(gettext('%s% unavailable'), [percentNonReporting])
+                            interpolate(gettext('%(percentNonReporting)s% unavailable'), {percentNonReporting}, true)
                         }
                     </span>
                     {' '}
