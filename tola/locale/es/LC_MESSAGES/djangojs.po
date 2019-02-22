@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-22 07:09-0800\n"
+"POT-Creation-Date: 2019-02-22 11:20-0800\n"
 "PO-Revision-Date: 2019-02-22 09:21-0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -153,13 +153,13 @@ msgstr ""
 msgid "Indicators on track"
 msgstr "Indicadores encaminados"
 
-#: js/pages/program_page/components/program_metrics.js:154
-#, python-format
+#. Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
+#: js/pages/program_page/components/program_metrics.js:153
 msgid "%(percentNonReporting)s% unavailable"
 msgstr "%(percentNonReporting)s% no disponible"
 
 #. Translators: help text for the percentage of indicators with no targets reporting data. */
-#: js/pages/program_page/components/program_metrics.js:165
+#: js/pages/program_page/components/program_metrics.js:164
 msgid ""
 "The indicator has no targets, no completed target periods, or no results "
 "reported."
@@ -168,7 +168,7 @@ msgstr ""
 "informan resultados."
 
 #. Translators: Help text explaining what an "on track" indicator is. */
-#: js/pages/program_page/components/program_metrics.js:191
+#: js/pages/program_page/components/program_metrics.js:190
 msgid ""
 "The actual value matches the target value, plus or minus 15%. So if your "
 "target is 100 and your result is 110, the indicator is 10% above target and "
@@ -190,97 +190,97 @@ msgstr ""
 "documentación para mayor información.</a>"
 
 #. Translators: variable %(percentHigh)s shows what percentage of indicators are a certain percentage above target percent %(marginPercent)s. Example: 31% are >15% above target */
-#: js/pages/program_page/components/program_metrics.js:211
+#: js/pages/program_page/components/program_metrics.js:210
 msgid "<strong>%(percentHigh)s%</strong> are >%(marginPercent)s% above target"
 msgstr ""
 "<strong>%(percentHigh)s%</strong> está >%(marginPercent)s% por encima del "
 "objetivo"
 
 #. Translators: variable %s shows what percentage of indicators are within a set range of target. Example: 31%  are on track */
-#: js/pages/program_page/components/program_metrics.js:217
+#: js/pages/program_page/components/program_metrics.js:216
 msgid "<strong>%s%</strong> are on track"
 msgstr "<strong>%s%</strong> está encaminado"
 
 #. Translators: variable %(percentBelow)s shows what percentage of indicators are a certain percentage below target. The variable %(marginPercent)s is that percentage. Example: 31% are >15% below target */
-#: js/pages/program_page/components/program_metrics.js:223
+#: js/pages/program_page/components/program_metrics.js:222
 msgid "<strong>%(percentBelow)s%</strong> are >%(marginPercent)s% below target"
 msgstr ""
 "<strong>%(percentBelow)s%</strong> está >%(marginPercent)s% por debajo del "
 "objetivo"
 
 #. Translators: message describing why this display does not show any data. # */}
-#: js/pages/program_page/components/program_metrics.js:244
+#: js/pages/program_page/components/program_metrics.js:243
 msgid "Unavailable until the first target period ends with results reported."
 msgstr ""
 "No disponible hasta finalizar el primer período objetivo con reporte de "
 "resultados."
 
 #. Translators: title of a graphic showing indicators with targets */
-#: js/pages/program_page/components/program_metrics.js:266
+#: js/pages/program_page/components/program_metrics.js:265
 msgid "Indicators with targets"
 msgstr "Indicadores con objetivos"
 
 #. Translators: a label in a graphic. Example: 31% have targets */
-#: js/pages/program_page/components/program_metrics.js:269
+#: js/pages/program_page/components/program_metrics.js:268
 msgid "have targets"
 msgstr "tienen objetivos"
 
 #. Translators: a label in a graphic. Example: 31% no targets */
-#: js/pages/program_page/components/program_metrics.js:272
+#: js/pages/program_page/components/program_metrics.js:271
 msgid "no targets"
 msgstr "sin objetivos"
 
-#: js/pages/program_page/components/program_metrics.js:274
+#: js/pages/program_page/components/program_metrics.js:273
 msgid "Add missing targets"
 msgstr "Agregar objetivos faltantes"
 
-#: js/pages/program_page/components/program_metrics.js:276
+#: js/pages/program_page/components/program_metrics.js:275
 msgid "No targets"
 msgstr "Sin objetivos"
 
 #. Translators: title of a graphic showing indicators with results */
-#: js/pages/program_page/components/program_metrics.js:281
+#: js/pages/program_page/components/program_metrics.js:280
 msgid "Indicators with results"
 msgstr "Indicadores con resultados"
 
 #. Translators: a label in a graphic. Example: 31% have results */
-#: js/pages/program_page/components/program_metrics.js:284
+#: js/pages/program_page/components/program_metrics.js:283
 msgid "have results"
 msgstr "tienen resultados"
 
 #. Translators: a label in a graphic. Example: 31% no results */
-#: js/pages/program_page/components/program_metrics.js:287
+#: js/pages/program_page/components/program_metrics.js:286
 msgid "no results"
 msgstr "sin resultados"
 
-#: js/pages/program_page/components/program_metrics.js:289
+#: js/pages/program_page/components/program_metrics.js:288
 msgid "Add missing results"
 msgstr "Agregar resultados faltantes"
 
-#: js/pages/program_page/components/program_metrics.js:291
+#: js/pages/program_page/components/program_metrics.js:290
 msgid "No results"
 msgstr "Sin resultados"
 
 #. Translators: title of a graphic showing results with evidence */
-#: js/pages/program_page/components/program_metrics.js:296
+#: js/pages/program_page/components/program_metrics.js:295
 msgid "Results with evidence"
 msgstr "Resultados con evidencia"
 
 #. Translators: a label in a graphic. Example: 31% have evidence */
-#: js/pages/program_page/components/program_metrics.js:299
+#: js/pages/program_page/components/program_metrics.js:298
 msgid "have evidence"
 msgstr "hay evidencia adjunta"
 
 #. Translators: a label in a graphic. Example: 31% no evidence */
-#: js/pages/program_page/components/program_metrics.js:302
+#: js/pages/program_page/components/program_metrics.js:301
 msgid "no evidence"
 msgstr "no hay evidencia adjunta"
 
-#: js/pages/program_page/components/program_metrics.js:304
+#: js/pages/program_page/components/program_metrics.js:303
 msgid "Add missing evidence"
 msgstr "Agregar evidencia faltante"
 
-#: js/pages/program_page/components/program_metrics.js:306
+#: js/pages/program_page/components/program_metrics.js:305
 msgid "No evidence"
 msgstr "Sin evidencia"
 
