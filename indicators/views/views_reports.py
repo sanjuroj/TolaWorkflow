@@ -1147,6 +1147,7 @@ def delete_pinned_report(request):
 
 from silk.profiling.profiler import silk_profile
 
+
 class IPTTQuickstart(TemplateView):
     template_name = 'indicators/iptt_quickstart.html'
 
@@ -1205,49 +1206,136 @@ class IPTTQuickstart(TemplateView):
         context['js_context'] = self.get_js_context(request)
         return self.render_to_response(context)
 
+
+from silk.profiling.profiler import silk_profile
+
 class IPTTReport(TemplateView):
     template_name = 'indicators/iptt_report.html'
-    
+
+    def get_programs(self, request, frequencies_used, tva=True):
+        programs = []
+        countries = request.user.tola_user.countries.all()
+        indicator_qs = Indicator.objects.select_related('program').filter(
+            program__funding_status="Funded", program__country__in=countries,
+            program__reporting_period_start__isnull=False, program__reporting_period_end__isnull=False
+        ).order_by('program__id', 'target_frequency').values(
+            'program__id', 'program__name', 'target_frequency',
+            'program__reporting_period_start', 'program__reporting_period_end'
+        ).distinct()
+        program = {'id': None}
+        for c, element in enumerate(indicator_qs):
+            if element['program__id'] != program['id']:
+                if c != 0:
+                    if not tva:
+                        program['frequencies'] = frequencies_used
+                    for frequency in program['frequencies']:
+                        program['periods'][frequency] = [{
+                            'label': p['label'],
+                            'name': unicode(p['name']),
+                            'start': p['start'].isoformat(),
+                            'end': p['end'].isoformat(),
+                            'sort_index': p['customsort']
+                        } for p in PeriodicTarget.generate_for_frequency(
+                            frequency
+                        )(program['reporting_period_start'], program['reporting_period_end'])]
+                    program['reporting_period_start_label'] = l10n_date_medium(program['reporting_period_start'])
+                    program['reporting_period_end_label'] = l10n_date_medium(program['reporting_period_end'])
+                    program['reporting_period_start'] = program['reporting_period_start'].isoformat()
+                    program['reporting_period_end'] = program['reporting_period_end'].isoformat()
+                    programs.append(program)
+                program = {
+                    'name': element['program__name'],
+                    'id': element['program__id'],
+                    'tva_url': reverse('iptt_report', kwargs={'program_id': element['program__id'],
+                                                              'reporttype': 'targetperiods'}),
+                    'timeperiods_url': reverse('iptt_report', kwargs={'program_id': element['program__id'],
+                                                                      'reporttype': 'timeperiods'}),
+                    'reporting_period_start': element['program__reporting_period_start'],
+                    'reporting_period_end': element['program__reporting_period_end'],
+                    'frequencies': [],
+                    'periods': {}
+                }
+            if tva and element['target_frequency'] in frequencies_used and \
+                element['target_frequency'] not in program['frequencies']:
+                program['frequencies'].append(element['target_frequency'])
+        return programs
+
+    def get_program(self, request, params):
+        program_qs = Program.objects.get(pk=params['program_id'])
+        program = {
+            'id': program_qs.pk,
+            'name': program_qs.name,
+            'levels': {
+                '23': 'level 23',
+                '41': 'level 41'
+            },
+            'types': {
+                '14': 'type 14',
+                '33': 'type 33'
+            },
+            'sectors': {
+                '31': 'sector 31',
+                '44': 'sector 44'
+            },
+            'sites': {
+                '21': 'site 21'
+            },
+            'indicators': {
+                '243': 'indciator 243',
+                '4444': 'indicator 4444',
+                '492': 'indicator 492'
+            }
+        }
+        return program
+
     def get_js_context(self, request, params):
         frequencies = {}
-        for frequency, label in Indicator.TARGET_FREQUENCIES:
-            if frequency != Indicator.EVENT:
-                frequencies[frequency] = unicode(label)
+        tva = False
+        if params['reporttype'] == 'targetperiods':
+            frequencies_used = [freq for freq in Indicator.TARGET_FREQUENCIES if freq[0] != Indicator.EVENT]
+            tva = True
+        elif params['reporttype'] == 'timeperiods':
+            frequencies_used = [freq for freq in Indicator.TARGET_FREQUENCIES
+                                if freq[0] in Indicator.TIME_AWARE_TARGET_FREQUENCIES]
+        else:
+            # shouldn't happen - logging?
+            frequencies_used = []
+        for frequency, label in frequencies_used:
+            frequencies[frequency] = unicode(label)
+        programs = self.get_programs(request, frequencies, tva)
+        program = self.get_program(request, params)
         return {
             'reportType': params['reporttype'],
             'frequency': params['frequency'],
-            'program': {
-                'id': 34,
-                'name': 'Test Program 1'
-            },
+            'program': program,
             'labels': {
                 'frequencies': frequencies,
+                'reportTitle': ugettext('Indicator Performance Tracking Table'),
+                'pinButton': ugettext('Pin'),
+                'excelButton': ugettext('Excel'),
+                'filterTitle': ugettext('Report Options'),
                 'tvaPeriodSelect': ugettext('Target Periods'),
                 'timeperiodsPeriodSelect': ugettext('Time periods'),
                 'programSelect': ugettext('Program'),
                 'showAll': ugettext('Show all'),
                 'mostRecent': ugettext('Most recent'),
+                'startPeriodSelect': ugettext('Start'),
+                'endPeriodSelect': ugettext('End'),
+                'levelSelect': ugettext('Levels'),
+                'typeSelect': ugettext('Types'),
+                'sectorSelect': ugettext('Sectors'),
+                'siteSelect': ugettext('Sites'),
+                'selectPlaceholder': ugettext('None selected'),
+                'indicatorSelect': ugettext('Indicators'),
+                'applyButton': ugettext('Apply'),
+                'resetButton': ugettext('Reset')
             },
-            'programs': [
-                {
-                    'name': 'Test Program 1',
-                    'id': 34,
-                    'tva_url': '/banana',
-                    'timeperiods_url': '/banana2',
-                    'frequencies': [2, 4, 5]
-                },
-                {
-                    'name': 'Test Program 2',
-                    'id': 36,
-                    'tva_url': '/banana',
-                    'timeperiods_url': '/banana2',
-                    'frequencies': [2, 4, 5]
-                },
-            ]
+            'programs': programs
         }
 
-    def get_params(self, request, reporttype):
+    def get_params(self, request, reporttype, program_id):
         params = {}
+        params['program_id'] = program_id
         params['reporttype'] = reporttype if reporttype is not None else 'targetperiods'
         frequency_params = [p for p in ['frequency', 'timeperiods', 'targetperiods'] if p in request.GET]
         frequency = None
@@ -1273,10 +1361,10 @@ class IPTTReport(TemplateView):
         params['show_all'] = show_all
         return params
 
-
     def get(self, request, *args, **kwargs):
-        context = {}
-        params = self.get_params(request, kwargs.get('reporttype'))
-        context['params'] = params
-        context['js_context'] = self.get_js_context(request, params)
-        return self.render_to_response(context)
+        with silk_profile(name='get report'):
+            context = {}
+            params = self.get_params(request, kwargs.get('reporttype'), kwargs.get('program_id'))
+            context['params'] = params
+            context['js_context'] = self.get_js_context(request, params)
+            return self.render_to_response(context)

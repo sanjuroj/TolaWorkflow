@@ -4,7 +4,7 @@ export const BLANK_LABEL = '---------';
 export const TVA = 1;
 export const TIMEPERIODS = 2;
 
-export class IPTTQuickstartUIStore {
+class IPTTUIStore {
     @observable selectedProgramId = null;
     @observable enabled = false;
     @observable selectedFrequencyId;
@@ -43,7 +43,7 @@ export class IPTTQuickstartUIStore {
         }
     }
 
-    extractProgramInfo = (programJSON) => {
+    extractProgramInfo(programJSON) {
         let programObject = {
             name: programJSON.name,
             id: programJSON.id,
@@ -191,6 +191,161 @@ export class IPTTQuickstartUIStore {
     
 }
 
+export class IPTTQuickstartUIStore extends IPTTUIStore {};
+
+
+export class IPTTReportUIStore extends IPTTUIStore {
+    @observable startPeriod = null;
+    @observable endPeriod = null;
+    @observable selectedLevels = [];
+    @observable selectedTypes = [];
+    @observable selectedSectors = [];
+    @observable selectedSites = [];
+    @observable selectedIndicators = [];
+    @observable programFilters;
+
+    constructor(jsContext, reportType) {
+        super(jsContext, reportType);
+        this.enabled = true;
+        this.setSelectedProgram(jsContext.program.id);
+        this.setSelectedFrequency(jsContext.frequency);
+        this.extractProgramFilters(jsContext.program);
+    }
+    
+     extractProgramInfo(programJSON) {
+        let programObject = {
+            name: programJSON.name,
+            id: programJSON.id,
+            url: this.reportType == TVA ? programJSON.tva_url : programJSON.timeperiods_url,
+            reportingStart: {
+                iso: programJSON.reporting_period_start,
+                label: programJSON.reporting_period_start_label
+            },
+            reportingEnd: {
+                iso: programJSON.reporting_period_end,
+                label: programJSON.reporting_period_end_label
+            },
+            frequencies: programJSON.frequencies,
+            periods: programJSON.periods
+        };
+        return programObject;
+    }
+    
+    extractProgramFilters = (programJSON) => {
+        this.programFilters = {
+            levels: Object.entries(programJSON.levels).map((item) => ({value: item[0], label: item[1]})),
+            types: Object.entries(programJSON.types).map((item)  => ({value: item[0], label: item[1]})),
+            sectors: Object.entries(programJSON.sectors).map((item)  => ({value: item[0], label: item[1]})),
+            sites: Object.entries(programJSON.sites).map((item)  => ({value: item[0], label: item[1]})),
+            indicators: Object.entries(programJSON.indicators).map((item)  => ({value: item[0], label: item[1]}))
+        };
+    }
+    
+    getStartPeriod = () => {
+        if (this.startPeriod === null) {
+            return BLANK_LABEL;
+        }
+        return this.startPeriod;
+    }
+    
+    getEndPeriod = () => {
+        if (this.endPeriod === null) {
+            return BLANK_LABEL;
+        }
+        return this.endPeriod;
+    }
+    
+    setStartPeriod = (count) => {
+        this.startPeriod = count;
+        return true;
+    }
+    
+    setEndPeriod = (count) => {
+        this.endPeriod = count;
+        return true;
+    }
+    
+    clearStartPeriod = () => {
+        let options = this.getPeriods();
+        if (options && options.length > 0) {
+            this.startPeriod = options[0].value;
+        } else {
+            this.startPeriod = null;
+        }
+    }
+    
+    clearEndPeriod = () => {
+        let options = this.getPeriods();
+        if (options && options.length > 0) {
+            this.endPeriod = options[options.length - 1].value;
+        } else {
+            this.endPeriod = null;
+        }
+    }
+    
+    getPeriods = (end_period=false) => {
+        let options = [];
+        if ([1, 2].includes(this.selectedFrequencyId)) {
+            let label = (end_period ? this.programs[this.selectedProgramId].reportingEnd.label :
+                         this.programs[this.selectedProgramId].reportingStart.label);
+            return [{value: 0, label: label, disabled: false}];
+        }
+        if (this.selectedProgramId !== null && this.selectedFrequencyId !== null) {
+            this.programs[this.selectedProgramId].periods[this.selectedFrequencyId].forEach(
+                (period) => {options.push(
+                    {
+                        value: period.sort_index,
+                        label: period.label,
+                        disabled: (end_period ? this.startPeriod !== null && period.sort_index < this.startPeriod :
+                                   this.endPeriod !== null && period.sort_index > this.endPeriod)
+                    })}
+            );
+        }
+        return options;
+    }
+    
+    setSelectedFrequency(value) {
+        if (value != this.selectedFrequencyId) {
+            super.setSelectedFrequency(value);
+            this.clearStartPeriod();
+            this.clearEndPeriod();
+        }
+    }
+    
+    setLevels = (selected) => {
+        this.selectedLevels = selected;
+    }
+    
+    setTypes = (selected) => {
+        this.selectedTypes = selected;
+    }
+    setSectors = (selected) => {
+        this.selectedSectors = selected;
+    }
+    setSites = (selected) => {
+        this.selectedSites = selected;
+    }
+    setIndicators = (selected) => {
+        this.selectedIndicators = selected;
+    }
+    
+    resetAll = () => {
+        this.clearStartPeriod();
+        this.clearEndPeriod();
+        this.selectedLevels = [];
+        this.selectedTypes = [];
+        this.selectedSectors = [];
+        this.selectedSites = [];
+        this.selectedIndicators = [];
+    }
+    
+    applyFilters = () => {
+        console.log("applying");
+    }
+};
+
+
+
 export class DualFilterStore {
     constructor(jsContext) {
         this.stores = {
@@ -208,12 +363,3 @@ export class DualFilterStore {
         this.stores[altReportType].setDisabled();
     }
 }
-
-export class IPTTReportUIStore extends IPTTQuickstartUIStore {
-    constructor(jsContext, reportType) {
-        super(jsContext, reportType);
-        this.enabled = true;
-        this.setSelectedProgram(jsContext.program.id);
-        this.setSelectedFrequency(jsContext.frequency);
-    }
-};

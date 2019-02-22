@@ -177,3 +177,137 @@ export const IPTTSubmit = observer(({ uiStore, reportType}) => {
             disabled={!enabled}
             style={inlineCSS}>{uiStore.labels.submit}</button>;
 });
+
+@observer
+export class StartPeriodSelect extends React.Component {
+    handleChange = (e) => {
+        this.props.uiStore.setStartPeriod(e.target.value);
+    }
+    createOptions = () => {
+        let options = [];
+        this.props.uiStore.getPeriods().forEach(
+            (period, count) => {
+                options.push(<option key={count} value={period.value} disabled={period.disabled}>{period.label}</option>);
+                }
+        );
+        return options;
+    }
+    render() {
+        let isEnabled = (this.props.uiStore.selectedProgramId !== null &&
+                         this.props.uiStore.selectedFrequencyId !== null);
+        return <React.Fragment>
+                    <label className="col-form-label">
+                    {this.props.uiStore.labels.startPeriodSelect}
+                    </label>
+                    <select className="form-control" value={this.props.uiStore.getStartPeriod()}
+                            disabled={!isEnabled}
+                             onChange={this.handleChange}>
+                             {this.createOptions()}
+                    </select>
+               </React.Fragment>
+    }
+}
+
+@observer
+export class EndPeriodSelect extends React.Component {
+    handleChange = (e) => {
+        this.props.uiStore.setEndPeriod(e.target.value);
+    }
+    createOptions = () => {
+        let options = [];
+        this.props.uiStore.getPeriods(true).forEach(
+            (period, count) => {
+                options.push(<option key={count} value={period.value} disabled={period.disabled}>{period.label}</option>);
+                }
+        );
+        return options;
+    }
+    render() {
+        let isEnabled = (this.props.uiStore.selectedProgramId !== null &&
+                         this.props.uiStore.selectedFrequencyId !== null);
+        return <React.Fragment>
+                    <label className="col-form-label">
+                    {this.props.uiStore.labels.endPeriodSelect}
+                    </label>
+                    <select className="form-control" value={this.props.uiStore.getEndPeriod()}
+                            disabled={!isEnabled}
+                             onChange={this.handleChange}>
+                             {this.createOptions()}
+                    </select>
+               </React.Fragment>
+    }
+}
+
+class FilterMultiSelect extends React.Component {
+    render() {
+        return <div className={this.props.outerClassNames} >
+                    <label className={this.props.labelClassNames} >
+                        {this.label}
+                    </label>
+                    <Select options={this.options}
+                        isMulti={true} placeholder={this.props.uiStore.labels.selectPlaceholder}
+                        value={this.getSelected()}
+                        onChange={this.onSelection} className={this.props.classNames} />
+                </div>;
+    }
+}
+
+@observer
+export class LevelSelect extends FilterMultiSelect {
+    label = this.props.uiStore.labels.levelSelect;
+    options = this.props.uiStore.programFilters.levels;
+
+    getSelected = () => this.props.uiStore.selectedLevels;
+
+    onSelection = (selected) => {
+        this.props.uiStore.setLevels(selected);
+    }
+}
+
+@observer
+export class TypeSelect extends FilterMultiSelect {
+    label = this.props.uiStore.labels.typeSelect;
+    options = this.props.uiStore.programFilters.types;
+    
+    getSelected = () => this.props.uiStore.selectedTypes;
+    
+    onSelection = (selected) => {
+        this.props.uiStore.setTypes(selected);
+    }
+}
+
+@observer
+export class SectorSelect extends FilterMultiSelect {
+    label = this.props.uiStore.labels.sectorSelect;
+    options = this.props.uiStore.programFilters.sectors;
+    
+    getSelected = () => this.props.uiStore.selectedSectors;
+    
+    onSelection = (selected) => {
+        this.props.uiStore.setSectors(selected);
+    }
+}
+
+@observer
+export class SiteSelect extends FilterMultiSelect {
+    label = this.props.uiStore.labels.siteSelect;
+    options = this.props.uiStore.programFilters.sites;
+    
+    getSelected = () => this.props.uiStore.selectedSites;
+    
+    onSelection = (selected) => {
+        this.props.uiStore.setSites(selected);
+    }
+}
+
+@observer
+export class IndicatorSelect extends FilterMultiSelect {
+    label = this.props.uiStore.labels.indicatorSelect;
+    options = this.props.uiStore.programFilters.indicators;
+    
+    getSelected = () => this.props.uiStore.selectedIndicators;
+    
+    onSelection = (selected) => {
+        this.props.uiStore.setIndicators(selected);
+    }
+}
