@@ -21,11 +21,6 @@ function filterDocuments(rootStore, uiStore) {
         documents = documents.filter(r => r.project && r.project.id === uiStore.selectedProjectId);
     }
 
-    if (uiStore.selectedIndicatorId) {
-        let documentsForIndicator = new Set(rootStore.getDocumentsForIndicator(uiStore.selectedIndicatorId));
-        documents = documents.filter(r => documentsForIndicator.has(r.id));
-    }
-
     return documents
 }
 
@@ -63,56 +58,6 @@ class ProgramFilterSelect extends React.Component {
             isClearable={true}
             placeholder={gettext('Filter by program')}
             onChange={this.onSelection}
-        />
-    }
-}
-
-
-@observer
-class IndicatorFilterSelect extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.onSelection = this.onSelection.bind(this);
-    }
-
-    onSelection(selectedObject) {
-        let indicatorId = selectedObject ? selectedObject.value : null;
-        eventBus.emit('indicator-id-filter-selected', indicatorId);
-    }
-
-    render() {
-        const {rootStore, uiStore} = this.props;
-        const {selectedProgramId, selectedIndicatorId} = uiStore;
-
-        let indicatorOptions = [];
-        if (selectedProgramId) {
-            indicatorOptions = rootStore.getIndicators(selectedProgramId).map(i => {
-                return {value: i.id, label: i.number ? i.number + ' ' + i.name : i.name}
-            });
-        }
-
-        let selectedValue = null;
-        if (selectedIndicatorId) {
-            selectedValue = indicatorOptions.find(p => p.value === selectedIndicatorId);
-        }
-
-        // Force the menu closed when the Select widget is also disabled
-        // otherwise the menu remains open and is not closeable since the widget
-        // no longer accepts mouse clicks
-        let menuIsOpen = undefined;
-        if (! selectedProgramId) {
-            menuIsOpen = false;
-        }
-
-        return <Select
-            isDisabled={! selectedProgramId}
-            options={indicatorOptions}
-            value={selectedValue}
-            isClearable={true}
-            placeholder={gettext('Filter by indicator')}
-            onChange={this.onSelection}
-            menuIsOpen={menuIsOpen}
         />
     }
 }
@@ -166,9 +111,6 @@ class DocumentsFilterBar extends React.Component {
                 <ProgramFilterSelect rootStore={rootStore} uiStore={uiStore} />
             </div>
             <div className="col-3">
-                <IndicatorFilterSelect rootStore={rootStore} uiStore={uiStore} />
-            </div>
-            <div className="col-3">
                 <DocumentFilterSelect rootStore={rootStore} uiStore={uiStore} />
             </div>
             <div className="col-3 text-right">
@@ -177,7 +119,6 @@ class DocumentsFilterBar extends React.Component {
             </div>
         </div>
     }
-
 }
 
 

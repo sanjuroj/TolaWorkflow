@@ -4,7 +4,7 @@
     width: 20px;
     height: 20px;
     border-radius: 50% 50% 50% 0;
-    background: rgb(232, 148, 36);
+    background: $secondary;
     position: absolute;
     transform: rotate(-45deg);
     left: 50%;
@@ -15,7 +15,7 @@
         width: 20px;
         height: 20px;
         border-radius: 50% 50% 50% 0;
-        background: #00cae9;
+        background: $primary;
         position: absolute;
         transform: rotate(-45deg);
         left: 50%;
@@ -36,4 +36,9 @@
 .leaflet-div-icon {
   border: 0!important;
   display: none;
+}
+
+// bring the z-index down to something sane, to not interfere with BS popovers
+.leaflet-control-container .leaflet-top, .leaflet-bottom {
+    z-index: 10;
 }

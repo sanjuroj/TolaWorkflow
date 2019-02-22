@@ -27,6 +27,12 @@
 <section class="home__featured-country">
     <div class="featured-country__map">
         {% include "home_country_map.html" %}
+        <div class="featured-country__map-key">
+            <div class="featured-country__map-key-results-color-box"></div>
+            <span>{% trans 'Sites with results' %}</span>
+            <div class="featured-country__map-key-without-results-color-box ml-3"></div>
+            <span>{% trans 'Sites without results' %}</span>
+        </div>
     </div>
     <div class="featured-country__overview-gauges">
         <h3>{% trans "Monitoring and Evaluation Status" %}</h3>
