@@ -1311,6 +1311,7 @@ class IPTTReport(TemplateView):
             'labels': {
                 'frequencies': frequencies,
                 'reportTitle': ugettext('Indicator Performance Tracking Table'),
+                'lopLabel': ugettext('Life of program'),
                 'pinButton': ugettext('Pin'),
                 'excelButton': ugettext('Excel'),
                 'filterTitle': ugettext('Report Options'),
