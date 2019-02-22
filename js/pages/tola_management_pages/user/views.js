@@ -252,7 +252,7 @@ export const IndexView = observer(
                                 expanded={data.id == store.editing_target}
                                 Expando={({Wrapper}) =>
                                     <Wrapper>
-                                        <LoadingSpinner isLoading={store.fetching_editing_target}>
+                                        <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
                                             <UserEditor
                                                 new={data.id == 'new'}
                                                 ProfileSection={observer(() =>

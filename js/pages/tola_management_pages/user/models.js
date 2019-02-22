@@ -314,6 +314,8 @@ export class UserStore {
                     is_active: result.user.is_active
                 }
                 this.users_listing[0] = result.id
+                this.editing_target = null
+                this.toggleEditingTarget(result.id)
                 delete this.users["new"]
             })
         })).catch(errors => {

@@ -115,7 +115,7 @@
                      $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
                  }
              });
-        }, () => {});
+        }, () => {}, true);
     });
 
     $("#indicator_form").on("submit", "#indicator_update_form", function(e){
@@ -128,7 +128,7 @@
             submitForm(this, false, rationale);
         }, () => {
 
-        });
+        }, true);
     });
 
     // Intercept IndicatorUpdate form submission and then use ajax to submit it.
@@ -142,7 +142,7 @@
             submitForm(this, false, rationale);
         }, () => {
 
-        });
+        }, true);
     });
 
 
@@ -165,7 +165,7 @@
 
         create_nondestructive_changeset_notice("", (rationale) => {
             submitForm($("#indicator_update_form"), true, rationale);
-        }, () => {});
+        }, () => {}, true);
     });
 
     $("#indicator_form").on("click", "#id_create_targets_btn", function(e) {
@@ -180,7 +180,7 @@
         // The reason being is to not display the link to program page when creating targets, regardless of context
         create_nondestructive_changeset_notice("", (rationale) => {
             submitForm($("#indicator_update_form"), true, rationale);
-        }, () => {});
+        }, () => {}, true);
     });
 
 
@@ -241,7 +241,7 @@
             });
         }, () => {
 
-        });
+        }, true);
     });
 
     // add new periodic target
@@ -261,7 +261,7 @@
             });
         }, () => {
 
-        });
+        }, true);
 
     });
 
@@ -396,6 +396,19 @@
 
             if (remove_missing_targts_link == true) {
                 $(`#id_missing_target_periods_for_indicator_id_${indicator.pk}`).html('');
+            }
+        }).fail((xhr, text, error) => {
+            var alertsElement = "#alerts";
+            if ( $("#modalmessages").length) {
+                alertsElement = "#modalmessages";
+            }
+
+            $(alertsElement).html('');
+
+            if(xhr.status == 403) {
+                PNotify.error("Permission denied")
+            } else {
+                PNotify.error(error)
             }
         });
     }
@@ -858,7 +871,7 @@
     const DELETE_ALL_TARGETS_MESSAGE = "<span class='text-danger'>This action cannot be undone.</span> Any result records already assigned to the targets you are deleting will need to be replaced. Please make sure your results data will not be lost. For future reference, please provide a rationale for deleting these targets."
     const DELETE_INDICATOR_MESSAGE = "<span class='text-danger'>This action cannot be undone.</span> All details about this indicator and results recorded to the indicator will be permanently removed. For future reference, please provide a rationale for deleting this indicator."
 
-    const create_changeset_notice = destructive => (message_text, on_submit, on_cancel) => {
+    const create_changeset_notice = destructive => (message_text, on_submit, on_cancel, is_indicator) => {
         var inner = '';
         if(destructive) {
             if(!message_text) message_text = DEFAULT_DESTRUCTIVE_MESSAGE;
@@ -915,6 +928,12 @@
                 </div>
             `;
         }
+
+        var has_results = parseInt($('#numDataPoints').text()) > 0 || !is_indicator;
+        if(!has_results) {
+            on_submit('')
+            return
+        }
         var notice = PNotify.notice({
             text: $(`<div><form action="" method="post" class="form container">${inner}</form></div>`).html(),
             textTrusted: true,
@@ -945,7 +964,6 @@
             var close = true;
             var textarea = $(this).find('textarea[name="rationale"]')
             var rationale = textarea.val();
-            var has_results = true;
             textarea.parent().find('.invalid-feedback').remove();
             if(has_results && !rationale) {
                 textarea.addClass('is-invalid');

@@ -11,7 +11,7 @@ const default_organization = {
     primary_contact_email: "",
     primary_contact_name: "",
     primary_contact_phone: "",
-    sectors: []
+    sectors: [],
 }
 
 export class OrganizationStore {
@@ -36,6 +36,7 @@ export class OrganizationStore {
 
     @observable editing_target = null
     @observable editing_target_data = {...default_organization}
+    @observable editing_target_history = []
     @observable editing_errors = {}
 
     @observable filters = {
@@ -257,9 +258,12 @@ export class OrganizationStore {
             this.editing_target = organization_id
             this.fetching_editing_target = true
             if(!(this.editing_target == 'new')) {
-                api.fetchOrganization(organization_id).then((organization) => {
-                    this.fetching_editing_target = false
-                    this.editing_target_data = organization
+                Promise.all([api.fetchOrganization(organization_id), api.fetchOrganizationHistory(organization_id)]).then(([organization, history]) => {
+                    runInAction(() => {
+                        this.fetching_editing_target = false
+                        this.editing_target_data = organization
+                        this.editing_target_history = history
+                    })
                 })
             }
         }

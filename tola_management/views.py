@@ -54,7 +54,8 @@ from workflow.models import (
 )
 
 from .models import (
-    UserManagementAuditLog
+    UserManagementAuditLog,
+    OrganizationAdminAuditLog
 )
 
 from .permissions import (
@@ -727,13 +728,30 @@ class OrganizationSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         sectors = validated_data.pop('sectors')
+        old = instance.logged_fields
         instance.sectors.add(*[sector["id"] for sector in sectors])
-        return super(OrganizationSerializer, self).update(instance, validated_data)
+        updated_org = super(OrganizationSerializer, self).update(instance, validated_data)
+
+        OrganizationAdminAuditLog.updated(
+            organization=updated_org,
+            changed_by=self.context.get('request').user.tola_user,
+            old=old,
+            new=updated_org.logged_fields
+        )
+
+        return updated_org
 
     def create(self, validated_data):
         sectors = validated_data.pop('sectors')
         org = Organization.objects.create(**validated_data)
         org.sectors.add(*[sector["id"] for sector in sectors])
+
+        OrganizationAdminAuditLog.created(
+            organization=org,
+            created_by=self.context.get('request').user.tola_user,
+            entry=org.logged_fields
+        )
+
         return org
 
     class Meta:
@@ -819,7 +837,7 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
         if req.GET.get('organization_status'):
             params.append(req.GET.get('organization_status'))
 
-            user_status_where = 'AND au.is_active = %s'
+            organization_status_where = 'AND wo.is_active = %s'
 
         sector_join = ''
         sector_where = ''
@@ -877,6 +895,7 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
                 {program_where}
                 {country_where}
                 {organization_where}
+                {organization_status_where}
                 {sector_where}
             GROUP BY wo.id
         """.format(
@@ -884,6 +903,7 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
             program_join=program_join,
             country_where=country_where,
             organization_where=organization_where,
+            organization_status_where=organization_status_where,
             sector_join=sector_join,
             sector_where=sector_where
         ), params)
@@ -898,6 +918,12 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
 
         serializer = OrganizationAdminSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    @detail_route(methods=['get'])
+    def history(self, request, pk=None):
+        org = Organization.objects.get(pk=pk)
+        history_log = OrganizationAdminAuditLog.objects.filter(organization=org).select_related('admin_user').order_by('-date')
+        return Response([{"date": entry.date, "admin_name": entry.admin_user.name, "change_type": entry.change_type, "previous": entry.previous_entry, "new": entry.new_entry} for entry in history_log])
 
     @detail_route(methods=["get"])
     def aggregate_data(self, request, pk=None):
