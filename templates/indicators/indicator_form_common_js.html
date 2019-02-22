@@ -37,6 +37,9 @@
     var mediaSize = window.matchMedia("(max-width: 575px)")
     var userLang = "{{ LANGUAGE_CODE }}";
 
+    const DELETE_ALL_TARGETS_MESSAGE = "<span class='text-danger'>This action cannot be undone.</span> Any result records already assigned to the targets you are deleting will need to be replaced. Please make sure your results data will not be lost. For future reference, please provide a rationale for deleting these targets."
+    const DELETE_INDICATOR_MESSAGE = "<span class='text-danger'>This action cannot be undone.</span> All details about this indicator and results recorded to the indicator will be permanently removed. For future reference, please provide a rationale for deleting this indicator."
+
     function setupPopupCalendar() {
         $('.monthPicker').datepicker({
             changeMonth: true,
@@ -100,22 +103,27 @@
     $("#indicator_modal_content, #indicator_form").on("click", "#id_delete_indicator_btn", function(e){
         e.preventDefault();
          // $(e.target).closest("tr").prev("tr").find("a").show(); //.css("display", "block");
-        create_destructive_changeset_notice(DELETE_INDICATOR_MESSAGE, (rationale) => {
-            var url = $(this).attr('href');
-            $.post(url, {rationale: rationale})
-             .done(function(data, textStatus, jqXHR){
-                 if (data.status == "success") {
-                     //ugly, but with no way to coordinate with the mobx data
-                     //store, this is probably the only way until the entire
-                     //thing gets replace with react
-                     PNotify.success({text: "Indicator successfully deleted"})
-                     setTimeout(function() { location.reload() }, 1000)
-                 } else {
-                     createAlert("danger", data.msg, true, "#modalmessages");
-                     $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
-                 }
-             });
-        }, () => {}, true);
+        create_destructive_changeset_notice({
+            message_text: DELETE_INDICATOR_MESSAGE,
+            is_indicator: true,
+            context: document.getElementById('indicator_update_form'),
+            on_submit: (rationale) => {
+                var url = $(this).attr('href');
+                $.post(url, {rationale: rationale})
+                .done(function(data, textStatus, jqXHR){
+                    if (data.status == "success") {
+                        //ugly, but with no way to coordinate with the mobx data
+                        //store, this is probably the only way until the entire
+                        //thing gets replace with react
+                        PNotify.success({text: "Indicator successfully deleted"})
+                        setTimeout(function() { location.reload() }, 1000)
+                    } else {
+                        createAlert("danger", data.msg, true, "#modalmessages");
+                        $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
+                    }
+                });
+            }
+        });
     });
 
     $("#indicator_form").on("submit", "#indicator_update_form", function(e){
@@ -124,11 +132,13 @@
             showValidations("#alerts");
             return;
         }
-        create_nondestructive_changeset_notice("", (rationale) => {
-            submitForm(this, false, rationale);
-        }, () => {
-
-        }, true);
+        window.create_nondestructive_changeset_notice({
+            is_indicator: true,
+            context: document.getElementById('indicator_update_form'),
+            on_submit: (rationale) => {
+                submitForm(this, false, rationale);
+            }
+        });
     });
 
     // Intercept IndicatorUpdate form submission and then use ajax to submit it.
@@ -138,11 +148,13 @@
             showValidations("#modalmessages");
             return;
         }
-        create_nondestructive_changeset_notice("", (rationale) => {
-            submitForm(this, false, rationale);
-        }, () => {
-
-        }, true);
+        window.create_nondestructive_changeset_notice({
+            is_indicator: true,
+            context: document.getElementById('indicator_update_form'),
+            on_submit: (rationale) => {
+                submitForm(this, false, rationale);
+            }
+        });
     });
 
 
@@ -163,9 +175,13 @@
         }
         $(this).attr("disabled", true);
 
-        create_nondestructive_changeset_notice("", (rationale) => {
-            submitForm($("#indicator_update_form"), true, rationale);
-        }, () => {}, true);
+        window.create_nondestructive_changeset_notice({
+            is_indicator: true,
+            context: document.getElementById('indicator_update_form'),
+            on_submit: (rationale) => {
+                submitForm($("#indicator_update_form"), true, rationale);
+            }
+        });
     });
 
     $("#indicator_form").on("click", "#id_create_targets_btn", function(e) {
@@ -178,9 +194,13 @@
 
         // Even though #indicator_form selector catches case when not a modal, pretend like it's a modal
         // The reason being is to not display the link to program page when creating targets, regardless of context
-        create_nondestructive_changeset_notice("", (rationale) => {
-            submitForm($("#indicator_update_form"), true, rationale);
-        }, () => {}, true);
+        window.create_nondestructive_changeset_notice({
+            is_indicator: true,
+            context: document.getElementById('indicator_update_form'),
+            on_submit: (rationale) => {
+                submitForm($("#indicator_update_form"), true, rationale);
+            }
+        });
     });
 
 
@@ -228,20 +248,23 @@
         var dataCountAttribute = $("#periodic_targets_table tr").attr("data-collected-count");
         var msg = '';
 
-        create_destructive_changeset_notice(DELETE_ALL_TARGETS_MESSAGE, (rationale) => {
-            $.post('/indicators/periodic_target_deleteall/' + indicator_id + '/true/', function(data){
-                var res = $.parseJSON(data);
-                if (res['status'] == 'success') {
-                    $("#id_div_periodic_tables_placeholder").empty();
-                    reset_frequency_fields();
-                    show_hide_frequency_fields();
-                    $("#indicator_update_form").data('indicatorchanged', true);
-                }
+        window.create_destructive_changeset_notice({
+            message_text: DELETE_ALL_TARGETS_MESSAGE,
+            is_indicator: true,
+            context: document.getElementById('indicator_update_form'),
+            on_submit: (rationale) => {
+                $.post('/indicators/periodic_target_deleteall/' + indicator_id + '/true/', function(data){
+                    var res = $.parseJSON(data);
+                    if (res['status'] == 'success') {
+                        $("#id_div_periodic_tables_placeholder").empty();
+                        reset_frequency_fields();
+                        show_hide_frequency_fields();
+                        $("#indicator_update_form").data('indicatorchanged', true);
+                    }
 
-            });
-        }, () => {
-
-        }, true);
+                });
+            }
+        });
     });
 
     // add new periodic target
@@ -251,17 +274,19 @@
         var form_url = $("#indicator_update_form").attr('action');
         var indicator_id = form_url.split('/').slice(-2, -1)[0]
 
-        create_nondestructive_changeset_notice("", (rationale) => {
-            $.get('/indicators/periodic_target_generate/' + indicator_id + '/?numTargets=' + numTargets, function(data){
-                var pt = $.parseJSON(data);
-                var isLastIteration = true;
-                var target_frequency = $("#id_target_frequency").val();
-                var markup = createPeriodicTargetRow(pt, target_frequency, isLastIteration);
-                $("#periodic_targets_table tbody tr:nth-last-child(2)").before(markup);
-            });
-        }, () => {
-
-        }, true);
+        window.create_nondestructive_changeset_notice({
+            is_indicator: true,
+            context: document.getElementById('indicator_update_form'),
+            on_submit: (rationale) => {
+                $.get('/indicators/periodic_target_generate/' + indicator_id + '/?numTargets=' + numTargets, function(data){
+                    var pt = $.parseJSON(data);
+                    var isLastIteration = true;
+                    var target_frequency = $("#id_target_frequency").val();
+                    var markup = createPeriodicTargetRow(pt, target_frequency, isLastIteration);
+                    $("#periodic_targets_table tbody tr:nth-last-child(2)").before(markup);
+                });
+            },
+        });
 
     });
 
@@ -865,131 +890,4 @@
             }
         }
     })
-
-    const DEFAULT_DESTRUCTIVE_MESSAGE = "<span class='text-danger'>This action cannot be undone.</span> Your changes will be recorded in an audit log. Please record your rationale for future reference."
-    const DEFAULT_NONDESTRUCTIVE_MESSAGE = 'Your changes will be recorded in an audit log. Please record your rationale for future reference.'
-    const DELETE_ALL_TARGETS_MESSAGE = "<span class='text-danger'>This action cannot be undone.</span> Any result records already assigned to the targets you are deleting will need to be replaced. Please make sure your results data will not be lost. For future reference, please provide a rationale for deleting these targets."
-    const DELETE_INDICATOR_MESSAGE = "<span class='text-danger'>This action cannot be undone.</span> All details about this indicator and results recorded to the indicator will be permanently removed. For future reference, please provide a rationale for deleting this indicator."
-
-    const create_changeset_notice = destructive => (message_text, on_submit, on_cancel, is_indicator) => {
-        var inner = '';
-        if(destructive) {
-            if(!message_text) message_text = DEFAULT_DESTRUCTIVE_MESSAGE;
-            inner = `
-                <div class="row">
-                    <div class="col">
-                        <h2 class="text-danger">Warning</h2>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        ${message_text}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <textarea class="form-control" name="rationale"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <input type="submit" class="btn btn-danger" value="Ok">
-                        <input type="button" name="cancel" class="btn btn-secondary" value="Cancel">
-                    </div>
-                </div>
-            `;
-        } else {
-            if(!message_text) message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE;
-            inner = `
-                <div class="row">
-                    <div class="col">
-                        <h2>Share Your Rationale</h2>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        ${message_text}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <textarea class="form-control" name="rationale"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <input type="submit" class="btn btn-primary" value="Ok">
-                        <input type="button" name="cancel" class="btn btn-secondary" value="Cancel">
-                    </div>
-                </div>
-            `;
-        }
-
-        var has_results = parseInt($('#numDataPoints').text()) > 0 || !is_indicator;
-        if(!has_results) {
-            on_submit('')
-            return
-        }
-        var notice = PNotify.notice({
-            text: $(`<div><form action="" method="post" class="form container">${inner}</form></div>`).html(),
-            textTrusted: true,
-            icon: false,
-            width: '350px',
-            hide: false,
-            addClass: 'program-page__rationale-form',
-            modules: {
-                Buttons: {
-                    closer: false,
-                    sticker: false
-                }
-            }
-        })
-
-        $(notice.refs.elem).find('form').on('click', '[name=cancel]', function() {
-            var close = true;
-            if(on_cancel) {
-                close = on_cancel()
-                if(close === undefined) {
-                    close = true;
-                }
-            }
-            if(close) {
-                notice.close();
-            }
-        }).submit(function() {
-            var close = true;
-            var textarea = $(this).find('textarea[name="rationale"]')
-            var rationale = textarea.val();
-            textarea.parent().find('.invalid-feedback').remove();
-            if(has_results && !rationale) {
-                textarea.addClass('is-invalid');
-                textarea.parent().append(`
-                    <div class="invalid-feedback">
-                        Results have been recorded. Rationale is required.
-                    </div>
-                `);
-                return false;
-            } else {
-                textarea.removeClass('is-invalid');
-            }
-            if(on_submit) {
-                close = on_submit(rationale);
-                if(close === undefined) {
-                    close = true;
-                }
-            }
-            if(close) {
-                notice.close();
-            }
-            return false
-        });
-    }
-
-    const create_destructive_changeset_notice = create_changeset_notice(true)
-
-    const create_nondestructive_changeset_notice = create_changeset_notice(false)
 </script>

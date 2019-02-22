@@ -4,7 +4,7 @@ export const fetchProgramAuditLogWithFilter = (program_id, page) => api.get(`/to
     let data = response.data
     let total_results_count = data.count
     let current_results_count = data.results.length
-    let total_pages = Math.floor(total_results_count/current_results_count)
+    let total_pages = data.page_count
 
     return {
         logs: data.results,

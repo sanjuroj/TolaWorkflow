@@ -406,33 +406,38 @@
             return;
             }
 
-            create_nondestructive_changeset_notice("", (rationale) => {
-                reporting_period_submitting = true;
-                var data = $(this).serialize()
-                data += '&rationale='+rationale
-                $.post({
-                    url: $(this).attr('action'),
-                    data: data,
-                    success: function(data){
-                        $('#id_reporting_period_modal').modal("hide")
-                        },
-                    suppressErrors: true
-                }).fail(function(data) {
-                    let msg = "{% trans 'There was a problem saving your changes.'|escapejs %}";
-                    if (typeof(data.responseJSON.failmsg) !== 'undefined') {
-                        msg = data.responseJSON.failmsg;
-                    }
-                    if (typeof(data.responseJSON.failfields) !== 'undefined' && data.responseJSON.failfields.length > 0) {
-                        for (let i = 0; i<data.responseJSON.failfields.length; i++) {
-                            $('[name="' + data.responseJSON.failfields[i] + '"]').addClass('is-invalid');
+            window.create_destructive_changeset_notice({
+                context: document.getElementById('reportingperiod_update_form'),
+                on_submit: (rationale) => {
+                    reporting_period_submitting = true;
+                    var data = $(this).serialize()
+                    data += '&rationale='+rationale
+                    $.post({
+                        url: $(this).attr('action'),
+                        data: data,
+                        success: function(data){
+                            $('#id_reporting_period_modal').modal("hide")
+                            },
+                        suppressErrors: true
+                    }).done(() => {
+                        PNotify.success('Reporting period updated')
+                    }).fail(function(data) {
+                        let msg = "{% trans 'There was a problem saving your changes.'|escapejs %}";
+                        if (typeof(data.responseJSON.failmsg) !== 'undefined') {
+                            msg = data.responseJSON.failmsg;
                         }
-                    }
-                    createAlert(
-                    "danger",
-                    msg,
-                    false,
-                    "#div-id-reportingperiod-alert");
-                });
+                        if (typeof(data.responseJSON.failfields) !== 'undefined' && data.responseJSON.failfields.length > 0) {
+                            for (let i = 0; i<data.responseJSON.failfields.length; i++) {
+                                $('[name="' + data.responseJSON.failfields[i] + '"]').addClass('is-invalid');
+                            }
+                        }
+                        createAlert(
+                        "danger",
+                        msg,
+                        false,
+                        "#div-id-reportingperiod-alert");
+                    });
+                }
             })
         }
     });

@@ -239,7 +239,7 @@ def app_host_page(request, react_app_page):
 
 
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
-    return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "report_wide": True})
+    return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context})
 
 def audit_log_host_page(request, program_id):
     js_context = get_audit_log_page_context(request, program_id)
@@ -319,6 +319,12 @@ class UserAdminSerializer(ModelSerializer):
         )
         new_user.save()
 
+        UserManagementAuditLog.created(
+            user=new_user,
+            changed_by=self.context["request"].user.tola_user,
+            entry=serializers.serialize('json', [new_user])
+        )
+
         send_new_user_registration_email(new_django_user, self.context["request"])
 
         return new_user
@@ -327,10 +333,6 @@ class UserAdminSerializer(ModelSerializer):
         user = instance
 
         auth_user_data = validated_data.pop('user')
-
-        audit_entry = UserManagementAuditLog()
-        audit_entry.change_type = 'user_profile_modified'
-        audit_entry.previous_entry = serializers.serialize('json', [user])
 
         user.name = validated_data["name"]
         user.organization_id = validated_data["organization_id"]
@@ -344,10 +346,12 @@ class UserAdminSerializer(ModelSerializer):
         user.user.is_active = auth_user_data["is_active"]
         user.user.save()
 
-        audit_entry.new_entry = serializers.serialize('json', [user])
-        audit_entry.admin_user = self.context["request"].user.tola_user
-        audit_entry.modified_user = user
-        audit_entry.save()
+        UserManagementAuditLog.profile_updated(
+            user=user,
+            changed_by=self.context["request"].user.tola_user,
+            old=previous_entry,
+            new=serializers.serialize('json', [user])
+        )
         return user
 
     class Meta:

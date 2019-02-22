@@ -295,3 +295,178 @@ function newPopup(url, windowName) {
 window.newPopup = newPopup;
 
 // EXAMPLE: <a onclick="newPopup('https://docs.google.com/document/d/1tDwo3m1ychefNiAMr-8hCZnhEugQlt36AOyUYHlPbVo/edit?usp=sharing','Form Help/Guidance'); return false;" href="#" class="btn btn-sm btn-info">Form Help/Guidance</a>
+
+const DEFAULT_DESTRUCTIVE_MESSAGE = "<span class='text-danger'>This action cannot be undone.</span> Your changes will be recorded in an audit log. Please record your rationale for future reference."
+const DEFAULT_NONDESTRUCTIVE_MESSAGE = 'Your changes will be recorded in an audit log. Please record your rationale for future reference.'
+
+const create_changeset_notice = ({
+    message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE,
+    on_submit = () => {},
+    on_cancel = () => {},
+    is_indicator = false,
+    confirm_text = 'Ok',
+    cancel_text = 'Cancel',
+    type = 'notice',
+    inner = '',
+    context = null
+} = {}) => {
+    var has_results = parseInt($('#numDataPoints').text()) > 0 || !is_indicator;
+    if(!has_results) {
+        on_submit('')
+        return
+    }
+    var notice = PNotify.alert({
+        text: $(`<div><form action="" method="post" class="form container">${inner}</form></div>`).html(),
+        textTrusted: true,
+        icon: false,
+        width: '350px',
+        hide: false,
+        type: type,
+        addClass: 'program-page__rationale-form',
+        stack: {
+            'overlayClose': true,
+            'dir1': 'right',
+            'dir2': 'up',
+            'firstpos1': 0,
+            'firstpos2': 0,
+            'context': context
+        },
+        modules: {
+            Buttons: {
+                closer: false,
+                sticker: false
+            },
+            Confirm: {
+                confirm: true,
+                buttons: [
+                    {
+                        text: confirm_text,
+                        primary: true,
+                        addClass:(type == 'error')?'btn-danger':'',
+                        click: function (notice) {
+                            var close = true;
+                            var textarea = $(notice.refs.elem).find('textarea[name="rationale"]')
+                            var rationale = textarea.val();
+                            textarea.parent().find('.invalid-feedback').remove();
+                            if(has_results && !rationale) {
+                                textarea.addClass('is-invalid');
+                                textarea.parent().append(`
+                                    <div class="invalid-feedback">
+                                        Results have been recorded. Rationale is required.
+                                    </div>
+                                `);
+                                return false;
+                            } else {
+                                textarea.removeClass('is-invalid');
+                            }
+                            if(on_submit) {
+                                close = on_submit(rationale);
+                                if(close === undefined) {
+                                    close = true;
+                                }
+                            }
+                            if(close) {
+                                notice.close();
+                            }
+                        }
+                    },
+                    {
+                        text: cancel_text,
+                        click: function (notice) {
+                            close = on_cancel()
+                            if(close === undefined) {
+                                close = true;
+                            }
+
+                            if(close) {
+                                notice.close();
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    })
+}
+
+window.create_destructive_changeset_notice = ({
+    message_text = DEFAULT_DESTRUCTIVE_MESSAGE,
+    on_submit = () => {},
+    on_cancel = () => {},
+    is_indicator = false,
+    confirm_text = 'Ok',
+    cancel_text = 'Cancel',
+    context = null
+} = {}) => {
+    const inner = `
+        <div class="row">
+            <div class="col">
+                <h2 class="text-danger">Warning</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                ${message_text}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <textarea class="form-control" name="rationale"></textarea>
+                </div>
+            </div>
+        </div>
+    `;
+    return create_changeset_notice({
+        message_text: message_text,
+        on_submit: on_submit,
+        on_cancel: on_cancel,
+        is_indicator: is_indicator,
+        confirm_text: confirm_text,
+        cancel_text: cancel_text,
+        type: 'error',
+        inner: inner,
+        context: context
+    })
+}
+
+window.create_nondestructive_changeset_notice = ({
+    message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE,
+    on_submit = () => {},
+    on_cancel = () => {},
+    is_indicator = false,
+    confirm_text = 'Ok',
+    cancel_text = 'Cancel',
+    context = null
+} = {}) => {
+    const inner = `
+        <div class="row">
+            <div class="col">
+                <h2>Share Your Rationale</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                ${message_text}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <textarea class="form-control" name="rationale"></textarea>
+                </div>
+            </div>
+        </div>
+    `;
+    return create_changeset_notice({
+        message_text: message_text,
+        on_submit: on_submit,
+        on_cancel: on_cancel,
+        is_indicator: is_indicator,
+        confirm_text: confirm_text,
+        cancel_text: cancel_text,
+        type: 'notice',
+        inner: inner,
+        context: context
+    })
+}

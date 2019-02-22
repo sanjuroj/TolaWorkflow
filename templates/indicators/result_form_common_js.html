@@ -63,51 +63,35 @@
         */
 
 
-        create_nondestructive_changeset_notice("", (rationale) => {
-            let form_url = $(this).attr('action');
-            let form_data = $(this).serialize();
-            form_data += '&rationale='+rationale;
-            // mark that the form data has changed so that when the modal is closed the list view can be updated
-            $(this).data('recordchanged', true);
-            $.post(form_url, form_data,
-                function(response, status, jqXHR) { // success callback
+        window.create_nondestructive_changeset_notice({
+            context: document.getElementById('result_update_form'),
+            on_submit: (rationale) => {
+                let form_url = $(this).attr('action');
+                let form_data = $(this).serialize();
+                form_data += '&rationale='+rationale;
+                // mark that the form data has changed so that when the modal is closed the list view can be updated
+                $(this).data('recordchanged', true);
+                $.post(form_url, form_data,
+                    function(response, status, jqXHR) { // success callback
+                        $('#submit-id-submit').removeAttr('disabled');
+                        if (response.url) {
+                            $('#result_update_form').attr('action', response.url);
+                        }
+                        $("#modalmessages").empty();
+                        if ($("#result_update_form div").hasClass('has-warning')) {
+                            createAlert("warning", "{% trans 'Result saved - however please review warnings below.'|escapejs %}", true, "#modalmessages");
+                        } else {
+                            createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, "#modalmessages");
+                        }
+                    })
+                .fail(function(error){
                     $('#submit-id-submit').removeAttr('disabled');
-                    if (response.url) {
-                        $('#result_update_form').attr('action', response.url);
-                    }
-                    $("#modalmessages").empty();
-                    if ($("#result_update_form div").hasClass('has-warning')) {
-                        createAlert("warning", "{% trans 'Result saved - however please review warnings below.'|escapejs %}", true, "#modalmessages");
-                    } else {
-                        createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, "#modalmessages");
-                    }
-                })
-            .fail(function(error){
-                $('#submit-id-submit').removeAttr('disabled');
-                createAlert("danger", "{% trans 'Could not save form.'|escapejs %}", true, "#modalmessages");
-            });
-            $('#indicator_results_div').animate({ scrollTop: 0 }, 'slow');
-        }, () => {
-
+                    createAlert("danger", "{% trans 'Could not save form.'|escapejs %}", true, "#modalmessages");
+                });
+                $('#indicator_results_div').animate({ scrollTop: 0 }, 'slow');
+            }
         });
     });
-
-    $('#indicator_collecteddata_div').on('click', '#delete_result_button', function(e) {
-        e.preventDefault();
-        var url = $(this).attr('href')
-        create_destructive_changeset_notice("", (rationale) => {
-            $.post(url, {rationale: rationale},
-                   function(response, status, jqXHR) { // success callback
-                       location.reload()
-                   })
-             .fail(function(error){
-                 createAlert("danger", "{% trans 'Could not save form.'|escapejs %}"  + error, true, "#modalmessages");
-             });
-        }, () => {
-
-        });
-    })
-
 
     $("#indicator_results_div").on("change", "#id_date_collected", function(e){
         validatePeriodicTarget(onlyPeriodic = true);
@@ -128,50 +112,21 @@
 
         let resultId = $('#id_delete_result_btn').data('result-id');
 
-        PNotify.alert({
-            text: "{% trans 'This action cannot be undone. Are you sure you want to delete this result?' %}",
-            title: "{% trans 'Warning' %}",
-            icon: 'fa fa-exclamation-circle',
-            hide: false,
-            type: 'error',
-            stack: {
-                {#'modal': true,#}
-                'overlayClose': true,
-                {#'dir1': 'down',#}
-                'dir1': 'right',
-                'dir2': 'up',
-                'firstpos1': 0,
-                'firstpos2': 0,
-                {#'push': 'top',#}
-                'context': document.getElementById('result_update_form')
-            },
-            modules: {
-                Confirm: {
-                    confirm: true,
-                    buttons: [
-                        {
-                            text: "{% trans 'Delete result' %}",
-                            primary: true,
-                            click: function (notice) {
-                                notice.close();
-
-                                // Mark the record being changed so results table is reloaded on modal close
-                                $('#indicator_results_div form').data('recordchanged', true);
-
-                                $.post("/indicators/result_delete/" + resultId + "/", function (data) {
-                                    // Close modal
-                                    $('#indicator_results_div').modal('hide')
-                                });
-                            }
-                        },
-                        {
-                            text: "{% trans 'Cancel' %}",
-                            click: function (notice) {
-                                notice.close();
-                            }
-                        }
-                    ]
-                }
+        var url = "/indicators/result_delete/" + resultId + "/"
+        window.create_destructive_changeset_notice({
+            context: document.getElementById('result_update_form'),
+            on_submit: (rationale) => {
+                // Mark the record being changed so results table is reloaded on modal close
+                $('#indicator_results_div form').data('recordchanged', true);
+                $.post(url, {rationale: rationale},
+                    function(response, status, jqXHR) { // success callback
+                        // Close modal
+                        $('#indicator_results_div').modal('hide')
+                        PNotify.success("Result deleted")
+                    })
+                .fail(function(error){
+                    createAlert("danger", "{% trans 'Could not save form.'|escapejs %}"  + error, true, "#modalmessages");
+                });
             }
         });
     });

@@ -213,6 +213,13 @@ def indicator_create(request, program=0):
         new_indicator.save()
         new_indicator.indicator_type.add(indicator_type)
 
+
+        ProgramAuditLog.log_indicator_created(
+            request.user,
+            new_indicator,
+            'N/A'
+        )
+
         latest = new_indicator.id
 
         # redirect to update page
@@ -1327,7 +1334,7 @@ class ProgramPage(ListView):
     def get(self, request, *args, **kwargs):
         # countries = request.user.tola_user.countries.all()
         program_id = int(self.kwargs['program_id'])
-        if request.user.is_anonymous or not request.user.tola_user.has_access(program_id=program_id):
+        if request.user.is_anonymous:
             return HttpResponseRedirect('/')
         unannotated_program = Program.objects.only(
             'reporting_period_start', 'reporting_period_end',

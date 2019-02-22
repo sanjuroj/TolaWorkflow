@@ -275,7 +275,7 @@ class ReportFormCommon(forms.Form):
         self.fields['numrecentperiods'].widget.attrs['placeholder'] = _("enter a number")
         self.fields['targetperiods'].label = _("Target periods")
         self.fields['program'].queryset = Program.objects \
-            .filter(country__in=countries,
+            .filter(Q(country__in=countries) | Q(user_access=self.request.user.tola_user),
                     funding_status="Funded",
                     reporting_period_start__isnull=False,
                     reporting_period_end__isnull=False,

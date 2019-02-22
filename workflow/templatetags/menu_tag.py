@@ -20,6 +20,7 @@ def program_menu(context):
             funding_status="Funded",
             indicator_count__gt=0
         ).prefetch_related('country').distinct()
+        print(programs.count())
     except AttributeError:
         countries = []
         programs = []

@@ -1187,7 +1187,7 @@ class Result(models.Model):
             "value": self.achieved,
             "date": self.date_collected,
             "target": self.periodic_target.period_name,
-            "evidence_name": self.evidence_name,
+            "evidence_name": self.record_name,
             "evidence_url": self.evidence_url
         }
 
