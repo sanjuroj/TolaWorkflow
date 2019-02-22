@@ -13,15 +13,16 @@ def program_menu(context):
     request = context['request']
     try:
         countries = request.user.tola_user.countries.all()
+        programs = Program.objects.annotate(
+            indicator_count=models.Count('indicator', distinct=True)
+        ).filter(
+            Q(country__in=countries) | Q(user_access=request.user.tola_user),
+            funding_status="Funded",
+            indicator_count__gt=0
+        ).prefetch_related('country').distinct()
     except AttributeError:
         countries = []
-    programs = Program.objects.annotate(
-        indicator_count=models.Count('indicator', distinct=True)
-    ).filter(
-        Q(country__in=countries) | Q(user_access=request.user.tola_user),
-        funding_status="Funded",
-        indicator_count__gt=0
-    ).prefetch_related('country').distinct()
+        programs = []
 
     programs_by_country = OrderedDict((country.country, []) for country in countries)
     programs_without_country = []

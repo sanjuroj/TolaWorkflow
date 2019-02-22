@@ -225,7 +225,8 @@ def indicator_create(request, program=0):
     return render(request, "indicators/indicator_create.html",
                   {'country': countries, 'program': program,
                    'getIndicatorTypes': get_indicator_types,
-                   'getServices': get_services})
+                   'getServices': get_services,
+                   'result_count': 0})
 
 
 class IndicatorCreate(CreateView):

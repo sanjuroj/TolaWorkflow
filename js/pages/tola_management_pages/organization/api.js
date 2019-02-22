@@ -29,9 +29,12 @@ export const createOrganization = (new_data) => api.post(`/tola_management/organ
 
 export const fetchOrganizationAggregates = id => api.get(`/tola_management/organization/${id}/aggregate_data/`).then(response => response.data)
 
+export const fetchOrganizationHistory = id => api.get(`/tola_management/organization/${id}/history`).then(response => response.data)
+
 export default {
     fetchOrganizationsWithFilter,
     fetchOrganization,
+    fetchOrganizationHistory,
     fetchOrganizationAggregates,
     updateOrganization,
     createOrganization,

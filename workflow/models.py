@@ -116,6 +116,20 @@ class Organization(models.Model):
         self.edit_date = timezone.now()
         super(Organization, self).save()
 
+    @property
+    def logged_fields(self):
+        o = self
+        return {
+            "name": o.name,
+            "primary_address": o.primary_address,
+            "primary_contact_name": o.primary_contact_name,
+            "primary_contact_email": o.primary_contact_email,
+            "primary_contact_phone": o.primary_contact_phone,
+            "mode_of_contact": o.mode_of_contact,
+            "is_active": o.is_active,
+            "sectors": [sector.sector for sector in o.sectors.all()]
+        }
+
     # displayed in admin templates
     def __unicode__(self):
         return self.name
