@@ -57,6 +57,9 @@ $border-supplemental-row: 1px solid $gray-150;
         @include pt-ended();
     }
 }
+.results__row__target-period {
+    min-width: $grid-gutter-width * 8;
+}
 .results__row--subtotal {
     @include pt-ended();
     td {

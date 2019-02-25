@@ -3,7 +3,6 @@
 {% load render_bundle from webpack_loader %}
 {% load group_tag menu_tag %}
 {% load i18n %}
-{% load render_bundle from webpack_loader %}
 <!doctype html>
 <html lang="en">
     <head>
@@ -36,17 +35,13 @@
         {% block extra_css_in_header %}{% endblock %}
         {% block extra_js_in_header %}
         {# TODO: this should be in at least two separate blocks #}
-
-        <!-- App specific Javascript -->
-        <script type="text/javascript" src="{% static 'js/app.js' %}?q=huckleberry"></script>
+        {% endblock %}
 
         <!-- Hosted Leaflet -->
         <script src="{% static "js/leaflet.js" %}"></script>
 
         <!-- bootstrap multiselect -->
         <script type="text/javascript" src="{% static "js/bootstrap-multiselect.js" %}?q=gp1116"></script>
-
-        {% endblock %}
 
     </head>
     <body class="{% block bodyclasses %}{% endblock %}">
@@ -199,7 +194,7 @@
                                     target="_blank">{% trans "Documentation" %}</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="https://thehub.mercycorps.org/page/7271"
+                                    <a href="https://thehub.mercycorps.org/node/7768"
                                     class="nav-link help-link"
                                     target="_blank">{% trans "FAQ" %}</a>
                                 </li>
@@ -270,6 +265,12 @@
         {# Webpack runtime and vendor bundles, shared across all pages using webpack #}
         {% render_bundle 'runtime' %}
         {% render_bundle 'vendors' %}
+
+        <!-- Global init and functions - what used to be app.js -->
+        {% render_bundle 'base' 'js' %}
+
+        <!-- Projects Javascript -->
+        <script type="text/javascript" src="{% static 'js/projects.js' %}?q=huckleberry"></script>
 
         {% block extra_js_in_body %}
         {% endblock %}
