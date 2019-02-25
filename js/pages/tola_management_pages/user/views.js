@@ -252,7 +252,7 @@ export const IndexView = observer(
                                 expanded={data.id == store.editing_target}
                                 Expando={({Wrapper}) =>
                                     <Wrapper>
-                                        <LoadingSpinner isLoading={store.fetching_editing_target}>
+                                        <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
                                             <UserEditor
                                                 new={data.id == 'new'}
                                                 ProfileSection={observer(() =>
@@ -291,7 +291,7 @@ export const IndexView = observer(
                                             </div>
                                         </div>
                                     </Col>
-                                    <Col size="2">{data.name || "---"}{data.is_super && <span class="badge badge-danger">Super Admin</span>}</Col>
+                                    <Col size="2">{data.name || "---"} {data.is_super && <span className="badge badge-danger">Super Admin</span>}</Col>
                                     <Col>{data.organization_name || "---"}</Col>
                                     <Col><a href="">{data.user_programs} programs</a></Col>
                                     <Col size="0.5">{data.is_admin?'Yes':'No'}</Col>

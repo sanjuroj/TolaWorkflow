@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from collections import OrderedDict
+from django.core.exceptions import PermissionDenied
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from django.core.mail import send_mail
@@ -13,6 +15,7 @@ from django.urls import reverse
 from django.conf import settings
 import json
 
+from rest_framework.validators import UniqueValidator
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.generics import ListAPIView
 from rest_framework.serializers import (
@@ -52,8 +55,33 @@ from workflow.models import (
 )
 
 from .models import (
-    UserManagementAuditLog
+    UserManagementAuditLog,
+    OrganizationAdminAuditLog
 )
+
+from .permissions import (
+    user_has_basic_or_super_admin,
+    ActionBasedPermissionsMixin,
+)
+
+class Paginator(SmallResultsSetPagination):
+    def get_paginated_response(self , data):
+        response = Response(OrderedDict([
+            ('count', self.page.paginator.count),
+            ('page_count', self.page.paginator.num_pages),
+            ('next', self.get_next_link()),
+            ('previous', self.get_previous_link()),
+            ('results', data),
+        ]))
+        return response
+
+def requires_basic_or_super_admin(func):
+    def wrapper(request, *args, **kwargs):
+        if user_has_basic_or_super_admin(request.user):
+            return func(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+    return wrapper
 
 def get_programs_for_user_queryset(user_id):
     return Program.objects.raw("""
@@ -84,7 +112,15 @@ def get_user_page_context(request):
     for country in Country.objects.all():
         countries[country.id] = {"id": country.id, "name": country.country, "programs": []}
 
-    programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
+    if request.user.is_superuser:
+        programs_qs = Program.objects.raw("""
+            SELECT wp.id, wp.name, wc.id AS country_id, wc.country AS country_name
+            FROM workflow_program wp
+            INNER JOIN workflow_program_country wpc ON wp.id = wpc.program_id
+            INNER JOIN workflow_country wc ON wpc.country_id = wc.id
+        """)
+    else:
+        programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
     programs = {}
     for program in list(programs_qs):
         programs[program.id] = {"id": program.id, "name": program.name, "country_id": program.country_id}
@@ -214,6 +250,7 @@ def send_new_user_registration_email(user, request):
 
 # Create your views here.
 @login_required(login_url='/accounts/login/')
+@requires_basic_or_super_admin
 def app_host_page(request, react_app_page):
     js_context = {}
     if react_app_page == 'user':
@@ -227,7 +264,7 @@ def app_host_page(request, react_app_page):
 
 
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
-    return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "report_wide": True})
+    return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context})
 
 def audit_log_host_page(request, program_id):
     js_context = get_audit_log_page_context(request, program_id)
@@ -268,10 +305,13 @@ class UserAdminReportSerializer(Serializer):
         )
 
 class AuthUserSerializer(ModelSerializer):
-    email = CharField(max_length=255, required=True)
+    id = IntegerField(allow_null=True, required=False)
+    email = CharField(max_length=255, required=True, validators=[
+        UniqueValidator(queryset=User.objects.all())
+    ])
     class Meta:
         model = User
-        fields = ('is_staff', 'is_superuser', 'is_active', 'email')
+        fields = ('id', 'is_staff', 'is_superuser', 'is_active', 'email')
 
 class UserAdminSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
@@ -304,6 +344,12 @@ class UserAdminSerializer(ModelSerializer):
         )
         new_user.save()
 
+        UserManagementAuditLog.created(
+            user=new_user,
+            created_by=self.context["request"].user.tola_user,
+            entry=serializers.serialize('json', [new_user])
+        )
+
         send_new_user_registration_email(new_django_user, self.context["request"])
 
         return new_user
@@ -313,9 +359,7 @@ class UserAdminSerializer(ModelSerializer):
 
         auth_user_data = validated_data.pop('user')
 
-        audit_entry = UserManagementAuditLog()
-        audit_entry.change_type = 'user_profile_modified'
-        audit_entry.previous_entry = serializers.serialize('json', [user])
+        previous_entry = serializers.serialize('json', [user])
 
         user.name = validated_data["name"]
         user.organization_id = validated_data["organization_id"]
@@ -329,10 +373,12 @@ class UserAdminSerializer(ModelSerializer):
         user.user.is_active = auth_user_data["is_active"]
         user.user.save()
 
-        audit_entry.new_entry = serializers.serialize('json', [user])
-        audit_entry.admin_user = self.context["request"].user.tola_user
-        audit_entry.modified_user = user
-        audit_entry.save()
+        UserManagementAuditLog.profile_updated(
+            user=user,
+            changed_by=self.context["request"].user.tola_user,
+            old=previous_entry,
+            new=serializers.serialize('json', [user])
+        )
         return user
 
     class Meta:
@@ -349,10 +395,11 @@ class UserAdminSerializer(ModelSerializer):
         )
 
 
-class UserAdminViewSet(viewsets.ModelViewSet):
+class UserAdminViewSet(viewsets.ModelViewSet, ActionBasedPermissionsMixin):
     queryset = TolaUser.objects.all()
     serializer_class = UserAdminSerializer
-    pagination_class = SmallResultsSetPagination
+    pagination_class = Paginator
+    permission_classes = []
 
     def get_list_queryset(self):
         req = self.request
@@ -514,13 +561,14 @@ class UserAdminViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get', 'put'])
     def program_access(self, request, pk=None):
         user = TolaUser.objects.get(pk=pk)
+        admin_user = request.user.tola_user
 
         if request.method == 'PUT':
 
             audit_entry = UserManagementAuditLog()
             audit_entry.change_type = 'user_programs_modified'
             audit_entry.previous_entry = serializers.serialize('json', [user])
-            audit_entry.admin_user = request.user.tola_user
+            audit_entry.admin_user = admin_user
             audit_entry.modified_user = user
 
             audit_entry.previous_entry = json.dumps({"countries": [country.id for country in user.countries.all()], "programs": [program.id for program in user.program_access.all()]}, cls=DjangoJSONEncoder)
@@ -591,8 +639,9 @@ class UserAdminViewSet(viewsets.ModelViewSet):
                 }
 
             for program_role in user.program_roles.all():
-                if program_role.program.id in program_access:
-                    program_access[program_role.program.id]["permission_level"] = program_role.role
+                if program_role.program.id not in program_access:
+                    program_access[program_role.program.id] = {}
+                program_access[program_role.program.id]["permission_level"] = program_role.role
 
             return Response({
                 "country": country_access,
@@ -710,13 +759,30 @@ class OrganizationSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         sectors = validated_data.pop('sectors')
+        old = instance.logged_fields
         instance.sectors.add(*[sector["id"] for sector in sectors])
-        return super(OrganizationSerializer, self).update(instance, validated_data)
+        updated_org = super(OrganizationSerializer, self).update(instance, validated_data)
+
+        OrganizationAdminAuditLog.updated(
+            organization=updated_org,
+            changed_by=self.context.get('request').user.tola_user,
+            old=old,
+            new=updated_org.logged_fields
+        )
+
+        return updated_org
 
     def create(self, validated_data):
         sectors = validated_data.pop('sectors')
         org = Organization.objects.create(**validated_data)
         org.sectors.add(*[sector["id"] for sector in sectors])
+
+        OrganizationAdminAuditLog.created(
+            organization=org,
+            created_by=self.context.get('request').user.tola_user,
+            entry=org.logged_fields
+        )
+
         return org
 
     class Meta:
@@ -736,7 +802,7 @@ class OrganizationSerializer(ModelSerializer):
 class OrganizationAdminViewSet(viewsets.ModelViewSet):
     serializer_class = OrganizationSerializer
     queryset = Organization.objects.all()
-    pagination_class = SmallResultsSetPagination
+    pagination_class = Paginator
 
     def get_listing_queryset(self):
         req = self.request
@@ -802,7 +868,7 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
         if req.GET.get('organization_status'):
             params.append(req.GET.get('organization_status'))
 
-            user_status_where = 'AND au.is_active = %s'
+            organization_status_where = 'AND wo.is_active = %s'
 
         sector_join = ''
         sector_where = ''
@@ -860,6 +926,7 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
                 {program_where}
                 {country_where}
                 {organization_where}
+                {organization_status_where}
                 {sector_where}
             GROUP BY wo.id
         """.format(
@@ -867,6 +934,7 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
             program_join=program_join,
             country_where=country_where,
             organization_where=organization_where,
+            organization_status_where=organization_status_where,
             sector_join=sector_join,
             sector_where=sector_where
         ), params)
@@ -881,6 +949,12 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
 
         serializer = OrganizationAdminSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    @detail_route(methods=['get'])
+    def history(self, request, pk=None):
+        org = Organization.objects.get(pk=pk)
+        history_log = OrganizationAdminAuditLog.objects.filter(organization=org).select_related('admin_user').order_by('-date')
+        return Response([{"date": entry.date, "admin_name": entry.admin_user.name, "change_type": entry.change_type, "previous": entry.previous_entry, "new": entry.new_entry} for entry in history_log])
 
     @detail_route(methods=["get"])
     def aggregate_data(self, request, pk=None):

@@ -38,6 +38,7 @@ const denormalize = (store, access_listing) => {
                 || false
 
             const permission_level = (access_listing && access_listing.program[program.id] && access_listing.program[program.id].permission_level) || program_options[0].value
+            const current_user_permission_level = store.current_user_country_roles && store.current_user_country_roles[country.id] && store.current_user_country_roles[country.id].role
             return {
                 id: program.id,
                 name: program.name,
@@ -45,7 +46,7 @@ const denormalize = (store, access_listing) => {
                 permissions: {
                     options: program_options,
                     permission_level: permission_level,
-                    admin_access: store.current_user_country_roles[country.id] == 'basic_admin'
+                    admin_access:  current_user_permission_level == 'basic_admin'
                 },
                 type: "program"
             }
@@ -61,7 +62,7 @@ const apply_filter = (filter_string, listing) => {
         country => country.name.toLowerCase().includes(filter_string.toLowerCase())
     )
     if(filtered_countries.length > 0) {
-        return filtered_countries.filter(country => country.programs.length > 0)
+        return filtered_countries
     } else {
         return [
             ...listing.map(country => ({
@@ -141,13 +142,13 @@ export default class EditUserPrograms extends React.Component {
                 const has_access = program_permissions && program_permissions.has_access
                 if(id == changed_program.id) {
                     xs[id] = {
-                        ...program,
+                        ...program_permissions,
                         has_access: !(has_access || (country_permissions && country_permissions.has_access))
                     }
                 } else {
                     xs[id] = {
-                        ...program,
-                        has_access: (changed_program.country_id == program.country_id && country_permissions.has_access) || has_access
+                        ...program_permissions,
+                        has_access: (changed_program.country_id == program.country_id && country_permissions && country_permissions.has_access) || has_access
                     }
                 }
                 return xs

@@ -17,7 +17,7 @@
 #organization-management-index-view {
     .list-controls {
         display: flex;
-        justify-content: end;
+        justify-content: flex-end;
     }
 }
 
@@ -42,7 +42,7 @@
 
 .changeset {
     .changeset-entry {
-        height: 150px;
+        height: 50px;
         overflow: hidden;
 
         &.expanded {
@@ -119,6 +119,18 @@
     }
 }
 
+table.list-table {
+    table-layout: fixed;
+    vertical-align: top;
+    th, td {
+        vertical-align: top;
+    }
+
+    .expander {
+        width: 10%;
+    }
+}
+
 .list-metadata {
     display: flex;
     justify-content: space-between;
@@ -126,9 +138,4 @@
 
 .virtualized-table__wrapper {
     height: 50vh;
-}
-
-.change-table-row__is-changed {
-    background-color: red;
-    color: white;
 }

@@ -43,9 +43,9 @@ def index(request, selected_country=None):
             # ... failing all of this, the homepage will be blank. Sorry!
 
     programs_with_metrics = ProgramWithMetrics.home_page.with_annotations().filter(
-        country=active_country,
+        Q(country=active_country) | Q(country__in=user.countries.all()) | Q(user_access=user),
         funding_status="Funded"
-    )
+    ).distinct()
 
     sites_with_results = SiteProfile.objects.all()\
         .prefetch_related('country', 'district', 'province') \
@@ -248,4 +248,3 @@ def logout_view(request):
     logout(request)
     # Redirect to a success page.
     return HttpResponseRedirect("/")
-

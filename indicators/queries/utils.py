@@ -17,6 +17,12 @@ TIME_AWARE_FREQUENCIES = [
 ]
 
 # pylint: disable=W0223
+class UTCNow(models.Func):
+    """no arguments, returns the current utc timestamp"""
+    function = 'UTC_TIMESTAMP'
+    template = '%(function)s()'
+
+# pylint: disable=W0223
 class Round(models.Func):
     """One argument, rounds to integer level (0 decimal places)"""
     function = 'ROUND'
@@ -56,7 +62,8 @@ def indicator_lop_actual_progress_annotation():
                 models.Q(
                     models.Q(
                         models.Q(target_frequency=Indicator.LOP) &
-                        models.Q(program__reporting_period_end__lte=models.functions.Now())
+                        # models.Q(program__reporting_period_end__lte=models.functions.Now())
+                        models.Q(program__reporting_period_end__lt=UTCNow())
                     ) |
                     models.Q(target_frequency__in=[Indicator.MID_END, Indicator.EVENT])
                 ) &
@@ -72,7 +79,8 @@ def indicator_lop_actual_progress_annotation():
             models.Q(
                 models.Q(
                     models.Q(target_frequency=Indicator.LOP) &
-                    models.Q(program__reporting_period_end__lte=models.functions.Now())
+                    # models.Q(program__reporting_period_end__lte=models.functions.Now())
+                    models.Q(program__reporting_period_end__lt=UTCNow())
                 ) |
                 models.Q(target_frequency__in=[Indicator.MID_END, Indicator.EVENT])
             ),
@@ -92,7 +100,8 @@ def indicator_lop_actual_progress_annotation():
             then=models.Subquery(
                 Result.objects.filter(
                     models.Q(indicator=models.OuterRef('pk')) &
-                    models.Q(periodic_target__end_date__lte=models.functions.Now())
+                    # models.Q(periodic_target__end_date__lt=models.functions.Now())
+                    models.Q(periodic_target__end_date__lt=UTCNow())
                 ).order_by('-date_collected').values('achieved')[:1]
             )
         ),
@@ -101,7 +110,8 @@ def indicator_lop_actual_progress_annotation():
             then=models.Subquery(
                 Result.objects.filter(
                     models.Q(indicator=models.OuterRef('pk')) &
-                    models.Q(periodic_target__end_date__lte=models.functions.Now())
+                    # models.Q(periodic_target__end_date__lt=models.functions.Now())
+                    models.Q(periodic_target__end_date__lt=UTCNow())
                 ).order_by().values('indicator').annotate(
                     actual_sum=models.Sum('achieved')
                 ).values('actual_sum')[:1]
@@ -121,7 +131,8 @@ def indicator_lop_target_progress_annotation():
             models.Q(
                 models.Q(
                     models.Q(target_frequency=Indicator.LOP) &
-                    models.Q(program__reporting_period_end__lte=models.functions.Now())
+                    # models.Q(program__reporting_period_end__lte=models.functions.Now())
+                    models.Q(program__reporting_period_end__lt=UTCNow())
                 )
             ),
             then=models.F('lop_target')
@@ -129,12 +140,16 @@ def indicator_lop_target_progress_annotation():
         models.When(
             models.Q(
                 models.Q(target_frequency__in=[f[0] for f in TIME_AWARE_FREQUENCIES]) &
-                models.Q(is_cumulative=True)
+                models.Q(
+                    models.Q(is_cumulative=True) |
+                    models.Q(unit_of_measure_type=Indicator.PERCENTAGE)
+                    )
                 ),
             then=models.Subquery(
                 PeriodicTarget.objects.filter(
                     models.Q(indicator=models.OuterRef('pk')) &
-                    models.Q(end_date__lte=models.functions.Now())
+                    # models.Q(end_date__lt=models.functions.Now())
+                    models.Q(end_date__lt=UTCNow())
                 ).order_by('-end_date').values('target')[:1]
             )
         ),
@@ -143,7 +158,8 @@ def indicator_lop_target_progress_annotation():
             then=models.Subquery(
                 PeriodicTarget.objects.filter(
                     models.Q(indicator=models.OuterRef('pk')) &
-                    models.Q(end_date__lte=models.functions.Now())
+                    # models.Q(end_date__lt=models.functions.Now())
+                    models.Q(end_date__lt=UTCNow())
                 ).order_by().values('indicator').annotate(
                     target_sum=models.Sum('target')
                 ).values('target_sum')[:1]
@@ -152,7 +168,10 @@ def indicator_lop_target_progress_annotation():
         models.When(
             models.Q(
                 models.Q(target_frequency__in=[Indicator.MID_END, Indicator.EVENT]) &
-                models.Q(is_cumulative=True)
+                models.Q(
+                    models.Q(is_cumulative=True) |
+                    models.Q(unit_of_measure_type=Indicator.PERCENTAGE)
+                    )
                 ),
             then=models.Subquery(
                 PeriodicTarget.objects.filter(
@@ -210,7 +229,8 @@ def indicator_reporting_annotation():
     return models.Case(
         models.When(
             models.Q(target_frequency=Indicator.LOP) &
-            models.Q(program__reporting_period_end__gt=models.functions.Now()),
+            # models.Q(program__reporting_period_end__gt=models.functions.Now()),
+            models.Q(program__reporting_period_end__gt=UTCNow()),
             then=models.Value(False)
         ),
         models.When(

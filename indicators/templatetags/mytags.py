@@ -4,6 +4,7 @@ from datetime import datetime
 from django.core.serializers import serialize
 from django import template
 from django.db.models import QuerySet
+from django.utils.timezone import localdate
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from indicators.models import Indicator
@@ -152,6 +153,15 @@ def js(obj):
     """
     return mark_safe(jsonify(obj))
 
+@register.filter('trailingzero')
+def strip_trailing_zero(value):
+    """Like builtin "floatformat" but strips trailing zeros from the right (12.5 does not become 12.50)"""
+    value = str(value)
+    if "." in value:
+        return value.rstrip("0").rstrip(".")
+    return value
+
+
 def make_percent(numerator, denominator):
     if denominator == 0 or numerator == 0:
         return 0
@@ -159,13 +169,14 @@ def make_percent(numerator, denominator):
         return 100
     return max(1, min(99, int(round(float(numerator*100)/denominator))))
 
+
 @register.inclusion_tag('indicators/tags/target-percent-met.html', takes_context=True)
 def target_percent_met(context, percent_met, has_ended):
     margin = Indicator.ONSCOPE_MARGIN
     on_track = None
     if percent_met:
-        on_track = abs(1-percent_met) <= margin
-        percent_met = percent_met*100
+        percent_met = percent_met * 100
+        on_track = (1 - margin) * 100 <= percent_met <= (1 + margin) * 100
     return {
         'on_track': on_track,
         'percent_met': percent_met,
@@ -186,6 +197,7 @@ def gauge_tank(context, metric, has_filters=True):
             'cta': _('Add missing targets'),
             # Translators: a label in a graphic. Example: 31% have missing targets
             'filter_title': _('have missing targets'),
+            'link_title': _('Add missing targets'),
             'empty': _('No targets'),
             'help_text': '', # currently unused
             'data_target': 'defined-targets',
@@ -200,6 +212,7 @@ def gauge_tank(context, metric, has_filters=True):
             'cta': _('Add missing results'),
             # Translators: a label in a graphic. Example: 31% have missing results
             'filter_title': _('have missing results'),
+            'link_title': _('Add missing results'),
             'empty': _('No results'),
             'help_text': '', # currently unused
             'data_target': 'reported-results',
@@ -214,10 +227,16 @@ def gauge_tank(context, metric, has_filters=True):
             'cta': _('Add missing evidence'),
             # Translators: a label in a graphic. Example: 31% have missing evidence
             'filter_title': _('have missing evidence'),
+            'link_title': _('Add missing evidence'),
             'empty': _('No evidence'),
             'help_text': '', # currently unused
             'data_target': 'has-evidence',
         },
+    }
+    routes = {
+        'targets_defined': 'targets',
+        'reported_results': 'results',
+        'results_evidence': 'evidence',
     }
     program = context['program']
     filled_value = program.metrics[metric]
@@ -226,11 +245,23 @@ def gauge_tank(context, metric, has_filters=True):
     unfilled_value = indicator_count - filled_value
     filter_title_count = program.metrics['needs_evidence'] if metric == 'results_evidence' else unfilled_value
     denominator = results_count if metric == 'results_evidence' else indicator_count
-    #filled_percent = int(round(float(filled_value*100)/denominator)) if denominator > 0 else 0
     filled_percent = make_percent(filled_value, denominator)
+    filter_active = filled_percent != 100 and (
+        metric == 'targets_defined' or (
+            metric == 'reported_results' and program.metrics.get('targets_defined', False)
+        ) or (
+            metric == 'results_evidence' and results_count > 0
+        )
+    )
+    # if has_filters is false this is from the homepage, so needs hardcoded url filters based on the program url:
+    program_url = False if (has_filters or not filter_active) else '{base}#/{route}/'.format(
+            base=program.program_page_url,
+            route=routes[metric]
+        )
     tick_count = 10
     return {
         'program': program,
+        'program_url': program_url,
         'title': labels[metric]['title'],
         'data_target': labels[metric]['data_target'],
         'id_tag': metric,
@@ -249,6 +280,8 @@ def gauge_tank(context, metric, has_filters=True):
         'filter_title_count': filter_title_count,
         'empty_label': labels[metric]['empty'],
         'help_text': labels[metric]['help_text'],
+        'link_title': labels[metric]['link_title'],
+        'filter_active': filter_active,
     }
 
 @register.inclusion_tag('indicators/tags/gauge-tank-small.html', takes_context=True)
@@ -303,10 +336,10 @@ def gauge_band(context, has_filters=True):
     scope_counts = program.scope_counts
     denominator = scope_counts['indicator_count']
     results_count = program.metrics['results_count']
-    #if denominator == 0:
-    #    make_percent = lambda x: 0
-    #else:
-    #    make_percent = lambda x: 100 if x == denominator else max(int(round(float(x*100)/denominator)), 99)
+    # program url is only used on the home page (which is served up with has_filters = false
+    #  because it does not filter in React on the home page, it links to the program page with filter in place)
+    program_url = False if has_filters else program.program_page_url
+    program_started = localdate() >= program.reporting_period_start
 
     scope_percents = {
         'high': make_percent(scope_counts['high'], denominator),
@@ -321,7 +354,9 @@ def gauge_band(context, has_filters=True):
         'ticks': list(range(1, 11)),
         'margin': int(Indicator.ONSCOPE_MARGIN * 100),
         'has_filters': has_filters,
+        'program_url': program_url,
         'results_count': results_count,
+        'program_started': program_started,
     }
 
 

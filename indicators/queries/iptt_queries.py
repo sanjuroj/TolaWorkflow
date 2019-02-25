@@ -145,7 +145,7 @@ class NoTargetsIndicatorManager(IPTTIndicatorManager):
 class WithTargetsIndicatorManager(IPTTIndicatorManager):
     """Manager for Indicator with PeriodicTargets and Result
 
-    automatically annotates for lop target and actual lop sum of collected data
+    automatically annotates for lop target and actual lop sum of results
     also can self-annotate for periodic target and actual sum
     returns % met for the above"""
 

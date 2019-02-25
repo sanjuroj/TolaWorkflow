@@ -11,12 +11,13 @@ from django.contrib import messages
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse_lazy
+from django.core.exceptions import PermissionDenied
 from django.db import connection
 from django.db.models import (
-    Count, Min, Q, Sum, Avg, Max, DecimalField, OuterRef, Subquery
+    Count, Min, Q, Sum, Avg, Max
 )
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, get_object_or_404, redirect, reverse
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -31,10 +32,9 @@ from feed.serializers import FlatJsonSerializer
 from util import getCountry, group_excluded, get_table
 
 from indicators.serializers import IndicatorSerializer, ProgramSerializer
-from workflow.forms import FilterForm
 from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
-    Program, Country, Sector, TolaSites, FormGuidance
+    Program, Sector, TolaSites, FormGuidance
 )
 from ..export import IndicatorResource, ResultResource
 from ..forms import IndicatorForm, ResultForm
@@ -50,6 +50,18 @@ from tola_management.models import (
     ProgramAuditLog
 )
 
+from tola_management.permissions import (
+    indicator_pk_adapter,
+    periodic_target_adapter,
+    has_indicator_read_access,
+    has_indicator_write_access,
+    result_pk_adapter,
+    has_result_read_access,
+    has_result_write_access,
+    has_program_read_access
+)
+
+import indicators.indicator_plan as ip
 
 logger = logging.getLogger(__name__)
 
@@ -146,13 +158,16 @@ def import_indicator(service=1):
     return response.json()
 
 
-def indicator_create(request, id=0):
+@has_indicator_write_access
+def indicator_create(request, program=0):
     """
     Step one in Indicator creation.
     Passed on to IndicatorCreate to do the creation [or  not]
     """
+    if not request.has_write_access:
+        raise PermissionDenied
     get_indicator_types = IndicatorType.objects.all()
-    program = Program.objects.get(pk=id)
+    program = Program.objects.get(pk=program)
     countries = ', '.join(program.country.all().order_by('country').values_list('country', flat=True))
     get_services = ExternalService.objects.all()
 
@@ -198,6 +213,13 @@ def indicator_create(request, id=0):
         new_indicator.save()
         new_indicator.indicator_type.add(indicator_type)
 
+
+        ProgramAuditLog.log_indicator_created(
+            request.user,
+            new_indicator,
+            'N/A'
+        )
+
         latest = new_indicator.id
 
         # redirect to update page
@@ -210,7 +232,8 @@ def indicator_create(request, id=0):
     return render(request, "indicators/indicator_create.html",
                   {'country': countries, 'program': program,
                    'getIndicatorTypes': get_indicator_types,
-                   'getServices': get_services})
+                   'getServices': get_services,
+                   'result_count': 0})
 
 
 class IndicatorCreate(CreateView):
@@ -241,7 +264,10 @@ class IndicatorCreate(CreateView):
         return context
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(indicator_pk_adapter(has_indicator_write_access))
     def dispatch(self, request, *args, **kwargs):
+        if not request.has_write_access:
+            raise PermissionDenied
         return super(IndicatorCreate, self).dispatch(request, *args, **kwargs)
 
     # add the request to the kwargs
@@ -267,6 +293,7 @@ class IndicatorCreate(CreateView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
+@method_decorator(periodic_target_adapter(has_indicator_write_access), name='dispatch')
 class PeriodicTargetView(View):
     """
     This view generates periodic targets or deleting them (via POST)
@@ -358,12 +385,12 @@ def handleDataCollectedRecords(indicatr, lop, existing_target_frequency,
 
 def reset_indicator_target_frequency(ind):
     if ind.target_frequency and ind.target_frequency != 1 and \
-            not ind.periodictargets.count():
-                ind.target_frequency = None
-                ind.target_frequency_start = None
-                ind.target_frequency_num_periods = 1
-                ind.save()
-                return True
+        not ind.periodictargets.count():
+            ind.target_frequency = None
+            ind.target_frequency_start = None
+            ind.target_frequency_num_periods = 1
+            ind.save()
+            return True
     return False
 
 
@@ -380,6 +407,7 @@ class IndicatorUpdate(UpdateView):
         return 'indicators/indicator_form.html'
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(indicator_pk_adapter(has_indicator_write_access))
     def dispatch(self, request, *args, **kwargs):
 
         if request.method == 'GET':
@@ -461,6 +489,9 @@ class IndicatorUpdate(UpdateView):
             context['targetsonly'] = True
         elif self.request.GET.get('targetsactive') == 'true':
             context['targetsactive'] = True
+
+        context['readonly'] = not self.request.has_write_access
+
         return context
 
     def get_initial(self):
@@ -643,6 +674,7 @@ class IndicatorDelete(DeleteView):
     form_class = IndicatorForm
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(indicator_pk_adapter(has_indicator_write_access))
     def dispatch(self, request, *args, **kwargs):
         return super(IndicatorDelete, self).dispatch(request, *args, **kwargs)
 
@@ -675,10 +707,10 @@ class IndicatorDelete(DeleteView):
             return super(IndicatorDelete, self).delete(request, *args, **kwargs)
 
     def get_success_url(self):
-        return reverse_lazy('program_page',
-                            kwargs={'program_id': self.object.program_id, 'indicator_id': 0, 'type_id': 0})
+        return self.object.program.program_page_url
 
 
+@method_decorator(periodic_target_adapter(has_indicator_write_access), name='dispatch')
 class PeriodicTargetDeleteView(DeleteView):
     model = PeriodicTarget
 
@@ -705,80 +737,50 @@ class PeriodicTargetDeleteView(DeleteView):
         return JsonResponse(
             {"status": "success", "msg": "Periodic Target deleted\
              successfully.", "targets_sum": targets_sum}
-        )
+            )
 
 
-class ResultCreate(CreateView):
+class ResultFormMixin(object):
+    def get_template_names(self):
+        return 'indicators/result_form_modal.html'
+
+    def form_invalid(self, form):
+        if self.request.is_ajax():
+            return JsonResponse(form.errors, status=400)
+        messages.error(self.request, 'Invalid Form', fail_silently=False)
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class ResultCreate(ResultFormMixin, CreateView):
+    """Create new Result called by result_add as modal"""
     model = Result
     form_class = ResultForm
 
-    def get_template_names(self):
-        if self.request.is_ajax():
-            return 'indicators/result_form_modal.html'
-        return 'indicators/result_form.html'
-
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(has_result_write_access)
     def dispatch(self, request, *args, **kwargs):
-        try:
-            self.guidance = FormGuidance.objects.get(form="Result")
-        except FormGuidance.DoesNotExist:
-            self.guidance = None
-        return super(ResultCreate, self).dispatch(
-            request, *args, **kwargs)
+        if not request.has_write_access:
+            raise PermissionDenied
+
+        self.indicator = get_object_or_404(Indicator, pk=self.kwargs['indicator'])
+        return super(ResultCreate, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        custom_disaggregation_labels = DisaggregationLabel.objects.filter(disaggregation_type__indicator=self.indicator.id)
+        standard_disaggregation_labels = DisaggregationLabel.get_standard_labels()
+
         context = super(ResultCreate, self).get_context_data(**kwargs)
-        try:
-            getDisaggregationLabel = DisaggregationLabel.objects.filter(
-                disaggregation_type__indicator__id=self.kwargs['indicator'])
-
-            getDisaggregationLabelStandard = DisaggregationLabel.objects \
-                .filter(disaggregation_type__standard=True)
-
-        except DisaggregationLabel.DoesNotExist:
-            getDisaggregationLabelStandard = None
-            getDisaggregationLabel = None
-
-        # set values to None so the form doesn't display empty fields for
-        # previous entries
-        getDisaggregationValue = None
-        indicator = Indicator.objects.get(pk=self.kwargs.get('indicator'))
-
-        context.update({'getDisaggregationValue': getDisaggregationValue})
-        context.update({'getDisaggregationLabel': getDisaggregationLabel})
-        context.update({'getDisaggregationLabelStandard':
-                        getDisaggregationLabelStandard})
-
-        context.update({'indicator_id': self.kwargs['indicator']})
-        context.update({'indicator': indicator})
-        context.update({'program_id': self.kwargs['program']})
+        context['indicator'] = self.indicator
+        context['custom_disaggregation_labels'] = custom_disaggregation_labels
+        context['standard_disaggregation_labels'] = standard_disaggregation_labels
         return context
 
-    def get_initial(self):
-        initial = {
-            'indicator': self.kwargs['indicator'],
-            'program': self.kwargs['program'],
-        }
-        return initial
-
-    # add the request to the kwargs
     def get_form_kwargs(self):
         kwargs = super(ResultCreate, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        kwargs['program'] = self.kwargs['program']
-        kwargs['indicator'] = self.kwargs['indicator']
-        kwargs['tola_table'] = None
+        kwargs['user'] = self.request.user
+        kwargs['indicator'] = self.indicator
+        kwargs['program'] = self.indicator.program
         return kwargs
-
-    def form_invalid(self, form):
-        # this is not receiving a valid date
-        if self.request.is_ajax():
-            print(".....%s....." % form.errors)
-            return HttpResponse(status=400)
-        else:
-            messages.error(self.request, _('Invalid Form'), fail_silently=False)
-            print(".....%s....." % form.errors)
-            return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form):
         indicator = self.request.POST['indicator']
@@ -825,84 +827,56 @@ class ResultCreate(CreateView):
             process_disaggregation = False
 
         if self.request.is_ajax():
-            data = serializers.serialize('json', [new])
-            return HttpResponse(data)
+            #data = serializers.serialize('json', [new])
+            data = {
+                'pk' : new.pk,
+                'url': reverse('result_update', kwargs={'pk': new.pk})
+            }
+            return JsonResponse(data)
 
         messages.success(self.request, _('Success, Data Created!'))
-        redirect_url = reverse_lazy('program_page', args=(self.kwargs['program'], 0, 0))
+        redirect_url = new.indicator.program.program_page_url
         return HttpResponseRedirect(redirect_url)
 
 
-class ResultUpdate(UpdateView):
+class ResultUpdate(ResultFormMixin, UpdateView):
+    """Update Result view called by result_update as modal"""
     model = Result
     form_class = ResultForm
 
-    def get_template_names(self):
-        if self.request.is_ajax():
-            return 'indicators/result_form_modal.html'
-        return 'indicators/result_form.html'
-
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(result_pk_adapter(has_result_write_access))
     def dispatch(self, request, *args, **kwargs):
-        try:
-            self.guidance = FormGuidance.objects.get(form="Result")
-        except FormGuidance.DoesNotExist:
-            self.guidance = None
-        return super(ResultUpdate, self).dispatch(
-            request, *args, **kwargs)
+        self.result = get_object_or_404(Result, pk=self.kwargs.get('pk'))
+        self.indicator = self.result.indicator
+        return super(ResultUpdate, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        custom_disaggregation_values = DisaggregationValue.objects.filter(
+            result=self.result).exclude(
+            disaggregation_label__disaggregation_type__standard=True)
+
+        standard_disaggregation_values = DisaggregationValue.objects.filter(
+            result=self.result).filter(
+            disaggregation_label__disaggregation_type__standard=True)
+        standard_disaggregation_labels = DisaggregationLabel.get_standard_labels()
+        custom_disaggregation_labels = DisaggregationLabel.objects.filter(
+            disaggregation_type__indicator=self.indicator.id)
         context = super(ResultUpdate, self).get_context_data(**kwargs)
-        getIndicator = Result.objects.get(id=self.kwargs['pk'])
+        context['indicator'] = self.indicator
 
-        try:
-            getDisaggregationLabel = DisaggregationLabel.objects.filter(
-                disaggregation_type__indicator__id=getIndicator.indicator_id)
-
-            getDisaggregationLabelStandard = DisaggregationLabel.objects \
-                .filter(disaggregation_type__standard=True)
-
-        except DisaggregationLabel.DoesNotExist:
-            getDisaggregationLabel = None
-            getDisaggregationLabelStandard = None
-
-        try:
-            getDisaggregationValue = DisaggregationValue.objects \
-                .filter(result=self.kwargs['pk']) \
-                .exclude(disaggregation_label__disaggregation_type__standard=True)
-
-            getDisaggregationValueStandard = DisaggregationValue.objects \
-                .filter(result=self.kwargs['pk']) \
-                .filter(disaggregation_label__disaggregation_type__standard=True)
-
-        except DisaggregationLabel.DoesNotExist:
-            getDisaggregationValue = None
-            getDisaggregationValueStandard = None
-
-        context.update({'getDisaggregationLabelStandard': getDisaggregationLabelStandard})
-        context.update({'getDisaggregationValueStandard': getDisaggregationValueStandard})
-        context.update({'getDisaggregationValue': getDisaggregationValue})
-        context.update({'getDisaggregationLabel': getDisaggregationLabel})
-        context.update({'id': self.kwargs['pk']})
-        context.update({'indicator_id': getIndicator.indicator_id})
-        context.update({'indicator': getIndicator})
+        context['readonly'] = not self.request.has_write_access
+        context['custom_disaggregation_labels'] = custom_disaggregation_labels
+        context['custom_disaggregation_values'] = custom_disaggregation_values
+        context['standard_disaggregation_labels'] = standard_disaggregation_labels
+        context['standard_disaggregation_values'] = standard_disaggregation_values
         return context
 
-    def form_invalid(self, form):
-        messages.error(self.request, 'Invalid Form', fail_silently=False)
-        return self.render_to_response(self.get_context_data(form=form))
-
-    # add the request to the kwargs
     def get_form_kwargs(self):
-        get_data = Result.objects.get(id=self.kwargs['pk'])
         kwargs = super(ResultUpdate, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        kwargs['program'] = get_data.program
-        kwargs['indicator'] = get_data.indicator
-        if get_data.tola_table:
-            kwargs['tola_table'] = get_data.tola_table.id
-        else:
-            kwargs['tola_table'] = None
+        kwargs['user'] = self.request.user
+        kwargs['indicator'] = self.indicator
+        kwargs['program'] = self.indicator.program
         return kwargs
 
     def form_valid(self, form):
@@ -951,7 +925,7 @@ class ResultUpdate(UpdateView):
             return HttpResponse(data)
 
         messages.success(self.request, _('Success, Data Updated!'))
-        redirect_url = reverse_lazy('program_page', args=(getIndicator.program.id, 0, 0))
+        redirect_url = getIndicator.program.program_page_url
 
         return HttpResponseRedirect(redirect_url)
 
@@ -960,6 +934,7 @@ class ResultDelete(DeleteView):
     model = Result
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(result_pk_adapter(has_result_write_access))
     def dispatch(self, request, *args, **kwargs):
         return super(ResultDelete, self).dispatch(
             request, *args, **kwargs)
@@ -984,8 +959,7 @@ class ResultDelete(DeleteView):
             return super(ResultDelete, self).delete(request, *args, **kwargs)
 
     def get_success_url(self):
-        return reverse_lazy('program_page',
-                            kwargs={'program_id': self.object.program_id, 'indicator_id': 0, 'type_id': 0})
+        return self.object.program.program_page_url
 
 
 def getTableCount(url, table_id):
@@ -1026,69 +1000,6 @@ def merge_two_dicts(x, y):
     return z
 
 
-def result_import(request):
-    """
-    Import resuts from Tola Tables
-    """
-    owner = request.user
-
-    # get the TolaTables URL and token from the sites object
-    service = TolaSites.objects.get(site_id=1)
-
-    # add filter to get just the users tables only
-    user_filter_url = "%s&owner__username=%s" \
-                      % (service.tola_tables_url, str(owner))
-
-    shared_filter_url = "%s&shared__username=%s" \
-                        % (service.tola_tables_url, str(owner))
-
-    user_json = get_table(user_filter_url)
-    shared_json = get_table(shared_filter_url)
-
-    if type(shared_json) is not dict:
-        data = user_json + shared_json
-    else:
-        data = user_json
-
-    if request.method == 'POST':
-        id = request.POST['service_table']
-        filter_url = service.tola_tables_url + "&id=" + id
-        data = get_table(filter_url)
-
-        # Get Data Info
-        for item in data:
-            name = item['name']
-            url = item['data']
-            remote_owner = item['owner']['username']
-
-        # send table ID to count items in data
-        count = getTableCount(url, id)
-
-        # get the users country
-        countries = getCountry(request.user)
-        check_for_existence = TolaTable.objects.filter(name=name, owner=owner)
-        if check_for_existence:
-            result = check_for_existence[0].id
-        else:
-            create_table = TolaTable.objects.create(
-                name=name, owner=owner, remote_owner=remote_owner, table_id=id,
-                url=url, unique_count=count)
-
-            create_table.country.add(countries[0].id)
-            create_table.save()
-            result = create_table.id
-
-        # send result back as json
-        message = result
-        return HttpResponse(json.dumps(message),
-                            content_type='application/json')
-
-    # send the keys and vars from the json data to the template along
-    # with submitted feed info and silos for new form
-    return render(request, "indicators/result_import.html",
-                  {'getTables': data})
-
-
 def service_json(request, service):
     """
     For populating service indicators in dropdown
@@ -1102,6 +1013,7 @@ def service_json(request, service):
     return JsonResponse(service_indicators, safe=False)
 
 
+@has_result_read_access
 def result_view(request, indicator, program):
     """Returns the results table for an indicator - used to expand rows on the Program Page"""
     indicator = ResultsIndicator.results_view.get(pk=indicator)
@@ -1244,44 +1156,21 @@ class IndicatorReport(View, AjaxableResponseMixin):
         return JsonResponse(get_indicators, safe=False)
 
 
-def programIndicatorReport(request, program=0):
+def indicator_plan(request, program_id):
     """
     This is the GRID report or indicator plan for a program.
     Shows a simple list of indicators sorted by level
     and number. Lives in the "Indicator" home page as a link.
     """
-    program = int(program)
-    countries = getCountry(request.user)
-    getPrograms = Program.objects.filter(funding_status="Funded",
-                                         country__in=countries).distinct()
+    program = get_object_or_404(Program, id=program_id)
 
-    getIndicators = Indicator.objects.filter(program__id=program) \
-        .select_related().order_by('level', 'number')
+    indicators = ip.indicator_queryset(program_id)
 
-    getProgram = Program.objects.get(id=program)
-
-    getIndicatorTypes = IndicatorType.objects.all()
-
-    if request.method == "GET" and "search" in request.GET:
-        # list1 = list()
-        # for obj in filtered:
-        #    list1.append(obj)
-        getIndicators = Indicator.objects.filter(
-            Q(indicator_type__icontains=request.GET["search"]) |
-            Q(name__icontains=request.GET["search"]) |
-            Q(number__icontains=request.GET["search"]) |
-            Q(definition__startswith=request.GET["search"])) \
-            .filter(program__id=program) \
-            .select_related() \
-            .order_by('level', 'number')
-
-    # send the keys and vars from the json data to the template along with
-    # submitted feed info and silos for new form
-    return render(request, "indicators/grid_report.html",
-                  {'getIndicators': getIndicators, 'getPrograms': getPrograms,
-                   'getProgram': getProgram, 'form': FilterForm(),
-                   'helper': FilterForm.helper,
-                   'getIndicatorTypes': getIndicatorTypes})
+    return render(request, "indicators/indicator_plan.html", {
+        'program': program,
+        'column_names': ip.column_names(),
+        'rows': [ip.row(i) for i in indicators]
+    })
 
 
 class IndicatorReportData(View, AjaxableResponseMixin):
@@ -1428,6 +1317,15 @@ def dictfetchall(cursor):
     ]
 
 
+def old_program_page(request, program_id, indicator_id, indicator_type_id):
+    """ redirect for old /program/<program_id>/<indicator_id>/<indicator_type_id>/ urls to new program page url"""
+    program = get_object_or_404(Program, pk=program_id)
+    if indicator_id != 0 or indicator_type_id != 0:
+        logger.warn('attempt to access program page with filters indicator id {0} and indicator type id {1}'.format(
+            indicator_id, indicator_type_id))
+    return redirect(program.program_page_url, permanent=True)
+
+@method_decorator(has_program_read_access, name='dispatch')
 class ProgramPage(ListView):
     model = Indicator
     template_name = 'indicators/program_page.html'
@@ -1436,6 +1334,8 @@ class ProgramPage(ListView):
     def get(self, request, *args, **kwargs):
         # countries = request.user.tola_user.countries.all()
         program_id = int(self.kwargs['program_id'])
+        if request.user.is_anonymous:
+            return HttpResponseRedirect('/')
         unannotated_program = Program.objects.only(
             'reporting_period_start', 'reporting_period_end',
             'start_date', 'end_date'
@@ -1448,14 +1348,6 @@ class ProgramPage(ListView):
             return render(
                 request, 'indicators/program_setup_incomplete.html', context
                 )
-        #indicator_filters = {'program__id': program_id}
-        # indicator_filters = {}
-        type_filter_id = None
-        indicator_filter_id = None
-        type_filter_name = None
-        indicator_filter_name = None
-        #was this for eventually showing more than one program?  Because pk already limits to 1:
-        #program = ProgramWithMetrics.with_metrics.get(pk=program_id, funding_status="Funded", country__in=countries)
         program = ProgramWithMetrics.program_page.get(pk=program_id)
         program.indicator_filters = {}
         if self.metrics:
@@ -1465,22 +1357,8 @@ class ProgramPage(ListView):
             }
             return JsonResponse(json_context)
 
-
-        if int(self.kwargs['type_id']):
-            type_filter_id = self.kwargs['type_id']
-            type_filter_name = IndicatorType.objects.get(id=type_filter_id)
-            program.indicator_filters['indicator_type'] = type_filter_id
-
-        if int(self.kwargs['indicator_id']):
-            indicator_filter_id = self.kwargs['indicator_id']
-            program.indicator_filters['id'] = indicator_filter_id
-            indicator_filter_name = program.annotated_indicators.first()
-
-        indicators = (
-            program.annotated_indicators
+        indicators = program.annotated_indicators\
             .annotate(target_period_last_end_date=Max('periodictargets__end_date')).select_related('level')
-        )
-        # indicator_count = program.indicator_count
         site_count = len(program.get_sites())
 
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
@@ -1495,10 +1373,6 @@ class ProgramPage(ListView):
         c_data = {
             'program': program,
             'site_count': site_count,
-            'indicator_filter_id': indicator_filter_id,
-            'indicator_filter_name': indicator_filter_name,
-            'type_filter_id': type_filter_id,
-            'type_filter_name': type_filter_name,
             'percent_complete': program.percent_complete,
             'pinned_reports': pinned_reports,
             'js_context': js_context,
@@ -1718,26 +1592,15 @@ class TVAReport(TemplateView):
 
 class IndicatorExport(View):
     """
-    Export all indicators to a CSV file
+    Export all indicators to an XLS file
     """
-
     def get(self, request, *args, **kwargs):
-        if int(kwargs['id']) == 0:
-            del kwargs['id']
-        if int(kwargs['indicator_type']) == 0:
-            del kwargs['indicator_type']
-        if int(kwargs['program']) == 0:
-            del kwargs['program']
+        queryset = ip.indicator_queryset(kwargs['program'])
+        wb = ip.create_workbook(queryset)
 
-        countries = getCountry(request.user)
-        queryset = Indicator.objects \
-            .filter(**kwargs) \
-            .filter(program__country__in=countries)
-
-        indicator = IndicatorResource().export(queryset)
-        response = HttpResponse(
-            indicator.csv, content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=indicator.csv'
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format('indicator_plan.xlsx')
+        wb.save(response)
         return response
 
 

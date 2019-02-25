@@ -62,6 +62,7 @@ class Command(makemessages.Command):
 
         options['domain'] = 'djangojs'
         options['ignore_patterns'] = DIRECTORIES_TO_IGNORE
+        options['extensions'] = ['js', 'jsx', 'html']
 
         # keep the pot file around until parsing it for stats
         orig_keep_pot = options['keep_pot']

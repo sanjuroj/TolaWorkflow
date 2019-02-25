@@ -35,6 +35,15 @@ const ChangesetRow = ({data, compareAgainst, field, name}) => {
     }
 }
 
+const ChangesetRowUrl = ({data, compareAgainst, field, name}) => {
+    if(data === compareAgainst) return null
+    if(data == undefined || data[field] == undefined) {
+        return <p>{name}: N/A</p>
+    } else {
+        return <p>{name}: <a href={data[field]}>{name}</a></p>
+    }
+}
+
 const hash_targets = targets => targets.reduce((xs, x) => {
     xs[x.id] = x
     return xs
@@ -79,7 +88,9 @@ const ResultChangeset = ({data, compareAgainst}) => {
         <ChangesetRow data={data} compareAgainst={compareAgainst} field="target" name="Target" />
         <ChangesetRow data={data} compareAgainst={compareAgainst} field="value" name="Value" />
         <ChangesetRow data={data} compareAgainst={compareAgainst} field="evidence_name" name="Evidence Name" />
-        <ChangesetRow data={data} compareAgainst={compareAgainst} field="evidence_url" name="Evidence URL" />
+        {is_field_changed(data, compareAgainst, 'evidence_url') &&
+         <p>Evidence Url: {(data)?<a href={data.evidence_url}>Link</a>:'N/A'}</p>
+        }
     </div>
 }
 
@@ -177,49 +188,40 @@ class ChangesetEntry extends React.Component {
 
 export const IndexView = observer(
     ({store}) => {
-        return <div id="organization-management-index-view" className="container-fluid row">
+        return <div id="audit-log-index-view" className="container-fluid row">
             <div className="col col-sm-12 list-section">
                 <LoadingSpinner isLoading={store.fetching}>
-                    <div className="list-table">
-                        <ManagementTable
-                            data={store.log_rows}
-                            keyField="id"
-                            HeaderRow={({Col, Row}) =>
-                                <Row>
-                                    <Col>Date and Time</Col>
-                                    <Col size="0.5">No.</Col>
-                                    <Col size="2">Indicator</Col>
-                                    <Col>User</Col>
-                                    <Col>Organization</Col>
-                                    <Col>Change Type</Col>
-                                    <Col>Previous Entry</Col>
-                                    <Col>New Entry</Col>
-                                    <Col>Rationale</Col>
-                                </Row>
-                            }
-                            Row={({Col, Row, data}) =>
-                                <Row
-                                expanded={data.id == store.details_target}
-                                Expando={({Wrapper}) =>
-                                    <Wrapper>
-                                    </Wrapper>
-                                }>
-                                    <Col>{data.date}</Col>
-                                    <Col size="0.5">{(data.indicator)?data.indicator.number:'N/A'}</Col>
-                                    <Col size="2">{(data.indicator)?data.indicator.name:'N/A'}</Col>
-                                    <Col>{data.user}</Col>
-                                    <Col>{data.organization}</Col>
-                                    <Col>{map_pretty_change_type(data.change_type)}</Col>
-                                    <Col><ChangesetEntry type={data.change_type} data={data.previous_entry} compareAgainst={data.new_entry} /></Col>
-                                    <Col><ChangesetEntry type={data.change_type} data={data.new_entry} compareAgainst={data.previous_entry} /></Col>
-                                    <Col><ChangesetEntry type="rationale" data={data.rationale} /></Col>
-                                </Row>
-                            }
-                        />
-                    </div>
+                    <table className="list-table">
+                        <thead>
+                            <tr>
+                                <th>Date and Time</th>
+                                <th>No.</th>
+                                <th width="25%">Indicator</th>
+                                <th>User</th>
+                                <th>Organization</th>
+                                <th>Change Type</th>
+                                <th>Previous Entry</th>
+                                <th>New Entry</th>
+                                <th>Rationale</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {store.log_rows.map(data => <tr key={data.id}>
+                                <td>{data.date}</td>
+                                <td>{(data.indicator)?data.indicator.number:'N/A'}</td>
+                                <td>{(data.indicator)?data.indicator.name:'N/A'}</td>
+                                <td>{data.user}</td>
+                                <td>{data.organization}</td>
+                                <td>{map_pretty_change_type(data.change_type)}</td>
+                                <td className="expander"><ChangesetEntry type={data.change_type} data={data.previous_entry} compareAgainst={data.new_entry} /></td>
+                                <td className="expander"><ChangesetEntry type={data.change_type} data={data.new_entry} compareAgainst={data.previous_entry} /></td>
+                                <td className="expander"><ChangesetEntry type="rationale" data={data.rationale} /></td>
+                            </tr>)}
+                        </tbody>
+                    </table>
                 </LoadingSpinner>
                 <div className="list-metadata">
-                    <div id="users-count">{store.entries_count?`${store.entries_count} entries`:`--`}</div>
+                    <div id="entries-count">{store.entries_count?`${store.entries_count} entries`:`--`}</div>
                     <div id ="pagination-controls">
                         {store.total_pages &&
                          <Pagination

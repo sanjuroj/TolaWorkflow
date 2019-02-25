@@ -15,8 +15,13 @@ import yaml
 import sys
 import re
 import getpass
+import argparse
 
 headers = {'Accept': 'application/vnd.github.inertia-preview+json'}
+
+parser = argparse.ArgumentParser(description='Parse a .po file')
+parser.add_argument('--column', help='the column name of the tickets you want to extract')
+args = parser.parse_args()
 
 project_name = raw_input('Enter the project name: ')
 print '\nEnter 1 to use GitHub token authorization (https://github.com/settings/tokens)'
@@ -71,7 +76,10 @@ else:
 # Get the columns ids associated with the project
 columns_url = columns_template % project_id
 response = requests.get(columns_url, headers=headers, auth=auth)
-cols_to_fetch = ['Done', ]
+cols_to_fetch = ['Done', 'Ready for Deploy']
+if args.column:
+    cols_to_fetch = args.column
+
 column_ids = [col['id'] for col in json.loads(response.text) if col['name'] in cols_to_fetch]
 issues = []
 for col_id in column_ids:

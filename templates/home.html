@@ -27,6 +27,12 @@
 <section class="home__featured-country">
     <div class="featured-country__map">
         {% include "home_country_map.html" %}
+        <div class="featured-country__map-key">
+            <div class="featured-country__map-key-results-color-box"></div>
+            <span>{% trans 'Sites with results' %}</span>
+            <div class="featured-country__map-key-without-results-color-box ml-3"></div>
+            <span>{% trans 'Sites without results' %}</span>
+        </div>
     </div>
     <div class="featured-country__overview-gauges">
         <h3>{% trans "Monitoring and Evaluation Status" %}</h3>
@@ -51,7 +57,7 @@
             <div class="card-header">
                 <div class="program-header__info">
                     <h3>{% if program.indicator_count %}
-                        <a href="{% url "program_page" program.id 0 0 %}" class="text-dark">{{ program.name }}</a>
+                        <a href="{{ program.program_page_url }}" class="text-dark">{{ program.name }}</a>
                         {% else %}
                         {{ program.name }}
                         {% endif %}
@@ -59,7 +65,7 @@
                     {% if program.indicator_count and program.reporting_period_start and program.reporting_period_end %}
                         <ul class="nav nav--text-list">
                             <li class="nav-item">
-                                <small><a href="{% url "program_page" program.id 0 0 %}" class="">{% trans "Program page" %}</a></small>
+                                <small><a href="{{ program.program_page_url }}" class="">{% trans "Program page" %}</a></small>
                             </li>
                             {% if program.has_started %}
                             <li class="nav-item">
@@ -75,46 +81,54 @@
                 {% endif %}
             </div>
             <div class="card-body">
-                <h4>
-                    Program metrics
-                    <small>for target periods completed so far
-                        {% include "indicators/program_target_period_info_helptext.html" %}
-                    </small>
-                </h4>
                 {% if not program.reporting_period_start or not program.reporting_period_end %}
-                    <p>Before adding indicators and performance results, we need to know your program's
+                    <p>
+                        {% blocktrans with id=program.id start_date=program.start_date end_date=program.end_date reporting_period_start=program.reporting_period_start reporting_period_end=program.reporting_period_end %}
+                        Before adding indicators and performance results, we need to know your program's
                         <a
-                            id="id_link_reporting_period_{{ program.id }}"
+                            id="id_link_reporting_period_{{ id }}"
                             class=""
                             href="#"
                             data-toggle="modal"
-                            data-program="{{ program.id }}"
-                            data-progstart="{{ program.start_date }}"
-                            data-progend="{{ program.end_date }}"
-                            data-rptstart="{{ program.reporting_period_start }}"
-                            data-rptend="{{ program.reporting_period_end }}"
+                            data-program="{{ id }}"
+                            data-progstart="{{ start_date }}"
+                            data-progend="{{ end_date }}"
+                            data-rptstart="{{ reporting_period_start }}"
+                            data-rptend="{{ reporting_period_end }}"
                             data-target="#id_reporting_period_modal"
-                            >reporting start and end dates.</a>
+                        >
+                            reporting start and end dates.
+                        </a>
+                        {% endblocktrans %}
                     </p>
                 {% elif program.metrics.indicator_count == 0 %}
-                    <h4>No indicators have been entered for this program.</h4>
+                    <h4>{% trans "No indicators have been entered for this program." %}</h4>
                     <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
-                {% elif program.metrics.targets_defined == 0 %}
-                    <div class="float--left">
-                        <i class="gauge__icon gauge__icon--error fas fa-frown"></i>
-                    </div>
-                    <h4>All indicators are missing targets.</h4>
-                    <p>Visit the <a href="{% url "program_page" program.id 0 0 %}">Program page</a> to set up targets.
                 {% else %}
-                    <div class="status__gauges">
-                        {% gauge_band False %}
+                    {% if program.metrics.targets_defined %}
+                        <h4>
+                            {% blocktrans %}
+                            Program metrics
+                            <small>for target periods completed to date
+                            {% endblocktrans %}
+                            {% include "indicators/program_target_period_info_helptext.html" %}
+                            </small>
+                        </h4>
+                        <div class="status__gauges">
+                            {% gauge_band False %}
 
-                        {% gauge_tank "targets_defined" False %}
+                            {% gauge_tank "targets_defined" False %}
 
-                        {% gauge_tank "reported_results" False %}
+                            {% gauge_tank "reported_results" False %}
 
-                        {% gauge_tank "results_evidence" False %}
-                    </div>
+                            {% gauge_tank "results_evidence" False %}
+                        </div>
+                    {% else %}
+                        {% blocktrans with program.program_page_url as program_page_url %}
+                        <h4>All indicators are missing targets.</h4>
+                        <p>Visit the <a href="{{ program_page_url }}">Program page</a> to set up targets.</p>
+                        {% endblocktrans %}
+                    {% endif %}
                 {% endif %}
             </div>
         </article><!--/.program-list__program-->

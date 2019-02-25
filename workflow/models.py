@@ -16,12 +16,12 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from simple_history.models import HistoricalRecords
 from django.contrib.sessions.models import Session
+from django.urls import reverse
 
 try:
     from django.utils import timezone
 except ImportError:
     from datetime import datetime as timezone
-
 
 # New user created generate a token
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -117,6 +117,20 @@ class Organization(models.Model):
         self.edit_date = timezone.now()
         super(Organization, self).save()
 
+    @property
+    def logged_fields(self):
+        o = self
+        return {
+            "name": o.name,
+            "primary_address": o.primary_address,
+            "primary_contact_name": o.primary_contact_name,
+            "primary_contact_email": o.primary_contact_email,
+            "primary_contact_phone": o.primary_contact_phone,
+            "mode_of_contact": o.mode_of_contact,
+            "is_active": o.is_active,
+            "sectors": [sector.sector for sector in o.sectors.all()]
+        }
+
     # displayed in admin templates
     def __unicode__(self):
         return self.name
@@ -189,7 +203,14 @@ class TolaUser(models.Model):
         ordering = ('name',)
 
     def __unicode__(self):
-        return self.name
+        # Returning None breaks the Django Admin on models with a FK to TolaUser
+        return self.name or u''
+
+    @property
+    def display_with_organization(self):
+        if not self.organization:
+            return str(self)
+        return u'{0} ({1})'.format(self, self.organization)
 
     @property
     def countries_list(self):
@@ -205,6 +226,15 @@ class TolaUser(models.Model):
             user_country_codes.add(self.country.code)
         return bool(user_country_codes & settings.PROJECTS_ACCESS_WHITELIST_SET)
 
+    @property
+    def has_admin_management_access(self):
+        #circular import avoidance
+        from tola_management.permissions import (
+            user_has_basic_or_super_admin
+        )
+
+        return user_has_basic_or_super_admin(self.user)
+
     # on save add create date or update edit date
     def save(self, *args, **kwargs):
         if self.create_date == None:
@@ -216,6 +246,15 @@ class TolaUser(models.Model):
     def update_active_country(self, country):
         self.active_country = country
         super(TolaUser, self).save()
+
+    # generic has access function (countries, programs, etc.?  currently program_id implemented):
+    def has_access(self, **kwargs):
+        if 'program_id' in kwargs:
+            return Program.objects.filter(
+                country__in=self.countries.all()
+                ).filter(pk=kwargs.get('program_id')).exists()
+        return False
+
 
 class TolaBookmarks(models.Model):
     user = models.ForeignKey(TolaUser, related_name='tolabookmark', verbose_name=_("User"))
@@ -405,9 +444,38 @@ class Program(models.Model):
     def has_started(self):
         return self.reporting_period_start is not None and self.reporting_period_start <= timezone.localdate()
 
+    @property
+    def has_ended(self):
+        try:
+            return self.reporting_period_end < timezone.localdate()
+        except TypeError: # esp. if there's no reporting dates
+            return False
+
     # displayed in admin templates
     def __unicode__(self):
         return self.name
+
+    @property
+    def program_page_url(self):
+        """used in place of get_absolute_url() because program page isn't strictly an absolute url (no editing) but
+            gives a single point of reference on the model for the program page url, used in linking in various places
+        """
+        return reverse('program_page', kwargs={'program_id': self.pk})
+
+    @property
+    def gait_url(self):
+        """if program has a gait ID, returns url https://gait.mercycorps.org/editgrant.vm?GrantID=####
+        otherwise returns false
+        """
+        try:
+            gaitid = int(self.gaitid)
+        except ValueError:
+            gaitid = False
+        if gaitid and gaitid != 0 and len(str(gaitid)) > 2 and len(str(gaitid)) < 5:
+            # gaitid exists, is numeric, is nonzero, and is a 3 or 4 digit number:
+            return 'https://gait.mercycorps.org/editgrant.vm?GrantID={gaitid}'.format(
+                gaitid=gaitid)
+        return None
 
     def get_sites(self):
         indicator_ids = Indicator.objects.filter(program__in=[self.id]).values_list('id')
@@ -445,13 +513,6 @@ class Program(models.Model):
         return True
 
     @property
-    def has_ended(self):
-        try:
-            return self.reporting_period_end < timezone.localdate()
-        except TypeError: # esp. if there's no reporting dates
-            return False
-
-    @property
     def get_indicators_in_need_of_targetperiods_fixing(self):
         indicators = Indicator.objects.filter(program__in=[self.pk]) \
             .annotate(minstarts=Min('periodictargets__start_date')) \
@@ -461,6 +522,24 @@ class Program(models.Model):
             .order_by('number', 'target_frequency')
 
         return indicators
+
+    @property
+    def has_time_aware_targets(self):
+        """returns true if this program has any indicators which have a time-aware target frequency - used in program
+        reporting period date validation"""
+        return self.indicator_set.filter(
+            target_frequency__in=Indicator.TIME_AWARE_TARGET_FREQUENCIES
+            ).exists()
+
+    @property
+    def last_time_aware_indicator_start_date(self):
+        """returns None if no time aware indicators, otherwise returns the most recent start date of all targets for
+        indicators with a time-aware frequency - used in program reporting period date validation"""
+        most_recent = PeriodicTarget.objects.filter(
+            indicator__program=self,
+            indicator__target_frequency__in=Indicator.TIME_AWARE_TARGET_FREQUENCIES
+        ).order_by('-start_date').first()
+        return most_recent if most_recent is None else most_recent.start_date
 
     def get_periods_for_frequency(self, frequency):
         period_generator = PeriodicTarget.generate_for_frequency(frequency)

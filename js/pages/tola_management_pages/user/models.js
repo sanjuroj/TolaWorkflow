@@ -223,6 +223,7 @@ export class UserStore {
 
     @action
     toggleEditingTarget(user_id) {
+        this.editing_errors = {}
         this.editing_target_data = {...default_editing_target_data}
         if(this.editing_target == 'new') {
             this.users_listing.shift()
@@ -313,6 +314,8 @@ export class UserStore {
                     is_active: result.user.is_active
                 }
                 this.users_listing[0] = result.id
+                this.editing_target = null
+                this.toggleEditingTarget(result.id)
                 delete this.users["new"]
             })
         })).catch(errors => {

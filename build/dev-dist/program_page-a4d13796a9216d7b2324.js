@@ -49,8 +49,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 /* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "wHSu");
 /* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../models */ "YVM2");
-/* harmony import */ var _components_bootstrap_multiselect__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../components/bootstrap_multiselect */ "lYLt");
-var _class, _class2, _class3;
+/* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-select */ "y2Vs");
+var _class, _class2, _temp, _class4;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -62,13 +62,13 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 
 
@@ -133,17 +133,16 @@ function (_React$Component) {
     _classCallCheck(this, StatusHeader);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(StatusHeader).call(this, props));
-    _this.onShowAllClick = _this.onShowAllClick.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+
+    _this.onShowAllClick = function (e) {
+      e.preventDefault();
+      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('nav-clear-all-indicator-filters');
+    };
+
     return _this;
   }
 
   _createClass(StatusHeader, [{
-    key: "onShowAllClick",
-    value: function onShowAllClick(e) {
-      e.preventDefault();
-      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('clear-all-indicator-filters');
-    }
-  }, {
     key: "render",
     value: function render() {
       var _this$props = this.props,
@@ -174,28 +173,54 @@ function (_React$Component) {
   return StatusHeader;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class;
 
-var IndicatorFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class2 =
+var IndicatorFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class2 = (_temp =
 /*#__PURE__*/
 function (_React$Component2) {
   _inherits(IndicatorFilter, _React$Component2);
 
   function IndicatorFilter() {
+    var _getPrototypeOf2;
+
+    var _this2;
+
     _classCallCheck(this, IndicatorFilter);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(IndicatorFilter).apply(this, arguments));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this2 = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(IndicatorFilter)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    _this2.onSelection = function (selectedObject) {
+      var selectedIndicatorId = selectedObject ? selectedObject.value : null;
+
+      if (selectedIndicatorId) {
+        _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('nav-select-indicator-to-filter', selectedIndicatorId);
+      }
+    };
+
+    return _this2;
   }
 
   _createClass(IndicatorFilter, [{
     key: "render",
     value: function render() {
       var indicators = this.props.rootStore.indicatorStore.indicators;
-      var selectedIndicatorIds = this.props.uiStore.selectedIndicatorIds;
+      var selectedIndicatorId = this.props.uiStore.selectedIndicatorId;
       var indicatorSelectOptions = indicators.map(function (i) {
         return {
           value: i.id,
           label: i.name
         };
       });
+      var selectedValue = null;
+
+      if (selectedIndicatorId) {
+        selectedValue = indicatorSelectOptions.find(function (i) {
+          return i.value === selectedIndicatorId;
+        });
+      }
+
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("nav", {
         className: "list__filters list__filters--inline-label",
         id: "id_div_indicators"
@@ -203,34 +228,33 @@ function (_React$Component2) {
         className: "filters__label"
       }, gettext("Find an indicator:")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "filters__control"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_bootstrap_multiselect__WEBPACK_IMPORTED_MODULE_8__["Select"], {
-        forceEmptySelect: true,
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_8__["default"], {
         options: indicatorSelectOptions,
-        selected: selectedIndicatorIds,
-        onSelectCb: function onSelectCb(selectedIndicatorIds) {
-          return _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('select-indicators-to-filter', selectedIndicatorIds);
-        }
+        value: selectedValue,
+        isClearable: false,
+        placeholder: gettext('None'),
+        onChange: this.onSelection
       })));
     }
   }]);
 
   return IndicatorFilter;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class2;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class2;
 
-var IndicatorListTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class3 =
+var IndicatorListTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class4 =
 /*#__PURE__*/
 function (_React$Component3) {
   _inherits(IndicatorListTable, _React$Component3);
 
   function IndicatorListTable(props) {
-    var _this2;
+    var _this3;
 
     _classCallCheck(this, IndicatorListTable);
 
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorListTable).call(this, props));
-    _this2.onIndicatorUpdateClick = _this2.onIndicatorUpdateClick.bind(_assertThisInitialized(_assertThisInitialized(_this2)));
-    _this2.onIndicatorResultsToggleClick = _this2.onIndicatorResultsToggleClick.bind(_assertThisInitialized(_assertThisInitialized(_this2)));
-    return _this2;
+    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorListTable).call(this, props));
+    _this3.onIndicatorUpdateClick = _this3.onIndicatorUpdateClick.bind(_assertThisInitialized(_assertThisInitialized(_this3)));
+    _this3.onIndicatorResultsToggleClick = _this3.onIndicatorResultsToggleClick.bind(_assertThisInitialized(_assertThisInitialized(_this3)));
+    return _this3;
   }
 
   _createClass(IndicatorListTable, [{
@@ -254,7 +278,7 @@ function (_React$Component3) {
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       var indicators = this.props.indicators;
       var program = this.props.program;
@@ -298,7 +322,7 @@ function (_React$Component3) {
           href: "#",
           className: "indicator_results_toggle",
           onClick: function onClick(e) {
-            return _this3.onIndicatorResultsToggleClick(e, indicator.id);
+            return _this4.onIndicatorResultsToggleClick(e, indicator.id);
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
           icon: resultsExist ? 'caret-down' : 'caret-right'
@@ -318,7 +342,7 @@ function (_React$Component3) {
           href: "#",
           className: "indicator-link",
           onClick: function onClick(e) {
-            return _this3.onIndicatorUpdateClick(e, indicator.id);
+            return _this4.onIndicatorUpdateClick(e, indicator.id);
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
           className: "fas fa-cog"
@@ -345,7 +369,7 @@ function (_React$Component3) {
   }]);
 
   return IndicatorListTable;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class3;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class4;
 
 var IndicatorList = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(function (props) {
   var program = props.rootStore.program;
@@ -353,14 +377,14 @@ var IndicatorList = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(
 
   var resultsMap = props.rootStore.resultsMap;
   var currentIndicatorFilter = props.uiStore.currentIndicatorFilter;
-  var selectedIndicatorIds = props.uiStore.selectedIndicatorIds; // Either a gas gauge filter is applied, or an indicator has been selected, but not both
+  var selectedIndicatorId = props.uiStore.selectedIndicatorId; // Either a gas gauge filter is applied, or an indicator has been selected, but not both
   // apply gas gauge filter
 
   var filteredIndicators = indicatorStore.filterIndicators(currentIndicatorFilter);
 
-  if (selectedIndicatorIds.length > 0) {
+  if (selectedIndicatorId) {
     filteredIndicators = filteredIndicators.filter(function (i) {
-      return selectedIndicatorIds.indexOf(i.id) > -1;
+      return i.id == selectedIndicatorId;
     });
   }
 
@@ -368,7 +392,7 @@ var IndicatorList = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(
     indicatorCount: filteredIndicators.length,
     programId: program.id,
     currentIndicatorFilter: currentIndicatorFilter,
-    filterApplied: currentIndicatorFilter || selectedIndicatorIds.length > 0
+    filterApplied: currentIndicatorFilter || selectedIndicatorId
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorFilter, {
     uiStore: props.uiStore,
     rootStore: props.rootStore
@@ -383,6 +407,60 @@ var IndicatorList = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(
     program: program
   }));
 });
+
+/***/ }),
+
+/***/ "LBcr":
+/*!**************************!*\
+  !*** ./js/date_utils.js ***!
+  \**************************/
+/*! exports provided: dateFromISOString, localDateFromISOString, mediumDateFormatStr */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "dateFromISOString", function() { return dateFromISOString; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "localDateFromISOString", function() { return localDateFromISOString; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mediumDateFormatStr", function() { return mediumDateFormatStr; });
+/*
+  Some nice helper functions to help with date parsing and localization
+
+  In the future it may make sense to use moment.js, luxon, or date-fns,
+  but for now, just get by with the native browser APIs and save some bytes.
+
+  Confusingly, native Date() objects are actually date/time objects.
+
+  Surprisingly, the Django i18n/l10n JS tools do not provide access to the language code
+  of the current language in use.
+ */
+var languageCode = window.userLang; // set in base.html by Django
+
+var n = "numeric",
+    s = "short",
+    l = "long",
+    d2 = "2-digit";
+var DATE_MED = {
+  year: n,
+  month: s,
+  day: n
+}; // Returns native Date()
+
+function dateFromISOString(isoDateStr) {
+  return new Date(isoDateStr); // modern browsers can just parse it
+} // "2017-01-01" -> Date with local timezone (not UTC)
+// also lives in base.js (localDateFromISOStr)
+
+function localDateFromISOString(dateStr) {
+  var dateInts = dateStr.split('-').map(function (x) {
+    return parseInt(x);
+  });
+  return new Date(dateInts[0], dateInts[1] - 1, dateInts[2]);
+} // Date() -> "Oct 2, 2018" (localized)
+// JS equiv of the Django template filter:   |date:"MEDIUM_DATE_FORMAT"
+
+function mediumDateFormatStr(date) {
+  return new Intl.DateTimeFormat(languageCode, DATE_MED).format(date);
+}
 
 /***/ }),
 
@@ -417,6 +495,7 @@ function _initializerWarningHelper(descriptor, context) { throw new Error('Decor
  // Types of filters available on the program page
 
 var IndicatorFilterType = Object.freeze({
+  noFilter: 0,
   missingTarget: 1,
   missingResults: 2,
   missingEvidence: 3,
@@ -444,7 +523,7 @@ function () {
         return e.id === indicator.id;
       });
 
-      if (i > 0) {
+      if (i > -1) {
         this.indicators[i] = indicator;
       }
     }
@@ -478,6 +557,7 @@ function () {
           indicators = this.getIndicatorsOnTarget;
           break;
 
+        case IndicatorFilterType.noFilter:
         default:
           indicators = this.indicators;
       }
@@ -627,11 +707,11 @@ function () {
 
     _initializerDefineProperty(this, "currentIndicatorFilter", _descriptor4, this);
 
-    _initializerDefineProperty(this, "selectedIndicatorIds", _descriptor5, this);
+    _initializerDefineProperty(this, "selectedIndicatorId", _descriptor5, this);
 
     this.setIndicatorFilter = this.setIndicatorFilter.bind(this);
     this.clearIndicatorFilter = this.clearIndicatorFilter.bind(this);
-    this.setSelectedIndicatorIds = this.setSelectedIndicatorIds.bind(this);
+    this.setSelectedIndicatorId = this.setSelectedIndicatorId.bind(this);
   }
 
   _createClass(ProgramPageUIStore, [{
@@ -645,9 +725,9 @@ function () {
       this.currentIndicatorFilter = null;
     }
   }, {
-    key: "setSelectedIndicatorIds",
-    value: function setSelectedIndicatorIds(selectedIndicatorIds) {
-      this.selectedIndicatorIds = selectedIndicatorIds;
+    key: "setSelectedIndicatorId",
+    value: function setSelectedIndicatorId(selectedIndicatorId) {
+      this.selectedIndicatorId = selectedIndicatorId;
     }
   }]);
 
@@ -657,14 +737,12 @@ function () {
   enumerable: true,
   writable: true,
   initializer: null
-}), _descriptor5 = _applyDecoratedDescriptor(_class5.prototype, "selectedIndicatorIds", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor5 = _applyDecoratedDescriptor(_class5.prototype, "selectedIndicatorId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
-  initializer: function initializer() {
-    return [];
-  }
-}), _applyDecoratedDescriptor(_class5.prototype, "setIndicatorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "setIndicatorFilter"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "clearIndicatorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "clearIndicatorFilter"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "setSelectedIndicatorIds", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "setSelectedIndicatorIds"), _class5.prototype)), _class5);
+  initializer: null
+}), _applyDecoratedDescriptor(_class5.prototype, "setIndicatorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "setIndicatorFilter"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "clearIndicatorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "clearIndicatorFilter"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "setSelectedIndicatorId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "setSelectedIndicatorId"), _class5.prototype)), _class5);
 
 /***/ }),
 
@@ -682,25 +760,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "i8i4");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _eventbus__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../eventbus */ "qtBC");
-/* harmony import */ var _components_indicator_list__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/indicator_list */ "KPAS");
-/* harmony import */ var _components_program_metrics__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/program_metrics */ "rE5y");
-/* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./models */ "YVM2");
-/* harmony import */ var _pinned_reports__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pinned_reports */ "DaGC");
-/* harmony import */ var _pinned_reports__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_pinned_reports__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var router5__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! router5 */ "wgi2");
+/* harmony import */ var router5_plugin_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! router5-plugin-browser */ "0pHI");
+/* harmony import */ var _components_indicator_list__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/indicator_list */ "KPAS");
+/* harmony import */ var _components_program_metrics__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/program_metrics */ "rE5y");
+/* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./models */ "YVM2");
+/* harmony import */ var _pinned_reports__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./pinned_reports */ "DaGC");
+/* harmony import */ var _pinned_reports__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_pinned_reports__WEBPACK_IMPORTED_MODULE_8__);
 
 
 
 
 
 
- // console.log(jsContext);
+
+
 
 /*
  * Model/Store setup
  */
 
-var rootStore = new _models__WEBPACK_IMPORTED_MODULE_5__["ProgramPageStore"](jsContext.indicators, jsContext.program);
-var uiStore = new _models__WEBPACK_IMPORTED_MODULE_5__["ProgramPageUIStore"]();
+var rootStore = new _models__WEBPACK_IMPORTED_MODULE_7__["ProgramPageStore"](jsContext.indicators, jsContext.program);
+var uiStore = new _models__WEBPACK_IMPORTED_MODULE_7__["ProgramPageUIStore"]();
 /*
  * Event Handlers
  */
@@ -716,6 +797,7 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('open-indicator-update-moda
 }); // get results html blob for indicator
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('load-indicator-results', function (indicatorId) {
+  if (!indicatorId) return;
   var url = "/indicators/result_table/".concat(indicatorId, "/").concat(rootStore.program.id, "/");
   $.get(url, function (data) {
     rootStore.addResultsHTML(indicatorId, data);
@@ -728,43 +810,42 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('delete-indicator-results',
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('reload-indicator', function (indicatorId) {
   $.get("/indicators/api/indicator/".concat(indicatorId), rootStore.indicatorStore.updateIndicator);
-}); // apply a gas gauge filter. Takes in IndicatorFilterType enum value
+}); // close all expanded indicators in the table
+
+_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('close-all-indicators', function () {
+  rootStore.deleteAllResultsHTML();
+}); // Indicator filters are controlled through routes
+// these should no longer be called directly from components
+// apply a gas gauge filter. Takes in IndicatorFilterType enum value
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('apply-gauge-tank-filter', function (indicatorFilter) {
   // reset all filters
   _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('clear-all-indicator-filters');
-  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('close-all-indicators');
   uiStore.setIndicatorFilter(indicatorFilter);
 }); // clear all gas tank and indicator select filters
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('clear-all-indicator-filters', function () {
   uiStore.clearIndicatorFilter();
-  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('select-indicators-to-filter', []);
+  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('select-indicator-to-filter', null);
   _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('close-all-indicators');
 }); // filter down by selecting individual indicator
 
-_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('select-indicators-to-filter', function (selectedIndicatorIds) {
+_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('select-indicator-to-filter', function (selectedIndicatorId) {
   // clear gauge tank filters
   uiStore.clearIndicatorFilter();
-  uiStore.setSelectedIndicatorIds(selectedIndicatorIds); // Open up results pane as well
+  uiStore.setSelectedIndicatorId(selectedIndicatorId); // Open up results pane as well
 
-  selectedIndicatorIds.forEach(function (id) {
-    return _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('load-indicator-results', id);
-  });
-}); // close all expanded indicators in the table
-
-_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('close-all-indicators', function () {
-  rootStore.deleteAllResultsHTML();
+  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('load-indicator-results', selectedIndicatorId);
 });
 /*
  * React components on page
  */
 
-react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicator_list__WEBPACK_IMPORTED_MODULE_3__["IndicatorList"], {
+react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicator_list__WEBPACK_IMPORTED_MODULE_5__["IndicatorList"], {
   rootStore: rootStore,
   uiStore: uiStore
 }), document.querySelector('#indicator-list-react-component'));
-react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_program_metrics__WEBPACK_IMPORTED_MODULE_4__["ProgramMetrics"], {
+react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_program_metrics__WEBPACK_IMPORTED_MODULE_6__["ProgramMetrics"], {
   rootStore: rootStore,
   uiStore: uiStore,
   indicatorOnScopeMargin: jsContext.indicator_on_scope_margin
@@ -775,14 +856,14 @@ react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_
  */
 // Open the CollectDataUpdate (update results) form in a modal
 
-$("#indicator-list-react-component").on("click", ".collected-data__link", function (e) {
+$("#indicator-list-react-component").on("click", ".results__link", function (e) {
   e.preventDefault();
   var url = $(this).attr("href");
   url += "?modal=1";
   $("#indicator_modal_content").empty();
   $("#modalmessages").empty();
-  $("#indicator_collected_data_modal_content").load(url);
-  $("#indicator_collecteddata_div").modal('show');
+  $("#indicator_results_modal_content").load(url);
+  $("#indicator_results_div").modal('show');
 }); // Open the IndicatorUpdate (Add targets btn in results section (HTML)) Form in a modal
 
 $("#indicator-list-react-component").on("click", ".indicator-link[data-tab]", function (e) {
@@ -813,7 +894,7 @@ $('#indicator_modal_div').on('hide.bs.modal', function (e) {
 }); // When "add results" modal is closed, the targets data needs refreshing
 // the indicator itself also needs refreshing for the gas tank gauge
 
-$('#indicator_collecteddata_div').on('hide.bs.modal', function (e) {
+$('#indicator_results_div').on('hide.bs.modal', function (e) {
   var recordchanged = $(this).find('form').data('recordchanged');
 
   if (recordchanged === true) {
@@ -822,167 +903,91 @@ $('#indicator_collecteddata_div').on('hide.bs.modal', function (e) {
     _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('reload-indicator', indicator_id);
   }
 });
-
-/***/ }),
-
-/***/ "lYLt":
-/*!************************************************!*\
-  !*** ./js/components/bootstrap_multiselect.js ***!
-  \************************************************/
-/*! exports provided: Select */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Select", function() { return Select; });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "xeH2");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react_fast_compare__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-fast-compare */ "bmMU");
-/* harmony import */ var react_fast_compare__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_fast_compare__WEBPACK_IMPORTED_MODULE_2__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-/* React wrappers to bootstrap-multiselect widgets */
-
-/* Note: bootstrap-multiselect exists in the global JS context (imported in base.html) */
-
-
-
 /*
-  Props:
-
-    - options: list of objects with 'value' and 'label' (assumes values are ints!)
-    - selected: single value, or array of values of selected options
-    - onSelectCb: a callback function that takes a list of selected values
-    - isMultiSelect: boolean - is a multi-select?
-    - forceEmptySelect: boolean - in single select, force "None selected" even if empty option is not provided
-    - nonSelectText: string - the text to display on an empty selection
+ * Routes setup:
  */
 
-var Select =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(Select, _React$Component);
+var routes = [{
+  name: 'all',
+  path: '/',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].noFilter
+}, {
+  name: 'targets',
+  path: '/targets',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingTarget
+}, {
+  name: 'results',
+  path: '/results',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingResults
+}, {
+  name: 'evidence',
+  path: '/evidence',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingEvidence
+}, {
+  name: 'scope',
+  path: '/scope',
+  forwardTo: 'scope.on'
+}, {
+  name: 'scope.on',
+  path: '/on',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].onTarget
+}, {
+  name: 'scope.above',
+  path: '/above',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].aboveTarget
+}, {
+  name: 'scope.below',
+  path: '/below',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].belowTarget
+}, {
+  name: 'indicator',
+  path: '/indicator/:indicator_id<\\d+>',
+  filterType: _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].noFilter
+}];
+var router = Object(router5__WEBPACK_IMPORTED_MODULE_3__["default"])(routes, {
+  defaultRoute: 'all',
+  //unrouted: show all indicators
+  defaultParams: {},
+  trailingSlashMode: 'always'
+});
 
-  function Select(props) {
-    var _this;
+var onNavigation = function onNavigation(navRoutes) {
+  var routeName = navRoutes.route.name;
+  var params = navRoutes.route.params;
 
-    _classCallCheck(this, Select);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Select).call(this, props));
-    _this.onChange = _this.onChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
-    _this.clearInternalSelection = _this.clearInternalSelection.bind(_assertThisInitialized(_assertThisInitialized(_this)));
-    return _this;
+  if (routeName === 'indicator') {
+    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('select-indicator-to-filter', parseInt(params.indicator_id));
+    return;
   }
 
-  _createClass(Select, [{
-    key: "onChange",
-    value: function onChange() {
-      var selectedValues = this.$el.find('option:selected').map(function () {
-        return parseInt(jquery__WEBPACK_IMPORTED_MODULE_1___default()(this).val());
-      }).get();
+  var routeObj = routes.find(function (r) {
+    return r.name === routeName;
+  });
+  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('apply-gauge-tank-filter', routeObj.filterType);
+};
 
-      if (this.props.onSelectCb) {
-        this.props.onSelectCb(selectedValues);
-      }
-    }
-  }, {
-    key: "clearInternalSelection",
-    value: function clearInternalSelection() {
-      // Set "none" selected in single select mode, with no empty option
-      // these do not trigger any bs-multiselect callbacks
-      if (this.props.forceEmptySelect) {
-        this.$el.val('');
-      }
-    }
-  }, {
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      var nonSelectText = this.props.nonSelectText;
-      var multiSelectOptions = {
-        nonSelectedText: nonSelectText,
-        includeSelectAllOption: true,
-        enableFiltering: true,
-        enableCaseInsensitiveFiltering: true,
-        numberDisplayed: 1,
-        maxHeight: 320,
-        buttonClass: 'btn form-control',
-        templates: {
-          filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
-          filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>'
-        },
-        onChange: this.onChange,
-        onSelectAll: this.onChange,
-        onDeselectAll: this.onChange
-      }; // jquery ref to select element
+router.usePlugin(Object(router5_plugin_browser__WEBPACK_IMPORTED_MODULE_4__["default"])({
+  useHash: true,
+  base: '/program/' + jsContext.program.id + '/'
+}));
+router.subscribe(onNavigation);
+router.start(); // nav events
 
-      this.$el = jquery__WEBPACK_IMPORTED_MODULE_1___default()(this.el); // initial setup of BS multiselect
-
-      this.$el.multiselect(multiSelectOptions); // set the selection and options
-
-      this.componentDidUpdate();
-    }
-  }, {
-    key: "componentDidUpdate",
-    value: function componentDidUpdate(prevProps) {
-      var _this$props = this.props,
-          options = _this$props.options,
-          selected = _this$props.selected; // Setting the options clears the filter search field which is not desired behavior
-      // As such, limit setting the options unless they really have changed
-      // Hopefully this deep check isn't too slow for a large number of options
-
-      if (!prevProps || !react_fast_compare__WEBPACK_IMPORTED_MODULE_2___default()(prevProps.options, options)) {
-        this.$el.multiselect('dataprovider', options);
-      }
-
-      this.$el.multiselect('select', selected);
-
-      if (selected.length === 0) {
-        this.clearInternalSelection();
-      }
-
-      this.$el.multiselect('refresh');
-    }
-  }, {
-    key: "componentWillUnmount",
-    value: function componentWillUnmount() {
-      this.$el.multiselect('destroy');
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this2 = this;
-
-      var isMultiSelect = this.props.isMultiSelect ? "multiple" : null;
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
-        className: "form-control",
-        ref: function ref(el) {
-          return _this2.el = el;
-        },
-        multiple: isMultiSelect
-      });
-    }
-  }]);
-
-  return Select;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('nav-apply-gauge-tank-filter', function (indicatorFilter) {
+  // Find route based on filter type and go
+  var routeObj = routes.find(function (r) {
+    return r.filterType === indicatorFilter;
+  });
+  router.navigate(routeObj.name);
+});
+_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('nav-clear-all-indicator-filters', function () {
+  router.navigate('all');
+});
+_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('nav-select-indicator-to-filter', function (selectedIndicatorId) {
+  router.navigate('indicator', {
+    'indicator_id': selectedIndicatorId
+  });
+});
 
 /***/ }),
 
@@ -1021,7 +1026,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! mobx-react */ "okNM");
 /* harmony import */ var _eventbus__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../eventbus */ "qtBC");
 /* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../models */ "YVM2");
-var _class, _class2;
+/* harmony import */ var _date_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../date_utils */ "LBcr");
+var _class, _temp, _class3, _temp2;
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
@@ -1043,13 +1049,14 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 
 
@@ -1057,27 +1064,36 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 
 
 
-var GaugeTank = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class =
+var GaugeTank = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class = (_temp =
 /*#__PURE__*/
 function (_React$Component) {
   _inherits(GaugeTank, _React$Component);
 
-  function GaugeTank(props) {
+  function GaugeTank() {
+    var _getPrototypeOf2;
+
     var _this;
 
     _classCallCheck(this, GaugeTank);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(GaugeTank).call(this, props));
-    _this.onGuageClick = _this.onGuageClick.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(GaugeTank)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    _this.handleClick = function (e) {
+      e.preventDefault();
+
+      if (!_this.props.disabled && _this.unfilledPercent != 0) {
+        _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('nav-apply-gauge-tank-filter', _this.props.filterType);
+      }
+    };
+
     return _this;
   }
 
   _createClass(GaugeTank, [{
-    key: "onGuageClick",
-    value: function onGuageClick() {
-      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('apply-gauge-tank-filter', this.props.filterType);
-    }
-  }, {
     key: "render",
     value: function render() {
       var tickCount = 10;
@@ -1088,19 +1104,22 @@ function (_React$Component) {
           filledLabel = _this$props.filledLabel,
           unfilledLabel = _this$props.unfilledLabel,
           cta = _this$props.cta,
-          emptyLabel = _this$props.emptyLabel;
+          emptyLabel = _this$props.emptyLabel,
+          disabled = _this$props.disabled;
       var filterType = this.props.filterType;
       var currentIndicatorFilter = this.props.currentIndicatorFilter;
       var isHighlighted = filterType === currentIndicatorFilter; // Gauge should only show 100%/0% if filtered == all/0 (absolute 100%, not rounding to 100%)
       // to accomplish this, added a Math.max and Math.min to prevent rounding to absolute values:
 
       var unfilledPercent = allIndicatorsLength <= 0 || allIndicatorsLength == filteredIndicatorsLength ? 100 : filteredIndicatorsLength == 0 ? 0 : Math.max(1, Math.min(Math.round(filteredIndicatorsLength / allIndicatorsLength * 100), 99));
+      this.unfilledPercent = unfilledPercent;
       var filledPercent = 100 - unfilledPercent;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: classnames__WEBPACK_IMPORTED_MODULE_1___default()('gauge', 'filter-trigger', {
+        className: classnames__WEBPACK_IMPORTED_MODULE_1___default()('gauge', {
+          'filter-trigger': unfilledPercent > 0 && !disabled,
           'is-highlighted': isHighlighted
         }),
-        onClick: this.onGuageClick
+        onClick: this.handleClick
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h6", {
         className: "gauge__title"
       }, title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -1136,7 +1155,7 @@ function (_React$Component) {
         className: "gauge__label"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "text-danger"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, emptyLabel))))), unfilledPercent > 0 && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, emptyLabel))))), unfilledPercent > 0 && !disabled && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "gauge__cta"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "btn-link btn-inline"
@@ -1147,9 +1166,9 @@ function (_React$Component) {
   }]);
 
   return GaugeTank;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class;
 
-var GaugeBand = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class2 =
+var GaugeBand = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class3 = (_temp2 =
 /*#__PURE__*/
 function (_React$Component2) {
   _inherits(GaugeBand, _React$Component2);
@@ -1160,8 +1179,13 @@ function (_React$Component2) {
     _classCallCheck(this, GaugeBand);
 
     _this2 = _possibleConstructorReturn(this, _getPrototypeOf(GaugeBand).call(this, props));
+
+    _this2.onFilterLinkClick = function (e) {
+      e.preventDefault();
+      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('nav-apply-gauge-tank-filter', parseInt(e.target.getAttribute('data-filter-type')));
+    };
+
     _this2.handledFilterTypes = new Set([_models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].aboveTarget, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].belowTarget, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].onTarget]);
-    _this2.onFilterLinkClick = _this2.onFilterLinkClick.bind(_assertThisInitialized(_assertThisInitialized(_this2)));
     return _this2;
   }
 
@@ -1174,18 +1198,14 @@ function (_React$Component2) {
       });
     }
   }, {
-    key: "onFilterLinkClick",
-    value: function onFilterLinkClick(e, filterType) {
-      e.preventDefault();
-      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('apply-gauge-tank-filter', filterType);
-    }
-  }, {
     key: "render",
     value: function render() {
       var _this3 = this;
 
       var tickCount = 10;
-      var indicatorStore = this.props.indicatorStore;
+      var _this$props2 = this.props,
+          indicatorStore = _this$props2.indicatorStore,
+          program = _this$props2.program;
       var currentIndicatorFilter = this.props.currentIndicatorFilter;
       var isHighlighted = this.handledFilterTypes.has(currentIndicatorFilter);
       var totalIndicatorCount = indicatorStore.indicators.length;
@@ -1203,7 +1223,9 @@ function (_React$Component2) {
       var percentOnTarget = makePercent(onTargetCount);
       var percentBelow = makePercent(lowCount);
       var percentNonReporting = makePercent(nonReportingCount);
-      var marginPercent = this.props.indicatorOnScopeMargin * 100; // Top level wrapper of component
+      var marginPercent = this.props.indicatorOnScopeMargin * 100;
+      var programPeriodStartDate = Object(_date_utils__WEBPACK_IMPORTED_MODULE_5__["localDateFromISOString"])(program.reporting_period_start);
+      var gaugeHasErrors = indicatorStore.getIndicatorsReporting.length === 0 || indicatorStore.getTotalResultsCount === 0; // Top level wrapper of component
 
       var Gauge = function Gauge(props) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -1220,32 +1242,67 @@ function (_React$Component2) {
         }, props.children));
       };
 
-      if (indicatorStore.getTotalResultsCount === 0) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Gauge, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
-          className: "text-muted"
-        }, gettext("Unavailable until results are reported")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-          className: "gauge__icon gauge__icon--error fas fa-frown"
-        }))));
-      }
-
-      if (indicatorStore.getIndicatorsReporting.length === 0) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Gauge, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "gauge__graphic gauge__graphic--empty gauge__graphic--performance-band"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "graphic__tick-marks"
-        }, _toConsumableArray(Array(tickCount)).map(function (e, i) {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-            key: i,
-            className: "graphic__tick"
-          });
-        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      var GaugeLabels = function GaugeLabels(props) {
+        // success case
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "gauge__labels"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "gauge__label"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "text-muted"
-        }, gettext("Unavailable until the first target period ends with results reported")))));
-      } // Handle strings containing HTML markup
+        },
+        /* # Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
+        interpolate(gettext('%s% unavailable'), [percentNonReporting])), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          href: "#",
+          tabIndex: "0",
+          "data-toggle": "popover",
+          "data-placement": "right",
+          "data-trigger": "focus",
+          "data-content":
+          /* # Translators: help text for the percentage of indicators with no targets reporting data. */
+          gettext("The indicator has no targets, no completed target periods, or no results reported."),
+          onClick: function onClick(e) {
+            return e.preventDefault();
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "far fa-question-circle"
+        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "gauge__label"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          className: "gauge__value--above filter-trigger--band",
+          "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].aboveTarget,
+          onClick: _this3.onFilterLinkClick,
+          dangerouslySetInnerHTML: aboveTargetMarkup()
+        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "gauge__label"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          className: "gauge__value filter-trigger--band",
+          "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].onTarget,
+          onClick: _this3.onFilterLinkClick,
+          dangerouslySetInnerHTML: onTargetMarkup()
+        }), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          href: "#",
+          tabIndex: "0",
+          "data-toggle": "popover",
+          "data-placement": "right",
+          "data-trigger": "focus",
+          "data-content":
+          /* # Translators: Help text explaining what an "on track" indicator is. */
+          gettext("The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is 110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a decreasing direction of change, then “above” and “below” are switched. In that case, if your target is 100 and your result is 200, your indicator is 50% below target and not on track.<br><br><a href='https://docs.google.com/document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our documentation for more information.</a>"),
+          onClick: function onClick(e) {
+            return e.preventDefault();
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "far fa-question-circle"
+        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "gauge__label"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          className: "gauge__value--below filter-trigger--band",
+          "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].belowTarget,
+          onClick: _this3.onFilterLinkClick,
+          dangerouslySetInnerHTML: belowTargetMarkup()
+        })));
+      }; // Handle strings containing HTML markup
 
 
       var aboveTargetMarkup = function aboveTargetMarkup() {
@@ -1302,75 +1359,21 @@ function (_React$Component2) {
         style: {
           'flexBasis': "".concat(percentBelow, "%")
         }
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      })), gaugeHasErrors ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "gauge__labels"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "gauge__label"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
         className: "text-muted"
-      },
-      /* # Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
-      interpolate(gettext('%s%% unavailable'), [percentNonReporting])), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        href: "#",
-        tabIndex: "0",
-        "data-toggle": "popover",
-        "data-placement": "right",
-        "data-trigger": "focus",
-        "data-content":
-        /* # Translators: help text for the percentage of indicators with no targets reporting data. */
-        gettext("The indicator has no targets, no completed target periods, or no results reported."),
-        onClick: function onClick(e) {
-          return e.preventDefault();
-        }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-        className: "far fa-question-circle"
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "gauge__label"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "gauge__value--above filter-trigger--band",
-        onClick: function onClick(e) {
-          return _this3.onFilterLinkClick(e, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].aboveTarget);
-        },
-        dangerouslySetInnerHTML: aboveTargetMarkup()
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "gauge__label"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "gauge__value filter-trigger--band",
-        onClick: function onClick(e) {
-          return _this3.onFilterLinkClick(e, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].onTarget);
-        },
-        dangerouslySetInnerHTML: onTargetMarkup()
-      }), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        href: "#",
-        tabIndex: "0",
-        "data-toggle": "popover",
-        "data-placement": "right",
-        "data-trigger": "focus",
-        "data-content":
-        /* # Translators: Help text explaining what an "on track" indicator is. */
-        gettext("The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is 110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a decreasing direction of change, then “above” and “below” are switched. In that case, if your target is 100 and your result is 200, your indicator is 50% below target and not on track.<br><br><a href='https://docs.google.com/document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our documentation for more information.</a>"),
-        onClick: function onClick(e) {
-          return e.preventDefault();
-        }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-        className: "far fa-question-circle"
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "gauge__label"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "gauge__value--below filter-trigger--band",
-        onClick: function onClick(e) {
-          return _this3.onFilterLinkClick(e, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].belowTarget);
-        },
-        dangerouslySetInnerHTML: belowTargetMarkup()
-      }))));
+      }, gettext("Unavailable until the first target period ends with results reported.")))) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(GaugeLabels, null));
     }
   }]);
 
   return GaugeBand;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class2;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp2)) || _class3;
 
 var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(function (props) {
-  // const program = props.rootStore.program;
+  var program = props.rootStore.program;
   var indicatorStore = props.rootStore.indicatorStore;
   var indicators = indicatorStore.indicators;
   var currentIndicatorFilter = props.uiStore.currentIndicatorFilter;
@@ -1411,7 +1414,20 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
     unfilledLabel: gettext("no evidence"),
     cta: gettext("Add missing evidence"),
     emptyLabel: gettext("No evidence")
-  }; // Do not display on pages with no indicators
+  }; // Are some targets defined on any indicators?
+  // all_targets_defined is an int (1,0) instead of bool
+
+  var someTargetsDefined = indicators.map(function (i) {
+    return i.all_targets_defined === 1;
+  }).some(function (b) {
+    return b;
+  }); // Do any indicators have results?
+
+  var someResults = indicators.map(function (i) {
+    return i.results_count;
+  }).some(function (count) {
+    return count > 0;
+  }); // Do not display on pages with no indicators
 
   if (indicators.length === 0) return null;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -1419,7 +1435,8 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(GaugeBand, {
     currentIndicatorFilter: currentIndicatorFilter,
     indicatorOnScopeMargin: indicatorOnScopeMargin,
-    indicatorStore: indicatorStore
+    indicatorStore: indicatorStore,
+    program: program
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(GaugeTank, _extends({
     filterType: _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].missingTarget,
     currentIndicatorFilter: currentIndicatorFilter,
@@ -1429,28 +1446,19 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
     filterType: _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].missingResults,
     currentIndicatorFilter: currentIndicatorFilter,
     allIndicatorsLength: indicators.length,
-    filteredIndicatorsLength: indicatorStore.getIndicatorsNeedingResults.length
+    filteredIndicatorsLength: indicatorStore.getIndicatorsNeedingResults.length,
+    disabled: !someTargetsDefined
   }, resultsLabels)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(GaugeTank, _extends({
     filterType: _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].missingEvidence,
     currentIndicatorFilter: currentIndicatorFilter // The names below are misleading as this gauge is measuring *results*, not indicators
     ,
     allIndicatorsLength: indicatorStore.getTotalResultsCount,
-    filteredIndicatorsLength: indicatorStore.getTotalResultsCount - indicatorStore.getTotalResultsWithEvidenceCount
+    filteredIndicatorsLength: indicatorStore.getTotalResultsCount - indicatorStore.getTotalResultsWithEvidenceCount,
+    disabled: !someTargetsDefined || !someResults
   }, evidenceLabels)));
 });
-
-/***/ }),
-
-/***/ "xeH2":
-/*!*************************!*\
-  !*** external "jQuery" ***!
-  \*************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = jQuery;
 
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-6fabb62ecb6f565e900f.js.map
+//# sourceMappingURL=program_page-a4d13796a9216d7b2324.js.map

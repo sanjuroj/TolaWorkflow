@@ -27,6 +27,45 @@ class UserManagementAuditLog(models.Model):
     previous_entry = models.TextField()
     new_entry = models.TextField()
 
+    @classmethod
+    def created(cls, user, created_by, entry):
+        new_entry = json.dumps(entry)
+        entry = cls(
+            admin_user=created_by,
+            modified_user=user,
+            change_type="user_created",
+            new_entry=entry,
+        )
+        entry.save()
+
+    @classmethod
+    def programs_updated(cls, user, changed_by, old, new):
+        old = json.dumps(old)
+        new = json.dumps(new)
+        if old != new:
+            entry = cls(
+                admin_user=changed_by,
+                modified_user=user,
+                change_type="user_profile_updated",
+                previous_entry=old,
+                new_entry=new,
+            )
+            entry.save()
+
+    @classmethod
+    def profile_updated(cls, user, changed_by, old, new):
+        old = json.dumps(old)
+        new = json.dumps(new)
+        if old != new:
+            entry = cls(
+                admin_user=changed_by,
+                modified_user=user,
+                change_type="user_programs_updated",
+                previous_entry=old,
+                new_entry=new,
+            )
+            entry.save()
+
 
 class ProgramAuditLog(models.Model):
     program = models.ForeignKey(Program, related_name="audit_logs")
@@ -188,3 +227,36 @@ class ProgramAdminAuditLog(models.Model):
             new_entry=new,
         )
         entry.save()
+
+class OrganizationAdminAuditLog(models.Model):
+    date = models.DateTimeField(_('Modification Date'), auto_now_add=True)
+    admin_user = models.ForeignKey(TolaUser, related_name="+")
+    organization = models.ForeignKey(Organization, related_name="+")
+    change_type = models.CharField(_('Modification Type'), max_length=255)
+    previous_entry = models.TextField()
+    new_entry = models.TextField()
+
+    @classmethod
+    def created(cls, organization, created_by, entry):
+        new_entry = json.dumps(entry)
+        entry = cls(
+            admin_user=created_by,
+            organization=organization,
+            change_type="organization_created",
+            new_entry=entry,
+        )
+        entry.save()
+
+    @classmethod
+    def updated(cls, organization, changed_by, old, new):
+        old = json.dumps(old)
+        new = json.dumps(new)
+        if old != new:
+            entry = cls(
+                admin_user=changed_by,
+                organization=organization,
+                change_type="organization_updated",
+                previous_entry=old,
+                new_entry=new,
+            )
+            entry.save()

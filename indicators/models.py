@@ -41,6 +41,14 @@ class TolaTable(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def table_view_url(self):
+        """
+        The `url` field actually stores the URL used to pull data from the API
+        This `tola_table_url` is the URL users can view
+        """
+        return u'https://tola-tables.mercycorps.org/silo_detail/{}/'.format(self.table_id) if self.table_id else None
+
 
 class TolaTableAdmin(admin.ModelAdmin):
     list_display = ('name', 'country', 'owner', 'url', 'create_date',
@@ -156,6 +164,10 @@ class DisaggregationLabel(models.Model):
 
     def __unicode__(self):
         return self.label
+
+    @classmethod
+    def get_standard_labels(cls):
+        return cls.objects.filter(disaggregation_type__standard=True)
 
 
 class DisaggregationValue(models.Model):
@@ -403,6 +415,23 @@ class Indicator(SafeDeleteModel):
         (QUARTERLY, _('Quarterly')),
         (MONTHLY, _('Monthly')),
         (EVENT, _('Event'))
+    )
+    TIME_AWARE_TARGET_FREQUENCIES = (
+        ANNUAL, SEMI_ANNUAL, TRI_ANNUAL, QUARTERLY, MONTHLY
+    )
+
+    REGULAR_TARGET_FREQUENCIES = (
+        ANNUAL,
+        SEMI_ANNUAL,
+        TRI_ANNUAL,
+        QUARTERLY,
+        MONTHLY,
+    )
+
+    IRREGULAR_TARGET_REQUENCIES = (
+        LOP,
+        MID_END,
+        EVENT,
     )
 
     NUMBER = 1
@@ -653,9 +682,15 @@ class Indicator(SafeDeleteModel):
 
     @property
     def is_target_frequency_time_aware(self):
-        return self.target_frequency in (self.ANNUAL, self.SEMI_ANNUAL,
-                                         self.TRI_ANNUAL, self.QUARTERLY,
-                                         self.MONTHLY)
+        return self.target_frequency in self.REGULAR_TARGET_FREQUENCIES
+
+    @property
+    def is_target_frequency_not_time_aware(self):
+        return self.target_frequency in self.IRREGULAR_TARGET_REQUENCIES
+
+    @property
+    def is_target_frequency_lop(self):
+        return self.target_frequency == self.LOP
 
     @property
     def just_created(self):
@@ -754,6 +789,25 @@ class Indicator(SafeDeleteModel):
                 return u"{0}%".format(lop_stripped)
             return lop_stripped
         return self.lop_target
+
+    def current_periodic_target(self, date_=None):
+        """
+        Return the periodic target with start/end date containing localdate() or specified date
+
+        :return: A PeriodicTarget with start_date and end_date containing now(), or None
+        if no PeriodicTargets are found matching that criteria such as MIDLINE/ENDLINE
+        """
+        today = date_ or timezone.localdate()
+        return self.periodictargets.filter(start_date__lte=today, end_date__gte=today).first()
+
+
+    @property
+    def last_ended_periodic_target(self):
+        """
+        Returns the last periodic target if any, or None
+        """
+        return self.periodictargets.filter(end_date__lte=timezone.localdate()).last()
+
 
     @cached_property
     def cached_data_count(self):
@@ -1039,17 +1093,12 @@ class Result(models.Model):
         verbose_name=_("Actual"), max_digits=20, decimal_places=2,
         help_text=" ")
 
-    # cumulative_achieved = models.DecimalField(
-    #     verbose_name=_('Cumulative Actuals'), max_digits=20, decimal_places=2,
-    #     null=True, blank=True, help_text=" ")
-
     disaggregation_value = models.ManyToManyField(
         DisaggregationValue, blank=True, help_text=" ",
         verbose_name=_("Disaggregation Value")
     )
 
-    description = models.TextField(
-        _("Remarks/comments"), blank=True, null=True, help_text=" ")
+    comments = models.TextField(_("Comments"), blank=True, default='')
 
     indicator = models.ForeignKey(
         Indicator, help_text=" ", verbose_name=_("Indicator"),
@@ -1073,10 +1122,6 @@ class Result(models.Model):
     date_collected = models.DateField(
         null=True, blank=True, help_text=" ", verbose_name=_("Date collected"))
 
-    comment = models.TextField(
-        _("Comment/Explanation"), max_length=255, blank=True, null=True,
-        help_text=" ")
-
     # Deprecated - see evidence_name/evidence_url
     evidence = models.ForeignKey(
         Documentation, null=True, blank=True, on_delete=models.SET_NULL,
@@ -1095,12 +1140,13 @@ class Result(models.Model):
         verbose_name=_("Would you like to update the achieved total with the \
         row count from TolaTables?"), default=False, help_text=" ")
 
-    evidence_name = models.CharField(max_length=135, blank=True)
+    record_name = models.CharField(max_length=135, blank=True)
     evidence_url = models.CharField(max_length=255, blank=True)
 
     create_date = models.DateTimeField(null=True, blank=True, help_text=" ")
     edit_date = models.DateTimeField(null=True, blank=True, help_text=" ")
     site = models.ManyToManyField(SiteProfile, blank=True, help_text=" ")
+
     history = HistoricalRecords()
     objects = ResultManager()
 
@@ -1141,7 +1187,7 @@ class Result(models.Model):
             "value": self.achieved,
             "date": self.date_collected,
             "target": self.periodic_target.period_name,
-            "evidence_name": self.evidence_name,
+            "evidence_name": self.record_name,
             "evidence_url": self.evidence_url
         }
 

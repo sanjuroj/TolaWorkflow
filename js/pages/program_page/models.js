@@ -2,6 +2,7 @@ import { observable, computed, action } from "mobx";
 
 // Types of filters available on the program page
 export const IndicatorFilterType = Object.freeze({
+    noFilter: 0,
     missingTarget: 1,
     missingResults: 2,
     missingEvidence: 3,
@@ -10,6 +11,7 @@ export const IndicatorFilterType = Object.freeze({
     belowTarget: 6,
     onTarget: 7,
 });
+
 
 export class IndicatorStore {
     @observable indicators = [];
@@ -24,7 +26,7 @@ export class IndicatorStore {
     @action
     updateIndicator(indicator) {
         let i = this.indicators.findIndex(e => e.id === indicator.id);
-        if (i > 0) {
+        if (i > -1) {
             this.indicators[i] = indicator;
         }
     }
@@ -91,6 +93,7 @@ export class IndicatorStore {
             case IndicatorFilterType.onTarget:
                 indicators = this.getIndicatorsOnTarget;
                 break;
+            case IndicatorFilterType.noFilter:
             default:
                 indicators = this.indicators;
         }
@@ -140,12 +143,12 @@ export class ProgramPageStore {
 
 export class ProgramPageUIStore {
     @observable currentIndicatorFilter;  // selected gas gauge filter
-    @observable selectedIndicatorIds = []; // indicators filter
+    @observable selectedIndicatorId; // indicators filter
 
     constructor() {
         this.setIndicatorFilter = this.setIndicatorFilter.bind(this);
         this.clearIndicatorFilter = this.clearIndicatorFilter.bind(this);
-        this.setSelectedIndicatorIds = this.setSelectedIndicatorIds.bind(this);
+        this.setSelectedIndicatorId = this.setSelectedIndicatorId.bind(this);
     }
 
     @action
@@ -159,7 +162,7 @@ export class ProgramPageUIStore {
     }
 
     @action
-    setSelectedIndicatorIds(selectedIndicatorIds) {
-        this.selectedIndicatorIds = selectedIndicatorIds;
+    setSelectedIndicatorId(selectedIndicatorId) {
+        this.selectedIndicatorId = selectedIndicatorId;
     }
 }

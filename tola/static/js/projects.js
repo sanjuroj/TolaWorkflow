@@ -1,169 +1,8 @@
-//Bootstrap remember tab
-// Javascript to enable link to tab
-
 /*
- * Global AJAX handlers for indicating a request in progress + error reporting
+ * Legacy Projects code
+ *
+ * DO NOT ADD NEW CODE HERE
  */
-$( document )
-    .ajaxStart( function() {
-        $('#ajaxloading').show();
-    })
-    .ajaxStop( function() {
-        $('#ajaxloading').hide();
-    })
-    .ajaxError(function( event, jqxhr, settings, thrownError ) {
-        if (jqxhr.readyState === 4) {
-            // HTTP error (can be checked by XMLHttpRequest.status and XMLHttpRequest.statusText)
-            // TODO: Give better error mssages based on HTTP status code
-            let errorStr = `${jqxhr.status}: ${jqxhr.statusText}`;
-            notifyError(js_context.strings.serverError, errorStr);
-        }
-        else if (jqxhr.readyState === 0) {
-            // Network error (i.e. connection refused, access denied due to CORS, etc.)
-            notifyError(js_context.strings.networkError, js_context.strings.networkErrorTryAgain);
-        }
-        else {
-            // something weird is happening
-            notifyError(js_context.strings.unknownNetworkError, jqxhr.statusText);
-        }
-    });
-
-if (!Date.prototype.toISODate) {
-  Date.prototype.toISODate = function() {
-    return this.getFullYear() + '-' +
-           ('0'+ (this.getMonth()+1)).slice(-2) + '-' +
-           ('0'+ this.getDate()).slice(-2);
-  }
-}
-
-
-function zeroPad(n, width) {
-    n = n + '';
-    return n.length >= width ? n : new Array(width - n.length + 1).join(0) + n;
-}
-
-function isDate(dateVal) {
-    /*
-    var pattern = /^(\d{4})-(\d{2})-(\d{2})$/;
-    var dateArray = dateVal.match(pattern);
-    if (dateArray == null) return false;
-
-    var currentYear = (new Date).getFullYear();
-    var year = dateArray[1];
-    var month = dateArray[2];
-    var day = dateArray[3];
-    if (year < 2010 || year > (currentYear+3)) return false;
-    if (month < 1 || month > 12) return false;
-    if (day < 1 || day > 31) return false;
-    return new Date(dateVal) === 'Invalid Date' ? false : true;
-    */
-    var date = new Date(dateVal);
-    if (date == 'Invalid Date') {
-        return false;
-    }
-    var currentYear = (new Date).getFullYear();
-    if (date.getFullYear() > currentYear + 100 || date.getFullYear() < 1980 ) {
-        return false;
-    }
-    return true;
-}
-
-function formatDate(dateString, day=0) {
-    // Returns an ISO formatted naive datestring
-    // Use only to sanitize simplified date strings e.g. for hidden fields or data attributes
-    // If you’re trying to format a date[string] for user display, you probably want something else
-    if (dateString == null || dateString == undefined || dateString.length == 0 || dateString == 'undefined' || dateString == 'null' ) {
-        return '';
-    }
-    try {
-        var dateval = new Date(dateString);
-        tz = dateval.getTimezoneOffset();
-        hrs = dateval.getHours();
-        if (hrs > 0) {
-            // alert("offsetting timezone tz=" + tz + " hrs = " + hrs);
-            dateval.setMinutes(dateval.getMinutes() + tz);
-        }
-        var year = dateval.getFullYear()
-        var month = zeroPad((dateval.getMonth() + 1), 2);
-        var day = zeroPad((day == 0 ? dateval.getDate() : day), 2);
-        var ret = year + '-' + month + '-' + day
-        return ret;
-    } catch (err) {
-        console.log(err);
-        try {
-            var dateArray = dateString.split('-');
-            var year = dateArray[0];
-            var month = zeroPad(parseInt(dateArray[1]), 2);
-            var day = zeroPad((day == 0 ? dateArray[2] : day), 2);
-            var ret = year + '-' + month + '-' + day
-            return ret
-        }
-        catch (err) {
-            return dateString == (null ? '' : dateString);
-        }
-    }
-}
-
-
-$(function() {
-     // Javascript to enable link to tab
-    var hash = document.location.hash;
-    if (hash) {
-        $('.nav-tabs a[href="'+hash+'"]').tab('show');
-    }
-
-    // Change hash for page-reload
-    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-    window.location.hash = e.target.hash;
-    });
-
-    // Enable popovers
-    $('[data-toggle="popover"]').popover({
-        html: true
-    })
-    $('[data-toggle="popover"]').on('click', function(e){
-        e.preventDefault();
-    });
-});
-
-
-//
-function submitClose(){
-    opener.location.reload(true);
-    self.close();
-}
-
-//App specific JavaScript
-$(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-})
-
-//custom jquery to trigger date picker, info pop-over and print category text
-$(document).ready(function() {
-    $('.datepicker').datepicker({ dateFormat: "yy-mm-dd" });
-});
-
-
-/*
- * Create and show a Bootstrap alert.
- */
-function createAlert (type, message, fade, whereToAppend) {
-    if (whereToAppend == undefined ){
-        whereToAppend = "#messages";
-    }
-    $(whereToAppend).append(
-        $(
-            "<div class='alert alert-" + type + " dynamic-alert alert-dismissable' style='margin-top:0;'>" +
-            "<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>" +
-            "<p>" + message + "</p>" +
-            "</div>"
-        )
-    );
-    if (fade == true) {
-        // Remove the alert after 5 seconds if the user does not close it.
-        $(".dynamic-alert").delay(5000).fadeOut("slow", function () { $(this).remove(); });
-    }
-}
 
 /*
 * Save the task checkbox state
@@ -182,92 +21,8 @@ function tasklistChange(pk,type,value){
 
 }
 
-// using jQuery
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
-
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-
-/*
- * Set the csrf header before sending the actual ajax request
- * while protecting csrf token from being sent to other domains
- */
-$.ajaxSetup({
-    crossDomain: false, // obviates need for sameOrigin test
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type)) {
-            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-        }
-    }
-});
-
-
-/* Configure PNotify global settings */
-/* Do so on document ready since lib is included after app.js */
-$(function() {
-    PNotify.defaults.styling = 'bootstrap4'; // Bootstrap version 4
-    PNotify.defaults.icons = 'fontawesome5'; // Font Awesome 5
-
-    // Show close button and hide pin button
-    PNotify.modules.Buttons.defaults.closerHover = false;
-    PNotify.modules.Buttons.defaults.sticker = false;
-});
-
-
-/* Notifications */
-
-function notifyError(title, msg) {
-    PNotify.alert({
-        text: msg,
-        title: title,
-        hide: false,
-        type: 'error',
-    });
-}
-
-
-/*
-* Save the bookmark
-*/
-function newBookmark(bookmark_url){
-
-
-     $.ajax({ url: "/workflow/new_bookmark/",
-                     data: {
-                        url: bookmark_url ,
-                        csrfmiddlewaretoken: getCookie('csrftoken'),
-                     },
-                     type: 'POST',
-                     success: function(data) {
-                         $('#bookmarks').load(location.href + " #bookmarks>*", "");
-                     },
-    });
-
-}
-
-
 
 $(document).ready(function() {
-    $(document).on('hidden.bs.modal', '.modal', function () {
-        $('.modal:visible').length && $(document.body).addClass('modal-open');
-    });
     /*
     *  Reload page if country dropdown changes on main dashboard
     */
@@ -392,6 +147,7 @@ $(document).ready(function() {
 /*
 * CUSTOM DASHBOARD
 */
+// COMMENTING OUT THE CUSTOM DASHBOARD BECAUSE NO ONE IS USING IT
 
     // on change to Step 2, selector, save change to db
     // on change to Step 3, selector, save change to db
@@ -454,30 +210,18 @@ $(document).ready(function() {
     $(document).on("change, keyup", "#id_cfw_estimate_female", updateCFW);
 
     /*
-    * Expand accordion down to location hash and then load collected data
+    * Expand accordion down to location hash and then load results
+    * clause pathname !== program/* to prevent this from interfering with react browserify hash usage on program page
     */
-    if(location.hash != null && location.hash != ""){
+    if(location.hash != null && location.hash != "" && location.pathname.split('/')[1] !== 'program'){
         $('.collapse').removeClass('in');
         $(location.hash + '.collapse').collapse('show');
         indicator_id = location.hash.split('-')
         //loadIndicators(indicator_id[1])
     }
+
 });
 
-/*
-* Pop-up window for help docs and guidance on forms
-*/
-
-function newPopup(url, windowName) {
-    return window.open(url,windowName,'height=768,width=1366,left=1200,top=10,titlebar=no,toolbar=no,menubar=no,location=no,directories=no,status=no');
-}
-
-// EXAMPLE: <a onclick="newPopup('https://docs.google.com/document/d/1tDwo3m1ychefNiAMr-8hCZnhEugQlt36AOyUYHlPbVo/edit?usp=sharing','Form Help/Guidance'); return false;" href="#" class="btn btn-sm btn-info">Form Help/Guidance</a>
-
-$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-  e.target // activated tab
-  e.relatedTarget // previous tab
-})
 
 /*
 * Confirm Change of Short form to Long

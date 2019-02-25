@@ -49,9 +49,9 @@ $(document).ready(function(){
 					    tooltipTemplate: "<%=label + ' {{ tooltip }}' %>",
 					};
 
-					var ctx2 = document.getElementById("collected_data_donought").getContext("2d");
+					var ctx2 = document.getElementById("results_donought").getContext("2d");
 					var statusChart = new Chart(ctx2).Doughnut(data2,options2);
-					document.getElementById('collected_data-legend').innerHTML = statusChart.generateLegend();
+					document.getElementById('results-legend').innerHTML = statusChart.generateLegend();
 				});
 */
 			$(function () {

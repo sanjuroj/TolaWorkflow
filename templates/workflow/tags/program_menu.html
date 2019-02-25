@@ -1,22 +1,35 @@
 {% load i18n %}
 
+{% if countries or programs_without_country %}
 <select class="" id="goto-country-program" style="display: none">
     <option value=""></option>
+    {% if countries %}
     <optgroup label="{% trans 'Countries' %}">
         {% for country in countries %}
             <option value="{% url 'index' country.id %}" class="">{{ country }}</option>
         {% endfor %}
     </optgroup>
+    {% endif %}
 
     {% for country_name, programs in programs_by_country.items %}
         <optgroup label="{{ country_name }}">
             {% for program in programs %}
                 {% if program.reporting_period_start or program.reporting_period_end %}
-                    <option value="{% url 'program_page' program.id 0 0 %}" class="">{{ program }}</option>
+                    <option value="{{ program.program_page_url }}" class="">{{ program }}</option>
                 {% endif %}
             {% endfor %}
         </optgroup>
     {% endfor %}
+
+    {% if programs_without_country %}
+    <optgroup label="{% trans 'Programs' %}">
+        {% for program in programs_without_country %}
+        {% if program.reporting_period_start or program.reporting_period_end %}
+        <option value="{{ program.program_page_url }}" class="">{{ program }}</option>
+        {% endif %}
+        {% endfor %}
+    </optgroup>
+    {% endif %}
 </select>
 
 <script type="text/javascript">
@@ -98,3 +111,4 @@
         $('#goto-country-program').show();
     });
 </script>
+{% endif %}

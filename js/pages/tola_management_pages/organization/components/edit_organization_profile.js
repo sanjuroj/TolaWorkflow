@@ -14,7 +14,7 @@ export default class EditOrganizationProfile extends React.Component {
 
         this.state = {
             initial_data: data,
-            managed_data: data
+            managed_data: {...data}
         }
     }
 

@@ -1,7 +1,6 @@
 
 
 
-
 <!doctype html>
 <html lang="en">
     <head>
@@ -26,7 +25,6 @@
 
         <!-- Custom CSS -->
         <link href="/static/css/app_bootstrap_overrides.css?v=ww" rel="stylesheet" type="text/css">
-        <link href="/static/css/app.css?v=ww" rel="stylesheet" type="text/css">
 
         <!--- Django Tables2 css -->
         <link rel="stylesheet" href="/static/django_tables2/themes/paleblue/css/screen.css">
@@ -37,13 +35,6 @@
         <link rel="stylesheet" href="/static/css/jquery-ui.min.css?v=ww">
 
         <script src="/static/js/jquery.min.js"></script>
-
-        
-        
-        
-
-        <!-- App specific Javascript -->
-        <script type="text/javascript" src="/static/js/app.js?v=ww"></script>
 
         <!-- Hosted Leaflet -->
         <script src="/static/js/leaflet.js"></script>
@@ -1404,11 +1395,11 @@
 
         });
 
-        // Open the Collected Data Records in a modal
+        // Open the Results Records in a modal
         $("#id_div_top_iptt_report").on("click", ".indicator-ajax-popup", function (e) {
           e.preventDefault();
           const indicatorId = $(this).data('indicatorid');
-          const url = `/indicators/collected_data_table/${indicatorId}/0/?edit=false`;
+          const url = `/indicators/results_table/${indicatorId}/0/?edit=false`;
           $("#indicator_modal_content").empty();
           $("#modalmessages").empty();
           $("#indicator_modal_content").load(url);
@@ -2228,7 +2219,7 @@
                                     target="_blank">Documentation</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="https://thehub.mercycorps.org/page/7271"
+                                    <a href="https://thehub.mercycorps.org/node/7768"
                                     class="nav-link help-link"
                                     target="_blank">FAQ</a>
                                 </li>

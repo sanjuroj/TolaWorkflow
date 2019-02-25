@@ -5,7 +5,7 @@ import Util from '../lib/testutil'
 import dateFormat from 'dateformat'
 import {expect} from 'chai'
 
-describe("Collected data datepicker", function () {
+describe("Results datepicker", function () {
   // Disable timeouts
   this.timeout(0)
 
@@ -33,7 +33,7 @@ describe("Collected data datepicker", function () {
       Util.waitForAjax()
 
       // Click the Add results button
-      let addResults = browser.$('a[href*="/indicators/collecteddata_add/"]')
+      let addResults = browser.$('a[href*="/indicators/results_add/"]')
       addResults.waitForVisible()
       addResults.click()
 
@@ -55,8 +55,8 @@ describe("Collected data datepicker", function () {
       curVal = dp.getValue()
       expect(curVal === '')
 
-      // Manually close the collected data modal
-      browser.$('div#indicator_collecteddata_div button.close').click()
+      // Manually close the results modal
+      browser.$('div#indicator_results_div button.close').click()
       Util.waitForAjax()
     })
 
@@ -75,7 +75,7 @@ describe("Collected data datepicker", function () {
       }
       Util.waitForAjax()
 
-      let addResults = browser.$('a[href*="/indicators/collecteddata_add/"]')
+      let addResults = browser.$('a[href*="/indicators/results_add/"]')
       addResults.waitForVisible()
       addResults.click()
 
@@ -98,7 +98,7 @@ describe("Collected data datepicker", function () {
       // Pop up should disappear after selecting a date
       expect(!browser.isVisible('div#div_id_date_collected'))
 
-      browser.$('div#indicator_collecteddata_div button.close').click()
+      browser.$('div#indicator_results_div button.close').click()
       Util.waitForAjax()
     })
 
@@ -117,7 +117,7 @@ describe("Collected data datepicker", function () {
       }
       Util.waitForAjax()
 
-      let addResults = browser.$('a[href*="/indicators/collecteddata_add/"]')
+      let addResults = browser.$('a[href*="/indicators/results_add/"]')
       addResults.waitForVisible()
       addResults.click()
 
@@ -141,7 +141,7 @@ describe("Collected data datepicker", function () {
       // Pop up should disappear after selecting a date
       expect(!browser.isVisible('div#div_id_date_collected'))
 
-      browser.$('div#indicator_collecteddata_div button.close').click()
+      browser.$('div#indicator_results_div button.close').click()
       Util.waitForAjax()
     })
 
@@ -160,7 +160,7 @@ describe("Collected data datepicker", function () {
       }
       Util.waitForAjax()
 
-      let addResults = browser.$('a[href*="/indicators/collecteddata_add/"]')
+      let addResults = browser.$('a[href*="/indicators/results_add/"]')
       addResults.waitForVisible()
       addResults.click()
 
@@ -184,7 +184,7 @@ describe("Collected data datepicker", function () {
       // Pop up should disappear after selecting a date
       expect(!browser.isVisible('div#div_id_date_collected'))
 
-      browser.$('div#indicator_collecteddata_div button.close').click()
+      browser.$('div#indicator_results_div button.close').click()
       Util.waitForAjax()
     })
 
@@ -208,7 +208,7 @@ describe("Collected data datepicker", function () {
       }
       Util.waitForAjax()
 
-      let addResults = browser.$('a[href*="/indicators/collecteddata_add/"]')
+      let addResults = browser.$('a[href*="/indicators/results_add/"]')
       addResults.waitForVisible()
       addResults.click()
 
@@ -227,7 +227,7 @@ describe("Collected data datepicker", function () {
       // Warning message should appear below the datepicker text box
       expect(browser.isVisible('small#hint_id_date_collected'))
 
-      browser.$('div#indicator_collecteddata_div button.close').click()
+      browser.$('div#indicator_results_div button.close').click()
       Util.waitForAjax()
     })
 
@@ -252,7 +252,7 @@ describe("Collected data datepicker", function () {
       }
       Util.waitForAjax()
 
-      let addResults = browser.$('a[href*="/indicators/collecteddata_add/"]')
+      let addResults = browser.$('a[href*="/indicators/results_add/"]')
       addResults.waitForVisible()
       addResults.click()
 
@@ -275,7 +275,7 @@ describe("Collected data datepicker", function () {
       // Datepicker should not be visible
       expect(!browser.isVisible('div#div_id_date_collected'))
 
-      browser.$('div#indicator_collecteddata_div button.close').click()
+      browser.$('div#indicator_results_div button.close').click()
       Util.waitForAjax()
     })
 
@@ -294,7 +294,7 @@ describe("Collected data datepicker", function () {
       }
       Util.waitForAjax()
 
-      let addResults = browser.$('a[href*="/indicators/collecteddata_add/"]')
+      let addResults = browser.$('a[href*="/indicators/results_add/"]')
       addResults.waitForVisible()
       addResults.click()
 
@@ -316,7 +316,7 @@ describe("Collected data datepicker", function () {
       let curVal = browser.$('input#id_date_collected').getValue()
       expect(curVal === spookyDate)
 
-      browser.$('div#indicator_collecteddata_div button.close').click()
+      browser.$('div#indicator_results_div button.close').click()
       Util.waitForAjax()
     })
 
@@ -341,7 +341,7 @@ describe("Collected data datepicker", function () {
       }
       Util.waitForAjax()
 
-      let addResults = browser.$('a[href*="/indicators/collecteddata_add/"]')
+      let addResults = browser.$('a[href*="/indicators/results_add/"]')
       addResults.waitForVisible()
       addResults.click()
 
@@ -359,7 +359,7 @@ describe("Collected data datepicker", function () {
       // Warning message should appear below the datepicker text box
       expect(browser.isVisible('small#hint_id_date_collected'))
 
-      browser.$('div#indicator_collecteddata_div button.close').click()
+      browser.$('div#indicator_results_div button.close').click()
       Util.waitForAjax()
     })
 

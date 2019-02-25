@@ -3,10 +3,11 @@ import operator
 import unicodedata
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
+from django.utils.translation import gettext as _
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 
-from workflow.serializers import RecordListProgramSerializer, RecordListRecordSerializer
+from workflow.serializers import DocumentListProgramSerializer, DocumentListDocumentSerializer
 from .models import Program, Country, Province, AdminLevelThree, District, ProjectAgreement, ProjectComplete, SiteProfile, \
     Documentation, Monitor, Benchmarks, Budget, ApprovalAuthority, Checklist, ChecklistItem, Contact, Stakeholder, FormGuidance, \
     TolaBookmarks, TolaUser
@@ -18,6 +19,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
+from django.core.exceptions import PermissionDenied
 
 from .forms import (
     ProjectAgreementForm,
@@ -70,6 +72,12 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from tola_management.models import ProgramAuditLog
+from tola_management.permissions import (
+    user_has_program_access,
+    has_site_read_access,
+    has_site_create_access,
+    has_site_write_access
+)
 
 APPROVALS = (
     ('in_progress',('in progress')),
@@ -78,7 +86,7 @@ APPROVALS = (
     ('rejected', 'rejected'),
 )
 
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 from dateutil import parser
 from django.core.serializers.json import DjangoJSONEncoder
@@ -815,23 +823,13 @@ def documentation_list(request):
 
     programs = Program.objects.filter(funding_status="Funded", country__in=user_countries)
 
-    # create a mapping of indicators to documents
-    all_program_results = Result.objects.filter(indicator__program__in=programs, evidence__isnull=False)
-    indicator_to_documents_map = collections.defaultdict(list)
-    for result in all_program_results:
-        indicator_to_documents_map[result.indicator_id].append(result.evidence_id)
-
-    # limit indicators to those with results w/ documents
-    indicators = Indicator.objects.filter(id__in=indicator_to_documents_map.keys()).with_logframe_sorting()
-    programs = programs.prefetch_related(Prefetch('indicator_set', queryset=indicators))
-
-    documents = Documentation.objects.all().select_related('project').filter(program__country__in=user_countries)
+    # distinct() needed as a program in multiple countries causes duplicate documents returned
+    documents = Documentation.objects.all().select_related('project').filter(program__country__in=user_countries).distinct()
 
     js_context = {
         'allowProjectsAccess': request.user.tola_user.allow_projects_access,
-        'programs': RecordListProgramSerializer(programs, many=True).data,
-        'documents': RecordListRecordSerializer(documents, many=True).data,
-        'indicatorToDocumentsMap': dict(indicator_to_documents_map),
+        'programs': DocumentListProgramSerializer(programs, many=True).data,
+        'documents': DocumentListDocumentSerializer(documents, many=True).data,
     }
 
     return render(request, 'workflow/documentation_list.html', {
@@ -1124,6 +1122,10 @@ class SiteProfileList(ListView):
     template_name = 'workflow/site_profile_list.html'
 
     def dispatch(self, request, *args, **kwargs):
+
+        if not user_has_program_access(request.user.tola_user, kwargs['program_id']):
+            raise PermissionDenied
+
         if request.GET.has_key('report'):
             template_name = 'workflow/site_profile_report.html'
 
@@ -1201,6 +1203,7 @@ class SiteProfileList(ListView):
                 'user_list': user_list})
 
 
+@method_decorator(has_site_read_access, name='dispatch')
 class SiteProfileReport(ListView):
     """
     SiteProfile Report filtered by project
@@ -1224,6 +1227,7 @@ class SiteProfileReport(ListView):
         return render(request, self.template_name, {'getSiteProfile':getSiteProfile, 'getSiteProfileIndicator':getSiteProfileIndicator,'project_agreement_id': project_agreement_id,'id':id,'country': countries})
 
 
+@method_decorator(has_site_create_access, name='post')
 class SiteProfileCreate(CreateView):
     """
     Using SiteProfile Form, create a new site profile
@@ -1273,6 +1277,7 @@ class SiteProfileCreate(CreateView):
     form_class = SiteProfileForm
 
 
+@method_decorator(has_site_write_access, name='dispatch')
 class SiteProfileUpdate(UpdateView):
     """
     SiteProfile Form Update an existing site profile
@@ -1312,6 +1317,7 @@ class SiteProfileUpdate(UpdateView):
     form_class = SiteProfileForm
 
 
+@method_decorator(has_site_write_access, name='dispatch')
 class SiteProfileDelete(DeleteView):
     """
     SiteProfile Form Delete an existing community
@@ -2473,28 +2479,70 @@ def reportingperiod_update(request, pk):
     old_dates = program.dates_for_logging
 
     # In some cases the start date input will be disabled and won't come through POST
-    if 'reporting_period_start' in request.POST:
-        program.reporting_period_start = parser.parse(request.POST['reporting_period_start']).date()
-
-    program.reporting_period_end = parser.parse(request.POST['reporting_period_end']).date()
-
-    # Should never happen w/ front end validation
-    if program.reporting_period_start > program.reporting_period_end:
-        return HttpResponse('End date can not come before start date', status=400)
+    reporting_period_start = False
+    reporting_period_end = False
+    try:
+        reporting_period_start = parser.parse(request.POST['reporting_period_start'])
+    except MultiValueDictKeyError as e:
+        pass
+    reporting_period_end = parser.parse(request.POST['reporting_period_end'])
+    success = True
+    failmsg = []
+    failfields = []
 
     if not request.POST.get('rationale'):
-        return HttpResponse('Rationale is required', status=400)
+        return failmsg.append(_('Rationale is required'))
 
-    program.save()
-
-    ProgramAuditLog.log_program_dates_updated(request.user, program, old_dates, program.dates_for_logging, request.POST['rationale'])
+    if reporting_period_start:
+        if reporting_period_start.day != 1:
+            success = False
+            failmsg.append(_('Reporting period must start on the first of the month'))
+            failfields.append('reporting_period_start')
+        elif reporting_period_start.date() == program.reporting_period_start:
+            pass
+        elif program.has_time_aware_targets:
+            success = False
+            failmsg.append(
+                _('Reporting period start date cannot be changed while time-aware periodic targets are in place')
+            )
+        else:
+            program.reporting_period_start = reporting_period_start
+    if reporting_period_end:
+        next_day = reporting_period_end + timedelta(days=1)
+        if next_day.day != 1:
+            success = False
+            failmsg.append(_('Reporting period must end on the last day of the month'))
+            failfields.append('reporting_period_end')
+        elif reporting_period_end.date() == program.reporting_period_end:
+            pass
+        elif (program.last_time_aware_indicator_start_date and
+              reporting_period_end.date() < program.last_time_aware_indicator_start_date):
+            success = False
+            failmsg.append(_('Reporting period must end after the start of the last target period'))
+            failfields.append('reporting_period_end')
+        else:
+            program.reporting_period_end = reporting_period_end
+        if reporting_period_start and reporting_period_start >= reporting_period_end:
+            success = False
+            failmsg.append(_('Reporting period must start before reporting period ends'))
+            failfields.append('reporting_period_start')
+            failfields.append('reporting_period_end')
+    else:
+        success = False
+        failmsg.append(_('You must select a reporting period end date'))
+        failfields.append('reporting_period_end')
+    if success:
+        program.save()
+        ProgramAuditLog.log_program_dates_updated(request.user, program, old_dates, program.dates_for_logging, request.POST['rationale'])
 
     return JsonResponse({
-        'msg': 'success',
+        'msg': 'success' if success else 'fail',
+        'failmsg': failmsg,
+        'failfields': failfields,
         'program_id': pk,
         'rptstart': program.reporting_period_start,
-        'rptend': program.reporting_period_end,
-    })
+        'rptend': program.reporting_period_end, },
+        status=200 if success else 422)
 
 
 @api_view(['GET'])
