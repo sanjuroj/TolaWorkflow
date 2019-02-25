@@ -52,19 +52,18 @@ class CountryAdminSerializer(serializers.ModelSerializer):
         # users to country by way of program access
         user_query1 = TolaUser.objects.filter(program_access__country__id=country.id).select_related('organization').distinct()
         # users to country by way of country access
-        user_query2 = TolaUser.objects.filter(country__id=country.id).select_related('organization')
+        user_query2 = TolaUser.objects.filter(countries__id=country.id).select_related('organization')
         country_users = user_query1.union(user_query2)
 
         organizations = set([tu.organization_id for tu in country_users if tu.organization_id])
 
-        # users directly associated with the country (base country)
-        user_count = TolaUser.objects.filter(country=country).count()
+        # This would be user directly associated with the country (base country users)
+        #user_count = TolaUser.objects.filter(country=country).count()
 
         program_ids = [program.id for program in Program.objects.filter(country__pk=country.id)]
         program_count = len(program_ids)
         ret['programCount'] = program_count
-        #ret['users_count'] = len(country_users)
-        ret['user_count'] = user_count
+        ret['user_count'] = len(country_users)
         ret['organizations'] = organizations
         return ret
 
