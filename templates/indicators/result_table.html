@@ -68,7 +68,7 @@
             {% endif %}
             <tr class="results__row--main{% if pt.has_ended and indicator.is_target_frequency_time_aware and not program.has_ended %} pt-ended{% endif %}">
                 {% ifchanged pt %}
-                <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="">
+                <td {% if pt.results_count %} rowspan="{{ pt.results_count }}" {% endif %} class="results__row__target-period">
                     {# note ".period" is deprecated, and .period_name should be used instead #}
                     <div><strong class="text-uppercase">{{ pt.period_name }}</strong></div>
                     <div class="text-nowrap">
@@ -285,7 +285,10 @@
     </div>
     {% else %}
     <div class="text-danger">
-        <i class="fas fa-bullseye"></i>&nbsp;{% trans "This indicator has no targets." %} <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link btn btn-success"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add targets" %}</a>
+        <i class="fas fa-bullseye"></i>&nbsp;{% trans "This indicator has no targets." %}
+        {% if is_editable is True %}
+        <a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link btn btn-success"><i class="fas fa-plus-circle"></i>&nbsp;{% trans "Add targets" %}</a>
+        {% endif %}
     </div>
     {% endif %}
 </div>

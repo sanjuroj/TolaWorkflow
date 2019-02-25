@@ -31,7 +31,7 @@ export function dateFromISOString(isoDateStr) {
 }
 
 // "2017-01-01" -> Date with local timezone (not UTC)
-// also lives in app.js (localDateFromISOStr)
+// also lives in base.js (localDateFromISOStr)
 export function localDateFromISOString(dateStr) {
     let dateInts = dateStr.split('-').map(function(x) {return parseInt(x)});
     return new Date(dateInts[0], dateInts[1]-1, dateInts[2]);

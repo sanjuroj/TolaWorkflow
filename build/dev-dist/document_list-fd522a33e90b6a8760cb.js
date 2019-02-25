@@ -12,66 +12,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DocumentListStore", function() { return DocumentListStore; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DocumentListUIStore", function() { return DocumentListUIStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _temp, _class3, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _temp2;
-
-function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _class, _descriptor, _descriptor2, _descriptor3, _temp, _class3, _descriptor4, _descriptor5, _descriptor6, _temp2;
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object['ke' + 'ys'](descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if ('value' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object['define' + 'Property'](target, property, desc); desc = null; } return desc; }
 
 function _initializerWarningHelper(descriptor, context) { throw new Error('Decorating class property failed. Please ensure that ' + 'proposal-class-properties is enabled and set to use loose mode. ' + 'To use proposal-class-properties in spec mode with decorators, wait for ' + 'the next major version of decorators in stage 2.'); }
 
 
-var DocumentListStore = (_class = (_temp =
-/*#__PURE__*/
-function () {
-  function DocumentListStore(documents, programs, indicatorToDocumentsMap, allowProjectsAccess) {
-    _classCallCheck(this, DocumentListStore);
+var DocumentListStore = (_class = (_temp = function DocumentListStore(documents, programs, allowProjectsAccess) {
+  _classCallCheck(this, DocumentListStore);
 
-    _initializerDefineProperty(this, "documents", _descriptor, this);
+  _initializerDefineProperty(this, "documents", _descriptor, this);
 
-    _initializerDefineProperty(this, "programs", _descriptor2, this);
+  _initializerDefineProperty(this, "programs", _descriptor2, this);
 
-    _initializerDefineProperty(this, "indicatorToDocumentsMap", _descriptor3, this);
+  _initializerDefineProperty(this, "allowProjectsAccess", _descriptor3, this);
 
-    _initializerDefineProperty(this, "allowProjectsAccess", _descriptor4, this);
-
-    this.documents = documents;
-    this.programs = programs;
-    this.indicatorToDocumentsMap = indicatorToDocumentsMap;
-    this.allowProjectsAccess = allowProjectsAccess;
-    this.getIndicators = this.getIndicators.bind(this);
-    this.getDocumentsForIndicator = this.getDocumentsForIndicator.bind(this);
-  } // For a given program, return a list of indicators
-
-
-  _createClass(DocumentListStore, [{
-    key: "getIndicators",
-    value: function getIndicators(programId) {
-      var programs = this.programs.filter(function (p) {
-        return p.id === programId;
-      });
-
-      if (programs.length) {
-        return programs[0].indicator_set;
-      }
-
-      return [];
-    }
-  }, {
-    key: "getDocumentsForIndicator",
-    value: function getDocumentsForIndicator(indicatorId) {
-      return this.indicatorToDocumentsMap[indicatorId];
-    }
-  }]);
-
-  return DocumentListStore;
-}(), _temp), (_descriptor = _applyDecoratedDescriptor(_class.prototype, "documents", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  this.documents = documents;
+  this.programs = programs;
+  this.allowProjectsAccess = allowProjectsAccess;
+}, _temp), (_descriptor = _applyDecoratedDescriptor(_class.prototype, "documents", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -85,14 +53,7 @@ function () {
   initializer: function initializer() {
     return [];
   }
-}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "indicatorToDocumentsMap", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return {};
-  }
-}), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "allowProjectsAccess", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "allowProjectsAccess", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -104,24 +65,19 @@ var DocumentListUIStore = (_class3 = (_temp2 =
 /*#__PURE__*/
 function () {
   // program filter selection
-  // indicator filter selection
   // single document filter selection
   // legacy URL filter for projects
   function DocumentListUIStore() {
     _classCallCheck(this, DocumentListUIStore);
 
-    _initializerDefineProperty(this, "selectedProgramId", _descriptor5, this);
+    _initializerDefineProperty(this, "selectedProgramId", _descriptor4, this);
 
-    _initializerDefineProperty(this, "selectedIndicatorId", _descriptor6, this);
+    _initializerDefineProperty(this, "selectedDocumentId", _descriptor5, this);
 
-    _initializerDefineProperty(this, "selectedDocumentId", _descriptor7, this);
-
-    _initializerDefineProperty(this, "selectedProjectId", _descriptor8, this);
+    _initializerDefineProperty(this, "selectedProjectId", _descriptor6, this);
 
     this.setSelectedProgramId = this.setSelectedProgramId.bind(this);
     this.clearSelectedProgramId = this.clearSelectedProgramId.bind(this);
-    this.setSelectedIndicatorId = this.setSelectedIndicatorId.bind(this);
-    this.clearSelectedIndicatorId = this.clearSelectedIndicatorId.bind(this);
     this.setSelectedDocumentId = this.setSelectedDocumentId.bind(this);
     this.clearSelectedDocumentId = this.clearSelectedDocumentId.bind(this);
     this.setSelectedProjectId = this.setSelectedProjectId.bind(this);
@@ -137,16 +93,6 @@ function () {
     key: "clearSelectedProgramId",
     value: function clearSelectedProgramId() {
       this.selectedProgramId = null;
-    }
-  }, {
-    key: "setSelectedIndicatorId",
-    value: function setSelectedIndicatorId(indicatorId) {
-      this.selectedIndicatorId = indicatorId;
-    }
-  }, {
-    key: "clearSelectedIndicatorId",
-    value: function clearSelectedIndicatorId() {
-      this.selectedIndicatorId = null;
     }
   }, {
     key: "setSelectedDocumentId",
@@ -171,27 +117,22 @@ function () {
   }]);
 
   return DocumentListUIStore;
-}(), _temp2), (_descriptor5 = _applyDecoratedDescriptor(_class3.prototype, "selectedProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}(), _temp2), (_descriptor4 = _applyDecoratedDescriptor(_class3.prototype, "selectedProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: null
-}), _descriptor6 = _applyDecoratedDescriptor(_class3.prototype, "selectedIndicatorId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor5 = _applyDecoratedDescriptor(_class3.prototype, "selectedDocumentId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: null
-}), _descriptor7 = _applyDecoratedDescriptor(_class3.prototype, "selectedDocumentId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor6 = _applyDecoratedDescriptor(_class3.prototype, "selectedProjectId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: null
-}), _descriptor8 = _applyDecoratedDescriptor(_class3.prototype, "selectedProjectId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: null
-}), _applyDecoratedDescriptor(_class3.prototype, "setSelectedProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "setSelectedProgramId"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "clearSelectedProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "clearSelectedProgramId"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "setSelectedIndicatorId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "setSelectedIndicatorId"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "clearSelectedIndicatorId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "clearSelectedIndicatorId"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "setSelectedDocumentId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "setSelectedDocumentId"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "clearSelectedDocumentId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "clearSelectedDocumentId"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "setSelectedProjectId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "setSelectedProjectId"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "clearSelectedProjectId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "clearSelectedProjectId"), _class3.prototype)), _class3);
+}), _applyDecoratedDescriptor(_class3.prototype, "setSelectedProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "setSelectedProgramId"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "clearSelectedProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "clearSelectedProgramId"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "setSelectedDocumentId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "setSelectedDocumentId"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "clearSelectedDocumentId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "clearSelectedDocumentId"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "setSelectedProjectId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "setSelectedProjectId"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "clearSelectedProjectId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "clearSelectedProjectId"), _class3.prototype)), _class3);
 
 /***/ }),
 
@@ -233,7 +174,7 @@ var DATE_MED = {
 function dateFromISOString(isoDateStr) {
   return new Date(isoDateStr); // modern browsers can just parse it
 } // "2017-01-01" -> Date with local timezone (not UTC)
-// also lives in app.js (localDateFromISOStr)
+// also lives in base.js (localDateFromISOStr)
 
 function localDateFromISOString(dateStr) {
   var dateInts = dateStr.split('-').map(function (x) {
@@ -271,7 +212,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-select */ "y2Vs");
 /* harmony import */ var _eventbus__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../eventbus */ "qtBC");
 /* harmony import */ var _date_utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../date_utils */ "LBcr");
-var _class, _class2, _class3, _class4;
+var _class, _class2, _class3;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -312,13 +253,6 @@ function filterDocuments(rootStore, uiStore) {
   if (uiStore.selectedProjectId) {
     documents = documents.filter(function (r) {
       return r.project && r.project.id === uiStore.selectedProjectId;
-    });
-  }
-
-  if (uiStore.selectedIndicatorId) {
-    var documentsForIndicator = new Set(rootStore.getDocumentsForIndicator(uiStore.selectedIndicatorId));
-    documents = documents.filter(function (r) {
-      return documentsForIndicator.has(r.id);
     });
   }
 
@@ -381,91 +315,19 @@ function (_React$Component) {
   return ProgramFilterSelect;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class;
 
-var IndicatorFilterSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class2 =
+var DocumentFilterSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class2 =
 /*#__PURE__*/
 function (_React$Component2) {
-  _inherits(IndicatorFilterSelect, _React$Component2);
-
-  function IndicatorFilterSelect(props) {
-    var _this2;
-
-    _classCallCheck(this, IndicatorFilterSelect);
-
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorFilterSelect).call(this, props));
-    _this2.onSelection = _this2.onSelection.bind(_assertThisInitialized(_assertThisInitialized(_this2)));
-    return _this2;
-  }
-
-  _createClass(IndicatorFilterSelect, [{
-    key: "onSelection",
-    value: function onSelection(selectedObject) {
-      var indicatorId = selectedObject ? selectedObject.value : null;
-      _eventbus__WEBPACK_IMPORTED_MODULE_6__["default"].emit('indicator-id-filter-selected', indicatorId);
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this$props2 = this.props,
-          rootStore = _this$props2.rootStore,
-          uiStore = _this$props2.uiStore;
-      var selectedProgramId = uiStore.selectedProgramId,
-          selectedIndicatorId = uiStore.selectedIndicatorId;
-      var indicatorOptions = [];
-
-      if (selectedProgramId) {
-        indicatorOptions = rootStore.getIndicators(selectedProgramId).map(function (i) {
-          return {
-            value: i.id,
-            label: i.number ? i.number + ' ' + i.name : i.name
-          };
-        });
-      }
-
-      var selectedValue = null;
-
-      if (selectedIndicatorId) {
-        selectedValue = indicatorOptions.find(function (p) {
-          return p.value === selectedIndicatorId;
-        });
-      } // Force the menu closed when the Select widget is also disabled
-      // otherwise the menu remains open and is not closeable since the widget
-      // no longer accepts mouse clicks
-
-
-      var menuIsOpen = undefined;
-
-      if (!selectedProgramId) {
-        menuIsOpen = false;
-      }
-
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_5__["default"], {
-        isDisabled: !selectedProgramId,
-        options: indicatorOptions,
-        value: selectedValue,
-        isClearable: true,
-        placeholder: gettext('Filter by indicator'),
-        onChange: this.onSelection,
-        menuIsOpen: menuIsOpen
-      });
-    }
-  }]);
-
-  return IndicatorFilterSelect;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class2;
-
-var DocumentFilterSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class3 =
-/*#__PURE__*/
-function (_React$Component3) {
-  _inherits(DocumentFilterSelect, _React$Component3);
+  _inherits(DocumentFilterSelect, _React$Component2);
 
   function DocumentFilterSelect(props) {
-    var _this3;
+    var _this2;
 
     _classCallCheck(this, DocumentFilterSelect);
 
-    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(DocumentFilterSelect).call(this, props));
-    _this3.onSelection = _this3.onSelection.bind(_assertThisInitialized(_assertThisInitialized(_this3)));
-    return _this3;
+    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(DocumentFilterSelect).call(this, props));
+    _this2.onSelection = _this2.onSelection.bind(_assertThisInitialized(_assertThisInitialized(_this2)));
+    return _this2;
   }
 
   _createClass(DocumentFilterSelect, [{
@@ -477,9 +339,9 @@ function (_React$Component3) {
   }, {
     key: "render",
     value: function render() {
-      var _this$props3 = this.props,
-          rootStore = _this$props3.rootStore,
-          uiStore = _this$props3.uiStore;
+      var _this$props2 = this.props,
+          rootStore = _this$props2.rootStore,
+          uiStore = _this$props2.uiStore;
       var documents = filterDocuments(rootStore, uiStore);
       var selectedDocumentId = uiStore.selectedDocumentId;
       var documentOptions = documents.map(function (r) {
@@ -507,12 +369,12 @@ function (_React$Component3) {
   }]);
 
   return DocumentFilterSelect;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class3;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class2;
 
-var DocumentsFilterBar = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class4 =
+var DocumentsFilterBar = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class3 =
 /*#__PURE__*/
-function (_React$Component4) {
-  _inherits(DocumentsFilterBar, _React$Component4);
+function (_React$Component3) {
+  _inherits(DocumentsFilterBar, _React$Component3);
 
   function DocumentsFilterBar() {
     _classCallCheck(this, DocumentsFilterBar);
@@ -523,19 +385,14 @@ function (_React$Component4) {
   _createClass(DocumentsFilterBar, [{
     key: "render",
     value: function render() {
-      var _this$props4 = this.props,
-          rootStore = _this$props4.rootStore,
-          uiStore = _this$props4.uiStore;
+      var _this$props3 = this.props,
+          rootStore = _this$props3.rootStore,
+          uiStore = _this$props3.uiStore;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProgramFilterSelect, {
-        rootStore: rootStore,
-        uiStore: uiStore
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col-3"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorFilterSelect, {
         rootStore: rootStore,
         uiStore: uiStore
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -555,7 +412,7 @@ function (_React$Component4) {
   }]);
 
   return DocumentsFilterBar;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class4;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class3;
 
 var DocumentsListTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(function (_ref) {
   var rootStore = _ref.rootStore,
@@ -688,13 +545,12 @@ __webpack_require__.r(__webpack_exports__);
 var _jsContext = jsContext,
     documents = _jsContext.documents,
     programs = _jsContext.programs,
-    indicatorToDocumentsMap = _jsContext.indicatorToDocumentsMap,
     allowProjectsAccess = _jsContext.allowProjectsAccess;
 /*
  * Model/Store setup
  */
 
-var rootStore = new _models__WEBPACK_IMPORTED_MODULE_6__["DocumentListStore"](documents, programs, indicatorToDocumentsMap, allowProjectsAccess);
+var rootStore = new _models__WEBPACK_IMPORTED_MODULE_6__["DocumentListStore"](documents, programs, allowProjectsAccess);
 var uiStore = new _models__WEBPACK_IMPORTED_MODULE_6__["DocumentListUIStore"]();
 /*
  * Routing
@@ -702,7 +558,7 @@ var uiStore = new _models__WEBPACK_IMPORTED_MODULE_6__["DocumentListUIStore"]();
 
 var routes = [{
   name: 'documents',
-  path: '/?program_id&project_id&indicator_id&document_id'
+  path: '/?program_id&project_id&document_id'
 }]; // When the URL changes due to navigation, back button press, etc
 
 function onNavigation(navRoutes) {
@@ -710,17 +566,10 @@ function onNavigation(navRoutes) {
       route = navRoutes.route;
   var params = route.params;
 
-  if (params.indicator_id) {
-    uiStore.setSelectedIndicatorId(parseInt(params.indicator_id));
-  } else {
-    uiStore.clearSelectedIndicatorId();
-  }
-
   if (params.program_id) {
     uiStore.setSelectedProgramId(parseInt(params.program_id));
   } else {
     uiStore.clearSelectedProgramId();
-    uiStore.clearSelectedIndicatorId();
   }
 
   if (params.document_id) {
@@ -761,31 +610,12 @@ _eventbus__WEBPACK_IMPORTED_MODULE_4__["default"].on('program-id-filter-selected
     router.navigate('documents');
   }
 });
-_eventbus__WEBPACK_IMPORTED_MODULE_4__["default"].on('indicator-id-filter-selected', function (indicatorId) {
-  var programId = uiStore.selectedProgramId;
-
-  if (indicatorId) {
-    router.navigate('documents', {
-      program_id: programId,
-      indicator_id: indicatorId
-    });
-  } else {
-    router.navigate('documents', {
-      program_id: programId
-    });
-  }
-});
 _eventbus__WEBPACK_IMPORTED_MODULE_4__["default"].on('document-id-filter-selected', function (documentId) {
   var programId = uiStore.selectedProgramId;
-  var indicatorId = uiStore.selectedIndicatorId;
   var qs = {};
 
   if (programId) {
     qs.program_id = programId;
-  }
-
-  if (indicatorId) {
-    qs.indicator_id = indicatorId;
   }
 
   if (documentId) {
@@ -824,4 +654,4 @@ var globalEventBus = nanobus__WEBPACK_IMPORTED_MODULE_0___default()();
 /***/ })
 
 },[["Wr7D","runtime","vendors"]]]);
-//# sourceMappingURL=document_list-6715dc82009200d5040a.js.map
+//# sourceMappingURL=document_list-fd522a33e90b6a8760cb.js.map

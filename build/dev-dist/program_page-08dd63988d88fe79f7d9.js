@@ -448,7 +448,7 @@ var DATE_MED = {
 function dateFromISOString(isoDateStr) {
   return new Date(isoDateStr); // modern browsers can just parse it
 } // "2017-01-01" -> Date with local timezone (not UTC)
-// also lives in app.js (localDateFromISOStr)
+// also lives in base.js (localDateFromISOStr)
 
 function localDateFromISOString(dateStr) {
   var dateInts = dateStr.split('-').map(function (x) {
@@ -1252,7 +1252,9 @@ function (_React$Component2) {
           className: "text-muted"
         },
         /* # Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
-        interpolate(gettext('%s% unavailable'), [percentNonReporting])), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        interpolate(gettext('%(percentNonReporting)s% unavailable'), {
+          percentNonReporting: percentNonReporting
+        }, true)), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
           href: "#",
           tabIndex: "0",
           "data-toggle": "popover",
@@ -1461,4 +1463,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-58500649d0bf9389497c.js.map
+//# sourceMappingURL=program_page-08dd63988d88fe79f7d9.js.map

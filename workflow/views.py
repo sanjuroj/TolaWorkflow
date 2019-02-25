@@ -7,7 +7,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 
-from workflow.serializers import RecordListProgramSerializer, RecordListRecordSerializer
+from workflow.serializers import DocumentListProgramSerializer, DocumentListDocumentSerializer
 from .models import Program, Country, Province, AdminLevelThree, District, ProjectAgreement, ProjectComplete, SiteProfile, \
     Documentation, Monitor, Benchmarks, Budget, ApprovalAuthority, Checklist, ChecklistItem, Contact, Stakeholder, FormGuidance, \
     TolaBookmarks, TolaUser
@@ -796,23 +796,13 @@ def documentation_list(request):
 
     programs = Program.objects.filter(funding_status="Funded", country__in=user_countries)
 
-    # create a mapping of indicators to documents
-    all_program_results = Result.objects.filter(indicator__program__in=programs, evidence__isnull=False)
-    indicator_to_documents_map = collections.defaultdict(list)
-    for result in all_program_results:
-        indicator_to_documents_map[result.indicator_id].append(result.evidence_id)
-
-    # limit indicators to those with results w/ documents
-    indicators = Indicator.objects.filter(id__in=indicator_to_documents_map.keys()).with_logframe_sorting()
-    programs = programs.prefetch_related(Prefetch('indicator_set', queryset=indicators))
-
-    documents = Documentation.objects.all().select_related('project').filter(program__country__in=user_countries)
+    # distinct() needed as a program in multiple countries causes duplicate documents returned
+    documents = Documentation.objects.all().select_related('project').filter(program__country__in=user_countries).distinct()
 
     js_context = {
         'allowProjectsAccess': request.user.tola_user.allow_projects_access,
-        'programs': RecordListProgramSerializer(programs, many=True).data,
-        'documents': RecordListRecordSerializer(documents, many=True).data,
-        'indicatorToDocumentsMap': dict(indicator_to_documents_map),
+        'programs': DocumentListProgramSerializer(programs, many=True).data,
+        'documents': DocumentListDocumentSerializer(documents, many=True).data,
     }
 
     return render(request, 'workflow/documentation_list.html', {

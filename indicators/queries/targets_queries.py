@@ -58,7 +58,8 @@ def target_is_complete_annotation():
         models.When(
             models.Q(
                 models.Q(indicator__target_frequency=Indicator.LOP) &
-                models.Q(indicator__program__reporting_period_end__lte=models.functions.Now())
+                # models.Q(indicator__program__reporting_period_end__lte=models.functions.Now())
+                models.Q(indicator__program__reporting_period_end__lt=utils.UTCNow())
                 ),
             then=models.Value(True)
         ),
@@ -72,7 +73,8 @@ def target_is_complete_annotation():
         models.When(
             models.Q(
                 models.Q(indicator__target_frequency__in=[f[0] for f in utils.TIME_AWARE_FREQUENCIES]) &
-                models.Q(end_date__lte=models.functions.Now())
+                # models.Q(end_date__lte=models.functions.Now())
+                models.Q(end_date__lt=utils.UTCNow())
             ),
             then=models.Value(True)
         ),
