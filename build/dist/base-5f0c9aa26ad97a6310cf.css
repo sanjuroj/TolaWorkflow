@@ -8393,7 +8393,8 @@ input[type=number]::-webkit-outer-spin-button {
   border: 0 !important;
   display: none; }
 
-.leaflet-control-container .leaflet-top, .leaflet-bottom {
+.leaflet-control-container .leaflet-top,
+.leaflet-control-container .leaflet-bottom {
   z-index: 10; }
 
 .chart-legend {
@@ -8982,5 +8983,3 @@ select.listoption_filters {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-eca749902482ea334e51.css.map*/
