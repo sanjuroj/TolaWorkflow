@@ -67,7 +67,7 @@
     100% { transform: rotate(360deg); }
 }
 
-.loading-spinner__container {
+.loading-spinner__container.loading {
     position: relative;
     height: auto;
 

@@ -74,10 +74,7 @@ export default class EditUserProfile extends React.Component {
         this.setState({
             managed_user_data: {
                 ...this.state.managed_user_data,
-                user: {
-                    ...this.state.managed_user_data.user,
-                    email: new_email,
-                }
+                email: new_email,
             }
         })
     }
@@ -113,7 +110,7 @@ export default class EditUserProfile extends React.Component {
         const e = this.props.errors
         const error_classes = {
             name: (e.name)?'is-invalid':'',
-            email: (e.user && e.user.email)?'is-invalid':'',
+            email: (e.email)?'is-invalid':'',
             organization: (e.organization_id)?'is-invalid':''
         }
         return (
@@ -173,12 +170,12 @@ export default class EditUserProfile extends React.Component {
                         <input
                             className={"form-control "+error_classes.email}
                             type="email"
-                            value={ud.user.email}
+                            value={ud.email}
                             onChange={(e) => this.updateEmail(e.target.value)}
                             id="user-email-input" />
-                        {e.user && e.user.email &&
+                        {e.email &&
                         <div className="invalid-feedback">
-                            {e.user.email}
+                            {e.email}
                         </div>
                         }
                     </div>

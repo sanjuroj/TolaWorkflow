@@ -24,7 +24,8 @@ from rest_framework.serializers import (
     CharField,
     IntegerField,
     PrimaryKeyRelatedField,
-    BooleanField
+    BooleanField,
+    ValidationError
 )
 from rest_framework.response import Response
 from rest_framework import viewsets, mixins, pagination, status
@@ -306,18 +307,29 @@ class UserAdminReportSerializer(Serializer):
 
 class AuthUserSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
-    email = CharField(max_length=255, required=True, validators=[
-        UniqueValidator(queryset=User.objects.all())
-    ])
     class Meta:
         model = User
-        fields = ('id', 'is_staff', 'is_superuser', 'is_active', 'email')
+        fields = ('id', 'is_staff', 'is_superuser', 'is_active')
 
 class UserAdminSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
     name = CharField(max_length=255, required=True)
     organization_id = IntegerField(required=True)
+    email = CharField(source="user.email", max_length=255, required=True)
     user = AuthUserSerializer()
+
+    def validate(self, data):
+        out_data = super(UserAdminSerializer, self).validate(data)
+        if self.instance:
+            others = list(User.objects.filter(email=data['user']['email']))
+            if len(others) > 1 or (len(others) > 0 and others[0].id != self.instance.user.id):
+                raise ValidationError({"email": 'This field must be unique'})
+        else:
+            others = list(User.objects.filter(email=data['user']['email']))
+            if len(others) > 0:
+                raise ValidationError({"email": 'This field must be unique'})
+
+        return out_data
 
     def create(self, validated_data):
         validated_data["is_active"] = True
@@ -392,6 +404,7 @@ class UserAdminSerializer(ModelSerializer):
             'mode_of_address',
             'mode_of_contact',
             'phone_number',
+            'email'
         )
 
 

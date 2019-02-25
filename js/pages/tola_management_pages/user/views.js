@@ -252,35 +252,41 @@ export const IndexView = observer(
                                 expanded={data.id == store.editing_target}
                                 Expando={({Wrapper}) =>
                                     <Wrapper>
-                                        <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
                                             <UserEditor
                                                 new={data.id == 'new'}
                                                 ProfileSection={observer(() =>
-                                                    <EditUserProfile
-                                                        new={data.id == 'new'}
-                                                        userData={store.editing_target_data.profile}
-                                                        errors={store.editing_errors}
-                                                        key={store.editing_target_data.profile.id}
-                                                        onUpdate={(new_user_data) => store.updateUserProfile(data.id, new_user_data)}
-                                                        onCreate={(new_user_data) => store.saveNewUser(new_user_data)}
-                                                        onCreateAndAddAnother={(new_user_data) => store.saveNewUserAndAddAnother(new_user_data)}
-                                                        organizations={store.organizations} />
+                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
+                                                        <EditUserProfile
+                                                            new={data.id == 'new'}
+                                                            userData={store.editing_target_data.profile}
+                                                            errors={store.editing_errors}
+                                                            key={store.editing_target_data.profile.id}
+                                                            onUpdate={(new_user_data) => store.updateUserProfile(data.id, new_user_data)}
+                                                            onCreate={(new_user_data) => store.saveNewUser(new_user_data)}
+                                                            onCreateAndAddAnother={(new_user_data) => store.saveNewUserAndAddAnother(new_user_data)}
+                                                            organizations={store.organizations} />
+                                                    </LoadingSpinner>
                                                 )}
-                                                ProgramSection={() =>
-                                                    <EditUserPrograms
-                                                        store={store}
-                                                            user={data}
-                                                            adminUserProgramRoles={store.current_user_program_roles}
-                                                            adminUserCountryRoles={store.current_user_country_roles}
-                                                            onSave={(new_program_data) => store.saveUserPrograms(data.id, new_program_data)}/>}
-                                                HistorySection={() =>
-                                                    <EditUserHistory
-                                                        userData={data}
-                                                                history={store.editing_target_data.history}
-                                                                onResendRegistrationEmail={() => store.resendRegistrationEmail(data.id)}
-                                                                onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>}
+                                                ProgramSection={observer(() =>
+                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
+                                                        <EditUserPrograms
+                                                            store={store}
+                                                                user={data}
+                                                                adminUserProgramRoles={store.current_user_program_roles}
+                                                                adminUserCountryRoles={store.current_user_country_roles}
+                                                                onSave={(new_program_data) => store.saveUserPrograms(data.id, new_program_data)}/>
+                                                    </LoadingSpinner>
+                                                )}
+                                                HistorySection={observer(() =>
+                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
+                                                        <EditUserHistory
+                                                            userData={data}
+                                                                    history={store.editing_target_data.history}
+                                                                    onResendRegistrationEmail={() => store.resendRegistrationEmail(data.id)}
+                                                                    onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>
+                                                    </LoadingSpinner>
+                                                )}
                                             />
-                                        </LoadingSpinner>
                                     </Wrapper>
                                 }>
                                     <Col size="0.5">

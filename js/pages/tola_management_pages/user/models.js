@@ -11,7 +11,7 @@ const default_user = {
     mode_of_contact: "",
     title: "",
     user_programs: 0,
-    user: {email: '', is_active:true},
+    user: {is_active:true},
 }
 
 const default_editing_target_data = {
@@ -230,7 +230,7 @@ export class UserStore {
         }
 
         if(this.editing_target == user_id) {
-            this.editing_target = false
+            this.editing_target = null
         } else {
             this.editing_target = user_id
             this.fetching_editing_target = true
@@ -276,6 +276,7 @@ export class UserStore {
     @action
     updateUserProfile(user_id, new_user_data) {
         this.saving_user_profile = true
+        this.editing_errors = {}
         api.saveUserProfile(user_id, new_user_data).then(result => {
             this.onSaveSuccessHandler()
             runInAction(() => {
@@ -301,6 +302,7 @@ export class UserStore {
     @action
     saveNewUser(new_user_data) {
         this.saving_user_profile = true
+        this.editing_errors = {}
         api.createUser(new_user_data).then(result => api.fetchUserAggregates(result.id).then(aggregates => {
             this.onSaveSuccessHandler()
             runInAction(() => {
@@ -330,6 +332,7 @@ export class UserStore {
     @action
     saveNewUserAndAddAnother(new_user_data) {
         this.saving_user_profile = true
+        this.editing_errors = {}
         api.createUser(new_user_data).then(result => api.fetchUserAggregates(result.id).then(aggregates => {
             this.onSaveSuccessHandler()
             runInAction(() => {
