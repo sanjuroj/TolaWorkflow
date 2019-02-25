@@ -62,7 +62,7 @@ const apply_filter = (filter_string, listing) => {
         country => country.name.toLowerCase().includes(filter_string.toLowerCase())
     )
     if(filtered_countries.length > 0) {
-        return filtered_countries.filter(country => country.programs.length > 0)
+        return filtered_countries
     } else {
         return [
             ...listing.map(country => ({

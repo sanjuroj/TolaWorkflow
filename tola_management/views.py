@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from collections import OrderedDict
 from django.core.exceptions import PermissionDenied
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
@@ -63,6 +64,17 @@ from .permissions import (
     ActionBasedPermissionsMixin,
 )
 
+class Paginator(SmallResultsSetPagination):
+    def get_paginated_response(self , data):
+        response = Response(OrderedDict([
+            ('count', self.page.paginator.count),
+            ('page_count', self.page.paginator.num_pages),
+            ('next', self.get_next_link()),
+            ('previous', self.get_previous_link()),
+            ('results', data),
+        ]))
+        return response
+
 def requires_basic_or_super_admin(func):
     def wrapper(request, *args, **kwargs):
         if user_has_basic_or_super_admin(request.user):
@@ -100,7 +112,15 @@ def get_user_page_context(request):
     for country in Country.objects.all():
         countries[country.id] = {"id": country.id, "name": country.country, "programs": []}
 
-    programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
+    if request.user.is_superuser:
+        programs_qs = Program.objects.raw("""
+            SELECT wp.id, wp.name, wc.id AS country_id, wc.country AS country_name
+            FROM workflow_program wp
+            INNER JOIN workflow_program_country wpc ON wp.id = wpc.program_id
+            INNER JOIN workflow_country wc ON wpc.country_id = wc.id
+        """)
+    else:
+        programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
     programs = {}
     for program in list(programs_qs):
         programs[program.id] = {"id": program.id, "name": program.name, "country_id": program.country_id}
@@ -321,7 +341,7 @@ class UserAdminSerializer(ModelSerializer):
 
         UserManagementAuditLog.created(
             user=new_user,
-            changed_by=self.context["request"].user.tola_user,
+            created_by=self.context["request"].user.tola_user,
             entry=serializers.serialize('json', [new_user])
         )
 
@@ -333,6 +353,8 @@ class UserAdminSerializer(ModelSerializer):
         user = instance
 
         auth_user_data = validated_data.pop('user')
+
+        previous_entry = serializers.serialize('json', [user])
 
         user.name = validated_data["name"]
         user.organization_id = validated_data["organization_id"]
@@ -371,7 +393,7 @@ class UserAdminSerializer(ModelSerializer):
 class UserAdminViewSet(viewsets.ModelViewSet, ActionBasedPermissionsMixin):
     queryset = TolaUser.objects.all()
     serializer_class = UserAdminSerializer
-    pagination_class = SmallResultsSetPagination
+    pagination_class = Paginator
     permission_classes = []
 
     def get_list_queryset(self):
@@ -775,7 +797,7 @@ class OrganizationSerializer(ModelSerializer):
 class OrganizationAdminViewSet(viewsets.ModelViewSet):
     serializer_class = OrganizationSerializer
     queryset = Organization.objects.all()
-    pagination_class = SmallResultsSetPagination
+    pagination_class = Paginator
 
     def get_listing_queryset(self):
         req = self.request

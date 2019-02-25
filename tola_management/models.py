@@ -39,7 +39,7 @@ class UserManagementAuditLog(models.Model):
         entry.save()
 
     @classmethod
-    def profile_updated(cls, user, changed_by, old, new):
+    def programs_updated(cls, user, changed_by, old, new):
         old = json.dumps(old)
         new = json.dumps(new)
         if old != new:
