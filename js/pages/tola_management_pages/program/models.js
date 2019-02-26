@@ -108,10 +108,12 @@ export class ProgramStore {
     toggleEditingTarget(id) {
         if(this.editing_target == 'new') {
             this.programs.shift()
+            this.editing_errors = {}
         }
 
         if(this.editing_target == id) {
             this.editing_target = false
+            this.editing_errors = {}
         } else {
             this.editing_target = id
             this.fetching_editing_history = true
