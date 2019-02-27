@@ -6,6 +6,8 @@ import ManagementTable from 'components/management-table'
 import Pagination from 'components/pagination'
 import CountryEditor from './components/country_editor'
 import EditCountryProfile from './components/edit_country_profile'
+import EditDisaggregations from './components/edit_disaggregations'
+import EditObjectives from './components/edit_objectives'
 import LoadingSpinner from 'components/loading-spinner'
 
 const CountryFilter = observer(({store, filterOptions}) => {
@@ -96,7 +98,21 @@ export const IndexView = observer(
                                                     onCreate={(new_country_data) => store.saveNewCountry(new_country_data)}
                                                     errors={store.editing_errors}
                                                 />)}
-                                            HistorySection={observer(() => null)}
+                                            StrategicObjectiveSection={observer(() =>
+                                                <LoadingSpinner isLoading={store.fetching_editing_data}>
+                                                    <EditObjectives
+                                                        objectives={store.editing_objectives_data}
+                                                    />
+                                                </LoadingSpinner>
+                                            )}
+                                            DisaggregationSection={observer(() =>
+                                                <LoadingSpinner isLoading={store.fetching_editing_data}>
+                                                    <EditDisaggregations
+                                                        disaggregations={store.editing_disaggregations_data}
+                                                    />
+                                                </LoadingSpinner>
+                                            )}
+                                            fetchObjectives={(countryId) => store.fetchObjectives(countryId)}
                                         />
                                     </Wrapper>
                                 }>

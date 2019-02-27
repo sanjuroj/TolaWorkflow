@@ -24,12 +24,19 @@ export const createCountry = (data) => api.post('/tola_management/country/', dat
 
 export const updateCountry = (id, data) => api.put(`/tola_management/country/${id}/`, data)
 
-//export const fetchCountryHistory = (id) => api.get(`/tola_management/country/${id}/history/`)
+export const fetchCountryObjectives = (countryId) => {
+    return api.get('/tola_management/countryobjective/', {params: {country: countryId}})
+}
+
+export const fetchCountryDisaggregations = (countryId) => {
+    return api.get('/tola_management/countrydisaggregation/', {params: {country: countryId}})
+}
 
 
 export default {
     fetchCountries,
-    //fetchCountryHistory,
+    fetchCountryObjectives,
+    fetchCountryDisaggregations,
     createCountry,
     updateCountry,
 }

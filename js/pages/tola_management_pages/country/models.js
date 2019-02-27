@@ -28,8 +28,9 @@ export class CountryStore {
 
     @observable editing_target = null
     @observable editing_errors = {}
-    @observable fetching_editing_history = true
-    @observable editing_target_history = null
+    @observable fetching_editing_data = true
+    @observable editing_objectives_data = []
+    @observable editing_disaggregations_data = []
     @observable saving = false
 
     @observable bulk_targets = new Map()
@@ -111,15 +112,17 @@ export class CountryStore {
             this.editing_target = false
         } else {
             this.editing_target = id
-            this.fetching_editing_history = true
-            /*
-            this.api.fetchCountryHistory(id).then(resp => {
+            this.fetching_editing_data = true
+            Promise.all([
+                this.api.fetchCountryObjectives(id),
+                this.api.fetchCountryDisaggregations(id),
+            ]).then(([objectives_resp, disaggregations_resp]) => {
                 runInAction(() => {
-                    this.fetching_editing_history = false
-                    this.editing_history = resp.data
+                    this.fetching_editing_data = false
+                    this.editing_objectives_data = objectives_resp.data
+                    this.editing_disaggregations_data = disaggregations_resp.data
                 })
             })
-            */
         }
     }
 
