@@ -26,7 +26,6 @@ from .views.views_reports import (
     IPTTReportQuickstartView,
     IPTT_ReportView,
     IPTT_ReportIndicatorsWithVariedStartDate,
-    IPTT_ExcelExport,
     create_pinned_report,
     delete_pinned_report,
     IPTT_ExcelExport,
