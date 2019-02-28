@@ -943,34 +943,6 @@ def result_view(request, indicator, program):
     )
 
 
-def program_indicators_json(request, program, indicator, type):
-    template_name = 'indicators/program_indicators_table.html'
-
-    program_obj = Program.objects.get(pk=program)
-    q = {'program__id__isnull': False, 'program__id': program_obj.pk}
-
-    if int(type) != 0:
-        q['indicator_type__id'] = type
-
-    if int(indicator) != 0:
-        q['id'] = indicator
-
-    indicators = Indicator.objects \
-        .select_related('sector') \
-        .prefetch_related('result_set', 'indicator_type', 'level',
-                          'periodictargets') \
-        .filter(**q) \
-        .annotate(data_count=Count('result'),
-                  levelmin=Min('level__customsort'),
-                  target_period_last_end_date=Max('periodictargets__end_date')) \
-        .order_by('levelmin', 'number', 'name')
-
-    return render_to_response(
-        template_name,
-        {'indicators': indicators, 'program': program_obj}
-    )
-
-
 class IndicatorReport(View, AjaxableResponseMixin):
     def get(self, request, *args, **kwargs):
         countries = getCountry(request.user)
