@@ -7,7 +7,7 @@ export default class EditUserProfile extends React.Component {
     constructor(props) {
         super(props)
         const {userData} = props
-        const organization_listing = props.organizations.map(org => ({value: org.id, label: org.name}))
+        const organization_listing = props.organizations
         const selected_organization = organization_listing.find(o => o.value == userData.organization_id)
         this.state = {
             original_user_data: {...userData},
@@ -158,7 +158,7 @@ export default class EditUserProfile extends React.Component {
                     <div className="form-group">
                         <label htmlFor="user-title-input">Title</label>
                         <input
-                            maxLength="3"
+                            maxLength="50"
                             type="text"
                             value={ud.title}
                             onChange={(e) => this.updateTitle(e.target.value)}

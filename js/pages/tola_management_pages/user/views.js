@@ -255,7 +255,7 @@ export const IndexView = observer(
                                             <UserEditor
                                                 new={data.id == 'new'}
                                                 ProfileSection={observer(() =>
-                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
+                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.save_user_programs}>
                                                         <EditUserProfile
                                                             new={data.id == 'new'}
                                                             userData={store.editing_target_data.profile}
@@ -264,11 +264,11 @@ export const IndexView = observer(
                                                             onUpdate={(new_user_data) => store.updateUserProfile(data.id, new_user_data)}
                                                             onCreate={(new_user_data) => store.saveNewUser(new_user_data)}
                                                             onCreateAndAddAnother={(new_user_data) => store.saveNewUserAndAddAnother(new_user_data)}
-                                                            organizations={store.organizations} />
+                                                            organizations={store.organization_selections} />
                                                     </LoadingSpinner>
                                                 )}
                                                 ProgramSection={observer(() =>
-                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
+                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.save_user_programs}>
                                                         <EditUserPrograms
                                                             store={store}
                                                                 user={data}
@@ -278,7 +278,7 @@ export const IndexView = observer(
                                                     </LoadingSpinner>
                                                 )}
                                                 HistorySection={observer(() =>
-                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
+                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.save_user_programs}>
                                                         <EditUserHistory
                                                             userData={data}
                                                                     history={store.editing_target_data.history}
@@ -299,7 +299,7 @@ export const IndexView = observer(
                                     </Col>
                                     <Col size="2">{data.name || "---"} {data.is_super && <span className="badge badge-danger">Super Admin</span>}</Col>
                                     <Col>{data.organization_name || "---"}</Col>
-                                    <Col><a href="">{data.user_programs} programs</a></Col>
+                                    <Col><a href={`/tola_management/program/?users[]=${data.id}`}>{data.user_programs} programs</a></Col>
                                     <Col size="0.5">{data.is_admin?'Yes':'No'}</Col>
                                     <Col size="0.25">{data.is_active?'Active':'Inactive'}</Col>
                                 </Row>

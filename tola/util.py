@@ -6,6 +6,7 @@ import dateutil
 import datetime
 
 from workflow.models import Country, TolaUser, TolaSites
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.core.mail import send_mail, mail_admins, mail_managers, EmailMessage
 from django.core.exceptions import PermissionDenied
@@ -34,7 +35,8 @@ def getCountry(user):
         """
         # get users country from django cosign module
         if user.is_authenticated():
-            return user.tola_user.countries.all()
+            return Country.objects.filter(Q(id__in=user.tola_user.countries.all().values('id')) | Q(id__in=user.tola_user.program_access.all().values('country__id')))
+            # return user.tola_user.countries.all()
         else:
             return Country.objects.none()
 

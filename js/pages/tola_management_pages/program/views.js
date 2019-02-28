@@ -9,6 +9,18 @@ import EditProgramProfile from './components/edit_program_profile'
 import ProgramHistory from './components/program_history'
 import LoadingSpinner from 'components/loading-spinner'
 
+const UserFilter = observer(({store, selections}) => {
+    return <div className="form-group">
+        <label htmlFor="users_filter">Users</label>
+        <CheckboxedMultiSelect
+            value={store.filters.user}
+            options={selections}
+            onChange={(e) => store.changeUserFilter(e)}
+            placeholder="None Selected"
+            id="users_filter" />
+    </div>
+})
+
 const CountryFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
         <label htmlFor="countries_filter">Countries</label>
@@ -138,6 +150,7 @@ export const IndexView = observer(
         const organizationFilterOptions = Object.entries(store.organizations).map(([id, org]) => ({value: org.id, label: org.name}))
         const sectorFilterOptions = store.sectors.map(x => ({value: x.id, label: x.name}))
         const programFilterOptions = Object.entries(store.allPrograms).map(([id, program]) => ({value: program.id, label: program.name}))
+        const userFilterOptions = Object.entries(store.users).map(([id, user]) => ({value: user.id, label: user.name}))
         const bulkProgramStatusOptions = [
             {value: 'Funded', label: 'Funded'},
             {value: 'Completed', label: 'Completed'},
@@ -158,6 +171,7 @@ export const IndexView = observer(
         return <div id="user-management-index-view" className="container-fluid row">
             <div className="col col-sm-3 filter-section">
                 <CountryFilter store={store} filterOptions={countryFilterOptions} />
+                <UserFilter store={store} filterOptions={userFilterOptions} />
                 <OrganizationFilter store={store} filterOptions={organizationFilterOptions} />
                 <SectorFilter store={store} filterOptions={sectorFilterOptions} />
                 <ProgramStatusFilter store={store} />
@@ -232,7 +246,7 @@ export const IndexView = observer(
                                     </Col>
                                     <Col size="2">{data.name || "---"}</Col>
                                     <Col>{data.onlyOrganizationId ? store.organizations[data.onlyOrganizationId].name : data.organizations ? data.organizations : "---"}</Col>
-                                    <Col>{data.program_users ? <a href="">{data.program_users} users</a> : '---'  }</Col>
+                                    <Col>{data.program_users ? <a href={`/tola_management/user/?programs[]=${data.id}`}>{data.program_users} users</a> : '---'  }</Col>
                                     <Col>{data.funding_status ? data.funding_status : '---'}</Col>
                                 </Row>
                             }

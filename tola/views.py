@@ -43,7 +43,8 @@ def index(request, selected_country=None):
             # ... failing all of this, the homepage will be blank. Sorry!
 
     programs_with_metrics = ProgramWithMetrics.home_page.with_annotations().filter(
-        Q(country=active_country) | Q(country__in=user.countries.all()) | Q(user_access=user),
+        Q(country__in=user.countries.all()) | Q(user_access=user),
+        country=active_country,
         funding_status="Funded"
     ).distinct()
 

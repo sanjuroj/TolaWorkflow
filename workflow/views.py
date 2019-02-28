@@ -1123,7 +1123,7 @@ class SiteProfileList(ListView):
 
     def dispatch(self, request, *args, **kwargs):
 
-        if not user_has_program_access(request.user.tola_user, kwargs['program_id']):
+        if not user_has_program_access(request.user, kwargs['program_id']):
             raise PermissionDenied
 
         if request.GET.has_key('report'):

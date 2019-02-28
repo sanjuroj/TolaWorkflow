@@ -11,6 +11,18 @@ import EditOrganizationHistory from './components/edit_organization_history'
 
 import LoadingSpinner from 'components/loading-spinner'
 
+const CountryFilter = observer(({store, selections}) => {
+    return <div className="form-group">
+        <label htmlFor="countries_permitted_filter">Countries</label>
+        <CheckboxedMultiSelect
+            value={store.filters.countries}
+            options={selections}
+            onChange={(e) => store.changeCountryFilter(e)}
+            placeholder="None Selected"
+            id="countries_permitted_filter" />
+    </div>
+})
+
 const ProgramFilter = observer(({store, selections}) => {
     return <div className="form-group">
         <label htmlFor="programs_filter">Programs</label>
@@ -54,6 +66,7 @@ export const IndexView = observer(
                 <SectorFilter store={store} selections={store.sector_selections} />
                 <ProgramFilter store={store} selections={store.program_selections} />
                 <OrganizationFilter store={store} selections={store.organization_selections} />
+                <CountryFilter store={store} selections={store.country_selections} />
                 <div className="form-group">
                     <label htmlFor="status_filter">Status</label>
                     <Select
@@ -128,8 +141,8 @@ export const IndexView = observer(
                                         </div>
                                     </Col>
                                     <Col size="2">{data.name || "---"}</Col>
-                                    <Col size="1"><a href="">{data.program_count} programs</a></Col>
-                                    <Col size="1"><a href="">{data.user_count} users</a></Col>
+                                    <Col size="1"><a href={`/tola_management/program/?organizations[]=${data.id}`}>{data.program_count} programs</a></Col>
+                                    <Col size="1"><a href={`/tola_management/user/?organizations[]=${data.id}`}>{data.user_count} users</a></Col>
                                     <Col size="0.25">{data.is_active?'Active':'Inactive'}</Col>
                                 </Row>
                             }

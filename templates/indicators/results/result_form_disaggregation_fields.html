@@ -34,6 +34,7 @@
                             <td>{{ item.disaggregation_label.label }}</td>
                             <td>
                                 <input type="number" min="0"
+                                    {% if readonly %}disabled="disabled"{% endif %}
                                     class="form-control form-control-sm"
                                     name="{{ item.disaggregation_label.id }}"
                                     value="{{ item.value }}">
@@ -47,6 +48,7 @@
                             <td>{{ item.label }}</td>
                             <td>
                                 <input type="number" min="0"
+                                    {% if readonly %}disabled="disabled"{% endif %}
                                     class="form-control form-control-sm"
                                     name="{{ item.id }}"
                                     value="">
@@ -87,9 +89,10 @@
                             <td>{{ item.disaggregation_label.label }}</td>
                             <td>
                                 <input type="number" min="0"
-                                                     class="form-control form-controm-sm"
-                                                     name="{{ item.disaggregation_label.id }}"
-                                                     value="{{ item.value }}">
+                                    {% if readonly %}disabled="disabled"{% endif %}
+                                    class="form-control form-controm-sm"
+                                    name="{{ item.disaggregation_label.id }}"
+                                    value="{{ item.value }}">
                             </td>
                         </tr>
                     {% endfor %}
@@ -100,9 +103,10 @@
                         <td>{{ item.label }}</td>
                         <td>
                             <input type="number" min="0"
-                                                 class="form-control form-control-sm"
-                                                 name="{{ item.id }}"
-                                                 value="">
+                                {% if readonly %}disabled="disabled"{% endif %}
+                                class="form-control form-control-sm"
+                                name="{{ item.id }}"
+                                value="">
                         </td>
                     </tr>
                     {% endfor %}

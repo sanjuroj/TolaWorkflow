@@ -135,17 +135,24 @@ def get_user_page_context(request):
     for role in list(request.user.tola_user.country_roles.all()):
         country_roles[role.country_id] = {"id": role.country_id, "role": role.role}
 
+    organizations = {
+        org.id: {"name": org.name, "id": org.id} for org in Organization.objects.all()
+    }
+
     return {
         "countries": countries,
-        "organizations": list(Organization.objects.all().values()),
+        "organizations": organizations,
         "programs": programs,
         "users": list(TolaUser.objects.all().values()),
         "program_roles": program_roles,
         "country_roles": country_roles,
-        "is_superuser": request.user.is_superuser
+        "is_superuser": request.user.is_superuser,
+        "programs_filter": request.GET.getlist('programs[]'),
+        "organizations_filter": request.GET.getlist('organizations[]')
     }
 
 def get_organization_page_context(request):
+    country_filter = request.GET.getlist('countries[]')
     programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
     programs = {}
     for program in list(programs_qs):
@@ -159,15 +166,23 @@ def get_organization_page_context(request):
     for sector in Sector.objects.all():
         sectors[sector.id] = {"id": sector.id, "name": sector.sector}
 
+    countries = {
+        country.id: {"name": country.country, "id": country.id}
+        for country in Country.objects.all()
+    }
+
     return {
         "programs": programs,
         "organizations": organizations,
-        "sectors": sectors
+        "sectors": sectors,
+        "countries": countries,
+        "country_filter": country_filter
     }
 
 def get_program_page_context(request):
     country_filter = request.GET.getlist('countries[]')
     organization_filter = request.GET.getlist('organizations[]')
+    users_filter = request.GET.getlist('users[]')
     countries = {
         country.id : {
             'id': country.id,
@@ -197,13 +212,22 @@ def get_program_page_context(request):
         } for sector in Sector.objects.all() if sector.sector
     ]
 
+    users = {
+        user.id: {
+            'id': user.id,
+            'name': user.name
+        } for user in TolaUser.objects.all()
+    }
+
     return {
         'countries': countries,
         'organizations': organizations,
+        'users': users,
         'allPrograms': programs,
         'sectors': sectors,
         'country_filter': country_filter,
         'organization_filter': organization_filter,
+        'users_filter': users_filter
     }
 
 def get_country_page_context(request):
@@ -373,6 +397,8 @@ class UserAdminSerializer(ModelSerializer):
 
         previous_entry = serializers.serialize('json', [user])
 
+        user.country_roles.filter(role='basic_admin', country__in=user.countries.all())
+
         user.name = validated_data["name"]
         user.organization_id = validated_data["organization_id"]
         user.mode_of_address = validated_data["mode_of_address"]
@@ -533,6 +559,7 @@ class UserAdminViewSet(viewsets.ModelViewSet, ActionBasedPermissionsMixin):
                 {admin_role_where}
                 {users_where}
             GROUP BY wtu.id
+            ORDER BY wtu.name
         """.format(
             country_join=country_join,
             country_where=country_where,
@@ -822,6 +849,7 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
 
         params = []
 
+        country_join = ''
         country_where = ''
         if req.GET.getlist('countries[]'):
             params.extend(req.GET.getlist('countries[]'))
@@ -829,7 +857,32 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
             #create placeholders for multiple countries and strip the trailing comma
             in_param_string = ('%s,'*len(req.GET.getlist('countries[]')))[:-1]
 
-            country_where = 'AND wtu.country_id IN ({})'.format(in_param_string)
+            country_where = 'AND wcz.country_id IN ({})'.format(in_param_string)
+
+            country_join = """
+                INNER JOIN (
+                        SELECT
+                            wo.id AS organization_id,
+                            wtuc.country_id AS country_id
+                        FROM workflow_organization wo
+                        INNER JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
+                        INNER JOIN workflow_tolauser_countries wtuc ON wtuc.tolauser_id = wtu.id
+                    UNION DISTINCT
+                        SELECT
+                            wo.id AS organization_id,
+                            wpc.country_id AS country_id
+                        FROM workflow_organization wo
+                        INNER JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
+                        INNER JOIN workflow_program_user_access wpua ON wpua.tolauser_id = wtu.id
+                        INNER JOIN workflow_program_country wpc ON wpua.program_id = wpc.program_id
+                    UNION DISTINCT
+                        SELECT
+                            wo.id AS organization_id,
+                            wtu.country_id AS country_id
+                        FROM workflow_organization wo
+                        INNER JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
+                ) wcz ON wcz.organization_id = wo.id
+            """.format(country_where=country_where)
 
         program_where = ''
         program_join = ''
@@ -908,6 +961,7 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
                 wo.is_active
             FROM workflow_organization wo
             LEFT JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
+            {country_join}
             LEFT JOIN (
                 SELECT
                     wo.id AS organization_id,
@@ -936,16 +990,18 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
             {sector_join}
             WHERE
                 1=1
-                {program_where}
                 {country_where}
+                {program_where}
                 {organization_where}
                 {organization_status_where}
                 {sector_where}
             GROUP BY wo.id
+            ORDER BY wo.name
         """.format(
             program_where=program_where,
             program_join=program_join,
             country_where=country_where,
+            country_join=country_join,
             organization_where=organization_where,
             organization_status_where=organization_status_where,
             sector_join=sector_join,

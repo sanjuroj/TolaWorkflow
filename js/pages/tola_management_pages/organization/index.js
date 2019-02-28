@@ -9,7 +9,9 @@ import {IndexView} from './views';
 const store = new OrganizationStore(
     jsContext.programs,
     jsContext.organizations,
-    jsContext.sectors
+    jsContext.sectors,
+    jsContext.countries,
+    jsContext.country_filter
 );
 
 ReactDOM.render(

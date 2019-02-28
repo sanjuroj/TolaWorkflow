@@ -189,6 +189,10 @@ class ChangesetEntry extends React.Component {
 export const IndexView = observer(
     ({store}) => {
         return <div id="audit-log-index-view" className="container-fluid row">
+
+            <div className="list-controls">
+                <a className="btn btn-link btn-secondary" href={`/api/tola_management/program/${store.program_id}/csv_audit_log`}>Export to Excel</a>
+            </div>
             <div className="col col-sm-12 list-section">
                 <LoadingSpinner isLoading={store.fetching}>
                     <table className="list-table">

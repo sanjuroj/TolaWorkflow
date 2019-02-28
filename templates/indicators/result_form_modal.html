@@ -124,11 +124,6 @@
               {{ indicator.name }}
           {% endif %}
         </h3>
-        {% if readonly %}
-        <div class="alert alert-danger">
-            <strong>You do not have write permissions. Changes you make will not be saved.</strong>
-        </div>
-        {% endif %}
         {% include 'indicators/results/result_form_common_fields.html' %}
         <div id="evidence_subform" class="card card-body bg-primary-light border-0">
 
@@ -138,7 +133,7 @@
             </p>
             {% include 'indicators/results/result_form_evidence_fields.html' %}
         </div>
-        {% if object.indicator %}
+        {% if object.indicator and not readonly %}
         <fieldset class="pb-2 pt-2">
             <strong>
                 <a href="#" id="id_delete_result_btn" data-result-id="{{ object.id }}" class="text-danger float-right">
@@ -147,6 +142,7 @@
             </strong>
         </fieldset>
         {% endif %}
+        {% if not readonly %}
         <div class="form-actions">
             <div>
                 <input type="submit" name="submit" value="{% trans 'Save changes' %}" class="btn btn-primary" id="submit-id-submit">
@@ -154,6 +150,7 @@
             </div>
           <div>{# help link goes here #}</div>
         </div>
+        {% endif %}
     </form>
 
 {% endblock content %}

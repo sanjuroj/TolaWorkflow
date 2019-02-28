@@ -59,17 +59,17 @@ def periodic_target_adapter(inner):
         return wrapper
     return outer
 
-def user_has_program_access(tola_user, program):
-    return Program.objects.filter(pk=program, user_access=tola_user).count() > 0 or Program.objects.filter(pk=program, country__in=tola_user.countries.all()).count() > 0
+def user_has_program_access(user, program):
+    return user.is_authenticated() and (Program.objects.filter(pk=program, user_access=user.tola_user).count() > 0 or Program.objects.filter(pk=program, country__in=user.tola_user.countries.all()).count() > 0)
 
-def user_has_program_roles(tola_user, programs, roles):
-    return tola_user.program_roles.filter(program_id__in=programs, role__in=roles).count() > 0
+def user_has_program_roles(user, programs, roles):
+    return user.is_authenticated() and user.tola_user.program_roles.filter(program_id__in=programs, role__in=roles).count() > 0
 
 def has_iptt_read_access(func):
     def wrapper(request, *args, **kwargs):
         program = kwargs['program_id']
 
-        if user_has_program_access(request.user.tola_user, program) or request.user.is_superuser:
+        if user_has_program_access(request.user, program) or request.user.is_superuser:
             return func(request, *args, **kwargs)
         else:
             raise PermissionDenied
@@ -90,7 +90,7 @@ def has_site_create_access(func):
     def wrapper(request, *args, **kwargs):
         site = SiteProfile.objects.get(pk=kwargs['pk'])
         programs = Program.objects.filter(country__in=[request.POST.get('country')]).distinct()
-        write_access = (user_has_program_roles(request.user.tola_user, [program.id for program in programs], ['high']) or request.user.is_superuser)
+        write_access = (user_has_program_roles(request.user, [program.id for program in programs], ['high']) or request.user.is_superuser)
         request.has_write_access = write_access
         if  write_access:
             return func(request, *args, **kwargs)
@@ -100,7 +100,7 @@ def has_site_create_access(func):
 
 def has_site_read_access(func):
     def wrapper(request, *args, **kwargs):
-        if user_has_site_access(request.user.tola_user, kwargs['pk']) or request.user.is_superuser:
+        if user_has_site_access(request.user, kwargs['pk']) or request.user.is_superuser:
             return func(request, *args, **kwargs)
         else:
             raise PermissionDenied
@@ -108,13 +108,13 @@ def has_site_read_access(func):
 
 def has_site_write_access(func):
     def wrapper(request, *args, **kwargs):
-        if user_has_site_access(request.user.tola_user, kwargs['pk']) or request.user.is_superuser:
+        if user_has_site_access(request.user, kwargs['pk']) or request.user.is_superuser:
             site = SiteProfile.objects.get(pk=kwargs['pk'])
             programs = Program.objects.filter(
                 Q(agreement__in=site.projectagreement_set.all())
                 | Q(i_program__in=site.result_set.all())
                 | Q(country__in=[site.country])).distinct()
-            write_access = (user_has_program_roles(request.user.tola_user, [program.id for program in programs], ['high']) or request.user.is_superuser)
+            write_access = (user_has_program_roles(request.user, [program.id for program in programs], ['high']) or request.user.is_superuser)
             request.has_write_access = write_access
             if request.method == 'GET':
                 return func(request, *args, **kwargs)
@@ -128,7 +128,7 @@ def has_site_write_access(func):
 
 def has_result_read_access(func):
     def wrapper(request, *args, **kwargs):
-        if user_has_program_access(request.user.tola_user, kwargs['program']) or request.user.is_superuser:
+        if user_has_program_access(request.user, kwargs['program']) or request.user.is_superuser:
             return func(request, *args, **kwargs)
         else:
             raise PermissionDenied
@@ -136,8 +136,8 @@ def has_result_read_access(func):
 
 def has_result_write_access(func):
     def wrapper(request, *args, **kwargs):
-        if user_has_program_access(request.user.tola_user, kwargs['program']) or request.user.is_superuser:
-            write_access = (user_has_program_roles(request.user.tola_user, [kwargs['program']], ['medium', 'high']) or request.user.is_superuser)
+        if user_has_program_access(request.user, kwargs['program']) or request.user.is_superuser:
+            write_access = (user_has_program_roles(request.user, [kwargs['program']], ['medium', 'high']) or request.user.is_superuser)
             request.has_write_access = write_access
             if request.method == 'GET':
                 return func(request, *args, **kwargs)
@@ -151,7 +151,7 @@ def has_result_write_access(func):
 
 def has_indicator_read_access(func):
     def wrapper(request, *args, **kwargs):
-        if user_has_program_access(request.user.tola_user, kwargs['program']) or request.user.is_superuser:
+        if user_has_program_access(request.user, kwargs['program']) or request.user.is_superuser:
             return func(request, *args, **kwargs)
         else:
             raise PermissionDenied
@@ -159,8 +159,8 @@ def has_indicator_read_access(func):
 
 def has_indicator_write_access(func):
     def wrapper(request, *args, **kwargs):
-        if user_has_program_access(request.user.tola_user, kwargs['program']) or request.user.is_superuser:
-            write_access = (user_has_program_roles(request.user.tola_user, [kwargs['program']], ['high']) or request.user.is_superuser)
+        if user_has_program_access(request.user, kwargs['program']) or request.user.is_superuser:
+            write_access = (user_has_program_roles(request.user, [kwargs['program']], ['high']) or request.user.is_superuser)
             request.has_write_access = write_access
             if request.method == 'GET':
                 return func(request, *args, **kwargs)
@@ -174,7 +174,7 @@ def has_indicator_write_access(func):
 
 def has_program_read_access(func):
     def wrapper(request, *args, **kwargs):
-        if user_has_program_access(request.user.tola_user, kwargs['program_id']) or request.user.is_superuser:
+        if user_has_program_access(request.user, kwargs['program_id']) or request.user.is_superuser:
             return func(request, *args, **kwargs)
         else:
             raise PermissionDenied

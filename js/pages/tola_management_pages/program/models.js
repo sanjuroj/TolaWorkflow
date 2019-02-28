@@ -16,6 +16,7 @@ export class ProgramStore {
         sectors: [],
         programStatus: null,
         programs: [],
+        users: []
     }
 
     @observable allPrograms = []
@@ -42,7 +43,6 @@ export class ProgramStore {
         api,
         initialData,
     ) {
-        this
         this.api = api
         Object.assign(this, initialData)
         this.fetchPrograms()
@@ -99,6 +99,7 @@ export class ProgramStore {
             sectors: [],
             programStatus: null,
             programs: [],
+            users: []
         }
         this.filters = Object.assign(this.filters, clearFilters);
     }

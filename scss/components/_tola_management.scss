@@ -21,6 +21,14 @@
     }
 }
 
+#audit-log-index-view {
+    .list-controls {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+    }
+}
+
 .td--stretch {
     display: flex;
     justify-content: space-around;

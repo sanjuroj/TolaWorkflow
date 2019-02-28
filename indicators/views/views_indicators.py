@@ -877,6 +877,7 @@ class ResultUpdate(ResultFormMixin, UpdateView):
         kwargs['user'] = self.request.user
         kwargs['indicator'] = self.indicator
         kwargs['program'] = self.indicator.program
+        kwargs['request'] = self.request
         return kwargs
 
     def form_valid(self, form):

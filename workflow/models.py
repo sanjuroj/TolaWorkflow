@@ -169,15 +169,8 @@ class Country(models.Model):
         return self.country
 
 
-TITLE_CHOICES = (
-    ('mr', _('Mr.')),
-    ('mrs', _('Mrs.')),
-    ('ms', _('Ms.')),
-)
-
-
 class TolaUser(models.Model):
-    title = models.CharField(_("Title"), blank=True, null=True, max_length=3, choices=TITLE_CHOICES)
+    title = models.CharField(_("Title"), blank=True, null=True, max_length=50)
     name = models.CharField(_("Given Name"), blank=True, null=True, max_length=100)
     employee_number = models.IntegerField(_("Employee Number"), blank=True, null=True)
     user = models.OneToOneField(User, unique=True, related_name='tola_user', verbose_name=_("User"))

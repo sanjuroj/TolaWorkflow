@@ -1,6 +1,6 @@
 {% load i18n %}
 
-{% if countries or programs_without_country %}
+{% if countries %}
 <select class="" id="goto-country-program" style="display: none">
     <option value=""></option>
     {% if countries %}
@@ -20,16 +20,6 @@
             {% endfor %}
         </optgroup>
     {% endfor %}
-
-    {% if programs_without_country %}
-    <optgroup label="{% trans 'Programs' %}">
-        {% for program in programs_without_country %}
-        {% if program.reporting_period_start or program.reporting_period_end %}
-        <option value="{{ program.program_page_url }}" class="">{{ program }}</option>
-        {% endif %}
-        {% endfor %}
-    </optgroup>
-    {% endif %}
 </select>
 
 <script type="text/javascript">

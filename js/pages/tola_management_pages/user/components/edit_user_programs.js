@@ -48,7 +48,8 @@ const denormalize = (store, access_listing) => {
                     permission_level: permission_level,
                     admin_access:  current_user_permission_level == 'basic_admin'
                 },
-                type: "program"
+                type: "program",
+                country_id: country.id
             }
         }),
     }))
@@ -108,6 +109,7 @@ export default class EditUserPrograms extends React.Component {
     }
 
     saveForm() {
+        console.log(this.state.user_program_access)
         this.props.onSave(this.state.user_program_access)
     }
 
@@ -287,8 +289,13 @@ export default class EditUserPrograms extends React.Component {
                                         <Column
                                         dataKey="has_access"
                                         width={50}
-                                        cellDataGetter={({rowData}) => ({checked: rowData.has_access, id: rowData.id, action: (rowData.type == "country")?this.toggleCountryAccess.bind(this):this.toggleProgramAccess.bind(this)})}
-                                        cellRenderer={({cellData}) => <input type="checkbox" checked={cellData.checked} onChange={() => cellData.action(cellData.id)} />}/>
+                                        cellDataGetter={({rowData}) => ({
+                                            checked: rowData.has_access,
+                                            disabled: (rowData.type == "country")?!this.props.store.current_user_is_super_admin:(!this.props.adminUserCountryRoles[rowData.country_id] || this.props.adminUserCountryRoles[rowData.country_id].role != 'basic_admin'),
+                                            id: rowData.id,
+                                            action: (rowData.type == "country")?this.toggleCountryAccess.bind(this):this.toggleProgramAccess.bind(this)
+                                        })}
+                                        cellRenderer={({cellData}) => <input type="checkbox" checked={cellData.checked} disabled={cellData.disabled} onChange={() => cellData.action(cellData.id)} />}/>
 
                                         <Column
                                         dataKey="name"

@@ -13,7 +13,9 @@ const store = new UserStore(
     jsContext.users,
     jsContext.program_roles,
     jsContext.country_roles,
-    jsContext.is_superuser
+    jsContext.is_superuser,
+    jsContext.programs_filter,
+    jsContext.organizations_filter
 );
 
 ReactDOM.render(

@@ -83,7 +83,9 @@ export class UserStore {
         users,
         current_user_program_roles,
         current_user_country_roles,
-        is_super_admin
+        is_super_admin,
+        programs_filter,
+        organizations_filter
     ) {
         this.countries = countries
         this.organizations = organizations
@@ -91,13 +93,15 @@ export class UserStore {
         this.available_users = users.filter(user => user.name)
 
         this.countries_selections = Object.entries(countries).map(([id, country]) => ({value: country.id, label: country.name}))
-        this.organization_selections = organizations.map(org => ({value: org.id, label: org.name}))
+        this.organization_selections = Object.entries(organizations).map(([id, org]) => ({value: org.id, label: org.name}))
         this.program_selections = Object.entries(programs).map(([id, program]) => ({value: program.id, label: program.name}))
         this.user_selections = this.available_users.map(user => ({value: user.id, label: user.name}))
 
         this.current_user_program_roles = current_user_program_roles
         this.current_user_country_roles = current_user_country_roles
         this.current_user_is_super_admin = is_super_admin
+        this.filters.programs = programs_filter.map(id => this.programs[id]).map(program => ({label: program.name, value: program.id}))
+        this.filters.organizations = organizations_filter.map(id => this.organizations[id]).map(org => ({label: org.name, value: org.id}))
         this.fetchUsers()
     }
 

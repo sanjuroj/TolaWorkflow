@@ -3,6 +3,7 @@ from collections import OrderedDict
 from django import template
 from django.db import models
 from django.db.models import Q
+from tola.util import getCountry
 from workflow.models import Program
 
 register = template.Library()
@@ -12,11 +13,11 @@ register = template.Library()
 def program_menu(context):
     request = context['request']
     try:
-        countries = request.user.tola_user.countries.all()
+        countries = getCountry(request.user)
         programs = Program.objects.annotate(
             indicator_count=models.Count('indicator', distinct=True)
         ).filter(
-            Q(country__in=countries) | Q(user_access=request.user.tola_user),
+            Q(country__in=request.user.tola_user.countries.all()) | Q(user_access=request.user.tola_user),
             funding_status="Funded",
             indicator_count__gt=0
         ).prefetch_related('country').distinct()
@@ -33,12 +34,9 @@ def program_menu(context):
             # a program can be in multiple countries, including a country a user is not privy to
             if country.country in programs_by_country:
                 programs_by_country[country.country].append(program)
-            else:
-                programs_without_country.append(program)
 
     return {
         'programs': programs,
         'countries': countries,
         'programs_by_country': programs_by_country,
-        'programs_without_country': programs_without_country
     }

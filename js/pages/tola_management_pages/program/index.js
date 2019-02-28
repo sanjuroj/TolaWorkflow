@@ -11,36 +11,23 @@ import api from './api';
 const {
     country_filter,
     organization_filter,
+    users_filter,
     countries,
     organizations,
+    users,
     allPrograms,
     sectors,
 } = jsContext
 
 /* formatting filters to be used by the ProgramStore */
-function makeCountryOptions(countryIds) {
-    let options = countryIds.reduce((acc, id) => {
-        let country = countries[id]
-        if (country) {
-            acc.push({label: country.name,  value: country.id})
-        }
-        return acc
-    }, [])
-    return options
-}
-function makeOrganizationOptions(organizationIds) {
-    let options = organizationIds.reduce((acc, id) => {
-        let organization = organizations[id]
-        if (organization) {
-            acc.push({label: organization.name, value: organization.id})
-        }
-        return acc
-    }, [])
-    return options
-}
+const makeCountryOptions = (country_ids) => country_ids.map(id => countries[id]).map(country => ({label: country.name, value: country.id}))
+const makeOrganizationOptions = (org_ids) => org_ids.map(id => organizations[id]).map(org => ({label: org.name, value: org.id}))
+const makeUserOptions = (user_ids) => user_ids.map(id => users[id]).map(user => ({label: user.name, value: user.id}))
+
 const filters = {
     countries: makeCountryOptions(country_filter),
     organizations: makeOrganizationOptions(organization_filter),
+    users: makeUserOptions(users_filter)
 }
 
 const initialData = {

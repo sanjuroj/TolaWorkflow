@@ -79,6 +79,10 @@ class IndicatorForm(forms.ModelForm):
 
         super(IndicatorForm, self).__init__(*args, **kwargs)
 
+        if not self.request.has_write_access:
+            for name, field in self.fields.items():
+                field.disabled = True
+
         countries = getCountry(self.request.user)
         self.fields['disaggregation'].queryset = DisaggregationType.objects\
             .filter(country__in=countries, standard=False)
@@ -152,7 +156,12 @@ class ResultForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         self.indicator = kwargs.pop('indicator')
         self.program = kwargs.pop('program')
+        self.request = kwargs.pop('request')
         super(ResultForm, self).__init__(*args, **kwargs)
+
+        if not self.request.has_write_access:
+            for name, field in self.fields.items():
+                field.disabled = True
 
         self.set_initial_querysets()
         self.set_periodic_target_widget()

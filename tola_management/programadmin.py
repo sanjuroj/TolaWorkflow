@@ -1,7 +1,11 @@
 import json
+import csv
+from StringIO import StringIO
+
 from collections import OrderedDict
 from django.db import transaction
 from django.db.models import Q
+from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status as httpstatus
@@ -19,6 +23,8 @@ from rest_framework.serializers import (
     HiddenField,
     JSONField,
 )
+
+from openpyxl import Workbook
 
 from feed.views import SmallResultsSetPagination
 
@@ -225,6 +231,10 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         if sectorFilter:
             queryset = queryset.filter(sector__in=sectorFilter)
 
+        usersFilter = params.getlist('users[]')
+        if usersFilter:
+            queryset = queryset.filter(Q(user_access__id__in=usersFilter) | Q(country__in=Country.objects.filter(users__id__in=usersFilter)))
+
         organizationFilter = params.getlist('organizations[]')
         if organizationFilter:
             queryset = queryset.filter(
@@ -284,3 +294,30 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @detail_route(methods=["get"])
+    def csv_audit_log(self, request, pk=None):
+        program = Program.objects.get(pk=pk)
+        header = ['Date and Time', 'No.', 'Indicator', 'User', 'Organization', 'Change Type', 'Previous Entry', 'New Entry', 'Rationale']
+
+        rows = [
+            [
+                row.date,
+                row.indicator.number if row.indicator else 'N/A',
+                row.indicator.name if row.indicator else 'N/A',
+                row.user.name,
+                row.organization.name,
+                row.change_type,
+                row.previous_entry,
+                row.new_entry,
+                row.rationale
+            ]
+            for row in program.audit_logs.all().order_by('date')
+        ]
+
+        rows.insert(0, header)
+
+        response = HttpResponse(content_type='application/csv')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(program.name+'_csv_export.csv')
+        csv.writer(response).writerows(rows)
+        return response

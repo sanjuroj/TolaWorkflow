@@ -8,11 +8,6 @@
         method="post"
         novalidate>
 
-        {% if readonly %}
-        <div class="alert alert-danger">
-            <strong>You do not have write permissions. Changes you make will not be saved.</strong>
-        </div>
-        {% endif %}
     <div class="indicator-setup tab-set--vertical" id="indicator_modal_body">
 
         {% csrf_token %}
@@ -80,6 +75,7 @@
                         <span id="validation_id_strategic_objectives" class="has-error"></span>
                     </div>
 
+                    {% if not readonly %}
                     <div class="form-group text-right" id="div_id_remove_indicator">
                         <a href="/indicators/indicator_delete/{{ indicator.id }}/"
                             id="id_delete_indicator_btn"
@@ -87,6 +83,7 @@
                                 <i class="fas fa-trash-alt"></i> {% trans "Delete this indicator" %}</a>
                         </a>
                     </div>
+                    {% endif %}
 
                 </fieldset>
             </div><!--/#summaryTab-->
@@ -194,6 +191,7 @@
                                         id="{{ form.lop_target.id_for_label }}"
                                         class="form-control"
                                         min="1"
+                                        {% if readonly %}disabled="disabled"{% endif %}
                                         {% if form.lop_target.value != None %} value="{{ form.lop_target.value|stringformat:'s' }}"{% endif %}
                                         required
                                         onblur="this.checkValidity();">
@@ -218,6 +216,7 @@
                             <div id="div_id_baseline">
                                 <span id="span_{{ form.baseline.id_for_label }}">
                                     <input type="number"
+                                           {% if readonly %}disabled="disabled"{% endif %}
                                            name="{{ form.baseline.name }}"
                                            id="{{ form.baseline.id_for_label }}"
                                            class="form-control"
@@ -253,10 +252,12 @@
                         <span id="validation_id_target_frequency_num_periods" class="has-error"></span>
                     </div>
 
+                    {% if not readonly %}
                     <div class="form-group" id="div_id_create_targets_btn">
                         <button type="button" id="id_create_targets_btn" class="btn btn-secondary">{% trans "Create targets" %}</button>
                         <button type="button" id="id_delete_targets_btn" class="btn btn-sm btn-link btn-danger"><i class="fas fa-trash-alt"></i> {% trans "Remove all targets" %}</button>
                     </div>
+                    {% endif %}
 
                     <div id="id_div_periodic_tables_placeholder">
                         {% include "indicators/indicatortargets.html" %}
@@ -388,6 +389,7 @@
         </div>
 
     </div> <!-- /#indicator_modal_body -->
+    {% if not readonly %}
     <div class="form-actions">
         <div>
             <!-- <input type="submit" class="btn btn-primary" value="Save changes"> -->
@@ -396,6 +398,7 @@
         </div>
         <div class="text-muted">{% include "form_guidance.html" %}</div>
     </div>
+    {% endif %}
 </form>
 
 <script>
