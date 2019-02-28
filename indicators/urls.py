@@ -20,9 +20,7 @@ from .views.views_indicators import (
     indicator_report,
     IndicatorReport,
     IndicatorDataExport,
-    TVAReport,
     DisaggregationReport,
-    TVAPrint,
     DisaggregationPrint,
     api_indicator_view)
 
@@ -62,10 +60,6 @@ urlpatterns = [
     url(r'^result_delete/(?P<pk>\d+)/$', ResultDelete.as_view(), name='result_delete'),
 
     url(r'^report/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$', indicator_report, name='indicator_report'),
-
-    url(r'^tvareport/$', TVAReport.as_view(), name='tvareport'),
-
-    url(r'^tvaprint/(?P<program>\d+)/$', TVAPrint.as_view(), name='tvaprint'),
 
     url(r'^disrep/(?P<program>\d+)/$', DisaggregationReport.as_view(), name='disrep'),
 
