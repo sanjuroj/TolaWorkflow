@@ -16,7 +16,6 @@ from .views.views_indicators import (
     PeriodicTargetDeleteView,
     result_view,
     indicator_plan,
-    IndicatorReport,
     DisaggregationReport,
     DisaggregationPrint,
     api_indicator_view)
@@ -58,9 +57,6 @@ urlpatterns = [
     url(r'^disrep/(?P<program>\d+)/$', DisaggregationReport.as_view(), name='disrep'),
 
     url(r'^disrepprint/(?P<program>\d+)/$', DisaggregationPrint.as_view(), name='disrepprint'),
-
-    url(r'^report_table/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$',
-        IndicatorReport.as_view(), name='indicator_table'),
 
     url(r'^indicator_plan/(?P<program_id>\d+)/$', indicator_plan, name='indicator_plan'),
 

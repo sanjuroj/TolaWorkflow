@@ -943,52 +943,6 @@ def result_view(request, indicator, program):
     )
 
 
-class IndicatorReport(View, AjaxableResponseMixin):
-    def get(self, request, *args, **kwargs):
-        countries = getCountry(request.user)
-        program = int(self.kwargs['program'])
-        indicator = int(self.kwargs['indicator'])
-        type = int(self.kwargs['type'])
-
-        filters = {}
-        if program != 0:
-            filters['program__id'] = program
-        if type != 0:
-            filters['indicator_type'] = type
-        if indicator != 0:
-            filters['id'] = indicator
-        if program == 0 and type == 0:
-            filters['program__country__in'] = countries
-
-        getIndicators = Indicator.objects.filter(**filters) \
-            .prefetch_related('sector') \
-            .select_related('program', 'external_service_record',
-                            'indicator_type', 'disaggregation',
-                            'reporting_frequency') \
-            .values('id', 'program__name', 'baseline', 'level__name',
-                    'lop_target', 'program__id',
-                    'external_service_record__external_service__name',
-                    'key_performance_indicator', 'name',
-                    'indicator_type__indicator_type', 'sector__sector',
-                    'disaggregation__disaggregation_type',
-                    'means_of_verification', 'data_collection_method',
-                    'reporting_frequency__frequency', 'create_date',
-                    'edit_date', 'source', 'method_of_analysis')
-
-        q = request.GET.get('search', None)
-        if q:
-            getIndicators = getIndicators.filter(
-                Q(indicator_type__indicator_type__contains=q) |
-                Q(name__contains=q) |
-                Q(number__contains=q) |
-                Q(number__contains=q) |
-                Q(sector__sector__contains=q) |
-                Q(definition__contains=q)
-            )
-        get_indicators = json.dumps(list(getIndicators), cls=DjangoJSONEncoder)
-        return JsonResponse(get_indicators, safe=False)
-
-
 def indicator_plan(request, program_id):
     """
     This is the GRID report or indicator plan for a program.
