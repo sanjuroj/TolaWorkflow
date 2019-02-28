@@ -8291,73 +8291,6 @@ span[data-toggle="popover"]:hover {
     flex-grow: 1;
     padding: 15px; }
 
-.mgmt-table {
-  width: 100%;
-  border: 1px solid #ddd; }
-  .mgmt-table .mgmt-table__row {
-    display: flex;
-    padding: 10px 0; }
-    .mgmt-table .mgmt-table__row:hover {
-      background-color: #eee; }
-  .mgmt-table .mgmt-table__col {
-    flex: 1; }
-
-.pagination {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 0.3rem; }
-  .pagination li {
-    color: #0645AD; }
-    .pagination li:hover, .pagination li.active {
-      color: #ADD8E6; }
-    .pagination li.disabled {
-      color: #ccc; }
-      .pagination li.disabled a {
-        cursor: default; }
-    .pagination li a {
-      text-decoration: none;
-      color: inherit;
-      width: 1rem;
-      padding: 0 1rem;
-      cursor: pointer; }
-
-#user-management-index-view .td--stretch {
-  display: flex;
-  justify-content: space-around; }
-  #user-management-index-view .td--stretch div {
-    width: 1rem; }
-
-#user-management-index-view .icon__clickable {
-  cursor: pointer;
-  color: darkblue; }
-
-#user-management-index-view .filter-buttons {
-  display: flex;
-  justify-content: space-around; }
-
-#user-management-index-view .list-controls {
-  display: flex;
-  justify-content: space-between; }
-  #user-management-index-view .list-controls .selector {
-    min-width: 10em; }
-  #user-management-index-view .list-controls .bulk-controls {
-    display: flex; }
-
-#user-management-index-view .user-editor__navigation {
-  background-color: #eee; }
-  #user-management-index-view .user-editor__navigation .list-group-item {
-    cursor: pointer;
-    color: darkblue;
-    background-color: transparent;
-    border: none; }
-  #user-management-index-view .user-editor__navigation .list-group-item.selected {
-    color: #888;
-    cursor: default; }
-
-.list-metadata {
-  display: flex;
-  justify-content: space-between; }
-
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
   color: #71757b !important;
@@ -8460,7 +8393,8 @@ input[type=number]::-webkit-outer-spin-button {
   border: 0 !important;
   display: none; }
 
-.leaflet-control-container .leaflet-top, .leaflet-bottom {
+.leaflet-control-container .leaflet-top,
+.leaflet-control-container .leaflet-bottom {
   z-index: 10; }
 
 .chart-legend {
@@ -9049,5 +8983,3 @@ select.listoption_filters {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-eca749902482ea334e51.css.map*/
