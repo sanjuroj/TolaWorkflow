@@ -176,14 +176,6 @@ class ProgramAuditLogSerializer(ModelSerializer):
     user = CharField(source='user.name', read_only=True)
     organization = CharField(source='organization.name', read_only=True)
 
-    def to_representation(self, instance):
-        ret = super(ProgramAuditLogSerializer, self).to_representation(instance)
-
-        #we need the unescaped entry data
-        ret["previous_entry"] = json.loads(instance.previous_entry) if instance.previous_entry else None
-        ret["new_entry"] = json.loads(instance.new_entry) if instance.new_entry else None
-        return ret
-
     class Meta:
         model = ProgramAuditLog
         fields = (
@@ -194,8 +186,7 @@ class ProgramAuditLogSerializer(ModelSerializer):
             'indicator',
             'change_type',
             'rationale',
-            'previous_entry',
-            'new_entry'
+            'diff_list'
         )
 
 class ProgramAdminViewSet(viewsets.ModelViewSet):
@@ -287,7 +278,7 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
     def audit_log(self, request, pk=None):
         program = Program.objects.get(pk=pk)
 
-        queryset = program.audit_logs.all()
+        queryset = program.audit_logs.all().order_by('date')
         page = self.paginate_queryset(list(queryset))
         if page is not None:
             serializer = ProgramAuditLogSerializer(page, many=True)
@@ -300,20 +291,37 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         program = Program.objects.get(pk=pk)
         header = ['Date and Time', 'No.', 'Indicator', 'User', 'Organization', 'Change Type', 'Previous Entry', 'New Entry', 'Rationale']
 
-        rows = [
-            [
+        rows = []
+        for row in program.audit_logs.all().order_by('date'):
+            prev_string = ''
+            for entry in row.diff_list:
+                if entry['name'] == 'targets':
+                    for k, target in entry['prev'].iteritems():
+                        prev_string += target['name']+": "+str(target['value'])+"\n"
+
+                else:
+                    prev_string += entry['name']+": "+str(entry['prev'])+"\n"
+
+            new_string = ''
+            for entry in row.diff_list:
+                if entry['name'] == 'targets':
+                    for k, target in entry['new'].iteritems():
+                        new_string += target['name']+": "+str(target['value'])+"\n"
+
+                else:
+                    new_string += entry['name']+": "+str(entry['new'])+"\n"
+
+            rows.append([
                 row.date,
                 row.indicator.number if row.indicator else 'N/A',
                 row.indicator.name if row.indicator else 'N/A',
                 row.user.name,
                 row.organization.name,
                 row.change_type,
-                row.previous_entry,
-                row.new_entry,
+                prev_string,
+                new_string,
                 row.rationale
-            ]
-            for row in program.audit_logs.all().order_by('date')
-        ]
+            ])
 
         rows.insert(0, header)
 

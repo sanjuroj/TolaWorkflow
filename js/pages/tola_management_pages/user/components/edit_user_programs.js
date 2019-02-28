@@ -109,7 +109,6 @@ export default class EditUserPrograms extends React.Component {
     }
 
     saveForm() {
-        console.log(this.state.user_program_access)
         this.props.onSave(this.state.user_program_access)
     }
 

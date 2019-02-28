@@ -689,13 +689,13 @@ class IndicatorDelete(DeleteView):
 
     def delete(self, request, *args, **kwargs):
         if request.is_ajax():
-            if not request.POST.get('rationale'):
+            indicator = self.get_object()
+            if not request.POST.get('rationale') and indicator.result_set.all().count() > 0:
                 return JsonResponse(
                     {"status": "failed", "msg": "Rationale is required"},
                     status=401
                 )
 
-            indicator = self.get_object()
             indicator_values = indicator.logged_fields
             indicator.delete()
             ProgramAuditLog.log_indicator_deleted(self.request.user, indicator, indicator_values, self.request.POST['rationale'])
@@ -780,6 +780,7 @@ class ResultCreate(ResultFormMixin, CreateView):
         kwargs['user'] = self.request.user
         kwargs['indicator'] = self.indicator
         kwargs['program'] = self.indicator.program
+        kwargs['request'] = self.request
         return kwargs
 
     def form_valid(self, form):
