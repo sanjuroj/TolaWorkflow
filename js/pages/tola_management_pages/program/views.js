@@ -13,7 +13,7 @@ const UserFilter = observer(({store, selections}) => {
     return <div className="form-group">
         <label htmlFor="users_filter">Users</label>
         <CheckboxedMultiSelect
-            value={store.filters.user}
+            value={store.filters.users}
             options={selections}
             onChange={(e) => store.changeUserFilter(e)}
             placeholder="None Selected"
