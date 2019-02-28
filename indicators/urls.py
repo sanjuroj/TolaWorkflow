@@ -9,7 +9,6 @@ from .views.views_indicators import (
     IndicatorDelete,
     IndicatorUpdate,
     IndicatorExport,
-    IndicatorReportData,
     ResultReportData,
     service_json,
     PeriodicTargetView,
@@ -67,9 +66,6 @@ urlpatterns = [
 
     url(r'^result_table/(?P<indicator>\d+)/(?P<program>\d+)/',
         result_view, name='result_view'),
-
-    url(r'^report_data/(?P<id>\w+)/(?P<program>\d+)/(?P<type>\d+)/$',
-        IndicatorReportData.as_view(), name='indicator_report_data'),
 
     url(r'^result_report_data/(?P<program>\d+)/(?P<indicator>\d+)/'
         r'(?P<type>\d+)/$',
