@@ -70,10 +70,6 @@ class Organization(models.Model):
     name = models.CharField(_("Organization Name"), max_length=255, blank=True, default="TolaData")
     description = models.TextField(_("Description/Notes"), max_length=765, null=True, blank=True)
     organization_url = models.CharField(_("Organization url"), blank=True, null=True, max_length=255)
-    level_1_label = models.CharField(_("Project/Program Organization Level 1 label"), default="Program", max_length=255, blank=True)
-    level_2_label = models.CharField(_("Project/Program Organization Level 2 label"), default="Project", max_length=255, blank=True)
-    level_3_label = models.CharField(_("Project/Program Organization Level 3 label"), default="Component", max_length=255, blank=True)
-    level_4_label = models.CharField(_("Project/Program Organization Level 4 label"), default="Activity", max_length=255, blank=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
