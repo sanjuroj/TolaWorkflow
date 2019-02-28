@@ -20,55 +20,6 @@ const pretty_change_type = {
 
 const map_pretty_change_type = change_type => pretty_change_type[change_type]
 
-const is_field_changed = (p, n, field) => {
-    if(!p && n) return true
-    if(!n && p) return true
-    return p[field] !== n[field]
-}
-
-const ChangesetRow = ({data, compareAgainst, field, name}) => {
-    if(!is_field_changed(data, compareAgainst, field)) return null
-    if(data == undefined || data[field] == undefined) {
-        return <p>{name}: N/A</p>
-    } else {
-        return <p>{name}: {data[field].toString()}</p>
-    }
-}
-
-const ChangesetRowUrl = ({data, compareAgainst, field, name}) => {
-    if(data === compareAgainst) return null
-    if(data == undefined || data[field] == undefined) {
-        return <p>{name}: N/A</p>
-    } else {
-        return <p>{name}: <a href={data[field]}>{name}</a></p>
-    }
-}
-
-const hash_targets = targets => targets.reduce((xs, x) => {
-    xs[x.id] = x
-    return xs
-}, {})
-
-const merge_previous_and_new_targets = (prev_table, new_table) => {
-    let ret_table = {}
-    Object.entries(prev_table).forEach(([id, data]) => {
-        ret_table[id] = {
-            prev_target: data,
-            new_target: null
-        }
-    })
-
-    Object.entries(new_table).forEach(([id, data]) => {
-        ret_table[id] = {
-            prev_target: null,
-            ...ret_table[id],
-            new_target: data
-        }
-    })
-
-    return ret_table
-}
-
 const units_of_measure_type = {
     1: "Number",
     2: "Percentage"
@@ -82,54 +33,100 @@ const directions_of_change = {
 }
 const map_direction_of_change = id => directions_of_change[id]
 
-const ResultChangeset = ({data, compareAgainst}) => {
-    return <div>
-        <ChangesetRow data={data} compareAgainst={compareAgainst} field="date" name="Collection Date" />
-        <ChangesetRow data={data} compareAgainst={compareAgainst} field="target" name="Target" />
-        <ChangesetRow data={data} compareAgainst={compareAgainst} field="value" name="Value" />
-        <ChangesetRow data={data} compareAgainst={compareAgainst} field="evidence_name" name="Evidence Name" />
-        {is_field_changed(data, compareAgainst, 'evidence_url') &&
-         <p>Evidence Url: {(data)?<a href={data.evidence_url}>Link</a>:'N/A'}</p>
+const result_changeset_name_map = {
+    'evidence_url': 'Evidence Url',
+    'evidence_name': 'Evidence Name',
+    'date': 'Date',
+    'target': 'Target',
+    'value': 'Value',
+}
+
+const ResultChangeset = ({data, name}) => {
+    if(name == 'evidence_url') {
+        return <p>{result_changeset_name_map[name]}: {(data != 'N/A')?<a href={data}>Link</a>:data}</p>
+    } else {
+        return <p>{result_changeset_name_map[name]}: {data}</p>
+    }
+}
+
+const program_dates_changset_name_map = {
+    'start_date': 'Start Date',
+    'end_date': 'End Date'
+}
+
+const ProgramDatesChangeset = ({data, name}) => {
+    return <p>{program_dates_changset_name_map[name]}: {data}</p>
+}
+
+const indicator_changeset_name_map = {
+    name: 'Name',
+    unit_of_measure: 'Unit of Measure',
+    unit_of_measure_type: 'Unit of Measure Type',
+    is_cumulative: 'Is Cumulative',
+    lop_target: 'LOP Target',
+    direction_of_change: 'Direction of Change',
+    rationale_for_target: 'Rationale for Target',
+    baseline_value: 'Baseline Value',
+    baseline_na: 'Baseline N/A',
+}
+
+const IndicatorChangeset = ({data, name}) => {
+    const mapped_data = (() => {
+        if (data == 'N/A') return data
+
+        switch(name) {
+            case 'unit_of_measure_type':
+                return map_unit_of_measure_type(data)
+                break
+            case 'direction_of_change':
+                return map_direction_of_change(data)
+                break
+            default:
+                return data
+                break
         }
-    </div>
-}
-
-const ProgramDatesChangeset = ({data, compareAgainst}) => {
-    return <div>
-        <ChangesetRow data={data} compareAgainst={compareAgainst} field="start_date" name="Start Date" />
-        <ChangesetRow data={data} compareAgainst={compareAgainst} field="end_date" name="End Date" />
-    </div>
-}
-
-const IndicatorChangeset = ({data, compareAgainst}) => {
-    const previous_entry_targets_table = (data)?hash_targets(data.targets):{}
-    const new_entry_targets_table = (compareAgainst)?hash_targets(compareAgainst.targets):{}
-    const targets_table = merge_previous_and_new_targets(previous_entry_targets_table, new_entry_targets_table)
-    const mapped_data = {
-        ...data,
-        unit_of_measure_type: (data)?map_unit_of_measure_type(data.unit_of_measure_type):undefined,
-        direction_of_change: (data)?map_direction_of_change(data.direction_of_change):undefined
+    })()
+    if(name == 'targets') {
+        return <div>
+            <p>Targets</p>
+            {Object.entries(data).map(([id, target]) => {
+                return <p key={id}>{target.name}: {target.value}</p>
+            })}
+        </div>
+    } else {
+        return <p>
+            {indicator_changeset_name_map[name]}: {mapped_data.toString()}
+        </p>
     }
-    const mapped_compare_against = {
-        ...compareAgainst,
-        unit_of_measure_type: (compareAgainst)?map_unit_of_measure_type(compareAgainst.unit_of_measure_type):undefined,
-        direction_of_change: (compareAgainst)?map_direction_of_change(compareAgainst.direction_of_change):undefined
-    }
-    return <div>
-        <ChangesetRow data={mapped_data} compareAgainst={mapped_compare_against} field="name" name="Name" />
-        <ChangesetRow data={mapped_data} compareAgainst={mapped_compare_against} field="unit_of_measure" name="Unit of Measure" />
-        <ChangesetRow data={mapped_data} compareAgainst={mapped_compare_against} field="unit_of_measure_type" name="Unit of Measure Type" />
-        <ChangesetRow data={mapped_data} compareAgainst={mapped_compare_against} field="is_cumulative" name="Is Cumulative" />
-        <ChangesetRow data={mapped_data} compareAgainst={mapped_compare_against} field="lop_target" name="LOP Target" />
-        <ChangesetRow data={mapped_data} compareAgainst={mapped_compare_against} field="direction_of_change" name="Direction of Change" />
-        <ChangesetRow data={mapped_data} compareAgainst={mapped_compare_against} field="rationale_for_target" name="Rationale for Target" />
-        <ChangesetRow data={mapped_data} compareAgainst={mapped_compare_against} field="baseline_value" name="Baseline Value" />
-        <ChangesetRow data={mapped_data} compareAgainst={mapped_compare_against} field="baseline_na" name="Baseline N/A" />
-        {Object.entries(targets_table).map(([id, data]) => <ChangesetRow key={id} data={data.prev_target} compareAgainst={data.new_target} field="value" name={data.prev_target?data.prev_target.name:data.new_target.name}/>)}
-    </div>
 }
 
 class ChangesetEntry extends React.Component {
+    renderType(type, data, name) {
+        switch(type) {
+            case 'indicator_changed':
+            case 'indicator_created':
+            case 'indicator_deleted':
+                return <IndicatorChangeset data={data} name={name}/>
+                break
+            case 'result_changed':
+            case 'result_created':
+            case 'result_deleted':
+                return <ResultChangeset data={data} name={name} />
+                break
+            case 'program_dates_changed':
+                return <ProgramDatesChangeset data={data} name={name} />
+                break
+        }
+    }
+
+    render() {
+        const {data, type, name} = this.props
+
+        return this.renderType(type, data, name)
+    }
+}
+
+class Expander extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -140,7 +137,9 @@ class ChangesetEntry extends React.Component {
     }
 
     componentDidMount() {
+        console.log(this.ref.current.scrollHeight, this.ref.current.clientHeight)
         if(this.ref.current.scrollHeight > this.ref.current.clientHeight) {
+            console.log('!!!!!!!!!!!!!!!')
             this.setState({overflowing: true})
         }
     }
@@ -152,30 +151,10 @@ class ChangesetEntry extends React.Component {
         })
     }
 
-    renderType(type) {
-        switch(type) {
-            case 'indicator_changed':
-            case 'indicator_created':
-            case 'indicator_deleted':
-                return <IndicatorChangeset data={this.props.data} compareAgainst={this.props.compareAgainst} />
-                break;
-            case 'result_changed':
-            case 'result_created':
-            case 'result_deleted':
-                return <ResultChangeset data={this.props.data} compareAgainst={this.props.compareAgainst} />
-                break;
-            case 'program_dates_changed':
-                return <ProgramDatesChangeset data={this.props.data} compareAgainst={this.props.compareAgainst} />
-            case 'rationale':
-                return <div>{this.props.data}</div>
-                break;
-        }
-    }
-
     render() {
-        return <div className="changeset">
-            <div ref={this.ref} className={classNames("changeset-entry", {expanded: this.state.expanded})}>
-                {this.renderType(this.props.type)}
+        return <div>
+            <div ref={this.ref} className="expander" style={{height: !this.state.expanded && (this.props.height || 50)}}>
+                {this.props.children}
             </div>
             {this.state.overflowing &&
             <div>
@@ -217,9 +196,21 @@ export const IndexView = observer(
                                 <td>{data.user}</td>
                                 <td>{data.organization}</td>
                                 <td>{map_pretty_change_type(data.change_type)}</td>
-                                <td className="expander"><ChangesetEntry type={data.change_type} data={data.previous_entry} compareAgainst={data.new_entry} /></td>
-                                <td className="expander"><ChangesetEntry type={data.change_type} data={data.new_entry} compareAgainst={data.previous_entry} /></td>
-                                <td className="expander"><ChangesetEntry type="rationale" data={data.rationale} /></td>
+                                <td className="expand-section">
+                                    <Expander>
+                                        {data.diff_list.map(changeset => {
+                                             return <ChangesetEntry key={changeset.name} name={changeset.name} type={data.change_type} data={changeset.prev} />
+                                        })}
+                                    </Expander>
+                                </td>
+                                <td className="expand-section">
+                                    <Expander>
+                                        {data.diff_list.map(changeset => {
+                                             return <ChangesetEntry key={changeset.name} name={changeset.name} type={data.change_type} data={changeset.new} />
+                                        })}
+                                    </Expander>
+                                </td>
+                                <td className="expand-section"><Expander>{data.rationale}</Expander></td>
                             </tr>)}
                         </tbody>
                     </table>

@@ -48,20 +48,12 @@
     justify-content: space-around;
 }
 
+.expander {
+    overflow: hidden;
+}
+
 .changeset {
-    .changeset-entry {
-        height: 50px;
-        overflow: hidden;
 
-        &.expanded {
-            height: auto;
-            overflow: visible;
-        }
-    }
-
-    a {
-        cursor: pointer;
-    }
 }
 
 /* Safari */
@@ -134,7 +126,7 @@ table.list-table {
         vertical-align: top;
     }
 
-    .expander {
+    .expand-section {
         width: 10%;
     }
 }

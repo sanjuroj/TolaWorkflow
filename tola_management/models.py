@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import json
+import itertools
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from django.db import models
@@ -17,9 +18,45 @@ from indicators.models import (
     Indicator
 )
 
-# Create your models here.
+class DiffableLog:
+    @property
+    def diff_list(self):
+        p = {}
+        if self.previous_entry:
+            p = json.loads(self.previous_entry)
 
-class UserManagementAuditLog(models.Model):
+        n = {}
+        if self.new_entry:
+            n = json.loads(self.new_entry)
+
+        diff_list = []
+
+        for (p_field, n_field) in itertools.izip_longest(p.keys(), n.keys()):
+            if p_field and p_field not in n:
+                diff_list.append({
+                    "name": p_field,
+                    "prev": p[p_field],
+                    "new": 'N/A'
+                })
+
+            if n_field and n_field not in p:
+                diff_list.append({
+                    "name": n_field,
+                    "prev": 'N/A',
+                    "new": n[n_field]
+                })
+
+            if n_field in p and p_field in n and n[p_field] != p[n_field]:
+                diff_list.append({
+                    "name": n_field,
+                    "prev": p[p_field],
+                    "new": n[n_field]
+                })
+
+        return diff_list
+
+
+class UserManagementAuditLog(models.Model, DiffableLog):
     date = models.DateTimeField(_('Modification Date'), auto_now_add=True)
     admin_user = models.ForeignKey(TolaUser, related_name="+")
     modified_user = models.ForeignKey(TolaUser, related_name="+")
@@ -67,7 +104,7 @@ class UserManagementAuditLog(models.Model):
             entry.save()
 
 
-class ProgramAuditLog(models.Model):
+class ProgramAuditLog(models.Model, DiffableLog):
     program = models.ForeignKey(Program, related_name="audit_logs")
     date = models.DateTimeField(_('Modification Date'), auto_now_add=True)
     user = models.ForeignKey(TolaUser, related_name="+")
@@ -77,6 +114,82 @@ class ProgramAuditLog(models.Model):
     previous_entry = models.TextField(null=True, blank=True)
     new_entry = models.TextField(null=True, blank=True)
     rationale = models.TextField()
+
+    @property
+    def diff_list(self):
+        diff_list = super(ProgramAuditLog, self).diff_list
+
+        for diff in diff_list:
+            if diff["name"] == 'targets':
+                if diff["prev"] == 'N/A':
+                    diff["prev"] = {
+                        n["id"]: {"name": n.get("name"), "value": 'N/A', "id": n["id"]} for k, n in diff["new"].iteritems()
+                    }
+                    continue
+
+                if diff["new"] == 'N/A':
+                    diff["new"] = {
+                        p["id"]: {"name": p.get("name"), "value": 'N/A', "id": p["id"]} for k, p in diff["prev"].iteritems()
+                    }
+                    continue
+
+                prev = {}
+                new = {}
+                for (prev_id, new_id) in itertools.izip_longest(diff["prev"].keys(), diff["new"].keys()):
+                    if prev_id and prev_id not in diff["new"]:
+                        new[prev_id] = {
+                            "name": diff["prev"][prev_id].get('name'),
+                            "value": 'N/A',
+                            "id": diff["prev"][prev_id].get('id')
+                        }
+
+                        prev[prev_id] = {
+                            "name": diff["prev"][prev_id].get('name'),
+                            "value": diff["prev"][prev_id].get('value'),
+                            "id": diff["prev"][prev_id].get('id')
+                        }
+
+                    if new_id and new_id not in diff["prev"]:
+                        prev[new_id] = {
+                            "name": diff["new"][new_id].get('name'),
+                            "value": 'N/A',
+                            "id": diff["new"][new_id].get('id')
+                        }
+
+                        new[new_id] = {
+                            "name": diff["new"][new_id].get('name'),
+                            "value": diff["new"][new_id].get('value'),
+                            "id": diff["new"][new_id].get('id')
+                        }
+
+                    if new_id in diff["prev"] and diff["prev"][new_id]["value"] != diff["new"][new_id]["value"]:
+                        new[new_id] = {
+                            "name": diff["new"][new_id].get('name'),
+                            "value": diff["new"][new_id].get('value'),
+                            "id": diff["new"][new_id].get('id')
+                        }
+                        prev[new_id] = {
+                            "name": diff["prev"][new_id].get('name'),
+                            "value": diff["prev"][new_id].get('value'),
+                            "id": diff["prev"][new_id].get('id')
+                        }
+
+                    if prev_id in diff["new"] and diff["prev"][prev_id]["value"] != diff["new"][prev_id]["value"]:
+                        new[prev_id] = {
+                            "name": diff["new"][prev_id].get('name'),
+                            "value": diff["new"][prev_id].get('value'),
+                            "id": diff["new"][prev_id].get('id')
+                        }
+                        prev[prev_id] = {
+                            "name": diff["prev"][prev_id].get('name'),
+                            "value": diff["prev"][prev_id].get('value'),
+                            "id": diff["prev"][prev_id].get('id')
+                        }
+
+                diff["prev"] = prev
+                diff["new"] = new
+
+        return diff_list
 
     @staticmethod
     def log_indicator_created(user, created_indicator, rationale):
@@ -186,7 +299,7 @@ class ProgramAuditLog(models.Model):
             new_program_log_entry.save()
 
 
-class ProgramAdminAuditLog(models.Model):
+class ProgramAdminAuditLog(models.Model, DiffableLog):
     date = models.DateTimeField(_('Modification Date'), auto_now_add=True)
     admin_user = models.ForeignKey(TolaUser, related_name="+")
     program = models.ForeignKey(Program, related_name="+")
@@ -228,7 +341,7 @@ class ProgramAdminAuditLog(models.Model):
         )
         entry.save()
 
-class OrganizationAdminAuditLog(models.Model):
+class OrganizationAdminAuditLog(models.Model, DiffableLog):
     date = models.DateTimeField(_('Modification Date'), auto_now_add=True)
     admin_user = models.ForeignKey(TolaUser, related_name="+")
     organization = models.ForeignKey(Organization, related_name="+")

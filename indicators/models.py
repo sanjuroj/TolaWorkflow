@@ -736,14 +736,14 @@ class Indicator(SafeDeleteModel):
             "rationale_for_target": s.rationale_for_target,
             "baseline_value": s.baseline,
             "baseline_na": s.baseline_na,
-            "targets": [
-                {
+            "targets": {
+                t.id: {
                     "id": t.id,
                     "value": t.target,
                     "name": t.period_name
                 }
                 for t in s.periodictargets.all()
-            ]
+            }
         }
 
     @property
