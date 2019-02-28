@@ -1,4 +1,3 @@
-import collections
 import operator
 import unicodedata
 
@@ -10,7 +9,7 @@ from django.views.generic.detail import DetailView
 from workflow.serializers import DocumentListProgramSerializer, DocumentListDocumentSerializer
 from .models import Program, Country, Province, AdminLevelThree, District, ProjectAgreement, ProjectComplete, SiteProfile, \
     Documentation, Monitor, Benchmarks, Budget, ApprovalAuthority, Checklist, ChecklistItem, Contact, Stakeholder, FormGuidance, \
-    TolaBookmarks, TolaUser
+    TolaUser
 from formlibrary.models import TrainingAttendance, Distribution
 from indicators.models import Result, ExternalService, Indicator
 from django.utils import timezone
@@ -26,11 +25,10 @@ import pytz # TODO: not used, keeping this import for potential regressions
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.db.models import Count, Q, Max, Prefetch
+from django.db.models import Count, Q, Max
 from tables import ProjectAgreementTable
 from filters import ProjectAgreementFilter
 import json
-import requests
 import logging
 
 from django.core import serializers
@@ -2385,19 +2383,6 @@ def export_stakeholders_list(request, **kwargs):
     response['Content-Disposition'] = 'attachment; filename=stakeholders.csv'
 
     return response
-
-
-def save_bookmark(request):
-    """
-    Create Bookmark from Link
-    """
-    url = request.POST['url']
-    username = request.user
-    tola_user = TolaUser.objects.get(user=username)
-
-    TolaBookmarks.objects.create(bookmark_url=url, name=url, user=tola_user)
-
-    return HttpResponse(url)
 
 
 #Ajax views for single page filtering

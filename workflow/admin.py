@@ -1,7 +1,3 @@
-
-import dateutil
-import datetime
-
 from admin_report.mixins import ChartReportAdmin
 from django.contrib import admin, messages
 from django.contrib.auth.models import User
@@ -17,11 +13,10 @@ from .models import (
     Office, Program, TolaUser, District, Province, ProfileType, AdminLevelThree, TolaUserProxy,
     Organization, Village, VillageAdmin, Sector, Capacity, Evaluate, Benchmarks, Budget, Template, Monitor,
     ApprovalAuthority, Checklist, ChecklistItem, Stakeholder, Contact, StakeholderType, TolaSites, FormGuidance,
-    TolaBookmarks,
     OrganizationAdmin, ProvinceAdmin, AdminLevelThreeAdmin,
-    DistrictAdmin, SiteProfileAdmin, ProjectTypeAdmin,
-    ChecklistAdmin, StakeholderAdmin, ContactAdmin,
-    ChecklistItemAdmin, TolaUserAdmin, TolaSitesAdmin, FormGuidanceAdmin, TolaBookmarksAdmin
+    DistrictAdmin, ProjectTypeAdmin,
+    ChecklistAdmin, ContactAdmin,
+    ChecklistItemAdmin, TolaUserAdmin, TolaSitesAdmin, FormGuidanceAdmin
 )
 
 
@@ -294,4 +289,3 @@ admin.site.register(TolaUser,TolaUserAdmin)
 admin.site.register(TolaSites,TolaSitesAdmin)
 admin.site.register(FormGuidance,FormGuidanceAdmin)
 admin.site.register(TolaUserProxy, ReportTolaUserProxyAdmin)
-admin.site.register(TolaBookmarks, TolaBookmarksAdmin)

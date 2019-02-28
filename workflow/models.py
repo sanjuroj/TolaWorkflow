@@ -198,37 +198,6 @@ class TolaUser(models.Model):
         return False
 
 
-class TolaBookmarks(models.Model):
-    user = models.ForeignKey(TolaUser, related_name='tolabookmark', verbose_name=_("User"))
-    name = models.CharField(_("Name"), blank=True, null=True, max_length=255)
-    bookmark_url = models.CharField(_("Bookmark url"), blank=True, null=True, max_length=255)
-    program = models.ForeignKey("Program", blank=True, null=True, verbose_name=_("Program"))
-    create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
-    edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
-
-    class Meta:
-        verbose_name=_("Tola Bookmarks")
-        ordering = ('name',)
-
-    def __unicode__(self):
-        return self.name
-
-    # on save add create date or update edit date
-    def save(self, *args, **kwargs):
-        if self.create_date == None:
-            self.create_date = timezone.now()
-        self.edit_date = timezone.now()
-        super(TolaBookmarks, self).save()
-
-
-class TolaBookmarksAdmin(admin.ModelAdmin):
-
-    list_display = ('user', 'name')
-    display = 'Tola User Bookmarks'
-    listd_filter = ('user__name',)
-    search_fields = ('name','user')
-
-
 class TolaUserProxy(TolaUser):
 
     class Meta:
