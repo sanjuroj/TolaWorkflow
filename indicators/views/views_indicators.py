@@ -1371,35 +1371,6 @@ class IndicatorExport(View):
         return response
 
 
-class IndicatorDataExport(View):
-    """
-    Export all indicators to a CSV file
-    """
-
-    def get(self, request, *args, **kwargs):
-        if int(kwargs['indicator']) == 0:
-            del kwargs['indicator']
-        if int(kwargs['program']) == 0:
-            del kwargs['program']
-        if int(kwargs['type']) == 0:
-            del kwargs['type']
-        else:
-            kwargs['indicator__indicator_type__id'] = kwargs['type']
-            del kwargs['type']
-
-        countries = getCountry(request.user)
-        queryset = Result.objects \
-            .filter(**kwargs) \
-            .filter(indicator__program__country__in=countries)
-
-        dataset = ResultResource().export(queryset)
-        response = HttpResponse(dataset.csv,
-                                content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; \
-            filename=indicator_data.csv'
-        return response
-
-
 def api_indicator_view(request, indicator_id):
     """
     API call for viewing an indicator for the program page

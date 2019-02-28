@@ -18,7 +18,6 @@ from .views.views_indicators import (
     program_indicators_json,
     indicator_plan,
     IndicatorReport,
-    IndicatorDataExport,
     DisaggregationReport,
     DisaggregationPrint,
     api_indicator_view)
