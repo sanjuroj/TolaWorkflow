@@ -17,7 +17,6 @@ from .views.views_indicators import (
     result_view,
     program_indicators_json,
     indicator_plan,
-    indicator_report,
     IndicatorReport,
     IndicatorDataExport,
     DisaggregationReport,
@@ -58,8 +57,6 @@ urlpatterns = [
     url(r'^result_update/(?P<pk>\d+)/$', ResultUpdate.as_view(), name='result_update'),
 
     url(r'^result_delete/(?P<pk>\d+)/$', ResultDelete.as_view(), name='result_delete'),
-
-    url(r'^report/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$', indicator_report, name='indicator_report'),
 
     url(r'^disrep/(?P<program>\d+)/$', DisaggregationReport.as_view(), name='disrep'),
 

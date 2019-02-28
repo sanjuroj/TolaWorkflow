@@ -971,49 +971,6 @@ def program_indicators_json(request, program, indicator, type):
     )
 
 
-def indicator_report(request, program=0, indicator=0, type=0):
-    countries = request.user.tola_user.countries.all()
-    getPrograms = Program.objects.filter(funding_status="Funded",
-                                         country__in=countries).distinct()
-    getIndicatorTypes = IndicatorType.objects.all()
-
-    filters = {}
-    if int(program) != 0:
-        filters['program__id'] = program
-    if int(type) != 0:
-        filters['indicator_type'] = type
-    if int(indicator) != 0:
-        filters['id'] = indicator
-
-    filters['program__country__in'] = countries
-
-    indicator_data = Indicator.objects.filter(**filters) \
-        .prefetch_related('sector') \
-        .select_related(
-        'program', 'external_service_record', 'indicator_type',
-        'disaggregation', 'reporting_frequency') \
-        .values('id', 'program__name', 'baseline', 'level__name',
-                'lop_target', 'program__id',
-                'external_service_record__external_service__name',
-                'key_performance_indicator', 'name', 'indicator_type__id',
-                'indicator_type__indicator_type', 'sector__sector',
-                'disaggregation__disaggregation_type',
-                'means_of_verification', 'data_collection_method',
-                'reporting_frequency__frequency', 'create_date', 'edit_date',
-                'source', 'method_of_analysis'
-                )
-    data = json.dumps(list(indicator_data), cls=DjangoJSONEncoder)
-
-    # send the keys and vars from the json data to the template along with
-    # submitted feed info and silos for new form
-    return render(request, "indicators/report.html", {
-        'program': program,
-        'getPrograms': getPrograms,
-        'getIndicatorTypes': getIndicatorTypes,
-        'getIndicators': indicator_data,
-        'data': data})
-
-
 class IndicatorReport(View, AjaxableResponseMixin):
     def get(self, request, *args, **kwargs):
         countries = getCountry(request.user)
