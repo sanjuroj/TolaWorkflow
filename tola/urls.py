@@ -87,7 +87,6 @@ urlpatterns = [
                 # enable admin documentation:
                 url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-                url(r'^bootstrap/', TemplateView.as_view(template_name="bootstrap4.html")),
                 url(r'^datedtargetinfo/(?P<pk>\w+)/$', dated_target_info, name='datedtargetinfo'),
                 # internationalization
                 url(r'^i18n/', include('django.conf.urls.i18n')),
