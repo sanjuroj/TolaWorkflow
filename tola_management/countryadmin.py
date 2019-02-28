@@ -15,6 +15,11 @@ from workflow.models import (
     Program,
     TolaUser,
 )
+from indicators.models import (
+    StrategicObjective,
+    DisaggregationType,
+    DisaggregationLabel,
+)
 
 
 class Paginator(SmallResultsSetPagination):
@@ -98,3 +103,70 @@ class CountryAdminViewSet(viewsets.ModelViewSet):
             )
 
         return queryset.distinct()
+
+
+class CountryObjectiveSerializer(serializers.ModelSerializer):
+    #id = serializers.IntegerField(allow_null=True, required=False)
+    #country = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all())
+    #name = serializers.CharField(max_length=135)
+    #description = serializers.CharField(max_length=765, allow_blank=True, required=False)
+
+    class Meta:
+        model = StrategicObjective
+        fields = (
+            'id',
+            'country',
+            'name',
+            'description',
+        )
+
+
+class CountryObjectiveViewset(viewsets.ModelViewSet):
+    serializer_class = CountryObjectiveSerializer
+
+    def get_queryset(self):
+        params = self.request.query_params
+        queryset = StrategicObjective.objects.all()
+
+        countryFilter = params.get('country')
+        if countryFilter:
+            queryset = queryset.filter(country__pk=countryFilter)
+        return queryset.distinct()
+
+
+class NestedDisaggregationLabelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DisaggregationLabel
+        fields = (
+            'id',
+            'label',
+        )
+
+class CountryDisaggregationSerializer(serializers.ModelSerializer):
+    labels = NestedDisaggregationLabelSerializer(
+        source="disaggregationlabel_set",
+        required=False,
+        many=True,
+    )
+
+    class Meta:
+        model = DisaggregationType
+        fields = (
+            'id',
+            'country',
+            'disaggregation_type',
+            'labels',
+        )
+
+class CountryDisaggregationViewSet(viewsets.ModelViewSet):
+    serializer_class = CountryDisaggregationSerializer
+
+    def get_queryset(self):
+        params = self.request.query_params
+        queryset = DisaggregationType.objects.all()
+
+        countryFilter = params.get('country')
+        if countryFilter:
+            queryset = queryset.filter(country__pk=countryFilter)
+
+        return queryset
