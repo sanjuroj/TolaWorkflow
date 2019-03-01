@@ -278,8 +278,6 @@ LOCAL_APPS = (
     'indicators',
     'customdashboard',
     #'configurabledashboard',
-    'reports',
-
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
