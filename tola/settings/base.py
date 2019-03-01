@@ -278,7 +278,6 @@ LOCAL_APPS = (
     'indicators',
     'customdashboard',
     #'configurabledashboard',
-    'tables',
     'reports',
 
 )
