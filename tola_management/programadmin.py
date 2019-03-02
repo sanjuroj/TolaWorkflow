@@ -194,14 +194,15 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
     pagination_class = Paginator
 
     def get_queryset(self):
-        viewing_user = self.request.user
+        auth_user = self.request.user
         params = self.request.query_params
 
         queryset = Program.objects.all()
 
-        if not viewing_user.is_superuser:
+        if not auth_user.is_superuser:
+            tola_user = auth_user.tola_user
             queryset = queryset.filter(
-                Q(user_access__id=viewing_user.id) | Q(country__users__id=viewing_user.id)
+                Q(user_access=tola_user) | Q(country__users=tola_user)
             )
 
         programStatus = params.get('programStatus')
