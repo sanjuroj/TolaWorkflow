@@ -12,6 +12,7 @@ const {
     country_filter,
     organization_filter,
     users_filter,
+    allCountries,
     countries,
     organizations,
     users,
@@ -32,6 +33,7 @@ const filters = {
 
 const initialData = {
     countries,
+    allCountries,
     organizations,
     allPrograms,
     sectors,

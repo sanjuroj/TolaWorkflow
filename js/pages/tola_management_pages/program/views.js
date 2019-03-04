@@ -146,6 +146,7 @@ class BulkActions extends React.Component {
 export const IndexView = observer(
     ({store}) => {
 
+        const allCountryOptions = Object.entries(store.allCountries).map(([id, country]) => ({value: country.id, label: country.name}))
         const countryFilterOptions = Object.entries(store.countries).map(([id, country]) => ({value: country.id, label: country.name}))
         const organizationFilterOptions = Object.entries(store.organizations).map(([id, org]) => ({value: org.id, label: org.name}))
         const sectorFilterOptions = store.sectors.map(x => ({value: x.id, label: x.name}))
@@ -233,7 +234,7 @@ export const IndexView = observer(
                                                     onUpdate={(id, data) => store.updateProgram(id, data)}
                                                     onCreate={(new_program_data) => store.saveNewProgram(new_program_data)}
                                                     sectorOptions={sectorFilterOptions}
-                                                    countryOptions={countryFilterOptions}
+                                                    countryOptions={allCountryOptions}
                                                     errors={store.editing_errors}
                                                 />)}
                                             HistorySection={observer(() =>

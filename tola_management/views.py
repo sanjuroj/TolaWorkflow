@@ -192,11 +192,18 @@ def get_program_page_context(request):
         country_queryset = country_queryset.filter(
             Q(users=tola_user) | Q(program__user_access=tola_user)
         ).distinct()
-    countries = {
+    filtered_countries = {
         country.id : {
             'id': country.id,
             'name': country.country,
         } for country in country_queryset.all()
+    }
+
+    all_countries = {
+        country.id : {
+            'id': country.id,
+            'name': country.country,
+        } for country in Country.objects.all()
     }
 
     organizations = {
@@ -234,7 +241,8 @@ def get_program_page_context(request):
     }
 
     return {
-        'countries': countries,
+        'countries': filtered_countries,
+        'allCountries': all_countries,
         'organizations': organizations,
         'users': users,
         'allPrograms': programs,

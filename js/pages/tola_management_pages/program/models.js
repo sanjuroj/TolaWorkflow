@@ -4,8 +4,8 @@ import { observable, computed, action, runInAction } from "mobx";
 export class ProgramStore {
 
     //filter options
-    @observable countries_listing = []
-    @observable countries = []
+    @observable countries = {}
+    @observable allCountries = {}
     @observable organizations = {}
     @observable users = []
     @observable sectors = []
