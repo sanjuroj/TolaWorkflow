@@ -168,6 +168,17 @@ export const IndexView = observer(
             }
         }
 
+        const organizationColumn = (data) => {
+            if (data.organizations) {
+                return (
+                    <a href={`/tola_management/organization/?programs[]=${data.id}`}>
+                        { data.onlyOrganizationId ? store.organizations[data.onlyOrganizationId].name : `${data.organizations} organizations` }
+                    </a>
+                )
+            }
+            return "---"
+        }
+
         return <div id="user-management-index-view" className="container-fluid row">
             <div className="col col-sm-3 filter-section">
                 <CountryFilter store={store} filterOptions={countryFilterOptions} />
@@ -245,7 +256,9 @@ export const IndexView = observer(
                                         </div>
                                     </Col>
                                     <Col size="2">{data.name || "---"}</Col>
-                                    <Col>{data.onlyOrganizationId ? store.organizations[data.onlyOrganizationId].name : data.organizations ? data.organizations : "---"}</Col>
+                                    <Col>
+                                        { organizationColumn(data)}
+                                    </Col>
                                     <Col>{data.program_users ? <a href={`/tola_management/user/?programs[]=${data.id}`}>{data.program_users} users</a> : '---'  }</Col>
                                     <Col>{data.funding_status ? data.funding_status : '---'}</Col>
                                 </Row>

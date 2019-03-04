@@ -116,7 +116,7 @@ class ProgramAdminSerializer(ModelSerializer):
 
         ret['program_users'] = len(program_users)
         ret['organizations'] = organization_count
-        ret['onlyOrganizationId'] = organizations.pop() if organization_count > 0 else None
+        ret['onlyOrganizationId'] = organizations.pop() if organization_count == 1 else None
         return ret
 
     @transaction.atomic
