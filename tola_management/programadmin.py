@@ -60,7 +60,7 @@ class NestedSectorSerializer(Serializer):
     def to_representation(self, sector):
         return sector.id
 
-    def to_internal_value(id, data):
+    def to_internal_value(self, data):
         sector = Sector.objects.get(pk=data)
         return sector
 
@@ -70,7 +70,7 @@ class NestedCountrySerializer(Serializer):
     def to_representation(self, country):
         return country.id
 
-    def to_internal_value(id, data):
+    def to_internal_value(self, data):
         country = Country.objects.get(pk=data)
         return country
 
@@ -78,7 +78,7 @@ class ProgramAdminSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
     name = CharField(required=True, max_length=255)
     funding_status = CharField(required=True)
-    gaitid = CharField(required=True, validators=[
+    gaitid = CharField(required=False, allow_blank=True, allow_null=True, validators=[
         UniqueValidator(queryset=Program.objects.all())
     ])
     description = CharField(allow_blank=True)
@@ -123,6 +123,8 @@ class ProgramAdminSerializer(ModelSerializer):
     def create(self, validated_data):
         country = validated_data.pop('country')
         sector = validated_data.pop('sector')
+        if not validated_data['gaitid']:
+            validated_data.pop('gaitid')
         program = super(ProgramAdminSerializer, self).create(validated_data)
         program.country.add(*country)
         program.sector.add(*sector)
