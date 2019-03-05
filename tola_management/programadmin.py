@@ -237,14 +237,28 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
 
         return queryset.distinct()
 
-    def list(self, request):
-        queryset = self.get_queryset()
-        page = self.paginate_queryset(list(queryset))
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+    @list_route(methods=["get"])
+    def program_filter_options(self, request):
+        """Provides a non paginated list of countries for the frontend filter"""
+        auth_user = self.request.user
+        params = self.request.query_params
+        queryset = Program.objects
+
+        if not auth_user.is_superuser:
+            tola_user = auth_user.tola_user
+            queryset = queryset.filter(
+                Q(user_access=tola_user) | Q(country__users=tola_user)
+            )
+
+        countryFilter = params.getlist('countries[]')
+        if countryFilter:
+            queryset = queryset.filter(country__in=countryFilter)
+        programs = [{
+            'id': program.id,
+            'name': program.name,
+        } for program in queryset.distinct().all()]
+        return Response(programs)
+
 
     @detail_route(methods=['get'])
     def history(self, request, pk=None):

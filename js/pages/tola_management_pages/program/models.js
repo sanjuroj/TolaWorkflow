@@ -19,7 +19,7 @@ export class ProgramStore {
         users: []
     }
 
-    @observable allPrograms = []
+    @observable programFilterPrograms = []
     @observable programs = []
     @observable program_count = 0
     @observable new_program = null
@@ -70,6 +70,11 @@ export class ProgramStore {
                 this.total_pages = results.total_pages
                 this.next_page =results.next_page
                 this.previous_page = results.previous_page
+            })
+        })
+        this.api.fetchProgramsForFilter(this.marshalFilters(this.filters)).then(response => {
+            runInAction(() => {
+                this.programFilterPrograms = response.data
             })
         })
 

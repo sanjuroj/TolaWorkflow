@@ -150,7 +150,7 @@ export const IndexView = observer(
         const countryFilterOptions = Object.entries(store.countries).map(([id, country]) => ({value: country.id, label: country.name}))
         const organizationFilterOptions = Object.entries(store.organizations).map(([id, org]) => ({value: org.id, label: org.name}))
         const sectorFilterOptions = store.sectors.map(x => ({value: x.id, label: x.name}))
-        const programFilterOptions = Object.entries(store.allPrograms).map(([id, program]) => ({value: program.id, label: program.name}))
+        const programFilterOptions = Object.entries(store.programFilterPrograms).map(([id, program]) => ({value: program.id, label: program.name}))
         const userFilterOptions = Object.entries(store.users).map(([id, user]) => ({value: user.id, label: user.name}))
         const bulkProgramStatusOptions = [
             {value: 'Funded', label: 'Funded'},

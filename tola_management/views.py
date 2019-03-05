@@ -245,7 +245,7 @@ def get_program_page_context(request):
         'allCountries': all_countries,
         'organizations': organizations,
         'users': users,
-        'allPrograms': programs,
+        'programFilterPrograms': programs,
         'sectors': sectors,
         'country_filter': country_filter,
         'organization_filter': organization_filter,
