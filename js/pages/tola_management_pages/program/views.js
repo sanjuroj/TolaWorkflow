@@ -146,10 +146,11 @@ class BulkActions extends React.Component {
 export const IndexView = observer(
     ({store}) => {
 
+        const allCountryOptions = Object.entries(store.allCountries).map(([id, country]) => ({value: country.id, label: country.name}))
         const countryFilterOptions = Object.entries(store.countries).map(([id, country]) => ({value: country.id, label: country.name}))
         const organizationFilterOptions = Object.entries(store.organizations).map(([id, org]) => ({value: org.id, label: org.name}))
         const sectorFilterOptions = store.sectors.map(x => ({value: x.id, label: x.name}))
-        const programFilterOptions = Object.entries(store.allPrograms).map(([id, program]) => ({value: program.id, label: program.name}))
+        const programFilterOptions = Object.entries(store.programFilterPrograms).map(([id, program]) => ({value: program.id, label: program.name}))
         const userFilterOptions = Object.entries(store.users).map(([id, user]) => ({value: user.id, label: user.name}))
         const bulkProgramStatusOptions = [
             {value: 'Funded', label: 'Funded'},
@@ -166,6 +167,17 @@ export const IndexView = observer(
                     onApply: (option) => store.bulkUpdateProgramStatus(option.value)
                 },
             }
+        }
+
+        const organizationColumn = (data) => {
+            if (data.organizations) {
+                return (
+                    <a href={`/tola_management/organization/?programs[]=${data.id}`}>
+                        { data.onlyOrganizationId ? store.organizations[data.onlyOrganizationId].name : `${data.organizations} organizations` }
+                    </a>
+                )
+            }
+            return "---"
         }
 
         return <div id="user-management-index-view" className="container-fluid row">
@@ -222,7 +234,7 @@ export const IndexView = observer(
                                                     onUpdate={(id, data) => store.updateProgram(id, data)}
                                                     onCreate={(new_program_data) => store.saveNewProgram(new_program_data)}
                                                     sectorOptions={sectorFilterOptions}
-                                                    countryOptions={countryFilterOptions}
+                                                    countryOptions={allCountryOptions}
                                                     errors={store.editing_errors}
                                                 />)}
                                             HistorySection={observer(() =>
@@ -245,7 +257,9 @@ export const IndexView = observer(
                                         </div>
                                     </Col>
                                     <Col size="2">{data.name || "---"}</Col>
-                                    <Col>{data.onlyOrganizationId ? store.organizations[data.onlyOrganizationId].name : data.organizations ? data.organizations : "---"}</Col>
+                                    <Col>
+                                        { organizationColumn(data)}
+                                    </Col>
                                     <Col>{data.program_users ? <a href={`/tola_management/user/?programs[]=${data.id}`}>{data.program_users} users</a> : '---'  }</Col>
                                     <Col>{data.funding_status ? data.funding_status : '---'}</Col>
                                 </Row>

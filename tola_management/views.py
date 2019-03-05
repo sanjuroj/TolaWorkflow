@@ -7,6 +7,7 @@ from django.core import serializers
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
+from django.db.models import Q
 from django.template import loader
 from django.shortcuts import render
 from django.utils.http import urlsafe_base64_encode
@@ -153,6 +154,7 @@ def get_user_page_context(request):
 
 def get_organization_page_context(request):
     country_filter = request.GET.getlist('countries[]')
+    program_filter = request.GET.getlist('programs[]')
     programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
     programs = {}
     for program in list(programs_qs):
@@ -176,14 +178,30 @@ def get_organization_page_context(request):
         "organizations": organizations,
         "sectors": sectors,
         "countries": countries,
-        "country_filter": country_filter
+        "country_filter": country_filter,
+        "program_filter": program_filter,
     }
 
 def get_program_page_context(request):
+    auth_user = request.user
+    tola_user = auth_user.tola_user
     country_filter = request.GET.getlist('countries[]')
     organization_filter = request.GET.getlist('organizations[]')
     users_filter = request.GET.getlist('users[]')
-    countries = {
+
+    country_queryset = Country.objects
+    if not auth_user.is_superuser:
+        country_queryset = country_queryset.filter(
+            Q(users=tola_user) | Q(program__user_access=tola_user)
+        ).distinct()
+    filtered_countries = {
+        country.id : {
+            'id': country.id,
+            'name': country.country,
+        } for country in country_queryset.all()
+    }
+
+    all_countries = {
         country.id : {
             'id': country.id,
             'name': country.country,
@@ -197,11 +215,16 @@ def get_program_page_context(request):
         } for organization in Organization.objects.all()
     }
 
+    program_queryset = Program.objects
+    if not auth_user.is_superuser:
+        program_queryset = program_queryset.filter(
+            Q(user_access=tola_user) | Q(country__users=tola_user)
+        )
     programs = [
         {
             'id': program.id,
             'name': program.name,
-        } for program in Program.objects.all()
+        } for program in program_queryset.all().distinct()
     ]
 
     # excluding sectors with no name (sector) set.
@@ -220,10 +243,11 @@ def get_program_page_context(request):
     }
 
     return {
-        'countries': countries,
+        'countries': filtered_countries,
+        'allCountries': all_countries,
         'organizations': organizations,
         'users': users,
-        'allPrograms': programs,
+        'programFilterPrograms': programs,
         'sectors': sectors,
         'country_filter': country_filter,
         'organization_filter': organization_filter,

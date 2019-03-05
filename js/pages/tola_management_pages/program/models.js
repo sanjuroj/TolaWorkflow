@@ -4,8 +4,8 @@ import { observable, computed, action, runInAction } from "mobx";
 export class ProgramStore {
 
     //filter options
-    @observable countries_listing = []
-    @observable countries = []
+    @observable countries = {}
+    @observable allCountries = {}
     @observable organizations = {}
     @observable users = []
     @observable sectors = []
@@ -19,7 +19,7 @@ export class ProgramStore {
         users: []
     }
 
-    @observable allPrograms = []
+    @observable programFilterPrograms = []
     @observable programs = []
     @observable program_count = 0
     @observable new_program = null
@@ -72,6 +72,11 @@ export class ProgramStore {
                 this.previous_page = results.previous_page
             })
         })
+        this.api.fetchProgramsForFilter(this.marshalFilters(this.filters)).then(response => {
+            runInAction(() => {
+                this.programFilterPrograms = response.data
+            })
+        })
 
     }
 
@@ -108,10 +113,12 @@ export class ProgramStore {
     toggleEditingTarget(id) {
         if(this.editing_target == 'new') {
             this.programs.shift()
+            this.editing_errors = {}
         }
 
         if(this.editing_target == id) {
             this.editing_target = false
+            this.editing_errors = {}
         } else {
             this.editing_target = id
             this.fetching_editing_history = true
