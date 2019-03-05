@@ -36,11 +36,10 @@ def program_menu(context):
         else:
             admin_programs = programs.filter(country__in=Country.objects.filter(countryaccess__tolauser=request.user.tola_user)).prefetch_related('country')
             for program in admin_programs:
-                for country in program.country.filter(countryaccess__tolauser=request.user.tolauser):
+                for country in program.country.filter(countryaccess__tolauser=request.user.tola_user):
                     programs_by_country[country.country].append(program)
 
             for access in request.user.tola_user.programaccess_set.filter(program__in=programs).exclude(program__in=admin_programs).prefetch_related('country'):
-                print(access.id)
                 programs_by_country[access.country.country].append(access.program)
 
     return {
