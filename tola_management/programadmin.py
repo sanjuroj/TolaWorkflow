@@ -107,9 +107,10 @@ class ProgramAdminSerializer(ModelSerializer):
         if not with_aggregates:
             return ret
         # Some n+1 queries here. If this is slow, Fix in queryset either either with rawsql or remodel.
-        user_query1 = TolaUser.objects.filter(program_access__id=program.id).select_related('organization')
-        user_query2 = TolaUser.objects.filter(countries__program=program.id).select_related('organization').distinct()
-        program_users = user_query1.union(user_query2)
+        program_users = (
+            TolaUser.objects.filter(programs__id=program.id).select_related('organization')
+            | TolaUser.objects.filter(countries__program=program.id).select_related('organization')
+        ).distinct()
 
         organizations = set([tu.organization_id for tu in program_users if tu.organization_id])
         organization_count = len(organizations)

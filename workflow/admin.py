@@ -21,7 +21,8 @@ from .models import (
     OrganizationAdmin, ProvinceAdmin, AdminLevelThreeAdmin,
     DistrictAdmin, SiteProfileAdmin, ProjectTypeAdmin,
     ChecklistAdmin, StakeholderAdmin, ContactAdmin,
-    ChecklistItemAdmin, TolaUserAdmin, TolaSitesAdmin, FormGuidanceAdmin, TolaBookmarksAdmin
+    ChecklistItemAdmin, TolaUserAdmin, TolaSitesAdmin, FormGuidanceAdmin, TolaBookmarksAdmin,
+    ProgramAccess
 )
 
 
@@ -182,6 +183,18 @@ class SiteProfileAdmin(ImportExportModelAdmin):
     list_filter = ('country__country',)
     search_fields = ('office__code', 'country__country')
 
+class ProgramAccessInline(admin.TabularInline):
+    model = ProgramAccess
+
+    #the goal here is to limit the valid country choices to those associated with the related program
+    def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
+        field = super(ProgramAccessInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+        if db_field.name == 'country':
+            if request._obj_ is not None:
+                field.queryset = field.queryset.filter(id__in = request._obj_.country.all().values('id'))
+
+        return field
 
 class ProgramAdmin(admin.ModelAdmin):
     list_display = ('countries', 'name', 'gaitid', 'description', 'budget_check', 'funding_status')
@@ -189,6 +202,13 @@ class ProgramAdmin(admin.ModelAdmin):
     list_filter = ('funding_status', 'country', 'budget_check', 'funding_status')
     display = 'Program'
     readonly_fields = ('start_date', 'end_date', 'reporting_period_start', 'reporting_period_end', )
+    inlines = (ProgramAccessInline,)
+
+    #we need a reference for the inline to limit country choices properly
+    def get_form(self, request, obj=None, **kwargs):
+        # just save obj reference for future processing in Inline
+        request._obj_ = obj
+        return super(ProgramAdmin, self).get_form(request, obj, **kwargs)
 
     # Non-destructively save the GAIT start and end dates based on the value entered in the ID field.
     # Non-destructively populate the reporting start and end dates based on the GAIT dates.

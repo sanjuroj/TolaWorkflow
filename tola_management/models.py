@@ -18,6 +18,34 @@ from indicators.models import (
     Indicator
 )
 
+def diff(previous, new):
+    diff_list = []
+    p = previous
+    n = new
+    for (p_field, n_field) in itertools.izip_longest(p.keys(), n.keys()):
+        if p_field and p_field not in n:
+            diff_list.append({
+                "name": p_field,
+                "prev": p[p_field],
+                "new": 'N/A'
+            })
+
+        if n_field and n_field not in p:
+            diff_list.append({
+                "name": n_field,
+                "prev": 'N/A',
+                "new": n[n_field]
+            })
+
+        if n_field in p and p_field in n and n[p_field] != p[n_field]:
+            diff_list.append({
+                "name": n_field,
+                "prev": p[p_field],
+                "new": n[n_field]
+            })
+    return diff_list
+
+
 class DiffableLog:
     @property
     def diff_list(self):
@@ -29,29 +57,7 @@ class DiffableLog:
         if self.new_entry:
             n = json.loads(self.new_entry)
 
-        diff_list = []
-
-        for (p_field, n_field) in itertools.izip_longest(p.keys(), n.keys()):
-            if p_field and p_field not in n:
-                diff_list.append({
-                    "name": p_field,
-                    "prev": p[p_field],
-                    "new": 'N/A'
-                })
-
-            if n_field and n_field not in p:
-                diff_list.append({
-                    "name": n_field,
-                    "prev": 'N/A',
-                    "new": n[n_field]
-                })
-
-            if n_field in p and p_field in n and n[p_field] != p[n_field]:
-                diff_list.append({
-                    "name": n_field,
-                    "prev": p[p_field],
-                    "new": n[n_field]
-                })
+        diff_list = diff(p, n)
 
         return diff_list
 
@@ -63,6 +69,55 @@ class UserManagementAuditLog(models.Model, DiffableLog):
     change_type = models.CharField(_('Modification Type'), max_length=255)
     previous_entry = models.TextField()
     new_entry = models.TextField()
+
+    @property
+    def diff_list(self):
+
+        if self.change_type == 'user_programs_updated':
+
+            p = {}
+            if self.previous_entry:
+                p = json.loads(self.previous_entry)
+
+            n = {}
+            if self.new_entry:
+                n = json.loads(self.new_entry)
+
+            def access_diff(p, n):
+                diff_list = []
+                for (p_field, n_field) in itertools.izip_longest(p.keys(), n.keys()):
+                    if p_field and p_field not in n:
+                        diff_list.append({
+                            "name": p_field,
+                            "prev": p[p_field],
+                            "new": {k: 'N/A' for k, _ in p[p_field].iteritems()},
+                        })
+
+                    if n_field and n_field not in p:
+                        diff_list.append({
+                            "name": n_field,
+                            "prev": {k: 'N/A' for k, _ in n[n_field].iteritems()},
+                            "new": n[n_field]
+                        })
+
+                    if n_field in p and p_field in n and n[p_field] != p[n_field]:
+                        diff_list.append({
+                            "name": n_field,
+                            "prev": p[p_field],
+                            "new": n[n_field]
+                        })
+
+                return diff_list
+
+            countries_diff = access_diff(p["countries"], n["countries"])
+            programs_diff = access_diff(p["programs"], n["programs"])
+
+            return {
+                "countries": countries_diff,
+                "programs": programs_diff
+            }
+        else:
+            return super(UserManagementAuditLog, self).diff_list
 
     @classmethod
     def created(cls, user, created_by, entry):
@@ -83,7 +138,7 @@ class UserManagementAuditLog(models.Model, DiffableLog):
             entry = cls(
                 admin_user=changed_by,
                 modified_user=user,
-                change_type="user_profile_updated",
+                change_type="user_programs_updated",
                 previous_entry=old,
                 new_entry=new,
             )

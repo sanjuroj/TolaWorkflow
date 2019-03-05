@@ -28,7 +28,7 @@ def index(request, selected_country=None):
 
     # Find the active country
     user = request.user.tola_user
-    user_countries = getCountry(request.user)  # all countries whose programs are available to the user
+    user_countries = user.available_countries  # all countries whose programs are available to the user
 
     if selected_country:  # from URL
         active_country = Country.objects.filter(id=selected_country)[0]
@@ -43,7 +43,7 @@ def index(request, selected_country=None):
             # ... failing all of this, the homepage will be blank. Sorry!
 
     programs_with_metrics = ProgramWithMetrics.home_page.with_annotations().filter(
-        Q(country__in=user.countries.all()) | Q(user_access=user),
+        Q(country__in=user.countries.all()) | Q(programaccess__tolauser=user) | Q(country=user.country),
         country=active_country,
         funding_status="Funded"
     ).distinct()

@@ -18,9 +18,8 @@ from indicators.models import (
 def user_has_basic_or_super_admin(user):
     return (
         user.is_superuser
-        or user.tola_user.country_roles.filter(
-            role='basic_admin',
-            country__in=user.tola_user.countries.all()
+        or user.tola_user.countryaccess_set.filter(
+            role='basic_admin'
         ).count() > 0
     )
 
@@ -63,7 +62,7 @@ def user_has_program_access(user, program):
     return user.is_authenticated() and (Program.objects.filter(pk=program, user_access=user.tola_user).count() > 0 or Program.objects.filter(pk=program, country__in=user.tola_user.countries.all()).count() > 0)
 
 def user_has_program_roles(user, programs, roles):
-    return user.is_authenticated() and user.tola_user.program_roles.filter(program_id__in=programs, role__in=roles).count() > 0
+    return user.is_authenticated() and user.tola_user.programaccess_set.filter(program_id__in=programs, role__in=roles).count() > 0
 
 def has_iptt_read_access(func):
     def wrapper(request, *args, **kwargs):
@@ -182,6 +181,7 @@ def has_program_read_access(func):
 
 
 class ActionBasedPermissionsMixin:
+
     def get_permissions(self):
         try:
             # return permission_classes depending on `action`
@@ -230,14 +230,7 @@ class HasProgramAdminWriteAccess(permissions.BasePermission):
         return request.user.is_superadmin #or is basic admin and has access to the programs country
 
 
-class HasCountryAdminReadAccess(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_superadmin
-
-    def has_object_permission(self, request, view, obj):
-        return request.user.is_superadmin
-
-class HasCountryAdminWriteAccess(permissions.BasePermission):
+class HasCountryAdminAccess(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_superadmin
 
