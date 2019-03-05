@@ -28,7 +28,7 @@ def index(request, selected_country=None):
 
     # Find the active country
     user = request.user.tola_user
-    user_countries = user.available_countries  # all countries whose programs are available to the user
+    user_countries = user.available_countries.distinct()  # all countries whose programs are available to the user
 
     if selected_country:  # from URL
         active_country = Country.objects.filter(id=selected_country)[0]
