@@ -54,17 +54,17 @@ export class OrganizationStore {
         {value: 0, label: 'Inactive'}
     ]
 
-    constructor(programs, organizations, sectors, countries, country_filter) {
+    constructor(programs, organizations, sectors, countries, country_filter, program_filter) {
         this.available_programs = programs
         this.available_organizations = organizations
         this.available_sectors = sectors
         this.available_countries = countries
-        console.log(country_filter)
         this.organization_selections = Object.entries(organizations).map(([id, org]) => ({value: org.id, label: org.name}))
         this.program_selections = Object.entries(programs).map(([id, program]) => ({value: program.id, label: program.name}))
         this.sector_selections = Object.entries(sectors).map(([id, sector]) => ({value: sector.id, label: sector.name}))
         this.country_selections = Object.entries(countries).map(([id, country]) => ({value: country.id, label: country.name}))
         this.filters.countries = country_filter.map(id => this.available_countries[id]).map(country => ({label: country.name, value: country.id}))
+        this.filters.programs = program_filter.filter(id => programs[id]).map(id => ({label: programs[id].name, value: id}))
         this.fetchOrganizations()
     }
 
