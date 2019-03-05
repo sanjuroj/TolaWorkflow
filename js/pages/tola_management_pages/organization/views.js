@@ -115,21 +115,21 @@ export const IndexView = observer(
                                                              ProfileSection={observer(() =>
                                                                  <LoadingSpinner isLoading={store.fetching_editing_target || store.saving}>
                                                                      <EditOrganizationProfile
-                                                                         new={data.id == 'new'}
-                                                                             sectorSelections={store.sector_selections}
-                                                                             organizationData={store.editing_target_data}
-                                                                             errors={store.editing_errors}
-                                                                             key={store.editing_target_data.id}
-                                                                             onSave={(new_organization_data) => store.updateOrganizationProfile(data.id, new_organization_data)}
-                                                                             onSaveNew={(new_organization_data) => store.saveNewOrganization(new_organization_data)}
-                                                                             onSaveNewAndAddAnother={(new_organization_data) => store.saveNewOrganizationAndAddAnother(new_organization_data)} />
+                                                                        new={data.id == 'new'}
+                                                                        sectorSelections={store.sector_selections}
+                                                                        organizationData={store.editing_target_data}
+                                                                        errors={store.editing_errors}
+                                                                        key={store.editing_target_data.id}
+                                                                        onSave={(new_organization_data) => store.updateOrganizationProfile(data.id, new_organization_data)}
+                                                                        onSaveNew={(new_organization_data) => store.saveNewOrganization(new_organization_data)}
+                                                                        onSaveNewAndAddAnother={(new_organization_data) => store.saveNewOrganizationAndAddAnother(new_organization_data)} />
                                                                  </LoadingSpinner>
                                                              )}
                                                              HistorySection={() =>
                                                                  <EditOrganizationHistory
-                                                                     organizationData={store.editing_target_data}
-                                                                                      organizationHistoryData={store.editing_target_history}
-                                                                                      onSave={(new_organization_data) => store.updateOrganizationProfile(data.id, new_organization_data)}/>}
+                                                                    organizationData={store.editing_target_data}
+                                                                    organizationHistoryData={store.editing_target_history}
+                                                                    onSave={(new_organization_data) => store.updateOrganizationProfile(data.id, new_organization_data)}/>}
                                                      />
                                                  </Wrapper>
                                              }>

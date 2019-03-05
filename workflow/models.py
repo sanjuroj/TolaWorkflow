@@ -484,7 +484,6 @@ class ActiveProgramsManager(models.Manager):
         return super(ActiveProgramsManager, self).get_queryset().filter(
             funding_status__iexact=self.ACTIVE_FUNDING_STATUS)
 
-
 class Program(models.Model):
     gaitid = models.CharField(_("ID"), max_length=255, null=True, blank=True, unique=True)
     name = models.CharField(_("Program Name"), max_length=255, blank=True)
@@ -634,6 +633,18 @@ class Program(models.Model):
     def get_periods_for_frequency(self, frequency):
         period_generator = PeriodicTarget.generate_for_frequency(frequency)
         return period_generator(self.reporting_period_start, self.reporting_period_end)
+
+    @property
+    def admin_logged_fields(self):
+        return {
+            'gaitid': self.gaitid,
+            'name': self.name,
+            'funding_status': self.funding_status,
+            'cost_center': self.cost_center,
+            'description': self.description,
+            'sectors': ','.join([s.sector for s in self.sector.all()]),
+            'countries': ','.join([c.country for c in self.country.all()])
+        }
 
     @property
     def dates_for_logging(self):

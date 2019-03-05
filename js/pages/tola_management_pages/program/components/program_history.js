@@ -2,11 +2,16 @@ import React from 'react'
 import Select from 'react-select'
 import {AutoSizer, Table, Column, CellMeasurer, CellMeasurerCache} from 'react-virtualized'
 import { observer } from 'mobx-react';
+import Expander from 'components/expander'
 
 const status_options = [
     {value: 'Funded', label: 'Funded'},
     {value: 'Completed', label: 'Completed'}
 ]
+
+const ChangesetEntry = ({name, type, data}) => {
+    return <p><strong>{name}</strong>: {(data != undefined && data != null)?data.toString():'N/A'}</p>
+}
 
 @observer
 export class ProgramHistory extends React.Component {
@@ -65,53 +70,38 @@ export class ProgramHistory extends React.Component {
             </div>
             <div className="row">
                 <div className="col">
-                    <div className="virtualized-table__wrapper">
-                        { this.props.history &&
-                        <AutoSizer>
-                            {({height, width}) =>
-                                <Table
-                                height={height}
-                                headerHeight={50}
-                                width={width}
-                                rowGetter={({index}) => history[index]}
-                                rowHeight={50}
-                                rowCount={history.length}>
-
-                                    <Column
-                                    dataKey="date"
-                                    label="Date"
-                                    width={100}
-                                    flexGrow={1} />
-
-                                    <Column
-                                    dataKey="admin_name"
-                                    label="Admin"
-                                    width={100}
-                                    flexGrow={2} />
-
-                                    <Column
-                                    width={100}
-                                    flexGrow={2}
-                                    dataKey="change_type"
-                                    label="Change Type" />
-
-                                    <Column
-                                    width={100}
-                                    flexGrow={2}
-                                    dataKey="previous"
-                                    label="Previous Entry" />
-
-                                    <Column
-                                    width={100}
-                                    flexGrow={2}
-                                    dataKey="new"
-                                    label="New Entry" />
-
-                                </Table>
-                            }
-                        </AutoSizer>
-                        }
-                    </div>
+                    <table className="history-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Admin User</th>
+                                <th>Change Type</th>
+                                <th>Previous Entry</th>
+                                <th>New Entry</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.props.history.map(entry => <tr key={entry.id}>
+                                <td>{entry.date}</td>
+                                <td>{entry.admin_user}</td>
+                                <td>{entry.change_type}</td>
+                                <td className="expand-section">
+                                    <Expander>
+                                        {entry.diff_list.map(changeset => {
+                                                return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.prev} />
+                                        })}
+                                    </Expander>
+                                </td>
+                                <td className="expand-section">
+                                    <Expander>
+                                        {entry.diff_list.map(changeset => {
+                                                return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.new} />
+                                        })}
+                                    </Expander>
+                                </td>
+                            </tr>)}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
