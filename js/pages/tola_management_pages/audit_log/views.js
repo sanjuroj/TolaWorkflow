@@ -5,6 +5,7 @@ import classNames from 'classnames'
 import ManagementTable from 'components/management-table'
 import Pagination from 'components/pagination'
 import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
+import Expander from 'components/expander'
 
 import LoadingSpinner from 'components/loading-spinner'
 
@@ -121,47 +122,7 @@ class ChangesetEntry extends React.Component {
 
     render() {
         const {data, type, name} = this.props
-
         return this.renderType(type, data, name)
-    }
-}
-
-class Expander extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            expanded: false,
-            overflowing: false,
-        }
-        this.ref = React.createRef()
-    }
-
-    componentDidMount() {
-        console.log(this.ref.current.scrollHeight, this.ref.current.clientHeight)
-        if(this.ref.current.scrollHeight > this.ref.current.clientHeight) {
-            console.log('!!!!!!!!!!!!!!!')
-            this.setState({overflowing: true})
-        }
-    }
-
-    toggleExpanded(e) {
-        e.preventDefault()
-        this.setState({
-            expanded: !this.state.expanded
-        })
-    }
-
-    render() {
-        return <div>
-            <div ref={this.ref} className="expander" style={{height: !this.state.expanded && (this.props.height || 50)}}>
-                {this.props.children}
-            </div>
-            {this.state.overflowing &&
-            <div>
-                <a href="" onClick={(e) => this.toggleExpanded(e)}>{(this.state.expanded)?'Show Less':'Show More'}</a>
-            </div>
-            }
-        </div>
     }
 }
 

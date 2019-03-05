@@ -12,12 +12,30 @@
         }
     }
 
+    .edit-user-history table {
+        width: 100%;
+        td {
+            vertical-align: top;
+        }
+
+        .program-changeset-row {
+            border: 1px solid #aaa;
+            padding: 5px;
+        }
+    }
 }
 
 #organization-management-index-view {
     .list-controls {
         display: flex;
         justify-content: flex-end;
+    }
+
+    .edit-organization table {
+        width: 100%;
+        td {
+            vertical-align: top;
+        }
     }
 }
 

@@ -22,6 +22,7 @@ from rest_framework.serializers import (
     BooleanField,
     HiddenField,
     JSONField,
+    DateTimeField
 )
 
 from openpyxl import Workbook
@@ -129,13 +130,13 @@ class ProgramAdminSerializer(ModelSerializer):
         ProgramAdminAuditLog.created(
             program=program,
             created_by=self.context.get('request').user.tola_user,
-            entry=self.get_initial(),
+            entry=program.admin_logged_fields,
         )
         return program
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        preupdate_serialized = self.to_representation(instance, with_aggregates=False)
+        previous_state = instance.admin_logged_fields
 
         original_countries = instance.country.all()
         incoming_countries = validated_data.pop('country')
@@ -152,14 +153,12 @@ class ProgramAdminSerializer(ModelSerializer):
         instance.sector.remove(*removed_sectors)
         instance.sector.add(*added_sectors)
         updated_instance = super(ProgramAdminSerializer, self).update(instance, validated_data)
-        postupdate_serialized = self.to_representation(updated_instance, with_aggregates=False)
-        if not preupdate_serialized == postupdate_serialized:
-            ProgramAdminAuditLog.updated(
-                program=instance,
-                changed_by=self.context.get('request').user.tola_user,
-                old=preupdate_serialized,
-                new=postupdate_serialized,
-            )
+        ProgramAdminAuditLog.updated(
+            program=instance,
+            changed_by=self.context.get('request').user.tola_user,
+            old=previous_state,
+            new=instance.admin_logged_fields,
+        )
         return updated_instance
 
 class ProgramAuditLogIndicatorSerializer(ModelSerializer):
@@ -175,6 +174,7 @@ class ProgramAuditLogSerializer(ModelSerializer):
     indicator = ProgramAuditLogIndicatorSerializer()
     user = CharField(source='user.name', read_only=True)
     organization = CharField(source='organization.name', read_only=True)
+    date = DateTimeField(format="%Y-%m-%d %H:%M:%S")
 
     class Meta:
         model = ProgramAuditLog
@@ -186,6 +186,21 @@ class ProgramAuditLogSerializer(ModelSerializer):
             'indicator',
             'change_type',
             'rationale',
+            'diff_list'
+        )
+
+class ProgramAdminAuditLogSerializer(ModelSerializer):
+    id = IntegerField(allow_null=True, required=False)
+    admin_user = CharField(source="admin_user.name", max_length=255)
+    date = DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
+    class Meta:
+        model = ProgramAdminAuditLog
+        fields = (
+            'id',
+            'date',
+            'admin_user',
+            'change_type',
             'diff_list'
         )
 
@@ -251,13 +266,8 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
             .filter(program=program)
             .select_related('admin_user')
             .order_by('-date'))
-        return Response([{
-            "date": entry.date.isoformat(),
-            "admin_name": entry.admin_user.name,
-            "change_type": entry.change_type,
-            "previous": entry.previous_entry,
-            "new": entry.new_entry
-        } for entry in history])
+        serializer = ProgramAdminAuditLogSerializer(history, many=True)
+        return Response(serializer.data)
 
     @list_route(methods=["post"])
     def bulk_update_status(self, request):

@@ -297,43 +297,28 @@ def audit_log_host_page(request, program_id):
     return render(request, 'react_app_base.html', {"bundle_name": "audit_log", "js_context": json_context, "report_wide": True})
 
 
-class UserAdminReportSerializer(Serializer):
-    id = IntegerField(allow_null=True, required=False)
-    name = CharField(max_length=100)
-    organization_name = CharField(max_length=255, allow_null=True, allow_blank=True, required=False)
-    email = CharField(max_length=255)
-    phone_number = CharField(max_length=50, allow_null=True, allow_blank=True, required=False)
-    mode_of_address = CharField(max_length=255, allow_null=True, allow_blank=True, required=False)
-    mode_of_contact = CharField(max_length=3, allow_null=True, allow_blank=True, required=False)
-    title = CharField(max_length=255, allow_null=True, allow_blank=True, required=False)
-    organization_id = IntegerField()
-    user_programs = IntegerField(required=False)
-    is_active = BooleanField()
-    is_admin = BooleanField(required=False)
-    is_super = BooleanField(required=False)
-
-    class Meta:
-        fields = (
-            'id',
-            'name',
-            'organization_name',
-            'organization_id',
-            'user_programs',
-            'is_active',
-            'is_admin',
-            'is_super,'
-            'title',
-            'phone_number',
-            'mode_of_address',
-            'mode_of_contact',
-            'email'
-        )
-
 class AuthUserSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
     class Meta:
         model = User
         fields = ('id', 'is_staff', 'is_superuser', 'is_active')
+
+class UserManagementAuditLogSerializer(ModelSerializer):
+    id = IntegerField(allow_null=True, required=False)
+    admin_user = CharField(source="admin_user.name", max_length=255)
+    date = DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
+    class Meta:
+        model = UserManagementAuditLog
+        fields = (
+            'id',
+            'date',
+            'admin_user',
+            'modified_user',
+            'change_type',
+            'diff_list'
+        )
+
 
 class UserAdminSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
@@ -383,7 +368,7 @@ class UserAdminSerializer(ModelSerializer):
         UserManagementAuditLog.created(
             user=new_user,
             created_by=self.context["request"].user.tola_user,
-            entry=serializers.serialize('json', [new_user])
+            entry=new_user.logged_fields
         )
 
         send_new_user_registration_email(new_django_user, self.context["request"])
@@ -395,9 +380,7 @@ class UserAdminSerializer(ModelSerializer):
 
         auth_user_data = validated_data.pop('user')
 
-        previous_entry = serializers.serialize('json', [user])
-
-        user.country_roles.filter(role='basic_admin', country__in=user.countries.all())
+        previous_entry = user.logged_fields
 
         user.name = validated_data["name"]
         user.organization_id = validated_data["organization_id"]
@@ -415,7 +398,7 @@ class UserAdminSerializer(ModelSerializer):
             user=user,
             changed_by=self.context["request"].user.tola_user,
             old=previous_entry,
-            new=serializers.serialize('json', [user])
+            new=user.logged_fields
         )
         return user
 
@@ -431,6 +414,28 @@ class UserAdminSerializer(ModelSerializer):
             'mode_of_contact',
             'phone_number',
             'email'
+        )
+
+class UserAdminReportSerializer(ModelSerializer):
+    id = IntegerField(allow_null=True, required=False)
+    organization_name = CharField(source="organization.name", max_length=255, allow_null=True, allow_blank=True, required=False)
+    organization_id = IntegerField(source="organization.id")
+    user_programs = IntegerField(required=False)
+    is_active = BooleanField(source="user.is_active")
+    is_admin = BooleanField(source="user.is_staff", required=False)
+    is_super = BooleanField(source="user.is_superuser", required=False)
+
+    class Meta:
+        model = TolaUser
+        fields = (
+            'id',
+            'name',
+            'organization_name',
+            'organization_id',
+            'user_programs',
+            'is_active',
+            'is_admin',
+            'is_super'
         )
 
 
@@ -595,8 +600,10 @@ class UserAdminViewSet(viewsets.ModelViewSet, ActionBasedPermissionsMixin):
     @detail_route(methods=['get'])
     def history(self, request, pk=None):
         user = TolaUser.objects.get(pk=pk)
-        history_log = UserManagementAuditLog.objects.filter(modified_user=user).select_related('admin_user').order_by('-date')
-        return Response([{"date": entry.date, "admin_name": entry.admin_user.name, "change_type": entry.change_type, "previous": entry.previous_entry, "new": entry.new_entry} for entry in history_log])
+        queryset = UserManagementAuditLog.objects.filter(modified_user=user).select_related('admin_user').order_by('-date')
+
+        serializer = UserManagementAuditLogSerializer(queryset, many=True)
+        return Response(serializer.data)
 
     @detail_route(methods=['get', 'put'])
     def program_access(self, request, pk=None):
@@ -839,6 +846,21 @@ class OrganizationSerializer(ModelSerializer):
             'sectors'
         )
 
+class OrganizationAdminAuditLogSerializer(ModelSerializer):
+    id = IntegerField(allow_null=True, required=False)
+    admin_user = CharField(source="admin_user.name", max_length=255)
+    date = DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
+    class Meta:
+        model = OrganizationAdminAuditLog
+        fields = (
+            'id',
+            'date',
+            'admin_user',
+            'change_type',
+            'diff_list'
+        )
+
 class OrganizationAdminViewSet(viewsets.ModelViewSet):
     serializer_class = OrganizationSerializer
     queryset = Organization.objects.all()
@@ -1022,8 +1044,9 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def history(self, request, pk=None):
         org = Organization.objects.get(pk=pk)
-        history_log = OrganizationAdminAuditLog.objects.filter(organization=org).select_related('admin_user').order_by('-date')
-        return Response([{"date": entry.date, "admin_name": entry.admin_user.name, "change_type": entry.change_type, "previous": entry.previous_entry, "new": entry.new_entry} for entry in history_log])
+        queryset = OrganizationAdminAuditLog.objects.filter(organization=org).select_related('admin_user').order_by('-date')
+        serializer = OrganizationAdminAuditLogSerializer(queryset, many=True)
+        return Response(serializer.data)
 
     @detail_route(methods=["get"])
     def aggregate_data(self, request, pk=None):

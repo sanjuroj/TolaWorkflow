@@ -97,7 +97,7 @@ class UserManagementAuditLog(models.Model, DiffableLog):
             entry = cls(
                 admin_user=changed_by,
                 modified_user=user,
-                change_type="user_programs_updated",
+                change_type="user_profile_updated",
                 previous_entry=old,
                 new_entry=new,
             )
@@ -332,14 +332,15 @@ class ProgramAdminAuditLog(models.Model, DiffableLog):
     def updated(cls, program, changed_by, old, new):
         old = json.dumps(old)
         new = json.dumps(new)
-        entry = cls(
-            admin_user=changed_by,
-            program=program,
-            change_type="program_updated",
-            previous_entry=old,
-            new_entry=new,
-        )
-        entry.save()
+        if old != new:
+            entry = cls(
+                admin_user=changed_by,
+                program=program,
+                change_type="program_updated",
+                previous_entry=old,
+                new_entry=new,
+            )
+            entry.save()
 
 class OrganizationAdminAuditLog(models.Model, DiffableLog):
     date = models.DateTimeField(_('Modification Date'), auto_now_add=True)
