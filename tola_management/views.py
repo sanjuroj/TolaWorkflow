@@ -154,6 +154,7 @@ def get_user_page_context(request):
 
 def get_organization_page_context(request):
     country_filter = request.GET.getlist('countries[]')
+    program_filter = request.GET.getlist('programs[]')
     programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
     programs = {}
     for program in list(programs_qs):
@@ -177,7 +178,8 @@ def get_organization_page_context(request):
         "organizations": organizations,
         "sectors": sectors,
         "countries": countries,
-        "country_filter": country_filter
+        "country_filter": country_filter,
+        "program_filter": program_filter,
     }
 
 def get_program_page_context(request):
