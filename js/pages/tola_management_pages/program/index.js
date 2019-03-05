@@ -12,10 +12,11 @@ const {
     country_filter,
     organization_filter,
     users_filter,
+    allCountries,
     countries,
     organizations,
     users,
-    allPrograms,
+    programFilterPrograms,
     sectors,
 } = jsContext
 
@@ -32,8 +33,9 @@ const filters = {
 
 const initialData = {
     countries,
+    allCountries,
     organizations,
-    allPrograms,
+    programFilterPrograms,
     sectors,
     filters,
 }

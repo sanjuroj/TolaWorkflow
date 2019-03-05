@@ -60,7 +60,7 @@ class NestedSectorSerializer(Serializer):
     def to_representation(self, sector):
         return sector.id
 
-    def to_internal_value(id, data):
+    def to_internal_value(self, data):
         sector = Sector.objects.get(pk=data)
         return sector
 
@@ -70,7 +70,7 @@ class NestedCountrySerializer(Serializer):
     def to_representation(self, country):
         return country.id
 
-    def to_internal_value(id, data):
+    def to_internal_value(self, data):
         country = Country.objects.get(pk=data)
         return country
 
@@ -78,7 +78,7 @@ class ProgramAdminSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
     name = CharField(required=True, max_length=255)
     funding_status = CharField(required=True)
-    gaitid = CharField(required=True, validators=[
+    gaitid = CharField(required=False, allow_blank=True, allow_null=True, validators=[
         UniqueValidator(queryset=Program.objects.all())
     ])
     description = CharField(allow_blank=True)
@@ -116,13 +116,15 @@ class ProgramAdminSerializer(ModelSerializer):
 
         ret['program_users'] = len(program_users)
         ret['organizations'] = organization_count
-        ret['onlyOrganizationId'] = organizations.pop() if organization_count > 0 else None
+        ret['onlyOrganizationId'] = organizations.pop() if organization_count == 1 else None
         return ret
 
     @transaction.atomic
     def create(self, validated_data):
         country = validated_data.pop('country')
         sector = validated_data.pop('sector')
+        if not validated_data['gaitid']:
+            validated_data.pop('gaitid')
         program = super(ProgramAdminSerializer, self).create(validated_data)
         program.country.add(*country)
         program.sector.add(*sector)
@@ -194,14 +196,15 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
     pagination_class = Paginator
 
     def get_queryset(self):
-        viewing_user = self.request.user
+        auth_user = self.request.user
         params = self.request.query_params
 
         queryset = Program.objects.all()
 
-        if not viewing_user.is_superuser:
+        if not auth_user.is_superuser:
+            tola_user = auth_user.tola_user
             queryset = queryset.filter(
-                Q(user_access__id=viewing_user.id) | Q(country__users__id=viewing_user.id)
+                Q(user_access=tola_user) | Q(country__users=tola_user)
             )
 
         programStatus = params.get('programStatus')
@@ -234,14 +237,28 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
 
         return queryset.distinct()
 
-    def list(self, request):
-        queryset = self.get_queryset()
-        page = self.paginate_queryset(list(queryset))
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+    @list_route(methods=["get"])
+    def program_filter_options(self, request):
+        """Provides a non paginated list of countries for the frontend filter"""
+        auth_user = self.request.user
+        params = self.request.query_params
+        queryset = Program.objects
+
+        if not auth_user.is_superuser:
+            tola_user = auth_user.tola_user
+            queryset = queryset.filter(
+                Q(user_access=tola_user) | Q(country__users=tola_user)
+            )
+
+        countryFilter = params.getlist('countries[]')
+        if countryFilter:
+            queryset = queryset.filter(country__in=countryFilter)
+        programs = [{
+            'id': program.id,
+            'name': program.name,
+        } for program in queryset.distinct().all()]
+        return Response(programs)
+
 
     @detail_route(methods=['get'])
     def history(self, request, pk=None):
