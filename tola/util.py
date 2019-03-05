@@ -35,7 +35,7 @@ def getCountry(user):
         """
         # get users country from django cosign module
         if user.is_authenticated():
-            return Country.objects.filter(Q(id__in=user.tola_user.countries.all().values('id')) | Q(id__in=user.tola_user.program_access.all().values('country__id')))
+            return Country.objects.filter(Q(id__in=user.tola_user.countries.all().values('id')) | Q(id__in=user.tola_user.programaccess_set.all().values('country__id')))
             # return user.tola_user.countries.all()
         else:
             return Country.objects.none()

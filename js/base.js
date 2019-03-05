@@ -1,4 +1,5 @@
 // Run the app's SCSS through webpack
+import '@babel/polyfill'
 import '../scss/tola.scss';
 import 'react-virtualized/styles.css'
 

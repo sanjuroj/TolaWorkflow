@@ -272,18 +272,18 @@ export const IndexView = observer(
                                                         <EditUserPrograms
                                                             store={store}
                                                                 user={data}
-                                                                adminUserProgramRoles={store.current_user_program_roles}
-                                                                adminUserCountryRoles={store.current_user_country_roles}
+                                                                adminUserProgramRoles={store.access.program}
+                                                                adminUserCountryRoles={store.access.countries}
                                                                 onSave={(new_program_data) => store.saveUserPrograms(data.id, new_program_data)}/>
                                                     </LoadingSpinner>
                                                 )}
                                                 HistorySection={observer(() =>
                                                     <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.save_user_programs}>
                                                         <EditUserHistory
-                                                            userData={data}
+                                                            userData={store.editing_target_data.profile}
                                                                     history={store.editing_target_data.history}
                                                                     onResendRegistrationEmail={() => store.resendRegistrationEmail(data.id)}
-                                                                    onSave={(new_data) => store.saveUserProfile(data.id, new_data)}/>
+                                                                    onSave={(new_data) => store.updateUserProfile(data.id, new_data)}/>
                                                     </LoadingSpinner>
                                                 )}
                                             />

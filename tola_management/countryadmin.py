@@ -21,6 +21,10 @@ from indicators.models import (
     DisaggregationLabel,
 )
 
+from .permissions import (
+    HasCountryAdminAccess
+)
+
 
 class Paginator(SmallResultsSetPagination):
     def get_paginated_response(self , data):
@@ -76,6 +80,7 @@ class CountryAdminSerializer(serializers.ModelSerializer):
 class CountryAdminViewSet(viewsets.ModelViewSet):
     serializer_class = CountryAdminSerializer
     pagination_class = Paginator
+    permissions = [HasCountryAdminAccess]
 
     def get_queryset(self):
         viewing_user = self.request.user
@@ -123,6 +128,7 @@ class CountryObjectiveSerializer(serializers.ModelSerializer):
 
 class CountryObjectiveViewset(viewsets.ModelViewSet):
     serializer_class = CountryObjectiveSerializer
+    permissions = [HasCountryAdminAccess]
 
     def get_queryset(self):
         params = self.request.query_params
@@ -160,6 +166,7 @@ class CountryDisaggregationSerializer(serializers.ModelSerializer):
 
 class CountryDisaggregationViewSet(viewsets.ModelViewSet):
     serializer_class = CountryDisaggregationSerializer
+    permissions = [HasCountryAdminAccess]
 
     def get_queryset(self):
         params = self.request.query_params

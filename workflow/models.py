@@ -140,7 +140,6 @@ class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('name', 'create_date', 'edit_date')
     display = 'Organization'
 
-
 class Country(models.Model):
     country = models.CharField(_("Country Name"), max_length=255, blank=True)
     organization = models.ForeignKey(Organization, blank=True, null=True, verbose_name=_("organization"))
@@ -181,7 +180,12 @@ class TolaUser(models.Model):
     active_country = models.ForeignKey( Country, blank=True, null=True, on_delete=models.SET_NULL,\
         related_name='active_country', verbose_name=_("Active Country"))
     countries = models.ManyToManyField(
-        Country, verbose_name=_("Accessible Countries"), related_name='users', blank=True)
+        Country,
+        verbose_name=_("Accessible Countries"),
+        related_name='users',
+        blank=True,
+        through='CountryAccess'
+    )
     tables_api_token = models.CharField(blank=True, null=True, max_length=255)
     activity_api_token = models.CharField(blank=True, null=True, max_length=255)
     privacy_disclaimer_accepted = models.BooleanField(default=False)
@@ -247,6 +251,93 @@ class TolaUser(models.Model):
                 country__in=self.countries.all()
                 ).filter(pk=kwargs.get('program_id')).exists()
         return False
+
+    @property
+    def managed_countries(self):
+        if self.user.is_superuser:
+            return Country.objects.all()
+        else:
+            return Country.objects.none()
+
+    @property
+    def managed_programs(self):
+        return Program.objects.filter(country__in=self.managed_countries)
+
+    @property
+    def available_countries(self):
+        if self.user.is_superuser:
+            return Country.objects.all()
+        else:
+            return (self.countries.all() | Country.objects.filter(id__in=ProgramAccess.objects.filter(tolauser=self).values('country_id')))
+
+    @property
+    def available_programs(self):
+        if self.user.is_superuser or True:
+            return Program.objects.all()
+        else:
+            return (Program.objects.filter(country__in=self.countries) | Program.objects.filter(programaccess__tolauser=self))
+
+    @property
+    def logged_fields(self):
+        return {
+            "title": self.title,
+            "name": self.name,
+            "mode_of_address": self.mode_of_address,
+            "mode_of_contact": self.mode_of_contact,
+            "phone_number": self.phone_number,
+            "email": self.user.email,
+            "organization": self.organization.name,
+            "active": self.user.is_active
+        }
+
+    @property
+    def logged_program_fields(self):
+        country_access = {
+            access.country_id: {"country": access.country.country, "role": access.role}
+            for access in self.countryaccess_set.all()
+        }
+
+        program_access = {
+            (str(access.country_id)+'_'+str(access.program_id)): {"role": access.role, "program": access.program.name, "country": access.country.country}
+            for access in self.programaccess_set.all()
+        }
+
+        return {
+            "countries": country_access,
+            "programs": program_access
+        }
+
+    @property
+    def access_data(self):
+        country_access = {
+            country.country_id: {"role": country.role}
+            for country in self.countryaccess_set.all()
+        }
+
+        program_access = [
+            {"role": access.role, "program": access.program_id, "country": access.country_id}
+            for access in self.programaccess_set.all()
+        ]
+
+        return {
+            "countries": country_access,
+            "programs": program_access
+        }
+
+
+COUNTRY_ROLE_CHOICES = (
+    ('user', 'User'),
+    ('basic_admin', 'Basic Admin'),
+)
+
+class CountryAccess(models.Model):
+    tolauser = models.ForeignKey(TolaUser)
+    country = models.ForeignKey(Country)
+    role = models.CharField(max_length=100, choices=COUNTRY_ROLE_CHOICES, default='user')
+
+    class Meta:
+        db_table = 'workflow_tolauser_countries'
+        unique_together = ('tolauser', 'country')
 
 
 class TolaBookmarks(models.Model):
@@ -406,7 +497,13 @@ class Program(models.Model):
     edit_date = models.DateTimeField(null=True, blank=True)
     budget_check = models.BooleanField(_("Enable Approval Authority"), default=False)
     country = models.ManyToManyField(Country, verbose_name=_("Country"))
-    user_access = models.ManyToManyField(TolaUser, blank=True, related_name="program_access")
+    user_access = models.ManyToManyField(
+        TolaUser,
+        blank=True,
+        related_name="programs",
+        through="ProgramAccess",
+        through_fields=('program', 'tolauser')
+    )
     public_dashboard = models.BooleanField(_("Enable Public Dashboard"), default=False)
     start_date = models.DateField(_("Program Start Date"), null=True, blank=True)
     end_date = models.DateField(_("Program End Date"), null=True, blank=True)
@@ -544,6 +641,23 @@ class Program(models.Model):
             "start_date": self.reporting_period_start,
             "end_date": self.reporting_period_end
         }
+
+
+PROGRAM_ROLE_CHOICES = (
+    ('low', 'Low'),
+    ('medium', 'Medium'),
+    ('high', 'High')
+)
+
+class ProgramAccess(models.Model):
+    program = models.ForeignKey(Program)
+    tolauser = models.ForeignKey(TolaUser)
+    country = models.ForeignKey(Country)
+    role = models.CharField(max_length=100, choices=PROGRAM_ROLE_CHOICES, default='low')
+
+    class Meta:
+        db_table = 'workflow_program_user_access'
+        unique_together = ('program', 'tolauser', 'country')
 
 
 class ApprovalAuthority(models.Model):
@@ -1703,30 +1817,6 @@ class LoggedUser(models.Model):
     # user_logged_in.connect(login_user)
     # user_logged_out.connect(logout_user)
 
-COUNTRY_ROLE_CHOICES = (
-    ('user', 'User'),
-    ('basic_admin', 'Basic Admin'),
-)
-
-class TolaUserCountryRoles(models.Model):
-    country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name="user_roles")
-    user = models.ForeignKey(TolaUser, on_delete=models.CASCADE, related_name="country_roles")
-    role = models.CharField(max_length=100, choices=COUNTRY_ROLE_CHOICES)
-    class Meta:
-        unique_together = (('country', 'user'),)
-
-PROGRAM_ROLE_CHOICES = (
-    ('low', 'Low'),
-    ('medium', 'Medium'),
-    ('high', 'High')
-)
-
-class TolaUserProgramRoles(models.Model):
-    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name="user_roles")
-    user = models.ForeignKey(TolaUser, on_delete=models.CASCADE, related_name="program_roles")
-    role = models.CharField(max_length=100, choices=PROGRAM_ROLE_CHOICES)
-    class Meta:
-        unique_together = (('program', 'user'),)
 
 def get_user_country(request):
 

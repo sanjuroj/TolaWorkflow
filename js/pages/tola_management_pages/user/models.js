@@ -16,7 +16,7 @@ const default_user = {
 
 const default_editing_target_data = {
     profile: {...default_user},
-    programs: {country: {}, programs:{}},
+    access: {country: {}, programs:[]},
     history: []
 }
 
@@ -34,9 +34,8 @@ export class UserStore {
     @observable saving_user_profile = false
     @observable saving_user_programs = false
 
-    @observable current_user_program_roles = {}
-    @observable current_user_country_roles = {}
-    @observable current_user_is_super_admin = false
+    @observable access = {countries: {}, programs: {}}
+    @observable is_superuser = false
 
     @observable fetching_editing_target = false
     @observable editing_target = null
@@ -46,8 +45,8 @@ export class UserStore {
     @observable new_user = null
 
     //filter options
-    @observable countries = []
-    @observable organizations = []
+    @observable countries = {}
+    @observable organizations = {}
     @observable programs = {}
     @observable available_users = []
 
@@ -55,6 +54,9 @@ export class UserStore {
     @observable organization_selections = []
     @observable program_selections = []
     @observable user_selections = []
+
+    country_role_choices = []
+    program_role_choices = []
 
     user_status_options = [
         {value: 1, label: 'Active'},
@@ -76,17 +78,18 @@ export class UserStore {
         users: []
     }
 
-    constructor(
+    constructor({
         countries,
         organizations,
         programs,
         users,
-        current_user_program_roles,
-        current_user_country_roles,
-        is_super_admin,
+        access,
+        is_superuser,
         programs_filter,
-        organizations_filter
-    ) {
+        organizations_filter,
+        program_role_choices,
+        country_role_choices,
+    }) {
         this.countries = countries
         this.organizations = organizations
         this.programs = programs
@@ -97,11 +100,13 @@ export class UserStore {
         this.program_selections = Object.entries(programs).map(([id, program]) => ({value: program.id, label: program.name}))
         this.user_selections = this.available_users.map(user => ({value: user.id, label: user.name}))
 
-        this.current_user_program_roles = current_user_program_roles
-        this.current_user_country_roles = current_user_country_roles
-        this.current_user_is_super_admin = is_super_admin
+        this.access = access
+        this.is_superuser = is_superuser
         this.filters.programs = programs_filter.map(id => this.programs[id]).map(program => ({label: program.name, value: program.id}))
         this.filters.organizations = organizations_filter.map(id => this.organizations[id]).map(org => ({label: org.name, value: org.id}))
+
+        this.country_role_choices = country_role_choices.map(([value, label]) => ({label, value}))
+        this.program_role_choices = program_role_choices.map(([value, label]) => ({label, value}))
         this.fetchUsers()
     }
 
@@ -238,12 +243,12 @@ export class UserStore {
         } else {
             this.editing_target = user_id
             this.fetching_editing_target = true
-            Promise.all([api.fetchUser(user_id), api.fetchUserProgramAccess(user_id), api.fetchUserHistory(user_id)]).then(([user, program_data, history_data]) => {
+            Promise.all([api.fetchUser(user_id), api.fetchUserProgramAccess(user_id), api.fetchUserHistory(user_id)]).then(([user, access_data, history_data]) => {
                 runInAction(() => {
                     this.fetching_editing_target = false
                     this.editing_target_data = {
                         profile: user,
-                        programs: program_data,
+                        access: access_data,
                         history: history_data
                     }
                 })
@@ -281,13 +286,21 @@ export class UserStore {
     updateUserProfile(user_id, new_user_data) {
         this.saving_user_profile = true
         this.editing_errors = {}
-        api.saveUserProfile(user_id, new_user_data).then(result => {
+        api.saveUserProfile(user_id, new_user_data).then(result => api.fetchUserAggregates(result.id).then(aggregates => {
             this.onSaveSuccessHandler()
             runInAction(() => {
                 this.saving_user_profile = false
-                this.users[user_id] = result
+                this.users[result.id] = {
+                    id: result.id,
+                    name: result.name,
+                    organization_name: this.organizations[result.organization_id].name,
+                    user_programs: aggregates.program_count,
+                    is_admin: result.user.is_staff,
+                    is_active: result.user.is_active
+                }
+                this.editing_target_data.profile = result
             })
-        }).catch(errors => {
+        })).catch(errors => {
             this.onSaveErrorHandler()
             runInAction(() => {
                 this.saving_user_profile = false
@@ -365,12 +378,13 @@ export class UserStore {
     @action
     saveUserPrograms(user_id, new_user_programs_data) {
         this.save_user_programs = true
-        api.saveUserPrograms(user_id, new_user_programs_data).then(result => {
+        api.saveUserPrograms(user_id, new_user_programs_data).then(result => api.fetchUserAggregates(user_id).then(aggregates => {
             runInAction(() => {
                 this.save_user_programs = false
+                this.users[user_id].user_programs = aggregates.program_count
             })
             this.onSaveSuccessHandler()
-        }).catch(response => {
+        })).catch(response => {
             runInAction(() => {
                 this.save_user_programs = false
             })

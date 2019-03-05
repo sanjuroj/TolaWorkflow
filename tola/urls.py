@@ -13,7 +13,7 @@ from feed.views import (
 )
 from tola_management.views import (
     UserAdminViewSet,
-    OrganizationAdminViewSet
+    OrganizationAdminViewSet,
 )
 from tola_management.programadmin import (
     ProgramAdminViewSet,
@@ -118,10 +118,10 @@ urlpatterns = [
 
                 # Site home page
                 url(r'^$', views.index, name='index'),
-                
+
                 url(r'^program/(?P<program_id>\d+)/$',
                     ProgramPage.as_view(), name='program_page'),
-                
+
                 url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<indicator_type_id>\d+)/$',
                     old_program_page, name='old_program_page'),
 

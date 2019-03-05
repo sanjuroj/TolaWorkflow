@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from collections import OrderedDict
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
+from django.db.models import OuterRef, Subquery, Q, Count
+import django.db.models
 from django.template import loader
 from django.shortcuts import render
 from django.utils.http import urlsafe_base64_encode
@@ -15,16 +17,18 @@ from django.urls import reverse
 from django.conf import settings
 import json
 
+from rest_framework.views import APIView
 from rest_framework.validators import UniqueValidator
 from rest_framework.decorators import list_route, detail_route
-from rest_framework.generics import ListAPIView
 from rest_framework.serializers import (
     Serializer,
     ModelSerializer,
+    ListSerializer,
     CharField,
     IntegerField,
     PrimaryKeyRelatedField,
     BooleanField,
+    DateTimeField,
     ValidationError
 )
 from rest_framework.response import Response
@@ -33,13 +37,7 @@ from rest_framework import viewsets, mixins, pagination, status
 from django.contrib.auth.models import User,Group
 
 from feed.views import (
-    TolaUserViewSet,
-    OrganizationViewSet,
     SmallResultsSetPagination
-)
-
-from feed.serializers import (
-    OrganizationSerializer
 )
 
 from workflow.models import (
@@ -48,9 +46,9 @@ from workflow.models import (
     Program,
     Sector,
     Country,
-    TolaUserCountryRoles,
-    TolaUserProgramRoles,
     Sector,
+    ProgramAccess,
+    CountryAccess,
     COUNTRY_ROLE_CHOICES,
     PROGRAM_ROLE_CHOICES
 )
@@ -109,31 +107,15 @@ def get_programs_for_user_queryset(user_id):
     """, [user_id, user_id, user_id])
 
 def get_user_page_context(request):
-    countries = {}
-    for country in Country.objects.all():
-        countries[country.id] = {"id": country.id, "name": country.country, "programs": []}
+    countries = {
+        country.id: {"id": country.id, "name": country.country, "programs": list(country.program_set.all().values_list('id', flat=True))}
+        for country in request.user.tola_user.available_countries
+    }
 
-    if request.user.is_superuser:
-        programs_qs = Program.objects.raw("""
-            SELECT wp.id, wp.name, wc.id AS country_id, wc.country AS country_name
-            FROM workflow_program wp
-            INNER JOIN workflow_program_country wpc ON wp.id = wpc.program_id
-            INNER JOIN workflow_country wc ON wpc.country_id = wc.id
-        """)
-    else:
-        programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
-    programs = {}
-    for program in list(programs_qs):
-        programs[program.id] = {"id": program.id, "name": program.name, "country_id": program.country_id}
-        countries[program.country_id]["programs"].append(program.id)
-
-    program_roles = {}
-    for role in list(request.user.tola_user.program_roles.all()):
-        program_roles[role.program_id] = {"id": role.program_id, "role": role.role}
-
-    country_roles = {}
-    for role in list(request.user.tola_user.country_roles.all()):
-        country_roles[role.country_id] = {"id": role.country_id, "role": role.role}
+    programs = {
+        program.id: {"id": program.id, "name": program.name}
+        for program in request.user.tola_user.available_programs
+    }
 
     organizations = {
         org.id: {"name": org.name, "id": org.id} for org in Organization.objects.all()
@@ -144,11 +126,12 @@ def get_user_page_context(request):
         "organizations": organizations,
         "programs": programs,
         "users": list(TolaUser.objects.all().values()),
-        "program_roles": program_roles,
-        "country_roles": country_roles,
+        "access": request.user.tola_user.access_data,
         "is_superuser": request.user.is_superuser,
         "programs_filter": request.GET.getlist('programs[]'),
-        "organizations_filter": request.GET.getlist('organizations[]')
+        "organizations_filter": request.GET.getlist('organizations[]'),
+        "program_role_choices": PROGRAM_ROLE_CHOICES,
+        "country_role_choices": COUNTRY_ROLE_CHOICES
     }
 
 def get_organization_page_context(request):
@@ -443,6 +426,47 @@ class UserAdminViewSet(viewsets.ModelViewSet, ActionBasedPermissionsMixin):
     def get_list_queryset(self):
         req = self.request
 
+        #theres a bug with django rest framework pagination that prevents this from working
+        # queryset = TolaUser.objects.all()
+
+        # countries = req.GET.getlist('countries[]')
+        # if countries:
+        #     queryset = queryset.filter(Q(countries_id__in=countries) | Q(programaccess_set__country_id__in=countries))
+
+        # base_countries = req.GET.getlist('base_countries[]')
+        # if base_countries:
+        #     queryset = queryset.filter(base_country_id_in=base_countries)
+
+        # programs = req.GET.getlist('programs[]')
+        # if programs:
+        #     queryset = queryset.filter(Q(programaccess_set__program_id__in=programs) | Q(countries__program_set__id__in=programs))
+
+        # organizations = req.GET.get('organizations[]')
+        # if organizations:
+        #     queryset = queryset.filter(organization_id__in=organizations)
+
+        # user_status = req.GET.get('user_status')
+        # if user_status:
+        #     queryset = queryset.filter(user__is_active=user_status)
+
+        # is_admin = req.GET.get('admin_role')
+        # if is_admin:
+        #     queryset = queryset.filter(user__is_staff=is_admin)
+
+        # users = req.GET.getlist('users[]')
+        # if users:
+        #     queryset = queryset.filter(id__in=users)
+
+        # program_counts = (
+        #     Program.objects.filter(programaccess__tolauser_id=OuterRef('id'))
+        #     | Program.objects.filter(country__in=OuterRef('countries'))
+        #     | Program.objects.filter(country=OuterRef('country'))
+        # ).distinct().order_by().values('id').annotate(c=Count('*')).values('c')
+
+        # queryset = queryset.annotate(user_programs=Subquery(program_counts))
+
+        # return queryset
+
         params = []
 
         country_join = ''
@@ -520,14 +544,9 @@ class UserAdminViewSet(viewsets.ModelViewSet, ActionBasedPermissionsMixin):
         return TolaUser.objects.raw("""
             SELECT
                 wtu.id,
-                wtu.mode_of_contact,
-                wtu.mode_of_address,
-                wtu.phone_number,
-                wtu.title,
                 au.is_active AS is_active,
                 au.is_staff AS is_admin,
                 au.is_superuser AS is_super,
-                au.email AS email,
                 wtu.name,
                 wo.name AS organization_name,
                 wo.id AS organization_id,
@@ -605,88 +624,55 @@ class UserAdminViewSet(viewsets.ModelViewSet, ActionBasedPermissionsMixin):
 
         if request.method == 'PUT':
 
-            audit_entry = UserManagementAuditLog()
-            audit_entry.change_type = 'user_programs_modified'
-            audit_entry.previous_entry = serializers.serialize('json', [user])
-            audit_entry.admin_user = admin_user
-            audit_entry.modified_user = user
+            previous_entry = user.logged_program_fields
 
-            audit_entry.previous_entry = json.dumps({"countries": [country.id for country in user.countries.all()], "programs": [program.id for program in user.program_access.all()]}, cls=DjangoJSONEncoder)
-
-            country_data = request.data["country"]
-            added_countries = []
-            removed_countries = []
-            for country_id, permissions in country_data.iteritems():
-                if "has_access" in permissions and permissions["has_access"]:
-                    added_countries.append(country_id)
-                else:
-                    removed_countries.append(country_id)
-
-                if "permission_level" in permissions:
-                    TolaUserCountryRoles.objects.update_or_create(
-                        user_id=user.id,
+            #we have the awkward problem of how to tell when to delete
+            #an existing country access. The answer is we can't know so we
+            #dont
+            country_data = request.data["countries"]
+            for country_id, access in country_data.iteritems():
+                if access["role"] == 'basic_admin':
+                    CountryAccess.objects.update_or_create(
+                        tolauser=user,
                         country_id=country_id,
                         defaults={
-                            "role": permissions["permission_level"],
+                            "role": access["role"],
                         }
                     )
-
-            user.countries.add(*list(Country.objects.filter(pk__in=added_countries)))
-            user.countries.remove(*list(Country.objects.filter(pk__in=removed_countries)))
-
-            program_data = request.data["program"]
-            added_programs = []
-            removed_programs = []
-            for program_id, permissions in program_data.iteritems():
-                if "has_access" in permissions and permissions["has_access"]:
-                    added_programs.append(program_id)
                 else:
-                    removed_programs.append(program_id)
+                    try:
+                        old_access = CountryAccess.objects.get(
+                            tolauser=user,
+                            country_id=country_id,
+                        )
+                        old_access.role = access["role"]
+                        old_access.save()
+                    except ObjectDoesNotExist:
+                        pass
 
-                if "permission_level" in permissions:
-                    TolaUserProgramRoles.objects.update_or_create(
-                        user_id=user.id,
-                        program_id=program_id,
-                        defaults={
-                            "role": permissions["permission_level"],
-                        }
-                    )
+            program_data = request.data["programs"]
+            user.programaccess_set.all().delete()
+            for access in program_data:
+                ProgramAccess.objects.update_or_create(
+                    tolauser=user,
+                    program_id=access["program"],
+                    country_id=access["country"],
+                    defaults={
+                        "role": access["role"],
+                    }
+                )
 
-            user.program_access.add(*list(Program.objects.filter(pk__in=added_programs)))
-            user.program_access.remove(*list(Program.objects.filter(pk__in=removed_programs)))
-
-            audit_entry.new_entry = json.dumps({"countries": [country.id for country in user.countries.all()], "programs": [program.id for program in user.program_access.all()]}, cls=DjangoJSONEncoder)
-            audit_entry.save()
+            UserManagementAuditLog.programs_updated(
+                user=user,
+                changed_by=request.user.tola_user,
+                old=previous_entry,
+                new=user.logged_program_fields
+            )
 
             return Response({}, status=status.HTTP_200_OK)
 
         elif request.method == 'GET':
-
-            country_access = {}
-            for country in user.countries.all():
-                country_access[country.id] = {
-                    "has_access": True
-                }
-
-            for country_role in user.country_roles.all():
-                if country_role.country.id in country_access:
-                    country_access[country_role.country.id]["permission_level"] = country_role.role
-
-            program_access = {}
-            for program in user.program_access.all():
-                program_access[program.id] = {
-                    "has_access": True
-                }
-
-            for program_role in user.program_roles.all():
-                if program_role.program.id not in program_access:
-                    program_access[program_role.program.id] = {}
-                program_access[program_role.program.id]["permission_level"] = program_role.role
-
-            return Response({
-                "country": country_access,
-                "program": program_access
-            })
+            return Response(user.access_data)
 
     @list_route(methods=["post"])
     def bulk_update_status(self, request):
