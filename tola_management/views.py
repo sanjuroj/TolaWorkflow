@@ -115,7 +115,7 @@ def get_organization_page_context(request):
     country_filter = request.GET.getlist('countries[]')
     program_filter = request.GET.getlist('programs[]')
     programs = {
-        program.id: {"id": program.id, "name": program.name, "country_id": program.country_id}
+        program.id: {"id": program.id, "name": program.name}
         for program in request.user.tola_user.available_programs
     }
 
