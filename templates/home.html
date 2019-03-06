@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n mytags %}
+{% load i18n mytags has_program_role %}
 {% block title %}{{ active_country|default:_("No active country") }} | {% endblock %}
 {% block page_title %}{{ active_country|default:_("No active country") }}{% endblock %}
 
@@ -53,6 +53,7 @@
 <section class="home__program-list">
     <h2>{% blocktrans %}{{ no_programs }} active programs{% endblocktrans %}</h2>
     {% for program in programs %}
+        {% has_program_role user program "high" as has_high_role %}
         <article class="program-list__program card">
             <div class="card-header">
                 <div class="program-header__info">
@@ -76,34 +77,44 @@
                         </ul>
                     {% endif %}
                 </div>
-                {% if program.reporting_period_start and program.reporting_period_end %}
-                    {% program_complete %}
+                {% if has_high_role %}
+                    {% if program.reporting_period_start and program.reporting_period_end %}
+                        {% program_complete %}
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="card-body">
                 {% if not program.reporting_period_start or not program.reporting_period_end %}
-                    <p>
-                        {% blocktrans with id=program.id start_date=program.start_date end_date=program.end_date reporting_period_start=program.reporting_period_start reporting_period_end=program.reporting_period_end %}
-                        Before adding indicators and performance results, we need to know your program's
-                        <a
-                            id="id_link_reporting_period_{{ id }}"
-                            class=""
-                            href="#"
-                            data-toggle="modal"
-                            data-program="{{ id }}"
-                            data-progstart="{{ start_date }}"
-                            data-progend="{{ end_date }}"
-                            data-rptstart="{{ reporting_period_start }}"
-                            data-rptend="{{ reporting_period_end }}"
-                            data-target="#id_reporting_period_modal"
-                        >
-                            reporting start and end dates.
-                        </a>
-                        {% endblocktrans %}
-                    </p>
+                    {% if has_high_role %}
+                        <p>
+                            {% blocktrans with id=program.id start_date=program.start_date end_date=program.end_date reporting_period_start=program.reporting_period_start reporting_period_end=program.reporting_period_end %}
+                            Before adding indicators and performance results, we need to know your program's
+                            <a
+                                id="id_link_reporting_period_{{ id }}"
+                                class=""
+                                href="#"
+                                data-toggle="modal"
+                                data-program="{{ id }}"
+                                data-progstart="{{ start_date }}"
+                                data-progend="{{ end_date }}"
+                                data-rptstart="{{ reporting_period_start }}"
+                                data-rptend="{{ reporting_period_end }}"
+                                data-indicator_count="{{program.indicator_count}}"
+                            >
+                                reporting start and end dates.
+                            </a>
+                            {% endblocktrans %}
+                        </p>
+                    {% else %}
+                        <p>{% trans "Your program administrator must initialize this program before you will be able to view or edit it" %}</p>
+                    {% endif %}
                 {% elif program.metrics.indicator_count == 0 %}
-                    <h4>{% trans "No indicators have been entered for this program." %}</h4>
-                    <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
+                    {% if has_high_role %}
+                        <h4>{% trans "No indicators have been entered for this program." %}</h4>
+                        <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
+                    {% else %}
+                        <p>{% trans "Your program administrator must initialize this program before you will be able to view or edit it" %}</p>
+                    {% endif %}
                 {% else %}
                     {% if program.metrics.targets_defined %}
                         <h4>

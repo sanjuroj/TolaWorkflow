@@ -117,6 +117,7 @@
                     name="is_cumulative"
                     value="3"
                     required
+                    {% if readonly %} disabled="disabled" {% endif %}
                     {% if indicator.is_cumulative is None or indicator.is_cumulative is False %} checked {% endif %}
                     class="form-control form-check-input"
                     id="id_is_cumulative_1"
@@ -135,6 +136,7 @@
                     name="is_cumulative"
                     value="2"
                     required
+                    {% if readonly %} disabled="disabled" {% endif %}
                     {% if indicator.is_cumulative is True %} checked {% endif %}
                     class="form-control form-check-input"
                     id="id_is_cumulative_2"

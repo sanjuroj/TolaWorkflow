@@ -96,7 +96,7 @@ const IndicatorChangeset = ({data, name}) => {
         </div>
     } else {
         return <p>
-            {indicator_changeset_name_map[name]}: {mapped_data.toString()}
+            {indicator_changeset_name_map[name]}: {(mapped_data !== null && mapped_data !== undefined)?mapped_data.toString():'N/A'}
         </p>
     }
 }

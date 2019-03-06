@@ -9,13 +9,13 @@ import EditProgramProfile from './components/edit_program_profile'
 import ProgramHistory from './components/program_history'
 import LoadingSpinner from 'components/loading-spinner'
 
-const UserFilter = observer(({store, selections}) => {
+const UserFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
         <label htmlFor="users_filter">Users</label>
         <CheckboxedMultiSelect
             value={store.filters.users}
-            options={selections}
-            onChange={(e) => store.changeUserFilter(e)}
+            options={filterOptions}
+            onChange={(e) => store.changeFilter('users', e)}
             placeholder="None Selected"
             id="users_filter" />
     </div>

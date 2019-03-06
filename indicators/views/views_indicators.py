@@ -1371,6 +1371,9 @@ class ProgramPage(ListView):
             'indicators': IndicatorSerializer(indicators, many=True).data,
             'indicator_on_scope_margin': Indicator.ONSCOPE_MARGIN,
         }
+
+        readonly = not request.has_write_access
+
         #program.set_metrics(indicators)
         c_data = {
             'program': program,
@@ -1378,6 +1381,7 @@ class ProgramPage(ListView):
             'percent_complete': program.percent_complete,
             'pinned_reports': pinned_reports,
             'js_context': js_context,
+            "readonly": readonly
         }
         return render(request, self.template_name, c_data)
 

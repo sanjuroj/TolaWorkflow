@@ -38,6 +38,7 @@ const initialData = {
     programFilterPrograms,
     sectors,
     filters,
+    users
 }
 const store = new ProgramStore(
     api,
