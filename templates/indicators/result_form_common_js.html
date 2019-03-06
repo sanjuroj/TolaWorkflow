@@ -4,6 +4,9 @@
 {% include 'validation_js.html' %}
 
 <script>
+
+    var resultDateModified = false;
+
     // gdrive picker
     function filePickerCallback(fileName, url) {
         document.getElementById('id_evidence_url').value = url;
@@ -11,6 +14,9 @@
         validateEvidence()
         setViewButtonDisabledState();
     }
+
+    const DELETE_RESULT_MESSAGE = "{% trans 'This result value and the information associated with it will be permanently removed. For future reference, please provide a rationale for deleting this result record.' %}"
+    const MODIFY_RESULT_DATE_MESSAGE = "{% trans 'This action may affect the target period achievements and should only be done to correct a previous data entry error. For future reference, please provide a rationale for why you are modifying the result information.' %}"
 
     $("#indicator_results_div").on('click', '#id_browse_google_drive', function(e) {
         e.preventDefault();
@@ -31,6 +37,10 @@
         $('#id_view_evidence_button').prop('disabled', ! evidenceURLHasValue);
     }
 
+    $("#indicator_results_div").on('shown.bs.modal', function() {
+        resultDateModified = false;
+    });
+
     $("#indicator_results_div").on('change keyup paste', '#id_evidence_url', function () {
         setViewButtonDisabledState();
     });
@@ -41,7 +51,6 @@
 
     // Intercept ResultsUpdate form submission and then use ajax to submit it.
     $("#indicator_results_div").on("submit", "#result_update_form", function(e){
-        $('#submit-id-submit').attr('disabled', 'disabled');
         e.preventDefault();
         {#let isFormValid = true;#}
         $("#modalmessages").empty();
@@ -62,10 +71,13 @@
         $(this.date_collected).val(date_collected_db_format);
         */
 
+        const message_text = (resultDateModified)?MODIFY_RESULT_DATE_MESSAGE:''
 
         window.create_nondestructive_changeset_notice({
+            message_text: message_text,
             context: document.getElementById('result_update_form'),
             on_submit: (rationale) => {
+                $('#submit-id-submit').attr('disabled', 'disabled');
                 let form_url = $(this).attr('action');
                 let form_data = $(this).serialize();
                 form_data += '&rationale='+rationale;
@@ -96,6 +108,7 @@
     $("#indicator_results_div").on("change", "#id_date_collected", function(e){
         validatePeriodicTarget(onlyPeriodic = true);
         validateDateCollected();
+        resultDateModified = true;
     });
 
     $("#indicator_results_div").on("change", "#id_periodic_target", function(e){
@@ -114,6 +127,7 @@
 
         var url = "/indicators/result_delete/" + resultId + "/"
         window.create_destructive_changeset_notice({
+            message_text: DELETE_RESULT_MESSAGE,
             context: document.getElementById('result_update_form'),
             on_submit: (rationale) => {
                 // Mark the record being changed so results table is reloaded on modal close

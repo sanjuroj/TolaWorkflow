@@ -383,6 +383,7 @@
 
     });
 
+    const REPORTING_PERIOD_CHANGE_TEXT = "{% trans 'This action may result in changes to your periodic targets. If you have already set up periodic targets for your indicators, you may need to enter additional target values to cover the entire reporting period. For future reference, please provide a rationale for modifying the reporting period.' %}"
 
     $("#reportingperiod_update_form").on('submit', function (e) {
         e.preventDefault();
@@ -446,7 +447,8 @@
             let program_data = $('#id_link_reporting_period_'+program_id).data()
 
             if(program_data['rptstart'] && program_data["rptstart"] != "None") {
-                window.create_destructive_changeset_notice({
+                window.create_nondestructive_changeset_notice({
+                    message_text: REPORTING_PERIOD_CHANGE_TEXT,
                     context: document.getElementById('reportingperiod_update_form'),
                     on_submit: (rationale) => save(rationale)
                 })
