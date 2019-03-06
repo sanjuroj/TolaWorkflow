@@ -84,14 +84,18 @@ class CountryAdminViewSet(viewsets.ModelViewSet):
     permissions = [HasCountryAdminAccess]
 
     def get_queryset(self):
-        viewing_user = self.request.user
+        auth_user = self.request.user
+        tola_user = auth_user.tola_user
         params = self.request.query_params
 
         queryset = Country.objects.all()
 
-        if not viewing_user.is_superuser:
-            #TODO limit queryset for viewing user
-            pass
+        if not auth_user.is_superuser:
+            queryset = queryset.filter(
+                Q(countryaccess__tolauser=tola_user) |
+                Q(programaccess__tolauser=tola_user) |
+                Q(tolauser=tola_user)
+            )
 
         countryFilter = params.getlist('countries[]')
         if countryFilter:
