@@ -297,25 +297,19 @@ window.newPopup = newPopup;
 
 // EXAMPLE: <a onclick="newPopup('https://docs.google.com/document/d/1tDwo3m1ychefNiAMr-8hCZnhEugQlt36AOyUYHlPbVo/edit?usp=sharing','Form Help/Guidance'); return false;" href="#" class="btn btn-sm btn-info">Form Help/Guidance</a>
 
-const DEFAULT_DESTRUCTIVE_MESSAGE = "<span class='text-danger'>This action cannot be undone.</span> Your changes will be recorded in an audit log. Please record your rationale for future reference."
-const DEFAULT_NONDESTRUCTIVE_MESSAGE = 'Your changes will be recorded in an audit log. Please record your rationale for future reference.'
+const DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in an audit log. Please record your rationale for future reference.")
+const DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in an audit log. Please record your rationale for future reference.')
 
 const create_changeset_notice = ({
     message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE,
     on_submit = () => {},
     on_cancel = () => {},
-    is_indicator = false,
     confirm_text = 'Ok',
     cancel_text = 'Cancel',
     type = 'notice',
     inner = '',
     context = null
 } = {}) => {
-    var has_results = parseInt($('#numDataPoints').text()) > 0 || !is_indicator;
-    if(!has_results) {
-        on_submit('')
-        return
-    }
     var notice = PNotify.alert({
         text: $(`<div><form action="" method="post" class="form container">${inner}</form></div>`).html(),
         textTrusted: true,
@@ -349,7 +343,7 @@ const create_changeset_notice = ({
                             var textarea = $(notice.refs.elem).find('textarea[name="rationale"]')
                             var rationale = textarea.val();
                             textarea.parent().find('.invalid-feedback').remove();
-                            if(has_results && !rationale) {
+                            if(!rationale) {
                                 textarea.addClass('is-invalid');
                                 textarea.parent().append(`
                                     <div class="invalid-feedback">
@@ -397,16 +391,20 @@ window.create_destructive_changeset_notice = ({
     is_indicator = false,
     confirm_text = 'Ok',
     cancel_text = 'Cancel',
-    context = null
+    context = null,
+    no_preamble = false
 } = {}) => {
+    if(!message_text) {message_text = DEFAULT_DESTRUCTIVE_MESSAGE}
+    const preamble = (no_preamble)?'':`<span class='text-danger'>${gettext("This action cannot be undone.")}</span>`
     const inner = `
         <div class="row">
             <div class="col">
-                <h2 class="text-danger">Warning</h2>
+                <h2 class="text-danger">${gettext("Warning")}</h2>
             </div>
         </div>
         <div class="row">
             <div class="col">
+                ${preamble}
                 ${message_text}
             </div>
         </div>
@@ -440,10 +438,11 @@ window.create_nondestructive_changeset_notice = ({
     cancel_text = 'Cancel',
     context = null
 } = {}) => {
+    if(!message_text) {message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE}
     const inner = `
         <div class="row">
             <div class="col">
-                <h2>Share Your Rationale</h2>
+                <h2>${gettext("Share Your Rationale")}</h2>
             </div>
         </div>
         <div class="row">
