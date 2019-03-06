@@ -61,6 +61,11 @@ const create_user_access = (user_access) => ({
     programs: user_access.programs.reduce((programs, program) => ({...programs, [`${program.country}_${program.program}`]: {...program, has_access: true}}), {})
 })
 
+const country_has_any_access = (country, user_program_access) => Array.from(country.programs).some(program_id =>
+    user_program_access.programs[`${country.id}_${program_id}`]
+    && user_program_access.programs[`${country.id}_${program_id}`].has_access
+)
+
 @observer
 export default class EditUserPrograms extends React.Component {
     constructor(props) {
@@ -145,11 +150,8 @@ export default class EditUserPrograms extends React.Component {
         const country = this.state.countries[country_id]
 
         const new_program_access = (() => {
-            const country_has_any_access = Array.from(country.programs).some(program_id =>
-                this.state.user_program_access.programs[`${country.id}_${program_id}`]
-                && this.state.user_program_access.programs[`${country.id}_${program_id}`].has_access
-            )
-            if(country_has_any_access) {
+            const country_has_checked = country_has_any_access(country, this.state.user_program_access)
+            if(country_has_checked) {
                 //toggle all off
                 return Array.from(country.programs).reduce((programs, program_id) => {
                     const program_key = `${country.id}_${program_id}`
@@ -173,7 +175,6 @@ export default class EditUserPrograms extends React.Component {
                 }, {})
             }
         })()
-        console.log(new_program_access)
         this.setState({
             user_program_access: {
                 ...this.state.user_program_access,
@@ -219,6 +220,20 @@ export default class EditUserPrograms extends React.Component {
                     [program_id]: new_program_access
                 }
             }
+        })
+    }
+
+    clearFilter() {
+        const val = ''
+        const {countries, programs} = apply_filter(
+            this.state.countries,
+            this.state.programs,
+            val
+        )
+
+        this.setState({
+            filter_string: val,
+            flattened_programs: flattened_listing(countries, programs),
         })
     }
 
@@ -287,12 +302,19 @@ export default class EditUserPrograms extends React.Component {
         }
 
         return (
-            <div className="edit-user-programs container">
+            <div className="edit-user-programs">
                 <h2>{user.name}: Programs and Roles</h2>
                 <div className="row">
                     <div className="col">
                         <div className="form-group">
-                            <input type="text" className="form-control" onChange={(e) => this.updateProgramFilter(e.target.value)} />
+                            <div className="input-group">
+                                <input type="text" value={this.state.filter_string} className="form-control" onChange={(e) => this.updateProgramFilter(e.target.value)} />
+                                <div className="input-group-append">
+                                    <a onClick={(e) => {e.preventDefault(); this.clearFilter()}}>
+                                        <span className="input-group-text"><i className="fa fa-times-circle"></i></span>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -311,14 +333,27 @@ export default class EditUserPrograms extends React.Component {
 
                                         <Column
                                         dataKey="not_applicable_but_required"
-                                        width={50}
+                                        width={100}
                                         cellDataGetter={({rowData}) => ({
                                             checked: is_checked(rowData),
                                             disabled: is_check_disabled(rowData),
                                             id: rowData.id,
+                                            type: rowData.type,
                                             action: (rowData.type == "country")?this.toggleAllProgramsForCountry.bind(this):this.toggleProgramAccess.bind(this)
                                         })}
-                                        cellRenderer={({cellData}) => <input type="checkbox" checked={cellData.checked} disabled={cellData.disabled} onChange={() => cellData.action(cellData.id)} />}/>
+                                        cellRenderer={({cellData}) => {
+                                            if (cellData.type == 'country') {
+                                                const country_has_checked = country_has_any_access(this.state.countries[cellData.id], this.state.user_program_access)
+                                                const button_label = (country_has_checked)?'Deselect All':'Select All'
+                                                if(cellData.is_disabled) {
+                                                    return null
+                                                } else {
+                                                    return <div className="check-column"><a className="edit-user-programs__select-all"onClick={(e) => cellData.action(cellData.id)}>{button_label}</a></div>
+                                                }
+                                            } else {
+                                                return <div className="check-column"><input type="checkbox" checked={cellData.checked} disabled={cellData.disabled} onChange={() => cellData.action(cellData.id)} /></div>
+                                            }
+                                        }}/>
 
                                         <Column
                                         dataKey="not_applicable_but_required"

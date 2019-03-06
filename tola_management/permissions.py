@@ -171,63 +171,54 @@ def has_indicator_write_access(func):
             raise PermissionDenied
     return wrapper
 
+def has_program_write_access(func):
+    def wrapper(request, *args, **kwargs):
+        if user_has_program_access(request.user, kwargs['pk']) or request.user.is_superuser:
+            write_access = (user_has_program_roles(request.user, [kwargs['pk']], ['high']) or request.user.is_superuser)
+            request.has_write_access = write_access
+            if request.method == 'GET':
+                return func(request, *args, **kwargs)
+            elif request.method == 'POST' and write_access:
+                return func(request, *args, **kwargs)
+            else:
+                raise PermissionDenied
+        else:
+            raise PermissionDenied
+    return wrapper
+
 def has_program_read_access(func):
     def wrapper(request, *args, **kwargs):
         if user_has_program_access(request.user, kwargs['program_id']) or request.user.is_superuser:
+            write_access = (user_has_program_roles(request.user, [kwargs['program_id']], ['high']) or request.user.is_superuser)
+            request.has_write_access = write_access
             return func(request, *args, **kwargs)
         else:
             raise PermissionDenied
     return wrapper
 
 
-class ActionBasedPermissionsMixin:
-
-    def get_permissions(self):
-        try:
-            # return permission_classes depending on `action`
-            return [permission() for permission in self.permission_classes_by_action[self.action]]
-        except KeyError:
-            # action is not set return default permission_classes
-            return [permission() for permission in self.permission_classes]
-
-
-class HasUserAdminReadAccess(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return user_has_basic_or_super_admin(request.user)
-
-class HasUserAdminWriteAccess(permissions.BasePermission):
-    def has_permission(self, request, view):
-        pass
-
-    def has_object_permission(self, request, view, obj):
-        pass
-
-
-class HasOrganizationAdminReadAccess(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return user_has_basic_or_super_admin(request.user)
-
-class HasOrganizationAdminWriteAccess(permissions.BasePermission):
+class HasUserAdminAccess(permissions.BasePermission):
     def has_permission(self, request, view):
         return user_has_basic_or_super_admin(request.user)
 
     def has_object_permission(self, request, view, obj):
-        return request.user.is_superadmin #or is basic admin and owns the org?
+        return user_has_basic_or_super_admin(request.user)
 
 
-class HasProgramAdminReadAccess(permissions.BasePermission):
+class HasOrganizationAdminAccess(permissions.BasePermission):
     def has_permission(self, request, view):
         return user_has_basic_or_super_admin(request.user)
 
     def has_object_permission(self, request, view, obj):
-        return request.user.is_superadmin #or is basic admin and has access to the programs country
+        return user_has_basic_or_super_admin(request.user)
 
-class HasProgramAdminWriteAccess(permissions.BasePermission):
+
+class HasProgramAdminAccess(permissions.BasePermission):
     def has_permission(self, request, view):
         return user_has_basic_or_super_admin(request.user)
 
     def has_object_permission(self, request, view, obj):
-        return request.user.is_superadmin #or is basic admin and has access to the programs country
+        return request.user.is_superadmin or request.user.tola_user.managed_programs.filter(id=obj.id).exists()
 
 
 class HasCountryAdminAccess(permissions.BasePermission):

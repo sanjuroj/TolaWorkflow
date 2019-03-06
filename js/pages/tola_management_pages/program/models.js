@@ -7,7 +7,7 @@ export class ProgramStore {
     @observable countries = {}
     @observable allCountries = {}
     @observable organizations = {}
-    @observable users = []
+    @observable users = {}
     @observable sectors = []
 
     @observable filters = {

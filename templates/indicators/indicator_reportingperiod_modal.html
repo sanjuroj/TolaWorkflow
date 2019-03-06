@@ -65,6 +65,7 @@
                                                    name="reporting_period_start"
                                                    class="form-control rptMonthPicker"
                                                    autocomplete="off"
+                                                   {% if readonly %} disabled="disabled" {% endif %}
                                                    id="id_reporting_start_date">
                                         </h4>
                                     </div>
@@ -77,6 +78,7 @@
                                                 name="reporting_period_end"
                                                 class="form-control rptMonthPicker"
                                                 autocomplete="off"
+                                                {% if readonly %} disabled="disabled" {% endif %}
                                                 id="id_reporting_end_date">
                                         </h4>
                                     </div>
@@ -96,12 +98,14 @@
                     </div>
                     <div class="form-actions">
                         <div>
-                            <input type="submit" name="submit" value="{% trans 'Save changes' %}" class="btn btn-primary" id="submit-id-submit">
-                            {% if close_only %}
-                                {# when the modal is required in order to view the program page #}
-                                <input type="exit" id="reportingperiod_update_form_exit_btn" class="btn btn-inverse" value="{% trans 'Back to Homepage' %}">
-                            {% else %}
-                                <input type="reset" class="btn btn-inverse" value="{% trans 'Reset' %}">
+                            {% if not readonly %}
+                                <input type="submit" name="submit" value="{% trans 'Save changes' %}" class="btn btn-primary" id="submit-id-submit">
+                                {% if close_only %}
+                                    {# when the modal is required in order to view the program page #}
+                                    <input type="exit" id="reportingperiod_update_form_exit_btn" class="btn btn-inverse" value="{% trans 'Back to Homepage' %}">
+                                {% else %}
+                                    <input type="reset" class="btn btn-inverse" value="{% trans 'Reset' %}">
+                                {% endif %}
                             {% endif %}
                         </div>
                         <div class="text-muted">{% include "form_guidance.html" %}</div>
@@ -386,6 +390,8 @@
         let startDateStr = $("#id_reporting_start_date").val();
         let endDateStr = $("#id_reporting_end_date").val();
 
+        let program_id = $("input[name=program_id]").val();
+
         if (startDateStr === "" || endDateStr === "") {
             createAlert(
                 "danger",
@@ -406,39 +412,47 @@
             return;
             }
 
-            window.create_destructive_changeset_notice({
-                context: document.getElementById('reportingperiod_update_form'),
-                on_submit: (rationale) => {
-                    reporting_period_submitting = true;
-                    var data = $(this).serialize()
-                    data += '&rationale='+rationale
-                    $.post({
-                        url: $(this).attr('action'),
-                        data: data,
-                        success: function(data){
-                            $('#id_reporting_period_modal').modal("hide")
-                            },
-                        suppressErrors: true
-                    }).done(() => {
-                        PNotify.success('Reporting period updated')
-                    }).fail(function(data) {
-                        let msg = "{% trans 'There was a problem saving your changes.'|escapejs %}";
-                        if (typeof(data.responseJSON.failmsg) !== 'undefined') {
-                            msg = data.responseJSON.failmsg;
+            var save = (rationale) => {
+                reporting_period_submitting = true;
+                var data = $(this).serialize()
+                data += '&rationale='+rationale
+                $.post({
+                    url: $(this).attr('action'),
+                    data: data,
+                    success: function(data){
+                        $('#id_reporting_period_modal').modal("hide")
+                        },
+                    suppressErrors: true
+                }).done(() => {
+                    PNotify.success('Reporting period updated')
+                }).fail(function(data) {
+                    let msg = "{% trans 'There was a problem saving your changes.'|escapejs %}";
+                    if (typeof(data.responseJSON.failmsg) !== 'undefined') {
+                        msg = data.responseJSON.failmsg;
+                    }
+                    if (typeof(data.responseJSON.failfields) !== 'undefined' && data.responseJSON.failfields.length > 0) {
+                        for (let i = 0; i<data.responseJSON.failfields.length; i++) {
+                            $('[name="' + data.responseJSON.failfields[i] + '"]').addClass('is-invalid');
                         }
-                        if (typeof(data.responseJSON.failfields) !== 'undefined' && data.responseJSON.failfields.length > 0) {
-                            for (let i = 0; i<data.responseJSON.failfields.length; i++) {
-                                $('[name="' + data.responseJSON.failfields[i] + '"]').addClass('is-invalid');
-                            }
-                        }
-                        createAlert(
-                        "danger",
-                        msg,
-                        false,
-                        "#div-id-reportingperiod-alert");
-                    });
-                }
-            })
+                    }
+                    createAlert(
+                    "danger",
+                    msg,
+                    false,
+                    "#div-id-reportingperiod-alert");
+                });
+            }
+
+            let program_data = $('#id_link_reporting_period_'+program_id).data()
+
+            if(program_data['rptstart'] && program_data["rptstart"] != "None") {
+                window.create_destructive_changeset_notice({
+                    context: document.getElementById('reportingperiod_update_form'),
+                    on_submit: (rationale) => save(rationale)
+                })
+            } else {
+                save('')
+            }
         }
     });
 

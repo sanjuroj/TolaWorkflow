@@ -23,6 +23,24 @@
             padding: 5px;
         }
     }
+
+    .edit-user-programs {
+        .check-column {
+            text-align: center;
+        }
+
+        .edit-user-programs__select-all {
+            color: darkblue;
+            font-weight: bold;
+            cursor: pointer
+        }
+
+        .input-group-text {
+            height: 100%;
+            cursor: pointer;
+        }
+    }
+
 }
 
 #organization-management-index-view {
@@ -68,10 +86,6 @@
 
 .expander {
     overflow: hidden;
-}
-
-.changeset {
-
 }
 
 /* Safari */

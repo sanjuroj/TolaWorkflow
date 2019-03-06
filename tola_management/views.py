@@ -60,7 +60,8 @@ from .models import (
 
 from .permissions import (
     user_has_basic_or_super_admin,
-    ActionBasedPermissionsMixin,
+    HasUserAdminAccess,
+    HasOrganizationAdminAccess
 )
 
 class Paginator(SmallResultsSetPagination):
@@ -82,39 +83,15 @@ def requires_basic_or_super_admin(func):
             raise PermissionDenied
     return wrapper
 
-def get_programs_for_user_queryset(user_id):
-    return Program.objects.raw("""
-            SELECT wp.id, wp.name, wc.id AS country_id, wc.country AS country_name
-            FROM workflow_program wp
-            INNER JOIN workflow_program_user_access wpuc ON wp.id = wpuc.program_id
-            INNER JOIN workflow_program_country wpc ON wp.id = wpc.program_id
-            INNER JOIN workflow_country wc ON wpc.country_id = wc.id
-            WHERE wpuc.tolauser_id = %s
-        UNION DISTINCT
-            SELECT wp.id, wp.name, wc.id AS country_id, wc.country AS country_name
-            FROM workflow_program wp
-            INNER JOIN workflow_program_country wpc ON wp.id = wpc.program_id
-            INNER JOIN workflow_country wc ON wpc.country_id = wc.id
-            INNER JOIN workflow_tolauser_countries wtc ON wtc.country_id = wpc.country_id
-            WHERE wtc.tolauser_id = %s
-        UNION DISTINCT
-            SELECT wp.id, wp.name, wc.id AS country_id, wc.country AS country_name
-            FROM workflow_program wp
-            INNER JOIN workflow_program_country wpc ON wp.id = wpc.program_id
-            INNER JOIN workflow_country wc ON wpc.country_id = wc.id
-            INNER JOIN workflow_tolauser wtu ON wtu.country_id = wc.id
-            WHERE wtu.id = %s
-    """, [user_id, user_id, user_id])
-
 def get_user_page_context(request):
     countries = {
         country.id: {"id": country.id, "name": country.country, "programs": list(country.program_set.all().values_list('id', flat=True))}
-        for country in request.user.tola_user.available_countries
+        for country in request.user.tola_user.managed_countries.distinct()
     }
 
     programs = {
         program.id: {"id": program.id, "name": program.name}
-        for program in request.user.tola_user.available_programs
+        for program in request.user.tola_user.managed_programs.distinct()
     }
 
     organizations = {
@@ -137,10 +114,10 @@ def get_user_page_context(request):
 def get_organization_page_context(request):
     country_filter = request.GET.getlist('countries[]')
     program_filter = request.GET.getlist('programs[]')
-    programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
-    programs = {}
-    for program in list(programs_qs):
-        programs[program.id] = {"id": program.id, "name": program.name, "country_id": program.country_id}
+    programs = {
+        program.id: {"id": program.id, "name": program.name, "country_id": program.country_id}
+        for program in request.user.tola_user.available_programs
+    }
 
     organizations = {}
     for o in Organization.objects.all():
@@ -171,11 +148,7 @@ def get_program_page_context(request):
     organization_filter = request.GET.getlist('organizations[]')
     users_filter = request.GET.getlist('users[]')
 
-    country_queryset = Country.objects
-    if not auth_user.is_superuser:
-        country_queryset = country_queryset.filter(
-            Q(users=tola_user) | Q(program__user_access=tola_user)
-        ).distinct()
+    country_queryset = tola_user.managed_countries
     filtered_countries = {
         country.id : {
             'id': country.id,
@@ -187,7 +160,7 @@ def get_program_page_context(request):
         country.id : {
             'id': country.id,
             'name': country.country,
-        } for country in Country.objects.all()
+        } for country in tola_user.managed_countries
     }
 
     organizations = {
@@ -197,11 +170,7 @@ def get_program_page_context(request):
         } for organization in Organization.objects.all()
     }
 
-    program_queryset = Program.objects
-    if not auth_user.is_superuser:
-        program_queryset = program_queryset.filter(
-            Q(user_access=tola_user) | Q(country__users=tola_user)
-        )
+    program_queryset = Program.objects.filter(country__in=tola_user.managed_countries)
     programs = [
         {
             'id': program.id,
@@ -291,6 +260,8 @@ def app_host_page(request, react_app_page):
     elif react_app_page == 'program':
         js_context = get_program_page_context(request)
     elif react_app_page == 'country':
+        if not request.user.is_superuser:
+            raise PermissionDenied
         js_context = get_country_page_context(request)
 
 
@@ -445,11 +416,11 @@ class UserAdminReportSerializer(ModelSerializer):
         )
 
 
-class UserAdminViewSet(viewsets.ModelViewSet, ActionBasedPermissionsMixin):
+class UserAdminViewSet(viewsets.ModelViewSet):
     queryset = TolaUser.objects.all()
     serializer_class = UserAdminSerializer
     pagination_class = Paginator
-    permission_classes = []
+    permissions = [HasUserAdminAccess]
 
     def get_list_queryset(self):
         req = self.request
@@ -773,7 +744,9 @@ class UserAdminViewSet(viewsets.ModelViewSet, ActionBasedPermissionsMixin):
 
 class OrganizationAdminSerializer(Serializer):
     id = IntegerField(allow_null=True, required=False)
-    name = CharField(max_length=100)
+    name = CharField(max_length=100, validators=[
+        UniqueValidator(queryset=Organization.objects.all())
+    ])
     primary_address = CharField(max_length=255)
     primary_contact_name = CharField(max_length=255)
     primary_contact_email = CharField(max_length=255)
@@ -874,6 +847,7 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
     serializer_class = OrganizationSerializer
     queryset = Organization.objects.all()
     pagination_class = Paginator
+    permissions = [HasOrganizationAdminAccess]
 
     def get_listing_queryset(self):
         req = self.request

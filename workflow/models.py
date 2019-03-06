@@ -257,7 +257,7 @@ class TolaUser(models.Model):
         if self.user.is_superuser:
             return Country.objects.all()
         else:
-            return Country.objects.none()
+            return Country.objects.filter(id__in=self.countryaccess_set.filter(role='basic_admin').values('country_id'))
 
     @property
     def managed_programs(self):
@@ -268,14 +268,34 @@ class TolaUser(models.Model):
         if self.user.is_superuser:
             return Country.objects.all()
         else:
-            return (self.countries.all() | Country.objects.filter(id__in=ProgramAccess.objects.filter(tolauser=self).values('country_id')))
+            if self.country is not None:
+                return (
+                    self.countries.all()
+                    | Country.objects.filter(id__in=ProgramAccess.objects.filter(tolauser=self).values('country_id'))
+                    | Country.objects.filter(id=self.country.id)
+                ).distinct()
+            else:
+                return (
+                    self.countries.all()
+                    | Country.objects.filter(id__in=ProgramAccess.objects.filter(tolauser=self).values('country_id'))
+                ).distinct()
 
     @property
     def available_programs(self):
-        if self.user.is_superuser or True:
+        if self.user.is_superuser:
             return Program.objects.all()
         else:
-            return (Program.objects.filter(country__in=self.countries) | Program.objects.filter(programaccess__tolauser=self))
+            if self.country is not None:
+                return (
+                    Program.objects.filter(country__in=self.countries.all())
+                    | self.programs.all()
+                    | self.country.program_set.all()
+                ).distinct()
+            else:
+                return (
+                    Program.objects.filter(country__in=self.countries.all())
+                    | self.programs.all()
+                ).distinct()
 
     @property
     def logged_fields(self):
@@ -630,6 +650,7 @@ class Program(models.Model):
         ).order_by('-start_date').first()
         return most_recent if most_recent is None else most_recent.start_date
 
+
     def get_periods_for_frequency(self, frequency):
         period_generator = PeriodicTarget.generate_for_frequency(frequency)
         return period_generator(self.reporting_period_start, self.reporting_period_end)
@@ -648,9 +669,17 @@ class Program(models.Model):
 
     @property
     def dates_for_logging(self):
+        start_date = None
+        if self.reporting_period_start is not None:
+            start_date = self.reporting_period_start.strftime('%Y-%m-%d')
+
+        end_date = None
+        if self.reporting_period_end is not None:
+            end_date = self.reporting_period_end.strftime('%Y-%m-%d')
+
         return {
-            "start_date": self.reporting_period_start,
-            "end_date": self.reporting_period_end
+            "start_date": start_date,
+            "end_date": end_date
         }
 
 

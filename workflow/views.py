@@ -76,7 +76,8 @@ from tola_management.permissions import (
     user_has_program_access,
     has_site_read_access,
     has_site_create_access,
-    has_site_write_access
+    has_site_write_access,
+    has_program_write_access,
 )
 
 APPROVALS = (
@@ -2474,6 +2475,7 @@ class StakeholderObjects(View, AjaxableResponseMixin):
         return JsonResponse(final_dict, safe=False)
 
 
+@has_program_write_access
 def reportingperiod_update(request, pk):
     program = Program.objects.get(pk=pk)
     old_dates = program.dates_for_logging
@@ -2490,8 +2492,9 @@ def reportingperiod_update(request, pk):
     failmsg = []
     failfields = []
 
-    if not request.POST.get('rationale'):
-        return failmsg.append(_('Rationale is required'))
+    if not request.POST.get('rationale') and program.indicator_set.all().exists():
+        success = False
+        failmsg.append(_('Rationale is required'))
 
     if reporting_period_start:
         if reporting_period_start.day != 1:
@@ -2533,7 +2536,7 @@ def reportingperiod_update(request, pk):
         failfields.append('reporting_period_end')
     if success:
         program.save()
-        ProgramAuditLog.log_program_dates_updated(request.user, program, old_dates, program.dates_for_logging, request.POST['rationale'])
+        ProgramAuditLog.log_program_dates_updated(request.user, program, old_dates, program.dates_for_logging, request.POST.get('rationale'))
 
     return JsonResponse({
         'msg': 'success' if success else 'fail',

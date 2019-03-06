@@ -35,15 +35,20 @@ from workflow.models import (
     Organization,
     Country,
     Sector,
+    ProgramAccess
 )
-from .models import ProgramAdminAuditLog
 
 from indicators.models import (
     Indicator
 )
 
 from .models import (
+    ProgramAdminAuditLog,
     ProgramAuditLog
+)
+
+from .permissions import (
+    HasProgramAdminAccess
 )
 
 class Paginator(SmallResultsSetPagination):
@@ -146,6 +151,7 @@ class ProgramAdminSerializer(ModelSerializer):
         added_countries = [x for x in incoming_countries if x not in original_countries]
         removed_countries = [x for x in original_countries if x not in incoming_countries]
 
+
         original_sectors = instance.sector.all()
         incoming_sectors = validated_data.pop('sector')
         added_sectors = [x for x in incoming_sectors if x not in original_sectors]
@@ -155,6 +161,8 @@ class ProgramAdminSerializer(ModelSerializer):
         instance.country.add(*added_countries)
         instance.sector.remove(*removed_sectors)
         instance.sector.add(*added_sectors)
+
+        ProgramAccess.objects.filter(program=instance, country__in=removed_countries).delete()
         updated_instance = super(ProgramAdminSerializer, self).update(instance, validated_data)
         ProgramAdminAuditLog.updated(
             program=instance,
@@ -210,12 +218,13 @@ class ProgramAdminAuditLogSerializer(ModelSerializer):
 class ProgramAdminViewSet(viewsets.ModelViewSet):
     serializer_class = ProgramAdminSerializer
     pagination_class = Paginator
+    permissions = [HasProgramAdminAccess]
 
     def get_queryset(self):
         auth_user = self.request.user
         params = self.request.query_params
 
-        queryset = Program.objects.all()
+        queryset = Program.objects.all().filter(country__in=auth_user.tola_user.managed_countries)
 
         if not auth_user.is_superuser:
             tola_user = auth_user.tola_user
@@ -306,7 +315,7 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
     def audit_log(self, request, pk=None):
         program = Program.objects.get(pk=pk)
 
-        queryset = program.audit_logs.all().order_by('date')
+        queryset = program.audit_logs.all().order_by('-date')
         page = self.paginate_queryset(list(queryset))
         if page is not None:
             serializer = ProgramAuditLogSerializer(page, many=True)
