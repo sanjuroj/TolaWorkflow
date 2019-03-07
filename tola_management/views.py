@@ -744,9 +744,7 @@ class UserAdminViewSet(viewsets.ModelViewSet):
 
 class OrganizationAdminSerializer(Serializer):
     id = IntegerField(allow_null=True, required=False)
-    name = CharField(max_length=100, validators=[
-        UniqueValidator(queryset=Organization.objects.all())
-    ])
+    name = CharField(max_length=100)
     primary_address = CharField(max_length=255)
     primary_contact_name = CharField(max_length=255)
     primary_contact_email = CharField(max_length=255)
@@ -779,7 +777,9 @@ class SectorSerializer(ModelSerializer):
 
 class OrganizationSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
-    name = CharField(required=True)
+    name = CharField(required=True, validators=[
+        UniqueValidator(queryset=Organization.objects.all())
+    ])
     primary_address = CharField(required=True)
     primary_contact_name = CharField(required=True)
     primary_contact_email = CharField(required=True)
