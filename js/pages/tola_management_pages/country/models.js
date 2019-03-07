@@ -75,6 +75,12 @@ export class CountryStore {
     }
 
     @action
+    applyFilters() {
+        this.current_page = 0
+        this.fetchCountries()
+    }
+
+    @action
     changePage(page) {
         if (page.selected == this.current_page) {
             return

@@ -117,6 +117,12 @@ export class OrganizationStore {
     }
 
     @action
+    applyFilters() {
+        this.current_page = 0
+        this.fetchOrganizations()
+    }
+
+    @action
     createOrganization() {
         const new_organization = {
             id: "new",

@@ -176,6 +176,12 @@ export class UserStore {
     }
 
     @action
+    applyFilters() {
+        this.current_page = 0
+        this.fetchUsers()
+    }
+
+    @action
     changePage(page) {
         if(page.selected != this.current_page) {
             this.current_page = page.selected
@@ -263,6 +269,7 @@ export class UserStore {
 
     @action
     createUser() {
+        this.editing_errors = {}
         if(this.editing_target == 'new') {
             this.users_listing.shift()
         }
@@ -332,6 +339,7 @@ export class UserStore {
                     is_admin: result.user.is_staff,
                     is_active: result.user.is_active
                 }
+                this.user_selections.push({value: result.id, label: result.name})
                 this.users_listing[0] = result.id
                 this.editing_target = null
                 this.toggleEditingTarget(result.id)

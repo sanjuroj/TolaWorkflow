@@ -77,7 +77,7 @@ export const IndexView = observer(
                     id="status_filter" />
                 </div>
                 <div className="filter-buttons">
-                    <button className="btn btn-primary" onClick={() => store.fetchOrganizations()}>Apply</button>
+                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>Apply</button>
                     <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>Reset</button>
                 </div>
             </div>

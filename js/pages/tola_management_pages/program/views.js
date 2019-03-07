@@ -189,7 +189,7 @@ export const IndexView = observer(
                 <ProgramStatusFilter store={store} />
                 <ProgramFilter store={store} filterOptions={programFilterOptions} />
                 <div className="filter-buttons">
-                    <button className="btn btn-primary" onClick={() => store.fetchPrograms()}>Apply</button>
+                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>Apply</button>
                     <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>Reset</button>
                 </div>
             </div>

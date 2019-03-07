@@ -81,6 +81,12 @@ export class ProgramStore {
     }
 
     @action
+    applyFilters() {
+        this.current_page = 0
+        this.fetchPrograms()
+    }
+
+    @action
     changePage(page) {
         if (page.selected == this.current_page) {
             return

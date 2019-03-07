@@ -216,7 +216,7 @@ export const IndexView = observer(
                 </div>
                 <UserFilter store={store} selections={store.user_selections} />
                 <div className="filter-buttons">
-                    <button className="btn btn-primary" onClick={() => store.fetchUsers()}>Apply</button>
+                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>Apply</button>
                     <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>Reset</button>
                 </div>
             </div>
