@@ -29,10 +29,27 @@
             text-align: center;
         }
 
-        .edit-user-programs__select-all {
+        &__filter-form {
+            justify-content: space-around;
+        }
+
+        &__select-all {
             color: darkblue;
             font-weight: bold;
             cursor: pointer
+        }
+
+        &__country-filter {
+            width: 40%;
+            display: inline-block;
+        }
+
+        &__program-filter {
+            width: 55%;
+
+            .input-group {
+                flex-grow: 1;
+            }
         }
 
         .input-group-text {
