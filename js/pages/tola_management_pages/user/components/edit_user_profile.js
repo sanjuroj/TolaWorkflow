@@ -7,7 +7,13 @@ export default class EditUserProfile extends React.Component {
     constructor(props) {
         super(props)
         const {userData} = props
-        const organization_listing = props.organizations.filter(o => o.value != 1 && !props.is_superuser)
+        const organization_listing = (() => {
+            if(props.new) {
+                return props.organizations.filter(o => o.value != 1 || props.is_superuser)
+            } else {
+                return props.organizations
+            }
+        })()
         const selected_organization = organization_listing.find(o => o.value == userData.organization_id)
         this.state = {
             original_user_data: {...userData},
