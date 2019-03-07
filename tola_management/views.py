@@ -30,6 +30,7 @@ from rest_framework.serializers import (
     PrimaryKeyRelatedField,
     BooleanField,
     DateTimeField,
+    EmailField,
     ValidationError
 )
 from rest_framework.response import Response
@@ -307,7 +308,7 @@ class UserAdminSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
     name = CharField(max_length=255, required=True)
     organization_id = IntegerField(required=True)
-    email = CharField(source="user.email", max_length=255, required=True)
+    email = EmailField(source="user.email", max_length=255, required=True)
     user = AuthUserSerializer()
 
     def validate(self, data):
@@ -911,20 +912,22 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
                     FROM workflow_organization wo
                     INNER JOIN workflow_tolauser wtu ON wo.id = wtu.organization_id
                     INNER JOIN (
-                        SELECT MAX(tu_p.tolauser_id) as tolauser_id, tu_p.program_id
-                        FROM (
-                                SELECT
-                                    wpua.tolauser_id,
-                                    wpua.program_id
-                                FROM workflow_program_user_access wpua
-                            UNION DISTINCT
-                                SELECT
-                                    wtuc.tolauser_id,
-                                    wpc.program_id
-                                FROM workflow_tolauser_countries wtuc
-                                INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
-                        ) tu_p
-                        GROUP BY tu_p.program_id
+                            SELECT
+                                wpua.tolauser_id AS tolauser_id,
+                                wpua.program_id AS program_id
+                            FROM workflow_program_user_access wpua
+                        UNION DISTINCT
+                            SELECT
+                                wtuc.tolauser_id AS tolauser_id,
+                                wpc.program_id AS program_id
+                            FROM workflow_tolauser_countries wtuc
+                            INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
+                        UNION DISTINCT
+                            SELECT
+                                wu.id AS tolauser_id,
+                                wpc.program_id AS program_id
+                            FROM workflow_tolauser wu
+                            INNER JOIN workflow_program_country wpc ON wpc.country_id = wu.country_id
                     ) pz ON pz.tolauser_id = wtu.id
                     GROUP BY wo.id, pz.program_id
                 ) pzz ON pzz.organization_id = wo.id
