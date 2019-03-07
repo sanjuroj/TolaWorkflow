@@ -1,7 +1,7 @@
 import React from 'react'
-import Select from 'react-select'
 import { observer } from "mobx-react"
 import {AutoSizer, Table, Column, CellMeasurer, CellMeasurerCache} from 'react-virtualized'
+import Select from 'components/virtualized-react-select'
 
 //we need a pretty peculiar structure to accommodate the virtualized table
 const create_country_objects = (countries, store) => Object.entries(countries)
@@ -37,22 +37,23 @@ const flattened_listing = (countries, programs) => Object.entries(countries)
                                                              ]
                                                          )
 
-const apply_filter = (countries, programs, filter_string) => {
+const apply_program_filter = (programs, countries, filter_string) => {
     const filtered_programs = Object.entries(programs).filter(([_, program]) => program.name.toLowerCase().includes(filter_string.toLowerCase())).map(([_, p]) => p)
+    const filtered_countries = Object.entries(countries).filter(([_, country]) => filtered_programs.some(program => country.programs.has(program.id))).map(([_, c]) => c)
 
-    if(filtered_programs.length > 0) {
-        const filtered_countries = Object.entries(countries).filter(([_, country]) => filtered_programs.some(program => country.programs.has(program.id))).map(([_, c]) => c)
+    return {
+        countries: filtered_countries.reduce((countries, country) => ({...countries, [country.id]: country}), {}),
+        programs: filtered_programs.reduce((programs, program) => ({...programs, [program.id]: program}), {}),
+    }
+}
 
-        return {
-            countries: filtered_countries.reduce((countries, country) => ({...countries, [country.id]: country}), {}),
-            programs: filtered_programs.reduce((programs, program) => ({...programs, [program.id]: program}), {}),
-        }
+const apply_country_filter = (countries, filtered) => {
+    if(filtered.length > 0) {
+        return filtered.filter(option => countries[option.value])
+                .map(option => countries[option.value])
+                .reduce((countries, country) => ({...countries, [country.id]: country}), {})
     } else {
-        const filtered_countries = Object.entries(countries).filter(([_, country]) => country.name.toLowerCase().includes(filter_string.toLowerCase())).map(([_, c]) => c)
-        return {
-            countries: filtered_countries.reduce((countries, country) => ({...countries, [country.id]: country}), {}),
-            programs
-        }
+        return countries
     }
 }
 
@@ -61,10 +62,13 @@ const create_user_access = (user_access) => ({
     programs: user_access.programs.reduce((programs, program) => ({...programs, [`${program.country}_${program.program}`]: {...program, has_access: true}}), {})
 })
 
-const country_has_any_access = (country, user_program_access) => Array.from(country.programs).some(program_id =>
-    user_program_access.programs[`${country.id}_${program_id}`]
-    && user_program_access.programs[`${country.id}_${program_id}`].has_access
-)
+const country_has_all_access = (country, visible_programs, user_program_access) =>
+    Array.from(country.programs)
+            .filter(program_id => !!visible_programs[program_id])
+            .every(program_id =>
+                user_program_access.programs[`${country.id}_${program_id}`]
+                && user_program_access.programs[`${country.id}_${program_id}`].has_access
+            )
 
 @observer
 export default class EditUserPrograms extends React.Component {
@@ -76,9 +80,13 @@ export default class EditUserPrograms extends React.Component {
         const programs = create_program_objects(store.programs, store)
 
         this.state = {
-            filter_string: '',
+            program_filter: '',
+            country_filter: [],
+            country_selections: Object.entries(store.countries).map(([_, country]) => ({value: country.id, label: country.name})),
             countries,
             programs,
+            filtered_countries: countries,
+            filtered_programs: programs,
             flattened_programs: flattened_listing(countries, programs),
             original_user_program_access: create_user_access(store.editing_target_data.access),
             user_program_access: create_user_access(store.editing_target_data.access)
@@ -86,15 +94,27 @@ export default class EditUserPrograms extends React.Component {
     }
 
     componentWillReceiveProps(next_props) {
-        const {countries, programs} = apply_filter(
-            create_country_objects(store.countries, store),
-            create_program_objects(store.programs, store),
-            this.state.filter_string
+        const {store} = next_props
+        const countries_obj = create_country_objects(store.countries, store)
+        const programs_obj = create_program_objects(store.programs, store)
+
+        const filtered_countries = apply_country_filter(
+            countries_obj,
+            this.state.country_filter
+        )
+
+        const {countries, programs}= apply_program_filter(
+            programs_obj,
+            countries,
+            this.state.program_filter
         )
 
         this.setState({
-            countries,
-            programs,
+            countries: countries_obj,
+            programs: programs_obj,
+            country_selections: Object.entries(store.countries).map(([_, country]) => ({value: country.id, label: country.name})),
+            filtered_countries: countries,
+            filtered_programs: programs,
             flattened_programs: flattened_listing(countries, programs),
             original_user_program_access: create_user_access(store.editing_target_data.access),
             user_program_access: create_user_access(store.editing_target_data.access)
@@ -150,10 +170,17 @@ export default class EditUserPrograms extends React.Component {
         const country = this.state.countries[country_id]
 
         const new_program_access = (() => {
-            const country_has_checked = country_has_any_access(country, this.state.user_program_access)
-            if(country_has_checked) {
+            const country_has_all_checked = country_has_all_access(
+                country,
+                this.state.filtered_programs,
+                this.state.user_program_access
+            )
+
+            if(country_has_all_checked) {
                 //toggle all off
-                return Array.from(country.programs).reduce((programs, program_id) => {
+                return Array.from(country.programs).filter(program_id => {
+                    return !!this.state.filtered_programs[program_id]
+                }).reduce((programs, program_id) => {
                     const program_key = `${country.id}_${program_id}`
                     const program = this.state.user_program_access.programs[program_key]
                     if(program) {
@@ -164,7 +191,9 @@ export default class EditUserPrograms extends React.Component {
                 }, {})
             } else {
                 //toggle all on
-                return Array.from(country.programs).reduce((programs, program_id) => {
+                return Array.from(country.programs).filter(program_id => {
+                    return !!this.state.filtered_programs[program_id]
+                }).reduce((programs, program_id) => {
                     const program_key = `${country.id}_${program_id}`
                     const program = this.state.user_program_access.programs[program_key]
                     if(program) {
@@ -178,7 +207,7 @@ export default class EditUserPrograms extends React.Component {
         this.setState({
             user_program_access: {
                 ...this.state.user_program_access,
-                programs: new_program_access
+                programs: {...this.state.user_program_access.programs, ...new_program_access}
             }
         })
     }
@@ -225,28 +254,49 @@ export default class EditUserPrograms extends React.Component {
 
     clearFilter() {
         const val = ''
-        const {countries, programs} = apply_filter(
-            this.state.countries,
+        const filtered_countries = apply_country_filter(this.state.countries, this.state.country_filter)
+        const {countries, programs} = apply_program_filter(
             this.state.programs,
+            filtered_countries,
             val
         )
 
         this.setState({
-            filter_string: val,
+            program_filter: val,
+            filtered_programs: programs,
+            filtered_countries: countries,
             flattened_programs: flattened_listing(countries, programs),
         })
     }
 
     updateProgramFilter(val) {
-        const {countries, programs} = apply_filter(
-            this.state.countries,
+        const filtered_countries = apply_country_filter(this.state.countries, this.state.country_filter)
+        const {countries, programs} = apply_program_filter(
             this.state.programs,
+            filtered_countries,
             val
         )
 
         this.setState({
-            filter_string: val,
+            program_filter: val,
+            filtered_programs: programs,
+            filtered_countries: countries,
             flattened_programs: flattened_listing(countries, programs),
+        })
+    }
+
+    changeCountryFilter(e) {
+        const filtered_countries = apply_country_filter(this.state.countries, e)
+        const {countries, programs} = apply_program_filter(
+            this.state.programs,
+            filtered_countries,
+            this.state.program_filter
+        )
+
+        this.setState({
+            country_filter: e,
+            filtered_countries: countries,
+            flattened_programs: flattened_listing(countries, this.state.filtered_programs)
         })
     }
 
@@ -306,13 +356,18 @@ export default class EditUserPrograms extends React.Component {
                 <h2>{user.name}: Programs and Roles</h2>
                 <div className="row">
                     <div className="col">
-                        <div className="form-group">
-                            <div className="input-group">
-                                <input type="text" value={this.state.filter_string} className="form-control" onChange={(e) => this.updateProgramFilter(e.target.value)} />
-                                <div className="input-group-append">
-                                    <a onClick={(e) => {e.preventDefault(); this.clearFilter()}}>
-                                        <span className="input-group-text"><i className="fa fa-times-circle"></i></span>
-                                    </a>
+                        <div className="edit-user-programs__filter-form form-inline">
+                            <div className="edit-user-programs__country-filter form-group">
+                                <Select placeholder="Filter countries" isMulti={true} value={this.state.country_filter} options={this.state.country_selections} onChange={(e) => this.changeCountryFilter(e)} />
+                            </div>
+                            <div className="form-group edit-user-programs__program-filter">
+                                <div className="input-group">
+                                    <input placeholder="Filter programs" type="text" value={this.state.program_filter} className="form-control" onChange={(e) => this.updateProgramFilter(e.target.value)} />
+                                    <div className="input-group-append">
+                                        <a onClick={(e) => {e.preventDefault(); this.clearFilter()}}>
+                                            <span className="input-group-text"><i className="fa fa-times-circle"></i></span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -343,8 +398,12 @@ export default class EditUserPrograms extends React.Component {
                                         })}
                                         cellRenderer={({cellData}) => {
                                             if (cellData.type == 'country') {
-                                                const country_has_checked = country_has_any_access(this.state.countries[cellData.id], this.state.user_program_access)
-                                                const button_label = (country_has_checked)?'Deselect All':'Select All'
+                                                const country_has_all_checked = country_has_all_access(
+                                                    this.state.countries[cellData.id],
+                                                    this.state.filtered_programs,
+                                                    this.state.user_program_access
+                                                )
+                                                const button_label = (country_has_all_checked)?'Deselect All':'Select All'
                                                 if(cellData.is_disabled) {
                                                     return null
                                                 } else {
