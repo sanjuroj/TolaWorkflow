@@ -722,9 +722,21 @@ class UserAdminViewSet(viewsets.ModelViewSet):
     def bulk_add_programs(self, request):
         added_programs = request.data["added_programs"]
 
-        for user_id in request.data["user_ids"]:
-            user = TolaUser.objects.get(pk=user_id)
-            user.program_access.add(*list(Program.objects.filter(pk__in=added_programs)))
+        managed_countries = {country.id: True for country in self.request.user.tola_user.managed_countries.all()}
+
+        for role in added_programs:
+            if int(role["country"]) in managed_countries:
+                for user_id in request.data["user_ids"]:
+                    try:
+                        access = ProgramAccess.objects.get(tolauser_id=user_id, country_id=role["country"], program_id=role["program"])
+                    except ObjectDoesNotExist:
+                        access = ProgramAccess(
+                            tolauser_id=user_id,
+                            country_id=role["country"],
+                            program_id=role["program"],
+                            role=role["role"]
+                        )
+                        access.save()
 
         return Response({})
 
@@ -732,9 +744,16 @@ class UserAdminViewSet(viewsets.ModelViewSet):
     def bulk_remove_programs(self, request):
         removed_programs = request.data["removed_programs"]
 
-        for user_id in request.data["user_ids"]:
-            user = TolaUser.objects.get(pk=user_id)
-            user.program_access.remove(*list(Program.objects.filter(pk__in=removed_programs)))
+        managed_countries = {country.id: True for country in self.request.user.tola_user.managed_countries.all()}
+
+        for role in removed_programs:
+            if int(role["country"]) in managed_countries:
+                for user_id in request.data["user_ids"]:
+                    try:
+                        access = ProgramAccess.objects.get(tolauser_id=user_id, country_id=role["country"], program_id=role["program"])
+                        access.delete()
+                    except ObjectDoesNotExist:
+                        pass
 
         return Response({})
 

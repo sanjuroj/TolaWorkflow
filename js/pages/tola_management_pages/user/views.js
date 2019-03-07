@@ -133,6 +133,7 @@ class BulkActions extends React.Component {
     render() {
         const selected = this.props.secondaryOptions[this.state.current_action]
         const SecondaryComponent = selected && selected.component
+        const apply_disabled = !this.state.current_action || (Array.isArray(this.state.current_vals) && !this.state.current_vals.length) || !this.state.current_vals
         return <div className="bulk-controls">
             <div className="bulk-select">
                 <Select
@@ -151,7 +152,7 @@ class BulkActions extends React.Component {
                 <Select className="bulk-select" placeholder="---"/>
             </div>
             }
-            <button className="btn btn-secondary" disabled={!this.state.current_action} onClick={() => this.onApply()}>Apply</button>
+            <button className="btn btn-secondary" disabled={apply_disabled} onClick={() => this.onApply()}>Apply</button>
         </div>
     }
 }
@@ -171,11 +172,11 @@ export const IndexView = observer(
                     onApply: (option) => store.bulkUpdateUserStatus(option.value)
                 },
                 add_to_program: {
-                    component: (props) => <CheckboxedMultiSelect options={programOptions} {...props} />,
+                    component: (props) => <CheckboxedMultiSelect options={store.program_bulk_selections} {...props} />,
                     onApply: (vals) => store.bulkAddPrograms(vals.map(option => option.value))
                 },
                 remove_from_program: {
-                    component: (props) => <CheckboxedMultiSelect options={programOptions} {...props} />,
+                    component: (props) => <CheckboxedMultiSelect options={store.program_bulk_selections} {...props} />,
                     onApply: (vals) => store.bulkRemovePrograms(vals.map(option => option.value))
                 },
             }

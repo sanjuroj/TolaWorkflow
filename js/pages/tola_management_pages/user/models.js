@@ -54,6 +54,7 @@ export class UserStore {
     @observable organization_selections = []
     @observable program_selections = []
     @observable user_selections = []
+    @observable program_bulk_selections = []
 
     country_role_choices = []
     program_role_choices = []
@@ -99,6 +100,12 @@ export class UserStore {
         this.organization_selections = Object.entries(organizations).map(([id, org]) => ({value: org.id, label: org.name}))
         this.program_selections = Object.entries(programs).map(([id, program]) => ({value: program.id, label: program.name}))
         this.user_selections = this.available_users.map(user => ({value: user.id, label: user.name}))
+        this.program_bulk_selections = Object.entries(countries).map(([id, country]) => ({
+            label: country.name,
+            options: country.programs.map(program_id => ({
+                label: country.name+": "+programs[program_id].name,
+                value: country.id+"_"+program_id
+            }))}))
 
         this.access = access
         this.is_superuser = is_superuser
@@ -428,7 +435,10 @@ export class UserStore {
         this.applying_bulk_updates = true
         api.bulkAddPrograms(
             this.getSelectedBulkTargetIDs(),
-            added_programs
+            added_programs.map(key => {
+                const [country_id, program_id] = key.split('_')
+                return {country: country_id, program: program_id, role: 'low'}
+            })
         ).then(result => {
             runInAction(() => {
                 this.applying_bulk_updates = false
@@ -447,7 +457,10 @@ export class UserStore {
         this.applying_bulk_updates = true
         api.bulkRemovePrograms(
             this.getSelectedBulkTargetIDs(),
-            removed_programs
+            removed_programs.map(key => {
+                const [country_id, program_id] = key.split('_')
+                return {country: country_id, program: program_id, role: 'low'}
+            })
         ).then(result => {
             runInAction(() => {
                 this.applying_bulk_updates = false
