@@ -1029,6 +1029,8 @@ def result_view(request, indicator, program):
     on_track = True if (on_track_lower <= indicator.lop_percent_met <= on_track_upper) else False
     is_editable = False if request.GET.get('edit') == 'false' else True
 
+    readonly = not request.has_write_access
+
     return render_to_response(
         template_name, {
             'indicator': indicator,
@@ -1037,6 +1039,7 @@ def result_view(request, indicator, program):
             'program': program_obj,
             'is_editable': is_editable,
             'on_track': on_track,
+            'readonly': readonly
         }
     )
 

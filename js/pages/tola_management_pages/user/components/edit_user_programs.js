@@ -126,7 +126,9 @@ export default class EditUserPrograms extends React.Component {
         //filtering out all !has_access
         const access = this.state.user_program_access
         this.props.onSave({
-            countries: access.countries,
+            countries: Object.entries(access.countries)
+                             .filter(([id, country]) => this.props.store.is_superuser)
+                             .reduce((countries, [id, country]) => ({...countries, [id]: country}), {}),
             programs: Object.entries(access.programs)
                             .filter(([_, program]) => program.has_access)
                             .map(([_, program]) => program)
@@ -313,8 +315,11 @@ export default class EditUserPrograms extends React.Component {
         }
 
         const is_check_disabled = (data) => {
+            return false
             if(data.type == 'country') {
-                return !this.props.store.is_superuser
+                return !this.state.countries[data.id].programs.size > 0
+                    || !this.props.store.access.countries[data.id]
+                    || this.props.store.access.countries[data.id].role != 'basic_admin'
             } else {
                 return !this.props.store.access.countries[data.country_id] || this.props.store.access.countries[data.country_id].role != 'basic_admin'
             }
@@ -404,10 +409,10 @@ export default class EditUserPrograms extends React.Component {
                                                     this.state.user_program_access
                                                 )
                                                 const button_label = (country_has_all_checked)?'Deselect All':'Select All'
-                                                if(cellData.is_disabled) {
+                                                if(cellData.disabled) {
                                                     return null
                                                 } else {
-                                                    return <div className="check-column"><a className="edit-user-programs__select-all"onClick={(e) => cellData.action(cellData.id)}>{button_label}</a></div>
+                                                    return <div className="check-column"><a className="edit-user-programs__select-all" onClick={(e) => cellData.action(cellData.id)}>{button_label}</a></div>
                                                 }
                                             } else {
                                                 return <div className="check-column"><input type="checkbox" checked={cellData.checked} disabled={cellData.disabled} onChange={() => cellData.action(cellData.id)} /></div>

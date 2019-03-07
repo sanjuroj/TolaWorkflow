@@ -638,29 +638,45 @@ class UserAdminViewSet(viewsets.ModelViewSet):
             #an existing country access. The answer is we can't know so we
             #dont
             country_data = request.data["countries"]
-            for country_id, access in country_data.iteritems():
-                if access["role"] == 'basic_admin':
-                    CountryAccess.objects.update_or_create(
-                        tolauser=user,
-                        country_id=country_id,
-                        defaults={
-                            "role": access["role"],
-                        }
-                    )
-                else:
-                    try:
-                        old_access = CountryAccess.objects.get(
+
+            if country_data and not request.user.is_superuser:
+                raise PermissionDenied
+            else:
+                for country_id, access in country_data.iteritems():
+                    if access["role"] == 'basic_admin':
+                        CountryAccess.objects.update_or_create(
                             tolauser=user,
                             country_id=country_id,
+                            defaults={
+                                "role": access["role"],
+                            }
                         )
-                        old_access.role = access["role"]
-                        old_access.save()
-                    except ObjectDoesNotExist:
-                        pass
+                    else:
+                        try:
+                            old_access = CountryAccess.objects.get(
+                                tolauser=user,
+                                country_id=country_id,
+                            )
+                            old_access.role = access["role"]
+                            old_access.save()
+                        except ObjectDoesNotExist:
+                            pass
 
             program_data = request.data["programs"]
-            user.programaccess_set.all().delete()
-            for access in program_data:
+
+            programs_by_id = {str(role["country"])+"_"+str(role["program"]): True for role in program_data}
+            managed_countries = {country.id: True for country in admin_user.managed_countries.all()}
+
+            for role in ProgramAccess.objects.filter(tolauser=user):
+                if not programs_by_id.get(str(role.country_id)+"_"+str(role.program_id), False) and role.country_id in managed_countries:
+                    role.delete()
+
+            added_programs = []
+            for program_role in program_data:
+                if managed_countries.get(int(program_role["country"]), False):
+                    added_programs.append(program_role)
+
+            for access in added_programs:
                 ProgramAccess.objects.update_or_create(
                     tolauser=user,
                     program_id=access["program"],

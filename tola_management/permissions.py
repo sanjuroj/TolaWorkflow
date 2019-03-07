@@ -128,6 +128,8 @@ def has_site_write_access(func):
 def has_result_read_access(func):
     def wrapper(request, *args, **kwargs):
         if user_has_program_access(request.user, kwargs['program']) or request.user.is_superuser:
+            write_access = (user_has_program_roles(request.user, [kwargs['program']], ['medium', 'high']) or request.user.is_superuser)
+            request.has_write_access = write_access
             return func(request, *args, **kwargs)
         else:
             raise PermissionDenied
