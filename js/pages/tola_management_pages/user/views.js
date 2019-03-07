@@ -10,50 +10,51 @@ import EditUserHistory from './components/edit_user_history'
 import Pagination from 'components/pagination'
 import LoadingSpinner from 'components/loading-spinner'
 
+const selection_placeholder = gettext("None Selected")
 const UserFilter = observer(({store, selections}) => {
     return <div className="form-group">
-        <label htmlFor="users_filter">Users</label>
+        <label htmlFor="users_filter">{gettext("Users")}</label>
         <CheckboxedMultiSelect
             value={store.filters.user}
             options={selections}
             onChange={(e) => store.changeUserFilter(e)}
-            placeholder="None Selected"
+            placeholder={selection_placeholder}
             id="users_filter" />
     </div>
 })
 
 const CountryFilter = observer(({store, selections}) => {
     return <div className="form-group">
-        <label htmlFor="countries_permitted_filter">Countries Permitted</label>
+        <label htmlFor="countries_permitted_filter">{gettext("Countries Permitted")}</label>
         <CheckboxedMultiSelect
             value={store.filters.countries}
             options={selections}
             onChange={(e) => store.changeCountryFilter(e)}
-            placeholder="None Selected"
+            placeholder={selection_placeholder}
             id="countries_permitted_filter" />
     </div>
 })
 
 const BaseCountryFilter = observer(({store, selections}) => {
     return <div className="form-group">
-        <label htmlFor="base_country_filter">Base Country</label>
+        <label htmlFor="base_country_filter">{gettext("Base Country")}</label>
         <CheckboxedMultiSelect
             value={store.filters.base_countries}
             options={selections}
             onChange={(e) => store.changeBaseCountryFilter(e)}
-            placeholder="None Selected"
+            placeholder={selection_placeholder}
             id="base_country_filter" />
     </div>
 })
 
 const ProgramFilter = observer(({store, selections}) => {
     return <div className="form-group">
-        <label htmlFor="programs_filter">Programs</label>
+        <label htmlFor="programs_filter">{gettext("Programs")}</label>
         <CheckboxedMultiSelect
             value={store.filters.programs}
             options={selections}
             onChange={(e) => store.changeProgramFilter(e)}
-            placeholder="None Selected"
+            placeholder={selection_placeholder}
             id="programs_filter" />
     </div>
 })
@@ -138,7 +139,7 @@ class BulkActions extends React.Component {
             <div className="bulk-select">
                 <Select
                 className="bulk-select"
-                placeholder="Bulk Actions"
+                placeholder={gettext("Bulk Actions")}
                 value={this.props.primaryOptions.find((o) => o.value == this.state.current_action)}
                 options={this.props.primaryOptions} onChange={(val) => this.onActionChanged(val)} />
             </div>
@@ -162,9 +163,9 @@ export const IndexView = observer(
         const programOptions = store.program_selections
         const bulk_actions = {
             primary_options: [
-                {label: 'Set account status', value: 'set_account_status'},
-                {label: 'Add to program', value: 'add_to_program'},
-                {label: 'Remove from program', value: 'remove_from_program'},
+                {label: gettext('Set account status'), value: 'set_account_status'},
+                {label: gettext('Add to program'), value: 'add_to_program'},
+                {label: gettext('Remove from program'), value: 'remove_from_program'},
             ],
             secondary_options: {
                 set_account_status: {
@@ -188,44 +189,44 @@ export const IndexView = observer(
                 <BaseCountryFilter store={store} selections={store.countries_selections} />
                 <ProgramFilter store={store} selections={store.program_selections} />
                 <div className="form-group">
-                    <label htmlFor="organization_filter">Organization</label>
+                    <label htmlFor="organization_filter">{gettext("Organization")}</label>
                     <Select
                     value={store.filters.organizations}
                     options={store.organization_selections}
                     onChange={(e) => store.changeOrganizationFilter(e)}
                     isMulti={true}
-                    placeholder="None Selected"
+                    placeholder={selection_placeholder}
                     id="organization_filter" />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="status_filter">Status</label>
+                    <label htmlFor="status_filter">{gettext("Status")}</label>
                     <Select
                     value={store.filters.user_status}
                     options={store.user_status_options}
                     onChange={(e) => store.changeUserStatusFilter(e)}
-                    placeholder="None Selected"
+                    placeholder={selection_placeholder}
                     id="status_filter" />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="admin_role_filter">Admin Role</label>
+                    <label htmlFor="admin_role_filter">{gettext("Admin Role")}</label>
                     <Select
                     value={store.filters.admin_role}
                     options={store.admin_role_options}
                     onChange={(e) => store.changeAdminRoleFilter(e)}
-                    placeholder="None Selected"
+                    placeholder={selection_placeholder}
                     id="admin_role_filter" />
                 </div>
                 <UserFilter store={store} selections={store.user_selections} />
                 <div className="filter-buttons">
-                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>Apply</button>
-                    <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>Reset</button>
+                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
+                    <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
                 </div>
             </div>
             <div className="col col-sm-9 list-section">
                 <div className="list-controls">
                     <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div>
-                        <button className="btn btn-primary" onClick={() => store.createUser()}><i className="fa fa-plus-circle"></i>Add User</button>
+                        <button className="btn btn-primary" onClick={() => store.createUser()}><i className="fa fa-plus-circle"></i>{gettext("Add User")}</button>
                     </div>
                 </div>
                 <LoadingSpinner isLoading={store.fetching_users_listing || store.applying_bulk_updates}>
@@ -241,11 +242,11 @@ export const IndexView = observer(
                                             <div></div>
                                         </div>
                                     </Col>
-                                    <Col size="2">User</Col>
-                                    <Col>Organization</Col>
-                                    <Col>Programs</Col>
-                                    <Col size="0.5">Admin Role</Col>
-                                    <Col size="0.25">Status</Col>
+                                    <Col size="2">{gettext("User")}</Col>
+                                    <Col>{gettext("Organization")}</Col>
+                                    <Col>{gettext("Programs")}</Col>
+                                    <Col size="0.5">{gettext("Admin Role")}</Col>
+                                    <Col size="0.25">{gettext("Status")}</Col>
                                 </Row>
                             }
                             Row={({Col, Row, data}) =>
@@ -301,18 +302,18 @@ export const IndexView = observer(
                                             </div>
                                         </div>
                                     </Col>
-                                    <Col size="2">{data.name || "---"} {data.is_super && <span className="badge badge-danger">Super Admin</span>}</Col>
+                                    <Col size="2">{data.name || "---"} {data.is_super && <span className="badge badge-danger">{gettext("Super Admin")}</span>}</Col>
                                     <Col>{data.organization_name || "---"}</Col>
-                                    <Col><a href={`/tola_management/program/?users[]=${data.id}`}>{data.user_programs} programs</a></Col>
-                                    <Col size="0.5">{data.is_admin?'Yes':'No'}</Col>
-                                    <Col size="0.25">{data.is_active?'Active':'Inactive'}</Col>
+                                    <Col><a href={`/tola_management/program/?users[]=${data.id}`}>{data.user_programs} {gettext("programs")}</a></Col>
+                                    <Col size="0.5">{data.is_admin?gettext('Yes'):gettext('No')}</Col>
+                                    <Col size="0.25">{data.is_active?gettext('Active'):gettext('Inactive')}</Col>
                                 </Row>
                             }
                         />
                     </div>
                 </LoadingSpinner>
                 <div className="list-metadata">
-                    <div id="users-count">{store.users_count?`${store.users_count} users`:`--`}</div>
+                    <div id="users-count">{store.users_count?`${store.users_count} ${gettext("users")}`:`--`}</div>
                     <div id ="pagination-controls">
                         {store.total_pages &&
                          <Pagination

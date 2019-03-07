@@ -124,7 +124,7 @@ export default class EditUserProfile extends React.Component {
             <div className="edit-user-profile container">
                 <form className="form">
                     <div className="form-group">
-                        <label htmlFor="user-full-name-input">Full name<span className="required">*</span></label>
+                        <label htmlFor="user-full-name-input">{gettext("Full name")}<span className="required">*</span></label>
                         <input
                             disabled={disabled}
                             className={"form-control "+error_classes.name}
@@ -140,7 +140,7 @@ export default class EditUserProfile extends React.Component {
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-mode-of-address-input">Preferred Mode Of Address</label>
+                        <label htmlFor="user-mode-of-address-input">{gettext("Preferred Mode Of Address")}</label>
                         <input
                             type="text"
                             disabled={disabled}
@@ -150,7 +150,7 @@ export default class EditUserProfile extends React.Component {
                             id="user-mode-of-address-input" />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-organization-input">Organization<span className="required">*</span></label>
+                        <label htmlFor="user-organization-input">{gettext("Organization")}<span className="required">*</span></label>
                         <Select
                             isDisabled={disabled}
                             className={"form-control "+error_classes.organization}
@@ -166,7 +166,7 @@ export default class EditUserProfile extends React.Component {
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-title-input">Title</label>
+                        <label htmlFor="user-title-input">{gettext("Title")}</label>
                         <input
                             disabled={disabled}
                             maxLength="50"
@@ -177,7 +177,7 @@ export default class EditUserProfile extends React.Component {
                             id="user-title-input" />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-email-input">Email<span className="required">*</span></label>
+                        <label htmlFor="user-email-input">{gettext("Email")}<span className="required">*</span></label>
                         <input
                             disabled={disabled}
                             className={"form-control "+error_classes.email}
@@ -192,7 +192,7 @@ export default class EditUserProfile extends React.Component {
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-phone-input">Phone</label>
+                        <label htmlFor="user-phone-input">{gettext("Phone")}</label>
                         <input
                             disabled={disabled}
                             type="tel"
@@ -202,7 +202,7 @@ export default class EditUserProfile extends React.Component {
                             id="user-phone-input" />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-mode-of-contact-input">Preferred Mode of Contact</label>
+                        <label htmlFor="user-mode-of-contact-input">{gettext("Preferred Mode of Contact")}</label>
                         <input
                             disabled={disabled}
                             type="text"
@@ -213,15 +213,15 @@ export default class EditUserProfile extends React.Component {
                     </div>
                     {this.props.new && !disabled &&
                     <div className="form-group">
-                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>Save</button>
-                        <button className="btn btn-primary" onClick={(e) => this.saveNewAndAddAnother(e)}>Save And Add Another</button>
-                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Reset</button>
+                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>{gettext("Save")}</button>
+                        <button className="btn btn-primary" onClick={(e) => this.saveNewAndAddAnother(e)}>{gettext("Save And Add Another")}</button>
+                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }
                     {!this.props.new && !disabled &&
                     <div className="form-group">
-                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>Save</button>
-                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Reset</button>
+                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>{gettext("Save")}</button>
+                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }
                 </form>

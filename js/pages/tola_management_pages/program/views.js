@@ -11,77 +11,77 @@ import LoadingSpinner from 'components/loading-spinner'
 
 const UserFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
-        <label htmlFor="users_filter">Users</label>
+        <label htmlFor="users_filter">{gettext("Users")}</label>
         <CheckboxedMultiSelect
             value={store.filters.users}
             options={filterOptions}
             onChange={(e) => store.changeFilter('users', e)}
-            placeholder="None Selected"
+            placeholder={gettext("None Selected")}
             id="users_filter" />
     </div>
 })
 
 const CountryFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
-        <label htmlFor="countries_filter">Countries</label>
+        <label htmlFor="countries_filter">{gettext("Countries")}</label>
         <CheckboxedMultiSelect
             value={store.filters.countries}
             options={filterOptions}
             onChange={(e) => store.changeFilter('countries', e)}
-            placeholder="None Selected"
+            placeholder={gettext("None Selected")}
             id="countries_filter" />
     </div>
 })
 
 const OrganizationFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
-        <label htmlFor="organizations_filter">Organizations</label>
+        <label htmlFor="organizations_filter">{gettext("Organizations")}</label>
         <CheckboxedMultiSelect
             value={store.filters.organizations}
             options={filterOptions}
             onChange={(e) => store.changeFilter('organizations', e)}
-            placeholder="None Selected"
+            placeholder={gettext("None Selected")}
             id="organizations_filter" />
     </div>
 })
 
 const SectorFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
-        <label htmlFor="sector-filter">Sectors</label>
+        <label htmlFor="sector-filter">{gettext("Sectors")}</label>
         <CheckboxedMultiSelect
             value={store.filters.sectors}
             options={filterOptions}
             onChange={(e) => store.changeFilter('sectors', e)}
-            placeholder="None Selected"
+            placeholder={gettext("None Selected")}
             id="sector-filter" />
     </div>
 })
 
 const ProgramStatusFilter = observer(({store}) => {
     const statusFilterOptions = [
-        {value: 'Active', label: 'Active'},
-        {value: 'Closed', label: 'Closed'},
+        {value: 'Active', label: gettext('Active')},
+        {value: 'Closed', label: gettext('Closed')},
     ]
     return <div className="form-group">
-        <label htmlFor="program-status-filter">Status</label>
+        <label htmlFor="program-status-filter">{gettext("Status")}</label>
         <Select
             isMulti={false}
             value={store.filters.programStatus}
             options={statusFilterOptions}
             onChange={(e) => store.changeFilter('programStatus', e)}
-            placeholder="None Selected"
+            placeholder={gettext("None Selected")}
             id="program-status-filter" />
     </div>
 })
 
 const ProgramFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
-        <label htmlFor="programs-filter">Programs</label>
+        <label htmlFor="programs-filter">{gettext("Programs")}</label>
         <CheckboxedMultiSelect
             value={store.filters.programs}
             options={filterOptions}
             onChange={(e) => store.changeFilter('programs', e)}
-            placeholder="None Selected"
+            placeholder={gettext("None Selected")}
             id="programs-filter" />
     </div>
 })
@@ -123,7 +123,7 @@ class BulkActions extends React.Component {
             <div className="bulk-select">
                 <Select
                 className="bulk-select"
-                placeholder="Bulk Actions"
+                placeholder={gettext("Bulk Actions")}
                 value={this.props.primaryOptions.find((o) => o.value == this.state.current_action)}
                 options={this.props.primaryOptions} onChange={(val) => this.onActionChanged(val)} />
             </div>
@@ -137,7 +137,7 @@ class BulkActions extends React.Component {
                 <Select className="bulk-select" placeholder="---"/>
             </div>
             }
-            <button className="btn btn-secondary" disabled={!this.state.current_action} onClick={() => this.onApply()}>Apply</button>
+            <button className="btn btn-secondary" disabled={!this.state.current_action} onClick={() => this.onApply()}>{gettext("Apply")}</button>
         </div>
     }
 }
@@ -153,13 +153,13 @@ export const IndexView = observer(
         const programFilterOptions = Object.entries(store.programFilterPrograms).map(([id, program]) => ({value: program.id, label: program.name}))
         const userFilterOptions = Object.entries(store.users).map(([id, user]) => ({value: user.id, label: user.name}))
         const bulkProgramStatusOptions = [
-            {value: 'Funded', label: 'Funded'},
-            {value: 'Completed', label: 'Completed'},
+            {value: 'Funded', label: gettext('Funded')},
+            {value: 'Completed', label: gettext('Completed')},
         ]
 
         const bulk_actions = {
             primary_options: [
-                {label: 'Set program status', value: 'set_program_status'},
+                {label: gettext('Set program status'), value: 'set_program_status'},
             ],
             secondary_options: {
                 set_program_status: {
@@ -189,15 +189,15 @@ export const IndexView = observer(
                 <ProgramStatusFilter store={store} />
                 <ProgramFilter store={store} filterOptions={programFilterOptions} />
                 <div className="filter-buttons">
-                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>Apply</button>
-                    <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>Reset</button>
+                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
+                    <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
                 </div>
             </div>
             <div className="col col-sm-9 list-section">
                 <div className="list-controls">
                     <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div>
-                        <button className="btn btn-primary" onClick={() => store.createProgram()}><i className="fa fa-plus-circle"></i>Add Program</button>
+                        <button className="btn btn-primary" onClick={() => store.createProgram()}><i className="fa fa-plus-circle"></i>{gettext("Add Program")}</button>
                     </div>
                 </div>
                 <LoadingSpinner isLoading={store.fetching_main_listing || store.applying_bulk_updates }>
@@ -214,10 +214,10 @@ export const IndexView = observer(
                                             <div></div>
                                         </div>
                                     </Col>
-                                    <Col size="2">Program</Col>
-                                    <Col>Organizations</Col>
-                                    <Col>Users</Col>
-                                    <Col>Status</Col>
+                                    <Col size="2">{gettext("Program")}</Col>
+                                    <Col>{gettext("Organizations")}</Col>
+                                    <Col>{gettext("Users")}</Col>
+                                    <Col>{gettext("Status")}</Col>
                                 </Row>
                             }
                             Row={({Col, Row, data}) =>
@@ -272,7 +272,7 @@ export const IndexView = observer(
                     </div>
                 </LoadingSpinner>
                 <div className="list-metadata row">
-                    <div id="users-count">{store.program_count ? `${store.program_count} programs`:`---`}</div>
+                    <div id="users-count">{store.program_count ? `${store.program_count} ${gettext("programs")}`:`---`}</div>
                     <div id ="pagination-controls">
                         {store.total_pages &&
                          <Pagination

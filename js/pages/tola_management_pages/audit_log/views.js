@@ -10,36 +10,36 @@ import Expander from 'components/expander'
 import LoadingSpinner from 'components/loading-spinner'
 
 const pretty_change_type = {
-    indicator_changed: 'Indicator changed',
-    indicator_created: 'Indicator created',
-    indicator_deleted: 'Indicator deleted',
-    result_changed: 'Result changed',
-    result_created: 'Result created',
-    result_deleted: 'Result deleted',
-    program_dates_changed: 'Program Dates Changed'
+    indicator_changed: gettext('Indicator changed'),
+    indicator_created: gettext('Indicator created'),
+    indicator_deleted: gettext('Indicator deleted'),
+    result_changed: gettext('Result changed'),
+    result_created: gettext('Result created'),
+    result_deleted: gettext('Result deleted'),
+    program_dates_changed: gettext('Program Dates Changed')
 }
 
 const map_pretty_change_type = change_type => pretty_change_type[change_type]
 
 const units_of_measure_type = {
-    1: "Number",
-    2: "Percentage"
+    1: gettext("Number"),
+    2: gettext("Percentage")
 }
 const map_unit_of_measure_type = id => units_of_measure_type[id]
 
 const directions_of_change = {
-    1: "N/A",
-    2: "Increase (+)",
-    3: "Decrease (-)",
+    1: gettext("N/A"),
+    2: gettext("Increase (+)"),
+    3: gettext("Decrease (-)"),
 }
 const map_direction_of_change = id => directions_of_change[id]
 
 const result_changeset_name_map = {
-    'evidence_url': 'Evidence Url',
-    'evidence_name': 'Evidence Name',
-    'date': 'Date',
-    'target': 'Target',
-    'value': 'Value',
+    'evidence_url': gettext('Evidence Url'),
+    'evidence_name': gettext('Evidence Name'),
+    'date': gettext('Date'),
+    'target': gettext('Target'),
+    'value': gettext('Value'),
 }
 
 const ResultChangeset = ({data, name}) => {
@@ -51,8 +51,8 @@ const ResultChangeset = ({data, name}) => {
 }
 
 const program_dates_changset_name_map = {
-    'start_date': 'Start Date',
-    'end_date': 'End Date'
+    'start_date': gettext('Start Date'),
+    'end_date': gettext('End Date')
 }
 
 const ProgramDatesChangeset = ({data, name}) => {
@@ -60,15 +60,15 @@ const ProgramDatesChangeset = ({data, name}) => {
 }
 
 const indicator_changeset_name_map = {
-    name: 'Name',
-    unit_of_measure: 'Unit of Measure',
-    unit_of_measure_type: 'Unit of Measure Type',
-    is_cumulative: 'Is Cumulative',
-    lop_target: 'LOP Target',
-    direction_of_change: 'Direction of Change',
-    rationale_for_target: 'Rationale for Target',
-    baseline_value: 'Baseline Value',
-    baseline_na: 'Baseline N/A',
+    name: gettext('Name'),
+    unit_of_measure: gettext('Unit of Measure'),
+    unit_of_measure_type: gettext('Unit of Measure Type'),
+    is_cumulative: gettext('Is Cumulative'),
+    lop_target: gettext('LOP Target'),
+    direction_of_change: gettext('Direction of Change'),
+    rationale_for_target: gettext('Rationale for Target'),
+    baseline_value: gettext('Baseline Value'),
+    baseline_na: gettext('Baseline N/A'),
 }
 
 const IndicatorChangeset = ({data, name}) => {
@@ -131,22 +131,22 @@ export const IndexView = observer(
         return <div id="audit-log-index-view" className="container-fluid row">
 
             <div className="list-controls">
-                <a className="btn btn-link btn-secondary" href={`/api/tola_management/program/${store.program_id}/csv_audit_log`}>Export to Excel</a>
+                <a className="btn btn-link btn-secondary" href={`/api/tola_management/program/${store.program_id}/csv_audit_log`}>{gettext("Export to Excel")}</a>
             </div>
             <div className="col col-sm-12 list-section">
                 <LoadingSpinner isLoading={store.fetching}>
                     <table className="list-table">
                         <thead>
                             <tr>
-                                <th>Date and Time</th>
-                                <th>No.</th>
-                                <th width="25%">Indicator</th>
-                                <th>User</th>
-                                <th>Organization</th>
-                                <th>Change Type</th>
-                                <th>Previous Entry</th>
-                                <th>New Entry</th>
-                                <th>Rationale</th>
+                                <th>{gettext("Date and Time")}</th>
+                                <th>{gettext("No.")}</th>
+                                <th width="25%">{gettext("Indicator")}</th>
+                                <th>{gettext("User")}</th>
+                                <th>{gettext("Organization")}</th>
+                                <th>{gettext("Change Type")}</th>
+                                <th>{gettext("Previous Entry")}</th>
+                                <th>{gettext("New Entry")}</th>
+                                <th>{gettext("Rationale")}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -177,7 +177,7 @@ export const IndexView = observer(
                     </table>
                 </LoadingSpinner>
                 <div className="list-metadata">
-                    <div id="entries-count">{store.entries_count?`${store.entries_count} entries`:`--`}</div>
+                    <div id="entries-count">{store.entries_count?`${store.entries_count} ${gettext("entries")}`:`--`}</div>
                     <div id ="pagination-controls">
                         {store.total_pages &&
                          <Pagination

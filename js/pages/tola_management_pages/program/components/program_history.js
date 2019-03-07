@@ -48,11 +48,11 @@ export class ProgramHistory extends React.Component {
         const {history} = this.props
         const currentStatusSelection = status_options.find(x=> x.value == this.state.managed_status.funding_status)
         return <div className="edit-user-history container">
-            <h2>{this.props.program_data.name}: Status and History</h2>
+            <h2>{this.props.program_data.name}: {gettext("Status and History")}</h2>
             <div className="row">
                 <div className="col">
                 <div className="form-group">
-                    <label htmlFor="status-input" required>Program Status*</label>
+                    <label htmlFor="status-input" required>{gettext("Program Status")}<span className="required">*</span></label>
                     <Select
                         isSearchable={false}
                         options={status_options}
@@ -64,8 +64,8 @@ export class ProgramHistory extends React.Component {
             </div>
             <div className="row">
                 <div className="col">
-                    <button className="btn btn-primary" type="button" onClick={() => this.onSave()}>Save Changes</button>
-                    <button className="btn btn-outline-primary" type="button" onClick={() => this.onReset()}>Reset</button>
+                    <button className="btn btn-primary" type="button" onClick={() => this.onSave()}>{gettext("Save Changes")}</button>
+                    <button className="btn btn-outline-primary" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
                 </div>
             </div>
             <div className="row">
@@ -73,11 +73,11 @@ export class ProgramHistory extends React.Component {
                     <table className="history-table">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Admin User</th>
-                                <th>Change Type</th>
-                                <th>Previous Entry</th>
-                                <th>New Entry</th>
+                                <th>{gettext("Date")}</th>
+                                <th>{gettext("Admin User")}</th>
+                                <th>{gettext("Change Type")}</th>
+                                <th>{gettext("Previous Entry")}</th>
+                                <th>{gettext("New Entry")}</th>
                             </tr>
                         </thead>
                         <tbody>

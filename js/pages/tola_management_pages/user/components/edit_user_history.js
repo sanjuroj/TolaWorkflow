@@ -5,8 +5,8 @@ import {AutoSizer, Table, Column, CellMeasurer, CellMeasurerCache} from 'react-v
 import Expander from 'components/expander'
 
 const status_options = [
-    {value: true, label: 'Active'},
-    {value: false, label: 'Inactive'}
+    {value: true, label: gettext('Active')},
+    {value: false, label: gettext('Inactive')}
 ]
 
 const ChangesetEntry = ({name, type, data}) => {
@@ -20,8 +20,8 @@ const ProgramChangesetEntry = ({data, timeframe}) => {
             <h3>Countries</h3>
             {Object.entries(data.countries).map(([id, country]) =>
                 <div key={id} className="program-changeset-row">
-                    <p><strong>Country</strong>: {country[timeframe].country}</p>
-                    <p><strong>Role</strong>: {country[timeframe].role}</p>
+                    <p><strong>{gettext("Country")}</strong>: {country[timeframe].country}</p>
+                    <p><strong>{gettext("Role")}</strong>: {country[timeframe].role}</p>
                 </div>
             )}
         </div>
@@ -31,9 +31,9 @@ const ProgramChangesetEntry = ({data, timeframe}) => {
             <h3>Programs</h3>
             {Object.entries(data.programs).map(([id, program]) =>
                 <div key={id} className="program-changeset-row">
-                    <p><strong>Program</strong>: {program[timeframe].program}</p>
-                    <p><strong>Country</strong>: {program[timeframe].country}</p>
-                    <p><strong>Role</strong>: {program[timeframe].role}</p>
+                    <p><strong>{gettext("Program")}</strong>: {program[timeframe].program}</p>
+                    <p><strong>{gettext("Country")}</strong>: {program[timeframe].country}</p>
+                    <p><strong>{gettext("Role")}</strong>: {program[timeframe].role}</p>
                 </div>
             )}
         </div>
@@ -74,7 +74,7 @@ export class EditUserHistory extends React.Component {
         const selected = status_options.find(option => option.value == this.state.user_data.user.is_active)
         const {history} = this.props
         return <div className="edit-user-history">
-            <h2>{this.state.user_data.name}: Status and History</h2>
+            <h2>{this.state.user_data.name}: {gettext("Status and History")}</h2>
             <div className="row">
                 <div className="col">
                     <Select isDisabled={this.props.disabled} options={status_options} value={selected} onChange={(new_value) => this.onChange(new_value)} />
@@ -82,14 +82,14 @@ export class EditUserHistory extends React.Component {
             </div>
             <div className="row">
                 <div className="col">
-                    <button className="btn btn-secondary" onClick={() => this.onResendRegistrationEmail()}>Resend Registration Email</button>
+                    <button className="btn btn-secondary" onClick={() => this.onResendRegistrationEmail()}>{gettext("Resend Registration Email")}</button>
                 </div>
             </div>
             <div className="row">
                 {!this.props.disabled &&
                 <div className="col">
-                    <button className="btn btn-primary" type="button" onClick={() => this.props.onSave(this.state.user_data)}>Save Changes</button>
-                    <button className="btn btn-outline-primary" type="button" onClick={() => this.onReset()}>Reset</button>
+                    <button className="btn btn-primary" type="button" onClick={() => this.props.onSave(this.state.user_data)}>{gettext("Save Changes")}</button>
+                    <button className="btn btn-outline-primary" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
                 </div>
                 }
             </div>
@@ -98,11 +98,11 @@ export class EditUserHistory extends React.Component {
                     <table>
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Admin</th>
-                                <th>Change Type</th>
-                                <th>Previous Entry</th>
-                                <th>New Entry</th>
+                                <th>{gettext("Date")}</th>
+                                <th>{gettext("Admin")}</th>
+                                <th>{gettext("Change Type")}</th>
+                                <th>{gettext("Previous Entry")}</th>
+                                <th>{gettext("New Entry")}</th>
                             </tr>
                         </thead>
                         <tbody>

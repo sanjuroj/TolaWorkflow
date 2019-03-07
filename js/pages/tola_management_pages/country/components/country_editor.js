@@ -30,7 +30,7 @@ export default class CountryEditor extends React.Component {
                             className={classNames('list-group-item', {'selected': active_page=='profile'})}
                             onClick={() => this.updateActivePage('profile')}
                         >
-                            Profile
+                            {gettext("Profile")}
                         </li>
                         <li
                             className={classNames('list-group-item', {
@@ -39,7 +39,7 @@ export default class CountryEditor extends React.Component {
                             })}
                             onClick={() => this.updateActivePage('objectives')}
                         >
-                            Strategic Objectives
+                            {gettext("Strategic Objectives")}
                         </li>
                         <li
                             className={classNames('list-group-item', {
@@ -48,7 +48,7 @@ export default class CountryEditor extends React.Component {
                             })}
                             onClick={() => this.updateActivePage('disaggregations')}
                         >
-                            Country Disaggregations
+                            {gettext("Country Disaggregations")}
                         </li>
                     </ul>
                 </div>

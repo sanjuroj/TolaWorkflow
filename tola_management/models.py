@@ -299,7 +299,7 @@ class ProgramAuditLog(models.Model, DiffableLog):
             organization=user.tola_user.organization,
             indicator=indicator,
             change_type="result_created",
-            rationale="N/A",
+            rationale=rationale,
             previous_entry=None,
             new_entry=json.dumps(created_result.logged_fields, cls=DjangoJSONEncoder)
         )

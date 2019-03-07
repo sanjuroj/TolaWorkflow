@@ -66,7 +66,7 @@ export default class EditCountryProfile extends React.Component {
             <div className="edit-user-profile container">
                 <form className="form">
                     <div className="form-group">
-                        <label htmlFor="country-name-input">Country name<span className="required">*</span></label>
+                        <label htmlFor="country-name-input">{gettext("Country name")}<span className="required">*</span></label>
                         <input
                             type="text"
                             value={formdata.country}
@@ -77,7 +77,7 @@ export default class EditCountryProfile extends React.Component {
                         <ErrorFeedback errorMessages={this.formErrors('country')} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="country-description-input">Description</label>
+                        <label htmlFor="country-description-input">{gettext("Description")}</label>
                         <textarea
                             value={formdata.description}
                             onChange={(e) => this.updateFormField('description', e.target.value) }
@@ -87,7 +87,7 @@ export default class EditCountryProfile extends React.Component {
                         <ErrorFeedback errorMessages={this.formErrors('description')} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="country-code-input">Country Code</label>
+                        <label htmlFor="country-code-input">{gettext("Country Code")}</label>
                         <input
                             value={formdata.code}
                             onChange={(e) => this.updateFormField('code', e.target.value) }
@@ -98,15 +98,15 @@ export default class EditCountryProfile extends React.Component {
                     </div>
                     {this.props.new &&
                     <div className="form-group">
-                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>Save</button>
+                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>{gettext("Save")}</button>
                         {/* <button className="btn btn-primary" onClick={(e) => this.saveNewAndAddAnother(e)}>Save And Add Another</button> */}
-                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Reset</button>
+                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }
                     {!this.props.new &&
                     <div className="form-group">
-                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>Save</button>
-                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Reset</button>
+                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>{gettext("Save")}</button>
+                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }
                 </form>

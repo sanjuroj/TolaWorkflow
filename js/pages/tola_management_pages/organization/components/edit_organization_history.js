@@ -5,8 +5,8 @@ import {AutoSizer, Table, Column, CellMeasurer, CellMeasurerCache} from 'react-v
 import Expander from 'components/expander'
 
 const status_options = [
-    {value: true, label: 'Active'},
-    {value: false, label: 'Inactive'}
+    {value: true, label: gettext('Active')},
+    {value: false, label: gettext('Inactive')}
 ]
 
 const ChangesetEntry = ({name, type, data}) => {
@@ -52,7 +52,7 @@ export default class EditOrganizationHistory extends React.Component {
 
     render() {
         return <div className="edit-organization">
-            <h2>OrganizationName: Status and History</h2>
+            <h2>OrganizationName: {gettext("Status and History")}</h2>
             <div className="row">
                 <div className="col">
                     <Select options={status_options} value={this.state.data.is_active} onChange={(new_value) => this.onChange(new_value)} />
@@ -60,8 +60,8 @@ export default class EditOrganizationHistory extends React.Component {
             </div>
             <div className="row">
                 <div className="col">
-                    <button className="btn btn-primary" type="button" onClick={(e) => this.save(e)}>Save Changes</button>
-                    <button className="btn btn-outline-primary" type="button" onClick={() => this.onReset()}>Reset</button>
+                    <button className="btn btn-primary" type="button" onClick={(e) => this.save(e)}>{gettext("Save Changes")}</button>
+                    <button className="btn btn-outline-primary" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
                 </div>
             </div>
             <div className="row">
@@ -69,11 +69,11 @@ export default class EditOrganizationHistory extends React.Component {
                     <table className="history-table">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Admin User</th>
-                                <th>Change Type</th>
-                                <th>Previous Entry</th>
-                                <th>New Entry</th>
+                                <th>{gettext("Date")}</th>
+                                <th>{gettext("Admin User")}</th>
+                                <th>{gettext("Change Type")}</th>
+                                <th>{gettext("Previous Entry")}</th>
+                                <th>{gettext("New Entry")}</th>
                             </tr>
                         </thead>
                         <tbody>

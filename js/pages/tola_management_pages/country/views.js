@@ -12,36 +12,36 @@ import LoadingSpinner from 'components/loading-spinner'
 
 const CountryFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
-        <label htmlFor="countries_filter">Countries</label>
+        <label htmlFor="countries_filter">{gettext("Countries")}</label>
         <CheckboxedMultiSelect
             value={store.filters.countries}
             options={filterOptions}
             onChange={(e) => store.changeFilter('countries', e)}
-            placeholder="None Selected"
+            placeholder={gettext("None Selected")}
             id="countries_filter" />
     </div>
 })
 
 const OrganizationFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
-        <label htmlFor="organizations_filter">Organizations</label>
+        <label htmlFor="organizations_filter">{gettext("Organizations")}</label>
         <CheckboxedMultiSelect
             value={store.filters.organizations}
             options={filterOptions}
             onChange={(e) => store.changeFilter('organizations', e)}
-            placeholder="None Selected"
+            placeholder={gettext("None Selected")}
             id="organizations_filter" />
     </div>
 })
 
 const ProgramFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
-        <label htmlFor="programs-filter">Programs</label>
+        <label htmlFor="programs-filter">{gettext("Programs")}</label>
         <CheckboxedMultiSelect
             value={store.filters.programs}
             options={filterOptions}
             onChange={(e) => store.changeFilter('programs', e)}
-            placeholder="None Selected"
+            placeholder={gettext("None Selected")}
             id="programs-filter" />
     </div>
 })
@@ -59,13 +59,13 @@ export const IndexView = observer(
                 <ProgramFilter store={store} filterOptions={programFilterOptions} />
                 <CountryFilter store={store} filterOptions={countryFilterOptions} />
                 <div className="filter-buttons">
-                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>Apply</button>
-                    <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>Reset</button>
+                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
+                    <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
                 </div>
             </div>
             <div className="col col-sm-9 list-section">
                 <div className="list-controls">
-                    <button className="btn btn-primary" onClick={() => store.createProgram()}><i className="fa fa-plus-circle"></i>Add Country</button>
+                    <button className="btn btn-primary" onClick={() => store.createProgram()}><i className="fa fa-plus-circle"></i>{gettext("Add Country")}</button>
                 </div>
                 <LoadingSpinner isLoading={store.fetching_main_listing || store.applying_bulk_updates }>
                     <div className="list-table">
@@ -76,10 +76,10 @@ export const IndexView = observer(
                             HeaderRow={({Col, Row}) =>
                                 <Row>
                                     <Col size=".2"></Col>
-                                    <Col size="2">Country</Col>
-                                    <Col>Organizations</Col>
-                                    <Col>Programs</Col>
-                                    <Col>Users</Col>
+                                    <Col size="2">{gettext("Country")}</Col>
+                                    <Col>{gettext("Organizations")}</Col>
+                                    <Col>{gettext("Programs")}</Col>
+                                    <Col>{gettext("Users")}</Col>
                                 </Row>
                             }
                             Row={({Col, Row, data}) =>
@@ -124,16 +124,16 @@ export const IndexView = observer(
                                         </div>
                                     </Col>
                                     <Col size="2">{data.country || "---"}</Col>
-                                    <Col>{data.organizations.length ? <a href={`/tola_management/organization/?countries[]=${data.id}`}>{data.organizations.length} Organizations</a>: '---'}</Col>
-                                    <Col>{data.programCount ? <a href={`/tola_management/program/?countries[]=${data.id}`}>{data.programCount} Programs</a> : "---"}</Col>
-                                    <Col>{data.user_count ? <a href={`/tola_management/user/?base_countries[]=${data.id}`}>{data.user_count} Users</a> : '---'  }</Col>
+                                    <Col>{data.organizations.length ? <a href={`/tola_management/organization/?countries[]=${data.id}`}>{data.organizations.length} {gettext("Organizations")}</a>: '---'}</Col>
+                                    <Col>{data.programCount ? <a href={`/tola_management/program/?countries[]=${data.id}`}>{data.programCount} {gettext("Programs")}</a> : "---"}</Col>
+                                    <Col>{data.user_count ? <a href={`/tola_management/user/?base_countries[]=${data.id}`}>{data.user_count} {gettext("Users")}</a> : '---'  }</Col>
                                 </Row>
                             }
                         />
                     </div>
                 </LoadingSpinner>
                 <div className="list-metadata row">
-                    <div id="users-count">{store.country_count ? `${store.country_count} countries`:`---`}</div>
+                    <div id="users-count">{store.country_count ? `${store.country_count} ${gettext("countries")}`:`---`}</div>
                     <div id ="pagination-controls">
                         {store.total_pages &&
                          <Pagination

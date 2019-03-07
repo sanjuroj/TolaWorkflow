@@ -363,11 +363,11 @@ export default class EditUserPrograms extends React.Component {
                     <div className="col">
                         <div className="edit-user-programs__filter-form form-inline">
                             <div className="edit-user-programs__country-filter form-group">
-                                <Select placeholder="Filter countries" isMulti={true} value={this.state.country_filter} options={this.state.country_selections} onChange={(e) => this.changeCountryFilter(e)} />
+                                <Select placeholder={gettext("Filter countries")} isMulti={true} value={this.state.country_filter} options={this.state.country_selections} onChange={(e) => this.changeCountryFilter(e)} />
                             </div>
                             <div className="form-group edit-user-programs__program-filter">
                                 <div className="input-group">
-                                    <input placeholder="Filter programs" type="text" value={this.state.program_filter} className="form-control" onChange={(e) => this.updateProgramFilter(e.target.value)} />
+                                    <input placeholder={gettext("Filter programs")} type="text" value={this.state.program_filter} className="form-control" onChange={(e) => this.updateProgramFilter(e.target.value)} />
                                     <div className="input-group-append">
                                         <a onClick={(e) => {e.preventDefault(); this.clearFilter()}}>
                                             <span className="input-group-text"><i className="fa fa-times-circle"></i></span>
@@ -408,7 +408,7 @@ export default class EditUserPrograms extends React.Component {
                                                     this.state.filtered_programs,
                                                     this.state.user_program_access
                                                 )
-                                                const button_label = (country_has_all_checked)?'Deselect All':'Select All'
+                                                const button_label = (country_has_all_checked)?gettext('Deselect All'):gettext('Select All')
                                                 if(cellData.disabled) {
                                                     return null
                                                 } else {
@@ -421,7 +421,7 @@ export default class EditUserPrograms extends React.Component {
 
                                         <Column
                                         dataKey="not_applicable_but_required"
-                                        label="Countries and Programs"
+                                        label={gettext("Countries and Programs")}
                                         width={200}
                                         flexGrow={2}
                                         cellDataGetter={({rowData}) => ({bold: rowData.type == "country", name: rowData.name})}
@@ -437,7 +437,7 @@ export default class EditUserPrograms extends React.Component {
                                         width={100}
                                         flexGrow={1}
                                         dataKey="not_applicable_but_required"
-                                        label="Roles and Permissions"
+                                        label={gettext("Roles and Permissions")}
                                         cellDataGetter={({rowData}) => ({
                                             id: rowData.id,
                                             disabled: is_role_disabled(rowData),

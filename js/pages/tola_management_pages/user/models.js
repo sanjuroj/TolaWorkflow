@@ -157,8 +157,8 @@ export class UserStore {
         PNotify.error({text: message || 'Saving Failed', delay: 5000});
     }
 
-    onSaveSuccessHandler() {
-        PNotify.success({text: 'Successfully Saved', delay: 5000})
+    onSaveSuccessHandler(message) {
+        PNotify.success({text: message || 'Successfully Saved', delay: 5000})
     }
 
     @action
@@ -326,8 +326,14 @@ export class UserStore {
 
     @action
     resendRegistrationEmail(user_id) {
+        this.saving_user_profile = true
         api.resendRegistrationEmail(user_id).then(result => {
-            console.log(result)
+            runInAction(() => {
+                this.saving_user_profile = false
+                this.onSaveSuccessHandler("Verification email sent")
+            })
+        }).catch(() => {
+            this.onSaveSuccessHandler("Verification email send failed")
         })
     }
 

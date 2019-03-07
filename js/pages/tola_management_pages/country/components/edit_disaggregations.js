@@ -72,11 +72,11 @@ export default class EditDisaggregations extends React.Component {
                     />
                 )}
                 <div className="form-group">
-                    <button className="btn btn-primary" onClick={(e) => this.save(e)}>Save Changes</button>
-                    <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Reset</button>
+                    <button className="btn btn-primary" onClick={(e) => this.save(e)}>{gettext("Save Changes")}</button>
+                    <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                 </div>
                 <div>
-                    <a href='#' className="btn-link btn-add"><FontAwesomeIcon icon={'plus-circle'} /> Add country disaggregation</a>
+                    <a href='#' className="btn-link btn-add"><FontAwesomeIcon icon={'plus-circle'} /> {gettext("Add country disaggregation")}</a>
                 </div>
             </div>
         )
