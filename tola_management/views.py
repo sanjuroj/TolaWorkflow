@@ -727,6 +727,8 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         for role in added_programs:
             if int(role["country"]) in managed_countries:
                 for user_id in request.data["user_ids"]:
+                    user = TolaUser.objects.get(id=user_id)
+                    previous_entry = user.logged_program_fields
                     try:
                         access = ProgramAccess.objects.get(tolauser_id=user_id, country_id=role["country"], program_id=role["program"])
                     except ObjectDoesNotExist:
@@ -737,8 +739,19 @@ class UserAdminViewSet(viewsets.ModelViewSet):
                             role=role["role"]
                         )
                         access.save()
+                    UserManagementAuditLog.programs_updated(
+                        user=user,
+                        changed_by=request.user.tola_user,
+                        old=previous_entry,
+                        new=user.logged_program_fields
+                    )
 
-        return Response({})
+        program_counts = {}
+        for user_id in request.data["user_ids"]:
+            user = TolaUser.objects.get(id=user_id)
+            program_counts[user_id] = user.available_programs.count()
+
+        return Response(program_counts)
 
     @list_route(methods=["post"])
     def bulk_remove_programs(self, request):
@@ -749,13 +762,26 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         for role in removed_programs:
             if int(role["country"]) in managed_countries:
                 for user_id in request.data["user_ids"]:
+                    user = TolaUser.objects.get(id=user_id)
+                    previous_entry = user.logged_program_fields
                     try:
                         access = ProgramAccess.objects.get(tolauser_id=user_id, country_id=role["country"], program_id=role["program"])
                         access.delete()
                     except ObjectDoesNotExist:
                         pass
+                    UserManagementAuditLog.programs_updated(
+                        user=user,
+                        changed_by=request.user.tola_user,
+                        old=previous_entry,
+                        new=user.logged_program_fields
+                    )
 
-        return Response({})
+        program_counts = {}
+        for user_id in request.data["user_ids"]:
+            user = TolaUser.objects.get(id=user_id)
+            program_counts[user_id] = user.available_programs.count()
+
+        return Response(program_counts)
 
     @detail_route(methods=["get"])
     def aggregate_data(self, request, pk=None):

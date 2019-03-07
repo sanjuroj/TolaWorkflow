@@ -125,11 +125,14 @@ export const IndexView = observer(
                                                                         onSaveNewAndAddAnother={(new_organization_data) => store.saveNewOrganizationAndAddAnother(new_organization_data)} />
                                                                  </LoadingSpinner>
                                                              )}
-                                                             HistorySection={() =>
-                                                                 <EditOrganizationHistory
-                                                                    organizationData={store.editing_target_data}
-                                                                    organizationHistoryData={store.editing_target_history}
-                                                                    onSave={(new_organization_data) => store.updateOrganizationProfile(data.id, new_organization_data)}/>}
+                                                             HistorySection={observer(() =>
+                                                                 <LoadingSpinner isLoading={store.fetching_editing_target || store.saving}>
+                                                                    <EditOrganizationHistory
+                                                                        organizationData={store.editing_target_data}
+                                                                        organizationHistoryData={store.editing_target_history}
+                                                                                         onSave={(new_organization_data) => store.updateOrganizationProfile(data.id, new_organization_data)}/>
+                                                                 </LoadingSpinner>
+                                                             )}
                                                      />
                                                  </Wrapper>
                                              }>

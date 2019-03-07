@@ -105,7 +105,7 @@ export default class EditUserPrograms extends React.Component {
 
         const {countries, programs}= apply_program_filter(
             programs_obj,
-            countries,
+            filtered_countries,
             this.state.program_filter
         )
 

@@ -256,7 +256,7 @@ export const IndexView = observer(
                                             <UserEditor
                                                 new={data.id == 'new'}
                                                 ProfileSection={observer(() =>
-                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.save_user_programs}>
+                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
                                                         <EditUserProfile
                                                             disabled={data.organization_id == 1 && !store.is_superuser && data.id != 'new'}
                                                             is_superuser={store.is_superuser}
@@ -271,7 +271,7 @@ export const IndexView = observer(
                                                     </LoadingSpinner>
                                                 )}
                                                 ProgramSection={observer(() =>
-                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.save_user_programs}>
+                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
                                                         <EditUserPrograms
                                                             store={store}
                                                                 user={data}
@@ -281,7 +281,7 @@ export const IndexView = observer(
                                                     </LoadingSpinner>
                                                 )}
                                                 HistorySection={observer(() =>
-                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.save_user_programs}>
+                                                    <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
                                                         <EditUserHistory
                                                             disabled={data.organization_id == 1 && !store.is_superuser}
                                                             userData={store.editing_target_data.profile}

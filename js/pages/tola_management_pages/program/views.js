@@ -228,23 +228,27 @@ export const IndexView = observer(
                                         <ProgramEditor
                                             new={data.id == 'new'}
                                             ProfileSection={observer(() =>
-                                                <EditProgramProfile
-                                                    new={data.id == 'new'}
-                                                    program_data={data}
-                                                    onUpdate={(id, data) => store.updateProgram(id, data)}
-                                                    onCreate={(new_program_data) => store.saveNewProgram(new_program_data)}
-                                                    sectorOptions={sectorFilterOptions}
-                                                    countryOptions={allCountryOptions}
-                                                    errors={store.editing_errors}
-                                                />)}
+                                                <LoadingSpinner isLoading={store.saving}>
+                                                    <EditProgramProfile
+                                                        new={data.id == 'new'}
+                                                            program_data={data}
+                                                            onUpdate={(id, data) => store.updateProgram(id, data)}
+                                                            onCreate={(new_program_data) => store.saveNewProgram(new_program_data)}
+                                                            sectorOptions={sectorFilterOptions}
+                                                            countryOptions={allCountryOptions}
+                                                            errors={store.editing_errors} />
+                                                </LoadingSpinner>
+                                            )}
                                             HistorySection={observer(() =>
-                                                <ProgramHistory
-                                                    program_data={data}
-                                                    fetching_history={store.fetching_editing_history}
-                                                    history={store.editing_history}
-                                                    saving={store.saving}
-                                                    onSave={(id, data) => store.updateProgram(id, data)}
-                                                />)}
+                                                <LoadingSpinner isLoading={store.saving}>
+                                                    <ProgramHistory
+                                                        program_data={data}
+                                                        fetching_history={store.fetching_editing_history}
+                                                        history={store.editing_history}
+                                                        saving={store.saving}
+                                                        onSave={(id, data) => store.updateProgram(id, data)} />
+                                                </LoadingSpinner>
+                                            )}
                                         />
                                     </Wrapper>
                                 }>

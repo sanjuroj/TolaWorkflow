@@ -259,6 +259,7 @@ export class OrganizationStore {
     @action
     toggleEditingTarget(organization_id) {
         this.editing_target_data = {...default_organization}
+        this.editing_errors = {}
 
         if(this.editing_target == "new") {
             this.organizations_listing.shift()

@@ -412,7 +412,7 @@ class OrganizationAdminAuditLog(models.Model, DiffableLog):
             admin_user=created_by,
             organization=organization,
             change_type="organization_created",
-            new_entry=entry,
+            new_entry=new_entry,
         )
         entry.save()
 

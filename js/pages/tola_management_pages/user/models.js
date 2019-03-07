@@ -300,7 +300,7 @@ export class UserStore {
     updateUserProfile(user_id, new_user_data) {
         this.saving_user_profile = true
         this.editing_errors = {}
-        api.saveUserProfile(user_id, new_user_data).then(result => api.fetchUserAggregates(result.id).then(aggregates => {
+        api.saveUserProfile(user_id, new_user_data).then(result => Promise.all([api.fetchUserAggregates(result.id), api.fetchUserHistory(result.id)]).then(([aggregates, history]) => {
             this.onSaveSuccessHandler()
             runInAction(() => {
                 this.saving_user_profile = false
@@ -313,6 +313,7 @@ export class UserStore {
                     is_active: result.user.is_active
                 }
                 this.editing_target_data.profile = result
+                this.editing_target_data.history = history
             })
         })).catch(errors => {
             this.onSaveErrorHandler(errors.response.data.detail)
@@ -392,17 +393,19 @@ export class UserStore {
 
     @action
     saveUserPrograms(user_id, new_user_programs_data) {
-        this.save_user_programs = true
-        api.saveUserPrograms(user_id, new_user_programs_data).then(result => api.fetchUserAggregates(user_id).then(aggregates => {
+        this.saving_user_programs = true
+        api.saveUserPrograms(user_id, new_user_programs_data).then(result => Promise.all([api.fetchUserAggregates(user_id), api.fetchUserHistory(user_id), api.fetchUserProgramAccess(user_id)]).then(([aggregates, history, access]) => {
             runInAction(() => {
-                this.save_user_programs = false
+                this.saving_user_programs = false
                 this.users[user_id].user_programs = aggregates.program_count
+                this.editing_target_data.history = history
+                this.editing_target_data.access = access
             })
             this.onSaveSuccessHandler()
         })).catch(errors => {
             this.onSaveErrorHandler(errors.response.data.detail)
             runInAction(() => {
-                this.save_user_programs = false
+                this.saving_user_programs = false
             })
         })
     }
@@ -440,7 +443,22 @@ export class UserStore {
                 return {country: country_id, program: program_id, role: 'low'}
             })
         ).then(result => {
+            //update open user programs
+            const updated_users = this.getSelectedBulkTargetIDs()
+            updated_users.forEach(id => {
+                if(this.editing_target == id) {
+                    api.fetchUserProgramAccess(id).then(access => {
+                        runInAction(() => {
+                            this.editing_target_data.access = access
+                        })
+                    })
+                }
+            })
+
             runInAction(() => {
+                Object.entries(result).forEach(([id, count]) => {
+                    this.users[id].user_programs = count
+                })
                 this.applying_bulk_updates = false
             })
             this.onSaveSuccessHandler()
@@ -462,9 +480,25 @@ export class UserStore {
                 return {country: country_id, program: program_id, role: 'low'}
             })
         ).then(result => {
+            //update open user programs
+            const updated_users = this.getSelectedBulkTargetIDs()
+            updated_users.forEach(id => {
+                if(this.editing_target == id) {
+                    api.fetchUserProgramAccess(id).then(access => {
+                        runInAction(() => {
+                            this.editing_target_data.access = access
+                        })
+                    })
+                }
+            })
+
             runInAction(() => {
+                Object.entries(result).forEach(([id, count]) => {
+                    this.users[id].user_programs = count
+                })
                 this.applying_bulk_updates = false
             })
+
             this.onSaveSuccessHandler()
         }).catch(response => {
             runInAction(() => {
