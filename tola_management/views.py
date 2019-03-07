@@ -15,6 +15,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.urls import reverse
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 import json
 
 from rest_framework.views import APIView
@@ -108,7 +109,7 @@ def get_user_page_context(request):
         "programs_filter": request.GET.getlist('programs[]'),
         "organizations_filter": request.GET.getlist('organizations[]'),
         "program_role_choices": PROGRAM_ROLE_CHOICES,
-        "country_role_choices": COUNTRY_ROLE_CHOICES
+        "country_role_choices": COUNTRY_ROLE_CHOICES,
     }
 
 def get_organization_page_context(request):
@@ -202,7 +203,7 @@ def get_program_page_context(request):
         'sectors': sectors,
         'country_filter': country_filter,
         'organization_filter': organization_filter,
-        'users_filter': users_filter
+        'users_filter': users_filter,
     }
 
 def get_country_page_context(request):
@@ -226,7 +227,6 @@ def get_country_page_context(request):
     ]
 
     return {
-
         'countries': countries,
         'organizations': organizations,
         'programs': programs,
@@ -253,25 +253,31 @@ def send_new_user_registration_email(user, request):
 @requires_basic_or_super_admin
 def app_host_page(request, react_app_page):
     js_context = {}
+    page_title = ""
     if react_app_page == 'user':
         js_context = get_user_page_context(request)
+        page_title = "User Management"
     elif react_app_page == 'organization':
         js_context = get_organization_page_context(request)
+        page_title = "Organization Management"
     elif react_app_page == 'program':
         js_context = get_program_page_context(request)
+        page_title = "Program Management"
     elif react_app_page == 'country':
         if not request.user.is_superuser:
             raise PermissionDenied
         js_context = get_country_page_context(request)
+        page_title = "Country Management"
 
 
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
-    return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context})
+    return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "page_title": page_title+" | "})
 
 def audit_log_host_page(request, program_id):
     js_context = get_audit_log_page_context(request, program_id)
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
-    return render(request, 'react_app_base.html', {"bundle_name": "audit_log", "js_context": json_context, "report_wide": True})
+    program = get_object_or_404(Program, pk=program_id)
+    return render(request, 'react_app_base.html', {"bundle_name": "audit_log", "js_context": json_context, "report_wide": True, "page_title": program.name+" Audit Log | "})
 
 
 class AuthUserSerializer(ModelSerializer):
