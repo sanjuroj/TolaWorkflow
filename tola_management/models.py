@@ -126,7 +126,7 @@ class UserManagementAuditLog(models.Model, DiffableLog):
             admin_user=created_by,
             modified_user=user,
             change_type="user_created",
-            new_entry=entry,
+            new_entry=new_entry,
         )
         entry.save()
 
