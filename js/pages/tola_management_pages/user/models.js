@@ -146,8 +146,8 @@ export class UserStore {
             .map(([user_id, _]) => user_id)
     }
 
-    onSaveErrorHandler() {
-        PNotify.error({text: 'Saving Failed', delay: 5000});
+    onSaveErrorHandler(message) {
+        PNotify.error({text: message || 'Saving Failed', delay: 5000});
     }
 
     onSaveSuccessHandler() {
@@ -308,7 +308,7 @@ export class UserStore {
                 this.editing_target_data.profile = result
             })
         })).catch(errors => {
-            this.onSaveErrorHandler()
+            this.onSaveErrorHandler(errors.response.data.detail)
             runInAction(() => {
                 this.saving_user_profile = false
                 this.editing_errors = errors.response.data
@@ -346,7 +346,7 @@ export class UserStore {
                 delete this.users["new"]
             })
         })).catch(errors => {
-            this.onSaveErrorHandler()
+            this.onSaveErrorHandler(errors.response.data.detail)
             runInAction(() => {
                 this.saving_user_profile = false
                 this.editing_errors = errors.response.data
@@ -375,7 +375,7 @@ export class UserStore {
                 this.createUser()
             })
         })).catch(errors => {
-            this.onSaveErrorHandler()
+            this.onSaveErrorHandler(errors.response.data.detail)
             runInAction(() => {
                 this.saving_user_profile = false
                 this.editing_errors = errors.response.data
@@ -392,11 +392,11 @@ export class UserStore {
                 this.users[user_id].user_programs = aggregates.program_count
             })
             this.onSaveSuccessHandler()
-        })).catch(response => {
+        })).catch(errors => {
+            this.onSaveErrorHandler(errors.response.data.detail)
             runInAction(() => {
                 this.save_user_programs = false
             })
-            this.onSaveErrorHandler()
         })
     }
 

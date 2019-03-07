@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from collections import OrderedDict
-from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist, SuspiciousOperation
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from django.core.mail import send_mail
@@ -327,6 +327,9 @@ class UserAdminSerializer(ModelSerializer):
     def create(self, validated_data):
         validated_data["is_active"] = True
 
+        if validated_data["organization_id"] == 1 and not self.context["request"].user.is_superuser:
+            raise PermissionDenied("Only superusers can create Mercy Corps staff profiles.")
+
         auth_user_data = validated_data.pop('user')
 
         #create auth user
@@ -360,6 +363,9 @@ class UserAdminSerializer(ModelSerializer):
         return new_user
 
     def update(self, instance, validated_data):
+        if instance.organization_id == 1 and not self.context["request"].user.is_superuser:
+            raise PermissionDenied("Only superusers can edit Mercy Corps staff profiles.")
+
         user = instance
 
         auth_user_data = validated_data.pop('user')
@@ -642,25 +648,28 @@ class UserAdminViewSet(viewsets.ModelViewSet):
             if country_data and not request.user.is_superuser:
                 raise PermissionDenied
             else:
-                for country_id, access in country_data.iteritems():
-                    if access["role"] == 'basic_admin':
-                        CountryAccess.objects.update_or_create(
-                            tolauser=user,
-                            country_id=country_id,
-                            defaults={
-                                "role": access["role"],
-                            }
-                        )
-                    else:
-                        try:
-                            old_access = CountryAccess.objects.get(
+                try:
+                    for country_id, access in country_data.iteritems():
+                        if access["role"] == 'basic_admin':
+                            CountryAccess.objects.update_or_create(
                                 tolauser=user,
                                 country_id=country_id,
+                                defaults={
+                                    "role": access["role"],
+                                }
                             )
-                            old_access.role = access["role"]
-                            old_access.save()
-                        except ObjectDoesNotExist:
-                            pass
+                        else:
+                            try:
+                                old_access = CountryAccess.objects.get(
+                                    tolauser=user,
+                                    country_id=country_id,
+                                )
+                                old_access.role = access["role"]
+                                old_access.save()
+                            except ObjectDoesNotExist:
+                                pass
+                except SuspiciousOperation, e:
+                    return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
             program_data = request.data["programs"]
 

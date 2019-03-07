@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.contrib import admin
+from django.core.exceptions import SuspiciousOperation
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from decimal import Decimal
@@ -354,6 +355,12 @@ class CountryAccess(models.Model):
     tolauser = models.ForeignKey(TolaUser)
     country = models.ForeignKey(Country)
     role = models.CharField(max_length=100, choices=COUNTRY_ROLE_CHOICES, default='user')
+
+    def save(self, *args, **kwargs):
+        #requirements that country access be given only to mercy corps users (id = 1)
+        if self.id is None and self.tolauser.organization_id != 1:
+            raise SuspiciousOperation("Only Mercy Corps users can be given country access")
+        super(CountryAccess, self).save(*args, **kwargs)
 
     class Meta:
         db_table = 'workflow_tolauser_countries'

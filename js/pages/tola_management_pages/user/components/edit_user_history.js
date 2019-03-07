@@ -77,7 +77,7 @@ export class EditUserHistory extends React.Component {
             <h2>{this.state.user_data.name}: Status and History</h2>
             <div className="row">
                 <div className="col">
-                    <Select options={status_options} value={selected} onChange={(new_value) => this.onChange(new_value)} />
+                    <Select isDisabled={this.props.disabled} options={status_options} value={selected} onChange={(new_value) => this.onChange(new_value)} />
                 </div>
             </div>
             <div className="row">
@@ -86,10 +86,12 @@ export class EditUserHistory extends React.Component {
                 </div>
             </div>
             <div className="row">
+                {!this.props.disabled &&
                 <div className="col">
                     <button className="btn btn-primary" type="button" onClick={() => this.props.onSave(this.state.user_data)}>Save Changes</button>
                     <button className="btn btn-outline-primary" type="button" onClick={() => this.onReset()}>Reset</button>
                 </div>
+                }
             </div>
             <div className="row">
                 <div className="col">

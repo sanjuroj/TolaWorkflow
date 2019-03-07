@@ -257,6 +257,8 @@ export const IndexView = observer(
                                                 ProfileSection={observer(() =>
                                                     <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.save_user_programs}>
                                                         <EditUserProfile
+                                                            disabled={data.organization_id == 1 && !store.is_superuser && data.id != 'new'}
+                                                            is_superuser={store.is_superuser}
                                                             new={data.id == 'new'}
                                                             userData={store.editing_target_data.profile}
                                                             errors={store.editing_errors}
@@ -280,6 +282,7 @@ export const IndexView = observer(
                                                 HistorySection={observer(() =>
                                                     <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.save_user_programs}>
                                                         <EditUserHistory
+                                                            disabled={data.organization_id == 1 && !store.is_superuser}
                                                             userData={store.editing_target_data.profile}
                                                                     history={store.editing_target_data.history}
                                                                     onResendRegistrationEmail={() => store.resendRegistrationEmail(data.id)}
