@@ -126,7 +126,7 @@ export const IndexView = observer(
                                     <Col size="2">{data.country || "---"}</Col>
                                     <Col>{data.organizations.length ? <a href={`/tola_management/organization/?countries[]=${data.id}`}>{data.organizations.length} {gettext("Organizations")}</a>: '---'}</Col>
                                     <Col>{data.programCount ? <a href={`/tola_management/program/?countries[]=${data.id}`}>{data.programCount} {gettext("Programs")}</a> : "---"}</Col>
-                                    <Col>{data.user_count ? <a href={`/tola_management/user/?base_countries[]=${data.id}`}>{data.user_count} {gettext("Users")}</a> : '---'  }</Col>
+                                    <Col>{data.user_count ? <a href={`/tola_management/user/?countries[]=${data.id}`}>{data.user_count} {gettext("Users")}</a> : '---'  }</Col>
                                 </Row>
                             }
                         />

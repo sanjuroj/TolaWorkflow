@@ -108,6 +108,7 @@ def get_user_page_context(request):
         "access": request.user.tola_user.access_data,
         "is_superuser": request.user.is_superuser,
         "programs_filter": request.GET.getlist('programs[]'),
+        "country_filter": request.GET.getlist('countries[]'),
         "organizations_filter": request.GET.getlist('organizations[]'),
         "program_role_choices": PROGRAM_ROLE_CHOICES,
         "country_role_choices": COUNTRY_ROLE_CHOICES,
@@ -486,12 +487,24 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         if req.GET.getlist('countries[]'):
             params.extend(req.GET.getlist('countries[]'))
             params.extend(req.GET.getlist('countries[]'))
+            params.extend(req.GET.getlist('countries[]'))
 
             #create placeholders for multiple countries and strip the trailing comma
             in_param_string = ('%s,'*len(req.GET.getlist('countries[]')))[:-1]
 
-            country_join = 'INNER JOIN workflow_tolauser_countries wtuc ON wtuc.tolauser_id = wtu.id'
-            country_where = 'AND (wtuc.country_id IN ({}) OR wtu.country_id IN ({}))'.format(in_param_string, in_param_string)
+            country_join = """
+                            LEFT JOIN workflow_tolauser_countries wtuc ON wtuc.tolauser_id = wtu.id
+                            LEFT JOIN (
+                                SELECT
+                                    wc.id AS country_id,
+                                    wpua.tolauser_id AS tolauser_id
+                                FROM workflow_country wc
+                                INNER JOIN workflow_program_country wpc ON wc.id = wpc.country_id
+                                INNER JOIN workflow_program_user_access wpua ON wpua.program_id = wpc.program_id
+                                GROUP BY wpua.tolauser_id, wc.id
+                            ) cz ON cz.tolauser_id = wtu.id
+                            """
+            country_where = 'AND (wtuc.country_id IN ({}) OR wtu.country_id IN ({}) OR cz.country_id IN ({}))'.format(in_param_string, in_param_string, in_param_string)
 
         base_country_where = ''
         if req.GET.getlist('base_countries[]'):
