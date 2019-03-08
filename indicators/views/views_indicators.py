@@ -690,7 +690,7 @@ class IndicatorDelete(DeleteView):
     def delete(self, request, *args, **kwargs):
         if request.is_ajax():
             indicator = self.get_object()
-            if not request.POST.get('rationale') and (indicator.result_set.all().count() > 0 or indicator.periodictarget_set.all().count() > 0):
+            if not request.POST.get('rationale') and (indicator.result_set.all().count() > 0 or indicator.periodictargets.all().count() > 0):
                 return JsonResponse(
                     {"status": "failed", "msg": "Rationale is required"},
                     status=400
