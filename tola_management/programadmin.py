@@ -6,6 +6,7 @@ from collections import OrderedDict
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse
+from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status as httpstatus
@@ -324,12 +325,14 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @detail_route(methods=["get"])
-    def csv_audit_log(self, request, pk=None):
+    def export_audit_log(self, request, pk=None):
         program = Program.objects.get(pk=pk)
+        workbook = Workbook()
+        ws = workbook.active
         header = ['Date and Time', 'No.', 'Indicator', 'User', 'Organization', 'Change Type', 'Previous Entry', 'New Entry', 'Rationale']
 
-        rows = []
-        for row in program.audit_logs.all().order_by('date'):
+        ws.append(header)
+        for row in program.audit_logs.all().order_by('-date'):
             prev_string = ''
             for entry in row.diff_list:
                 if entry['name'] == 'targets':
@@ -348,7 +351,7 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
                 else:
                     new_string += entry['name']+": "+str(entry['new'])+"\n"
 
-            rows.append([
+            ws.append([
                 row.date,
                 row.indicator.number if row.indicator else 'N/A',
                 row.indicator.name if row.indicator else 'N/A',
@@ -360,9 +363,8 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
                 row.rationale
             ])
 
-        rows.insert(0, header)
-
-        response = HttpResponse(content_type='application/csv')
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format(program.name+'_csv_export.csv')
-        csv.writer(response).writerows(rows)
+        response = HttpResponse(content_type='application/ms-excel')
+        filename = u'{} Audit Log {}.xlsx'.format(program.name, timezone.now().strftime('%b %d, %Y'))
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+        workbook.save(response)
         return response
