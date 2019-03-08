@@ -8,4 +8,4 @@ def has_program_role(user, program, role):
     if not user.is_authenticated:
         return False
     else:
-        return user.tola_user.programaccess_set.filter(program=program, role=role).exists()
+        return user.is_superuser or user.tola_user.programaccess_set.filter(program=program, role=role).exists()

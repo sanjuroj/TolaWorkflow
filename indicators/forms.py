@@ -283,9 +283,8 @@ class ReportFormCommon(forms.Form):
         self.fields['timeperiods'].choices = ((k, v.capitalize()) for k, v in self.TIMEPERIODS_CHOICES)
         self.fields['numrecentperiods'].widget.attrs['placeholder'] = _("enter a number")
         self.fields['targetperiods'].label = _("Target periods")
-        self.fields['program'].queryset = Program.objects \
-            .filter(Q(country__in=countries) | Q(user_access=self.request.user.tola_user),
-                    funding_status="Funded",
+        self.fields['program'].queryset = self.request.user.tola_user.available_programs \
+            .filter(funding_status="Funded",
                     reporting_period_start__isnull=False,
                     reporting_period_end__isnull=False,
                     reporting_period_start__lte=timezone.localdate(),
