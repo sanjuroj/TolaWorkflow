@@ -59,7 +59,11 @@ def periodic_target_adapter(inner):
     return outer
 
 def user_has_program_access(user, program):
-    return user.is_authenticated() and (Program.objects.filter(pk=program, user_access=user.tola_user).count() > 0 or Program.objects.filter(pk=program, country__in=user.tola_user.countries.all()).count() > 0)
+    return user.is_authenticated() and (
+        Program.objects.filter(pk=program, user_access=user.tola_user)
+        | Program.objects.filter(pk=program, country__in=user.tola_user.countries.all())
+        | Program.objects.filter(pk=program, country=user.tola_user.country)
+    ).exists()
 
 def user_has_program_roles(user, programs, roles):
     return user.is_authenticated() and user.tola_user.programaccess_set.filter(program_id__in=programs, role__in=roles).count() > 0
@@ -74,24 +78,32 @@ def has_iptt_read_access(func):
             raise PermissionDenied
     return wrapper
 
-def user_has_site_access(tola_user, site):
-    site_access_count = (
-        SiteProfile.objects.filter(
-            Q(projectagreement__program__in=tola_user.program_access.all())
-            | Q(result__program__in=tola_user.program_access.all())
-            | Q(country__in=tola_user.countries.all()),
-            pk=site
-        ).count()
-    )
-    return site_access_count > 0
+def user_has_site_access(user, site):
+    return user.is_authenticated() and (SiteProfile.objects.filter(
+        country__in=user.tola_user.available_countries,
+        pk=site
+    ).exists() or user.is_superuser())
 
 def has_site_create_access(func):
     def wrapper(request, *args, **kwargs):
+        request.has_write_access = request.user.tola_user.programaccess_set.filter(role='high').exists() or request.user.is_superuser
+        if request.has_write_access:
+            return func(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+    return wrapper
+
+def has_site_delete_access(func):
+    def wrapper(request, *args, **kwargs):
         site = SiteProfile.objects.get(pk=kwargs['pk'])
-        programs = Program.objects.filter(country__in=[request.POST.get('country')]).distinct()
-        write_access = (user_has_program_roles(request.user, [program.id for program in programs], ['high']) or request.user.is_superuser)
-        request.has_write_access = write_access
-        if  write_access:
+        high_role_programs = request.user.tola_user.programaccess_set.filter(role='high', country=site.country)
+        request.has_write_access = Program.objects.filter(
+            Q(agreement__in=site.projectagreement_set.all())
+            | Q(i_program__in=site.result_set.all())
+            | Q(country=site.country),
+            id__in=high_role_programs.values('program_id')
+        ).exists() or request.user.is_superuser
+        if request.has_write_access:
             return func(request, *args, **kwargs)
         else:
             raise PermissionDenied
@@ -109,12 +121,13 @@ def has_site_write_access(func):
     def wrapper(request, *args, **kwargs):
         if user_has_site_access(request.user, kwargs['pk']) or request.user.is_superuser:
             site = SiteProfile.objects.get(pk=kwargs['pk'])
-            programs = Program.objects.filter(
+            high_role_programs = request.user.tola_user.programaccess_set.filter(role='high', country=site.country)
+            request.has_write_access = Program.objects.filter(
                 Q(agreement__in=site.projectagreement_set.all())
                 | Q(i_program__in=site.result_set.all())
-                | Q(country__in=[site.country])).distinct()
-            write_access = (user_has_program_roles(request.user, [program.id for program in programs], ['high']) or request.user.is_superuser)
-            request.has_write_access = write_access
+                | Q(country=site.country),
+                id__in=high_role_programs.values('program_id')
+            ).exists() or request.user.is_superuser
             if request.method == 'GET':
                 return func(request, *args, **kwargs)
             elif request.method == 'POST' and write_access:

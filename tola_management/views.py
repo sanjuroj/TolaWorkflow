@@ -86,6 +86,7 @@ def requires_basic_or_super_admin(func):
     return wrapper
 
 def get_user_page_context(request):
+    #json.dumps doesn't seem to respect ordereddicts so we'll sort it on the frontend
     countries = {
         country.id: {"id": country.id, "name": country.country, "programs": list(country.program_set.all().values_list('id', flat=True))}
         for country in request.user.tola_user.managed_countries.distinct()

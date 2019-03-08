@@ -76,6 +76,7 @@ from tola_management.permissions import (
     user_has_program_access,
     has_site_read_access,
     has_site_create_access,
+    has_site_delete_access,
     has_site_write_access,
     has_program_write_access,
 )
@@ -1088,7 +1089,7 @@ class DocumentationDelete(DeleteView):
 
 class IndicatorDataBySite(ListView):
     template_name = 'workflow/site_indicatordata.html'
-    context_object_name = 'result'
+    context_object_name = 'results'
 
     def get_context_data(self, **kwargs):
         context = super(IndicatorDataBySite, self).get_context_data(**kwargs)
@@ -1096,7 +1097,7 @@ class IndicatorDataBySite(ListView):
         return context
 
     def get_queryset(self):
-        q = Result.objects.filter(site__id = self.kwargs.get('site_id')).order_by('program', 'indicator')
+        q = Result.objects.filter(site__id=self.kwargs.get('site_id'), program__in=self.request.user.tola_user.available_programs).order_by('program', 'indicator')
         return q
 
 
@@ -1110,7 +1111,7 @@ class ProjectCompleteBySite(ListView):
         return context
 
     def get_queryset(self):
-        q = ProjectComplete.objects.filter(site__id = self.kwargs.get('site_id')).order_by('program')
+        q = ProjectComplete.objects.filter(site__id=self.kwargs.get('site_id'), program__in=self.request.user.tola_user.available_programs).order_by('program')
         return q
 
 
@@ -1123,10 +1124,6 @@ class SiteProfileList(ListView):
     template_name = 'workflow/site_profile_list.html'
 
     def dispatch(self, request, *args, **kwargs):
-
-        if not user_has_program_access(request.user, kwargs['program_id']):
-            raise PermissionDenied
-
         if request.GET.has_key('report'):
             template_name = 'workflow/site_profile_report.html'
 
@@ -1136,7 +1133,7 @@ class SiteProfileList(ListView):
         activity_id = int(self.kwargs['activity_id'])
         program_id = int(self.kwargs['program_id'])
 
-        countries = getCountry(request.user)
+        countries = request.user.tola_user.available_countries
         getPrograms = Program.objects.filter(funding_status="Funded", country__in=countries)
 
         #this date, 3 months ago, a site is considered inactive
@@ -1228,7 +1225,7 @@ class SiteProfileReport(ListView):
         return render(request, self.template_name, {'getSiteProfile':getSiteProfile, 'getSiteProfileIndicator':getSiteProfileIndicator,'project_agreement_id': project_agreement_id,'id':id,'country': countries})
 
 
-@method_decorator(has_site_create_access, name='post')
+@method_decorator(has_site_create_access, name='dispatch')
 class SiteProfileCreate(CreateView):
     """
     Using SiteProfile Form, create a new site profile
@@ -1318,7 +1315,7 @@ class SiteProfileUpdate(UpdateView):
     form_class = SiteProfileForm
 
 
-@method_decorator(has_site_write_access, name='dispatch')
+@method_decorator(has_site_delete_access, name='dispatch')
 class SiteProfileDelete(DeleteView):
     """
     SiteProfile Form Delete an existing community
@@ -1326,7 +1323,6 @@ class SiteProfileDelete(DeleteView):
     model = SiteProfile
     success_url = "/workflow/siteprofile_list/0/0/"
 
-    @method_decorator(group_required('Country',url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
         return super(SiteProfileDelete, self).dispatch(request, *args, **kwargs)
 

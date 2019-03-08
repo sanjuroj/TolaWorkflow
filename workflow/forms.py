@@ -10,7 +10,7 @@ from django import forms
 from .models import (
     ProjectAgreement, ProjectComplete, Program, SiteProfile, Documentation, Benchmarks,
     Monitor, Budget, Capacity, Evaluate, Office, Checklist, ChecklistItem, Province, Stakeholder,
-    TolaUser, Contact, Sector
+    TolaUser, Contact, Sector, Country
 )
 from indicators.models import Result, Indicator, PeriodicTarget
 from crispy_forms.layout import LayoutObject, TEMPLATE_PACK
@@ -1333,6 +1333,16 @@ class SiteProfileForm(forms.ModelForm):
         self.helper.help_text_inline = True
         self.helper.html5_required = True
 
+        submit_section = Div()
+        if self.request.has_write_access:
+            submit_section = Div(
+                FormActions(
+                    Submit('submit', _('Save changes'), css_class=''),
+                    Reset('reset', _('Reset'), css_class='')
+                ),
+                css_class='form-actions',
+            )
+
         # Organize the fields in the site profile form using a layout class
         self.helper.layout = Layout(
 
@@ -1371,14 +1381,7 @@ class SiteProfileForm(forms.ModelForm):
                     ),
                 ),
 
-            ),
-            Div(
-                FormActions(
-                    Submit('submit', _('Save changes'), css_class=''),
-                    Reset('reset', _('Reset'), css_class='')
-                ),
-                css_class='form-actions',
-            ),
+            ), submit_section,
 
              HTML("""
                   <div class='card mt-4'>
@@ -1413,13 +1416,21 @@ class SiteProfileForm(forms.ModelForm):
 
         super(SiteProfileForm, self).__init__(*args, **kwargs)
 
+        if not self.request.has_write_access:
+            for name, field in self.fields.items():
+                field.disabled = True
+
         #override the office queryset to use request.user for country
-        countries = getCountry(self.request.user)
+        countries = (
+            self.request.user.tola_user.managed_countries.all()
+            | Country.objects.filter(id__in=self.request.user.tola_user.programaccess_set.filter(role='high').values('country_id'))
+        ).distinct()
         self.fields['date_of_firstcontact'].label = _("Date of First Contact")
         self.fields['office'].queryset = Office.objects.filter(province__country__in=countries)
         self.fields['province'].queryset = Province.objects.filter(country__in=countries)
         self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
         self.fields['filled_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
+        self.fields['country'].queryset = countries
 
 
 class DocumentationForm(forms.ModelForm):
