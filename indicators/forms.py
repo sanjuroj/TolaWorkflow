@@ -172,6 +172,14 @@ class ResultForm(forms.ModelForm):
     def set_initial_querysets(self):
         """populate foreign key fields with limited quersets based on user / country / program"""
         # provide only in-program Documentation objects for the evidence queryset
+
+        self.fields['site'].queryset = SiteProfile.objects.filter(
+            country__in=self.indicator.program.country.filter(
+                Q(id__in=self.request.user.tola_user.managed_countries.all().values('id'))
+                | Q(id__in=self.request.user.tola_user.programaccess_set.filter(Q(role='high') | Q(role='medium')).values('country_id'))
+            )
+        )
+
         self.fields['evidence'].queryset = Documentation.objects\
             .filter(program=self.indicator.program)
         # only display Project field to existing users
@@ -180,9 +188,6 @@ class ResultForm(forms.ModelForm):
         else:
             # provide only in-program projects for the complete queryset:
             self.fields['complete'].queryset = ProjectComplete.objects.filter(program=self.program)
-        self.fields['site'].queryset = SiteProfile._base_manager.filter(
-            country__in=self.indicator.program.country.all()
-        ).only('id', 'name')
 
     def set_periodic_target_widget(self):
         # Django will deliver localized strings to the template but the form needs to be able to compare the date

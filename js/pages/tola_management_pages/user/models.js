@@ -46,6 +46,7 @@ export class UserStore {
 
     //filter options
     @observable countries = {}
+    @observable ordered_country_ids = []
     @observable organizations = {}
     @observable programs = {}
     @observable available_users = []
@@ -93,20 +94,27 @@ export class UserStore {
         country_role_choices,
     }) {
         this.countries = countries
+        this.ordered_country_ids = Object.values(countries).sort((a, b) => a.name.localeCompare(b.name)).map(country => country.id)
         this.organizations = organizations
         this.programs = programs
         this.available_users = users.filter(user => user.name)
 
-        this.countries_selections = Object.entries(countries).map(([id, country]) => ({value: country.id, label: country.name}))
-        this.organization_selections = Object.entries(organizations).map(([id, org]) => ({value: org.id, label: org.name}))
-        this.program_selections = Object.entries(programs).map(([id, program]) => ({value: program.id, label: program.name}))
+        this.countries_selections = this.ordered_country_ids.map(id => this.countries[id])
+                                                            .map(country => ({value: country.id, label: country.name}))
+
+        this.organization_selections = Object.values(organizations).map(org => ({value: org.id, label: org.name}))
+
+        this.program_selections = Object.values(programs).map(program => ({value: program.id, label: program.name}))
+
         this.user_selections = this.available_users.map(user => ({value: user.id, label: user.name}))
-        this.program_bulk_selections = Object.entries(countries).map(([id, country]) => ({
+
+        this.program_bulk_selections = this.ordered_country_ids.map(id => this.countries[id]).map((country) => ({
             label: country.name,
             options: country.programs.map(program_id => ({
                 label: country.name+": "+programs[program_id].name,
                 value: country.id+"_"+program_id
-            }))}))
+            }))
+        }))
 
         this.access = access
         this.is_superuser = is_superuser

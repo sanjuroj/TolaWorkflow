@@ -27,15 +27,14 @@ const create_program_objects = (programs, store) => Object.entries(programs)
                                                            }),{})
 
 //we need to flatten the country -> program heirarchy to support the virtualized table
-const flattened_listing = (countries, programs) => Object.entries(countries)
-                                                         .flatMap(([_, country]) =>
-                                                             [
-                                                                 country,
-                                                                 ...Array.from(country.programs)
-                                                                        .filter(program_id => programs[program_id])
-                                                                        .map(program_id => ({...programs[program_id], id: `${country.id}_${program_id}`, country_id: country.id}))
-                                                             ]
-                                                         )
+const flattened_listing = (countries, programs) => countries.flatMap(country =>
+                                                        [
+                                                            country,
+                                                            ...Array.from(country.programs)
+                                                                .filter(program_id => programs[program_id])
+                                                                .map(program_id => ({...programs[program_id], id: `${country.id}_${program_id}`, country_id: country.id}))
+                                                        ]
+                                                    )
 
 const apply_program_filter = (programs, countries, filter_string) => {
     const filtered_programs = Object.entries(programs).filter(([_, program]) => program.name.toLowerCase().includes(filter_string.toLowerCase())).map(([_, p]) => p)
@@ -87,7 +86,8 @@ export default class EditUserPrograms extends React.Component {
             programs,
             filtered_countries: countries,
             filtered_programs: programs,
-            flattened_programs: flattened_listing(countries, programs),
+            ordered_country_ids: store.ordered_country_ids,
+            flattened_programs: flattened_listing(store.ordered_country_ids.filter(id => id in countries).map(id => countries[id]), programs),
             original_user_program_access: create_user_access(store.editing_target_data.access),
             user_program_access: create_user_access(store.editing_target_data.access)
         }
@@ -115,7 +115,8 @@ export default class EditUserPrograms extends React.Component {
             country_selections: Object.entries(store.countries).map(([_, country]) => ({value: country.id, label: country.name})),
             filtered_countries: countries,
             filtered_programs: programs,
-            flattened_programs: flattened_listing(countries, programs),
+            ordered_country_ids: store.ordered_country_ids,
+            flattened_programs: flattened_listing(store.ordered_country_ids.filter(id => id in countries).map(id => countries[id]), programs),
             original_user_program_access: create_user_access(store.editing_target_data.access),
             user_program_access: create_user_access(store.editing_target_data.access)
         })
@@ -267,7 +268,7 @@ export default class EditUserPrograms extends React.Component {
             program_filter: val,
             filtered_programs: programs,
             filtered_countries: countries,
-            flattened_programs: flattened_listing(countries, programs),
+            flattened_programs: flattened_listing(this.state.ordered_country_ids.filter(id => id in countries).map(id => countries[id]), programs),
         })
     }
 
@@ -283,7 +284,7 @@ export default class EditUserPrograms extends React.Component {
             program_filter: val,
             filtered_programs: programs,
             filtered_countries: countries,
-            flattened_programs: flattened_listing(countries, programs),
+            flattened_programs: flattened_listing(this.state.ordered_country_ids.filter(id => id in countries).map(id => countries[id]), programs),
         })
     }
 
@@ -298,7 +299,7 @@ export default class EditUserPrograms extends React.Component {
         this.setState({
             country_filter: e,
             filtered_countries: countries,
-            flattened_programs: flattened_listing(countries, this.state.filtered_programs)
+            flattened_programs: flattened_listing(this.state.ordered_country_ids.filter(id => id in countries).map(id => countries[id]), this.state.filtered_programs),
         })
     }
 
