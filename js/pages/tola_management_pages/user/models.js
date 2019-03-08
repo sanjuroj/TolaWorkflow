@@ -87,6 +87,7 @@ export class UserStore {
         access,
         is_superuser,
         programs_filter,
+        country_filter,
         organizations_filter,
         program_role_choices,
         country_role_choices,
@@ -111,6 +112,7 @@ export class UserStore {
         this.is_superuser = is_superuser
         this.filters.programs = programs_filter.map(id => this.programs[id]).map(program => ({label: program.name, value: program.id}))
         this.filters.organizations = organizations_filter.map(id => this.organizations[id]).map(org => ({label: org.name, value: org.id}))
+        this.filters.countries = country_filter.map(id => this.countries[id]).map(country => ({label: country.name, value: country.id}))
 
         this.country_role_choices = country_role_choices.map(([value, label]) => ({label, value}))
         this.program_role_choices = program_role_choices.map(([value, label]) => ({label, value}))
