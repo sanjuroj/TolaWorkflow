@@ -807,7 +807,7 @@ class ResultCreate(ResultFormMixin, CreateView):
             form.instance.achieved = count
 
         new = form.save()
-        ProgramAuditLog.log_result_created(self.request.user, new.indicator, new, form.cleaned_data.get('rationale'))
+        ProgramAuditLog.log_result_created(self.request.user, new.indicator, new)
         process_disaggregation = False
 
         for label in disaggregation_labels:

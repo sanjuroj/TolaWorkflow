@@ -71,38 +71,45 @@
         $(this.date_collected).val(date_collected_db_format);
         */
 
-        const message_text = (resultDateModified)?MODIFY_RESULT_DATE_MESSAGE:''
-
-        window.create_nondestructive_changeset_notice({
-            message_text: message_text,
-            context: document.getElementById('result_update_form'),
-            on_submit: (rationale) => {
-                $('#submit-id-submit').attr('disabled', 'disabled');
-                let form_url = $(this).attr('action');
-                let form_data = $(this).serialize();
-                form_data += '&rationale='+rationale;
-                // mark that the form data has changed so that when the modal is closed the list view can be updated
-                $(this).data('recordchanged', true);
-                $.post(form_url, form_data,
-                    function(response, status, jqXHR) { // success callback
-                        $('#submit-id-submit').removeAttr('disabled');
-                        if (response.url) {
-                            $('#result_update_form').attr('action', response.url);
-                        }
-                        $("#modalmessages").empty();
-                        if ($("#result_update_form div").hasClass('has-warning')) {
-                            createAlert("warning", "{% trans 'Result saved - however please review warnings below.'|escapejs %}", true, "#modalmessages");
-                        } else {
-                            createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, "#modalmessages");
-                        }
-                    })
-                .fail(function(error){
+        const save = (rationale) => {
+            $('#submit-id-submit').attr('disabled', 'disabled');
+            let form_url = $(this).attr('action');
+            let form_data = $(this).serialize();
+            form_data += '&rationale='+rationale;
+            // mark that the form data has changed so that when the modal is closed the list view can be updated
+            $(this).data('recordchanged', true);
+            $.post(form_url, form_data,
+                function(response, status, jqXHR) { // success callback
                     $('#submit-id-submit').removeAttr('disabled');
-                    createAlert("danger", "{% trans 'Could not save form.'|escapejs %}", true, "#modalmessages");
-                });
-                $('#indicator_results_div').animate({ scrollTop: 0 }, 'slow');
-            }
-        });
+                    if (response.url) {
+                        $('#result_update_form').attr('action', response.url);
+                    }
+                    $("#modalmessages").empty();
+                    if ($("#result_update_form div").hasClass('has-warning')) {
+                        createAlert("warning", "{% trans 'Result saved - however please review warnings below.'|escapejs %}", true, "#modalmessages");
+                    } else {
+                        createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, "#modalmessages");
+                    }
+                })
+            .fail(function(error){
+                $('#submit-id-submit').removeAttr('disabled');
+                createAlert("danger", "{% trans 'Could not save form.'|escapejs %}", true, "#modalmessages");
+            });
+            $('#indicator_results_div').animate({ scrollTop: 0 }, 'slow');
+        }
+
+        const message_text = (resultDateModified)?MODIFY_RESULT_DATE_MESSAGE:'';
+        const result_is_new = $('#id_delete_result_btn').length == 0;
+
+        if(result_is_new) {
+            save('');
+        } else {
+            window.create_nondestructive_changeset_notice({
+                message_text: message_text,
+                context: document.getElementById('result_update_form'),
+                on_submit: save
+            });
+        }
     });
 
     $("#indicator_results_div").on("change", "#id_date_collected", function(e){
