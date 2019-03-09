@@ -6,9 +6,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
 const statusOptions = [
-    {value: 'proposed', label: 'Proposed'},
-    {value: 'active', label: 'Active'},
-    {value: 'acheived', label: 'Achieved'},
+    {value: 'proposed', label: gettext('Proposed')},
+    {value: 'active', label: gettext('Active')},
+    {value: 'acheived', label: gettext('Achieved')},
 ]
 
 const ErrorFeedback = observer(({errorMessages}) => {
@@ -71,7 +71,7 @@ class StrategicObjectiveForm extends React.Component {
                 <form className="form">
                     <div className="form-group">
                         <label htmlFor="objective-name-input">
-                            Code*
+                            {gettext("Code")}*
                         </label>
                         <input
                             id="objective-name-input"
@@ -85,7 +85,7 @@ class StrategicObjectiveForm extends React.Component {
                     </div>
                     <div className="form-group">
                         <label htmlFor="objective-description-input">
-                            Objective*
+                            {gettext("Objective")}*
                         </label>
                         <textarea
                             id="objective-description-input"
@@ -97,7 +97,7 @@ class StrategicObjectiveForm extends React.Component {
                         <ErrorFeedback errorMessages={this.formErrors('description')} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="objective-status-input">Status</label>
+                        <label htmlFor="objective-status-input">{gettext("Status")}</label>
                         <Select
                             value={selectedStatus}
                             options={statusOptions}
@@ -110,18 +110,18 @@ class StrategicObjectiveForm extends React.Component {
                     <div className="objective-form-buttons">
                         {objective.id=='new' && (
                             <div>
-                                <button className="btn btn-primary" type="button" onClick={() => createObjective(managed_data)}>Save</button>
+                                <button className="btn btn-primary" type="button" onClick={() => createObjective(managed_data)}>{gettext("Save")}</button>
                             </div>
                         )}
                         {objective.id!='new' && (
                             <div>
-                                <button className="btn btn-primary" type="button" onClick={() => saveObjective(managed_data)}>Save Changes</button>
-                                <button className="btn btn-outline-primary" type="button" onClick={()=> this.resetForm()}>Reset</button>
+                                <button className="btn btn-primary" type="button" onClick={() => saveObjective(managed_data)}>{gettext("Save Changes")}</button>
+                                <button className="btn btn-outline-primary" type="button" onClick={()=> this.resetForm()}>{gettext("Reset")}</button>
                             </div>
                         )}
                         <div className="right-buttons">
                             <a tabIndex="0" onClick={deleteAction} className="btn btn-link btn-danger">
-                                <FontAwesomeIcon icon={'trash'} /> Delete
+                                <FontAwesomeIcon icon={'trash'} /> {gettext("Delete")}
                             </a>
                         </div>
                     </div>
@@ -164,7 +164,7 @@ export default class EditObjectives extends React.Component {
             this.props.onDelete(objectiveId)
             return
         }
-        if(confirm("Delete Strategic Objective?")) {
+        if(confirm(gettext("Delete Strategic Objective?"))) {
             this.props.onDelete(objectiveId)
         }
     }
@@ -185,7 +185,7 @@ export default class EditObjectives extends React.Component {
         const {objectives} = this.props
         return (
             <div>
-                <h3>Strategic Objectives</h3>
+                <h3>{gettext("Strategic Objectives")}</h3>
                 {objectives.map((objective) =>
                     <StrategicObjectiveForm
                         key={objective.id}
@@ -201,7 +201,7 @@ export default class EditObjectives extends React.Component {
                 )}
                 <div>
                     <a tabIndex="0" onClick={() => this.addObjective()} className="btn-link btn-add">
-                        <FontAwesomeIcon icon={'plus-circle'} /> Add strategic objective
+                        <FontAwesomeIcon icon={'plus-circle'} /> {gettext("Add strategic objective")}
                     </a>
                 </div>
             </div>
