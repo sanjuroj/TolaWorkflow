@@ -152,6 +152,8 @@ class CountryObjectiveViewset(viewsets.ModelViewSet):
 
 
 class NestedDisaggregationLabelSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False, allow_null=True)
+    label = serializers.CharField(required=True)
     class Meta:
         model = DisaggregationLabel
         fields = (
@@ -159,7 +161,26 @@ class NestedDisaggregationLabelSerializer(serializers.ModelSerializer):
             'label',
         )
 
+    def to_representation(self, disaggregation_label):
+        ret = super(NestedDisaggregationLabelSerializer, self).to_representation(disaggregation_label)
+        ret['in_use'] = disaggregation_label.disaggregationvalue_set.exists()
+        return ret
+
+    def to_internal_value(self, data):
+        if data.get("id") == "new":
+            data.pop('id')
+        validated_data = super(NestedDisaggregationLabelSerializer, self).to_internal_value(data)
+        instance = None
+        if validated_data.get(id):
+            instance = DisaggregationLabel.objects.get(pk=validated_data.id)
+            instance.update(**validated_data)
+        else:
+            instance = DisaggregationLabel(**validated_data)
+        return instance
+
+
 class CountryDisaggregationSerializer(serializers.ModelSerializer):
+    disaggregation_type = serializers.CharField(required=True)
     labels = NestedDisaggregationLabelSerializer(
         source="disaggregationlabel_set",
         required=False,
@@ -174,6 +195,29 @@ class CountryDisaggregationSerializer(serializers.ModelSerializer):
             'disaggregation_type',
             'labels',
         )
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        updated_label_data = validated_data.pop('disaggregationlabel_set')
+        current_labels = [label for label in instance.disaggregationlabel_set.all()]
+        removed_labels = [label for label in current_labels if label not in updated_label_data]
+        new_labels = [label for label in updated_label_data if label not in current_labels]
+        for label in new_labels:
+            label.disaggregation_type = instance
+            label.save()
+        for label in removed_labels:
+            label.delete()
+        updated_instance = super(CountryDisaggregationSerializer, self).update(instance, validated_data)
+        return updated_instance
+
+    @transaction.atomic
+    def create(self, validated_data):
+        labels = validated_data.pop('disaggregationlabel_set')
+        instance = super(CountryDisaggregationSerializer, self).create(validated_data)
+        for label in labels:
+            label.disaggregation_type = instance
+            label.save()
+        return instance
 
 class CountryDisaggregationViewSet(viewsets.ModelViewSet):
     serializer_class = CountryDisaggregationSerializer
