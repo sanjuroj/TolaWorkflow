@@ -117,9 +117,10 @@ class CountryAdminViewSet(viewsets.ModelViewSet):
 
 class CountryObjectiveSerializer(serializers.ModelSerializer):
     #id = serializers.IntegerField(allow_null=True, required=False)
-    #country = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all())
-    #name = serializers.CharField(max_length=135)
-    #description = serializers.CharField(max_length=765, allow_blank=True, required=False)
+    country = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all())
+    name = serializers.CharField(required=True, allow_blank=False, max_length=135)
+    description = serializers.CharField(max_length=765, allow_blank=True, required=False)
+    status = serializers.CharField(max_length=255, allow_blank=True, required=False)
 
     class Meta:
         model = StrategicObjective
@@ -128,7 +129,12 @@ class CountryObjectiveSerializer(serializers.ModelSerializer):
             'country',
             'name',
             'description',
+            'status',
         )
+
+    def create(self, validated_data):
+        objective = super(CountryObjectiveSerializer, self).create(validated_data)
+        return objective
 
 
 class CountryObjectiveViewset(viewsets.ModelViewSet):

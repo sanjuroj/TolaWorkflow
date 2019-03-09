@@ -77,10 +77,11 @@ class IndicatorTypeAdmin(admin.ModelAdmin):
     display = 'Indicator Type'
 
 
-class StrategicObjective(models.Model):
+class StrategicObjective(SafeDeleteModel):
     name = models.CharField(_("Name"), max_length=135, blank=True)
     country = models.ForeignKey(Country, null=True, blank=True, verbose_name=_("Country"))
     description = models.TextField(_("Description"), max_length=765, blank=True)
+    status = models.CharField(_("status"), max_length=255, blank=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
@@ -91,10 +92,10 @@ class StrategicObjective(models.Model):
     def __unicode__(self):
         return self.name
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if self.create_date is None:
             self.create_date = timezone.now()
-        super(StrategicObjective, self).save()
+        super(StrategicObjective, self).save(*args, **kwargs)
 
 
 class Objective(models.Model):

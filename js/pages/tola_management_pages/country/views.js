@@ -65,7 +65,7 @@ export const IndexView = observer(
             </div>
             <div className="col col-sm-9 list-section">
                 <div className="list-controls">
-                    <button className="btn btn-primary" onClick={() => store.createProgram()}><i className="fa fa-plus-circle"></i>{gettext("Add Country")}</button>
+                    <button className="btn btn-primary" onClick={() => store.addCountry()}><i className="fa fa-plus-circle"></i>{gettext("Add Country")}</button>
                 </div>
                 <LoadingSpinner isLoading={store.fetching_main_listing || store.applying_bulk_updates }>
                     <div className="list-table">
@@ -101,7 +101,14 @@ export const IndexView = observer(
                                             StrategicObjectiveSection={observer(() =>
                                                 <LoadingSpinner isLoading={store.fetching_editing_data}>
                                                     <EditObjectives
+                                                        country_id={data.id}
                                                         objectives={store.editing_objectives_data}
+                                                        addObjective={() => store.addObjective()}
+                                                        onUpdate={(id, data) => store.updateObjective(id, data)}
+                                                        onCreate={(data) => store.createObjective(data)}
+                                                        onDelete={(id) => store.deleteObjective(id)}
+                                                        errors={store.editing_objectives_errors}
+                                                        clearErrors={() => store.clearObjectiveEditingErrors()}
                                                     />
                                                 </LoadingSpinner>
                                             )}

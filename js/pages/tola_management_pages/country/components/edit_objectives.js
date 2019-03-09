@@ -1,104 +1,151 @@
 import React from 'react'
 import { observer } from "mobx-react"
-import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
+import Select from 'react-select'
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
-const new_objective_data = {
-    id: 'new',
-    name: '',
-    description: '',
-    status: [],
-}
+const statusOptions = [
+    {value: 'proposed', label: 'Proposed'},
+    {value: 'active', label: 'Active'},
+    {value: 'acheived', label: 'Achieved'},
+]
 
-const StrategicObjectiveForm = observer(({objective_name, objective, expanded, expandAction, updateFormField, resetForm}) => {
-    const statusOptions = [
-        {value: 'proposed', label: 'proposed'},
-        {value: 'active', label: 'active'},
-        {value: 'acheived', label: 'achieved'},
-    ]
-    const objective_status = objective.status
-    const selectedStatus = objective_status ? objective_status.map(x=>statusOptions.find(y=>y.value==x)) : []
+const ErrorFeedback = observer(({errorMessages}) => {
+    if (!errorMessages) {
+        return null
+    }
     return (
-        <div className="strategic_objective__row">
-            <div onClick={expandAction}>
-                <FontAwesomeIcon icon={expanded ? 'caret-down' : 'caret-right'} /> {objective_name}
+    <div className="invalid-feedback">
+        {errorMessages.map((message, index) =>
+            <span key={index}>{message}</span>
+        )}
+    </div>
+    )
+})
+
+@observer
+class StrategicObjectiveForm extends React.Component {
+    constructor(props) {
+        super(props)
+        const {objective} = props
+
+        this.state = {
+            managed_data: {...objective},
+        }
+    }
+
+    updateFormField(fieldKey, value) {
+        const {managed_data} = this.state
+        const modified = Object.assign(managed_data, {[fieldKey]: value})
+        this.setState({managed_data: modified})
+    }
+
+    formErrors(fieldKey) {
+        return this.props.errors[fieldKey]
+    }
+
+    resetForm() {
+        this.props.clearErrors()
+        const {objective} = this.props
+        this.setState({managed_data: {...objective}})
+    }
+
+    render() {
+        const {objective, expanded, expandAction, deleteAction, saveObjective, createObjective} = this.props
+        const {managed_data} = this.state
+        const objective_status = managed_data.status
+        const selectedStatus = objective_status ? statusOptions.find(x=>x.value==objective_status) : {}
+        return (
+        <div className="edit-strategic-objective__row">
+            <div className="row-expand__toggle">
+                <span onClick={expandAction}>
+                    <FontAwesomeIcon icon={expanded ? 'caret-down' : 'caret-right'} />
+                </span>
             </div>
+            <div className="row__content">
+            <a onClick={expandAction} tabIndex="0">
+                {(objective.id == 'new')? "New Strategic Objective" : objective.name}
+            </a>
             { expanded && (
                 <form className="form">
                     <div className="form-group">
                         <label htmlFor="objective-name-input">
-                            Objective Name*
+                            Code*
                         </label>
                         <input
-                            id="objective-name"
-                            className="form-control"
-                            value={objective.name}
-                            onChange={(e) => updateFormField('name', e.target.value)}
+                            id="objective-name-input"
+                            className={classNames('form-control', {'is-invalid':this.formErrors('name')})}
+                            value={managed_data.name}
+                            onChange={(e) => this.updateFormField('name', e.target.value)}
                             type="text"
                             required
                         />
+                        <ErrorFeedback errorMessages={this.formErrors('name')} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="objective-description-input">
-                            Description
+                            Objective*
                         </label>
                         <textarea
-                            id="objective-description"
-                            className="form-control"
-                            value={objective.description}
-                            onChange={(e) => updateFormField('description', e.target.value)}
+                            id="objective-description-input"
+                            className={classNames('form-control', {'is-invalid': this.formErrors('description')})}
+                            value={managed_data.description}
+                            onChange={(e) => this.updateFormField('description', e.target.value)}
                             type="text"
                         />
+                        <ErrorFeedback errorMessages={this.formErrors('description')} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="objectives-status-input">Status</label>
-                        <CheckboxedMultiSelect
+                        <label htmlFor="objective-status-input">Status</label>
+                        <Select
                             value={selectedStatus}
                             options={statusOptions}
-                            onChange={(e) => updateFormField('status', e.map(x=>x.value)) }
-                            className={'react-select'}
-                            id="program-sectors-input"
-                            />
+                            onChange={(e) => this.updateFormField('status', e.value) }
+                            className={classNames('react-select', {'is-invalid': this.formErrors('status')})}
+                            id="objective-status-input"
+                        />
+                        <ErrorFeedback errorMessages={this.formErrors('status')} />
                     </div>
-                    <div className="form-group">
+                    <div className="objective-form-buttons">
                         {objective.id=='new' && (
                             <div>
-                                <button className="btn btn-primary" type="button">Save</button>
+                                <button className="btn btn-primary" type="button" onClick={() => createObjective(managed_data)}>Save</button>
                             </div>
                         )}
                         {objective.id!='new' && (
                             <div>
-                                <button className="btn btn-primary" type="button">Save Changes</button>
-                                <button className="btn btn-outline-primary" type="button" onClick={resetForm}>Reset</button>
+                                <button className="btn btn-primary" type="button" onClick={() => saveObjective(managed_data)}>Save Changes</button>
+                                <button className="btn btn-outline-primary" type="button" onClick={()=> this.resetForm()}>Reset</button>
                             </div>
                         )}
+                        <div className="right-buttons">
+                            <a tabIndex="0" onClick={deleteAction} className="btn btn-link btn-danger">
+                                <FontAwesomeIcon icon={'trash'} /> Delete
+                            </a>
+                        </div>
                     </div>
                 </form>
             )}
+            </div>
         </div>
-    )
-})
+        )
+    }
+}
+
 @observer
 export default class EditObjectives extends React.Component {
     constructor(props) {
         super(props)
 
-        const {objectives} = props
-
-        const managed_objectives = objectives.map(objective => ({...objective}))
         this.state = {
-            original_data: [...objectives],
-            managed_data: managed_objectives,
-
             expanded_id: null,
         }
-
     }
 
     toggleExpand(id) {
-        let {expanded_id} = this.state
+        this.props.clearErrors()
+        const {expanded_id} = this.state
         if (id == expanded_id) {
             this.setState({expanded_id: null})
         } else {
@@ -106,58 +153,54 @@ export default class EditObjectives extends React.Component {
         }
     }
 
-    updateFormField(objectiveId, fieldKey, value) {
-        let {managed_data} = this.state
-        let objective = managed_data.find(x=> x.id==objectiveId)
-        let modified = Object.assign(objective, {[fieldKey]: value})
-        let new_managed_data = managed_data.map(objective => {
-            if (objective.id == modified.id) {
-                return modified
-            }
-            return objective
-        })
-        this.setState({managed_data: new_managed_data})
+    addObjective() {
+        this.props.clearErrors()
+        this.props.addObjective()
+        this.setState({expanded_id: 'new'})
     }
 
-    resetForm(objectiveId){
-        let objective_original = this.state.original_data.find(x=> x.id==objectiveId)
-        let new_managed_data = this.state.managed_data.map(objective => {
-            if (objective.id == objective_original.id) {
-                return {...objective_original}
-            }
-            return objective
-        })
-        this.setState({managed_data: new_managed_data})
+    deleteObjectiveAction(objectiveId) {
+        if (objectiveId=='new') {
+            this.props.onDelete(objectiveId)
+            return
+        }
+        if(confirm("Delete Strategic Objective?")) {
+            this.props.onDelete(objectiveId)
+        }
     }
 
-    addObjective(e) {
-        e.preventDefault()
-        let managed_data = this.state.managed_data.concat([new_objective_data])
-        this.setState({managed_data: managed_data})
+    updateObjective(objectiveId, data)
+    {
+        this.props.onUpdate(objectiveId, data)
+    }
+
+    createObjective(data)
+    {
+        let objectiveData = Object.assign(data, {country: this.props.country_id})
+        this.props.onCreate(objectiveData)
     }
 
     render() {
-        const {expanded_id,  managed_data, original_data} = this.state
+        const {expanded_id, new_objective} = this.state
+        const {objectives} = this.props
         return (
             <div>
                 <h3>Strategic Objectives</h3>
-                {managed_data.map((objective, idx) =>
+                {objectives.map((objective) =>
                     <StrategicObjectiveForm
                         key={objective.id}
-                        objective_name={original_data.find(x=>x.id==objective.id) ? original_data.find(x=>x.id==objective.id).name : 'New Strategic Objective'}
                         objective={objective}
                         expanded={objective.id==expanded_id}
                         expandAction={() => this.toggleExpand(objective.id)}
-                        updateFormField={(attribute, value) => this.updateFormField(objective.id, attribute, value)}
-                        resetForm={() => this.resetForm(objective.id)}
+                        deleteAction={() => this.deleteObjectiveAction(objective.id)}
+                        saveObjective={(data) => this.updateObjective(objective.id, data)}
+                        createObjective={(data) => this.createObjective(data)}
+                        errors={this.props.errors}
+                        clearErrors={this.props.clearErrors}
                     />
                 )}
                 <div>
-                    <a
-                        href='#'
-                        onClick={(e) => this.addObjective(e)}
-                        className="btn-link btn-add"
-                    >
+                    <a tabIndex="0" onClick={() => this.addObjective()} className="btn-link btn-add">
                         <FontAwesomeIcon icon={'plus-circle'} /> Add strategic objective
                     </a>
                 </div>

@@ -5,17 +5,39 @@ import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
-const DisaggregationType = observer(({disaggregation, expanded, expandAction}) => {
+const DisaggregationType = observer(({disaggregation, expanded, expandAction, updateLabel}) => {
     return (
-        <div className="disaggregation__row" onClick={() => expandAction()}>
-            <div>
-                <FontAwesomeIcon icon={expanded ? 'caret-down' : 'caret-right'} /> {disaggregation.disaggregation_type}
+        <div className="edit-disaggregation__row">
+            <div className="row-expand__toggle">
+                <span onClick={expandAction}>
+                    <FontAwesomeIcon icon={expanded ? 'caret-down' : 'caret-right'} />
+                </span>
             </div>
-            {expanded && (
-                disaggregation.labels.map(label =>
-                    <div key={label.id}>{label.label}</div>
-                )
-            )}
+            <div className="row__content">
+                <a onClick={expandAction} tabIndex='0'>
+                    {disaggregation.disaggregation_type}
+                </a>
+                {expanded && (
+                    <form>
+                    {disaggregation.labels.map((label, idx) =>
+                        <div className="form-group disaggregation-label-group">
+                            <input
+                                key={idx}
+                                value={label.label}
+                                onChange={(e) => updateLabel(idx, e.target.value)}
+                                className="form-control"
+                            />
+                            <a tabIndex="0" o1nClick={() => deleteAction()} className="btn btn-link btn-danger">
+                                <FontAwesomeIcon icon={'trash'} /> Remove
+                            </a>
+                        </div>
+                    )}
+                    <div>
+                        <a tabIndex="0" className="btn-link btn-add"><FontAwesomeIcon icon={'plus-circle'} /> Add another option</a>
+                    </div>
+                    </form>
+                )}
+            </div>
         </div>
     )
 })
@@ -49,12 +71,16 @@ export default class EditDisaggregations extends React.Component {
     }
 
     toggleExpand(id) {
-        let {expanded_id} = this.state
+        const {expanded_id} = this.state
         if (id == expanded_id) {
             this.setState({expanded_id: null})
         } else {
             this.setState({expanded_id: id})
         }
+    }
+
+    updateLabel(disaggregationId, labelIndex, value) {
+        console.log(`${disaggregationId}, ${labelIndex}, ${value}`)
     }
 
     render() {
@@ -69,6 +95,7 @@ export default class EditDisaggregations extends React.Component {
                         disaggregation={disaggregation}
                         expanded={disaggregation.id==expanded_id}
                         expandAction={() => this.toggleExpand(disaggregation.id)}
+                        updateLabel={(labelIndex, value) => this.updateLabel(disaggregation.id, labelIndex, value)}
                     />
                 )}
                 <div className="form-group">
@@ -76,7 +103,7 @@ export default class EditDisaggregations extends React.Component {
                     <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                 </div>
                 <div>
-                    <a href='#' className="btn-link btn-add"><FontAwesomeIcon icon={'plus-circle'} /> {gettext("Add country disaggregation")}</a>
+                    <a tabIndex="0" className="btn-link btn-add"><FontAwesomeIcon icon={'plus-circle'} /> {gettext("Add country disaggregation")}</a>
                 </div>
             </div>
         )
