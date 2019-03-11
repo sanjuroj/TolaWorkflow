@@ -18,6 +18,7 @@ from indicators.queries import ProgramWithMetrics
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.core.exceptions import PermissionDenied
 
 
 @login_required(login_url='/accounts/login/')
@@ -28,9 +29,12 @@ def index(request, selected_country=None):
 
     # Find the active country
     user = request.user.tola_user
-    user_countries = user.available_countries.distinct()  # all countries whose programs are available to the user
+    user_countries = user.available_countries # all countries whose programs are available to the user
 
     if selected_country:  # from URL
+        if not user.available_countries.filter(id=selected_country).exists():
+            raise PermissionDenied
+
         active_country = Country.objects.filter(id=selected_country)[0]
         user.update_active_country(active_country)
     else:
