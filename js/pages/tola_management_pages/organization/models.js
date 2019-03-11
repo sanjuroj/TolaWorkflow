@@ -134,6 +134,8 @@ export class OrganizationStore {
         if(this.editing_target !== "new") {
             this.organizations_listing.unshift("new")
         }
+
+        this.editing_errors = {}
         this.organizations["new"] = new_organization
         this.editing_target = new_organization.id
         this.editing_target_data = {...default_organization}
@@ -150,10 +152,10 @@ export class OrganizationStore {
                 this.editing_target_data = {...default_organization}
             })
             this.onSaveSuccessHandler()
-        })).catch((errors) => {
+        })).catch((error) => {
             runInAction(() => {
                 this.saving = false
-                this.editing_errors = errors.response.data
+                this.editing_errors = error.response.data
             })
             this.onSaveErrorHandler()
         })
@@ -178,7 +180,7 @@ export class OrganizationStore {
         }).catch(error => {
             runInAction(() => {
                 this.saving = false
-                this.editing_errors = errors.response.data
+                this.editing_errors = error.response.data
             })
             this.onSaveErrorHandler()
         })
@@ -203,7 +205,7 @@ export class OrganizationStore {
         }).catch(error => {
             runInAction(() => {
                 this.saving = false
-                this.editing_errors = errors.response.data
+                this.editing_errors = error.response.data
             })
             this.onSaveErrorHandler()
         })
