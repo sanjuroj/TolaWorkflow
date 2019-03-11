@@ -188,3 +188,29 @@ table.list-table {
 .virtualized-table__wrapper {
     height: 50vh;
 }
+
+.objective-form-buttons {
+    display: flex;
+
+    .right-buttons {
+        margin-left: auto;
+    }
+}
+
+.edit-strategic-objective__row, .edit-disaggregation__row {
+    display: flex;
+
+    .row-expand__toggle {
+        flex-basis: 1em;
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+
+    .row__content {
+        flex-grow: 1;
+    }
+}
+
+.disaggregation-label-group {
+    display: flex;
+}

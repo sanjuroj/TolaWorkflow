@@ -1,4 +1,13 @@
 import { observable, computed, action, runInAction } from "mobx";
+import { updateObjective, deleteObjective } from "./api";
+
+
+const new_objective_data = {
+    id: 'new',
+    name: '',
+    description: '',
+    status: '',
+}
 
 
 export class CountryStore {
@@ -30,6 +39,7 @@ export class CountryStore {
     @observable editing_errors = {}
     @observable fetching_editing_data = true
     @observable editing_objectives_data = []
+    @observable editing_objectives_errors = {}
     @observable editing_disaggregations_data = []
     @observable saving = false
 
@@ -151,8 +161,12 @@ export class CountryStore {
         PNotify.error({text: "Saving Failed", delay: 5000})
     }
 
+    onDeleteSuccessHandler() {
+        PNotify.success({text: "Successfully Deleted", delay: 5000})
+    }
+
     @action
-    createProgram() {
+    addCountry() {
         if(this.editing_target == 'new') {
             this.countries.shift()
         }
@@ -204,6 +218,69 @@ export class CountryStore {
                 this.onSaveErrorHandler()
             })
         })
+    }
+
+    @action addObjective() {
+        if (this.editing_objectives_data.find(objective => objective.id=='new')) {
+            return
+        }
+        this.editing_objectives_data = [...this.editing_objectives_data, new_objective_data]
+    }
+
+    @action updateObjective(id, data) {
+        this.editing_objectives_errors = {}
+        this.api.updateObjective(id, data).then(response => {
+            runInAction(() => {
+                this.onSaveSuccessHandler()
+                let updatedObjective = response.data
+                this.editing_objectives_data = this.editing_objectives_data.map(objective => {
+                    if (objective.id == updatedObjective.id) {
+                        return updatedObjective
+                    }
+                    return objective
+                })
+            })
+        }).catch((errors) => {
+            runInAction(() => {
+                this.saving = false
+                this.editing_objectives_errors = errors.response.data
+                this.onSaveErrorHandler()
+            })
+        })
+    }
+
+    @action createObjective(data) {
+        this.editing_objectives_errors = {}
+        this.api.createObjective(data).then(response => {
+            runInAction(() => {
+                this.onSaveSuccessHandler()
+                let newObjective = response.data
+                this.editing_objectives_data = [...this.editing_objectives_data.filter(objective => objective.id!='new'), newObjective]
+            })
+        }).catch((errors) => {
+            runInAction(() => {
+                this.saving = false
+                this.editing_objectives_errors = errors.response.data
+                this.onSaveErrorHandler()
+            })
+        })
+    }
+
+    @action deleteObjective(id) {
+        if (id=='new') {
+            this.editing_objectives_data = this.editing_objectives_data.filter(objective => objective.id!='new')
+            return
+        }
+        this.api.deleteObjective(id).then(response => {
+            runInAction(() => {
+                this.editing_objectives_data = this.editing_objectives_data.filter(objective => objective.id!=id)
+                this.onDeleteSuccessHandler()
+            })
+        })
+    }
+
+    @action clearObjectiveEditingErrors() {
+        this.editing_objectives_errors = {}
     }
 
 }

@@ -32,6 +32,10 @@ export const fetchCountryDisaggregations = (countryId) => {
     return api.get('/tola_management/countrydisaggregation/', {params: {country: countryId}})
 }
 
+export const createObjective = (data) => api.post('/tola_management/countryobjective/', data)
+export const updateObjective = (id, data) => api.put(`/tola_management/countryobjective/${id}/`, data)
+export const deleteObjective = (id) => api.delete(`/tola_management/countryobjective/${id}`)
+
 
 export default {
     fetchCountries,
@@ -39,4 +43,7 @@ export default {
     fetchCountryDisaggregations,
     createCountry,
     updateCountry,
+    createObjective,
+    updateObjective,
+    deleteObjective,
 }

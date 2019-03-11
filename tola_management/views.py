@@ -210,10 +210,20 @@ def get_program_page_context(request):
     }
 
 def get_country_page_context(request):
+    auth_user = request.user
+    tola_user = auth_user.tola_user
+
+    country_queryset = Country.objects
+    if not auth_user.is_superuser:
+        country_queryset = country_queryset.filter(
+            Q(countryaccess__tolauser=tola_user) |
+            Q(programaccess__tolauser=tola_user) |
+            Q(tolauser=tola_user)
+        )
     countries = [{
         'id': country.id,
         'country': country.country,
-    } for country in Country.objects.all()]
+    } for country in country_queryset.distinct()]
 
     organizations = {
         organization.id : {

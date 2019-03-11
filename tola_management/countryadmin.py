@@ -84,14 +84,18 @@ class CountryAdminViewSet(viewsets.ModelViewSet):
     permissions = [HasCountryAdminAccess]
 
     def get_queryset(self):
-        viewing_user = self.request.user
+        auth_user = self.request.user
+        tola_user = auth_user.tola_user
         params = self.request.query_params
 
         queryset = Country.objects.all()
 
-        if not viewing_user.is_superuser:
-            #TODO limit queryset for viewing user
-            pass
+        if not auth_user.is_superuser:
+            queryset = queryset.filter(
+                Q(countryaccess__tolauser=tola_user) |
+                Q(programaccess__tolauser=tola_user) |
+                Q(tolauser=tola_user)
+            )
 
         countryFilter = params.getlist('countries[]')
         if countryFilter:
@@ -113,9 +117,10 @@ class CountryAdminViewSet(viewsets.ModelViewSet):
 
 class CountryObjectiveSerializer(serializers.ModelSerializer):
     #id = serializers.IntegerField(allow_null=True, required=False)
-    #country = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all())
-    #name = serializers.CharField(max_length=135)
-    #description = serializers.CharField(max_length=765, allow_blank=True, required=False)
+    country = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all())
+    name = serializers.CharField(required=True, allow_blank=False, max_length=135)
+    description = serializers.CharField(max_length=765, allow_blank=True, required=False)
+    status = serializers.CharField(max_length=255, allow_blank=True, required=False)
 
     class Meta:
         model = StrategicObjective
@@ -124,7 +129,12 @@ class CountryObjectiveSerializer(serializers.ModelSerializer):
             'country',
             'name',
             'description',
+            'status',
         )
+
+    def create(self, validated_data):
+        objective = super(CountryObjectiveSerializer, self).create(validated_data)
+        return objective
 
 
 class CountryObjectiveViewset(viewsets.ModelViewSet):
