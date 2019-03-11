@@ -16,6 +16,7 @@ from django.utils.translation import (
 )
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, PatternFill, Alignment
@@ -1145,10 +1146,9 @@ def delete_pinned_report(request):
     PinnedReport.objects.filter(id=pinned_report_id, tola_user_id=request.user.tola_user.id).delete()
     return HttpResponse()
 
-from silk.profiling.profiler import silk_profile
 
 
-class IPTTQuickstart(TemplateView):
+class IPTTQuickstart(LoginRequiredMixin, TemplateView):
     template_name = 'indicators/iptt_quickstart.html'
 
     def get_programs(self, request, frequencies_used):
@@ -1207,9 +1207,8 @@ class IPTTQuickstart(TemplateView):
         return self.render_to_response(context)
 
 
-from silk.profiling.profiler import silk_profile
 
-class IPTTReport(TemplateView):
+class IPTTReport(LoginRequiredMixin, TemplateView):
     template_name = 'indicators/iptt_report.html'
 
     def get_programs(self, request, frequencies_used, tva=True):
@@ -1363,9 +1362,8 @@ class IPTTReport(TemplateView):
         return params
 
     def get(self, request, *args, **kwargs):
-        with silk_profile(name='get report'):
-            context = {}
-            params = self.get_params(request, kwargs.get('reporttype'), kwargs.get('program_id'))
-            context['params'] = params
-            context['js_context'] = self.get_js_context(request, params)
-            return self.render_to_response(context)
+        context = {}
+        params = self.get_params(request, kwargs.get('reporttype'), kwargs.get('program_id'))
+        context['params'] = params
+        context['js_context'] = self.get_js_context(request, params)
+        return self.render_to_response(context)

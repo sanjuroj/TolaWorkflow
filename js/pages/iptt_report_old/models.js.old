@@ -1,0 +1,224 @@
+/**
+ * Data models for the IPTT report reqct page
+ * @module iptt_report/models
+ */
+
+import { observable, action } from 'mobx';
+import { ProgramFilterData, IPTTUIStore, TVA, TIMEPERIODS } from '../iptt_shared/models';
+
+/**
+ * Represents program data for filter fields on IPTT Report page
+ * @extends module:iptt_shared/models.ProgramFilterData
+ * adds indicators, levels, sites, sectors data for added filters on IPTT Report page
+ */   
+export class ReportProgramFilterData extends ProgramFilterData {
+
+    constructor(programsJSON) {
+        super(programsJSON);
+        programsJSON.forEach(this.additionalProgramInfo);
+    }
+
+    additionalProgramInfo = programJSON => {
+        this.programs[programJSON.id].periods = programJSON.periods;
+        //let programObject = {
+        //    name: programJSON.name,
+        //    id: programJSON.id,
+        //    url: {
+        //        [TVA]: programJSON.tva_url,
+        //        [TIMEPERIODS]: programJSON.timeperiods_url
+        //    },
+        //    reportingStart: {
+        //        iso: programJSON.reporting_period_start,
+        //        label: programJSON.reporting_period_start_label
+        //    },
+        //    reportingEnd: {
+        //        iso: programJSON.reporting_period_end,
+        //        label: programJSON.reporting_period_end_label
+        //    },
+        //    frequencies: programJSON.frequencies,
+        //    periods: programJSON.periods
+        //};
+        //this.programs[programJSON.id] = programObject;
+    }
+}
+
+export class IPTTReportUIStore extends IPTTUIStore {
+    @observable selectedStartPeriod = null;
+    @observable selectedEndPeriod = null;
+    @observable selectedLevels = [];
+    @observable selectedTypes = [];
+    @observable selectedSectors = [];
+    @observable selectedSites = [];
+    @observable selectedIndicators = [];
+    @observable programFilters;
+    reportType = null;
+
+    constructor(programStore, labels, reportStore, routerData) {
+        super(programStore, labels);
+        this.reportStore = reportStore;
+        this.enabled = true;
+        this.extractRouterData(routerData);
+    }
+    
+    extractRouterData = (routerData) => {
+        this.setReportType(routerData.reportType);
+        this.selectedProgramId = routerData.programId;
+        this.selectedFrequencyId = routerData.frequency;
+        if (routerData.showAll === true) {
+            this.setShowAll();
+        } else if ('mostRecent' in routerData) {
+            this.setMostRecentCount(routerData.mostRecent);
+        }
+    }
+    
+    setReportType = (reportType) => {
+        if ([TVA, TIMEPERIODS].includes(parseInt(reportType))) {
+            this.reportType = parseInt(reportType);
+        } else {
+            //how did we get here?
+        }
+    }
+    
+    get programOptions() {
+        if (this.reportType == TVA) {
+            return super.programOptions.filter((program) => this.programStore.getProgram(program.value).frequencies.length > 0);
+        } else {
+            return super.programOptions;
+        }
+    }
+    
+    get submitUrl() {
+        if (this.selectedProgramId == this.reportStore.programId) {
+            return false;
+        } else {
+            return super.submitUrl;
+        }
+    }
+    
+    setShowAll = () => {
+        super.setShowAll();
+        this.initPeriods();
+    }
+    
+    setMostRecentCount = (count) => {
+        super.setMostRecentCount(count);
+        let periods = this.selectedProgram.periods[this.selectedFrequencyId];
+        this.selectedStartPeriod = periods[periods.length - count].sort_index;
+        this.selectedEndPeriod = periods[periods.length - 1].sort_index;
+    }
+    
+    extractProgramFilters = (programJSON) => {
+        this.programFilters = {
+            levels: Object.entries(programJSON.levels).map((item) => ({value: item[0], label: item[1]})),
+            types: Object.entries(programJSON.types).map((item)  => ({value: item[0], label: item[1]})),
+            sectors: Object.entries(programJSON.sectors).map((item)  => ({value: item[0], label: item[1]})),
+            sites: Object.entries(programJSON.sites).map((item)  => ({value: item[0], label: item[1]})),
+            indicators: Object.entries(programJSON.indicators).map((item)  => ({value: item[0], label: item[1]}))
+        };
+    }
+    
+    initPeriods = () => {
+        if (this.selectedFrequencyId !== null) {
+            if ([1, 2].includes(this.selectedFrequencyId)) {
+                this.selectedStartPeriod = 0;
+                this.selectedEndPeriod = 0;
+            } else {
+                let periods = this.selectedProgram.periods[this.selectedFrequencyId];
+                this.selectedStartPeriod = 0;
+                this.selectedEndPeriod = periods[periods.length-1].sort_index;
+            }
+        }
+    }
+    
+    setStartPeriod = (count) => {
+        if (count > 0) {
+            this.showAll = false;
+        } else {
+            let periods = this.selectedProgram.periods[this.selectedFrequencyId];
+            if (this.selectedEndPeriod == periods[periods.length-1].sort_index) {
+                this.showAll = true;
+            }
+        }
+        if (this.mostRecent && count + this.mostRecentCount != this.selectedProgram.periods[this.selectedFrequencyId].length){
+            this.mostRecent = false;
+        }
+        this.selectedStartPeriod = count;
+    }
+    
+    setEndPeriod = (count) => {
+        if (this.showAll || this.mostRecent) {
+            let periods = this.selectedProgram.periods[this.selectedFrequencyId];
+            if (count != periods[periods.length-1].sort_index) {
+                this.showAll = false;
+                this.mostRecent = false;
+            }
+        }
+        this.selectedEndPeriod = count;
+    }
+    
+    getPeriods = (end_period=false) => {
+        let options = [];
+        if ([1, 2].includes(this.selectedFrequencyId)) {
+            let label = (end_period ? this.selectedProgram.reportingEnd :
+                         this.selectedProgram.reportingStart);
+            return [{value: 0, label: label, disabled: false}];
+        }
+        if (this.selectedProgramId !== null && this.selectedFrequencyId !== null) {
+            this.selectedProgram.periods[this.selectedFrequencyId].forEach(
+                (period) => {options.push(
+                    {
+                        value: period.sort_index,
+                        label: period.label,
+                        disabled: (end_period ? this.startPeriod !== null && period.sort_index < this.startPeriod :
+                                   this.endPeriod !== null && period.sort_index > this.endPeriod)
+                    })}
+            );
+        }
+        return options;
+    }
+    
+    setSelectedFrequency(value) {
+        super.setSelectedFrequency(value);
+        this.initPeriods();
+    }
+    
+    setLevels = (selected) => {
+        this.selectedLevels = selected;
+    }
+    
+    setTypes = (selected) => {
+        this.selectedTypes = selected;
+    }
+    setSectors = (selected) => {
+        this.selectedSectors = selected;
+    }
+    setSites = (selected) => {
+        this.selectedSites = selected;
+    }
+    setIndicators = (selected) => {
+        this.selectedIndicators = selected;
+    }
+    
+    resetAll = () => {
+        this.clearStartPeriod();
+        this.clearEndPeriod();
+        this.selectedLevels = [];
+        this.selectedTypes = [];
+        this.selectedSectors = [];
+        this.selectedSites = [];
+        this.selectedIndicators = [];
+    }
+    
+    applyFilters = () => {
+        console.log("applying");
+    }
+};
+
+export class IPTTReportStore {
+    @observable programId = null;
+    
+    constructor(programJSON) {
+        this.programId = programJSON.programId;    
+    }
+    
+}

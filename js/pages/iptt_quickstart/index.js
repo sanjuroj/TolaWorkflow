@@ -3,16 +3,19 @@ import ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { observable, action } from 'mobx';
 
-import { DualFilterStore, TVA, TIMEPERIODS } from '../iptt_shared/models';
+import { TVA, TIMEPERIODS } from '../iptt_shared/models';
+import { DualFilterStore, QuickstartProgramFilterData } from './models';
 import { IPTTQuickstartForm } from './components/form';
 
 
-let uiStore = new DualFilterStore(jsContext);
+let programStore = new QuickstartProgramFilterData(jsContext.programs);
+let labels = jsContext.labels;
+let parentStore = new DualFilterStore(programStore, labels);
 
 
-ReactDOM.render(<IPTTQuickstartForm uiStore={uiStore.getStore(TVA)} reportType={TVA} />,
+ReactDOM.render(<IPTTQuickstartForm uiStore={parentStore.getStore(TVA)} />,
                 document.querySelector('#quickstart-tva-form'));
 
 
-ReactDOM.render(<IPTTQuickstartForm uiStore={uiStore.getStore(TIMEPERIODS)} reportType={TIMEPERIODS} />,
+ReactDOM.render(<IPTTQuickstartForm uiStore={parentStore.getStore(TIMEPERIODS)} />,
                 document.querySelector('#quickstart-timeperiods-form'));

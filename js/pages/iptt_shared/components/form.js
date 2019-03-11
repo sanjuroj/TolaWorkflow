@@ -4,115 +4,122 @@ import { computed, when } from 'mobx';
 import Select from 'react-select';
 import { TVA, TIMEPERIODS } from '../models';
 
+const SelectWrapper = ({ classNames, labelText }) => {
+    return <div className={ classNames.outerDiv }>
+                <label className={ classNames.label }>
+                    { labelText }
+                </label>
+            </div>;
+}
+
+class IPTTFormComponent extends React.Component {
+    getClassNames = () => {
+        return {
+            outerDiv: this.props.outerDivClass || '',
+            label: this.props.labelClass || '',
+            field: this.props.fieldClass || '',
+            span: this.props.spanClass || ''
+        };
+    }
+}
 
 @observer
-export class ProgramSelect extends React.Component {
-    onSelection = (selected) => {
-        let selectedId = selected ? selected.value : null;
-        this.props.uiStore.setSelectedProgram(selectedId);
-    }
-
-    render() {
-        return <div className={this.props.outerClassNames}>
-                    <label className={this.props.labelClassNames}>
-                        {this.props.uiStore.labels.programSelect}
-                    </label>
+export class ProgramSelect extends IPTTFormComponent {
+    render = () => {
+        let classNames = this.getClassNames();
+        let store = this.props.uiStore;
+        return <SelectWrapper classNames={classNames} labelText={label} >
                     <Select
-                        options={this.props.uiStore.getPrograms(this.props.reportType)}
-                        value={this.props.uiStore.getSelectedProgram()}
-                        onChange={this.onSelection}
-                        className={this.props.classNames}
+                        options={ store.programOptions }
+                        value={ store.selectedProgramOption }
+                        onChange={ (selected) => { if (selected) { store.setSelectedProgram(selected.value) } } }
+                        className={ classNames.field }
                     />
-                </div>;
-    }
-}
-
-class IPTTFormFieldBase extends React.Component {
-    isEnabled = () => {
-        return (this.props.uiStore.reportType && this.props.reportType == this.props.uiStore.reportType &&
-                this.props.uiStore.selectedProgramId !== null);
-    }
-
-    processOptions = (optionsCallback, isEnabled) => {
-        if (!isEnabled) {
-            return [[], false];
-        }
-        let options = optionsCallback(this.props.reportType);
-        if (options === false || options.length == 0) {
-            return [[], false];
-        }
-        return [options, true];
+                </SelectWrapper>;
     }
 }
 
 @observer
-export class PeriodSelect extends IPTTFormFieldBase {
-    onSelection = (selected) => {
-        let selectedId = selected ? selected.value : null;
-        this.props.uiStore.setSelectedFrequency(selectedId);
+export class PeriodSelect extends IPTTFormComponent {
+    get enabled() {
+        return (this.props.uiStore.enabled === true && this.props.uiStore.selectedProgramId !== null);
     }
     
     render() {
-        let isEnabled = this.isEnabled();
-        let options;
-        [options, isEnabled] = this.processOptions(this.props.uiStore.getFrequencies, isEnabled);
-        let label = this.props.reportType == TVA ? this.props.uiStore.labels.tvaPeriodSelect : this.props.uiStore.labels.timeperiodsPeriodSelect;
-        return <div className={this.props.outerClassNames} >
-                    <label className={this.props.labelClassNames} >
-                        {label}
-                    </label>
-                    <Select options={options} isDisabled={!isEnabled}
-                        value={this.props.uiStore.getSelectedFrequency()}
-                        onChange={this.onSelection} className={this.props.classNames} />
-                </div>;
+        let classNames = this.getClassNames();
+        let store = this.props.uiStore;
+        return <SelectWrapper classNames={classNames} labelText={ store.labels.periodSelect } >
+                    <Select options={ store.frequencyOptions } isDisabled={ !this.enabled }
+                        value={ store.selectedFrequencyOption }
+                        onChange={ (selected) => { if (selected) { store.setSelectedFrequency(selected.value) } } }
+                        className={ classNames.field } />
+                </SelectWrapper>;
     }
 }
 
+class IPTTFormFieldBase extends IPTTFormComponent {
+    get enabled() {
+        return (this.props.uiStore.enabled === true && this.props.uiStore.selectedProgramId !== null);
+    }
+}
+
+
 @observer
 export class ShowAllSelect extends IPTTFormFieldBase {
+    get enabled() {
+        return super.enabled && ![1,2].includes(this.props.uiStore.selectedFrequencyId);
+    }
+
+    get checked() {
+        return this.enabled && this.props.uiStore.showAll;
+    }
+
+    getClassNames = () => {
+        let classNames = super.getClassNames();
+        classNames.outerDiv += ' pr-2';
+        if (!this.enabled) { classNames.outerDiv += ' form-check-inline--is-disabled'; }
+        return classNames;
+    }
+
     render() {
-        let isEnabled = this.isEnabled() && (this.props.reportType == TIMEPERIODS || this.props.uiStore.selectedFrequencyId);
-        let checked = (this.props.reportType == this.props.uiStore.reportType && this.props.uiStore.showAll);
-        let handleChange = () => {this.props.uiStore.setShowAll();};
-        let outerClassNames = this.props.outerClassNames || '';
-        outerClassNames = "form-check form-check-inline " + outerClassNames;
-        if (!isEnabled) {
-            outerClassNames += ' form-check-inline--is-disabled';
-        }
-        return <div className={outerClassNames}>
-                 <span className="form-check-input">
+        let classNames = this.getClassNames();
+        let store = this.props.uiStore;
+        return <div className={ classNames.outerDiv }>
+                 <span className={ classNames.span }>
                     <input type="radio"
-                    checked={checked} disabled={!isEnabled} 
-                    onChange={handleChange} />
+                    checked={ this.checked } disabled={ !this.enabled } 
+                    onChange={ store.setShowAll } />
                  </span>
-                 <label className="form-check-label">{this.props.uiStore.labels.showAll}</label>
+                 <label className={ classNames.label }>{ store.labels.showAll }</label>
                </div>;
     }
 }
 
 @observer
 export class MostRecentSelect extends IPTTFormFieldBase {
+    getClassNames = () => {
+        let classNames = super.getClassNames();
+        if (!this.enabled) { classNames.outerDiv += ' form-check-inline--is-disabled'; }
+        return classNames;
+    }
+    
+    get enabled() {
+        return super.enabled && ![1,2].includes(this.props.uiStore.selectedFrequencyId);
+    }
+
+    get checked() {
+        return this.enabled && this.props.uiStore.mostRecent;
+    }
     render() {
-        let isEnabled = (this.isEnabled() && (this.props.reportType == TIMEPERIODS ||
-                                             (this.props.uiStore.selectedFrequencyId &&
-                                              ![1, 2, null].includes(this.props.uiStore.selectedFrequencyId))));
-        let checked = (this.props.reportType == this.props.uiStore.reportType && this.props.uiStore.mostRecent);
-        let handleChange = () => {
-            this.props.uiStore.setMostRecent();
-            this.props.uiStore.focusMostRecentCount();
-            };
-        let outerClassNames = this.props.outerClassNames || '';
-        outerClassNames = "form-check form-check-inline " + outerClassNames;
-        if (!isEnabled) {
-            outerClassNames += ' form-check-inline--is-disabled';
-        }
-        return <div className={outerClassNames}>
-             <span className="form-check-input">
-                <input type="radio"
-                       checked={checked} disabled={!isEnabled} 
-                       onChange={handleChange} />
+        let classNames = this.getClassNames();
+        let store = this.props.uiStore;
+        return <div className={ classNames.outerDiv }>
+                 <span className={ classNames.span }>
+                    <input type="radio"
+                    checked={ this.checked } disabled={ !this.enabled } 
+                       onChange={ store.setMostRecent } />
              </span>
-             <label className="form-check-label">{this.props.uiStore.labels.mostRecent}</label>
+             <label className={ classNames.label }>{ store.labels.mostRecent }</label>
            </div>;  
     }
 }
@@ -120,62 +127,58 @@ export class MostRecentSelect extends IPTTFormFieldBase {
 
 @observer
 export class MostRecentCount extends IPTTFormFieldBase {
-    constructor(props) {
-        super(props);
-        when(
-            () => this.props.uiStore.mostRecentCountHasFocus,
-            () => {
-                this.props.uiStore.focusedMostRecentCount();
+
+    componentDidMount() {
+        eventBus.on('most-recent-count-focus', () => {
+            if (this.countInput) {
                 this.countInput.focus();
             }
-        );
+        });
     }
     
     handleChange = (e) => {
-        this.props.uiStore.setMostRecent(true);
         let value = e.target.value;
         if (value !== '' && !isNaN(parseFloat(value)) && isFinite(value)) {
-            this.props.uiStore.setMostRecent(value);
-        }
-    }
-    
-    handleFocus = () => {
-        if (this.props.uiStore.mostRecent === false) {
-            this.props.uiStore.setMostRecent(true);
+            this.props.uiStore.setMostRecentCount(value);
         }
     }
     
     render() {
-        let isEnabled = (this.isEnabled() && this.props.uiStore.selectedFrequencyId &&
-                         !([1, 2, null].includes(this.props.uiStore.selectedFrequencyId)));
-        let value = this.props.uiStore.getMostRecentCount();
-        value = value || '';
+        let classNames = this.getClassNames();
+        let store = this.props.uiStore;
         return <div>
                 <input ref={ (input) => { this.countInput = input; }}
-                    onFocus={this.handleFocus}
-                    type="number" placeholder={this.props.uiStore.labels.mostRecentCount}
-                    disabled={!isEnabled} value={this.props.uiStore.getMostRecentCount() || ''}
-                    className="form-control" onChange={this.handleChange}/>
+                    onFocus={ store.setMostRecent }
+                    type="number" placeholder={ store.labels.mostRecentCount }
+                    disabled={ !this.enabled } value={ store.mostRecentCount }
+                    className={ classNames.field } onChange={ this.handleChange } />
                 </div>;
     }
 }
 
 
-export const IPTTSubmit = observer(({ uiStore, reportType}) => {
+export const IPTTSubmit = observer((props) => {
+    let store = props.uiStore;
+
     const handleClick = (e) => {
-        let url = uiStore.getUrl(reportType);
-        window.location.href = url;
+        let url = store.submitUrl;
+        if (url) {
+            window.location.href = url;
+        }
     };
-    const enabled = (uiStore.enabled && uiStore.selectedProgramId !== null &&
-                     uiStore.selectedFrequencyId && uiStore.getUrl());
+    const enabled = (store.enabled && store.selectedProgramId !== null &&
+                     store.selectedFrequencyId && store.submitUrl);
+
     const inlineCSS = {
         width: '100%'
     };
-    return <button
-            className="btn btn-primary"
-            onClick={handleClick}
-            disabled={!enabled}
-            style={inlineCSS}>{uiStore.labels.submit}</button>;
+    return  <div className="d-flex justify-content-center mb-1">
+                <button
+                className="btn btn-primary"
+                onClick={ handleClick }
+                disabled={ !enabled }
+                style={ inlineCSS }>{ store.labels.submit }</button>
+            </div>;
 });
 
 @observer
@@ -183,6 +186,10 @@ export class StartPeriodSelect extends React.Component {
     handleChange = (e) => {
         this.props.uiStore.setStartPeriod(e.target.value);
     }
+    get enabled() {
+        return (this.props.uiStore.selectedProgramId !== null && this.props.uiStore.selectedFrequencyId !== null);
+    }
+    
     createOptions = () => {
         let options = [];
         this.props.uiStore.getPeriods().forEach(
@@ -193,15 +200,14 @@ export class StartPeriodSelect extends React.Component {
         return options;
     }
     render() {
-        let isEnabled = (this.props.uiStore.selectedProgramId !== null &&
-                         this.props.uiStore.selectedFrequencyId !== null);
+        let store = this.props.uiStore;
         return <React.Fragment>
                     <label className="col-form-label">
-                    {this.props.uiStore.labels.startPeriodSelect}
+                    {store.labels.startPeriodSelect}
                     </label>
-                    <select className="form-control" value={this.props.uiStore.getStartPeriod()}
-                            disabled={!isEnabled}
-                             onChange={this.handleChange}>
+                    <select className="form-control" value={ store.selectedStartPeriod }
+                            disabled={!this.enabled}
+                             onChange={ (e) => store.setStartPeriod(e.target.value) }>
                              {this.createOptions()}
                     </select>
                </React.Fragment>

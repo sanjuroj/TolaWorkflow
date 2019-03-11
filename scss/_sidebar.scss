@@ -4,7 +4,7 @@
 
 #sidebar {
     flex-basis: 1;
-    overflow: hidden;
+    // (commenting out while working on react)overflow: hidden;
     z-index: 3;
     .list-group {
         min-width: 400px;

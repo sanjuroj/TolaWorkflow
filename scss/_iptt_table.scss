@@ -58,3 +58,9 @@ body.page_iptt_table { // body element for extra specificity
     }
 }
 
+//reskin react-select modals to match bootstrap selects
+.iptt-react-select {
+    width: 100%;
+    color: $black;
+}
+
