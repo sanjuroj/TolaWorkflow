@@ -214,3 +214,11 @@ table.list-table {
 .disaggregation-label-group {
     display: flex;
 }
+
+.disaggregation-form-buttons {
+    display: flex;
+
+    .right-buttons {
+        margin-left: auto;
+    }
+}

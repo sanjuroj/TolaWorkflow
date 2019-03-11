@@ -115,7 +115,14 @@ export const IndexView = observer(
                                             DisaggregationSection={observer(() =>
                                                 <LoadingSpinner isLoading={store.fetching_editing_data}>
                                                     <EditDisaggregations
+                                                        country_id={data.id}
                                                         disaggregations={store.editing_disaggregations_data}
+                                                        addDisaggregation={() => store.addDisaggregation()}
+                                                        onDelete={(id) => store.deleteDisaggregation(id)}
+                                                        onUpdate={(id, data) => store.updateDisaggregation(id, data)}
+                                                        onCreate={(data) => store.createDisaggregation(data)}
+                                                        errors={store.editing_disaggregations_errors}
+                                                        clearErrors={() => store.clearDisaggregationEditingErrors()}
                                                     />
                                                 </LoadingSpinner>
                                             )}
