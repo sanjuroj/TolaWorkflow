@@ -33,6 +33,16 @@ def associate_all_program_countries(apps, schema_editor):
 def deassociate_all_program_countries(apps, schema_editor):
     pass
 
+def associate_all_staff_to_countries_and_remove_staff(apps, schema_editor):
+    CountryAccess = apps.get_model('workflow', 'ProgramAccess')
+    User = apps.get_model('auth', 'User')
+
+    for auth_user in User.objects.filter(is_staff=True).exclude(tola_user__country__isnull=True):
+        auth_user.is_staff = False
+        auth_user.save()
+        access = CountryAccess(tolauser=auth_user.tola_user, country=auth_user.tola_user.country)
+        access.save()
+
 
 class Migration(migrations.Migration):
 
@@ -57,4 +67,5 @@ class Migration(migrations.Migration):
             unique_together=set([('program', 'tolauser', 'country')]),
         ),
         migrations.RunPython(associate_all_program_countries, deassociate_all_program_countries),
+        migrations.RunPython(associate_all_staff_to_countries_and_remove_staff),
     ]
