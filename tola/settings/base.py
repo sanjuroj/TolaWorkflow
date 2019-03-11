@@ -267,6 +267,7 @@ THIRD_PARTY_APPS = (
     #'user_language_middleware',
     'widget_tweaks',
     'webpack_loader',
+    'safedelete'
 )
 
 # Apps specific for this project go here.

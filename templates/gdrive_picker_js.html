@@ -1,0 +1,108 @@
+{# Used on Documentation form (full page and popup version) and Results form #}
+
+<script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
+
+<script>
+    let developerKey = 'AIzaSyCuDmq8DjGziPnfAl4bW7fEZtf25teO3x4';
+    // let developerKey = 'AIzaSyCT-IRNfrcEhYjcrf7CIHAF54eTldOaYlY';
+
+    // The Client ID obtained from the Google Developers Console. Replace with your own Client ID.
+    let clientId = '859950034311-r6gsqnipugbtv6a2j4h4eo2tt2a1js2t.apps.googleusercontent.com';
+    // let clientId = "445847194486-gl2v6ud6ll65vf06vbjaslqqgejad61k.apps.googleusercontent.com"
+
+    // Scope to use to access user's drive.
+    let scope = ['https://www.googleapis.com/auth/drive.readonly'];
+    let pickerApiLoaded = false;
+    let oauthToken;
+    {#let actionType = null;#}
+    let picker = null;
+
+    let userCallback = null;
+
+    // Go through the auth process, and call pickerSelectCallback with `name` and `url args
+    function gdriveFilePicker(pickerSelectCallback) {
+        // This is jank to have a single global CB. Fix once I understand the Google API and can refactor.
+        userCallback = pickerSelectCallback;
+
+        onApiLoad();
+    }
+
+    // Use the API Loader script to load google.picker and gapi.auth.
+    function onApiLoad() {
+        gapi.load('auth', {'callback': onAuthApiLoad});
+        gapi.load('picker', {'callback': onPickerApiLoad});
+    }
+
+    function onAuthApiLoad() {
+        window.gapi.auth.authorize(
+            {
+                'client_id': clientId,
+                'scope': scope,
+                'immediate': false
+            },
+            handleAuthResult);
+    }
+
+    function onPickerApiLoad() {
+        pickerApiLoaded = true;
+        // createPicker();
+    }
+
+    function handleAuthResult(authResult) {
+        if (authResult && !authResult.error) {
+            oauthToken = authResult.access_token;
+            createPicker();
+        }
+    }
+
+    // Create and render a Picker object
+    function createPicker() {
+        if (pickerApiLoaded && oauthToken) {
+            let view = new google.picker.DocsView(google.picker.ViewId.DOCS);
+            let teamView = new google.picker.DocsView(google.picker.ViewId.DOCS);
+            let ownedByMeView = new google.picker.DocsView(google.picker.ViewId.DOCS);
+
+            view.setIncludeFolders(true);
+            view.setSelectFolderEnabled(true);
+            view.setMode("DocsViewMode.LIST");
+
+            teamView.setEnableTeamDrives(true);
+            teamView.setIncludeFolders(true);
+            teamView.setSelectFolderEnabled(true);
+            teamView.setMode("DocsViewMode.LIST");
+
+            ownedByMeView.setIncludeFolders(true);
+            ownedByMeView.setOwnedByMe(true);
+            ownedByMeView.setSelectFolderEnabled(true);
+            ownedByMeView.setMode("DocsViewMode.LIST");
+
+            picker = new google.picker.PickerBuilder()
+            // .enableFeature(google.picker.Feature.NAV_HIDDEN)
+                .enableFeature(google.picker.Feature.SUPPORT_TEAM_DRIVES)
+                .addView(view)
+                .addView(ownedByMeView)
+                .addView(teamView)
+                .setOAuthToken(oauthToken)
+                // .setDeveloperKey(developerKey)
+                .setCallback(pickerCallback)
+                .setOrigin(window.location.protocol + '//' + window.location.host)
+                .build();
+            picker.setVisible(true);
+        }
+    }
+
+    // A simple callback implementation.
+    function pickerCallback(data) {
+        //console.log(JSON.stringify(data));
+        if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
+            let doc = data[google.picker.Response.DOCUMENTS][0];
+            let url = doc[google.picker.Document.URL];
+            let id = doc[google.picker.Document.ID];
+            console.log("URL: " + url);
+            // console.log("ID: " + id);
+            // console.log("name:" + doc['name']);
+
+            userCallback(doc['name'], url);
+        }
+    }
+</script>

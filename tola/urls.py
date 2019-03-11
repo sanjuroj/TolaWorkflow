@@ -13,10 +13,15 @@ from feed.views import (
 )
 from tola_management.views import (
     UserAdminViewSet,
-    OrganizationAdminViewSet
+    OrganizationAdminViewSet,
 )
 from tola_management.programadmin import (
     ProgramAdminViewSet,
+)
+from tola_management.countryadmin import (
+    CountryAdminViewSet,
+    CountryObjectiveViewset,
+    CountryDisaggregationViewSet,
 )
 from django.conf.urls import include, url
 # Import i18n_patterns
@@ -29,7 +34,7 @@ from rest_framework.authtoken import views as auth_views
 from django.contrib.auth import views as authviews
 
 from tola import views as tolaviews
-from indicators.views.views_indicators import ProgramPage
+from indicators.views.views_indicators import ProgramPage, old_program_page
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -84,6 +89,9 @@ router.register(r'programtargetfrequencies', ProgramTargetFrequencies, base_name
 router.register(r'tola_management/user', UserAdminViewSet, base_name='tolamanagementuser')
 router.register(r'tola_management/organization', OrganizationAdminViewSet, base_name='tolamanagementorganization')
 router.register(r'tola_management/program', ProgramAdminViewSet, base_name='tolamanagementprograms')
+router.register(r'tola_management/country', CountryAdminViewSet, base_name='tolamanagementcountry')
+router.register(r'tola_management/countryobjective', CountryObjectiveViewset, base_name='tolamanagementcountryobjective')
+router.register(r'tola_management/countrydisaggregation', CountryDisaggregationViewSet, base_name='tolamanagementcountrydisaggregation')
 
 urlpatterns = [
                 url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
@@ -111,9 +119,15 @@ urlpatterns = [
                 # Site home page
                 url(r'^$', views.index, name='index'),
 
-                # program page
-                url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<type_id>\d+)/$',
+                url(r'^program/(?P<program_id>\d+)/$',
                     ProgramPage.as_view(), name='program_page'),
+
+                url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<indicator_type_id>\d+)/$',
+                    old_program_page, name='old_program_page'),
+
+                # program page (deprecated - indicator_id and type_id filters unneeded now)
+                # url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<type_id>\d+)/$',
+                #     ProgramPage.as_view(), name='program_page'),
 
                 # program ajax update for metrics
                 url(r'^program/(?P<program_id>\d+)/metrics/$',
@@ -161,3 +175,10 @@ urlpatterns = [
                 #url(r'^oauth/', include('social_django.urls', namespace='social')),
 
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+if settings.DEBUG:
+    urlpatterns = [
+        url(r'^500/$', TemplateView.as_view(template_name='500.html')),
+        url(r'^404/$', TemplateView.as_view(template_name='404.html')),
+    ] + urlpatterns

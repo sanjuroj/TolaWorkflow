@@ -7,3 +7,14 @@
         content: "*";
     }
 }
+
+.react-select.is-invalid~.invalid-feedback {
+    display: block;
+}
+.input--inline {
+    // subclass form-group or input for inline form elements inside a d-flex container
+    margin-right: $grid-gutter-width/3;
+    &:last-child {
+        margin-right: 0;
+    }
+}

@@ -11,7 +11,7 @@ const default_organization = {
     primary_contact_email: "",
     primary_contact_name: "",
     primary_contact_phone: "",
-    sectors: []
+    sectors: [],
 }
 
 export class OrganizationStore {
@@ -30,12 +30,15 @@ export class OrganizationStore {
     available_programs = {}
     available_organizations = {}
     available_sectors = {}
+    available_countries = {}
     program_selections = []
     organization_selections = []
     sector_selections = []
+    country_selections = []
 
     @observable editing_target = null
     @observable editing_target_data = {...default_organization}
+    @observable editing_target_history = []
     @observable editing_errors = {}
 
     @observable filters = {
@@ -51,13 +54,17 @@ export class OrganizationStore {
         {value: 0, label: 'Inactive'}
     ]
 
-    constructor(programs, organizations, sectors) {
+    constructor(programs, organizations, sectors, countries, country_filter, program_filter) {
         this.available_programs = programs
         this.available_organizations = organizations
         this.available_sectors = sectors
+        this.available_countries = countries
         this.organization_selections = Object.entries(organizations).map(([id, org]) => ({value: org.id, label: org.name}))
         this.program_selections = Object.entries(programs).map(([id, program]) => ({value: program.id, label: program.name}))
         this.sector_selections = Object.entries(sectors).map(([id, sector]) => ({value: sector.id, label: sector.name}))
+        this.country_selections = Object.entries(countries).map(([id, country]) => ({value: country.id, label: country.name}))
+        this.filters.countries = country_filter.map(id => this.available_countries[id]).map(country => ({label: country.name, value: country.id}))
+        this.filters.programs = program_filter.filter(id => programs[id]).map(id => ({label: programs[id].name, value: id}))
         this.fetchOrganizations()
     }
 
@@ -107,6 +114,12 @@ export class OrganizationStore {
                 this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]))
             })
         })
+    }
+
+    @action
+    applyFilters() {
+        this.current_page = 0
+        this.fetchOrganizations()
     }
 
     @action
@@ -246,6 +259,7 @@ export class OrganizationStore {
     @action
     toggleEditingTarget(organization_id) {
         this.editing_target_data = {...default_organization}
+        this.editing_errors = {}
 
         if(this.editing_target == "new") {
             this.organizations_listing.shift()
@@ -257,9 +271,12 @@ export class OrganizationStore {
             this.editing_target = organization_id
             this.fetching_editing_target = true
             if(!(this.editing_target == 'new')) {
-                api.fetchOrganization(organization_id).then((organization) => {
-                    this.fetching_editing_target = false
-                    this.editing_target_data = organization
+                Promise.all([api.fetchOrganization(organization_id), api.fetchOrganizationHistory(organization_id)]).then(([organization, history]) => {
+                    runInAction(() => {
+                        this.fetching_editing_target = false
+                        this.editing_target_data = organization
+                        this.editing_target_history = history
+                    })
                 })
             }
         }

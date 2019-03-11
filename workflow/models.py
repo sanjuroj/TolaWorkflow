@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.contrib import admin
+from django.core.exceptions import SuspiciousOperation
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from decimal import Decimal
@@ -16,12 +17,12 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from simple_history.models import HistoricalRecords
 from django.contrib.sessions.models import Session
+from django.urls import reverse
 
 try:
     from django.utils import timezone
 except ImportError:
     from datetime import datetime as timezone
-
 
 # New user created generate a token
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -117,6 +118,20 @@ class Organization(models.Model):
         self.edit_date = timezone.now()
         super(Organization, self).save()
 
+    @property
+    def logged_fields(self):
+        o = self
+        return {
+            "name": o.name,
+            "primary_address": o.primary_address,
+            "primary_contact_name": o.primary_contact_name,
+            "primary_contact_email": o.primary_contact_email,
+            "primary_contact_phone": o.primary_contact_phone,
+            "mode_of_contact": o.mode_of_contact,
+            "is_active": o.is_active,
+            "sectors": [sector.sector for sector in o.sectors.all()]
+        }
+
     # displayed in admin templates
     def __unicode__(self):
         return self.name
@@ -125,7 +140,6 @@ class Organization(models.Model):
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('name', 'create_date', 'edit_date')
     display = 'Organization'
-
 
 class Country(models.Model):
     country = models.CharField(_("Country Name"), max_length=255, blank=True)
@@ -155,15 +169,8 @@ class Country(models.Model):
         return self.country
 
 
-TITLE_CHOICES = (
-    ('mr', _('Mr.')),
-    ('mrs', _('Mrs.')),
-    ('ms', _('Ms.')),
-)
-
-
 class TolaUser(models.Model):
-    title = models.CharField(_("Title"), blank=True, null=True, max_length=3, choices=TITLE_CHOICES)
+    title = models.CharField(_("Title"), blank=True, null=True, max_length=50)
     name = models.CharField(_("Given Name"), blank=True, null=True, max_length=100)
     employee_number = models.IntegerField(_("Employee Number"), blank=True, null=True)
     user = models.OneToOneField(User, unique=True, related_name='tola_user', verbose_name=_("User"))
@@ -174,7 +181,12 @@ class TolaUser(models.Model):
     active_country = models.ForeignKey( Country, blank=True, null=True, on_delete=models.SET_NULL,\
         related_name='active_country', verbose_name=_("Active Country"))
     countries = models.ManyToManyField(
-        Country, verbose_name=_("Accessible Countries"), related_name='users', blank=True)
+        Country,
+        verbose_name=_("Accessible Countries"),
+        related_name='users',
+        blank=True,
+        through='CountryAccess'
+    )
     tables_api_token = models.CharField(blank=True, null=True, max_length=255)
     activity_api_token = models.CharField(blank=True, null=True, max_length=255)
     privacy_disclaimer_accepted = models.BooleanField(default=False)
@@ -189,7 +201,14 @@ class TolaUser(models.Model):
         ordering = ('name',)
 
     def __unicode__(self):
-        return self.name
+        # Returning None breaks the Django Admin on models with a FK to TolaUser
+        return self.name or u''
+
+    @property
+    def display_with_organization(self):
+        if not self.organization:
+            return str(self)
+        return u'{0} ({1})'.format(self, self.organization)
 
     @property
     def countries_list(self):
@@ -205,6 +224,15 @@ class TolaUser(models.Model):
             user_country_codes.add(self.country.code)
         return bool(user_country_codes & settings.PROJECTS_ACCESS_WHITELIST_SET)
 
+    @property
+    def has_admin_management_access(self):
+        #circular import avoidance
+        from tola_management.permissions import (
+            user_has_basic_or_super_admin
+        )
+
+        return user_has_basic_or_super_admin(self.user)
+
     # on save add create date or update edit date
     def save(self, *args, **kwargs):
         if self.create_date == None:
@@ -216,6 +244,128 @@ class TolaUser(models.Model):
     def update_active_country(self, country):
         self.active_country = country
         super(TolaUser, self).save()
+
+    # generic has access function (countries, programs, etc.?  currently program_id implemented):
+    def has_access(self, **kwargs):
+        if 'program_id' in kwargs:
+            return Program.objects.filter(
+                country__in=self.countries.all()
+                ).filter(pk=kwargs.get('program_id')).exists()
+        return False
+
+    @property
+    def managed_countries(self):
+        if self.user.is_superuser:
+            return Country.objects.all()
+        else:
+            return Country.objects.filter(id__in=self.countryaccess_set.filter(role='basic_admin').values('country_id'))
+
+    @property
+    def managed_programs(self):
+        return Program.objects.filter(country__in=self.managed_countries)
+
+    @property
+    def available_countries(self):
+        if self.user.is_superuser:
+            return Country.objects.all()
+        else:
+            if self.country is not None:
+                return (
+                    self.countries.all()
+                    | Country.objects.filter(id__in=ProgramAccess.objects.filter(tolauser=self).values('country_id'))
+                    | Country.objects.filter(id=self.country.id)
+                ).distinct()
+            else:
+                return (
+                    self.countries.all()
+                    | Country.objects.filter(id__in=ProgramAccess.objects.filter(tolauser=self).values('country_id'))
+                ).distinct()
+
+    @property
+    def available_programs(self):
+        if self.user.is_superuser:
+            return Program.objects.all()
+        else:
+            if self.country is not None:
+                return (
+                    Program.objects.filter(country__in=self.countries.all())
+                    | self.programs.all()
+                    | self.country.program_set.all()
+                ).distinct()
+            else:
+                return (
+                    Program.objects.filter(country__in=self.countries.all())
+                    | self.programs.all()
+                ).distinct()
+
+    @property
+    def logged_fields(self):
+        return {
+            "title": self.title,
+            "name": self.name,
+            "mode_of_address": self.mode_of_address,
+            "mode_of_contact": self.mode_of_contact,
+            "phone_number": self.phone_number,
+            "email": self.user.email,
+            "organization": self.organization.name,
+            "active": self.user.is_active
+        }
+
+    @property
+    def logged_program_fields(self):
+        country_access = {
+            access.country_id: {"country": access.country.country, "role": access.role}
+            for access in self.countryaccess_set.all()
+        }
+
+        program_access = {
+            (str(access.country_id)+'_'+str(access.program_id)): {"role": access.role, "program": access.program.name, "country": access.country.country}
+            for access in self.programaccess_set.all()
+        }
+
+        return {
+            "countries": country_access,
+            "programs": program_access
+        }
+
+    @property
+    def access_data(self):
+        country_access = {
+            country.country_id: {"role": country.role}
+            for country in self.countryaccess_set.all()
+        }
+
+        program_access = [
+            {"role": access.role, "program": access.program_id, "country": access.country_id}
+            for access in self.programaccess_set.all()
+        ]
+
+        return {
+            "countries": country_access,
+            "programs": program_access
+        }
+
+
+COUNTRY_ROLE_CHOICES = (
+    ('user', 'User'),
+    ('basic_admin', 'Basic Admin'),
+)
+
+class CountryAccess(models.Model):
+    tolauser = models.ForeignKey(TolaUser)
+    country = models.ForeignKey(Country)
+    role = models.CharField(max_length=100, choices=COUNTRY_ROLE_CHOICES, default='user')
+
+    def save(self, *args, **kwargs):
+        #requirements that country access be given only to mercy corps users (id = 1)
+        if self.id is None and self.tolauser.organization_id != 1:
+            raise SuspiciousOperation("Only Mercy Corps users can be given country access")
+        super(CountryAccess, self).save(*args, **kwargs)
+
+    class Meta:
+        db_table = 'workflow_tolauser_countries'
+        unique_together = ('tolauser', 'country')
+
 
 class TolaBookmarks(models.Model):
     user = models.ForeignKey(TolaUser, related_name='tolabookmark', verbose_name=_("User"))
@@ -361,9 +511,8 @@ class ActiveProgramsManager(models.Manager):
         return super(ActiveProgramsManager, self).get_queryset().filter(
             funding_status__iexact=self.ACTIVE_FUNDING_STATUS)
 
-
 class Program(models.Model):
-    gaitid = models.CharField(_("ID"), max_length=255, blank=True, unique=True)
+    gaitid = models.CharField(_("ID"), max_length=255, null=True, blank=True, unique=True)
     name = models.CharField(_("Program Name"), max_length=255, blank=True)
     funding_status = models.CharField(_("Funding Status"), max_length=255, blank=True)
     cost_center = models.CharField(_("Fund Code"), max_length=255, blank=True, null=True)
@@ -374,7 +523,13 @@ class Program(models.Model):
     edit_date = models.DateTimeField(null=True, blank=True)
     budget_check = models.BooleanField(_("Enable Approval Authority"), default=False)
     country = models.ManyToManyField(Country, verbose_name=_("Country"))
-    user_access = models.ManyToManyField(TolaUser, blank=True, related_name="program_access")
+    user_access = models.ManyToManyField(
+        TolaUser,
+        blank=True,
+        related_name="programs",
+        through="ProgramAccess",
+        through_fields=('program', 'tolauser')
+    )
     public_dashboard = models.BooleanField(_("Enable Public Dashboard"), default=False)
     start_date = models.DateField(_("Program Start Date"), null=True, blank=True)
     end_date = models.DateField(_("Program End Date"), null=True, blank=True)
@@ -405,9 +560,38 @@ class Program(models.Model):
     def has_started(self):
         return self.reporting_period_start is not None and self.reporting_period_start <= timezone.localdate()
 
+    @property
+    def has_ended(self):
+        try:
+            return self.reporting_period_end < timezone.localdate()
+        except TypeError: # esp. if there's no reporting dates
+            return False
+
     # displayed in admin templates
     def __unicode__(self):
         return self.name
+
+    @property
+    def program_page_url(self):
+        """used in place of get_absolute_url() because program page isn't strictly an absolute url (no editing) but
+            gives a single point of reference on the model for the program page url, used in linking in various places
+        """
+        return reverse('program_page', kwargs={'program_id': self.pk})
+
+    @property
+    def gait_url(self):
+        """if program has a gait ID, returns url https://gait.mercycorps.org/editgrant.vm?GrantID=####
+        otherwise returns false
+        """
+        try:
+            gaitid = int(self.gaitid)
+        except ValueError:
+            gaitid = False
+        if gaitid and gaitid != 0 and len(str(gaitid)) > 2 and len(str(gaitid)) < 5:
+            # gaitid exists, is numeric, is nonzero, and is a 3 or 4 digit number:
+            return 'https://gait.mercycorps.org/editgrant.vm?GrantID={gaitid}'.format(
+                gaitid=gaitid)
+        return None
 
     def get_sites(self):
         indicator_ids = Indicator.objects.filter(program__in=[self.id]).values_list('id')
@@ -445,13 +629,6 @@ class Program(models.Model):
         return True
 
     @property
-    def has_ended(self):
-        try:
-            return self.reporting_period_end < timezone.localdate()
-        except TypeError: # esp. if there's no reporting dates
-            return False
-
-    @property
     def get_indicators_in_need_of_targetperiods_fixing(self):
         indicators = Indicator.objects.filter(program__in=[self.pk]) \
             .annotate(minstarts=Min('periodictargets__start_date')) \
@@ -462,9 +639,72 @@ class Program(models.Model):
 
         return indicators
 
+    @property
+    def has_time_aware_targets(self):
+        """returns true if this program has any indicators which have a time-aware target frequency - used in program
+        reporting period date validation"""
+        return self.indicator_set.filter(
+            target_frequency__in=Indicator.TIME_AWARE_TARGET_FREQUENCIES
+            ).exists()
+
+    @property
+    def last_time_aware_indicator_start_date(self):
+        """returns None if no time aware indicators, otherwise returns the most recent start date of all targets for
+        indicators with a time-aware frequency - used in program reporting period date validation"""
+        most_recent = PeriodicTarget.objects.filter(
+            indicator__program=self,
+            indicator__target_frequency__in=Indicator.TIME_AWARE_TARGET_FREQUENCIES
+        ).order_by('-start_date').first()
+        return most_recent if most_recent is None else most_recent.start_date
+
+
     def get_periods_for_frequency(self, frequency):
         period_generator = PeriodicTarget.generate_for_frequency(frequency)
         return period_generator(self.reporting_period_start, self.reporting_period_end)
+
+    @property
+    def admin_logged_fields(self):
+        return {
+            'gaitid': self.gaitid,
+            'name': self.name,
+            'funding_status': self.funding_status,
+            'cost_center': self.cost_center,
+            'description': self.description,
+            'sectors': ','.join([s.sector for s in self.sector.all()]),
+            'countries': ','.join([c.country for c in self.country.all()])
+        }
+
+    @property
+    def dates_for_logging(self):
+        start_date = None
+        if self.reporting_period_start is not None:
+            start_date = self.reporting_period_start.strftime('%Y-%m-%d')
+
+        end_date = None
+        if self.reporting_period_end is not None:
+            end_date = self.reporting_period_end.strftime('%Y-%m-%d')
+
+        return {
+            "start_date": start_date,
+            "end_date": end_date
+        }
+
+
+PROGRAM_ROLE_CHOICES = (
+    ('low', 'Low'),
+    ('medium', 'Medium'),
+    ('high', 'High')
+)
+
+class ProgramAccess(models.Model):
+    program = models.ForeignKey(Program)
+    tolauser = models.ForeignKey(TolaUser)
+    country = models.ForeignKey(Country)
+    role = models.CharField(max_length=100, choices=PROGRAM_ROLE_CHOICES, default='low')
+
+    class Meta:
+        db_table = 'workflow_program_user_access'
+        unique_together = ('program', 'tolauser', 'country')
 
 
 class ApprovalAuthority(models.Model):
@@ -1624,30 +1864,6 @@ class LoggedUser(models.Model):
     # user_logged_in.connect(login_user)
     # user_logged_out.connect(logout_user)
 
-COUNTRY_ROLE_CHOICES = (
-    ('user', 'User'),
-    ('basic_admin', 'Basic Admin'),
-)
-
-class TolaUserCountryRoles(models.Model):
-    country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name="user_roles")
-    user = models.ForeignKey(TolaUser, on_delete=models.CASCADE, related_name="country_roles")
-    role = models.CharField(max_length=100, choices=COUNTRY_ROLE_CHOICES)
-    class Meta:
-        unique_together = (('country', 'user'),)
-
-PROGRAM_ROLE_CHOICES = (
-    ('low', 'Low'),
-    ('medium', 'Medium'),
-    ('high', 'High')
-)
-
-class TolaUserProgramRoles(models.Model):
-    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name="user_roles")
-    user = models.ForeignKey(TolaUser, on_delete=models.CASCADE, related_name="program_roles")
-    role = models.CharField(max_length=100, choices=PROGRAM_ROLE_CHOICES)
-    class Meta:
-        unique_together = (('program', 'user'),)
 
 def get_user_country(request):
 

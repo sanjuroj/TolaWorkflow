@@ -10,7 +10,8 @@ from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from import_export.admin import ImportExportModelAdmin, ExportMixin
 
-from tola.util import getCountry, get_GAIT_data
+#from tola.util import getCountry, get_GAIT_data
+from tola import util
 from .models import (
     Documentation, ProjectAgreement, ProjectComplete, ProjectType, Country, SiteProfile,
     Office, Program, TolaUser, District, Province, ProfileType, AdminLevelThree, TolaUserProxy,
@@ -20,7 +21,8 @@ from .models import (
     OrganizationAdmin, ProvinceAdmin, AdminLevelThreeAdmin,
     DistrictAdmin, SiteProfileAdmin, ProjectTypeAdmin,
     ChecklistAdmin, StakeholderAdmin, ContactAdmin,
-    ChecklistItemAdmin, TolaUserAdmin, TolaSitesAdmin, FormGuidanceAdmin, TolaBookmarksAdmin
+    ChecklistItemAdmin, TolaUserAdmin, TolaSitesAdmin, FormGuidanceAdmin, TolaBookmarksAdmin,
+    ProgramAccess
 )
 
 
@@ -103,7 +105,7 @@ class ProjectAgreementAdmin(ImportExportModelAdmin):
         `self.value()`.
         """
         # Filter by logged in users allowable countries
-        user_countries = getCountry(request.user)
+        user_countries = util.getCountry(request.user)
         # if not request.user.user.is_superuser:
         return queryset.filter(country__in=user_countries)
 
@@ -138,7 +140,7 @@ class ProjectCompleteAdmin(ImportExportModelAdmin):
         `self.value()`.
         """
         # Filter by logged in users allowable countries
-        user_countries = getCountry(request.user)
+        user_countries = util.getCountry(request.user)
         # if not request.user.user.is_superuser:
         return queryset.filter(country__in=user_countries)
 
@@ -181,6 +183,18 @@ class SiteProfileAdmin(ImportExportModelAdmin):
     list_filter = ('country__country',)
     search_fields = ('office__code', 'country__country')
 
+class ProgramAccessInline(admin.TabularInline):
+    model = ProgramAccess
+
+    #the goal here is to limit the valid country choices to those associated with the related program
+    def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
+        field = super(ProgramAccessInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+        if db_field.name == 'country':
+            if request._obj_ is not None:
+                field.queryset = field.queryset.filter(id__in = request._obj_.country.all().values('id'))
+
+        return field
 
 class ProgramAdmin(admin.ModelAdmin):
     list_display = ('countries', 'name', 'gaitid', 'description', 'budget_check', 'funding_status')
@@ -188,35 +202,36 @@ class ProgramAdmin(admin.ModelAdmin):
     list_filter = ('funding_status', 'country', 'budget_check', 'funding_status')
     display = 'Program'
     readonly_fields = ('start_date', 'end_date', 'reporting_period_start', 'reporting_period_end', )
+    inlines = (ProgramAccessInline,)
+
+    #we need a reference for the inline to limit country choices properly
+    def get_form(self, request, obj=None, **kwargs):
+        # just save obj reference for future processing in Inline
+        request._obj_ = obj
+        return super(ProgramAdmin, self).get_form(request, obj, **kwargs)
 
     # Non-destructively save the GAIT start and end dates based on the value entered in the ID field.
     # Non-destructively populate the reporting start and end dates based on the GAIT dates.
     def save_model(self, request, obj, form, change):
-        gait_data = get_GAIT_data([obj.gaitid])
+        gait_data = util.get_GAIT_data([obj.gaitid])
         if len(gait_data) == 1:
+            dates = util.get_dates_from_gait_response(gait_data[0])
             if not obj.start_date:
-                try:
-                    obj.start_date = dateutil.parser.parse(gait_data[0]['start_date']).date()
-                except TypeError:
-                    obj.start_date = None
+                obj.start_date = dates['start_date']
 
             if not obj.end_date:
-                try:
-                    obj.end_date = dateutil.parser.parse(gait_data[0]['end_date']).date()
-                except TypeError:
-                    obj.end_date = None
-
+                obj.end_date = dates['end_date']
+            reporting_dates = util.get_reporting_dates(obj)
             if not obj.reporting_period_start:
-                obj.reporting_period_start = obj.start_date
+                obj.reporting_period_start = reporting_dates['reporting_period_start']
 
             if not obj.reporting_period_end:
-                if obj.end_date is None:
-                    obj.reporting_end_date = None
-                else:
-                    next_month = obj.end_date.replace(day=28) + datetime.timedelta(days=4)
-                    obj.reporting_period_end = obj.end_date - datetime.timedelta(days=next_month.day)
+                obj.reporting_period_end = reporting_dates['reporting_period_end']
         else:
-            messages.add_message(request, messages.ERROR, 'Error pulling data from GAIT server for ID {gait_id} during Program creation.'.format(gait_id=obj.gaitid))
+            messages.add_message(
+                request, messages.ERROR,
+                'Error pulling data from GAIT server for ID {gait_id} during Program creation.'.format(
+                    gait_id=obj.gaitid))
 
         super(ProgramAdmin, self).save_model(request, obj, form, change)
 

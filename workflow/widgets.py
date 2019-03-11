@@ -1,5 +1,6 @@
 from django import forms
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
 
 
 class GoogleMapsWidget(forms.HiddenInput):
@@ -15,7 +16,6 @@ class GoogleMapsWidget(forms.HiddenInput):
         self.attrs['width'] = self.attrs.get('width', 700)
         self.attrs['height'] = self.attrs.get('height', 400)
         self.attrs['country'] = self.attrs.get('country', country)
-
 
         maps_html = u"""
             <script type="text/javascript" src="https://maps.google.com/maps/api/js?v=3&key=AIzaSyAc76ZfKuHCvwXAEAiR2vINQPgNRenCf_8&sensor=false"></script>
@@ -113,9 +113,9 @@ class GoogleMapsWidget(forms.HiddenInput):
             <br stlye="clear: both" />
             <div style="width: 400px; margin-bottom: 25px; margin-left: 100px">
                 <div id="search">
-                <label for="city_county">City, Country:</label>
+                <label for="city_county">%(city_country)s</label>
                 <input id="city_country" type="text" value="%(country)s" class="input-medium search-query"/>
-                <input class="btn" type="button" value="Find" onclick="codeAddress()" />
+                <input class="btn" type="button" value="%(find)s" onclick="codeAddress()" />
                 </div>
                 <div id="search_results"><br/>
                 </div>
@@ -127,7 +127,9 @@ class GoogleMapsWidget(forms.HiddenInput):
 
 
             """ % {'latitude': self.attrs['latitude'], 'longitude': self.attrs['longitude'], 'base_longitude': self.attrs['base_longitude'],
-                   'base_latitude': self.attrs['base_latitude'], 'width': self.attrs['width'], 'height': self.attrs['height'], 'country': self.attrs['country']}
+                   'base_latitude': self.attrs['base_latitude'], 'width': self.attrs['width'], 'height': self.attrs['height'], 'country': self.attrs['country'],
+                   'find': _('Find'),
+                   'city_country': _('City, Country:')}
 
         rendered = super(GoogleMapsWidget, self).render(name, value, attrs)
         return rendered + mark_safe(maps_html)

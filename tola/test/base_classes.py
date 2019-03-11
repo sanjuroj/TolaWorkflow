@@ -9,7 +9,7 @@ from django.core.exceptions import ImproperlyConfigured
 from factories.django_models import UserFactory
 from factories.indicators_models import IndicatorFactory
 from factories.workflow_models import ProgramFactory, TolaUserFactory
-from indicators.models import Indicator
+from indicators.models import Indicator, Program
 from tola.test.utils import instantiate_scenario, decimalize
 
 
@@ -17,7 +17,7 @@ class TestBase(object):
     fixtures = ['indicatortype.json', 'levels.json']
 
     def setUp(self):
-        self.user = UserFactory(first_name="Indicator", last_name="CreateTest", username="IC")
+        self.user = UserFactory(first_name="Indicator", last_name="CreateTest", username="IC", is_superuser=True)
         self.user.set_password('password')
         self.user.save()
         self.tola_user = TolaUserFactory(user=self.user)
@@ -28,6 +28,7 @@ class TestBase(object):
             funding_status='Funded', reporting_period_start='2016-03-01', reporting_period_end='2020-05-01')
         self.program.country.add(self.country)
         self.program.save()
+        self.program = Program.objects.get()  # forces reporting_period_start/end from str to date()
         self.indicator = IndicatorFactory(
             program=self.program, unit_of_measure_type=Indicator.NUMBER, is_cumulative=False,
             direction_of_change=Indicator.DIRECTION_OF_CHANGE_NONE, target_frequency=Indicator.ANNUAL)
@@ -176,4 +177,3 @@ class IndicatorStatsMixin(object):
         buckets_percents = {k: float(v)/len(self.indicator_ids) for (k, v) in buckets_values.iteritems()}
 
         self.assertEqual(buckets_percents, self.response.context['scope_counts'])
-

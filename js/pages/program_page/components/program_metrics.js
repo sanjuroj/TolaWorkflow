@@ -3,24 +3,23 @@ import classNames from 'classnames';
 import { observer } from "mobx-react"
 import eventBus from '../../../eventbus';
 import {IndicatorFilterType} from "../models";
+import {localDateFromISOString} from "../../../date_utils";
 
 
 @observer
 class GaugeTank extends React.Component {
-    constructor(props) {
-        super(props);
 
-        this.onGuageClick = this.onGuageClick.bind(this);
-    }
-
-    onGuageClick() {
-        eventBus.emit('apply-gauge-tank-filter', this.props.filterType);
-    }
+    handleClick = (e) => {
+        e.preventDefault();
+        if (! this.props.disabled && this.unfilledPercent != 0) {
+            eventBus.emit('nav-apply-gauge-tank-filter', this.props.filterType);
+        }
+    };
 
     render() {
         const tickCount = 10;
 
-        const {allIndicatorsLength, filteredIndicatorsLength, title, filledLabel, unfilledLabel, cta, emptyLabel} = this.props;
+        const {allIndicatorsLength, filteredIndicatorsLength, title, filledLabel, unfilledLabel, cta, emptyLabel, disabled} = this.props;
 
         const filterType = this.props.filterType;
         const currentIndicatorFilter = this.props.currentIndicatorFilter;
@@ -32,10 +31,11 @@ class GaugeTank extends React.Component {
         const unfilledPercent = (allIndicatorsLength <= 0 || allIndicatorsLength == filteredIndicatorsLength) ? 100 :
             (filteredIndicatorsLength == 0 ? 0 :
                 Math.max(1, Math.min(Math.round((filteredIndicatorsLength / allIndicatorsLength) * 100), 99)));
+        this.unfilledPercent = unfilledPercent;
         const filledPercent = 100 - unfilledPercent;
 
-        return <div className={classNames('gauge', 'filter-trigger', {'is-highlighted': isHighlighted})}
-                    onClick={this.onGuageClick}>
+        return <div className={classNames('gauge', {'filter-trigger': unfilledPercent > 0 && !disabled, 'is-highlighted': isHighlighted})}
+                    onClick={this.handleClick} >
             <h6 className="gauge__title">{title}</h6>
             <div className="gauge__overview">
                 <div
@@ -66,7 +66,7 @@ class GaugeTank extends React.Component {
                     }
                 </div>
             </div>
-            { unfilledPercent > 0 &&
+            { unfilledPercent > 0 && !disabled &&
             <div className="gauge__cta">
                 <span className="btn-link btn-inline"><i className="fas fa-exclamation-triangle text-warning"/> {cta}</span>
                 &nbsp;
@@ -87,9 +87,12 @@ class GaugeBand extends React.Component {
             IndicatorFilterType.belowTarget,
             IndicatorFilterType.onTarget,
         ]);
-
-        this.onFilterLinkClick = this.onFilterLinkClick.bind(this);
     }
+
+    onFilterLinkClick = (e) => {
+        e.preventDefault();
+        eventBus.emit('nav-apply-gauge-tank-filter', parseInt(e.target.getAttribute('data-filter-type')));
+    };
 
     componentDidUpdate() {
         // Enable popovers after update (they break otherwise)
@@ -98,15 +101,11 @@ class GaugeBand extends React.Component {
         });
     }
 
-    onFilterLinkClick(e, filterType) {
-        e.preventDefault();
-        eventBus.emit('apply-gauge-tank-filter', filterType);
-    }
 
     render() {
         const tickCount = 10;
 
-        const {indicatorStore} = this.props;
+        const {indicatorStore, program} = this.props;
 
         const currentIndicatorFilter = this.props.currentIndicatorFilter;
 
@@ -117,7 +116,7 @@ class GaugeBand extends React.Component {
         const highCount = indicatorStore.getIndicatorsAboveTarget.length;
         const lowCount = indicatorStore.getIndicatorsBelowTarget.length;
         const onTargetCount = indicatorStore.getIndicatorsOnTarget.length;
-        
+
         //100 and 0 should only represent absolute "all" and "none" values respectively (no round to 100 or to 0)
         const makePercent = totalIndicatorCount > 0 ?
             (x) => (x == totalIndicatorCount ? 100 :
@@ -130,6 +129,11 @@ class GaugeBand extends React.Component {
 
         const marginPercent = this.props.indicatorOnScopeMargin * 100;
 
+        let programPeriodStartDate = localDateFromISOString(program.reporting_period_start);
+
+        let gaugeHasErrors = (indicatorStore.getIndicatorsReporting.length === 0) || (indicatorStore.getTotalResultsCount === 0);
+
+
         // Top level wrapper of component
         let Gauge = (props) => {
             return <div className={classNames('gauge', {'is-highlighted': isHighlighted})} ref={el => this.el = el}>
@@ -140,34 +144,64 @@ class GaugeBand extends React.Component {
             </div>
         };
 
-
-        if (indicatorStore.getTotalResultsCount === 0) {
-            return <Gauge>
-                <div>
-                    {/* # Translators: message describing why this display does not show any data. */}
-                    <p className="text-muted">{gettext("Unavailable until results are reported")}</p>
-                    <div>
-                        <i className="gauge__icon gauge__icon--error fas fa-frown"/>
-                    </div>
+        let GaugeLabels = (props) => { // success case
+            return <div className="gauge__labels">
+                <div className="gauge__label">
+                    <span className="text-muted">
+                        {
+                            /* # Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
+                            interpolate(gettext('%(percentNonReporting)s% unavailable'), {percentNonReporting}, true)
+                        }
+                    </span>
+                    {' '}
+                    <a href="#"
+                       tabIndex="0"
+                       data-toggle="popover"
+                       data-placement="right"
+                       data-trigger="focus"
+                       data-content={
+                           /* # Translators: help text for the percentage of indicators with no targets reporting data. */
+                           gettext("The indicator has no targets, no completed target periods, or no results reported.")
+                       }
+                       onClick={e => e.preventDefault()}
+                    ><i className="far fa-question-circle"/></a>
                 </div>
-            </Gauge>;
+                <div className="gauge__label">
+                    <span className="gauge__value--above filter-trigger--band"
+                          data-filter-type={ IndicatorFilterType.aboveTarget }
+                          onClick={ this.onFilterLinkClick }
+                          dangerouslySetInnerHTML={ aboveTargetMarkup() }>
+                    </span>
+                </div>
+                <div className="gauge__label">
+                    <span className="gauge__value filter-trigger--band"
+                          data-filter-type={ IndicatorFilterType.onTarget }
+                          onClick={ this.onFilterLinkClick }
+                          dangerouslySetInnerHTML={ onTargetMarkup() }>
+                    </span>
+                    {' '}
+                    <a href="#"
+                       tabIndex="0"
+                       data-toggle="popover"
+                       data-placement="right"
+                       data-trigger="focus"
+                       data-content={
+                           /* # Translators: Help text explaining what an "on track" indicator is. */
+                           gettext("The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is 110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a decreasing direction of change, then “above” and “below” are switched. In that case, if your target is 100 and your result is 200, your indicator is 50% below target and not on track.<br><br><a href='https://docs.google.com/document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our documentation for more information.</a>")
+                       }
+                       onClick={e => e.preventDefault()}
+                    ><i className="far fa-question-circle"/></a>
+                </div>
+                <div className="gauge__label">
+                    <span className="gauge__value--below filter-trigger--band"
+                          data-filter-type={ IndicatorFilterType.belowTarget }
+                          onClick={ this.onFilterLinkClick }
+                          dangerouslySetInnerHTML={belowTargetMarkup()}>
+                    </span>
+                </div>
+            </div>
         }
 
-        if (indicatorStore.getIndicatorsReporting.length === 0) {
-            return <Gauge>
-                <div className="gauge__graphic gauge__graphic--empty gauge__graphic--performance-band">
-                    <div className="graphic__tick-marks">
-                        {[...Array(tickCount)].map((e, i) => <div key={i} className="graphic__tick" />)}
-                    </div>
-                </div>
-                <div className="gauge__labels">
-                    <div className="gauge__label">
-                        {/* # Translators: message describing why this display does not show any data. */}
-                        <p className="text-muted">{gettext("Unavailable until the first target period ends with results reported")}</p>
-                    </div>
-                </div>
-            </Gauge>;
-        }
 
         // Handle strings containing HTML markup
 
@@ -202,65 +236,21 @@ class GaugeBand extends React.Component {
                 <div className="graphic__performance-band--below-target"
                      style={{'flexBasis': `${percentBelow}%`}}/>
             </div>
-            <div className="gauge__labels">
-                <div className="gauge__label">
-                    <span className="text-muted">
-                        {
-                            /* # Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
-                            interpolate(gettext('%s%% unavailable'), [percentNonReporting])
-                        }
-                    </span>
-                    {' '}
-                    <a href="#"
-                       tabIndex="0"
-                       data-toggle="popover"
-                       data-placement="right"
-                       data-trigger="focus"
-                       data-content={
-                           /* # Translators: help text for the percentage of indicators with no targets reporting data. */
-                           gettext("The indicator has no targets, no completed target periods, or no results reported.")
-                       }
-                       onClick={e => e.preventDefault()}
-                    ><i className="far fa-question-circle"/></a>
+            { gaugeHasErrors ?
+                <div className="gauge__labels">
+                    <div className="gauge__label">
+                        {/* # Translators: message describing why this display does not show any data. # */}
+                        <p className="text-muted">{gettext("Unavailable until the first target period ends with results reported.")}</p>
+                    </div>
                 </div>
-                <div className="gauge__label">
-                    <span className="gauge__value--above filter-trigger--band"
-                          onClick={e => this.onFilterLinkClick(e, IndicatorFilterType.aboveTarget)}
-                          dangerouslySetInnerHTML={aboveTargetMarkup()}>
-                    </span>
-                </div>
-                <div className="gauge__label">
-                    <span className="gauge__value filter-trigger--band"
-                          onClick={e => this.onFilterLinkClick(e, IndicatorFilterType.onTarget)}
-                          dangerouslySetInnerHTML={onTargetMarkup()}>
-                    </span>
-                    {' '}
-                    <a href="#"
-                       tabIndex="0"
-                       data-toggle="popover"
-                       data-placement="right"
-                       data-trigger="focus"
-                       data-content={
-                           /* # Translators: Help text explaining what an "on track" indicator is. */
-                           gettext("The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is 110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a decreasing direction of change, then “above” and “below” are switched. In that case, if your target is 100 and your result is 200, your indicator is 50% below target and not on track.<br><br><a href='https://docs.google.com/document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our documentation for more information.</a>")
-                       }
-                       onClick={e => e.preventDefault()}
-                    ><i className="far fa-question-circle"/></a>
-                </div>
-                <div className="gauge__label">
-                    <span className="gauge__value--below filter-trigger--band"
-                          onClick={e => this.onFilterLinkClick(e, IndicatorFilterType.belowTarget)}
-                          dangerouslySetInnerHTML={belowTargetMarkup()}>
-                    </span>
-                </div>
-            </div>
+            : <GaugeLabels />}
         </Gauge>;
     }
 }
 
 
 export const ProgramMetrics = observer(function (props) {
-    // const program = props.rootStore.program;
+    const program = props.rootStore.program;
     const indicatorStore = props.rootStore.indicatorStore;
     const indicators = indicatorStore.indicators;
 
@@ -315,6 +305,13 @@ export const ProgramMetrics = observer(function (props) {
         emptyLabel: gettext("No evidence"),
     };
 
+    // Are some targets defined on any indicators?
+    // all_targets_defined is an int (1,0) instead of bool
+    const someTargetsDefined = indicators.map(i => i.all_targets_defined === 1).some(b => b);
+
+    // Do any indicators have results?
+    const someResults = indicators.map(i => i.results_count).some(count => count > 0);
+
     // Do not display on pages with no indicators
     if (indicators.length === 0) return null;
 
@@ -323,6 +320,7 @@ export const ProgramMetrics = observer(function (props) {
             <GaugeBand currentIndicatorFilter={currentIndicatorFilter}
                        indicatorOnScopeMargin={indicatorOnScopeMargin}
                        indicatorStore={indicatorStore}
+                       program={program}
             />
 
             <GaugeTank filterType={IndicatorFilterType.missingTarget}
@@ -330,8 +328,8 @@ export const ProgramMetrics = observer(function (props) {
 
                        allIndicatorsLength={indicators.length}
                        filteredIndicatorsLength={indicatorStore.getIndicatorsNeedingTargets.length}
-
                        {...targetLabels}
+
                        />
 
             <GaugeTank filterType={IndicatorFilterType.missingResults}
@@ -340,15 +338,19 @@ export const ProgramMetrics = observer(function (props) {
                        allIndicatorsLength={indicators.length}
                        filteredIndicatorsLength={indicatorStore.getIndicatorsNeedingResults.length}
 
+                       disabled={! someTargetsDefined}
+
                        {...resultsLabels}
+
                        />
 
             <GaugeTank filterType={IndicatorFilterType.missingEvidence}
                        currentIndicatorFilter={currentIndicatorFilter}
-
                        // The names below are misleading as this gauge is measuring *results*, not indicators
                        allIndicatorsLength={indicatorStore.getTotalResultsCount}
                        filteredIndicatorsLength={indicatorStore.getTotalResultsCount - indicatorStore.getTotalResultsWithEvidenceCount}
+
+                       disabled={! someTargetsDefined || ! someResults}
 
                        {...evidenceLabels}
                        />

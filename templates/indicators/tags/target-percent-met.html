@@ -14,14 +14,14 @@
             {% else %}
             <h4 class='badge badge-warning-light'>Not on track</h4>
             {% endif %}
-            {% blocktrans with percent_met=percent_met|floatformat:"0" %}
+            {% blocktrans with percent_met=percent_met|floatformat:"1" %}
             <p><strong>The actual value is {{ percent_met }}% of the target value.</strong> An indicator is on track if the result is no less than 85% of the target and no more than 115% of the target.</p>
             <p><em>Remember to consider your direction of change when thinking about whether the indicator is on track.</em></p>
             {% endblocktrans %}
             "
-            >{{ percent_met|floatformat:'0' }}%</span>
+            >{{ percent_met|floatformat:'1' }}%</span>
     {% else %}
-            <span class="badge">{{ percent_met|floatformat:'0' }}%</span>
+            <span class="badge">{{ percent_met|floatformat:'1' }}%</span>
     {% endif %}
 {% else %}
     <span class="badge">N/A</span>

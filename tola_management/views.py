@@ -1,27 +1,37 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from collections import OrderedDict
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist, SuspiciousOperation
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
+from django.db.models import OuterRef, Subquery, Q, Count
+import django.db.models
 from django.template import loader
 from django.shortcuts import render
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.urls import reverse
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 import json
 
+from rest_framework.views import APIView
+from rest_framework.validators import UniqueValidator
 from rest_framework.decorators import list_route, detail_route
-from rest_framework.generics import ListAPIView
 from rest_framework.serializers import (
     Serializer,
     ModelSerializer,
+    ListSerializer,
     CharField,
     IntegerField,
     PrimaryKeyRelatedField,
-    BooleanField
+    BooleanField,
+    DateTimeField,
+    EmailField,
+    ValidationError
 )
 from rest_framework.response import Response
 from rest_framework import viewsets, mixins, pagination, status
@@ -29,13 +39,7 @@ from rest_framework import viewsets, mixins, pagination, status
 from django.contrib.auth.models import User,Group
 
 from feed.views import (
-    TolaUserViewSet,
-    OrganizationViewSet,
     SmallResultsSetPagination
-)
-
-from feed.serializers import (
-    OrganizationSerializer
 )
 
 from workflow.models import (
@@ -44,75 +48,80 @@ from workflow.models import (
     Program,
     Sector,
     Country,
-    TolaUserCountryRoles,
-    TolaUserProgramRoles,
     Sector,
+    ProgramAccess,
+    CountryAccess,
     COUNTRY_ROLE_CHOICES,
     PROGRAM_ROLE_CHOICES
 )
 
 from .models import (
-    UserManagementAuditLog
+    UserManagementAuditLog,
+    OrganizationAdminAuditLog
 )
 
-def get_programs_for_user_queryset(user_id):
-    return Program.objects.raw("""
-            SELECT wp.id, wp.name, wc.id AS country_id, wc.country AS country_name
-            FROM workflow_program wp
-            INNER JOIN workflow_program_user_access wpuc ON wp.id = wpuc.program_id
-            INNER JOIN workflow_program_country wpc ON wp.id = wpc.program_id
-            INNER JOIN workflow_country wc ON wpc.country_id = wc.id
-            WHERE wpuc.tolauser_id = %s
-        UNION DISTINCT
-            SELECT wp.id, wp.name, wc.id AS country_id, wc.country AS country_name
-            FROM workflow_program wp
-            INNER JOIN workflow_program_country wpc ON wp.id = wpc.program_id
-            INNER JOIN workflow_country wc ON wpc.country_id = wc.id
-            INNER JOIN workflow_tolauser_countries wtc ON wtc.country_id = wpc.country_id
-            WHERE wtc.tolauser_id = %s
-        UNION DISTINCT
-            SELECT wp.id, wp.name, wc.id AS country_id, wc.country AS country_name
-            FROM workflow_program wp
-            INNER JOIN workflow_program_country wpc ON wp.id = wpc.program_id
-            INNER JOIN workflow_country wc ON wpc.country_id = wc.id
-            INNER JOIN workflow_tolauser wtu ON wtu.country_id = wc.id
-            WHERE wtu.id = %s
-    """, [user_id, user_id, user_id])
+from .permissions import (
+    user_has_basic_or_super_admin,
+    HasUserAdminAccess,
+    HasOrganizationAdminAccess
+)
+
+class Paginator(SmallResultsSetPagination):
+    def get_paginated_response(self , data):
+        response = Response(OrderedDict([
+            ('count', self.page.paginator.count),
+            ('page_count', self.page.paginator.num_pages),
+            ('next', self.get_next_link()),
+            ('previous', self.get_previous_link()),
+            ('results', data),
+        ]))
+        return response
+
+def requires_basic_or_super_admin(func):
+    def wrapper(request, *args, **kwargs):
+        if user_has_basic_or_super_admin(request.user):
+            return func(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+    return wrapper
 
 def get_user_page_context(request):
-    countries = {}
-    for country in Country.objects.all():
-        countries[country.id] = {"id": country.id, "name": country.country, "programs": []}
+    #json.dumps doesn't seem to respect ordereddicts so we'll sort it on the frontend
+    countries = {
+        country.id: {"id": country.id, "name": country.country, "programs": list(country.program_set.all().values_list('id', flat=True))}
+        for country in request.user.tola_user.managed_countries.distinct()
+    }
 
-    programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
-    programs = {}
-    for program in list(programs_qs):
-        programs[program.id] = {"id": program.id, "name": program.name, "country_id": program.country_id}
-        countries[program.country_id]["programs"].append(program.id)
+    programs = {
+        program.id: {"id": program.id, "name": program.name}
+        for program in request.user.tola_user.managed_programs.distinct()
+    }
 
-    program_roles = {}
-    for role in list(request.user.tola_user.program_roles.all()):
-        program_roles[role.program_id] = {"id": role.program_id, "role": role.role}
-
-    country_roles = {}
-    for role in list(request.user.tola_user.country_roles.all()):
-        country_roles[role.country_id] = {"id": role.country_id, "role": role.role}
+    organizations = {
+        org.id: {"name": org.name, "id": org.id} for org in Organization.objects.all()
+    }
 
     return {
         "countries": countries,
-        "organizations": list(Organization.objects.all().values()),
+        "organizations": organizations,
         "programs": programs,
         "users": list(TolaUser.objects.all().values()),
-        "program_roles": program_roles,
-        "country_roles": country_roles,
-        "is_superuser": request.user.is_superuser
+        "access": request.user.tola_user.access_data,
+        "is_superuser": request.user.is_superuser,
+        "programs_filter": request.GET.getlist('programs[]'),
+        "country_filter": request.GET.getlist('countries[]'),
+        "organizations_filter": request.GET.getlist('organizations[]'),
+        "program_role_choices": PROGRAM_ROLE_CHOICES,
+        "country_role_choices": COUNTRY_ROLE_CHOICES,
     }
 
 def get_organization_page_context(request):
-    programs_qs = get_programs_for_user_queryset(request.user.tola_user.id)
-    programs = {}
-    for program in list(programs_qs):
-        programs[program.id] = {"id": program.id, "name": program.name, "country_id": program.country_id}
+    country_filter = request.GET.getlist('countries[]')
+    program_filter = request.GET.getlist('programs[]')
+    programs = {
+        program.id: {"id": program.id, "name": program.name}
+        for program in request.user.tola_user.available_programs
+    }
 
     organizations = {}
     for o in Organization.objects.all():
@@ -122,19 +131,99 @@ def get_organization_page_context(request):
     for sector in Sector.objects.all():
         sectors[sector.id] = {"id": sector.id, "name": sector.sector}
 
+    countries = {
+        country.id: {"name": country.country, "id": country.id}
+        for country in Country.objects.all()
+    }
+
     return {
         "programs": programs,
         "organizations": organizations,
-        "sectors": sectors
+        "sectors": sectors,
+        "countries": countries,
+        "country_filter": country_filter,
+        "program_filter": program_filter,
     }
 
 def get_program_page_context(request):
-    countries = {
+    auth_user = request.user
+    tola_user = auth_user.tola_user
+    country_filter = request.GET.getlist('countries[]')
+    organization_filter = request.GET.getlist('organizations[]')
+    users_filter = request.GET.getlist('users[]')
+
+    country_queryset = tola_user.managed_countries
+    filtered_countries = {
         country.id : {
             'id': country.id,
             'name': country.country,
-        } for country in Country.objects.all()
+        } for country in country_queryset.all()
     }
+
+    all_countries = {
+        country.id : {
+            'id': country.id,
+            'name': country.country,
+        } for country in tola_user.managed_countries
+    }
+
+    organizations = {
+        organization.id : {
+            'id': organization.id,
+            'name': organization.name,
+        } for organization in Organization.objects.all()
+    }
+
+    program_queryset = Program.objects.filter(country__in=tola_user.managed_countries)
+    programs = [
+        {
+            'id': program.id,
+            'name': program.name,
+        } for program in program_queryset.all().distinct()
+    ]
+
+    # excluding sectors with no name (sector) set.
+    sectors = [
+        {
+            'id': sector.id,
+            'name': sector.sector,
+        } for sector in Sector.objects.all() if sector.sector
+    ]
+
+    users = {
+        user.id: {
+            'id': user.id,
+            'name': user.name
+        } for user in TolaUser.objects.all()
+    }
+
+    return {
+        'countries': filtered_countries,
+        'allCountries': all_countries,
+        'organizations': organizations,
+        'users': users,
+        'programFilterPrograms': programs,
+        'sectors': sectors,
+        'country_filter': country_filter,
+        'organization_filter': organization_filter,
+        'users_filter': users_filter,
+    }
+
+def get_country_page_context(request):
+    auth_user = request.user
+    tola_user = auth_user.tola_user
+
+    country_queryset = Country.objects
+    if not auth_user.is_superuser:
+        country_queryset = country_queryset.filter(
+            Q(countryaccess__tolauser=tola_user) |
+            Q(programaccess__tolauser=tola_user) |
+            Q(tolauser=tola_user)
+        )
+    countries = [{
+        'id': country.id,
+        'country': country.country,
+    } for country in country_queryset.distinct()]
 
     organizations = {
         organization.id : {
@@ -150,19 +239,15 @@ def get_program_page_context(request):
         } for program in Program.objects.all()
     ]
 
-    # excluding sectors with no name (sector) set.
-    sectors = [
-        {
-            'id': sector.id,
-            'name': sector.sector,
-        } for sector in Sector.objects.all() if sector.sector
-    ]
-
     return {
         'countries': countries,
         'organizations': organizations,
         'programs': programs,
-        'sectors': sectors,
+    }
+
+def get_audit_log_page_context(request, program_id):
+    return {
+        "program_id": program_id
     }
 
 def send_new_user_registration_email(user, request):
@@ -178,62 +263,84 @@ def send_new_user_registration_email(user, request):
 
 # Create your views here.
 @login_required(login_url='/accounts/login/')
+@requires_basic_or_super_admin
 def app_host_page(request, react_app_page):
     js_context = {}
+    page_title = ""
     if react_app_page == 'user':
         js_context = get_user_page_context(request)
+        page_title = "User Management"
     elif react_app_page == 'organization':
         js_context = get_organization_page_context(request)
+        page_title = "Organization Management"
     elif react_app_page == 'program':
         js_context = get_program_page_context(request)
+        page_title = "Program Management"
+    elif react_app_page == 'country':
+        if not request.user.is_superuser:
+            raise PermissionDenied
+        js_context = get_country_page_context(request)
+        page_title = "Country Management"
+
 
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
-    return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "report_wide": True})
+    return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "page_title": page_title+" | "})
 
-class UserAdminReportSerializer(Serializer):
-    id = IntegerField(allow_null=True, required=False)
-    name = CharField(max_length=100)
-    organization_name = CharField(max_length=255, allow_null=True, allow_blank=True, required=False)
-    email = CharField(max_length=255)
-    phone_number = CharField(max_length=50, allow_null=True, allow_blank=True, required=False)
-    mode_of_address = CharField(max_length=255, allow_null=True, allow_blank=True, required=False)
-    mode_of_contact = CharField(max_length=3, allow_null=True, allow_blank=True, required=False)
-    title = CharField(max_length=255, allow_null=True, allow_blank=True, required=False)
-    organization_id = IntegerField()
-    user_programs = IntegerField(required=False)
-    is_active = BooleanField()
-    is_admin = BooleanField(required=False)
+def audit_log_host_page(request, program_id):
+    js_context = get_audit_log_page_context(request, program_id)
+    json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
+    program = get_object_or_404(Program, pk=program_id)
+    return render(request, 'react_app_base.html', {"bundle_name": "audit_log", "js_context": json_context, "report_wide": True, "page_title": program.name+" Audit Log | "})
 
-    class Meta:
-        fields = (
-            'id',
-            'name',
-            'organization_name',
-            'organization_id',
-            'user_programs',
-            'is_active',
-            'is_admin',
-            'title',
-            'phone_number',
-            'mode_of_address',
-            'mode_of_contact',
-            'email'
-        )
 
 class AuthUserSerializer(ModelSerializer):
-    email = CharField(max_length=255, required=True)
+    id = IntegerField(allow_null=True, required=False)
     class Meta:
         model = User
-        fields = ('is_staff', 'is_superuser', 'is_active', 'email')
+        fields = ('id', 'is_staff', 'is_superuser', 'is_active')
+
+class UserManagementAuditLogSerializer(ModelSerializer):
+    id = IntegerField(allow_null=True, required=False)
+    admin_user = CharField(source="admin_user.name", max_length=255)
+    date = DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
+    class Meta:
+        model = UserManagementAuditLog
+        fields = (
+            'id',
+            'date',
+            'admin_user',
+            'modified_user',
+            'change_type',
+            'diff_list'
+        )
+
 
 class UserAdminSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
     name = CharField(max_length=255, required=True)
     organization_id = IntegerField(required=True)
+    email = EmailField(source="user.email", max_length=255, required=True)
     user = AuthUserSerializer()
+
+    def validate(self, data):
+        out_data = super(UserAdminSerializer, self).validate(data)
+        if self.instance:
+            others = list(User.objects.filter(email=data['user']['email']))
+            if len(others) > 1 or (len(others) > 0 and others[0].id != self.instance.user.id):
+                raise ValidationError({"email": 'This field must be unique'})
+        else:
+            others = list(User.objects.filter(email=data['user']['email']))
+            if len(others) > 0:
+                raise ValidationError({"email": 'This field must be unique'})
+
+        return out_data
 
     def create(self, validated_data):
         validated_data["is_active"] = True
+
+        if validated_data["organization_id"] == 1 and not self.context["request"].user.is_superuser:
+            raise PermissionDenied("Only superusers can create Mercy Corps staff profiles.")
 
         auth_user_data = validated_data.pop('user')
 
@@ -257,18 +364,25 @@ class UserAdminSerializer(ModelSerializer):
         )
         new_user.save()
 
+        UserManagementAuditLog.created(
+            user=new_user,
+            created_by=self.context["request"].user.tola_user,
+            entry=new_user.logged_fields
+        )
+
         send_new_user_registration_email(new_django_user, self.context["request"])
 
         return new_user
 
     def update(self, instance, validated_data):
+        if instance.organization_id == 1 and not self.context["request"].user.is_superuser:
+            raise PermissionDenied("Only superusers can edit Mercy Corps staff profiles.")
+
         user = instance
 
         auth_user_data = validated_data.pop('user')
 
-        audit_entry = UserManagementAuditLog()
-        audit_entry.change_type = 'user_profile_modified'
-        audit_entry.previous_entry = serializers.serialize('json', [user])
+        previous_entry = user.logged_fields
 
         user.name = validated_data["name"]
         user.organization_id = validated_data["organization_id"]
@@ -282,10 +396,12 @@ class UserAdminSerializer(ModelSerializer):
         user.user.is_active = auth_user_data["is_active"]
         user.user.save()
 
-        audit_entry.new_entry = serializers.serialize('json', [user])
-        audit_entry.admin_user = self.context["request"].user.tola_user
-        audit_entry.modified_user = user
-        audit_entry.save()
+        UserManagementAuditLog.profile_updated(
+            user=user,
+            changed_by=self.context["request"].user.tola_user,
+            old=previous_entry,
+            new=user.logged_fields
+        )
         return user
 
     class Meta:
@@ -299,16 +415,81 @@ class UserAdminSerializer(ModelSerializer):
             'mode_of_address',
             'mode_of_contact',
             'phone_number',
+            'email'
+        )
+
+class UserAdminReportSerializer(ModelSerializer):
+    id = IntegerField(allow_null=True, required=False)
+    organization_name = CharField(source="organization.name", max_length=255, allow_null=True, allow_blank=True, required=False)
+    organization_id = IntegerField(source="organization.id")
+    user_programs = IntegerField(required=False)
+    is_active = BooleanField(source="user.is_active")
+    is_admin = BooleanField(source="user.is_staff", required=False)
+    is_super = BooleanField(source="user.is_superuser", required=False)
+
+    class Meta:
+        model = TolaUser
+        fields = (
+            'id',
+            'name',
+            'organization_name',
+            'organization_id',
+            'user_programs',
+            'is_active',
+            'is_admin',
+            'is_super'
         )
 
 
 class UserAdminViewSet(viewsets.ModelViewSet):
     queryset = TolaUser.objects.all()
     serializer_class = UserAdminSerializer
-    pagination_class = SmallResultsSetPagination
+    pagination_class = Paginator
+    permissions = [HasUserAdminAccess]
 
     def get_list_queryset(self):
         req = self.request
+
+        #theres a bug with django rest framework pagination that prevents this from working
+        # queryset = TolaUser.objects.all()
+
+        # countries = req.GET.getlist('countries[]')
+        # if countries:
+        #     queryset = queryset.filter(Q(countries_id__in=countries) | Q(programaccess_set__country_id__in=countries))
+
+        # base_countries = req.GET.getlist('base_countries[]')
+        # if base_countries:
+        #     queryset = queryset.filter(base_country_id_in=base_countries)
+
+        # programs = req.GET.getlist('programs[]')
+        # if programs:
+        #     queryset = queryset.filter(Q(programaccess_set__program_id__in=programs) | Q(countries__program_set__id__in=programs))
+
+        # organizations = req.GET.get('organizations[]')
+        # if organizations:
+        #     queryset = queryset.filter(organization_id__in=organizations)
+
+        # user_status = req.GET.get('user_status')
+        # if user_status:
+        #     queryset = queryset.filter(user__is_active=user_status)
+
+        # is_admin = req.GET.get('admin_role')
+        # if is_admin:
+        #     queryset = queryset.filter(user__is_staff=is_admin)
+
+        # users = req.GET.getlist('users[]')
+        # if users:
+        #     queryset = queryset.filter(id__in=users)
+
+        # program_counts = (
+        #     Program.objects.filter(programaccess__tolauser_id=OuterRef('id'))
+        #     | Program.objects.filter(country__in=OuterRef('countries'))
+        #     | Program.objects.filter(country=OuterRef('country'))
+        # ).distinct().order_by().values('id').annotate(c=Count('*')).values('c')
+
+        # queryset = queryset.annotate(user_programs=Subquery(program_counts))
+
+        # return queryset
 
         params = []
 
@@ -317,12 +498,24 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         if req.GET.getlist('countries[]'):
             params.extend(req.GET.getlist('countries[]'))
             params.extend(req.GET.getlist('countries[]'))
+            params.extend(req.GET.getlist('countries[]'))
 
             #create placeholders for multiple countries and strip the trailing comma
             in_param_string = ('%s,'*len(req.GET.getlist('countries[]')))[:-1]
 
-            country_join = 'INNER JOIN workflow_tolauser_countries wtuc ON wtuc.tolauser_id = wtu.id'
-            country_where = 'AND (wtuc.country_id IN ({}) OR wtu.country_id IN ({}))'.format(in_param_string, in_param_string)
+            country_join = """
+                            LEFT JOIN workflow_tolauser_countries wtuc ON wtuc.tolauser_id = wtu.id
+                            LEFT JOIN (
+                                SELECT
+                                    wc.id AS country_id,
+                                    wpua.tolauser_id AS tolauser_id
+                                FROM workflow_country wc
+                                INNER JOIN workflow_program_country wpc ON wc.id = wpc.country_id
+                                INNER JOIN workflow_program_user_access wpua ON wpua.program_id = wpc.program_id
+                                GROUP BY wpua.tolauser_id, wc.id
+                            ) cz ON cz.tolauser_id = wtu.id
+                            """
+            country_where = 'AND (wtuc.country_id IN ({}) OR wtu.country_id IN ({}) OR cz.country_id IN ({}))'.format(in_param_string, in_param_string, in_param_string)
 
         base_country_where = ''
         if req.GET.getlist('base_countries[]'):
@@ -387,13 +580,9 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         return TolaUser.objects.raw("""
             SELECT
                 wtu.id,
-                wtu.mode_of_contact,
-                wtu.mode_of_address,
-                wtu.phone_number,
-                wtu.title,
                 au.is_active AS is_active,
                 au.is_staff AS is_admin,
-                au.email AS email,
+                au.is_superuser AS is_super,
                 wtu.name,
                 wo.name AS organization_name,
                 wo.id AS organization_id,
@@ -425,6 +614,7 @@ class UserAdminViewSet(viewsets.ModelViewSet):
                 {admin_role_where}
                 {users_where}
             GROUP BY wtu.id
+            ORDER BY wtu.name
         """.format(
             country_join=country_join,
             country_where=country_where,
@@ -460,124 +650,162 @@ class UserAdminViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def history(self, request, pk=None):
         user = TolaUser.objects.get(pk=pk)
-        history_log = UserManagementAuditLog.objects.filter(modified_user=user).select_related('admin_user').order_by('-date')
-        return Response([{"date": entry.date, "admin_name": entry.admin_user.name, "change_type": entry.change_type, "previous": entry.previous_entry, "new": entry.new_entry} for entry in history_log])
+        queryset = UserManagementAuditLog.objects.filter(modified_user=user).select_related('admin_user').order_by('-date')
+
+        serializer = UserManagementAuditLogSerializer(queryset, many=True)
+        return Response(serializer.data)
 
     @detail_route(methods=['get', 'put'])
     def program_access(self, request, pk=None):
         user = TolaUser.objects.get(pk=pk)
+        admin_user = request.user.tola_user
 
         if request.method == 'PUT':
 
-            audit_entry = UserManagementAuditLog()
-            audit_entry.change_type = 'user_programs_modified'
-            audit_entry.previous_entry = serializers.serialize('json', [user])
-            audit_entry.admin_user = request.user.tola_user
-            audit_entry.modified_user = user
+            previous_entry = user.logged_program_fields
 
-            audit_entry.previous_entry = json.dumps({"countries": [country.id for country in user.countries.all()], "programs": [program.id for program in user.program_access.all()]}, cls=DjangoJSONEncoder)
+            #we have the awkward problem of how to tell when to delete
+            #an existing country access. The answer is we can't know so we
+            #dont
+            country_data = request.data["countries"]
 
-            country_data = request.data["country"]
-            added_countries = []
-            removed_countries = []
-            for country_id, permissions in country_data.iteritems():
-                if "has_access" in permissions and permissions["has_access"]:
-                    added_countries.append(country_id)
-                else:
-                    removed_countries.append(country_id)
+            if country_data and not request.user.is_superuser:
+                raise PermissionDenied
+            else:
+                try:
+                    for country_id, access in country_data.iteritems():
+                        if access["role"] == 'basic_admin':
+                            CountryAccess.objects.update_or_create(
+                                tolauser=user,
+                                country_id=country_id,
+                                defaults={
+                                    "role": access["role"],
+                                }
+                            )
+                        else:
+                            try:
+                                old_access = CountryAccess.objects.get(
+                                    tolauser=user,
+                                    country_id=country_id,
+                                )
+                                old_access.role = access["role"]
+                                old_access.save()
+                            except ObjectDoesNotExist:
+                                pass
+                except SuspiciousOperation, e:
+                    return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-                if "permission_level" in permissions:
-                    TolaUserCountryRoles.objects.update_or_create(
-                        user_id=user.id,
-                        country_id=country_id,
-                        defaults={
-                            "role": permissions["permission_level"],
-                        }
-                    )
+            program_data = request.data["programs"]
 
-            user.countries.add(*list(Country.objects.filter(pk__in=added_countries)))
-            user.countries.remove(*list(Country.objects.filter(pk__in=removed_countries)))
+            programs_by_id = {str(role["country"])+"_"+str(role["program"]): True for role in program_data}
+            managed_countries = {country.id: True for country in admin_user.managed_countries.all()}
 
-            program_data = request.data["program"]
+            for role in ProgramAccess.objects.filter(tolauser=user):
+                if not programs_by_id.get(str(role.country_id)+"_"+str(role.program_id), False) and role.country_id in managed_countries:
+                    role.delete()
+
             added_programs = []
-            removed_programs = []
-            for program_id, permissions in program_data.iteritems():
-                if "has_access" in permissions and permissions["has_access"]:
-                    added_programs.append(program_id)
-                else:
-                    removed_programs.append(program_id)
+            for program_role in program_data:
+                if managed_countries.get(int(program_role["country"]), False):
+                    added_programs.append(program_role)
 
-                if "permission_level" in permissions:
-                    TolaUserProgramRoles.objects.update_or_create(
-                        user_id=user.id,
-                        program_id=program_id,
-                        defaults={
-                            "role": permissions["permission_level"],
-                        }
-                    )
+            for access in added_programs:
+                ProgramAccess.objects.update_or_create(
+                    tolauser=user,
+                    program_id=access["program"],
+                    country_id=access["country"],
+                    defaults={
+                        "role": access["role"],
+                    }
+                )
 
-            user.program_access.add(*list(Program.objects.filter(pk__in=added_programs)))
-            user.program_access.remove(*list(Program.objects.filter(pk__in=removed_programs)))
-
-            audit_entry.new_entry = json.dumps({"countries": [country.id for country in user.countries.all()], "programs": [program.id for program in user.program_access.all()]}, cls=DjangoJSONEncoder)
-            audit_entry.save()
+            UserManagementAuditLog.programs_updated(
+                user=user,
+                changed_by=request.user.tola_user,
+                old=previous_entry,
+                new=user.logged_program_fields
+            )
 
             return Response({}, status=status.HTTP_200_OK)
 
         elif request.method == 'GET':
-
-            country_access = {}
-            for country in user.countries.all():
-                country_access[country.id] = {
-                    "has_access": True
-                }
-
-            for country_role in user.country_roles.all():
-                if country_role.country.id in country_access:
-                    country_access[country_role.country.id]["permission_level"] = country_role.role
-
-            program_access = {}
-            for program in user.program_access.all():
-                program_access[program.id] = {
-                    "has_access": True
-                }
-
-            for program_role in user.program_roles.all():
-                if program_role.program.id in program_access:
-                    program_access[program_role.program.id]["permission_level"] = program_role.role
-
-            return Response({
-                "country": country_access,
-                "program": program_access
-            })
+            return Response(user.access_data)
 
     @list_route(methods=["post"])
     def bulk_update_status(self, request):
 
         tola_users = TolaUser.objects.filter(pk__in=request.data["user_ids"])
         User.objects.filter(pk__in=[t_user.user_id for t_user in tola_users]).update(is_active=bool(request.data["new_status"]))
-        return Response({})
-
+        updated = [{
+            'id': tu.id,
+            'is_active': tu.user.is_active,
+        } for tu in tola_users]
+        return Response(updated)
 
     @list_route(methods=["post"])
     def bulk_add_programs(self, request):
         added_programs = request.data["added_programs"]
 
-        for user_id in request.data["user_ids"]:
-            user = TolaUser.objects.get(pk=user_id)
-            user.program_access.add(*list(Program.objects.filter(pk__in=added_programs)))
+        managed_countries = {country.id: True for country in self.request.user.tola_user.managed_countries.all()}
 
-        return Response({})
+        for role in added_programs:
+            if int(role["country"]) in managed_countries:
+                for user_id in request.data["user_ids"]:
+                    user = TolaUser.objects.get(id=user_id)
+                    previous_entry = user.logged_program_fields
+                    try:
+                        access = ProgramAccess.objects.get(tolauser_id=user_id, country_id=role["country"], program_id=role["program"])
+                    except ObjectDoesNotExist:
+                        access = ProgramAccess(
+                            tolauser_id=user_id,
+                            country_id=role["country"],
+                            program_id=role["program"],
+                            role=role["role"]
+                        )
+                        access.save()
+                    UserManagementAuditLog.programs_updated(
+                        user=user,
+                        changed_by=request.user.tola_user,
+                        old=previous_entry,
+                        new=user.logged_program_fields
+                    )
+
+        program_counts = {}
+        for user_id in request.data["user_ids"]:
+            user = TolaUser.objects.get(id=user_id)
+            program_counts[user_id] = user.available_programs.count()
+
+        return Response(program_counts)
 
     @list_route(methods=["post"])
     def bulk_remove_programs(self, request):
         removed_programs = request.data["removed_programs"]
 
-        for user_id in request.data["user_ids"]:
-            user = TolaUser.objects.get(pk=user_id)
-            user.program_access.remove(*list(Program.objects.filter(pk__in=removed_programs)))
+        managed_countries = {country.id: True for country in self.request.user.tola_user.managed_countries.all()}
 
-        return Response({})
+        for role in removed_programs:
+            if int(role["country"]) in managed_countries:
+                for user_id in request.data["user_ids"]:
+                    user = TolaUser.objects.get(id=user_id)
+                    previous_entry = user.logged_program_fields
+                    try:
+                        access = ProgramAccess.objects.get(tolauser_id=user_id, country_id=role["country"], program_id=role["program"])
+                        access.delete()
+                    except ObjectDoesNotExist:
+                        pass
+                    UserManagementAuditLog.programs_updated(
+                        user=user,
+                        changed_by=request.user.tola_user,
+                        old=previous_entry,
+                        new=user.logged_program_fields
+                    )
+
+        program_counts = {}
+        for user_id in request.data["user_ids"]:
+            user = TolaUser.objects.get(id=user_id)
+            program_counts[user_id] = user.available_programs.count()
+
+        return Response(program_counts)
 
     @detail_route(methods=["get"])
     def aggregate_data(self, request, pk=None):
@@ -650,7 +878,9 @@ class SectorSerializer(ModelSerializer):
 
 class OrganizationSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
-    name = CharField(required=True)
+    name = CharField(required=True, validators=[
+        UniqueValidator(queryset=Organization.objects.all())
+    ])
     primary_address = CharField(required=True)
     primary_contact_name = CharField(required=True)
     primary_contact_email = CharField(required=True)
@@ -659,13 +889,30 @@ class OrganizationSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         sectors = validated_data.pop('sectors')
+        old = instance.logged_fields
         instance.sectors.add(*[sector["id"] for sector in sectors])
-        return super(OrganizationSerializer, self).update(instance, validated_data)
+        updated_org = super(OrganizationSerializer, self).update(instance, validated_data)
+
+        OrganizationAdminAuditLog.updated(
+            organization=updated_org,
+            changed_by=self.context.get('request').user.tola_user,
+            old=old,
+            new=updated_org.logged_fields
+        )
+
+        return updated_org
 
     def create(self, validated_data):
         sectors = validated_data.pop('sectors')
         org = Organization.objects.create(**validated_data)
         org.sectors.add(*[sector["id"] for sector in sectors])
+
+        OrganizationAdminAuditLog.created(
+            organization=org,
+            created_by=self.context.get('request').user.tola_user,
+            entry=org.logged_fields
+        )
+
         return org
 
     class Meta:
@@ -682,16 +929,33 @@ class OrganizationSerializer(ModelSerializer):
             'sectors'
         )
 
+class OrganizationAdminAuditLogSerializer(ModelSerializer):
+    id = IntegerField(allow_null=True, required=False)
+    admin_user = CharField(source="admin_user.name", max_length=255)
+    date = DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
+    class Meta:
+        model = OrganizationAdminAuditLog
+        fields = (
+            'id',
+            'date',
+            'admin_user',
+            'change_type',
+            'diff_list'
+        )
+
 class OrganizationAdminViewSet(viewsets.ModelViewSet):
     serializer_class = OrganizationSerializer
     queryset = Organization.objects.all()
-    pagination_class = SmallResultsSetPagination
+    pagination_class = Paginator
+    permissions = [HasOrganizationAdminAccess]
 
     def get_listing_queryset(self):
         req = self.request
 
         params = []
 
+        country_join = ''
         country_where = ''
         if req.GET.getlist('countries[]'):
             params.extend(req.GET.getlist('countries[]'))
@@ -699,7 +963,32 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
             #create placeholders for multiple countries and strip the trailing comma
             in_param_string = ('%s,'*len(req.GET.getlist('countries[]')))[:-1]
 
-            country_where = 'AND wtu.country_id IN ({})'.format(in_param_string)
+            country_where = 'AND wcz.country_id IN ({})'.format(in_param_string)
+
+            country_join = """
+                INNER JOIN (
+                        SELECT
+                            wo.id AS organization_id,
+                            wtuc.country_id AS country_id
+                        FROM workflow_organization wo
+                        INNER JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
+                        INNER JOIN workflow_tolauser_countries wtuc ON wtuc.tolauser_id = wtu.id
+                    UNION DISTINCT
+                        SELECT
+                            wo.id AS organization_id,
+                            wpc.country_id AS country_id
+                        FROM workflow_organization wo
+                        INNER JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
+                        INNER JOIN workflow_program_user_access wpua ON wpua.tolauser_id = wtu.id
+                        INNER JOIN workflow_program_country wpc ON wpua.program_id = wpc.program_id
+                    UNION DISTINCT
+                        SELECT
+                            wo.id AS organization_id,
+                            wtu.country_id AS country_id
+                        FROM workflow_organization wo
+                        INNER JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
+                ) wcz ON wcz.organization_id = wo.id
+            """.format(country_where=country_where)
 
         program_where = ''
         program_join = ''
@@ -717,20 +1006,22 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
                     FROM workflow_organization wo
                     INNER JOIN workflow_tolauser wtu ON wo.id = wtu.organization_id
                     INNER JOIN (
-                        SELECT MAX(tu_p.tolauser_id) as tolauser_id, tu_p.program_id
-                        FROM (
-                                SELECT
-                                    wpua.tolauser_id,
-                                    wpua.program_id
-                                FROM workflow_program_user_access wpua
-                            UNION DISTINCT
-                                SELECT
-                                    wtuc.tolauser_id,
-                                    wpc.program_id
-                                FROM workflow_tolauser_countries wtuc
-                                INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
-                        ) tu_p
-                        GROUP BY tu_p.program_id
+                            SELECT
+                                wpua.tolauser_id AS tolauser_id,
+                                wpua.program_id AS program_id
+                            FROM workflow_program_user_access wpua
+                        UNION DISTINCT
+                            SELECT
+                                wtuc.tolauser_id AS tolauser_id,
+                                wpc.program_id AS program_id
+                            FROM workflow_tolauser_countries wtuc
+                            INNER JOIN workflow_program_country wpc ON wpc.country_id = wtuc.country_id
+                        UNION DISTINCT
+                            SELECT
+                                wu.id AS tolauser_id,
+                                wpc.program_id AS program_id
+                            FROM workflow_tolauser wu
+                            INNER JOIN workflow_program_country wpc ON wpc.country_id = wu.country_id
                     ) pz ON pz.tolauser_id = wtu.id
                     GROUP BY wo.id, pz.program_id
                 ) pzz ON pzz.organization_id = wo.id
@@ -751,7 +1042,7 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
         if req.GET.get('organization_status'):
             params.append(req.GET.get('organization_status'))
 
-            user_status_where = 'AND au.is_active = %s'
+            organization_status_where = 'AND wo.is_active = %s'
 
         sector_join = ''
         sector_where = ''
@@ -778,6 +1069,7 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
                 wo.is_active
             FROM workflow_organization wo
             LEFT JOIN workflow_tolauser wtu ON wtu.organization_id = wo.id
+            {country_join}
             LEFT JOIN (
                 SELECT
                     wo.id AS organization_id,
@@ -806,16 +1098,20 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
             {sector_join}
             WHERE
                 1=1
-                {program_where}
                 {country_where}
+                {program_where}
                 {organization_where}
+                {organization_status_where}
                 {sector_where}
             GROUP BY wo.id
+            ORDER BY wo.name
         """.format(
             program_where=program_where,
             program_join=program_join,
             country_where=country_where,
+            country_join=country_join,
             organization_where=organization_where,
+            organization_status_where=organization_status_where,
             sector_join=sector_join,
             sector_where=sector_where
         ), params)
@@ -829,6 +1125,13 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
 
         serializer = OrganizationAdminSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @detail_route(methods=['get'])
+    def history(self, request, pk=None):
+        org = Organization.objects.get(pk=pk)
+        queryset = OrganizationAdminAuditLog.objects.filter(organization=org).select_related('admin_user').order_by('-date')
+        serializer = OrganizationAdminAuditLogSerializer(queryset, many=True)
         return Response(serializer.data)
 
     @detail_route(methods=["get"])

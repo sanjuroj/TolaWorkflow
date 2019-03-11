@@ -28,7 +28,7 @@ def index(request, selected_country=None):
 
     # Find the active country
     user = request.user.tola_user
-    user_countries = getCountry(request.user)  # all countries whose programs are available to the user
+    user_countries = user.available_countries.distinct()  # all countries whose programs are available to the user
 
     if selected_country:  # from URL
         active_country = Country.objects.filter(id=selected_country)[0]
@@ -42,10 +42,15 @@ def index(request, selected_country=None):
             active_country = user.country
             # ... failing all of this, the homepage will be blank. Sorry!
 
+    active_country_id = None
+    if active_country:
+        active_country_id = active_country.id
+
     programs_with_metrics = ProgramWithMetrics.home_page.with_annotations().filter(
+        Q(country__in=user.countries.filter(id=active_country_id)) | Q(programaccess__tolauser=user, programaccess__country=active_country) | Q(country=user.country),
         country=active_country,
         funding_status="Funded"
-    )
+    ).distinct()
 
     sites_with_results = SiteProfile.objects.all()\
         .prefetch_related('country', 'district', 'province') \
@@ -248,4 +253,3 @@ def logout_view(request):
     logout(request)
     # Redirect to a success page.
     return HttpResponseRedirect("/")
-

@@ -1,33 +1,19 @@
 from rest_framework import serializers
 
-from indicators.models import Indicator
 from workflow.models import Program, Documentation, ProjectAgreement
 
 
-class RecordListIndicatorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Indicator
-        fields = [
-            'id',
-            'name',
-            'number',
-        ]
-
-
-class RecordListProgramSerializer(serializers.ModelSerializer):
-    indicator_set = RecordListIndicatorSerializer(many=True, read_only=True)
-
+class DocumentListProgramSerializer(serializers.ModelSerializer):
     class Meta:
         model = Program
         fields = [
             'id',
             'gaitid',
             'name',
-            'indicator_set',
         ]
 
 
-class RecordListProjectSerializer(serializers.ModelSerializer):
+class DocumentListProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectAgreement
         fields = [
@@ -36,8 +22,8 @@ class RecordListProjectSerializer(serializers.ModelSerializer):
         ]
 
 
-class RecordListRecordSerializer(serializers.ModelSerializer):
-    project = RecordListProjectSerializer(read_only=True)
+class DocumentListDocumentSerializer(serializers.ModelSerializer):
+    project = DocumentListProjectSerializer(read_only=True)
 
     class Meta:
         model = Documentation

@@ -14,7 +14,7 @@ export default class EditOrganizationProfile extends React.Component {
 
         this.state = {
             initial_data: data,
-            managed_data: data
+            managed_data: {...data}
         }
     }
 
@@ -109,7 +109,7 @@ export default class EditOrganizationProfile extends React.Component {
             <div className="edit-organization-profile container">
                 <form className="form needs-validation" noValidate>
                     <div className="form-group">
-                        <label htmlFor="organization-name-input">Organization name<span className="required">*</span></label>
+                        <label htmlFor="organization-name-input">{gettext("Organization name")}<span className="required">*</span></label>
                         <input
                             type="text"
                             value={od.name}
@@ -129,11 +129,11 @@ export default class EditOrganizationProfile extends React.Component {
                             value={od.sectors}
                             options={this.props.sectorSelections}
                             onChange={(e) => this.updateSectors(e)}
-                            placeholder="None Selected"
+                            placeholder={gettext("None Selected")}
                             id="sectors-input" />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="primary-address-input">Primary Address<span className="required">*</span></label>
+                        <label htmlFor="primary-address-input">{gettext("Primary Address")}<span className="required">*</span></label>
                         <textarea
                             value={od.primary_address}
                             onChange={(e) => this.updatePrimaryAddress(e.target.value)}
@@ -147,7 +147,7 @@ export default class EditOrganizationProfile extends React.Component {
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="primary-contact-name-input">Primary Contact Name<span className="required">*</span></label>
+                        <label htmlFor="primary-contact-name-input">{gettext("Primary Contact Name")}<span className="required">*</span></label>
                         <input
                             type="text"
                             value={od.primary_contact_name}
@@ -162,7 +162,7 @@ export default class EditOrganizationProfile extends React.Component {
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="primary-contact-email-input">Primary Contact Email<span className="required">*</span></label>
+                        <label htmlFor="primary-contact-email-input">{gettext("Primary Contact Email")}<span className="required">*</span></label>
                         <input
                             type="text"
                             value={od.primary_contact_email}
@@ -177,7 +177,7 @@ export default class EditOrganizationProfile extends React.Component {
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="primary-contact-phone-input">Primary Contact Phone Number<span className="required">*</span></label>
+                        <label htmlFor="primary-contact-phone-input">{gettext("Primary Contact Phone Number")}<span className="required">*</span></label>
                         <input
                             type="text"
                             value={od.primary_contact_phone}
@@ -192,7 +192,7 @@ export default class EditOrganizationProfile extends React.Component {
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="mode-of-contact-input">Preferred Mode of Contact</label>
+                        <label htmlFor="mode-of-contact-input">{gettext("Preferred Mode of Contact")}</label>
                         <input
                             type="text"
                             value={od.mode_of_contact}
@@ -202,15 +202,15 @@ export default class EditOrganizationProfile extends React.Component {
                     </div>
                     {this.props.new &&
                     <div className="form-group">
-                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>Save</button>
-                        <button className="btn btn-primary" onClick={(e) => this.saveNewAndAddAnother(e)}>Save and Add Another</button>
-                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Clear</button>
+                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>{gettext("Save")}</button>
+                        <button className="btn btn-primary" onClick={(e) => this.saveNewAndAddAnother(e)}>{gettext("Save and Add Another")}</button>
+                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext("Clear")}</button>
                     </div>
                     }
                     {!this.props.new &&
                     <div className="form-group">
-                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>Save</button>
-                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Reset</button>
+                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>{gettext("Save")}</button>
+                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }
                 </form>

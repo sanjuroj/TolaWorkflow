@@ -3,26 +3,35 @@ import re
 import csv
 import os
 import sys
+import io
+from backports import csv
 
 
 def main():
     parser = argparse.ArgumentParser(description='Parse a .po file')
-    parser.add_argument('infilepath', help='the filepath to the .po file')
+    parser.add_argument('infilepath', help='the filepath to the .po or .csv file')
+    parser.add_argument(
+        '--newOrFuzzy',
+        action='store_true',
+        dest='only_new_or_fuzzy',
+        help='Export only new and fuzzy translations to .csv file'
+    )
+    parser.add_argument('-c', dest='c2p_encoding', default='utf-8-sig', help='csv to po file encoding')
     args = parser.parse_args()
     basedir, filename = os.path.split(args.infilepath)
     match = re.search('(.*)(\.po|\.csv)$', filename)
     if '.po' in args.infilepath:
-        po_to_csv(args.infilepath, basedir, match.group(1))
+        po_to_csv(args, basedir, match.group(1))
     elif '.csv' in args.infilepath:
-        csv_to_po(args.infilepath, basedir, match.group(1))
+        csv_to_po(args, basedir, match.group(1))
     else:
         print 'You must provide either a .po file or a .csv file.  Exiting'
         sys.exit()
 
 
-def csv_to_po(infilepath, basedir, basefile):
+def csv_to_po(args, basedir, basefile):
     outfilepath = os.path.join(basedir, basefile + '.po')
-    with open(infilepath, 'r') as fh:
+    with io.open(args.infilepath, 'r', encoding=args.c2p_encoding) as fh:
         with open(outfilepath, 'w') as pofile:
             pofile.write(
                 '''
@@ -48,26 +57,26 @@ msgstr ""
             for row in csvreader:
                 if row[1] == 'English - Plural':
                     continue
-                pofile.write('msgid "{}"\n'.format(row[0]))
+                pofile.write('msgid "{}"\n'.format(row[0].encode('utf-8')))
                 # If the second column has a value, it's a plurlalized translations
                 if len(row[1]) > 0:
-                    pofile.write('msgid_plural "{}"\n'.format(row[1]))
-                    pofile.write('msgstr[0] "{}"\n'.format(row[3]))
-                    pofile.write('msgstr[1] "{}"\n'.format(row[4]))
+                    pofile.write('msgid_plural "{}"\n'.format(row[1].encode('utf-8')))
+                    pofile.write('msgstr[0] "{}"\n'.format(row[3].encode('utf-8')))
+                    pofile.write('msgstr[1] "{}"\n'.format(row[4].encode('utf-8')))
                 else:
-                    pofile.write('msgstr "{}"\n'.format(row[2]))
+                    pofile.write('msgstr "{}"\n'.format(row[2].encode('utf-8')))
                 pofile.write('\n')
 
 
-def po_to_csv(infilepath, basedir, basefile):
+def po_to_csv(args, basedir, basefile):
     outfilepath = os.path.join(basedir, basefile + '.csv')
-    with open(infilepath, 'r') as infile:
+    with io.open(args.infilepath, 'r', encoding='utf-8-sig') as infile:
         contents = infile.read()
 
     stanzas = contents.split('\n\n')
 
-    with open(outfilepath, 'w') as csvfile:
-        csv_writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    with io.open(outfilepath, 'w', encoding='utf-8-sig') as csvfile:
+        csv_writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
         csv_writer.writerow([
             'English',
             'English - Plural',
@@ -81,17 +90,20 @@ def po_to_csv(infilepath, basedir, basefile):
         for i in range(1, len(stanzas)):
             stanza = stanzas[i]
             # print 'stanza', stanza
-            # Some lines can be fuzzy and untranslated, need to do unstranslated first
-            if is_untranslated(stanza) or 'fuzzy' in stanza:
-                components = stanza_to_components(stanza)
+            # Skip output of translated strings if only new and fuzzy are to be exported
+            if args.only_new_or_fuzzy and not is_untranslated(stanza) and not 'fuzzy' in stanza:
+                continue
+            components = stanza_to_components(stanza)
+            # stanza_to_components could will return None if the whole stanza is a component
+            if components:
                 csv_writer.writerow([
-                    components['msgid'].encode('utf8'),
-                    components['msgid_plural'].encode('utf8'),
-                    components['msgstr'].encode('utf8'),
-                    components['msgstr[0]'].encode('utf8'),
-                    components['msgstr[1]'].encode('utf8'),
-                    components['similar'].encode('utf8'),
-                    components['note'].encode('utf8')
+                    components['msgid'],
+                    components['msgid_plural'],
+                    components['msgstr'],
+                    components['msgstr[0]'],
+                    components['msgstr[1]'],
+                    components['similar'],
+                    components['note']
                 ])
 
 
@@ -117,9 +129,11 @@ def stanza_to_components(stanza):
 
     current_componenet = ''
     for line in lines:
-        print 'liineee', line
-        line = line.decode('utf8')
+        line = line
         if 'msgid_plural' in line:
+            # if this line begins with "#", the whole thing is an old (commented) translation and should be skipped.
+            if re.search('^#', line):
+                return None
             current_componenet = 'msgid_plural'
             if not re.search('^msgid_plural ""', line):
                 components[current_componenet] += strip_quotes(line)
@@ -140,6 +154,9 @@ def stanza_to_components(stanza):
             current_componenet = 'note'
             components[current_componenet] += line
         elif re.search('^msgid', line):
+            # if this line begins with "#", the whole thing is an old (commented) translation and should be skipped.
+            if re.search('^#', line):
+                return None
             current_componenet = 'msgid'
             if not re.search('^msgid ""', line):
                 components[current_componenet] += strip_quotes(line)
@@ -155,7 +172,7 @@ def stanza_to_components(stanza):
 
 
 def is_untranslated(stanza):
-    # print '----', stanza, '========'
+    # print '-----', stanza, '========'
     lines = stanza.split('\n')
     for i, line in enumerate(lines):
         if 'msgstr' in line:

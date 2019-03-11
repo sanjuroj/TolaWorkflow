@@ -1,0 +1,99 @@
+// Results table included in the indicator table (& elsewhere?)
+
+$border-summary-row: 2px solid $gray-500;
+$border-main-row: 1px solid $gray-200;
+$border-supplemental-row: 1px solid $gray-150;
+
+@mixin pt-ended($left: true) {
+    // paints 2px borders on the outside of ended target periods
+    @if ($left) {
+        td:first-child {
+            border-left: $border-summary-row;
+        }
+    }
+    td:last-child {
+        border-right: $border-summary-row;
+    }
+}
+.results-table__wrapper {
+    // this div provides a little padding but is probably not necessary
+    padding: $grid-gutter-width/2;
+}
+.results-table {
+    background-color: transparent !important;
+    th, td { // table-sm
+        font-size: $font-size-sm;
+        padding: $table-cell-padding-sm;
+    }
+    td {
+        background: $white;
+    }
+}
+.results-table--has-subtotal {
+    &.table thead th { // crazy specificity! overloads bootstrap
+        border-bottom: $border-summary-row;
+    }
+}
+.results__result--date {
+    border-left: $border-main-row;
+    white-space: nowrap;
+}
+.results__result--value {
+    border-right: $border-main-row;
+    text-align: right;
+    white-space: nowrap;
+}
+.results__result--url {
+    word-break: break-all;
+}
+.results__result--nodata {
+    border-left: $border-main-row;
+    border-right: $border-main-row;
+    white-space: nowrap;
+}
+
+.results__row--main {
+    &.pt-ended {
+        @include pt-ended();
+    }
+}
+.results__row__target-period {
+    min-width: $grid-gutter-width * 8;
+}
+.results__row--subtotal {
+    @include pt-ended();
+    td {
+        background-color: $gray-200;
+        border-bottom: $border-summary-row;
+    }
+}
+.results__row--supplemental {
+    td {
+        border-top: $border-supplemental-row;
+    }
+    &.pt-ended {
+        @include pt-ended($left: false);
+    }
+}
+
+// see _iptt_table.scss
+.results__link {}
+.results-table__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.cd-actions__message {}
+.cd-actions__button {
+    margin-left: $grid-gutter-width/2;
+    white-space: nowrap;
+}
+
+// Potentially global styles
+.disable-span {
+    cursor: not-allowed;
+    opacity: .65;
+}
+.disable-span a {
+    pointer-events: none;
+}

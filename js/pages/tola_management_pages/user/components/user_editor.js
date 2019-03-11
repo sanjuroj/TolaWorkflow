@@ -28,9 +28,9 @@ export default class UserEditor extends React.Component {
             <div className="user-editor row">
                 <div className="editor__navigation col-sm-3">
                     <ul className="list-group">
-                        <li className={`list-group-item ${profile_active_class}`} onClick={() => this.updateActivePage('profile')}>Profile</li>
-                        <li className={`list-group-item ${programs_active_class} ${new_class}`} onClick={() => this.updateActivePage('programs_and_roles')}>Programs and Roles</li>
-                        <li className={`list-group-item ${history_active_class} ${new_class}`} onClick={() => this.updateActivePage('status_and_history')}>Status and History</li>
+                        <li className={`list-group-item ${profile_active_class}`} onClick={() => this.updateActivePage('profile')}>{gettext("Profile")}</li>
+                        <li className={`list-group-item ${programs_active_class} ${new_class}`} onClick={() => this.updateActivePage('programs_and_roles')}>{gettext("Programs and Roles")}</li>
+                        <li className={`list-group-item ${history_active_class} ${new_class}`} onClick={() => this.updateActivePage('status_and_history')}>{gettext("Status and History")}</li>
                     </ul>
                 </div>
                 <div className="user-editor__content col-sm-9">

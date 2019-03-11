@@ -1,5 +1,6 @@
 import React from 'react'
 import {List, AutoSizer, CellMeasurer, CellMeasurerCache} from 'react-virtualized'
+import Select, {components} from 'react-select'
 
 export class VirtualizedMenuList extends React.PureComponent {
     constructor(props) {
@@ -47,3 +48,13 @@ export class VirtualizedMenuList extends React.PureComponent {
         )
     }
 }
+
+const VirtualizedSelect = props => (
+    <Select
+        components={{
+            VirtualizedMenuList,
+        }}
+        {...props} />
+)
+
+export default VirtualizedSelect

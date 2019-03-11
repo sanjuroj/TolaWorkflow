@@ -7,7 +7,13 @@ export default class EditUserProfile extends React.Component {
     constructor(props) {
         super(props)
         const {userData} = props
-        const organization_listing = props.organizations.map(org => ({value: org.id, label: org.name}))
+        const organization_listing = (() => {
+            if(props.new) {
+                return props.organizations.filter(o => o.value != 1 || props.is_superuser)
+            } else {
+                return props.organizations
+            }
+        })()
         const selected_organization = organization_listing.find(o => o.value == userData.organization_id)
         this.state = {
             original_user_data: {...userData},
@@ -74,10 +80,7 @@ export default class EditUserProfile extends React.Component {
         this.setState({
             managed_user_data: {
                 ...this.state.managed_user_data,
-                user: {
-                    ...this.state.managed_user_data.user,
-                    email: new_email,
-                }
+                email: new_email,
             }
         })
     }
@@ -111,17 +114,19 @@ export default class EditUserProfile extends React.Component {
     render() {
         const ud = this.state.managed_user_data
         const e = this.props.errors
+        const disabled = this.props.disabled
         const error_classes = {
             name: (e.name)?'is-invalid':'',
-            email: (e.user && e.user.email)?'is-invalid':'',
+            email: (e.email)?'is-invalid':'',
             organization: (e.organization_id)?'is-invalid':''
         }
         return (
             <div className="edit-user-profile container">
                 <form className="form">
                     <div className="form-group">
-                        <label htmlFor="user-full-name-input">Full name<span className="required">*</span></label>
+                        <label htmlFor="user-full-name-input">{gettext("Full name")}<span className="required">*</span></label>
                         <input
+                            disabled={disabled}
                             className={"form-control "+error_classes.name}
                             type="text"
                             value={ud.name}
@@ -135,17 +140,19 @@ export default class EditUserProfile extends React.Component {
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-mode-of-address-input">Preferred Mode Of Address</label>
+                        <label htmlFor="user-mode-of-address-input">{gettext("Preferred Mode Of Address")}</label>
                         <input
                             type="text"
+                            disabled={disabled}
                             value={ud.mode_of_address}
                             onChange={(e) => this.updateModeOfAddress(e.target.value)}
                             className="form-control"
                             id="user-mode-of-address-input" />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-organization-input">Organization<span className="required">*</span></label>
+                        <label htmlFor="user-organization-input">{gettext("Organization")}<span className="required">*</span></label>
                         <Select
+                            isDisabled={disabled}
                             className={"form-control "+error_classes.organization}
                             value={this.state.selected_organization}
                             options={this.state.organization_listing}
@@ -159,9 +166,10 @@ export default class EditUserProfile extends React.Component {
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-title-input">Title</label>
+                        <label htmlFor="user-title-input">{gettext("Title")}</label>
                         <input
-                            maxLength="3"
+                            disabled={disabled}
+                            maxLength="50"
                             type="text"
                             value={ud.title}
                             onChange={(e) => this.updateTitle(e.target.value)}
@@ -169,22 +177,24 @@ export default class EditUserProfile extends React.Component {
                             id="user-title-input" />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-email-input">Email<span className="required">*</span></label>
+                        <label htmlFor="user-email-input">{gettext("Email")}<span className="required">*</span></label>
                         <input
+                            disabled={disabled}
                             className={"form-control "+error_classes.email}
                             type="email"
-                            value={ud.user.email}
+                            value={ud.email}
                             onChange={(e) => this.updateEmail(e.target.value)}
                             id="user-email-input" />
-                        {e.user && e.user.email &&
+                        {e.email &&
                         <div className="invalid-feedback">
-                            {e.user.email}
+                            {e.email}
                         </div>
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-phone-input">Phone</label>
+                        <label htmlFor="user-phone-input">{gettext("Phone")}</label>
                         <input
+                            disabled={disabled}
                             type="tel"
                             value={ud.phone}
                             onChange={(e) => this.updatePhone(e.target.value)}
@@ -192,25 +202,26 @@ export default class EditUserProfile extends React.Component {
                             id="user-phone-input" />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-mode-of-contact-input">Preferred Mode of Contact</label>
+                        <label htmlFor="user-mode-of-contact-input">{gettext("Preferred Mode of Contact")}</label>
                         <input
+                            disabled={disabled}
                             type="text"
                             value={ud.mode_of_contact}
                             onChange={(e) => this.updateModeOfContact(e.target.value)}
                             className="form-control"
                             id="user-mode-of-contact-input" />
                     </div>
-                    {this.props.new &&
+                    {this.props.new && !disabled &&
                     <div className="form-group">
-                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>Save</button>
-                        <button className="btn btn-primary" onClick={(e) => this.saveNewAndAddAnother(e)}>Save And Add Another</button>
-                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Reset</button>
+                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>{gettext("Save")}</button>
+                        <button className="btn btn-primary" onClick={(e) => this.saveNewAndAddAnother(e)}>{gettext("Save And Add Another")}</button>
+                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }
-                    {!this.props.new &&
+                    {!this.props.new && !disabled &&
                     <div className="form-group">
-                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>Save</button>
-                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>Reset</button>
+                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>{gettext("Save")}</button>
+                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }
                 </form>
