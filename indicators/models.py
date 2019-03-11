@@ -1156,7 +1156,7 @@ class Result(models.Model):
         verbose_name_plural = "Indicator Output/Outcome Result"
 
     def __unicode__(self):
-        return self.description
+        return u'{}: {}'.format(self.indicator, self.periodic_target)
 
     def save(self, *args, **kwargs):
         if self.create_date is None:
