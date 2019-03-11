@@ -316,7 +316,6 @@ export default class EditUserPrograms extends React.Component {
         }
 
         const is_check_disabled = (data) => {
-            return false
             if(data.type == 'country') {
                 return !this.state.countries[data.id].programs.size > 0
                     || !this.props.store.access.countries[data.id]
