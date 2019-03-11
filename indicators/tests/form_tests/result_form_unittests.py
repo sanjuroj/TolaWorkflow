@@ -32,9 +32,15 @@ class TestResultCreateUpdate404(test.TestCase):
         self.result = i_factories.ResultFactory(
             indicator=self.indicator
         )
-        self.factory = test.RequestFactory()
-        tola_user = w_factories.TolaUserFactory()
-        self.user = tola_user.user
+        self.user = w_factories.UserFactory(first_name="FN", last_name="LN", username="tester", is_superuser=True)
+        self.user.set_password('password')
+        self.user.save()
+
+        self.tola_user = w_factories.TolaUserFactory(user=self.user)
+        self.tola_user.save()
+
+        self.client = test.Client(enforce_csrf_checks=False)
+        self.client.login(username='tester', password='password')
 
     def test_create_view_raises_404_with_bad_indicator_id(self):
         kwargs = {
@@ -42,20 +48,16 @@ class TestResultCreateUpdate404(test.TestCase):
             'indicator': self.indicator.id + 1
         }
         bad_url = reverse('result_add', kwargs=kwargs)
-        request = self.factory.get(bad_url)
-        request.user = self.user
-        with self.assertRaises(Http404):
-            ResultCreate.as_view()(request, **kwargs)
+        response = self.client.get(bad_url)
+        self.assertEqual(response.status_code, 404)
 
     def test_update_view_raises_404_with_bad_result_id(self):
         kwargs = {
             'pk': self.result.id + 1
         }
         bad_url = reverse('result_update', kwargs=kwargs)
-        request = self.factory.get(bad_url)
-        request.user = self.user
-        with self.assertRaises(Http404):
-            ResultUpdate.as_view()(request, **kwargs)
+        response = self.client.get(bad_url)
+        self.assertEqual(response.status_code, 404)
 
 
 class TestUpdateFormInitialValues(test.TestCase):
@@ -74,11 +76,14 @@ class TestUpdateFormInitialValues(test.TestCase):
         self.blank_result = i_factories.ResultFactory(
             indicator=self.indicator
         )
+
         self.tola_user = w_factories.TolaUserFactory()
         self.user = self.tola_user.user
+        self.request = type('Request', (object,), {'has_write_access': True, 'user': self.user})()
+
 
     def test_initial_values(self):
-        form = ResultForm(user=self.user, indicator=self.indicator, program=self.program, instance=self.result)
+        form = ResultForm(user=self.user, indicator=self.indicator, program=self.program, instance=self.result, request=self.request)
         self.assertEqual(form['achieved'].value(), self.result.achieved)
         self.assertEqual(form['target_frequency'].value(), Indicator.ANNUAL)
         self.assertEqual(form['indicator'].value(), self.indicator.id)
@@ -87,7 +92,7 @@ class TestUpdateFormInitialValues(test.TestCase):
         self.assertEqual(form['evidence_url'].value(), 'evidence url')
 
     def test_initial_values_no_evidence(self):
-        form = ResultForm(user=self.user, indicator=self.indicator, program=self.program, instance=self.blank_result)
+        form = ResultForm(user=self.user, indicator=self.indicator, program=self.program, instance=self.blank_result, request=self.request)
         self.assertEqual(form['achieved'].value(), self.result.achieved)
         self.assertEqual(form['target_frequency'].value(), Indicator.ANNUAL)
         self.assertEqual(form['indicator'].value(), self.indicator.id)
@@ -95,7 +100,7 @@ class TestUpdateFormInitialValues(test.TestCase):
         self.assertEqual(form['evidence_url'].value(), '')
 
     def test_create_form_initial_values(self):
-        form = ResultForm(user=self.user, indicator=self.indicator, program=self.program)
+        form = ResultForm(user=self.user, indicator=self.indicator, program=self.program, request=self.request)
         self.assertEqual(form['indicator'].value(), self.indicator.id)
         self.assertEqual(form['program'].value(), self.program.id)
         self.assertEqual(form['achieved'].value(), None)
@@ -116,10 +121,12 @@ class TestCreateValidation(test.TestCase):
         self.tola_user = w_factories.TolaUserFactory()
         self.user = self.tola_user.user
 
+        self.request = type('Request', (object,), {'has_write_access': True, 'user': self.user})()
         self.form_kwargs = {
             'user': self.user,
             'indicator': self.indicator,
             'program': self.program,
+            'request': self.request,
         }
 
     def test_good_data_validates(self):

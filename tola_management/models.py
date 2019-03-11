@@ -168,7 +168,7 @@ class ProgramAuditLog(models.Model, DiffableLog):
     change_type = models.CharField(_('Modification Type'), max_length=255)
     previous_entry = models.TextField(null=True, blank=True)
     new_entry = models.TextField(null=True, blank=True)
-    rationale = models.TextField()
+    rationale = models.TextField(null=True)
 
     @property
     def diff_list(self):

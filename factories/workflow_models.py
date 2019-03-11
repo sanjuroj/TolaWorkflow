@@ -17,6 +17,8 @@ from workflow.models import (
     TolaSites as TolaSitesM,
     TolaUser as TolaUserM,
     Program as ProgramM,
+    CountryAccess as CountryAccessM,
+    ProgramAccess as ProgramAccessM
 )
 
 
@@ -27,6 +29,10 @@ class CountryFactory(DjangoModelFactory):
 
     country = 'Afghanistan'
     code = 'AF'
+
+class CountryAccessFactory(DjangoModelFactory):
+    class Meta:
+        model = CountryAccessM
 
 
 class Contact(DjangoModelFactory):
@@ -62,13 +68,8 @@ class TolaUserFactory(DjangoModelFactory):
 
     user = SubFactory(UserFactory)
     name = LazyAttribute(lambda o: o.user.first_name + " " + o.user.last_name)
-    organization = SubFactory(OrganizationFactory)
+    organization = SubFactory(OrganizationFactory, id=1)
     country = SubFactory(CountryFactory, country='United States', code='US')
-
-    @post_generation
-    def countries(self, create, extracted, **kwargs):
-        self.countries.add(CountryFactory(country='United States', code='US'))
-
 
 class ProgramFactory(DjangoModelFactory):
     class Meta:

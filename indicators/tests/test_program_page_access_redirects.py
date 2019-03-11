@@ -22,11 +22,19 @@ class TestProgramPageRedirects(test.TestCase):
         self.program_b = w_factories.ProgramFactory()
         self.program_b.country.set([self.country_b])
         self.program_b.save()
-        self.tola_user = w_factories.TolaUserFactory()
-        self.tola_user.countries.set([self.country_a])
+        self.user = w_factories.UserFactory(first_name="FN", last_name="LN", username="tester")
+        self.user.set_password('password')
+        self.user.save()
+
+        self.tola_user = w_factories.TolaUserFactory(user=self.user)
         self.tola_user.save()
-        self.user = self.tola_user.user
-        self.client = test.Client()
+
+        self.country_access = w_factories.CountryAccessFactory(tolauser=self.tola_user, country=self.country_a)
+        self.tola_user.countryaccess_set.add(self.country_access)
+        self.tola_user.save()
+
+        self.client = test.Client(enforce_csrf_checks=False)
+        self.client.login(username='tester', password='password')
 
     def test_unit_test_user_has_access_to_program_in_country(self):
         self.assertTrue(self.tola_user.has_access(program_id=self.program_a.pk))
@@ -50,6 +58,8 @@ class TestProgramPageRedirects(test.TestCase):
 
     def test_anonymous_user_is_redirected_from_program_page(self):
         """Anonymous user should be redirected to home page for any program page"""
+        self.client.logout()
+
         url = reverse('program_page', kwargs={'program_id': self.program_a.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)

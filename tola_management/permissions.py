@@ -1,6 +1,7 @@
 from rest_framework import permissions
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect
 
 from workflow.models import (
     Program,
@@ -29,7 +30,7 @@ def result_pk_adapter(inner):
     def outer(func):
         wrapped = inner(func)
         def wrapper(request, *args, **kwargs):
-            result = Result.objects.get(pk=kwargs['pk'])
+            result = get_object_or_404(Result, pk=kwargs.get('pk'))
             indicator_id = result.indicator_id
             program_id = result.program_id
             kwargs['program'] = program_id
@@ -208,7 +209,7 @@ def has_program_read_access(func):
             request.has_write_access = write_access
             return func(request, *args, **kwargs)
         else:
-            raise PermissionDenied
+            return redirect('index')
     return wrapper
 
 

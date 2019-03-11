@@ -88,7 +88,8 @@ class ProgramWithMetricsQueryCountsBase(test.TestCase):
     def setUpTestData(cls):
         cls.country = w_factories.CountryFactory()
         cls.user = w_factories.TolaUserFactory()
-        cls.user.countries.add(cls.country)
+        cls.country_access = w_factories.CountryAccessFactory(tolauser=cls.user, country=cls.country)
+        cls.user.countryaccess_set.add(cls.country_access)
         for case in cls.expected_cases:
             program = w_factories.ProgramFactory(
                 reporting_period_start=cls.program_start_date,
