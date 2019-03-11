@@ -212,6 +212,8 @@ class TolaUser(models.Model):
 
     @property
     def countries_list(self):
+        if self.organization__id != 1:
+            return Country.objects.none()
         return ', '.join([x.code for x in self.countries.all()])
 
     @property
@@ -257,6 +259,8 @@ class TolaUser(models.Model):
     def managed_countries(self):
         if self.user.is_superuser:
             return Country.objects.all()
+        elif self.organization__id != 1:
+            return Country.objects.none()
         else:
             return Country.objects.filter(id__in=self.countryaccess_set.filter(role='basic_admin').values('country_id'))
 
