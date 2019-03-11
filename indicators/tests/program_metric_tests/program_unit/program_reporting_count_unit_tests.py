@@ -14,6 +14,7 @@ from factories import (
     )
 from indicators.models import Indicator, PeriodicTarget
 from indicators.queries import ProgramWithMetrics
+from safedelete.models import HARD_DELETE
 from django import test
 
 
@@ -356,7 +357,7 @@ class TestSingleReportingIndicator(ReportingIndicatorBase):
                 datum.delete()
             self.data = []
             self.targets = []
-            self.indicator.delete()
+            self.indicator.delete(force_policy=HARD_DELETE)
             self.indicator = None
 
 class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
