@@ -10,6 +10,7 @@ import EditOrganizationProfile from './components/edit_organization_profile'
 import EditOrganizationHistory from './components/edit_organization_history'
 
 import LoadingSpinner from 'components/loading-spinner'
+import FoldingSidebar from 'components/folding-sidebar'
 
 const CountryFilter = observer(({store, selections}) => {
     return <div className="form-group">
@@ -61,27 +62,29 @@ const SectorFilter = observer(({store, selections}) => {
 
 export const IndexView = observer(
     ({store}) => {
-        return <div id="organization-management-index-view" className="container-fluid row">
-            <div className="col col-sm-3 filter-section">
-                <SectorFilter store={store} selections={store.sector_selections} />
-                <ProgramFilter store={store} selections={store.program_selections} />
-                <OrganizationFilter store={store} selections={store.organization_selections} />
-                <CountryFilter store={store} selections={store.country_selections} />
-                <div className="form-group">
-                    <label htmlFor="status_filter">{gettext("Status")}</label>
-                    <Select
-                    value={store.filters.organization_status}
-                    options={store.organization_status_options}
-                    onChange={(e) => store.changeOrganizationStatusFilter(e)}
-                    placeholder={gettext("None Selected")}
-                    id="status_filter" />
+        return <div id="organization-management-index-view" className="row">
+            <FoldingSidebar>
+                <div className="filter-section">
+                    <SectorFilter store={store} selections={store.sector_selections} />
+                    <ProgramFilter store={store} selections={store.program_selections} />
+                    <OrganizationFilter store={store} selections={store.organization_selections} />
+                    <CountryFilter store={store} selections={store.country_selections} />
+                    <div className="form-group">
+                        <label htmlFor="status_filter">{gettext("Status")}</label>
+                        <Select
+                        value={store.filters.organization_status}
+                        options={store.organization_status_options}
+                        onChange={(e) => store.changeOrganizationStatusFilter(e)}
+                        placeholder={gettext("None Selected")}
+                        id="status_filter" />
+                    </div>
+                    <div className="filter-buttons">
+                        <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
+                        <button className="btn btn-inverse" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
+                    </div>
                 </div>
-                <div className="filter-buttons">
-                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
-                    <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
-                </div>
-            </div>
-            <div className="col col-sm-9 list-section">
+            </FoldingSidebar>
+            <div className="col list-section">
                 <div className="list-controls">
                     <div>
                         <button className="btn btn-primary" onClick={() => store.createOrganization()}><i className="fa fa-plus-circle"></i>{gettext("Add Organization")}</button>

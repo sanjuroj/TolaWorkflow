@@ -9,6 +9,7 @@ import EditCountryProfile from './components/edit_country_profile'
 import EditDisaggregations from './components/edit_disaggregations'
 import EditObjectives from './components/edit_objectives'
 import LoadingSpinner from 'components/loading-spinner'
+import FoldingSidebar from 'components/folding-sidebar'
 
 const CountryFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
@@ -53,17 +54,19 @@ export const IndexView = observer(
         const organizationFilterOptions = Object.entries(store.organizations).map(([id, org]) => ({value: org.id, label: org.name}))
         const programFilterOptions = Object.entries(store.allPrograms).map(([id, program]) => ({value: program.id, label: program.name}))
 
-        return <div id="user-management-index-view" className="container-fluid row">
-            <div className="col col-sm-3 filter-section">
-                <OrganizationFilter store={store} filterOptions={organizationFilterOptions} />
-                <ProgramFilter store={store} filterOptions={programFilterOptions} />
-                <CountryFilter store={store} filterOptions={countryFilterOptions} />
-                <div className="filter-buttons">
-                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
-                    <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
+        return <div id="country-management-index-view" className="row">
+            <FoldingSidebar>
+                <div className="filter-section">
+                    <OrganizationFilter store={store} filterOptions={organizationFilterOptions} />
+                    <ProgramFilter store={store} filterOptions={programFilterOptions} />
+                    <CountryFilter store={store} filterOptions={countryFilterOptions} />
+                    <div className="filter-buttons">
+                        <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
+                        <button className="btn btn-inverse" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
+                    </div>
                 </div>
-            </div>
-            <div className="col col-sm-9 list-section">
+            </FoldingSidebar>
+            <div className="col list-section">
                 <div className="list-controls">
                     <button className="btn btn-primary" onClick={() => store.addCountry()}><i className="fa fa-plus-circle"></i>{gettext("Add Country")}</button>
                 </div>

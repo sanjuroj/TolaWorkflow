@@ -409,12 +409,16 @@ class TolaUserProxy(TolaUser):
         proxy = True
 
 
+class CountryAccessInline(admin.TabularInline):
+    model = CountryAccess
+
 class TolaUserAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'country')
     display = 'Tola User'
     list_filter = ('country', 'user__is_staff',)
     search_fields = ('name','country__country','title')
+    inlines = (CountryAccessInline, )
 
 
 # Form Guidance

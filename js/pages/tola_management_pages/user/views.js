@@ -9,6 +9,7 @@ import EditUserPrograms from './components/edit_user_programs'
 import EditUserHistory from './components/edit_user_history'
 import Pagination from 'components/pagination'
 import LoadingSpinner from 'components/loading-spinner'
+import FoldingSidebar from 'components/folding-sidebar'
 
 const selection_placeholder = gettext("None Selected")
 const UserFilter = observer(({store, selections}) => {
@@ -183,46 +184,48 @@ export const IndexView = observer(
             }
         }
 
-        return <div id="user-management-index-view" className="container-fluid row">
-            <div className="col col-sm-3 filter-section">
-                <CountryFilter store={store} selections={store.countries_selections} />
-                <BaseCountryFilter store={store} selections={store.countries_selections} />
-                <ProgramFilter store={store} selections={store.program_selections} />
-                <div className="form-group">
-                    <label htmlFor="organization_filter">{gettext("Organization")}</label>
-                    <Select
-                    value={store.filters.organizations}
-                    options={store.organization_selections}
-                    onChange={(e) => store.changeOrganizationFilter(e)}
-                    isMulti={true}
-                    placeholder={selection_placeholder}
-                    id="organization_filter" />
+        return <div id="user-management-index-view" className="row">
+            <FoldingSidebar>
+                <div className="filter-section">
+                    <CountryFilter store={store} selections={store.countries_selections} />
+                    <BaseCountryFilter store={store} selections={store.countries_selections} />
+                    <ProgramFilter store={store} selections={store.program_selections} />
+                    <div className="form-group">
+                        <label htmlFor="organization_filter">{gettext("Organization")}</label>
+                        <Select
+                        value={store.filters.organizations}
+                        options={store.organization_selections}
+                        onChange={(e) => store.changeOrganizationFilter(e)}
+                        isMulti={true}
+                        placeholder={selection_placeholder}
+                        id="organization_filter" />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="status_filter">{gettext("Status")}</label>
+                        <Select
+                        value={store.filters.user_status}
+                        options={store.user_status_options}
+                        onChange={(e) => store.changeUserStatusFilter(e)}
+                        placeholder={selection_placeholder}
+                        id="status_filter" />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="admin_role_filter">{gettext("Admin Role")}</label>
+                        <Select
+                        value={store.filters.admin_role}
+                        options={store.admin_role_options}
+                        onChange={(e) => store.changeAdminRoleFilter(e)}
+                        placeholder={selection_placeholder}
+                        id="admin_role_filter" />
+                    </div>
+                    <UserFilter store={store} selections={store.user_selections} />
+                    <div className="filter-buttons">
+                        <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
+                        <button className="btn btn-inverse" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
+                    </div>
                 </div>
-                <div className="form-group">
-                    <label htmlFor="status_filter">{gettext("Status")}</label>
-                    <Select
-                    value={store.filters.user_status}
-                    options={store.user_status_options}
-                    onChange={(e) => store.changeUserStatusFilter(e)}
-                    placeholder={selection_placeholder}
-                    id="status_filter" />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="admin_role_filter">{gettext("Admin Role")}</label>
-                    <Select
-                    value={store.filters.admin_role}
-                    options={store.admin_role_options}
-                    onChange={(e) => store.changeAdminRoleFilter(e)}
-                    placeholder={selection_placeholder}
-                    id="admin_role_filter" />
-                </div>
-                <UserFilter store={store} selections={store.user_selections} />
-                <div className="filter-buttons">
-                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
-                    <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
-                </div>
-            </div>
-            <div className="col col-sm-9 list-section">
+            </FoldingSidebar>
+            <div className="col list-section">
                 <div className="list-controls">
                     <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div>
