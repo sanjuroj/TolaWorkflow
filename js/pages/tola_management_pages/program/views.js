@@ -254,13 +254,21 @@ export const IndexView = observer(
                                 }>
                                     <Col size="0.5">
                                         <div className="td--stretch">
-                                            <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
+                                            <input type="checkbox" disabled={data.id=='new'} checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
+
+                                            {data.id == 'new' &&
+                                            <div className="icon__disabled">
+                                                <i className="fa fa-cog"></i>
+                                            </div>
+                                            }
+                                            {data.id != 'new' &&
                                             <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
                                                 <i className="fa fa-cog"></i>
                                             </div>
+                                            }
                                         </div>
                                     </Col>
-                                    <Col size="2">{data.name || "---"}</Col>
+                                    <Col size="2">{data.name || "New Program"}</Col>
                                     <Col>
                                         { organizationColumn(data)}
                                     </Col>

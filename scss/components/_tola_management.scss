@@ -91,9 +91,15 @@
     }
 }
 
-.icon__clickable {
-    cursor: pointer;
-    color: darkblue;
+.icon {
+    &__clickable {
+        cursor: pointer;
+        color: darkblue;
+    }
+
+    &__disabled {
+        color: grey;
+    }
 }
 
 .filter-buttons {
