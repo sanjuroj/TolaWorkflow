@@ -216,11 +216,8 @@ def get_country_page_context(request):
 
     country_queryset = Country.objects
     if not auth_user.is_superuser:
-        country_queryset = country_queryset.filter(
-            Q(countryaccess__tolauser=tola_user) |
-            Q(programaccess__tolauser=tola_user) |
-            Q(tolauser=tola_user)
-        )
+        country_queryset = tola_user.managed_countries
+
     countries = [{
         'id': country.id,
         'country': country.country,
@@ -233,11 +230,14 @@ def get_country_page_context(request):
         } for organization in Organization.objects.all()
     }
 
+    program_queryset = Program.objects.all()
+    if not auth_user.is_superuser:
+        program_queryset = tola_user.managed_programs
     programs = [
         {
             'id': program.id,
             'name': program.name,
-        } for program in Program.objects.all()
+        } for program in program_queryset
     ]
 
     return {
@@ -278,8 +278,6 @@ def app_host_page(request, react_app_page):
         js_context = get_program_page_context(request)
         page_title = "Program Management"
     elif react_app_page == 'country':
-        if not request.user.is_superuser:
-            raise PermissionDenied
         js_context = get_country_page_context(request)
         page_title = "Country Management"
 

@@ -237,12 +237,30 @@ class HasProgramAdminAccess(permissions.BasePermission):
         return user_has_basic_or_super_admin(request.user)
 
     def has_object_permission(self, request, view, obj):
-        return request.user.is_superadmin or request.user.tola_user.managed_programs.filter(id=obj.id).exists()
+        return request.user.is_superuser or request.user.tola_user.managed_programs.filter(id=obj.id).exists()
 
 
 class HasCountryAdminAccess(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_superadmin
+        if view.action == 'create':
+            return request.user.is_superuser
+        return user_has_basic_or_super_admin(request.user)
 
     def has_object_permission(self, request, view, obj):
-        return request.user.is_superadmin
+        tola_user = request.user.tola_user
+        return request.user.is_superuser or obj in tola_user.managed_countries
+
+
+class HasRelatedCountryAdminAccess(permissions.BasePermission):
+    def has_permission(self, request, view):
+        tola_user = request.user.tola_user
+        if view.action == 'create':
+            country_id = request.data.get('country')
+            return (request.user.is_superuser or
+                Country.objects.get(pk=country_id) in tola_user.managed_countries
+            )
+        return user_has_basic_or_super_admin(request.user)
+
+    def has_object_permission(self, request, view, obj):
+        tola_user = request.user.tola_user
+        return request.user.is_superuser or obj.country in tola_user.managed_countries

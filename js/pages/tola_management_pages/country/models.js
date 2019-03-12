@@ -122,10 +122,12 @@ export class CountryStore {
     toggleEditingTarget(id) {
         if(this.editing_target == 'new') {
             this.countries.shift()
+            this.editing_errors = {}
         }
 
         if(this.editing_target == id) {
             this.editing_target = false
+            this.editing_errors = {}
         } else {
             this.editing_target = id
             this.fetching_editing_data = true
@@ -157,8 +159,8 @@ export class CountryStore {
         PNotify.success({text: gettext("Successfully Saved"), delay: 5000})
     }
 
-    onSaveErrorHandler() {
-        PNotify.error({text: gettext("Saving Failed"), delay: 5000})
+    onSaveErrorHandler(message) {
+        PNotify.error({text: message || "Saving Failed", delay: 5000})
     }
 
     onDeleteSuccessHandler() {
@@ -193,11 +195,11 @@ export class CountryStore {
                 this.countries.shift()
                 this.countries.unshift(response.data)
             })
-        }).catch(error => {
+        }).catch(errors => {
             runInAction(()=> {
-                let errors = error.response.data
                 this.saving = false
-                this.editing_errors = errors
+                this.editing_errors = errors.response.data
+                this.onSaveErrorHandler(errors.response.data.detail)
             })
         })
     }
@@ -215,7 +217,7 @@ export class CountryStore {
             runInAction(() => {
                 this.saving = false
                 this.editing_errors = errors.response.data
-                this.onSaveErrorHandler()
+                this.onSaveErrorHandler(errors.response.data.detail)
             })
         })
     }
@@ -244,7 +246,7 @@ export class CountryStore {
             runInAction(() => {
                 this.saving = false
                 this.editing_objectives_errors = errors.response.data
-                this.onSaveErrorHandler()
+                this.onSaveErrorHandler(errors.response.data.detail)
             })
         })
     }
@@ -261,7 +263,7 @@ export class CountryStore {
             runInAction(() => {
                 this.saving = false
                 this.editing_objectives_errors = errors.response.data
-                this.onSaveErrorHandler()
+                this.onSaveErrorHandler(errors.response.data.detail)
             })
         })
     }
@@ -275,6 +277,10 @@ export class CountryStore {
             runInAction(() => {
                 this.editing_objectives_data = this.editing_objectives_data.filter(objective => objective.id!=id)
                 this.onDeleteSuccessHandler()
+            })
+        }).catch((errors) => {
+            runInAction(() => {
+                this.onSaveErrorHandler(errors.response.data.detail)
             })
         })
     }
