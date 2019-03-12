@@ -6,6 +6,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 
 from rest_framework import serializers
+from rest_framework import permissions
 
 from feed.views import SmallResultsSetPagination
 
@@ -22,7 +23,8 @@ from indicators.models import (
 )
 
 from .permissions import (
-    HasCountryAdminAccess
+    HasCountryAdminAccess,
+    HasRelatedCountryAdminAccess,
 )
 
 
@@ -81,7 +83,7 @@ class CountryAdminSerializer(serializers.ModelSerializer):
 class CountryAdminViewSet(viewsets.ModelViewSet):
     serializer_class = CountryAdminSerializer
     pagination_class = Paginator
-    permissions = [HasCountryAdminAccess]
+    permission_classes = [permissions.IsAuthenticated, HasCountryAdminAccess]
 
     def get_queryset(self):
         auth_user = self.request.user
@@ -91,11 +93,7 @@ class CountryAdminViewSet(viewsets.ModelViewSet):
         queryset = Country.objects.all()
 
         if not auth_user.is_superuser:
-            queryset = queryset.filter(
-                Q(countryaccess__tolauser=tola_user) |
-                Q(programaccess__tolauser=tola_user) |
-                Q(tolauser=tola_user)
-            )
+            queryset = tola_user.managed_countries
 
         countryFilter = params.getlist('countries[]')
         if countryFilter:
@@ -139,7 +137,7 @@ class CountryObjectiveSerializer(serializers.ModelSerializer):
 
 class CountryObjectiveViewset(viewsets.ModelViewSet):
     serializer_class = CountryObjectiveSerializer
-    permissions = [HasCountryAdminAccess]
+    permission_classes = [permissions.IsAuthenticated, HasRelatedCountryAdminAccess]
 
     def get_queryset(self):
         params = self.request.query_params
@@ -221,7 +219,7 @@ class CountryDisaggregationSerializer(serializers.ModelSerializer):
 
 class CountryDisaggregationViewSet(viewsets.ModelViewSet):
     serializer_class = CountryDisaggregationSerializer
-    permissions = [HasCountryAdminAccess]
+    permission_classes = [permissions.IsAuthenticated, HasRelatedCountryAdminAccess]
 
     def get_queryset(self):
         params = self.request.query_params
