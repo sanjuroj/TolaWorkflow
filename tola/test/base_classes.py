@@ -14,7 +14,7 @@ from tola.test.utils import instantiate_scenario, decimalize
 
 
 class TestBase(object):
-    fixtures = ['indicatortype.json', 'levels.json']
+    fixtures = ['indicatortype.json']
 
     def setUp(self):
         self.user = UserFactory(first_name="Indicator", last_name="CreateTest", username="IC")

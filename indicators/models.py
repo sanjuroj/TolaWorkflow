@@ -118,15 +118,16 @@ class Objective(models.Model):
 
 class Level(models.Model):
     name = models.CharField(_("Name"), max_length=135, blank=True)
-    description = models.TextField(
-        _("Description"), max_length=765, blank=True)
-    customsort = models.IntegerField(_("Customsort"), blank=True, null=True)
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='child_levels')
+    program = models.ForeignKey(Program, blank=True, null=True, on_delete=models.CASCADE, related_name='levels')
+    customsort = models.IntegerField(_("Sort Order"), blank=True, null=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
     class Meta:
         ordering = ('customsort', )
         verbose_name = _("Level")
+        unique_together = ('parent', 'customsort')
 
     def __unicode__(self):
         return self.name
@@ -136,10 +137,48 @@ class Level(models.Model):
             self.create_date = timezone.now()
         super(Level, self).save(*args, **kwargs)
 
+    def get_level_depth(self, depth=1):
+        if self.parent is None:
+            return depth
+        else:
+            depth += 1
+            depth = self.parent.get_level_depth(depth)
+        return depth
+
+    @property
+    def leveltier(self):
+        tiers = self.program.level_tiers.order_by('tier_depth')
+        try:
+            tier = tiers[self.get_level_depth()-1]
+        except IndexError:
+            tier = None
+        return tier
+
 
 class LevelAdmin(admin.ModelAdmin):
     list_display = ('name')
     display = 'Levels'
+
+
+class LevelTier(models.Model):
+    name = models.CharField(_("Name"), max_length=135, blank=True)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='level_tiers')
+    tier_depth = models.IntegerField(_("Level Tier depth"), blank=True, null=True)
+    create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
+    edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
+
+    class Meta:
+        ordering = ('tier_depth', )
+        verbose_name = _("Level Tier")
+        unique_together = (('name', 'program'), ('program', 'tier_depth'))
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if self.create_date is None:
+            self.create_date = timezone.now()
+        super(LevelTier, self).save(*args, **kwargs)
 
 
 class DisaggregationType(models.Model):
@@ -652,6 +691,11 @@ class Indicator(models.Model):
     external_service_record = models.ForeignKey(
         ExternalServiceRecord, verbose_name=_("External Service ID"),
         blank=True, null=True, on_delete=models.SET_NULL, help_text=" "
+    )
+
+    old_level = models.CharField(
+        max_length=80, null=True, blank=True,
+        verbose_name=_("Old Level"), help_text=" "
     )
 
     create_date = models.DateTimeField(

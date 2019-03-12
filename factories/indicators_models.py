@@ -13,6 +13,7 @@ from indicators.models import (
     Indicator as IndicatorM,
     IndicatorType as IndicatorTypeM,
     Level as LevelM,
+    LevelTier as LevelTierM,
     Objective as ObjectiveM,
     PeriodicTarget as PeriodicTargetM,
     StrategicObjective as StrategicObjectiveM,
@@ -78,6 +79,13 @@ class LevelFactory(DjangoModelFactory):
         model = LevelM
 
     name = Sequence(lambda n: 'Level: {0}'.format(n))
+
+
+class LevelTierFactory(DjangoModelFactory):
+    class Meta:
+        model = LevelTierM
+
+    name = Sequence(lambda n: 'LevelTier: {0}'.format(n))
 
 
 class ResultFactory(DjangoModelFactory):
