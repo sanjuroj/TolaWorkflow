@@ -8,6 +8,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.db.models import OuterRef, Subquery, Q, Count
+from django.utils.translation import ugettext_lazy as _
 import django.db.models
 from django.template import loader
 from django.shortcuts import render
@@ -328,11 +329,11 @@ class UserAdminSerializer(ModelSerializer):
         if self.instance:
             others = list(User.objects.filter(email=data['user']['email']))
             if len(others) > 1 or (len(others) > 0 and others[0].id != self.instance.user.id):
-                raise ValidationError({"email": 'This field must be unique'})
+                raise ValidationError({"email": _('This field must be unique')})
         else:
             others = list(User.objects.filter(email=data['user']['email']))
             if len(others) > 0:
-                raise ValidationError({"email": 'This field must be unique'})
+                raise ValidationError({"email": _('This field must be unique')})
 
         return out_data
 
@@ -340,7 +341,7 @@ class UserAdminSerializer(ModelSerializer):
         validated_data["is_active"] = True
 
         if validated_data["organization_id"] == 1 and not self.context["request"].user.is_superuser:
-            raise PermissionDenied("Only superusers can create Mercy Corps staff profiles.")
+            raise PermissionDenied(_("Only superusers can create Mercy Corps staff profiles."))
 
         auth_user_data = validated_data.pop('user')
 

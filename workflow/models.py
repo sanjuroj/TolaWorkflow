@@ -351,8 +351,8 @@ class TolaUser(models.Model):
 
 
 COUNTRY_ROLE_CHOICES = (
-    ('user', 'User'),
-    ('basic_admin', 'Basic Admin'),
+    ('user', _('User')),
+    ('basic_admin', _('Basic Admin')),
 )
 
 class CountryAccess(models.Model):
@@ -699,9 +699,9 @@ class Program(models.Model):
 
 
 PROGRAM_ROLE_CHOICES = (
-    ('low', 'Low'),
-    ('medium', 'Medium'),
-    ('high', 'High')
+    ('low', _('Low')),
+    ('medium', _('Medium')),
+    ('high', _('High'))
 )
 
 class ProgramAccess(models.Model):
