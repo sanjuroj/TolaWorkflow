@@ -241,6 +241,7 @@ def get_country_page_context(request):
     ]
 
     return {
+        'is_superuser': request.user.is_superuser,
         'countries': countries,
         'organizations': organizations,
         'programs': programs,

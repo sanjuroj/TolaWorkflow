@@ -24,6 +24,7 @@ export class CountryStore {
         programs: [],
     }
 
+    @observable is_superuser = false
     @observable allCountries = []
     @observable countries = []
     @observable country_count = 0

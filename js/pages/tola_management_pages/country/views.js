@@ -1,6 +1,5 @@
 import React from 'react'
 import { observer } from "mobx-react"
-import Select from 'react-select'
 import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
 import ManagementTable from 'components/management-table'
 import Pagination from 'components/pagination'
@@ -68,7 +67,9 @@ export const IndexView = observer(
             </FoldingSidebar>
             <div className="col list-section">
                 <div className="list-controls">
-                    <button className="btn btn-primary" onClick={() => store.addCountry()}><i className="fa fa-plus-circle"></i>{gettext("Add Country")}</button>
+                    {store.is_superuser && (
+                        <button className="btn btn-primary" onClick={() => store.addCountry()}><i className="fa fa-plus-circle"></i>{gettext("Add Country")}</button>
+                    )}
                 </div>
                 <LoadingSpinner isLoading={store.fetching_main_listing || store.applying_bulk_updates }>
                     <div className="list-table">
