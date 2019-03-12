@@ -163,7 +163,7 @@ class LevelAdmin(admin.ModelAdmin):
 class LevelTier(models.Model):
     name = models.CharField(_("Name"), max_length=135, blank=True)
     program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='level_tiers')
-    tier_depth = models.IntegerField(_("LevelTier Depth"), blank=True, null=True)
+    tier_depth = models.IntegerField(_("Level Tier depth"), blank=True, null=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
