@@ -161,6 +161,14 @@ class LevelAdmin(admin.ModelAdmin):
 
 
 class LevelTier(models.Model):
+
+    PRESETS = {
+        'Mercy Corps standard': (_('Goal'), _('Outcome'), _('Output'), _('Activity')),
+        'European Commission (EC)': (_('Overall Objective'), _('Specific Objective'), _('Purpose'), _('Result'), _('Activity')),
+        'USAID 1': (_('Goal'), _('Purpose'), _('Sub-Purpose'), _('Output'), _('Input')),
+        'USAID 2': (_('Strategic Objective'), _('Intermediate Result'), _('Sub-Intermediate Result'), _('Output'), _('Input')),
+        'USAID FFP': (_('Goal'), _('Purpose'), _('Sub-Purpose'), _('Intermediate Outcome'), _('Output')),
+    }
     name = models.CharField(_("Name"), max_length=135, blank=True)
     program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='level_tiers')
     tier_depth = models.IntegerField(_("Level Tier depth"), blank=True, null=True)

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load i18n mathfilters mytags static %}
+{% load render_bundle from webpack_loader %}
+{% block title %}{{ program.name }} | {% endblock %}
+{% block page_title %}{{ program.name }}{% endblock %}
+{% block header_extras %}
+    {% program_complete %}
+{% endblock %}
+
+{% block content %}
+
+<div class="program-page__main">
+    <div class="program-page__sidebar">
+        <section class="sidebar__detail">
+            <h3>{% trans "Program details" %}</h3>
+            <p><a href="{% url 'indicator_plan' program.id %}">{% trans "Indicator plan" %}</a></p>
+            {% if program.gait_url %}
+                {% comment %}Translators: GAIT is the Grant and Award Information Tracker system used by MercyCorps {% endcomment %}
+                <p><a href="{{ program.gait_url }}">{% trans "View program in GAIT" %}</a></p>
+            {% endif %}
+        </section>
+        <section class="sidebar__detail">
+            <h3>{% trans "Sites" %}</h3>
+            {% if site_count > 0 %}
+                <p><a href="{% url 'siteprofile_list' program.id 0 %}">{% trans "View program sites" %}</a></p>
+            {% else %}
+                <p class="text-muted">{% trans "There are no program sites." %}</p>
+            {% endif %}
+            <a href="{% url 'siteprofile_add' %}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add site" %}</a>
+        </section>
+        <section class="sidebar__detail">
+            <h3>{% trans "Pinned reports" %}</h3>
+            {% if program.has_started %}
+                <ul class="pinned-reports">
+                    {% for pr in pinned_reports %}
+                        <li class="pinned-report">
+                            <a href="{% url 'iptt_report' pr.program_id pr.report_type %}?{{ pr.query_string }}" class="pinned-report__link">
+                                <h4>{% trans "IPTT:" %} {{ pr.name }}</h4>
+                               {{ pr.date_range_str }}
+                            </a>
+                            {% if pr.id %}
+                            <a href="#"
+                               class="pinned-report__remove text-danger"
+                               data-delete-pinned-report="{{ pr.id }}">
+                                <i class="fa fa-times"></i>
+                            </a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+                <a href="{% url 'iptt_quickstart' %}?program_id={{ program.id }}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Create an IPTT report" %}</a>
+            {% else %}
+                <p class="text-muted">{% trans "Reports will be available after the program start date." %}</p>
+            {% endif %}
+        </section>
+    </div>
+
+    <div id="indicator-list-react-component" class="indicators-list program-page__indicators"></div>
+</div>
+
+
+{% endblock content %}
+
+
+{% block extra_js_in_body %}
+    <script>
+        let jsContext = {{ js_context|js }};
+    </script>
+
+    {% render_bundle 'program_page' %}
+{% endblock %}
