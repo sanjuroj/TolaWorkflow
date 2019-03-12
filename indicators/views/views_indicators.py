@@ -16,6 +16,8 @@ from django.db import connection
 from django.db.models import (
     Count, Min, Q, Sum, Avg, Max
 )
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, render_to_response, get_object_or_404, redirect, reverse
 from django.template.loader import render_to_string
@@ -158,6 +160,7 @@ def import_indicator(service=1):
     return response.json()
 
 
+@login_required
 @has_indicator_write_access
 def indicator_create(request, program=0):
     """
@@ -236,7 +239,7 @@ def indicator_create(request, program=0):
                    'result_count': 0})
 
 
-class IndicatorCreate(CreateView):
+class IndicatorCreate(LoginRequiredMixin, CreateView):
     """
     Indicator Form not using a template or service indicator first as well as
     the post reciever for creating an indicator.
@@ -294,7 +297,7 @@ class IndicatorCreate(CreateView):
 
 
 @method_decorator(periodic_target_adapter(has_indicator_write_access), name='dispatch')
-class PeriodicTargetView(View):
+class PeriodicTargetView(LoginRequiredMixin, View):
     """
     This view generates periodic targets or deleting them (via POST)
     """
@@ -394,7 +397,7 @@ def reset_indicator_target_frequency(ind):
     return False
 
 
-class IndicatorUpdate(UpdateView):
+class IndicatorUpdate(LoginRequiredMixin, UpdateView):
     """
     Update and Edit Indicators.
     """
@@ -669,7 +672,7 @@ class IndicatorUpdate(UpdateView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
-class IndicatorDelete(DeleteView):
+class IndicatorDelete(LoginRequiredMixin, DeleteView):
     model = Indicator
     form_class = IndicatorForm
 
@@ -711,7 +714,7 @@ class IndicatorDelete(DeleteView):
 
 
 @method_decorator(periodic_target_adapter(has_indicator_write_access), name='dispatch')
-class PeriodicTargetDeleteView(DeleteView):
+class PeriodicTargetDeleteView(LoginRequiredMixin, DeleteView):
     model = PeriodicTarget
 
     def delete(self, request, *args, **kwargs):
@@ -751,7 +754,7 @@ class ResultFormMixin(object):
         return self.render_to_response(self.get_context_data(form=form))
 
 
-class ResultCreate(ResultFormMixin, CreateView):
+class ResultCreate(LoginRequiredMixin, ResultFormMixin, CreateView):
     """Create new Result called by result_add as modal"""
     model = Result
     form_class = ResultForm
@@ -840,7 +843,7 @@ class ResultCreate(ResultFormMixin, CreateView):
         return HttpResponseRedirect(redirect_url)
 
 
-class ResultUpdate(ResultFormMixin, UpdateView):
+class ResultUpdate(LoginRequiredMixin, ResultFormMixin, UpdateView):
     """Update Result view called by result_update as modal"""
     model = Result
     form_class = ResultForm
@@ -932,7 +935,7 @@ class ResultUpdate(ResultFormMixin, UpdateView):
         return HttpResponseRedirect(redirect_url)
 
 
-class ResultDelete(DeleteView):
+class ResultDelete(LoginRequiredMixin, DeleteView):
     model = Result
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
@@ -1002,6 +1005,7 @@ def merge_two_dicts(x, y):
     return z
 
 
+@login_required
 def service_json(request, service):
     """
     For populating service indicators in dropdown
@@ -1015,6 +1019,7 @@ def service_json(request, service):
     return JsonResponse(service_indicators, safe=False)
 
 
+@login_required
 @has_result_read_access
 def result_view(request, indicator, program):
     """Returns the results table for an indicator - used to expand rows on the Program Page"""
@@ -1044,6 +1049,7 @@ def result_view(request, indicator, program):
     )
 
 
+@login_required
 def program_indicators_json(request, program, indicator, type):
     template_name = 'indicators/program_indicators_table.html'
 
@@ -1072,6 +1078,7 @@ def program_indicators_json(request, program, indicator, type):
     )
 
 
+@login_required
 def indicator_report(request, program=0, indicator=0, type=0):
     countries = request.user.tola_user.countries.all()
     getPrograms = Program.objects.filter(funding_status="Funded",
@@ -1115,7 +1122,7 @@ def indicator_report(request, program=0, indicator=0, type=0):
         'data': data})
 
 
-class IndicatorReport(View, AjaxableResponseMixin):
+class IndicatorReport(LoginRequiredMixin, View, AjaxableResponseMixin):
     def get(self, request, *args, **kwargs):
         countries = getCountry(request.user)
         program = int(self.kwargs['program'])
@@ -1161,6 +1168,7 @@ class IndicatorReport(View, AjaxableResponseMixin):
         return JsonResponse(get_indicators, safe=False)
 
 
+@login_required
 def indicator_plan(request, program_id):
     """
     This is the GRID report or indicator plan for a program.
@@ -1178,7 +1186,7 @@ def indicator_plan(request, program_id):
     })
 
 
-class IndicatorReportData(View, AjaxableResponseMixin):
+class IndicatorReportData(LoginRequiredMixin, View, AjaxableResponseMixin):
     """
     This is the Indicator Visual report data, returns a json object of
     report data to be displayed in the table report
@@ -1246,7 +1254,7 @@ class IndicatorReportData(View, AjaxableResponseMixin):
         return JsonResponse(final_dict, safe=False)
 
 
-class ResultReportData(View, AjaxableResponseMixin):
+class ResultReportData(LoginRequiredMixin, View, AjaxableResponseMixin):
     """
     This is the Result reports data in JSON format for a specific
     indicator
@@ -1322,6 +1330,7 @@ def dictfetchall(cursor):
     ]
 
 
+@login_required
 def old_program_page(request, program_id, indicator_id, indicator_type_id):
     """ redirect for old /program/<program_id>/<indicator_id>/<indicator_type_id>/ urls to new program page url"""
     program = get_object_or_404(Program, pk=program_id)
@@ -1331,7 +1340,7 @@ def old_program_page(request, program_id, indicator_id, indicator_type_id):
     return redirect(program.program_page_url, permanent=True)
 
 @method_decorator(has_program_read_access, name='dispatch')
-class ProgramPage(ListView):
+class ProgramPage(LoginRequiredMixin, ListView):
     model = Indicator
     template_name = 'indicators/program_page.html'
     metrics = False
@@ -1468,7 +1477,7 @@ class DisaggregationReportMixin(object):
         return context
 
 
-class DisaggregationReport(DisaggregationReportMixin, TemplateView):
+class DisaggregationReport(LoginRequiredMixin, DisaggregationReportMixin, TemplateView):
     template_name = 'indicators/disaggregation_report.html'
 
     def get_context_data(self, **kwargs):
@@ -1477,7 +1486,7 @@ class DisaggregationReport(DisaggregationReportMixin, TemplateView):
         return context
 
 
-class DisaggregationPrint(DisaggregationReportMixin, TemplateView):
+class DisaggregationPrint(LoginRequiredMixin, DisaggregationReportMixin, TemplateView):
     template_name = 'indicators/disaggregation_print.html'
 
     def get(self, request, *args, **kwargs):
@@ -1599,7 +1608,7 @@ class TVAReport(TemplateView):
         return context
 
 
-class IndicatorExport(View):
+class IndicatorExport(LoginRequiredMixin, View):
     """
     Export all indicators to an XLS file
     """
@@ -1613,7 +1622,7 @@ class IndicatorExport(View):
         return response
 
 
-class IndicatorDataExport(View):
+class IndicatorDataExport(LoginRequiredMixin, View):
     """
     Export all indicators to a CSV file
     """
@@ -1642,6 +1651,7 @@ class IndicatorDataExport(View):
         return response
 
 
+@login_required
 def api_indicator_view(request, indicator_id):
     """
     API call for viewing an indicator for the program page

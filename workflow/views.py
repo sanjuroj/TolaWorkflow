@@ -18,6 +18,8 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.http import urlsafe_base64_decode
 from django.core.exceptions import PermissionDenied
 
@@ -98,7 +100,7 @@ def date_handler(obj):
     return obj.isoformat() if hasattr(obj, 'isoformat') else obj
 
 
-class ProjectDash(ListView):
+class ProjectDash(LoginRequiredMixin, ListView):
 
     template_name = 'workflow/projectdashboard_list.html'
 
@@ -141,7 +143,7 @@ class ProjectDash(ListView):
                                                     'getChecklist': getChecklist, 'getDistributionCount': getDistributionCount})
 
 
-class ProgramDash(ListView):
+class ProgramDash(LoginRequiredMixin, ListView):
     """
     Dashboard links for and status for each program with number of projects
     :param request:
@@ -179,7 +181,7 @@ class ProgramDash(ListView):
         return render(request, self.template_name, {'getDashboard': getDashboard, 'getPrograms': getPrograms, 'APPROVALS': APPROVALS, 'program_id':  self.kwargs['pk'], 'status': status, 'filtered_program': filtered_program})
 
 
-class ProjectAgreementList(ListView):
+class ProjectAgreementList(LoginRequiredMixin, ListView):
     """
     Project Agreement
     :param request:
@@ -206,7 +208,7 @@ class ProjectAgreementList(ListView):
             return render(request, self.template_name, {'form': FilterForm(),'getDashboard':getDashboard,'getPrograms':getPrograms,'APPROVALS': APPROVALS})
 
 
-class ProjectAgreementImport(ListView):
+class ProjectAgreementImport(LoginRequiredMixin, ListView):
     """
     Import a project agreement from TolaData or other third party service
     """
@@ -222,7 +224,7 @@ class ProjectAgreementImport(ListView):
         return render(request, self.template_name, {'getPrograms': getPrograms, 'getServices': getServices , 'getCountries': getCountries})
 
 
-class ProjectAgreementCreate(CreateView):
+class ProjectAgreementCreate(LoginRequiredMixin, CreateView):
     """
     Project Agreement Form
     :param request:
@@ -301,7 +303,7 @@ class ProjectAgreementCreate(CreateView):
     form_class = ProjectAgreementCreateForm
 
 
-class ProjectAgreementUpdate(UpdateView):
+class ProjectAgreementUpdate(LoginRequiredMixin, UpdateView):
     """
     Project Initiation Form
     :param request:
@@ -442,7 +444,7 @@ class ProjectAgreementUpdate(UpdateView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
-class ProjectAgreementDetail(DetailView):
+class ProjectAgreementDetail(LoginRequiredMixin, DetailView):
 
     model = ProjectAgreement
     context_object_name = 'agreement'
@@ -487,7 +489,7 @@ class ProjectAgreementDetail(DetailView):
         return context
 
 
-class ProjectAgreementDelete(DeleteView):
+class ProjectAgreementDelete(LoginRequiredMixin, DeleteView):
     """
     Project Agreement Delete
     """
@@ -513,7 +515,7 @@ class ProjectAgreementDelete(DeleteView):
     form_class = ProjectAgreementForm
 
 
-class ProjectCompleteList(ListView):
+class ProjectCompleteList(LoginRequiredMixin, ListView):
     """
     Project Complete
     :param request:
@@ -536,7 +538,7 @@ class ProjectCompleteList(ListView):
             return render(request, self.template_name, {'getProgram': getProgram, 'getDashboard':getDashboard,'getPrograms':getPrograms})
 
 
-class ProjectCompleteCreate(CreateView):
+class ProjectCompleteCreate(LoginRequiredMixin, CreateView):
     """
     Project Complete Form
     """
@@ -637,7 +639,7 @@ class ProjectCompleteCreate(CreateView):
     form_class = ProjectCompleteCreateForm
 
 
-class ProjectCompleteUpdate(UpdateView):
+class ProjectCompleteUpdate(LoginRequiredMixin, UpdateView):
     """
     Project Tracking Form
     """
@@ -747,7 +749,7 @@ class ProjectCompleteUpdate(UpdateView):
     form_class = ProjectCompleteForm
 
 
-class ProjectCompleteDetail(DetailView):
+class ProjectCompleteDetail(LoginRequiredMixin, DetailView):
 
     model = ProjectComplete
     context_object_name = 'complete'
@@ -784,7 +786,7 @@ class ProjectCompleteDetail(DetailView):
         return context
 
 
-class ProjectCompleteDelete(DeleteView):
+class ProjectCompleteDelete(LoginRequiredMixin, DeleteView):
     """
     Project Complete Delete
     """
@@ -810,7 +812,7 @@ class ProjectCompleteDelete(DeleteView):
     form_class = ProjectCompleteForm
 
 
-class ProjectCompleteImport(ListView):
+class ProjectCompleteImport(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ProjectCompleteImport, self).get_context_data(**kwargs)
@@ -820,6 +822,7 @@ class ProjectCompleteImport(ListView):
     template_name = 'workflow/projectcomplete_import.html'
 
 
+@login_required
 def documentation_list(request):
     user_countries = request.user.tola_user.countries.all()
 
@@ -839,7 +842,7 @@ def documentation_list(request):
     })
 
 
-class DocumentationAgreementList(AjaxableResponseMixin, CreateView):
+class DocumentationAgreementList(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     """
        Documentation Modal List
     """
@@ -857,7 +860,7 @@ class DocumentationAgreementList(AjaxableResponseMixin, CreateView):
         return render(request, self.template_name, {'getPrograms': getPrograms, 'getDocumentation': getDocumentation})
 
 
-class DocumentationAgreementCreate(AjaxableResponseMixin, CreateView):
+class DocumentationAgreementCreate(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     """
     Documentation Form
     """
@@ -911,7 +914,7 @@ class DocumentationAgreementCreate(AjaxableResponseMixin, CreateView):
     form_class = DocumentationForm
 
 
-class DocumentationAgreementUpdate(AjaxableResponseMixin, UpdateView):
+class DocumentationAgreementUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     """
     Documentation Form
     """
@@ -956,7 +959,7 @@ class DocumentationAgreementUpdate(AjaxableResponseMixin, UpdateView):
     form_class = DocumentationForm
 
 
-class DocumentationAgreementDelete(AjaxableResponseMixin, DeleteView):
+class DocumentationAgreementDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     """
     Documentation Delete popup window
     """
@@ -985,7 +988,7 @@ class DocumentationAgreementDelete(AjaxableResponseMixin, DeleteView):
     form_class = DocumentationForm
 
 
-class DocumentationCreate(CreateView):
+class DocumentationCreate(LoginRequiredMixin, CreateView):
     """
     Documentation Form
     """
@@ -1028,7 +1031,7 @@ class DocumentationCreate(CreateView):
     form_class = DocumentationForm
 
 
-class DocumentationUpdate(UpdateView):
+class DocumentationUpdate(LoginRequiredMixin, UpdateView):
     """
     Documentation Form
     """
@@ -1065,7 +1068,7 @@ class DocumentationUpdate(UpdateView):
     form_class = DocumentationForm
 
 
-class DocumentationDelete(DeleteView):
+class DocumentationDelete(LoginRequiredMixin, DeleteView):
     """
     Documentation Form
     """
@@ -1087,7 +1090,7 @@ class DocumentationDelete(DeleteView):
 
     form_class = DocumentationForm
 
-class IndicatorDataBySite(ListView):
+class IndicatorDataBySite(LoginRequiredMixin, ListView):
     template_name = 'workflow/site_indicatordata.html'
     context_object_name = 'results'
 
@@ -1101,7 +1104,7 @@ class IndicatorDataBySite(ListView):
         return q
 
 
-class ProjectCompleteBySite(ListView):
+class ProjectCompleteBySite(LoginRequiredMixin, ListView):
     template_name = 'workflow/site_projectcomplete.html'
     context_object_name = 'projects'
 
@@ -1115,7 +1118,7 @@ class ProjectCompleteBySite(ListView):
         return q
 
 
-class SiteProfileList(ListView):
+class SiteProfileList(LoginRequiredMixin, ListView):
     """
     SiteProfile list creates a map and list of sites by user country access and filters
     by either direct link from project or by program dropdown filter
@@ -1202,7 +1205,7 @@ class SiteProfileList(ListView):
 
 
 @method_decorator(has_site_read_access, name='dispatch')
-class SiteProfileReport(ListView):
+class SiteProfileReport(LoginRequiredMixin, ListView):
     """
     SiteProfile Report filtered by project
     """
@@ -1226,7 +1229,7 @@ class SiteProfileReport(ListView):
 
 
 @method_decorator(has_site_create_access, name='dispatch')
-class SiteProfileCreate(CreateView):
+class SiteProfileCreate(LoginRequiredMixin, CreateView):
     """
     Using SiteProfile Form, create a new site profile
     """
@@ -1276,7 +1279,7 @@ class SiteProfileCreate(CreateView):
 
 
 @method_decorator(has_site_write_access, name='dispatch')
-class SiteProfileUpdate(UpdateView):
+class SiteProfileUpdate(LoginRequiredMixin, UpdateView):
     """
     SiteProfile Form Update an existing site profile
     """
@@ -1316,7 +1319,7 @@ class SiteProfileUpdate(UpdateView):
 
 
 @method_decorator(has_site_delete_access, name='dispatch')
-class SiteProfileDelete(DeleteView):
+class SiteProfileDelete(LoginRequiredMixin, DeleteView):
     """
     SiteProfile Form Delete an existing community
     """
@@ -1342,7 +1345,7 @@ class SiteProfileDelete(DeleteView):
     form_class = SiteProfileForm
 
 
-class MonitorList(ListView):
+class MonitorList(LoginRequiredMixin, ListView):
     """
     Monitoring Data
     """
@@ -1366,7 +1369,7 @@ class MonitorList(ListView):
         return render(request, self.template_name, {'getMonitorData': getMonitorData, 'getBenchmarkData': getBenchmarkData,'project_agreement_id': project_agreement_id})
 
 
-class MonitorCreate(AjaxableResponseMixin,CreateView):
+class MonitorCreate(LoginRequiredMixin, AjaxableResponseMixin,CreateView):
     """
     Monitor Form
     """
@@ -1401,7 +1404,7 @@ class MonitorCreate(AjaxableResponseMixin,CreateView):
     form_class = MonitorForm
 
 
-class MonitorUpdate(AjaxableResponseMixin, UpdateView):
+class MonitorUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     """
     Monitor Form
     """
@@ -1425,7 +1428,7 @@ class MonitorUpdate(AjaxableResponseMixin, UpdateView):
     form_class = MonitorForm
 
 
-class MonitorDelete(AjaxableResponseMixin, DeleteView):
+class MonitorDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     """
     Monitor Form
     """
@@ -1451,7 +1454,7 @@ class MonitorDelete(AjaxableResponseMixin, DeleteView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
-class BenchmarkCreate(AjaxableResponseMixin, CreateView):
+class BenchmarkCreate(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     """
     Benchmark Form
     """
@@ -1507,7 +1510,7 @@ class BenchmarkCreate(AjaxableResponseMixin, CreateView):
     form_class = BenchmarkForm
 
 
-class BenchmarkUpdate(AjaxableResponseMixin, UpdateView):
+class BenchmarkUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     """
     Benchmark Form
     """
@@ -1545,7 +1548,7 @@ class BenchmarkUpdate(AjaxableResponseMixin, UpdateView):
     form_class = BenchmarkForm
 
 
-class BenchmarkDelete(AjaxableResponseMixin, DeleteView):
+class BenchmarkDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     """
     Benchmark Form
     """
@@ -1573,7 +1576,7 @@ class BenchmarkDelete(AjaxableResponseMixin, DeleteView):
     form_class = BenchmarkForm
 
 
-class ContactList(ListView):
+class ContactList(LoginRequiredMixin, ListView):
     model = Contact
     template_name = 'workflow/contact_list.html'
 
@@ -1599,7 +1602,7 @@ class ContactList(ListView):
         return render(request, self.template_name, {'getContacts': getContacts, 'getStakeholder': getStakeholder})
 
 
-class ContactCreate(CreateView):
+class ContactCreate(LoginRequiredMixin, CreateView):
     """
     Contact Form
     """
@@ -1645,7 +1648,7 @@ class ContactCreate(CreateView):
     form_class = ContactForm
 
 
-class ContactUpdate(UpdateView):
+class ContactUpdate(LoginRequiredMixin, UpdateView):
     """
     Contact Form
     """
@@ -1678,7 +1681,7 @@ class ContactUpdate(UpdateView):
     form_class = ContactForm
 
 
-class ContactDelete(DeleteView):
+class ContactDelete(LoginRequiredMixin, DeleteView):
     """
     Benchmark Form
     """
@@ -1710,7 +1713,7 @@ class ContactDelete(DeleteView):
     form_class = ContactForm
 
 
-class StakeholderList(ListView):
+class StakeholderList(LoginRequiredMixin, ListView):
     """
     getStakeholders
     """
@@ -1743,7 +1746,7 @@ class StakeholderList(ListView):
         return render(request, self.template_name, {'getStakeholders': getStakeholders, 'project_agreement_id': project_agreement_id,'program_id':program_id, 'getPrograms': getPrograms})
 
 
-class StakeholderCreate(CreateView):
+class StakeholderCreate(LoginRequiredMixin, CreateView):
     """
     Stakeholder Form
     """
@@ -1795,7 +1798,7 @@ class StakeholderCreate(CreateView):
     form_class = StakeholderForm
 
 
-class StakeholderUpdate(UpdateView):
+class StakeholderUpdate(LoginRequiredMixin, UpdateView):
     """
     Stakeholder Form
     """
@@ -1833,7 +1836,7 @@ class StakeholderUpdate(UpdateView):
     form_class = StakeholderForm
 
 
-class StakeholderDelete(DeleteView):
+class StakeholderDelete(LoginRequiredMixin, DeleteView):
     """
     Benchmark Form
     """
@@ -1861,7 +1864,7 @@ class StakeholderDelete(DeleteView):
     form_class = StakeholderForm
 
 
-class QuantitativeOutputsCreate(AjaxableResponseMixin, CreateView):
+class QuantitativeOutputsCreate(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     """
     QuantitativeOutput Form
     """
@@ -1925,7 +1928,7 @@ class QuantitativeOutputsCreate(AjaxableResponseMixin, CreateView):
     form_class = QuantitativeOutputsForm
 
 
-class QuantitativeOutputsUpdate(AjaxableResponseMixin, UpdateView):
+class QuantitativeOutputsUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     """
     QuantitativeOutput Form
     """
@@ -1977,7 +1980,7 @@ class QuantitativeOutputsUpdate(AjaxableResponseMixin, UpdateView):
     form_class = QuantitativeOutputsForm
 
 
-class QuantitativeOutputsDelete(AjaxableResponseMixin, DeleteView):
+class QuantitativeOutputsDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     """
     QuantitativeOutput Delete
     """
@@ -2007,7 +2010,7 @@ class QuantitativeOutputsDelete(AjaxableResponseMixin, DeleteView):
     form_class = QuantitativeOutputsForm
 
 
-class BudgetList(ListView):
+class BudgetList(LoginRequiredMixin, ListView):
     """
     Budget List
     """
@@ -2026,7 +2029,7 @@ class BudgetList(ListView):
         return render(request, self.template_name, {'getBudget': getBudget, 'project_agreement_id': project_agreement_id})
 
 
-class BudgetCreate(AjaxableResponseMixin, CreateView):
+class BudgetCreate(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     """
     Budget Form
     """
@@ -2074,7 +2077,7 @@ class BudgetCreate(AjaxableResponseMixin, CreateView):
     form_class = BudgetForm
 
 
-class BudgetUpdate(AjaxableResponseMixin, UpdateView):
+class BudgetUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     """
     Budget Form
     """
@@ -2112,7 +2115,7 @@ class BudgetUpdate(AjaxableResponseMixin, UpdateView):
     form_class = BudgetForm
 
 
-class BudgetDelete(AjaxableResponseMixin, DeleteView):
+class BudgetDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     """
     Budget Delete
     """
@@ -2144,7 +2147,7 @@ class BudgetDelete(AjaxableResponseMixin, DeleteView):
     form_class = BudgetForm
 
 
-class ChecklistItemList(ListView):
+class ChecklistItemList(LoginRequiredMixin, ListView):
     """
     Checklist List
     """
@@ -2163,7 +2166,7 @@ class ChecklistItemList(ListView):
         return render(request, self.template_name, {'getChecklist': getChecklist, 'project_agreement_id': self.kwargs['pk']})
 
 
-class ChecklistItemCreate(CreateView):
+class ChecklistItemCreate(LoginRequiredMixin, CreateView):
     """
     Checklist Form
     """
@@ -2217,7 +2220,7 @@ class ChecklistItemCreate(CreateView):
     form_class = ChecklistItemForm
 
 
-class ChecklistItemUpdate(UpdateView):
+class ChecklistItemUpdate(LoginRequiredMixin, UpdateView):
     """
     Checklist Form
     """
@@ -2255,6 +2258,7 @@ class ChecklistItemUpdate(UpdateView):
     form_class = ChecklistItemForm
 
 
+@login_required
 def checklist_update_link(AjaxableResponseMixin,pk,type,value):
     """
     Checklist Update from Link
@@ -2269,7 +2273,7 @@ def checklist_update_link(AjaxableResponseMixin,pk,type,value):
     return HttpResponse(value)
 
 
-class ChecklistItemDelete(DeleteView):
+class ChecklistItemDelete(LoginRequiredMixin, DeleteView):
     """
     Checklist Delete
     """
@@ -2301,7 +2305,7 @@ class ChecklistItemDelete(DeleteView):
     form_class = ChecklistItemForm
 
 
-class Report(View, AjaxableResponseMixin):
+class Report(LoginRequiredMixin, View, AjaxableResponseMixin):
     """
     project agreement list report
     """
@@ -2343,7 +2347,7 @@ class Report(View, AjaxableResponseMixin):
                       'getPrograms': getPrograms})
 
 
-class ReportData(View, AjaxableResponseMixin):
+class ReportData(LoginRequiredMixin, View, AjaxableResponseMixin):
     """
     Render Agreements json object response to the report ajax call
     """
@@ -2372,6 +2376,7 @@ class ReportData(View, AjaxableResponseMixin):
         return JsonResponse(final_dict, safe=False)
 
 
+@login_required
 def country_json(request, country):
     """
     For populating the province dropdown based  country dropdown value
@@ -2382,6 +2387,7 @@ def country_json(request, country):
     return HttpResponse(provinces_json, content_type="application/json")
 
 
+@login_required
 def province_json(request, province):
     """
     For populating the office district based  country province value
@@ -2392,6 +2398,7 @@ def province_json(request, province):
     return HttpResponse(districts_json, content_type="application/json")
 
 
+@login_required
 def district_json(request, district):
     """
     For populating the office dropdown based  country dropdown value
@@ -2402,6 +2409,7 @@ def district_json(request, district):
     return HttpResponse(adminthree_json, content_type="application/json")
 
 
+@login_required
 def export_stakeholders_list(request, **kwargs):
 
     program_id = int(kwargs['program_id'])
@@ -2419,6 +2427,7 @@ def export_stakeholders_list(request, **kwargs):
     return response
 
 
+@login_required
 def save_bookmark(request):
     """
     Create Bookmark from Link
@@ -2433,7 +2442,7 @@ def save_bookmark(request):
 
 
 #Ajax views for single page filtering
-class StakeholderObjects(View, AjaxableResponseMixin):
+class StakeholderObjects(LoginRequiredMixin, View, AjaxableResponseMixin):
     """
     Render Agreements json object response to the report ajax call
     """
@@ -2471,6 +2480,7 @@ class StakeholderObjects(View, AjaxableResponseMixin):
         return JsonResponse(final_dict, safe=False)
 
 
+@login_required
 @has_program_write_access
 def reportingperiod_update(request, pk):
     program = Program.objects.get(pk=pk)
@@ -2544,13 +2554,14 @@ def reportingperiod_update(request, pk):
         status=200 if success else 422)
 
 
+@login_required
 @api_view(['GET'])
 def dated_target_info(request, pk):
     return Response({
         'max_start_date': Program.objects.filter(id=pk).annotate(
             ptd=Max('indicator__periodictargets__start_date')).values_list('ptd', flat=True)[0]})
 
-class OneTimeRegistrationView(FormView):
+class OneTimeRegistrationView(LoginRequiredMixin, FormView):
     """
     View that checks the hash in a password reset link and presents a
     form for entering a new password.
