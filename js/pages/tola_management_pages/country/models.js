@@ -160,7 +160,7 @@ export class CountryStore {
     }
 
     onSaveErrorHandler(message) {
-        PNotify.error({text: message || "Saving Failed", delay: 5000})
+        PNotify.error({text: message || gettext("Saving Failed"), delay: 5000})
     }
 
     onDeleteSuccessHandler() {
