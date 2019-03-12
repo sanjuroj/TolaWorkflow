@@ -3,7 +3,8 @@ import api from './api';
 
 const default_user = {
     id: null,
-    name: "",
+    first_name: "",
+    last_name: "",
     email: "",
     phone_number: "",
     organization_id: null,

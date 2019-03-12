@@ -240,6 +240,7 @@ class TolaUser(models.Model):
         if self.create_date == None:
             self.create_date = timezone.now()
         self.edit_date = timezone.now()
+        self.name = self.user.first_name + u' ' + self.user.last_name
         super(TolaUser, self).save()
 
     # update active country

@@ -35,7 +35,7 @@ from rest_framework.serializers import (
     ValidationError
 )
 from rest_framework.response import Response
-from rest_framework import viewsets, mixins, pagination, status
+from rest_framework import viewsets, mixins, pagination, status, permissions
 
 from django.contrib.auth.models import User,Group
 
@@ -319,7 +319,9 @@ class UserManagementAuditLogSerializer(ModelSerializer):
 
 class UserAdminSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
-    name = CharField(max_length=255, required=True)
+    name = CharField(max_length=255, required=False)
+    first_name = CharField(source="user.first_name", max_length=100, required=True)
+    last_name = CharField(source="user.last_name", max_length=100, required=True)
     organization_id = IntegerField(required=True)
     email = EmailField(source="user.email", max_length=255, required=True)
     user = AuthUserSerializer()
@@ -349,13 +351,14 @@ class UserAdminSerializer(ModelSerializer):
         new_django_user = User(
             username=auth_user_data["email"],
             email=auth_user_data["email"],
-            is_active=auth_user_data["is_active"]
+            is_active=auth_user_data["is_active"],
+            first_name=auth_user_data["first_name"],
+            last_name=auth_user_data["last_name"],
         )
         new_django_user.save()
 
         #create tola user
         new_user = TolaUser(
-            name=validated_data["name"],
             organization_id=validated_data["organization_id"],
             user=new_django_user,
             mode_of_address=validated_data["mode_of_address"],
@@ -377,7 +380,7 @@ class UserAdminSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         if instance.organization_id == 1 and not self.context["request"].user.is_superuser:
-            raise PermissionDenied("Only superusers can edit Mercy Corps staff profiles.")
+            raise PermissionDenied(_("Only superusers can edit Mercy Corps staff profiles."))
 
         user = instance
 
@@ -385,17 +388,18 @@ class UserAdminSerializer(ModelSerializer):
 
         previous_entry = user.logged_fields
 
-        user.name = validated_data["name"]
+        user.user.email = auth_user_data["email"]
+        user.user.is_active = auth_user_data["is_active"]
+        user.user.first_name = auth_user_data["first_name"]
+        user.user.last_name = auth_user_data["last_name"]
+        user.user.save()
+
         user.organization_id = validated_data["organization_id"]
         user.mode_of_address = validated_data["mode_of_address"]
         user.mode_of_contact = validated_data["mode_of_contact"]
         user.title = validated_data["title"]
         user.phone_number = validated_data["phone_number"]
         user.save()
-
-        user.user.email = auth_user_data["email"]
-        user.user.is_active = auth_user_data["is_active"]
-        user.user.save()
 
         UserManagementAuditLog.profile_updated(
             user=user,
@@ -412,6 +416,8 @@ class UserAdminSerializer(ModelSerializer):
             'user',
             'title',
             'name',
+            'first_name',
+            'last_name',
             'organization_id',
             'mode_of_address',
             'mode_of_contact',
@@ -446,7 +452,7 @@ class UserAdminViewSet(viewsets.ModelViewSet):
     queryset = TolaUser.objects.all()
     serializer_class = UserAdminSerializer
     pagination_class = Paginator
-    permissions = [HasUserAdminAccess]
+    permission_classes = [permissions.IsAuthenticated, HasUserAdminAccess]
 
     def get_list_queryset(self):
         req = self.request
@@ -949,7 +955,7 @@ class OrganizationAdminViewSet(viewsets.ModelViewSet):
     serializer_class = OrganizationSerializer
     queryset = Organization.objects.all()
     pagination_class = Paginator
-    permissions = [HasOrganizationAdminAccess]
+    permission_classes = [permissions.IsAuthenticated, HasOrganizationAdminAccess]
 
     def get_listing_queryset(self):
         req = self.request

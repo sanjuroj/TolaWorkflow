@@ -39,11 +39,20 @@ export default class EditUserProfile extends React.Component {
         this.props.onCreateAndAddAnother(this.state.managed_user_data)
     }
 
-    updateFullName(new_full_name) {
+    updateFirstName(new_first_name) {
         this.setState({
             managed_user_data: {
                 ...this.state.managed_user_data,
-                name: new_full_name,
+                first_name: new_first_name,
+            }
+        })
+    }
+
+    updateLastName(new_last_name) {
+        this.setState({
+            managed_user_data: {
+                ...this.state.managed_user_data,
+                last_name: new_last_name,
             }
         })
     }
@@ -116,7 +125,8 @@ export default class EditUserProfile extends React.Component {
         const e = this.props.errors
         const disabled = this.props.disabled
         const error_classes = {
-            name: (e.name)?'is-invalid':'',
+            first_name: (e.first_name)?'is-invalid':'',
+            last_name: (e.last_name)?'is-invalid':'',
             email: (e.email)?'is-invalid':'',
             organization: (e.organization_id)?'is-invalid':''
         }
@@ -124,19 +134,35 @@ export default class EditUserProfile extends React.Component {
             <div className="edit-user-profile container">
                 <form className="form">
                     <div className="form-group">
-                        <label htmlFor="user-full-name-input">{gettext("Full name")}<span className="required">*</span></label>
+                        <label htmlFor="user-first-name-input">{gettext("Preferred First Name")}<span className="required">*</span></label>
                         <input
                             disabled={disabled}
-                            className={"form-control "+error_classes.name}
+                            className={"form-control "+error_classes.first_name}
                             type="text"
-                            value={ud.name}
-                            onChange={(e) => this.updateFullName(e.target.value) }
-                            id="user-full-name-input"
+                            value={ud.first_name}
+                            onChange={(e) => this.updateFirstName(e.target.value) }
+                            id="user-first-name-input"
                             required />
                         {e.name &&
                         <div className="invalid-feedback">
                             {e.name}
                         </div>
+                        }
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="user-last-name-input">{gettext("Preferred Last Name")}<span className="required">*</span></label>
+                        <input
+                            disabled={disabled}
+                            className={"form-control "+error_classes.last_name}
+                            type="text"
+                            value={ud.last_name}
+                            onChange={(e) => this.updateLastName(e.target.value) }
+                            id="user-last-name-input"
+                            required />
+                        {e.name &&
+                         <div className="invalid-feedback">
+                             {e.name}
+                         </div>
                         }
                     </div>
                     <div className="form-group">
