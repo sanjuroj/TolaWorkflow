@@ -8,7 +8,6 @@ const default_user = {
     email: "",
     phone_number: "",
     organization_id: null,
-    mode_of_address: "",
     mode_of_contact: "",
     title: "",
     user_programs: 0,

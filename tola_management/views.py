@@ -361,7 +361,6 @@ class UserAdminSerializer(ModelSerializer):
         new_user = TolaUser(
             organization_id=validated_data["organization_id"],
             user=new_django_user,
-            mode_of_address=validated_data["mode_of_address"],
             mode_of_contact=validated_data["mode_of_contact"],
             phone_number=validated_data["phone_number"],
             title=validated_data["title"]
@@ -395,7 +394,6 @@ class UserAdminSerializer(ModelSerializer):
         user.user.save()
 
         user.organization_id = validated_data["organization_id"]
-        user.mode_of_address = validated_data["mode_of_address"]
         user.mode_of_contact = validated_data["mode_of_contact"]
         user.title = validated_data["title"]
         user.phone_number = validated_data["phone_number"]
@@ -419,7 +417,6 @@ class UserAdminSerializer(ModelSerializer):
             'first_name',
             'last_name',
             'organization_id',
-            'mode_of_address',
             'mode_of_contact',
             'phone_number',
             'email'
