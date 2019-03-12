@@ -7,7 +7,6 @@ import django.db.models.deletion
 from django.forms.models import model_to_dict
 
 
-
 def move_old_data(apps, schema_editor):
     Indicator = apps.get_model('indicators', 'Indicator')
     Level = apps.get_model('indicators', 'Level')
@@ -19,12 +18,14 @@ def move_old_data(apps, schema_editor):
         indicator.level = None
         indicator.save()
 
-
+    for level in Level.objects.all():
+        level.delete()
 
 
 def reverse_migration(apps, schema_editor):
     """Allow the reverse migration to happen"""
     pass
+
 
 class Migration(migrations.Migration):
 
