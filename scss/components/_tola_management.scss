@@ -108,7 +108,10 @@
     width: 20vw;
     padding: 10px;
     background-color: #54585a;
-    color: white;
+
+    label {
+        color: white;
+    }
 }
 
 .filter-buttons {
