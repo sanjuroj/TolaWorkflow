@@ -154,15 +154,15 @@ export class CountryStore {
     }
 
     onSaveSuccessHandler() {
-        PNotify.success({text: "Successfully Saved", delay: 5000})
+        PNotify.success({text: gettext("Successfully Saved"), delay: 5000})
     }
 
     onSaveErrorHandler() {
-        PNotify.error({text: "Saving Failed", delay: 5000})
+        PNotify.error({text: gettext("Saving Failed"), delay: 5000})
     }
 
     onDeleteSuccessHandler() {
-        PNotify.success({text: "Successfully Deleted", delay: 5000})
+        PNotify.success({text: gettext("Successfully Deleted"), delay: 5000})
     }
 
     @action

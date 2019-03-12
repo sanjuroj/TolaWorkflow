@@ -50,8 +50,8 @@ export class OrganizationStore {
     }
 
     organization_status_options = [
-        {value: 1, label: 'Active'},
-        {value: 0, label: 'Inactive'}
+        {value: 1, label: gettext('Active')},
+        {value: 0, label: gettext('Inactive')}
     ]
 
     constructor(programs, organizations, sectors, countries, country_filter, program_filter) {
@@ -90,11 +90,11 @@ export class OrganizationStore {
     }
 
     onSaveErrorHandler() {
-        PNotify.error({text: 'Saving Failed', delay: 5000});
+        PNotify.error({text: gettext('Saving Failed'), delay: 5000});
     }
 
     onSaveSuccessHandler() {
-        PNotify.success({text: 'Successfully Saved', delay: 5000})
+        PNotify.success({text: gettext('Successfully Saved'), delay: 5000})
     }
 
     @action
