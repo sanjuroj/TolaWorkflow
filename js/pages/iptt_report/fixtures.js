@@ -36,6 +36,21 @@ export const contextFixture = {
             5: 'Tri-annual period',
             6: 'Quarter'
         },
+        columnHeaders: {
+            lop: 'Life of Program',
+            number: 'No.',
+            indicator: 'Indicator',
+            level: 'Level',
+            uom: 'Unit of measure',
+            change: 'Change',
+            cumulative: 'C / NC',
+            numType: '# / %',
+            baseline: 'Baseline',
+            target: 'Target',
+            actual: 'Actual',
+            met: '% Met'
+        }
+        
     },
     programs: [
         {
@@ -46,19 +61,19 @@ export const contextFixture = {
                 1: [
                     [
                         'Apr 1, 2018',
-                        'Mar 31, 2019'
+                        'Jun 30, 2019'
                     ]
                 ],
                 2: [
                     [
                         'Apr 1, 2018',
-                        'Mar 31, 2019'
+                        'Jun 30, 2019'
                     ]
                 ],
                 3: [
                     [
                         'Apr 1, 2018',
-                        'Mar 31, 2019'
+                        'Jun 30, 2019'
                     ]
                 ],
                 4: [
@@ -69,6 +84,11 @@ export const contextFixture = {
                     [
                         'Oct 1, 2018',
                         'Mar 31, 2019'
+                    ],
+                    [
+                        'Apr 1, 2019',
+                        'Sept 30, 2019',
+                        true
                     ]
                 ],
                 5: [
@@ -82,7 +102,12 @@ export const contextFixture = {
                     ],
                     [
                         'Dec 1, 2018',
-                        'Mar 31, 2018'
+                        'Apr 30, 2018'
+                    ],
+                    [
+                        'May 1, 2018',
+                        'Aug 31, 2018',
+                        true
                     ]
                 ],
                 6: [
@@ -101,6 +126,11 @@ export const contextFixture = {
                     [
                         'Jan 1, 2019',
                         'Mar 31, 2019'
+                    ],
+                    [
+                        'Apr 1, 2019',
+                        'Jun 30, 2019',
+                        true
                     ]
                 ],
                 7: [
@@ -175,6 +205,27 @@ export const contextFixture = {
                         'Mar 31, 2019',
                         'March',
                         '2019'
+                    ],
+                    [
+                        'Apr 1, 2019',
+                        'Apr 30, 2019',
+                        'April',
+                        '2019',
+                        true
+                    ],
+                    [
+                        'May 1, 2019',
+                        'May 31, 2019',
+                        'May',
+                        '2019',
+                        true
+                    ],
+                    [
+                        'Jun 1, 2019',
+                        'Jun 30, 2019',
+                        'June',
+                        '2019',
+                        true
                     ]
                 ]
             }
@@ -321,4 +372,41 @@ export const contextFixture = {
             }
         }
     ]
+};
+
+
+export const reportData = {
+    542: {
+        programId: 542,
+        indicators: [
+            {
+                id: 5145,
+                number: '1.1',
+                name: 'Number of reported incidents of violence',
+                level: 'Outcome',
+                unitOfMeasure: 'Reported Incidents of Violence',
+                directionOfChange: '-',
+                cumulative: 'Non-cumulative',
+                unitType: '#',
+                baseline: '600',
+                lopTarget: '200',
+                lopActual: '1333',
+                lopMet: '666.5%'
+            },
+            {
+                id: 5147,
+                number: '2.1',
+                name: 'Number of individuals receiving emergency relief services showing change in assessed conditions.',
+                level: 'Output',
+                unitOfMeasure: 'Individuals',
+                directionOfChange: '+',
+                cumulative: 'Non-cumulative',
+                unitType: '%',
+                baseline: '0',
+                lopTarget: '20000',
+                lopActual: '11925',
+                lopMet: '59.6%'
+            }
+        ]
+    }
 };

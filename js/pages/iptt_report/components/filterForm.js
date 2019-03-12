@@ -62,7 +62,7 @@ class StartDateSelect extends React.Component {
     }
     @computed get options() {
         if (this.props.rootStore.selectedFrequencyId == 7) {
-            return Object.entries(this.props.rootStore.startPeriodOptions).map(
+            return Object.entries(this.props.rootStore.periodOptions).map(
                 ([optgroupLabel, options], index) => {
                     return <optgroup label={optgroupLabel} key={index}>
                         {options.map(
@@ -72,7 +72,7 @@ class StartDateSelect extends React.Component {
                 }
             );
         } else {
-            return this.props.rootStore.startPeriodOptions.map(
+            return this.props.rootStore.periodOptions.map(
                 (option) => <option value={option.value} key={option.value}>{option.label}</option>
             );
         }
@@ -88,32 +88,86 @@ class StartDateSelect extends React.Component {
     }
 }
 
-@inject('labels', 'filterStore')
+@inject('labels', 'rootStore')
+@observer
+class EndDateSelect extends React.Component {
+    selectEndPeriod = (selected) => {
+        this.props.rootStore.setEndPeriod(selected.target.value);
+    }
+    @computed get options() {
+        if (this.props.rootStore.selectedFrequencyId == 7) {
+            return Object.entries(this.props.rootStore.periodOptions).map(
+                ([optgroupLabel, options], index) => {
+                    return <optgroup label={optgroupLabel} key={index}>
+                        {options.map(
+                            (option) => <option value={option.value} key={option.value}>{option.label}</option>
+                        )}
+                    </optgroup>;
+                }
+            );
+        } else {
+            return this.props.rootStore.periodOptions.map(
+                (option) => <option value={option.value} key={option.value}>{option.label}</option>
+            );
+        }
+    }
+    render() {
+        return <IPTTSelectWrapper label={ this.props.labels.endPeriod }>
+                    <select className="form-control"
+                            value={ this.props.rootStore.endPeriod }
+                            onChange={ this.selectEndPeriod }>
+                        { this.options }
+                    </select>
+                </IPTTSelectWrapper>;
+    }
+}
+
+@inject('labels', 'rootStore')
+@observer
 class TimeFrameRadio extends React.Component {
-    render = () => {
-        return <div class="form-row mb-3">
-                    <div class="col-sm-4">
-                        <div class="form-check form-check-inline pt-1">
-                            <span class="form-check-input">
-                                <input type="radio" checked={ this.props.filterStore.showAllSelected } />
+    checkMostRecent = () => {
+        //default value of 2 in case of clicking "most recent" radio box - default behavior
+        this.props.rootStore.setMostRecent(2);
+    }
+    updateMostRecentCount = (e) => {
+        this.props.rootStore.setMostRecent(e.target.value);
+    }
+    render() {
+        return <div className="form-row mb-3">
+                    <div className="col-sm-4">
+                        <div className="form-check form-check-inline pt-1">
+                            <span className="form-check-input">
+                                <input type="radio"
+                                       checked={ this.props.rootStore.showAll }
+                                       disabled={ !this.props.rootStore.timeframeEnabled }
+                                       onChange={ this.props.rootStore.setShowAll }
+                                       />
                             </span>
-                            <label class="form-check-label">
-                                { this.props.labelStore.showAll }
+                            <label className="form-check-label">
+                                { this.props.labels.showAll }
                             </label>
                         </div>
                     </div>
-                    <div class="col-sm-4 p-0">
-                        <div class="form-check form-check-inline pt-1">
-                            <span class="form-check-input">
-                                <input type="radio" checked={ this.props.filterStore.mostRecentValue !== null } />
+                    <div className="col-sm-4 p-0">
+                        <div className="form-check form-check-inline pt-1">
+                            <span className="form-check-input">
+                                <input type="radio"
+                                       checked={ this.props.rootStore.mostRecent !== null }
+                                       disabled={ !this.props.rootStore.timeframeEnabled }
+                                       onChange={ this.checkMostRecent }
+                                       />
                             </span>
-                            <label class="form-check-label">
-                                { this.props.labelStore.mostRecent}
+                            <label className="form-check-label">
+                                { this.props.labels.mostRecent}
                             </label>
                         </div>
                     </div>
-                    <div class="col-sm-4">
-                        <input type="number" class="form-control" value={ this.props.filterStore.mostRecentValue } />
+                    <div className="col-sm-4">
+                        <input type="number" className="form-control"
+                               value={ this.props.rootStore.mostRecent || ''}
+                               disabled={ !this.props.rootStore.timeframeEnabled }
+                               onChange={ this.updateMostRecentCount }
+                               />
                     </div>
                </div>;
     }
@@ -129,7 +183,9 @@ export class IPTTFilterForm extends React.Component {
                         <h3 className="filter-title text-title-case">{ this.props.labels.filterTitle }</h3>
                         <ProgramSelect />
                         <PeriodSelect />
+                        <TimeFrameRadio />
                         <StartDateSelect />
+                        <EndDateSelect />
                     </div>
                 </nav>;
     }

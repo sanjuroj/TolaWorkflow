@@ -7,12 +7,11 @@ import ReactDOM from 'react-dom';
 import createRouter from 'router5';
 import browserPlugin from 'router5-plugin-browser';
 import { Provider, inject } from 'mobx-react';
-import eventBus from '../../eventbus';
-import { ReportStore, FilterStore, RootStore } from './models';
+import { ReportStore, RootStore } from './models';
 import { IPTTSidebar, IPTTReport } from './components/main';
 
 //testing:
-import { contextFixture } from './fixtures';
+import { contextFixture, reportData } from './fixtures';
 
 
 const labels = contextFixture.labels;
@@ -28,23 +27,10 @@ router.usePlugin(browserPlugin({useHash: false, base: '/indicators/iptt_report'}
 router.subscribe(rootStore.updateRoute);
 router.start();
 
-const routerParamsCleanup = (router) => {
-    let params = router.getState().params;
-    let reload = false;
-    if (params.timeperiods || params.targetperiods) {
-        params.frequency = params.timeperiods || params.targetperiods;
-        delete params['timeperiods'];
-        delete params['targetperiods'];
-        reload = true;
-    }
-    if (params.timeframe)
-    if (reload) {
-        router.navigate(router.getState().name, params, {reload: true});
-    }
-}
-
 rootStore.init(router);
 
+const reportStore = new ReportStore();
+reportStore.addReport(reportData[542]);
 
 class IPTTReportApp extends React.Component {
     render() {
@@ -56,6 +42,7 @@ class IPTTReportApp extends React.Component {
 }
 
 ReactDOM.render(<Provider rootStore={ rootStore }
+                          reportStore={ reportStore }
                           labels={ labels } >
                     <IPTTReportApp />    
                 </Provider>,

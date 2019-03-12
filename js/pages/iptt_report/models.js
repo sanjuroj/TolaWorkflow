@@ -16,13 +16,13 @@ const TVA = 1;
 const TIMEPERIODS = 2;
 
 export class ReportStore {
-    rootStore = null;
-    constructor(contextData) {
-        //this.isTVA = (contextData.report.reportType == 'timeperiods') ? false : true;
+    reports = {};
+    addReport(reportData) {
+        this.reports[reportData.programId] = reportData;
     }
     
-    @computed get reportDates() {
-        return 'Feb 1, 2019 - Mar 31, 2019';
+    getIndicators(programId) {
+        return this.reports[programId].indicators;
     }
 }
 
@@ -33,6 +33,26 @@ class Program {
         this.frequencies = programJSON.frequencies;
         this.periodDateRanges = programJSON.periodDateRanges;
     }
+    
+    periods(frequency) {
+        return frequency in this.periodDateRanges ? this.periodDateRanges[frequency] : false;
+    }
+    
+    periodCount(frequency) {
+        return this.periods(frequency) ? this.periods(frequency).length : 0;
+    }
+    
+    currentPeriod(frequency) {
+        let periods = this.periods(frequency);
+        if (!periods) {
+            return null;
+        } else if (frequency == 7) {
+            return periods.filter((period) => !period[4]).length - 1;
+        } else {
+            return periods.filter((period) => !period[2]).length - 1;
+        }
+    }
+
 }
 
 class ProgramStore  {
@@ -48,96 +68,14 @@ class ProgramStore  {
 
 }
 
-export class FilterStore {
-    @observable showAllSelected = null;
-    @observable mostRecentValue = null;
-    @observable rootStore;
-    programStore = null;
-    _periodLabels = null;
-
-    constructor(contextData, rootStore) {
-        this.programStore = new ProgramStore(contextData.programs);
-        this.rootStore = rootStore;
-        
-    }
-    
-    
-    
-    @computed get selectedProgram() {
-        if (this.rootStore && this.rootStore.programId !== null) {
-            return this.programStore.programs[this.rootStore.programId];
-        }
-        return null;
-    }
-    
-    @computed get selectedProgramOption() {
-        if (this.selectedProgram === null) {
-            return {value: null, label: BLANK_LABEL};
-        }
-        return {value: this.selectedProgram.id, label: this.selectedProgram.name};
-    }
-
-    get periodLabels() {
-        if (this.rootStore.isTVA) {
-            return this._periodLabels.targetperiods;
-        }
-        return this._periodLabels.timeperiods;
-    }
-    
-    
-    @computed get selectedProgramDateRanges() {
-        if (this.selectedProgramId === null || this.selectedFrequencyId === null) {
-            return null;
-        }
-        return this.selectedProgram.periodDateRanges[this.selectedFrequencyId];
-    }
-    
-    get allFrequencyOptions() {
-        return Object.entries(this.periodLabels).map(
-            ([id, label]) => ({value: id, label: label})
-        );
-    }
-    
-    @computed get programFrequencyOptions() {
-        return this.selectedProgram.frequencies.map(
-            frequency => ({value: frequency, label: this.periodLabels[frequency]})
-        );
-    }
-    
-    @computed get selectedFrequencyOption() {
-        if (this.selectedFrequencyId === null) {
-            return {value: null, label: BLANK_LABEL};
-        }
-        return {value: this.selectedFrequencyId, label: this.periodLabels[this.selectedFrequencyId]};
-    }
-    
-    setShowAll(value) {
-        if (value === true) {
-            this.setMostRecent()
-            this.showAllSelected = true;
-        } else if (value === false) {
-            this.showAllSelected = false;
-        } else {
-            this.showAllSelected = !(this.showAllSelected);
-        }
-    }
-    
-    setMostRecent(numRecent) {
-        if (numRecent) {
-            this.setShowAll(false);
-            this.mostRecentValue = numRecent;
-        } else {
-            this.mostRecentValue = null;
-        }
-    }
-}
-
 export class RootStore {
     @observable selectedProgram = null;
     @observable selectedFrequencyId = null;
     @observable startPeriod = '';
-    @observable startPeriodLabel = null;
+    @observable endPeriod = '';
     reportType = null;
+    router = null;
+    currentPeriod = null;
     
     constructor(contextData) {
         this.programStore = new ProgramStore(contextData.programs);
@@ -149,6 +87,7 @@ export class RootStore {
     }
     
     init = (router) => {
+        this.router = router;
         let params = router.getState().params;
         let reload = false;
         this.setProgramId(params.programId);
@@ -181,9 +120,18 @@ export class RootStore {
             delete params['end_period'];
             reload = true;
         }
-        //this.setStartPeriod
+        this.setStartPeriod(params.start);
+        this.setEndPeriod(params.end);
         if (reload) {
             router.navigate(router.getState().name, params, {reload: true});
+        }
+    }
+    
+    updateUrl = (param, newValue) => {
+        let oldParams = this.router.getState().params;
+        if (!oldParams[param] || oldParams[param] != newValue) {
+            let newParams = { ...oldParams, [param]: newValue };
+            this.router.navigate(this.router.getState().name, newParams, {replace: true});
         }
     }
     
@@ -240,9 +188,17 @@ export class RootStore {
         if (id === null) {
             this.selectedFrequencyId = null;
         } else if (this.selectedFrequencyId != id) {
-            console.log("updating frequency ID to", id);
             this.selectedFrequencyId = id;
+            this.updateUrl('frequency', id);
+            //refresh periods to make sure they're in range:
+            this.setStartPeriod(this.startPeriod);
+            this.setEndPeriod(this.endPeriod);
+            this.updateCurrentPeriod();
         }
+    }
+    
+    updateCurrentPeriod() {
+        this.currentPeriod = this.selectedProgram.currentPeriod(this.selectedFrequencyId);
     }
     
     @computed get selectedFrequencyOption() {
@@ -273,38 +229,122 @@ export class RootStore {
     //PERIODS:
     
     setStartPeriod(period) {
-        this.startPeriod = period;
-        this.startPeriodLabel = this.selectedProgram.periodDateRanges[this.selectedFrequencyId][period][0];
+        //use '' for null values as React does badly with null value for select
+        if (this.selectedFrequencyId && this.selectedProgram) {
+            period = period !== null
+                     ? period < this.selectedProgram.periodCount(this.selectedFrequencyId)
+                        ? period
+                        : 0
+                    : '';
+            this.startPeriod = period;
+            this.updateUrl('start', this.startPeriod);
+        }
     }
     
-    @computed get startPeriodOptions() {
+    setEndPeriod(period) {
+        if (this.selectedFrequencyId && this.selectedProgram) {
+            period = period !== null
+                     ? period < this.selectedProgram.periodCount(this.selectedFrequencyId)
+                        ? period
+                        : this.selectedProgram.periodCount(this.selectedFrequencyId) - 1
+                    : '';
+            this.endPeriod = period;
+            this.updateUrl('end', this.endPeriod);
+        }
+    }
+    
+    @computed get startPeriodLabel() {
+        if (this.selectedProgram && this.selectedFrequencyId
+            && this.startPeriod !== null && this.startPeriod !== ''
+            && this.startPeriod <= this.selectedProgram.periodCount(this.selectedFrequencyId)) {
+            return this.selectedProgram.periods(this.selectedFrequencyId)[this.startPeriod][0];
+        }
+        return '';
+    }
+    
+    @computed get endPeriodLabel() {
+        if (this.selectedProgram && this.selectedFrequencyId
+            &&this.endPeriod !== null && this.endPeriod !== ''
+            && this.endPeriod < this.selectedProgram.periodCount(this.selectedFrequencyId)) {
+            return this.selectedProgram.periods(this.selectedFrequencyId)[this.endPeriod][1];
+        }
+        return '';
+    }
+    
+    @computed get selectedPeriods() {
+        if (!this.selectedProgram || !this.selectedFrequencyId || this.selectedFrequencyId === 1
+            || this.startPeriod === null || this.endPeriod === null) {
+            return [];
+        }
+        return this.selectedProgram.periods(this.selectedFrequencyId).slice(this.startPeriod, parseInt(this.endPeriod) + 1);
+    }
+    
+    @computed get periodOptions() {
         if (this.selectedProgram === null || this.selectedFrequencyId === null) {
             return [{value: null, label: BLANK_LABEL}];
         } else if (this.selectedFrequencyId == 7) {
             let years = {};
             this.selectedProgram.periodDateRanges[7].forEach(
-                ( [,, monthLabel, year], index ) => {
+                ( period, index ) => {
+                    let label = this.getPeriodLabel(period, index);
+                    let year = period[3];
                     if (!(year in years)) {
                         years[year] = [];
                     }
-                    years[year].push({value: index, label: monthLabel + " " + year});
+                    years[year].push({value: index, label: label.title});
                 }
             );
             return years;
         }
-        return this.selectedProgram.periodDateRanges[this.selectedFrequencyId].map(
-            (labels, index) => ({value: index, label: this.getPeriodLabel(labels, index)})
+        return this.selectedProgram.periods(this.selectedFrequencyId).map(
+            (labels, index) => {
+                let label = this.getPeriodLabel(labels, index);
+                return {value: index, label: label.title + ' ' + '(' + label.subtitle + ')'};
+            }
         );
     }
     
-    getPeriodLabel([startLabel, endLabel], index) {
-        if (this._periodLabels.names[this.selectedFrequencyId]) {
-            return this._periodLabels.names[this.selectedFrequencyId] + " " + (index + 1) + " (" + startLabel + " - " + endLabel + ")";
+    getPeriodLabel = (period, index) => {
+        if (this.selectedFrequencyId == 7) {
+            let [, , monthLabel, year] = period;
+            return {title: monthLabel + ' ' + year, subtitle: ''};
+        } else {
+            let [startLabel, endLabel] = period;
+            return {title: this._periodLabels.names[this.selectedFrequencyId] + " " + (index + 1),
+                    subtitle: startLabel + ' - ' + endLabel};
         }
     }
     
-    @computed get dateRange() {
-        return this.startPeriodLabel + ' - banana';
+    // SHOW ALL / MOST RECENT OPTIONS:
+    
+    setShowAll = () => {
+        this.setStartPeriod(0);
+        this.setEndPeriod(this.selectedProgram.periodCount(this.selectedFrequencyId) - 1);
+    }
+    
+    setMostRecent = (numrecent) => {
+        numrecent = numrecent || 2;
+        let startPeriod = Math.max(this.currentPeriod - numrecent + 1, 0);
+        this.setEndPeriod(this.currentPeriod);
+        this.setStartPeriod(startPeriod);
+    }
+    
+    @computed get timeframeEnabled() {
+        //showAll and Most Recent don't make sense for non time-aware frequencies:
+        return (this.selectedProgram && ['3', '4', '5', '6', '7'].indexOf(this.selectedFrequencyId) != -1);
+    }
+    
+    @computed get showAll() {
+        return (this.timeframeEnabled && this.startPeriod == 0
+                && this.endPeriod == this.selectedProgram.periodCount(this.selectedFrequencyId) - 1);
+    }
+    
+    @computed get mostRecent() {
+        if (this.timeframeEnabled && !this.showAll && this.currentPeriod !== null
+            && this.endPeriod == this.currentPeriod) {
+            return this.endPeriod - this.startPeriod + 1;
+        }
+        return null;
     }
     
 }
