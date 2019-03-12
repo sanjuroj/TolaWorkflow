@@ -2561,7 +2561,7 @@ def dated_target_info(request, pk):
         'max_start_date': Program.objects.filter(id=pk).annotate(
             ptd=Max('indicator__periodictargets__start_date')).values_list('ptd', flat=True)[0]})
 
-class OneTimeRegistrationView(LoginRequiredMixin, FormView):
+class OneTimeRegistrationView(FormView):
     """
     View that checks the hash in a password reset link and presents a
     form for entering a new password.
