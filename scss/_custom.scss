@@ -285,6 +285,29 @@ a:hover {
     }
 }
 
+// reset button
+// use with .btn as per usual
+.btn-reset {
+    color: $text-muted;
+    text-transform: uppercase;
+    &:hover {
+        color: darken($text-muted, 20%);
+        background-color: $gray-300;
+    }
+}
+
+// Button row
+// just a row of buttons without the special styling of btn-group
+// adds a little margin between buttons
+.btn-row {
+    .btn {
+        margin-left: $grid-gutter-width/4;
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+}
+
 // icons inside buttons
 .btn, .btn-add {
     .svg-inline--fa {

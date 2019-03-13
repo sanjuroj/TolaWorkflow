@@ -156,13 +156,13 @@ class DisaggregationType extends React.Component {
                                 </a>
                             </div>
                             <div className="disaggregation-form-buttons">
-                                <div>
+                                <div className="form-row btn-row">
                                     {disaggregation.id=='new' ? (
-                                        <button className="btn btn-primary" onClick={(e) => this.save()} type="button">{gettext('Save')}</button>
+                                        <button className="btn btn-primary" onClick={(e) => this.save()} type="button">{gettext('Save Changes')}</button>
                                     ) : (
                                         <button className="btn btn-primary" onClick={(e) => this.save()} type="button">{gettext('Save Changes')}</button>
                                     )}
-                                    <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext('Reset')}</button>
+                                    <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext('Reset')}</button>
                                 </div>
                                 <div className="right-buttons">
                                     {disaggregation.id=='new' && (

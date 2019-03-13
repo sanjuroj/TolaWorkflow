@@ -153,16 +153,16 @@ export default class EditProgramProfile extends React.Component {
                             <ErrorFeedback errorMessages={this.formErrors('funding_status')} />
                     </div>
                     {this.props.new &&
-                    <div className="form-group">
-                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>{gettext("Save")}</button>
+                    <div className="form-group btn-row">
+                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>{gettext("Save Changes")}</button>
                         {/* <button className="btn btn-primary" onClick={(e) => this.saveNewAndAddAnother(e)}>Save And Add Another</button> */}
-                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
+                        <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }
                     {!this.props.new &&
-                    <div className="form-group">
-                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>{gettext("Save")}</button>
-                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
+                    <div className="form-group btn-row">
+                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>{gettext("Save Changes")}</button>
+                        <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }
                 </form>

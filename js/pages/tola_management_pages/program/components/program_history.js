@@ -64,8 +64,10 @@ export class ProgramHistory extends React.Component {
             </div>
             <div className="row">
                 <div className="col">
-                    <button className="btn btn-primary" type="button" onClick={() => this.onSave()}>{gettext("Save Changes")}</button>
-                    <button className="btn btn-outline-primary" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
+                    <div className="form-group btn-row">
+                        <button className="btn btn-primary" type="button" onClick={() => this.onSave()}>{gettext("Save Changes")}</button>
+                        <button className="btn btn-reset" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
+                    </div>
                 </div>
             </div>
             <div className="row">
