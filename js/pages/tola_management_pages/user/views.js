@@ -10,6 +10,7 @@ import EditUserHistory from './components/edit_user_history'
 import Pagination from 'components/pagination'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const selection_placeholder = gettext("None Selected")
 const UserFilter = observer(({store, selections}) => {
@@ -229,7 +230,10 @@ export const IndexView = observer(
                 <div className="list-controls">
                     <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div>
-                        <button className="btn btn-primary" onClick={() => store.createUser()}><i className="fa fa-plus-circle"></i>{gettext("Add User")}</button>
+                        <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.createUser()}>
+                            <FontAwesomeIcon icon={'plus-circle'} />
+                            {gettext("Add User")}
+                        </a>
                     </div>
                 </div>
                 <LoadingSpinner isLoading={store.fetching_users_listing || store.applying_bulk_updates}>
@@ -301,7 +305,7 @@ export const IndexView = observer(
                                         <div className="td--stretch">
                                             <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
                                             <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                                <i className="fa fa-user"></i>
+                                                <FontAwesomeIcon icon={'user'} />
                                             </div>
                                         </div>
                                     </Col>

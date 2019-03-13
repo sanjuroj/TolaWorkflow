@@ -9,6 +9,7 @@ import EditProgramProfile from './components/edit_program_profile'
 import ProgramHistory from './components/program_history'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const UserFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
@@ -200,7 +201,10 @@ export const IndexView = observer(
                 <div className="list-controls">
                     <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div>
-                        <button className="btn btn-primary" onClick={() => store.createProgram()}><i className="fa fa-plus-circle"></i>{gettext("Add Program")}</button>
+                        <a href="#" className="btn btn-link btn-add" tabIndex="0" onClick={() => store.createProgram()}>
+                            <FontAwesomeIcon icon={'plus-circle'} />
+                            {gettext("Add Program")}
+                        </a>
                     </div>
                 </div>
                 <LoadingSpinner isLoading={store.fetching_main_listing || store.applying_bulk_updates }>
@@ -261,12 +265,12 @@ export const IndexView = observer(
 
                                             {data.id == 'new' &&
                                             <div className="icon__disabled">
-                                                <i className="fa fa-cog"></i>
+                                                <FontAwesomeIcon icon={'cog'} />
                                             </div>
                                             }
                                             {data.id != 'new' &&
                                             <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                                <i className="fa fa-cog"></i>
+                                                <FontAwesomeIcon icon={'cog'} />
                                             </div>
                                             }
                                         </div>

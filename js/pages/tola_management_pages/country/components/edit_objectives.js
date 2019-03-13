@@ -200,7 +200,7 @@ export default class EditObjectives extends React.Component {
                     />
                 )}
                 <div>
-                    <a tabIndex="0" onClick={() => this.addObjective()} className="btn-link btn-add">
+                    <a tabIndex="0" onClick={() => this.addObjective()} className="btn btn-link btn-add">
                         <FontAwesomeIcon icon={'plus-circle'} /> {gettext("Add strategic objective")}
                     </a>
                 </div>

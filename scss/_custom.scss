@@ -269,6 +269,11 @@ select.listoption_filters {
     }
 }
 
+// hover effect for <a> tags without href attributes
+a:hover {
+    cursor: pointer;
+}
+
 // "add a thing" buttons
 // Leave off the 'btn' parent class for a non-bold, non-padded version
 .btn-add {
@@ -277,6 +282,15 @@ select.listoption_filters {
     //padding-right: 0.625rem;
     &:hover {
         color: $green-700;
+    }
+}
+
+// icons inside buttons
+.btn, .btn-add {
+    .svg-inline--fa {
+        display: inline-block;
+        margin-left: $grid-gutter-width/4;
+        margin-right: $grid-gutter-width/4;
     }
 }
 
@@ -295,9 +309,6 @@ select.listoption_filters {
     display: block;
     text-indent: -15px;
     margin-left: 15px;
-    .svg-inline--fa {
-        margin-right: 5px;
-    }
 }
 
 // conditional styling to hide modal titles in nonmodal contexts.

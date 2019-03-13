@@ -151,7 +151,7 @@ class DisaggregationType extends React.Component {
                                 </div>
                             )}
                             <div>
-                                <a tabIndex="0" onClick={() => this.appendLabel()} className="btn-link btn-add">
+                                <a tabIndex="0" onClick={() => this.appendLabel()} className="btn btn-link btn-add">
                                     <FontAwesomeIcon icon={'plus-circle'} /> {gettext('Add another option')}
                                 </a>
                             </div>
@@ -235,7 +235,7 @@ export default class EditDisaggregations extends React.Component {
                 )}
                 <div>
                     {!disaggregations.find(d=> d.id=='new') && (
-                        <a tabIndex="0" className="btn-link btn-add" onClick={() => this.addDisaggregation()}>
+                        <a tabIndex="0" className="btn btn-link btn-add" onClick={() => this.addDisaggregation()}>
                             <FontAwesomeIcon icon={'plus-circle'} /> {gettext("Add country disaggregation")}
                         </a>
                     )}

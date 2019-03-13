@@ -75,11 +75,11 @@ body > .container {
 }
 .btn-link {
     font-weight: bold;
+    padding-left: 0;
+    padding-right: 0;
 }
 .btn-toggle {
     // usually used with .btn-link
-    padding-left: 0;
-    padding-right: 0;
 }
 
 .btn-danger.btn-link {

@@ -10,6 +10,7 @@ import EditDisaggregations from './components/edit_disaggregations'
 import EditObjectives from './components/edit_objectives'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const CountryFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
@@ -68,7 +69,12 @@ export const IndexView = observer(
             </FoldingSidebar>
             <div className="col list-section">
                 <div className="list-controls">
-                    <button className="btn btn-primary" onClick={() => store.addCountry()}><i className="fa fa-plus-circle"></i>{gettext("Add Country")}</button>
+                    <div>
+                        <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.addCountry()}>
+                            <FontAwesomeIcon icon={'plus-circle'} />
+                            {gettext("Add Country")}
+                        </a>
+                    </div>
                 </div>
                 <LoadingSpinner isLoading={store.fetching_main_listing || store.applying_bulk_updates }>
                     <div className="list-table">
@@ -136,7 +142,7 @@ export const IndexView = observer(
                                     <Col size="0.2">
                                         <div className="td--stretch">
                                             <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                                <i className="fa fa-globe"></i>
+                                                <FontAwesomeIcon icon={'globe'} />
                                             </div>
                                         </div>
                                     </Col>

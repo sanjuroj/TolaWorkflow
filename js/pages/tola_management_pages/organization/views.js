@@ -12,6 +12,8 @@ import EditOrganizationHistory from './components/edit_organization_history'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 const CountryFilter = observer(({store, selections}) => {
     return <div className="form-group">
         <label htmlFor="countries_permitted_filter">{gettext("Countries")}</label>
@@ -87,7 +89,9 @@ export const IndexView = observer(
             <div className="col list-section">
                 <div className="list-controls">
                     <div>
-                        <button className="btn btn-primary" onClick={() => store.createOrganization()}><i className="fa fa-plus-circle"></i>{gettext("Add Organization")}</button>
+                        <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.createOrganization()}>
+                            <FontAwesomeIcon icon={'plus-circle'} /> {gettext("Add Organization")}
+                        </a>
                     </div>
                 </div>
                 <LoadingSpinner isLoading={store.fetching}>
@@ -142,7 +146,7 @@ export const IndexView = observer(
                                     <Col size="0.15">
                                         <div className="td--stretch">
                                             <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                                <i className="fa fa-users"></i>
+                                                <FontAwesomeIcon icon={'users'} />
                                             </div>
                                         </div>
                                     </Col>
