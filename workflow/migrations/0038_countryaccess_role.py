@@ -4,6 +4,22 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 
+def associate_all_staff_to_countries_and_remove_staff(apps, schema_editor):
+    CountryAccess = apps.get_model('workflow', 'CountryAccess')
+    User = apps.get_model('auth', 'User')
+
+    for auth_user in User.objects.filter(is_staff=True).exclude(tola_user__country__isnull=True):
+        if not auth_user.is_superuser:
+            auth_user.is_staff = False
+            auth_user.save()
+
+        CountryAccess.objects.update_or_create(
+            tolauser=auth_user.tola_user,
+            country=auth_user.tola_user.country,
+            defaults={
+                "role": 'basic_admin',
+            }
+        )
 
 class Migration(migrations.Migration):
 
@@ -17,4 +33,5 @@ class Migration(migrations.Migration):
             name='role',
             field=models.CharField(choices=[('user', 'User'), ('basic_admin', 'Basic Admin')], default='user', max_length=100),
         ),
+        migrations.RunPython(associate_all_staff_to_countries_and_remove_staff, migrations.RunPython.noop),
     ]

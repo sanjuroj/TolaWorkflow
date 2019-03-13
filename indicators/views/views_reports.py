@@ -10,6 +10,8 @@ from django.utils import formats, timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max, Value, IntegerField
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, FormView
@@ -724,7 +726,7 @@ def set_cell_value(cell, value, percent=False):
 
 
 @method_decorator(has_iptt_read_access, name='dispatch')
-class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
+class IPTT_ExcelExport(LoginRequiredMixin, IPTT_Mixin, TemplateView):
     # TODO: should be localize dates in the Excel format
     headers = ['Program ID', 'Indicator ID', 'No.', 'Indicator', 'Level', 'Unit of measure',
                'Change', 'C / NC', '# / %', 'Baseline']
@@ -809,7 +811,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
             ws.cell(row=3, column=col).alignment = alignment
             ws.cell(row=3, column=col).font = headers_font
             if data['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
-                ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col + 2)                
+                ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col + 2)
                 ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col + 2)
 
                 set_cell_value(ws.cell(row=4, column=col), _('Target'))
@@ -858,7 +860,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
             for c, period in enumerate(periods):
                 col = period_column_start + col_offset
                 if context['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
-                    set_cell_value(ws.cell(row=row, column=col), 
+                    set_cell_value(ws.cell(row=row, column=col),
                                    indicator.get(u'{0}_period_target'.format(period['customsort'])))
                     set_cell_value(ws.cell(row=row, column=col+1),
                                            indicator.get(u'{0}_actual'.format(period['customsort'])),
@@ -900,7 +902,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         return response
 
 
-class IPTT_ReportIndicatorsWithVariedStartDate(TemplateView):
+class IPTT_ReportIndicatorsWithVariedStartDate(LoginRequiredMixin, TemplateView):
     template_name = "indicators/iptt_indicators_varied_startdates.html"
 
     def get_context_data(self, **kwargs):
@@ -930,7 +932,7 @@ class IPTT_ReportIndicatorsWithVariedStartDate(TemplateView):
         return self.render_to_response(context)
 
 
-class IPTTReportQuickstartView(FormView):
+class IPTTReportQuickstartView(LoginRequiredMixin, FormView):
     template_name = 'indicators/iptt_quickstart.html'
     form_class = IPTTReportQuickstartForm
     FORM_PREFIX_TIME = 'timeperiods'
@@ -1026,7 +1028,7 @@ class IPTTReportQuickstartView(FormView):
 
 
 @method_decorator(has_iptt_read_access, name='dispatch')
-class IPTT_ReportView(IPTT_Mixin, TemplateView):
+class IPTT_ReportView(LoginRequiredMixin, IPTT_Mixin, TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
@@ -1074,7 +1076,7 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
         return HttpResponseRedirect(redirect_url)
 
 @method_decorator(has_iptt_read_access, name='dispatch')
-class IPTT_CSVExport(IPTT_Mixin, TemplateView):
+class IPTT_CSVExport(LoginRequiredMixin, IPTT_Mixin, TemplateView):
     header_row = ["Program:"]
     subheader_row = ['id', 'number', 'name', 'level_name', 'unit_of_measure', 'unit_of_measure_type',
                      'sector', 'disaggregations', 'baseline', 'baseline_na', 'lop_target', 'target_frequency',
@@ -1129,6 +1131,7 @@ class IPTT_CSVExport(IPTT_Mixin, TemplateView):
         return response
 
 
+@login_required
 @require_POST
 def create_pinned_report(request):
     """
@@ -1145,6 +1148,7 @@ def create_pinned_report(request):
     return HttpResponse()
 
 
+@login_required
 @require_POST
 def delete_pinned_report(request):
     """

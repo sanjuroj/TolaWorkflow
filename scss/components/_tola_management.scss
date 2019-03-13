@@ -1,4 +1,6 @@
-#user-management-index-view {
+#user-management-index-view,
+#program-management-index-view,
+#country-management-index-view {
     .list-controls {
         display: flex;
         justify-content: space-between;
@@ -91,14 +93,49 @@
     }
 }
 
-.icon__clickable {
-    cursor: pointer;
-    color: darkblue;
+.icon {
+    &__clickable {
+        cursor: pointer;
+        color: darkblue;
+    }
+
+    &__disabled {
+        color: grey;
+    }
+}
+
+.filter-section {
+    width: 20vw;
+    padding: 10px;
+    background-color: #54585a;
+
+    label {
+        color: white;
+    }
 }
 
 .filter-buttons {
     display: flex;
     justify-content: space-around;
+}
+
+.folding-sidebar {
+    $trigger_width: 40px;
+    position: relative;
+    margin-right: $trigger_width;
+
+    &__trigger {
+        background-color: #00a49f;
+        color: white;
+        font-size: 2em;
+        display: inline-block;
+        padding: 5px;
+        position: absolute;
+        top: 0;
+        right: -$trigger_width;
+        cursor: pointer;
+        width: $trigger_width;
+    }
 }
 
 .expander {
@@ -213,4 +250,12 @@ table.list-table {
 
 .disaggregation-label-group {
     display: flex;
+}
+
+.disaggregation-form-buttons {
+    display: flex;
+
+    .right-buttons {
+        margin-left: auto;
+    }
 }

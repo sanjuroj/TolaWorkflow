@@ -212,6 +212,8 @@ class TolaUser(models.Model):
 
     @property
     def countries_list(self):
+        if self.organization_id != 1:
+            return Country.objects.none()
         return ', '.join([x.code for x in self.countries.all()])
 
     @property
@@ -238,6 +240,7 @@ class TolaUser(models.Model):
         if self.create_date == None:
             self.create_date = timezone.now()
         self.edit_date = timezone.now()
+        self.name = self.user.first_name + u' ' + self.user.last_name
         super(TolaUser, self).save()
 
     # update active country
@@ -257,6 +260,8 @@ class TolaUser(models.Model):
     def managed_countries(self):
         if self.user.is_superuser:
             return Country.objects.all()
+        elif self.organization_id != 1:
+            return Country.objects.none()
         else:
             return Country.objects.filter(id__in=self.countryaccess_set.filter(role='basic_admin').values('country_id'))
 
@@ -347,8 +352,8 @@ class TolaUser(models.Model):
 
 
 COUNTRY_ROLE_CHOICES = (
-    ('user', 'User'),
-    ('basic_admin', 'Basic Admin'),
+    ('user', _('User')),
+    ('basic_admin', _('Basic Admin')),
 )
 
 class CountryAccess(models.Model):
@@ -359,7 +364,7 @@ class CountryAccess(models.Model):
     def save(self, *args, **kwargs):
         #requirements that country access be given only to mercy corps users (id = 1)
         if self.id is None and self.tolauser.organization_id != 1:
-            raise SuspiciousOperation("Only Mercy Corps users can be given country access")
+            raise SuspiciousOperation(_("Only Mercy Corps users can be given country access"))
         super(CountryAccess, self).save(*args, **kwargs)
 
     class Meta:
@@ -405,12 +410,16 @@ class TolaUserProxy(TolaUser):
         proxy = True
 
 
+class CountryAccessInline(admin.TabularInline):
+    model = CountryAccess
+
 class TolaUserAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'country')
     display = 'Tola User'
     list_filter = ('country', 'user__is_staff',)
     search_fields = ('name','country__country','title')
+    inlines = (CountryAccessInline, )
 
 
 # Form Guidance
@@ -691,9 +700,9 @@ class Program(models.Model):
 
 
 PROGRAM_ROLE_CHOICES = (
-    ('low', 'Low'),
-    ('medium', 'Medium'),
-    ('high', 'High')
+    ('low', _('Low')),
+    ('medium', _('Medium')),
+    ('high', _('High'))
 )
 
 class ProgramAccess(models.Model):

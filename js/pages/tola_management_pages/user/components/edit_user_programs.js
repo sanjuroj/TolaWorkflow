@@ -37,6 +37,12 @@ const flattened_listing = (countries, programs) => countries.flatMap(country =>
                                                     )
 
 const apply_program_filter = (programs, countries, filter_string) => {
+    if(!filter_string) {
+        return {
+            programs,
+            countries
+        }
+    }
     const filtered_programs = Object.entries(programs).filter(([_, program]) => program.name.toLowerCase().includes(filter_string.toLowerCase())).map(([_, p]) => p)
     const filtered_countries = Object.entries(countries).filter(([_, country]) => filtered_programs.some(program => country.programs.has(program.id))).map(([_, c]) => c)
 
@@ -316,7 +322,6 @@ export default class EditUserPrograms extends React.Component {
         }
 
         const is_check_disabled = (data) => {
-            return false
             if(data.type == 'country') {
                 return !this.state.countries[data.id].programs.size > 0
                     || !this.props.store.access.countries[data.id]

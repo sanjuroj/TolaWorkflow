@@ -156,8 +156,10 @@
         <div id="nonfooter" class="{% block mainclasses %}region--main{% endblock %}">
             <div id="id_div_breadcrumb">{% block bread_crumb %}{% endblock %}</div>
             <header class="region-header">
-                <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
-                {% block header_extras %}{% endblock %}
+                {% block region_header %}
+                    <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
+                    {% block header_extras %}{% endblock %}
+                {% endblock %}
             </header>
             <div id="alerts">
                 <!-- Any messages for users -->

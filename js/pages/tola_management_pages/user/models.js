@@ -3,7 +3,8 @@ import api from './api';
 
 const default_user = {
     id: null,
-    name: "",
+    first_name: "",
+    last_name: "",
     email: "",
     phone_number: "",
     organization_id: null,
@@ -164,11 +165,11 @@ export class UserStore {
     }
 
     onSaveErrorHandler(message) {
-        PNotify.error({text: message || 'Saving Failed', delay: 5000});
+        PNotify.error({text: message || gettext('Saving Failed'), delay: 5000});
     }
 
     onSaveSuccessHandler(message) {
-        PNotify.success({text: message || 'Successfully Saved', delay: 5000})
+        PNotify.success({text: message || gettext('Successfully Saved'), delay: 5000})
     }
 
     @action
@@ -340,10 +341,10 @@ export class UserStore {
         api.resendRegistrationEmail(user_id).then(result => {
             runInAction(() => {
                 this.saving_user_profile = false
-                this.onSaveSuccessHandler("Verification email sent")
+                this.onSaveSuccessHandler(gettext("Verification email sent"))
             })
         }).catch(() => {
-            this.onSaveSuccessHandler("Verification email send failed")
+            this.onSaveSuccessHandler(gettext("Verification email send failed"))
         })
     }
 

@@ -19,9 +19,12 @@ from indicators.models import (
 def user_has_basic_or_super_admin(user):
     return (
         user.is_superuser
-        or user.tola_user.countryaccess_set.filter(
-            role='basic_admin'
-        ).count() > 0
+        or (
+            user.tola_user.organization_id == 1
+            and user.tola_user.countryaccess_set.filter(
+                role='basic_admin'
+            ).count() > 0
+        )
     )
 
 #wrap a decorator to unify interface between various read/write operations,

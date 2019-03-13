@@ -1,5 +1,4 @@
 import { observable, computed, action, runInAction } from "mobx";
-import { updateObjective, deleteObjective } from "./api";
 
 
 const new_objective_data = {
@@ -41,6 +40,7 @@ export class CountryStore {
     @observable editing_objectives_data = []
     @observable editing_objectives_errors = {}
     @observable editing_disaggregations_data = []
+    @observable editing_disaggregations_errors = {}
     @observable saving = false
 
     @observable bulk_targets = new Map()
@@ -154,15 +154,15 @@ export class CountryStore {
     }
 
     onSaveSuccessHandler() {
-        PNotify.success({text: "Successfully Saved", delay: 5000})
+        PNotify.success({text: gettext("Successfully Saved"), delay: 5000})
     }
 
     onSaveErrorHandler() {
-        PNotify.error({text: "Saving Failed", delay: 5000})
+        PNotify.error({text: gettext("Saving Failed"), delay: 5000})
     }
 
     onDeleteSuccessHandler() {
-        PNotify.success({text: "Successfully Deleted", delay: 5000})
+        PNotify.success({text: gettext("Successfully Deleted"), delay: 5000})
     }
 
     @action
@@ -281,6 +281,74 @@ export class CountryStore {
 
     @action clearObjectiveEditingErrors() {
         this.editing_objectives_errors = {}
+    }
+
+    @action clearDisaggregationEditingErrors() {
+        this.editing_disaggregations_errors = {}
+    }
+
+    @action addDisaggregation() {
+        const new_disaggregation_data = {
+            id: 'new',
+            disaggregation_type: "",
+            labels: [],
+        }
+        if (this.editing_disaggregations_data.find(disaggregation => disaggregation.id=='new')) {
+            return
+        }
+        this.editing_disaggregations_data = [...this.editing_disaggregations_data, new_disaggregation_data]
+    }
+
+    @action deleteDisaggregation(id) {
+        if (id=='new') {
+            this.editing_disaggregations_data = this.editing_disaggregations_data.filter(disagg=>disagg.id!='new')
+            return
+        }
+        /*
+        this.api.deleteDisaggregation(id).then(response => {
+            runInAction(() => {
+                this.editing_disaggregations_data = this.editing_disaggregations_data.filter(disagg => disagg.id!=id)
+                this.onDeleteSuccessHandler()
+            })
+        }
+        */
+    }
+
+    @action updateDisaggregation(id, data) {
+        this.editing_disaggregations_errors = {}
+        this.api.updateDisaggregation(id, data).then(response => {
+            runInAction(() => {
+                this.onSaveSuccessHandler()
+                let updatedDisaggregation = response.data
+                this.editing_disaggregations_data = this.editing_disaggregations_data.map(disaggregation => {
+                    if (disaggregation.id == updatedDisaggregation.id) {
+                        return updatedDisaggregation
+                    }
+                    return disaggregation
+                })
+            })
+        }).catch((errors) => {
+            this.saving = false
+            this.editing_disaggregations_errors = errors.response.data
+            this.onSaveErrorHandler()
+        })
+    }
+
+    @action createDisaggregation(data) {
+        this.editing_disaggregations_errors = {}
+        this.api.createDisaggregation(data).then(response => {
+            runInAction(() => {
+                this.onSaveSuccessHandler()
+                const newDisaggregation = response.data
+                this.editing_disaggregations_data = [...this.editing_disaggregations_data.filter(disaggregation => disaggregation.id!='new'), newDisaggregation]
+            })
+        }).catch((errors) => {
+            runInAction(() => {
+                this.saving = false
+                this.editing_disaggregations_errors = errors.response.data
+                this.onSaveErrorHandler()
+            })
+        })
     }
 
 }

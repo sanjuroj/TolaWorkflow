@@ -7,7 +7,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse
 from django.utils import timezone
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework import status as httpstatus
 from rest_framework.validators import UniqueValidator
@@ -219,7 +219,7 @@ class ProgramAdminAuditLogSerializer(ModelSerializer):
 class ProgramAdminViewSet(viewsets.ModelViewSet):
     serializer_class = ProgramAdminSerializer
     pagination_class = Paginator
-    permissions = [HasProgramAdminAccess]
+    permission_classes = [permissions.IsAuthenticated, HasProgramAdminAccess]
 
     def get_queryset(self):
         auth_user = self.request.user

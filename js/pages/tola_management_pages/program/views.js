@@ -8,6 +8,7 @@ import ProgramEditor from './components/program_editor'
 import EditProgramProfile from './components/edit_program_profile'
 import ProgramHistory from './components/program_history'
 import LoadingSpinner from 'components/loading-spinner'
+import FoldingSidebar from 'components/folding-sidebar'
 
 const UserFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
@@ -180,20 +181,22 @@ export const IndexView = observer(
             return "---"
         }
 
-        return <div id="user-management-index-view" className="container-fluid row">
-            <div className="col col-sm-3 filter-section">
-                <CountryFilter store={store} filterOptions={countryFilterOptions} />
-                <UserFilter store={store} filterOptions={userFilterOptions} />
-                <OrganizationFilter store={store} filterOptions={organizationFilterOptions} />
-                <SectorFilter store={store} filterOptions={sectorFilterOptions} />
-                <ProgramStatusFilter store={store} />
-                <ProgramFilter store={store} filterOptions={programFilterOptions} />
-                <div className="filter-buttons">
-                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
-                    <button className="btn btn-outline-primary" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
+        return <div id="program-management-index-view" className="row">
+            <FoldingSidebar>
+                <div className="filter-section">
+                    <CountryFilter store={store} filterOptions={countryFilterOptions} />
+                    <UserFilter store={store} filterOptions={userFilterOptions} />
+                    <OrganizationFilter store={store} filterOptions={organizationFilterOptions} />
+                    <SectorFilter store={store} filterOptions={sectorFilterOptions} />
+                    <ProgramStatusFilter store={store} />
+                    <ProgramFilter store={store} filterOptions={programFilterOptions} />
+                    <div className="filter-buttons">
+                        <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
+                        <button className="btn btn-inverse" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
+                    </div>
                 </div>
-            </div>
-            <div className="col col-sm-9 list-section">
+            </FoldingSidebar>
+            <div className="col list-section">
                 <div className="list-controls">
                     <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div>
@@ -254,13 +257,21 @@ export const IndexView = observer(
                                 }>
                                     <Col size="0.5">
                                         <div className="td--stretch">
-                                            <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
+                                            <input type="checkbox" disabled={data.id=='new'} checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
+
+                                            {data.id == 'new' &&
+                                            <div className="icon__disabled">
+                                                <i className="fa fa-cog"></i>
+                                            </div>
+                                            }
+                                            {data.id != 'new' &&
                                             <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
                                                 <i className="fa fa-cog"></i>
                                             </div>
+                                            }
                                         </div>
                                     </Col>
-                                    <Col size="2">{data.name || "---"}</Col>
+                                    <Col size="2">{data.name || "New Program"}</Col>
                                     <Col>
                                         { organizationColumn(data)}
                                     </Col>
