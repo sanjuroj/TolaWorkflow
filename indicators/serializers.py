@@ -25,7 +25,8 @@ class LevelTierSerializer(serializers.ModelSerializer):
         model = LevelTier
         fields = [
             'id',
-            'name'
+            'name',
+            'tier_depth'
         ]
 
 
