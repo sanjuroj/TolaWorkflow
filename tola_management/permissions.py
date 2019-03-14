@@ -234,6 +234,9 @@ class HasOrganizationAdminAccess(permissions.BasePermission):
 
 class HasProgramAdminAccess(permissions.BasePermission):
     def has_permission(self, request, view):
+        if view.action == 'audit_log' or view.action=='export_audit_log':
+            return request.user.tola_user.available_programs.filter(id=view.kwargs["pk"]).exists()
+
         return user_has_basic_or_super_admin(request.user)
 
     def has_object_permission(self, request, view, obj):

@@ -286,10 +286,13 @@ def app_host_page(request, react_app_page):
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
     return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "page_title": page_title+" | "})
 
+@login_required(login_url='/accounts/login/')
 def audit_log_host_page(request, program_id):
     js_context = get_audit_log_page_context(request, program_id)
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
     program = get_object_or_404(Program, pk=program_id)
+    if not request.user.tola_user.available_programs.filter(id=program.id).exists():
+        raise PermissionDenied
     return render(request, 'react_app_base.html', {"bundle_name": "audit_log", "js_context": json_context, "report_wide": True, "page_title": program.name+" Audit Log | "})
 
 
