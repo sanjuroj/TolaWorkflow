@@ -71,7 +71,9 @@ export default class EditProgramProfile extends React.Component {
         const selectedSectors = formdata.sector.map(x=>this.props.sectorOptions.find(y=>y.value==x))
         return (
             <div className="edit-user-profile container">
+                {this.props.new &&
                 <h2>{gettext("Add program: Profile")}</h2>
+                }
                 <form className="form">
                     <div className="form-group">
                         <label htmlFor="program-name-input">{gettext("Program name")}<span className="required">*</span></label>
