@@ -592,6 +592,9 @@ class Program(models.Model):
         """if program has a gait ID, returns url https://gait.mercycorps.org/editgrant.vm?GrantID=####
         otherwise returns false
         """
+        if gaitid is None:
+            return None
+
         try:
             gaitid = int(self.gaitid)
         except ValueError:
