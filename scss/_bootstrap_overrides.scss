@@ -151,6 +151,14 @@ body > .container {
     margin-top: 1rem;
 }
 
+// Overrides for tables
+// For add-ons (not overrides, see components/tables
+.table {
+    tbody + tbody {
+        border-top: none; // no special styling for multiple tbodys
+    }
+}
+
 // Overrides for Indicator tables
 .hiddenRow > td {
     // background: $gray-150;

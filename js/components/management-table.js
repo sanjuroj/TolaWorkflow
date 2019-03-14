@@ -1,8 +1,16 @@
 import { observer } from "mobx-react"
 import React from 'react';
 
-const ColumnComponent = ({className, size, ...props}) => <div className={["mgmt-table__col", className].join(' ')} style={{flexGrow: size}} {...props}>{props.children}</div>
-const InnerRowComponent = (props) => <div className="mgmt-table__row">{props.children}</div>
+// TODO: "size" is no longer used
+const ColumnComponent = ({className, size, ...props}) => <td className={["mgmt-table__col", className].join(' ')}  {...props}>{props.children}</td>
+
+// TODO: this is redundant with ColumnComponent
+const HeaderColumnComponent = ({className, size, ...props}) => <th className={["mgmt-table__col", className].join(' ')}  {...props}>{props.children}</th>
+
+const InnerRowComponent = ({className, ...props}) => <tr className={["mgmt-table__row", className].join(' ')} {...props}>{props.children}</tr>
+
+// TODO: this is redundant with InnerRowComponent
+const HeaderRowCompnent = ({className, ...props}) => <tr className={["mgmt-table__row table-header", className].join(' ')} {...props}>{props.children}</tr>
 
 /***
     A wrapper for the rendering of the given row renderer, it takes and expando
@@ -15,22 +23,21 @@ const InnerRowComponent = (props) => <div className="mgmt-table__row">{props.chi
 const RowComponent = observer(({className, expanded, Expando, ...props}) => {
     if(Expando) {
         const ObservedExpando = observer(Expando)
-        return <div className={["mgmt-table__body", className].join(' ')} {...props} >
+        return <tbody className={["mgmt-table__body", className].join(' ')} {...props} >
             <InnerRowComponent>{props.children}</InnerRowComponent>
             {expanded && <ObservedExpando Wrapper={ExpandoWrapper} />}
-        </div>
+        </tbody>
     } else {
-        return <div className={["mgmt-table__body", className].join(' ')} {...props} >
+        return <tbody className={["mgmt-table__body", className].join(' ')} {...props} >
             <InnerRowComponent>{props.children}</InnerRowComponent>
-        </div>
+        </tbody>
     }
 })
-const ExpandoWrapper = ({className, ...props}) => <div className={["container-fluid", className].join(' ')} {...props}>{props.children}</div>
+const ExpandoWrapper = ({className, ...props}) => <tr className={["", className].join(' ')} {...props}><td colSpan="6">{props.children}</td></tr>
+
 const RowList = observer(({data, Row, keyField, ...props}) => {
     const ObservedRow = observer(Row)
-    return <div className="mgmt-table__rows">
-        {data.map(row_data => <ObservedRow key={row_data[keyField]} data={row_data} Col={ColumnComponent} Row={RowComponent} />)}
-    </div>
+    return data.map(row_data => <ObservedRow key={row_data[keyField]} data={row_data} Col={ColumnComponent} Row={RowComponent} />)
 })
 
 /*
@@ -50,11 +57,11 @@ const RowList = observer(({data, Row, keyField, ...props}) => {
  */
 const ManagementTable = observer(({HeaderRow, className, ...props}) => {
     const ObservedHeaderRow = observer(HeaderRow)
-    return <div className={["mgmt-table", className].join(' ')} >
-        <div className="mgmt-table__head">
-            <ObservedHeaderRow Col={ColumnComponent} Row={InnerRowComponent}/>
-        </div>
+    return <table className={['table bg-white', className].join(' ')} >
+        <thead>
+            <ObservedHeaderRow Col={HeaderColumnComponent} Row={HeaderRowCompnent}/>
+        </thead>
         <RowList {...props} />
-    </div>
+    </table>
 })
 export default ManagementTable
