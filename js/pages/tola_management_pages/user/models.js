@@ -104,7 +104,7 @@ export class UserStore {
 
         this.organization_selections = Object.values(organizations).map(org => ({value: org.id, label: org.name}))
 
-        this.program_selections = Object.values(programs).map(program => ({value: program.id, label: program.name}))
+        this.program_selections = this.createProgramSelections(this.programs)
 
         this.user_selections = this.available_users.map(user => ({value: user.id, label: user.name}))
 
@@ -171,6 +171,10 @@ export class UserStore {
         PNotify.success({text: message || gettext('Successfully Saved'), delay: 5000})
     }
 
+    createProgramSelections(programs) {
+        return Object.values(programs).map(program => ({value: program.id, label: program.name}))
+    }
+
     @action
     fetchUsers() {
         this.fetching_users_listing = true
@@ -221,6 +225,15 @@ export class UserStore {
     @action
     changeCountryFilter(countries) {
         this.filters.countries = countries
+        if(countries.length == 0) {
+            this.program_selections = this.createProgramSelections(this.programs)
+        } else {
+            const candidate_programs = countries.map(selection => selection.value)
+                                                .map(id => this.countries[id])
+                                                .flatMap(country => country.programs)
+            const selected_programs_set = new Set(candidate_programs)
+            this.program_selections = this.createProgramSelections(Array.from(selected_programs_set).map(id => this.programs[id]))
+        }
     }
 
     @action
