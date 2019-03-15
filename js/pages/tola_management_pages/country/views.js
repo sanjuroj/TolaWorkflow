@@ -85,7 +85,7 @@ export const IndexView = observer(
                             HeaderRow={({Col, Row}) =>
                                 <Row>
                                     <Col size=".2"></Col>
-                                    <Col size="2">{gettext("Country")}</Col>
+                                    <Col size="2" class="td--stretch">{gettext("Country")}</Col>
                                     <Col>{gettext("Organizations")}</Col>
                                     <Col>{gettext("Programs")}</Col>
                                     <Col>{gettext("Users")}</Col>
@@ -140,16 +140,37 @@ export const IndexView = observer(
                                     </Wrapper>
                                 }>
                                     <Col size="0.2">
-                                        <div className="td--stretch">
-                                            <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                                <FontAwesomeIcon icon={'globe'} />
-                                            </div>
+                                    </Col>
+                                    <Col size="2" className="td--stretch">
+                                        <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
+                                            <FontAwesomeIcon icon={'globe'} />&nbsp;
+                                            {data.country || "---"}
                                         </div>
                                     </Col>
-                                    <Col size="2">{data.country || "---"}</Col>
-                                    <Col>{data.organizations.length ? <a href={`/tola_management/organization/?countries[]=${data.id}`}>{data.organizations.length} {gettext("Organizations")}</a>: '---'}</Col>
-                                    <Col>{data.programCount ? <a href={`/tola_management/program/?countries[]=${data.id}`}>{data.programCount} {gettext("Programs")}</a> : "---"}</Col>
-                                    <Col>{data.user_count ? <a href={`/tola_management/user/?countries[]=${data.id}`}>{data.user_count} {gettext("Users")}</a> : '---'  }</Col>
+                                    <Col className="text-nowrap">
+                                        { data.organizations.length ?
+                                            <a href={`/tola_management/organization/?countries[]=${data.id}`}>
+                                                <FontAwesomeIcon icon={'building'} />&nbsp;
+                                                {data.organizations.length} {gettext("Organizations")}
+                                            </a>
+                                        : '---'}
+                                    </Col>
+                                    <Col className="text-nowrap">
+                                        { data.programCount ?
+                                            <a href={`/tola_management/program/?countries[]=${data.id}`}>
+                                                <FontAwesomeIcon icon={'cubes'} />&nbsp;
+                                                {data.programCount} {gettext("Programs")}
+                                            </a>
+                                        : "---"}
+                                    </Col>
+                                    <Col className="text-nowrap">
+                                        { data.user_count ?
+                                            <a href={`/tola_management/user/?countries[]=${data.id}`}>
+                                                <FontAwesomeIcon icon={'users'} />&nbsp;
+                                                {data.user_count} {gettext("Users")}
+                                            </a>
+                                        : '---'  }
+                                    </Col>
                                 </Row>
                             }
                         />

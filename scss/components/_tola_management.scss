@@ -84,30 +84,21 @@
     }
 }
 
-.td--stretch {
-    display: flex;
-    justify-content: space-around;
-
-    div {
-        width: 1rem;
-    }
-}
-
 .icon {
     &__clickable {
         cursor: pointer;
-        color: darkblue;
+        color: $blue;
     }
 
     &__disabled {
-        color: grey;
+        opacity: 0.5;
     }
 }
 
 .filter-section {
     width: 20vw;
     padding: 10px;
-    background-color: #54585a;
+    background-color: #54585a; // TODO
 
     label {
         color: white;
@@ -125,7 +116,7 @@
     margin-right: $trigger_width;
 
     &__trigger {
-        background-color: #00a49f;
+        background-color: #00a49f; // TODO
         color: white;
         font-size: 2em;
         display: inline-block;
