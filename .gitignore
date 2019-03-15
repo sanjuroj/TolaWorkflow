@@ -57,4 +57,3 @@ webpack-stats-vagrant.json
 .vagrant
 site.retry
 .eslintrc.yml
-build/
