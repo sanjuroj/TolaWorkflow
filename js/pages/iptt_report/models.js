@@ -3,7 +3,7 @@
  * @module iptt_report/models
  */
 
-import {observable, action, reaction, when, computed} from "mobx";
+import {observable, action, computed} from "mobx";
 
 /**
  * models list:
@@ -15,7 +15,7 @@ const BLANK_LABEL = '---------';
 const TVA = 1;
 const TIMEPERIODS = 2;
 
-class ReportAPI {
+export class ReportAPI {
     constructor(ajaxUrl) {
         this.url = ajaxUrl;
     }
@@ -237,9 +237,9 @@ export class RootStore {
     currentPeriod = null;
     loading = false;
     
-    constructor(contextData) {
+    constructor(contextData, reportAPI) {
         this.programStore = new ProgramStore(this, contextData.programs);
-        this.reportAPI = new ReportAPI('/indicators/iptt_report_data/');
+        this.reportAPI = reportAPI;
         this._periodLabels = {
             [TIMEPERIODS]: contextData.labels.timeperiods,
             [TVA]: contextData.labels.targetperiods,

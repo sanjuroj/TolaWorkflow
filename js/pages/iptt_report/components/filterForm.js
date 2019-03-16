@@ -222,7 +222,7 @@ class TypeSelect extends React.Component {
 
 @inject('labels', 'rootStore')
 @observer
-class SectorSelect extends React.Component {
+class Sector    Select extends React.Component {
     updateSectorFilters = (selected) => {
         this.props.rootStore.sectorFilters = selected;
     }
