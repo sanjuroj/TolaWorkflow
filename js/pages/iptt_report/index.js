@@ -7,15 +7,15 @@ import ReactDOM from 'react-dom';
 import createRouter from 'router5';
 import browserPlugin from 'router5-plugin-browser';
 import { Provider, inject } from 'mobx-react';
-import { ReportStore, RootStore } from './models';
+import { RootStore } from './models';
 import { IPTTSidebar, IPTTReport } from './components/main';
 
 //testing:
 import { contextFixture, reportData } from './fixtures';
 
 
-const labels = contextFixture.labels;
-const rootStore = new RootStore(contextFixture);
+const labels = jsContext.labels;
+const rootStore = new RootStore(jsContext);
 
 const routes = [
     {name: 'iptt', path: '/:programId<\\d+>/:reportType/?frequency&timeperiods&targetperiods&timeframe&numrecenteperiods&start&end&start_period&end_period'}
@@ -29,8 +29,7 @@ router.start();
 
 rootStore.init(router);
 
-const reportStore = new ReportStore();
-reportStore.addReport(reportData[542]);
+
 
 class IPTTReportApp extends React.Component {
     render() {
@@ -42,7 +41,6 @@ class IPTTReportApp extends React.Component {
 }
 
 ReactDOM.render(<Provider rootStore={ rootStore }
-                          reportStore={ reportStore }
                           labels={ labels } >
                     <IPTTReportApp />    
                 </Provider>,

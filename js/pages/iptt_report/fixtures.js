@@ -407,6 +407,6 @@ export const reportData = {
                 lopActual: '11925',
                 lopMet: '59.6%'
             }
-        ]
+        ],
     }
 };
