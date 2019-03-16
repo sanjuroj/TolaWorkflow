@@ -972,7 +972,7 @@ class PeriodicTarget(models.Model):
             Indicator.MONTHLY: 1
         }
         if frequency == Indicator.ANNUAL:
-            next_date_func = lambda x: date(x.year + 1, x.month, x.day)
+            next_date_func = lambda x: date(x.year + 1, x.month, 1)
             name_func = lambda start, count: '{period_name} {count}'.format(
                 period_name=_(cls.ANNUAL_PERIOD), count=count)
         elif frequency in months_per_period:
@@ -980,7 +980,7 @@ class PeriodicTarget(models.Model):
                 x.year if x.month <= 12-months_per_period[frequency] else x.year + 1,
                 x.month + months_per_period[frequency] if x.month <= 12 - months_per_period[frequency] \
                 else x.month + months_per_period[frequency] - 12,
-                x.day)
+                1)
             if frequency == Indicator.MONTHLY:
                 # TODO: strftime() does not work with Django i18n and will not give you localized month names
                 # Could be: name_func = lambda start, count: cls.generate_monthly_period_name(start)
