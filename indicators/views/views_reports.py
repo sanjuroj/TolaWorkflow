@@ -9,12 +9,12 @@ from django.utils import timezone
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max, Value, IntegerField, Count, Prefetch
 from django.views.decorators.http import require_POST
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView, FormView, View
 from django.utils.translation import (
     ugettext,
     ugettext_lazy as _
 )
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from openpyxl import Workbook
@@ -23,7 +23,7 @@ from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.worksheet.cell_range import CellRange
 
 from tola.util import formatFloat
-from tola.l10n_utils import l10n_date_medium, l10n_date_long, l10n_number
+from tola.l10n_utils import l10n_date_medium, l10n_date_long, l10n_number, l10n_monthname
 from workflow.models import Program
 from indicators.models import Indicator, Result, Level, PeriodicTarget, PinnedReport
 from indicators.forms import IPTTReportQuickstartForm, IPTTReportFilterForm, PinnedReportForm
@@ -1206,164 +1206,216 @@ class IPTTQuickstart(LoginRequiredMixin, TemplateView):
         context['js_context'] = self.get_js_context(request)
         return self.render_to_response(context)
 
-
+from silk.profiling.profiler import silk_profile
 
 class IPTTReport(LoginRequiredMixin, TemplateView):
-    template_name = 'indicators/iptt_report.html'
-
-    def get_programs(self, request, frequencies_used, tva=True):
-        programs = []
-        countries = request.user.tola_user.countries.all()
-        indicator_qs = Indicator.objects.select_related('program').filter(
-            program__funding_status="Funded", program__country__in=countries,
-            program__reporting_period_start__isnull=False, program__reporting_period_end__isnull=False
-        ).order_by('program__id', 'target_frequency').values(
-            'program__id', 'program__name', 'target_frequency',
-            'program__reporting_period_start', 'program__reporting_period_end'
-        ).distinct()
-        program = {'id': None}
-        for c, element in enumerate(indicator_qs):
-            if element['program__id'] != program['id']:
-                if c != 0:
-                    if not tva:
-                        program['frequencies'] = frequencies_used
-                    for frequency in program['frequencies']:
-                        program['periods'][frequency] = [{
-                            'label': p['label'],
-                            'name': unicode(p['name']),
-                            'start': p['start'].isoformat(),
-                            'end': p['end'].isoformat(),
-                            'sort_index': p['customsort']
-                        } for p in PeriodicTarget.generate_for_frequency(
-                            frequency
-                        )(program['reporting_period_start'], program['reporting_period_end'])]
-                    program['reporting_period_start_label'] = l10n_date_medium(program['reporting_period_start'])
-                    program['reporting_period_end_label'] = l10n_date_medium(program['reporting_period_end'])
-                    program['reporting_period_start'] = program['reporting_period_start'].isoformat()
-                    program['reporting_period_end'] = program['reporting_period_end'].isoformat()
-                    programs.append(program)
-                program = {
-                    'name': element['program__name'],
-                    'id': element['program__id'],
-                    'tva_url': reverse('iptt_report', kwargs={'program_id': element['program__id'],
-                                                              'reporttype': 'targetperiods'}),
-                    'timeperiods_url': reverse('iptt_report', kwargs={'program_id': element['program__id'],
-                                                                      'reporttype': 'timeperiods'}),
-                    'reporting_period_start': element['program__reporting_period_start'],
-                    'reporting_period_end': element['program__reporting_period_end'],
-                    'frequencies': [],
-                    'periods': {}
-                }
-            if tva and element['target_frequency'] in frequencies_used and \
-                element['target_frequency'] not in program['frequencies']:
-                program['frequencies'].append(element['target_frequency'])
-        return programs
-
-    def get_program(self, request, params):
-        program_qs = Program.objects.get(pk=params['program_id'])
-        program = {
-            'id': program_qs.pk,
-            'name': program_qs.name,
-            'levels': {
-                '23': 'level 23',
-                '41': 'level 41'
+    template_name= 'indicators/iptt_report.html'
+    
+    @silk_profile('labeling')
+    def get_labels(self):
+        # this is not in a loop or comprehension so as to allow translator comments:
+        return {
+            'filterTitle': ugettext('Report options'),
+            'reportTitle': ugettext('Indicator performance tracking table'),
+            'sidebarToggle': ugettext('Show/hide filters'),
+            'pin': ugettext('Pin'),
+            'excel': ugettext('Excel'),
+            'programSelect': ugettext('Program'),
+            'periodSelect': {
+                'tva': ugettext('Target periods'),
+                'timeperiods': ugettext('Time periods')
             },
-            'types': {
-                '14': 'type 14',
-                '33': 'type 33'
+            'showAll': ugettext('Show all'),
+            'mostRecent': ugettext('Most recent'),
+            'startPeriod': ugettext('Start'),
+            'endPeriod': ugettext('End'),
+            'levelSelect': ugettext('Levels'),
+            'typeSelect': ugettext('Types'),
+            'sectorSelect': ugettext('Sectors'),
+            'siteSelect': ugettext('Sites'),
+            'timeperiods': {
+                '3' : ugettext('Years'),
+                '4' : ugettext('Semi-annual periods'),
+                '5' : ugettext('Tri-annual periods'),
+                # Translators: this is the measure of time (3 months)
+                '6' : ugettext('Quarters'),
+                '7' : ugettext('Months')
             },
-            'sectors': {
-                '31': 'sector 31',
-                '44': 'sector 44'
+            'targetperiods': {
+                '2': ugettext('Midline and endline'),
+                '3': ugettext('Annual'),
+                '4': ugettext('Semi-annual'),
+                '5': ugettext('Tri-annual'),
+                # Translators: this is the measure of time (3 months)
+                '6': ugettext('Quarterly'),
+                '7': ugettext('Monthly')
             },
-            'sites': {
-                '21': 'site 21'
+            'periodNames': {
+                '3': ugettext('Year'),
+                '4': ugettext('Semi-annual period'),
+                '5': ugettext('Tri-annual period'),
+                # Translators: this is the measure of time (3 months)
+                '6': ugettext('Quarter')
             },
-            'indicators': {
-                '243': 'indciator 243',
-                '4444': 'indicator 4444',
-                '492': 'indicator 492'
+            'columnHeaders': {
+                'lop': ugettext('Life of Program'),
+                # Translators: this is the abbreviation for number
+                'number': ugettext('No.'),
+                'indicator': ugettext('Indicator'),
+                'level': ugettext('Level'),
+                'uom': ugettext('Unit of measure'),
+                # Translators: the noun form (as in 'type of change')
+                'change': ugettext('Change'),
+                # Translators: C as in Cumulative and NC as in Non Cumulative
+                'cumulative': ugettext('C / NC'),
+                'numType': '# / %',
+                'baseline': ugettext('Baseline'),
+                'target': ugettext('Target'),
+                'actual': ugettext('Actual'),
+                'met': ugettext('% Met')
             }
         }
-        return program
+    @silk_profile('alllll programs')
+    def get_program_filter_data(self, request):
+        programs = []
+        countries = request.user.tola_user.countries.all()
+        programs_qs = Program.objects.filter(
+            funding_status="Funded", country__in=countries,
+            reporting_period_start__isnull=False, reporting_period_end__isnull=False
+        ).order_by('id')
+        frequencies_qs = Indicator.objects.filter(
+            program__in=programs_qs, target_frequency__isnull=False
+        ).order_by('program_id', 'target_frequency').values(
+            'program_id', 'target_frequency'
+        ).distinct()
+        for program in programs_qs:
+            start_formatted = l10n_date_medium(program.reporting_period_start)
+            end_formatted = l10n_date_medium(program.reporting_period_end)
+            programs.append({
+                'id': program.pk,
+                'name': program.name,
+                'frequencies': [f['target_frequency'] for f in frequencies_qs if f['program_id'] == program.pk],
+                'periodDateRanges': {
+                    '1': [[
+                            start_formatted,
+                            end_formatted
+                        ]],
+                    '2': [[
+                            start_formatted,
+                            end_formatted,
+                            ugettext('Midline')
+                        ],
+                        [
+                            start_formatted,
+                            end_formatted,
+                            ugettext('Endline')
+                        ]],
+                    '3': [
+                        [l10n_date_medium(period['start']),
+                         l10n_date_medium(period['end']),
+                         period['start'] > timezone.now().date()]
+                        for period in PeriodicTarget.generate_for_frequency(3)(
+                            program.reporting_period_start,
+                            program.reporting_period_end)],
+                    '4': [
+                        [l10n_date_medium(period['start']),
+                         l10n_date_medium(period['end']),
+                         period['start'] > timezone.now().date()]
+                        for period in PeriodicTarget.generate_for_frequency(4)(
+                            program.reporting_period_start,
+                            program.reporting_period_end)],
+                    '5': [
+                        [l10n_date_medium(period['start']),
+                         l10n_date_medium(period['end']),
+                         period['start'] > timezone.now().date()]
+                        for period in PeriodicTarget.generate_for_frequency(5)(
+                            program.reporting_period_start,
+                            program.reporting_period_end)],
+                    '6': [
+                        [l10n_date_medium(period['start']),
+                         l10n_date_medium(period['end']),
+                         period['start'] > timezone.now().date()]
+                        for period in PeriodicTarget.generate_for_frequency(6)(
+                            program.reporting_period_start,
+                            program.reporting_period_end)],
+                    '7': [
+                        [l10n_date_medium(period['start']),
+                         l10n_date_medium(period['end']),
+                         l10n_monthname(period['start']),
+                         period['start'].year,
+                         period['start'] > timezone.now().date()]
+                        for period in PeriodicTarget.generate_for_frequency(7)(
+                            program.reporting_period_start,
+                            program.reporting_period_end)],
+                }
+            })
+        return programs
 
-    def get_js_context(self, request, params):
-        frequencies = {}
-        tva = False
-        if params['reporttype'] == 'targetperiods':
-            frequencies_used = [freq for freq in Indicator.TARGET_FREQUENCIES if freq[0] != Indicator.EVENT]
-            tva = True
-        elif params['reporttype'] == 'timeperiods':
-            frequencies_used = [freq for freq in Indicator.TARGET_FREQUENCIES
-                                if freq[0] in Indicator.TIME_AWARE_TARGET_FREQUENCIES]
-        else:
-            # shouldn't happen - logging?
-            frequencies_used = []
-        for frequency, label in frequencies_used:
-            frequencies[frequency] = unicode(label)
-        programs = self.get_programs(request, frequencies, tva)
-        program = self.get_program(request, params)
-        return {
-            'reportType': params['reporttype'],
-            'frequency': params['frequency'],
-            'program': program,
-            'labels': {
-                'frequencies': frequencies,
-                'reportTitle': ugettext('Indicator Performance Tracking Table'),
-                'lopLabel': ugettext('Life of program'),
-                'pinButton': ugettext('Pin'),
-                'excelButton': ugettext('Excel'),
-                'filterTitle': ugettext('Report Options'),
-                'tvaPeriodSelect': ugettext('Target Periods'),
-                'timeperiodsPeriodSelect': ugettext('Time periods'),
-                'programSelect': ugettext('Program'),
-                'showAll': ugettext('Show all'),
-                'mostRecent': ugettext('Most recent'),
-                'startPeriodSelect': ugettext('Start'),
-                'endPeriodSelect': ugettext('End'),
-                'levelSelect': ugettext('Levels'),
-                'typeSelect': ugettext('Types'),
-                'sectorSelect': ugettext('Sectors'),
-                'siteSelect': ugettext('Sites'),
-                'selectPlaceholder': ugettext('None selected'),
-                'indicatorSelect': ugettext('Indicators'),
-                'applyButton': ugettext('Apply'),
-                'resetButton': ugettext('Reset')
-            },
-            'programs': programs
-        }
-
-    def get_params(self, request, reporttype, program_id):
-        params = {}
-        params['program_id'] = program_id
-        params['reporttype'] = reporttype if reporttype is not None else 'targetperiods'
-        frequency_params = [p for p in ['frequency', 'timeperiods', 'targetperiods'] if p in request.GET]
-        frequency = None
-        if frequency_params:
-            try:
-                frequency = int(request.GET.get(frequency_params[0]))
-            except ValueError:
-                frequency = None
-        params['frequency'] = frequency if frequency is not None else Indicator.ANNUAL
-        recent_params = [p for p in ['recents', 'numrecentperiods'] if p in request.GET]
-        recent_periods = None
-        if recent_params:
-            try:
-                recent_periods = int(request.GET.get(recent_params[0]))
-            except ValueError:
-                recent_periods = None
-        params['recent_periods'] = recent_periods
-        show_all = None
-        if 'show_all' in request.GET and request.GET.get('show_all') == '1':
-            show_all = True
-        if show_all is None and 'timeframe' in request.GET and request.GET.get('timeframe') == 1:
-            show_all = True
-        params['show_all'] = show_all
-        return params
-
+    @silk_profile('overall get')
     def get(self, request, *args, **kwargs):
-        context = {}
-        params = self.get_params(request, kwargs.get('reporttype'), kwargs.get('program_id'))
-        context['params'] = params
-        context['js_context'] = self.get_js_context(request, params)
-        return self.render_to_response(context)
+        program_id = kwargs.get('program_id')
+        js_context = {
+            'labels': self.get_labels(),
+            'programs': self.get_program_filter_data(request)
+        }
+        return self.render_to_response({'js_context': js_context})
+
+
+class IPTTReportData(LoginRequiredMixin, View):
+    @silk_profile('data get')
+    def get(self, request, *args, **kwargs):
+        program_id = request.GET.get('programId')
+        tva = request.GET.get('reportType') == 'tva'
+        frequency = int(request.GET.get('frequency'))
+        dates = Program.objects.values('reporting_period_start', 'reporting_period_end').get(pk=program_id)
+        indicator_manager = IPTTIndicator.tva if tva else IPTTIndicator.timeperiods
+        indicator_qs = indicator_manager.filter(
+            program_id=program_id
+            )
+        if tva:
+            indicator_qs = indicator_qs.filter(
+                target_frequency=frequency
+            )
+        indicator_qs = indicator_qs.with_frequency_annotations(frequency, dates['reporting_period_start'], dates['reporting_period_end'])
+        indicators = []
+        for sort_index, indicator in enumerate(indicator_qs):
+            this_indicator = {
+                'id': indicator.pk,
+                'sortIndex': sort_index,
+                'number': indicator.number,
+                'name': indicator.name,
+                'level': indicator.levelname,
+                'sites': indicator.sites,
+                'indicatorTypes': indicator.indicator_types,
+                'sector': {'pk': indicator.sector.pk, 'name': indicator.sector.sector} if indicator.sector else {},
+                'frequency': indicator.target_frequency,
+                'unitOfMeasure': indicator.unit_of_measure,
+                'cumulative': ugettext('Cumulative') if indicator.is_cumulative else ugettext('Non-cumulative'),
+                'unitType': indicator.get_unit_of_measure_type,
+                'baseline': indicator.baseline,
+                'lopTarget': indicator.lop_target,
+                'lopActual': indicator.lop_actual,
+                'lopMet': indicator.lop_percent_met,
+                'reportData': {}
+            }
+            values_count = getattr(indicator, 'frequency_{0}_count'.format(frequency))
+            if tva:
+                this_indicator['reportData']['tva'] = {
+                    frequency: [
+                        {'target': getattr(indicator, 'frequency_{0}_period_{1}_target'.format(frequency, c)),
+                         'value': getattr(indicator, 'frequency_{0}_period_{1}'.format(frequency, c))}
+                        for c in range(values_count)
+                    ]
+                }
+            else:
+                this_indicator['reportData']['timeperiods'] = {
+                    frequency: [getattr(indicator, 'frequency_{0}_period_{1}'.format(frequency, c)) for c in range(values_count)]
+                }
+            indicators.append(this_indicator)
+        reportData = {
+            'programId': program_id,
+            'reportFrequency': frequency,
+            'reportType': 'tva' if tva else 'timeperiods',
+            'indicators': indicators
+        }
+        return JsonResponse(reportData)
