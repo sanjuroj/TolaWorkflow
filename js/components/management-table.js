@@ -33,7 +33,7 @@ const RowComponent = observer(({className, expanded, Expando, ...props}) => {
         </tbody>
     }
 })
-const ExpandoWrapper = ({className, ...props}) => <tr className={["", className].join(' ')} {...props}><td colSpan="6">{props.children}</td></tr>
+const ExpandoWrapper = ({className, ...props}) => <tr className={["mgmt-table__row--expanded", className].join(' ')} {...props}><td colSpan="6">{props.children}</td></tr>
 
 const RowList = observer(({data, Row, keyField, ...props}) => {
     const ObservedRow = observer(Row)

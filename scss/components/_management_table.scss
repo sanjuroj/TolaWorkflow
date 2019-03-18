@@ -4,7 +4,16 @@
 }
 .mgmt-table__body { // tbody
 }
+.mgmt-table__body--expanded { // tbody, with expanded accordion child
+    background-color: $gray-300;
+}
 .mgmt-table__row { // tr
+}
+.mgmt-table__row--expanded { // tr, expanded accordion
+    background-color: $gray-200;
+    > td {
+        padding: $grid-gutter-width;
+    }
 }
 .mgmt-table__col { //td
 }
