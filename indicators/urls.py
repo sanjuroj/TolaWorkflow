@@ -1,6 +1,4 @@
-from django.conf.urls import url
-
-from .views.views_indicators import (
+from indicators.views.views_indicators import (
     indicator_create,
     ResultCreate,
     ResultUpdate,
@@ -19,26 +17,22 @@ from .views.views_indicators import (
     indicator_plan,
     indicator_report,
     IndicatorReport,
-    IndicatorDataExport,
     TVAReport,
     DisaggregationReport,
     TVAPrint,
     DisaggregationPrint,
     api_indicator_view)
 
-from .views.views_reports import (
-    IPTTReportQuickstartView,
-    IPTT_ReportView,
+from indicators.views.views_reports import (
     IPTTReport,
-    IPTT_ReportIndicatorsWithVariedStartDate,
     IPTT_ExcelExport,
     create_pinned_report,
     delete_pinned_report,
-    IPTT_ExcelExport,
-    IPTT_CSVExport,
     IPTTQuickstart,
     IPTTReportData
 )
+
+from django.conf.urls import url
 
 
 urlpatterns = [
@@ -57,7 +51,7 @@ urlpatterns = [
     url(r'^periodic_target_deleteall/(?P<indicator>\d+)/(?P<deleteall>\w+)/$',
         PeriodicTargetView.as_view(), name='pt_deleteall'),
 
-     url(r'^result_add/(?P<program>\d+)/(?P<indicator>\d+)/$',
+    url(r'^result_add/(?P<program>\d+)/(?P<indicator>\d+)/$',
         ResultCreate.as_view(), name='result_add'),
 
     url(r'^result_update/(?P<pk>\d+)/$', ResultUpdate.as_view(), name='result_update'),
@@ -98,22 +92,14 @@ urlpatterns = [
         ResultReportData.as_view(),
         name='result_report_data'),
 
-    #url(r'^iptt_quickstart/', IPTTReportQuickstartView.as_view(), name='iptt_quickstart'),
     url(r'^iptt_quickstart/', IPTTQuickstart.as_view(), name='iptt_quickstart'),
-
-    #url(r'^iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ReportView.as_view(), name='iptt_report'),
     url(r'^iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTTReport.as_view(), name='iptt_report'),
     url(r'^iptt_report_data/$', IPTTReportData.as_view(), name='iptt_ajax'),
-
-    url(r'^iptt_redirect/(?P<program_id>\d+)/$', IPTT_ReportIndicatorsWithVariedStartDate.as_view(),
-        name='iptt_redirect'),
 
     url(r'^iptt_excel/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ExcelExport.as_view(), name='iptt_excel'),
 
     url(r'^pinned_report/$', create_pinned_report, name='create_pinned_report'),
     url(r'^pinned_report/delete/$', delete_pinned_report, name='delete_pinned_report'),
-
-    url(r'^iptt_csv/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_CSVExport.as_view(), name='iptt_csv'),
 
     # API call for program page
     url(r'^api/indicator/(?P<indicator_id>\d+)', api_indicator_view, name='api_indicator_view'),
