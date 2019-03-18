@@ -46,16 +46,15 @@ export class EditUserHistory extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            original_user_data: props.userData,
-            user_data: {...props.userData, user: {...props.userData.user}}
+            original_user_data: {user: {is_active: props.userData.user.is_active}},
+            user_data: {user: {is_active: props.userData.user.is_active}}
         }
     }
 
     onChange(new_value) {
         this.setState({
             user_data: {
-                ...this.state.user_data,
-                user: {...this.state.user_data.user, is_active: new_value.value}
+                user: {is_active: new_value.value}
             }
         })
     }

@@ -348,6 +348,34 @@ export class UserStore {
     }
 
     @action
+    updateUserIsActive(user_id, new_user_data) {
+        this.saving_user_profile = true
+        this.editing_errors = {}
+        api.updateUserIsActive(user_id, new_user_data).then(result => Promise.all([api.fetchUserAggregates(user_id), api.fetchUserHistory(user_id)]).then(([aggregates, history]) => {
+            this.onSaveSuccessHandler()
+            runInAction(() => {
+                this.saving_user_profile = false
+                this.users[result.id] = {
+                    id: result.id,
+                    name: result.name,
+                    organization_name: this.organizations[result.organization_id].name,
+                    user_programs: aggregates.program_count,
+                    is_admin: result.user.is_staff,
+                    is_active: result.user.is_active
+                }
+                this.editing_target_data.profile = result
+                this.editing_target_data.history = history
+            })
+        })).catch(errors => {
+            this.onSaveErrorHandler(errors.response.data.detail)
+            runInAction(() => {
+                this.saving_user_profile = false
+                this.editing_errors = errors.response.data
+            })
+        })
+    }
+
+    @action
     resendRegistrationEmail(user_id) {
         this.saving_user_profile = true
         api.resendRegistrationEmail(user_id).then(result => {

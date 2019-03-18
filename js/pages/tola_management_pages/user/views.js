@@ -289,9 +289,9 @@ export const IndexView = observer(
                                                         <EditUserHistory
                                                             disabled={data.organization_id == 1 && !store.is_superuser}
                                                             userData={store.editing_target_data.profile}
-                                                                    history={store.editing_target_data.history}
-                                                                    onResendRegistrationEmail={() => store.resendRegistrationEmail(data.id)}
-                                                                    onSave={(new_data) => store.updateUserProfile(data.id, new_data)}/>
+                                                            history={store.editing_target_data.history}
+                                                            onResendRegistrationEmail={() => store.resendRegistrationEmail(data.id)}
+                                                            onSave={(new_data) => store.updateUserIsActive(data.id, new_data)}/>
                                                     </LoadingSpinner>
                                                 )}
                                             />

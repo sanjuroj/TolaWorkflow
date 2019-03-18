@@ -134,9 +134,9 @@ export default class EditUserProfile extends React.Component {
                             onChange={(e) => this.updateFirstName(e.target.value) }
                             id="user-first-name-input"
                             required />
-                        {e.name &&
+                        {e.first_name &&
                         <div className="invalid-feedback">
-                            {e.name}
+                            {e.first_name}
                         </div>
                         }
                     </div>
@@ -150,9 +150,9 @@ export default class EditUserProfile extends React.Component {
                             onChange={(e) => this.updateLastName(e.target.value) }
                             id="user-last-name-input"
                             required />
-                        {e.name &&
+                        {e.last_name &&
                          <div className="invalid-feedback">
-                             {e.name}
+                             {e.last_name}
                          </div>
                         }
                     </div>
