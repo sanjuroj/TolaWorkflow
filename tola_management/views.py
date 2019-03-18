@@ -665,8 +665,18 @@ class UserAdminViewSet(viewsets.ModelViewSet):
     def is_active(self, request, pk=None):
         is_active = request.data['user']['is_active']
         user = get_object_or_404(TolaUser, id=pk)
+
+        previous_entry = user.logged_fields
+
         user.user.is_active = is_active
         user.user.save()
+
+        UserManagementAuditLog.profile_updated(
+            user=user,
+            changed_by=request.user.tola_user,
+            old=previous_entry,
+            new=user.logged_fields
+        )
         serializer = UserAdminSerializer(user)
         return Response(serializer.data)
 
