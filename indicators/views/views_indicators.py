@@ -35,6 +35,7 @@ from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
     Program, Sector, TolaSites, FormGuidance
 )
+from indicators.views.views_reports import IPTT_Mixin
 from ..export import IndicatorResource, ResultResource
 from ..forms import IndicatorForm, ResultForm
 from ..models import (
@@ -43,7 +44,6 @@ from ..models import (
     ExternalService, TolaTable, PinnedReport
 )
 from indicators.queries import ProgramWithMetrics, ResultsIndicator
-from .views_reports import IPTT_ReportView
 import indicators.indicator_plan as ip
 
 logger = logging.getLogger(__name__)
@@ -422,7 +422,7 @@ class IndicatorUpdate(UpdateView):
             else:
                 latest_pt_end_date += timedelta(days=1)
 
-            target_frequency_num_periods = IPTT_ReportView._get_num_periods(
+            target_frequency_num_periods = IPTT_Mixin._get_num_periods(
                 latest_pt_end_date, program.reporting_period_end, getIndicator.target_frequency)
 
             num_existing_targets = pts.count()
