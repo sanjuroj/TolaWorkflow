@@ -11,3 +11,11 @@ Unit:
 from indicators.tests.iptt_tests.quickstart_unit import (
     TestIPTTQuickstartJSContext
 )
+
+from indicators.tests.iptt_tests.reportview_unit import (
+    TestIPTTReportviewURL
+)
+
+from indicators.tests.iptt_tests.targetperiod_lop_values import (
+    TestIPTTReportResponseCounts
+)
