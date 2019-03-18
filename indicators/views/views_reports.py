@@ -1148,134 +1148,8 @@ def delete_pinned_report(request):
 
 
 
-class IPTTQuickstart(LoginRequiredMixin, TemplateView):
-    template_name = 'indicators/iptt_quickstart.html'
 
-    def get_programs(self, request, frequencies_used):
-        programs = []
-        countries = request.user.tola_user.countries.all()
-        indicator_qs = Indicator.objects.select_related('program').filter(
-            program__funding_status="Funded", program__country__in=countries
-        ).order_by('program__id', 'target_frequency').values('program__id', 'program__name', 'target_frequency').distinct()
-        program = {'id': None}
-        for c, element in enumerate(indicator_qs):
-            if element['program__id'] != program['id']:
-                if c != 0:
-                    programs.append(program)
-                program = {
-                    'name': element['program__name'],
-                    'id': element['program__id'],
-                    'tva_url': reverse('iptt_report', kwargs={'program_id': element['program__id'],
-                                                              'reporttype': 'targetperiods'}),
-                    'timeperiods_url': reverse('iptt_report', kwargs={'program_id': element['program__id'],
-                                                                      'reporttype': 'timeperiods'}),
-                    'frequencies': []
-                }
-            if element['target_frequency'] in frequencies_used and \
-                element['target_frequency'] not in program['frequencies']:
-                program['frequencies'].append(element['target_frequency'])
-        return programs
-
-
-    def get_js_context(self, request):
-        frequencies = {}
-        for frequency, label in Indicator.TARGET_FREQUENCIES:
-            if frequency != Indicator.EVENT:
-                frequencies[frequency] = unicode(label)
-        programs = self.get_programs(request, frequencies)
-        return {
-            'programs': programs,
-            'labels': {
-                'tvaTitle': ugettext('Periodic targets vs. actuals'),
-                'tvaSubtitle': ugettext('View results organized by target period for indicators that share the same target frequency.'),
-                'timeperiodsTitle': ugettext('Recent progress for all indicators'),
-                'timeperiodsSubtitle': ugettext('View the most recent two months of results. (You can customize your time periods.) This report does not include periodic targets.'),
-                'frequencies': frequencies,
-                'programSelect': ugettext('Program'),
-                'tvaPeriodSelect': ugettext('Target periods'),
-                'timeperiodsPeriodSelect': ugettext('Time periods'),
-                'mostRecentCount': ugettext('enter a number'),
-                'showAll': ugettext('Show all'),
-                'mostRecent': ugettext('Most recent'),
-                'submit': ugettext('View Report')
-            }
-        }
-
-    def get(self, request, *args, **kwargs):
-        context = {}
-        context['js_context'] = self.get_js_context(request)
-        return self.render_to_response(context)
-
-from silk.profiling.profiler import silk_profile
-
-class IPTTReport(LoginRequiredMixin, TemplateView):
-    template_name= 'indicators/iptt_report.html'
-    
-    @silk_profile('labeling')
-    def get_labels(self):
-        # this is not in a loop or comprehension so as to allow translator comments:
-        return {
-            'filterTitle': ugettext('Report options'),
-            'reportTitle': ugettext('Indicator performance tracking table'),
-            'sidebarToggle': ugettext('Show/hide filters'),
-            'pin': ugettext('Pin'),
-            'excel': ugettext('Excel'),
-            'programSelect': ugettext('Program'),
-            'periodSelect': {
-                'tva': ugettext('Target periods'),
-                'timeperiods': ugettext('Time periods')
-            },
-            'showAll': ugettext('Show all'),
-            'mostRecent': ugettext('Most recent'),
-            'startPeriod': ugettext('Start'),
-            'endPeriod': ugettext('End'),
-            'levelSelect': ugettext('Levels'),
-            'typeSelect': ugettext('Types'),
-            'sectorSelect': ugettext('Sectors'),
-            'siteSelect': ugettext('Sites'),
-            'timeperiods': {
-                '3' : ugettext('Years'),
-                '4' : ugettext('Semi-annual periods'),
-                '5' : ugettext('Tri-annual periods'),
-                # Translators: this is the measure of time (3 months)
-                '6' : ugettext('Quarters'),
-                '7' : ugettext('Months')
-            },
-            'targetperiods': {
-                '2': ugettext('Midline and endline'),
-                '3': ugettext('Annual'),
-                '4': ugettext('Semi-annual'),
-                '5': ugettext('Tri-annual'),
-                # Translators: this is the measure of time (3 months)
-                '6': ugettext('Quarterly'),
-                '7': ugettext('Monthly')
-            },
-            'periodNames': {
-                '3': ugettext('Year'),
-                '4': ugettext('Semi-annual period'),
-                '5': ugettext('Tri-annual period'),
-                # Translators: this is the measure of time (3 months)
-                '6': ugettext('Quarter')
-            },
-            'columnHeaders': {
-                'lop': ugettext('Life of Program'),
-                # Translators: this is the abbreviation for number
-                'number': ugettext('No.'),
-                'indicator': ugettext('Indicator'),
-                'level': ugettext('Level'),
-                'uom': ugettext('Unit of measure'),
-                # Translators: the noun form (as in 'type of change')
-                'change': ugettext('Change'),
-                # Translators: C as in Cumulative and NC as in Non Cumulative
-                'cumulative': ugettext('C / NC'),
-                'numType': '# / %',
-                'baseline': ugettext('Baseline'),
-                'target': ugettext('Target'),
-                'actual': ugettext('Actual'),
-                'met': ugettext('% Met')
-            }
-        }
-    @silk_profile('alllll programs')
+class IPTTProgramMixin:
     def get_program_filter_data(self, request):
         programs = []
         countries = request.user.tola_user.countries.all()
@@ -1351,7 +1225,114 @@ class IPTTReport(LoginRequiredMixin, TemplateView):
             })
         return programs
 
-    @silk_profile('overall get')
+class IPTTQuickstart(LoginRequiredMixin, IPTTProgramMixin, TemplateView):
+    template_name = 'indicators/iptt_quickstart.html'
+
+    def get_labels(self):
+        # this is not in a loop or comprehension so as to allow translator comments:
+        return {
+            'tvaFilterTitle': ugettext('Periodic targets vs. actuals'),
+            'timeperiodsFilterTitle': ugettext('Recent progress for all indicators'),
+            'tvaFilterSubtitle': ugettext(
+                'View results organized by target period for indicators that share the same target frequency'
+                ),
+            'timeperiodsFilterSubtitle': ugettext(
+                ('View the most recent two months of results. '
+                 '(You can customize your time periods.) '
+                 'This report does not include periodic targets')
+                ),
+            'programSelect': ugettext('Program'),
+            'periodSelect': ugettext('Target periods'),
+            'showAll': ugettext('Show all'),
+            'mostRecent': ugettext('Most recent'),
+            'mostRecentPlaceholder': ugettext('enter a number'),
+            'submitButton': ugettext('View report'),
+            'targetperiods': {
+                '2': ugettext('Midline and endline'),
+                '3': ugettext('Annual'),
+                '4': ugettext('Semi-annual'),
+                '5': ugettext('Tri-annual'),
+                # Translators: this is the measure of time (3 months)
+                '6': ugettext('Quarterly'),
+                '7': ugettext('Monthly')
+            },
+        }
+
+    def get(self, request, *args, **kwargs):
+        js_context = {
+            'labels': self.get_labels(),
+            'programs': self.get_program_filter_data(request)
+        }
+        return self.render_to_response({'js_context': js_context})
+
+
+class IPTTReport(LoginRequiredMixin, IPTTProgramMixin, TemplateView):
+    template_name= 'indicators/iptt_report.html'
+
+    def get_labels(self):
+        # this is not in a loop or comprehension so as to allow translator comments:
+        return {
+            'filterTitle': ugettext('Report options'),
+            'reportTitle': ugettext('Indicator performance tracking table'),
+            'sidebarToggle': ugettext('Show/hide filters'),
+            'pin': ugettext('Pin'),
+            'excel': ugettext('Excel'),
+            'programSelect': ugettext('Program'),
+            'periodSelect': {
+                'tva': ugettext('Target periods'),
+                'timeperiods': ugettext('Time periods')
+            },
+            'showAll': ugettext('Show all'),
+            'mostRecent': ugettext('Most recent'),
+            'startPeriod': ugettext('Start'),
+            'endPeriod': ugettext('End'),
+            'levelSelect': ugettext('Levels'),
+            'typeSelect': ugettext('Types'),
+            'sectorSelect': ugettext('Sectors'),
+            'siteSelect': ugettext('Sites'),
+            'timeperiods': {
+                '3' : ugettext('Years'),
+                '4' : ugettext('Semi-annual periods'),
+                '5' : ugettext('Tri-annual periods'),
+                # Translators: this is the measure of time (3 months)
+                '6' : ugettext('Quarters'),
+                '7' : ugettext('Months')
+            },
+            'targetperiods': {
+                '2': ugettext('Midline and endline'),
+                '3': ugettext('Annual'),
+                '4': ugettext('Semi-annual'),
+                '5': ugettext('Tri-annual'),
+                # Translators: this is the measure of time (3 months)
+                '6': ugettext('Quarterly'),
+                '7': ugettext('Monthly')
+            },
+            'periodNames': {
+                '3': ugettext('Year'),
+                '4': ugettext('Semi-annual period'),
+                '5': ugettext('Tri-annual period'),
+                # Translators: this is the measure of time (3 months)
+                '6': ugettext('Quarter')
+            },
+            'columnHeaders': {
+                'lop': ugettext('Life of Program'),
+                # Translators: this is the abbreviation for number
+                'number': ugettext('No.'),
+                'indicator': ugettext('Indicator'),
+                'level': ugettext('Level'),
+                'uom': ugettext('Unit of measure'),
+                # Translators: the noun form (as in 'type of change')
+                'change': ugettext('Change'),
+                # Translators: C as in Cumulative and NC as in Non Cumulative
+                'cumulative': ugettext('C / NC'),
+                'numType': '# / %',
+                'baseline': ugettext('Baseline'),
+                'target': ugettext('Target'),
+                'actual': ugettext('Actual'),
+                'met': ugettext('% Met')
+            }
+        }
+
     def get(self, request, *args, **kwargs):
         program_id = kwargs.get('program_id')
         js_context = {
@@ -1362,7 +1343,6 @@ class IPTTReport(LoginRequiredMixin, TemplateView):
 
 
 class IPTTReportData(LoginRequiredMixin, View):
-    @silk_profile('data get')
     def get(self, request, *args, **kwargs):
         program_id = request.GET.get('programId')
         tva = request.GET.get('reportType') == 'tva'
