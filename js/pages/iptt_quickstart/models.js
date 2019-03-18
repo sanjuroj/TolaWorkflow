@@ -3,82 +3,180 @@
  * @module: iptt_quickstart/models
  */
 
-import { computed } from 'mobx';
-import { ProgramFilterData, IPTTUIStore, TVA, TIMEPERIODS } from '../iptt_shared/models';
-import eventBus from '../../eventbus';
+import { observable, computed } from 'mobx';
+
+const BLANK_LABEL = '---------';
+const TVA = 1;
+const TIMEPERIODS = 2;
 
 
-/** Class representing a program's filterable information (name, id, frequencies, dates */
-export class QuickstartProgramFilterData extends ProgramFilterData {}
+class QSProgram {
+    constructor(rootStore, programJSON) {
+        this.rootStore = rootStore;
+        this.id = programJSON.id;
+        this.name = programJSON.name;
+        this.frequencies = programJSON.frequencies;
+        this.periodDateRanges = programJSON.periodDateRanges;
+    }
+    
+    periods(frequency) {
+        return frequency in this.periodDateRanges ? this.periodDateRanges[frequency] : false;
+    }
+    
+    periodCount(frequency) {
+        return this.periods(frequency) ? this.periods(frequency).length : 0;
+    }
+}
 
-/** Class containing UI data in one of two Quickstart page filters (TVA/Timeperiods)
- * @extends module:iptt_shared/,mmodels.IPTTUIStore
- */
-class IPTTQuickstartUIStore extends IPTTUIStore {
-    setSelectedProgram(value) {
-        super.setSelectedProgram(value);
-        if (this.selectedProgramId !== null && !this.enabled) {
-            this.enabled = true;
-            eventBus.emit('activate-iptt-quickstart-form', this.reportType); 
+class QSProgramStore  {
+    constructor(rootStore, programsJSON) {
+        this.rootStore = rootStore;
+        this.programs = {};
+        programsJSON.forEach(programJSON => {
+            this.programs[programJSON.id] = new QSProgram(this.rootStore, programJSON);
+        });
+    }
+    
+    getProgram(id) {
+        return this.programs[id];
+    }
+
+}
+
+export class QSRootStore {
+    @observable reportType = null;
+    @observable tvaSelectedProgram = null;
+    @observable timeperiodsSelectedProgram = null;
+    @observable tvaSelectedFrequencyId = null;
+    @observable tvaShowAll = true;
+    @observable tvaMostRecent = null;
+    @observable tvaMostRecentCount = 2;
+
+    constructor(contextData) {
+        this.programStore = new QSProgramStore(this, contextData.programs);
+        this.periodLabels = contextData.labels.targetperiods;
+    }
+    
+    setTVAProgramId(id) {
+        if (id === null) {
+            this.tvaSelectedProgram = null;
+        } else if (this.tvaSelectedProgram == null || this.tvaSelectedProgram.id != id) {
+            this.tvaSelectedProgram = this.programStore.getProgram(id);
+            if (this.tvaSelectedFrequencyId
+                && this.tvaSelectedProgram.frequencies.indexOf(parseInt(this.tvaSelectedFrequencyId)) == -1) {
+                this.setTVAFrequencyId(null);
+            }
         }
-    }
-}
-
-export class IPTTQuickstartTVAStore extends IPTTQuickstartUIStore {
-    reportType = TVA;
-    
-    init() {
-        super.init();
-        this.enabled = true;
-        this.showAll = true;
+        this.reportType = TVA;
     }
     
-    get formTitle() { return this.labels.tvaTitle; }
-    get formSubtitle() { return this.labels.tvaSubtitle; }
-    
-    get programOptions() {
-        return super.programOptions.filter((program) => this.programStore.getProgram(program.value).frequencies.length > 0);
-    }
-    
-    setSelectedProgram(value) {
-        super.setSelectedProgram(value);
-        let validFrequencies = this.programStore.getProgram(this.selectedProgramId).frequencies;
-        if (this.selectedFrequencyId &&
-            !this.programStore.getProgram(this.selectedProgramId).frequencies.includes(this.selectedFrequencyId)) {
-            this.selectedFrequencyId = null;
+    @computed get selectedTVAProgramOption() {
+        if (this.tvaSelectedProgram === null || this.reportType == TIMEPERIODS) {
+            return {value: null, label: BLANK_LABEL};
         }
-    }
-}
-
-export class IPTTQuickstartTimeperiodsStore extends IPTTQuickstartUIStore {
-    reportType = TIMEPERIODS;
-    
-    init() {
-        this.enabled = false;
-        this.selectedFrequencyId = 7;
-        this.mostRecent = true;
-        this.mostRecentCount = 2;
+        return {value: this.tvaSelectedProgram.id, label: this.tvaSelectedProgram.name};
     }
     
-    get formTitle() { return this.labels.timeperiodsTitle; }
-    get formSubtitle() { return this.labels.timeperiodsSubtitle; }
-}
-
-export class DualFilterStore {
-    constructor(programStore, labels) {
-        this.stores = {
-            [TVA]: new IPTTQuickstartTVAStore(programStore, labels),
-            [TIMEPERIODS]: new IPTTQuickstartTimeperiodsStore(programStore, labels)
+    setTimeperiodsProgramId(id) {
+        if (id === null) {
+            this.timeperiodsSelectedProgram = null;
+        } else if (this.timeperiodsSelectedProgram == null || this.timeperiodsSelectedProgram.id != id) {
+            this.timeperiodsSelectedProgram = this.programStore.getProgram(id);
+        }
+        this.reportType = TIMEPERIODS;
+    }
+    
+    @computed get selectedTimeperiodsProgramOption() {
+        if (this.timeperiodsSelectedProgram === null || this.reportType == TVA) {
+            return {value: null, label: BLANK_LABEL};
+        }
+        return {value: this.timeperiodsSelectedProgram.id, label: this.timeperiodsSelectedProgram.name};
+    }
+    
+    get timeperiodsProgramOptions() {
+        return Object.entries(this.programStore.programs).map(
+            ([id, program]) => ({value: id, label: program.name})
+        );
+    }
+    
+    get tvaProgramOptions() {
+        return Object.entries(this.programStore.programs).filter(
+            ([id, program]) => program.frequencies.length > 0
+        ).map(
+            ([id, program]) => ({value: id, label: program.name})
+        );
+    }
+    
+    setTVAFrequencyId(id) {
+        if (id === null) {
+            this.tvaSelectedFrequencyId = null;
+        } else if (this.tvaSelectedFrequencyId != id) {
+            this.tvaSelectedFrequencyId = id;
+        }
+        this.reportType = TVA;
+    }
+    
+    @computed get tvaSelectedFrequencyOption() {
+        if (this.reportType == TIMEPERIODS || this.tvaSelectedProgram === null
+            || this.tvaSelectedFrequencyId === null) {
+            return {value: null, label: BLANK_LABEL};
+        }
+        return {
+            value: this.tvaSelectedFrequencyId,
+            label: this.periodLabels[this.tvaSelectedFrequencyId]
         };
-        eventBus.on('activate-iptt-quickstart-form', this.disableOthers);
     }
     
-    getStore = (reportType) => {
-        return this.stores[reportType];
+    @computed get tvaFrequencyOptions() {
+        if (this.tvaSelectedProgram === null || this.reportType == TIMEPERIODS) {
+            return [{value: null, label: BLANK_LABEL}, ];
+        } else {
+            return this.tvaSelectedProgram.frequencies.map(
+                (id) => ({value: id, label: this.periodLabels[id]})
+            );
+        }
     }
     
-    disableOthers = (reportType) => {
-        let altReportType = reportType == TVA ? TIMEPERIODS : TVA;
-        this.stores[altReportType].enabled = false;
+    @computed get tvaRadioDisabled() {
+        return !(this.reportType == TVA && this.tvaSelectedProgram != null && this.tvaSelectedFrequencyId !== null);
     }
+    
+    setTVAShowAll = () => {
+        this.tvaShowAll = true;
+        this.tvaMostRecent = false;
+    }
+    
+    setTVAMostRecent = (count) => {
+        this.tvaMostRecent = true;
+        this.tvaShowAll = false;
+        if (count !== undefined && count !== null) {
+            this.tvaMostRecentCount = count;
+        }
+    }
+    
+    @computed get tvaMostRecentCountDisplay() {
+        return this.tvaMostRecent ? this.tvaMostRecentCount : '';
+    }
+    
+    @computed get tvaURL() {
+        if (this.reportType == TIMEPERIODS || this.tvaSelectedProgram == null || this.tvaSelectedFrequencyId == null) {
+            return false;
+        }
+        let url = '/indicators/iptt_report/' + this.tvaSelectedProgram.id + '/targetperiods/?frequency=' + this.tvaSelectedFrequencyId;
+        if (this.tvaShowAll) {
+            return url + '&timeframe=1';
+        } else if (this.tvaMostRecent) {
+            return url + '&timeframe=2&numrecentcount=' + this.tvaMostRecentCount;
+        }
+        return url;
+    }
+    
+    @computed get timeperiodsURL() {
+        if (this.reportType == TVA || this.timeperiodsSelectedProgram == null) {
+            return false;
+        }
+        let url = '/indicators/iptt_report/' + this.timeperiodsSelectedProgram.id + '/timeperiods/?frequency=';
+        return url + '2&timeframe=2&numrecentcount=2';
+    }
+    
 }
