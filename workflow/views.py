@@ -22,6 +22,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.http import urlsafe_base64_decode
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
 
 from .forms import (
     ProjectAgreementForm,
@@ -107,7 +108,7 @@ class ProjectDash(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
 
         countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries)
+        getPrograms = self.request.user.tola_user.available_programs.filter(funding_status="Funded")
         project_id = int(self.kwargs['pk'])
 
         if project_id == 0:
@@ -120,22 +121,27 @@ class ProjectDash(LoginRequiredMixin, ListView):
             getDistributionCount = 0
             getChecklistCount = 0
         else:
-            getAgreement = ProjectAgreement.objects.get(id=project_id)
+
             try:
-                getComplete = ProjectComplete.objects.get(project_agreement__id=self.kwargs['pk'])
+                getAgreement = ProjectAgreement.objects.get(id=project_id, program__in=getPrograms)
+            except ProjectAgreement.DoesNotExist:
+                getAgreement = None
+
+            try:
+                getComplete = ProjectComplete.objects.get(project_agreement__id=self.kwargs['pk'], program__in=getPrograms)
             except ProjectComplete.DoesNotExist:
                 getComplete = None
-            getDocumentCount = Documentation.objects.all().filter(project_id=self.kwargs['pk']).count()
-            getCommunityCount = SiteProfile.objects.all().filter(projectagreement__id=self.kwargs['pk']).count()
-            getTrainingCount = TrainingAttendance.objects.all().filter(project_agreement_id=self.kwargs['pk']).count()
-            getDistributionCount = Distribution.objects.all().filter(initiation_id=self.kwargs['pk']).count()
-            getChecklistCount = ChecklistItem.objects.all().filter(checklist__agreement_id=self.kwargs['pk']).count()
-            getChecklist = ChecklistItem.objects.all().filter(checklist__agreement_id=self.kwargs['pk'])
+            getDocumentCount = Documentation.objects.all().filter(project_id=self.kwargs['pk'], program__in=getPrograms).count()
+            getCommunityCount = SiteProfile.objects.all().filter(projectagreement__id=self.kwargs['pk'], projectagreement__program__in=getPrograms).count()
+            getTrainingCount = TrainingAttendance.objects.all().filter(project_agreement_id=self.kwargs['pk'], program__in=getPrograms).count()
+            getDistributionCount = Distribution.objects.all().filter(initiation_id=self.kwargs['pk'], program__in=getPrograms).count()
+            getChecklistCount = ChecklistItem.objects.all().filter(checklist__agreement_id=self.kwargs['pk'], checklist__agreement__program__in=getPrograms).count()
+            getChecklist = ChecklistItem.objects.all().filter(checklist__agreement_id=self.kwargs['pk'], checklist__agreement__program__in=getPrograms)
 
         if int(self.kwargs['pk']) == 0:
-            getProgram =Program.objects.all().filter(funding_status="Funded", country__in=countries).distinct()
+            getProgram =getPrograms.filter(funding_status="Funded").distinct()
         else:
-            getProgram =Program.objects.get(agreement__id=self.kwargs['pk'])
+            getProgram = get_object_or_404(Program, agreement__id=self.kwargs['pk'], id__in=getPrograms.values('id'))
 
         return render(request, self.template_name, {'getProgram': getProgram, 'getAgreement': getAgreement,'getComplete': getComplete,
                                                     'getPrograms':getPrograms, 'getDocumentCount':getDocumentCount,'getChecklistCount': getChecklistCount,
@@ -155,14 +161,13 @@ class ProgramDash(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
 
-        countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries).distinct()
+        getPrograms = self.request.user.tola_user.available_programs.filter(funding_status="Funded")
         filtered_program = None
         if int(self.kwargs['pk']) == 0:
-            getDashboard = Program.objects.all().prefetch_related('agreement','agreement__projectcomplete','agreement__office').filter(funding_status="Funded", country__in=countries).order_by('name').annotate(has_agreement=Count('agreement'),has_complete=Count('complete'))
+            getDashboard = getPrograms.prefetch_related('agreement','agreement__projectcomplete','agreement__office').filter(funding_status="Funded").order_by('name').annotate(has_agreement=Count('agreement'),has_complete=Count('complete'))
         else:
-            getDashboard = Program.objects.all().prefetch_related('agreement','agreement__projectcomplete','agreement__office').filter(id=self.kwargs['pk'], funding_status="Funded", country__in=countries).order_by('name')
-            filtered_program = Program.objects.only('name').get(pk=self.kwargs['pk']).name
+            getDashboard = getPrograms.prefetch_related('agreement','agreement__projectcomplete','agreement__office').filter(id=self.kwargs['pk'], funding_status="Funded").order_by('name')
+            filtered_program = getPrograms.only('name').get(pk=self.kwargs['pk']).name
 
         if self.kwargs.get('status', None):
 
@@ -190,20 +195,19 @@ class ProjectAgreementList(LoginRequiredMixin, ListView):
     template_name = 'workflow/projectagreement_list.html'
 
     def get(self, request, *args, **kwargs):
-        countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries).distinct()
+        getPrograms = request.user.tola_user.available_programs.filter(funding_status="Funded").distinct()
 
         if int(self.kwargs['pk']) != 0:
-            getDashboard = ProjectAgreement.objects.all().filter(program__id=self.kwargs['pk'])
-            getProgram =Program.objects.get(id=self.kwargs['pk'])
+            getDashboard = ProjectAgreement.objects.all().filter(program__id=self.kwargs['pk'], program__in=getPrograms)
+            getProgram =get_object_or_404(Program, id=self.kwargs['pk'], id__in=getPrograms.values('id'))
             return render(request, self.template_name, {'form': FilterForm(),'getProgram': getProgram, 'getDashboard':getDashboard,'getPrograms':getPrograms,'APPROVALS': APPROVALS})
 
         elif self.kwargs['status'] != 'none':
-            getDashboard = ProjectAgreement.objects.all().filter(approval=self.kwargs['status'])
+            getDashboard = ProjectAgreement.objects.all().filter(approval=self.kwargs['status'], program__in=getPrograms)
             return render(request, self.template_name, {'form': FilterForm(), 'getDashboard':getDashboard,'getPrograms':getPrograms,'APPROVALS': APPROVALS})
 
         else:
-            getDashboard = ProjectAgreement.objects.all().filter(program__country__in=countries)
+            getDashboard = ProjectAgreement.objects.all().filter(program__in=getPrograms)
 
             return render(request, self.template_name, {'form': FilterForm(),'getDashboard':getDashboard,'getPrograms':getPrograms,'APPROVALS': APPROVALS})
 
@@ -525,15 +529,14 @@ class ProjectCompleteList(LoginRequiredMixin, ListView):
     template_name = 'workflow/projectcomplete_list.html'
 
     def get(self, request, *args, **kwargs):
-        countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries)
+        getPrograms = request.user.tola_user.available_programs.filter(funding_status="Funded")
 
         if int(self.kwargs['pk']) == 0:
-            getDashboard = ProjectComplete.objects.all().filter(program__country__in=countries)
+            getDashboard = ProjectComplete.objects.all().filter(program__in=getPrograms)
             return render(request, self.template_name, {'getDashboard':getDashboard,'getPrograms':getPrograms})
         else:
-            getDashboard = ProjectComplete.objects.all().filter(program__id=self.kwargs['pk'])
-            getProgram =Program.objects.get(id=self.kwargs['pk'])
+            getDashboard = ProjectComplete.objects.all().filter(program__id=self.kwargs['pk'], program__in=getPrograms)
+            getProgram =get_object_or_404(id=self.kwargs['pk'], id__in=getPrograms.values('id'))
 
             return render(request, self.template_name, {'getProgram': getProgram, 'getDashboard':getDashboard,'getPrograms':getPrograms})
 
@@ -824,12 +827,11 @@ class ProjectCompleteImport(LoginRequiredMixin, ListView):
 
 @login_required
 def documentation_list(request):
-    user_countries = request.user.tola_user.countries.all()
 
-    programs = Program.objects.filter(funding_status="Funded", country__in=user_countries)
+    programs = request.user.tola_user.available_programs.filter(funding_status="Funded")
 
     # distinct() needed as a program in multiple countries causes duplicate documents returned
-    documents = Documentation.objects.all().select_related('project').filter(program__country__in=user_countries).distinct()
+    documents = Documentation.objects.all().select_related('project').filter(program__in=programs).distinct()
 
     js_context = {
         'allowProjectsAccess': request.user.tola_user.allow_projects_access,
@@ -1729,19 +1731,16 @@ class StakeholderList(LoginRequiredMixin, ListView):
         else:
             program_id = 0
 
-        countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries)
-
-        countries = getCountry(request.user)
+        getPrograms = request.user.tola_user.available_programs.filter(funding_status="Funded")
 
         if program_id != 0:
-            getStakeholders = Stakeholder.objects.all().filter(projectagreement__program__id=program_id).distinct()
+            getStakeholders = Stakeholder.objects.all().filter(projectagreement__program__id=program_id, projectagreement__program__in=getPrograms).distinct()
 
         elif int(self.kwargs['pk']) != 0:
-            getStakeholders = Stakeholder.objects.all().filter(projectagreement=self.kwargs['pk']).distinct()
+            getStakeholders = Stakeholder.objects.all().filter(projectagreement=self.kwargs['pk'], projectagreement__program__in=getPrograms).distinct()
 
         else:
-            getStakeholders = Stakeholder.objects.all().filter(country__in=countries)
+            getStakeholders = Stakeholder.objects.all().filter(projectagreement__program__in=getPrograms).distinct()
 
         return render(request, self.template_name, {'getStakeholders': getStakeholders, 'project_agreement_id': project_agreement_id,'program_id':program_id, 'getPrograms': getPrograms})
 
@@ -2413,12 +2412,12 @@ def district_json(request, district):
 def export_stakeholders_list(request, **kwargs):
 
     program_id = int(kwargs['program_id'])
-    countries = getCountry(request.user)
+    programs = request.user.tola_user.available_programs
 
     if program_id != 0:
-        getStakeholders = Stakeholder.objects.prefetch_related('sector').filter(projectagreement__program__id=program_id).distinct()
+        getStakeholders = Stakeholder.objects.prefetch_related('sector').filter(projectagreement__program__id=program_id, projectagreement__program__in=programs).distinct()
     else:
-        getStakeholders = Stakeholder.objects.prefetch_related('sector').filter(country__in=countries)
+        getStakeholders = Stakeholder.objects.prefetch_related('sector').filter(projectagreement__program__in=programs).distinct()
 
     dataset = StakeholderResource().export(getStakeholders)
     response = HttpResponse(dataset.csv, content_type='application/ms-excel')
@@ -2458,19 +2457,17 @@ class StakeholderObjects(LoginRequiredMixin, View, AjaxableResponseMixin):
         else:
             program_id = 0
 
-        countries = getCountry(request.user)
-
-        countries = getCountry(request.user)
+        programs = request.user.tola_user.available_programs
 
         if program_id != 0:
-            getStakeholders = Stakeholder.objects.all().filter(projectagreement__program__id=program_id).distinct().values('id', 'create_date', 'type__name', 'name', 'sectors__sector')
+            getStakeholders = Stakeholder.objects.all().filter(projectagreement__program__id=program_id, projectagreement__program__in=programs).distinct().values('id', 'create_date', 'type__name', 'name', 'sectors__sector')
 
         elif int(self.kwargs['pk']) != 0:
-            getStakeholders = Stakeholder.objects.all().filter(projectagreement=self.kwargs['pk']).distinct().values('id', 'create_date', 'type__name', 'name', 'sectors__sector')
+            getStakeholders = Stakeholder.objects.all().filter(projectagreement=self.kwargs['pk'], projectagreement__program__in=programs).distinct().values('id', 'create_date', 'type__name', 'name', 'sectors__sector')
 
 
         else:
-            getStakeholders = Stakeholder.objects.all().filter(country__in=countries).values('id', 'create_date', 'type__name', 'name', 'sectors__sector')
+            getStakeholders = Stakeholder.objects.all().filter(projectagreement__program__in=programs).values('id', 'create_date', 'type__name', 'name', 'sectors__sector').distinct()
 
 
         getStakeholders = json.dumps(list(getStakeholders), cls=DjangoJSONEncoder)
