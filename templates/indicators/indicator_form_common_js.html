@@ -219,18 +219,7 @@
         }
         $(this).attr("disabled", true);
 
-
-        var has_results = parseInt($('#numDataPoints').text()) > 0;
-        if(has_results) {
-            window.create_nondestructive_changeset_notice({
-                context: document.getElementById('indicator_update_form'),
-                on_submit: (rationale) => {
-                    submitForm($("#indicator_update_form"), true, rationale);
-                }
-            });
-        } else {
-            submitForm($("#indicator_update_form"), true, '');
-        }
+        submitForm($("#indicator_update_form"), true, '');
     });
 
     $("#indicator_form").on("click", "#id_create_targets_btn", function(e) {
@@ -303,7 +292,7 @@
         var msg = '';
 
         const save = (rationale) => {
-            $.post('/indicators/periodic_target_deleteall/' + indicator_id + '/true/', function(data){
+            $.post('/indicators/periodic_target_deleteall/' + indicator_id + '/true/', {rationale}, function(data){
                 var res = $.parseJSON(data);
                 if (res['status'] == 'success') {
                     $("#id_div_periodic_tables_placeholder").empty();
