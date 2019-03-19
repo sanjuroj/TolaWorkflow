@@ -87,8 +87,10 @@ export class EditUserHistory extends React.Component {
             <div className="row">
                 {!this.props.disabled &&
                 <div className="col">
-                    <button className="btn btn-primary" type="button" onClick={() => this.props.onSave(this.state.user_data)}>{gettext("Save Changes")}</button>
-                    <button className="btn btn-outline-primary" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
+                    <div className="form-group btn-row">
+                        <button className="btn btn-primary" type="button" onClick={() => this.props.onSave(this.state.user_data)}>{gettext("Save Changes")}</button>
+                        <button className="btn btn-reset" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
+                    </div>
                 </div>
                 }
             </div>

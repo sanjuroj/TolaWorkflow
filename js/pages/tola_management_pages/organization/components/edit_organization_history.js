@@ -51,7 +51,7 @@ export default class EditOrganizationHistory extends React.Component {
     }
 
     render() {
-        return <div className="edit-organization">
+        return <div className="tab-pane">
             <h2>OrganizationName: {gettext("Status and History")}</h2>
             <div className="row">
                 <div className="col">
@@ -60,8 +60,10 @@ export default class EditOrganizationHistory extends React.Component {
             </div>
             <div className="row">
                 <div className="col">
-                    <button className="btn btn-primary" type="button" onClick={(e) => this.save(e)}>{gettext("Save Changes")}</button>
-                    <button className="btn btn-outline-primary" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
+                    <div className="form-group btn-row">
+                        <button className="btn btn-primary" type="button" onClick={(e) => this.save(e)}>{gettext("Save Changes")}</button>
+                        <button className="btn btn-reset" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
+                    </div>
                 </div>
             </div>
             <div className="row">

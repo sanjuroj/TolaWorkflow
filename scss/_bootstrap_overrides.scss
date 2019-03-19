@@ -75,11 +75,11 @@ body > .container {
 }
 .btn-link {
     font-weight: bold;
+    padding-left: 0;
+    padding-right: 0;
 }
 .btn-toggle {
     // usually used with .btn-link
-    padding-left: 0;
-    padding-right: 0;
 }
 
 .btn-danger.btn-link {
@@ -149,6 +149,14 @@ body > .container {
 }
 .tab-content.panel-body {
     margin-top: 1rem;
+}
+
+// Overrides for tables
+// For add-ons (not overrides, see components/tables
+.table {
+    tbody + tbody {
+        border-top: none; // no special styling for multiple tbodys
+    }
 }
 
 // Overrides for Indicator tables

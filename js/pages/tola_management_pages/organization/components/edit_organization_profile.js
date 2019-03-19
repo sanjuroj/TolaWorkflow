@@ -106,7 +106,7 @@ export default class EditOrganizationProfile extends React.Component {
             primary_contact_phone: (errors.primary_contact_phone)?'is-invalid':'',
         }
         return (
-            <div className="edit-organization-profile container">
+            <div className="tab-pane">
                 <form className="form needs-validation" noValidate>
                     <div className="form-group">
                         <label htmlFor="organization-name-input">{gettext("Organization name")}<span className="required">*</span></label>
@@ -201,16 +201,16 @@ export default class EditOrganizationProfile extends React.Component {
                             id="mode-of-contact-input" />
                     </div>
                     {this.props.new &&
-                    <div className="form-group">
-                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>{gettext("Save")}</button>
-                        <button className="btn btn-primary" onClick={(e) => this.saveNewAndAddAnother(e)}>{gettext("Save and Add Another")}</button>
-                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext("Clear")}</button>
+                    <div className="form-group btn-row">
+                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>{gettext("Save Changes")}</button>
+                        <button className="btn btn-secondary" onClick={(e) => this.saveNewAndAddAnother(e)}>{gettext("Save and Add Another")}</button>
+                        <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }
                     {!this.props.new &&
-                    <div className="form-group">
-                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>{gettext("Save")}</button>
-                        <button className="btn btn-outline-primary" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
+                    <div className="form-group btn-row">
+                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>{gettext("Save Changes")}</button>
+                        <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }
                 </form>

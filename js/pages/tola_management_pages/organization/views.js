@@ -12,6 +12,8 @@ import EditOrganizationHistory from './components/edit_organization_history'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 const CountryFilter = observer(({store, selections}) => {
     return <div className="form-group">
         <label htmlFor="countries_permitted_filter">{gettext("Countries")}</label>
@@ -87,7 +89,9 @@ export const IndexView = observer(
             <div className="col list-section">
                 <div className="list-controls">
                     <div>
-                        <button className="btn btn-primary" onClick={() => store.createOrganization()}><i className="fa fa-plus-circle"></i>{gettext("Add Organization")}</button>
+                        <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.createOrganization()}>
+                            <FontAwesomeIcon icon={'plus-circle'} /> {gettext("Add Organization")}
+                        </a>
                     </div>
                 </div>
                 <LoadingSpinner isLoading={store.fetching}>
@@ -98,11 +102,8 @@ export const IndexView = observer(
                             HeaderRow={({Col, Row}) =>
                                 <Row>
                                     <Col size="0.15">
-                                        <div className="td--stretch">
-                                            <div></div>
-                                        </div>
                                     </Col>
-                                    <Col size="2">{gettext("Organization")}</Col>
+                                    <Col size="2" className="td--stretch">{gettext("Organization")}</Col>
                                     <Col>{gettext("Programs")}</Col>
                                     <Col size="1">{gettext("Users")}</Col>
                                     <Col size="0.25">{gettext("Status")}</Col>
@@ -140,15 +141,25 @@ export const IndexView = observer(
                                                  </Wrapper>
                                              }>
                                     <Col size="0.15">
-                                        <div className="td--stretch">
-                                            <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                                <i className="fa fa-users"></i>
-                                            </div>
+                                    </Col>
+                                    <Col size="2" className="td--stretch">
+                                        <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
+                                            <FontAwesomeIcon icon={'building'} />&nbsp;
+                                            {data.name || "---"}
                                         </div>
                                     </Col>
-                                    <Col size="2">{data.name || "---"}</Col>
-                                    <Col size="1"><a href={`/tola_management/program/?organizations[]=${data.id}`}>{data.program_count} {gettext("programs")}</a></Col>
-                                    <Col size="1"><a href={`/tola_management/user/?organizations[]=${data.id}`}>{data.user_count} {gettext("users")}</a></Col>
+                                    <Col size="1" className="text-nowrap">
+                                        <a href={`/tola_management/program/?organizations[]=${data.id}`}>
+                                            <FontAwesomeIcon icon={'cubes'} />&nbsp;
+                                            {data.program_count} {gettext("programs")}
+                                        </a>
+                                    </Col>
+                                    <Col size="1" className="text-nowrap">
+                                        <a href={`/tola_management/user/?organizations[]=${data.id}`}>
+                                            <FontAwesomeIcon icon={'users'} />&nbsp;
+                                            {data.user_count} {gettext("users")}
+                                        </a>
+                                    </Col>
                                     <Col size="0.25">{data.is_active?'Active':'Inactive'}</Col>
                                 </Row>
                             }

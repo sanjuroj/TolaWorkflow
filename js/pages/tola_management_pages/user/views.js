@@ -10,6 +10,7 @@ import EditUserHistory from './components/edit_user_history'
 import Pagination from 'components/pagination'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const selection_placeholder = gettext("None Selected")
 const UserFilter = observer(({store, selections}) => {
@@ -229,7 +230,10 @@ export const IndexView = observer(
                 <div className="list-controls">
                     <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div>
-                        <button className="btn btn-primary" onClick={() => store.createUser()}><i className="fa fa-plus-circle"></i>{gettext("Add User")}</button>
+                        <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.createUser()}>
+                            <FontAwesomeIcon icon={'plus-circle'} />
+                            {gettext("Add User")}
+                        </a>
                     </div>
                 </div>
                 <LoadingSpinner isLoading={store.fetching_users_listing || store.applying_bulk_updates}>
@@ -240,12 +244,9 @@ export const IndexView = observer(
                             HeaderRow={({Col, Row}) =>
                                 <Row>
                                     <Col size="0.5">
-                                        <div className="td--stretch">
-                                            <input type="checkbox" checked={store.bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
-                                            <div></div>
-                                        </div>
+                                        <input type="checkbox" checked={store.bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
                                     </Col>
-                                    <Col size="2">{gettext("User")}</Col>
+                                    <Col size="2" className="td--stretch">{gettext("User")}</Col>
                                     <Col>{gettext("Organization")}</Col>
                                     <Col>{gettext("Programs")}</Col>
                                     <Col size="0.5">{gettext("Admin Role")}</Col>
@@ -298,16 +299,24 @@ export const IndexView = observer(
                                     </Wrapper>
                                 }>
                                     <Col size="0.5">
-                                        <div className="td--stretch">
                                             <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
-                                            <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                                <i className="fa fa-user"></i>
-                                            </div>
+                                    </Col>
+                                    <Col size="2" className="td--stretch">
+                                        <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
+                                            <FontAwesomeIcon icon={'user'} />&nbsp;
+                                            {data.name || "---"} {data.is_super && <span className="badge badge-danger">{gettext("Super Admin")}</span>}
                                         </div>
                                     </Col>
-                                    <Col size="2">{data.name || "---"} {data.is_super && <span className="badge badge-danger">{gettext("Super Admin")}</span>}</Col>
-                                    <Col>{data.organization_name || "---"}</Col>
-                                    <Col><a href={`/tola_management/program/?users[]=${data.id}`}>{data.user_programs} {gettext("programs")}</a></Col>
+                                    <Col>
+                                        <FontAwesomeIcon icon={"building"} />&nbsp;
+                                        {data.organization_name || "---"}
+                                    </Col>
+                                    <Col className="text-nowrap">
+                                        <a href={`/tola_management/program/?users[]=${data.id}`}>
+                                            <FontAwesomeIcon icon={"cubes"} />&nbsp;
+                                            {data.user_programs} {gettext("programs")}
+                                        </a>
+                                    </Col>
                                     <Col size="0.5">{data.is_admin?gettext('Yes'):gettext('No')}</Col>
                                     <Col size="0.25">{data.is_active?gettext('Active'):gettext('Inactive')}</Col>
                                 </Row>

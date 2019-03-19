@@ -95,6 +95,7 @@
 @import 'components/management_table'; // Management table component
 @import 'components/pagination'; // Pagination component
 @import 'components/tola_management'; // Tola Managament pages (user, organization, program, and countries)
+@import 'components/list_table'; // Generic accordion list
 
 /* Local custom CSS and overloads for non-BS libraries */
 @import 'mixins';

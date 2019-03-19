@@ -38,11 +38,12 @@
         .nav-link {
             border-bottom-left-radius: $nav-tabs-border-radius;
             border-top-right-radius: 0;
+            display: block;
             &:hover, &:focus {
                 border-right-color: transparent;
             }
             &.active {
-                border-color: $nav-tabs-border-color $nav-tabs-link-active-bg $nav-tabs-border-color $nav-tabs-border-color;
+                border-color: $nav-tabs-border-color transparent $nav-tabs-border-color $nav-tabs-border-color;
             }
         }
     }
@@ -52,6 +53,6 @@
         border-style: solid;
         border-width: $nav-tabs-border-width $nav-tabs-border-width $nav-tabs-border-width 0;
         flex-grow: 1;
-        padding: $grid-gutter-width/2;
+        padding: $grid-gutter-width;
     }
 }

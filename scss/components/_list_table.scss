@@ -1,0 +1,16 @@
+// Generic component for nested accordion tables, for example:
+// * Indicator list on program page
+// * "Management" list in admin-lite
+// * Results table
+
+// TODO: refactor postentially redunandant selectors/components from:
+// * _management_table.scss
+// * _indicator_table.scss
+// * _results_table.scss
+
+.list-table {
+    margin-bottom: $grid-gutter-width;
+    margin-top: $grid-gutter-width;
+}
+
+

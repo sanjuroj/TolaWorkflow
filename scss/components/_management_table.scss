@@ -1,23 +1,19 @@
 .mgmt-table {
-    width: 100%;
-    border: 1px solid #ddd;
-
-    .mgmt-table__head {
+}
+.mgmt-table__head { // thead
+}
+.mgmt-table__body { // tbody
+}
+.mgmt-table__body--expanded { // tbody, with expanded accordion child
+    background-color: $gray-300;
+}
+.mgmt-table__row { // tr
+}
+.mgmt-table__row--expanded { // tr, expanded accordion
+    background-color: $gray-200;
+    > td {
+        padding: $grid-gutter-width;
     }
-
-    .mgmt-table__body {
-    }
-
-    .mgmt-table__row {
-        display: flex;
-        padding: 10px 0;
-
-        &:hover {
-            background-color: #eee;
-        }
-    }
-
-    .mgmt-table__col {
-        flex: 1;
-    }
+}
+.mgmt-table__col { //td
 }

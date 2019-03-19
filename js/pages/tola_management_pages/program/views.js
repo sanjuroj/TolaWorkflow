@@ -9,6 +9,7 @@ import EditProgramProfile from './components/edit_program_profile'
 import ProgramHistory from './components/program_history'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const UserFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
@@ -174,6 +175,7 @@ export const IndexView = observer(
             if (data.organizations) {
                 return (
                     <a href={`/tola_management/organization/?programs[]=${data.id}`}>
+                        <FontAwesomeIcon icon={"building"} />&nbsp;
                         { data.onlyOrganizationId ? store.organizations[data.onlyOrganizationId].name : `${data.organizations} organizations` }
                     </a>
                 )
@@ -200,7 +202,10 @@ export const IndexView = observer(
                 <div className="list-controls">
                     <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div>
-                        <button className="btn btn-primary" onClick={() => store.createProgram()}><i className="fa fa-plus-circle"></i>{gettext("Add Program")}</button>
+                        <a href="#" className="btn btn-link btn-add" tabIndex="0" onClick={() => store.createProgram()}>
+                            <FontAwesomeIcon icon={'plus-circle'} />
+                            {gettext("Add Program")}
+                        </a>
                     </div>
                 </div>
                 <LoadingSpinner isLoading={store.fetching_main_listing || store.applying_bulk_updates }>
@@ -212,12 +217,9 @@ export const IndexView = observer(
                             HeaderRow={({Col, Row}) =>
                                 <Row>
                                     <Col size="0.5">
-                                        <div className="td--stretch">
-                                            <input type="checkbox" checked={store.bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
-                                            <div></div>
-                                        </div>
+                                        <input type="checkbox" checked={store.bulk_targets_all} onChange={() => store.toggleBulkTargetsAll()}/>
                                     </Col>
-                                    <Col size="2">{gettext("Program")}</Col>
+                                    <Col size="2" className="td--stretch">{gettext("Program")}</Col>
                                     <Col>{gettext("Organizations")}</Col>
                                     <Col>{gettext("Users")}</Col>
                                     <Col>{gettext("Status")}</Col>
@@ -256,26 +258,28 @@ export const IndexView = observer(
                                     </Wrapper>
                                 }>
                                     <Col size="0.5">
-                                        <div className="td--stretch">
                                             <input type="checkbox" disabled={data.id=='new'} checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
-
-                                            {data.id == 'new' &&
-                                            <div className="icon__disabled">
-                                                <i className="fa fa-cog"></i>
-                                            </div>
-                                            }
-                                            {data.id != 'new' &&
-                                            <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                                <i className="fa fa-cog"></i>
-                                            </div>
-                                            }
-                                        </div>
                                     </Col>
-                                    <Col size="2">{data.name || "New Program"}</Col>
+                                    <Col size="2" className="td--stretch">
+                                        {data.id == 'new' &&
+                                            <div className="icon__disabled">
+                                                <FontAwesomeIcon icon={'cube'} />&nbsp;
+                                                {data.name || "New Program"}
+                                            </div>
+                                        }
+                                        {data.id != 'new' &&
+                                            <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
+                                                <FontAwesomeIcon icon={'cube'} />&nbsp;
+                                                {data.name || "New Program"}
+                                            </div>
+                                        }
+                                    </Col>
                                     <Col>
                                         { organizationColumn(data)}
                                     </Col>
-                                    <Col>{data.program_users ? <a href={`/tola_management/user/?programs[]=${data.id}`}>{data.program_users} users</a> : '---'  }</Col>
+                                    <Col className="text-nowrap">
+                                        {data.program_users ? <a href={`/tola_management/user/?programs[]=${data.id}`}><FontAwesomeIcon icon={"users"} />&nbsp;{data.program_users} users</a> : '---'  }
+                                    </Col>
                                     <Col>{data.funding_status ? data.funding_status : '---'}</Col>
                                 </Row>
                             }

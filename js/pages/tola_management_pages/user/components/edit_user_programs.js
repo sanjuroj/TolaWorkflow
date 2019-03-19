@@ -504,8 +504,10 @@ export default class EditUserPrograms extends React.Component {
                 </div>
                 <div className="row">
                     <div className="col">
-                        <button type="button" className="btn btn-primary" onClick={() => this.saveForm()}>Save Changes</button>
-                        <button type="button" className="btn btn-outline-primary" onClick={() => this.resetForm()}>Reset</button>
+                        <div className="form-group btn-row">
+                            <button type="button" className="btn btn-primary" onClick={() => this.saveForm()}>Save Changes</button>
+                            <button type="button" className="btn btn-reset" onClick={() => this.resetForm()}>Reset</button>
+                        </div>
                     </div>
                 </div>
             </div>

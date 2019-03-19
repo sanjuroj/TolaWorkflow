@@ -19,21 +19,34 @@ export default class UserEditor extends React.Component {
     render() {
         const {ProfileSection, ProgramSection, HistorySection} = this.props
 
-        const profile_active_class = (this.state.active_page == 'profile')?'selected':''
-        const programs_active_class = (this.state.active_page == 'programs_and_roles')?'selected':''
-        const history_active_class = (this.state.active_page == 'status_and_history')?'selected':''
+        const profile_active_class = (this.state.active_page == 'profile')?'active':''
+        const programs_active_class = (this.state.active_page == 'programs_and_roles')?'active':''
+        const history_active_class = (this.state.active_page == 'status_and_history')?'active':''
         const new_class = (this.props.new)?'disabled':''
 
         return (
-            <div className="user-editor row">
-                <div className="editor__navigation col-sm-3">
-                    <ul className="list-group">
-                        <li className={`list-group-item ${profile_active_class}`} onClick={() => this.updateActivePage('profile')}>{gettext("Profile")}</li>
-                        <li className={`list-group-item ${programs_active_class} ${new_class}`} onClick={() => this.updateActivePage('programs_and_roles')}>{gettext("Programs and Roles")}</li>
-                        <li className={`list-group-item ${history_active_class} ${new_class}`} onClick={() => this.updateActivePage('status_and_history')}>{gettext("Status and History")}</li>
-                    </ul>
-                </div>
-                <div className="user-editor__content col-sm-9">
+            <div className="user-editor tab-set--vertical">
+                <ul className="nav nav-tabs">
+                    <li className="nav-item">
+                        <a href="#" className={`nav-link ${profile_active_class}`}
+                            onClick={(e) => { e.preventDefault(); this.updateActivePage('profile')}}>
+                            {gettext("Profile")}
+                        </a>
+                    </li>
+                    <li className="nav-item">
+                        <a href="#" className={`nav-link ${programs_active_class} ${new_class}`}
+                            onClick={(e) => { e.preventDefault(); this.updateActivePage('programs_and_roles')}}>
+                            {gettext("Programs and Roles")}
+                        </a>
+                    </li>
+                    <li className="nav-item">
+                        <a href="#" className={`nav-item nav-link ${history_active_class} ${new_class}`}
+                            onClick={(e) => { e.preventDefault(); this.updateActivePage('status_and_history')}}>
+                            {gettext("Status and History")}
+                        </a>
+                    </li>
+                </ul>
+                <div className="tab-content">
                     {this.state.active_page == 'profile' &&
                     <ProfileSection />
                     }

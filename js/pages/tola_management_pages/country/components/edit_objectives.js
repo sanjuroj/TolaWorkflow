@@ -109,14 +109,14 @@ class StrategicObjectiveForm extends React.Component {
                     </div>
                     <div className="objective-form-buttons">
                         {objective.id=='new' && (
-                            <div>
-                                <button className="btn btn-primary" type="button" onClick={() => createObjective(managed_data)}>{gettext("Save")}</button>
+                            <div className="form-group btn-row">
+                                <button className="btn btn-primary" type="button" onClick={() => createObjective(managed_data)}>{gettext("Save Changes")}</button>
                             </div>
                         )}
                         {objective.id!='new' && (
-                            <div>
+                            <div className="form-group btn-row">
                                 <button className="btn btn-primary" type="button" onClick={() => saveObjective(managed_data)}>{gettext("Save Changes")}</button>
-                                <button className="btn btn-outline-primary" type="button" onClick={()=> this.resetForm()}>{gettext("Reset")}</button>
+                                <button className="btn btn-reset" type="button" onClick={()=> this.resetForm()}>{gettext("Reset")}</button>
                             </div>
                         )}
                         <div className="right-buttons">
@@ -200,7 +200,7 @@ export default class EditObjectives extends React.Component {
                     />
                 )}
                 <div>
-                    <a tabIndex="0" onClick={() => this.addObjective()} className="btn-link btn-add">
+                    <a tabIndex="0" onClick={() => this.addObjective()} className="btn btn-link btn-add">
                         <FontAwesomeIcon icon={'plus-circle'} /> {gettext("Add strategic objective")}
                     </a>
                 </div>
