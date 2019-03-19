@@ -1152,19 +1152,20 @@ class IPTTReportData(LoginRequiredMixin, View):
                 'lopMet': indicator.lop_percent_met,
                 'reportData': {}
             }
-            values_count = getattr(indicator, 'frequency_{0}_count'.format(frequency))
-            if tva:
-                this_indicator['reportData']['tva'] = {
-                    frequency: [
-                        {'target': getattr(indicator, 'frequency_{0}_period_{1}_target'.format(frequency, c)),
-                         'value': getattr(indicator, 'frequency_{0}_period_{1}'.format(frequency, c))}
-                        for c in range(values_count)
-                    ]
-                }
-            else:
-                this_indicator['reportData']['timeperiods'] = {
-                    frequency: [getattr(indicator, 'frequency_{0}_period_{1}'.format(frequency, c)) for c in range(values_count)]
-                }
+            if frequency != Indicator.LOP:
+                values_count = getattr(indicator, 'frequency_{0}_count'.format(frequency))
+                if tva:
+                    this_indicator['reportData']['tva'] = {
+                        frequency: [
+                            {'target': getattr(indicator, 'frequency_{0}_period_{1}_target'.format(frequency, c)),
+                             'value': getattr(indicator, 'frequency_{0}_period_{1}'.format(frequency, c))}
+                            for c in range(values_count)
+                        ]
+                    }
+                else:
+                    this_indicator['reportData']['timeperiods'] = {
+                        frequency: [getattr(indicator, 'frequency_{0}_period_{1}'.format(frequency, c)) for c in range(values_count)]
+                    }
             indicators.append(this_indicator)
         reportData = {
             'programId': program_id,
