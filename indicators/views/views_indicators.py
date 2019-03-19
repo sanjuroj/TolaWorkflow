@@ -1389,14 +1389,16 @@ class ProgramPage(LoginRequiredMixin, ListView):
 
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
                          [PinnedReport.default_report(program.id)]
+
+        readonly = not request.has_write_access
+
         js_context = {
             'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
             'program': ProgramSerializer(program).data,
             'indicators': IndicatorSerializer(indicators, many=True).data,
             'indicator_on_scope_margin': Indicator.ONSCOPE_MARGIN,
+            'readonly': readonly,
         }
-
-        readonly = not request.has_write_access
 
         #program.set_metrics(indicators)
         c_data = {
