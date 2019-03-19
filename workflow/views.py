@@ -161,7 +161,7 @@ class ProgramDash(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
 
-        getPrograms = self.request.user.tola_user.available_programs.filter(funding_status="Funded")
+        getPrograms = self.request.user.tola_user.available_programs.filter(Q(agreement__isnull=False) | Q(complete__isnull=False), funding_status="Funded").distinct()
         filtered_program = None
         if int(self.kwargs['pk']) == 0:
             getDashboard = getPrograms.prefetch_related('agreement','agreement__projectcomplete','agreement__office').filter(funding_status="Funded").order_by('name').annotate(has_agreement=Count('agreement'),has_complete=Count('complete'))
