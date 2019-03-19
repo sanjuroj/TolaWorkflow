@@ -131,7 +131,7 @@ export default class EditUserProfile extends React.Component {
             organization: (e.organization_id)?'is-invalid':''
         }
         return (
-            <div className="tab-pane">
+            <div className="tab-pane--react">
                 <form className="form">
                     <div className="form-group">
                         <label htmlFor="user-first-name-input">{gettext("Preferred First Name")}<span className="required">*</span></label>

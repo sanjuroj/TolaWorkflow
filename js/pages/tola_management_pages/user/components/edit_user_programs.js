@@ -363,7 +363,7 @@ export default class EditUserPrograms extends React.Component {
         }
 
         return (
-            <div className="edit-user-programs">
+            <div className="tab-pane--react">
                 <h2>{user.name}: Programs and Roles</h2>
                 <div className="row">
                     <div className="col">

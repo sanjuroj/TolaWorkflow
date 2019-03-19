@@ -218,7 +218,7 @@ export default class EditDisaggregations extends React.Component {
         const {disaggregations} = this.props
         const {expanded_id} = this.state
         return (
-            <div>
+            <div class="tab-pane--react">
                 <h3>Country Disaggregations</h3>
                 {disaggregations.map(disaggregation =>
                     <DisaggregationType

@@ -184,7 +184,7 @@ export default class EditObjectives extends React.Component {
         const {expanded_id, new_objective} = this.state
         const {objectives} = this.props
         return (
-            <div>
+            <div class="tab-pane--react">
                 <h3>{gettext("Strategic Objectives")}</h3>
                 {objectives.map((objective) =>
                     <StrategicObjectiveForm

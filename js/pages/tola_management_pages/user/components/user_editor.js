@@ -25,7 +25,7 @@ export default class UserEditor extends React.Component {
         const new_class = (this.props.new)?'disabled':''
 
         return (
-            <div className="user-editor tab-set--vertical">
+            <div className="tab-set--vertical">
                 <ul className="nav nav-tabs">
                     <li className="nav-item">
                         <a href="#" className={`nav-link ${profile_active_class}`}
