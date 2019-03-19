@@ -7,6 +7,7 @@ Unit:
             - frequencies (in correct language)
 
 """
+
 from indicators.tests.iptt_tests.tp_indicator_counts import (
     TestIPTTTimeperiodsValues
 )

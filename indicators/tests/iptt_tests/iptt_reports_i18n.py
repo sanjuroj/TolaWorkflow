@@ -9,7 +9,7 @@ from django.urls import reverse
 
 from factories import UserFactory, TolaUserFactory, ProgramFactory, IndicatorFactory, PeriodicTargetFactory
 from indicators.views.views_reports import IPTT_Mixin
-from iptt_sample_data import iptt_utility
+from indicators.tests.iptt_sample_data import iptt_utility
 from indicators.models import Indicator
 
 TEST_LANGUAGES = ['en', 'es', 'fr']
