@@ -10,7 +10,7 @@ const HeaderColumnComponent = ({className, size, ...props}) => <th className={["
 const InnerRowComponent = ({className, ...props}) => <tr className={["mgmt-table__row", className].join(' ')} {...props}>{props.children}</tr>
 
 // TODO: this is redundant with InnerRowComponent
-const HeaderRowCompnent = ({className, ...props}) => <tr className={["mgmt-table__row table-header", className].join(' ')} {...props}>{props.children}</tr>
+const HeaderRowComponent = ({className, ...props}) => <tr className={["mgmt-table__row table-header", className].join(' ')} {...props}>{props.children}</tr>
 
 /***
     A wrapper for the rendering of the given row renderer, it takes and expando
@@ -59,7 +59,7 @@ const ManagementTable = observer(({HeaderRow, className, ...props}) => {
     const ObservedHeaderRow = observer(HeaderRow)
     return <table className={['table bg-white', className].join(' ')} >
         <thead>
-            <ObservedHeaderRow Col={HeaderColumnComponent} Row={HeaderRowCompnent}/>
+            <ObservedHeaderRow Col={HeaderColumnComponent} Row={HeaderRowComponent}/>
         </thead>
         <RowList {...props} />
     </table>
