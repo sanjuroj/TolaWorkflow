@@ -66,20 +66,24 @@ TOLA_TABLES_USER = app_settings['TOLA_TABLES_USER']
 # REPORT BUILDER FOR REPORT SERVER
 DEV_APPS = app_settings['DEV_APPS']
 
-LOCAL_APPS = (
-    'silk',
-)
+# silk only for testing locally:
+# LOCAL_APPS = (
+#    'silk',
+# )
+LOCAL_APPS = ()
 
 #INSTALLED_APPS = INSTALLED_APPS #+ tuple(DEV_APPS)
 INSTALLED_APPS = INSTALLED_APPS + LOCAL_APPS
 
-LOCAL_MIDDLEWARE = (
-    'silk.middleware.SilkyMiddleware',
-)
+# silk only for testing:
+# LOCAL_MIDDLEWARE = (
+#     'silk.middleware.SilkyMiddleware',
+# )
+LOCAL_MIDDLEWARE = ()
 
 MIDDLEWARE =  LOCAL_MIDDLEWARE + MIDDLEWARE
-SILK_ENABLED = True
-SILKY_PYTHON_PROFILER = True
+# SILK_ENABLED = True
+# SILKY_PYTHON_PROFILER = True
 
 LDAP_LOGIN = app_settings['LDAP_LOGIN']
 LDAP_SERVER = app_settings['LDAP_SERVER']
