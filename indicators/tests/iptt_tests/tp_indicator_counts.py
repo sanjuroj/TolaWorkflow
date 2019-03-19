@@ -70,7 +70,7 @@ class TestIPTTTimeperiodsValues(test.TestCase):
             'monthly': {
                 0: 20,
                 1: 80,
-                8: 130
+                12: 130
             }
         },
         {
@@ -108,6 +108,47 @@ class TestIPTTTimeperiodsValues(test.TestCase):
                 12: 400,
                 13: 500
             }
+        },
+        {
+            'indicator': {
+                'target_frequency': Indicator.SEMI_ANNUAL,
+                'lop_target': 105,
+                'unit_of_measure_type': Indicator.NUMBER,
+                'is_cumulative': True
+            },
+            'targets': [
+                {
+                    'target': 30,
+                    'results': [
+                        (datetime.date(2018, 2, 15), 10),
+                    ]
+                },
+                {
+                    'target': 40,
+                    'results': [
+                        (datetime.date(2018, 8, 15), 40),
+                    ]
+                },
+                {
+                    'target': 50,
+                    'results': [
+                        (datetime.date(2019, 2, 10), 80),
+                    ]
+                },
+                {
+                    'target': 60,
+                    'results': []
+                },
+            ],
+            'results': [],
+            'annual': [50, 130],
+            'monthly': {
+                0: 10,
+                6: 50,
+                10: None,
+                12: 130,
+                15: None
+            }
         }
     ]
     def setUp(self):
@@ -129,16 +170,16 @@ class TestIPTTTimeperiodsValues(test.TestCase):
             indicator = i_factories.IndicatorFactory(program=self.program,
                                                      number=c,
                                                      **kwargs['indicator'])
-            for target, period in zip(kwargs['targets'],
-                                      self.program.get_periods_for_frequency(indicator.target_frequency)):
+            for target_kwargs, period in zip(kwargs['targets'],
+                                             self.program.get_periods_for_frequency(indicator.target_frequency)):
                 target = i_factories.PeriodicTargetFactory(
                     indicator=indicator,
-                    target=target['target'],
+                    target=target_kwargs['target'],
                     start_date=period['start'],
                     end_date=period['end'],
                     customsort=period['customsort']
                 )
-                for date_collected, achieved in kwargs['results']:
+                for date_collected, achieved in target_kwargs['results']:
                     i_factories.ResultFactory(
                         periodic_target=target,
                         indicator=indicator,
@@ -166,5 +207,25 @@ class TestIPTTTimeperiodsValues(test.TestCase):
             for response_value, expected_value in zip(
                 response_indicator['reportData']['timeperiods'][str(Indicator.ANNUAL)],
                 kwargs['annual']):
-                self.assertEqual(float(response_value), expected_value)
-        
+                value = float(response_value) if response_value else None
+                self.assertEqual(value, expected_value,
+                                 "expected {0} got {1}\n kwargs {2}\n response {3}".format(
+                                    expected_value, value, kwargs, response_indicator))
+
+    def test_monthly_values(self):
+        response = json.loads(self.client.get(
+            reverse('iptt_ajax'),
+            {
+                'programId': self.program.id,
+                'frequency': Indicator.MONTHLY,
+                'reporttype': 'timeperiods'
+            }
+        ).content)
+        self.assertEqual(len(response['indicators']), len(self.indicator_kwargs))
+        for response_indicator, kwargs in zip(response['indicators'], self.indicator_kwargs):
+            for month, expected_value in kwargs['monthly'].items():
+                response_value = response_indicator['reportData']['timeperiods'][str(Indicator.MONTHLY)][month]
+                response_value = float(response_value) if response_value else None
+                self.assertEqual(response_value, expected_value,
+                                 "expected {0} got {1}\n kwargs {2}\n response {3}".format(
+                                    expected_value, response_value, kwargs, response_indicator))
