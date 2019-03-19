@@ -8498,9 +8498,12 @@ body.page_iptt_table {
 .page_iptt_table .modal-dialog .results-table__actions {
   background: transparent; }
 
+.iptt-react-select {
+  width: 100%;
+  color: #000; }
+
 #sidebar {
   flex-basis: 1;
-  overflow: hidden;
   z-index: 3; }
   #sidebar .list-group {
     min-width: 400px;
@@ -8667,6 +8670,9 @@ body.page_iptt_table {
 
 .text-large {
   font-size: 1.25rem; }
+
+.text-title-case {
+  text-transform: capitalize; }
 
 .color-red {
   color: #c8102e; }
@@ -8964,5 +8970,3 @@ select.listoption_filters {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-27a4812e89f79e80ee66.css.map*/
