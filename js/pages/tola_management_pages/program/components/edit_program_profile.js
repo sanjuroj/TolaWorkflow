@@ -70,7 +70,7 @@ export default class EditProgramProfile extends React.Component {
         const selectedCountries = formdata.country.map(x=>this.props.countryOptions.find(y=>y.value==x))
         const selectedSectors = formdata.sector.map(x=>this.props.sectorOptions.find(y=>y.value==x))
         return (
-            <div className="edit-user-profile container">
+            <div className="tab-pane">
                 <h2>{gettext("Add program: Profile")}</h2>
                 <form className="form">
                     <div className="form-group">

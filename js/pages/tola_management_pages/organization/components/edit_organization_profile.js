@@ -106,7 +106,7 @@ export default class EditOrganizationProfile extends React.Component {
             primary_contact_phone: (errors.primary_contact_phone)?'is-invalid':'',
         }
         return (
-            <div className="edit-organization-profile container">
+            <div className="tab-pane">
                 <form className="form needs-validation" noValidate>
                     <div className="form-group">
                         <label htmlFor="organization-name-input">{gettext("Organization name")}<span className="required">*</span></label>

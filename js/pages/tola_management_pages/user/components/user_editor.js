@@ -28,13 +28,22 @@ export default class UserEditor extends React.Component {
             <div className="user-editor tab-set--vertical">
                 <ul className="nav nav-tabs">
                     <li className="nav-item">
-                        <a href="#" className={`nav-link ${profile_active_class}`} onClick={() => this.updateActivePage('profile')}>{gettext("Profile")}</a>
+                        <a href="#" className={`nav-link ${profile_active_class}`}
+                            onClick={(e) => { e.preventDefault(); this.updateActivePage('profile')}}>
+                            {gettext("Profile")}
+                        </a>
                     </li>
                     <li className="nav-item">
-                        <a href="#" className={`nav-link ${programs_active_class} ${new_class}`} onClick={() => this.updateActivePage('programs_and_roles')}>{gettext("Programs and Roles")}</a>
+                        <a href="#" className={`nav-link ${programs_active_class} ${new_class}`}
+                            onClick={(e) => { e.preventDefault(); this.updateActivePage('programs_and_roles')}}>
+                            {gettext("Programs and Roles")}
+                        </a>
                     </li>
                     <li className="nav-item">
-                        <a href="#" className={`nav-item nav-link ${history_active_class} ${new_class}`} onClick={() => this.updateActivePage('status_and_history')}>{gettext("Status and History")}</a>
+                        <a href="#" className={`nav-item nav-link ${history_active_class} ${new_class}`}
+                            onClick={(e) => { e.preventDefault(); this.updateActivePage('status_and_history')}}>
+                            {gettext("Status and History")}
+                        </a>
                     </li>
                 </ul>
                 <div className="tab-content">

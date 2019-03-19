@@ -23,36 +23,34 @@ export default class CountryEditor extends React.Component {
         const active_page = this.state.active_page
 
         return (
-            <div className="program-editor row">
-                <div className="editor__navigation col-sm-3">
-                    <ul className="list-group">
-                        <li
-                            className={classNames('list-group-item', {'selected': active_page=='profile'})}
-                            onClick={() => this.updateActivePage('profile')}
-                        >
+            <div className="tab-set--vertical">
+                <ul className="nav nav-tabs">
+                    <li className="nav-item">
+                        <a href="#" className={classNames('nav-link', {'active': active_page=='profile'})}
+                            onClick={(e) => { e.preventDefault(); this.updateActivePage('profile')}}>
                             {gettext("Profile")}
-                        </li>
-                        <li
-                            className={classNames('list-group-item', {
-                                'selected': active_page=='objectives',
+                            </a>
+                    </li>
+                    <li className="nav-item">
+                        <a href="#" className={classNames('nav-link', {
+                                'active': active_page=='objectives',
                                 'disabled': this.props.new,
                             })}
-                            onClick={() => this.updateActivePage('objectives')}
-                        >
+                            onClick={(e) => { e.preventDefault(); this.updateActivePage('objectives')}}>
                             {gettext("Strategic Objectives")}
-                        </li>
-                        <li
-                            className={classNames('list-group-item', {
-                                'selected': active_page=='disaggregations',
+                        </a>
+                    </li>
+                    <li className="nav-item">
+                        <a href="#" className={classNames('nav-link', {
+                                'active': active_page=='disaggregations',
                                 'disabled': this.props.new,
                             })}
-                            onClick={() => this.updateActivePage('disaggregations')}
-                        >
+                            onClick={(e) => { e.preventDefault(); this.updateActivePage('disaggregations')}}>
                             {gettext("Country Disaggregations")}
-                        </li>
-                    </ul>
-                </div>
-                <div className="program-editor__content col-sm-9">
+                        </a>
+                    </li>
+                </ul>
+                <div className="tab-content">
                     {this.state.active_page == 'profile' && (
                         <ProfileSection />
                     )}

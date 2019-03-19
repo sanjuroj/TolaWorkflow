@@ -47,7 +47,7 @@ export class ProgramHistory extends React.Component {
     render() {
         const {history} = this.props
         const currentStatusSelection = status_options.find(x=> x.value == this.state.managed_status.funding_status)
-        return <div className="edit-user-history container">
+        return <div className="tab-pane">
             <h2>{this.props.program_data.name}: {gettext("Status and History")}</h2>
             <div className="row">
                 <div className="col">

@@ -51,7 +51,7 @@ export default class EditOrganizationHistory extends React.Component {
     }
 
     render() {
-        return <div className="edit-organization">
+        return <div className="tab-pane">
             <h2>OrganizationName: {gettext("Status and History")}</h2>
             <div className="row">
                 <div className="col">
