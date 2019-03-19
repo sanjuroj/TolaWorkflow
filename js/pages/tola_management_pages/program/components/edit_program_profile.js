@@ -71,7 +71,7 @@ export default class EditProgramProfile extends React.Component {
         const selectedSectors = formdata.sector.map(x=>this.props.sectorOptions.find(y=>y.value==x))
         return (
             <div className="tab-pane--react">
-                <h2>{gettext("Add program: Profile")}</h2>
+                <h2 className="no-bold">{this.props.program_data.name ? this.props.program_data.name+': ' : ''}{gettext("Profile")}</h2>
                 <form className="form">
                     <div className="form-group">
                         <label htmlFor="program-name-input">{gettext("Program name")}<span className="required">*</span></label>
