@@ -662,7 +662,7 @@ function () {
       }
 
       var url = '/indicators/iptt_report/' + this.timeperiodsSelectedProgram.id + '/timeperiods/?frequency=';
-      return url + '2&timeframe=2&numrecentcount=2';
+      return url + '7&timeframe=2&numrecentcount=2';
     }
   }]);
 
@@ -782,4 +782,4 @@ var IPTTQuickstartForm = function IPTTQuickstartForm() {
 /***/ })
 
 },[["+aul","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_quickstart-2a78879eaf99e74f0277.js.map
+//# sourceMappingURL=iptt_quickstart-7103b30b933b288c1185.js.map

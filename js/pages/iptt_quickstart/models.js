@@ -176,7 +176,7 @@ export class QSRootStore {
             return false;
         }
         let url = '/indicators/iptt_report/' + this.timeperiodsSelectedProgram.id + '/timeperiods/?frequency=';
-        return url + '2&timeframe=2&numrecentcount=2';
+        return url + '7&timeframe=2&numrecentcount=2';
     }
     
 }
