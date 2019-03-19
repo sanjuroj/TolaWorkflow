@@ -125,7 +125,7 @@ class DocumentsFilterBar extends React.Component {
 }
 
 
-const DocumentsListTable = observer(function ({rootStore, uiStore}) {
+const DocumentsListTable = observer(function ({rootStore, uiStore, access}) {
     // Apply filters to displayed list of documents
     let documents = filterDocuments(rootStore, uiStore);
 
@@ -169,12 +169,16 @@ const DocumentsListTable = observer(function ({rootStore, uiStore}) {
             text: '',
             align: 'right',
             formatter: (cell, row) => {
-                return <div className="text-nowrap">
-                    <a href={"/workflow/documentation_delete/" + row.id} className="btn p-0 pr-4 btn-sm btn-text text-danger">
-                        <i className="fas fa-trash-alt"/>&nbsp;{gettext("Delete")}</a>
-                    <a href={"/workflow/documentation_update/" + row.id} className="btn p-0 btn-sm btn-text">
-                        <i className="fas fa-edit"/>&nbsp;{gettext("Edit")}</a>
-                </div>
+                if(access[row.program] && (access[row.program].role == 'high' || access[row.program].role == 'medium')) {
+                    return <div className="text-nowrap">
+                        <a href={"/workflow/documentation_delete/" + row.id} className="btn p-0 pr-4 btn-sm btn-text text-danger">
+                            <i className="fas fa-trash-alt"/>&nbsp;{gettext("Delete")}</a>
+                            <a href={"/workflow/documentation_update/" + row.id} className="btn p-0 btn-sm btn-text">
+                                <i className="fas fa-edit"/>&nbsp;{gettext("Edit")}</a>
+                    </div>
+                } else {
+                    return null
+                }
             }
         }
     ];
@@ -211,10 +215,10 @@ const DocumentsListTable = observer(function ({rootStore, uiStore}) {
 
 
 
-export const DocumentsView = observer(function ({rootStore, uiStore, readonly}) {
+export const DocumentsView = observer(function ({rootStore, uiStore, readonly, access}) {
     return <React.Fragment>
         <DocumentsFilterBar rootStore={rootStore} uiStore={uiStore} readonly={readonly}/>
         <br/>
-        <DocumentsListTable rootStore={rootStore} uiStore={uiStore}/>
+        <DocumentsListTable rootStore={rootStore} uiStore={uiStore} access={access}/>
     </React.Fragment>
 });

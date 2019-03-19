@@ -9,7 +9,7 @@ import {DocumentListStore, DocumentListUIStore} from './models';
 
 // console.log(jsContext);
 
-const {documents, programs, allowProjectsAccess, readonly} = jsContext;
+const {documents, programs, allowProjectsAccess, readonly, access} = jsContext;
 
 /*
  * Model/Store setup
@@ -93,5 +93,6 @@ eventBus.on('document-id-filter-selected', (documentId) => {
  * React components on page
  */
 
-ReactDOM.render(<DocumentsView rootStore={rootStore} uiStore={uiStore} readonly={readonly}/>,
+const mapped_program_access = access.programs.reduce((programs, program) => ({...programs, [program.program]: program}),{})
+ReactDOM.render(<DocumentsView rootStore={rootStore} uiStore={uiStore} readonly={readonly} access={mapped_program_access}/>,
     document.querySelector('#documents-view'));

@@ -840,7 +840,8 @@ def documentation_list(request):
         'allowProjectsAccess': request.user.tola_user.allow_projects_access,
         'programs': DocumentListProgramSerializer(programs, many=True).data,
         'documents': DocumentListDocumentSerializer(documents, many=True).data,
-        'readonly': readonly
+        'access': request.user.tola_user.access_data,
+        'readonly': readonly,
     }
 
     return render(request, 'workflow/documentation_list.html', {
@@ -1049,7 +1050,7 @@ class DocumentationUpdate(LoginRequiredMixin, UpdateView):
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
-        if not user_has_program_roles(request.user, request.user.tola_user.available_programs, ['medium', 'high']):
+        if not user_has_program_roles(request.user, Program.objects.filter(id=Documentation.objects.get(id=kwargs['pk']).program.id), ['medium', 'high']):
             raise PermissionDenied
 
         try:
@@ -1086,6 +1087,13 @@ class DocumentationDelete(LoginRequiredMixin, DeleteView):
     """
     model = Documentation
     success_url = '/workflow/documentation_list/'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        if not user_has_program_roles(request.user, Program.objects.filter(id=Documentation.objects.get(id=kwargs['pk']).program.id), ['medium', 'high']):
+            raise PermissionDenied
+
+        return super(DocumentationDelete, self).dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form):
 
