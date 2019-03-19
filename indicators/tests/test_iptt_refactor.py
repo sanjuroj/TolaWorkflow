@@ -11,7 +11,7 @@ from indicators.tests.iptt_tests.tp_indicator_counts import (
     TestIPTTTimeperiodsValues
 )
 
-"""
+
 from indicators.tests.iptt_tests.quickstart_unit import (
     TestIPTTQuickstartJSContext
 )
@@ -51,4 +51,4 @@ from indicators.tests.iptt_tests.tva_report_tests import (
 from indicators.tests.iptt_tests.iptt_reports_i18n import (
     TestIPTTTimePeriodReportsI18N,
     TestIPTTTargetReportsI18N
-)"""
+)
