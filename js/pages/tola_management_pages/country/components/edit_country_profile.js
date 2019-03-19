@@ -63,7 +63,7 @@ export default class EditCountryProfile extends React.Component {
         const formdata = this.state.managed_data
         const selectedOrganization = this.props.organizationOptions.find(x=>x.value==formdata.organization)
         return (
-            <div className="edit-user-profile"> {/* TODO: can't use tab-pane here ? */}
+            <div className="tab-pane--react">
                 <form className="form">
                     <div className="form-group">
                         <label htmlFor="country-name-input">{gettext("Country name")}<span className="required">*</span></label>

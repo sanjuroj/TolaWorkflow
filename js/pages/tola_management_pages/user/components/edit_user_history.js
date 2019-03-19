@@ -73,7 +73,7 @@ export class EditUserHistory extends React.Component {
         const selected = status_options.find(option => option.value == this.state.user_data.user.is_active)
         const {history} = this.props
         return <div className="edit-user-history">
-            <h2>{this.state.user_data.name}: {gettext("Status and History")}</h2>
+            <h2 className="no-bold">{this.state.user_data.name?this.state.user_data.name+': ':''}{gettext("Status and History")}</h2>
             <div className="row">
                 <div className="col">
                     <Select isDisabled={this.props.disabled} options={status_options} value={selected} onChange={(new_value) => this.onChange(new_value)} />
