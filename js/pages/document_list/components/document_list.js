@@ -104,7 +104,7 @@ class DocumentFilterSelect extends React.Component {
 @observer
 class DocumentsFilterBar extends React.Component {
     render() {
-        const {rootStore, uiStore} = this.props;
+        const {rootStore, uiStore, readonly} = this.props;
 
         return <div className="row">
             <div className="col-3">
@@ -114,8 +114,11 @@ class DocumentsFilterBar extends React.Component {
                 <DocumentFilterSelect rootStore={rootStore} uiStore={uiStore} />
             </div>
             <div className="col-3 text-right">
-                <a href="/workflow/documentation_add" className="btn btn-link btn-add">
-                    <i className="fas fa-plus-circle"/> {gettext("Add document")}</a>
+            {!readonly &&
+            <a href="/workflow/documentation_add" className="btn btn-link btn-add">
+                <i className="fas fa-plus-circle"/> {gettext("Add document")}
+            </a>
+            }
             </div>
         </div>
     }
@@ -208,9 +211,9 @@ const DocumentsListTable = observer(function ({rootStore, uiStore}) {
 
 
 
-export const DocumentsView = observer(function ({rootStore, uiStore}) {
+export const DocumentsView = observer(function ({rootStore, uiStore, readonly}) {
     return <React.Fragment>
-        <DocumentsFilterBar rootStore={rootStore} uiStore={uiStore}/>
+        <DocumentsFilterBar rootStore={rootStore} uiStore={uiStore} readonly={readonly}/>
         <br/>
         <DocumentsListTable rootStore={rootStore} uiStore={uiStore}/>
     </React.Fragment>

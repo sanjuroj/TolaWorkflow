@@ -77,6 +77,7 @@ from rest_framework.response import Response
 from tola_management.models import ProgramAuditLog
 from tola_management.permissions import (
     user_has_program_access,
+    user_has_program_roles,
     has_site_read_access,
     has_site_create_access,
     has_site_delete_access,
@@ -833,10 +834,13 @@ def documentation_list(request):
     # distinct() needed as a program in multiple countries causes duplicate documents returned
     documents = Documentation.objects.all().select_related('project').filter(program__in=programs).distinct()
 
+    readonly = not user_has_program_roles(request.user, programs, ['medium', 'high'])
+
     js_context = {
         'allowProjectsAccess': request.user.tola_user.allow_projects_access,
         'programs': DocumentListProgramSerializer(programs, many=True).data,
         'documents': DocumentListDocumentSerializer(documents, many=True).data,
+        'readonly': readonly
     }
 
     return render(request, 'workflow/documentation_list.html', {
@@ -998,6 +1002,9 @@ class DocumentationCreate(LoginRequiredMixin, CreateView):
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
+        if not user_has_program_roles(request.user, request.user.tola_user.available_programs, ['medium', 'high']):
+            raise PermissionDenied
+
         try:
             self.guidance = FormGuidance.objects.get(form="Documentation")
         except FormGuidance.DoesNotExist:
@@ -1042,6 +1049,9 @@ class DocumentationUpdate(LoginRequiredMixin, UpdateView):
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
+        if not user_has_program_roles(request.user, request.user.tola_user.available_programs, ['medium', 'high']):
+            raise PermissionDenied
+
         try:
             self.guidance = FormGuidance.objects.get(form="Documentation")
         except FormGuidance.DoesNotExist:

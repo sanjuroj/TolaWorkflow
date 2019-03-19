@@ -70,7 +70,7 @@ def user_has_program_access(user, program):
     ).exists()
 
 def user_has_program_roles(user, programs, roles):
-    return user.is_authenticated() and user.tola_user.programaccess_set.filter(program_id__in=programs, role__in=roles).count() > 0
+    return user.is_authenticated() and user.tola_user.programaccess_set.filter(program_id__in=programs, role__in=roles).exists()
 
 def has_iptt_read_access(func):
     def wrapper(request, *args, **kwargs):

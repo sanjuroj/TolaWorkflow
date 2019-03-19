@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from functools import partial
 from widgets import GoogleMapsWidget
 from django import forms
+from django.db.models import Q
 from .models import (
     ProjectAgreement, ProjectComplete, Program, SiteProfile, Documentation, Benchmarks,
     Monitor, Budget, Capacity, Evaluate, Office, Checklist, ChecklistItem, Province, Stakeholder,
@@ -1469,11 +1470,16 @@ class DocumentationForm(forms.ModelForm):
         super(DocumentationForm, self).__init__(*args, **kwargs)
 
         #override the program queryset to use request.user for country
-        countries = getCountry(self.request.user)
         self.fields['name'].required = True
         self.fields['url'].required = True
-        self.fields['project'].queryset = ProjectAgreement.objects.filter(program__country__in=countries)
-        self.fields['program'].queryset = Program.active_programs.filter(country__in=countries).distinct()
+        self.fields['project'].queryset = ProjectAgreement.objects.filter(
+            Q(program_id__in=self.request.user.tola_user.programaccess_set.filter(role='high').values('program_id'))
+            | Q(program_id__in=self.request.user.tola_user.programaccess_set.filter(role='medium').values('program_id'))
+        )
+        self.fields['program'].queryset = Program.active_programs.filter(
+            Q(id__in=self.request.user.tola_user.programaccess_set.filter(role='high').values('program_id'))
+            | Q(id__in=self.request.user.tola_user.programaccess_set.filter(role='medium').values('program_id'))
+        ).distinct()
 
         # only display Project field to existing users
         if not self.request.user.tola_user.allow_projects_access:
