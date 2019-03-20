@@ -23,26 +23,56 @@ export class RFPageStore {
         this.levelTiers = levelTiers;
         this.tierPresets = tierPresets;
     }
-
-    @action
-    update(indicator) {
-        let i = this.indicators.findIndex(e => e.id === indicator.id);
-        if (i > -1) {
-            this.indicators[i] = indicator;
-        }
-    }
-
 }
 
 export class RFPageUIStore {
-    @observable selectedPreset = '';
+    @observable selectedPreset;
+    @observable levelTiers;
+    tierPresets;
+    defaultPreset = 'Mercy Corps standard';
 
-    constructor() {
+
+    constructor(levelTiers, tierPresets){
+        if (levelTiers.length) {
+            this.selectedPreset = this.derive_preset_name(levelTiers, tierPresets);
+            this.levelTiers = levelTiers;
+        }
+        else {
+            this.selectedPreset = this.defaultPreset;
+            this.levelTiers = tierPresets[this.defaultPreset];
+        }
+        this.tierPresets = tierPresets;
+
         this.changePreset = this.changePreset.bind(this);
+
+    }
+
+    @computed get tierList () {
+        if (!this.selectedPreset && !this.levelTiers){
+            return null;
+        }
+        else if (this.selectedPreset in this.tierPresets){
+            return this.tierPresets[this.selectedPreset];
+        }
+        else {
+            return this.levelTiers;
+        }
     }
 
     @action
     changePreset(newPreset) {
         this.selectedPreset = newPreset;
     }
+
+    // derive_preset_name(levelTiers, tierPresets) {
+    //     console.log('tierpreeesets', typeof(tierPresets));
+    //     if (!levelTiers){
+    //         return self.defaultPreset;
+    //     }
+    //     for (let preset_name in tierPresets){
+    //         return preset_name;
+    //     }
+    // }
+
+
 }

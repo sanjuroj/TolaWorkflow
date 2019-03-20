@@ -47,7 +47,7 @@ class ResultsFrameworkBuilder(ListView):
         js_context = {
             'levels': LevelSerializer(levels, many=True).data,
             'levelTiers': LevelTierSerializer(tiers, many=True).data,
-            'tierPresets': unicode(LevelTier.PRESETS),
+            'tierPresets': LevelTier.PRESETS,
         }
 
         context_data = {

@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(blank=True, max_length=135, verbose_name='Name')),
-                ('tier_depth', models.IntegerField(blank=True, null=True, verbose_name='Level Tier depth')),
+                ('tier_depth', models.IntegerField(verbose_name='Level Tier depth')),
                 ('create_date', models.DateTimeField(blank=True, null=True, verbose_name='Create date')),
                 ('edit_date', models.DateTimeField(blank=True, null=True, verbose_name='Edit date')),
                 ('program', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='level_tiers',

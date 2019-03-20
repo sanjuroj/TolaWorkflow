@@ -12,6 +12,7 @@ from django.http import QueryDict
 from django.urls import reverse
 from django.utils import formats, timezone, functional
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 from tola.l10n_utils import l10n_date_year_month, l10n_date_medium
 from django.contrib import admin
 from django.utils.functional import cached_property
@@ -163,22 +164,22 @@ class LevelAdmin(admin.ModelAdmin):
 class LevelTier(models.Model):
 
     PRESETS = {
-        'Mercy Corps standard': (_('Goal'), _('Outcome'), _('Output'), _('Activity')),
-        'European Commission (EC)': (_('Overall Objective'), _('Specific Objective'), _('Purpose'), _('Result'), _('Activity')),
-        'USAID 1': (_('Goal'), _('Purpose'), _('Sub-Purpose'), _('Output'), _('Input')),
-        'USAID 2': (_('Strategic Objective'), _('Intermediate Result'), _('Sub-Intermediate Result'), _('Output'), _('Input')),
-        'USAID FFP': (_('Goal'), _('Purpose'), _('Sub-Purpose'), _('Intermediate Outcome'), _('Output')),
+        'Mercy Corps standard': (ugettext('Goal'), ugettext('Outcome'), ugettext('Output'), ugettext('Activity')),
+        'European Commission (EC)': (ugettext('Overall Objective'), ugettext('Specific Objective'), ugettext('Purpose'), ugettext('Result'), ugettext('Activity')),
+        'USAID 1': (ugettext('Goal'), ugettext('Purpose'), ugettext('Sub-Purpose'), ugettext('Output'), ugettext('Input')),
+        'USAID 2': (ugettext('Strategic Objective'), ugettext('Intermediate Result'), ugettext('Sub-Intermediate Result'), ugettext('Output'), ugettext('Input')),
+        'USAID FFP': (ugettext('Goal'), ugettext('Purpose'), ugettext('Sub-Purpose'), ugettext('Intermediate Outcome'), ugettext('Output')),
     }
 
-    name = models.CharField(_("Name"), max_length=135, blank=True)
+    name = models.CharField(ugettext("Name"), max_length=135, blank=True)
     program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='level_tiers')
-    tier_depth = models.IntegerField(_("Level Tier depth"), blank=True, null=True)
-    create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
-    edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
+    tier_depth = models.IntegerField(ugettext("Level Tier depth"))
+    create_date = models.DateTimeField(ugettext("Create date"), null=True, blank=True)
+    edit_date = models.DateTimeField(ugettext("Edit date"), null=True, blank=True)
 
     class Meta:
         ordering = ('tier_depth', )
-        verbose_name = _("Level Tier")
+        verbose_name = ugettext("Level Tier")
         unique_together = (('name', 'program'), ('program', 'tier_depth'))
 
     def __unicode__(self):

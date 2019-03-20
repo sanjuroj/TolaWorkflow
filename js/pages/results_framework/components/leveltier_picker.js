@@ -1,24 +1,60 @@
 import React from 'react';
-import classNames from 'classnames';
-import { observer } from "mobx-react"
-import eventBus from '../../../eventbus';
-import {IndicatorFilterType} from "../models";
-import {localDateFromISOString} from "../../../date_utils";
+import { observer, inject } from "mobx-react"
 
+import Select from 'react-select';
 
+@inject('uiStore')
 @observer
-class LevelTierPicker extends React.Component {
+class Picker extends React.Component {
+    handleChange = selectedPreset => {
+        this.props.uiStore.changePreset(selectedPreset.value);
+    };
 
     render() {
+        const options = Object.keys(this.props.uiStore.tierPresets).map(val=>{
+            return {value:val, label:val};
+        });
+        const selectedOption = {value:this.props.uiStore.selectedPreset, label: this.props.uiStore.selectedPreset};
 
-        return <div>Help! I'm trapped!</div>
+        return <Select
+            options={options}
+            value={selectedOption}
+            onChange={this.handleChange}
+        />
     }
 }
 
-export const LevelTierPickerExport = observer(function (props) {
+class LevelTier extends React.Component {
 
-    return <div>
+    render() {
+        console.log('tierprinter', this.props.tierName)
+        return (
+            <div> {this.props.tierName} </div>
+    )}
+}
+
+@inject('uiStore')
+@observer
+class LevelTierList extends React.Component{
+    render() {
+        console.log('thisisitierlist', this.props.uiStore.tierList.slice())
+        return (
+            <div>
+                {this.props.uiStore.tierList.map((tier, index) => {
+                    return <LevelTier key={index} tierName={tier}/>
+                    }
+                )}
+            </div>
+        )
+    }
+}
+
+export const LevelTierPicker = observer(function (props) {
+
+    return (
         <React.Fragment>
-            <LevelTierPicker />
-        </React.Fragment></div>
+            <Picker />
+            <LevelTierList />
+        </React.Fragment>
+    )
 });
