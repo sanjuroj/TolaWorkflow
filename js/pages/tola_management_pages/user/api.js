@@ -22,6 +22,8 @@ export const saveUserProfile = (user_id, data) => api.put(`/tola_management/user
     return response.data
 })
 
+export const updateUserIsActive = (user_id, data) => api.put(`/tola_management/user/${user_id}/is_active/`, data).then(response => response.data)
+
 export const fetchUserProgramAccess = (user_id) => api.get(`/tola_management/user/${user_id}/program_access/`).then(response => response.data)
 
 export const saveUserPrograms = (user_id, data) => api.put(`/tola_management/user/${user_id}/program_access/`, data).then(response => {
@@ -54,5 +56,6 @@ export default {
     bulkUpdateUserStatus,
     bulkAddPrograms,
     bulkRemovePrograms,
-    fetchUserAggregates
+    fetchUserAggregates,
+    updateUserIsActive
 }

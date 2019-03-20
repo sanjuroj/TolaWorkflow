@@ -36,7 +36,9 @@
             {% else %}
                 <p class="text-muted">{% trans "There are no program sites." %}</p>
             {% endif %}
-            <a href="{% url 'siteprofile_add' %}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add site" %}</a>
+            {% if not readonly %}
+                <a href="{% url 'siteprofile_add' %}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add site" %}</a>
+            {% endif %}
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Pinned reports" %}</h3>

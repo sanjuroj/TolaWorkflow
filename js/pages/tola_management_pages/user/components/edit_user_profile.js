@@ -57,15 +57,6 @@ export default class EditUserProfile extends React.Component {
         })
     }
 
-    updateModeOfAddress(new_mode_of_address) {
-        this.setState({
-            managed_user_data: {
-                ...this.state.managed_user_data,
-                mode_of_address: new_mode_of_address,
-            }
-        })
-    }
-
     updateOrganization(new_option) {
         this.setState({
             managed_user_data: {
@@ -144,9 +135,9 @@ export default class EditUserProfile extends React.Component {
                             onChange={(e) => this.updateFirstName(e.target.value) }
                             id="user-first-name-input"
                             required />
-                        {e.name &&
+                        {e.first_name &&
                         <div className="invalid-feedback">
-                            {e.name}
+                            {e.first_name}
                         </div>
                         }
                     </div>
@@ -160,21 +151,11 @@ export default class EditUserProfile extends React.Component {
                             onChange={(e) => this.updateLastName(e.target.value) }
                             id="user-last-name-input"
                             required />
-                        {e.name &&
+                        {e.last_name &&
                          <div className="invalid-feedback">
-                             {e.name}
+                             {e.last_name}
                          </div>
                         }
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="user-mode-of-address-input">{gettext("Preferred Mode Of Address")}</label>
-                        <input
-                            type="text"
-                            disabled={disabled}
-                            value={ud.mode_of_address}
-                            onChange={(e) => this.updateModeOfAddress(e.target.value)}
-                            className="form-control"
-                            id="user-mode-of-address-input" />
                     </div>
                     <div className="form-group">
                         <label htmlFor="user-organization-input">{gettext("Organization")}<span className="required">*</span></label>

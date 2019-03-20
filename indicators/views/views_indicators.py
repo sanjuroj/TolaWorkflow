@@ -331,10 +331,19 @@ class PeriodicTargetView(LoginRequiredMixin, View):
         indicator = Indicator.objects.get(
             pk=self.kwargs.get('indicator', None))
 
+        rationale = request.POST.get('rationale')
+        if not rationale and indicator.result_set.all().exists():
+            return JsonResponse(
+                {"status": "failed", "msg": "Rationale is required"},
+                status=400
+            )
+
         deleteall = self.kwargs.get('deleteall', None)
         if deleteall == 'true':
             periodic_targets = PeriodicTarget.objects.filter(
                 indicator=indicator)
+
+            old = indicator.logged_fields
 
             for pt in periodic_targets:
                 pt.result_set.all().update(periodic_target=None)
@@ -344,6 +353,8 @@ class PeriodicTargetView(LoginRequiredMixin, View):
             indicator.target_frequency_start = None
             indicator.target_frequency_custom = None
             indicator.save()
+            ProgramAuditLog.log_indicator_updated(self.request.user, indicator, old, indicator.logged_fields, rationale)
+
         return HttpResponse('{"status": "success", \
                             "message": "Request processed successfully!"}')
 
@@ -617,13 +628,14 @@ class IndicatorUpdate(LoginRequiredMixin, UpdateView):
         self.object = form.save()
         self.object.refresh_from_db()
 
-        ProgramAuditLog.log_indicator_updated(
-            self.request.user,
-            self.object,
-            old_indicator_values,
-            self.object.logged_fields,
-            rationale
-        )
+        if not periodic_targets == 'generateTargets':
+            ProgramAuditLog.log_indicator_updated(
+                self.request.user,
+                self.object,
+                old_indicator_values,
+                self.object.logged_fields,
+                rationale
+            )
 
         # fetch all existing periodic_targets for this indicator
         periodic_targets = PeriodicTarget.objects.filter(indicator=indicatr) \
@@ -1377,14 +1389,16 @@ class ProgramPage(LoginRequiredMixin, ListView):
 
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
                          [PinnedReport.default_report(program.id)]
+
+        readonly = not request.has_write_access
+
         js_context = {
             'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
             'program': ProgramSerializer(program).data,
             'indicators': IndicatorSerializer(indicators, many=True).data,
             'indicator_on_scope_margin': Indicator.ONSCOPE_MARGIN,
+            'readonly': readonly,
         }
-
-        readonly = not request.has_write_access
 
         #program.set_metrics(indicators)
         c_data = {

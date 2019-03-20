@@ -221,7 +221,7 @@ class TolaUser(models.Model):
         """
         Only allow existing users to access the Projects/workflow functionality
         """
-        user_country_codes = set(self.countries.values_list('code', flat=True))
+        user_country_codes = set(self.available_countries.values_list('code', flat=True))
         if self.country:
             user_country_codes.add(self.country.code)
         return bool(user_country_codes & settings.PROJECTS_ACCESS_WHITELIST_SET)
@@ -592,6 +592,9 @@ class Program(models.Model):
         """if program has a gait ID, returns url https://gait.mercycorps.org/editgrant.vm?GrantID=####
         otherwise returns false
         """
+        if self.gaitid is None:
+            return None
+
         try:
             gaitid = int(self.gaitid)
         except ValueError:

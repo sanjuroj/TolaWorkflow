@@ -8,7 +8,6 @@ const ErrorFeedback = observer(({errorMessages}) => {
     if (!errorMessages) {
         return null
     }
-    console.log(errorMessages)
     return (
         <div className="invalid-feedback">
             {errorMessages.map((message, index) =>

@@ -95,7 +95,7 @@ eventBus.on('select-indicator-to-filter', (selectedIndicatorId) => {
  * React components on page
  */
 
-ReactDOM.render(<IndicatorList rootStore={rootStore} uiStore={uiStore} />,
+ReactDOM.render(<IndicatorList rootStore={rootStore} uiStore={uiStore} readonly={jsContext.readonly} />,
     document.querySelector('#indicator-list-react-component'));
 
 ReactDOM.render(<ProgramMetrics rootStore={rootStore}

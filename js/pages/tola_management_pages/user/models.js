@@ -8,7 +8,6 @@ const default_user = {
     email: "",
     phone_number: "",
     organization_id: null,
-    mode_of_address: "",
     mode_of_contact: "",
     title: "",
     user_programs: 0,
@@ -105,7 +104,7 @@ export class UserStore {
 
         this.organization_selections = Object.values(organizations).map(org => ({value: org.id, label: org.name}))
 
-        this.program_selections = Object.values(programs).map(program => ({value: program.id, label: program.name}))
+        this.program_selections = this.createProgramSelections(this.programs)
 
         this.user_selections = this.available_users.map(user => ({value: user.id, label: user.name}))
 
@@ -172,6 +171,10 @@ export class UserStore {
         PNotify.success({text: message || gettext('Successfully Saved'), delay: 5000})
     }
 
+    createProgramSelections(programs) {
+        return Object.values(programs).map(program => ({value: program.id, label: program.name}))
+    }
+
     @action
     fetchUsers() {
         this.fetching_users_listing = true
@@ -222,6 +225,15 @@ export class UserStore {
     @action
     changeCountryFilter(countries) {
         this.filters.countries = countries
+        if(countries.length == 0) {
+            this.program_selections = this.createProgramSelections(this.programs)
+        } else {
+            const candidate_programs = countries.map(selection => selection.value)
+                                                .map(id => this.countries[id])
+                                                .flatMap(country => country.programs)
+            const selected_programs_set = new Set(candidate_programs)
+            this.program_selections = this.createProgramSelections(Array.from(selected_programs_set).map(id => this.programs[id]))
+        }
     }
 
     @action
@@ -312,6 +324,34 @@ export class UserStore {
         this.saving_user_profile = true
         this.editing_errors = {}
         api.saveUserProfile(user_id, new_user_data).then(result => Promise.all([api.fetchUserAggregates(result.id), api.fetchUserHistory(result.id)]).then(([aggregates, history]) => {
+            this.onSaveSuccessHandler()
+            runInAction(() => {
+                this.saving_user_profile = false
+                this.users[result.id] = {
+                    id: result.id,
+                    name: result.name,
+                    organization_name: this.organizations[result.organization_id].name,
+                    user_programs: aggregates.program_count,
+                    is_admin: result.user.is_staff,
+                    is_active: result.user.is_active
+                }
+                this.editing_target_data.profile = result
+                this.editing_target_data.history = history
+            })
+        })).catch(errors => {
+            this.onSaveErrorHandler(errors.response.data.detail)
+            runInAction(() => {
+                this.saving_user_profile = false
+                this.editing_errors = errors.response.data
+            })
+        })
+    }
+
+    @action
+    updateUserIsActive(user_id, new_user_data) {
+        this.saving_user_profile = true
+        this.editing_errors = {}
+        api.updateUserIsActive(user_id, new_user_data).then(result => Promise.all([api.fetchUserAggregates(user_id), api.fetchUserHistory(user_id)]).then(([aggregates, history]) => {
             this.onSaveSuccessHandler()
             runInAction(() => {
                 this.saving_user_profile = false

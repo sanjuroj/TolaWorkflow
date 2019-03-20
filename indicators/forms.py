@@ -113,8 +113,9 @@ class IndicatorForm(forms.ModelForm):
         return data
 
     def clean_rationale(self):
-        data = self.cleaned_data['rationale']
-        if len(self.instance.result_set.all()) > 0 and (not data or len(data) <= 0):
+        data = self.cleaned_data.get('rationale')
+        periodic_targets = self.request.POST.get('periodic_targets')
+        if not periodic_targets == 'generateTargets' and len(self.instance.result_set.all()) > 0 and (not data or len(data) <= 0):
             raise forms.ValidationError(_('Results have been recorded, rationale is required.'))
         return data
 

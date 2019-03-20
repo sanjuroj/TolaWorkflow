@@ -216,11 +216,8 @@ def get_country_page_context(request):
 
     country_queryset = Country.objects
     if not auth_user.is_superuser:
-        country_queryset = country_queryset.filter(
-            Q(countryaccess__tolauser=tola_user) |
-            Q(programaccess__tolauser=tola_user) |
-            Q(tolauser=tola_user)
-        )
+        country_queryset = tola_user.managed_countries
+
     countries = [{
         'id': country.id,
         'country': country.country,
@@ -233,14 +230,18 @@ def get_country_page_context(request):
         } for organization in Organization.objects.all()
     }
 
+    program_queryset = Program.objects.all()
+    if not auth_user.is_superuser:
+        program_queryset = tola_user.managed_programs
     programs = [
         {
             'id': program.id,
             'name': program.name,
-        } for program in Program.objects.all()
+        } for program in program_queryset
     ]
 
     return {
+        'is_superuser': request.user.is_superuser,
         'countries': countries,
         'organizations': organizations,
         'programs': programs,
@@ -278,8 +279,6 @@ def app_host_page(request, react_app_page):
         js_context = get_program_page_context(request)
         page_title = "Program Management"
     elif react_app_page == 'country':
-        if not request.user.is_superuser:
-            raise PermissionDenied
         js_context = get_country_page_context(request)
         page_title = "Country Management"
 
@@ -287,10 +286,13 @@ def app_host_page(request, react_app_page):
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
     return render(request, 'react_app_base.html', {"bundle_name": "tola_management_"+react_app_page, "js_context": json_context, "page_title": page_title+" | "})
 
+@login_required(login_url='/accounts/login/')
 def audit_log_host_page(request, program_id):
     js_context = get_audit_log_page_context(request, program_id)
     json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
     program = get_object_or_404(Program, pk=program_id)
+    if not request.user.tola_user.available_programs.filter(id=program.id).exists():
+        raise PermissionDenied
     return render(request, 'react_app_base.html', {"bundle_name": "audit_log", "js_context": json_context, "report_wide": True, "page_title": program.name+" Audit Log | "})
 
 
@@ -361,7 +363,6 @@ class UserAdminSerializer(ModelSerializer):
         new_user = TolaUser(
             organization_id=validated_data["organization_id"],
             user=new_django_user,
-            mode_of_address=validated_data["mode_of_address"],
             mode_of_contact=validated_data["mode_of_contact"],
             phone_number=validated_data["phone_number"],
             title=validated_data["title"]
@@ -395,7 +396,6 @@ class UserAdminSerializer(ModelSerializer):
         user.user.save()
 
         user.organization_id = validated_data["organization_id"]
-        user.mode_of_address = validated_data["mode_of_address"]
         user.mode_of_contact = validated_data["mode_of_contact"]
         user.title = validated_data["title"]
         user.phone_number = validated_data["phone_number"]
@@ -419,7 +419,6 @@ class UserAdminSerializer(ModelSerializer):
             'first_name',
             'last_name',
             'organization_id',
-            'mode_of_address',
             'mode_of_contact',
             'phone_number',
             'email'
@@ -662,6 +661,25 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         serializer = UserManagementAuditLogSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @detail_route(methods=['put'])
+    def is_active(self, request, pk=None):
+        is_active = request.data['user']['is_active']
+        user = get_object_or_404(TolaUser, id=pk)
+
+        previous_entry = user.logged_fields
+
+        user.user.is_active = is_active
+        user.user.save()
+
+        UserManagementAuditLog.profile_updated(
+            user=user,
+            changed_by=request.user.tola_user,
+            old=previous_entry,
+            new=user.logged_fields
+        )
+        serializer = UserAdminSerializer(user)
+        return Response(serializer.data)
+
     @detail_route(methods=['get', 'put'])
     def program_access(self, request, pk=None):
         user = TolaUser.objects.get(pk=pk)
@@ -680,25 +698,15 @@ class UserAdminViewSet(viewsets.ModelViewSet):
                 raise PermissionDenied
             else:
                 try:
+                    user.countryaccess_set.all().delete()
                     for country_id, access in country_data.iteritems():
-                        if access["role"] == 'basic_admin':
-                            CountryAccess.objects.update_or_create(
-                                tolauser=user,
-                                country_id=country_id,
-                                defaults={
-                                    "role": access["role"],
-                                }
-                            )
-                        else:
-                            try:
-                                old_access = CountryAccess.objects.get(
-                                    tolauser=user,
-                                    country_id=country_id,
-                                )
-                                old_access.role = access["role"]
-                                old_access.save()
-                            except ObjectDoesNotExist:
-                                pass
+                        CountryAccess.objects.update_or_create(
+                            tolauser=user,
+                            country_id=country_id,
+                            defaults={
+                                "role": access["role"],
+                            }
+                        )
                 except SuspiciousOperation, e:
                     return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
