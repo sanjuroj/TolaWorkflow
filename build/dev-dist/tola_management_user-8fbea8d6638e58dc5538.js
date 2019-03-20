@@ -68,7 +68,10 @@ var create_country_objects = function create_country_objects(countries, store) {
 
     return _objectSpread({}, countries, _defineProperty({}, id, _objectSpread({}, country, {
       type: 'country',
-      options: store.country_role_choices,
+      options: [{
+        label: '',
+        value: 'none'
+      }].concat(_toConsumableArray(store.country_role_choices)),
       admin_access: store.is_superuser,
       programs: new Set(country.programs)
     })));
@@ -280,27 +283,33 @@ function (_React$Component) {
       this.props.onSave({
         countries: Object.entries(access.countries).filter(function (_ref19) {
           var _ref20 = _slicedToArray(_ref19, 2),
-              id = _ref20[0],
+              _ = _ref20[0],
               country = _ref20[1];
 
           return _this2.props.store.is_superuser;
-        }).reduce(function (countries, _ref21) {
+        }).filter(function (_ref21) {
           var _ref22 = _slicedToArray(_ref21, 2),
-              id = _ref22[0],
+              _ = _ref22[0],
               country = _ref22[1];
+
+          return country.has_access;
+        }).reduce(function (countries, _ref23) {
+          var _ref24 = _slicedToArray(_ref23, 2),
+              id = _ref24[0],
+              country = _ref24[1];
 
           return _objectSpread({}, countries, _defineProperty({}, id, country));
         }, {}),
-        programs: Object.entries(access.programs).filter(function (_ref23) {
-          var _ref24 = _slicedToArray(_ref23, 2),
-              _ = _ref24[0],
-              program = _ref24[1];
-
-          return program.has_access;
-        }).map(function (_ref25) {
+        programs: Object.entries(access.programs).filter(function (_ref25) {
           var _ref26 = _slicedToArray(_ref25, 2),
               _ = _ref26[0],
               program = _ref26[1];
+
+          return program.has_access;
+        }).map(function (_ref27) {
+          var _ref28 = _slicedToArray(_ref27, 2),
+              _ = _ref28[0],
+              program = _ref28[1];
 
           return program;
         })
@@ -407,17 +416,19 @@ function (_React$Component) {
   }, {
     key: "changeCountryRole",
     value: function changeCountryRole(country_id, new_val) {
-      var country = this.state.user_program_access.countries[country_id];
+      var country = _objectSpread({}, this.state.user_program_access.countries[country_id]);
 
       var new_country_access = function () {
-        if (country) {
+        if (new_val != 'none') {
           return _objectSpread({}, country, {
-            role: new_val
+            role: new_val,
+            has_access: true
           });
         } else {
-          return {
-            role: new_val
-          };
+          return _objectSpread({}, country, {
+            role: new_val,
+            has_access: false
+          });
         }
       }();
 
@@ -429,16 +440,35 @@ function (_React$Component) {
     }
   }, {
     key: "changeProgramRole",
-    value: function changeProgramRole(program_id, new_val) {
-      var program_access = this.state.user_program_access.programs[program_id];
+    value: function changeProgramRole(program_key, new_val) {
+      var _program_key$split3 = program_key.split('_'),
+          _program_key$split4 = _slicedToArray(_program_key$split3, 2),
+          country_id = _program_key$split4[0],
+          program_id = _program_key$split4[1];
 
-      var new_program_access = _objectSpread({}, program_access, {
-        role: new_val
-      });
+      var access = this.state.user_program_access;
+
+      var new_program_access = function () {
+        if (access[country_id] && access[country_id].has_access && new_val == 'low') {
+          return {
+            program: program_id,
+            country: country_id,
+            role: new_val,
+            has_access: false
+          };
+        } else {
+          return {
+            program: program_id,
+            country: country_id,
+            role: new_val,
+            has_access: true
+          };
+        }
+      }();
 
       this.setState({
         user_program_access: _objectSpread({}, this.state.user_program_access, {
-          programs: _objectSpread({}, this.state.user_program_access.programs, _defineProperty({}, program_id, new_program_access))
+          programs: _objectSpread({}, this.state.user_program_access.programs, _defineProperty({}, program_key, new_program_access))
         })
       });
     }
@@ -517,14 +547,22 @@ function (_React$Component) {
         if (data.type == 'country') {
           return access.countries[data.id] && access.countries[data.id].has_access || false;
         } else {
+          if (_this4.state.user_program_access.countries[data.country_id] && _this4.state.user_program_access.countries[data.country_id].has_access) {
+            return true;
+          }
+
           return access.programs[data.id] && access.programs[data.id].has_access || false;
         }
       };
 
       var is_check_disabled = function is_check_disabled(data) {
         if (data.type == 'country') {
-          return !_this4.state.countries[data.id].programs.size > 0 || !_this4.props.store.access.countries[data.id] || _this4.props.store.access.countries[data.id].role != 'basic_admin';
+          return !(_this4.state.countries[data.id].programs.size > 0) || !(_this4.props.store.access.countries[data.id] && _this4.props.store.access.countries[data.id].role == 'basic_admin') || _this4.state.user_program_access.countries[data.id] && _this4.state.user_program_access.countries[data.id].has_access;
         } else {
+          if (_this4.state.user_program_access.countries[data.country_id] && _this4.state.user_program_access.countries[data.country_id].has_access) {
+            return true;
+          }
+
           return !_this4.props.store.access.countries[data.country_id] || _this4.props.store.access.countries[data.country_id].role != 'basic_admin';
         }
       };
@@ -533,7 +571,7 @@ function (_React$Component) {
         if (data.type == 'country') {
           return !_this4.props.store.is_superuser;
         } else {
-          return !_this4.props.store.access.countries[data.country_id] || _this4.props.store.access.countries[data.country_id].role != 'basic_admin' || !_this4.state.user_program_access.programs[data.id] || !_this4.state.user_program_access.programs[data.id].has_access;
+          return !_this4.props.store.access.countries[data.country_id] || _this4.props.store.access.countries[data.country_id].role != 'basic_admin' || !(_this4.state.user_program_access.programs[data.id] && _this4.state.user_program_access.programs[data.id].has_access) && !(_this4.state.user_program_access.countries[data.country_id] && _this4.state.user_program_access.countries[data.country_id].has_access);
         }
       };
 
@@ -542,7 +580,7 @@ function (_React$Component) {
           var country_access = _this4.state.user_program_access.countries;
 
           if (!country_access[data.id]) {
-            return _this4.props.store.country_role_choices[0].value;
+            return 'none';
           } else {
             return country_access[data.id].role;
           }
@@ -558,8 +596,10 @@ function (_React$Component) {
       };
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "edit-user-programs"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, user.name, ": Programs and Roles"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "tab-pane--react"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", {
+        class: "no-bold"
+      }, user.name ? user.name + ': ' : '', gettext("Programs and Roles")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col"
@@ -605,15 +645,15 @@ function (_React$Component) {
         className: "col"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "virtualized-table__wrapper"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_virtualized__WEBPACK_IMPORTED_MODULE_2__["AutoSizer"], null, function (_ref27) {
-        var height = _ref27.height,
-            width = _ref27.width;
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_virtualized__WEBPACK_IMPORTED_MODULE_2__["AutoSizer"], null, function (_ref29) {
+        var height = _ref29.height,
+            width = _ref29.width;
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_virtualized__WEBPACK_IMPORTED_MODULE_2__["Table"], {
           height: height,
           headerHeight: 50,
           width: width,
-          rowGetter: function rowGetter(_ref28) {
-            var index = _ref28.index;
+          rowGetter: function rowGetter(_ref30) {
+            var index = _ref30.index;
             return _this4.state.flattened_programs[index];
           },
           rowHeight: 50,
@@ -621,8 +661,8 @@ function (_React$Component) {
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_virtualized__WEBPACK_IMPORTED_MODULE_2__["Column"], {
           dataKey: "not_applicable_but_required",
           width: 100,
-          cellDataGetter: function cellDataGetter(_ref29) {
-            var rowData = _ref29.rowData;
+          cellDataGetter: function cellDataGetter(_ref31) {
+            var rowData = _ref31.rowData;
             return {
               checked: is_checked(rowData),
               disabled: is_check_disabled(rowData),
@@ -631,8 +671,8 @@ function (_React$Component) {
               action: rowData.type == "country" ? _this4.toggleAllProgramsForCountry.bind(_this4) : _this4.toggleProgramAccess.bind(_this4)
             };
           },
-          cellRenderer: function cellRenderer(_ref30) {
-            var cellData = _ref30.cellData;
+          cellRenderer: function cellRenderer(_ref32) {
+            var cellData = _ref32.cellData;
 
             if (cellData.type == 'country') {
               var country_has_all_checked = country_has_all_access(_this4.state.countries[cellData.id], _this4.state.filtered_programs, _this4.state.user_program_access);
@@ -668,15 +708,15 @@ function (_React$Component) {
           label: gettext("Countries and Programs"),
           width: 200,
           flexGrow: 2,
-          cellDataGetter: function cellDataGetter(_ref31) {
-            var rowData = _ref31.rowData;
+          cellDataGetter: function cellDataGetter(_ref33) {
+            var rowData = _ref33.rowData;
             return {
               bold: rowData.type == "country",
               name: rowData.name
             };
           },
-          cellRenderer: function cellRenderer(_ref32) {
-            var cellData = _ref32.cellData;
+          cellRenderer: function cellRenderer(_ref34) {
+            var cellData = _ref34.cellData;
 
             if (cellData.bold) {
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, cellData.name);
@@ -689,8 +729,8 @@ function (_React$Component) {
           flexGrow: 1,
           dataKey: "not_applicable_but_required",
           label: gettext("Roles and Permissions"),
-          cellDataGetter: function cellDataGetter(_ref33) {
-            var rowData = _ref33.rowData;
+          cellDataGetter: function cellDataGetter(_ref35) {
+            var rowData = _ref35.rowData;
             return {
               id: rowData.id,
               disabled: is_role_disabled(rowData),
@@ -699,8 +739,8 @@ function (_React$Component) {
               action: rowData.type == "country" ? _this4.changeCountryRole.bind(_this4) : _this4.changeProgramRole.bind(_this4)
             };
           },
-          cellRenderer: function cellRenderer(_ref34) {
-            var cellData = _ref34.cellData;
+          cellRenderer: function cellRenderer(_ref36) {
+            var cellData = _ref36.cellData;
             return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
               disabled: cellData.disabled,
               value: get_role(cellData),
@@ -990,15 +1030,6 @@ function (_React$Component) {
       });
     }
   }, {
-    key: "updateModeOfAddress",
-    value: function updateModeOfAddress(new_mode_of_address) {
-      this.setState({
-        managed_user_data: _objectSpread({}, this.state.managed_user_data, {
-          mode_of_address: new_mode_of_address
-        })
-      });
-    }
-  }, {
     key: "updateOrganization",
     value: function updateOrganization(new_option) {
       this.setState({
@@ -1072,8 +1103,10 @@ function (_React$Component) {
         organization: e.organization_id ? 'is-invalid' : ''
       };
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "edit-user-profile container"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+        className: "tab-pane--react"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", {
+        className: "no-bold"
+      }, ud.name ? ud.name + ': ' : '', "Profile"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
         className: "form"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
@@ -1091,9 +1124,9 @@ function (_React$Component) {
         },
         id: "user-first-name-input",
         required: true
-      }), e.name && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), e.first_name && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "invalid-feedback"
-      }, e.name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, e.first_name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         htmlFor: "user-last-name-input"
@@ -1109,22 +1142,9 @@ function (_React$Component) {
         },
         id: "user-last-name-input",
         required: true
-      }), e.name && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), e.last_name && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "invalid-feedback"
-      }, e.name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        htmlFor: "user-mode-of-address-input"
-      }, gettext("Preferred Mode Of Address")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-        type: "text",
-        disabled: disabled,
-        value: ud.mode_of_address,
-        onChange: function onChange(e) {
-          return _this3.updateModeOfAddress(e.target.value);
-        },
-        className: "form-control",
-        id: "user-mode-of-address-input"
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, e.last_name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         htmlFor: "user-organization-input"
@@ -1328,10 +1348,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var components_expander__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! components/expander */ "H4hL");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -1412,10 +1428,16 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(EditUserHistory).call(this, props));
     _this.state = {
-      original_user_data: props.userData,
-      user_data: _objectSpread({}, props.userData, {
-        user: _objectSpread({}, props.userData.user)
-      })
+      original_user_data: {
+        user: {
+          is_active: props.userData.user.is_active
+        }
+      },
+      user_data: {
+        user: {
+          is_active: props.userData.user.is_active
+        }
+      }
     };
     return _this;
   }
@@ -1424,11 +1446,11 @@ function (_React$Component) {
     key: "onChange",
     value: function onChange(new_value) {
       this.setState({
-        user_data: _objectSpread({}, this.state.user_data, {
-          user: _objectSpread({}, this.state.user_data.user, {
+        user_data: {
+          user: {
             is_active: new_value.value
-          })
-        })
+          }
+        }
       });
     }
   }, {
@@ -1454,7 +1476,9 @@ function (_React$Component) {
       var history = this.props.history;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "edit-user-history"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, this.state.user_data.name, ": ", gettext("Status and History")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", {
+        className: "no-bold"
+      }, this.state.user_data.name ? this.state.user_data.name + ': ' : '', gettext("Status and History")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col"
@@ -1642,7 +1666,7 @@ function (_React$Component) {
 /*!****************************************************!*\
   !*** ./js/pages/tola_management_pages/user/api.js ***!
   \****************************************************/
-/*! exports provided: fetchUsersWithFilter, fetchUser, saveUserProfile, fetchUserProgramAccess, saveUserPrograms, fetchUserHistory, createUser, resendRegistrationEmail, bulkUpdateUserStatus, bulkAddPrograms, bulkRemovePrograms, fetchUserAggregates, default */
+/*! exports provided: fetchUsersWithFilter, fetchUser, saveUserProfile, updateUserIsActive, fetchUserProgramAccess, saveUserPrograms, fetchUserHistory, createUser, resendRegistrationEmail, bulkUpdateUserStatus, bulkAddPrograms, bulkRemovePrograms, fetchUserAggregates, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1650,6 +1674,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchUsersWithFilter", function() { return fetchUsersWithFilter; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchUser", function() { return fetchUser; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "saveUserProfile", function() { return saveUserProfile; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateUserIsActive", function() { return updateUserIsActive; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchUserProgramAccess", function() { return fetchUserProgramAccess; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "saveUserPrograms", function() { return saveUserPrograms; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchUserHistory", function() { return fetchUserHistory; });
@@ -1691,6 +1716,11 @@ var fetchUser = function fetchUser(user_id) {
 };
 var saveUserProfile = function saveUserProfile(user_id, data) {
   return _api__WEBPACK_IMPORTED_MODULE_0__["api"].put("/tola_management/user/".concat(user_id, "/"), data).then(function (response) {
+    return response.data;
+  });
+};
+var updateUserIsActive = function updateUserIsActive(user_id, data) {
+  return _api__WEBPACK_IMPORTED_MODULE_0__["api"].put("/tola_management/user/".concat(user_id, "/is_active/"), data).then(function (response) {
     return response.data;
   });
 };
@@ -1758,7 +1788,8 @@ var fetchUserAggregates = function fetchUserAggregates(user_id) {
   bulkUpdateUserStatus: bulkUpdateUserStatus,
   bulkAddPrograms: bulkAddPrograms,
   bulkRemovePrograms: bulkRemovePrograms,
-  fetchUserAggregates: fetchUserAggregates
+  fetchUserAggregates: fetchUserAggregates,
+  updateUserIsActive: updateUserIsActive
 });
 
 /***/ }),
@@ -1824,11 +1855,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx-react */ "okNM");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "TSYQ");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
 
 
  // TODO: "size" is no longer used
@@ -1864,7 +1898,7 @@ var InnerRowComponent = function InnerRowComponent(_ref3) {
 }; // TODO: this is redundant with InnerRowComponent
 
 
-var HeaderRowCompnent = function HeaderRowCompnent(_ref4) {
+var HeaderRowComponent = function HeaderRowComponent(_ref4) {
   var className = _ref4.className,
       props = _objectWithoutProperties(_ref4, ["className"]);
 
@@ -1891,7 +1925,9 @@ var RowComponent = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(f
   if (Expando) {
     var ObservedExpando = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(Expando);
     return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tbody", _extends({
-      className: ["mgmt-table__body", className].join(' ')
+      className: classnames__WEBPACK_IMPORTED_MODULE_2___default()(["mgmt-table__body", className].join(' '), {
+        "is-expanded": expanded
+      })
     }, props), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(InnerRowComponent, null, props.children), expanded && react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(ObservedExpando, {
       Wrapper: ExpandoWrapper
     }));
@@ -1907,7 +1943,7 @@ var ExpandoWrapper = function ExpandoWrapper(_ref6) {
       props = _objectWithoutProperties(_ref6, ["className"]);
 
   return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tr", _extends({
-    className: ["", className].join(' ')
+    className: ["mgmt-table__row--expanded", className].join(' ')
   }, props), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", {
     colSpan: "6"
   }, props.children));
@@ -1955,7 +1991,7 @@ var ManagementTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"]
     className: ['table bg-white', className].join(' ')
   }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(ObservedHeaderRow, {
     Col: HeaderColumnComponent,
-    Row: HeaderRowCompnent
+    Row: HeaderRowComponent
   })), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(RowList, props));
 });
 /* harmony default export */ __webpack_exports__["default"] = (ManagementTable);
@@ -2484,16 +2520,15 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
           Row = _ref6.Row;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Row, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.5"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "td--stretch"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "checkbox",
         checked: store.bulk_targets_all,
         onChange: function onChange() {
           return store.toggleBulkTargetsAll();
         }
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
-        size: "2"
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+        size: "2",
+        className: "td--stretch"
       }, gettext("User")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, gettext("Programs")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.5"
       }, gettext("Admin Role")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
@@ -2556,7 +2591,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
                   return store.resendRegistrationEmail(data.id);
                 },
                 onSave: function onSave(new_data) {
-                  return store.updateUserProfile(data.id, new_data);
+                  return store.updateUserIsActive(data.id, new_data);
                 }
               }));
             })
@@ -2564,28 +2599,33 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.5"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "td--stretch"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "checkbox",
         checked: store.bulk_targets.get(data.id) || false,
         onChange: function onChange() {
           return store.toggleBulkTarget(data.id);
         }
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+        size: "2",
+        className: "td--stretch"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "icon__clickable",
         onClick: function onClick() {
           return store.toggleEditingTarget(data.id);
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__["FontAwesomeIcon"], {
         icon: 'user'
-      })))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
-        size: "2"
-      }, data.name || "---", " ", data.is_super && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      }), "\xA0", data.name || "---", " ", data.is_super && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "badge badge-danger"
-      }, gettext("Super Admin"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, data.organization_name || "---"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      }, gettext("Super Admin")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__["FontAwesomeIcon"], {
+        icon: "building"
+      }), "\xA0", data.organization_name || "---"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+        className: "text-nowrap"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "/tola_management/program/?users[]=".concat(data.id)
-      }, data.user_programs, " ", gettext("programs"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__["FontAwesomeIcon"], {
+        icon: "cubes"
+      }), "\xA0", data.user_programs, " ", gettext("programs"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.5"
       }, data.is_admin ? gettext('Yes') : gettext('No')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.25"
@@ -2663,7 +2703,6 @@ var default_user = {
   email: "",
   phone_number: "",
   organization_id: null,
-  mode_of_address: "",
   mode_of_contact: "",
   title: "",
   user_programs: 0,
@@ -2800,12 +2839,7 @@ function () {
         label: org.name
       };
     });
-    this.program_selections = Object.values(programs).map(function (program) {
-      return {
-        value: program.id,
-        label: program.name
-      };
-    });
+    this.program_selections = this.createProgramSelections(this.programs);
     this.user_selections = this.available_users.map(function (user) {
       return {
         value: user.id,
@@ -2938,6 +2972,16 @@ function () {
       });
     }
   }, {
+    key: "createProgramSelections",
+    value: function createProgramSelections(programs) {
+      return Object.values(programs).map(function (program) {
+        return {
+          value: program.id,
+          label: program.name
+        };
+      });
+    }
+  }, {
     key: "fetchUsers",
     value: function fetchUsers() {
       var _this2 = this;
@@ -2995,7 +3039,25 @@ function () {
   }, {
     key: "changeCountryFilter",
     value: function changeCountryFilter(countries) {
+      var _this4 = this;
+
       this.filters.countries = countries;
+
+      if (countries.length == 0) {
+        this.program_selections = this.createProgramSelections(this.programs);
+      } else {
+        var candidate_programs = countries.map(function (selection) {
+          return selection.value;
+        }).map(function (id) {
+          return _this4.countries[id];
+        }).flatMap(function (country) {
+          return country.programs;
+        });
+        var selected_programs_set = new Set(candidate_programs);
+        this.program_selections = this.createProgramSelections(Array.from(selected_programs_set).map(function (id) {
+          return _this4.programs[id];
+        }));
+      }
     }
   }, {
     key: "changeBaseCountryFilter",
@@ -3030,7 +3092,7 @@ function () {
   }, {
     key: "toggleEditingTarget",
     value: function toggleEditingTarget(user_id) {
-      var _this4 = this;
+      var _this5 = this;
 
       this.editing_errors = {};
       this.editing_target_data = _objectSpread({}, default_editing_target_data);
@@ -3051,8 +3113,8 @@ function () {
               history_data = _ref11[2];
 
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this4.fetching_editing_target = false;
-            _this4.editing_target_data = {
+            _this5.fetching_editing_target = false;
+            _this5.editing_target_data = {
               profile: user,
               access: access_data,
               history: history_data
@@ -3090,7 +3152,7 @@ function () {
   }, {
     key: "updateUserProfile",
     value: function updateUserProfile(user_id, new_user_data) {
-      var _this5 = this;
+      var _this6 = this;
 
       this.saving_user_profile = true;
       this.editing_errors = {};
@@ -3100,56 +3162,44 @@ function () {
               aggregates = _ref13[0],
               history = _ref13[1];
 
-          _this5.onSaveSuccessHandler();
+          _this6.onSaveSuccessHandler();
 
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this5.saving_user_profile = false;
-            _this5.users[result.id] = {
+            _this6.saving_user_profile = false;
+            _this6.users[result.id] = {
               id: result.id,
               name: result.name,
-              organization_name: _this5.organizations[result.organization_id].name,
+              organization_name: _this6.organizations[result.organization_id].name,
               user_programs: aggregates.program_count,
               is_admin: result.user.is_staff,
               is_active: result.user.is_active
             };
-            _this5.editing_target_data.profile = result;
-            _this5.editing_target_data.history = history;
+            _this6.editing_target_data.profile = result;
+            _this6.editing_target_data.history = history;
           });
         });
       }).catch(function (errors) {
-        _this5.onSaveErrorHandler(errors.response.data.detail);
+        _this6.onSaveErrorHandler(errors.response.data.detail);
 
-        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this5.saving_user_profile = false;
-          _this5.editing_errors = errors.response.data;
-        });
-      });
-    }
-  }, {
-    key: "resendRegistrationEmail",
-    value: function resendRegistrationEmail(user_id) {
-      var _this6 = this;
-
-      this.saving_user_profile = true;
-      _api__WEBPACK_IMPORTED_MODULE_1__["default"].resendRegistrationEmail(user_id).then(function (result) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this6.saving_user_profile = false;
-
-          _this6.onSaveSuccessHandler(gettext("Verification email sent"));
+          _this6.editing_errors = errors.response.data;
         });
-      }).catch(function () {
-        _this6.onSaveSuccessHandler(gettext("Verification email send failed"));
       });
     }
   }, {
-    key: "saveNewUser",
-    value: function saveNewUser(new_user_data) {
+    key: "updateUserIsActive",
+    value: function updateUserIsActive(user_id, new_user_data) {
       var _this7 = this;
 
       this.saving_user_profile = true;
       this.editing_errors = {};
-      _api__WEBPACK_IMPORTED_MODULE_1__["default"].createUser(new_user_data).then(function (result) {
-        return _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserAggregates(result.id).then(function (aggregates) {
+      _api__WEBPACK_IMPORTED_MODULE_1__["default"].updateUserIsActive(user_id, new_user_data).then(function (result) {
+        return Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserAggregates(user_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserHistory(user_id)]).then(function (_ref14) {
+          var _ref15 = _slicedToArray(_ref14, 2),
+              aggregates = _ref15[0],
+              history = _ref15[1];
+
           _this7.onSaveSuccessHandler();
 
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
@@ -3162,18 +3212,8 @@ function () {
               is_admin: result.user.is_staff,
               is_active: result.user.is_active
             };
-
-            _this7.user_selections.push({
-              value: result.id,
-              label: result.name
-            });
-
-            _this7.users_listing[0] = result.id;
-            _this7.editing_target = null;
-
-            _this7.toggleEditingTarget(result.id);
-
-            delete _this7.users["new"];
+            _this7.editing_target_data.profile = result;
+            _this7.editing_target_data.history = history;
           });
         });
       }).catch(function (errors) {
@@ -3186,101 +3226,161 @@ function () {
       });
     }
   }, {
-    key: "saveNewUserAndAddAnother",
-    value: function saveNewUserAndAddAnother(new_user_data) {
+    key: "resendRegistrationEmail",
+    value: function resendRegistrationEmail(user_id) {
       var _this8 = this;
+
+      this.saving_user_profile = true;
+      _api__WEBPACK_IMPORTED_MODULE_1__["default"].resendRegistrationEmail(user_id).then(function (result) {
+        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+          _this8.saving_user_profile = false;
+
+          _this8.onSaveSuccessHandler(gettext("Verification email sent"));
+        });
+      }).catch(function () {
+        _this8.onSaveSuccessHandler(gettext("Verification email send failed"));
+      });
+    }
+  }, {
+    key: "saveNewUser",
+    value: function saveNewUser(new_user_data) {
+      var _this9 = this;
 
       this.saving_user_profile = true;
       this.editing_errors = {};
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].createUser(new_user_data).then(function (result) {
         return _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserAggregates(result.id).then(function (aggregates) {
-          _this8.onSaveSuccessHandler();
+          _this9.onSaveSuccessHandler();
 
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this8.saving_user_profile = false;
-            _this8.users[result.id] = {
+            _this9.saving_user_profile = false;
+            _this9.users[result.id] = {
               id: result.id,
               name: result.name,
-              organization_name: _this8.organizations.find(function (o) {
+              organization_name: _this9.organizations[result.organization_id].name,
+              user_programs: aggregates.program_count,
+              is_admin: result.user.is_staff,
+              is_active: result.user.is_active
+            };
+
+            _this9.user_selections.push({
+              value: result.id,
+              label: result.name
+            });
+
+            _this9.users_listing[0] = result.id;
+            _this9.editing_target = null;
+
+            _this9.toggleEditingTarget(result.id);
+
+            delete _this9.users["new"];
+          });
+        });
+      }).catch(function (errors) {
+        _this9.onSaveErrorHandler(errors.response.data.detail);
+
+        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+          _this9.saving_user_profile = false;
+          _this9.editing_errors = errors.response.data;
+        });
+      });
+    }
+  }, {
+    key: "saveNewUserAndAddAnother",
+    value: function saveNewUserAndAddAnother(new_user_data) {
+      var _this10 = this;
+
+      this.saving_user_profile = true;
+      this.editing_errors = {};
+      _api__WEBPACK_IMPORTED_MODULE_1__["default"].createUser(new_user_data).then(function (result) {
+        return _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserAggregates(result.id).then(function (aggregates) {
+          _this10.onSaveSuccessHandler();
+
+          Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+            _this10.saving_user_profile = false;
+            _this10.users[result.id] = {
+              id: result.id,
+              name: result.name,
+              organization_name: _this10.organizations.find(function (o) {
                 return o.id = result.organization_id;
               }).name,
               user_programs: aggregates.program_count,
               is_admin: result.user.is_staff,
               is_active: result.user.is_active
             };
-            _this8.users_listing[0] = result.id;
-            delete _this8.users["new"];
+            _this10.users_listing[0] = result.id;
+            delete _this10.users["new"];
 
-            _this8.createUser();
+            _this10.createUser();
           });
         });
       }).catch(function (errors) {
-        _this8.onSaveErrorHandler(errors.response.data.detail);
+        _this10.onSaveErrorHandler(errors.response.data.detail);
 
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this8.saving_user_profile = false;
-          _this8.editing_errors = errors.response.data;
+          _this10.saving_user_profile = false;
+          _this10.editing_errors = errors.response.data;
         });
       });
     }
   }, {
     key: "saveUserPrograms",
     value: function saveUserPrograms(user_id, new_user_programs_data) {
-      var _this9 = this;
+      var _this11 = this;
 
       this.saving_user_programs = true;
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].saveUserPrograms(user_id, new_user_programs_data).then(function (result) {
-        return Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserAggregates(user_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserHistory(user_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserProgramAccess(user_id)]).then(function (_ref14) {
-          var _ref15 = _slicedToArray(_ref14, 3),
-              aggregates = _ref15[0],
-              history = _ref15[1],
-              access = _ref15[2];
+        return Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserAggregates(user_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserHistory(user_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserProgramAccess(user_id)]).then(function (_ref16) {
+          var _ref17 = _slicedToArray(_ref16, 3),
+              aggregates = _ref17[0],
+              history = _ref17[1],
+              access = _ref17[2];
 
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this9.saving_user_programs = false;
-            _this9.users[user_id].user_programs = aggregates.program_count;
-            _this9.editing_target_data.history = history;
-            _this9.editing_target_data.access = access;
+            _this11.saving_user_programs = false;
+            _this11.users[user_id].user_programs = aggregates.program_count;
+            _this11.editing_target_data.history = history;
+            _this11.editing_target_data.access = access;
           });
 
-          _this9.onSaveSuccessHandler();
+          _this11.onSaveSuccessHandler();
         });
       }).catch(function (errors) {
-        _this9.onSaveErrorHandler(errors.response.data.detail);
+        _this11.onSaveErrorHandler(errors.response.data.detail);
 
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this9.saving_user_programs = false;
+          _this11.saving_user_programs = false;
         });
       });
     }
   }, {
     key: "bulkUpdateUserStatus",
     value: function bulkUpdateUserStatus(new_status) {
-      var _this10 = this;
+      var _this12 = this;
 
       this.applying_bulk_updates = true;
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].bulkUpdateUserStatus(this.getSelectedBulkTargetIDs(), new_status).then(function (result) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           result.forEach(function (updated) {
-            var user = Object.assign(_this10.users[updated.id], updated);
-            _this10.users[user.id] = user;
+            var user = Object.assign(_this12.users[updated.id], updated);
+            _this12.users[user.id] = user;
           });
-          _this10.applying_bulk_updates = false;
+          _this12.applying_bulk_updates = false;
         });
 
-        _this10.onSaveSuccessHandler();
+        _this12.onSaveSuccessHandler();
       }).catch(function (response) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this10.applying_bulk_updates = false;
+          _this12.applying_bulk_updates = false;
         });
 
-        _this10.onSaveErrorHandler();
+        _this12.onSaveErrorHandler();
       });
     }
   }, {
     key: "bulkAddPrograms",
     value: function bulkAddPrograms(added_programs) {
-      var _this11 = this;
+      var _this13 = this;
 
       this.applying_bulk_updates = true;
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].bulkAddPrograms(this.getSelectedBulkTargetIDs(), added_programs.map(function (key) {
@@ -3296,41 +3396,41 @@ function () {
         };
       })).then(function (result) {
         //update open user programs
-        var updated_users = _this11.getSelectedBulkTargetIDs();
+        var updated_users = _this13.getSelectedBulkTargetIDs();
 
         updated_users.forEach(function (id) {
-          if (_this11.editing_target == id) {
+          if (_this13.editing_target == id) {
             _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserProgramAccess(id).then(function (access) {
               Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-                _this11.editing_target_data.access = access;
+                _this13.editing_target_data.access = access;
               });
             });
           }
         });
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          Object.entries(result).forEach(function (_ref16) {
-            var _ref17 = _slicedToArray(_ref16, 2),
-                id = _ref17[0],
-                count = _ref17[1];
+          Object.entries(result).forEach(function (_ref18) {
+            var _ref19 = _slicedToArray(_ref18, 2),
+                id = _ref19[0],
+                count = _ref19[1];
 
-            _this11.users[id].user_programs = count;
+            _this13.users[id].user_programs = count;
           });
-          _this11.applying_bulk_updates = false;
+          _this13.applying_bulk_updates = false;
         });
 
-        _this11.onSaveSuccessHandler();
+        _this13.onSaveSuccessHandler();
       }).catch(function (response) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this11.applying_bulk_updates = false;
+          _this13.applying_bulk_updates = false;
         });
 
-        _this11.onSaveErrorHandler();
+        _this13.onSaveErrorHandler();
       });
     }
   }, {
     key: "bulkRemovePrograms",
     value: function bulkRemovePrograms(removed_programs) {
-      var _this12 = this;
+      var _this14 = this;
 
       this.applying_bulk_updates = true;
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].bulkRemovePrograms(this.getSelectedBulkTargetIDs(), removed_programs.map(function (key) {
@@ -3346,35 +3446,35 @@ function () {
         };
       })).then(function (result) {
         //update open user programs
-        var updated_users = _this12.getSelectedBulkTargetIDs();
+        var updated_users = _this14.getSelectedBulkTargetIDs();
 
         updated_users.forEach(function (id) {
-          if (_this12.editing_target == id) {
+          if (_this14.editing_target == id) {
             _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserProgramAccess(id).then(function (access) {
               Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-                _this12.editing_target_data.access = access;
+                _this14.editing_target_data.access = access;
               });
             });
           }
         });
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          Object.entries(result).forEach(function (_ref18) {
-            var _ref19 = _slicedToArray(_ref18, 2),
-                id = _ref19[0],
-                count = _ref19[1];
+          Object.entries(result).forEach(function (_ref20) {
+            var _ref21 = _slicedToArray(_ref20, 2),
+                id = _ref21[0],
+                count = _ref21[1];
 
-            _this12.users[id].user_programs = count;
+            _this14.users[id].user_programs = count;
           });
-          _this12.applying_bulk_updates = false;
+          _this14.applying_bulk_updates = false;
         });
 
-        _this12.onSaveSuccessHandler();
+        _this14.onSaveSuccessHandler();
       }).catch(function (response) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this12.applying_bulk_updates = false;
+          _this14.applying_bulk_updates = false;
         });
 
-        _this12.onSaveErrorHandler();
+        _this14.onSaveErrorHandler();
       });
     }
   }, {
@@ -3607,7 +3707,7 @@ function () {
       users: []
     };
   }
-}), _applyDecoratedDescriptor(_class.prototype, "fetchUsers", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchUsers"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeBaseCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeBaseCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeProgramFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeProgramFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserStatusFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserStatusFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeAdminRoleFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeAdminRoleFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateActiveEditPage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateActiveEditPage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserProfile", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserProfile"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "resendRegistrationEmail", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "resendRegistrationEmail"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUserAndAddAnother", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUserAndAddAnother"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveUserPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveUserPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkUpdateUserStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkUpdateUserStatus"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkAddPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkAddPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkRemovePrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkRemovePrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype)), _class);
+}), _applyDecoratedDescriptor(_class.prototype, "fetchUsers", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchUsers"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeBaseCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeBaseCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeProgramFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeProgramFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserStatusFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserStatusFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeAdminRoleFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeAdminRoleFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateActiveEditPage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateActiveEditPage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserProfile", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserProfile"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserIsActive", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserIsActive"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "resendRegistrationEmail", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "resendRegistrationEmail"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUserAndAddAnother", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUserAndAddAnother"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveUserPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveUserPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkUpdateUserStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkUpdateUserStatus"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkAddPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkAddPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkRemovePrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkRemovePrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype)), _class);
 
 /***/ }),
 
@@ -3682,33 +3782,46 @@ function (_React$Component) {
           ProfileSection = _this$props.ProfileSection,
           ProgramSection = _this$props.ProgramSection,
           HistorySection = _this$props.HistorySection;
-      var profile_active_class = this.state.active_page == 'profile' ? 'selected' : '';
-      var programs_active_class = this.state.active_page == 'programs_and_roles' ? 'selected' : '';
-      var history_active_class = this.state.active_page == 'status_and_history' ? 'selected' : '';
+      var profile_active_class = this.state.active_page == 'profile' ? 'active' : '';
+      var programs_active_class = this.state.active_page == 'programs_and_roles' ? 'active' : '';
+      var history_active_class = this.state.active_page == 'status_and_history' ? 'active' : '';
       var new_class = this.props.new ? 'disabled' : '';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "user-editor row"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "editor__navigation col-sm-3"
+        className: "tab-set--vertical"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
-        className: "list-group"
+        className: "nav nav-tabs"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-        className: "list-group-item ".concat(profile_active_class),
-        onClick: function onClick() {
-          return _this2.updateActivePage('profile');
+        className: "nav-item"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        href: "#",
+        className: "nav-link ".concat(profile_active_class),
+        onClick: function onClick(e) {
+          e.preventDefault();
+
+          _this2.updateActivePage('profile');
         }
-      }, gettext("Profile")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-        className: "list-group-item ".concat(programs_active_class, " ").concat(new_class),
-        onClick: function onClick() {
-          return _this2.updateActivePage('programs_and_roles');
+      }, gettext("Profile"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+        className: "nav-item"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        href: "#",
+        className: "nav-link ".concat(programs_active_class, " ").concat(new_class),
+        onClick: function onClick(e) {
+          e.preventDefault();
+
+          _this2.updateActivePage('programs_and_roles');
         }
-      }, gettext("Programs and Roles")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-        className: "list-group-item ".concat(history_active_class, " ").concat(new_class),
-        onClick: function onClick() {
-          return _this2.updateActivePage('status_and_history');
+      }, gettext("Programs and Roles"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+        className: "nav-item"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        href: "#",
+        className: "nav-item nav-link ".concat(history_active_class, " ").concat(new_class),
+        onClick: function onClick(e) {
+          e.preventDefault();
+
+          _this2.updateActivePage('status_and_history');
         }
       }, gettext("Status and History")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "user-editor__content col-sm-9"
+        className: "tab-content"
       }, this.state.active_page == 'profile' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProfileSection, null), this.state.active_page == 'programs_and_roles' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProgramSection, null), this.state.active_page == 'status_and_history' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(HistorySection, null)));
     }
   }]);
@@ -3814,4 +3927,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-a8074527226526e14e7f.js.map
+//# sourceMappingURL=tola_management_user-8fbea8d6638e58dc5538.js.map

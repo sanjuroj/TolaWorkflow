@@ -387,7 +387,8 @@ function (_React$Component3) {
     value: function render() {
       var _this$props3 = this.props,
           rootStore = _this$props3.rootStore,
-          uiStore = _this$props3.uiStore;
+          uiStore = _this$props3.uiStore,
+          readonly = _this$props3.readonly;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -402,7 +403,7 @@ function (_React$Component3) {
         uiStore: uiStore
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-3 text-right"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      }, !readonly && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "/workflow/documentation_add",
         className: "btn btn-link btn-add"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
@@ -416,7 +417,8 @@ function (_React$Component3) {
 
 var DocumentsListTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(function (_ref) {
   var rootStore = _ref.rootStore,
-      uiStore = _ref.uiStore;
+      uiStore = _ref.uiStore,
+      access = _ref.access;
   // Apply filters to displayed list of documents
   var documents = filterDocuments(rootStore, uiStore); // filter down by individual document select
 
@@ -458,19 +460,23 @@ var DocumentsListTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observe
     text: '',
     align: 'right',
     formatter: function formatter(cell, row) {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "text-nowrap"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        href: "/workflow/documentation_delete/" + row.id,
-        className: "btn p-0 pr-4 btn-sm btn-text text-danger"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-        className: "fas fa-trash-alt"
-      }), "\xA0", gettext("Delete")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        href: "/workflow/documentation_update/" + row.id,
-        className: "btn p-0 btn-sm btn-text"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-        className: "fas fa-edit"
-      }), "\xA0", gettext("Edit")));
+      if (access[row.program] && (access[row.program].role == 'high' || access[row.program].role == 'medium')) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "text-nowrap"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          href: "/workflow/documentation_delete/" + row.id,
+          className: "btn p-0 pr-4 btn-sm btn-text text-danger"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "fas fa-trash-alt"
+        }), "\xA0", gettext("Delete")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          href: "/workflow/documentation_update/" + row.id,
+          className: "btn p-0 btn-sm btn-text"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "fas fa-edit"
+        }), "\xA0", gettext("Edit")));
+      } else {
+        return null;
+      }
     }
   }];
   var defaultSorted = [{
@@ -504,13 +510,17 @@ var DocumentsListTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observe
 });
 var DocumentsView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(function (_ref2) {
   var rootStore = _ref2.rootStore,
-      uiStore = _ref2.uiStore;
+      uiStore = _ref2.uiStore,
+      readonly = _ref2.readonly,
+      access = _ref2.access;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DocumentsFilterBar, {
     rootStore: rootStore,
-    uiStore: uiStore
+    uiStore: uiStore,
+    readonly: readonly
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DocumentsListTable, {
     rootStore: rootStore,
-    uiStore: uiStore
+    uiStore: uiStore,
+    access: access
   }));
 });
 
@@ -534,6 +544,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _eventbus__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../eventbus */ "qtBC");
 /* harmony import */ var _components_document_list__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/document_list */ "QxHc");
 /* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./models */ "Hqim");
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -545,7 +559,9 @@ __webpack_require__.r(__webpack_exports__);
 var _jsContext = jsContext,
     documents = _jsContext.documents,
     programs = _jsContext.programs,
-    allowProjectsAccess = _jsContext.allowProjectsAccess;
+    allowProjectsAccess = _jsContext.allowProjectsAccess,
+    readonly = _jsContext.readonly,
+    access = _jsContext.access;
 /*
  * Model/Store setup
  */
@@ -628,9 +644,14 @@ _eventbus__WEBPACK_IMPORTED_MODULE_4__["default"].on('document-id-filter-selecte
  * React components on page
  */
 
+var mapped_program_access = access.programs.reduce(function (programs, program) {
+  return _objectSpread({}, programs, _defineProperty({}, program.program, program));
+}, {});
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_document_list__WEBPACK_IMPORTED_MODULE_5__["DocumentsView"], {
   rootStore: rootStore,
-  uiStore: uiStore
+  uiStore: uiStore,
+  readonly: readonly,
+  access: mapped_program_access
 }), document.querySelector('#documents-view'));
 
 /***/ }),
@@ -654,4 +675,4 @@ var globalEventBus = nanobus__WEBPACK_IMPORTED_MODULE_0___default()();
 /***/ })
 
 },[["Wr7D","runtime","vendors"]]]);
-//# sourceMappingURL=document_list-fd522a33e90b6a8760cb.js.map
+//# sourceMappingURL=document_list-02274453eeeb2f279f56.js.map

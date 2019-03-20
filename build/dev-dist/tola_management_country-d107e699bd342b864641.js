@@ -13,17 +13,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
-/* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-select */ "y2Vs");
-/* harmony import */ var components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! components/checkboxed-multi-select */ "Z2Y6");
-/* harmony import */ var components_management_table__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! components/management-table */ "TGVD");
-/* harmony import */ var components_pagination__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! components/pagination */ "RCjz");
-/* harmony import */ var _components_country_editor__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/country_editor */ "micH");
-/* harmony import */ var _components_edit_country_profile__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/edit_country_profile */ "1//Y");
-/* harmony import */ var _components_edit_disaggregations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/edit_disaggregations */ "hLpu");
-/* harmony import */ var _components_edit_objectives__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/edit_objectives */ "5G0W");
-/* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
-/* harmony import */ var components_folding_sidebar__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! components/folding-sidebar */ "tnXs");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
+/* harmony import */ var components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! components/checkboxed-multi-select */ "Z2Y6");
+/* harmony import */ var components_management_table__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! components/management-table */ "TGVD");
+/* harmony import */ var components_pagination__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! components/pagination */ "RCjz");
+/* harmony import */ var _components_country_editor__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/country_editor */ "micH");
+/* harmony import */ var _components_edit_country_profile__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/edit_country_profile */ "1//Y");
+/* harmony import */ var _components_edit_disaggregations__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/edit_disaggregations */ "hLpu");
+/* harmony import */ var _components_edit_objectives__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/edit_objectives */ "5G0W");
+/* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
+/* harmony import */ var components_folding_sidebar__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! components/folding-sidebar */ "tnXs");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -44,7 +43,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-
 var CountryFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref) {
   var store = _ref.store,
       filterOptions = _ref.filterOptions;
@@ -52,7 +50,7 @@ var CountryFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(
     className: "form-group"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "countries_filter"
-  }, gettext("Countries")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }, gettext("Countries")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
     value: store.filters.countries,
     options: filterOptions,
     onChange: function onChange(e) {
@@ -69,7 +67,7 @@ var OrganizationFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observe
     className: "form-group"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "organizations_filter"
-  }, gettext("Organizations")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }, gettext("Organizations")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
     value: store.filters.organizations,
     options: filterOptions,
     onChange: function onChange(e) {
@@ -86,7 +84,7 @@ var ProgramFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(
     className: "form-group"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "programs-filter"
-  }, gettext("Programs")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }, gettext("Programs")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
     value: store.filters.programs,
     options: filterOptions,
     onChange: function onChange(e) {
@@ -127,7 +125,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "country-management-index-view",
     className: "row"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_folding_sidebar__WEBPACK_IMPORTED_MODULE_11__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_folding_sidebar__WEBPACK_IMPORTED_MODULE_10__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "filter-section"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(OrganizationFilter, {
     store: store,
@@ -154,20 +152,20 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     className: "col list-section"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "list-controls"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+  }, store.is_superuser && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
     href: "#",
     tabIndex: "0",
     className: "btn btn-link btn-add",
     onClick: function onClick() {
       return store.addCountry();
     }
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__["FontAwesomeIcon"], {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
     icon: 'plus-circle'
-  }), gettext("Add Country")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
+  }), gettext("Add Country")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
     isLoading: store.fetching_main_listing || store.applying_bulk_updates
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "list-table"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_management_table__WEBPACK_IMPORTED_MODULE_4__["default"], {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_management_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
     newData: store.new_country,
     data: store.countries,
     keyField: "id",
@@ -177,7 +175,8 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Row, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: ".2"
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
-        size: "2"
+        size: "2",
+        class: "td--stretch"
       }, gettext("Country")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, gettext("Organizations")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, gettext("Programs")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, gettext("Users")));
     },
     Row: function Row(_ref10) {
@@ -188,10 +187,10 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         expanded: data.id == store.editing_target,
         Expando: function Expando(_ref11) {
           var Wrapper = _ref11.Wrapper;
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Wrapper, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_country_editor__WEBPACK_IMPORTED_MODULE_6__["default"], {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Wrapper, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_country_editor__WEBPACK_IMPORTED_MODULE_5__["default"], {
             new: data.id == 'new',
             ProfileSection: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function () {
-              return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_country_profile__WEBPACK_IMPORTED_MODULE_7__["default"], {
+              return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_country_profile__WEBPACK_IMPORTED_MODULE_6__["default"], {
                 new: data.id == 'new',
                 country_data: data,
                 organizationOptions: organizationFilterOptions,
@@ -205,9 +204,9 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
               });
             }),
             StrategicObjectiveSection: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function () {
-              return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
+              return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
                 isLoading: store.fetching_editing_data
-              }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_objectives__WEBPACK_IMPORTED_MODULE_9__["default"], {
+              }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_objectives__WEBPACK_IMPORTED_MODULE_8__["default"], {
                 country_id: data.id,
                 objectives: store.editing_objectives_data,
                 addObjective: function addObjective() {
@@ -229,9 +228,9 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
               }));
             }),
             DisaggregationSection: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function () {
-              return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
+              return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
                 isLoading: store.fetching_editing_data
-              }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_disaggregations__WEBPACK_IMPORTED_MODULE_8__["default"], {
+              }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_disaggregations__WEBPACK_IMPORTED_MODULE_7__["default"], {
                 country_id: data.id,
                 disaggregations: store.editing_disaggregations_data,
                 addDisaggregation: function addDisaggregation() {
@@ -259,24 +258,35 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.2"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+        size: "2",
         className: "td--stretch"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "icon__clickable",
         onClick: function onClick() {
           return store.toggleEditingTarget(data.id);
         }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__["FontAwesomeIcon"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
         icon: 'globe'
-      })))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
-        size: "2"
-      }, data.country || "---"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, data.organizations.length ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      }), "\xA0", data.country || "---")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+        className: "text-nowrap"
+      }, data.organizations.length ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "/tola_management/organization/?countries[]=".concat(data.id)
-      }, data.organizations.length, " ", gettext("Organizations")) : '---'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, data.programCount ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
+        icon: 'building'
+      }), "\xA0", data.organizations.length, " ", gettext("Organizations")) : '---'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+        className: "text-nowrap"
+      }, data.programCount ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "/tola_management/program/?countries[]=".concat(data.id)
-      }, data.programCount, " ", gettext("Programs")) : "---"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, data.user_count ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
+        icon: 'cubes'
+      }), "\xA0", data.programCount, " ", gettext("Programs")) : "---"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+        className: "text-nowrap"
+      }, data.user_count ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "/tola_management/user/?countries[]=".concat(data.id)
-      }, data.user_count, " ", gettext("Users")) : '---'));
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
+        icon: 'users'
+      }), "\xA0", data.user_count, " ", gettext("Users")) : '---'));
     }
   }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "list-metadata row"
@@ -284,7 +294,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     id: "users-count"
   }, store.country_count ? "".concat(store.country_count, " ").concat(gettext("countries")) : "---"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "pagination-controls"
-  }, store.total_pages && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_pagination__WEBPACK_IMPORTED_MODULE_5__["default"], {
+  }, store.total_pages && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_pagination__WEBPACK_IMPORTED_MODULE_4__["default"], {
     pageCount: store.total_pages,
     initialPage: store.current_page,
     onPageChange: function onPageChange(page) {
@@ -418,7 +428,7 @@ function (_React$Component) {
         return x.value == formdata.organization;
       });
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "edit-user-profile container"
+        className: "tab-pane--react"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
         className: "form"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -518,7 +528,7 @@ function (_React$Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CountryStore", function() { return CountryStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _temp;
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -572,45 +582,47 @@ function () {
 
     _initializerDefineProperty(this, "filters", _descriptor4, this);
 
-    _initializerDefineProperty(this, "allCountries", _descriptor5, this);
+    _initializerDefineProperty(this, "is_superuser", _descriptor5, this);
 
-    _initializerDefineProperty(this, "countries", _descriptor6, this);
+    _initializerDefineProperty(this, "allCountries", _descriptor6, this);
 
-    _initializerDefineProperty(this, "country_count", _descriptor7, this);
+    _initializerDefineProperty(this, "countries", _descriptor7, this);
 
-    _initializerDefineProperty(this, "new_country", _descriptor8, this);
+    _initializerDefineProperty(this, "country_count", _descriptor8, this);
 
-    _initializerDefineProperty(this, "fetching_main_listing", _descriptor9, this);
+    _initializerDefineProperty(this, "new_country", _descriptor9, this);
 
-    _initializerDefineProperty(this, "current_page", _descriptor10, this);
+    _initializerDefineProperty(this, "fetching_main_listing", _descriptor10, this);
 
-    _initializerDefineProperty(this, "total_pages", _descriptor11, this);
+    _initializerDefineProperty(this, "current_page", _descriptor11, this);
 
-    _initializerDefineProperty(this, "bulk_targets", _descriptor12, this);
+    _initializerDefineProperty(this, "total_pages", _descriptor12, this);
 
-    _initializerDefineProperty(this, "bulk_targets_all", _descriptor13, this);
+    _initializerDefineProperty(this, "bulk_targets", _descriptor13, this);
 
-    _initializerDefineProperty(this, "editing_target", _descriptor14, this);
+    _initializerDefineProperty(this, "bulk_targets_all", _descriptor14, this);
 
-    _initializerDefineProperty(this, "editing_errors", _descriptor15, this);
+    _initializerDefineProperty(this, "editing_target", _descriptor15, this);
 
-    _initializerDefineProperty(this, "fetching_editing_data", _descriptor16, this);
+    _initializerDefineProperty(this, "editing_errors", _descriptor16, this);
 
-    _initializerDefineProperty(this, "editing_objectives_data", _descriptor17, this);
+    _initializerDefineProperty(this, "fetching_editing_data", _descriptor17, this);
 
-    _initializerDefineProperty(this, "editing_objectives_errors", _descriptor18, this);
+    _initializerDefineProperty(this, "editing_objectives_data", _descriptor18, this);
 
-    _initializerDefineProperty(this, "editing_disaggregations_data", _descriptor19, this);
+    _initializerDefineProperty(this, "editing_objectives_errors", _descriptor19, this);
 
-    _initializerDefineProperty(this, "editing_disaggregations_errors", _descriptor20, this);
+    _initializerDefineProperty(this, "editing_disaggregations_data", _descriptor20, this);
 
-    _initializerDefineProperty(this, "saving", _descriptor21, this);
+    _initializerDefineProperty(this, "editing_disaggregations_errors", _descriptor21, this);
 
-    _initializerDefineProperty(this, "bulk_targets", _descriptor22, this);
+    _initializerDefineProperty(this, "saving", _descriptor22, this);
 
-    _initializerDefineProperty(this, "applying_bulk_updates", _descriptor23, this);
+    _initializerDefineProperty(this, "bulk_targets", _descriptor23, this);
 
-    _initializerDefineProperty(this, "bulk_targets_all", _descriptor24, this);
+    _initializerDefineProperty(this, "applying_bulk_updates", _descriptor24, this);
+
+    _initializerDefineProperty(this, "bulk_targets_all", _descriptor25, this);
 
     this;
     this.api = api;
@@ -696,10 +708,12 @@ function () {
 
       if (this.editing_target == 'new') {
         this.countries.shift();
+        this.editing_errors = {};
       }
 
       if (this.editing_target == id) {
         this.editing_target = false;
+        this.editing_errors = {};
       } else {
         this.editing_target = id;
         this.fetching_editing_data = true;
@@ -739,9 +753,9 @@ function () {
     }
   }, {
     key: "onSaveErrorHandler",
-    value: function onSaveErrorHandler() {
+    value: function onSaveErrorHandler(message) {
       PNotify.error({
-        text: gettext("Saving Failed"),
+        text: message || gettext("Saving Failed"),
         delay: 5000
       });
     }
@@ -786,11 +800,12 @@ function () {
 
           _this3.countries.unshift(response.data);
         });
-      }).catch(function (error) {
+      }).catch(function (errors) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          var errors = error.response.data;
           _this3.saving = false;
-          _this3.editing_errors = errors;
+          _this3.editing_errors = errors.response.data;
+
+          _this3.onSaveErrorHandler(errors.response.data.detail);
         });
       });
     }
@@ -814,7 +829,7 @@ function () {
           _this4.saving = false;
           _this4.editing_errors = errors.response.data;
 
-          _this4.onSaveErrorHandler();
+          _this4.onSaveErrorHandler(errors.response.data.detail);
         });
       });
     }
@@ -853,7 +868,7 @@ function () {
           _this5.saving = false;
           _this5.editing_objectives_errors = errors.response.data;
 
-          _this5.onSaveErrorHandler();
+          _this5.onSaveErrorHandler(errors.response.data.detail);
         });
       });
     }
@@ -877,7 +892,7 @@ function () {
           _this6.saving = false;
           _this6.editing_objectives_errors = errors.response.data;
 
-          _this6.onSaveErrorHandler();
+          _this6.onSaveErrorHandler(errors.response.data.detail);
         });
       });
     }
@@ -900,6 +915,10 @@ function () {
           });
 
           _this7.onDeleteSuccessHandler();
+        });
+      }).catch(function (errors) {
+        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+          _this7.onSaveErrorHandler(errors.response.data.detail);
         });
       });
     }
@@ -1036,140 +1055,147 @@ function () {
       programs: []
     };
   }
-}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "allCountries", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return [];
-  }
-}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "countries", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return [];
-  }
-}), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "country_count", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return 0;
-  }
-}), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "new_country", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return null;
-  }
-}), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, "fetching_main_listing", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "is_superuser", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, "current_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "allCountries", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return [];
+  }
+}), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "countries", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return [];
+  }
+}), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "country_count", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return 0;
   }
-}), _descriptor11 = _applyDecoratedDescriptor(_class.prototype, "total_pages", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, "new_country", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor12 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, "fetching_main_listing", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return false;
+  }
+}), _descriptor11 = _applyDecoratedDescriptor(_class.prototype, "current_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return 0;
+  }
+}), _descriptor12 = _applyDecoratedDescriptor(_class.prototype, "total_pages", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return null;
+  }
+}), _descriptor13 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return new Map();
   }
-}), _descriptor13 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets_all", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor14 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets_all", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor14 = _applyDecoratedDescriptor(_class.prototype, "editing_target", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor15 = _applyDecoratedDescriptor(_class.prototype, "editing_target", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor15 = _applyDecoratedDescriptor(_class.prototype, "editing_errors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor16 = _applyDecoratedDescriptor(_class.prototype, "editing_errors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor16 = _applyDecoratedDescriptor(_class.prototype, "fetching_editing_data", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor17 = _applyDecoratedDescriptor(_class.prototype, "fetching_editing_data", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return true;
   }
-}), _descriptor17 = _applyDecoratedDescriptor(_class.prototype, "editing_objectives_data", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor18 = _applyDecoratedDescriptor(_class.prototype, "editing_objectives_data", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return [];
   }
-}), _descriptor18 = _applyDecoratedDescriptor(_class.prototype, "editing_objectives_errors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor19 = _applyDecoratedDescriptor(_class.prototype, "editing_objectives_errors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor19 = _applyDecoratedDescriptor(_class.prototype, "editing_disaggregations_data", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor20 = _applyDecoratedDescriptor(_class.prototype, "editing_disaggregations_data", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return [];
   }
-}), _descriptor20 = _applyDecoratedDescriptor(_class.prototype, "editing_disaggregations_errors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor21 = _applyDecoratedDescriptor(_class.prototype, "editing_disaggregations_errors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor21 = _applyDecoratedDescriptor(_class.prototype, "saving", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor22 = _applyDecoratedDescriptor(_class.prototype, "saving", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor22 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor23 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return new Map();
   }
-}), _descriptor23 = _applyDecoratedDescriptor(_class.prototype, "applying_bulk_updates", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor24 = _applyDecoratedDescriptor(_class.prototype, "applying_bulk_updates", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor24 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets_all", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor25 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets_all", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -1489,7 +1515,9 @@ function (_React$Component2) {
           expanded_id = _this$state.expanded_id,
           new_objective = _this$state.new_objective;
       var objectives = this.props.objectives;
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, gettext("Strategic Objectives")), objectives.map(function (objective) {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        class: "tab-pane--react"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, gettext("Strategic Objectives")), objectives.map(function (objective) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StrategicObjectiveForm, {
           key: objective.id,
           objective: objective,
@@ -1727,7 +1755,8 @@ __webpack_require__.r(__webpack_exports__);
 var initialData = {
   allCountries: jsContext.countries,
   organizations: jsContext.organizations,
-  allPrograms: jsContext.programs
+  allPrograms: jsContext.programs,
+  is_superuser: jsContext.is_superuser
 };
 var store = new _models__WEBPACK_IMPORTED_MODULE_2__["CountryStore"](_api__WEBPACK_IMPORTED_MODULE_4__["default"], initialData);
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_views__WEBPACK_IMPORTED_MODULE_3__["IndexView"], {
@@ -1797,11 +1826,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx-react */ "okNM");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "TSYQ");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
 
 
  // TODO: "size" is no longer used
@@ -1837,7 +1869,7 @@ var InnerRowComponent = function InnerRowComponent(_ref3) {
 }; // TODO: this is redundant with InnerRowComponent
 
 
-var HeaderRowCompnent = function HeaderRowCompnent(_ref4) {
+var HeaderRowComponent = function HeaderRowComponent(_ref4) {
   var className = _ref4.className,
       props = _objectWithoutProperties(_ref4, ["className"]);
 
@@ -1864,7 +1896,9 @@ var RowComponent = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(f
   if (Expando) {
     var ObservedExpando = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(Expando);
     return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tbody", _extends({
-      className: ["mgmt-table__body", className].join(' ')
+      className: classnames__WEBPACK_IMPORTED_MODULE_2___default()(["mgmt-table__body", className].join(' '), {
+        "is-expanded": expanded
+      })
     }, props), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(InnerRowComponent, null, props.children), expanded && react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(ObservedExpando, {
       Wrapper: ExpandoWrapper
     }));
@@ -1880,7 +1914,7 @@ var ExpandoWrapper = function ExpandoWrapper(_ref6) {
       props = _objectWithoutProperties(_ref6, ["className"]);
 
   return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tr", _extends({
-    className: ["", className].join(' ')
+    className: ["mgmt-table__row--expanded", className].join(' ')
   }, props), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", {
     colSpan: "6"
   }, props.children));
@@ -1928,7 +1962,7 @@ var ManagementTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"]
     className: ['table bg-white', className].join(' ')
   }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(ObservedHeaderRow, {
     Col: HeaderColumnComponent,
-    Row: HeaderRowCompnent
+    Row: HeaderRowComponent
   })), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(RowList, props));
 });
 /* harmony default export */ __webpack_exports__["default"] = (ManagementTable);
@@ -2161,7 +2195,6 @@ var ErrorFeedback = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(
     return null;
   }
 
-  console.log(errorMessages);
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "invalid-feedback"
   }, errorMessages.map(function (message, index) {
@@ -2456,7 +2489,9 @@ function (_React$Component2) {
 
       var disaggregations = this.props.disaggregations;
       var expanded_id = this.state.expanded_id;
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Country Disaggregations"), disaggregations.map(function (disaggregation) {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        class: "tab-pane--react"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Country Disaggregations"), disaggregations.map(function (disaggregation) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DisaggregationType, {
           key: disaggregation.id,
           disaggregation: disaggregation,
@@ -2573,36 +2608,49 @@ function (_React$Component) {
           DisaggregationSection = _this$props.DisaggregationSection;
       var active_page = this.state.active_page;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "program-editor row"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "editor__navigation col-sm-3"
+        className: "tab-set--vertical"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
-        className: "list-group"
+        className: "nav nav-tabs"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-        className: classnames__WEBPACK_IMPORTED_MODULE_2___default()('list-group-item', {
-          'selected': active_page == 'profile'
+        className: "nav-item"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        href: "#",
+        className: classnames__WEBPACK_IMPORTED_MODULE_2___default()('nav-link', {
+          'active': active_page == 'profile'
         }),
-        onClick: function onClick() {
-          return _this2.updateActivePage('profile');
+        onClick: function onClick(e) {
+          e.preventDefault();
+
+          _this2.updateActivePage('profile');
         }
-      }, gettext("Profile")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-        className: classnames__WEBPACK_IMPORTED_MODULE_2___default()('list-group-item', {
-          'selected': active_page == 'objectives',
+      }, gettext("Profile"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+        className: "nav-item"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        href: "#",
+        className: classnames__WEBPACK_IMPORTED_MODULE_2___default()('nav-link', {
+          'active': active_page == 'objectives',
           'disabled': this.props.new
         }),
-        onClick: function onClick() {
-          return _this2.updateActivePage('objectives');
+        onClick: function onClick(e) {
+          e.preventDefault();
+
+          _this2.updateActivePage('objectives');
         }
-      }, gettext("Strategic Objectives")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-        className: classnames__WEBPACK_IMPORTED_MODULE_2___default()('list-group-item', {
-          'selected': active_page == 'disaggregations',
+      }, gettext("Strategic Objectives"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+        className: "nav-item"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        href: "#",
+        className: classnames__WEBPACK_IMPORTED_MODULE_2___default()('nav-link', {
+          'active': active_page == 'disaggregations',
           'disabled': this.props.new
         }),
-        onClick: function onClick() {
-          return _this2.updateActivePage('disaggregations');
+        onClick: function onClick(e) {
+          e.preventDefault();
+
+          _this2.updateActivePage('disaggregations');
         }
       }, gettext("Country Disaggregations")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "program-editor__content col-sm-9"
+        className: "tab-content"
       }, this.state.active_page == 'profile' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProfileSection, null), this.state.active_page == 'objectives' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StrategicObjectiveSection, null), this.state.active_page == 'disaggregations' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DisaggregationSection, null)));
     }
   }]);
@@ -2708,4 +2756,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-817e652ad02c5c2961f7.js.map
+//# sourceMappingURL=tola_management_country-d107e699bd342b864641.js.map

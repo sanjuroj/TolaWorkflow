@@ -640,11 +640,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx-react */ "okNM");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "TSYQ");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
 
 
  // TODO: "size" is no longer used
@@ -680,7 +683,7 @@ var InnerRowComponent = function InnerRowComponent(_ref3) {
 }; // TODO: this is redundant with InnerRowComponent
 
 
-var HeaderRowCompnent = function HeaderRowCompnent(_ref4) {
+var HeaderRowComponent = function HeaderRowComponent(_ref4) {
   var className = _ref4.className,
       props = _objectWithoutProperties(_ref4, ["className"]);
 
@@ -707,7 +710,9 @@ var RowComponent = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(f
   if (Expando) {
     var ObservedExpando = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(Expando);
     return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tbody", _extends({
-      className: ["mgmt-table__body", className].join(' ')
+      className: classnames__WEBPACK_IMPORTED_MODULE_2___default()(["mgmt-table__body", className].join(' '), {
+        "is-expanded": expanded
+      })
     }, props), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(InnerRowComponent, null, props.children), expanded && react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(ObservedExpando, {
       Wrapper: ExpandoWrapper
     }));
@@ -723,7 +728,7 @@ var ExpandoWrapper = function ExpandoWrapper(_ref6) {
       props = _objectWithoutProperties(_ref6, ["className"]);
 
   return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tr", _extends({
-    className: ["", className].join(' ')
+    className: ["mgmt-table__row--expanded", className].join(' ')
   }, props), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", {
     colSpan: "6"
   }, props.children));
@@ -771,7 +776,7 @@ var ManagementTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"]
     className: ['table bg-white', className].join(' ')
   }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(ObservedHeaderRow, {
     Col: HeaderColumnComponent,
-    Row: HeaderRowCompnent
+    Row: HeaderRowComponent
   })), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(RowList, props));
 });
 /* harmony default export */ __webpack_exports__["default"] = (ManagementTable);
@@ -1054,4 +1059,4 @@ function () {
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-090ceefb73065bbae488.js.map
+//# sourceMappingURL=audit_log-16cfe7c5acefe2d9264c.js.map

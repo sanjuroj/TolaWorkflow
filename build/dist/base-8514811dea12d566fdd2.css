@@ -8285,18 +8285,27 @@ span[data-toggle="popover"]:hover {
       margin-right: -1px; }
     .tab-set--vertical .nav-tabs .nav-link {
       border-bottom-left-radius: 0;
-      border-top-right-radius: 0; }
+      border-top-right-radius: 0;
+      display: block; }
       .tab-set--vertical .nav-tabs .nav-link:hover, .tab-set--vertical .nav-tabs .nav-link:focus {
         border-right-color: transparent; }
       .tab-set--vertical .nav-tabs .nav-link.active {
-        border-color: #dbdcde #FAFAFA #dbdcde #dbdcde; }
+        border-color: #dbdcde transparent #dbdcde #dbdcde; }
   .tab-set--vertical .tab-content {
     background: #FAFAFA;
     border-color: #dbdcde;
     border-style: solid;
     border-width: 1px 1px 1px 0;
     flex-grow: 1;
-    padding: 15px; }
+    padding: 30px; }
+
+.mgmt-table__body.is-expanded {
+  background: #dbdcde; }
+
+.mgmt-table__row--expanded {
+  background-color: #ebedf0; }
+  .mgmt-table__row--expanded > td {
+    padding: 30px; }
 
 .pagination {
   border: 1px solid #ccc;
@@ -8397,18 +8406,12 @@ span[data-toggle="popover"]:hover {
   justify-content: flex-end;
   width: 100%; }
 
-.td--stretch {
-  display: flex;
-  justify-content: space-around; }
-  .td--stretch div {
-    width: 1rem; }
-
 .icon__clickable {
   cursor: pointer;
-  color: darkblue; }
+  color: #0645AD; }
 
 .icon__disabled {
-  color: grey; }
+  opacity: 0.5; }
 
 .filter-section {
   width: 20vw;
@@ -8527,6 +8530,10 @@ table.list-table {
   display: flex; }
   .disaggregation-form-buttons .right-buttons {
     margin-left: auto; }
+
+.list-table {
+  margin-bottom: 30px;
+  margin-top: 30px; }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
@@ -9175,6 +9182,7 @@ a:hover {
     color: #506e00; }
 
 .btn-reset {
+  background-color: #fff;
   color: #71757b;
   text-transform: uppercase; }
   .btn-reset:hover {
