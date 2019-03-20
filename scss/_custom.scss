@@ -288,6 +288,7 @@ a:hover {
 // reset button
 // use with .btn as per usual
 .btn-reset {
+    background-color: $white;
     color: $text-muted;
     text-transform: uppercase;
     &:hover {
