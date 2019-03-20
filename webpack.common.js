@@ -11,6 +11,7 @@ module.exports = {
         base: './js/base.js',
         program_page: './js/pages/program_page/index.js' ,
         document_list: './js/pages/document_list/index.js' ,
+        results_framework: './js/pages/results_framework/index.js' ,
     },
 
     output: {

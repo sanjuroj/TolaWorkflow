@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n mathfilters mytags static %}
+{% load render_bundle from webpack_loader %}
+{% block title %}Title of the thing | {% endblock %}
+{% block page_title %}Page Title of the thing{% endblock %}
+
+{% block content %}
+
+<div class="results_framework-page__main">
+    <div id="leveltier-picker-react-component" class="results-framework-page__body"></div>
+    <div id="level-list-react-component" class="results-framework-page__body"></div>
+
+</div>
+
+
+{% endblock content %}
+
+
+{% block extra_js_in_body %}
+    <script>
+        let jsContext = {{ js_context|js }};
+    </script>
+
+    {% render_bundle 'results_framework' %}
+{% endblock %}
