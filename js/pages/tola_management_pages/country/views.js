@@ -66,8 +66,8 @@ export const IndexView = observer(
                     </div>
                 </div>
             </FoldingSidebar>
-            <div className="col list-section">
-                <div className="list-controls">
+            <div className="col admin-list">
+                <div className="admin-list__controls">
                 {store.is_superuser &&
                 <div>
                     <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.addCountry()}>
@@ -78,7 +78,7 @@ export const IndexView = observer(
                 }
                 </div>
                 <LoadingSpinner isLoading={store.fetching_main_listing || store.applying_bulk_updates }>
-                    <div className="list-table">
+                    <div className="admin-list__table">
                         <ManagementTable
                             newData={store.new_country}
                             data={store.countries}
@@ -177,7 +177,7 @@ export const IndexView = observer(
                         />
                     </div>
                 </LoadingSpinner>
-                <div className="list-metadata row">
+                <div className="admin-list__metadata">
                     <div id="users-count">{store.country_count ? `${store.country_count} ${gettext("countries")}`:`---`}</div>
                     <div id ="pagination-controls">
                         {store.total_pages &&

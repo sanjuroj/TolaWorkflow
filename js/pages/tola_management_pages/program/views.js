@@ -121,22 +121,21 @@ class BulkActions extends React.Component {
     render() {
         const selected = this.props.secondaryOptions[this.state.current_action]
         const SecondaryComponent = selected && selected.component
-        return <div className="bulk-controls">
-            <div className="bulk-select">
+        return <div className="controls__bulk-actions">
+            <div className="bulk__select">
                 <Select
-                className="bulk-select"
                 placeholder={gettext("Bulk Actions")}
                 value={this.props.primaryOptions.find((o) => o.value == this.state.current_action)}
                 options={this.props.primaryOptions} onChange={(val) => this.onActionChanged(val)} />
             </div>
             {selected &&
-            <div className="bulk-select">
+            <div className="bulk__select">
                 <SecondaryComponent value={this.state.current_vals} onChange={(vals) => this.onChange(vals)}/>
             </div>
             }
             {!selected &&
-            <div className="bulk-select">
-                <Select className="bulk-select" placeholder="---"/>
+            <div className="bulk__select">
+                <Select placeholder="---"/>
             </div>
             }
             <button className="btn btn-secondary" disabled={!this.state.current_action} onClick={() => this.onApply()}>{gettext("Apply")}</button>
@@ -198,8 +197,8 @@ export const IndexView = observer(
                     </div>
                 </div>
             </FoldingSidebar>
-            <div className="col list-section">
-                <div className="list-controls">
+            <div className="col admin-list">
+                <div className="admin-list__controls">
                     <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div>
                         <a href="#" className="btn btn-link btn-add" tabIndex="0" onClick={() => store.createProgram()}>
@@ -209,7 +208,7 @@ export const IndexView = observer(
                     </div>
                 </div>
                 <LoadingSpinner isLoading={store.fetching_main_listing || store.applying_bulk_updates }>
-                    <div className="list-table">
+                    <div className="admin-list__table">
                         <ManagementTable
                             newData={store.new_program}
                             data={store.programs}
@@ -286,7 +285,7 @@ export const IndexView = observer(
                         />
                     </div>
                 </LoadingSpinner>
-                <div className="list-metadata row">
+                <div className="admin-list__metadata">
                     <div id="users-count">{store.program_count ? `${store.program_count} ${gettext("programs")}`:`---`}</div>
                     <div id ="pagination-controls">
                         {store.total_pages &&

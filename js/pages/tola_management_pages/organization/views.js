@@ -86,8 +86,8 @@ export const IndexView = observer(
                     </div>
                 </div>
             </FoldingSidebar>
-            <div className="col list-section">
-                <div className="list-controls">
+            <div className="col admin-list">
+                <div className="admin-list__controls">
                     <div>
                         <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.createOrganization()}>
                             <FontAwesomeIcon icon={'plus-circle'} /> {gettext("Add Organization")}
@@ -95,7 +95,7 @@ export const IndexView = observer(
                     </div>
                 </div>
                 <LoadingSpinner isLoading={store.fetching}>
-                    <div className="list-table">
+                    <div className="admin-list__table">
                         <ManagementTable
                             data={store.organizations_listing.map(id => store.organizations[id])}
                             keyField="id"
@@ -166,7 +166,7 @@ export const IndexView = observer(
                         />
                     </div>
                 </LoadingSpinner>
-                <div className="list-metadata">
+                <div className="admin-list__metadata">
                     <div id="users-count">{store.organizations_count?`${store.organizations_count} ${gettext("organizations")}`:`--`}</div>
                     <div id ="pagination-controls">
                         {store.total_pages &&
