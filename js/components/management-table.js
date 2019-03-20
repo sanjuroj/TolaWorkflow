@@ -1,5 +1,6 @@
 import { observer } from "mobx-react"
 import React from 'react';
+import classNames from 'classnames';
 
 // TODO: "size" is no longer used
 const ColumnComponent = ({className, size, ...props}) => <td className={["mgmt-table__col", className].join(' ')}  {...props}>{props.children}</td>
@@ -23,7 +24,9 @@ const HeaderRowComponent = ({className, ...props}) => <tr className={["mgmt-tabl
 const RowComponent = observer(({className, expanded, Expando, ...props}) => {
     if(Expando) {
         const ObservedExpando = observer(Expando)
-        return <tbody className={["mgmt-table__body", className].join(' ')} {...props} >
+        return <tbody className={
+                classNames(["mgmt-table__body", className].join(' '), { "is-expanded": expanded })
+            } {...props} >
             <InnerRowComponent>{props.children}</InnerRowComponent>
             {expanded && <ObservedExpando Wrapper={ExpandoWrapper} />}
         </tbody>
