@@ -88,7 +88,8 @@ export const IndexView = observer(
             </FoldingSidebar>
             <div className="col admin-list">
                 <div className="admin-list__controls">
-                    <div>
+                    <div className="controls__bulk-actions"></div>
+                    <div className="controls__buttons">
                         <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.createOrganization()}>
                             <FontAwesomeIcon icon={'plus-circle'} /> {gettext("Add Organization")}
                         </a>

@@ -68,14 +68,15 @@ export const IndexView = observer(
             </FoldingSidebar>
             <div className="col admin-list">
                 <div className="admin-list__controls">
-                {store.is_superuser &&
-                <div>
-                    <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.addCountry()}>
-                        <FontAwesomeIcon icon={'plus-circle'} />
-                        {gettext("Add Country")}
-                    </a>
-                </div>
-                }
+                    <div className="controls__bulk-actions"></div>
+                    {store.is_superuser &&
+                    <div className="controls__buttons">
+                        <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.addCountry()}>
+                            <FontAwesomeIcon icon={'plus-circle'} />
+                            {gettext("Add Country")}
+                        </a>
+                    </div>
+                    }
                 </div>
                 <LoadingSpinner isLoading={store.fetching_main_listing || store.applying_bulk_updates }>
                     <div className="admin-list__table">

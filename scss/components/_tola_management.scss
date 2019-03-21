@@ -234,10 +234,14 @@ table.admin-list__table {
 }
 .controls__bulk-actions { // was: .bulk-controls; wraps bulk action controls
     display: flex;
+    flex-grow: 1;
+}
+.controls__buttons { // contains buttons like "add [object]"
 }
 .bulk__select { // was: .bulk-select; wraps custom select element
+    flex-grow: 1;
     margin-right: $grid-gutter-width/4;
-    width: 14vw; // TODO: there must be a better way than this
+    min-width: 15vw; // TODO: this is fragile
 }
 .loading-spinner__container  { // DO NOT CHANGE; sometimes wraps list-table
 }

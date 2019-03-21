@@ -228,8 +228,9 @@ export const IndexView = observer(
             <div className="col admin-list">
                 <div className="admin-list__controls">
                     <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
-                    <div>
+                    <div className="controls__buttons">
                         <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.createUser()}>
+                            {/*<i className="fas fa-plus-circle"/> */}
                             <FontAwesomeIcon icon={'plus-circle'} />
                             {gettext("Add User")}
                         </a>
