@@ -400,7 +400,7 @@ export default class EditUserPrograms extends React.Component {
 
         return (
             <div className="tab-pane--react">
-                <h2 class="no-bold">{user.name?user.name+': ':''}{gettext("Programs and Roles")}</h2>
+                <h2 className="no-bold">{user.name?user.name+': ':''}{gettext("Programs and Roles")}</h2>
                 <div className="row">
                     <div className="col">
                         <div className="edit-user-programs__filter-form form-inline">

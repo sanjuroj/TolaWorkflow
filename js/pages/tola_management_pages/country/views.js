@@ -9,7 +9,6 @@ import EditDisaggregations from './components/edit_disaggregations'
 import EditObjectives from './components/edit_objectives'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const CountryFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
@@ -72,8 +71,7 @@ export const IndexView = observer(
                     {store.is_superuser &&
                     <div className="controls__buttons">
                         <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.addCountry()}>
-                            <FontAwesomeIcon icon={'plus-circle'} />
-                            {gettext("Add Country")}
+                            <i className="fas fa-plus-circle"/>{gettext("Add Country")}
                         </a>
                     </div>
                     }
@@ -87,7 +85,7 @@ export const IndexView = observer(
                             HeaderRow={({Col, Row}) =>
                                 <Row>
                                     <Col size=".2"></Col>
-                                    <Col size="2" class="td--stretch">{gettext("Country")}</Col>
+                                    <Col size="2" className="td--stretch">{gettext("Country")}</Col>
                                     <Col>{gettext("Organizations")}</Col>
                                     <Col>{gettext("Programs")}</Col>
                                     <Col>{gettext("Users")}</Col>
@@ -145,14 +143,14 @@ export const IndexView = observer(
                                     </Col>
                                     <Col size="2" className="td--stretch">
                                         <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                            <FontAwesomeIcon icon={'globe'} />&nbsp;
+                                            <i className="fas fa-globe"/>&nbsp;
                                             {data.country || "---"}
                                         </div>
                                     </Col>
                                     <Col className="text-nowrap">
                                         { data.organizations.length ?
                                             <a href={`/tola_management/organization/?countries[]=${data.id}`}>
-                                                <FontAwesomeIcon icon={'building'} />&nbsp;
+                                                <i className="fas fa-building"/>&nbsp;
                                                 {data.organizations.length} {gettext("Organizations")}
                                             </a>
                                         : '---'}
@@ -160,7 +158,7 @@ export const IndexView = observer(
                                     <Col className="text-nowrap">
                                         { data.programCount ?
                                             <a href={`/tola_management/program/?countries[]=${data.id}`}>
-                                                <FontAwesomeIcon icon={'cubes'} />&nbsp;
+                                                <i className="fas fa-cubes"/>&nbsp;
                                                 {data.programCount} {gettext("Programs")}
                                             </a>
                                         : "---"}
@@ -168,7 +166,7 @@ export const IndexView = observer(
                                     <Col className="text-nowrap">
                                         { data.user_count ?
                                             <a href={`/tola_management/user/?countries[]=${data.id}`}>
-                                                <FontAwesomeIcon icon={'users'} />&nbsp;
+                                                <i className="fas fa-users"/>&nbsp;
                                                 {data.user_count} {gettext("Users")}
                                             </a>
                                         : '---'  }

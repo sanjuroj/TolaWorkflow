@@ -10,7 +10,6 @@ import EditUserHistory from './components/edit_user_history'
 import Pagination from 'components/pagination'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const selection_placeholder = gettext("None Selected")
 const UserFilter = observer(({store, selections}) => {
@@ -230,9 +229,7 @@ export const IndexView = observer(
                     <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div className="controls__buttons">
                         <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.createUser()}>
-                            {/*<i className="fas fa-plus-circle"/> */}
-                            <FontAwesomeIcon icon={'plus-circle'} />
-                            {gettext("Add User")}
+                            <i className="fas fa-plus-circle"/>{gettext("Add User")}
                         </a>
                     </div>
                 </div>
@@ -303,17 +300,17 @@ export const IndexView = observer(
                                     </Col>
                                     <Col size="2" className="td--stretch">
                                         <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                            <FontAwesomeIcon icon={'user'} />&nbsp;
+                                            <i className="fas fa-user"/>&nbsp;
                                             {data.name || "---"} {data.is_super && <span className="badge badge-danger">{gettext("Super Admin")}</span>}
                                         </div>
                                     </Col>
                                     <Col>
-                                        <FontAwesomeIcon icon={"building"} />&nbsp;
+                                        <i className="fas fa-building"/>&nbsp;
                                         {data.organization_name || "---"}
                                     </Col>
                                     <Col className="text-nowrap">
                                         <a href={`/tola_management/program/?users[]=${data.id}`}>
-                                            <FontAwesomeIcon icon={"cubes"} />&nbsp;
+                                            <i className="fas fa-cubes"/>&nbsp;
                                             {data.user_programs} {gettext("programs")}
                                         </a>
                                     </Col>
