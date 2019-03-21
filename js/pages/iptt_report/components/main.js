@@ -10,7 +10,9 @@ const IPTTHeader = inject('labels', 'rootStore')(
         return <div className="page-subheader">
                     <div id="id_span_iptt_date_range" className="subheader__title">
                         <h2 className="pt-3 text-title-case">{ labels.reportTitle }</h2>
-                        <h4 className="pb-3">{ rootStore.startPeriodLabel } - { rootStore.endPeriodLabel }</h4>
+                        <h4 className="pb-3">{ (rootStore.startPeriodLabel && rootStore.endPeriodLabel)
+                                               ? rootStore.startPeriodLabel + " - " + rootStore.endPeriodLabel
+                                               : "" }</h4>
                     </div>
                     <div className="subheader__actions">
                         <PinButton />
