@@ -1105,7 +1105,9 @@ class IPTTReport(LoginRequiredMixin, IPTTProgramMixin, TemplateView):
                 'target': ugettext('Target'),
                 'actual': ugettext('Actual'),
                 'met': ugettext('% Met')
-            }
+            },
+            'noIndicatorsForFrequency': ugettext('No indicators for this target frequency in this program, '
+                                                 'please select a different target period frequency.')
         }
 
     def get(self, request, *args, **kwargs):

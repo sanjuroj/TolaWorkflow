@@ -14,7 +14,7 @@ const IndicatorTD = observer((props) => {
 const TVAValue = observer(({ target, value, isPercent }) => {
     let percentText = (value && target && target != 0) ? String(Math.round(value / target * 1000) / 10) + '%' : EMPTY_CELL;
     let valueText = value ? String(Math.round(value)) + (isPercent ? '%' : '') : EMPTY_CELL;
-    let targetText = (value && target) ? String(Math.round(target)) + (isPercent ? '%' : '') : '';
+    let targetText = target ? String(Math.round(target)) + (isPercent ? '%' : '') : EMPTY_CELL;
     return <React.Fragment>
         <td align="right">{targetText}</td>
         <td align="right">{valueText}</td>
@@ -87,13 +87,19 @@ const Loading = () => {
     return <tr><td>Loading</td></tr>;
 }
 
+const NoIndicatorsForFrequency = inject('labels')(({ labels }) => {
+    return <tr><td colSpan="8">{ labels.noIndicatorsForFrequency }</td></tr>;
+})
+
 const IPTTTableBody = inject('rootStore')(
     observer(
         ({rootStore}) => {
-            const indicatorRows = rootStore.reportIndicators
+            const indicatorRows = (rootStore.reportIndicators && rootStore.reportIndicators.length > 0)
                                   ? rootStore.reportIndicators.map(
                                     (indicator, count) => <IndicatorRow indicator={indicator} key={count} />
-                                  ) : <Loading />
+                                  ) : rootStore.noIndicatorsForFrequency
+                                    ? <NoIndicatorsForFrequency />
+                                    : <Loading />;
             
             return <tbody>
                         {indicatorRows}

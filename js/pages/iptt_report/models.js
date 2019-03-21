@@ -155,7 +155,7 @@ class Program {
     }
     
     @computed get reportIndicators() {
-        if (this.indicators === null) {
+        if (!this.indicators || this.indicators.length == 0) {
             return false;
         }
         if ((this.rootStore.isTVA && this.reportsLoaded.tva.indexOf(String(this.rootStore.selectedFrequencyId)) == -1) ||
@@ -171,7 +171,7 @@ class Program {
     }
     
     @computed get reportLevels() {
-        if (!this.reportIndicators) {
+        if (!this.reportIndicators || this.reportIndicators.length == 0) {
             return [];
         }
         return [...new Set(this.reportIndicators.filter(
@@ -182,7 +182,7 @@ class Program {
     }
     
     @computed get reportSites() {
-        if (!this.reportIndicators) {
+        if (!this.reportIndicators || this.reportIndicators.length == 0) {
             return [];
         }
         let sites = this.reportIndicators.map(indicator => indicator.sites)
@@ -192,7 +192,7 @@ class Program {
     }
     
     @computed get reportTypes() {
-        if (!this.reportIndicators) {
+        if (!this.reportIndicators || this.reportIndicators.length == 0) {
             return [];
         }
         let types = this.reportIndicators.map(indicator => indicator.types)
@@ -202,7 +202,7 @@ class Program {
     }
     
     @computed get reportSectors() {
-        if (!this.reportIndicators) {
+        if (!this.reportIndicators || this.reportIndicators.length == 0) {
             return [];
         }
         return [...new Set(
@@ -212,7 +212,7 @@ class Program {
     }
     
     @computed get reportIndicatorsOptions() {
-        if (!this.reportIndicators) {
+        if (!this.reportIndicators || this.reportIndicators.length == 0) {
             return [];
         }
         return this.reportIndicators.map(
@@ -248,6 +248,7 @@ export class RootStore {
     @observable typeFilters = [];
     @observable sectorFilters = [];
     @observable indicatorFilters = [];
+    @observable noIndicatorsForFrequency = false;
     reportType = null;
     router = null;
     currentPeriod = null;
@@ -381,6 +382,11 @@ export class RootStore {
     
     updateFilters = () => {
         let params = this.router.getState().params;
+        if (params.frequency && this.isTVA
+                && this.selectedProgram.frequencies.indexOf(parseInt(params.frequency)) == -1) {
+                this.noIndicatorsForFrequency = true;
+                this.setFrequencyId(null);
+        }
         if (params.levels) {
             let levels = params.levels instanceof(Array) ? params.levels.map(Number) : [params.levels].map(Number);
             this.levelFilters = this.selectedProgram.reportLevels.filter(
@@ -426,10 +432,12 @@ export class RootStore {
         if (id === null) {
             this.selectedProgram = null;
         } else if (this.selectedProgram == null || this.selectedProgram.id != id) {
+            this.noIndicatorsForFrequency = false;
             this.updateUrl('programId', id);
             this.selectedProgram = this.programStore.getProgram(id);
             if (this.isTVA && this.selectedFrequencyId
                 && this.selectedProgram.frequencies.indexOf(parseInt(this.selectedFrequencyId)) == -1) {
+                this.noIndicatorsForFrequency = true;
                 this.setFrequencyId(null);
             } else if (this.selectedFrequencyId !== null) {
                 this.setFrequencyId(this.selectedFrequencyId);
