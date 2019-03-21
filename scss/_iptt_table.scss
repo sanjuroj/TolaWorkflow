@@ -36,6 +36,10 @@ body.page_iptt_table { // body element for extra specificity
     .page-title {
         display: none;
     }
+    .subheader__actions {
+        position: fixed;
+        right: 0px;
+    }
 }
 .iptt_table_wrapper {
     // See breakpoint mixin below
@@ -62,5 +66,16 @@ body.page_iptt_table { // body element for extra specificity
 .iptt-react-select {
     width: 100%;
     color: $black;
+}
+
+.iptt-react-select-row > div {
+    width: 100%;
+    color: $black;
+    button {
+        width: 100%;
+    }
+    > div {
+        width: 100%;
+    }
 }
 

@@ -1064,6 +1064,7 @@ class IPTTReport(LoginRequiredMixin, IPTTProgramMixin, TemplateView):
             'typeSelect': ugettext('Types'),
             'sectorSelect': ugettext('Sectors'),
             'siteSelect': ugettext('Sites'),
+            'indicatorSelect': ugettext('Indicators'),
             'timeperiods': {
                 '3' : ugettext('Years'),
                 '4' : ugettext('Semi-annual periods'),

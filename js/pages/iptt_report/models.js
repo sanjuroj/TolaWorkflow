@@ -41,6 +41,7 @@ class Indicator {
 
     loadData(data) {
         this.id = data.id;
+        this.pk = data.id;
         this.sortIndex = data.sortIndex;
         this.number = data.number;
         this.name = data.name;
@@ -204,6 +205,15 @@ class Program {
                 indicator => JSON.stringify({value: indicator.sector.pk, label:indicator.sector.name}))
             )].map(JSON.parse);
     }
+    
+    @computed get reportIndicatorsOptions() {
+        if (!this.reportIndicators) {
+            return [];
+        }
+        return this.reportIndicators.map(
+            indicator => ({value: indicator.pk, label: indicator.name})
+        );
+    }
 
 }
 
@@ -232,6 +242,7 @@ export class RootStore {
     @observable siteFilters = [];
     @observable typeFilters = [];
     @observable sectorFilters = [];
+    @observable indicatorFilters = [];
     reportType = null;
     router = null;
     currentPeriod = null;
@@ -341,6 +352,11 @@ export class RootStore {
             if (this.sectorFilters && this.sectorFilters.length > 0) {
                 indicators = indicators.filter(
                     indicator => this.sectorFilters.map(sectorOption => sectorOption.value).indexOf(indicator.sector.pk) != -1
+                );
+            }
+            if (this.indicatorFilters && this.indicatorFilters.length > 0) {
+                indicators = indicators.filter(
+                    indicator => this.indicatorFilters.map(indicatorOption => indicatorOption.value).indexOf(indicator.pk) != -1
                 );
             }
             return indicators;

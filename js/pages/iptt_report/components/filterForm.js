@@ -2,6 +2,7 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 import { computed } from 'mobx';
 import Select from 'react-select';
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 
 const programOptions = [
     { value: 1, label: 'program 1'},
@@ -156,7 +157,7 @@ class TimeFrameRadio extends React.Component {
 }
 
 const IPTTMultiSelectWrapper = (props) => {
-    return <div className="form-row mb-2">
+    return <div className="form-row mb-2 iptt-react-select-row">
                 <label className="col-form-label text-uppercase">
                     { props.label }
                 </label>
@@ -177,11 +178,10 @@ class LevelSelect extends React.Component {
     }
     render() {
         return <IPTTMultiSelectWrapper label={this.props.labels.levelSelect}>
-                    <Select options={this.getOptions()}
+                    <ReactMultiSelectCheckboxes options={this.getOptions()}
                             isMulti={true}
                             value={ this.props.rootStore.levelFilters }
-                            onChange={ this.updateLevelFilters }
-                            className="iptt-react-select"/>
+                            onChange={ this.updateLevelFilters } />
                 </IPTTMultiSelectWrapper>;
     }
 }
@@ -194,11 +194,11 @@ class SiteSelect extends React.Component {
     }
     render() {
         return <IPTTMultiSelectWrapper label={this.props.labels.siteSelect}>
-                    <Select options={this.props.rootStore.selectedProgram.reportSites}
+                    <ReactMultiSelectCheckboxes
+                            options={this.props.rootStore.selectedProgram.reportSites}
                             isMulti={ true }
                             value={ this.props.rootStore.siteFilters }
-                            onChange={ this.updateSiteFilters }
-                            className="iptt-react-select" />
+                            onChange={ this.updateSiteFilters } />
                 </IPTTMultiSelectWrapper>
     }
 }
@@ -211,11 +211,11 @@ class TypeSelect extends React.Component {
     }
     render() {
         return <IPTTMultiSelectWrapper label={this.props.labels.typeSelect}>
-                    <Select options={this.props.rootStore.selectedProgram.reportTypes}
+                    <ReactMultiSelectCheckboxes
+                            options={this.props.rootStore.selectedProgram.reportTypes}
                             isMulti={ true }
                             value={ this.props.rootStore.typeFilters }
-                            onChange={ this.updateTypeFilters }
-                            className="iptt-react-select" />
+                            onChange={ this.updateTypeFilters } />
                 </IPTTMultiSelectWrapper>
     }
 }
@@ -228,11 +228,29 @@ class SectorSelect extends React.Component {
     }
     render() {
         return <IPTTMultiSelectWrapper label={this.props.labels.sectorSelect}>
-                    <Select options={this.props.rootStore.selectedProgram.reportSectors}
+                    <ReactMultiSelectCheckboxes
+                            options={this.props.rootStore.selectedProgram.reportSectors}
                             isMulti={ true }
                             value={ this.props.rootStore.sectorFilters }
-                            onChange={ this.updateSectorFilters }
-                            className="iptt-react-select" />
+                            onChange={ this.updateSectorFilters } />
+                </IPTTMultiSelectWrapper>
+    }
+}
+
+
+@inject('labels', 'rootStore')
+@observer
+class IndicatorSelect extends React.Component {
+    updateIndicatorFilters = (selected) => {
+        this.props.rootStore.indicatorFilters = selected;
+    }
+    render() {
+        return <IPTTMultiSelectWrapper label={this.props.labels.indicatorSelect}>
+                    <ReactMultiSelectCheckboxes
+                            options={this.props.rootStore.selectedProgram.reportIndicatorsOptions}
+                            isMulti={ true }
+                            value={ this.props.rootStore.indicatorFilters }
+                            onChange={ this.updateIndicatorFilters } />
                 </IPTTMultiSelectWrapper>
     }
 }
@@ -254,6 +272,7 @@ export const IPTTFilterForm = inject('labels')(
                         <SiteSelect />
                         <TypeSelect />
                         <SectorSelect />
+                        <IndicatorSelect />
                     </div>
                 </nav>;
     })
