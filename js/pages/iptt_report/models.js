@@ -46,6 +46,7 @@ class Indicator {
         this.number = data.number;
         this.name = data.name;
         this.level = data.level;
+        this.levelId = data.levelpk;
         this.sites = data.sites;
         this.types = data.indicatorTypes;
         this.sector = data.sector;
@@ -173,7 +174,11 @@ class Program {
         if (!this.reportIndicators) {
             return [];
         }
-        return [...new Set(this.reportIndicators.map(indicator => indicator.level))];
+        return [...new Set(this.reportIndicators.filter(
+                        indicator => indicator.levelId !== null
+                    ).map(
+                        indicator => ({value: indicator.levelId, label: indicator.level})
+                    ).map(JSON.stringify))].map(JSON.parse);
     }
     
     @computed get reportSites() {
@@ -334,7 +339,7 @@ export class RootStore {
             let indicators = this.selectedProgram.reportIndicators;
             if (this.levelFilters && this.levelFilters.length > 0) {
                 indicators = indicators.filter(
-                    indicator => this.levelFilters.map(levelOption => levelOption.value).indexOf(indicator.level) != -1
+                    indicator => this.levelFilters.map(levelOption => levelOption.value).indexOf(indicator.levelId) != -1
                 );
             }
             if (this.siteFilters && this.siteFilters.length > 0) {
@@ -370,7 +375,46 @@ export class RootStore {
         if (!this.loading) {
             this.loading = true;
             this.reportAPI.callForData(this.selectedProgram.id, this.selectedFrequencyId, this.isTVA)
-                .then((data) => { this.selectedProgram.loadData(data); this.loading=false; });
+                .then((data) => { this.selectedProgram.loadData(data); this.updateFilters(); this.loading=false; });
+        }
+    }
+    
+    updateFilters = () => {
+        let params = this.router.getState().params;
+        if (params.levels) {
+            let levels = params.levels instanceof(Array) ? params.levels.map(Number) : [params.levels].map(Number);
+            this.levelFilters = this.selectedProgram.reportLevels.filter(
+                levelOption => levels.indexOf(levelOption.value) != -1
+            );
+            this.updateUrl('levels', this.levelFilters.map(levelOption => levelOption.value));
+        }
+        if (params.sites) {
+            let sites = params.sites instanceof(Array) ? params.sites.map(Number) : [params.sites].map(Number);
+            this.siteFilters = this.selectedProgram.reportSites.filter(
+                siteOption => sites.indexOf(siteOption.value) != -1
+            );
+            this.updateUrl('sites', this.siteFilters.map(siteOption => siteOption.value));
+        }
+        if (params.types) {
+            let theseTypes = params.types instanceof(Array) ? params.types.map(Number) : [params.types].map(Number);
+            this.typeFilters = this.selectedProgram.reportTypes.filter(
+                typeOption => theseTypes.indexOf(typeOption.value) != -1
+            );
+            this.updateUrl('types', this.typeFilters.map(typeOption => typeOption.value));
+        }
+        if (params.sectors) {
+            let sectors = params.sectors instanceof(Array) ? params.sectors.map(Number) : [params.sectors].map(Number);
+            this.sectorFilters = this.selectedProgram.reportSectors.filter(
+                sectorOption => sectors.indexOf(sectorOption.value) != -1
+            );
+            this.updateUrl('sectors', this.sectorFilters.map(sectorOption => sectorOption.value));
+        }
+        if (params.indicators) {
+            let indicators = params.indicators instanceof (Array) ? params.indicators.map(Number) : [params.indicators].map(Number);
+            this.indicatorFilters = this.selectedProgram.reportIndicatorsOptions.filter(
+                indicatorOption => indicators.indexOf(indicatorOption.value) != -1
+            );
+            this.updateUrl('indicators', this.indicatorFilters.map(indicatorOption => indicatorOption.value));
         }
     }
     
@@ -604,6 +648,31 @@ export class RootStore {
             return this.endPeriod - this.startPeriod + 1;
         }
         return null;
+    }
+    
+    setLevelFilters = (selected) => {
+        this.levelFilters = selected;
+        this.updateUrl('levels', selected.map(item => item.value));
+    }
+    
+    setSiteFilters = (selected) => {
+        this.siteFilters = selected;
+        this.updateUrl('sites', selected.map(item => item.value));
+    }
+    
+    setTypeFilters = (selected) => {
+        this.typeFilters = selected;
+        this.updateUrl('types', selected.map(item => item.value));
+    }
+    
+    setSectorFilters = (selected) => {
+        this.sectorFilters = selected;
+        this.updateUrl('sectors', selected.map(item => item.value));
+    }
+    
+    setIndicatorFilters = (selected) => {
+        this.indicatorFilters = selected;
+        this.updateUrl('indicators', selected.map(item => item.value));
     }
     
 }

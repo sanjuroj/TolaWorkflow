@@ -1140,6 +1140,7 @@ class IPTTReportData(LoginRequiredMixin, View):
                 'number': indicator.number,
                 'name': indicator.name,
                 'level': indicator.levelname,
+                'levelpk': indicator.level.pk if indicator.level else None,
                 'sites': indicator.sites,
                 'indicatorTypes': indicator.indicator_types,
                 'sector': {'pk': indicator.sector.pk, 'name': indicator.sector.sector} if indicator.sector else {},

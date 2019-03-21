@@ -168,17 +168,13 @@ const IPTTMultiSelectWrapper = (props) => {
 @inject('labels', 'rootStore')
 @observer
 class LevelSelect extends React.Component {
-    getOptions = () => {
-        return this.props.rootStore.selectedProgram.reportLevels.map(
-            level => ({value: level, label: level})
-        );
-    }
     updateLevelFilters = (selected) => {
-        this.props.rootStore.levelFilters = selected;
+        this.props.rootStore.setLevelFilters(selected);
     }
     render() {
         return <IPTTMultiSelectWrapper label={this.props.labels.levelSelect}>
-                    <ReactMultiSelectCheckboxes options={this.getOptions()}
+                    <ReactMultiSelectCheckboxes
+                            options={this.props.rootStore.selectedProgram.reportLevels}
                             isMulti={true}
                             value={ this.props.rootStore.levelFilters }
                             onChange={ this.updateLevelFilters } />
@@ -190,7 +186,7 @@ class LevelSelect extends React.Component {
 @observer
 class SiteSelect extends React.Component {
     updateSiteFilters = (selected) => {
-        this.props.rootStore.siteFilters = selected;
+        this.props.rootStore.setSiteFilters(selected);
     }
     render() {
         return <IPTTMultiSelectWrapper label={this.props.labels.siteSelect}>
@@ -207,7 +203,7 @@ class SiteSelect extends React.Component {
 @observer
 class TypeSelect extends React.Component {
     updateTypeFilters = (selected) => {
-        this.props.rootStore.typeFilters = selected;
+        this.props.rootStore.setTypeFilters(selected);
     }
     render() {
         return <IPTTMultiSelectWrapper label={this.props.labels.typeSelect}>
@@ -224,7 +220,7 @@ class TypeSelect extends React.Component {
 @observer
 class SectorSelect extends React.Component {
     updateSectorFilters = (selected) => {
-        this.props.rootStore.sectorFilters = selected;
+        this.props.rootStore.setSectorFilters(selected);
     }
     render() {
         return <IPTTMultiSelectWrapper label={this.props.labels.sectorSelect}>
@@ -242,7 +238,7 @@ class SectorSelect extends React.Component {
 @observer
 class IndicatorSelect extends React.Component {
     updateIndicatorFilters = (selected) => {
-        this.props.rootStore.indicatorFilters = selected;
+        this.props.rootStore.setIndicatorFilters(selected);
     }
     render() {
         return <IPTTMultiSelectWrapper label={this.props.labels.indicatorSelect}>
