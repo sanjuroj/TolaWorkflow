@@ -8484,6 +8484,10 @@ body.page_iptt_table {
 .page_iptt_table .page-title {
   display: none; }
 
+.page_iptt_table .subheader__actions {
+  position: fixed;
+  right: 0px; }
+
 .iptt_table_wrapper {
   width: 100%;
   overflow-x: auto;
@@ -8501,6 +8505,14 @@ body.page_iptt_table {
 .iptt-react-select {
   width: 100%;
   color: #000; }
+
+.iptt-react-select-row > div {
+  width: 100%;
+  color: #000; }
+  .iptt-react-select-row > div button {
+    width: 100%; }
+  .iptt-react-select-row > div > div {
+    width: 100%; }
 
 #sidebar {
   flex-basis: 1;
@@ -8970,3 +8982,5 @@ select.listoption_filters {
 
 /* Unsorted custom selectors */
 
+
+/*# sourceMappingURL=base-878f1d99132eea9f0ab8.css.map*/

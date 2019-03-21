@@ -496,6 +496,28 @@ exports.default = function () {
 
 /***/ }),
 
+/***/ "0PhW":
+/*!********************************************************************************!*\
+  !*** ./node_modules/emotion/node_modules/@emotion/memoize/dist/memoize.esm.js ***!
+  \********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function memoize(fn) {
+  var cache = {};
+  return function (arg) {
+    if (cache[arg] === undefined) cache[arg] = fn(arg);
+    return cache[arg];
+  };
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (memoize);
+
+
+/***/ }),
+
 /***/ "0QlW":
 /*!**************************************************!*\
   !*** ./node_modules/remove-array-items/index.js ***!
@@ -531,6 +553,544 @@ module.exports = function removeItems (arr, startIdx, removeCount) {
 
   arr.length = len
 }
+
+
+/***/ }),
+
+/***/ "0hr6":
+/*!****************************************************************************!*\
+  !*** ./node_modules/emotion/node_modules/create-emotion/dist/index.esm.js ***!
+  \****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _emotion_memoize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @emotion/memoize */ "0PhW");
+/* harmony import */ var _emotion_unitless__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @emotion/unitless */ "VLL2");
+/* harmony import */ var _emotion_hash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @emotion/hash */ "qm10");
+/* harmony import */ var _emotion_stylis__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @emotion/stylis */ "KrFH");
+/* harmony import */ var stylis_rule_sheet__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! stylis-rule-sheet */ "TAZq");
+/* harmony import */ var stylis_rule_sheet__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(stylis_rule_sheet__WEBPACK_IMPORTED_MODULE_4__);
+
+
+
+
+
+
+var hyphenateRegex = /[A-Z]|^ms/g;
+var processStyleName = Object(_emotion_memoize__WEBPACK_IMPORTED_MODULE_0__["default"])(function (styleName) {
+  return styleName.replace(hyphenateRegex, '-$&').toLowerCase();
+});
+var processStyleValue = function processStyleValue(key, value) {
+  if (value == null || typeof value === 'boolean') {
+    return '';
+  }
+
+  if (_emotion_unitless__WEBPACK_IMPORTED_MODULE_1__["default"][key] !== 1 && key.charCodeAt(1) !== 45 && // custom properties
+  !isNaN(value) && value !== 0) {
+    return value + 'px';
+  }
+
+  return value;
+};
+
+if (true) {
+  var contentValuePattern = /(attr|calc|counters?|url)\(/;
+  var contentValues = ['normal', 'none', 'counter', 'open-quote', 'close-quote', 'no-open-quote', 'no-close-quote', 'initial', 'inherit', 'unset'];
+  var oldProcessStyleValue = processStyleValue;
+
+  processStyleValue = function processStyleValue(key, value) {
+    if (key === 'content') {
+      if (typeof value !== 'string' || contentValues.indexOf(value) === -1 && !contentValuePattern.test(value) && (value.charAt(0) !== value.charAt(value.length - 1) || value.charAt(0) !== '"' && value.charAt(0) !== "'")) {
+        console.error("You seem to be using a value for 'content' without quotes, try replacing it with `content: '\"" + value + "\"'`");
+      }
+    }
+
+    return oldProcessStyleValue(key, value);
+  };
+}
+
+var classnames = function classnames(args) {
+  var len = args.length;
+  var i = 0;
+  var cls = '';
+
+  for (; i < len; i++) {
+    var arg = args[i];
+    if (arg == null) continue;
+    var toAdd = void 0;
+
+    switch (typeof arg) {
+      case 'boolean':
+        break;
+
+      case 'function':
+        if (true) {
+          console.error('Passing functions to cx is deprecated and will be removed in the next major version of Emotion.\n' + 'Please call the function before passing it to cx.');
+        }
+
+        toAdd = classnames([arg()]);
+        break;
+
+      case 'object':
+        {
+          if (Array.isArray(arg)) {
+            toAdd = classnames(arg);
+          } else {
+            toAdd = '';
+
+            for (var k in arg) {
+              if (arg[k] && k) {
+                toAdd && (toAdd += ' ');
+                toAdd += k;
+              }
+            }
+          }
+
+          break;
+        }
+
+      default:
+        {
+          toAdd = arg;
+        }
+    }
+
+    if (toAdd) {
+      cls && (cls += ' ');
+      cls += toAdd;
+    }
+  }
+
+  return cls;
+};
+var isBrowser = typeof document !== 'undefined';
+
+/*
+
+high performance StyleSheet for css-in-js systems
+
+- uses multiple style tags behind the scenes for millions of rules
+- uses `insertRule` for appending in production for *much* faster performance
+- 'polyfills' on server side
+
+// usage
+
+import StyleSheet from 'glamor/lib/sheet'
+let styleSheet = new StyleSheet()
+
+styleSheet.inject()
+- 'injects' the stylesheet into the page (or into memory if on server)
+
+styleSheet.insert('#box { border: 1px solid red; }')
+- appends a css rule into the stylesheet
+
+styleSheet.flush()
+- empties the stylesheet of all its contents
+
+*/
+// $FlowFixMe
+function sheetForTag(tag) {
+  if (tag.sheet) {
+    // $FlowFixMe
+    return tag.sheet;
+  } // this weirdness brought to you by firefox
+
+
+  for (var i = 0; i < document.styleSheets.length; i++) {
+    if (document.styleSheets[i].ownerNode === tag) {
+      // $FlowFixMe
+      return document.styleSheets[i];
+    }
+  }
+}
+
+function makeStyleTag(opts) {
+  var tag = document.createElement('style');
+  tag.setAttribute('data-emotion', opts.key || '');
+
+  if (opts.nonce !== undefined) {
+    tag.setAttribute('nonce', opts.nonce);
+  }
+
+  tag.appendChild(document.createTextNode('')) // $FlowFixMe
+  ;
+  (opts.container !== undefined ? opts.container : document.head).appendChild(tag);
+  return tag;
+}
+
+var StyleSheet =
+/*#__PURE__*/
+function () {
+  function StyleSheet(options) {
+    this.isSpeedy = "development" === 'production'; // the big drawback here is that the css won't be editable in devtools
+
+    this.tags = [];
+    this.ctr = 0;
+    this.opts = options;
+  }
+
+  var _proto = StyleSheet.prototype;
+
+  _proto.inject = function inject() {
+    if (this.injected) {
+      throw new Error('already injected!');
+    }
+
+    this.tags[0] = makeStyleTag(this.opts);
+    this.injected = true;
+  };
+
+  _proto.speedy = function speedy(bool) {
+    if (this.ctr !== 0) {
+      // cannot change speedy mode after inserting any rule to sheet. Either call speedy(${bool}) earlier in your app, or call flush() before speedy(${bool})
+      throw new Error("cannot change speedy now");
+    }
+
+    this.isSpeedy = !!bool;
+  };
+
+  _proto.insert = function insert(rule, sourceMap) {
+    // this is the ultrafast version, works across browsers
+    if (this.isSpeedy) {
+      var tag = this.tags[this.tags.length - 1];
+      var sheet = sheetForTag(tag);
+
+      try {
+        sheet.insertRule(rule, sheet.cssRules.length);
+      } catch (e) {
+        if (true) {
+          console.warn('illegal rule', rule); // eslint-disable-line no-console
+        }
+      }
+    } else {
+      var _tag = makeStyleTag(this.opts);
+
+      this.tags.push(_tag);
+
+      _tag.appendChild(document.createTextNode(rule + (sourceMap || '')));
+    }
+
+    this.ctr++;
+
+    if (this.ctr % 65000 === 0) {
+      this.tags.push(makeStyleTag(this.opts));
+    }
+  };
+
+  _proto.flush = function flush() {
+    // $FlowFixMe
+    this.tags.forEach(function (tag) {
+      return tag.parentNode.removeChild(tag);
+    });
+    this.tags = [];
+    this.ctr = 0; // todo - look for remnants in document.styleSheets
+
+    this.injected = false;
+  };
+
+  return StyleSheet;
+}();
+
+function createEmotion(context, options) {
+  if (context.__SECRET_EMOTION__ !== undefined) {
+    return context.__SECRET_EMOTION__;
+  }
+
+  if (options === undefined) options = {};
+  var key = options.key || 'css';
+
+  if (true) {
+    if (/[^a-z-]/.test(key)) {
+      throw new Error("Emotion key must only contain lower case alphabetical characters and - but \"" + key + "\" was passed");
+    }
+  }
+
+  var current;
+
+  function insertRule(rule) {
+    current += rule;
+
+    if (isBrowser) {
+      sheet.insert(rule, currentSourceMap);
+    }
+  }
+
+  var insertionPlugin = stylis_rule_sheet__WEBPACK_IMPORTED_MODULE_4___default()(insertRule);
+  var stylisOptions;
+
+  if (options.prefix !== undefined) {
+    stylisOptions = {
+      prefix: options.prefix
+    };
+  }
+
+  var caches = {
+    registered: {},
+    inserted: {},
+    nonce: options.nonce,
+    key: key
+  };
+  var sheet = new StyleSheet(options);
+
+  if (isBrowser) {
+    // 🚀
+    sheet.inject();
+  }
+
+  var stylis = new _emotion_stylis__WEBPACK_IMPORTED_MODULE_3__["default"](stylisOptions);
+  stylis.use(options.stylisPlugins)(insertionPlugin);
+  var currentSourceMap = '';
+
+  function handleInterpolation(interpolation, couldBeSelectorInterpolation) {
+    if (interpolation == null) {
+      return '';
+    }
+
+    switch (typeof interpolation) {
+      case 'boolean':
+        return '';
+
+      case 'function':
+        if (interpolation.__emotion_styles !== undefined) {
+          var selector = interpolation.toString();
+
+          if (selector === 'NO_COMPONENT_SELECTOR' && "development" !== 'production') {
+            throw new Error('Component selectors can only be used in conjunction with babel-plugin-emotion.');
+          }
+
+          return selector;
+        }
+
+        if (this === undefined && "development" !== 'production') {
+          console.error('Interpolating functions in css calls is deprecated and will be removed in the next major version of Emotion.\n' + 'If you want to have a css call based on props, create a function that returns a css call like this\n' + 'let dynamicStyle = (props) => css`color: ${props.color}`\n' + 'It can be called directly with props or interpolated in a styled call like this\n' + "let SomeComponent = styled('div')`${dynamicStyle}`");
+        }
+
+        return handleInterpolation.call(this, this === undefined ? interpolation() : // $FlowFixMe
+        interpolation(this.mergedProps, this.context), couldBeSelectorInterpolation);
+
+      case 'object':
+        return createStringFromObject.call(this, interpolation);
+
+      default:
+        var cached = caches.registered[interpolation];
+        return couldBeSelectorInterpolation === false && cached !== undefined ? cached : interpolation;
+    }
+  }
+
+  var objectToStringCache = new WeakMap();
+
+  function createStringFromObject(obj) {
+    if (objectToStringCache.has(obj)) {
+      // $FlowFixMe
+      return objectToStringCache.get(obj);
+    }
+
+    var string = '';
+
+    if (Array.isArray(obj)) {
+      obj.forEach(function (interpolation) {
+        string += handleInterpolation.call(this, interpolation, false);
+      }, this);
+    } else {
+      Object.keys(obj).forEach(function (key) {
+        if (typeof obj[key] !== 'object') {
+          if (caches.registered[obj[key]] !== undefined) {
+            string += key + "{" + caches.registered[obj[key]] + "}";
+          } else {
+            string += processStyleName(key) + ":" + processStyleValue(key, obj[key]) + ";";
+          }
+        } else {
+          if (key === 'NO_COMPONENT_SELECTOR' && "development" !== 'production') {
+            throw new Error('Component selectors can only be used in conjunction with babel-plugin-emotion.');
+          }
+
+          if (Array.isArray(obj[key]) && typeof obj[key][0] === 'string' && caches.registered[obj[key][0]] === undefined) {
+            obj[key].forEach(function (value) {
+              string += processStyleName(key) + ":" + processStyleValue(key, value) + ";";
+            });
+          } else {
+            string += key + "{" + handleInterpolation.call(this, obj[key], false) + "}";
+          }
+        }
+      }, this);
+    }
+
+    objectToStringCache.set(obj, string);
+    return string;
+  }
+
+  var name;
+  var stylesWithLabel;
+  var labelPattern = /label:\s*([^\s;\n{]+)\s*;/g;
+
+  var createClassName = function createClassName(styles, identifierName) {
+    return Object(_emotion_hash__WEBPACK_IMPORTED_MODULE_2__["default"])(styles + identifierName) + identifierName;
+  };
+
+  if (true) {
+    var oldCreateClassName = createClassName;
+    var sourceMappingUrlPattern = /\/\*#\ssourceMappingURL=data:application\/json;\S+\s+\*\//g;
+
+    createClassName = function createClassName(styles, identifierName) {
+      return oldCreateClassName(styles.replace(sourceMappingUrlPattern, function (sourceMap) {
+        currentSourceMap = sourceMap;
+        return '';
+      }), identifierName);
+    };
+  }
+
+  var createStyles = function createStyles(strings) {
+    var stringMode = true;
+    var styles = '';
+    var identifierName = '';
+
+    if (strings == null || strings.raw === undefined) {
+      stringMode = false;
+      styles += handleInterpolation.call(this, strings, false);
+    } else {
+      styles += strings[0];
+    }
+
+    for (var _len = arguments.length, interpolations = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      interpolations[_key - 1] = arguments[_key];
+    }
+
+    interpolations.forEach(function (interpolation, i) {
+      styles += handleInterpolation.call(this, interpolation, styles.charCodeAt(styles.length - 1) === 46 // .
+      );
+
+      if (stringMode === true && strings[i + 1] !== undefined) {
+        styles += strings[i + 1];
+      }
+    }, this);
+    stylesWithLabel = styles;
+    styles = styles.replace(labelPattern, function (match, p1) {
+      identifierName += "-" + p1;
+      return '';
+    });
+    name = createClassName(styles, identifierName);
+    return styles;
+  };
+
+  if (true) {
+    var oldStylis = stylis;
+
+    stylis = function stylis(selector, styles) {
+      oldStylis(selector, styles);
+      currentSourceMap = '';
+    };
+  }
+
+  function insert(scope, styles) {
+    if (caches.inserted[name] === undefined) {
+      current = '';
+      stylis(scope, styles);
+      caches.inserted[name] = current;
+    }
+  }
+
+  var css = function css() {
+    var styles = createStyles.apply(this, arguments);
+    var selector = key + "-" + name;
+
+    if (caches.registered[selector] === undefined) {
+      caches.registered[selector] = stylesWithLabel;
+    }
+
+    insert("." + selector, styles);
+    return selector;
+  };
+
+  var keyframes = function keyframes() {
+    var styles = createStyles.apply(this, arguments);
+    var animation = "animation-" + name;
+    insert('', "@keyframes " + animation + "{" + styles + "}");
+    return animation;
+  };
+
+  var injectGlobal = function injectGlobal() {
+    var styles = createStyles.apply(this, arguments);
+    insert('', styles);
+  };
+
+  function getRegisteredStyles(registeredStyles, classNames) {
+    var rawClassName = '';
+    classNames.split(' ').forEach(function (className) {
+      if (caches.registered[className] !== undefined) {
+        registeredStyles.push(className);
+      } else {
+        rawClassName += className + " ";
+      }
+    });
+    return rawClassName;
+  }
+
+  function merge(className, sourceMap) {
+    var registeredStyles = [];
+    var rawClassName = getRegisteredStyles(registeredStyles, className);
+
+    if (registeredStyles.length < 2) {
+      return className;
+    }
+
+    return rawClassName + css(registeredStyles, sourceMap);
+  }
+
+  function cx() {
+    for (var _len2 = arguments.length, classNames = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      classNames[_key2] = arguments[_key2];
+    }
+
+    return merge(classnames(classNames));
+  }
+
+  function hydrateSingleId(id) {
+    caches.inserted[id] = true;
+  }
+
+  function hydrate(ids) {
+    ids.forEach(hydrateSingleId);
+  }
+
+  function flush() {
+    if (isBrowser) {
+      sheet.flush();
+      sheet.inject();
+    }
+
+    caches.inserted = {};
+    caches.registered = {};
+  }
+
+  if (isBrowser) {
+    var chunks = document.querySelectorAll("[data-emotion-" + key + "]");
+    Array.prototype.forEach.call(chunks, function (node) {
+      // $FlowFixMe
+      sheet.tags[0].parentNode.insertBefore(node, sheet.tags[0]); // $FlowFixMe
+
+      node.getAttribute("data-emotion-" + key).split(' ').forEach(hydrateSingleId);
+    });
+  }
+
+  var emotion = {
+    flush: flush,
+    hydrate: hydrate,
+    cx: cx,
+    merge: merge,
+    getRegisteredStyles: getRegisteredStyles,
+    injectGlobal: injectGlobal,
+    keyframes: keyframes,
+    css: css,
+    sheet: sheet,
+    caches: caches
+  };
+  context.__SECRET_EMOTION__ = emotion;
+  return emotion;
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (createEmotion);
 
 
 /***/ }),
@@ -6680,6 +7240,42 @@ exports.default = SelectionCell;
 
 /***/ }),
 
+/***/ "3p05":
+/*!******************************************************************!*\
+  !*** ./node_modules/react-multiselect-checkboxes/lib/Blanket.js ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Blanket;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "q1tI"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function Blanket(props) {
+  return _react.default.createElement("div", _extends({
+    style: {
+      bottom: 0,
+      left: 0,
+      top: 0,
+      right: 0,
+      position: 'fixed',
+      zIndex: 1
+    }
+  }, props));
+}
+
+/***/ }),
+
 /***/ "4Bwb":
 /*!***************************************************************************************************!*\
   !*** ./node_modules/react-bootstrap-table-next/lib/src/row-expand/expand-header-cell-consumer.js ***!
@@ -8930,6 +9526,67 @@ var autoReplace = function autoReplace() {
 
 /***/ }),
 
+/***/ "7xkc":
+/*!***************************************************************!*\
+  !*** ./node_modules/react-multiselect-checkboxes/lib/Menu.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Menu;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "q1tI"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "17x9"));
+
+var _theme = __webpack_require__(/*! react-select/lib/theme */ "KXCe");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function Menu(_ref) {
+  var rightAligned = _ref.rightAligned,
+      props = _objectWithoutProperties(_ref, ["rightAligned"]);
+
+  var shadow = _theme.colors.neutral10a;
+  var style = {
+    backgroundColor: 'white',
+    borderRadius: 4,
+    boxShadow: "0 0 0 1px ".concat(shadow, ", 0 4px 11px ").concat(shadow),
+    marginTop: 8,
+    position: 'absolute',
+    zIndex: 2
+  };
+
+  if (rightAligned) {
+    style.right = 0;
+  }
+
+  return _react.default.createElement("div", _extends({
+    style: style
+  }, props));
+}
+
+Menu.propTypes = {
+  rightAligned: _propTypes.default.bool
+};
+Menu.defaultProps = {
+  rightAligned: false
+};
+
+/***/ }),
+
 /***/ "8HSv":
 /*!***************************************************************************!*\
   !*** ./node_modules/react-bootstrap-table-next/lib/src/contexts/index.js ***!
@@ -10343,6 +11000,130 @@ Body.propTypes = {
 };
 
 exports.default = Body;
+
+/***/ }),
+
+/***/ "FOVo":
+/*!*************************************************************************!*\
+  !*** ./node_modules/react-multiselect-checkboxes/lib/DropdownButton.js ***!
+  \*************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = DropdownButton;
+exports.defaultDropdownButtonStyle = void 0;
+
+var _theme = __webpack_require__(/*! react-select/lib/theme */ "KXCe");
+
+var _emotion = __webpack_require__(/*! emotion */ "PAeb");
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "q1tI"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "17x9"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var propTypes = {
+  children: _propTypes.default.node.isRequired,
+  onPress: _propTypes.default.func,
+  iconAfter: _propTypes.default.node,
+  style: _propTypes.default.object // eslint-disable-line react/forbid-prop-types
+
+};
+var defaultProps = {
+  onPress: function onPress() {},
+  style: {},
+  iconAfter: null
+};
+var defaultDropdownButtonStyle = {
+  padding: '8px 8px 5px 8px',
+  backgroundColor: '#FFF',
+  borderRadius: '2px',
+  borderWidth: 0,
+  boxShadow: '0 1px 1px 1px rgba(0, 0, 0, 0.08)',
+  fontStyle: 'normal',
+  fontWeight: 400,
+  fontSize: '14px',
+  lineHeight: 1.36,
+  alignItems: 'baseline',
+  background: '#FFF',
+  boxSizing: 'border-box',
+  borderColor: _theme.colors.neutral20,
+  color: '#515151',
+  cursor: 'pointer',
+  display: 'inline-flex',
+  margin: 0,
+  maxWidth: '100%',
+  flexWrap: 'nowrap',
+  outline: 'currentcolor none medium !important',
+  textAlign: 'left',
+  textDecoration: 'none',
+  transition: 'background 0.1s ease-out 0s, box-shadow 0.15s cubic-bezier(0.47, 0.03, 0.49, 1.38) 0s',
+  verticalAlign: 'middle',
+  whiteSpace: 'nowrap',
+  width: 'auto',
+  ':hover': {
+    background: _theme.colors.neutral3
+  }
+};
+exports.defaultDropdownButtonStyle = defaultDropdownButtonStyle;
+var iconSpan = {
+  alignSelf: 'center',
+  display: 'flex',
+  flexShrink: 0,
+  lineHeight: 0,
+  fontSize: 0,
+  margin: '0px 4px'
+};
+var textSpan = {
+  alignItems: 'center',
+  alignSelf: 'center',
+  flex: '1 1 auto',
+  margin: 0,
+  maxWidth: '100%',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap'
+};
+var defaultStyles = {
+  iconSpan: iconSpan,
+  textSpan: textSpan
+};
+
+function DropdownButton(_ref) {
+  var onPress = _ref.onPress,
+      children = _ref.children,
+      iconAfter = _ref.iconAfter,
+      buttonStyle = _ref.style;
+
+  var styles = _objectSpread({}, defaultStyles, {
+    button: buttonStyle
+  });
+
+  var childContent = typeof children === 'string' ? _react.default.createElement("span", {
+    className: (0, _emotion.css)(styles.textSpan)
+  }, children) : children;
+  return _react.default.createElement("button", {
+    type: "button",
+    className: (0, _emotion.css)(styles.button),
+    onClick: onPress
+  }, childContent, !!iconAfter && _react.default.createElement("span", {
+    className: (0, _emotion.css)(styles.iconSpan)
+  }, iconAfter));
+}
+
+DropdownButton.propTypes = propTypes;
+DropdownButton.defaultProps = defaultProps;
 
 /***/ }),
 
@@ -12134,6 +12915,807 @@ var editCell = exports.editCell = function editCell(data, keyField, rowId, dataF
 
 /***/ }),
 
+/***/ "KXCe":
+/*!************************************************!*\
+  !*** ./node_modules/react-select/lib/theme.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var colors = exports.colors = {
+  primary: '#2684FF',
+  primary75: '#4C9AFF',
+  primary50: '#B2D4FF',
+  primary25: '#DEEBFF',
+
+  danger: '#DE350B',
+  dangerLight: '#FFBDAD',
+
+  neutral0: 'hsl(0, 0%, 100%)',
+  neutral5: 'hsl(0, 0%, 95%)',
+  neutral10: 'hsl(0, 0%, 90%)',
+  neutral20: 'hsl(0, 0%, 80%)',
+  neutral30: 'hsl(0, 0%, 70%)',
+  neutral40: 'hsl(0, 0%, 60%)',
+  neutral50: 'hsl(0, 0%, 50%)',
+  neutral60: 'hsl(0, 0%, 40%)',
+  neutral70: 'hsl(0, 0%, 30%)',
+  neutral80: 'hsl(0, 0%, 20%)',
+  neutral90: 'hsl(0, 0%, 10%)'
+};
+
+var borderRadius = 4;
+var baseUnit = 4; /* Used to calculate consistent margin/padding on elements */
+var controlHeight = 38; /* The minimum height of the control */
+var menuGutter = baseUnit * 2; /* The amount of space between the control and menu */
+
+var spacing = exports.spacing = {
+  baseUnit: baseUnit,
+  controlHeight: controlHeight,
+  menuGutter: menuGutter
+};
+
+var defaultTheme = exports.defaultTheme = {
+  borderRadius: borderRadius,
+  colors: colors,
+  spacing: spacing
+};
+
+/***/ }),
+
+/***/ "KrFH":
+/*!******************************************************************************!*\
+  !*** ./node_modules/emotion/node_modules/@emotion/stylis/dist/stylis.esm.js ***!
+  \******************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function stylis_min (W) {
+  function M(d, c, e, h, a) {
+    for (var m = 0, b = 0, v = 0, n = 0, q, g, x = 0, K = 0, k, u = k = q = 0, l = 0, r = 0, I = 0, t = 0, B = e.length, J = B - 1, y, f = '', p = '', F = '', G = '', C; l < B;) {
+      g = e.charCodeAt(l);
+      l === J && 0 !== b + n + v + m && (0 !== b && (g = 47 === b ? 10 : 47), n = v = m = 0, B++, J++);
+
+      if (0 === b + n + v + m) {
+        if (l === J && (0 < r && (f = f.replace(N, '')), 0 < f.trim().length)) {
+          switch (g) {
+            case 32:
+            case 9:
+            case 59:
+            case 13:
+            case 10:
+              break;
+
+            default:
+              f += e.charAt(l);
+          }
+
+          g = 59;
+        }
+
+        switch (g) {
+          case 123:
+            f = f.trim();
+            q = f.charCodeAt(0);
+            k = 1;
+
+            for (t = ++l; l < B;) {
+              switch (g = e.charCodeAt(l)) {
+                case 123:
+                  k++;
+                  break;
+
+                case 125:
+                  k--;
+                  break;
+
+                case 47:
+                  switch (g = e.charCodeAt(l + 1)) {
+                    case 42:
+                    case 47:
+                      a: {
+                        for (u = l + 1; u < J; ++u) {
+                          switch (e.charCodeAt(u)) {
+                            case 47:
+                              if (42 === g && 42 === e.charCodeAt(u - 1) && l + 2 !== u) {
+                                l = u + 1;
+                                break a;
+                              }
+
+                              break;
+
+                            case 10:
+                              if (47 === g) {
+                                l = u + 1;
+                                break a;
+                              }
+
+                          }
+                        }
+
+                        l = u;
+                      }
+
+                  }
+
+                  break;
+
+                case 91:
+                  g++;
+
+                case 40:
+                  g++;
+
+                case 34:
+                case 39:
+                  for (; l++ < J && e.charCodeAt(l) !== g;) {
+                  }
+
+              }
+
+              if (0 === k) break;
+              l++;
+            }
+
+            k = e.substring(t, l);
+            0 === q && (q = (f = f.replace(ca, '').trim()).charCodeAt(0));
+
+            switch (q) {
+              case 64:
+                0 < r && (f = f.replace(N, ''));
+                g = f.charCodeAt(1);
+
+                switch (g) {
+                  case 100:
+                  case 109:
+                  case 115:
+                  case 45:
+                    r = c;
+                    break;
+
+                  default:
+                    r = O;
+                }
+
+                k = M(c, r, k, g, a + 1);
+                t = k.length;
+                0 < A && (r = X(O, f, I), C = H(3, k, r, c, D, z, t, g, a, h), f = r.join(''), void 0 !== C && 0 === (t = (k = C.trim()).length) && (g = 0, k = ''));
+                if (0 < t) switch (g) {
+                  case 115:
+                    f = f.replace(da, ea);
+
+                  case 100:
+                  case 109:
+                  case 45:
+                    k = f + '{' + k + '}';
+                    break;
+
+                  case 107:
+                    f = f.replace(fa, '$1 $2');
+                    k = f + '{' + k + '}';
+                    k = 1 === w || 2 === w && L('@' + k, 3) ? '@-webkit-' + k + '@' + k : '@' + k;
+                    break;
+
+                  default:
+                    k = f + k, 112 === h && (k = (p += k, ''));
+                } else k = '';
+                break;
+
+              default:
+                k = M(c, X(c, f, I), k, h, a + 1);
+            }
+
+            F += k;
+            k = I = r = u = q = 0;
+            f = '';
+            g = e.charCodeAt(++l);
+            break;
+
+          case 125:
+          case 59:
+            f = (0 < r ? f.replace(N, '') : f).trim();
+            if (1 < (t = f.length)) switch (0 === u && (q = f.charCodeAt(0), 45 === q || 96 < q && 123 > q) && (t = (f = f.replace(' ', ':')).length), 0 < A && void 0 !== (C = H(1, f, c, d, D, z, p.length, h, a, h)) && 0 === (t = (f = C.trim()).length) && (f = '\x00\x00'), q = f.charCodeAt(0), g = f.charCodeAt(1), q) {
+              case 0:
+                break;
+
+              case 64:
+                if (105 === g || 99 === g) {
+                  G += f + e.charAt(l);
+                  break;
+                }
+
+              default:
+                58 !== f.charCodeAt(t - 1) && (p += P(f, q, g, f.charCodeAt(2)));
+            }
+            I = r = u = q = 0;
+            f = '';
+            g = e.charCodeAt(++l);
+        }
+      }
+
+      switch (g) {
+        case 13:
+        case 10:
+          47 === b ? b = 0 : 0 === 1 + q && 107 !== h && 0 < f.length && (r = 1, f += '\x00');
+          0 < A * Y && H(0, f, c, d, D, z, p.length, h, a, h);
+          z = 1;
+          D++;
+          break;
+
+        case 59:
+        case 125:
+          if (0 === b + n + v + m) {
+            z++;
+            break;
+          }
+
+        default:
+          z++;
+          y = e.charAt(l);
+
+          switch (g) {
+            case 9:
+            case 32:
+              if (0 === n + m + b) switch (x) {
+                case 44:
+                case 58:
+                case 9:
+                case 32:
+                  y = '';
+                  break;
+
+                default:
+                  32 !== g && (y = ' ');
+              }
+              break;
+
+            case 0:
+              y = '\\0';
+              break;
+
+            case 12:
+              y = '\\f';
+              break;
+
+            case 11:
+              y = '\\v';
+              break;
+
+            case 38:
+              0 === n + b + m && (r = I = 1, y = '\f' + y);
+              break;
+
+            case 108:
+              if (0 === n + b + m + E && 0 < u) switch (l - u) {
+                case 2:
+                  112 === x && 58 === e.charCodeAt(l - 3) && (E = x);
+
+                case 8:
+                  111 === K && (E = K);
+              }
+              break;
+
+            case 58:
+              0 === n + b + m && (u = l);
+              break;
+
+            case 44:
+              0 === b + v + n + m && (r = 1, y += '\r');
+              break;
+
+            case 34:
+            case 39:
+              0 === b && (n = n === g ? 0 : 0 === n ? g : n);
+              break;
+
+            case 91:
+              0 === n + b + v && m++;
+              break;
+
+            case 93:
+              0 === n + b + v && m--;
+              break;
+
+            case 41:
+              0 === n + b + m && v--;
+              break;
+
+            case 40:
+              if (0 === n + b + m) {
+                if (0 === q) switch (2 * x + 3 * K) {
+                  case 533:
+                    break;
+
+                  default:
+                    q = 1;
+                }
+                v++;
+              }
+
+              break;
+
+            case 64:
+              0 === b + v + n + m + u + k && (k = 1);
+              break;
+
+            case 42:
+            case 47:
+              if (!(0 < n + m + v)) switch (b) {
+                case 0:
+                  switch (2 * g + 3 * e.charCodeAt(l + 1)) {
+                    case 235:
+                      b = 47;
+                      break;
+
+                    case 220:
+                      t = l, b = 42;
+                  }
+
+                  break;
+
+                case 42:
+                  47 === g && 42 === x && t + 2 !== l && (33 === e.charCodeAt(t + 2) && (p += e.substring(t, l + 1)), y = '', b = 0);
+              }
+          }
+
+          0 === b && (f += y);
+      }
+
+      K = x;
+      x = g;
+      l++;
+    }
+
+    t = p.length;
+
+    if (0 < t) {
+      r = c;
+      if (0 < A && (C = H(2, p, r, d, D, z, t, h, a, h), void 0 !== C && 0 === (p = C).length)) return G + p + F;
+      p = r.join(',') + '{' + p + '}';
+
+      if (0 !== w * E) {
+        2 !== w || L(p, 2) || (E = 0);
+
+        switch (E) {
+          case 111:
+            p = p.replace(ha, ':-moz-$1') + p;
+            break;
+
+          case 112:
+            p = p.replace(Q, '::-webkit-input-$1') + p.replace(Q, '::-moz-$1') + p.replace(Q, ':-ms-input-$1') + p;
+        }
+
+        E = 0;
+      }
+    }
+
+    return G + p + F;
+  }
+
+  function X(d, c, e) {
+    var h = c.trim().split(ia);
+    c = h;
+    var a = h.length,
+        m = d.length;
+
+    switch (m) {
+      case 0:
+      case 1:
+        var b = 0;
+
+        for (d = 0 === m ? '' : d[0] + ' '; b < a; ++b) {
+          c[b] = Z(d, c[b], e, m).trim();
+        }
+
+        break;
+
+      default:
+        var v = b = 0;
+
+        for (c = []; b < a; ++b) {
+          for (var n = 0; n < m; ++n) {
+            c[v++] = Z(d[n] + ' ', h[b], e, m).trim();
+          }
+        }
+
+    }
+
+    return c;
+  }
+
+  function Z(d, c, e) {
+    var h = c.charCodeAt(0);
+    33 > h && (h = (c = c.trim()).charCodeAt(0));
+
+    switch (h) {
+      case 38:
+        return c.replace(F, '$1' + d.trim());
+
+      case 58:
+        return d.trim() + c.replace(F, '$1' + d.trim());
+
+      default:
+        if (0 < 1 * e && 0 < c.indexOf('\f')) return c.replace(F, (58 === d.charCodeAt(0) ? '' : '$1') + d.trim());
+    }
+
+    return d + c;
+  }
+
+  function P(d, c, e, h) {
+    var a = d + ';',
+        m = 2 * c + 3 * e + 4 * h;
+
+    if (944 === m) {
+      d = a.indexOf(':', 9) + 1;
+      var b = a.substring(d, a.length - 1).trim();
+      b = a.substring(0, d).trim() + b + ';';
+      return 1 === w || 2 === w && L(b, 1) ? '-webkit-' + b + b : b;
+    }
+
+    if (0 === w || 2 === w && !L(a, 1)) return a;
+
+    switch (m) {
+      case 1015:
+        return 97 === a.charCodeAt(10) ? '-webkit-' + a + a : a;
+
+      case 951:
+        return 116 === a.charCodeAt(3) ? '-webkit-' + a + a : a;
+
+      case 963:
+        return 110 === a.charCodeAt(5) ? '-webkit-' + a + a : a;
+
+      case 1009:
+        if (100 !== a.charCodeAt(4)) break;
+
+      case 969:
+      case 942:
+        return '-webkit-' + a + a;
+
+      case 978:
+        return '-webkit-' + a + '-moz-' + a + a;
+
+      case 1019:
+      case 983:
+        return '-webkit-' + a + '-moz-' + a + '-ms-' + a + a;
+
+      case 883:
+        if (45 === a.charCodeAt(8)) return '-webkit-' + a + a;
+        if (0 < a.indexOf('image-set(', 11)) return a.replace(ja, '$1-webkit-$2') + a;
+        break;
+
+      case 932:
+        if (45 === a.charCodeAt(4)) switch (a.charCodeAt(5)) {
+          case 103:
+            return '-webkit-box-' + a.replace('-grow', '') + '-webkit-' + a + '-ms-' + a.replace('grow', 'positive') + a;
+
+          case 115:
+            return '-webkit-' + a + '-ms-' + a.replace('shrink', 'negative') + a;
+
+          case 98:
+            return '-webkit-' + a + '-ms-' + a.replace('basis', 'preferred-size') + a;
+        }
+        return '-webkit-' + a + '-ms-' + a + a;
+
+      case 964:
+        return '-webkit-' + a + '-ms-flex-' + a + a;
+
+      case 1023:
+        if (99 !== a.charCodeAt(8)) break;
+        b = a.substring(a.indexOf(':', 15)).replace('flex-', '').replace('space-between', 'justify');
+        return '-webkit-box-pack' + b + '-webkit-' + a + '-ms-flex-pack' + b + a;
+
+      case 1005:
+        return ka.test(a) ? a.replace(aa, ':-webkit-') + a.replace(aa, ':-moz-') + a : a;
+
+      case 1e3:
+        b = a.substring(13).trim();
+        c = b.indexOf('-') + 1;
+
+        switch (b.charCodeAt(0) + b.charCodeAt(c)) {
+          case 226:
+            b = a.replace(G, 'tb');
+            break;
+
+          case 232:
+            b = a.replace(G, 'tb-rl');
+            break;
+
+          case 220:
+            b = a.replace(G, 'lr');
+            break;
+
+          default:
+            return a;
+        }
+
+        return '-webkit-' + a + '-ms-' + b + a;
+
+      case 1017:
+        if (-1 === a.indexOf('sticky', 9)) break;
+
+      case 975:
+        c = (a = d).length - 10;
+        b = (33 === a.charCodeAt(c) ? a.substring(0, c) : a).substring(d.indexOf(':', 7) + 1).trim();
+
+        switch (m = b.charCodeAt(0) + (b.charCodeAt(7) | 0)) {
+          case 203:
+            if (111 > b.charCodeAt(8)) break;
+
+          case 115:
+            a = a.replace(b, '-webkit-' + b) + ';' + a;
+            break;
+
+          case 207:
+          case 102:
+            a = a.replace(b, '-webkit-' + (102 < m ? 'inline-' : '') + 'box') + ';' + a.replace(b, '-webkit-' + b) + ';' + a.replace(b, '-ms-' + b + 'box') + ';' + a;
+        }
+
+        return a + ';';
+
+      case 938:
+        if (45 === a.charCodeAt(5)) switch (a.charCodeAt(6)) {
+          case 105:
+            return b = a.replace('-items', ''), '-webkit-' + a + '-webkit-box-' + b + '-ms-flex-' + b + a;
+
+          case 115:
+            return '-webkit-' + a + '-ms-flex-item-' + a.replace(ba, '') + a;
+
+          default:
+            return '-webkit-' + a + '-ms-flex-line-pack' + a.replace('align-content', '').replace(ba, '') + a;
+        }
+        break;
+
+      case 973:
+      case 989:
+        if (45 !== a.charCodeAt(3) || 122 === a.charCodeAt(4)) break;
+
+      case 931:
+      case 953:
+        if (!0 === la.test(d)) return 115 === (b = d.substring(d.indexOf(':') + 1)).charCodeAt(0) ? P(d.replace('stretch', 'fill-available'), c, e, h).replace(':fill-available', ':stretch') : a.replace(b, '-webkit-' + b) + a.replace(b, '-moz-' + b.replace('fill-', '')) + a;
+        break;
+
+      case 962:
+        if (a = '-webkit-' + a + (102 === a.charCodeAt(5) ? '-ms-' + a : '') + a, 211 === e + h && 105 === a.charCodeAt(13) && 0 < a.indexOf('transform', 10)) return a.substring(0, a.indexOf(';', 27) + 1).replace(ma, '$1-webkit-$2') + a;
+    }
+
+    return a;
+  }
+
+  function L(d, c) {
+    var e = d.indexOf(1 === c ? ':' : '{'),
+        h = d.substring(0, 3 !== c ? e : 10);
+    e = d.substring(e + 1, d.length - 1);
+    return R(2 !== c ? h : h.replace(na, '$1'), e, c);
+  }
+
+  function ea(d, c) {
+    var e = P(c, c.charCodeAt(0), c.charCodeAt(1), c.charCodeAt(2));
+    return e !== c + ';' ? e.replace(oa, ' or ($1)').substring(4) : '(' + c + ')';
+  }
+
+  function H(d, c, e, h, a, m, b, v, n, q) {
+    for (var g = 0, x = c, w; g < A; ++g) {
+      switch (w = S[g].call(B, d, x, e, h, a, m, b, v, n, q)) {
+        case void 0:
+        case !1:
+        case !0:
+        case null:
+          break;
+
+        default:
+          x = w;
+      }
+    }
+
+    if (x !== c) return x;
+  }
+
+  function T(d) {
+    switch (d) {
+      case void 0:
+      case null:
+        A = S.length = 0;
+        break;
+
+      default:
+        switch (d.constructor) {
+          case Array:
+            for (var c = 0, e = d.length; c < e; ++c) {
+              T(d[c]);
+            }
+
+            break;
+
+          case Function:
+            S[A++] = d;
+            break;
+
+          case Boolean:
+            Y = !!d | 0;
+        }
+
+    }
+
+    return T;
+  }
+
+  function U(d) {
+    d = d.prefix;
+    void 0 !== d && (R = null, d ? 'function' !== typeof d ? w = 1 : (w = 2, R = d) : w = 0);
+    return U;
+  }
+
+  function B(d, c) {
+    var e = d;
+    33 > e.charCodeAt(0) && (e = e.trim());
+    V = e;
+    e = [V];
+
+    if (0 < A) {
+      var h = H(-1, c, e, e, D, z, 0, 0, 0, 0);
+      void 0 !== h && 'string' === typeof h && (c = h);
+    }
+
+    var a = M(O, e, c, 0, 0);
+    0 < A && (h = H(-2, a, e, e, D, z, a.length, 0, 0, 0), void 0 !== h && (a = h));
+    V = '';
+    E = 0;
+    z = D = 1;
+    return a;
+  }
+
+  var ca = /^\0+/g,
+      N = /[\0\r\f]/g,
+      aa = /: */g,
+      ka = /zoo|gra/,
+      ma = /([,: ])(transform)/g,
+      ia = /,\r+?/g,
+      F = /([\t\r\n ])*\f?&/g,
+      fa = /@(k\w+)\s*(\S*)\s*/,
+      Q = /::(place)/g,
+      ha = /:(read-only)/g,
+      G = /[svh]\w+-[tblr]{2}/,
+      da = /\(\s*(.*)\s*\)/g,
+      oa = /([\s\S]*?);/g,
+      ba = /-self|flex-/g,
+      na = /[^]*?(:[rp][el]a[\w-]+)[^]*/,
+      la = /stretch|:\s*\w+\-(?:conte|avail)/,
+      ja = /([^-])(image-set\()/,
+      z = 1,
+      D = 1,
+      E = 0,
+      w = 1,
+      O = [],
+      S = [],
+      A = 0,
+      R = null,
+      Y = 0,
+      V = '';
+  B.use = T;
+  B.set = U;
+  void 0 !== W && U(W);
+  return B;
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (stylis_min);
+
+
+/***/ }),
+
+/***/ "LRxA":
+/*!************************************************************************************!*\
+  !*** ./node_modules/react-multiselect-checkboxes/lib/CheckboxWithIndeterminate.js ***!
+  \************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "q1tI"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "17x9"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var CheckboxWithIndeterminate =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(CheckboxWithIndeterminate, _React$Component);
+
+  function CheckboxWithIndeterminate() {
+    _classCallCheck(this, CheckboxWithIndeterminate);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(CheckboxWithIndeterminate).apply(this, arguments));
+  }
+
+  _createClass(CheckboxWithIndeterminate, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.el.indeterminate = !!this.props.indeterminate;
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps) {
+      if (prevProps.indeterminate !== this.props.indeterminate) {
+        this.el.indeterminate = this.props.indeterminate;
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this = this;
+
+      var _this$props = this.props,
+          indeterminate = _this$props.indeterminate,
+          rest = _objectWithoutProperties(_this$props, ["indeterminate"]);
+
+      return _react.default.createElement("input", _extends({}, rest, {
+        type: "checkbox",
+        style: {
+          marginRight: 8
+        },
+        ref: function ref(el) {
+          _this.el = el;
+        }
+      }));
+    }
+  }]);
+
+  return CheckboxWithIndeterminate;
+}(_react.default.Component);
+
+exports.default = CheckboxWithIndeterminate;
+
+_defineProperty(CheckboxWithIndeterminate, "propTypes", {
+  indeterminate: _propTypes.default.bool
+});
+
+_defineProperty(CheckboxWithIndeterminate, "defaultProps", {
+  indeterminate: false
+});
+
+/***/ }),
+
 /***/ "ME5O":
 /*!*********************************************************************!*\
   !*** ./node_modules/@emotion/unitless/dist/unitless.browser.esm.js ***!
@@ -13489,6 +15071,48 @@ module.exports = exports["default"];
 
 /***/ }),
 
+/***/ "PAeb":
+/*!************************************************!*\
+  !*** ./node_modules/emotion/dist/index.esm.js ***!
+  \************************************************/
+/*! exports provided: flush, hydrate, cx, merge, getRegisteredStyles, injectGlobal, keyframes, css, sheet, caches */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "flush", function() { return flush; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hydrate", function() { return hydrate; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cx", function() { return cx; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "merge", function() { return merge; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRegisteredStyles", function() { return getRegisteredStyles; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "injectGlobal", function() { return injectGlobal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "keyframes", function() { return keyframes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "css", function() { return css; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sheet", function() { return sheet; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "caches", function() { return caches; });
+/* harmony import */ var create_emotion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! create-emotion */ "0hr6");
+
+
+var context = typeof global !== 'undefined' ? global : {};
+
+var _createEmotion = Object(create_emotion__WEBPACK_IMPORTED_MODULE_0__["default"])(context),
+    flush = _createEmotion.flush,
+    hydrate = _createEmotion.hydrate,
+    cx = _createEmotion.cx,
+    merge = _createEmotion.merge,
+    getRegisteredStyles = _createEmotion.getRegisteredStyles,
+    injectGlobal = _createEmotion.injectGlobal,
+    keyframes = _createEmotion.keyframes,
+    css = _createEmotion.css,
+    sheet = _createEmotion.sheet,
+    caches = _createEmotion.caches;
+
+
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../webpack/buildin/global.js */ "yLpj")))
+
+/***/ }),
+
 /***/ "PPua":
 /*!*************************************************************************************!*\
   !*** ./node_modules/react-bootstrap-table2-paginator/lib/src/pagination-handler.js ***!
@@ -14717,6 +16341,64 @@ CSSTransition.propTypes =  true ? propTypes : undefined;
 var _default = CSSTransition;
 exports.default = _default;
 module.exports = exports["default"];
+
+/***/ }),
+
+/***/ "TAZq":
+/*!*************************************************!*\
+  !*** ./node_modules/stylis-rule-sheet/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function (factory) {
+	 true ? (module['exports'] = factory()) :
+		undefined
+}(function () {
+
+	'use strict'
+
+	return function (insertRule) {
+		var delimiter = '/*|*/'
+		var needle = delimiter+'}'
+
+		function toSheet (block) {
+			if (block)
+				try {
+					insertRule(block + '}')
+				} catch (e) {}
+		}
+
+		return function ruleSheet (context, content, selectors, parents, line, column, length, ns, depth, at) {
+			switch (context) {
+				// property
+				case 1:
+					// @import
+					if (depth === 0 && content.charCodeAt(0) === 64)
+						return insertRule(content+';'), ''
+					break
+				// selector
+				case 2:
+					if (ns === 0)
+						return content + delimiter
+					break
+				// at-rule
+				case 3:
+					switch (ns) {
+						// @font-face, @page
+						case 102:
+						case 112:
+							return insertRule(selectors[0]+content), ''
+						default:
+							return content + (at === 0 ? delimiter : '')
+					}
+				case -2:
+					content.split(needle).forEach(toSheet)
+			}
+		}
+	}
+}))
+
 
 /***/ }),
 
@@ -16278,6 +17960,91 @@ function polyfill(Component) {
 }
 
 
+
+
+/***/ }),
+
+/***/ "VCnP":
+/*!****************************************************************!*\
+  !*** ./node_modules/react-multiselect-checkboxes/lib/index.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function get() {
+    return _ReactMultiselectCheckboxes.default;
+  }
+});
+
+var _ReactMultiselectCheckboxes = _interopRequireDefault(__webpack_require__(/*! ./ReactMultiselectCheckboxes */ "dqVn"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+
+/***/ "VLL2":
+/*!**********************************************************************************!*\
+  !*** ./node_modules/emotion/node_modules/@emotion/unitless/dist/unitless.esm.js ***!
+  \**********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var unitlessKeys = {
+  animationIterationCount: 1,
+  borderImageOutset: 1,
+  borderImageSlice: 1,
+  borderImageWidth: 1,
+  boxFlex: 1,
+  boxFlexGroup: 1,
+  boxOrdinalGroup: 1,
+  columnCount: 1,
+  columns: 1,
+  flex: 1,
+  flexGrow: 1,
+  flexPositive: 1,
+  flexShrink: 1,
+  flexNegative: 1,
+  flexOrder: 1,
+  gridRow: 1,
+  gridRowEnd: 1,
+  gridRowSpan: 1,
+  gridRowStart: 1,
+  gridColumn: 1,
+  gridColumnEnd: 1,
+  gridColumnSpan: 1,
+  gridColumnStart: 1,
+  fontWeight: 1,
+  lineHeight: 1,
+  opacity: 1,
+  order: 1,
+  orphans: 1,
+  tabSize: 1,
+  widows: 1,
+  zIndex: 1,
+  zoom: 1,
+  WebkitLineClamp: 1,
+  // SVG-related properties
+  fillOpacity: 1,
+  floodOpacity: 1,
+  stopOpacity: 1,
+  strokeDasharray: 1,
+  strokeDashoffset: 1,
+  strokeMiterlimit: 1,
+  strokeOpacity: 1,
+  strokeWidth: 1
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (unitlessKeys);
 
 
 /***/ }),
@@ -38898,6 +40665,441 @@ module.exports = react;
 
 /***/ }),
 
+/***/ "dqVn":
+/*!*************************************************************************************!*\
+  !*** ./node_modules/react-multiselect-checkboxes/lib/ReactMultiselectCheckboxes.js ***!
+  \*************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "17x9"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "q1tI"));
+
+var _reactSelect = _interopRequireDefault(__webpack_require__(/*! react-select */ "y2Vs"));
+
+var _theme = __webpack_require__(/*! react-select/lib/theme */ "KXCe");
+
+var _CheckboxGroup = _interopRequireWildcard(__webpack_require__(/*! ./CheckboxGroup */ "oary"));
+
+var _CheckboxOption = _interopRequireDefault(__webpack_require__(/*! ./CheckboxOption */ "tYsy"));
+
+var _ChevronDown = _interopRequireDefault(__webpack_require__(/*! ./ChevronDown */ "i3Ka"));
+
+var _Dropdown = _interopRequireDefault(__webpack_require__(/*! ./Dropdown */ "g4S+"));
+
+var _DropdownButton = _interopRequireWildcard(__webpack_require__(/*! ./DropdownButton */ "FOVo"));
+
+var _DropdownIndicator = _interopRequireDefault(__webpack_require__(/*! ./DropdownIndicator */ "ntm+"));
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var countOptions = function countOptions(opts) {
+  if (!opts || !Array.isArray(opts)) return 0;
+  return opts.reduce(function (acc, o) {
+    return acc + (o.options ? countOptions(o.options) : 1);
+  }, 0);
+};
+
+var defaultStyles = {
+  control: function control(provided) {
+    return _objectSpread({}, provided, {
+      minWidth: 240,
+      margin: 8
+    });
+  },
+  menu: function menu() {
+    return {
+      boxShadow: 'inset 0 1px 0 rgba(0, 0, 0, 0.1)'
+    };
+  },
+  groupHeading: function groupHeading(def, opts) {
+    var provided = _objectSpread({}, def, {
+      marginBottom: 0,
+      padding: '8px 12px 4px',
+      fontSize: '110%',
+      // textTransform: undefined,
+      display: 'flex',
+      alignItems: 'center'
+    });
+
+    if (opts.checked) {
+      return _objectSpread({}, provided, {
+        backgroundColor: _theme.colors.primary50,
+        color: _theme.colors.neutral80
+      });
+    }
+
+    if (opts.indeterminate) {
+      return _objectSpread({}, provided, {
+        backgroundColor: _theme.colors.primary25
+      });
+    }
+
+    return _objectSpread({}, provided, {
+      ':hover': {
+        backgroundColor: _theme.colors.primary25
+      }
+    });
+  },
+  group: function group(provided) {
+    return _objectSpread({}, provided, {
+      padding: 0
+    });
+  },
+  dropdownButton: function dropdownButton(baseProvided, opts) {
+    var provided = _objectSpread({}, baseProvided);
+
+    ['width', 'maxWidth', 'minWidth'].forEach(function (widthProp) {
+      if (opts[widthProp]) {
+        provided[widthProp] = opts[widthProp];
+      }
+    });
+
+    if (opts.isOpen) {
+      return _objectSpread({}, provided, {
+        background: _theme.colors.neutral3
+      });
+    }
+
+    return provided;
+  },
+  option: function option(provided, opts) {
+    if (opts.isSelected) {
+      return _objectSpread({}, provided, {
+        color: '#000',
+        backgroundColor: _theme.colors.primary50,
+        fontWeight: 'bold',
+        minWidth: 240
+      });
+    }
+
+    return _objectSpread({}, provided, {
+      backgroundColor: 'transparent',
+      minWidth: 240,
+      ':hover': {
+        backgroundColor: _theme.colors.primary25
+      }
+    });
+  }
+};
+var defaultComponents = {
+  // these three components pertain to react-multiselect-checkboxes
+  Dropdown: _Dropdown.default,
+  DropdownButton: _DropdownButton.default,
+  DropdownButtonIcon: _ChevronDown.default,
+  // these are react-select components, with sane defaults for react-multiselect-checkboxes
+  DropdownIndicator: _DropdownIndicator.default,
+  IndicatorSeparator: null,
+  Option: _CheckboxOption.default,
+  GroupHeading: _CheckboxGroup.CheckboxGroupHeading,
+  Group: _CheckboxGroup.default
+};
+
+var valueShape = _propTypes.default.shape({
+  value: _propTypes.default.any,
+  label: _propTypes.default.string,
+  options: _propTypes.default.array
+});
+
+var ReactMultiselectCheckboxes =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(ReactMultiselectCheckboxes, _Component);
+
+  function ReactMultiselectCheckboxes() {
+    var _getPrototypeOf2;
+
+    var _this;
+
+    _classCallCheck(this, ReactMultiselectCheckboxes);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(ReactMultiselectCheckboxes)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "state", {
+      isOpen: false,
+      value: undefined,
+      inputValue: ''
+    });
+
+    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "onSelectChange", function (value) {
+      var _this$props;
+
+      // this.toggleOpen();
+      _this.setState({
+        value: value
+      });
+
+      for (var _len2 = arguments.length, rest = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        rest[_key2 - 1] = arguments[_key2];
+      }
+
+      (_this$props = _this.props).onChange.apply(_this$props, [value].concat(rest));
+    });
+
+    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "onInputChange", function (inputValue, event) {
+      if (_this.props.onInputChange) {
+        var _this$props2;
+
+        for (var _len3 = arguments.length, restArgs = new Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
+          restArgs[_key3 - 2] = arguments[_key3];
+        }
+
+        (_this$props2 = _this.props).onInputChange.apply(_this$props2, [inputValue, event].concat(restArgs));
+      }
+
+      switch (event.action) {
+        case 'input-change':
+          _this.setState({
+            inputValue: inputValue
+          });
+
+          break;
+
+        case 'menu-close':
+          _this.setState({
+            inputValue: ''
+          });
+
+          break;
+
+        default:
+          break;
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "toggleOpen", function () {
+      _this.setState(function (state) {
+        return {
+          isOpen: !state.isOpen
+        };
+      });
+    });
+
+    return _this;
+  }
+
+  _createClass(ReactMultiselectCheckboxes, [{
+    key: "calcStyles",
+    value: function calcStyles() {
+      // This is messy, but conceptually simple. We're just replacing react-select's defaults
+      // with the defaults from defaultStyles for user-provided style functions.
+      var propsStyles = _objectSpread({}, this.props.styles);
+
+      Object.entries(defaultStyles).forEach(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            k = _ref2[0],
+            defaultFunc = _ref2[1];
+
+        if (propsStyles[k]) {
+          var passedInStyleFunc = propsStyles[k];
+
+          propsStyles[k] = function (provided, selectState) {
+            return passedInStyleFunc(defaultFunc(provided, selectState), selectState);
+          };
+        } else {
+          propsStyles[k] = defaultFunc;
+        }
+      });
+      return propsStyles;
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this$props3 = this.props,
+          getDropdownButtonLabel = _this$props3.getDropdownButtonLabel,
+          placeholderButtonLabel = _this$props3.placeholderButtonLabel,
+          propsComponents = _this$props3.components,
+          propsStyles = _this$props3.styles,
+          menuIsOpen = _this$props3.menuIsOpen,
+          rightAligned = _this$props3.rightAligned,
+          onChange = _this$props3.onChange,
+          width = _this$props3.width,
+          minWidth = _this$props3.minWidth,
+          maxWidth = _this$props3.maxWidth,
+          propsValue = _this$props3.value,
+          hideSearch = _this$props3.hideSearch,
+          minItemsForSearch = _this$props3.minItemsForSearch,
+          options = _this$props3.options,
+          resetInputOnSelect = _this$props3.resetInputOnSelect,
+          onInputChange = _this$props3.onInputChange,
+          rest = _objectWithoutProperties(_this$props3, ["getDropdownButtonLabel", "placeholderButtonLabel", "components", "styles", "menuIsOpen", "rightAligned", "onChange", "width", "minWidth", "maxWidth", "value", "hideSearch", "minItemsForSearch", "options", "resetInputOnSelect", "onInputChange"]);
+
+      var components = _objectSpread({}, defaultComponents, propsComponents);
+
+      if (hideSearch || countOptions(options) < minItemsForSearch) {
+        components.Control = function () {
+          return null;
+        };
+      }
+
+      var styles = this.calcStyles();
+      var isOpen = typeof menuIsOpen === 'boolean' ? menuIsOpen : this.state.isOpen;
+      var value = propsValue || this.state.value;
+      var inputValueIfDefined = resetInputOnSelect ? {} : {
+        inputValue: this.state.inputValue
+      };
+      return _react.default.createElement(components.Dropdown, {
+        isOpen: isOpen,
+        rightAligned: rightAligned,
+        onClose: this.toggleOpen,
+        target: _react.default.createElement(components.DropdownButton, {
+          iconAfter: _react.default.createElement(components.DropdownButtonIcon, null),
+          onPress: this.toggleOpen,
+          isSelected: isOpen,
+          style: styles.dropdownButton(_DropdownButton.defaultDropdownButtonStyle, {
+            value: value,
+            isOpen: isOpen,
+            width: width,
+            minWidth: minWidth,
+            maxWidth: maxWidth
+          })
+        }, getDropdownButtonLabel({
+          placeholderButtonLabel: placeholderButtonLabel,
+          value: value
+        }))
+      }, _react.default.createElement(_reactSelect.default, _extends({
+        autoFocus: true,
+        isMulti: true,
+        closeMenuOnSelect: false,
+        backspaceRemovesValue: false,
+        components: components,
+        controlShouldRenderValue: false,
+        hideSelectedOptions: false,
+        isClearable: false,
+        menuIsOpen: true,
+        onChange: this.onSelectChange,
+        placeholder: "Search...",
+        styles: styles,
+        tabSelectsValue: false,
+        value: value,
+        options: options,
+        onInputChange: this.onInputChange,
+        inputValue: this.state.inputValue,
+        isSearchable: true
+      }, rest)));
+    }
+  }]);
+
+  return ReactMultiselectCheckboxes;
+}(_react.Component);
+
+exports.default = ReactMultiselectCheckboxes;
+
+_defineProperty(ReactMultiselectCheckboxes, "propTypes", {
+  components: _propTypes.default.shape({
+    Dropdown: _propTypes.default.func,
+    DropdownButton: _propTypes.default.func,
+    DropdownButtonIcon: _propTypes.default.func
+  }),
+  options: _propTypes.default.arrayOf(valueShape).isRequired,
+  styles: _propTypes.default.objectOf(_propTypes.default.func),
+  placeholderButtonLabel: _propTypes.default.string,
+  getDropdownButtonLabel: _propTypes.default.func,
+  onChange: _propTypes.default.func,
+  menuIsOpen: _propTypes.default.bool,
+  rightAligned: _propTypes.default.bool,
+  width: _propTypes.default.oneOfType([_propTypes.default.string, _propTypes.default.number]),
+  minWidth: _propTypes.default.oneOfType([_propTypes.default.string, _propTypes.default.number]),
+  maxWidth: _propTypes.default.oneOfType([_propTypes.default.string, _propTypes.default.number]),
+  value: _propTypes.default.oneOfType([valueShape, _propTypes.default.arrayOf(valueShape)]),
+  hideSearch: _propTypes.default.bool,
+  minItemsForSearch: _propTypes.default.number,
+  resetInputOnSelect: _propTypes.default.bool,
+  onInputChange: _propTypes.default.func
+});
+
+_defineProperty(ReactMultiselectCheckboxes, "defaultProps", {
+  menuIsOpen: undefined,
+  components: {},
+  styles: {},
+  placeholderButtonLabel: 'Select...',
+  onChange: function onChange() {},
+  getDropdownButtonLabel: function getDropdownButtonLabel(_ref3) {
+    var placeholderButtonLabel = _ref3.placeholderButtonLabel,
+        value = _ref3.value;
+
+    if (!value) {
+      return placeholderButtonLabel;
+    }
+
+    if (Array.isArray(value)) {
+      if (value.length === 0) {
+        return placeholderButtonLabel;
+      }
+
+      if (value.length === 1) {
+        return value[0].label;
+      }
+
+      return "".concat(value.length, " selected");
+    }
+
+    return value.label;
+  },
+  rightAligned: false,
+  width: null,
+  minWidth: null,
+  maxWidth: null,
+  value: null,
+  hideSearch: false,
+  minItemsForSearch: 0,
+  resetInputOnSelect: false,
+  onInputChange: function onInputChange() {}
+});
+
+/***/ }),
+
 /***/ "eyB7":
 /*!******************************************************************!*\
   !*** ./node_modules/react-bootstrap-table-next/lib/src/const.js ***!
@@ -38971,6 +41173,65 @@ var SortSymbol = function SortSymbol() {
 };
 
 exports.default = SortSymbol;
+
+/***/ }),
+
+/***/ "g4S+":
+/*!*******************************************************************!*\
+  !*** ./node_modules/react-multiselect-checkboxes/lib/Dropdown.js ***!
+  \*******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Dropdown;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "q1tI"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "17x9"));
+
+var _Blanket = _interopRequireDefault(__webpack_require__(/*! ./Blanket */ "3p05"));
+
+var _Menu = _interopRequireDefault(__webpack_require__(/*! ./Menu */ "7xkc"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Dropdown(_ref) {
+  var children = _ref.children,
+      isOpen = _ref.isOpen,
+      target = _ref.target,
+      onClose = _ref.onClose,
+      rightAligned = _ref.rightAligned;
+  return _react.default.createElement("div", {
+    style: {
+      position: 'relative'
+    }
+  }, target, isOpen ? _react.default.createElement(_Menu.default, {
+    rightAligned: rightAligned
+  }, children) : null, isOpen ? _react.default.createElement(_Blanket.default, {
+    onClick: onClose
+  }) : null);
+}
+
+Dropdown.propTypes = {
+  children: _propTypes.default.node,
+  isOpen: _propTypes.default.bool,
+  target: _propTypes.default.node,
+  onClose: _propTypes.default.func,
+  rightAligned: _propTypes.default.bool
+};
+Dropdown.defaultProps = {
+  children: null,
+  isOpen: false,
+  target: null,
+  onClose: function onClose() {},
+  rightAligned: false
+};
 
 /***/ }),
 
@@ -39227,6 +41488,41 @@ var getSelectedRows = exports.getSelectedRows = function getSelectedRows(data, k
     return !!x;
   });
 };
+
+/***/ }),
+
+/***/ "i3Ka":
+/*!**********************************************************************!*\
+  !*** ./node_modules/react-multiselect-checkboxes/lib/ChevronDown.js ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = ChevronDown;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "q1tI"));
+
+var _Svg = _interopRequireDefault(__webpack_require__(/*! ./Svg */ "oM+Q"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ChevronDown() {
+  return _react.default.createElement(_Svg.default, {
+    style: {
+      marginRight: -6
+    }
+  }, _react.default.createElement("path", {
+    d: "M8.292 10.293a1.009 1.009 0 0 0 0 1.419l2.939 2.965c.218.215.5.322.779.322s.556-.107.769-.322l2.93-2.955a1.01 1.01 0 0 0 0-1.419.987.987 0 0 0-1.406 0l-2.298 2.317-2.307-2.327a.99.99 0 0 0-1.406 0z",
+    fill: "currentColor",
+    fillRule: "evenodd"
+  }));
+}
 
 /***/ }),
 
@@ -40437,6 +42733,78 @@ exports.default = function (dataOperator, isRemoteSort, handleSortChange) {
 
 /***/ }),
 
+/***/ "ntm+":
+/*!****************************************************************************!*\
+  !*** ./node_modules/react-multiselect-checkboxes/lib/DropdownIndicator.js ***!
+  \****************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = DropdownIndicator;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "q1tI"));
+
+var _theme = __webpack_require__(/*! react-select/lib/theme */ "KXCe");
+
+var _Svg = _interopRequireDefault(__webpack_require__(/*! ./Svg */ "oM+Q"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function DropdownIndicator() {
+  return _react.default.createElement("div", {
+    style: {
+      color: _theme.colors.neutral20,
+      height: 24,
+      width: 32
+    }
+  }, _react.default.createElement(_Svg.default, null, _react.default.createElement("path", {
+    d: "M16.436 15.085l3.94 4.01a1 1 0 0 1-1.425 1.402l-3.938-4.006a7.5 7.5 0 1 1 1.423-1.406zM10.5 16a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11z",
+    fill: "currentColor",
+    fillRule: "evenodd"
+  })));
+}
+
+/***/ }),
+
+/***/ "oM+Q":
+/*!**************************************************************!*\
+  !*** ./node_modules/react-multiselect-checkboxes/lib/Svg.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Svg;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "q1tI"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function Svg(p) {
+  return _react.default.createElement("svg", _extends({
+    width: "24",
+    height: "24",
+    viewBox: "0 0 24 24",
+    focusable: "false",
+    role: "presentation"
+  }, p));
+}
+
+/***/ }),
+
 /***/ "oVyQ":
 /*!***************************************************!*\
   !*** ./node_modules/prop-types/checkPropTypes.js ***!
@@ -40537,6 +42905,174 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 
 module.exports = checkPropTypes;
 
+
+/***/ }),
+
+/***/ "oary":
+/*!************************************************************************!*\
+  !*** ./node_modules/react-multiselect-checkboxes/lib/CheckboxGroup.js ***!
+  \************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CheckboxGroupHeading = CheckboxGroupHeading;
+exports.default = void 0;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "q1tI"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "17x9"));
+
+var _emotion = __webpack_require__(/*! emotion */ "PAeb");
+
+var _CheckboxWithIndeterminate = _interopRequireDefault(__webpack_require__(/*! ./CheckboxWithIndeterminate */ "LRxA"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function CheckboxGroup(props) {
+  var children = props.children,
+      className = props.className,
+      cx = props.cx,
+      getStyles = props.getStyles,
+      Heading = props.Heading,
+      setValue = props.setValue,
+      data = props.data,
+      label = props.label,
+      getValue = props.getValue,
+      getOptionValue = props.selectProps.getOptionValue,
+      theme = props.theme;
+
+  var optionsIncludes = function optionsIncludes(v) {
+    return !!data.options.find(function (opt) {
+      return getOptionValue(opt) === getOptionValue(v);
+    });
+  };
+
+  var numCheckedOptions = getValue().filter(function (v) {
+    return optionsIncludes(v);
+  }).length;
+  var checked = numCheckedOptions === data.options.length;
+  var indeterminate = numCheckedOptions > 0 && !checked;
+  var checkboxProps = {
+    indeterminate: indeterminate,
+    checked: checked
+  };
+
+  var selectAllOptions = function selectAllOptions() {
+    var newValue = _toConsumableArray(getValue().filter(function (v) {
+      return !optionsIncludes(v);
+    })).concat(_toConsumableArray(data.options));
+
+    setValue(newValue);
+  };
+
+  var clearOptions = function clearOptions() {
+    var newValue = getValue().filter(function (v) {
+      return !optionsIncludes(v);
+    });
+    setValue(newValue);
+  };
+
+  return _react.default.createElement("div", {
+    className: cx((0, _emotion.css)(getStyles('group', props)), {
+      group: true
+    }, className)
+  }, _react.default.createElement(Heading, {
+    checkboxProps: checkboxProps,
+    getStyles: getStyles,
+    cx: cx,
+    theme: theme,
+    onClick: function onClick() {
+      if (indeterminate || checked) {
+        clearOptions();
+      } else {
+        selectAllOptions();
+      }
+    }
+  }, label), _react.default.createElement("div", null, children));
+}
+
+CheckboxGroup.propTypes = {
+  children: _propTypes.default.node,
+  className: _propTypes.default.string,
+  cx: _propTypes.default.func.isRequired,
+  getStyles: _propTypes.default.func.isRequired,
+  Heading: _propTypes.default.func.isRequired,
+  getValue: _propTypes.default.func.isRequired,
+  setValue: _propTypes.default.func.isRequired,
+  label: _propTypes.default.string.isRequired,
+  data: _propTypes.default.shape({
+    options: _propTypes.default.arrayOf(_propTypes.default.shape({
+      label: _propTypes.default.node,
+      value: _propTypes.default.any
+    }))
+  }).isRequired,
+  theme: _propTypes.default.object.isRequired,
+  // eslint-disable-line react/forbid-prop-types
+  selectProps: _propTypes.default.objectOf(_propTypes.default.any).isRequired
+};
+CheckboxGroup.defaultProps = {
+  children: null,
+  className: undefined
+};
+
+function CheckboxGroupHeading(props) {
+  var className = props.className,
+      cx = props.cx,
+      getStyles = props.getStyles,
+      children = props.children,
+      checkboxProps = props.checkboxProps,
+      cleanProps = _objectWithoutProperties(props, ["className", "cx", "getStyles", "children", "checkboxProps"]);
+
+  return _react.default.createElement("div", _extends({
+    className: cx((0, _emotion.css)(getStyles('groupHeading', _objectSpread({}, props, checkboxProps))), {
+      'group-heading': true
+    }, className)
+  }, cleanProps), _react.default.createElement(_CheckboxWithIndeterminate.default, _extends({
+    readOnly: true,
+    type: "checkbox"
+  }, checkboxProps)), children);
+}
+
+CheckboxGroupHeading.propTypes = {
+  children: _propTypes.default.node,
+  className: _propTypes.default.string,
+  cx: _propTypes.default.func.isRequired,
+  getStyles: _propTypes.default.func.isRequired,
+  checkboxProps: _propTypes.default.shape({
+    checked: _propTypes.default.bool,
+    indeterminate: _propTypes.default.bool
+  }).isRequired
+};
+CheckboxGroupHeading.defaultProps = {
+  children: null,
+  className: undefined
+};
+var _default = CheckboxGroup;
+exports.default = _default;
 
 /***/ }),
 
@@ -42233,6 +44769,56 @@ exports.default = function (Component) {
 
 /***/ }),
 
+/***/ "qm10":
+/*!**************************************************************************!*\
+  !*** ./node_modules/emotion/node_modules/@emotion/hash/dist/hash.esm.js ***!
+  \**************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* eslint-disable */
+// murmurhash2 via https://github.com/garycourt/murmurhash-js/blob/master/murmurhash2_gc.js
+function murmurhash2_32_gc(str) {
+  var l = str.length,
+      h = l ^ l,
+      i = 0,
+      k;
+
+  while (l >= 4) {
+    k = str.charCodeAt(i) & 0xff | (str.charCodeAt(++i) & 0xff) << 8 | (str.charCodeAt(++i) & 0xff) << 16 | (str.charCodeAt(++i) & 0xff) << 24;
+    k = (k & 0xffff) * 0x5bd1e995 + (((k >>> 16) * 0x5bd1e995 & 0xffff) << 16);
+    k ^= k >>> 24;
+    k = (k & 0xffff) * 0x5bd1e995 + (((k >>> 16) * 0x5bd1e995 & 0xffff) << 16);
+    h = (h & 0xffff) * 0x5bd1e995 + (((h >>> 16) * 0x5bd1e995 & 0xffff) << 16) ^ k;
+    l -= 4;
+    ++i;
+  }
+
+  switch (l) {
+    case 3:
+      h ^= (str.charCodeAt(i + 2) & 0xff) << 16;
+
+    case 2:
+      h ^= (str.charCodeAt(i + 1) & 0xff) << 8;
+
+    case 1:
+      h ^= str.charCodeAt(i) & 0xff;
+      h = (h & 0xffff) * 0x5bd1e995 + (((h >>> 16) * 0x5bd1e995 & 0xffff) << 16);
+  }
+
+  h ^= h >>> 13;
+  h = (h & 0xffff) * 0x5bd1e995 + (((h >>> 16) * 0x5bd1e995 & 0xffff) << 16);
+  h ^= h >>> 15;
+  return (h >>> 0).toString(36);
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (murmurhash2_32_gc);
+
+
+/***/ }),
+
 /***/ "ruwt":
 /*!*******************************************************************!*\
   !*** ./node_modules/react-bootstrap-table-next/lib/src/header.js ***!
@@ -42916,6 +45502,82 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
   return ReactPropTypes;
 };
 
+
+/***/ }),
+
+/***/ "tYsy":
+/*!*************************************************************************!*\
+  !*** ./node_modules/react-multiselect-checkboxes/lib/CheckboxOption.js ***!
+  \*************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "q1tI"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "17x9"));
+
+var _emotion = __webpack_require__(/*! emotion */ "PAeb");
+
+var _CheckboxWithIndeterminate = _interopRequireDefault(__webpack_require__(/*! ./CheckboxWithIndeterminate */ "LRxA"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function CheckboxOption(props) {
+  var children = props.children,
+      className = props.className,
+      cx = props.cx,
+      getStyles = props.getStyles,
+      isDisabled = props.isDisabled,
+      isFocused = props.isFocused,
+      isSelected = props.isSelected,
+      innerRef = props.innerRef,
+      innerProps = props.innerProps;
+  return _react.default.createElement("div", _extends({
+    ref: innerRef,
+    className: cx((0, _emotion.css)(getStyles('option', props)), {
+      option: true,
+      'option--is-disabled': isDisabled,
+      'option--is-focused': isFocused,
+      'option--is-selected': isSelected
+    }, className)
+  }, innerProps), _react.default.createElement(_CheckboxWithIndeterminate.default, {
+    readOnly: true,
+    type: "checkbox",
+    checked: isSelected
+  }), children);
+}
+
+CheckboxOption.propTypes = {
+  children: _propTypes.default.node,
+  className: _propTypes.default.string,
+  cx: _propTypes.default.func.isRequired,
+  getStyles: _propTypes.default.func.isRequired,
+  isDisabled: _propTypes.default.bool.isRequired,
+  isFocused: _propTypes.default.bool.isRequired,
+  isSelected: _propTypes.default.bool.isRequired,
+  innerRef: _propTypes.default.any,
+  // eslint-disable-line react/forbid-prop-types
+  innerProps: _propTypes.default.any // eslint-disable-line react/forbid-prop-types
+
+};
+CheckboxOption.defaultProps = {
+  children: null,
+  innerRef: undefined,
+  innerProps: {},
+  className: null
+};
+var _default = CheckboxOption;
+exports.default = _default;
 
 /***/ }),
 
@@ -58280,4 +60942,4 @@ exports.default = ExpansionHeaderCell;
 /***/ })
 
 }]);
-//# sourceMappingURL=vendors-e79b152d30a6237c9f6e.js.map
+//# sourceMappingURL=vendors-dd70a6d001fc00833256.js.map

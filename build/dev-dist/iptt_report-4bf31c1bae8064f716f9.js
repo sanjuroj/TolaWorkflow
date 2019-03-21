@@ -320,7 +320,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-select */ "y2Vs");
-var _dec, _class, _temp, _dec2, _class3, _temp2, _dec3, _class5, _class6, _dec4, _class7, _temp3, _dec5, _class9, _temp4, _dec6, _class11, _temp5, _dec7, _class13, _temp6, _dec8, _class15, _temp7;
+/* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-multiselect-checkboxes */ "VCnP");
+/* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_4__);
+var _dec, _class, _temp, _dec2, _class3, _temp2, _dec3, _class5, _class6, _dec4, _class7, _temp3, _dec5, _class9, _temp4, _dec6, _class11, _temp5, _dec7, _class13, _temp6, _dec8, _class15, _temp7, _dec9, _class17, _temp8;
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -349,6 +351,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -618,7 +621,7 @@ function (_React$Component4) {
 
 var IPTTMultiSelectWrapper = function IPTTMultiSelectWrapper(props) {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-row mb-2"
+    className: "form-row mb-2 iptt-react-select-row"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     className: "col-form-label text-uppercase"
   }, props.label), props.children);
@@ -642,17 +645,8 @@ function (_React$Component5) {
 
     _this4 = _possibleConstructorReturn(this, (_getPrototypeOf5 = _getPrototypeOf(LevelSelect)).call.apply(_getPrototypeOf5, [this].concat(args)));
 
-    _this4.getOptions = function () {
-      return _this4.props.rootStore.selectedProgram.reportLevels.map(function (level) {
-        return {
-          value: level,
-          label: level
-        };
-      });
-    };
-
     _this4.updateLevelFilters = function (selected) {
-      _this4.props.rootStore.levelFilters = selected;
+      _this4.props.rootStore.setLevelFilters(selected);
     };
 
     return _this4;
@@ -663,12 +657,11 @@ function (_React$Component5) {
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IPTTMultiSelectWrapper, {
         label: this.props.labels.levelSelect
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
-        options: this.getOptions(),
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_4___default.a, {
+        options: this.props.rootStore.selectedProgram.reportLevels,
         isMulti: true,
         value: this.props.rootStore.levelFilters,
-        onChange: this.updateLevelFilters,
-        className: "iptt-react-select"
+        onChange: this.updateLevelFilters
       }));
     }
   }]);
@@ -694,7 +687,7 @@ function (_React$Component6) {
     _this5 = _possibleConstructorReturn(this, (_getPrototypeOf6 = _getPrototypeOf(SiteSelect)).call.apply(_getPrototypeOf6, [this].concat(args)));
 
     _this5.updateSiteFilters = function (selected) {
-      _this5.props.rootStore.siteFilters = selected;
+      _this5.props.rootStore.setSiteFilters(selected);
     };
 
     return _this5;
@@ -705,12 +698,11 @@ function (_React$Component6) {
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IPTTMultiSelectWrapper, {
         label: this.props.labels.siteSelect
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_4___default.a, {
         options: this.props.rootStore.selectedProgram.reportSites,
         isMulti: true,
         value: this.props.rootStore.siteFilters,
-        onChange: this.updateSiteFilters,
-        className: "iptt-react-select"
+        onChange: this.updateSiteFilters
       }));
     }
   }]);
@@ -736,7 +728,7 @@ function (_React$Component7) {
     _this6 = _possibleConstructorReturn(this, (_getPrototypeOf7 = _getPrototypeOf(TypeSelect)).call.apply(_getPrototypeOf7, [this].concat(args)));
 
     _this6.updateTypeFilters = function (selected) {
-      _this6.props.rootStore.typeFilters = selected;
+      _this6.props.rootStore.setTypeFilters(selected);
     };
 
     return _this6;
@@ -747,12 +739,11 @@ function (_React$Component7) {
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IPTTMultiSelectWrapper, {
         label: this.props.labels.typeSelect
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_4___default.a, {
         options: this.props.rootStore.selectedProgram.reportTypes,
         isMulti: true,
         value: this.props.rootStore.typeFilters,
-        onChange: this.updateTypeFilters,
-        className: "iptt-react-select"
+        onChange: this.updateTypeFilters
       }));
     }
   }]);
@@ -778,7 +769,7 @@ function (_React$Component8) {
     _this7 = _possibleConstructorReturn(this, (_getPrototypeOf8 = _getPrototypeOf(SectorSelect)).call.apply(_getPrototypeOf8, [this].concat(args)));
 
     _this7.updateSectorFilters = function (selected) {
-      _this7.props.rootStore.sectorFilters = selected;
+      _this7.props.rootStore.setSectorFilters(selected);
     };
 
     return _this7;
@@ -789,18 +780,58 @@ function (_React$Component8) {
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IPTTMultiSelectWrapper, {
         label: this.props.labels.sectorSelect
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_4___default.a, {
         options: this.props.rootStore.selectedProgram.reportSectors,
         isMulti: true,
         value: this.props.rootStore.sectorFilters,
-        onChange: this.updateSectorFilters,
-        className: "iptt-react-select"
+        onChange: this.updateSectorFilters
       }));
     }
   }]);
 
   return SectorSelect;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp7)) || _class15) || _class15);
+var IndicatorSelect = (_dec9 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labels', 'rootStore'), _dec9(_class17 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(_class17 = (_temp8 =
+/*#__PURE__*/
+function (_React$Component9) {
+  _inherits(IndicatorSelect, _React$Component9);
+
+  function IndicatorSelect() {
+    var _getPrototypeOf9;
+
+    var _this8;
+
+    _classCallCheck(this, IndicatorSelect);
+
+    for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+      args[_key8] = arguments[_key8];
+    }
+
+    _this8 = _possibleConstructorReturn(this, (_getPrototypeOf9 = _getPrototypeOf(IndicatorSelect)).call.apply(_getPrototypeOf9, [this].concat(args)));
+
+    _this8.updateIndicatorFilters = function (selected) {
+      _this8.props.rootStore.setIndicatorFilters(selected);
+    };
+
+    return _this8;
+  }
+
+  _createClass(IndicatorSelect, [{
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IPTTMultiSelectWrapper, {
+        label: this.props.labels.indicatorSelect
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_4___default.a, {
+        options: this.props.rootStore.selectedProgram.reportIndicatorsOptions,
+        isMulti: true,
+        value: this.props.rootStore.indicatorFilters,
+        onChange: this.updateIndicatorFilters
+      }));
+    }
+  }]);
+
+  return IndicatorSelect;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp8)) || _class17) || _class17);
 var IPTTFilterForm = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labels')(Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref5) {
   var labels = _ref5.labels;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("nav", {
@@ -813,7 +844,7 @@ var IPTTFilterForm = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('
   }, labels.filterTitle), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProgramSelect, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(PeriodSelect, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(TimeFrameRadio, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StartDateSelect, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(EndDateSelect, null)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "filter-middle",
     className: "p-3"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelSelect, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SiteSelect, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(TypeSelect, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SectorSelect, null)));
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelSelect, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SiteSelect, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(TypeSelect, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SectorSelect, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorSelect, null)));
 }));
 
 /***/ }),
@@ -957,7 +988,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReportAPI", function() { return ReportAPI; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RootStore", function() { return RootStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
-var _class, _descriptor, _descriptor2, _descriptor3, _temp, _class3, _descriptor4, _descriptor5, _temp2, _class5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _temp3;
+var _class, _descriptor, _descriptor2, _descriptor3, _temp, _class3, _descriptor4, _descriptor5, _temp2, _class5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _temp3;
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -1047,10 +1078,12 @@ function () {
     key: "loadData",
     value: function loadData(data) {
       this.id = data.id;
+      this.pk = data.id;
       this.sortIndex = data.sortIndex;
       this.number = data.number;
       this.name = data.name;
       this.level = data.level;
+      this.levelId = data.levelpk;
       this.sites = data.sites;
       this.types = data.indicatorTypes;
       this.sector = data.sector;
@@ -1237,9 +1270,14 @@ function () {
         return [];
       }
 
-      return _toConsumableArray(new Set(this.reportIndicators.map(function (indicator) {
-        return indicator.level;
-      })));
+      return _toConsumableArray(new Set(this.reportIndicators.filter(function (indicator) {
+        return indicator.levelId !== null;
+      }).map(function (indicator) {
+        return {
+          value: indicator.levelId,
+          label: indicator.level
+        };
+      }).map(JSON.stringify))).map(JSON.parse);
     }
   }, {
     key: "reportSites",
@@ -1293,6 +1331,20 @@ function () {
         });
       }))).map(JSON.parse);
     }
+  }, {
+    key: "reportIndicatorsOptions",
+    get: function get() {
+      if (!this.reportIndicators) {
+        return [];
+      }
+
+      return this.reportIndicators.map(function (indicator) {
+        return {
+          value: indicator.pk,
+          label: indicator.name
+        };
+      });
+    }
   }]);
 
   return Program;
@@ -1313,7 +1365,7 @@ function () {
       timeperiods: []
     };
   }
-}), _applyDecoratedDescriptor(_class3.prototype, "loadData", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "loadData"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "reportIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "reportIndicators"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "reportLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "reportLevels"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "reportSites", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "reportSites"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "reportTypes", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "reportTypes"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "reportSectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "reportSectors"), _class3.prototype)), _class3);
+}), _applyDecoratedDescriptor(_class3.prototype, "loadData", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "loadData"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "reportIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "reportIndicators"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "reportLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "reportLevels"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "reportSites", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "reportSites"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "reportTypes", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "reportTypes"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "reportSectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "reportSectors"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "reportIndicatorsOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "reportIndicatorsOptions"), _class3.prototype)), _class3);
 
 var ProgramStore =
 /*#__PURE__*/
@@ -1366,6 +1418,8 @@ function () {
     _initializerDefineProperty(this, "typeFilters", _descriptor13, this);
 
     _initializerDefineProperty(this, "sectorFilters", _descriptor14, this);
+
+    _initializerDefineProperty(this, "indicatorFilters", _descriptor15, this);
 
     this.reportType = null;
     this.router = null;
@@ -1449,8 +1503,69 @@ function () {
         _this5.reportAPI.callForData(_this5.selectedProgram.id, _this5.selectedFrequencyId, _this5.isTVA).then(function (data) {
           _this5.selectedProgram.loadData(data);
 
+          _this5.updateFilters();
+
           _this5.loading = false;
         });
+      }
+    };
+
+    this.updateFilters = function () {
+      var params = _this5.router.getState().params;
+
+      if (params.levels) {
+        var levels = params.levels instanceof Array ? params.levels.map(Number) : [params.levels].map(Number);
+        _this5.levelFilters = _this5.selectedProgram.reportLevels.filter(function (levelOption) {
+          return levels.indexOf(levelOption.value) != -1;
+        });
+
+        _this5.updateUrl('levels', _this5.levelFilters.map(function (levelOption) {
+          return levelOption.value;
+        }));
+      }
+
+      if (params.sites) {
+        var sites = params.sites instanceof Array ? params.sites.map(Number) : [params.sites].map(Number);
+        _this5.siteFilters = _this5.selectedProgram.reportSites.filter(function (siteOption) {
+          return sites.indexOf(siteOption.value) != -1;
+        });
+
+        _this5.updateUrl('sites', _this5.siteFilters.map(function (siteOption) {
+          return siteOption.value;
+        }));
+      }
+
+      if (params.types) {
+        var theseTypes = params.types instanceof Array ? params.types.map(Number) : [params.types].map(Number);
+        _this5.typeFilters = _this5.selectedProgram.reportTypes.filter(function (typeOption) {
+          return theseTypes.indexOf(typeOption.value) != -1;
+        });
+
+        _this5.updateUrl('types', _this5.typeFilters.map(function (typeOption) {
+          return typeOption.value;
+        }));
+      }
+
+      if (params.sectors) {
+        var sectors = params.sectors instanceof Array ? params.sectors.map(Number) : [params.sectors].map(Number);
+        _this5.sectorFilters = _this5.selectedProgram.reportSectors.filter(function (sectorOption) {
+          return sectors.indexOf(sectorOption.value) != -1;
+        });
+
+        _this5.updateUrl('sectors', _this5.sectorFilters.map(function (sectorOption) {
+          return sectorOption.value;
+        }));
+      }
+
+      if (params.indicators) {
+        var indicators = params.indicators instanceof Array ? params.indicators.map(Number) : [params.indicators].map(Number);
+        _this5.indicatorFilters = _this5.selectedProgram.reportIndicatorsOptions.filter(function (indicatorOption) {
+          return indicators.indexOf(indicatorOption.value) != -1;
+        });
+
+        _this5.updateUrl('indicators', _this5.indicatorFilters.map(function (indicatorOption) {
+          return indicatorOption.value;
+        }));
       }
     };
 
@@ -1497,6 +1612,46 @@ function () {
 
         _this5.setStartPeriod(startPeriod);
       }
+    };
+
+    this.setLevelFilters = function (selected) {
+      _this5.levelFilters = selected;
+
+      _this5.updateUrl('levels', selected.map(function (item) {
+        return item.value;
+      }));
+    };
+
+    this.setSiteFilters = function (selected) {
+      _this5.siteFilters = selected;
+
+      _this5.updateUrl('sites', selected.map(function (item) {
+        return item.value;
+      }));
+    };
+
+    this.setTypeFilters = function (selected) {
+      _this5.typeFilters = selected;
+
+      _this5.updateUrl('types', selected.map(function (item) {
+        return item.value;
+      }));
+    };
+
+    this.setSectorFilters = function (selected) {
+      _this5.sectorFilters = selected;
+
+      _this5.updateUrl('sectors', selected.map(function (item) {
+        return item.value;
+      }));
+    };
+
+    this.setIndicatorFilters = function (selected) {
+      _this5.indicatorFilters = selected;
+
+      _this5.updateUrl('indicators', selected.map(function (item) {
+        return item.value;
+      }));
     };
 
     this.programStore = new ProgramStore(this, contextData.programs);
@@ -1616,7 +1771,7 @@ function () {
           indicators = indicators.filter(function (indicator) {
             return _this6.levelFilters.map(function (levelOption) {
               return levelOption.value;
-            }).indexOf(indicator.level) != -1;
+            }).indexOf(indicator.levelId) != -1;
           });
         }
 
@@ -1651,6 +1806,14 @@ function () {
             return _this6.sectorFilters.map(function (sectorOption) {
               return sectorOption.value;
             }).indexOf(indicator.sector.pk) != -1;
+          });
+        }
+
+        if (this.indicatorFilters && this.indicatorFilters.length > 0) {
+          indicators = indicators.filter(function (indicator) {
+            return _this6.indicatorFilters.map(function (indicatorOption) {
+              return indicatorOption.value;
+            }).indexOf(indicator.pk) != -1;
           });
         }
 
@@ -1889,6 +2052,13 @@ function () {
     return [];
   }
 }), _descriptor14 = _applyDecoratedDescriptor(_class5.prototype, "sectorFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return [];
+  }
+}), _descriptor15 = _applyDecoratedDescriptor(_class5.prototype, "indicatorFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -2135,7 +2305,7 @@ var reportAPI = new _models__WEBPACK_IMPORTED_MODULE_5__["ReportAPI"]('/indicato
 var rootStore = new _models__WEBPACK_IMPORTED_MODULE_5__["RootStore"](jsContext, reportAPI);
 var routes = [{
   name: 'iptt',
-  path: '/:programId<\\d+>/:reportType/?frequency&timeperiods&targetperiods&timeframe&numrecenteperiods&start&end&start_period&end_period'
+  path: '/:programId<\\d+>/:reportType/?frequency&timeperiods&targetperiods&timeframe&numrecenteperiods&start&end&start_period&end_period&levels&sites&types&sectors&indicators'
 }];
 var router = Object(router5__WEBPACK_IMPORTED_MODULE_2__["default"])(routes);
 router.usePlugin(Object(router5_plugin_browser__WEBPACK_IMPORTED_MODULE_3__["default"])({
@@ -2190,4 +2360,4 @@ var ExcelButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('lab
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-1a628f7f1e4f409e939d.js.map
+//# sourceMappingURL=iptt_report-4bf31c1bae8064f716f9.js.map
