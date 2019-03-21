@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { observer } from "mobx-react"
+import { observer, inject } from "mobx-react"
 import eventBus from '../../../eventbus';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -12,24 +12,32 @@ import Select from 'react-select';
 
 library.add(faCaretDown, faCaretRight);
 
-
-
-
-
-
-@observer
-class LevelList extends React.Component {
-
-    render() {
-        return <div>In a code factory!</div>
-
+class LevelCard extends React.Component {
+    render(){
+        return (
+            <div>{this.props.level.name}</div>
+        )
     }
 }
 
 
-export const LevelListExport = observer(function (props) {
 
-    return <React.Fragment>
-        <LevelList />
-    </React.Fragment>
+@inject('rootStore')
+@observer
+class LevelList extends React.Component {
+    render() {
+        return (
+            this.props.rootStore.levels.map( (level, index) => {
+                return <LevelCard key={index} level={level} />
+            })
+
+        )
+    }
+}
+
+
+export const LevelListing = observer(function (props) {
+    return (
+        <div id="level-list" style={{flexGrow:"2"}}><LevelList /></div>
+    )
 });

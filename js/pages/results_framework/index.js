@@ -5,7 +5,7 @@ import eventBus from '../../eventbus';
 import createRouter from 'router5';
 import browserPlugin from 'router5-plugin-browser';
 
-import {LevelListExport} from './components/level_list';
+import {LevelListing} from './components/level_list';
 import {LevelTierPicker} from './components/leveltier_picker';
 import {RFPageStore, RFPageUIStore} from './models';
 
@@ -22,11 +22,14 @@ const uiStore = new RFPageUIStore(levelTiers, tierPresets);
  */
 
 ReactDOM.render(
-    <Provider uiStore={uiStore}>
-        <LevelTierPicker />
+    <Provider uiStore={uiStore} rootStore={rootStore}>
+        <div style={{display:"flex"}}>
+            <LevelTierPicker />
+            <LevelListing />
+        </div>
     </Provider>,
-    document.querySelector('#leveltier-picker-react-component'));
+    document.querySelector('#level-builder-react-component'));
 
-ReactDOM.render(<LevelListExport rootStore={rootStore}
-                                uiStore={uiStore} />,
-    document.querySelector('#level-list-react-component'));
+// ReactDOM.render(<LevelList rootStore={rootStore}
+//                                 uiStore={uiStore} />,
+//     document.querySelector('#level-list-react-component'));

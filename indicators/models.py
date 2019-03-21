@@ -147,6 +147,22 @@ class Level(models.Model):
         return depth
 
     @property
+    def ontology(self):
+        target = self
+        ontology = []
+        while True:
+            ontology = [str(target.customsort)] + ontology
+            if target.parent is None:
+                break
+            else:
+                target = target.parent
+
+        tier_count = LevelTier.objects.filter(program=self.program_id).count()
+        missing_tiers = tier_count - self.get_level_depth()
+        ontology += missing_tiers * ['0']
+        return '.'.join(ontology)
+
+    @property
     def leveltier(self):
         tiers = self.program.level_tiers.order_by('tier_depth')
         try:
