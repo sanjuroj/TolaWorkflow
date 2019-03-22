@@ -2,10 +2,12 @@ import { observable, computed, action } from "mobx";
 
 export class RFPageStore {
     @observable levels = [];
-    @observable levelTiers = [];
+    @observable chosenTierSet = [];
+    @observable chosenTierSetName = "";
     tierPresets = {};
 
     constructor(levels, levelTiers, tierPresets) {
+        // Set and sort levels
         this.levels = levels.sort( function (a, b) {
             if (a.ontology < b.ontology) {
                 return -1;
@@ -15,57 +17,43 @@ export class RFPageStore {
             }
             return 0
         });
-        this.levelTiers = levelTiers;
-        this.tierPresets = tierPresets;
-    }
-}
 
-export class RFPageUIStore {
-    @observable selectedPreset;
-    @observable levelTiers;
-    tierPresets;
-    defaultPreset = 'Mercy Corps standard';
-
-    constructor(levelTiers, tierPresets){
+        // Set the stored tierset and its name, if they exist
         if (levelTiers.length) {
-            this.selectedPreset = this.derive_preset_name(levelTiers, tierPresets);
-            this.levelTiers = levelTiers;
+            this.chosenTierSetName = this.derive_preset_name(levelTiers, tierPresets);
+            this.chosenTierSet = levelTiers;
         }
-        else {
-            this.selectedPreset = this.defaultPreset;
-            this.levelTiers = tierPresets[this.defaultPreset];
-        }
+        // else {
+        //     this.selectedTierSetName = none;
+        //     this.chosenLevelTierSet = tierPresets[this.defaultPreset];
+        // }
         this.tierPresets = tierPresets;
-
-        this.changePreset = this.changePreset.bind(this);
-
     }
 
     @computed get tierList () {
-        if (!this.selectedPreset && !this.levelTiers){
-            return null;
+        if (!this.chosenTierSet && !this.chosenTierSetName){
+            return [];
         }
-        else if (this.selectedPreset in this.tierPresets){
-            return this.tierPresets[this.selectedPreset];
+        else if (this.chosenTierSetName in this.tierPresets){
+            return this.tierPresets[this.chosenTierSetName];
         }
         else {
-            return this.levelTiers;
+            return this.chosenTierSet;
         }
     }
 
     @action
-    changePreset(newPreset) {
-        this.selectedPreset = newPreset;
+    changeTierSet(newTierSetName) {
+        this.chosenTierSetName = newTierSetName;
     }
 
-    derive_preset_name(levelTiers, tierPresets) {
-        if (!levelTiers){
+    derive_preset_name(chosenTierSet, tierPresets) {
+        if (!chosenTierSet){
             return None;
         }
-        for (let preset_name in tierPresets){
+        for (preset_name in tierPresets){
+            // TODO: need to actually implement this
             return preset_name;
         }
     }
-
-
 }

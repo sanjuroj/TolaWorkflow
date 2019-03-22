@@ -164,6 +164,7 @@ class Level(models.Model):
 
     @property
     def leveltier(self):
+        # TODO: What if their level hierarchy is deeper than the leveltier set that they pick
         tiers = self.program.level_tiers.order_by('tier_depth')
         try:
             tier = tiers[self.get_level_depth()-1]

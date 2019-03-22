@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { observer, inject } from "mobx-react"
+import { toJS } from 'mobx';
 import eventBus from '../../../eventbus';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
