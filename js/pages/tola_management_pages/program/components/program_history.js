@@ -62,7 +62,7 @@ export class ProgramHistory extends React.Component {
                 <button className="btn btn-primary" type="button" onClick={() => this.onSave()}>{gettext("Save Changes")}</button>
                 <button className="btn btn-reset" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
             </div>
-            <table className="table table-sm">
+            <table className="table table-sm text-small">
                 <thead>
                     <tr>
                         <th>{gettext("Date")}</th>

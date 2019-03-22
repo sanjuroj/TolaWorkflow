@@ -88,7 +88,7 @@ export class EditUserHistory extends React.Component {
                     </div>
                 </div>
             }
-            <table className="table table-sm">
+            <table className="table table-sm text-small">
                 <thead>
                     <tr>
                         <th>{gettext("Date")}</th>
