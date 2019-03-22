@@ -1,25 +1,20 @@
 import { observable, computed, action } from "mobx";
 
-// Types of filters available on the program page
-export const IndicatorFilterType = Object.freeze({
-    noFilter: 0,
-    missingTarget: 1,
-    missingResults: 2,
-    missingEvidence: 3,
-
-    aboveTarget: 5,
-    belowTarget: 6,
-    onTarget: 7,
-});
-
-
 export class RFPageStore {
     @observable levels = [];
     @observable levelTiers = [];
     tierPresets = {};
 
     constructor(levels, levelTiers, tierPresets) {
-        this.levels = levels;
+        this.levels = levels.sort( function (a, b) {
+            if (a.ontology < b.ontology) {
+                return -1;
+            }
+            if (b.ontology < a.ontology) {
+                return 1;
+            }
+            return 0
+        });
         this.levelTiers = levelTiers;
         this.tierPresets = tierPresets;
     }
@@ -30,7 +25,6 @@ export class RFPageUIStore {
     @observable levelTiers;
     tierPresets;
     defaultPreset = 'Mercy Corps standard';
-
 
     constructor(levelTiers, tierPresets){
         if (levelTiers.length) {
@@ -64,15 +58,14 @@ export class RFPageUIStore {
         this.selectedPreset = newPreset;
     }
 
-    // derive_preset_name(levelTiers, tierPresets) {
-    //     console.log('tierpreeesets', typeof(tierPresets));
-    //     if (!levelTiers){
-    //         return self.defaultPreset;
-    //     }
-    //     for (let preset_name in tierPresets){
-    //         return preset_name;
-    //     }
-    // }
+    derive_preset_name(levelTiers, tierPresets) {
+        if (!levelTiers){
+            return None;
+        }
+        for (let preset_name in tierPresets){
+            return preset_name;
+        }
+    }
 
 
 }

@@ -27,7 +27,6 @@ class Picker extends React.Component {
 class LevelTier extends React.Component {
 
     render() {
-        console.log('tierprinter', this.props.tierName)
         return (
             <div> {this.props.tierName} </div>
     )}
@@ -37,9 +36,8 @@ class LevelTier extends React.Component {
 @observer
 class LevelTierList extends React.Component{
     render() {
-        console.log('thisisitierlist', this.props.uiStore.tierList.slice())
         return (
-            <div>
+            <div id="leveltier-list">
                 {this.props.uiStore.tierList.map((tier, index) => {
                     return <LevelTier key={index} tierName={tier}/>
                     }
@@ -52,9 +50,9 @@ class LevelTierList extends React.Component{
 export const LevelTierPicker = observer(function (props) {
 
     return (
-        <React.Fragment>
+        <div id="leveltier-picker" style={{marginRight:"3em"}}>
             <Picker />
             <LevelTierList />
-        </React.Fragment>
+        </div>
     )
 });

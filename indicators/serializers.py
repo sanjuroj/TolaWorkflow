@@ -8,12 +8,16 @@ class LevelSerializer(serializers.ModelSerializer):
     """
     Level serializer for Program Page
     """
+
     class Meta:
         model = Level
         fields = [
             'id',
+            'parent',
             'name',
-            'customsort'
+            'customsort',
+            'ontology',
+            'get_level_depth',
         ]
 
 
