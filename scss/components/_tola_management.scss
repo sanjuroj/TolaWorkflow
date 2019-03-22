@@ -2,11 +2,6 @@
 #program-management-index-view,
 #country-management-index-view {
     .edit-user-history table {
-        width: 100%;
-        td {
-            vertical-align: top;
-        }
-
         .program-changeset-row {
             border: 1px solid #aaa;
             padding: 5px;
@@ -256,3 +251,9 @@ table.admin-list__table {
     display: flex;
     justify-content: space-between;
 }
+
+
+// admin panes on individual edit items
+// TODO: this needs a parent class
+
+.admin-edit-pane {}
