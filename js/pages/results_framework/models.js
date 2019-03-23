@@ -21,9 +21,10 @@ export class RFPageStore {
         });
 
         // Set the stored tierset and its name, if they exist
-        if (levelTiers.length) {
-            this.chosenTierSetName = this.derive_preset_name(levelTiers, tierPresets);
+        if (levelTiers.length > 0) {
             this.chosenTierSet = levelTiers;
+            this.chosenTierSetName = this.derive_preset_name(levelTiers, tierPresets);
+
         }
         // else {
         //     this.selectedTierSetName = none;
@@ -33,7 +34,6 @@ export class RFPageStore {
     }
 
     @computed get tierList () {
-        console.log('calcing tierlist')
         if (!this.chosenTierSet && !this.chosenTierSetName){
             return [];
         }
@@ -48,10 +48,11 @@ export class RFPageStore {
     @computed get levelProperties () {
         let levelProperties = {};
         for (let level of this.levels) {
-            console.log(toJS(level))
             let properties = {};
             properties['ontologyLabel'] = trimOntology(level.ontology);
             properties['tierName'] = this.tierList[level.get_level_depth-1];
+            const childCount =  this.levels.filter(l => l.parent == level.id).length;
+            properties['canDelete'] = childCount==0;
             levelProperties[level.id] = properties
         }
         console.log("levelTierNameMap", toJS(levelProperties))
@@ -63,13 +64,21 @@ export class RFPageStore {
         this.chosenTierSetName = newTierSetName;
     }
 
-    derive_preset_name(chosenTierSet, tierPresets) {
-        if (!chosenTierSet){
+    derive_preset_name(levelTiers, tierPresets) {
+        if (!levelTiers){
             return None;
         }
-        for (preset_name in tierPresets){
-            // TODO: need to actually implement this
-            return preset_name;
+        const levelTiersArray = levelTiers.sort(t => t.tier_depth).map(t => t.name);
+        const levelTierStr = JSON.stringify(levelTiersArray);
+        for (let presetName in tierPresets){
+            if (levelTiers.length != tierPresets[presetName].length){
+                continue
+            }
+            const presetValues = JSON.stringify(tierPresets[presetName]);
+            if (levelTierStr == presetValues) {
+                return presetName;
+            }
         }
+        return "Custom"
     }
 }

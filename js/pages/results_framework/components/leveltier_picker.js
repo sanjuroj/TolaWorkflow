@@ -56,7 +56,7 @@ class LevelTierList extends React.Component{
 export const LevelTierPicker = observer(function (props) {
 
     return (
-        <div id="leveltier-picker" style={{marginRight:"3em", width:"10em"}}>
+        <div id="leveltier-picker" style={{marginRight:"3em", width:"17em"}}>
             <Picker />
             <LevelTierList />
         </div>
