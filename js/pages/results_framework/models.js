@@ -1,4 +1,6 @@
-import { observable, computed, action } from "mobx";
+import { observable, computed, action, toJS } from "mobx";
+
+import { trimOntology } from '../../level_utils'
 
 export class RFPageStore {
     @observable levels = [];
@@ -31,6 +33,7 @@ export class RFPageStore {
     }
 
     @computed get tierList () {
+        console.log('calcing tierlist')
         if (!this.chosenTierSet && !this.chosenTierSetName){
             return [];
         }
@@ -40,6 +43,19 @@ export class RFPageStore {
         else {
             return this.chosenTierSet;
         }
+    }
+
+    @computed get levelProperties () {
+        let levelProperties = {};
+        for (let level of this.levels) {
+            console.log(toJS(level))
+            let properties = {};
+            properties['ontologyLabel'] = trimOntology(level.ontology);
+            properties['tierName'] = this.tierList[level.get_level_depth-1];
+            levelProperties[level.id] = properties
+        }
+        console.log("levelTierNameMap", toJS(levelProperties))
+        return levelProperties
     }
 
     @action

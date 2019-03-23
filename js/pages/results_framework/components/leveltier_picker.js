@@ -29,7 +29,7 @@ class LevelTier extends React.Component {
 
     render() {
         return (
-            <div> {this.props.tierName} </div>
+            <li> {this.props.tierName} </li>
     )}
 }
 
@@ -38,7 +38,7 @@ class LevelTier extends React.Component {
 class LevelTierList extends React.Component{
     render() {
         return (
-            <div id="leveltier-list">
+            <ul id="leveltier-list" style={{listStyle: "none"}}>
                 {
                     this.props.rootStore.tierList.length > 0 ?
                         this.props.rootStore.tierList.map((tier, index) => {
@@ -48,7 +48,7 @@ class LevelTierList extends React.Component{
                 }
 
 
-            </div>
+            </ul>
         )
     }
 }
