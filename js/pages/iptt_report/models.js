@@ -313,6 +313,23 @@ export class RootStore {
         }
     }
     
+    @computed get pinData() {
+        if (!this.selectedProgram) {
+            return false;
+        }
+        let queryString = window.location.search;
+        queryString = queryString && queryString.length > 0 && queryString[0] == '?' ? queryString.slice(1) : queryString;
+        return !this.selectedProgram ? false : {
+            program: this.selectedProgram.id,
+            report_type: this.router.getState().params.reportType,
+            query_string: queryString
+        };
+    }
+    
+    @computed get programPageUrl() {
+        return this.selectedProgram ? '/program/' + this.selectedProgram.id + '/' : false;
+    }
+    
     updateRoute = ({ previousRoute, route }) => {
         //console.log("updating route from", previousRoute, "  to ", route);
     }

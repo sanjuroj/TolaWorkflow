@@ -1049,7 +1049,14 @@ class IPTTReport(LoginRequiredMixin, IPTTProgramMixin, TemplateView):
             'filterTitle': ugettext('Report options'),
             'reportTitle': ugettext('Indicator performance tracking table'),
             'sidebarToggle': ugettext('Show/hide filters'),
-            'pin': ugettext('Pin'),
+            'pin': {
+                'buttonLabel': ugettext('Pin'),
+                'reportName': ugettext('Report name'),
+                'submitButton': ugettext('Pin to program page'),
+                'createUrl': reverse('create_pinned_report'),
+                'successMsg': ugettext('Success! This report is now pinned to the program page.'),
+                'successLink': ugettext('Visit the program page now.')
+            },
             'excel': ugettext('Excel'),
             'programSelect': ugettext('Program'),
             'periodSelect': {
@@ -1065,6 +1072,7 @@ class IPTTReport(LoginRequiredMixin, IPTTProgramMixin, TemplateView):
             'sectorSelect': ugettext('Sectors'),
             'siteSelect': ugettext('Sites'),
             'indicatorSelect': ugettext('Indicators'),
+            'loading': ugettext('Loading'),
             'timeperiods': {
                 '3' : ugettext('Years'),
                 '4' : ugettext('Semi-annual periods'),

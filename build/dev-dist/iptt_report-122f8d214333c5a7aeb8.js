@@ -51,7 +51,7 @@ var IPTTHeader = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labe
     className: "pt-3 text-title-case"
   }, labels.reportTitle), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
     className: "pb-3"
-  }, rootStore.startPeriodLabel, " - ", rootStore.endPeriodLabel)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, rootStore.startPeriodLabel && rootStore.endPeriodLabel ? rootStore.startPeriodLabel + " - " + rootStore.endPeriodLabel : "")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "subheader__actions"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_4__["PinButton"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_4__["ExcelButton"], null)));
 }));
@@ -156,7 +156,7 @@ var TVAValue = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(funct
       isPercent = _ref.isPercent;
   var percentText = value && target && target != 0 ? String(Math.round(value / target * 1000) / 10) + '%' : EMPTY_CELL;
   var valueText = value ? String(Math.round(value)) + (isPercent ? '%' : '') : EMPTY_CELL;
-  var targetText = value && target ? String(Math.round(target)) + (isPercent ? '%' : '') : '';
+  var targetText = target ? String(Math.round(target)) + (isPercent ? '%' : '') : EMPTY_CELL;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     align: "right"
   }, targetText), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
@@ -259,14 +259,20 @@ var Loading = function Loading() {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Loading"));
 };
 
-var IPTTTableBody = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('rootStore')(Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref2) {
-  var rootStore = _ref2.rootStore;
-  var indicatorRows = rootStore.reportIndicators ? rootStore.reportIndicators.map(function (indicator, count) {
+var NoIndicatorsForFrequency = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labels')(function (_ref2) {
+  var labels = _ref2.labels;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+    colSpan: "8"
+  }, labels.noIndicatorsForFrequency));
+});
+var IPTTTableBody = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('rootStore')(Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref3) {
+  var rootStore = _ref3.rootStore;
+  var indicatorRows = rootStore.reportIndicators && rootStore.reportIndicators.length > 0 ? rootStore.reportIndicators.map(function (indicator, count) {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorRow, {
       indicator: indicator,
       key: count
     });
-  }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Loading, null);
+  }) : rootStore.noIndicatorsForFrequency ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(NoIndicatorsForFrequency, null) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Loading, null);
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, indicatorRows);
 }));
 var IPTTTable = (_dec2 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labels', 'rootStore'), _dec2(_class3 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(_class3 =
@@ -988,7 +994,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReportAPI", function() { return ReportAPI; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RootStore", function() { return RootStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
-var _class, _descriptor, _descriptor2, _descriptor3, _temp, _class3, _descriptor4, _descriptor5, _temp2, _class5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _temp3;
+var _class, _descriptor, _descriptor2, _descriptor3, _temp, _class3, _descriptor4, _descriptor5, _temp2, _class5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _temp3;
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -1239,7 +1245,7 @@ function () {
     get: function get() {
       var _this3 = this;
 
-      if (this.indicators === null) {
+      if (!this.indicators || this.indicators.length == 0) {
         return false;
       }
 
@@ -1266,7 +1272,7 @@ function () {
   }, {
     key: "reportLevels",
     get: function get() {
-      if (!this.reportIndicators) {
+      if (!this.reportIndicators || this.reportIndicators.length == 0) {
         return [];
       }
 
@@ -1282,7 +1288,7 @@ function () {
   }, {
     key: "reportSites",
     get: function get() {
-      if (!this.reportIndicators) {
+      if (!this.reportIndicators || this.reportIndicators.length == 0) {
         return [];
       }
 
@@ -1301,7 +1307,7 @@ function () {
   }, {
     key: "reportTypes",
     get: function get() {
-      if (!this.reportIndicators) {
+      if (!this.reportIndicators || this.reportIndicators.length == 0) {
         return [];
       }
 
@@ -1320,7 +1326,7 @@ function () {
   }, {
     key: "reportSectors",
     get: function get() {
-      if (!this.reportIndicators) {
+      if (!this.reportIndicators || this.reportIndicators.length == 0) {
         return [];
       }
 
@@ -1334,7 +1340,7 @@ function () {
   }, {
     key: "reportIndicatorsOptions",
     get: function get() {
-      if (!this.reportIndicators) {
+      if (!this.reportIndicators || this.reportIndicators.length == 0) {
         return [];
       }
 
@@ -1420,6 +1426,8 @@ function () {
     _initializerDefineProperty(this, "sectorFilters", _descriptor14, this);
 
     _initializerDefineProperty(this, "indicatorFilters", _descriptor15, this);
+
+    _initializerDefineProperty(this, "noIndicatorsForFrequency", _descriptor16, this);
 
     this.reportType = null;
     this.router = null;
@@ -1512,6 +1520,12 @@ function () {
 
     this.updateFilters = function () {
       var params = _this5.router.getState().params;
+
+      if (params.frequency && _this5.isTVA && _this5.selectedProgram.frequencies.indexOf(parseInt(params.frequency)) == -1) {
+        _this5.noIndicatorsForFrequency = true;
+
+        _this5.setFrequencyId(null);
+      }
 
       if (params.levels) {
         var levels = params.levels instanceof Array ? params.levels.map(Number) : [params.levels].map(Number);
@@ -1676,10 +1690,12 @@ function () {
       if (id === null) {
         this.selectedProgram = null;
       } else if (this.selectedProgram == null || this.selectedProgram.id != id) {
+        this.noIndicatorsForFrequency = false;
         this.updateUrl('programId', id);
         this.selectedProgram = this.programStore.getProgram(id);
 
         if (this.isTVA && this.selectedFrequencyId && this.selectedProgram.frequencies.indexOf(parseInt(this.selectedFrequencyId)) == -1) {
+          this.noIndicatorsForFrequency = true;
           this.setFrequencyId(null);
         } else if (this.selectedFrequencyId !== null) {
           this.setFrequencyId(this.selectedFrequencyId);
@@ -1748,6 +1764,26 @@ function () {
         this.endPeriod = period;
         this.updateUrl('end', this.endPeriod);
       }
+    }
+  }, {
+    key: "pinData",
+    get: function get() {
+      if (!this.selectedProgram) {
+        return false;
+      }
+
+      var queryString = window.location.search;
+      queryString = queryString && queryString.length > 0 && queryString[0] == '?' ? queryString.slice(1) : queryString;
+      return !this.selectedProgram ? false : {
+        program: this.selectedProgram.id,
+        report_type: this.router.getState().params.reportType,
+        query_string: queryString
+      };
+    }
+  }, {
+    key: "programPageUrl",
+    get: function get() {
+      return this.selectedProgram ? '/program/' + this.selectedProgram.id + '/' : false;
     }
   }, {
     key: "isTVA",
@@ -2065,7 +2101,14 @@ function () {
   initializer: function initializer() {
     return [];
   }
-}), _applyDecoratedDescriptor(_class5.prototype, "reportIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "reportIndicators"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "selectedProgramOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "selectedProgramOption"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "selectedFrequencyOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "selectedFrequencyOption"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "frequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "frequencyOptions"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "startPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "startPeriodLabel"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "endPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "endPeriodLabel"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "selectedPeriods", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "selectedPeriods"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "periodOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "periodOptions"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "timeframeEnabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "timeframeEnabled"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "showAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "showAll"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "mostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "mostRecent"), _class5.prototype)), _class5);
+}), _descriptor16 = _applyDecoratedDescriptor(_class5.prototype, "noIndicatorsForFrequency", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return false;
+  }
+}), _applyDecoratedDescriptor(_class5.prototype, "pinData", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "pinData"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "programPageUrl"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "reportIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "reportIndicators"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "selectedProgramOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "selectedProgramOption"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "selectedFrequencyOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "selectedFrequencyOption"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "frequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "frequencyOptions"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "startPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "startPeriodLabel"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "endPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "endPeriodLabel"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "selectedPeriods", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "selectedPeriods"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "periodOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "periodOptions"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "timeframeEnabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "timeframeEnabled"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "showAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "showAll"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "mostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "mostRecent"), _class5.prototype)), _class5);
 
 /***/ }),
 
@@ -2336,19 +2379,179 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
+/* harmony import */ var react_simple_popover__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-simple-popover */ "MWn0");
+/* harmony import */ var react_simple_popover__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_simple_popover__WEBPACK_IMPORTED_MODULE_2__);
+var _dec, _class, _temp, _dec2, _class3;
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 
-var PinButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labels')(function (_ref) {
+
+
+var PinPopover = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labels', 'rootStore'), _dec(_class = (_temp =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(PinPopover, _React$Component);
+
+  function PinPopover(props) {
+    var _this;
+
+    _classCallCheck(this, PinPopover);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(PinPopover).call(this, props));
+
+    _this.handleChange = function (e) {
+      _this.setState({
+        reportName: e.target.value
+      });
+    };
+
+    _this.isDisabled = function () {
+      return !_this.props.rootStore.pinData || !_this.state.reportName;
+    };
+
+    _this.handleClick = function () {
+      //send this.props.rootStore.pinUrl as data to this.props.labels.pin.creatUrl
+      //with data "name" as this.state.reportName
+      _this.setState({
+        sending: true
+      });
+
+      $.ajax({
+        type: "POST",
+        url: _this.props.labels.pin.createUrl,
+        data: _objectSpread({
+          name: _this.state.reportName
+        }, _this.props.rootStore.pinData),
+        success: function success() {
+          _this.setState({
+            sending: false,
+            sent: true
+          });
+        },
+        error: function error() {
+          console.log("AJAX ERROR");
+        }
+      });
+    };
+
+    _this.state = {
+      reportName: '',
+      sending: false,
+      sent: false
+    };
+    return _this;
+  }
+
+  _createClass(PinPopover, [{
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, this.state.sent ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, this.props.labels.pin.successMsg)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        href: this.props.rootStore.programPageUrl
+      }, this.props.labels.pin.successLink))) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "text-uppercase"
+      }, this.props.labels.pin.reportName), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "text",
+        className: "form-control",
+        value: this.state.reportName,
+        onChange: this.handleChange,
+        disabled: this.state.sending
+      })), this.state.sending ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "btn btn-outline-primary",
+        disabled: true
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+        src: "/static/img/ajax-loader.gif"
+      }), "\xA0", this.props.labels.loading) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        onClick: this.handleClick,
+        disabled: this.isDisabled(),
+        className: "btn btn-primary"
+      }, this.props.labels.pin.submitButton)));
+    }
+  }]);
+
+  return PinPopover;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class);
+var PinButton = (_dec2 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labels'), _dec2(_class3 =
+/*#__PURE__*/
+function (_React$Component2) {
+  _inherits(PinButton, _React$Component2);
+
+  function PinButton(props) {
+    var _this2;
+
+    _classCallCheck(this, PinButton);
+
+    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(PinButton).call(this, props));
+    _this2.state = {
+      open: false
+    };
+    return _this2;
+  }
+
+  _createClass(PinButton, [{
+    key: "handleClick",
+    value: function handleClick(e) {
+      this.setState({
+        open: !this.state.open
+      });
+    }
+  }, {
+    key: "handleClose",
+    value: function handleClose(e) {
+      this.setState({
+        open: false
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "btn btn-sm btn-secondary",
+        ref: "target",
+        onClick: this.handleClick.bind(this)
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-thumbtack"
+      }), " ", this.props.labels.pin.buttonLabel), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_simple_popover__WEBPACK_IMPORTED_MODULE_2___default.a, {
+        placement: "bottom",
+        style: {
+          width: 'auto'
+        },
+        target: this.refs.target,
+        show: this.state.open,
+        onHide: this.handleClose.bind(this)
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(PinPopover, null)));
+    }
+  }]);
+
+  return PinButton;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class3);
+var ExcelButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labels')(function (_ref) {
   var labels = _ref.labels;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-    type: "button",
-    className: "btn btn-sm btn-secondary"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-    className: "fas fa-thumbtack"
-  }), " ", labels.pin);
-});
-var ExcelButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labels')(function (_ref2) {
-  var labels = _ref2.labels;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     type: "button",
     className: "btn btn-sm btn-secondary"
@@ -2360,4 +2563,4 @@ var ExcelButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('lab
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-4bf31c1bae8064f716f9.js.map
+//# sourceMappingURL=iptt_report-122f8d214333c5a7aeb8.js.map
