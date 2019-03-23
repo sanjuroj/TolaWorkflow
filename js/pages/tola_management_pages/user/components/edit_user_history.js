@@ -10,30 +10,32 @@ const status_options = [
 ]
 
 const ChangesetEntry = ({name, type, data}) => {
-    return <p><strong>{name}</strong>: {(data != undefined && data != null)?data.toString():'N/A'}</p>
+    return <div className="changeset__change"><strong>{name}</strong>: {(data != undefined && data != null)?data.toString():'N/A'}</div>
 }
 
 const ProgramChangesetEntry = ({data, timeframe}) => {
-    return <div>
+    return <div className="foobar">
         {Object.entries(data.countries).length > 0 &&
-        <div>
+        <div className="changeset">
             <h3>Countries</h3>
             {Object.entries(data.countries).map(([id, country]) =>
-                <div key={id} className="program-changeset-row">
-                    <p><strong>{gettext("Country")}</strong>: {country[timeframe].country}</p>
-                    <p><strong>{gettext("Role")}</strong>: {country[timeframe].role}</p>
+                <div key={id} className="changeset__row">
+                    {id}
+                    <div className="changeset__change"><strong>{gettext("Country")}</strong>: {country[timeframe].country}</div>
+                    <div className="changeset__change"><strong>{gettext("Role")}</strong>: {country[timeframe].role}</div>
                 </div>
             )}
         </div>
         }
         {Object.entries(data.programs).length > 0 &&
-        <div>
+        <div className="changeset">
             <h3>Programs</h3>
             {Object.entries(data.programs).map(([id, program]) =>
-                <div key={id} className="program-changeset-row">
-                    <p><strong>{gettext("Program")}</strong>: {program[timeframe].program}</p>
-                    <p><strong>{gettext("Country")}</strong>: {program[timeframe].country}</p>
-                    <p><strong>{gettext("Role")}</strong>: {program[timeframe].role}</p>
+                <div key={id} className="changeset__row">
+                    {id}
+                    <div className="changeset__change"><strong>{gettext("Program")}</strong>: {program[timeframe].program}</div>
+                    <div className="changeset__change"><strong>{gettext("Country")}</strong>: {program[timeframe].country}</div>
+                    <div className="changeset__change"><strong>{gettext("Role")}</strong>: {program[timeframe].role}</div>
                 </div>
             )}
         </div>

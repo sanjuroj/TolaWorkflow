@@ -2,10 +2,6 @@
 #program-management-index-view,
 #country-management-index-view {
     .edit-user-history table {
-        .program-changeset-row {
-            border: 1px solid #aaa;
-            padding: 5px;
-        }
     }
 
     .edit-user-programs {
@@ -101,8 +97,22 @@
     }
 }
 
-.expander {
+// Expanding change logs
+.changelog-entry {}
+.changelog-entry__expanding {
+    // expanding child element
     overflow: hidden;
+}
+.changelog-entry__expand-trigger {}
+
+// changesets inside change log
+.changeset {}
+.changeset__row {
+    // collects a group of changes made at the same time
+    border-bottom: 1px solid $gray-200;
+    padding: 5px;
+}
+.changeset__change {
 }
 
 /* Safari */
@@ -173,10 +183,6 @@ table.admin-list__table {
     vertical-align: top;
     th, td {
         vertical-align: top;
-    }
-
-    .expand-section {
-        width: 10%;
     }
 }
 
