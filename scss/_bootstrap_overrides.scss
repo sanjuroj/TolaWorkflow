@@ -157,6 +157,9 @@ body > .container {
     tbody + tbody {
         border-top: none; // no special styling for multiple tbodys
     }
+  .table {
+    background-color: inherit;
+  }
 }
 
 // Overrides for Indicator tables

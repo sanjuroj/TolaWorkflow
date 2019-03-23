@@ -47,65 +47,53 @@ export class ProgramHistory extends React.Component {
     render() {
         const {history} = this.props
         const currentStatusSelection = status_options.find(x=> x.value == this.state.managed_status.funding_status)
-        return <div className="tab-pane--react">
+        return <div className="tab-pane--react admin-edit-pane">
             <h2 className="no-bold">{this.props.program_data.name ? this.props.program_data.name+': ' : ''}{gettext("Status and History")}</h2>
-            <div className="row">
-                <div className="col">
-                <div className="form-group">
-                    <label htmlFor="status-input" required>{gettext("Program Status")}<span className="required">*</span></label>
-                    <Select
-                        isSearchable={false}
-                        options={status_options}
-                        value={currentStatusSelection}
-                        onChange={(new_value) => this.onStatusChange(new_value)}
-                    />
-                </div>
-                </div>
+            <div className="form-group">
+                <label htmlFor="status-input" required>{gettext("Program Status")}<span className="required">*</span></label>
+                <Select
+                    isSearchable={false}
+                    options={status_options}
+                    value={currentStatusSelection}
+                    onChange={(new_value) => this.onStatusChange(new_value)}
+                />
             </div>
-            <div className="row">
-                <div className="col">
-                    <div className="form-group btn-row">
-                        <button className="btn btn-primary" type="button" onClick={() => this.onSave()}>{gettext("Save Changes")}</button>
-                        <button className="btn btn-reset" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
-                    </div>
-                </div>
+            <div className="form-group btn-row">
+                <button className="btn btn-primary" type="button" onClick={() => this.onSave()}>{gettext("Save Changes")}</button>
+                <button className="btn btn-reset" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
             </div>
-            <div className="row">
-                <div className="col">
-                    <table className="history-table">
-                        <thead>
-                            <tr>
-                                <th>{gettext("Date")}</th>
-                                <th>{gettext("Admin User")}</th>
-                                <th>{gettext("Change Type")}</th>
-                                <th>{gettext("Previous Entry")}</th>
-                                <th>{gettext("New Entry")}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.props.history.map(entry => <tr key={entry.id}>
-                                <td>{entry.date}</td>
-                                <td>{entry.admin_user}</td>
-                                <td>{entry.change_type}</td>
-                                <td className="expand-section">
-                                    <Expander>
-                                        {entry.diff_list.map(changeset => {
-                                                return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.prev} />
-                                        })}
-                                    </Expander>
-                                </td>
-                                <td className="expand-section">
-                                    <Expander>
-                                        {entry.diff_list.map(changeset => {
-                                                return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.new} />
-                                        })}
-                                    </Expander>
-                                </td>
-                            </tr>)}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <table className="table table-sm text-small">
+                <thead>
+                    <tr>
+                        <th>{gettext("Date")}</th>
+                        <th>{gettext("Admin User")}</th>
+                        <th>{gettext("Change Type")}</th>
+                        <th>{gettext("Previous Entry")}</th>
+                        <th>{gettext("New Entry")}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {this.props.history.map(entry => <tr key={entry.id}>
+                        <td className="text-nowrap">{entry.date}</td>
+                        <td>{entry.admin_user}</td>
+                        <td>{entry.change_type}</td>
+                        <td className="expand-section">
+                            <Expander>
+                                {entry.diff_list.map(changeset => {
+                                        return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.prev} />
+                                })}
+                            </Expander>
+                        </td>
+                        <td className="expand-section">
+                            <Expander>
+                                {entry.diff_list.map(changeset => {
+                                        return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.new} />
+                                })}
+                            </Expander>
+                        </td>
+                    </tr>)}
+                </tbody>
+            </table>
         </div>
     }
 }
