@@ -13,34 +13,45 @@ const ChangesetEntry = ({name, type, data}) => {
     return <div className="changeset__change"><strong>{name}</strong>: {(data != undefined && data != null)?data.toString():'N/A'}</div>
 }
 
-const ProgramChangesetEntry = ({data, timeframe}) => {
-    return <div className="foobar">
+const ProgramChangesetEntry = ({data}) => {
+    return <React.Fragment>
         {Object.entries(data.countries).length > 0 &&
-        <div className="changeset">
-            <h3>Countries</h3>
-            {Object.entries(data.countries).map(([id, country]) =>
-                <div key={id} className="changeset__row">
-                    {id}
-                    <div className="changeset__change"><strong>{gettext("Country")}</strong>: {country[timeframe].country}</div>
-                    <div className="changeset__change"><strong>{gettext("Role")}</strong>: {country[timeframe].role}</div>
-                </div>
-            )}
-        </div>
+            Object.entries(data.countries).map(([id, country]) =>
+                <tr key={id} className="changelog__entry__row">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <div className="changeset__change"><strong>{gettext("Country")}</strong>: {country.prev.country}</div>
+                        <div className="changeset__change"><strong>{gettext("Role")}</strong>: {country.prev.role}</div>
+                    </td>
+                    <td>
+                        <div className="changeset__change"><strong>{gettext("Country")}</strong>: {country.new.country}</div>
+                        <div className="changeset__change"><strong>{gettext("Role")}</strong>: {country.new.role}</div>
+                    </td>
+                </tr>
+            )
         }
         {Object.entries(data.programs).length > 0 &&
-        <div className="changeset">
-            <h3>Programs</h3>
-            {Object.entries(data.programs).map(([id, program]) =>
-                <div key={id} className="changeset__row">
-                    {id}
-                    <div className="changeset__change"><strong>{gettext("Program")}</strong>: {program[timeframe].program}</div>
-                    <div className="changeset__change"><strong>{gettext("Country")}</strong>: {program[timeframe].country}</div>
-                    <div className="changeset__change"><strong>{gettext("Role")}</strong>: {program[timeframe].role}</div>
-                </div>
-            )}
-        </div>
+            Object.entries(data.programs).map(([id, program]) =>
+                <tr key={id} className="changelog__entry__row">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <div className="changeset__change"><strong>{gettext("Program")}</strong>: {program.prev.program}</div>
+                        <div className="changeset__change"><strong>{gettext("Country")}</strong>: {program.prev.country}</div>
+                        <div className="changeset__change"><strong>{gettext("Role")}</strong>: {program.prev.role}</div>
+                    </td>
+                    <td>
+                        <div className="changeset__change"><strong>{gettext("Program")}</strong>: {program.new.program}</div>
+                        <div className="changeset__change"><strong>{gettext("Country")}</strong>: {program.new.country}</div>
+                        <div className="changeset__change"><strong>{gettext("Role")}</strong>: {program.new.role}</div>
+                    </td>
+                </tr>
+            )
         }
-    </div>
+    </React.Fragment>
 }
 
 export class EditUserHistory extends React.Component {
@@ -90,7 +101,7 @@ export class EditUserHistory extends React.Component {
                     </div>
                 </div>
             }
-            <table className="table table-sm text-small">
+            <table className="table table-sm text-small changelog">
                 <thead>
                     <tr>
                         <th>{gettext("Date")}</th>
@@ -100,48 +111,69 @@ export class EditUserHistory extends React.Component {
                         <th>{gettext("New Entry")}</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {history.map(entry => {
-                        if(entry.change_type == 'user_programs_updated') {
-                            return <tr key={entry.id}>
+                {history.map(entry => {
+                    if(entry.change_type == 'user_programs_updated'){
+                        return <tbody className="changelog__entry" key={entry.id}>
+                            <tr className="changelog__entry__header">
+                                <td className="text-nowrap">{entry.id}:{entry.date}</td>
+                                <td>{entry.admin_user}</td>
+                                <td>{entry.change_type}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <ProgramChangesetEntry data={entry.diff_list} />
+                        </tbody>
+                    } else {
+                        return <tbody className="changelog__entry" key={entry.id}>
+                            <tr className="changelog__entry__row">
+                                <td className="text-nowrap">{entry.id}:{entry.date}</td>
+                                <td>{entry.admin_user}</td>
+                                <td>{entry.change_type}</td>
+                                <td>
+                                    prev
+                                </td>
+                                <td>
+                                    new
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                    {/*if(entry.change_type == 'user_programs_updated') {
+                        return <tbody className="changelog__entry" key={entry.id}>
+                            <tr className="changelog__entry__row" key={entry.id}>
                                 <td className="text-nowrap">{entry.date}</td>
                                 <td>{entry.admin_user}</td>
                                 <td>{entry.change_type}</td>
-                                <td className="expand-section">
-                                    <Expander>
-                                        <ProgramChangesetEntry data={entry.diff_list} timeframe="prev"/>
-                                    </Expander>
+                                <td>
+                                    <ProgramChangesetEntry data={entry.diff_list} timeframe="prev"/>
                                 </td>
-                                <td className="expand-section">
-                                    <Expander>
-                                        <ProgramChangesetEntry data={entry.diff_list} timeframe="new" />
-                                    </Expander>
+                                <td>
+                                    <ProgramChangesetEntry data={entry.diff_list} timeframe="new" />
                                 </td>
                             </tr>
-                        } else {
+                        </tbody>
+                    } else {
 
-                            return <tr key={entry.id}>
+                        return <tbody className="changelog__entry" key={entry.id}>
+                            <tr className="changelog__entry__row">
                                 <td className="text-nowrap">{entry.date}</td>
                                 <td>{entry.admin_user}</td>
                                 <td>{entry.change_type}</td>
-                                <td className="expand-section">
-                                    <Expander>
-                                        {entry.diff_list.map(changeset => {
-                                                return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.prev} />
-                                        })}
-                                    </Expander>
+                                <td>
+                                    diff 1
+                                    {entry.diff_list.map(changeset => {
+                                        return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.prev} />
+                                    })}
                                 </td>
-                                <td className="expand-section">
-                                    <Expander>
-                                        {entry.diff_list.map(changeset => {
-                                                return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.new} />
-                                        })}
-                                    </Expander>
+                                <td>
+                                    diff 2
+                                    {entry.diff_list.map(changeset => {
+                                        return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.new} />
+                                    })}
                                 </td>
                             </tr>
-                        }
-                    })}
-                </tbody>
+                        } */ }
+                })}
             </table>
         </div>
     }

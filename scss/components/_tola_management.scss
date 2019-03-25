@@ -98,6 +98,7 @@
 }
 
 // Expanding change logs
+// OLD SELECTORS, DELETE US!
 .changelog-entry {}
 .changelog-entry__expanding {
     // expanding child element
@@ -113,6 +114,19 @@
     padding: 5px;
 }
 .changeset__change {
+}
+
+// NEW SELECTORS
+.changelog { // <table>
+}
+.changelog__entry { // each timestamped batch of DB updates; <tbody>
+}
+.changelog__entry__header { // title row for changelog__entry; <tr>
+    background-color: $gray-200;
+    font-weight: bold;
+}
+.changelog__entry__row { // each DB row change; <tr>
+
 }
 
 /* Safari */
