@@ -10,7 +10,9 @@ const status_options = [
 ]
 
 const ChangesetEntry = ({name, type, data}) => {
-    return <div className="changeset__change"><strong>{name}</strong>: {(data != undefined && data != null)?data.toString():'N/A'}</div>
+    return <div className="changeset__change">
+            <strong>{name}</strong>: {(data != undefined && data != null)?data.toString():'N/A'}
+        </div>
 }
 
 const ProgramChangesetEntry = ({data}) => {
@@ -115,7 +117,7 @@ export class EditUserHistory extends React.Component {
                     if(entry.change_type == 'user_programs_updated'){
                         return <tbody className="changelog__entry" key={entry.id}>
                             <tr className="changelog__entry__header">
-                                <td className="text-nowrap">{entry.id}:{entry.date}</td>
+                                <td className="text-nowrap">{entry.date}</td>
                                 <td>{entry.admin_user}</td>
                                 <td>{entry.change_type}</td>
                                 <td></td>
@@ -125,54 +127,30 @@ export class EditUserHistory extends React.Component {
                         </tbody>
                     } else {
                         return <tbody className="changelog__entry" key={entry.id}>
-                            <tr className="changelog__entry__row">
-                                <td className="text-nowrap">{entry.id}:{entry.date}</td>
-                                <td>{entry.admin_user}</td>
-                                <td>{entry.change_type}</td>
-                                <td>
-                                    prev
-                                </td>
-                                <td>
-                                    new
-                                </td>
-                            </tr>
-                        </tbody>
-                    }
-                    {/*if(entry.change_type == 'user_programs_updated') {
-                        return <tbody className="changelog__entry" key={entry.id}>
-                            <tr className="changelog__entry__row" key={entry.id}>
+                            <tr className="changelog__entry__header">
                                 <td className="text-nowrap">{entry.date}</td>
                                 <td>{entry.admin_user}</td>
                                 <td>{entry.change_type}</td>
-                                <td>
-                                    <ProgramChangesetEntry data={entry.diff_list} timeframe="prev"/>
-                                </td>
-                                <td>
-                                    <ProgramChangesetEntry data={entry.diff_list} timeframe="new" />
-                                </td>
+                                <td></td>
+                                <td></td>
                             </tr>
-                        </tbody>
-                    } else {
-
-                        return <tbody className="changelog__entry" key={entry.id}>
                             <tr className="changelog__entry__row">
-                                <td className="text-nowrap">{entry.date}</td>
-                                <td>{entry.admin_user}</td>
-                                <td>{entry.change_type}</td>
+                                <td className="text-nowrap"></td>
+                                <td></td>
+                                <td></td>
                                 <td>
-                                    diff 1
                                     {entry.diff_list.map(changeset => {
                                         return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.prev} />
                                     })}
                                 </td>
                                 <td>
-                                    diff 2
                                     {entry.diff_list.map(changeset => {
                                         return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.new} />
                                     })}
                                 </td>
                             </tr>
-                        } */ }
+                        </tbody>
+                    }
                 })}
             </table>
         </div>
