@@ -106,33 +106,29 @@ export class EditUserHistory extends React.Component {
             <table className="table table-sm text-small changelog">
                 <thead>
                     <tr>
-                        <th>{gettext("Date")}</th>
-                        <th>{gettext("Admin")}</th>
-                        <th>{gettext("Change Type")}</th>
-                        <th>{gettext("Previous Entry")}</th>
-                        <th>{gettext("New Entry")}</th>
+                        <th className="text-nowrap">{gettext("Date")}</th>
+                        <th className="text-nowrap">{gettext("Admin")}</th>
+                        <th className="text-nowrap">{gettext("Change Type")}</th>
+                        <th className="text-nowrap">{gettext("Previous Entry")}</th>
+                        <th className="text-nowrap">{gettext("New Entry")}</th>
                     </tr>
                 </thead>
                 {history.map(entry => {
                     if(entry.change_type == 'user_programs_updated'){
                         return <tbody className="changelog__entry" key={entry.id}>
                             <tr className="changelog__entry__header">
-                                <td className="text-nowrap">{entry.date}</td>
-                                <td>{entry.admin_user}</td>
-                                <td>{entry.change_type}</td>
-                                <td></td>
-                                <td></td>
+                                <td className="text-nowrap"><strong>{entry.date}</strong></td>
+                                <td className="text-nowrap">{entry.admin_user}</td>
+                                <td colspan="3"><i class="fas fa-cube"></i>&nbsp;{entry.change_type}</td>
                             </tr>
                             <ProgramChangesetEntry data={entry.diff_list} />
                         </tbody>
                     } else {
                         return <tbody className="changelog__entry" key={entry.id}>
                             <tr className="changelog__entry__header">
-                                <td className="text-nowrap">{entry.date}</td>
-                                <td>{entry.admin_user}</td>
-                                <td>{entry.change_type}</td>
-                                <td></td>
-                                <td></td>
+                                <td className="text-nowrap"><strong>{entry.date}</strong></td>
+                                <td className="text-nowrap">{entry.admin_user}</td>
+                                <td colspan="3"><i class="fas fa-user"></i>&nbsp;{gettext("User profile")}</td>
                             </tr>
                             <tr className="changelog__entry__row">
                                 <td className="text-nowrap"></td>
