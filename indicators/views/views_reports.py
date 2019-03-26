@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """ View functions for generating IPTT Reports (HTML and Excel)"""
 
-import string
 import openpyxl
 from openpyxl import styles
 
@@ -227,7 +226,7 @@ def get_labels(quickstart=True):
     return labels
 
 def add_numeric_cell(cell, value):
-    if value is None:
+    if value is None or value == '':
         return None
     cell.value = float(value)
     cell.data_type = 'n'
@@ -235,7 +234,7 @@ def add_numeric_cell(cell, value):
     return True
 
 def add_percentage_cell(cell, value, is_float=False):
-    if value is None:
+    if value is None or value == '':
         return None
     if not is_float:
         value = float(value)/100
@@ -497,12 +496,12 @@ class IPTTExcelExport(LoginRequiredMixin, View):
     def set_widths(self, sheet):
         widths = [10, 10, 10, 100, 12, 40, 8, 12]
         for col_no, width in enumerate(widths):
-            sheet.column_dimensions[string.uppercase[col_no]].width = width
+            sheet.column_dimensions[openpyxl.utils.get_column_letter(col_no + 1)].width = width
         sheet.column_dimensions['A'].hidden = True
         sheet.column_dimensions['B'].hidden = True
         if not self.tva:
             for col_no in range(13, sheet.max_column):
-                sheet.column_dimensions[string.uppercase[col_no]].width = 25
+                sheet.column_dimensions[openpyxl.utils.get_column_letter(col_no + 1)].width = 25
 
     def add_sheets(self, frequencies):
         frequency_names = {
