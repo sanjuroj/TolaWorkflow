@@ -1,5 +1,7 @@
 // Page regions and sub-regions
-
+#nonfooter {
+    flex-grow: 1;
+}
 .region--main {
     // contains most of the page except for top/bottom nav
     // defined in {% block mainclasses %}
