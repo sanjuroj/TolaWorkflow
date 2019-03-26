@@ -96,6 +96,20 @@ const ProgramChangelogEntryRow = ({data}) => {
     </React.Fragment>
 }
 
+const ChangeLogEntry = ({data}) => {
+    if(data.change_type == 'user_programs_updated'){
+        return <tbody className="changelog__entry" key={data.id}>
+            <ChangeLogEntryHeader data={data} />
+            <ProgramChangelogEntryRow data={data} />
+        </tbody>
+    } else {
+        return <tbody className="changelog__entry" key={data.id}>
+            <ChangeLogEntryHeader data={data} />
+            <ChangeLogEntryRow data={data} />
+        </tbody>
+    }
+}
+
 export class EditUserHistory extends React.Component {
 
     constructor(props) {
@@ -153,19 +167,9 @@ export class EditUserHistory extends React.Component {
                         <th className="text-nowrap td--half-stretch">{gettext("New Entry")}</th>
                     </tr>
                 </thead>
-                {history.map(entry => {
-                    if(entry.change_type == 'user_programs_updated'){
-                        return <tbody className="changelog__entry" key={entry.id}>
-                            <ChangeLogEntryHeader data={entry} />
-                            <ProgramChangelogEntryRow data={entry} />
-                        </tbody>
-                    } else {
-                        return <tbody className="changelog__entry" key={entry.id}>
-                            <ChangeLogEntryHeader data={entry} />
-                            <ChangeLogEntryRow data={entry} />
-                        </tbody>
-                    }
-                })}
+                {history.map((entry, id) =>
+                    <ChangeLogEntry key={id} data={entry} />
+                )}
             </table>
         </div>
     }
