@@ -6,7 +6,7 @@ from workflow.models import TolaUser, Country
 from django.contrib.auth.backends import RemoteUserBackend
 from django.utils.timezone import utc
 
-logger = logging.getLogger("tola")
+logger = logging.getLogger("django")
 
 
 class CosignBackend(RemoteUserBackend):
@@ -46,8 +46,8 @@ class CosignBackend(RemoteUserBackend):
             logger.error("Could not retrieve info for %s in ldap" % user.username)
             return user
 
-        user.first_name = ldap_info['first_name']
-        user.last_name = ldap_info['last_name']
+        user.first_name = ldap_info['first_name'][:30]
+        user.last_name = ldap_info['last_name'][:30]
         user.email = ldap_info['email']
 
         user.save()
