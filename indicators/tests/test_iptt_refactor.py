@@ -48,8 +48,8 @@ from indicators.tests.iptt_tests.tva_report_tests import (
     TestMidEndTVAReportValues,
     TestSemiannualTVAReportValues
 )
-
-from indicators.tests.iptt_tests.iptt_reports_i18n import (
-    TestIPTTTimePeriodReportsI18N,
-    TestIPTTTargetReportsI18N
-)
+#  needs to be overhauled to not use outdate methods
+# from indicators.tests.iptt_tests.iptt_reports_i18n import (
+#     TestIPTTTimePeriodReportsI18N,
+#     TestIPTTTargetReportsI18N
+# )
