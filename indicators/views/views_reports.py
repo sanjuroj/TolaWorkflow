@@ -532,8 +532,9 @@ class IPTTExcelExport(LoginRequiredMixin, View):
             periods = [period for period in program.get_periods_for_frequency(sheet_frequency)]
             periods = periods[int(start_period):] if start_period else periods
             periods = periods[:int(end_period)] if end_period else periods
+            sheet_indicators = indicators.filter(target_frequency=int(sheet_frequency))
             self.add_headers(sheet, program, periods)
-            self.add_data(sheet, indicators, periods, sheet_frequency)
+            self.add_data(sheet, sheet_indicators, periods, sheet_frequency)
             self.set_widths(sheet)
 
         response = HttpResponse(content_type='application/ms-excel')
