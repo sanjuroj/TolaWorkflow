@@ -229,7 +229,7 @@ export const IndexView = observer(
                     <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
                     <div className="controls__buttons">
                         <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.createUser()}>
-                            <i className="fas fa-plus-circle"/>{gettext("Add User")}
+                            <i className="fas fa-plus-circle"/>
                             {gettext("Add User")}
                         </a>
                     </div>
