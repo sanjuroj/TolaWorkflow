@@ -3,15 +3,12 @@ import Select from 'react-select'
 import {AutoSizer, Table, Column, CellMeasurer, CellMeasurerCache} from 'react-virtualized'
 import { observer } from 'mobx-react';
 import Expander from 'components/expander'
+import ChangeLog from 'components/changelog'
 
 const status_options = [
     {value: 'Funded', label: 'Funded'},
     {value: 'Completed', label: 'Completed'}
 ]
-
-const ChangesetEntry = ({name, type, data}) => {
-    return <p><strong>{name}</strong>: {(data != undefined && data != null)?data.toString():'N/A'}</p>
-}
 
 @observer
 export class ProgramHistory extends React.Component {
@@ -62,38 +59,9 @@ export class ProgramHistory extends React.Component {
                 <button className="btn btn-primary" type="button" onClick={() => this.onSave()}>{gettext("Save Changes")}</button>
                 <button className="btn btn-reset" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
             </div>
-            <table className="table table-sm text-small">
-                <thead>
-                    <tr>
-                        <th>{gettext("Date")}</th>
-                        <th>{gettext("Admin User")}</th>
-                        <th>{gettext("Change Type")}</th>
-                        <th>{gettext("Previous Entry")}</th>
-                        <th>{gettext("New Entry")}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {this.props.history.map(entry => <tr key={entry.id}>
-                        <td className="text-nowrap">{entry.date}</td>
-                        <td>{entry.admin_user}</td>
-                        <td>{entry.change_type}</td>
-                        <td className="expand-section">
-                            <Expander>
-                                {entry.diff_list.map(changeset => {
-                                        return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.prev} />
-                                })}
-                            </Expander>
-                        </td>
-                        <td className="expand-section">
-                            <Expander>
-                                {entry.diff_list.map(changeset => {
-                                        return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.new} />
-                                })}
-                            </Expander>
-                        </td>
-                    </tr>)}
-                </tbody>
-            </table>
+
+            <ChangeLog data={this.props.history} />
+
         </div>
     }
 }
