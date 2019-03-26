@@ -7764,6 +7764,9 @@ span[data-toggle="popover"]:hover {
 .td--stretch {
   width: 100%; }
 
+#nonfooter {
+  flex-grow: 1; }
+
 .region--main {
   display: flex;
   flex-direction: column;
@@ -8983,5 +8986,3 @@ select.listoption_filters {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-05a74019ca2930b05e66.css.map*/
