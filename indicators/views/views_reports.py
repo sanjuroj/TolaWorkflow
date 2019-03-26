@@ -128,7 +128,6 @@ def get_program_filter_data(request):
 def get_labels(quickstart=True):
     # this is not in a loop or comprehension so as to allow translator comments:
     labels = {
-        'excel': ugettext('Excel - all targets'),
         'programSelect': ugettext('Program'),
         'showAll': ugettext('Show all'),
         'mostRecent': ugettext('Most recent'),
@@ -159,6 +158,7 @@ def get_labels(quickstart=True):
                 ),
                 'periodSelect': ugettext('Target periods'),
                 'submitButton': ugettext('View report'),
+                'excel': ugettext('Excel - all targets'),
             }
         )
     else:
@@ -175,6 +175,7 @@ def get_labels(quickstart=True):
                     'successMsg': ugettext('Success! This report is now pinned to the program page.'),
                     'successLink': ugettext('Visit the program page now.')
                 },
+                'excel': ugettext('Excel'),
                 'periodSelect': {
                     'tva': ugettext('Target periods'),
                     'timeperiods': ugettext('Time periods')
