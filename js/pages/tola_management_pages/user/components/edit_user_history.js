@@ -2,7 +2,6 @@ import React from 'react'
 import { observer } from "mobx-react"
 import Select from 'react-select'
 import {AutoSizer, Table, Column, CellMeasurer, CellMeasurerCache} from 'react-virtualized'
-import Expander from 'components/expander'
 
 const status_options = [
     {value: true, label: gettext('Active')},
@@ -26,88 +25,82 @@ const ChangeLogEntryHeader = ({data}) => {
 }
 
 const ChangeLogEntryRow = ({data}) => {
-    return <tr className="changelog__entry__row">
-        <td className="text-nowrap"></td>
-        <td></td>
-        <td></td>
-        <td>
-            <div className="changelog__change--prev">
-                {data.diff_list.map((changeset, id)  =>
-                    <ChangeField key={id} name={changeset.name} data={changeset.prev} />
-                )}
-            </div>
-        </td>
-        <td>
-            <div className="changelog__change--new">
-                {data.diff_list.map((changeset, id) =>
-                    <ChangeField key={id} name={changeset.name} data={changeset.new} />
-                )}
-            </div>
-        </td>
-    </tr>
-}
-
-const ProgramChangelogEntryRow = ({data}) => {
-    return <React.Fragment>
-        {Object.entries(data.diff_list.countries).length > 0 &&
-            Object.entries(data.diff_list.countries).map(([id, country]) =>
-                <tr key={id} className="changelog__entry__row">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <div className="changelog__change--prev">
-                            <ChangeField name="country" data={country.prev.country} />
-                            <ChangeField name="role" data={country.prev.role} />
-                        </div>
-                    </td>
-                    <td>
-                        <div className="changelog__change--new">
-                            <ChangeField name="country" data={country.new.country} />
-                            <ChangeField name="role" data={country.new.role} />
-                        </div>
-                    </td>
-                </tr>
-            )
-        }
-        {Object.entries(data.diff_list.programs).length > 0 &&
-            Object.entries(data.diff_list.programs).map(([id, program]) =>
-                <tr key={id} className="changelog__entry__row">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <div className="changelog__change--prev">
-                            <ChangeField name="program" data={program.prev.program} />
-                            <ChangeField name="country" data={program.prev.country} />
-                            <ChangeField name="role" data={program.prev.role} />
-                        </div>
-                    </td>
-                    <td>
-                        <div className="changelog__change--new">
-                            <ChangeField name="program" data={program.new.program} />
-                            <ChangeField name="country" data={program.new.country} />
-                            <ChangeField name="role" data={program.new.role} />
-                        </div>
-                    </td>
-                </tr>
-            )
-        }
-    </React.Fragment>
+    if (data.change_type == 'user_programs_updated') {
+        // Create multiple row for program/country changes:
+        return <React.Fragment>
+            {Object.entries(data.diff_list.countries).length > 0 &&
+                Object.entries(data.diff_list.countries).map(([id, country]) =>
+                    <tr key={id} className="changelog__entry__row">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <div className="changelog__change--prev">
+                                <ChangeField name="country" data={country.prev.country} />
+                                <ChangeField name="role" data={country.prev.role} />
+                            </div>
+                        </td>
+                        <td>
+                            <div className="changelog__change--new">
+                                <ChangeField name="country" data={country.new.country} />
+                                <ChangeField name="role" data={country.new.role} />
+                            </div>
+                        </td>
+                    </tr>
+                )
+            }
+            {Object.entries(data.diff_list.programs).length > 0 &&
+                Object.entries(data.diff_list.programs).map(([id, program]) =>
+                    <tr key={id} className="changelog__entry__row">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <div className="changelog__change--prev">
+                                <ChangeField name="program" data={program.prev.program} />
+                                <ChangeField name="country" data={program.prev.country} />
+                                <ChangeField name="role" data={program.prev.role} />
+                            </div>
+                        </td>
+                        <td>
+                            <div className="changelog__change--new">
+                                <ChangeField name="program" data={program.new.program} />
+                                <ChangeField name="country" data={program.new.country} />
+                                <ChangeField name="role" data={program.new.role} />
+                            </div>
+                        </td>
+                    </tr>
+                )
+            }
+        </React.Fragment>
+    } else {
+        return <tr className="changelog__entry__row">
+            <td className="text-nowrap"></td>
+            <td></td>
+            <td></td>
+            <td>
+                <div className="changelog__change--prev">
+                    {data.diff_list.map((changeset, id)  =>
+                        <ChangeField key={id} name={changeset.name} data={changeset.prev} />
+                    )}
+                </div>
+            </td>
+            <td>
+                <div className="changelog__change--new">
+                    {data.diff_list.map((changeset, id) =>
+                        <ChangeField key={id} name={changeset.name} data={changeset.new} />
+                    )}
+                </div>
+            </td>
+        </tr>
+    }
 }
 
 const ChangeLogEntry = ({data}) => {
-    if(data.change_type == 'user_programs_updated'){
-        return <tbody className="changelog__entry" key={data.id}>
-            <ChangeLogEntryHeader data={data} />
-            <ProgramChangelogEntryRow data={data} />
-        </tbody>
-    } else {
-        return <tbody className="changelog__entry" key={data.id}>
-            <ChangeLogEntryHeader data={data} />
-            <ChangeLogEntryRow data={data} />
-        </tbody>
-    }
+    return <tbody className="changelog__entry" key={data.id}>
+        <ChangeLogEntryHeader data={data} />
+        <ChangeLogEntryRow data={data} />
+    </tbody>
 }
 
 export class EditUserHistory extends React.Component {
