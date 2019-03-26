@@ -32,6 +32,10 @@ class IPTTIndicatorQueryset(models.QuerySet, IndicatorSortingQSMixin):
 class TVAIPTTQueryset(IPTTIndicatorQueryset):
     def with_frequency_annotations(self, frequency, start, end):
         qs = self
+        if frequency == 'all':
+            for freq in Indicator.TIME_AWARE_TARGET_FREQUENCIES + tuple([Indicator.MID_END,]):
+                qs = qs.with_frequency_annotations(freq, start, end)
+            return qs
         if frequency == Indicator.LOP:
             return qs
         elif frequency in Indicator.TIME_AWARE_TARGET_FREQUENCIES:
