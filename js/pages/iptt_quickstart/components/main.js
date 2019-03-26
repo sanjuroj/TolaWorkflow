@@ -2,7 +2,7 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 import { QSTVAProgramSelect, QSTVAPeriodSelect, QSTimeperiodsProgramSelect } from './selects';
 import { QSTVATimeFrameRadio } from './radios';
-import { IPTTSubmit } from './buttons';
+import { IPTTSubmit, ExcelButton } from './buttons';
 
 const QuickstartCard = ({ children }) => {
     return <div className="col-sm-6">
@@ -23,6 +23,7 @@ const TVAQuickstartForm = inject('labels')(
                     <QSTVAPeriodSelect />
                     <QSTVATimeFrameRadio />
                     <IPTTSubmit url={'tvaURL' } />
+                    <ExcelButton />
                 </QuickstartCard>;
     })
 );

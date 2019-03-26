@@ -51,6 +51,7 @@ class Indicator {
         this.types = data.indicatorTypes;
         this.sector = data.sector;
         this.frequency = data.frequency;
+        this.directionOfChange = data.directionOfChange;
         this.unitOfMeasure = data.unitOfMeasure;
         this.cumulative = data.cumulative;
         this.unitType = data.unitType;
@@ -328,6 +329,14 @@ export class RootStore {
     
     @computed get programPageUrl() {
         return this.selectedProgram ? '/program/' + this.selectedProgram.id + '/' : false;
+    }
+    
+    @computed get excelURL() {
+        let params = this.router.getState().params;
+        let url = '/indicators/iptt_excel/' + window.location.search;
+        url += '&programId=' + this.selectedProgram.id;
+        url += '&reportType=' + (this.isTVA ? 'tva' : 'timeperiods');
+        return url;
     }
     
     updateRoute = ({ previousRoute, route }) => {

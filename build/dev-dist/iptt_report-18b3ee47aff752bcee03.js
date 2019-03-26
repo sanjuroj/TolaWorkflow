@@ -239,7 +239,7 @@ function (_React$Component) {
       var lopActual = indicator.lopActual ? indicator.isPercent ? String(Math.round(indicator.lopActual * 10) / 10) + '%' : String(Math.round(indicator.lopActual)) : EMPTY_CELL;
       var lopMet = indicator.lopMet ? String(Math.round(indicator.lopMet * 1000) / 10) + '%' : EMPTY_CELL;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorTD, null, indicator.number), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorTD, null, resultsButton, "  ", indicator.name), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorTD, null, updateButton), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorTD, null, indicator.level), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorTD, null, indicator.unitOfMeasure), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorTD, {
-        align: "right"
+        align: "center"
       }, indicator.directionOfChange), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorTD, null, indicator.cumulative), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorTD, null, indicator.unitType), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorTD, {
         align: "right"
       }, baseline), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorTD, {
@@ -1094,6 +1094,7 @@ function () {
       this.types = data.indicatorTypes;
       this.sector = data.sector;
       this.frequency = data.frequency;
+      this.directionOfChange = data.directionOfChange;
       this.unitOfMeasure = data.unitOfMeasure;
       this.cumulative = data.cumulative;
       this.unitType = data.unitType;
@@ -1786,6 +1787,15 @@ function () {
       return this.selectedProgram ? '/program/' + this.selectedProgram.id + '/' : false;
     }
   }, {
+    key: "excelURL",
+    get: function get() {
+      var params = this.router.getState().params;
+      var url = '/indicators/iptt_excel/' + window.location.search;
+      url += '&programId=' + this.selectedProgram.id;
+      url += '&reportType=' + (this.isTVA ? 'tva' : 'timeperiods');
+      return url;
+    }
+  }, {
     key: "isTVA",
     get: function get() {
       return this.reportType === TVA;
@@ -2108,7 +2118,7 @@ function () {
   initializer: function initializer() {
     return false;
   }
-}), _applyDecoratedDescriptor(_class5.prototype, "pinData", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "pinData"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "programPageUrl"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "reportIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "reportIndicators"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "selectedProgramOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "selectedProgramOption"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "selectedFrequencyOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "selectedFrequencyOption"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "frequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "frequencyOptions"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "startPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "startPeriodLabel"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "endPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "endPeriodLabel"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "selectedPeriods", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "selectedPeriods"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "periodOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "periodOptions"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "timeframeEnabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "timeframeEnabled"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "showAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "showAll"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "mostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "mostRecent"), _class5.prototype)), _class5);
+}), _applyDecoratedDescriptor(_class5.prototype, "pinData", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "pinData"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "programPageUrl"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "excelURL", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "excelURL"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "reportIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "reportIndicators"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "selectedProgramOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "selectedProgramOption"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "selectedFrequencyOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "selectedFrequencyOption"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "frequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "frequencyOptions"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "startPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "startPeriodLabel"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "endPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "endPeriodLabel"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "selectedPeriods", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "selectedPeriods"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "periodOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "periodOptions"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "timeframeEnabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "timeframeEnabled"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "showAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "showAll"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "mostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "mostRecent"), _class5.prototype)), _class5);
 
 /***/ }),
 
@@ -2550,10 +2560,12 @@ function (_React$Component2) {
 
   return PinButton;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class3);
-var ExcelButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labels')(function (_ref) {
-  var labels = _ref.labels;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+var ExcelButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labels', 'rootStore')(function (_ref) {
+  var labels = _ref.labels,
+      rootStore = _ref.rootStore;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
     type: "button",
+    href: rootStore.excelURL,
     className: "btn btn-sm btn-secondary"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
     className: "fas fa-download"
@@ -2563,4 +2575,4 @@ var ExcelButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('lab
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-122f8d214333c5a7aeb8.js.map
+//# sourceMappingURL=iptt_report-18b3ee47aff752bcee03.js.map

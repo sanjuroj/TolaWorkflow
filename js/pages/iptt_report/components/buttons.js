@@ -113,10 +113,12 @@ export class PinButton extends React.Component {
     }
 }
 
-export const ExcelButton = inject('labels')(({ labels }) => {
-        return <button type="button" className="btn btn-sm btn-secondary">
+export const ExcelButton = inject('labels', 'rootStore')(({ labels, rootStore }) => {
+        return <a type="button"
+                  href={ rootStore.excelURL }
+                  className="btn btn-sm btn-secondary">
                     <i className="fas fa-download"></i> { labels.excel }
-                </button>;
+                </a>;
             
     }
 );

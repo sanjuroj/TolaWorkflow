@@ -71,7 +71,7 @@ class IndicatorRow extends React.Component {
                     <IndicatorTD>{ updateButton }</IndicatorTD>
                     <IndicatorTD>{ indicator.level }</IndicatorTD>
                     <IndicatorTD>{ indicator.unitOfMeasure }</IndicatorTD>
-                    <IndicatorTD align="right">{ indicator.directionOfChange }</IndicatorTD>
+                    <IndicatorTD align="center">{ indicator.directionOfChange }</IndicatorTD>
                     <IndicatorTD>{ indicator.cumulative }</IndicatorTD>
                     <IndicatorTD>{ indicator.unitType }</IndicatorTD>
                     <IndicatorTD align="right">{ baseline }</IndicatorTD>

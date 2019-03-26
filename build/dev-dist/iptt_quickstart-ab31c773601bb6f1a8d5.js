@@ -34,12 +34,13 @@ react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_
 /*!********************************************************!*\
   !*** ./js/pages/iptt_quickstart/components/buttons.js ***!
   \********************************************************/
-/*! exports provided: IPTTSubmit */
+/*! exports provided: IPTTSubmit, ExcelButton */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IPTTSubmit", function() { return IPTTSubmit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExcelButton", function() { return ExcelButton; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
@@ -65,6 +66,17 @@ var IPTTSubmit = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labe
     disabled: !rootStore[url],
     style: inlineCSS
   }, labels.submitButton));
+}));
+var ExcelButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labels', 'rootStore')(Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref2) {
+  var labels = _ref2.labels,
+      rootStore = _ref2.rootStore;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    type: "button",
+    href: rootStore.excelURL || '#',
+    className: "btn btn-sm btn-secondary" + (rootStore.excelURL === false ? " disabled" : "")
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-download"
+  }), " ", labels.excel);
 }));
 
 /***/ }),
@@ -655,6 +667,15 @@ function () {
       return url;
     }
   }, {
+    key: "excelURL",
+    get: function get() {
+      if (this.tvaSelectedProgram == null) {
+        return false;
+      }
+
+      return '/indicators/iptt_excel/?programId=' + this.tvaSelectedProgram.id + '&frequency=all&reportType=tva';
+    }
+  }, {
     key: "timeperiodsURL",
     get: function get() {
       if (this.reportType == TVA || this.timeperiodsSelectedProgram == null) {
@@ -716,7 +737,7 @@ function () {
   initializer: function initializer() {
     return 2;
   }
-}), _applyDecoratedDescriptor(_class.prototype, "selectedTVAProgramOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTVAProgramOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedTimeperiodsProgramOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTimeperiodsProgramOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaSelectedFrequencyOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaSelectedFrequencyOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaFrequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaFrequencyOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaRadioDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaRadioDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaMostRecentCountDisplay", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaMostRecentCountDisplay"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaURL", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaURL"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "timeperiodsURL", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "timeperiodsURL"), _class.prototype)), _class);
+}), _applyDecoratedDescriptor(_class.prototype, "selectedTVAProgramOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTVAProgramOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedTimeperiodsProgramOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTimeperiodsProgramOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaSelectedFrequencyOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaSelectedFrequencyOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaFrequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaFrequencyOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaRadioDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaRadioDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaMostRecentCountDisplay", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaMostRecentCountDisplay"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaURL", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaURL"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "excelURL", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "excelURL"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "timeperiodsURL", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "timeperiodsURL"), _class.prototype)), _class);
 
 /***/ }),
 
@@ -761,7 +782,7 @@ var TVAQuickstartForm = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"]
     className: "card-subtitle text-muted mb-2"
   }, labels.tvaFilterSubtitle), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_selects__WEBPACK_IMPORTED_MODULE_2__["QSTVAProgramSelect"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_selects__WEBPACK_IMPORTED_MODULE_2__["QSTVAPeriodSelect"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_radios__WEBPACK_IMPORTED_MODULE_3__["QSTVATimeFrameRadio"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_4__["IPTTSubmit"], {
     url: 'tvaURL'
-  }));
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_4__["ExcelButton"], null));
 }));
 var TimeperiodsQuickstartForm = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('labels')(Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref3) {
   var labels = _ref3.labels;
@@ -782,4 +803,4 @@ var IPTTQuickstartForm = function IPTTQuickstartForm() {
 /***/ })
 
 },[["+aul","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_quickstart-7103b30b933b288c1185.js.map
+//# sourceMappingURL=iptt_quickstart-ab31c773601bb6f1a8d5.js.map
