@@ -22,10 +22,10 @@ const rootStore = new RFPageStore(levels, levelTiers, tierPresets);
 
 ReactDOM.render(
     <Provider rootStore={rootStore}>
-        <div style={{display:"flex"}}>
+        <React.Fragment>
             <LevelTierPicker />
             <LevelListing />
-        </div>
+        </React.Fragment>
     </Provider>,
     document.querySelector('#level-builder-react-component'));
 
