@@ -25,8 +25,6 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "tola_activity",
-        "USER": "mercy_corps",
-        "PASSWORD": "mercy_corps",
         "HOST": "localhost",
         "PORT": "",
     },

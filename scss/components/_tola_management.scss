@@ -106,16 +106,6 @@
 }
 .changelog-entry__expand-trigger {}
 
-// changesets inside change log
-.changeset {}
-.changeset__row {
-    // collects a group of changes made at the same time
-    border-bottom: 1px solid $gray-200;
-    padding: 5px;
-}
-.changeset__change {
-}
-
 // NEW SELECTORS
 .changelog { // <table>
 }
@@ -125,7 +115,16 @@
     background-color: $gray-200;
 }
 .changelog__entry__row { // each DB row change; <tr>
-
+}
+.changelog__change {
+    // inside a row
+    // collects a group of changes made at the same time
+}
+.changelog__change--prev {
+    // previous values
+}
+.changelog__change--new {
+    // new values
 }
 
 /* Safari */
