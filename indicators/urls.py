@@ -25,7 +25,7 @@ from indicators.views.views_indicators import (
 
 from indicators.views.views_reports import (
     IPTTReport,
-    IPTT_ExcelExport,
+    IPTTExcelExport,
     create_pinned_report,
     delete_pinned_report,
     IPTTQuickstart,
@@ -95,8 +95,9 @@ urlpatterns = [
     url(r'^iptt_quickstart/', IPTTQuickstart.as_view(), name='iptt_quickstart'),
     url(r'^iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTTReport.as_view(), name='iptt_report'),
     url(r'^iptt_report_data/$', IPTTReportData.as_view(), name='iptt_ajax'),
+    url(r'^iptt_excel/$', IPTTExcelExport.as_view(), name='iptt_excel'),
 
-    url(r'^iptt_excel/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ExcelExport.as_view(), name='iptt_excel'),
+    #url(r'^iptt_excel/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ExcelExport.as_view(), name='iptt_excel'),
 
     url(r'^pinned_report/$', create_pinned_report, name='create_pinned_report'),
     url(r'^pinned_report/delete/$', delete_pinned_report, name='delete_pinned_report'),

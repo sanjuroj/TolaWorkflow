@@ -35,7 +35,6 @@ from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
     Program, Sector, TolaSites, FormGuidance
 )
-from indicators.views.views_reports import IPTT_Mixin
 from ..export import IndicatorResource, ResultResource
 from ..forms import IndicatorForm, ResultForm
 from ..models import (
@@ -421,9 +420,11 @@ class IndicatorUpdate(UpdateView):
                 latest_pt_end_date = program.reporting_period_start
             else:
                 latest_pt_end_date += timedelta(days=1)
-
-            target_frequency_num_periods = IPTT_Mixin._get_num_periods(
-                latest_pt_end_date, program.reporting_period_end, getIndicator.target_frequency)
+            target_frequency_num_periods = len(
+                [p for p in PeriodicTarget.generate_for_frequency(
+                    getIndicator.target_frequency)(latest_pt_end_date, program.reporting_period_end)])
+            # target_frequency_num_periods = IPTT_Mixin._get_num_periods(
+            #     latest_pt_end_date, program.reporting_period_end, getIndicator.target_frequency)
 
             num_existing_targets = pts.count()
             event_name = ''
