@@ -117,8 +117,8 @@ export class EditUserHistory extends React.Component {
                         <th className="text-nowrap">{gettext("Date")}</th>
                         <th className="text-nowrap">{gettext("Admin")}</th>
                         <th className="text-nowrap">{gettext("Change Type")}</th>
-                        <th className="text-nowrap">{gettext("Previous Entry")}</th>
-                        <th className="text-nowrap">{gettext("New Entry")}</th>
+                        <th className="text-nowrap td--half-stretch">{gettext("Previous Entry")}</th>
+                        <th className="text-nowrap td--half-stretch">{gettext("New Entry")}</th>
                     </tr>
                 </thead>
                 {history.map(entry => {
