@@ -10,7 +10,7 @@ const status_options = [
 ]
 
 const ChangesetEntry = ({name, type, data}) => {
-    return <div className="changeset__change">
+    return <div className="changeset__field">
             <strong>{name}</strong>: {(data != undefined && data != null)?data.toString():'N/A'}
         </div>
 }
@@ -24,12 +24,16 @@ const ProgramChangesetEntry = ({data}) => {
                     <td></td>
                     <td></td>
                     <td>
-                        <div className="changeset__change"><strong>{gettext("Country")}</strong>: {country.prev.country}</div>
-                        <div className="changeset__change"><strong>{gettext("Role")}</strong>: {country.prev.role}</div>
+                        <div className="changeset__change">
+                            <div className="changeset__field"><strong>{gettext("Country")}</strong>: {country.prev.country}</div>
+                            <div className="changeset__field"><strong>{gettext("Role")}</strong>: {country.prev.role}</div>
+                        </div>
                     </td>
                     <td>
-                        <div className="changeset__change"><strong>{gettext("Country")}</strong>: {country.new.country}</div>
-                        <div className="changeset__change"><strong>{gettext("Role")}</strong>: {country.new.role}</div>
+                        <div className="changeset__change">
+                            <div className="changeset__field"><strong>{gettext("Country")}</strong>: {country.new.country}</div>
+                            <div className="changeset__field"><strong>{gettext("Role")}</strong>: {country.new.role}</div>
+                        </div>
                     </td>
                 </tr>
             )
@@ -41,14 +45,18 @@ const ProgramChangesetEntry = ({data}) => {
                     <td></td>
                     <td></td>
                     <td>
-                        <div className="changeset__change"><strong>{gettext("Program")}</strong>: {program.prev.program}</div>
-                        <div className="changeset__change"><strong>{gettext("Country")}</strong>: {program.prev.country}</div>
-                        <div className="changeset__change"><strong>{gettext("Role")}</strong>: {program.prev.role}</div>
+                        <div className="changeset__change">
+                            <div className="changeset__field"><strong>{gettext("Program")}</strong>: {program.prev.program}</div>
+                            <div className="changeset__field"><strong>{gettext("Country")}</strong>: {program.prev.country}</div>
+                            <div className="changeset__field"><strong>{gettext("Role")}</strong>: {program.prev.role}</div>
+                        </div>
                     </td>
                     <td>
-                        <div className="changeset__change"><strong>{gettext("Program")}</strong>: {program.new.program}</div>
-                        <div className="changeset__change"><strong>{gettext("Country")}</strong>: {program.new.country}</div>
-                        <div className="changeset__change"><strong>{gettext("Role")}</strong>: {program.new.role}</div>
+                        <div className="changeset__change">
+                            <div className="changeset__field"><strong>{gettext("Program")}</strong>: {program.new.program}</div>
+                            <div className="changeset__field"><strong>{gettext("Country")}</strong>: {program.new.country}</div>
+                            <div className="changeset__field"><strong>{gettext("Role")}</strong>: {program.new.role}</div>
+                        </div>
                     </td>
                 </tr>
             )
@@ -119,7 +127,9 @@ export class EditUserHistory extends React.Component {
                             <tr className="changelog__entry__header">
                                 <td className="text-nowrap"><strong>{entry.date}</strong></td>
                                 <td className="text-nowrap">{entry.admin_user}</td>
-                                <td colspan="3"><i class="fas fa-cube"></i>&nbsp;{entry.change_type}</td>
+                                <td>{entry.change_type}</td>
+                                <td></td>
+                                <td></td>
                             </tr>
                             <ProgramChangesetEntry data={entry.diff_list} />
                         </tbody>
@@ -128,21 +138,27 @@ export class EditUserHistory extends React.Component {
                             <tr className="changelog__entry__header">
                                 <td className="text-nowrap"><strong>{entry.date}</strong></td>
                                 <td className="text-nowrap">{entry.admin_user}</td>
-                                <td colspan="3"><i class="fas fa-user"></i>&nbsp;{gettext("User profile")}</td>
+                                <td>{entry.change_type}</td>
+                                <td></td>
+                                <td></td>
                             </tr>
                             <tr className="changelog__entry__row">
                                 <td className="text-nowrap"></td>
                                 <td></td>
                                 <td></td>
                                 <td>
-                                    {entry.diff_list.map(changeset => {
-                                        return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.prev} />
-                                    })}
+                                    <div className="changeset__change">
+                                        {entry.diff_list.map(changeset => {
+                                            return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.prev} />
+                                        })}
+                                    </div>
                                 </td>
                                 <td>
-                                    {entry.diff_list.map(changeset => {
-                                        return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.new} />
-                                    })}
+                                    <div className="changeset__change">
+                                        {entry.diff_list.map(changeset => {
+                                            return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.new} />
+                                        })}
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
