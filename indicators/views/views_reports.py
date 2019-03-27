@@ -466,11 +466,11 @@ class IPTT_Mixin(object):
                 else:
                     ind['lop_target'] = formatFloat(lop_target)
             except (ValueError, TypeError):
-                lop_target = u'—'
+                lop_target = u'N/A'
                 ind['lop_target'] = lop_target
 
             # process lop_actual
-            lop_actual = u'—'
+            lop_actual = u'N/A'
             percent = u''
             if ind['unit_of_measure_type'] == Indicator.NUMBER:
                 if ind['actualsum'] is not None:
@@ -482,7 +482,7 @@ class IPTT_Mixin(object):
             try:
                 ind['lop_actual'] = u"{}{}".format(formatFloat(lop_actual), percent)
             except TypeError:
-                ind['lop_actual'] = u'—'
+                ind['lop_actual'] = u'N/A'
 
             # process lop_percent_met
             try:
@@ -528,7 +528,7 @@ class IPTT_Mixin(object):
                     if actual_val is not None and actual_val != '':
                         ind[actual] = u"{}{}".format(formatFloat(actual_val), percent_sign)
                     else:
-                        ind[actual] = u'—'
+                        ind[actual] = u'N/A'
 
                     if reporttype == self.REPORT_TYPE_TARGETPERIODS:
                         # process target_period target value
@@ -719,7 +719,7 @@ def set_cell_value(cell, value, percent=False):
     else:
         # more catches?
         value = str(value)
-    if percent and len(value) > 1 and value[-1] != '%' and value not in ['N/A', '—']:
+    if percent and len(value) > 1 and value[-1] != '%' and value not in ['N/A', 'N/A']:
         value = value + '%'
     cell.value = value
 

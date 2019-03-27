@@ -44,7 +44,7 @@ const result_changeset_name_map = {
 
 const ResultChangeset = ({data, name}) => {
     if(name == 'evidence_url') {
-        return <div className="change__field"><strong>{result_changeset_name_map[name]}</strong>: {(data != '—')?<a href={data}>Link</a>:data}</div>
+        return <div className="change__field"><strong>{result_changeset_name_map[name]}</strong>: {(data != 'N/A')?<a href={data}>Link</a>:data}</div>
     } else {
         return <div className="change__field"><strong>{result_changeset_name_map[name]}</strong>: {data}</div>
     }
@@ -73,7 +73,7 @@ const indicator_changeset_name_map = {
 
 const IndicatorChangeset = ({data, name}) => {
     const mapped_data = (() => {
-        if (data == '—') return data
+        if (data == 'N/A') return data
 
         switch(name) {
             case 'unit_of_measure_type':
@@ -96,7 +96,7 @@ const IndicatorChangeset = ({data, name}) => {
         </div>
     } else {
         return <div className="change__field">
-            <strong>{indicator_changeset_name_map[name]}:</strong> {(mapped_data !== null && mapped_data !== undefined)?mapped_data.toString():'—'}
+            <strong>{indicator_changeset_name_map[name]}:</strong> {(mapped_data !== null && mapped_data !== undefined)?mapped_data.toString():'N/A'}
         </div>
     }
 }

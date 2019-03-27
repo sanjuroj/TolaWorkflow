@@ -2,7 +2,7 @@ import React from 'react'
 
 const ChangeField = ({name, data}) => {
     return <div className="change__field">
-        <strong>{name}</strong>: {(data != undefined && data != null)?data.toString():'—'}
+        <strong>{name}</strong>: {(data != undefined && data != null)?data.toString():'N/A'}
     </div>
 }
 

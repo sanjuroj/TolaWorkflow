@@ -27,13 +27,13 @@ def diff(previous, new):
             diff_list.append({
                 "name": p_field,
                 "prev": p[p_field],
-                "new": '—'
+                "new": 'N/A'
             })
 
         if n_field and n_field not in p:
             diff_list.append({
                 "name": n_field,
-                "prev": '—',
+                "prev": 'N/A',
                 "new": n[n_field]
             })
 
@@ -90,13 +90,13 @@ class UserManagementAuditLog(models.Model, DiffableLog):
                         diff_list.append({
                             "name": p_field,
                             "prev": p[p_field],
-                            "new": {k: '—' for k, _ in p[p_field].iteritems()},
+                            "new": {k: 'N/A' for k, _ in p[p_field].iteritems()},
                         })
 
                     if n_field and n_field not in p:
                         diff_list.append({
                             "name": n_field,
-                            "prev": {k: '—' for k, _ in n[n_field].iteritems()},
+                            "prev": {k: 'N/A' for k, _ in n[n_field].iteritems()},
                             "new": n[n_field]
                         })
 
@@ -176,15 +176,15 @@ class ProgramAuditLog(models.Model, DiffableLog):
 
         for diff in diff_list:
             if diff["name"] == 'targets':
-                if diff["prev"] == '—':
+                if diff["prev"] == 'N/A':
                     diff["prev"] = {
-                        n["id"]: {"name": n.get("name"), "value": '—', "id": n["id"]} for k, n in diff["new"].iteritems()
+                        n["id"]: {"name": n.get("name"), "value": 'N/A', "id": n["id"]} for k, n in diff["new"].iteritems()
                     }
                     continue
 
-                if diff["new"] == '—':
+                if diff["new"] == 'N/A':
                     diff["new"] = {
-                        p["id"]: {"name": p.get("name"), "value": '—', "id": p["id"]} for k, p in diff["prev"].iteritems()
+                        p["id"]: {"name": p.get("name"), "value": 'N/A', "id": p["id"]} for k, p in diff["prev"].iteritems()
                     }
                     continue
 
@@ -194,7 +194,7 @@ class ProgramAuditLog(models.Model, DiffableLog):
                     if prev_id and prev_id not in diff["new"]:
                         new[prev_id] = {
                             "name": diff["prev"][prev_id].get('name'),
-                            "value": '—',
+                            "value": 'N/A',
                             "id": diff["prev"][prev_id].get('id')
                         }
 
@@ -207,7 +207,7 @@ class ProgramAuditLog(models.Model, DiffableLog):
                     if new_id and new_id not in diff["prev"]:
                         prev[new_id] = {
                             "name": diff["new"][new_id].get('name'),
-                            "value": '—',
+                            "value": 'N/A',
                             "id": diff["new"][new_id].get('id')
                         }
 
@@ -299,7 +299,7 @@ class ProgramAuditLog(models.Model, DiffableLog):
             organization=user.tola_user.organization,
             indicator=indicator,
             change_type="result_created",
-            rationale='—',
+            rationale='N/A',
             previous_entry=None,
             new_entry=json.dumps(created_result.logged_fields, cls=DjangoJSONEncoder)
         )

@@ -354,8 +354,8 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
 
             ws.append([
                 row.date,
-                row.indicator.number if row.indicator else '—',
-                row.indicator.name if row.indicator else '—',
+                row.indicator.number if row.indicator else 'N/A',
+                row.indicator.name if row.indicator else 'N/A',
                 row.user.name,
                 row.organization.name,
                 row.change_type,
