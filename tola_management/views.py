@@ -885,12 +885,14 @@ class OrganizationAdminSerializer(Serializer):
             'is_active',
         )
 
-class SectorSerializer(ModelSerializer):
-    id = IntegerField(required=False)
+class SectorSerializer(Serializer):
+    def to_representation(self, sector):
+        return sector.id
 
-    class Meta:
-        model = Sector
-        fields = "__all__"
+    def to_internal_value(self, data):
+        sector = Sector.objects.get(pk=data)
+        return sector
+
 
 class OrganizationSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
@@ -901,12 +903,17 @@ class OrganizationSerializer(ModelSerializer):
     primary_contact_name = CharField(required=True)
     primary_contact_email = CharField(required=True)
     primary_contact_phone = CharField(required=True)
-    sectors = SectorSerializer(many=True, default={})
+    sectors = SectorSerializer(many=True)
 
     def update(self, instance, validated_data):
-        sectors = validated_data.pop('sectors')
+        incoming_sectors = validated_data.pop('sectors')
+        original_sectors = instance.sectors.all()
+        added_sectors = [x for x in incoming_sectors if x not in original_sectors]
+        removed_sectors = [x for x in original_sectors if x not in incoming_sectors]
+
         old = instance.logged_fields
-        instance.sectors.add(*[sector["id"] for sector in sectors])
+        instance.sectors.add(*added_sectors)
+        instance.sectors.remove(*removed_sectors)
         updated_org = super(OrganizationSerializer, self).update(instance, validated_data)
 
         OrganizationAdminAuditLog.updated(
@@ -921,7 +928,7 @@ class OrganizationSerializer(ModelSerializer):
     def create(self, validated_data):
         sectors = validated_data.pop('sectors')
         org = Organization.objects.create(**validated_data)
-        org.sectors.add(*[sector["id"] for sector in sectors])
+        org.sectors.add(*sectors)
 
         OrganizationAdminAuditLog.created(
             organization=org,
