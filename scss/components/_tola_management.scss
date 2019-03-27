@@ -112,7 +112,9 @@
 .changelog__entry { // each timestamped batch of DB updates; <tbody>
 }
 .changelog__entry__header { // title row for changelog__entry; <tr>
-    background-color: $gray-200;
+    &.is-expanded {
+        background-color: $gray-200;
+    }
 }
 .changelog__entry__row { // each DB row change; <tr>
 }

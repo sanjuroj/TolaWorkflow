@@ -7,7 +7,7 @@ const ChangeField = ({name, data}) => {
 }
 
 const ChangeLogEntryHeader = ({data}) => {
-    return <tr className="changelog__entry__header">
+    return <tr className="changelog__entry__header is-expanded"> {/* TODO: apply is-expanded dynamically */}
         <td className="text-nowrap"><strong>{data.date}</strong></td>
         <td className="text-nowrap">{data.admin_user}</td>
         <td>{data.change_type}</td>
@@ -96,7 +96,7 @@ const ChangeLogEntry = ({data}) => {
 }
 
 const ChangeLog = ({data}) => {
-    return <table className="table table-sm text-small changelog">
+    return <table className="table table-sm bg-white table-bordered text-small changelog">
         <thead>
             <tr>
                 <th className="text-nowrap">{gettext("Date")}</th>

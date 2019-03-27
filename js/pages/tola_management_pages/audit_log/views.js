@@ -44,9 +44,9 @@ const result_changeset_name_map = {
 
 const ResultChangeset = ({data, name}) => {
     if(name == 'evidence_url') {
-        return <p>{result_changeset_name_map[name]}: {(data != 'N/A')?<a href={data}>Link</a>:data}</p>
+        return <div className="change__field"><strong>{result_changeset_name_map[name]}</strong>: {(data != '—')?<a href={data}>Link</a>:data}</div>
     } else {
-        return <p>{result_changeset_name_map[name]}: {data}</p>
+        return <div className="change__field"><strong>{result_changeset_name_map[name]}</strong>: {data}</div>
     }
 }
 
@@ -56,7 +56,7 @@ const program_dates_changset_name_map = {
 }
 
 const ProgramDatesChangeset = ({data, name}) => {
-    return <p>{program_dates_changset_name_map[name]}: {data}</p>
+    return <div className="change__field"><strong>{program_dates_changset_name_map[name]}</strong>: {data}</div>
 }
 
 const indicator_changeset_name_map = {
@@ -141,7 +141,7 @@ export const IndexView = observer(
             </div>
             <div className="admin-list__table">
                 <LoadingSpinner isLoading={store.fetching}>
-                    <table className="table table-sm text-small changelog">
+                    <table className="table table-sm table-bordered bg-white text-small changelog">
                         <thead>
                             <tr>
                                 <th className="text-nowrap">{gettext("Date and Time")}</th>
