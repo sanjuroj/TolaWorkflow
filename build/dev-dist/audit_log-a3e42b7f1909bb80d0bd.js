@@ -231,16 +231,16 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     id: "audit-log-index-view",
     className: "container-fluid row"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "list-controls"
+    className: "admin-list__controls"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
     className: "btn btn-link btn-secondary btn-sm",
     href: "/api/tola_management/program/".concat(store.program_id, "/export_audit_log")
   }, gettext("Export to Excel"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "col col-sm-12 list-section"
+    className: "col col-sm-12 admin-list"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_8__["default"], {
     isLoading: store.fetching
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
-    className: "list-table"
+    className: "admin-list__table"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Date and Time")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("No.")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     width: "25%"
   }, gettext("Indicator")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("User")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Change Type")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("New Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Rationale")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, store.log_rows.map(function (data) {
@@ -268,7 +268,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
       className: "expand-section"
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_expander__WEBPACK_IMPORTED_MODULE_7__["default"], null, data.rationale)));
   })))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "list-metadata"
+    className: "admin-list__metadata"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "entries-count"
   }, store.entries_count ? "".concat(store.entries_count, " ").concat(gettext("entries")) : "--"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -1059,4 +1059,4 @@ function () {
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-16cfe7c5acefe2d9264c.js.map
+//# sourceMappingURL=audit_log-a3e42b7f1909bb80d0bd.js.map

@@ -22,7 +22,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_edit_objectives__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/edit_objectives */ "5G0W");
 /* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
 /* harmony import */ var components_folding_sidebar__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! components/folding-sidebar */ "tnXs");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -30,7 +29,6 @@ function _nonIterableRest() { throw new TypeError("Invalid attempt to destructur
 function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 
 
 
@@ -149,22 +147,26 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
       return store.clearFilters();
     }
   }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "col list-section"
+    className: "col admin-list"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "list-controls"
-  }, store.is_superuser && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    className: "admin-list__controls"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "controls__bulk-actions"
+  }), store.is_superuser && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "controls__buttons"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
     href: "#",
     tabIndex: "0",
     className: "btn btn-link btn-add",
     onClick: function onClick() {
       return store.addCountry();
     }
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
-    icon: 'plus-circle'
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-plus-circle"
   }), gettext("Add Country")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
     isLoading: store.fetching_main_listing || store.applying_bulk_updates
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "list-table"
+    className: "admin-list__table"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_management_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
     newData: store.new_country,
     data: store.countries,
@@ -176,7 +178,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         size: ".2"
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "2",
-        class: "td--stretch"
+        className: "td--stretch"
       }, gettext("Country")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, gettext("Organizations")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, gettext("Programs")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, gettext("Users")));
     },
     Row: function Row(_ref10) {
@@ -266,30 +268,30 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         onClick: function onClick() {
           return store.toggleEditingTarget(data.id);
         }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
-        icon: 'globe'
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-globe"
       }), "\xA0", data.country || "---")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         className: "text-nowrap"
       }, data.organizations.length ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "/tola_management/organization/?countries[]=".concat(data.id)
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
-        icon: 'building'
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-building"
       }), "\xA0", data.organizations.length, " ", gettext("Organizations")) : '---'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         className: "text-nowrap"
       }, data.programCount ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "/tola_management/program/?countries[]=".concat(data.id)
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
-        icon: 'cubes'
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-cubes"
       }), "\xA0", data.programCount, " ", gettext("Programs")) : "---"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         className: "text-nowrap"
       }, data.user_count ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "/tola_management/user/?countries[]=".concat(data.id)
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
-        icon: 'users'
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-users"
       }), "\xA0", data.user_count, " ", gettext("Users")) : '---'));
     }
   }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "list-metadata row"
+    className: "admin-list__metadata"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "users-count"
   }, store.country_count ? "".concat(store.country_count, " ").concat(gettext("countries")) : "---"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -1430,9 +1432,9 @@ function (_React$Component) {
         tabIndex: "0",
         onClick: deleteAction,
         className: "btn btn-link btn-danger"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__["FontAwesomeIcon"], {
-        icon: 'trash'
-      }), " ", gettext("Delete")))))));
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-trash"
+      }), gettext("Delete")))))));
     }
   }]);
 
@@ -1516,7 +1518,7 @@ function (_React$Component2) {
           new_objective = _this$state.new_objective;
       var objectives = this.props.objectives;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        class: "tab-pane--react"
+        className: "tab-pane--react"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, gettext("Strategic Objectives")), objectives.map(function (objective) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StrategicObjectiveForm, {
           key: objective.id,
@@ -1543,9 +1545,9 @@ function (_React$Component2) {
           return _this4.addObjective();
         },
         className: "btn btn-link btn-add"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__["FontAwesomeIcon"], {
-        icon: 'plus-circle'
-      }), " ", gettext("Add strategic objective"))));
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-plus-circle"
+      }), gettext("Add strategic objective"))));
     }
   }]);
 
@@ -2380,18 +2382,18 @@ function (_React$Component) {
             'disabled': label.in_use
           }),
           disabled: label.in_use
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__["FontAwesomeIcon"], {
-          icon: 'trash'
-        }), " ", gettext('Remove')));
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "fas fa-trash"
+        }), gettext('Remove')));
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         tabIndex: "0",
         onClick: function onClick() {
           return _this2.appendLabel();
         },
         className: "btn btn-link btn-add"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__["FontAwesomeIcon"], {
-        icon: 'plus-circle'
-      }), " ", gettext('Add another option'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-plus-circle"
+      }), gettext('Add another option'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "disaggregation-form-buttons"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-row btn-row"
@@ -2419,9 +2421,9 @@ function (_React$Component) {
         tabIndex: "0",
         onClick: deleteAction,
         className: "btn btn-link btn-danger"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__["FontAwesomeIcon"], {
-        icon: 'trash'
-      }), " ", gettext('Delete')))))));
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-trash"
+      }), gettext('Delete')))))));
     }
   }]);
 
@@ -2490,7 +2492,7 @@ function (_React$Component2) {
       var disaggregations = this.props.disaggregations;
       var expanded_id = this.state.expanded_id;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        class: "tab-pane--react"
+        className: "tab-pane--react"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Country Disaggregations"), disaggregations.map(function (disaggregation) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DisaggregationType, {
           key: disaggregation.id,
@@ -2519,9 +2521,9 @@ function (_React$Component2) {
         onClick: function onClick() {
           return _this4.addDisaggregation();
         }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__["FontAwesomeIcon"], {
-        icon: 'plus-circle'
-      }), " ", gettext("Add country disaggregation"))));
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-plus-circle"
+      }), gettext("Add country disaggregation"))));
     }
   }]);
 
@@ -2756,4 +2758,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-d107e699bd342b864641.js.map
+//# sourceMappingURL=tola_management_country-1d7509325c60fb79f034.js.map

@@ -4,40 +4,61 @@
     .edit-user-history table {
     }
 
-    .edit-user-programs {
-        .check-column {
-            text-align: center;
-        }
 
-        &__filter-form {
-            justify-content: space-around;
-        }
+}
 
-        &__select-all {
-            color: darkblue;
-            font-weight: bold;
-            cursor: pointer
-        }
+.edit-user-programs { // Program and Country access pane
+    .check-column {
+        text-align: center;
+    }
 
-        &__country-filter {
-            width: 40%;
-            display: inline-block;
-        }
+    &__filter-form {
+        display: flex;
+        justify-content: space-between;
+    }
 
-        &__program-filter {
-            width: 55%;
+    &__select-all {
+        color: $blue !important;
+        font-weight: bold;
+        cursor: pointer
+    }
 
-            .input-group {
-                flex-grow: 1;
-            }
-        }
-
-        .input-group-text {
-            height: 100%;
-            cursor: pointer;
+    &__country-filter {
+        flex-basis: 50%;
+        margin-right: $grid-gutter-width/4;
+        > div { // React multiselect
+            width: 100%; // ... hates being flexed
         }
     }
 
+    &__program-filter {
+        flex-basis: 50%;
+        margin-left: $grid-gutter-width/4;
+        .input-group {
+            flex-grow: 1;
+        }
+    }
+
+    .input-group-text {
+        height: 100%;
+        cursor: pointer;
+    }
+}
+
+// virtualized tables on Edit User screen
+.virtualized-table__wrapper {
+    height: 50vh;
+    margin-bottom: $grid-gutter-width/2;
+}
+.ReactVirtualized__Table__Grid {
+    background-color: $white;
+    border: 1px solid $gray-300;
+}
+.ReactVirtualized__Table__row {
+    border-bottom: 1px solid $gray-200;
+}
+.ReactVirtualized__Table__rowColumn {
+    padding-left: 10px;
 }
 
 #organization-management-index-view {
@@ -205,10 +226,6 @@ table.admin-list__table {
     th, td {
         vertical-align: top;
     }
-}
-
-.virtualized-table__wrapper {
-    height: 50vh;
 }
 
 .objective-form-buttons {
