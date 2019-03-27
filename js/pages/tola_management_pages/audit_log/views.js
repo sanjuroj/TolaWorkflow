@@ -40,6 +40,7 @@ const result_changeset_name_map = {
     'date': gettext('Date'),
     'target': gettext('Target'),
     'value': gettext('Value'),
+    'id': gettext('ID'),
 }
 
 const ResultChangeset = ({data, name}) => {
