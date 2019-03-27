@@ -19,12 +19,10 @@ export const fetchOrganization = (id) => api.get(`/tola_management/organization/
 
 export const updateOrganization = (id, new_data) => api.put(`/tola_management/organization/${id}/`, {
     ...new_data,
-    sectors: new_data.sectors.map(sector => ({id: sector}))
 }).then(response => response.data)
 
 export const createOrganization = (new_data) => api.post(`/tola_management/organization/`, {
     ...new_data,
-    sectors: new_data.sectors.map(sector => ({id: sector}))
 }).then(response => response.data)
 
 export const fetchOrganizationAggregates = id => api.get(`/tola_management/organization/${id}/aggregate_data/`).then(response => response.data)

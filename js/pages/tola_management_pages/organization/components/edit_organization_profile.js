@@ -7,9 +7,10 @@ export default class EditOrganizationProfile extends React.Component {
     constructor(props) {
         super(props)
         const o = props.organizationData
+        const {sectorSelections} = props
         const data = {
             ...o,
-            sectors: o.sectors.map(sector => ({value: sector.id, label: sector.sector}))
+            sectors: sectorSelections.filter(sectorOption => o.sectors.includes(sectorOption.value))
         }
 
         this.state = {
