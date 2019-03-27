@@ -31,7 +31,11 @@ export class RFPageStore {
         //     this.chosenLevelTierSet = tierPresets[this.defaultPreset];
         // }
         this.tierPresets = tierPresets;
+
+        this.addChildLevel = this.addChildLevel.bind(this);
     }
+
+
 
     @computed get tierList () {
         if (!this.chosenTierSet && !this.chosenTierSetName){
@@ -62,6 +66,11 @@ export class RFPageStore {
     @action
     changeTierSet(newTierSetName) {
         this.chosenTierSetName = newTierSetName;
+    }
+
+    @action
+    addChildLevel(level_id){
+        console.log('yay', level_id)
     }
 
     derive_preset_name(levelTiers, tierPresets) {
