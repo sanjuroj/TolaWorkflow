@@ -87,3 +87,73 @@ LOGFILE: '{{logfile}}'
 SECRET_KEY: '{{django_secret_key}}'
 
 WEBPACK_STATS_FILE: '{{webpack_stats_file}}'
+
+SOCIAL_AUTH_SAML_SP_ENTITY_ID: 'http://local.tolaactivity.com'
+SOCIAL_AUTH_SAML_SP_PUBLIC_CERT: |
+  MIIDYDCCAkigAwIBAgIJAOuwlUch1xsvMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV
+  BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX
+  aWRnaXRzIFB0eSBMdGQwHhcNMTkwMzE5MjI0NDE3WhcNMjkwMzE4MjI0NDE3WjBF
+  MQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50
+  ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+  CgKCAQEAqspdi4U3yVWueWr0CrJeQPJFiSQZLc+4krTnHWw95VneIZXTE05zYXYg
+  3M1rIftxnMej9vEOi5H4q9BWehQI1EbZH5fR6CKcEzDyxH08vwkfDnL6/EYnyIry
+  15hZhoWfNWcnAH2yO4WM6Frm9gICqoJfB1Hf8DScov0y9rqti4lB28QiDqk7S+ZT
+  epovZbzVJwcZsD5LxsE+mYirVaidwHkoBuXrLmhoNq0y2s6gmp9+TOYDkkMa/KcI
+  IiwTXiQuEjdAjS0G4KVxxNDOd5MRO7PBc1/yVoKkH1ODdUalcY7nYoZGeiaDfS/d
+  OyoUSMUwFKDKYTL61TKrXD9KJjnvewIDAQABo1MwUTAdBgNVHQ4EFgQU/fKLofde
+  S5gzNggSxlj0qt6mqO8wHwYDVR0jBBgwFoAU/fKLofdeS5gzNggSxlj0qt6mqO8w
+  DwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAUFoe7o90V+OIQHee
+  bWnPpDhJMCFTNPcbDOogl8rSrFkto3aDKbrkVHRu2ztfgYz85+FbrLhAPQ5qTjfp
+  J+IPLGnkowtRHfrKyoNueiTE2u/1ILvBZYgxIbvRzz7u2LLFzsc779VDik+qBYwq
+  3a53wAlqnRpYfi/RDH2AD5ZJ75hpxKwCQR1b4opwiuy8ow7K9eTSn5e9tGBlupDm
+  7nXCIN0ON2paI4+qF3nt3lSWSaNSg+uu/t2+aF22uB2mmg6Ktph/SY/bD+AH8fQw
+  N5F7m/Ys/g2DyDpqgbnFwBkJAdFBfzNhXiC08i9VSffAFx8TOxIHR7yeXvNI5QQ1
+  JdvNvg==
+
+SOCIAL_AUTH_SAML_SP_PRIVATE_KEY: |
+  MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCqyl2LhTfJVa55
+  avQKsl5A8kWJJBktz7iStOcdbD3lWd4hldMTTnNhdiDczWsh+3Gcx6P28Q6Lkfir
+  0FZ6FAjURtkfl9HoIpwTMPLEfTy/CR8Ocvr8RifIivLXmFmGhZ81ZycAfbI7hYzo
+  Wub2AgKqgl8HUd/wNJyi/TL2uq2LiUHbxCIOqTtL5lN6mi9lvNUnBxmwPkvGwT6Z
+  iKtVqJ3AeSgG5esuaGg2rTLazqCan35M5gOSQxr8pwgiLBNeJC4SN0CNLQbgpXHE
+  0M53kxE7s8FzX/JWgqQfU4N1RqVxjudihkZ6JoN9L907KhRIxTAUoMphMvrVMqtc
+  P0omOe97AgMBAAECggEBAJswMnv6WsyJHHabZpDprpdZDTImKPLlkpNL6c1kc4GZ
+  fSwLVbZvTIw8qHO5/CTuszeAeE6Ej3Dm/IwyTMG0vqkUj2oTq9pAyIzvp0g/fBki
+  EqQwejsNDE0/ZJXei0qe1CHUTy41COTo3zaqkr7q6L1CpVKjZNaBF+tKIyrqSZNF
+  cx8o9M/1NRL8HvvmwqUx4xbY6Y++DqJ5jvsdhhDd3GfJDiZsk4TuXYpNf+Vsll5L
+  +E1Q1yWz7cbjKEULY3QjemYe/sF/ajISRBhEiF3tFNuoSqkC2VHZ+3yG3nVH6v8C
+  PKIcsh0Pf71kZ1tc8nhFrzfuwdVR6UYsaPrrm7DZF5ECgYEA0iJwVuN+u/MGBB53
+  4xVN95Oiq0KVeeYk2sqB9/vUKqrXJaXZOZ+aJatrWDl7a1pmCTXj+7saHRGBguBF
+  7DXN3EnIIxSn/0mWhQFu6i9oCNEFR+3hOpUpaWGz6GEZUk+ab8UImXei51WeBzFV
+  db8Oc3V9zeRcXcmiN2Eq+B75lN8CgYEA0BGF/OCUcaQ0hGQhjDjSOH6YHG/Pf/JN
+  64FRIqpHrAm39bVJsgHNT+kkFDSuUemFyUYwFk7qHBOALfaBmW7lPRkrjuzqiWtY
+  Ut5cEXqJVsYoSYXZgC8/tJQEYGXoAgi3DfjqFbB1TL3F3eo9qNdrk64zPLaH4XUn
+  yW/208jcvOUCgYB5PrG/EKhxXbnc6o+WERbZgO/dDSAeI7KkIzB2m3FB5S0aZeU+
+  oF5a2duoHhKeUJyLN/MBrmVU3GLz1t/BeRH8xv2ZcDO20wjsWXVb3lqSq7f2VsUb
+  /jDUwzEBJfVsTs33K6LYmfT+saHq2IZM2B5IdERQZjD9VHgqqAAZBhZP1QKBgDBw
+  M+on+kbufE9p5Cl5vO7sAct0+DCIHz25UEMqsx7I8GuiNbLcGokE9KJDlWV6YOv3
+  jBBVdMjufUO2BHvMxk9QAcT3QK6XL+uy2mozRa/O1+gt4fGmjkUixFYQw09d6ge1
+  sAE2oEgqUdsUwiABbojl4AW9VKrXFFkf2K17MHBFAoGAQbtFb6bKvO9dXvTyrLKv
+  EseGEON7SqQsNv7U+vuOO+sHYKxBCh7gEw/SWeaqEHWDlJ/8xpYa5pc4X/8gNsWO
+  uDtyx/2jjndLL/aBM2cs4TivwqJFWB0doqGr77ZqoY6Sc39GWdvLy3n/1HxNS4WE
+  WcIUpuxOzNm37cQvnAW4bOo=
+
+SOCIAL_AUTH_SAML_ORG_INFO:
+  en-US:
+    name: "example"
+    displayname: "Example Inc."
+    url: "http://example.com"
+
+SOCIAL_AUTH_SAML_TECHNICAL_CONTACT:
+  givenName: "Tech Gal"
+  emailAddress: "technical@example.com"
+
+SOCIAL_AUTH_SAML_SUPPORT_CONTACT:
+  givenName: "Support Guy"
+  emailAddress: "support@example.com"
+
+SOCIAL_AUTH_SAML_ENABLED_IDPS:
+  okta:
+    entity_id: "https://idp.testshib.org/idp/shibboleth"
+    url: "https://idp.testshib.org/idp/profile/SAML2/Redirect/SSO"
+    x509cert: "MIIEDjCCAvagAwIBAgIBADA ... 8Bbnl+ev0peYzxFyF5sQA=="
