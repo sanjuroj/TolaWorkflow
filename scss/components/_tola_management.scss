@@ -126,6 +126,16 @@
 .changelog__change--new {
     // new values
 }
+.changelog__change--rationale {
+    // only on indicator report, ie. from IPTT
+}
+.changelog__change__targets {
+    // only on indicator report, ie. from IPTT
+    // group of targets inside the prev/new component
+    border-top: 1px solid $gray-200;
+    margin-top: $grid-gutter-width/4;
+    padding-top: $grid-gutter-width/4;
+}
 
 /* Safari */
 @-webkit-keyframes spin {

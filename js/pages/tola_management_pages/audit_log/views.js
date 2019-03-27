@@ -73,7 +73,7 @@ const indicator_changeset_name_map = {
 
 const IndicatorChangeset = ({data, name}) => {
     const mapped_data = (() => {
-        if (data == 'N/A') return data
+        if (data == '—') return data
 
         switch(name) {
             case 'unit_of_measure_type':
@@ -88,16 +88,16 @@ const IndicatorChangeset = ({data, name}) => {
         }
     })()
     if(name == 'targets') {
-        return <div>
-            <p>Targets</p>
+        return <div className="changelog__change__targets">
+            <h4>Targets</h4>
             {Object.entries(data).map(([id, target]) => {
-                return <p key={id}>{target.name}: {target.value}</p>
+                return <div className="change__field" key={id}><strong>{target.name}:</strong> {target.value}</div>
             })}
         </div>
     } else {
-        return <p>
-            {indicator_changeset_name_map[name]}: {(mapped_data !== null && mapped_data !== undefined)?mapped_data.toString():'N/A'}
-        </p>
+        return <div className="change__field">
+            <strong>{indicator_changeset_name_map[name]}:</strong> {(mapped_data !== null && mapped_data !== undefined)?mapped_data.toString():'—'}
+        </div>
     }
 }
 
@@ -128,50 +128,52 @@ class ChangesetEntry extends React.Component {
 
 export const IndexView = observer(
     ({store}) => {
-        return <div id="audit-log-index-view" className="container-fluid row">
+        return <div id="audit-log-index-view">
 
             <div className="admin-list__controls">
-                <a className="btn btn-link btn-secondary btn-sm" href={`/api/tola_management/program/${store.program_id}/export_audit_log`}>{gettext("Export to Excel")}</a>
+                <div className="controls__bulk-actions" />
+                <div className="controls__buttons">
+                    <a className="btn btn-secondary btn-sm" href={`/api/tola_management/program/${store.program_id}/export_audit_log`}>
+                        <i className="fas fa-download"></i>
+                        {gettext("Excel")}
+                    </a>
+                </div>
             </div>
-            <div className="col col-sm-12 admin-list">
+            <div className="admin-list__table">
                 <LoadingSpinner isLoading={store.fetching}>
-                    <table className="admin-list__table">
+                    <table className="table table-sm text-small changelog">
                         <thead>
                             <tr>
-                                <th>{gettext("Date and Time")}</th>
-                                <th>{gettext("No.")}</th>
-                                <th width="25%">{gettext("Indicator")}</th>
-                                <th>{gettext("User")}</th>
-                                <th>{gettext("Organization")}</th>
-                                <th>{gettext("Change Type")}</th>
-                                <th>{gettext("Previous Entry")}</th>
-                                <th>{gettext("New Entry")}</th>
-                                <th>{gettext("Rationale")}</th>
+                                <th className="text-nowrap">{gettext("Date and Time")}</th>
+                                <th className="text-nowrap">{gettext("No.")}</th>
+                                <th className="text-nowrap">{gettext("Indicator")}</th>
+                                <th className="text-nowrap">{gettext("User")}</th>
+                                <th className="text-nowrap">{gettext("Organization")}</th>
+                                <th className="text-nowrap">{gettext("Change Type")}</th>
+                                <th className="text-nowrap">{gettext("Previous Entry")}</th>
+                                <th className="text-nowrap">{gettext("New Entry")}</th>
+                                <th className="text-nowrap">{gettext("Rationale")}</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {store.log_rows.map(data => <tr key={data.id}>
+                        <tbody>{/* Note that this changelog is different than others. Only 1 tbody! */}
+                            {store.log_rows.map(data => <tr className="changelog__entry__row" key={data.id}>
                                 <td>{data.date}</td>
                                 <td>{(data.indicator)?data.indicator.number:'N/A'}</td>
                                 <td>{(data.indicator)?data.indicator.name:'N/A'}</td>
                                 <td>{data.user}</td>
                                 <td>{data.organization}</td>
-                                <td>{map_pretty_change_type(data.change_type)}</td>
-                                <td className="expand-section">
-                                    <Expander>
-                                        {data.diff_list.map(changeset => {
-                                             return <ChangesetEntry key={changeset.name} name={changeset.name} type={data.change_type} data={changeset.prev} />
-                                        })}
-                                    </Expander>
+                                <td>{map_pretty_change_type(data.change_type)}</td>{/* SWEET FANCY MOSES WHAT IS THIS */}
+                                <td className="changelog__change--prev">
+                                    {data.diff_list.map(changeset => {
+                                         return <ChangesetEntry key={changeset.name} name={changeset.name} type={data.change_type} data={changeset.prev} />
+                                    })}
                                 </td>
-                                <td className="expand-section">
-                                    <Expander>
-                                        {data.diff_list.map(changeset => {
-                                             return <ChangesetEntry key={changeset.name} name={changeset.name} type={data.change_type} data={changeset.new} />
-                                        })}
-                                    </Expander>
+                                <td className="changelog__change--new">
+                                    {data.diff_list.map(changeset => {
+                                         return <ChangesetEntry key={changeset.name} name={changeset.name} type={data.change_type} data={changeset.new} />
+                                    })}
                                 </td>
-                                <td className="expand-section"><Expander>{data.rationale}</Expander></td>
+                                <td className="changelog__change--rationale"><Expander>{data.rationale}</Expander></td>
                             </tr>)}
                         </tbody>
                     </table>
