@@ -315,7 +315,8 @@ class UserManagementAuditLogSerializer(ModelSerializer):
             'admin_user',
             'modified_user',
             'change_type',
-            'diff_list'
+            'diff_list',
+            'pretty_change_type',
         )
 
 
@@ -956,7 +957,8 @@ class OrganizationAdminAuditLogSerializer(ModelSerializer):
             'date',
             'admin_user',
             'change_type',
-            'diff_list'
+            'diff_list',
+            'pretty_change_type',
         )
 
 class OrganizationAdminViewSet(viewsets.ModelViewSet):

@@ -25,8 +25,11 @@ from rest_framework.serializers import (
     JSONField,
     DateTimeField
 )
+from django.utils.translation import ugettext as _
 
 from openpyxl import Workbook
+from openpyxl.cell import Cell
+from openpyxl.styles import Alignment, Font
 
 from feed.views import SmallResultsSetPagination
 
@@ -198,7 +201,8 @@ class ProgramAuditLogSerializer(ModelSerializer):
             'indicator',
             'change_type',
             'rationale',
-            'diff_list'
+            'diff_list',
+            'pretty_change_type',
         )
 
 class ProgramAdminAuditLogSerializer(ModelSerializer):
@@ -213,7 +217,8 @@ class ProgramAdminAuditLogSerializer(ModelSerializer):
             'date',
             'admin_user',
             'change_type',
-            'diff_list'
+            'diff_list',
+            'pretty_change_type',
         )
 
 class ProgramAdminViewSet(viewsets.ModelViewSet):
@@ -329,9 +334,35 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         program = Program.objects.get(pk=pk)
         workbook = Workbook()
         ws = workbook.active
-        header = ['Date and Time', 'No.', 'Indicator', 'User', 'Organization', 'Change Type', 'Previous Entry', 'New Entry', 'Rationale']
+
+        header = [
+            Cell(ws, value=_("Date and Time")),
+            Cell(ws, value=_('No.')),
+            Cell(ws, value=_('Indicator')),
+            Cell(ws, value=_('User')),
+            Cell(ws, value=_('Organization')),
+            Cell(ws, value=_('Change Type')),
+            Cell(ws, value=_('Previous Entry')),
+            Cell(ws, value=_('New Entry')),
+            Cell(ws, value=_('Rationale'))
+        ]
+
+        header_font = Font(bold=True)
+
+        for h in header:
+            h.font = header_font
 
         ws.append(header)
+
+        alignment = Alignment(
+            horizontal='general',
+            vertical='top',
+            text_rotation=0,
+            wrap_text=True,
+            shrink_to_fit=False,
+            indent=0
+        )
+
         for row in program.audit_logs.all().order_by('-date'):
             prev_string = ''
             for entry in row.diff_list:
@@ -340,7 +371,7 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
                         prev_string += target['name']+": "+str(target['value'])+"\n"
 
                 else:
-                    prev_string += entry['name']+": "+str(entry['prev'])+"\n"
+                    prev_string += entry['pretty_name']+": "+str(entry['prev'] if entry['prev'] else _('N/A'))+"\n"
 
             new_string = ''
             for entry in row.diff_list:
@@ -349,19 +380,29 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
                         new_string += target['name']+": "+str(target['value'])+"\n"
 
                 else:
-                    new_string += entry['name']+": "+str(entry['new'])+"\n"
+                    new_string += entry['pretty_name']+": "+str(entry['new'] if entry['new'] else _('N/A'))+"\n"
 
-            ws.append([
-                row.date,
-                row.indicator.number if row.indicator else 'N/A',
-                row.indicator.name if row.indicator else 'N/A',
-                row.user.name,
-                row.organization.name,
-                row.change_type,
-                prev_string,
-                new_string,
-                row.rationale
-            ])
+            xl_row = [
+                Cell(ws, value=row.date),
+                Cell(ws, value=row.indicator.number if row.indicator else _('N/A')),
+                Cell(ws, value=row.indicator.name if row.indicator else _('N/A')),
+                Cell(ws, value=row.user.name),
+                Cell(ws, value=row.organization.name),
+                Cell(ws, value=row.pretty_change_type),
+                Cell(ws, value=prev_string),
+                Cell(ws, value=new_string),
+                Cell(ws, value=row.rationale)
+            ]
+            for cell in xl_row:
+                cell.alignment = alignment
+            ws.append(xl_row)
+
+        for rd in ws.row_dimensions:
+            rd.auto_size = True
+
+        for cd in ws.column_dimensions:
+            cd.auto_size = True
+
 
         response = HttpResponse(content_type='application/ms-excel')
         filename = u'{} Audit Log {}.xlsx'.format(program.name, timezone.now().strftime('%b %d, %Y'))

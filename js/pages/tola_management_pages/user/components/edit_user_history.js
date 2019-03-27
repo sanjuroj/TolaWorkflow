@@ -9,8 +9,8 @@ const status_options = [
     {value: false, label: gettext('Inactive')}
 ]
 
-const ChangesetEntry = ({name, type, data}) => {
-    return <p><strong>{name}</strong>: {(data != undefined && data != null)?data.toString():'N/A'}</p>
+const ChangesetEntry = ({name, type, data, pretty_name}) => {
+    return <p><strong>{pretty_name}</strong>: {(data != undefined && data != null)?data.toString():'N/A'}</p>
 }
 
 const ProgramChangesetEntry = ({data, timeframe}) => {
@@ -112,7 +112,7 @@ export class EditUserHistory extends React.Component {
                                     return <tr key={entry.id}>
                                         <td>{entry.date}</td>
                                         <td>{entry.admin_user}</td>
-                                        <td>{entry.change_type}</td>
+                                        <td>{entry.pretty_change_type}</td>
                                         <td className="expand-section">
                                             <Expander>
                                                 <ProgramChangesetEntry data={entry.diff_list} timeframe="prev"/>
@@ -129,18 +129,18 @@ export class EditUserHistory extends React.Component {
                                     return <tr key={entry.id}>
                                         <td>{entry.date}</td>
                                         <td>{entry.admin_user}</td>
-                                        <td>{entry.change_type}</td>
+                                        <td>{entry.pretty_change_type}</td>
                                         <td className="expand-section">
                                             <Expander>
                                                 {entry.diff_list.map(changeset => {
-                                                        return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.prev} />
+                                                     return <ChangesetEntry key={changeset.name} name={changeset.name} pretty_name={changeset.pretty_name} type={entry.change_type} data={changeset.prev} />
                                                 })}
                                             </Expander>
                                         </td>
                                         <td className="expand-section">
                                             <Expander>
                                                 {entry.diff_list.map(changeset => {
-                                                        return <ChangesetEntry key={changeset.name} name={changeset.name} type={entry.change_type} data={changeset.new} />
+                                                     return <ChangesetEntry key={changeset.name} name={changeset.name} pretty_name={changeset.pretty_name} type={entry.change_type} data={changeset.new} />
                                                 })}
                                             </Expander>
                                         </td>

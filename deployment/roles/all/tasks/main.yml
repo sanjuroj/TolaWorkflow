@@ -32,6 +32,8 @@
       - libpango1.0-dev
       - uwsgi-plugin-python
       - apt-transport-https
+      - libxml2-dev
+      - libxmlsec1-dev
     state: present
   tags:
     - provision
