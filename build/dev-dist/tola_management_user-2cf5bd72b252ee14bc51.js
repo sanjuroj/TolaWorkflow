@@ -596,15 +596,11 @@ function (_React$Component) {
       };
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "tab-pane--react"
+        className: "tab-pane--react edit-user-programs"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", {
-        class: "no-bold"
+        className: "no-bold"
       }, user.name ? user.name + ': ' : '', gettext("Programs and Roles")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "edit-user-programs__filter-form form-inline"
+        className: "edit-user-programs__filter-form"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "edit-user-programs__country-filter form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_virtualized_react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -639,11 +635,7 @@ function (_React$Component) {
         className: "input-group-text"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fa fa-times-circle"
-      }))))))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }))))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "virtualized-table__wrapper"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_virtualized__WEBPACK_IMPORTED_MODULE_2__["AutoSizer"], null, function (_ref29) {
         var height = _ref29.height,
@@ -755,11 +747,7 @@ function (_React$Component) {
             }));
           }
         }));
-      })))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "button",
@@ -773,7 +761,7 @@ function (_React$Component) {
         onClick: function onClick() {
           return _this4.resetForm();
         }
-      }, "Reset")))));
+      }, "Reset")));
     }
   }]);
 
@@ -1475,13 +1463,11 @@ function (_React$Component) {
       });
       var history = this.props.history;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "edit-user-history"
+        className: "admin-edit-pane"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", {
         className: "no-bold"
       }, this.state.user_data.name ? this.state.user_data.name + ': ' : '', gettext("Status and History")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col"
+        className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
         isDisabled: this.props.disabled,
         options: status_options,
@@ -1489,19 +1475,15 @@ function (_React$Component) {
         onChange: function onChange(new_value) {
           return _this2.onChange(new_value);
         }
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col"
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-secondary",
         onClick: function onClick() {
           return _this2.onResendRegistrationEmail();
         }
-      }, gettext("Resend Registration Email")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row"
-      }, !this.props.disabled && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col"
+      }, gettext("Resend Registration Email"))), !this.props.disabled && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
@@ -1516,15 +1498,15 @@ function (_React$Component) {
         onClick: function onClick() {
           return _this2.onReset();
         }
-      }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Date")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Admin")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Change Type")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("New Entry")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, history.map(function (entry) {
+      }, gettext("Reset")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
+        className: "table table-sm text-small"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Date")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Admin")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Change Type")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("New Entry")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, history.map(function (entry) {
         if (entry.change_type == 'user_programs_updated') {
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
             key: entry.id
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, entry.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, entry.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, entry.change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+            className: "text-nowrap"
+          }, entry.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, entry.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, entry.change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
             className: "expand-section"
           }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_expander__WEBPACK_IMPORTED_MODULE_4__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProgramChangesetEntry, {
             data: entry.diff_list,
@@ -1538,7 +1520,9 @@ function (_React$Component) {
         } else {
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
             key: entry.id
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, entry.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, entry.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, entry.change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+            className: "text-nowrap"
+          }, entry.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, entry.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, entry.change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
             className: "expand-section"
           }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_expander__WEBPACK_IMPORTED_MODULE_4__["default"], null, entry.diff_list.map(function (changeset) {
             return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangesetEntry, {
@@ -1558,7 +1542,7 @@ function (_React$Component) {
             });
           }))));
         }
-      }))))));
+      }))));
     }
   }]);
 
@@ -2090,7 +2074,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var components_pagination__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! components/pagination */ "RCjz");
 /* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
 /* harmony import */ var components_folding_sidebar__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! components/folding-sidebar */ "tnXs");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2110,7 +2093,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
 
 
 
@@ -2335,11 +2317,10 @@ function (_React$Component3) {
       var SecondaryComponent = selected && selected.component;
       var apply_disabled = !this.state.current_action || Array.isArray(this.state.current_vals) && !this.state.current_vals.length || !this.state.current_vals;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "bulk-controls"
+        className: "controls__bulk-actions"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "bulk-select"
+        className: "bulk__select"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        className: "bulk-select",
         placeholder: gettext("Bulk Actions"),
         value: this.props.primaryOptions.find(function (o) {
           return o.value == _this6.state.current_action;
@@ -2349,16 +2330,15 @@ function (_React$Component3) {
           return _this6.onActionChanged(val);
         }
       })), selected && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "bulk-select"
+        className: "bulk__select"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SecondaryComponent, {
         value: this.state.current_vals,
         onChange: function onChange(vals) {
           return _this6.onChange(vals);
         }
       })), !selected && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "bulk-select"
+        className: "bulk__select"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        className: "bulk-select",
         placeholder: "---"
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-secondary",
@@ -2491,25 +2471,27 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
       return store.clearFilters();
     }
   }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "col list-section"
+    className: "col admin-list"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "list-controls"
+    className: "admin-list__controls"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(BulkActions, {
     primaryOptions: bulk_actions.primary_options,
     secondaryOptions: bulk_actions.secondary_options
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "controls__buttons"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
     href: "#",
     tabIndex: "0",
     className: "btn btn-link btn-add",
     onClick: function onClick() {
       return store.createUser();
     }
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__["FontAwesomeIcon"], {
-    icon: 'plus-circle'
-  }), gettext("Add User")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-plus-circle"
+  }), gettext("Add User"), gettext("Add User")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
     isLoading: store.fetching_users_listing || store.applying_bulk_updates
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "list-table"
+    className: "admin-list__table"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_management_table__WEBPACK_IMPORTED_MODULE_4__["default"], {
     data: store.users_listing.map(function (id) {
       return store.users[id];
@@ -2613,18 +2595,18 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         onClick: function onClick() {
           return store.toggleEditingTarget(data.id);
         }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__["FontAwesomeIcon"], {
-        icon: 'user'
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-user"
       }), "\xA0", data.name || "---", " ", data.is_super && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "badge badge-danger"
-      }, gettext("Super Admin")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__["FontAwesomeIcon"], {
-        icon: "building"
+      }, gettext("Super Admin")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-building"
       }), "\xA0", data.organization_name || "---"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         className: "text-nowrap"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "/tola_management/program/?users[]=".concat(data.id)
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__["FontAwesomeIcon"], {
-        icon: "cubes"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-cubes"
       }), "\xA0", data.user_programs, " ", gettext("programs"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.5"
       }, data.is_admin ? gettext('Yes') : gettext('No')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
@@ -2632,7 +2614,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
       }, data.is_active ? gettext('Active') : gettext('Inactive')));
     }
   }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "list-metadata"
+    className: "admin-list__metadata"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "users-count"
   }, store.users_count ? "".concat(store.users_count, " ").concat(gettext("users")) : "--"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -3927,4 +3909,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-8fbea8d6638e58dc5538.js.map
+//# sourceMappingURL=tola_management_user-2cf5bd72b252ee14bc51.js.map
