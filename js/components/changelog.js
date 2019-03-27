@@ -8,7 +8,7 @@ const ChangeField = ({name, data}) => {
 
 const ChangeLogEntryHeader = ({data}) => {
     return <tr className="changelog__entry__header is-expanded"> {/* TODO: apply is-expanded dynamically */}
-        <td className="text-nowrap"><strong>{data.date}</strong></td>
+        <td className="text-nowrap text-action"><i className="fas fa-caret-down"></i>&nbsp;<strong>{data.date}</strong></td>
         <td className="text-nowrap">{data.admin_user}</td>
         <td>{data.change_type}</td>
         <td></td>
