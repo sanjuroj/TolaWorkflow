@@ -89,7 +89,7 @@ const IndicatorChangeset = ({data, name}) => {
     })()
     if(name == 'targets') {
         return <div className="changelog__change__targets">
-            <h4>Targets</h4>
+            <h4 className="text-small">{gettext('Targets changed')}</h4>
             {Object.entries(data).map(([id, target]) => {
                 return <div className="change__field" key={id}><strong>{target.name}:</strong> {target.value}</div>
             })}
@@ -155,27 +155,39 @@ export const IndexView = observer(
                                 <th className="text-nowrap">{gettext("Rationale")}</th>
                             </tr>
                         </thead>
-                        <tbody>{/* Note that this changelog is different than others. Only 1 tbody! */}
-                            {store.log_rows.map(data => <tr className="changelog__entry__row" key={data.id}>
+                        {store.log_rows.map(data => <tbody>
+                            <tr className="changelog__entry__header is-expanded">
                                 <td>{data.date}</td>
                                 <td>{(data.indicator)?data.indicator.number:'N/A'}</td>
                                 <td>{(data.indicator)?data.indicator.name:'N/A'}</td>
                                 <td>{data.user}</td>
                                 <td>{data.organization}</td>
                                 <td>{map_pretty_change_type(data.change_type)}</td>{/* SWEET FANCY MOSES WHAT IS THIS */}
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr className="changelog__entry__row" key={data.id}>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                                 <td className="changelog__change--prev">
                                     {data.diff_list.map(changeset => {
-                                         return <ChangesetEntry key={changeset.name} name={changeset.name} type={data.change_type} data={changeset.prev} />
+                                        return <ChangesetEntry key={changeset.name} name={changeset.name} type={data.change_type} data={changeset.prev} />
                                     })}
                                 </td>
                                 <td className="changelog__change--new">
                                     {data.diff_list.map(changeset => {
-                                         return <ChangesetEntry key={changeset.name} name={changeset.name} type={data.change_type} data={changeset.new} />
+                                        return <ChangesetEntry key={changeset.name} name={changeset.name} type={data.change_type} data={changeset.new} />
                                     })}
                                 </td>
-                                <td className="changelog__change--rationale"><Expander>{data.rationale}</Expander></td>
-                            </tr>)}
+                                <td className="changelog__change--rationale">{data.rationale}</td>
+                            </tr>
                         </tbody>
+                        )}
                     </table>
                 </LoadingSpinner>
                 <div className="admin-list__metadata">
