@@ -3,6 +3,8 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
 
+from django.contrib.auth.models import User
+
 from workflow.models import (
     Program,
     TolaUser,
@@ -14,6 +16,32 @@ from indicators.models import (
     Result,
     Indicator
 )
+
+def social_auth_okta_pipeline(backend, details, user, response, *args, **kwargs):
+    if backend.name == 'saml' and response.get('idp_name') == 'okta':
+        #annoyingly the attributes are coming back as arrays, so let's flatten them
+        attributes = {k: v[0] if len(v) > 0 else None for k,v in response['attributes'].iteritems()}
+
+        try:
+            user = User.objects.get(email=attributes.get('email'))
+            tola_user = user.tola_user
+        except User.DoesNotExist:
+            user = User(username=attributes.get('email'), email=attributes.get('email'))
+            user.save()
+            tola_user = TolaUser(user=user)
+
+        user.first_name = attributes['firstName']
+        user.last_name = attributes['lastName']
+        try:
+            tola_user.country = Country.objects.get(code=attributes.get("mcCountryCode"))
+        except Country.DoesNotExist:
+            pass
+
+        user.save()
+        tola_user.save()
+        return None
+    else:
+        return None
 
 
 def user_has_basic_or_super_admin(user):

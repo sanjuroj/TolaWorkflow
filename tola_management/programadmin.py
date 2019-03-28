@@ -230,7 +230,11 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         auth_user = self.request.user
         params = self.request.query_params
 
-        queryset = Program.objects.all().filter(country__in=auth_user.tola_user.managed_countries)
+        #we have to handle this explicitly in case there are some programs without a country
+        if auth_user.is_superuser:
+            queryset = Program.objects.all()
+        else:
+            queryset = Program.objects.all().filter(country__in=auth_user.tola_user.managed_countries)
 
         if not auth_user.is_superuser:
             tola_user = auth_user.tola_user

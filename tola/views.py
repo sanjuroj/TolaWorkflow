@@ -24,6 +24,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.core.exceptions import PermissionDenied
 
+from django.contrib.admin.views.decorators import staff_member_required
 
 @login_required(login_url='/accounts/login/')
 def index(request, selected_country=None):
@@ -53,12 +54,14 @@ def index(request, selected_country=None):
     active_country_id = None
     if active_country:
         active_country_id = active_country.id
+        programs_with_metrics = ProgramWithMetrics.home_page.with_annotations().filter(
+            Q(country__in=user.countries.filter(id=active_country_id)) | Q(programaccess__tolauser=user, programaccess__country=active_country) | Q(country=user.country),
+            country=active_country,
+            funding_status="Funded"
+        ).distinct()
+    else:
+        programs_with_metrics = ProgramWithMetrics.objects.none()
 
-    programs_with_metrics = ProgramWithMetrics.home_page.with_annotations().filter(
-        Q(country__in=user.countries.filter(id=active_country_id)) | Q(programaccess__tolauser=user, programaccess__country=active_country) | Q(country=user.country),
-        country=active_country,
-        funding_status="Funded"
-    ).distinct()
 
     sites_with_results = SiteProfile.objects.all()\
         .prefetch_related('country', 'district', 'province') \
@@ -138,6 +141,8 @@ def profile(request):
     else:
         return HttpResponseRedirect(reverse_lazy('register'))
 
+@login_required(login_url='/accounts/login/')
+@staff_member_required
 def saml_metadata_view(request):
     complete_url = reverse('social:complete', args=("saml", ))
     saml_backend = load_backend(
