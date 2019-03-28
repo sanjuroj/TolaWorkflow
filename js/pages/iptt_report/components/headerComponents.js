@@ -47,7 +47,6 @@ class IPTTSubheadRow extends React.Component {
                     <SubheadCell minWidth='600px' classes='td-no-side-borders'
                                  cellText={ colLabels.indicator } />
                     <SubheadCell classes="td-no-side-borders" />
-                    <SubheadCell minWidth='90px' cellText={ colLabels.level } />
                     <SubheadCell minWidth='250px' cellText={ colLabels.uom } />
                     <SubheadCell cellText={ colLabels.change } />
                     <SubheadCell minWidth='130px' cellText={ colLabels.cumulative } />
@@ -70,34 +69,39 @@ export const IPTTTableHead = inject('labels', 'rootStore')(
     observer(
         ({ labels, rootStore }) => {
             let getDateHeaders = () => {
-                let headers = [];
-                let periods = rootStore.selectedPeriods;
-                if (!periods) {
-                    return headers;
-                }
-                periods.forEach(
-                    (period, index) => {
-                        index += parseInt(rootStore.startPeriod);
-                        let label = rootStore.getPeriodLabel(period, index);
-                        headers.push(
-                            <td scope="col" colSpan={ rootStore.isTVA ? '3' : '1'}
-                                className={"text-center lopCols text-nowrap align-bottom" + (rootStore.selectedFrequencyId == 7 ? " text-uppercase" : "")} 
-                                key={ index }> { label.title }<br /><small>{ label.subtitle }</small>
-                            </td>
-                        );
-                    }
-                );
-                return headers;
+                return !(rootStore.selectedPeriods)
+                    ? []
+                    : rootStore.selectedPeriods.map(
+                        (period, count) => {
+                            let label = rootStore.getPeriodLabel(period, count);
+                                return (
+                                    <td scope="col"
+                                        colSpan={ rootStore.isTVA ? '3' : '1'}
+                                        className={"text-center lopCols text-nowrap align-bottom" + (rootStore.selectedFrequencyId == 7 ? " text-uppercase" : "")} 
+                                        key={ count + parseInt(rootStore.startPeriod) }>
+                                            { label.title }
+                                            <br />
+                                            <small>{ label.subtitle }</small>
+                                    </td>
+                                    );
+                        }
+                    );
             }
-            return <thead className="thead-light">
+            let periodsLength = rootStore.selectedPeriods.length * (rootStore.isTva ? 3 : 1);
+            return (
+                <React.Fragment>
+                    <colgroup scope="col" span={ rootStore.headerCols }></colgroup>
+                    <colgroup scope="col" span={ rootStore.lopCols } className="lopCols"></colgroup>
+                    <colgroup scope="col" span={ periodsLength }></colgroup>
+                    <thead className="thead-light">
                         <tr>
-                            <td colSpan="9" id="id_td_iptt_program_name"
+                            <td colSpan={ rootStore.headerCols } id="id_td_iptt_program_name"
                                 className="lopCols align-bottom pt-2"> 
                                 <h5 className="m-0">
                                     <strong>{ rootStore.selectedProgram.name }</strong>
                                 </h5>
                             </td>
-                            <td scope="colgroup" colSpan="3"
+                            <td scope="colgroup" colSpan={ rootStore.lopCols }
                              className="text-center align-bottom text-uppercase">
                              { labels.columnHeaders.lop }
                              </td>
@@ -105,6 +109,8 @@ export const IPTTTableHead = inject('labels', 'rootStore')(
                         </tr>
                         <IPTTSubheadRow />
                     </thead>
+                </React.Fragment>
+            );
         }
     )
 )

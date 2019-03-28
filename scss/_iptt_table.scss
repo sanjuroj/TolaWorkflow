@@ -51,6 +51,12 @@ body.page_iptt_table { // body element for extra specificity
     color: $gray-700; // why is this not #54585A ?
 }
 
+.table__iptt .row__level {
+    font-weight: bold;
+    color: $gray-800;
+    background-color: $gray-200;
+}
+
 
 // restyle the Results table on the IPTT
 .page_iptt_table .modal-dialog {

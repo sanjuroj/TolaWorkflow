@@ -6,7 +6,7 @@ from openpyxl import styles
 
 from tola.l10n_utils import l10n_date_medium, l10n_date_long, l10n_monthname
 from workflow.models import Program
-from indicators.models import Indicator, PeriodicTarget, PinnedReport, Level
+from indicators.models import Indicator, PeriodicTarget, PinnedReport, Level, LevelTier
 from indicators.forms import PinnedReportForm
 from indicators.queries import IPTTIndicator
 
@@ -185,6 +185,10 @@ def get_labels(quickstart=True):
                 },
                 'startPeriod': ugettext('Start'),
                 'endPeriod': ugettext('End'),
+                'levelGrouping': {
+                    'label': ugettext('Group indicators'),
+                    'group': ugettext('by Level')
+                },
                 'levelSelect': ugettext('Levels'),
                 'typeSelect': ugettext('Types'),
                 'sectorSelect': ugettext('Sectors'),
@@ -290,14 +294,24 @@ class IPTTReportData(LoginRequiredMixin, View):
         levels = Level.objects.filter(program_id=int(program_id))
         level_data = []
         for level in levels:
-            level_data.append({
+            level_item ={
                 'id': level.pk,
                 'name': level.name,
                 'tier': level.leveltier.name,
+                'tierPk': level.leveltier.pk,
                 'ontology': level.ontology,
+                'parent': level.parent.pk if level.parent else None,
                 'depth': level.get_level_depth(),
                 'sort': level.customsort
-                })
+                }
+            if level_item['depth'] > 2:
+                target = level
+                while target.get_level_depth() > 2:
+                    target = target.parent
+                level_item['level2parent'] = target.pk
+            else:
+                level_item['level2parent'] = None
+            level_data.append(level_item)
         return indicator_qs, level_data
 
     def get(self, request):
@@ -312,6 +326,7 @@ class IPTTReportData(LoginRequiredMixin, View):
                 'number': indicator.number,
                 'name': indicator.name,
                 'level': indicator.level.leveltier.name if indicator.level else None,
+                'tierDepth': indicator.level.get_level_depth(),
                 'levelpk': indicator.level.pk if indicator.level else None,
                 'sites': indicator.sites,
                 'indicatorTypes': indicator.indicator_types,
@@ -343,12 +358,15 @@ class IPTTReportData(LoginRequiredMixin, View):
                                          for c in range(values_count)]
                     }
             indicators.append(this_indicator)
+        second_tier_name = LevelTier.objects.filter(program_id=int(request.GET.get('programId')),
+                                                    tier_depth=2).first().name
         reportData = {
             'programId': request.GET.get('programId'),
             'reportFrequency': self.frequency,
             'reportType': 'tva' if self.tva else 'timeperiods',
             'indicators': indicators,
-            'levels': level_data
+            'levels': level_data,
+            'resultChainFilter': ugettext('by %(tier)s chain') % {'tier': second_tier_name}
         }
         return JsonResponse(reportData)
 

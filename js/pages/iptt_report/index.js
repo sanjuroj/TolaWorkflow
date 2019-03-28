@@ -19,7 +19,7 @@ const reportAPI = new ReportAPI('/indicators/iptt_report_data/');
 const rootStore = new RootStore(jsContext, reportAPI);
 
 const routes = [
-    {name: 'iptt', path: '/:programId<\\d+>/:reportType/?frequency&timeperiods&targetperiods&timeframe&numrecenteperiods&start&end&start_period&end_period&levels&sites&types&sectors&indicators'}
+    {name: 'iptt', path: '/:programId<\\d+>/:reportType/?frequency&timeperiods&targetperiods&timeframe&numrecenteperiods&start&end&start_period&end_period&levels&sites&types&sectors&indicators&tiers'}
 ];
 
 const router = createRouter(routes);

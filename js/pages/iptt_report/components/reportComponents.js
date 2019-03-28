@@ -69,7 +69,6 @@ class IndicatorRow extends React.Component {
                     <IndicatorTD>{ indicator.number }</IndicatorTD>
                     <IndicatorTD>{ resultsButton }  { indicator.name }</IndicatorTD>
                     <IndicatorTD>{ updateButton }</IndicatorTD>
-                    <IndicatorTD>{ indicator.level }</IndicatorTD>
                     <IndicatorTD>{ indicator.unitOfMeasure }</IndicatorTD>
                     <IndicatorTD align="center">{ indicator.directionOfChange }</IndicatorTD>
                     <IndicatorTD>{ indicator.cumulative }</IndicatorTD>
@@ -91,59 +90,61 @@ const NoIndicatorsForFrequency = inject('labels')(({ labels }) => {
     return <tr><td colSpan="8">{ labels.noIndicatorsForFrequency }</td></tr>;
 })
 
-/* const IPTTTableBody = inject('rootStore')(
-    observer(
-        ({rootStore}) => {
-            const indicatorRows = (rootStore.reportIndicators && rootStore.reportIndicators.length > 0)
-                                  ? rootStore.reportIndicators.map(
-                                    (indicator, count) => <IndicatorRow indicator={indicator} key={count} />
-                                  ) : rootStore.noIndicatorsForFrequency
-                                    ? <NoIndicatorsForFrequency />
-                                    : <Loading />;
-            
-            return <tbody>
-                        {indicatorRows}
-                   </tbody>
-        }
-    )
-) */
 
-const LevelRow = ({ level }) => {
-    return (
-        <tr className="row__level">
-            <td colSpan="8">
-                {level.tier} {level.displayOntology}: { level.name }
-            </td>
-        </tr>
-        );
+const LevelRow = inject('rootStore')(
+observer(
+    ({ level, rootStore }) => {
+        const indicators = level.indicators
+                           ? level.indicators.map(
+                                (indicator, count) => <IndicatorRow indicator={indicator} key={count} />
+                            ) : null;
+        const width = rootStore.headerCols + rootStore.lopCols +
+                      (rootStore.selectedPeriods.length * (rootStore.isTva ? 3 : 1));
+        return (
+            <React.Fragment>
+                <tr className="row__level">
+                    <td colSpan={ width }>
+                        {level.tier} {level.displayOntology}: { level.name }
+                    </td>
+                </tr>
+                { indicators }
+            </React.Fragment>
+            );
+    })
+);
+
+@inject('rootStore')
+@observer
+class IPTTTableBody extends React.Component {
+    get noIndicatorsForFrequency() {
+        return false;
+    }
+    get tableContent() {
+        if (this.props.rootStore.loading || !this.props.rootStore.initialized) {
+            return <Loading />;
+        } else if (this.noIndicatorsForFrequency) {
+            return <NoIndicatorsForFrequency />;
+        } else {
+            return this.props.rootStore.report.map(
+                        (level, count) => <LevelRow level={ level } key={ count } />
+                        );
+        }
+    }
+    
+    render() {
+            return (
+                <tbody>
+                    { this.tableContent }
+                </tbody>
+            );
+    }
 }
 
-const IPTTTableBody = inject('rootStore')(
-    observer(
-        ({ rootStore }) => {
-            const levelRows = (rootStore.report && rootStore.report.length > 0)
-                           ? rootStore.report.map(
-                                (level, count) => <LevelRow level={ level } key={ count } />
-                           ) : rootStore.noIndicatorsForFrequency
-                             ? <NoIndicatorsForFrequency />
-                             : <Loading />;
-            return <tbody>
-                        { levelRows }
-                    </tbody>
-        }
-    )
-)
-
-@inject('labels', 'rootStore')
-@observer
-export class IPTTTable extends React.Component {
-    render() {
-        return <table className="table table-sm table-bordered table-hover" id="iptt_table">
-                    <colgroup scope="col" span="9"></colgroup>
-                    <colgroup scope="col" span="3" className="lopCols"></colgroup>
-                    <colgroup scope="col" span={ this.props.rootStore.selectedPeriods.length }></colgroup>
-                    <IPTTTableHead />
-                    <IPTTTableBody />
-               </table>;
-    }
+export const IPTTTable = () => {
+    return (
+        <table className="table table-sm table-bordered table-hover table__iptt" id="iptt_table">
+            <IPTTTableHead />
+            <IPTTTableBody />
+        </table>
+        );
 }

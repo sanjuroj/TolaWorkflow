@@ -4,6 +4,7 @@
  */
 
 import {observable, action, computed} from "mobx";
+import { trimOntology } from '../../level_utils'
 
 /**
  * models list:
@@ -36,9 +37,29 @@ class Level {
         this.id = levelJSON.id;
         this.name = levelJSON.name;
         this.tier = levelJSON.tier;
+        this.tierPk = levelJSON.tierPk;
         this.ontology = levelJSON.ontology;
+        this.parentPk = levelJSON.parent;
+        this.displayOntology = trimOntology(this.ontology);
         this.depth = levelJSON.depth;
+        this.level2parent = levelJSON.level2parent;
         this.sortIndex = levelJSON.sort;
+    }
+    
+    @computed get indicators() {
+        return this.program.filteredIndicators
+               ? this.program.filteredIndicators.filter(indicator => indicator.levelId == this.id)
+               : [];
+    }
+    
+    @computed get allIndicators() {
+        return this.program.allIndicators
+               ? this.program.allIndicators.filter(indicator => indicator.levelId == this.id)
+               : [];
+    }
+    
+    get optionName() {
+        return this.tier + ' ' + this.sortIndex + ' and sub-levels: ' + this.name;
     }
 
 }
@@ -59,6 +80,7 @@ class Indicator {
         this.number = data.number;
         this.name = data.name;
         this.level = data.level;
+        this.tierDepth = data.tierDepth;
         this.levelId = data.levelpk;
         this.sites = data.sites;
         this.types = data.indicatorTypes;
@@ -117,6 +139,7 @@ class Indicator {
 class Program {
     @observable indicators = null;
     @observable levels = null;
+    @observable resultChainFilter = 'loading';
     @observable reportsLoaded = {
         tva: [],
         timeperiods: []
@@ -176,6 +199,9 @@ class Program {
                 this.indicators[indicatorJSON.id].loadData(indicatorJSON);
             }
         );
+        if (data.resultChainFilter) {
+            this.resultChainFilter = data.resultChainFilter;
+        }
         this.reportsLoaded[data.reportType].push(String(data.reportFrequency));
     }
     
@@ -207,70 +233,117 @@ class Program {
                 .sort(groupCompare);
     }
     
-    @computed get reportIndicators() {
-        if (!this.indicators || this.indicators.length == 0) {
-            return false;
-        }
-        if ((this.rootStore.isTVA && this.reportsLoaded.tva.indexOf(String(this.rootStore.selectedFrequencyId)) == -1) ||
-            (!this.rootStore.isTVA && this.reportsLoaded.timeperiods.indexOf(String(this.rootStore.selectedFrequencyId)) == -1)) {
-                return false;
-            }
-        return Object.entries(this.indicators).filter(
-            ([pk, indicator]) => {
-                return (!this.rootStore.isTVA || indicator.frequency == this.rootStore.selectedFrequencyId);
-            }
-        ).map(([pk, indicator]) => indicator).sort((a, b) => a.sortIndex - b.sortIndex);
-        
+    @computed get thisReportNotLoaded() {
+        return ((this.rootStore.isTVA
+                 && this.reportsLoaded.tva.indexOf(String(this.rootStore.selectedFrequencyId)) == -1) ||
+                (!this.rootStore.isTVA
+                 && this.reportsLoaded.timeperiods.indexOf(String(this.rootStore.selectedFrequencyId)) == -1));
     }
     
-    @computed get reportLevels() {
-        if (!this.reportIndicators || this.reportIndicators.length == 0) {
+    @computed get allIndicators() {
+        if (!this.indicators || this.indicators.length == 0) {
+            return false;
+        } else {
+            return Object.values(this.indicators).sort((a, b) => a.sortIndex - b.sortIndex);
+        }
+    }
+    
+    @computed get filteredIndicators() {
+        let indicators = this.allIndicators;
+        if (!indicators) {
+            return false;
+        }
+        indicators = this.rootStore.filterOnTiers(indicators);
+        indicators = this.rootStore.filterOnLevelChains(indicators);
+        indicators = this.rootStore.filterOnSites(indicators);
+        indicators = this.rootStore.filterOnTypes(indicators);
+        indicators = this.rootStore.filterOnSectors(indicators);
+        indicators = this.rootStore.filterOnIndicatorIds(indicators);
+        return indicators;
+    }
+    
+    @computed get reportLevelTiers() {
+        if (!this.levelsChain) {
             return [];
         }
-        return [...new Set(this.reportIndicators.filter(
-                        indicator => indicator.levelId !== null
-                    ).map(
-                        indicator => ({value: indicator.levelId, label: indicator.level})
-                    ).map(JSON.stringify))].map(JSON.parse);
+        return [...new Set(this.levelsChain.filter(
+            level => level.allIndicators && level.allIndicators.length > 0
+        ).map(level => ({label: level.tier, value: level.tierPk,
+                         sortIndex: level.depth, filterType: 'tier'})
+        ).map(JSON.stringify))].map(JSON.parse);
+    }
+
+    @computed get reportLevelChains() {
+        if (!this.levelsChain) {
+            return [];
+        }
+        let level2s = this.levelsChain.filter(
+            level => level.depth == this.rootStore.levelFilterDepth
+        );
+        let indicatorCounts = {};
+        level2s.forEach(
+            level2 => indicatorCounts[level2.id] = level2.allIndicators.length
+        );
+        this.levelsChain.filter(
+            level => level.level2parent
+        ).forEach(
+            level => indicatorCounts[level.level2parent] += level.allIndicators.length
+        )
+        level2s = level2s.filter(
+            level2 => indicatorCounts[level2.id]
+        );
+        return [...new Set(
+            level2s.map(level => ({label: level.optionName, value: level.id,
+                         sortIndex: level.sort, filterType: 'level'})
+            ).map(JSON.stringify))].map(JSON.parse);
     }
     
     @computed get reportSites() {
-        if (!this.reportIndicators || this.reportIndicators.length == 0) {
+        let indicators = this.allIndicators;
+        if (!indicators || indicators.length == 0) {
             return [];
         }
-        let sites = this.reportIndicators.map(indicator => indicator.sites)
+        let sites = indicators.map(indicator => indicator.sites)
                         .reduce((pre, cur) => {return pre.concat(cur)})
                         .map((elem) => ({value: elem.pk, label: elem.name}));
         return [...new Set(sites.map(JSON.stringify))].map(JSON.parse);
     }
     
     @computed get reportTypes() {
-        if (!this.reportIndicators || this.reportIndicators.length == 0) {
-            return [];
-        }
-        let types = this.reportIndicators.map(indicator => indicator.types)
-                        .reduce((pre, cur) => {return pre.concat(cur)})
-                        .map((elem) => ({value: elem.pk, label: elem.name}));
-        return [...new Set(types.map(JSON.stringify))].map(JSON.parse);
-    }
-    
-    @computed get reportSectors() {
-        if (!this.reportIndicators || this.reportIndicators.length == 0) {
+        let indicators = this.allIndicators;
+        if (!indicators || indicators.length == 0) {
             return [];
         }
         return [...new Set(
-            this.reportIndicators.map(
+            indicators.map(indicator => indicator.types)
+                        .reduce((pre, cur) => {return pre.concat(cur)})
+                        .map((elem) => ({value: elem.pk, label: elem.name}))
+                        .map(JSON.stringify))].map(JSON.parse);
+    }
+    
+    @computed get reportSectors() {
+        let indicators = this.allIndicators;
+        if (!indicators || indicators.length == 0) {
+            return [];
+        }
+        return [...new Set(
+            indicators.map(
                 indicator => JSON.stringify({value: indicator.sector.pk, label:indicator.sector.name}))
             )].map(JSON.parse);
     }
     
     @computed get reportIndicatorsOptions() {
-        if (!this.reportIndicators || this.reportIndicators.length == 0) {
+        let levels = this.rootStore.levelGrouping ? this.levelsGrouped : this.levelsChain;
+        if (!levels || levels.length == 0) {
             return [];
         }
-        return this.reportIndicators.map(
-            indicator => ({value: indicator.pk, label: indicator.name})
+        let indicators = levels.map(
+            level => ({
+                label: level.tier + ' ' + level.displayOntology,
+                options: level.allIndicators.map(indicator => ({value: indicator.pk, label: indicator.name}))
+            })
         );
+        return indicators;
     }
 
 }
@@ -298,15 +371,22 @@ export class RootStore {
     @observable nullRecent = false;
     @observable levelGrouping = false;
     @observable levelFilters = [];
+    @observable tierFilters = [];
     @observable siteFilters = [];
     @observable typeFilters = [];
     @observable sectorFilters = [];
     @observable indicatorFilters = [];
     @observable noIndicatorsForFrequency = false;
+    @observable loading = false;
+    @observable initialized = false;
     reportType = null;
     router = null;
     currentPeriod = null;
-    loading = false;
+    
+    headerCols = 8;
+    lopCols = 3;
+    levelFilterDepth = 2;
+    
     
     constructor(contextData, reportAPI) {
         this.programStore = new ProgramStore(this, contextData.programs);
@@ -320,6 +400,7 @@ export class RootStore {
     
     init = (router) => {
         this.router = router;
+        this.loading = true;
         let params = router.getState().params;
         let reload = false;
         this.setProgramId(params.programId);
@@ -357,6 +438,8 @@ export class RootStore {
         if (reload) {
             router.navigate(router.getState().name, params, {reload: true});
         }
+        this.loading = false;
+        this.callForData();
     }
     
     updateUrl = (param, newValue) => {
@@ -436,52 +519,77 @@ export class RootStore {
         }
     }
     
-    @computed get reportIndicators() {
-        if (this.selectedProgram === null || !this.selectedFrequencyId) {
-            return [];
+    filterOnTiers(indicators) {
+        if (this.tierFilters && this.tierFilters.length > 0) {
+            let tierDepths = this.tierFilters.map(tierOption => tierOption.sortIndex);
+            indicators = indicators.filter(
+                (indicator) => tierDepths.indexOf(indicator.tierDepth) != -1
+            );
         }
-        if (this.selectedProgram.reportIndicators) {
-            //return this.selectedProgram.reportIndicators;
-            let indicators = this.selectedProgram.reportIndicators;
-            if (this.levelFilters && this.levelFilters.length > 0) {
-                indicators = indicators.filter(
-                    indicator => this.levelFilters.map(levelOption => levelOption.value).indexOf(indicator.levelId) != -1
-                );
-            }
-            if (this.siteFilters && this.siteFilters.length > 0) {
-                let sitePks = this.siteFilters.map(siteOption => siteOption.value);
-                indicators = indicators.filter(
-                    (indicator) => indicator.sites.map(site => site.pk).filter(pk => sitePks.includes(pk)).length > 0
-                );
-            }
-            if (this.typeFilters && this.typeFilters.length > 0) {
-                let typePks = this.typeFilters.map(typeOption => typeOption.value);
-                indicators = indicators.filter(
-                    (indicator) => indicator.types.map(iType => iType.pk).filter(pk => typePks.includes(pk)).length > 0
-                );
-            }
-            if (this.sectorFilters && this.sectorFilters.length > 0) {
-                indicators = indicators.filter(
-                    indicator => this.sectorFilters.map(sectorOption => sectorOption.value).indexOf(indicator.sector.pk) != -1
-                );
-            }
-            if (this.indicatorFilters && this.indicatorFilters.length > 0) {
-                indicators = indicators.filter(
-                    indicator => this.indicatorFilters.map(indicatorOption => indicatorOption.value).indexOf(indicator.pk) != -1
-                );
-            }
-            return indicators;
-        } else {
-            this.callForData();
-            return false;
+        return indicators;
+    }
+    
+    filterOnLevelChains(indicators) {
+        if (this.levelFilters && this.levelFilters.length > 0) {
+            let level2Pks = this.levelFilters.map(levelOption => levelOption.value);
+            let levelIds = this.selectedProgram.levelsGrouped.filter(
+                level => level2Pks.indexOf(level.level2parent) != -1
+            ).map( level => level.id );
+            indicators = indicators.filter(
+                (indicator) => levelIds.indexOf(indicator.levelId) != -1
+            );
         }
+        return indicators;
+    }
+    
+    filterOnTypes(indicators) {
+        if (this.typeFilters && this.typeFilters.length > 0) {
+            let typePks = this.typeFilters.map(typeOption => typeOption.value);
+            indicators = indicators.filter(
+                (indicator) => indicator.types.map(iType => iType.pk).filter(pk => typePks.includes(pk)).length > 0
+            );
+        }
+        return indicators;
+    }
+    
+    filterOnSectors(indicators) {
+        if (this.sectorFilters && this.sectorFilters.length > 0) {
+            indicators = indicators.filter(
+                indicator => this.sectorFilters.map(sectorOption => sectorOption.value).indexOf(indicator.sector.pk) != -1
+            );
+        }
+        return indicators;
+    }
+    
+    filterOnSites(indicators) {
+        if (this.siteFilters && this.siteFilters.length > 0) {
+            let sitePks = this.siteFilters.map(siteOption => siteOption.value);
+            indicators = indicators.filter(
+                (indicator) => indicator.sites.map(site => site.pk).filter(pk => sitePks.includes(pk)).length > 0
+            );
+        }
+        return indicators;
+    }
+    
+    filterOnIndicatorIds(indicators) {
+        if (this.indicatorFilters && this.indicatorFilters.length > 0) {
+            indicators = indicators.filter(
+                indicator => this.indicatorFilters.map(indicatorOption => indicatorOption.value).indexOf(indicator.pk) != -1
+            );
+        }
+        return indicators;
     }
 
     callForData = () => {
         if (!this.loading) {
             this.loading = true;
             this.reportAPI.callForData(this.selectedProgram.id, this.selectedFrequencyId, this.isTVA)
-                .then((data) => { this.selectedProgram.loadData(data); this.updateFilters(); this.loading=false; });
+                .then((data) => {
+                    this.selectedProgram.loadData(data);
+                    this.updateFilters();
+                    this.loading=false;
+                    this.initialized=true;
+                    });
         }
     }
     
@@ -494,10 +602,20 @@ export class RootStore {
         }
         if (params.levels) {
             let levels = params.levels instanceof(Array) ? params.levels.map(Number) : [params.levels].map(Number);
-            this.levelFilters = this.selectedProgram.reportLevels.filter(
+            this.levelFilters = this.selectedProgram.reportLevelChains.filter(
                 levelOption => levels.indexOf(levelOption.value) != -1
             );
             this.updateUrl('levels', this.levelFilters.map(levelOption => levelOption.value));
+            if (params.tiers) {
+                this.updateUrl('params', []);
+            }
+        }
+        if (params.tiers) {
+            let tiers = params.tiers instanceof(Array) ? params.tiers.map(Number) : [params.tiers].map(Number);
+            this.tierFilters = this.selectedProgram.reportLevelTiers.filter(
+                tierOption => tiers.indexOf(tierOption.value) != -1
+            );
+            this.updateUrl('tiers', this.tierFilters.map(tierOption => tierOption.value));
         }
         if (params.sites) {
             let sites = params.sites instanceof(Array) ? params.sites.map(Number) : [params.sites].map(Number);
@@ -573,9 +691,17 @@ export class RootStore {
         } else if (this.selectedFrequencyId != id) {
             this.selectedFrequencyId = id;
             this.updateUrl('frequency', id);
-            //refresh periods to make sure they're in range:
+            if (this.isTVA && this.selectedFrequencyId
+                && this.selectedProgram.frequencies.indexOf(parseInt(this.selectedFrequencyId)) != -1) {
+                this.noIndicatorsForFrequency = false;
+            }
+            // refresh periods to make sure they're in range:
             this.updatePeriods();
             this.updateCurrentPeriod();
+            // call for data if not loaded:
+            if (this.selectedProgram.thisReportNotLoaded) {
+                this.callForData();
+            }
         }
     }
     
@@ -765,8 +891,17 @@ export class RootStore {
     
     setLevelFilters = (selected) => {
         this.levelFilters = selected;
+        this.tierFilters = [];
         this.updateUrl('levels', selected.map(item => item.value));
+        this.updateUrl('tiers', []);
     }
+    
+    setTierFilters = (selected) => {
+        this.levelFilters = [];
+        this.tierFilters = selected;
+        this.updateUrl('tiers', selected.map(item => item.value));
+        this.updateUrl('levels', []);
+   }
     
     setSiteFilters = (selected) => {
         this.siteFilters = selected;
@@ -789,8 +924,9 @@ export class RootStore {
     }
     
     clearFilters = () => {
-        this.levelFilters = this.siteFilters = this.typeFilters = this.sectorFilters = this.indicatorFilters = [];
+        this.levelFilters = this.siteFilters = this.typeFilters = this.sectorFilters = this.tierFilters = this.indicatorFilters = [];
         this.updateUrl('levels', []);
+        this.updateUrl('tiers', []);
         this.updateUrl('sites', []);
         this.updateUrl('types', []);
         this.updateUrl('sectors', []);

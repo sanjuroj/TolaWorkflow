@@ -32,7 +32,7 @@ def create_mercycorps_leveltiers(program):
             LevelTier.objects.create(
                 name=tier_name,
                 program=program,
-                tier_depth=depth
+                tier_depth=depth+1
             )
         )
     return tiers
@@ -162,9 +162,15 @@ class Command(BaseCommand):
                         ])
                 ]),
                 # Outcome 3:
-                ('To measure an empty [no outputs] Outcome 3', [])
+                ('To measure an empty [no outputs] Outcome 3', []),
             ]
         )
         levels = get_levels(level_data, program, 0)
+        empty_level = Level.objects.create(
+            name='To measure an empty [no indicators] Outcome 4',
+            parent=levels[0],
+            program=program,
+            customsort=4
+        )
         add_indicators(levels, program)
         

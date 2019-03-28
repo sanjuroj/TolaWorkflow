@@ -1,7 +1,8 @@
 import React from 'react';
 import { inject, observer } from 'mobx-react';
 import { computed } from 'mobx';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
+import { CheckboxGroupHeading } from 'react-multiselect-checkboxes/lib/CheckboxGroup';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 
 const programOptions = [
@@ -156,6 +157,27 @@ class TimeFrameRadio extends React.Component {
     }
 }
 
+@inject('labels', 'rootStore')
+@observer
+class GroupingSelect extends React.Component {
+    onChange = (e) => {
+        this.props.rootStore.levelGrouping = (e.target.value == 1);
+    }
+    
+    render() {
+        return (
+            <IPTTSelectWrapper label={ this.props.labels.levelGrouping.label }>
+                <select className="form-control"
+                        value={ (this.props.rootStore.levelGrouping ? 1 : 0) }
+                        onChange={ this.onChange }>
+                        <option value="0">{ this.props.rootStore.selectedProgram.resultChainFilter }</option>
+                        <option value="1">{ this.props.labels.levelGrouping.group }</option>
+                </select>
+            </IPTTSelectWrapper>
+        );
+    }
+}
+
 const IPTTMultiSelectWrapper = (props) => {
     return <div className="form-row mb-2 iptt-react-select-row">
                 <label className="col-form-label text-uppercase">
@@ -165,18 +187,85 @@ const IPTTMultiSelectWrapper = (props) => {
             </div>;
 }
 
+const GroupHeading = (props) => {
+    if (props.children == '') {
+        return <div></div>;
+    } else {
+        return (
+            <React.Fragment>
+                <hr style={{ margin: '3px 0px 0px 0px' }} />
+                <div style={{ textTransform: 'uppercase',
+                              paddingLeft: '4px',
+                              marginBottom: '2px'}}>
+                    { props.children }
+                </div>
+            </React.Fragment>
+            );
+    }
+}
+
 @inject('labels', 'rootStore')
 @observer
 class LevelSelect extends React.Component {
-    updateLevelFilters = (selected) => {
-        this.props.rootStore.setLevelFilters(selected);
+    getOptions = () => {
+        let tiers = this.props.rootStore.selectedProgram.reportLevelTiers;
+        let chains = this.props.rootStore.selectedProgram.reportLevelChains;
+        return [
+            {label: '',
+             options: tiers},
+             {label: 'Outcome chains',
+             options: chains}
+        ];
     }
+    getValue = () => {
+        if (this.props.rootStore.levelFilters && this.props.rootStore.levelFilters.length > 0) {
+            return this.props.rootStore.levelFilters;
+        } else if (this.props.rootStore.tierFilters && this.props.rootStore.tierFilters.length > 0) {
+            return this.props.rootStore.tierFilters;
+        } else {
+            return [];
+        }
+    }
+    
+    updateLevelFilters = (selected) => {
+        let levelSelects = selected.filter(option => option.filterType == 'level');
+        let tierSelects = selected.filter(option => option.filterType == 'tier');
+        if (levelSelects.length > 0 && tierSelects.length > 0) {
+            if (this.props.rootStore.tierFilters && this.props.rootStore.tierFilters.length > 0) {
+                this.props.rootStore.setLevelFilters(levelSelects);
+            } else {
+                this.props.rootStore.setTierFilters(tierSelects);
+            }
+        } else if (levelSelects.length > 0) {
+            this.props.rootStore.setLevelFilters(levelSelects);
+        } else {
+            this.props.rootStore.setTierFilters(tierSelects);
+        }
+    }
+
     render() {
+        const customStyles = {
+            option: (provided, state) => ({
+                ...provided,
+                padding: '1px 12px',
+                display: 'inline-block'
+            }),
+            container: (provided, state) => ({
+                ...provided,
+                backgroundColor: '#f5f5f5'
+            })
+        };
+        const formatOptionLabel = (props) => {
+            return <div style={{ display: "inline-block" , float: "right", width: "90%"}}>{props.label}</div>;
+        }
         return <IPTTMultiSelectWrapper label={this.props.labels.levelSelect}>
                     <ReactMultiSelectCheckboxes
-                            options={this.props.rootStore.selectedProgram.reportLevels}
-                            isMulti={true}
-                            value={ this.props.rootStore.levelFilters }
+                            options={ this.getOptions() }
+                            isMulti={ true }
+                            styles={ customStyles }
+                            formatOptionLabel={ formatOptionLabel }
+                            components={{ GroupHeading }}
+                            value={ this.getValue() }
                             onChange={ this.updateLevelFilters } />
                 </IPTTMultiSelectWrapper>;
     }
@@ -245,6 +334,7 @@ class IndicatorSelect extends React.Component {
                     <ReactMultiSelectCheckboxes
                             options={this.props.rootStore.selectedProgram.reportIndicatorsOptions}
                             isMulti={ true }
+                            components={{ GroupHeading }}
                             value={ this.props.rootStore.indicatorFilters }
                             onChange={ this.updateIndicatorFilters } />
                 </IPTTMultiSelectWrapper>
@@ -262,6 +352,7 @@ export const IPTTFilterForm = inject('labels')(
                         <TimeFrameRadio />
                         <StartDateSelect />
                         <EndDateSelect />
+                        <GroupingSelect />
                     </div>
                     <div id="filter-middle" className="p-3">
                         <LevelSelect />
