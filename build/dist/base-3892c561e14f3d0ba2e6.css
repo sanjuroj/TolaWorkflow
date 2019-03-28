@@ -8291,6 +8291,54 @@ span[data-toggle="popover"]:hover {
     flex-grow: 1;
     padding: 15px; }
 
+.rfpage {
+  display: flex; }
+
+.rfpicker {
+  margin-right: 3em;
+  min-width: 20em; }
+
+.rfpicker__selectbox {
+  background-color: #ccefee;
+  padding: 2em; }
+
+.rfpicker__tierlist {
+  list-style: none;
+  background-color: #fff;
+  padding: 1em; }
+
+.rfpicker__tierlist__tier {
+  background-color: #f5f5f5;
+  padding: .5em;
+  margin: .75em 0; }
+
+.levelcard-collapsed {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: white;
+  margin: 2em; }
+
+.levelcard-collapsed__name {
+  margin: .75em 0 .75em .75em; }
+
+.levelcard-collapsed__rightbuttons {
+  margin: .75em 0 .75em .75em; }
+
+.levelcard-expanded {
+  display: flex;
+  flex-direction: column; }
+
+.levelcard-expanded__title {
+  font-weight: bold; }
+
+.levelcard-expanded__form {
+  display: flex;
+  flex-direction: column; }
+
+.new-leveltier {
+  margin-left: 1em; }
+
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
   color: #71757b !important;
@@ -8514,6 +8562,11 @@ body.page_iptt_table {
 
 #id_div_top_iptt_report {
   color: #54585a; }
+
+.table__iptt .row__level {
+  font-weight: bold;
+  color: #343840;
+  background-color: #ebedf0; }
 
 .page_iptt_table .modal-dialog .results__link {
   display: none; }
