@@ -88,7 +88,7 @@ SECRET_KEY: '{{django_secret_key}}'
 
 WEBPACK_STATS_FILE: '{{webpack_stats_file}}'
 
-SOCIAL_AUTH_SAML_SP_ENTITY_ID: 'http://local.tolaactivity.com'
+SOCIAL_AUTH_SAML_SP_ENTITY_ID: '{{hostname}}'
 SOCIAL_AUTH_SAML_SP_PUBLIC_CERT: |
   MIIDYDCCAkigAwIBAgIJAOuwlUch1xsvMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV
   BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX
@@ -154,6 +154,25 @@ SOCIAL_AUTH_SAML_SUPPORT_CONTACT:
 
 SOCIAL_AUTH_SAML_ENABLED_IDPS:
   okta:
-    entity_id: "https://idp.testshib.org/idp/shibboleth"
-    url: "https://idp.testshib.org/idp/profile/SAML2/Redirect/SSO"
-    x509cert: "MIIEDjCCAvagAwIBAgIBADA ... 8Bbnl+ev0peYzxFyF5sQA=="
+    entity_id: "http://www.okta.com/exkjti1qeoH3lwGhO0h7"
+    url: "https://mercycorps.oktapreview.com/app/mcsandbox_tola_1/exkjti1qeoH3lwGhO0h7/sso/saml"
+    attr_user_permanent_id: "email"
+    attr_email: "email"
+    x509cert: |
+      MIIDpDCCAoygAwIBAgIGAWQ+LhOZMA0GCSqGSIb3DQEBCwUAMIGSMQswCQYDVQQGEwJVUzETMBEG
+      A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+      MBIGA1UECwwLU1NPUHJvdmlkZXIxEzARBgNVBAMMCm1lcmN5Y29ycHMxHDAaBgkqhkiG9w0BCQEW
+      DWluZm9Ab2t0YS5jb20wHhcNMTgwNjI2MjIxODI0WhcNMjgwNjI2MjIxOTIzWjCBkjELMAkGA1UE
+      BhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNV
+      BAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMRMwEQYDVQQDDAptZXJjeWNvcnBzMRwwGgYJ
+      KoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+      uJIkLh7GUoR+fAuhk8x/JhZkfIJvr1nYjb7JmziqR/xtm99utiVr8op2FDpMsJpHin8X8MUGtrMV
+      QRmS7qARWeA1+KDKDl954l+zQphO5KwNOTx+OpByMEZ2pwWtDD2FU/8Tv/xV6gbCGbwQwyw7mhtx
+      Z2DRjnIIrRDsxKqmv+UxzBVGn8t8UGHge7UpntVaSQF5tDLuyyCT2i98uX4wVBc/mnP+32xRVXs7
+      IIbL60f57zpDMY5KC0FNwdVMtrqyc8EcqGPlFTPgjA2NxxrsvozA/MxWqn/BqGbMwryyDC0cf40z
+      dkJxESjMieDisOV9xjIis4G2XPESp5gqrJ5w5QIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQAmqTYM
+      NYDVKLvdL22fbTzoRkXqGCahV1ytikQewmbtBAuKjHS4joqyV9acS30WSFTRJxlA7mHTs5OsgMz1
+      sOEp1tv3W96xfc8J88iGJGT72irx1WW4UyugAGF81p7F5iWSCHL3xpCr6rrJSWmQ1OKMRRud6O4W
+      NMpST0vQ+GwIwYrPP6ppIwQNITX48C+1p7sTxWQGads2i4AOZ30hKSOSEimc9MTRQph0wyJebzM3
+      SnMAyVf9AYwdDqW4AO0WBr6cZr88wh26zTVaQy0X5a0DzwIKM4PhPGlDC4Vx45imbPF5bfcU7LVC
+      yZN8eHtO8/zhLCSn8vLhV1ZO7JZ3XsuE
