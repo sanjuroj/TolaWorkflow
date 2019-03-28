@@ -91,7 +91,7 @@ const NoIndicatorsForFrequency = inject('labels')(({ labels }) => {
     return <tr><td colSpan="8">{ labels.noIndicatorsForFrequency }</td></tr>;
 })
 
-const IPTTTableBody = inject('rootStore')(
+/* const IPTTTableBody = inject('rootStore')(
     observer(
         ({rootStore}) => {
             const indicatorRows = (rootStore.reportIndicators && rootStore.reportIndicators.length > 0)
@@ -104,6 +104,32 @@ const IPTTTableBody = inject('rootStore')(
             return <tbody>
                         {indicatorRows}
                    </tbody>
+        }
+    )
+) */
+
+const LevelRow = ({ level }) => {
+    return (
+        <tr className="row__level">
+            <td colSpan="8">
+                {level.tier} {level.displayOntology}: { level.name }
+            </td>
+        </tr>
+        );
+}
+
+const IPTTTableBody = inject('rootStore')(
+    observer(
+        ({ rootStore }) => {
+            const levelRows = (rootStore.report && rootStore.report.length > 0)
+                           ? rootStore.report.map(
+                                (level, count) => <LevelRow level={ level } key={ count } />
+                           ) : rootStore.noIndicatorsForFrequency
+                             ? <NoIndicatorsForFrequency />
+                             : <Loading />;
+            return <tbody>
+                        { levelRows }
+                    </tbody>
         }
     )
 )

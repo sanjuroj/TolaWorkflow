@@ -30,6 +30,19 @@ export class ReportAPI {
     }
 }
 
+class Level {
+    constructor(program, levelJSON) {
+        this.program = program;
+        this.id = levelJSON.id;
+        this.name = levelJSON.name;
+        this.tier = levelJSON.tier;
+        this.ontology = levelJSON.ontology;
+        this.depth = levelJSON.depth;
+        this.sortIndex = levelJSON.sort;
+    }
+
+}
+
 class Indicator {
     @observable timeperiodsData = {};
     @observable tvaData = {};
@@ -103,6 +116,7 @@ class Indicator {
 
 class Program {
     @observable indicators = null;
+    @observable levels = null;
     @observable reportsLoaded = {
         tva: [],
         timeperiods: []
@@ -141,6 +155,16 @@ class Program {
             //something went wrong
             console.log("what happened?  data", data);
         }
+        if (this.levels === null) {
+            this.levels = {};
+        }
+        data.levels.forEach(
+            levelJSON => {
+                if (this.levels[levelJSON.id] == undefined) {
+                    this.levels[levelJSON.id] = new Level(this, levelJSON);
+                }
+            }
+        )
         if (this.indicators === null) {
             this.indicators = {};
         }
@@ -153,6 +177,34 @@ class Program {
             }
         );
         this.reportsLoaded[data.reportType].push(String(data.reportFrequency));
+    }
+    
+    @computed get levelsChain() {
+        if (!this.levels || this.levels.length == 0) {
+            return false;
+        }
+        return Object.values(this.levels)
+                .sort((levelA, levelB) => levelA.ontology < levelB.ontology ? -1 : 1);
+    }
+    
+    @computed get levelsGrouped() {
+        if (!this.levels || this.levels.length == 0) {
+            return false;
+        }
+        function groupCompare(a, b) {
+            if (a.depth < b.depth) {
+                return -1;
+            } else if (a.depth > b.depth) {
+                return 1;
+            } else if (a.ontology < b.ontology) {
+                return -1;
+            } else if (b.ontology < a.ontology) {
+                return 1;
+            }
+            return 0;
+        }
+        return Object.values(this.levels)
+                .sort(groupCompare);
     }
     
     @computed get reportIndicators() {
@@ -244,6 +296,7 @@ export class RootStore {
     @observable startPeriod = '';
     @observable endPeriod = '';
     @observable nullRecent = false;
+    @observable levelGrouping = false;
     @observable levelFilters = [];
     @observable siteFilters = [];
     @observable typeFilters = [];
@@ -363,6 +416,24 @@ export class RootStore {
     
     get isTVA() {
         return (this.reportType === TVA);
+    }
+    
+    @computed get report() {
+        let levels;
+        if (this.selectedProgram === null || !this.selectedFrequencyId) {
+            return [];
+        }
+        else if (this.levelGrouping) {
+            levels = this.selectedProgram.levelsGrouped;
+        } else {
+            levels = this.selectedProgram.levelsChain;
+        }
+        if (levels) {
+            return levels;
+        } else {
+            this.callForData();
+            return false;
+        }
     }
     
     @computed get reportIndicators() {
