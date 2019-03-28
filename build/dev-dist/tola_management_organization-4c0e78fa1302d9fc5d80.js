@@ -1025,9 +1025,9 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
   }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__metadata"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    id: "users-count"
+    className: "metadata__count text-small text-muted"
   }, store.organizations_count ? "".concat(store.organizations_count, " ").concat(gettext("organizations")) : "--"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    id: "pagination-controls"
+    className: "metadata__controls"
   }, store.total_pages && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_pagination__WEBPACK_IMPORTED_MODULE_4__["default"], {
     pageCount: store.total_pages,
     initialPage: store.current_page,
@@ -1162,18 +1162,21 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
 
 var Pagination = function Pagination(props) {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_paginate__WEBPACK_IMPORTED_MODULE_1___default.a, _extends({
-    previousLabel: react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-      className: "fa fa-angle-left"
-    }),
-    nextLabel: react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-      className: "fa fa-angle-right"
-    }),
+    previousLabel: '‹',
+    previousClassName: 'page-item previous',
+    previousLinkClassName: 'page-link',
+    nextLabel: '›',
+    nextClassName: 'page-item next',
+    nextLinkClassName: 'page-link',
     breakLabel: "...",
-    breakClassName: "break-me",
+    disabledClassName: 'disabled',
+    breakClassName: 'page-item disabled',
+    breakLinkClassName: 'page-link',
+    pageClassName: 'page-item',
+    pageLinkClassName: 'page-link',
     marginPagesDisplayed: 2,
     pageRangeDisplayed: 5,
     containerClassName: "pagination",
-    subContainerClassName: "pages pagination",
     activeClassName: "active"
   }, props));
 };
@@ -2243,4 +2246,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-e90b327acc4f335fc803.js.map
+//# sourceMappingURL=tola_management_organization-4c0e78fa1302d9fc5d80.js.map

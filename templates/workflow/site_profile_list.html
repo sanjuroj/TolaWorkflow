@@ -118,59 +118,59 @@
 </table>
 
 <!-- paginate site profile listing -->
- <div class="row">
-    <div class="col-md-8">
-        <ul class="paginate">
+ <div class="admin-list__metadata">
+    <div class="metadata__controls">
+        <ul class="pagination">
             {% if getSiteProfile.has_previous %}
-                <li>
-                    <a href="?user_list={{user_list}}&page={{ getSiteProfile.previous_page_number }}">{% trans "Previous" %}</a>
+                <li class="page-item">
+                    <a class="page-link" href="?user_list={{user_list}}&page={{ getSiteProfile.previous_page_number }}">‹</a>
                 </li>
-                <li>
-                    <a href="?user_list={{user_list}}&page={{ getSiteProfile.previous_page_number }}"> {{getSiteProfile.previous_page_number}}</a>
+                <li class="page-item">
+                    <a class="page-link" href="?user_list={{user_list}}&page={{ getSiteProfile.previous_page_number }}"> {{getSiteProfile.previous_page_number}}</a>
                 </li>
             {% endif %}
 
             {% with getSiteProfile.number as site_num %}
-                <li>
-                    <a class="active" href="">{{ site_num }}</a>
+                <li class="page-item active">
+                    <a class="page-link" href="">{{ site_num }}</a>
                 </li>
             {% endwith %}
 
             {% if getSiteProfile.has_next %}
-                <li>
-                    <a href="?user_list={{user_list}}&page={{ getSiteProfile.next_page_number }}">
+                <li class="page-item">
+                    <a class="page-link" href="?user_list={{user_list}}&page={{ getSiteProfile.next_page_number }}">
                         {{ getSiteProfile.next_page_number }}</a>
                 </li>
                 {% ifnotequal getSiteProfile.next_page_number getSiteProfile.paginator.num_pages %}
                     {% with getSiteProfile.paginator.num_pages as num_pages %}
-                        <li><a href="">...</a></li>
-                        <li><a href="?user_list={{user_list}}&page={{ num_pages }}"> {{ num_pages }}  </a></li>
+                        <li class="page-item"><a class="page-link" href="">...</a></li>
+                        <li class="page-item"><a class="page-link" href="?user_list={{user_list}}&page={{ num_pages }}"> {{ num_pages }}  </a></li>
                     {% endwith %}
                 {% endifnotequal %}
-                <li>
-                    <a href="?user_list={{user_list}}&page={{ getSiteProfile.next_page_number }}">{% trans "Next" %}</a>
+                <li class="page-item">
+                    <a class="page-link" href="?user_list={{user_list}}&page={{ getSiteProfile.next_page_number }}">›</a>
                 </li>
             {% endif %}
         </ul>
     </div>
-    <div class="per_page">
-        <ul class="paginate">
-            <li><a class="{% if default_list == 5 %}active{% endif %}"
+    <div class="metadata__count">
+        <ul class="pagination">
+            <li class="page-item align-items-center"><span class="text-muted text-small">{% trans "results per page:" %}&nbsp;</span></li>
+            <li class="page-item"><a class="page-link {% if default_list == 5 %}active{% endif %}"
                     href="?user_list=10">5</a>
             </li>
-            <li>
-                <a class="{% if default_list == 10 %}active{% endif %}"
+            <li class="page-item {% if default_list == 10 %}active{% endif %}">
+                <a class="page-link "
                     href="?user_list=10">10</a>
             </li>
-            <li>
-                <a class="{% if default_list == 20 %}active{% endif %}"
+            <li class="page-item {% if default_list == 20 %}active{% endif %}">
+                <a class="page-link"
                     href="?user_list=20">20 </a>
             </li>
-            <li>
-                <a class="{% if default_list == 30 %}active{% endif %}"
+            <li class="page-item {% if default_list == 30 %}active{% endif %}">
+                <a class="page-link"
                     href="?user_list=30" >30</a>
             </li>
-            <li><a href="#">{% trans "per page" %}</a></li>
         </ul>
     </div>
 </div>

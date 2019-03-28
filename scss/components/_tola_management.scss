@@ -292,8 +292,19 @@ table.admin-list__table {
 }
 
 .admin-list__metadata { // was: .list-metadata; contains metadata (e.g. count) & pagination
+    align-items: center;
     display: flex;
     justify-content: space-between;
+}
+.metadata__count { // number of results
+    .pagination {
+        align-items: center;
+    }
+}
+.metadata__controls { // wraps pagination controls
+    .pagination {
+        align-items: center;
+    }
 }
 
 

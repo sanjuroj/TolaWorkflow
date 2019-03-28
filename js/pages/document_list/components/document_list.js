@@ -189,6 +189,10 @@ const DocumentsListTable = observer(function ({rootStore, uiStore, access}) {
     }];
 
     const paginationOptions = {
+        prePageText: '‹',
+        nextPageText: '›',
+        firstPageText: '«',
+        lastPageText: '»',
         sizePerPage: 50,
         // page: 2,
         showTotal: true,
@@ -199,7 +203,7 @@ const DocumentsListTable = observer(function ({rootStore, uiStore, access}) {
                 toCount: to,
                 totalCount: size,
             }, true);
-            return <span className="react-bootstrap-table-pagination-total">&nbsp;{str}</span>
+            return <span className="metadata__count text-muted text-small">&nbsp;{str}</span>
         }
     };
 

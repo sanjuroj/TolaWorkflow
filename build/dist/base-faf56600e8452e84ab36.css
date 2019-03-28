@@ -8313,25 +8313,6 @@ span[data-toggle="popover"]:hover {
   .mgmt-table__row--expanded > td {
     padding: 30px; }
 
-.pagination {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 0.3rem; }
-  .pagination li {
-    color: #0645AD; }
-    .pagination li:hover, .pagination li.active {
-      color: #ADD8E6; }
-    .pagination li.disabled {
-      color: #ccc; }
-      .pagination li.disabled a {
-        cursor: default; }
-    .pagination li a {
-      text-decoration: none;
-      color: inherit;
-      width: 1rem;
-      padding: 0 1rem;
-      cursor: pointer; }
-
 #user-management-index-view .edit-user-history table .program-changeset-row,
 #program-management-index-view .edit-user-history table .program-changeset-row,
 #country-management-index-view .edit-user-history table .program-changeset-row {
@@ -8523,8 +8504,15 @@ table.admin-list__table {
   margin-top: 30px; }
 
 .admin-list__metadata {
+  align-items: center;
   display: flex;
   justify-content: space-between; }
+
+.metadata__count .pagination {
+  align-items: center; }
+
+.metadata__controls .pagination {
+  align-items: center; }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
@@ -9072,30 +9060,6 @@ body.loading {
   height: 100px;
   overflow: auto; }
 
-ul.paginate {
-  display: inline-block;
-  padding: 0;
-  margin: 0; }
-  ul.paginate li {
-    display: inline; }
-    ul.paginate li a {
-      color: black;
-      float: left;
-      padding: 8px 16px;
-      text-decoration: none;
-      transition: background-color .3s;
-      border: 1px solid #dbdcde; }
-      ul.paginate li a.active {
-        background-color: #81bc00;
-        color: white;
-        border: 1px solid #81bc00; }
-      ul.paginate li a:hover:not(.active) {
-        background-color: #dbdcde; }
-
-.per_page {
-  float: right;
-  margin-right: 15px; }
-
 .ui-datepicker {
   z-index: 10000 !important; }
 
@@ -9237,5 +9201,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-dc046710ebc98e2dad5b.css.map*/
