@@ -80,6 +80,9 @@ export class UserStore {
         users: []
     }
 
+    @observable appliedFilters = {
+    }
+
     constructor({
         countries,
         organizations,
@@ -124,6 +127,7 @@ export class UserStore {
 
         this.country_role_choices = country_role_choices.map(([value, label]) => ({label, value}))
         this.program_role_choices = program_role_choices.map(([value, label]) => ({label, value}))
+        this.appliedFilters = {...this.filters}
         this.fetchUsers()
     }
 
@@ -178,7 +182,7 @@ export class UserStore {
     @action
     fetchUsers() {
         this.fetching_users_listing = true
-        api.fetchUsersWithFilter(this.current_page + 1, this.marshalFilters(this.filters)).then(results => {
+        api.fetchUsersWithFilter(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(results => {
             runInAction(() => {
                 this.fetching_users_listing = false
                 this.users = results.users.reduce((xs, x) => {
@@ -198,6 +202,7 @@ export class UserStore {
 
     @action
     applyFilters() {
+        this.appliedFilters = {...this.filters}
         this.current_page = 0
         this.fetchUsers()
     }

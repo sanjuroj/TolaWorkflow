@@ -19,6 +19,9 @@ export class ProgramStore {
         users: []
     }
 
+    @observable appliedFilters = {
+    }
+
     @observable programFilterPrograms = []
     @observable programs = []
     @observable program_count = 0
@@ -45,6 +48,7 @@ export class ProgramStore {
     ) {
         this.api = api
         Object.assign(this, initialData)
+        this.appliedFilters = {...this.filters}
         this.fetchPrograms()
     }
 
@@ -62,7 +66,7 @@ export class ProgramStore {
     @action
     fetchPrograms() {
         this.fetching_main_listing = true
-        this.api.fetchPrograms(this.current_page + 1, this.marshalFilters(this.filters)).then(results => {
+        this.api.fetchPrograms(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(results => {
             runInAction(() => {
                 this.fetching_main_listing = false
                 this.programs = results.results
@@ -72,7 +76,7 @@ export class ProgramStore {
                 this.previous_page = results.previous_page
             })
         })
-        this.api.fetchProgramsForFilter(this.marshalFilters(this.filters)).then(response => {
+        this.api.fetchProgramsForFilter(this.marshalFilters(this.appliedFilters)).then(response => {
             runInAction(() => {
                 this.programFilterPrograms = response.data
             })
@@ -82,6 +86,7 @@ export class ProgramStore {
 
     @action
     applyFilters() {
+        this.appliedFilters = {...this.filters}
         this.current_page = 0
         this.fetchPrograms()
     }
