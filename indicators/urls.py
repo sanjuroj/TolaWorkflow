@@ -31,7 +31,7 @@ from indicators.views.views_reports import (
     IPTTQuickstart,
     IPTTReportData
 )
-
+from indicators.views.views_results_framework import ResultsFrameworkBuilder
 from django.conf.urls import url
 
 
@@ -101,6 +101,11 @@ urlpatterns = [
 
     url(r'^pinned_report/$', create_pinned_report, name='create_pinned_report'),
     url(r'^pinned_report/delete/$', delete_pinned_report, name='delete_pinned_report'),
+
+    #url(r'^iptt_csv/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_CSVExport.as_view(), name='iptt_csv'),
+
+    # Results framework builder
+    url(r'^results_framework_builder/(?P<program_id>\d+)', ResultsFrameworkBuilder.as_view(), name='results_framework_builder'),
 
     # API call for program page
     url(r'^api/indicator/(?P<indicator_id>\d+)', api_indicator_view, name='api_indicator_view'),

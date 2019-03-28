@@ -1,18 +1,36 @@
 from rest_framework import serializers
 
 from workflow.models import Program
-from indicators.models import Indicator, Level
+from indicators.models import Indicator, Level, LevelTier
 
 
 class LevelSerializer(serializers.ModelSerializer):
     """
     Level serializer for Program Page
     """
+
     class Meta:
         model = Level
         fields = [
             'id',
-            'name'
+            'parent',
+            'name',
+            'customsort',
+            'ontology',
+            'get_level_depth',
+        ]
+
+
+class LevelTierSerializer(serializers.ModelSerializer):
+    """
+    Level serializer for Program Page
+    """
+    class Meta:
+        model = LevelTier
+        fields = [
+            'id',
+            'name',
+            'tier_depth'
         ]
 
 
