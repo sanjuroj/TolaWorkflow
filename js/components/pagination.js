@@ -10,12 +10,11 @@ import { observer } from "mobx-react"
     - onPageChange: a function to receive the newly selected page
 */
 const Pagination = (props) => {
-
     return <ReactPaginate
-            previousLabel={<i className="fa fa-angle-left"></i>}
+            previousLabel={'‹'}
             previousClassName={'page-item previous'}
             previousLinkClassName={'page-link'}
-            nextLabel={<i className="fa fa-angle-right"></i>}
+            nextLabel={'›'}
             nextClassName={'page-item next'}
             nextLinkClassName={'page-link'}
             breakLabel={"..."}
