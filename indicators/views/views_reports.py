@@ -178,6 +178,7 @@ def get_labels(quickstart=True):
                     'buttonCurrent': ugettext('Current view'),
                     'buttonAll': ugettext('All program data')
                 },
+                'resetButton': ugettext('Reset'),
                 'periodSelect': {
                     'tva': ugettext('Target periods'),
                     'timeperiods': ugettext('Time periods')
@@ -365,6 +366,12 @@ class IPTTExcelExport(LoginRequiredMixin, View):
             indicator_qs = indicator_qs.filter(
                 target_frequency=int(frequency)
             )
+        indicator_qs = indicator_qs.apply_filters(
+            levels=request.GET.getlist('levels'),
+            sites=request.GET.getlist('sites'),
+            indicator_types=request.GET.getlist('types'),
+            sectors=request.GET.getlist('sectors'),
+            indicator_ids=request.GET.getlist('indicators'))
         frequency = int(frequency) if frequency != 'all' else 'all'
         indicator_qs = indicator_qs.with_frequency_annotations(
             frequency, program.reporting_period_start, program.reporting_period_end

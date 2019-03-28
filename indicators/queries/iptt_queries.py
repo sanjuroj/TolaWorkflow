@@ -26,6 +26,28 @@ class IPTTIndicatorQueryset(models.QuerySet, IndicatorSortingQSMixin):
         qs = qs.annotate(lop_percent_met=utils.indicator_lop_percent_met_annotation())
         return qs
 
+    def apply_filters(self, levels=None, sites=None, indicator_types=None,
+                      sectors=None, indicator_ids=None):
+        qs = self.all()
+        if not any([levels, sites, indicator_types, sectors, indicator_ids]):
+            return qs
+        # if levels (add after Satsuma integration)
+        if sites:
+            sites_subquery = Result.objects.filter(
+                indicator_id=models.OuterRef('pk'),
+                site__in=[int(s) for s in sites]
+            )
+            qs = qs.annotate(
+                sites_in_filter=models.Exists(sites_subquery)
+                ).filter(sites_in_filter=True)
+        if indicator_types:
+            qs = qs.filter(indicator_type__in=[int(t) for t in indicator_types])
+        if sectors:
+            qs = qs.filter(sector__in=[int(s) for s in sectors])
+        if indicator_ids:
+            qs = qs.filter(pk__in=[int(i) for i in indicator_ids])
+        return qs
+
     def get_periods(self, frequency, start, end):
         return [{'start': p['start'], 'end': p['end']} for p in PeriodicTarget.generate_for_frequency(frequency)(start, end)]
 
