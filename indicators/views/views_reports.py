@@ -156,8 +156,7 @@ def get_labels(quickstart=True):
                      'This report does not include periodic targets')
                 ),
                 'periodSelect': ugettext('Target periods'),
-                'submitButton': ugettext('View report'),
-                'excel': ugettext('Excel - all targets'),
+                'submitButton': ugettext('View report')
             }
         )
     else:
@@ -174,7 +173,11 @@ def get_labels(quickstart=True):
                     'successMsg': ugettext('Success! This report is now pinned to the program page.'),
                     'successLink': ugettext('Visit the program page now.')
                 },
-                'excel': ugettext('Excel'),
+                'excel': {
+                    'buttonMain': ugettext('Excel'),
+                    'buttonCurrent': ugettext('Current view'),
+                    'buttonAll': ugettext('All program data')
+                },
                 'periodSelect': {
                     'tva': ugettext('Target periods'),
                     'timeperiods': ugettext('Time periods')
@@ -342,6 +345,7 @@ class IPTTExcelExport(LoginRequiredMixin, View):
     wb = None
     TITLE_START_COLUMN = 3
     TITLE_END_COLUMN = 8
+    INDICATOR_ROW = 5 # first row that has indicator data
     TITLE_FONT = styles.Font(size=18)
     HEADER_FONT = styles.Font(bold=True)
     HEADER_FILL = styles.PatternFill('solid', 'EEEEEE')
@@ -447,30 +451,29 @@ class IPTTExcelExport(LoginRequiredMixin, View):
         return col_no + len(header_cells)
 
     def add_data(self, sheet, indicators, periods, frequency):
-        indicator_row = 5
         for offset, indicator in enumerate(indicators):
-            sheet.cell(row=indicator_row + offset, column=1).value = indicator.program_id
-            sheet.cell(row=indicator_row + offset, column=2).value = indicator.id
-            sheet.cell(row=indicator_row + offset, column=3).value = unicode(indicator.number)
-            name_cell = sheet.cell(row=indicator_row + offset, column=4)
-            name_cell.value = unicode(indicator.name)
-            name_cell.alignment = self.INDICATOR_NAME_ALIGN
-            sheet.cell(row=indicator_row + offset, column=5).value = unicode(indicator.levelname)
-            sheet.cell(row=indicator_row + offset, column=6).value = unicode(indicator.unit_of_measure)
-            sheet.cell(row=indicator_row + offset, column=7).value = unicode(indicator.get_direction_of_change)
+            for col, val in enumerate([indicator.program_id,
+                                       indicator.id,
+                                       unicode(indicator.number),
+                                       unicode(indicator.name),
+                                       unicode(indicator.levelname),
+                                       unicode(indicator.unit_of_measure),
+                                       unicode(indicator.get_direction_of_change)]):
+                sheet.cell(row=self.INDICATOR_ROW + offset, column=col+1).value = val
+            sheet.cell(row=self.INDICATOR_ROW + offset, column=4).alignment = self.INDICATOR_NAME_ALIGN
             if indicator.is_cumulative:
-                sheet.cell(row=indicator_row + offset, column=8).value = unicode(ugettext('Cumulative'))
+                sheet.cell(row=self.INDICATOR_ROW + offset, column=8).value = unicode(ugettext('Cumulative'))
             else:
-                sheet.cell(row=indicator_row + offset, column=8).value = unicode(ugettext('Non-cumulative'))
-            sheet.cell(row=indicator_row + offset, column=9).value = unicode(indicator.get_unit_of_measure_type)
+                sheet.cell(row=self.INDICATOR_ROW + offset, column=8).value = unicode(ugettext('Non-cumulative'))
+            sheet.cell(row=self.INDICATOR_ROW + offset, column=9).value = unicode(indicator.get_unit_of_measure_type)
             if indicator.unit_of_measure_type == Indicator.PERCENTAGE:
                 add_cell_func = add_percentage_cell
             else:
                 add_cell_func = add_numeric_cell
-            add_cell_func(sheet.cell(row=indicator_row + offset, column=10), indicator.baseline)
-            add_cell_func(sheet.cell(row=indicator_row + offset, column=11), indicator.lop_target)
-            add_cell_func(sheet.cell(row=indicator_row + offset, column=12), indicator.lop_actual)
-            add_percentage_cell(sheet.cell(row=indicator_row + offset, column=13),
+            add_cell_func(sheet.cell(row=self.INDICATOR_ROW + offset, column=10), indicator.baseline)
+            add_cell_func(sheet.cell(row=self.INDICATOR_ROW + offset, column=11), indicator.lop_target)
+            add_cell_func(sheet.cell(row=self.INDICATOR_ROW + offset, column=12), indicator.lop_actual)
+            add_percentage_cell(sheet.cell(row=self.INDICATOR_ROW + offset, column=13),
                                 indicator.lop_percent_met, True)
             column = 14
             for period in periods:
@@ -479,18 +482,18 @@ class IPTTExcelExport(LoginRequiredMixin, View):
                         indicator,
                         'frequency_{f}_period_{p}_target'.format(f=frequency, p=period['customsort'])
                     )
-                    add_cell_func(sheet.cell(row=indicator_row+offset, column=column), target)
+                    add_cell_func(sheet.cell(row=self.INDICATOR_ROW + offset, column=column), target)
                     column += 1
                 actual = getattr(
                     indicator,
                     'frequency_{f}_period_{p}'.format(f=frequency, p=period['customsort'])
                 )
-                add_cell_func(sheet.cell(row=indicator_row+offset, column=column), actual)
+                add_cell_func(sheet.cell(row=self.INDICATOR_ROW + offset, column=column), actual)
                 column += 1
                 if self.tva:
                     if actual and target and target != 0:
                         met = float(actual)/float(target)
-                        add_percentage_cell(sheet.cell(row=indicator_row+offset, column=column), met, True)
+                        add_percentage_cell(sheet.cell(row=self.INDICATOR_ROW + offset, column=column), met, True)
                     column += 1
 
     def set_widths(self, sheet):
@@ -516,7 +519,7 @@ class IPTTExcelExport(LoginRequiredMixin, View):
         }
         self.wb.remove(self.wb.active)
         # cut event out of this loop - haven't figured out how to show event frequency indicators yet:
-        for frequency in [f for f in frequencies if f in frequency_names]:
+        for frequency in [f for f in frequency_names if f in frequencies]:
             sheet = self.wb.create_sheet(frequency_names[frequency])
             yield frequency, sheet
 
@@ -531,8 +534,11 @@ class IPTTExcelExport(LoginRequiredMixin, View):
         for sheet_frequency, sheet in self.add_sheets(frequencies):
             periods = [period for period in program.get_periods_for_frequency(sheet_frequency)]
             periods = periods[int(start_period):] if start_period else periods
-            periods = periods[:int(end_period)] if end_period else periods
-            sheet_indicators = indicators.filter(target_frequency=int(sheet_frequency))
+            periods = periods[:int(end_period)+1] if end_period else periods
+            if self.tva:
+                sheet_indicators = indicators.filter(target_frequency=int(sheet_frequency))
+            else:
+                sheet_indicators = indicators
             self.add_headers(sheet, program, periods)
             self.add_data(sheet, sheet_indicators, periods, sheet_frequency)
             self.set_widths(sheet)
