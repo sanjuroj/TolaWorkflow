@@ -118,7 +118,8 @@ class Objective(models.Model):
 
 
 class Level(models.Model):
-    name = models.CharField(_("Name"), max_length=135, blank=True)
+    name = models.CharField(_("Name"), max_length=500, blank=True)
+    assumptions = models.CharField(_("Assumptions"), max_length=500, blank=True, null=True)
     parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='child_levels')
     program = models.ForeignKey(Program, blank=True, null=True, on_delete=models.CASCADE, related_name='levels')
     customsort = models.IntegerField(_("Sort Order"), blank=True, null=True)
@@ -173,6 +174,7 @@ class Level(models.Model):
 
     @property
     def leveltier(self):
+        # TODO: What if their level hierarchy is deeper than the leveltier set that they pick
         tiers = self.program.level_tiers.order_by('tier_depth')
         try:
             tier = tiers[self.get_level_depth()-1]
