@@ -113,12 +113,80 @@ export class PinButton extends React.Component {
     }
 }
 
-export const ExcelButton = inject('labels', 'rootStore')(({ labels, rootStore }) => {
-        return <a type="button"
-                  href={ rootStore.excelURL }
-                  className="btn btn-sm btn-secondary">
-                    <i className="fas fa-download"></i> { labels.excel }
-                </a>;
-            
+
+@inject('labels', 'rootStore')
+@observer
+class ExcelPopover extends React.Component {
+    getCurrent = () => {
+        if (this.props.rootStore.currentExcelURL) {
+            window.location=this.props.rootStore.currentExcelURL;
+        }
     }
-);
+    
+    getAll = () => {
+        if (this.props.rootStore.allExcelURL) {
+            window.location=this.props.rootStore.allExcelURL;
+        }
+    }
+    render() {
+        return (
+            <div className="container-fluid">
+                <div className="row mt-1 mb-2">
+                    <div className="btn btn-primary btn-block"
+                         onClick={ this.getCurrent }>
+                        { this.props.labels.excel.buttonCurrent }
+                    </div>
+                </div>
+                <div className="row mt-2 mb-1">
+                    <div className="btn btn-primary btn-block"
+                         onClick={ this.getAll }>
+                         { this.props.labels.excel.buttonAll }
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}
+
+@inject('labels', 'rootStore')
+@observer
+export class ExcelButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            open: false
+        };
+    }
+    
+    handleClick = () => {
+        if (this.props.rootStore.isTVA) {
+            this.setState({open: !this.state.open});
+        } else if (this.props.rootStore.currentExcelURL) {
+            window.location=this.props.rootStore.currentExcelURL;
+        }
+    }
+    
+    handleClose(e) {
+        this.setState({open: false});
+    }
+    render() {
+        return (
+            <React.Fragment>
+                <div className="btn btn-sm btn-secondary"
+                     ref="target"
+                     onClick={this.handleClick.bind(this) }>
+                     <i className="fas fa-download"></i> { this.props.labels.excel.buttonMain }
+                     </div>
+                     <Popover
+                        placement="bottom"
+                        containerStyle={ {paddingRight: '10px'} }
+                        style={ {width: 'auto' } }
+                        target={ this.refs.target }
+                        show={ this.state.open }
+                        onHide={ this.handleClose.bind(this) } >
+                        <ExcelPopover />
+                      </Popover>
+            </React.Fragment>
+        );
+    }
+}

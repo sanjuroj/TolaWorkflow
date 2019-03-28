@@ -16,14 +16,3 @@ export const IPTTSubmit = inject('labels', 'rootStore')(
             </div>;    
     })
 )
-
-
-export const ExcelButton = inject('labels', 'rootStore')(
-    observer(({ labels, rootStore }) => {
-        return <a type="button"
-                  href={ rootStore.excelURL || '#' }
-                  className={"btn btn-sm btn-secondary" + (rootStore.excelURL === false ? " disabled" : "")}>
-                    <i className="fas fa-download"></i> { labels.excel }
-                </a>;
-    })
-);
