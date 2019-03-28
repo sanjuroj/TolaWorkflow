@@ -484,6 +484,10 @@ var DocumentsListTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observe
     order: 'desc'
   }];
   var paginationOptions = {
+    prePageText: '‹',
+    nextPageText: '›',
+    firstPageText: '«',
+    lastPageText: '»',
     sizePerPage: 50,
     // page: 2,
     showTotal: true,
@@ -495,7 +499,7 @@ var DocumentsListTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observe
         totalCount: size
       }, true);
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "react-bootstrap-table-pagination-total"
+        className: "metadata__count text-muted text-small"
       }, "\xA0", str);
     }
   };
@@ -675,4 +679,4 @@ var globalEventBus = nanobus__WEBPACK_IMPORTED_MODULE_0___default()();
 /***/ })
 
 },[["Wr7D","runtime","vendors"]]]);
-//# sourceMappingURL=document_list-02274453eeeb2f279f56.js.map
+//# sourceMappingURL=document_list-4bf5d1e03d38a6eaca94.js.map
