@@ -2,7 +2,7 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 import { IPTTTable } from './reportComponents';
 import { IPTTFilterForm } from './filterForm';
-import { PinButton, ExcelButton } from './buttons';
+import { PinButton, ExcelButton, ClearButton } from './buttons';
 
 
 const IPTTHeader = inject('labels', 'rootStore')(
@@ -27,6 +27,10 @@ const IPTTSidebar = inject('labels')(({ labels }) => {
     return <div className="sidebar_wrapper">
                 <div className="collapse width show" id="sidebar">
                   <IPTTFilterForm />
+                  <div id="filter-bottom"
+                       className="d-flex justify-content-between no-gutters p-3">
+                    <ClearButton />
+                  </div>
                 </div>
                 <div className="sidebar-toggle">
                   <a href="#" data-target="#sidebar" data-toggle="collapse"

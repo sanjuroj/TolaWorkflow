@@ -190,3 +190,14 @@ export class ExcelButton extends React.Component {
         );
     }
 }
+
+export const ClearButton = inject('labels', 'rootStore')(
+    ({labels, rootStore}) => {
+        return (
+            <div className="btn btn-primary btn-block"
+                onClick={ rootStore.clearFilters }>
+                    { labels.resetButton }
+            </div>
+        )
+    }
+);

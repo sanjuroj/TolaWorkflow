@@ -717,4 +717,13 @@ export class RootStore {
         this.updateUrl('indicators', selected.map(item => item.value));
     }
     
+    clearFilters = () => {
+        this.levelFilters = this.siteFilters = this.typeFilters = this.sectorFilters = this.indicatorFilters = [];
+        this.updateUrl('levels', []);
+        this.updateUrl('sites', []);
+        this.updateUrl('types', []);
+        this.updateUrl('sectors', []);
+        this.updateUrl('indicators', []);
+    }
+    
 }
