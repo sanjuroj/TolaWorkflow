@@ -331,9 +331,17 @@ export class RootStore {
         return this.selectedProgram ? '/program/' + this.selectedProgram.id + '/' : false;
     }
     
-    @computed get excelURL() {
+    @computed get currentExcelURL() {
         let params = this.router.getState().params;
         let url = '/indicators/iptt_excel/' + window.location.search;
+        url += '&programId=' + this.selectedProgram.id;
+        url += '&reportType=' + (this.isTVA ? 'tva' : 'timeperiods');
+        return url;
+    }
+    
+    @computed get allExcelURL() {
+        let params = this.router.getState().params;
+        let url = '/indicators/iptt_excel/?frequency=all';
         url += '&programId=' + this.selectedProgram.id;
         url += '&reportType=' + (this.isTVA ? 'tva' : 'timeperiods');
         return url;

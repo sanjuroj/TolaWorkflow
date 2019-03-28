@@ -171,13 +171,6 @@ export class QSRootStore {
         return url;
     }
     
-    @computed get excelURL() {
-        if (this.tvaSelectedProgram == null) {
-            return false;
-        }
-        return '/indicators/iptt_excel/?programId=' + this.tvaSelectedProgram.id + '&frequency=all&reportType=tva';
-    }
-    
     @computed get timeperiodsURL() {
         if (this.reportType == TVA || this.timeperiodsSelectedProgram == null) {
             return false;
