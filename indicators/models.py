@@ -163,6 +163,15 @@ class Level(models.Model):
         return '.'.join(ontology)
 
     @property
+    def display_ontology(self):
+        target = self
+        display_ontology = []
+        while target.parent is not None:
+            display_ontology = [str(target.customsort),] + display_ontology
+            target = target.parent
+        return '.'.join(display_ontology)
+
+    @property
     def leveltier(self):
         tiers = self.program.level_tiers.order_by('tier_depth')
         try:

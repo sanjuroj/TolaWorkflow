@@ -6,7 +6,7 @@ from openpyxl import styles
 
 from tola.l10n_utils import l10n_date_medium, l10n_date_long, l10n_monthname
 from workflow.models import Program
-from indicators.models import Indicator, PeriodicTarget, PinnedReport
+from indicators.models import Indicator, PeriodicTarget, PinnedReport, Level
 from indicators.forms import PinnedReportForm
 from indicators.queries import IPTTIndicator
 
@@ -287,12 +287,23 @@ class IPTTReportData(LoginRequiredMixin, View):
             )
         indicator_qs = indicator_qs.with_frequency_annotations(
             self.frequency, dates['reporting_period_start'], dates['reporting_period_end'])
-        return indicator_qs
+        levels = Level.objects.filter(program_id=int(program_id))
+        level_data = []
+        for level in levels:
+            level_data.append({
+                'id': level.pk,
+                'name': level.name,
+                'tier': level.leveltier.name,
+                'ontology': level.ontology,
+                'depth': level.get_level_depth(),
+                'sort': level.customsort
+                })
+        return indicator_qs, level_data
 
     def get(self, request):
         self.tva = request.GET.get('reportType') == 'tva'
         self.frequency = int(request.GET.get('frequency'))
-        indicator_qs = self.get_context_data(request)
+        indicator_qs, level_data = self.get_context_data(request)
         indicators = []
         for sort_index, indicator in enumerate(indicator_qs):
             this_indicator = {
@@ -300,7 +311,7 @@ class IPTTReportData(LoginRequiredMixin, View):
                 'sortIndex': sort_index,
                 'number': indicator.number,
                 'name': indicator.name,
-                'level': indicator.levelname,
+                'level': indicator.level.leveltier.name if indicator.level else None,
                 'levelpk': indicator.level.pk if indicator.level else None,
                 'sites': indicator.sites,
                 'indicatorTypes': indicator.indicator_types,
@@ -336,7 +347,8 @@ class IPTTReportData(LoginRequiredMixin, View):
             'programId': request.GET.get('programId'),
             'reportFrequency': self.frequency,
             'reportType': 'tva' if self.tva else 'timeperiods',
-            'indicators': indicators
+            'indicators': indicators,
+            'levels': level_data
         }
         return JsonResponse(reportData)
 
