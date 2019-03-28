@@ -284,8 +284,8 @@ export const IndexView = observer(
                     </div>
                 </LoadingSpinner>
                 <div className="admin-list__metadata">
-                    <div id="users-count">{store.program_count ? `${store.program_count} ${gettext("programs")}`:`---`}</div>
-                    <div id ="pagination-controls">
+                    <div className="metadata__count text-small text-muted">{store.program_count ? `${store.program_count} ${gettext("programs")}`:`---`}</div>
+                    <div className="metadata__controls">
                         {store.total_pages &&
                          <Pagination
                             pageCount={store.total_pages}
