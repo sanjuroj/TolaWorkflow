@@ -15,6 +15,7 @@ class LevelSerializer(serializers.ModelSerializer):
             'id',
             'parent',
             'name',
+            'assumptions',
             'customsort',
             'ontology',
             'get_level_depth'

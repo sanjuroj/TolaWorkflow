@@ -26,7 +26,7 @@
     margin: .75em 0;
 }
 
-.levelcard {
+.levelcard-collapsed {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -40,6 +40,21 @@
 
 .levelcard-collapsed__rightbuttons {
     margin: .75em 0 .75em .75em;
+}
+
+.levelcard-expanded {
+    display: flex;
+    flex-direction: column;
+}
+
+.levelcard-expanded__title {
+    font-weight: bold;
+}
+
+.levelcard-expanded__form {
+    display: flex;
+    flex-direction: column;
+
 }
 
 .new-leveltier {
