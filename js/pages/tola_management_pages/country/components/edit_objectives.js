@@ -121,7 +121,7 @@ class StrategicObjectiveForm extends React.Component {
                         )}
                         <div className="right-buttons">
                             <a tabIndex="0" onClick={deleteAction} className="btn btn-link btn-danger">
-                                <FontAwesomeIcon icon={'trash'} /> {gettext("Delete")}
+                                <i className="fas fa-trash"/>{gettext("Delete")}
                             </a>
                         </div>
                     </div>
@@ -184,7 +184,7 @@ export default class EditObjectives extends React.Component {
         const {expanded_id, new_objective} = this.state
         const {objectives} = this.props
         return (
-            <div class="tab-pane--react">
+            <div className="tab-pane--react">
                 <h3>{gettext("Strategic Objectives")}</h3>
                 {objectives.map((objective) =>
                     <StrategicObjectiveForm
@@ -201,7 +201,7 @@ export default class EditObjectives extends React.Component {
                 )}
                 <div>
                     <a tabIndex="0" onClick={() => this.addObjective()} className="btn btn-link btn-add">
-                        <FontAwesomeIcon icon={'plus-circle'} /> {gettext("Add strategic objective")}
+                        <i className="fas fa-plus-circle"/>{gettext("Add strategic objective")}
                     </a>
                 </div>
             </div>

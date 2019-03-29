@@ -53,10 +53,8 @@ export default class EditOrganizationHistory extends React.Component {
     render() {
         return <div className="tab-pane--react">
             <h2 className="no-bold">{this.state.data.name ? this.state.data.name+": ": ""}{gettext("Status and history")}</h2>
-            <div className="row">
-                <div className="col">
-                    <Select options={status_options} value={this.state.data.is_active} onChange={(new_value) => this.onChange(new_value)} />
-                </div>
+            <div className="form-group">
+                <Select options={status_options} value={this.state.data.is_active} onChange={(new_value) => this.onChange(new_value)} />
             </div>
             <div className="row">
                 <div className="col">
@@ -68,7 +66,7 @@ export default class EditOrganizationHistory extends React.Component {
             </div>
             <div className="row">
                 <div className="col">
-                    <table className="history-table">
+                    <table className="table table-sm text-small">
                         <thead>
                             <tr>
                                 <th>{gettext("Date")}</th>

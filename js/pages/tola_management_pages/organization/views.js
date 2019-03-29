@@ -12,8 +12,6 @@ import EditOrganizationHistory from './components/edit_organization_history'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
 const CountryFilter = observer(({store, selections}) => {
     return <div className="form-group">
         <label htmlFor="countries_permitted_filter">{gettext("Countries")}</label>
@@ -86,16 +84,17 @@ export const IndexView = observer(
                     </div>
                 </div>
             </FoldingSidebar>
-            <div className="col list-section">
-                <div className="list-controls">
-                    <div>
+            <div className="col admin-list">
+                <div className="admin-list__controls">
+                    <div className="controls__bulk-actions"></div>
+                    <div className="controls__buttons">
                         <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.createOrganization()}>
-                            <FontAwesomeIcon icon={'plus-circle'} /> {gettext("Add Organization")}
+                            <i className="fas fa-plus-circle"/>{gettext("Add Organization")}
                         </a>
                     </div>
                 </div>
                 <LoadingSpinner isLoading={store.fetching}>
-                    <div className="list-table">
+                    <div className="admin-list__table">
                         <ManagementTable
                             data={store.organizations_listing.map(id => store.organizations[id])}
                             keyField="id"
@@ -144,19 +143,19 @@ export const IndexView = observer(
                                     </Col>
                                     <Col size="2" className="td--stretch">
                                         <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                            <FontAwesomeIcon icon={'building'} />&nbsp;
+                                            <i className="fas fa-building"/>&nbsp;
                                             {data.name || "---"}
                                         </div>
                                     </Col>
                                     <Col size="1" className="text-nowrap">
                                         <a href={`/tola_management/program/?organizations[]=${data.id}`}>
-                                            <FontAwesomeIcon icon={'cubes'} />&nbsp;
+                                            <i className="fas fa-cubes"/>&nbsp;
                                             {data.program_count} {gettext("programs")}
                                         </a>
                                     </Col>
                                     <Col size="1" className="text-nowrap">
                                         <a href={`/tola_management/user/?organizations[]=${data.id}`}>
-                                            <FontAwesomeIcon icon={'users'} />&nbsp;
+                                            <i className="fas fa-users"/>&nbsp;
                                             {data.user_count} {gettext("users")}
                                         </a>
                                     </Col>
@@ -166,9 +165,9 @@ export const IndexView = observer(
                         />
                     </div>
                 </LoadingSpinner>
-                <div className="list-metadata">
-                    <div id="users-count">{store.organizations_count?`${store.organizations_count} ${gettext("organizations")}`:`--`}</div>
-                    <div id ="pagination-controls">
+                <div className="admin-list__metadata">
+                    <div className="metadata__count text-small text-muted">{store.organizations_count?`${store.organizations_count} ${gettext("organizations")}`:`--`}</div>
+                    <div className="metadata__controls">
                         {store.total_pages &&
                          <Pagination
                             pageCount={store.total_pages}

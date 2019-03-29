@@ -787,8 +787,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_edit_organization_history__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/edit_organization_history */ "SXQ9");
 /* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
 /* harmony import */ var components_folding_sidebar__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! components/folding-sidebar */ "tnXs");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
-
 
 
 
@@ -912,22 +910,26 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
       return store.clearFilters();
     }
   }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "col list-section"
+    className: "col admin-list"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "list-controls"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    className: "admin-list__controls"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "controls__bulk-actions"
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "controls__buttons"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
     href: "#",
     tabIndex: "0",
     className: "btn btn-link btn-add",
     onClick: function onClick() {
       return store.createOrganization();
     }
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
-    icon: 'plus-circle'
-  }), " ", gettext("Add Organization")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-plus-circle"
+  }), gettext("Add Organization")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
     isLoading: store.fetching
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "list-table"
+    className: "admin-list__table"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_management_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
     data: store.organizations_listing.map(function (id) {
       return store.organizations[id];
@@ -938,10 +940,9 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
           Row = _ref6.Row;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Row, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.15"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+        size: "2",
         className: "td--stretch"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
-        size: "2"
       }, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, gettext("Programs")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "1"
       }, gettext("Users")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
@@ -993,35 +994,40 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.15"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+        size: "2",
         className: "td--stretch"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "icon__clickable",
         onClick: function onClick() {
           return store.toggleEditingTarget(data.id);
         }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
-        icon: 'users'
-      })))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
-        size: "2"
-      }, data.name || "---"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
-        size: "1"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-building"
+      }), "\xA0", data.name || "---")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+        size: "1",
+        className: "text-nowrap"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "/tola_management/program/?organizations[]=".concat(data.id)
-      }, data.program_count, " ", gettext("programs"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
-        size: "1"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-cubes"
+      }), "\xA0", data.program_count, " ", gettext("programs"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+        size: "1",
+        className: "text-nowrap"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "/tola_management/user/?organizations[]=".concat(data.id)
-      }, data.user_count, " ", gettext("users"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-users"
+      }), "\xA0", data.user_count, " ", gettext("users"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.25"
       }, data.is_active ? 'Active' : 'Inactive'));
     }
   }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "list-metadata"
+    className: "admin-list__metadata"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    id: "users-count"
+    className: "metadata__count text-small text-muted"
   }, store.organizations_count ? "".concat(store.organizations_count, " ").concat(gettext("organizations")) : "--"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    id: "pagination-controls"
+    className: "metadata__controls"
   }, store.total_pages && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_pagination__WEBPACK_IMPORTED_MODULE_4__["default"], {
     pageCount: store.total_pages,
     initialPage: store.current_page,
@@ -1156,18 +1162,21 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
 
 var Pagination = function Pagination(props) {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_paginate__WEBPACK_IMPORTED_MODULE_1___default.a, _extends({
-    previousLabel: react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-      className: "fa fa-angle-left"
-    }),
-    nextLabel: react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-      className: "fa fa-angle-right"
-    }),
+    previousLabel: '‹',
+    previousClassName: 'page-item previous',
+    previousLinkClassName: 'page-link',
+    nextLabel: '›',
+    nextClassName: 'page-item next',
+    nextLinkClassName: 'page-link',
     breakLabel: "...",
-    breakClassName: "break-me",
+    disabledClassName: 'disabled',
+    breakClassName: 'page-item disabled',
+    breakLinkClassName: 'page-link',
+    pageClassName: 'page-item',
+    pageLinkClassName: 'page-link',
     marginPagesDisplayed: 2,
     pageRangeDisplayed: 5,
     containerClassName: "pagination",
-    subContainerClassName: "pages pagination",
     activeClassName: "active"
   }, props));
 };
@@ -1246,27 +1255,33 @@ function (_React$Component) {
       var _this$props = this.props,
           ProfileSection = _this$props.ProfileSection,
           HistorySection = _this$props.HistorySection;
-      var profile_active_class = this.state.active_page == 'profile' ? 'selected' : '';
-      var history_active_class = this.state.active_page == 'status_and_history' ? 'selected' : '';
+      var profile_active_class = this.state.active_page == 'profile' ? 'active' : '';
+      var history_active_class = this.state.active_page == 'status_and_history' ? 'active' : '';
       var new_class = this.props.new ? 'disabled' : '';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "organization-editor row"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "editor__navigation col-sm-3"
+        className: "user-editor tab-set--vertical"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
-        className: "list-group"
+        className: "nav nav-tabs"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-        className: "list-group-item ".concat(profile_active_class),
-        onClick: function onClick() {
-          return _this2.updateActivePage('profile');
+        className: "nav-item"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        href: "#",
+        className: "nav-link ".concat(profile_active_class),
+        onClick: function onClick(e) {
+          e.preventDefault();
+
+          _this2.updateActivePage('profile');
         }
-      }, gettext("Profile")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-        className: "list-group-item ".concat(history_active_class, " ").concat(new_class),
-        onClick: function onClick() {
-          return _this2.updateActivePage('status_and_history');
+      }, gettext("Profile")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        href: "#",
+        className: "nav-link ".concat(history_active_class),
+        onClick: function onClick(e) {
+          e.preventDefault();
+
+          _this2.updateActivePage('status_and_history');
         }
       }, gettext("Status and History")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "user-editor__content col-sm-9"
+        className: "tab-content"
       }, this.state.active_page == 'profile' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProfileSection, null), this.state.active_page == 'status_and_history' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(HistorySection, null)));
     }
   }]);
@@ -1393,22 +1408,18 @@ function (_React$Component) {
       var _this2 = this;
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "edit-organization"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "OrganizationName: ", gettext("Status and History")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col"
+        className: "tab-pane--react"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", {
+        className: "no-bold"
+      }, this.state.data.name ? this.state.data.name + ": " : "", gettext("Status and history")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
         options: status_options,
         value: this.state.data.is_active,
         onChange: function onChange(new_value) {
           return _this2.onChange(new_value);
         }
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
@@ -1422,12 +1433,8 @@ function (_React$Component) {
         onClick: function onClick() {
           return _this2.onReset();
         }
-      }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
-        className: "history-table"
+      }, gettext("Reset"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
+        className: "table table-sm text-small"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Date")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Admin User")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Change Type")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("New Entry")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, this.props.organizationHistoryData.map(function (entry) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           key: entry.id
@@ -1450,7 +1457,7 @@ function (_React$Component) {
             data: changeset.new
           });
         }))));
-      }))))));
+      }))));
     }
   }]);
 
@@ -1473,11 +1480,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx-react */ "okNM");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "TSYQ");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
 
 
  // TODO: "size" is no longer used
@@ -1513,7 +1523,7 @@ var InnerRowComponent = function InnerRowComponent(_ref3) {
 }; // TODO: this is redundant with InnerRowComponent
 
 
-var HeaderRowCompnent = function HeaderRowCompnent(_ref4) {
+var HeaderRowComponent = function HeaderRowComponent(_ref4) {
   var className = _ref4.className,
       props = _objectWithoutProperties(_ref4, ["className"]);
 
@@ -1540,7 +1550,9 @@ var RowComponent = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(f
   if (Expando) {
     var ObservedExpando = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(Expando);
     return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tbody", _extends({
-      className: ["mgmt-table__body", className].join(' ')
+      className: classnames__WEBPACK_IMPORTED_MODULE_2___default()(["mgmt-table__body", className].join(' '), {
+        "is-expanded": expanded
+      })
     }, props), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(InnerRowComponent, null, props.children), expanded && react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(ObservedExpando, {
       Wrapper: ExpandoWrapper
     }));
@@ -1556,7 +1568,7 @@ var ExpandoWrapper = function ExpandoWrapper(_ref6) {
       props = _objectWithoutProperties(_ref6, ["className"]);
 
   return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tr", _extends({
-    className: ["", className].join(' ')
+    className: ["mgmt-table__row--expanded", className].join(' ')
   }, props), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", {
     colSpan: "6"
   }, props.children));
@@ -1604,7 +1616,7 @@ var ManagementTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"]
     className: ['table bg-white', className].join(' ')
   }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(ObservedHeaderRow, {
     Col: HeaderColumnComponent,
-    Row: HeaderRowCompnent
+    Row: HeaderRowComponent
   })), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(RowList, props));
 });
 /* harmony default export */ __webpack_exports__["default"] = (ManagementTable);
@@ -1989,8 +2001,10 @@ function (_React$Component) {
         primary_contact_phone: errors.primary_contact_phone ? 'is-invalid' : ''
       };
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "edit-organization-profile container"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+        className: "tab-pane--react"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", {
+        className: "no-bold"
+      }, od.name ? od.name + ": " : "", gettext("Profile")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
         className: "form needs-validation",
         noValidate: true
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -2232,4 +2246,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-e50dd03240f17cd8c132.js.map
+//# sourceMappingURL=tola_management_organization-4c0e78fa1302d9fc5d80.js.map

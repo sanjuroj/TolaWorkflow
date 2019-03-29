@@ -149,7 +149,8 @@ function (_React$Component) {
           indicatorCount = _this$props.indicatorCount,
           programId = _this$props.programId,
           currentIndicatorFilter = _this$props.currentIndicatorFilter,
-          filterApplied = _this$props.filterApplied;
+          filterApplied = _this$props.filterApplied,
+          readonly = _this$props.readonly;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "indicators-list__header"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
@@ -160,7 +161,7 @@ function (_React$Component) {
         href: "#",
         id: "show-all-indicators",
         onClick: this.onShowAllClick
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, "Show all"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, "Show all"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, !readonly && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "/indicators/indicator_create/".concat(programId),
         role: "button",
         className: "btn-link btn-add"
@@ -392,7 +393,8 @@ var IndicatorList = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(
     indicatorCount: filteredIndicators.length,
     programId: program.id,
     currentIndicatorFilter: currentIndicatorFilter,
-    filterApplied: currentIndicatorFilter || selectedIndicatorId
+    filterApplied: currentIndicatorFilter || selectedIndicatorId,
+    readonly: props.readonly
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorFilter, {
     uiStore: props.uiStore,
     rootStore: props.rootStore
@@ -843,7 +845,8 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('select-indicator-to-filter
 
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicator_list__WEBPACK_IMPORTED_MODULE_5__["IndicatorList"], {
   rootStore: rootStore,
-  uiStore: uiStore
+  uiStore: uiStore,
+  readonly: jsContext.readonly
 }), document.querySelector('#indicator-list-react-component'));
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_program_metrics__WEBPACK_IMPORTED_MODULE_6__["ProgramMetrics"], {
   rootStore: rootStore,
@@ -1463,4 +1466,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-08dd63988d88fe79f7d9.js.map
+//# sourceMappingURL=program_page-fff173154048bae63e32.js.map

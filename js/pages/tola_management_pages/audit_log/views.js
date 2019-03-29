@@ -65,12 +65,12 @@ export const IndexView = observer(
     ({store}) => {
         return <div id="audit-log-index-view" className="container-fluid row">
 
-            <div className="list-controls">
+            <div className="admin-list__controls">
                 <a className="btn btn-link btn-secondary btn-sm" href={`/api/tola_management/program/${store.program_id}/export_audit_log`}>{gettext("Export to Excel")}</a>
             </div>
-            <div className="col col-sm-12 list-section">
+            <div className="col col-sm-12 admin-list">
                 <LoadingSpinner isLoading={store.fetching}>
-                    <table className="list-table">
+                    <table className="admin-list__table">
                         <thead>
                             <tr>
                                 <th>{gettext("Date and Time")}</th>
@@ -111,9 +111,9 @@ export const IndexView = observer(
                         </tbody>
                     </table>
                 </LoadingSpinner>
-                <div className="list-metadata">
-                    <div id="entries-count">{store.entries_count?`${store.entries_count} ${gettext("entries")}`:`--`}</div>
-                    <div id ="pagination-controls">
+                <div className="admin-list__metadata">
+                    <div className="metadata__count text-muted text-small">{store.entries_count?`${store.entries_count} ${gettext("entries")}`:`--`}</div>
+                    <div className="metadata__controls">
                         {store.total_pages &&
                          <Pagination
                              pageCount={store.total_pages}

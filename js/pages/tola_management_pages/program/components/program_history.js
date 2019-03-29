@@ -47,20 +47,16 @@ export class ProgramHistory extends React.Component {
     render() {
         const {history} = this.props
         const currentStatusSelection = status_options.find(x=> x.value == this.state.managed_status.funding_status)
-        return <div className="tab-pane--react">
+        return <div className="tab-pane--react admin-edit-pane">
             <h2 className="no-bold">{this.props.program_data.name ? this.props.program_data.name+': ' : ''}{gettext("Status and History")}</h2>
-            <div className="row">
-                <div className="col">
-                <div className="form-group">
-                    <label htmlFor="status-input" required>{gettext("Program Status")}<span className="required">*</span></label>
-                    <Select
-                        isSearchable={false}
-                        options={status_options}
-                        value={currentStatusSelection}
-                        onChange={(new_value) => this.onStatusChange(new_value)}
-                    />
-                </div>
-                </div>
+            <div className="form-group">
+                <label htmlFor="status-input" required>{gettext("Program Status")}<span className="required">*</span></label>
+                <Select
+                    isSearchable={false}
+                    options={status_options}
+                    value={currentStatusSelection}
+                    onChange={(new_value) => this.onStatusChange(new_value)}
+                />
             </div>
             <div className="row">
                 <div className="col">
@@ -72,7 +68,7 @@ export class ProgramHistory extends React.Component {
             </div>
             <div className="row">
                 <div className="col">
-                    <table className="history-table">
+                    <table className="table table-sm text-small">
                         <thead>
                             <tr>
                                 <th>{gettext("Date")}</th>
@@ -84,7 +80,7 @@ export class ProgramHistory extends React.Component {
                         </thead>
                         <tbody>
                             {this.props.history.map(entry => <tr key={entry.id}>
-                                <td>{entry.date}</td>
+                                <td className="text-nowrap">{entry.date}</td>
                                 <td>{entry.admin_user}</td>
                                 <td>{entry.pretty_change_type}</td>
                                 <td className="expand-section">

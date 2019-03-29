@@ -1,11 +1,15 @@
+// This is component of admin-table, see _tola_management.scss
 .mgmt-table {
+    // TODO: add to appropriate components
 }
 .mgmt-table__head { // thead
+    // TODO: add to appropriate components
 }
 .mgmt-table__body { // tbody
-}
-.mgmt-table__body--expanded { // tbody, with expanded accordion child
-    background-color: $gray-300;
+    &.is-expanded { // with expanded accordion child
+        // TODO: this is identical to .indicators-list__indicator-header.is-expanded
+        background: $gray-300;
+    }
 }
 .mgmt-table__row { // tr
 }

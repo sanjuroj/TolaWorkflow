@@ -1,5 +1,5 @@
 import React from 'react'
-import { observer, disposeOnUnmount } from "mobx-react"
+import { observer } from "mobx-react"
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -145,13 +145,13 @@ class DisaggregationType extends React.Component {
                                         className={classNames("btn btn-link btn-danger", {'disabled': label.in_use})}
                                         disabled={label.in_use}
                                     >
-                                        <FontAwesomeIcon icon={'trash'} /> {gettext('Remove')}
+                                        <i className="fas fa-trash"/>{gettext('Remove')}
                                     </a>
                                 </div>
                             )}
                             <div>
                                 <a tabIndex="0" onClick={() => this.appendLabel()} className="btn btn-link btn-add">
-                                    <FontAwesomeIcon icon={'plus-circle'} /> {gettext('Add another option')}
+                                    <i className="fas fa-plus-circle"/>{gettext('Add another option')}
                                 </a>
                             </div>
                             <div className="disaggregation-form-buttons">
@@ -166,7 +166,7 @@ class DisaggregationType extends React.Component {
                                 <div className="right-buttons">
                                     {disaggregation.id=='new' && (
                                         <a tabIndex="0" onClick={deleteAction} className="btn btn-link btn-danger">
-                                            <FontAwesomeIcon icon={'trash'} /> {gettext('Delete')}
+                                            <i className="fas fa-trash"/>{gettext('Delete')}
                                         </a>
                                     )}
                                 </div>
@@ -217,7 +217,7 @@ export default class EditDisaggregations extends React.Component {
         const {disaggregations} = this.props
         const {expanded_id} = this.state
         return (
-            <div class="tab-pane--react">
+            <div className="tab-pane--react">
                 <h3>Country Disaggregations</h3>
                 {disaggregations.map(disaggregation =>
                     <DisaggregationType
@@ -235,7 +235,7 @@ export default class EditDisaggregations extends React.Component {
                 <div>
                     {!disaggregations.find(d=> d.id=='new') && (
                         <a tabIndex="0" className="btn btn-link btn-add" onClick={() => this.addDisaggregation()}>
-                            <FontAwesomeIcon icon={'plus-circle'} /> {gettext("Add country disaggregation")}
+                            <i className="fas fa-plus-circle"/>{gettext("Add country disaggregation")}
                         </a>
                     )}
                 </div>

@@ -3437,25 +3437,42 @@ var _react = __webpack_require__(/*! react */ "q1tI");
 
 var _react2 = _interopRequireDefault(_react);
 
+var _propTypes = __webpack_require__(/*! prop-types */ "17x9");
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var BreakView = function BreakView(props) {
-  var label = props.breakLabel;
-  var className = props.breakClassName || 'break';
-  var onClick = props.onClick;
+  var breakLabel = props.breakLabel,
+      breakClassName = props.breakClassName,
+      breakLinkClassName = props.breakLinkClassName,
+      onClick = props.onClick;
+
+  var className = breakClassName || 'break';
 
   return _react2.default.createElement(
     'li',
     { className: className },
     _react2.default.createElement(
       'a',
-      { onClick: onClick,
+      {
+        className: breakLinkClassName,
+        onClick: onClick,
         role: 'button',
         tabIndex: '0',
-        onKeyPress: onClick },
-      label
+        onKeyPress: onClick
+      },
+      breakLabel
     )
   );
+};
+
+BreakView.propTypes = {
+  breakLabel: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.node]),
+  breakClassName: _propTypes2.default.string,
+  breakLinkClassName: _propTypes2.default.string,
+  onClick: _propTypes2.default.func.isRequired
 };
 
 exports.default = BreakView;
@@ -8949,6 +8966,10 @@ var _react = __webpack_require__(/*! react */ "q1tI");
 
 var _react2 = _interopRequireDefault(_react);
 
+var _propTypes = __webpack_require__(/*! prop-types */ "17x9");
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var PageView = function PageView(props) {
@@ -8957,13 +8978,13 @@ var PageView = function PageView(props) {
 
   var onClick = props.onClick;
   var href = props.href;
-
-  var ariaLabel = 'Page ' + props.page + (props.extraAriaContext ? ' ' + props.extraAriaContext : '');
+  var ariaLabel = props.ariaLabel || 'Page ' + props.page + (props.extraAriaContext ? ' ' + props.extraAriaContext : '');
   var ariaCurrent = null;
 
   if (props.selected) {
     ariaCurrent = 'page';
-    ariaLabel = 'Page ' + props.page + ' is your current page';
+
+    ariaLabel = props.ariaLabel || 'Page ' + props.page + ' is your current page';
 
     if (typeof pageClassName !== 'undefined') {
       pageClassName = pageClassName + ' ' + props.activeClassName;
@@ -8972,8 +8993,6 @@ var PageView = function PageView(props) {
     }
 
     if (typeof pageLinkClassName !== 'undefined') {
-      pageLinkClassName = pageLinkClassName;
-
       if (typeof props.activeLinkClassName !== 'undefined') {
         pageLinkClassName = pageLinkClassName + ' ' + props.activeLinkClassName;
       }
@@ -8987,17 +9006,32 @@ var PageView = function PageView(props) {
     { className: pageClassName },
     _react2.default.createElement(
       'a',
-      { onClick: onClick,
+      {
+        onClick: onClick,
         role: 'button',
         className: pageLinkClassName,
         href: href,
         tabIndex: '0',
         'aria-label': ariaLabel,
         'aria-current': ariaCurrent,
-        onKeyPress: onClick },
+        onKeyPress: onClick
+      },
       props.page
     )
   );
+};
+
+PageView.propTypes = {
+  onClick: _propTypes2.default.func.isRequired,
+  selected: _propTypes2.default.bool.isRequired,
+  pageClassName: _propTypes2.default.string,
+  pageLinkClassName: _propTypes2.default.string,
+  activeClassName: _propTypes2.default.string,
+  activeLinkClassName: _propTypes2.default.string,
+  extraAriaContext: _propTypes2.default.string,
+  href: _propTypes2.default.string,
+  ariaLabel: _propTypes2.default.string,
+  page: _propTypes2.default.number.isRequired
 };
 
 exports.default = PageView;
@@ -60595,7 +60629,7 @@ var PaginationBoxView = function (_Component) {
     };
 
     _this.callCallback = function (selectedItem) {
-      if (typeof _this.props.onPageChange !== "undefined" && typeof _this.props.onPageChange === "function") {
+      if (typeof _this.props.onPageChange !== 'undefined' && typeof _this.props.onPageChange === 'function') {
         _this.props.onPageChange({ selected: selectedItem });
       }
     };
@@ -60607,17 +60641,16 @@ var PaginationBoxView = function (_Component) {
           pageCount = _this$props.pageCount,
           marginPagesDisplayed = _this$props.marginPagesDisplayed,
           breakLabel = _this$props.breakLabel,
-          breakClassName = _this$props.breakClassName;
+          breakClassName = _this$props.breakClassName,
+          breakLinkClassName = _this$props.breakLinkClassName;
       var selected = _this.state.selected;
 
 
       if (pageCount <= pageRangeDisplayed) {
-
         for (var index = 0; index < pageCount; index++) {
           items.push(_this.getPageElement(index));
         }
       } else {
-
         var leftSide = pageRangeDisplayed / 2;
         var rightSide = pageRangeDisplayed - leftSide;
 
@@ -60641,7 +60674,6 @@ var PaginationBoxView = function (_Component) {
         };
 
         for (_index = 0; _index < pageCount; _index++) {
-
           page = _index + 1;
 
           // If the page index is lower than the margin defined,
@@ -60678,6 +60710,7 @@ var PaginationBoxView = function (_Component) {
               key: _index,
               breakLabel: breakLabel,
               breakClassName: breakClassName,
+              breakLinkClassName: breakLinkClassName,
               onClick: _this.handleBreakClick.bind(null, _index)
             });
             items.push(breakView);
@@ -60688,8 +60721,17 @@ var PaginationBoxView = function (_Component) {
       return items;
     };
 
+    var initialSelected = void 0;
+    if (props.initialPage) {
+      initialSelected = props.initialPage;
+    } else if (props.forcePage) {
+      initialSelected = props.forcePage;
+    } else {
+      initialSelected = 0;
+    }
+
     _this.state = {
-      selected: props.initialPage ? props.initialPage : props.forcePage ? props.forcePage : 0
+      selected: initialSelected
     };
     return _this;
   }
@@ -60699,16 +60741,21 @@ var PaginationBoxView = function (_Component) {
     value: function componentDidMount() {
       var _props = this.props,
           initialPage = _props.initialPage,
-          disableInitialCallback = _props.disableInitialCallback;
+          disableInitialCallback = _props.disableInitialCallback,
+          extraAriaContext = _props.extraAriaContext;
       // Call the callback with the initialPage item:
 
       if (typeof initialPage !== 'undefined' && !disableInitialCallback) {
         this.callCallback(initialPage);
       }
+
+      if (extraAriaContext) {
+        console.warn('DEPRECATED (react-paginate): The extraAriaContext prop is deprecated. You should now use the ariaLabelBuilder instead.');
+      }
     }
   }, {
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps) {
+    key: 'UNSAFE_componentWillReceiveProps',
+    value: function UNSAFE_componentWillReceiveProps(nextProps) {
       if (typeof nextProps.forcePage !== 'undefined' && this.props.forcePage !== nextProps.forcePage) {
         this.setState({ selected: nextProps.forcePage });
       }
@@ -60747,6 +60794,20 @@ var PaginationBoxView = function (_Component) {
       }
     }
   }, {
+    key: 'ariaLabelBuilder',
+    value: function ariaLabelBuilder(pageIndex) {
+      var selected = pageIndex === this.state.selected;
+      if (this.props.ariaLabelBuilder && pageIndex >= 0 && pageIndex < this.props.pageCount) {
+        var label = this.props.ariaLabelBuilder(pageIndex + 1, selected);
+        // DEPRECATED: The extraAriaContext prop was used to add additional context
+        // to the aria-label. Users should now use the ariaLabelBuilder instead.
+        if (this.props.extraAriaContext && !selected) {
+          label = label + ' ' + this.props.extraAriaContext;
+        }
+        return label;
+      }
+    }
+  }, {
     key: 'getPageElement',
     value: function getPageElement(index) {
       var selected = this.state.selected;
@@ -60768,7 +60829,9 @@ var PaginationBoxView = function (_Component) {
         activeLinkClassName: activeLinkClassName,
         extraAriaContext: extraAriaContext,
         href: this.hrefBuilder(index),
-        page: index + 1 });
+        ariaLabel: this.ariaLabelBuilder(index),
+        page: index + 1
+      });
     }
   }, {
     key: 'render',
@@ -60789,6 +60852,9 @@ var PaginationBoxView = function (_Component) {
       var previousClasses = previousClassName + (selected === 0 ? ' ' + disabledClassName : '');
       var nextClasses = nextClassName + (selected === pageCount - 1 ? ' ' + disabledClassName : '');
 
+      var previousAriaDisabled = selected === 0 ? 'true' : 'false';
+      var nextAriaDisabled = selected === pageCount - 1 ? 'true' : 'false';
+
       return _react2.default.createElement(
         'ul',
         { className: containerClassName },
@@ -60797,12 +60863,15 @@ var PaginationBoxView = function (_Component) {
           { className: previousClasses },
           _react2.default.createElement(
             'a',
-            { onClick: this.handlePreviousPage,
+            {
+              onClick: this.handlePreviousPage,
               className: previousLinkClassName,
               href: this.hrefBuilder(selected - 1),
               tabIndex: '0',
               role: 'button',
-              onKeyPress: this.handlePreviousPage },
+              onKeyPress: this.handlePreviousPage,
+              'aria-disabled': previousAriaDisabled
+            },
             previousLabel
           )
         ),
@@ -60812,12 +60881,15 @@ var PaginationBoxView = function (_Component) {
           { className: nextClasses },
           _react2.default.createElement(
             'a',
-            { onClick: this.handleNextPage,
+            {
+              onClick: this.handleNextPage,
               className: nextLinkClassName,
               href: this.hrefBuilder(selected + 1),
               tabIndex: '0',
               role: 'button',
-              onKeyPress: this.handleNextPage },
+              onKeyPress: this.handleNextPage,
+              'aria-disabled': nextAriaDisabled
+            },
             nextLabel
           )
         )
@@ -60850,23 +60922,25 @@ PaginationBoxView.propTypes = {
   previousLinkClassName: _propTypes2.default.string,
   nextLinkClassName: _propTypes2.default.string,
   disabledClassName: _propTypes2.default.string,
-  breakClassName: _propTypes2.default.string
+  breakClassName: _propTypes2.default.string,
+  breakLinkClassName: _propTypes2.default.string,
+  extraAriaContext: _propTypes2.default.string,
+  ariaLabelBuilder: _propTypes2.default.func
 };
 PaginationBoxView.defaultProps = {
   pageCount: 10,
   pageRangeDisplayed: 2,
   marginPagesDisplayed: 3,
-  activeClassName: "selected",
-  previousClassName: "previous",
-  nextClassName: "next",
-  previousLabel: "Previous",
-  nextLabel: "Next",
-  breakLabel: "...",
-  disabledClassName: "disabled",
+  activeClassName: 'selected',
+  previousClassName: 'previous',
+  nextClassName: 'next',
+  previousLabel: 'Previous',
+  nextLabel: 'Next',
+  breakLabel: '...',
+  disabledClassName: 'disabled',
   disableInitialCallback: false
 };
 exports.default = PaginationBoxView;
-;
 //# sourceMappingURL=PaginationBoxView.js.map
 
 /***/ }),
@@ -84551,4 +84625,4 @@ exports.default = ExpansionHeaderCell;
 /***/ })
 
 }]);
-//# sourceMappingURL=vendors-24987fe1ab4e8c0966b2.js.map
+//# sourceMappingURL=vendors-5c9fb0cb6044de5e5456.js.map

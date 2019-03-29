@@ -9,7 +9,6 @@ import EditProgramProfile from './components/edit_program_profile'
 import ProgramHistory from './components/program_history'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const UserFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
@@ -121,22 +120,21 @@ class BulkActions extends React.Component {
     render() {
         const selected = this.props.secondaryOptions[this.state.current_action]
         const SecondaryComponent = selected && selected.component
-        return <div className="bulk-controls">
-            <div className="bulk-select">
+        return <div className="controls__bulk-actions">
+            <div className="bulk__select">
                 <Select
-                className="bulk-select"
                 placeholder={gettext("Bulk Actions")}
                 value={this.props.primaryOptions.find((o) => o.value == this.state.current_action)}
                 options={this.props.primaryOptions} onChange={(val) => this.onActionChanged(val)} />
             </div>
             {selected &&
-            <div className="bulk-select">
+            <div className="bulk__select">
                 <SecondaryComponent value={this.state.current_vals} onChange={(vals) => this.onChange(vals)}/>
             </div>
             }
             {!selected &&
-            <div className="bulk-select">
-                <Select className="bulk-select" placeholder="---"/>
+            <div className="bulk__select">
+                <Select placeholder="---"/>
             </div>
             }
             <button className="btn btn-secondary" disabled={!this.state.current_action} onClick={() => this.onApply()}>{gettext("Apply")}</button>
@@ -175,7 +173,7 @@ export const IndexView = observer(
             if (data.organizations) {
                 return (
                     <a href={`/tola_management/organization/?programs[]=${data.id}`}>
-                        <FontAwesomeIcon icon={"building"} />&nbsp;
+                        <i className="fas fa-building"/>&nbsp;
                         { data.onlyOrganizationId ? store.organizations[data.onlyOrganizationId].name : `${data.organizations} organizations` }
                     </a>
                 )
@@ -198,18 +196,17 @@ export const IndexView = observer(
                     </div>
                 </div>
             </FoldingSidebar>
-            <div className="col list-section">
-                <div className="list-controls">
+            <div className="col admin-list">
+                <div className="admin-list__controls">
                     <BulkActions primaryOptions={bulk_actions.primary_options} secondaryOptions={bulk_actions.secondary_options}/>
-                    <div>
+                    <div className="controls__buttons">
                         <a href="#" className="btn btn-link btn-add" tabIndex="0" onClick={() => store.createProgram()}>
-                            <FontAwesomeIcon icon={'plus-circle'} />
-                            {gettext("Add Program")}
+                            <i className="fas fa-plus-circle"/>{gettext("Add Program")}
                         </a>
                     </div>
                 </div>
                 <LoadingSpinner isLoading={store.fetching_main_listing || store.applying_bulk_updates }>
-                    <div className="list-table">
+                    <div className="admin-list__table">
                         <ManagementTable
                             newData={store.new_program}
                             data={store.programs}
@@ -263,13 +260,13 @@ export const IndexView = observer(
                                     <Col size="2" className="td--stretch">
                                         {data.id == 'new' &&
                                             <div className="icon__disabled">
-                                                <FontAwesomeIcon icon={'cube'} />&nbsp;
+                                                <i className="fas fa-cube"/>&nbsp;
                                                 {data.name || "New Program"}
                                             </div>
                                         }
                                         {data.id != 'new' &&
                                             <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                                <FontAwesomeIcon icon={'cube'} />&nbsp;
+                                                <i className="fas fa-cube"/>&nbsp;
                                                 {data.name || "New Program"}
                                             </div>
                                         }
@@ -278,7 +275,7 @@ export const IndexView = observer(
                                         { organizationColumn(data)}
                                     </Col>
                                     <Col className="text-nowrap">
-                                        {data.program_users ? <a href={`/tola_management/user/?programs[]=${data.id}`}><FontAwesomeIcon icon={"users"} />&nbsp;{data.program_users} users</a> : '---'  }
+                                        {data.program_users ? <a href={`/tola_management/user/?programs[]=${data.id}`}><i className="fas fa-users"/>&nbsp;{data.program_users} users</a> : '---'  }
                                     </Col>
                                     <Col>{data.funding_status ? data.funding_status : '---'}</Col>
                                 </Row>
@@ -286,9 +283,9 @@ export const IndexView = observer(
                         />
                     </div>
                 </LoadingSpinner>
-                <div className="list-metadata row">
-                    <div id="users-count">{store.program_count ? `${store.program_count} ${gettext("programs")}`:`---`}</div>
-                    <div id ="pagination-controls">
+                <div className="admin-list__metadata">
+                    <div className="metadata__count text-small text-muted">{store.program_count ? `${store.program_count} ${gettext("programs")}`:`---`}</div>
+                    <div className="metadata__controls">
                         {store.total_pages &&
                          <Pagination
                             pageCount={store.total_pages}

@@ -231,16 +231,16 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     id: "audit-log-index-view",
     className: "container-fluid row"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "list-controls"
+    className: "admin-list__controls"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
     className: "btn btn-link btn-secondary btn-sm",
     href: "/api/tola_management/program/".concat(store.program_id, "/export_audit_log")
   }, gettext("Export to Excel"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "col col-sm-12 list-section"
+    className: "col col-sm-12 admin-list"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_8__["default"], {
     isLoading: store.fetching
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
-    className: "list-table"
+    className: "admin-list__table"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Date and Time")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("No.")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     width: "25%"
   }, gettext("Indicator")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("User")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Change Type")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("New Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Rationale")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, store.log_rows.map(function (data) {
@@ -268,11 +268,11 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
       className: "expand-section"
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_expander__WEBPACK_IMPORTED_MODULE_7__["default"], null, data.rationale)));
   })))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "list-metadata"
+    className: "admin-list__metadata"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    id: "entries-count"
+    className: "metadata__count text-muted text-small"
   }, store.entries_count ? "".concat(store.entries_count, " ").concat(gettext("entries")) : "--"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    id: "pagination-controls"
+    className: "metadata__controls"
   }, store.total_pages && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_pagination__WEBPACK_IMPORTED_MODULE_5__["default"], {
     pageCount: store.total_pages,
     initialPage: store.current_page,
@@ -608,18 +608,21 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
 
 var Pagination = function Pagination(props) {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_paginate__WEBPACK_IMPORTED_MODULE_1___default.a, _extends({
-    previousLabel: react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-      className: "fa fa-angle-left"
-    }),
-    nextLabel: react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-      className: "fa fa-angle-right"
-    }),
+    previousLabel: '‹',
+    previousClassName: 'page-item previous',
+    previousLinkClassName: 'page-link',
+    nextLabel: '›',
+    nextClassName: 'page-item next',
+    nextLinkClassName: 'page-link',
     breakLabel: "...",
-    breakClassName: "break-me",
+    disabledClassName: 'disabled',
+    breakClassName: 'page-item disabled',
+    breakLinkClassName: 'page-link',
+    pageClassName: 'page-item',
+    pageLinkClassName: 'page-link',
     marginPagesDisplayed: 2,
     pageRangeDisplayed: 5,
     containerClassName: "pagination",
-    subContainerClassName: "pages pagination",
     activeClassName: "active"
   }, props));
 };
@@ -640,11 +643,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx-react */ "okNM");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "TSYQ");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
 
 
  // TODO: "size" is no longer used
@@ -680,7 +686,7 @@ var InnerRowComponent = function InnerRowComponent(_ref3) {
 }; // TODO: this is redundant with InnerRowComponent
 
 
-var HeaderRowCompnent = function HeaderRowCompnent(_ref4) {
+var HeaderRowComponent = function HeaderRowComponent(_ref4) {
   var className = _ref4.className,
       props = _objectWithoutProperties(_ref4, ["className"]);
 
@@ -707,7 +713,9 @@ var RowComponent = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(f
   if (Expando) {
     var ObservedExpando = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(Expando);
     return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tbody", _extends({
-      className: ["mgmt-table__body", className].join(' ')
+      className: classnames__WEBPACK_IMPORTED_MODULE_2___default()(["mgmt-table__body", className].join(' '), {
+        "is-expanded": expanded
+      })
     }, props), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(InnerRowComponent, null, props.children), expanded && react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(ObservedExpando, {
       Wrapper: ExpandoWrapper
     }));
@@ -723,7 +731,7 @@ var ExpandoWrapper = function ExpandoWrapper(_ref6) {
       props = _objectWithoutProperties(_ref6, ["className"]);
 
   return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tr", _extends({
-    className: ["", className].join(' ')
+    className: ["mgmt-table__row--expanded", className].join(' ')
   }, props), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", {
     colSpan: "6"
   }, props.children));
@@ -771,7 +779,7 @@ var ManagementTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"]
     className: ['table bg-white', className].join(' ')
   }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(ObservedHeaderRow, {
     Col: HeaderColumnComponent,
-    Row: HeaderRowCompnent
+    Row: HeaderRowComponent
   })), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(RowList, props));
 });
 /* harmony default export */ __webpack_exports__["default"] = (ManagementTable);
@@ -1054,4 +1062,4 @@ function () {
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-090ceefb73065bbae488.js.map
+//# sourceMappingURL=audit_log-8f3ec9b285211b3b3934.js.map

@@ -3,12 +3,14 @@
 // * "Management" list in admin-lite
 // * Results table
 
+// CURRENTLY UNUSED, see _management_table.scss & _tola_management.scss
+
 // TODO: refactor postentially redunandant selectors/components from:
 // * _management_table.scss
 // * _indicator_table.scss
 // * _results_table.scss
 
-.list-table {
+.admin-list__table {
     margin-bottom: $grid-gutter-width;
     margin-top: $grid-gutter-width;
 }

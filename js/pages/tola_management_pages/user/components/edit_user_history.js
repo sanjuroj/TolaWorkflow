@@ -110,7 +110,7 @@ export class EditUserHistory extends React.Component {
                             {history.map(entry => {
                                 if(entry.change_type == 'user_programs_updated') {
                                     return <tr key={entry.id}>
-                                        <td>{entry.date}</td>
+                                        <td className="text-nowrap">{entry.date}</td>
                                         <td>{entry.admin_user}</td>
                                         <td>{entry.pretty_change_type}</td>
                                         <td className="expand-section">
@@ -127,7 +127,7 @@ export class EditUserHistory extends React.Component {
                                 } else {
 
                                     return <tr key={entry.id}>
-                                        <td>{entry.date}</td>
+                                        <td className="text-nowrap">{entry.date}</td>
                                         <td>{entry.admin_user}</td>
                                         <td>{entry.pretty_change_type}</td>
                                         <td className="expand-section">
