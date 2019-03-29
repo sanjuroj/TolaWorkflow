@@ -6,8 +6,8 @@ import Expander from 'components/expander'
 import ChangeLog from 'components/changelog'
 
 const status_options = [
-    {value: 'Funded', label: 'Funded'},
-    {value: 'Completed', label: 'Completed'}
+    {value: 'Funded', label: gettext('Funded')},
+    {value: 'Completed', label: gettext('Completed')}
 ]
 
 @observer

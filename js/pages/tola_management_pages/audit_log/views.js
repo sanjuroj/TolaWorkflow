@@ -31,7 +31,7 @@ const IndicatorChangeset = ({data, name, pretty_name}) => {
         </div>
     } else {
         return <div className="change__field">
-            <strong>{pretty_name}:</strong> {(mapped_data !== null && mapped_data !== undefined)?mapped_data.toString():'N/A'}
+            <strong>{pretty_name}:</strong> {(data !== null && data !== undefined)?data.toString():gettext('N/A')}
         </div>
     }
 }
@@ -93,8 +93,8 @@ export const IndexView = observer(
                         {store.log_rows.map(data => <tbody>
                             <tr className="changelog__entry__header is-expanded">
                                 <td>{data.date}</td>
-                                <td>{(data.indicator)?data.indicator.number:'N/A'}</td>
-                                <td>{(data.indicator)?data.indicator.name:'N/A'}</td>
+                                <td>{(data.indicator)?data.indicator.number:gettext('N/A')}</td>
+                                <td>{(data.indicator)?data.indicator.name:gettext('N/A')}</td>
                                 <td>{data.user}</td>
                                 <td>{data.organization}</td>
                                 <td>{data.pretty_change_type}</td>{/* SWEET FANCY MOSES WHAT IS THIS */}
