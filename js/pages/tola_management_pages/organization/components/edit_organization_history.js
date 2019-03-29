@@ -3,15 +3,12 @@ import { observer } from "mobx-react"
 import Select from 'react-select'
 import {AutoSizer, Table, Column, CellMeasurer, CellMeasurerCache} from 'react-virtualized'
 import Expander from 'components/expander'
+import ChangeLog from 'components/changelog'
 
 const status_options = [
     {value: true, label: gettext('Active')},
     {value: false, label: gettext('Inactive')}
 ]
-
-const ChangesetEntry = ({name, type, data, pretty_name}) => {
-    return <p><strong>{pretty_name}</strong>: {(data != undefined && data != null)?data.toString():'N/A'}</p>
-}
 
 export default class EditOrganizationHistory extends React.Component {
 
@@ -100,6 +97,9 @@ export default class EditOrganizationHistory extends React.Component {
                     </table>
                 </div>
             </div>
+
+            <ChangeLog data={this.props.organizationHistoryData} />
+
         </div>
     }
 }

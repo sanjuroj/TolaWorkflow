@@ -3,15 +3,12 @@ import Select from 'react-select'
 import {AutoSizer, Table, Column, CellMeasurer, CellMeasurerCache} from 'react-virtualized'
 import { observer } from 'mobx-react';
 import Expander from 'components/expander'
+import ChangeLog from 'components/changelog'
 
 const status_options = [
     {value: 'Funded', label: 'Funded'},
     {value: 'Completed', label: 'Completed'}
 ]
-
-const ChangesetEntry = ({name, type, data, pretty_name}) => {
-    return <p><strong>{pretty_name}</strong>: {(data != undefined && data != null)?data.toString():'N/A'}</p>
-}
 
 @observer
 export class ProgramHistory extends React.Component {
@@ -102,6 +99,7 @@ export class ProgramHistory extends React.Component {
                     </table>
                 </div>
             </div>
+            <ChangeLog data={this.props.history} />
         </div>
     }
 }

@@ -7768,6 +7768,9 @@ span[data-toggle="popover"]:hover {
 .td--stretch {
   width: 100%; }
 
+.td--half-stretch {
+  width: 50%; }
+
 #nonfooter {
   flex-grow: 1; }
 
@@ -8313,12 +8316,6 @@ span[data-toggle="popover"]:hover {
   .mgmt-table__row--expanded > td {
     padding: 30px; }
 
-#user-management-index-view .edit-user-history table .program-changeset-row,
-#program-management-index-view .edit-user-history table .program-changeset-row,
-#country-management-index-view .edit-user-history table .program-changeset-row {
-  border: 1px solid #aaa;
-  padding: 5px; }
-
 .edit-user-programs .check-column {
   text-align: center; }
 
@@ -8399,8 +8396,11 @@ span[data-toggle="popover"]:hover {
     cursor: pointer;
     width: 40px; }
 
-.expander {
+.changelog-entry__expanding {
   overflow: hidden; }
+
+.changelog__entry__header.is-expanded {
+  background-color: #ebedf0; }
 
 /* Safari */
 @-webkit-keyframes spin {
@@ -8459,8 +8459,6 @@ table.admin-list__table {
   vertical-align: top; }
   table.admin-list__table th, table.admin-list__table td {
     vertical-align: top; }
-  table.admin-list__table .expand-section {
-    width: 10%; }
 
 .objective-form-buttons {
   display: flex; }
@@ -9201,5 +9199,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-a3666adfd3893f62c008.css.map*/

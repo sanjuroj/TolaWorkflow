@@ -34,13 +34,13 @@ export default class UserEditor extends React.Component {
                         </a>
                     </li>
                     <li className="nav-item">
-                        <a href="#" className={`nav-link ${programs_active_class} ${new_class}`}
+                        <a href="#" className={`nav-link text-nowrap ${programs_active_class} ${new_class}`}
                             onClick={(e) => { e.preventDefault(); this.updateActivePage('programs_and_roles')}}>
                             {gettext("Programs and Roles")}
                         </a>
                     </li>
                     <li className="nav-item">
-                        <a href="#" className={`nav-item nav-link ${history_active_class} ${new_class}`}
+                        <a href="#" className={`nav-link text-nowrap ${history_active_class} ${new_class}`}
                             onClick={(e) => { e.preventDefault(); this.updateActivePage('status_and_history')}}>
                             {gettext("Status and History")}
                         </a>

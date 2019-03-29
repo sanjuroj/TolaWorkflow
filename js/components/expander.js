@@ -24,12 +24,12 @@ class Expander extends React.Component {
     }
 
     render() {
-        return <div>
-            <div ref={this.ref} className="expander" style={{height: !this.state.expanded && (this.props.height || 50)}}>
+        return <div className="changelog-entry">
+            <div ref={this.ref} className="changelog-entry__expanding" style={{height: !this.state.expanded && (this.props.height || 50)}}>
                 {this.props.children}
             </div>
             {this.state.overflowing &&
-            <div>
+            <div className="changelog-entry__expand-trigger">
                 <a href="" onClick={(e) => this.toggleExpanded(e)}>{(this.state.expanded)?'Show Less':'Show More'}</a>
             </div>
             }

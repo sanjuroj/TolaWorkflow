@@ -94,7 +94,8 @@ var result_changeset_name_map = {
   'evidence_name': gettext('Evidence Name'),
   'date': gettext('Date'),
   'target': gettext('Target'),
-  'value': gettext('Value')
+  'value': gettext('Value'),
+  'id': gettext('ID')
 };
 
 var ResultChangeset = function ResultChangeset(_ref) {
@@ -102,11 +103,15 @@ var ResultChangeset = function ResultChangeset(_ref) {
       name = _ref.name;
 
   if (name == 'evidence_url') {
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, result_changeset_name_map[name], ": ", data != 'N/A' ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "change__field"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, result_changeset_name_map[name]), ": ", data != 'N/A' ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
       href: data
     }, "Link") : data);
   } else {
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, result_changeset_name_map[name], ": ", data);
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "change__field"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, result_changeset_name_map[name]), ": ", data);
   }
 };
 
@@ -118,7 +123,9 @@ var program_dates_changset_name_map = {
 var ProgramDatesChangeset = function ProgramDatesChangeset(_ref2) {
   var data = _ref2.data,
       name = _ref2.name;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, program_dates_changset_name_map[name], ": ", data);
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "change__field"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, program_dates_changset_name_map[name]), ": ", data);
 };
 
 var indicator_changeset_name_map = {
@@ -156,17 +163,24 @@ var IndicatorChangeset = function IndicatorChangeset(_ref3) {
   }();
 
   if (name == 'targets') {
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Targets"), Object.entries(data).map(function (_ref4) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "changelog__change__targets"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
+      className: "text-small"
+    }, gettext('Targets changed')), Object.entries(data).map(function (_ref4) {
       var _ref5 = _slicedToArray(_ref4, 2),
           id = _ref5[0],
           target = _ref5[1];
 
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "change__field",
         key: id
-      }, target.name, ": ", target.value);
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, target.name, ":"), " ", target.value);
     }));
   } else {
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, indicator_changeset_name_map[name], ": ", mapped_data !== null && mapped_data !== undefined ? mapped_data.toString() : 'N/A');
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "change__field"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, indicator_changeset_name_map[name], ":"), " ", mapped_data !== null && mapped_data !== undefined ? mapped_data.toString() : 'N/A');
   }
 };
 
@@ -228,46 +242,70 @@ function (_React$Component) {
 var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref6) {
   var store = _ref6.store;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    id: "audit-log-index-view",
-    className: "container-fluid row"
+    id: "audit-log-index-view"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__controls"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "controls__bulk-actions"
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "controls__buttons"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    className: "btn btn-link btn-secondary btn-sm",
+    className: "btn btn-secondary btn-sm",
     href: "/api/tola_management/program/".concat(store.program_id, "/export_audit_log")
-  }, gettext("Export to Excel"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "col col-sm-12 admin-list"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-download"
+  }), gettext("Excel")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "admin-list__table"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_8__["default"], {
     isLoading: store.fetching
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
-    className: "admin-list__table"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Date and Time")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("No.")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
-    width: "25%"
-  }, gettext("Indicator")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("User")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Change Type")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("New Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Rationale")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, store.log_rows.map(function (data) {
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+    className: "table table-sm table-bordered bg-white text-small changelog"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap"
+  }, gettext("Date and Time")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap"
+  }, gettext("No.")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap"
+  }, gettext("Indicator")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap"
+  }, gettext("User")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap"
+  }, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap"
+  }, gettext("Change Type")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap"
+  }, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap"
+  }, gettext("New Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap"
+  }, gettext("Rationale")))), store.log_rows.map(function (data) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+      className: "changelog__entry__header is-expanded"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.number : 'N/A'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.name : 'N/A'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.organization), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, map_pretty_change_type(data.change_type)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+      className: "changelog__entry__row",
       key: data.id
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.number : 'N/A'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.name : 'N/A'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.organization), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, map_pretty_change_type(data.change_type)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-      className: "expand-section"
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_expander__WEBPACK_IMPORTED_MODULE_7__["default"], null, data.diff_list.map(function (changeset) {
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+      className: "changelog__change--prev"
+    }, data.diff_list.map(function (changeset) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangesetEntry, {
         key: changeset.name,
         name: changeset.name,
         type: data.change_type,
         data: changeset.prev
       });
-    }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-      className: "expand-section"
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_expander__WEBPACK_IMPORTED_MODULE_7__["default"], null, data.diff_list.map(function (changeset) {
+    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+      className: "changelog__change--new"
+    }, data.diff_list.map(function (changeset) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangesetEntry, {
         key: changeset.name,
         name: changeset.name,
         type: data.change_type,
         data: changeset.new
       });
-    }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-      className: "expand-section"
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_expander__WEBPACK_IMPORTED_MODULE_7__["default"], null, data.rationale)));
-  })))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+      className: "changelog__change--rationale"
+    }, data.rationale)));
+  }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__metadata"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "metadata__count text-muted text-small"
@@ -557,13 +595,17 @@ function (_React$Component) {
     value: function render() {
       var _this2 = this;
 
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "changelog-entry"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         ref: this.ref,
-        className: "expander",
+        className: "changelog-entry__expanding",
         style: {
           height: !this.state.expanded && (this.props.height || 50)
         }
-      }, this.props.children), this.state.overflowing && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      }, this.props.children), this.state.overflowing && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "changelog-entry__expand-trigger"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "",
         onClick: function onClick(e) {
           return _this2.toggleExpanded(e);
@@ -1062,4 +1104,4 @@ function () {
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-8f3ec9b285211b3b3934.js.map
+//# sourceMappingURL=audit_log-7a0e288eaf6a936df408.js.map
