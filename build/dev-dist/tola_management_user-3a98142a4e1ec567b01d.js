@@ -1333,7 +1333,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-select */ "y2Vs");
 /* harmony import */ var react_virtualized__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-virtualized */ "c7k8");
-/* harmony import */ var components_expander__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! components/expander */ "H4hL");
+/* harmony import */ var components_changelog__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! components/changelog */ "KnAV");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1352,14 +1352,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 
 
 
@@ -1372,38 +1364,6 @@ var status_options = [{
   value: false,
   label: gettext('Inactive')
 }];
-
-var ChangesetEntry = function ChangesetEntry(_ref) {
-  var name = _ref.name,
-      type = _ref.type,
-      data = _ref.data;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, name), ": ", data != undefined && data != null ? data.toString() : 'N/A');
-};
-
-var ProgramChangesetEntry = function ProgramChangesetEntry(_ref2) {
-  var data = _ref2.data,
-      timeframe = _ref2.timeframe;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, Object.entries(data.countries).length > 0 && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Countries"), Object.entries(data.countries).map(function (_ref3) {
-    var _ref4 = _slicedToArray(_ref3, 2),
-        id = _ref4[0],
-        country = _ref4[1];
-
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-      key: id,
-      className: "program-changeset-row"
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, gettext("Country")), ": ", country[timeframe].country), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, gettext("Role")), ": ", country[timeframe].role));
-  })), Object.entries(data.programs).length > 0 && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Programs"), Object.entries(data.programs).map(function (_ref5) {
-    var _ref6 = _slicedToArray(_ref5, 2),
-        id = _ref6[0],
-        program = _ref6[1];
-
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-      key: id,
-      className: "program-changeset-row"
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, gettext("Program")), ": ", program[timeframe].program), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, gettext("Country")), ": ", program[timeframe].country), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, gettext("Role")), ": ", program[timeframe].role));
-  })));
-};
-
 var EditUserHistory =
 /*#__PURE__*/
 function (_React$Component) {
@@ -1498,51 +1458,9 @@ function (_React$Component) {
         onClick: function onClick() {
           return _this2.onReset();
         }
-      }, gettext("Reset")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
-        className: "table table-sm text-small"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Date")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Admin")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Change Type")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, gettext("New Entry")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, history.map(function (entry) {
-        if (entry.change_type == 'user_programs_updated') {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
-            key: entry.id
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-            className: "text-nowrap"
-          }, entry.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, entry.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, entry.change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-            className: "expand-section"
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_expander__WEBPACK_IMPORTED_MODULE_4__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProgramChangesetEntry, {
-            data: entry.diff_list,
-            timeframe: "prev"
-          }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-            className: "expand-section"
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_expander__WEBPACK_IMPORTED_MODULE_4__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProgramChangesetEntry, {
-            data: entry.diff_list,
-            timeframe: "new"
-          }))));
-        } else {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
-            key: entry.id
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-            className: "text-nowrap"
-          }, entry.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, entry.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, entry.change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-            className: "expand-section"
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_expander__WEBPACK_IMPORTED_MODULE_4__["default"], null, entry.diff_list.map(function (changeset) {
-            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangesetEntry, {
-              key: changeset.name,
-              name: changeset.name,
-              type: entry.change_type,
-              data: changeset.prev
-            });
-          }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-            className: "expand-section"
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_expander__WEBPACK_IMPORTED_MODULE_4__["default"], null, entry.diff_list.map(function (changeset) {
-            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangesetEntry, {
-              key: changeset.name,
-              name: changeset.name,
-              type: entry.change_type,
-              data: changeset.new
-            });
-          }))));
-        }
-      }))));
+      }, gettext("Reset")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_changelog__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        data: history
+      }));
     }
   }]);
 
@@ -1552,10 +1470,10 @@ function (_React$Component) {
 
 /***/ }),
 
-/***/ "H4hL":
-/*!***********************************!*\
-  !*** ./js/components/expander.js ***!
-  \***********************************/
+/***/ "KnAV":
+/*!************************************!*\
+  !*** ./js/components/changelog.js ***!
+  \************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1563,86 +1481,159 @@ function (_React$Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-var Expander =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(Expander, _React$Component);
+var ChangeField = function ChangeField(_ref) {
+  var name = _ref.name,
+      data = _ref.data;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "change__field"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, name), ": ", data != undefined && data != null ? data.toString() : 'N/A');
+};
 
-  function Expander(props) {
-    var _this;
+var ChangeLogEntryHeader = function ChangeLogEntryHeader(_ref2) {
+  var data = _ref2.data;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+    className: "changelog__entry__header is-expanded"
+  }, " ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+    className: "text-nowrap text-action"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-caret-down"
+  }), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, data.date)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+    className: "text-nowrap"
+  }, data.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null));
+};
 
-    _classCallCheck(this, Expander);
+var ChangeLogEntryRow = function ChangeLogEntryRow(_ref3) {
+  var data = _ref3.data;
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Expander).call(this, props));
-    _this.state = {
-      expanded: false,
-      overflowing: false
-    };
-    _this.ref = react__WEBPACK_IMPORTED_MODULE_0___default.a.createRef();
-    return _this;
-  }
+  if (data.change_type == 'user_programs_updated') {
+    // Create multiple row for program/country changes:
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, Object.entries(data.diff_list.countries).length > 0 && Object.entries(data.diff_list.countries).map(function (_ref4) {
+      var _ref5 = _slicedToArray(_ref4, 2),
+          id = _ref5[0],
+          country = _ref5[1];
 
-  _createClass(Expander, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      if (this.ref.current.scrollHeight > this.ref.current.clientHeight) {
-        this.setState({
-          overflowing: true
-        });
-      }
-    }
-  }, {
-    key: "toggleExpanded",
-    value: function toggleExpanded(e) {
-      e.preventDefault();
-      this.setState({
-        expanded: !this.state.expanded
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+        key: id,
+        className: "changelog__entry__row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "changelog__change--prev"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeField, {
+        name: "country",
+        data: country.prev.country
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeField, {
+        name: "role",
+        data: country.prev.role
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "changelog__change--new"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeField, {
+        name: "country",
+        data: country.new.country
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeField, {
+        name: "role",
+        data: country.new.role
+      }))));
+    }), Object.entries(data.diff_list.programs).length > 0 && Object.entries(data.diff_list.programs).map(function (_ref6) {
+      var _ref7 = _slicedToArray(_ref6, 2),
+          id = _ref7[0],
+          program = _ref7[1];
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+        key: id,
+        className: "changelog__entry__row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "changelog__change--prev"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeField, {
+        name: "program",
+        data: program.prev.program
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeField, {
+        name: "country",
+        data: program.prev.country
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeField, {
+        name: "role",
+        data: program.prev.role
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "changelog__change--new"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeField, {
+        name: "program",
+        data: program.new.program
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeField, {
+        name: "country",
+        data: program.new.country
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeField, {
+        name: "role",
+        data: program.new.role
+      }))));
+    }));
+  } else {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+      className: "changelog__entry__row"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+      className: "text-nowrap"
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "changelog__change--prev"
+    }, data.diff_list.map(function (changeset, id) {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeField, {
+        key: id,
+        name: changeset.name,
+        data: changeset.prev
       });
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this2 = this;
+    }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "changelog__change--new"
+    }, data.diff_list.map(function (changeset, id) {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeField, {
+        key: id,
+        name: changeset.name,
+        data: changeset.new
+      });
+    }))));
+  }
+};
 
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        ref: this.ref,
-        className: "expander",
-        style: {
-          height: !this.state.expanded && (this.props.height || 50)
-        }
-      }, this.props.children), this.state.overflowing && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        href: "",
-        onClick: function onClick(e) {
-          return _this2.toggleExpanded(e);
-        }
-      }, this.state.expanded ? 'Show Less' : 'Show More')));
-    }
-  }]);
+var ChangeLogEntry = function ChangeLogEntry(_ref8) {
+  var data = _ref8.data;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
+    className: "changelog__entry",
+    key: data.id
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryHeader, {
+    data: data
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryRow, {
+    data: data
+  }));
+};
 
-  return Expander;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+var ChangeLog = function ChangeLog(_ref9) {
+  var data = _ref9.data;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
+    className: "table table-sm bg-white table-bordered text-small changelog"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap"
+  }, gettext("Date")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap"
+  }, gettext("Admin")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap"
+  }, gettext("Change Type")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap td--half-stretch"
+  }, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap td--half-stretch"
+  }, gettext("New Entry")))), data.map(function (entry, id) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntry, {
+      key: id,
+      data: entry
+    });
+  }));
+};
 
-/* harmony default export */ __webpack_exports__["default"] = (Expander);
+/* harmony default export */ __webpack_exports__["default"] = (ChangeLog);
 
 /***/ }),
 
@@ -2491,7 +2482,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     }
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
     className: "fas fa-plus-circle"
-  }), gettext("Add User"), gettext("Add User")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
+  }), gettext("Add User")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
     isLoading: store.fetching_users_listing || store.applying_bulk_updates
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__table"
@@ -3789,7 +3780,7 @@ function (_React$Component) {
         className: "nav-item"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
-        className: "nav-link ".concat(programs_active_class, " ").concat(new_class),
+        className: "nav-link text-nowrap ".concat(programs_active_class, " ").concat(new_class),
         onClick: function onClick(e) {
           e.preventDefault();
 
@@ -3799,7 +3790,7 @@ function (_React$Component) {
         className: "nav-item"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
-        className: "nav-item nav-link ".concat(history_active_class, " ").concat(new_class),
+        className: "nav-link text-nowrap ".concat(history_active_class, " ").concat(new_class),
         onClick: function onClick(e) {
           e.preventDefault();
 
@@ -3912,4 +3903,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-2e62a5cc5ee41288dcc0.js.map
+//# sourceMappingURL=tola_management_user-3a98142a4e1ec567b01d.js.map
