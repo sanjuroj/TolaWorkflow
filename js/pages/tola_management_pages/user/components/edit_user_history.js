@@ -61,7 +61,8 @@ export class EditUserHistory extends React.Component {
                         <button className="btn btn-reset" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
                     </div>
                 </div>
-            }
+                }
+            </div>
             <ChangeLog data={history} />
         </div>
     }

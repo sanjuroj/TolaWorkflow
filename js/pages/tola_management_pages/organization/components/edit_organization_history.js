@@ -61,42 +61,6 @@ export default class EditOrganizationHistory extends React.Component {
                     </div>
                 </div>
             </div>
-            <div className="row">
-                <div className="col">
-                    <table className="table table-sm text-small">
-                        <thead>
-                            <tr>
-                                <th>{gettext("Date")}</th>
-                                <th>{gettext("Admin User")}</th>
-                                <th>{gettext("Change Type")}</th>
-                                <th>{gettext("Previous Entry")}</th>
-                                <th>{gettext("New Entry")}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.props.organizationHistoryData.map(entry => <tr key={entry.id}>
-                                <td>{entry.date}</td>
-                                <td>{entry.admin_user}</td>
-                                <td>{entry.pretty_change_type}</td>
-                                <td className="expand-section">
-                                    <Expander>
-                                        {entry.diff_list.map(changeset => {
-                                                return <ChangesetEntry key={changeset.name} name={changeset.name} pretty_name={changeset.pretty_name} type={entry.change_type} data={changeset.prev} />
-                                        })}
-                                    </Expander>
-                                </td>
-                                <td className="expand-section">
-                                    <Expander>
-                                        {entry.diff_list.map(changeset => {
-                                             return <ChangesetEntry key={changeset.name} name={changeset.name} pretty_name={changeset.pretty_name} type={entry.change_type} data={changeset.new} />
-                                        })}
-                                    </Expander>
-                                </td>
-                            </tr>)}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
             <ChangeLog data={this.props.organizationHistoryData} />
 
