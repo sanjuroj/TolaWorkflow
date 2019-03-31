@@ -814,10 +814,13 @@ class IPTT_ExcelExport(LoginRequiredMixin, IPTT_Mixin, TemplateView):
                 ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col + 2)
                 ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col + 2)
 
+                # Translators: The goal value the user wishes to reach
                 set_cell_value(ws.cell(row=4, column=col), _('Target'))
                 ws.cell(row=4, column=col).alignment = alignment_right
+                # Translators: The current value of the indicator
                 set_cell_value(ws.cell(row=4, column=col + 1), _('Actual'))
                 ws.cell(row=4, column=col + 1).alignment = alignment_right
+                # Translators: The ratio of the actual value to the target value as a precentage
                 set_cell_value(ws.cell(row=4, column=col + 2), _('% Met'))
                 ws.cell(row=4, column=col + 2).alignment = alignment_right
                 col_offset += 3

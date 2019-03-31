@@ -109,6 +109,7 @@ class IndicatorForm(forms.ModelForm):
     def clean_lop_target(self):
         data = self.cleaned_data['lop_target']
         if data < 0:
+            # Translators: Input form error message
             raise forms.ValidationError(_('Please enter a number larger than zero.'))
         return data
 
@@ -116,6 +117,7 @@ class IndicatorForm(forms.ModelForm):
         data = self.cleaned_data.get('rationale')
         periodic_targets = self.request.POST.get('periodic_targets')
         if not periodic_targets == 'generateTargets' and len(self.instance.result_set.all()) > 0 and (not data or len(data) <= 0):
+            # Translators: Input form error message that the "rationale" form field is empty when results have already been saved
             raise forms.ValidationError(_('Results have been recorded, rationale is required.'))
         return data
 

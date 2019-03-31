@@ -11,7 +11,8 @@ import Pagination from 'components/pagination'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
 
-const selection_placeholder = gettext("None Selected")
+// # Translators: Nothing selected by user [THIS TRANSLATOR NOTE DOESN'T GET PICKED UP]
+const selection_placeholder = gettext("None Selected");
 const UserFilter = observer(({store, selections}) => {
     return <div className="form-group">
         <label htmlFor="users_filter">{gettext("Users")}</label>
@@ -26,6 +27,7 @@ const UserFilter = observer(({store, selections}) => {
 
 const CountryFilter = observer(({store, selections}) => {
     return <div className="form-group">
+        {/* # Translators: The countries a user is allowed to access */}
         <label htmlFor="countries_permitted_filter">{gettext("Countries Permitted")}</label>
         <CheckboxedMultiSelect
             value={store.filters.countries}
@@ -38,6 +40,7 @@ const CountryFilter = observer(({store, selections}) => {
 
 const BaseCountryFilter = observer(({store, selections}) => {
     return <div className="form-group">
+        {/* # Translators: Primary country of the user */}
         <label htmlFor="base_country_filter">{gettext("Base Country")}</label>
         <CheckboxedMultiSelect
             value={store.filters.base_countries}
@@ -163,8 +166,11 @@ export const IndexView = observer(
         const programOptions = store.program_selections
         const bulk_actions = {
             primary_options: [
+                // # Translators: Set an account to active or inactive
                 {label: gettext('Set account status'), value: 'set_account_status'},
+                // # Translators: Associate a user with a program granting permission
                 {label: gettext('Add to program'), value: 'add_to_program'},
+                // # Translators: Disassociate a user with a program removing permission
                 {label: gettext('Remove from program'), value: 'remove_from_program'},
             ],
             secondary_options: {
@@ -247,6 +253,7 @@ export const IndexView = observer(
                                     <Col size="2" className="td--stretch">{gettext("User")}</Col>
                                     <Col>{gettext("Organization")}</Col>
                                     <Col>{gettext("Programs")}</Col>
+                                    {/* # Translators: Label for yes/no choice form input - if user is an admin or not */}
                                     <Col size="0.5">{gettext("Admin Role")}</Col>
                                     <Col size="0.25">{gettext("Status")}</Col>
                                 </Row>
@@ -302,6 +309,7 @@ export const IndexView = observer(
                                     <Col size="2" className="td--stretch">
                                         <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
                                             <i className="fas fa-user"/>&nbsp;
+                                            {/* # Translators: The highest level of administrator in the system */}
                                             {data.name || "---"} {data.is_super && <span className="badge badge-danger">{gettext("Super Admin")}</span>}
                                         </div>
                                     </Col>
