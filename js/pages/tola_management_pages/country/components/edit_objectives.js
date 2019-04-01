@@ -35,10 +35,16 @@ class StrategicObjectiveForm extends React.Component {
         }
     }
 
+    hasUnsavedDataAction() {
+        this.props.onIsDirtyChange(JSON.stringify(this.state.managed_data) != JSON.stringify(this.props.objective))
+    }
+
     updateFormField(fieldKey, value) {
         const {managed_data} = this.state
         const modified = Object.assign(managed_data, {[fieldKey]: value})
-        this.setState({managed_data: modified})
+        this.setState({
+            managed_data: modified
+        }, () => this.hasUnsavedDataAction())
     }
 
     formErrors(fieldKey) {
@@ -48,7 +54,9 @@ class StrategicObjectiveForm extends React.Component {
     resetForm() {
         this.props.clearErrors()
         const {objective} = this.props
-        this.setState({managed_data: {...objective}})
+        this.setState({
+            managed_data: {...objective}
+        }, () => this.hasUnsavedDataAction())
     }
 
     render() {
@@ -140,23 +148,42 @@ export default class EditObjectives extends React.Component {
 
         this.state = {
             expanded_id: null,
+            is_dirty: false
         }
+    }
+
+    handleDirtyUpdate(is_dirty) {
+        this.setState({is_dirty: is_dirty})
+        this.props.onIsDirtyChange(is_dirty)
+    }
+
+    dirtyConfirm() {
+        return !this.state.is_dirty || (this.state.is_dirty && confirm(gettext("You have unsaved changes. Are you sure you want to discard them?")))
     }
 
     toggleExpand(id) {
         this.props.clearErrors()
-        const {expanded_id} = this.state
-        if (id == expanded_id) {
-            this.setState({expanded_id: null})
-        } else {
-            this.setState({expanded_id: id})
+        if(this.dirtyConfirm()) {
+            const {expanded_id} = this.state
+            if (id == expanded_id) {
+                this.setState({expanded_id: null})
+            } else {
+                this.setState({expanded_id: id})
+            }
+            if(expanded_id == 'new') {
+                this.props.onDelete(expanded_id)
+            }
+            this.handleDirtyUpdate(false)
         }
     }
 
     addObjective() {
-        this.props.clearErrors()
-        this.props.addObjective()
-        this.setState({expanded_id: 'new'})
+        if(this.dirtyConfirm()){
+            this.props.clearErrors()
+            this.props.addObjective()
+            this.setState({expanded_id: 'new'})
+            this.handleDirtyUpdate(false)
+        }
     }
 
     deleteObjectiveAction(objectiveId) {
@@ -172,12 +199,14 @@ export default class EditObjectives extends React.Component {
     updateObjective(objectiveId, data)
     {
         this.props.onUpdate(objectiveId, data)
+        this.setState({is_dirty: false})
     }
 
     createObjective(data)
     {
         let objectiveData = Object.assign(data, {country: this.props.country_id})
         this.props.onCreate(objectiveData)
+        this.setState({is_dirty: false})
     }
 
     render() {
@@ -197,6 +226,7 @@ export default class EditObjectives extends React.Component {
                         createObjective={(data) => this.createObjective(data)}
                         errors={this.props.errors}
                         clearErrors={this.props.clearErrors}
+                        onIsDirtyChange={(is_dirty) => this.handleDirtyUpdate(is_dirty)}
                     />
                 )}
                 <div>

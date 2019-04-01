@@ -4,36 +4,28 @@ import classNames from 'classnames'
 
 @observer
 export default class CountryEditor extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            active_page: 'profile'
-        }
-    }
 
     updateActivePage(new_page) {
         if(!this.props.new) {
-            this.setState({active_page: new_page})
+            this.props.notifyPaneChange(new_page)
         }
     }
 
     render() {
-        const {ProfileSection, StrategicObjectiveSection, DisaggregationSection} = this.props
-
-        const active_page = this.state.active_page
+        const {ProfileSection, StrategicObjectiveSection, DisaggregationSection, active_pane} = this.props
 
         return (
             <div className="tab-set--vertical">
                 <ul className="nav nav-tabs">
                     <li className="nav-item">
-                        <a href="#" className={classNames('nav-link', {'active': active_page=='profile'})}
+                        <a href="#" className={classNames('nav-link', {'active': active_pane=='profile'})}
                             onClick={(e) => { e.preventDefault(); this.updateActivePage('profile')}}>
                             {gettext("Profile")}
                             </a>
                     </li>
                     <li className="nav-item">
                         <a href="#" className={classNames('nav-link', {
-                                'active': active_page=='objectives',
+                                'active': active_pane=='objectives',
                                 'disabled': this.props.new,
                             })}
                             onClick={(e) => { e.preventDefault(); this.updateActivePage('objectives')}}>
@@ -42,7 +34,7 @@ export default class CountryEditor extends React.Component {
                     </li>
                     <li className="nav-item">
                         <a href="#" className={classNames('nav-link', {
-                                'active': active_page=='disaggregations',
+                                'active': active_pane=='disaggregations',
                                 'disabled': this.props.new,
                             })}
                             onClick={(e) => { e.preventDefault(); this.updateActivePage('disaggregations')}}>
@@ -51,15 +43,15 @@ export default class CountryEditor extends React.Component {
                     </li>
                 </ul>
                 <div className="tab-content">
-                    {this.state.active_page == 'profile' && (
+                    {active_pane == 'profile' && (
                         <ProfileSection />
                     )}
 
-                    {this.state.active_page == 'objectives' && (
+                    {active_pane == 'objectives' && (
                         <StrategicObjectiveSection />
                     )}
 
-                    {this.state.active_page == 'disaggregations' && (
+                    {active_pane == 'disaggregations' && (
                         <DisaggregationSection />
                     )}
                 </div>

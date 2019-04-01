@@ -46,7 +46,6 @@ const ProgramFilter = observer(({store, filterOptions}) => {
     </div>
 })
 
-
 export const IndexView = observer(
     ({store}) => {
         const countryFilterOptions = store.allCountries.map(country => {return {value: country.id, label: country.country}})
@@ -94,21 +93,27 @@ export const IndexView = observer(
                             Row={({Col, Row, data}) =>
                             <Row
                                 expanded={data.id == store.editing_target}
-                                Expando={({Wrapper}) =>
+                                Expando={observer(({Wrapper}) =>
                                     <Wrapper>
                                         <CountryEditor
+                                            notifyPaneChange={(new_pane) => store.onProfilePaneChange(new_pane)}
+                                            active_pane={store.active_editor_pane}
                                             new={data.id == 'new'}
                                             ProfileSection={observer(() =>
-                                                <EditCountryProfile
-                                                    new={data.id == 'new'}
-                                                    country_data={data}
-                                                    organizationOptions={organizationFilterOptions}
-                                                    onUpdate={(id, data) => store.updateCountry(id, data)}
-                                                    onCreate={(new_country_data) => store.saveNewCountry(new_country_data)}
-                                                    errors={store.editing_errors}
-                                                />)}
+                                                <LoadingSpinner isLoading={store.fetching_editing_data || store.saving}>
+                                                    <EditCountryProfile
+                                                        new={data.id == 'new'}
+                                                        country_data={data}
+                                                        organizationOptions={organizationFilterOptions}
+                                                        onUpdate={(id, data) => store.updateCountry(id, data)}
+                                                        onCreate={(new_country_data) => store.saveNewCountry(new_country_data)}
+                                                        errors={store.editing_errors}
+                                                        onIsDirtyChange={is_dirty => store.setActiveFormIsDirty(is_dirty)}
+                                                    />
+                                                </LoadingSpinner>
+                                            )}
                                             StrategicObjectiveSection={observer(() =>
-                                                <LoadingSpinner isLoading={store.fetching_editing_data}>
+                                                <LoadingSpinner isLoading={store.fetching_editing_data || store.saving}>
                                                     <EditObjectives
                                                         country_id={data.id}
                                                         objectives={store.editing_objectives_data}
@@ -118,11 +123,12 @@ export const IndexView = observer(
                                                         onDelete={(id) => store.deleteObjective(id)}
                                                         errors={store.editing_objectives_errors}
                                                         clearErrors={() => store.clearObjectiveEditingErrors()}
+                                                        onIsDirtyChange={is_dirty => store.setActiveFormIsDirty(is_dirty)}
                                                     />
                                                 </LoadingSpinner>
                                             )}
                                             DisaggregationSection={observer(() =>
-                                                <LoadingSpinner isLoading={store.fetching_editing_data}>
+                                                <LoadingSpinner isLoading={store.fetching_editing_data || store.saving}>
                                                     <EditDisaggregations
                                                         country_id={data.id}
                                                         disaggregations={store.editing_disaggregations_data}
@@ -132,13 +138,14 @@ export const IndexView = observer(
                                                         onCreate={(data) => store.createDisaggregation(data)}
                                                         errors={store.editing_disaggregations_errors}
                                                         clearErrors={() => store.clearDisaggregationEditingErrors()}
+                                                        onIsDirtyChange={is_dirty => store.setActiveFormIsDirty(is_dirty)}
                                                     />
                                                 </LoadingSpinner>
                                             )}
                                             fetchObjectives={(countryId) => store.fetchObjectives(countryId)}
                                         />
                                     </Wrapper>
-                                }>
+                                )}>
                                     <Col size="0.2">
                                     </Col>
                                     <Col size="2" className="td--stretch">

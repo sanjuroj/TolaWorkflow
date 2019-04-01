@@ -42,6 +42,10 @@ export class ProgramStore {
     @observable applying_bulk_updates = false
     @observable bulk_targets_all = false
 
+    @observable active_editor_pane = 'profile'
+
+    active_pane_is_dirty = false
+
     constructor(
         api,
         initialData,
@@ -63,24 +67,48 @@ export class ProgramStore {
         }, {})
     }
 
+    dirtyConfirm() {
+        return !this.active_pane_is_dirty || (this.active_pane_is_dirty && confirm(gettext("You have unsaved changes. Are you sure you want to discard them?")))
+    }
+
+    @action
+    onProfilePaneChange(new_pane) {
+        if(this.dirtyConfirm()) {
+            this.active_editor_pane = new_pane
+            this.active_pane_is_dirty = false
+        }
+    }
+
+    setActiveFormIsDirty(is_dirty) {
+        this.active_pane_is_dirty = is_dirty
+    }
+
+    setActivePaneSaveAction(action) {
+        this.active_pane_save = action
+    }
+
     @action
     fetchPrograms() {
-        this.fetching_main_listing = true
-        this.api.fetchPrograms(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(results => {
-            runInAction(() => {
-                this.fetching_main_listing = false
-                this.programs = results.results
-                this.program_count = results.total_results
-                this.total_pages = results.total_pages
-                this.next_page =results.next_page
-                this.previous_page = results.previous_page
+        if(this.dirtyConfirm()) {
+            this.fetching_main_listing = true
+            this.api.fetchPrograms(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(results => {
+                runInAction(() => {
+                    this.fetching_main_listing = false
+                    this.programs = results.results
+                    this.program_count = results.total_results
+                    this.total_pages = results.total_pages
+                    this.next_page =results.next_page
+                    this.previous_page = results.previous_page
+                    this.active_editor_pane = 'profile'
+                    this.active_pane_is_dirty = false
+                })
             })
-        })
-        this.api.fetchProgramsForFilter(this.marshalFilters(this.appliedFilters)).then(response => {
-            runInAction(() => {
-                this.programFilterPrograms = response.data
+            this.api.fetchProgramsForFilter(this.marshalFilters(this.appliedFilters)).then(response => {
+                runInAction(() => {
+                    this.programFilterPrograms = response.data
+                })
             })
-        })
+        }
 
     }
 
@@ -122,23 +150,26 @@ export class ProgramStore {
 
     @action
     toggleEditingTarget(id) {
-        if(this.editing_target == 'new') {
-            this.programs.shift()
-            this.editing_errors = {}
-        }
+        if(this.dirtyConfirm()) {
+            if(this.editing_target == 'new') {
+                this.programs.shift()
+                this.editing_errors = {}
+            }
+            this.active_editor_pane = 'profile'
 
-        if(this.editing_target == id) {
-            this.editing_target = false
-            this.editing_errors = {}
-        } else {
-            this.editing_target = id
-            this.fetching_editing_history = true
-            this.api.fetchProgramHistory(id).then(resp => {
-                runInAction(() => {
-                    this.fetching_editing_history = false
-                    this.editing_history = resp.data
+            if(this.editing_target == id) {
+                this.editing_target = false
+                this.editing_errors = {}
+            } else {
+                this.editing_target = id
+                this.fetching_editing_history = true
+                this.api.fetchProgramHistory(id).then(resp => {
+                    runInAction(() => {
+                        this.fetching_editing_history = false
+                        this.editing_history = resp.data
+                    })
                 })
-            })
+            }
         }
     }
 
@@ -163,22 +194,26 @@ export class ProgramStore {
 
     @action
     createProgram() {
-        if(this.editing_target == 'new') {
-            this.programs.shift()
-        }
+        if(this.dirtyConfirm()) {
+            if(this.editing_target == 'new') {
+                this.programs.shift()
+            }
+            this.active_editor_pane = 'profile'
+            this.active_pane_is_dirty = false
 
-        let new_program_data = {
-            id: "new",
-            name: "",
-            gaitid: "",
-            fundcode: "",
-            funding_status: "",
-            description: "",
-            country: [],
-            sector: [],
+            let new_program_data = {
+                id: "new",
+                name: "",
+                gaitid: "",
+                fundcode: "",
+                funding_status: "",
+                description: "",
+                country: [],
+                sector: [],
+            }
+            this.programs.unshift(new_program_data)
+            this.editing_target = 'new'
         }
-        this.programs.unshift(new_program_data)
-        this.editing_target = 'new'
     }
 
     @action
@@ -188,9 +223,11 @@ export class ProgramStore {
         this.api.createProgram(program_data).then(response => {
             runInAction(()=> {
                 this.saving = false
-                this.editing_target = false
+                this.editing_target = response.data.id
+                this.editing_target_data = response.data
                 this.programs.shift()
                 this.programs.unshift(response.data)
+                this.active_pane_is_dirty = false
             })
         }).catch(error => {
             runInAction(()=> {
@@ -206,7 +243,8 @@ export class ProgramStore {
         this.api.updateProgram(id, program_data).then(response => {
             runInAction(() => {
                 this.saving = false
-                this.editing_target = false
+                this.active_pane_is_dirty = false
+                this.editing_target_data = program_data
                 this.updateLocalPrograms(response.data)
                 this.onSaveSuccessHandler()
             })

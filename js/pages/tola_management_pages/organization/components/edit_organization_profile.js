@@ -19,8 +19,11 @@ export default class EditOrganizationProfile extends React.Component {
         }
     }
 
-    save(e) {
-        e.preventDefault()
+    hasUnsavedDataAction() {
+        this.props.onIsDirtyChange(JSON.stringify(this.state.managed_data) != JSON.stringify(this.state.initial_data))
+    }
+
+    save() {
         this.props.onSave({...this.state.managed_data, sectors: this.state.managed_data.sectors.map(sector => sector.value)})
     }
 
@@ -37,7 +40,7 @@ export default class EditOrganizationProfile extends React.Component {
     resetForm() {
         this.setState({
             managed_data: this.state.initial_data
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     updateName(new_name) {
@@ -45,7 +48,7 @@ export default class EditOrganizationProfile extends React.Component {
         new_data.name = new_name
         this.setState({
             managed_data: new_data
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     updateSectors(new_sectors) {
@@ -53,7 +56,7 @@ export default class EditOrganizationProfile extends React.Component {
         new_data.sectors = new_sectors
         this.setState({
             managed_data: new_data
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     updatePrimaryAddress(new_address) {
@@ -61,7 +64,7 @@ export default class EditOrganizationProfile extends React.Component {
         new_data.primary_address = new_address
         this.setState({
             managed_data: new_data
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     updatePrimaryContactName(new_name) {
@@ -69,7 +72,7 @@ export default class EditOrganizationProfile extends React.Component {
         new_data.primary_contact_name = new_name
         this.setState({
             managed_data: new_data
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     updatePrimaryContactEmail(new_email) {
@@ -77,7 +80,7 @@ export default class EditOrganizationProfile extends React.Component {
         new_data.primary_contact_email = new_email
         this.setState({
             managed_data: new_data
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     updatePrimaryContactPhone(new_phone) {
@@ -85,7 +88,7 @@ export default class EditOrganizationProfile extends React.Component {
         new_data.primary_contact_phone = new_phone
         this.setState({
             managed_data: new_data
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     updateModeOfContact(new_mode_of_contact) {
@@ -93,7 +96,7 @@ export default class EditOrganizationProfile extends React.Component {
         new_data.mode_of_contact = new_mode_of_contact
         this.setState({
             managed_data: new_data
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     render() {
@@ -204,14 +207,14 @@ export default class EditOrganizationProfile extends React.Component {
                     </div>
                     {this.props.new &&
                     <div className="form-group btn-row">
-                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>{gettext("Save Changes")}</button>
+                        <button className="btn btn-primary" type="button" onClick={(e) => this.saveNew(e)}>{gettext("Save Changes")}</button>
                         <button className="btn btn-secondary" onClick={(e) => this.saveNewAndAddAnother(e)}>{gettext("Save and Add Another")}</button>
                         <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }
                     {!this.props.new &&
                     <div className="form-group btn-row">
-                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>{gettext("Save Changes")}</button>
+                        <button className="btn btn-primary" type="button" onClick={(e) => this.save(e)}>{gettext("Save Changes")}</button>
                         <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }

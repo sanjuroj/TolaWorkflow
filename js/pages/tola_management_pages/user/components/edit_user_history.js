@@ -20,22 +20,30 @@ export class EditUserHistory extends React.Component {
         }
     }
 
+    save() {
+        this.props.onSave(this.state.user_data)
+    }
+
     onChange(new_value) {
         this.setState({
             user_data: {
                 user: {is_active: new_value.value}
             }
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     onResendRegistrationEmail() {
         this.props.onResendRegistrationEmail()
     }
 
+    hasUnsavedDataAction() {
+        this.props.onIsDirtyChange(this.state.user_data.user.is_active == this.state.user_data.user.is_active)
+    }
+
     onReset() {
         this.setState({
             user_data: this.state.original_user_data
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     render() {
@@ -57,7 +65,7 @@ export class EditUserHistory extends React.Component {
                 {!this.props.disabled &&
                 <div className="col">
                     <div className="form-group btn-row">
-                        <button className="btn btn-primary" type="button" onClick={() => this.props.onSave(this.state.user_data)}>{gettext("Save Changes")}</button>
+                        <button className="btn btn-primary" type="button" onClick={() => this.save()}>{gettext("Save Changes")}</button>
                         <button className="btn btn-reset" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
                     </div>
                 </div>

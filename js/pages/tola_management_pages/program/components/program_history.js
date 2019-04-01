@@ -22,11 +22,15 @@ export class ProgramHistory extends React.Component {
         }
     }
 
+    hasUnsavedDataAction() {
+        this.props.onIsDirtyChange(JSON.stringify(this.state.managed_status) != JSON.stringify(this.state.original_status))
+    }
+
     onStatusChange(selection) {
         let value = selection.value
         this.setState({
             managed_status: Object.assign(this.state.managed_status, {'funding_status': value})
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     onSave() {
@@ -38,7 +42,7 @@ export class ProgramHistory extends React.Component {
     onReset() {
         this.setState({
             managed_status: this.state.original_status,
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     render() {
