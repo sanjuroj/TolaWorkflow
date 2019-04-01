@@ -194,6 +194,10 @@ def get_labels(quickstart=True):
                 'sectorSelect': ugettext('Sectors'),
                 'siteSelect': ugettext('Sites'),
                 'indicatorSelect': ugettext('Indicators'),
+                'emptySelect': ugettext('None selected'),
+                'noOptionsSelect': ugettext('None available'),
+                # Translators: this is used after a number, i.e. "3 selected"
+                'selected': ugettext('selected'),
                 'loading': ugettext('Loading'),
                 'timeperiods': {
                     '3' : ugettext('Years'),
@@ -366,7 +370,8 @@ class IPTTReportData(LoginRequiredMixin, View):
             'reportType': 'tva' if self.tva else 'timeperiods',
             'indicators': indicators,
             'levels': level_data,
-            'resultChainFilter': ugettext('by %(tier)s chain') % {'tier': second_tier_name}
+            'resultChainFilter': ugettext('by %(tier)s chain') % {'tier': second_tier_name},
+            'resultChainHeader': ugettext('%(tier)s chains') % {'tier': second_tier_name}
         }
         return JsonResponse(reportData)
 
