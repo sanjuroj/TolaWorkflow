@@ -530,7 +530,7 @@ function (_React$Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CountryStore", function() { return CountryStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _descriptor26, _temp;
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -540,8 +540,6 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -549,6 +547,10 @@ function _nonIterableRest() { throw new TypeError("Invalid attempt to destructur
 function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -584,51 +586,54 @@ function () {
 
     _initializerDefineProperty(this, "filters", _descriptor4, this);
 
-    _initializerDefineProperty(this, "is_superuser", _descriptor5, this);
+    _initializerDefineProperty(this, "appliedFilters", _descriptor5, this);
 
-    _initializerDefineProperty(this, "allCountries", _descriptor6, this);
+    _initializerDefineProperty(this, "is_superuser", _descriptor6, this);
 
-    _initializerDefineProperty(this, "countries", _descriptor7, this);
+    _initializerDefineProperty(this, "allCountries", _descriptor7, this);
 
-    _initializerDefineProperty(this, "country_count", _descriptor8, this);
+    _initializerDefineProperty(this, "countries", _descriptor8, this);
 
-    _initializerDefineProperty(this, "new_country", _descriptor9, this);
+    _initializerDefineProperty(this, "country_count", _descriptor9, this);
 
-    _initializerDefineProperty(this, "fetching_main_listing", _descriptor10, this);
+    _initializerDefineProperty(this, "new_country", _descriptor10, this);
 
-    _initializerDefineProperty(this, "current_page", _descriptor11, this);
+    _initializerDefineProperty(this, "fetching_main_listing", _descriptor11, this);
 
-    _initializerDefineProperty(this, "total_pages", _descriptor12, this);
+    _initializerDefineProperty(this, "current_page", _descriptor12, this);
 
-    _initializerDefineProperty(this, "bulk_targets", _descriptor13, this);
+    _initializerDefineProperty(this, "total_pages", _descriptor13, this);
 
-    _initializerDefineProperty(this, "bulk_targets_all", _descriptor14, this);
+    _initializerDefineProperty(this, "bulk_targets", _descriptor14, this);
 
-    _initializerDefineProperty(this, "editing_target", _descriptor15, this);
+    _initializerDefineProperty(this, "bulk_targets_all", _descriptor15, this);
 
-    _initializerDefineProperty(this, "editing_errors", _descriptor16, this);
+    _initializerDefineProperty(this, "editing_target", _descriptor16, this);
 
-    _initializerDefineProperty(this, "fetching_editing_data", _descriptor17, this);
+    _initializerDefineProperty(this, "editing_errors", _descriptor17, this);
 
-    _initializerDefineProperty(this, "editing_objectives_data", _descriptor18, this);
+    _initializerDefineProperty(this, "fetching_editing_data", _descriptor18, this);
 
-    _initializerDefineProperty(this, "editing_objectives_errors", _descriptor19, this);
+    _initializerDefineProperty(this, "editing_objectives_data", _descriptor19, this);
 
-    _initializerDefineProperty(this, "editing_disaggregations_data", _descriptor20, this);
+    _initializerDefineProperty(this, "editing_objectives_errors", _descriptor20, this);
 
-    _initializerDefineProperty(this, "editing_disaggregations_errors", _descriptor21, this);
+    _initializerDefineProperty(this, "editing_disaggregations_data", _descriptor21, this);
 
-    _initializerDefineProperty(this, "saving", _descriptor22, this);
+    _initializerDefineProperty(this, "editing_disaggregations_errors", _descriptor22, this);
 
-    _initializerDefineProperty(this, "bulk_targets", _descriptor23, this);
+    _initializerDefineProperty(this, "saving", _descriptor23, this);
 
-    _initializerDefineProperty(this, "applying_bulk_updates", _descriptor24, this);
+    _initializerDefineProperty(this, "bulk_targets", _descriptor24, this);
 
-    _initializerDefineProperty(this, "bulk_targets_all", _descriptor25, this);
+    _initializerDefineProperty(this, "applying_bulk_updates", _descriptor25, this);
+
+    _initializerDefineProperty(this, "bulk_targets_all", _descriptor26, this);
 
     this;
     this.api = api;
     Object.assign(this, initialData);
+    this.appliedFilters = _objectSpread({}, this.filters);
     this.fetchCountries();
   }
 
@@ -657,7 +662,7 @@ function () {
       var _this = this;
 
       this.fetching_main_listing = true;
-      this.api.fetchCountries(this.current_page + 1, this.marshalFilters(this.filters)).then(function (results) {
+      this.api.fetchCountries(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(function (results) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this.fetching_main_listing = false;
           _this.countries = results.results;
@@ -671,6 +676,7 @@ function () {
   }, {
     key: "applyFilters",
     value: function applyFilters() {
+      this.appliedFilters = _objectSpread({}, this.filters);
       this.current_page = 0;
       this.fetchCountries();
     }
@@ -1057,147 +1063,154 @@ function () {
       programs: []
     };
   }
-}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "is_superuser", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return false;
-  }
-}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "allCountries", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return [];
-  }
-}), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "countries", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return [];
-  }
-}), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "country_count", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return 0;
-  }
-}), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, "new_country", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return null;
-  }
-}), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, "fetching_main_listing", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return false;
-  }
-}), _descriptor11 = _applyDecoratedDescriptor(_class.prototype, "current_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return 0;
-  }
-}), _descriptor12 = _applyDecoratedDescriptor(_class.prototype, "total_pages", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return null;
-  }
-}), _descriptor13 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return new Map();
-  }
-}), _descriptor14 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets_all", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return false;
-  }
-}), _descriptor15 = _applyDecoratedDescriptor(_class.prototype, "editing_target", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return null;
-  }
-}), _descriptor16 = _applyDecoratedDescriptor(_class.prototype, "editing_errors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "appliedFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor17 = _applyDecoratedDescriptor(_class.prototype, "fetching_editing_data", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "is_superuser", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return false;
+  }
+}), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "allCountries", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return [];
+  }
+}), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "countries", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return [];
+  }
+}), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, "country_count", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return 0;
+  }
+}), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, "new_country", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return null;
+  }
+}), _descriptor11 = _applyDecoratedDescriptor(_class.prototype, "fetching_main_listing", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return false;
+  }
+}), _descriptor12 = _applyDecoratedDescriptor(_class.prototype, "current_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return 0;
+  }
+}), _descriptor13 = _applyDecoratedDescriptor(_class.prototype, "total_pages", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return null;
+  }
+}), _descriptor14 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return new Map();
+  }
+}), _descriptor15 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets_all", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return false;
+  }
+}), _descriptor16 = _applyDecoratedDescriptor(_class.prototype, "editing_target", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return null;
+  }
+}), _descriptor17 = _applyDecoratedDescriptor(_class.prototype, "editing_errors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return {};
+  }
+}), _descriptor18 = _applyDecoratedDescriptor(_class.prototype, "fetching_editing_data", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return true;
   }
-}), _descriptor18 = _applyDecoratedDescriptor(_class.prototype, "editing_objectives_data", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor19 = _applyDecoratedDescriptor(_class.prototype, "editing_objectives_data", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return [];
   }
-}), _descriptor19 = _applyDecoratedDescriptor(_class.prototype, "editing_objectives_errors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor20 = _applyDecoratedDescriptor(_class.prototype, "editing_objectives_errors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor20 = _applyDecoratedDescriptor(_class.prototype, "editing_disaggregations_data", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor21 = _applyDecoratedDescriptor(_class.prototype, "editing_disaggregations_data", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return [];
   }
-}), _descriptor21 = _applyDecoratedDescriptor(_class.prototype, "editing_disaggregations_errors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor22 = _applyDecoratedDescriptor(_class.prototype, "editing_disaggregations_errors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor22 = _applyDecoratedDescriptor(_class.prototype, "saving", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor23 = _applyDecoratedDescriptor(_class.prototype, "saving", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor23 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor24 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return new Map();
   }
-}), _descriptor24 = _applyDecoratedDescriptor(_class.prototype, "applying_bulk_updates", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor25 = _applyDecoratedDescriptor(_class.prototype, "applying_bulk_updates", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor25 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets_all", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor26 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets_all", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -2761,4 +2774,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-d2d40a6be9de670de4c2.js.map
+//# sourceMappingURL=tola_management_country-0f2606fd56ef75f13922.js.map

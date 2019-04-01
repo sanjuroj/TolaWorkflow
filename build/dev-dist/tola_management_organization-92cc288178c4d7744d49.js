@@ -12,7 +12,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OrganizationStore", function() { return OrganizationStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./api */ "zUdS");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _temp;
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -99,6 +99,8 @@ function () {
 
     _initializerDefineProperty(this, "filters", _descriptor15, this);
 
+    _initializerDefineProperty(this, "appliedFilters", _descriptor16, this);
+
     this.organization_status_options = [{
       value: 1,
       label: gettext('Active')
@@ -166,6 +168,7 @@ function () {
         value: id
       };
     });
+    this.appliedFilters = _objectSpread({}, this.filter);
     this.fetchOrganizations();
   }
 
@@ -217,7 +220,7 @@ function () {
       var _this2 = this;
 
       this.fetching = true;
-      _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationsWithFilter(this.current_page + 1, this.marshalFilters(this.filters)).then(function (results) {
+      _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationsWithFilter(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(function (results) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this2.fetching = false;
           _this2.organizations = results.organizations.reduce(function (xs, x) {
@@ -242,6 +245,7 @@ function () {
   }, {
     key: "applyFilters",
     value: function applyFilters() {
+      this.appliedFilters = _objectSpread({}, this.filters);
       this.current_page = 0;
       this.fetchOrganizations();
     }
@@ -589,6 +593,13 @@ function () {
       sectors: [],
       organization_status: ''
     };
+  }
+}), _descriptor16 = _applyDecoratedDescriptor(_class.prototype, "appliedFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return {};
   }
 }), _applyDecoratedDescriptor(_class.prototype, "fetchOrganizations", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchOrganizations"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createOrganization", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createOrganization"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateOrganizationProfile", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateOrganizationProfile"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewOrganization", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewOrganization"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewOrganizationAndAddAnother", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewOrganizationAndAddAnother"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeSectorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeSectorFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeProgramFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeProgramFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationStatusFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationStatusFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype)), _class);
 
@@ -1176,7 +1187,7 @@ var ChangeLogEntryHeader = function ChangeLogEntryHeader(_ref2) {
     className: "fas fa-caret-down"
   }), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, data.date)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "text-nowrap"
-  }, data.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null));
+  }, data.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null));
 };
 
 var ChangeLogEntryRow = function ChangeLogEntryRow(_ref3) {
@@ -1251,7 +1262,7 @@ var ChangeLogEntryRow = function ChangeLogEntryRow(_ref3) {
     }, data.diff_list.map(function (changeset, id) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeField, {
         key: id,
-        name: changeset.name,
+        name: changeset.pretty_name,
         data: changeset.prev
       });
     }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -1259,7 +1270,7 @@ var ChangeLogEntryRow = function ChangeLogEntryRow(_ref3) {
     }, data.diff_list.map(function (changeset, id) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeField, {
         key: id,
-        name: changeset.name,
+        name: changeset.pretty_name,
         data: changeset.new
       });
     }))));
@@ -1586,6 +1597,10 @@ function (_React$Component) {
           return _this2.onChange(new_value);
         }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
@@ -1599,7 +1614,7 @@ function (_React$Component) {
         onClick: function onClick() {
           return _this2.onReset();
         }
-      }, gettext("Reset"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_changelog__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_changelog__WEBPACK_IMPORTED_MODULE_5__["default"], {
         data: this.props.organizationHistoryData
       }));
     }
@@ -2013,13 +2028,11 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(EditOrganizationProfile).call(this, props));
     var o = props.organizationData;
+    var sectorSelections = props.sectorSelections;
 
     var data = _objectSpread({}, o, {
-      sectors: o.sectors.map(function (sector) {
-        return {
-          value: sector.id,
-          label: sector.sector
-        };
+      sectors: sectorSelections.filter(function (sectorOption) {
+        return o.sectors.includes(sectorOption.value);
       })
     });
 
@@ -2347,24 +2360,12 @@ var fetchOrganization = function fetchOrganization(id) {
   });
 };
 var updateOrganization = function updateOrganization(id, new_data) {
-  return _api__WEBPACK_IMPORTED_MODULE_0__["api"].put("/tola_management/organization/".concat(id, "/"), _objectSpread({}, new_data, {
-    sectors: new_data.sectors.map(function (sector) {
-      return {
-        id: sector
-      };
-    })
-  })).then(function (response) {
+  return _api__WEBPACK_IMPORTED_MODULE_0__["api"].put("/tola_management/organization/".concat(id, "/"), _objectSpread({}, new_data)).then(function (response) {
     return response.data;
   });
 };
 var createOrganization = function createOrganization(new_data) {
-  return _api__WEBPACK_IMPORTED_MODULE_0__["api"].post("/tola_management/organization/", _objectSpread({}, new_data, {
-    sectors: new_data.sectors.map(function (sector) {
-      return {
-        id: sector
-      };
-    })
-  })).then(function (response) {
+  return _api__WEBPACK_IMPORTED_MODULE_0__["api"].post("/tola_management/organization/", _objectSpread({}, new_data)).then(function (response) {
     return response.data;
   });
 };
@@ -2390,4 +2391,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-5271c5c80db2208426b1.js.map
+//# sourceMappingURL=tola_management_organization-92cc288178c4d7744d49.js.map

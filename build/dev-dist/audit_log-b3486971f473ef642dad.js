@@ -56,111 +56,36 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-var pretty_change_type = {
-  indicator_changed: gettext('Indicator changed'),
-  indicator_created: gettext('Indicator created'),
-  indicator_deleted: gettext('Indicator deleted'),
-  result_changed: gettext('Result changed'),
-  result_created: gettext('Result created'),
-  result_deleted: gettext('Result deleted'),
-  program_dates_changed: gettext('Program Dates Changed')
-};
-
-var map_pretty_change_type = function map_pretty_change_type(change_type) {
-  return pretty_change_type[change_type];
-};
-
-var units_of_measure_type = {
-  1: gettext("Number"),
-  2: gettext("Percentage")
-};
-
-var map_unit_of_measure_type = function map_unit_of_measure_type(id) {
-  return units_of_measure_type[id];
-};
-
-var directions_of_change = {
-  1: gettext("N/A"),
-  2: gettext("Increase (+)"),
-  3: gettext("Decrease (-)")
-};
-
-var map_direction_of_change = function map_direction_of_change(id) {
-  return directions_of_change[id];
-};
-
-var result_changeset_name_map = {
-  'evidence_url': gettext('Evidence Url'),
-  'evidence_name': gettext('Evidence Name'),
-  'date': gettext('Date'),
-  'target': gettext('Target'),
-  'value': gettext('Value'),
-  'id': gettext('ID')
-};
 
 var ResultChangeset = function ResultChangeset(_ref) {
   var data = _ref.data,
-      name = _ref.name;
+      name = _ref.name,
+      pretty_name = _ref.pretty_name;
 
   if (name == 'evidence_url') {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
       className: "change__field"
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, result_changeset_name_map[name]), ": ", data != 'N/A' ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, pretty_name), ": ", data != 'N/A' ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
       href: data
     }, "Link") : data);
   } else {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
       className: "change__field"
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, result_changeset_name_map[name]), ": ", data);
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, pretty_name), ": ", data);
   }
-};
-
-var program_dates_changset_name_map = {
-  'start_date': gettext('Start Date'),
-  'end_date': gettext('End Date')
 };
 
 var ProgramDatesChangeset = function ProgramDatesChangeset(_ref2) {
   var data = _ref2.data,
-      name = _ref2.name;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "change__field"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, program_dates_changset_name_map[name]), ": ", data);
-};
-
-var indicator_changeset_name_map = {
-  name: gettext('Name'),
-  unit_of_measure: gettext('Unit of Measure'),
-  unit_of_measure_type: gettext('Unit of Measure Type'),
-  is_cumulative: gettext('Is Cumulative'),
-  lop_target: gettext('LOP Target'),
-  direction_of_change: gettext('Direction of Change'),
-  rationale_for_target: gettext('Rationale for Target'),
-  baseline_value: gettext('Baseline Value'),
-  baseline_na: gettext('Baseline N/A')
+      name = _ref2.name,
+      pretty_name = _ref2.pretty_name;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, pretty_name, ": ", data);
 };
 
 var IndicatorChangeset = function IndicatorChangeset(_ref3) {
   var data = _ref3.data,
-      name = _ref3.name;
-
-  var mapped_data = function () {
-    if (data == 'N/A') return data;
-
-    switch (name) {
-      case 'unit_of_measure_type':
-        return map_unit_of_measure_type(data);
-        break;
-
-      case 'direction_of_change':
-        return map_direction_of_change(data);
-        break;
-
-      default:
-        return data;
-        break;
-    }
-  }();
+      name = _ref3.name,
+      pretty_name = _ref3.pretty_name;
 
   if (name == 'targets') {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -180,7 +105,7 @@ var IndicatorChangeset = function IndicatorChangeset(_ref3) {
   } else {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
       className: "change__field"
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, indicator_changeset_name_map[name], ":"), " ", mapped_data !== null && mapped_data !== undefined ? mapped_data.toString() : 'N/A');
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, pretty_name, ":"), " ", data !== null && data !== undefined ? data.toString() : gettext('N/A'));
   }
 };
 
@@ -197,14 +122,15 @@ function (_React$Component) {
 
   _createClass(ChangesetEntry, [{
     key: "renderType",
-    value: function renderType(type, data, name) {
+    value: function renderType(type, data, name, pretty_name) {
       switch (type) {
         case 'indicator_changed':
         case 'indicator_created':
         case 'indicator_deleted':
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorChangeset, {
             data: data,
-            name: name
+            name: name,
+            pretty_name: pretty_name
           });
           break;
 
@@ -213,14 +139,16 @@ function (_React$Component) {
         case 'result_deleted':
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ResultChangeset, {
             data: data,
-            name: name
+            name: name,
+            pretty_name: pretty_name
           });
           break;
 
         case 'program_dates_changed':
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProgramDatesChangeset, {
             data: data,
-            name: name
+            name: name,
+            pretty_name: pretty_name
           });
           break;
       }
@@ -231,8 +159,9 @@ function (_React$Component) {
       var _this$props = this.props,
           data = _this$props.data,
           type = _this$props.type,
-          name = _this$props.name;
-      return this.renderType(type, data, name);
+          name = _this$props.name,
+          pretty_name = _this$props.pretty_name;
+      return this.renderType(type, data, name, pretty_name);
     }
   }]);
 
@@ -281,7 +210,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
   }, gettext("Rationale")))), store.log_rows.map(function (data) {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
       className: "changelog__entry__header is-expanded"
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.number : 'N/A'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.name : 'N/A'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.organization), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, map_pretty_change_type(data.change_type)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.number : gettext('N/A')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.name : gettext('N/A')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.organization), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
       className: "changelog__entry__row",
       key: data.id
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
@@ -290,6 +219,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangesetEntry, {
         key: changeset.name,
         name: changeset.name,
+        pretty_name: changeset.pretty_name,
         type: data.change_type,
         data: changeset.prev
       });
@@ -299,6 +229,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangesetEntry, {
         key: changeset.name,
         name: changeset.name,
+        pretty_name: changeset.pretty_name,
         type: data.change_type,
         data: changeset.new
       });
@@ -1104,4 +1035,4 @@ function () {
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-7a0e288eaf6a936df408.js.map
+//# sourceMappingURL=audit_log-b3486971f473ef642dad.js.map
