@@ -10,7 +10,7 @@ const ChangeLogEntryHeader = ({data}) => {
     return <tr className="changelog__entry__header is-expanded"> {/* TODO: apply is-expanded dynamically */}
         <td className="text-nowrap text-action"><i className="fas fa-caret-down"></i>&nbsp;<strong>{data.date}</strong></td>
         <td className="text-nowrap">{data.admin_user}</td>
-        <td>{data.change_type}</td>
+        <td>{data.pretty_change_type}</td>
         <td></td>
         <td></td>
     </tr>
@@ -73,14 +73,14 @@ const ChangeLogEntryRow = ({data}) => {
             <td>
                 <div className="changelog__change--prev">
                     {data.diff_list.map((changeset, id)  =>
-                        <ChangeField key={id} name={changeset.name} data={changeset.prev} />
+                        <ChangeField key={id} name={changeset.pretty_name} data={changeset.prev} />
                     )}
                 </div>
             </td>
             <td>
                 <div className="changelog__change--new">
                     {data.diff_list.map((changeset, id) =>
-                        <ChangeField key={id} name={changeset.name} data={changeset.new} />
+                        <ChangeField key={id} name={changeset.pretty_name} data={changeset.new} />
                     )}
                 </div>
             </td>

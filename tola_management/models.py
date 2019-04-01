@@ -6,7 +6,7 @@ import itertools
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from workflow.models import (
     TolaUser,
@@ -18,7 +18,7 @@ from indicators.models import (
     Indicator
 )
 
-def diff(previous, new):
+def diff(previous, new, mapping):
     diff_list = []
     p = previous
     n = new
@@ -26,6 +26,7 @@ def diff(previous, new):
         if p_field and p_field not in n:
             diff_list.append({
                 "name": p_field,
+                "pretty_name": mapping.get(p_field, p_field),
                 "prev": p[p_field],
                 "new": 'N/A'
             })
@@ -33,6 +34,7 @@ def diff(previous, new):
         if n_field and n_field not in p:
             diff_list.append({
                 "name": n_field,
+                "pretty_name": mapping.get(n_field, n_field),
                 "prev": 'N/A',
                 "new": n[n_field]
             })
@@ -40,6 +42,7 @@ def diff(previous, new):
         if n_field in p and p_field in n and n[p_field] != p[n_field]:
             diff_list.append({
                 "name": n_field,
+                "pretty_name": mapping.get(n_field, n_field),
                 "prev": p[p_field],
                 "new": n[n_field]
             })
@@ -57,7 +60,7 @@ class DiffableLog:
         if self.new_entry:
             n = json.loads(self.new_entry)
 
-        diff_list = diff(p, n)
+        diff_list = diff(p, n, self.field_map)
 
         return diff_list
 
@@ -69,6 +72,27 @@ class UserManagementAuditLog(models.Model, DiffableLog):
     change_type = models.CharField(_('Modification Type'), max_length=255)
     previous_entry = models.TextField()
     new_entry = models.TextField()
+
+    field_map = {
+        "title": _("Title"),
+        "name": _("Name"),
+        "mode_of_address": _("Mode of Address"),
+        "mode_of_contact": _("Mode of Contact"),
+        "phone_number": _("Phone Number"),
+        "email": _("Email"),
+        "organization": _("Organization"),
+        "active": _("Is Active")
+    }
+
+    change_type_map = {
+        "user_created": _("User Created"),
+        "user_programs_updated": _("User Programs Updated"),
+        "user_profile_updated": _("User Profile Updated")
+    }
+
+    @property
+    def pretty_change_type(self):
+        return self.change_type_map.get(self.change_type, self.change_type)
 
     @property
     def diff_list(self):
@@ -170,12 +194,62 @@ class ProgramAuditLog(models.Model, DiffableLog):
     new_entry = models.TextField(null=True, blank=True)
     rationale = models.TextField(null=True)
 
+    field_map = {
+        "name": _("Name"),
+        "unit_of_measure": _("Unit of Measure"),
+        "unit_of_measure_type": _("Unit of Measure Type"),
+        "is_cumulative": _("Is Cumulative"),
+        "lop_target": _("LOP Target"),
+        "direction_of_change": _("Direction of Change"),
+        "rationale_for_target": _("Rationale for Target"),
+        "baseline_value": _("Baseline"),
+        "baseline_na": _("Baseline N/A"),
+        "evidence_url": _('Evidence Url'),
+        "evidence_name": _('Evidence Name'),
+        "date": _('Date'),
+        "target": _('Target'),
+        "value": _('Value'),
+        "start_date": _('Start Date'),
+        "end_date": _('End Date')
+    }
+
+    change_type_map = {
+        "indicator_created": _("Indicator Created"),
+        "indicator_changed": _('Indicator Changed'),
+        "indicator_deleted": _('Indicator Deleted'),
+        "result_changed": _('Result Changed'),
+        "result_created": _('Result Created'),
+        "result_deleted": _('Result Deleted'),
+        "program_dates_changed": _('Program Dates Changed')
+    }
+
+    unit_of_measure_type_map = {
+        1: _("Number"),
+        2: _("Percentage")
+    }
+
+    direction_of_change_map = {
+        1: _("N/A"),
+        2: _("Increase (+)"),
+        3: _("Decrease (-)"),
+    }
+
+    @property
+    def pretty_change_type(self):
+        return self.change_type_map.get(self.change_type, self.change_type)
+
     @property
     def diff_list(self):
         diff_list = super(ProgramAuditLog, self).diff_list
 
         for diff in diff_list:
-            if diff["name"] == 'targets':
+            if diff["name"] == 'unit_of_measure_type':
+                diff["prev"] = self.unit_of_measure_type_map.get(diff["prev"], diff["prev"])
+                diff["new"] = self.unit_of_measure_type_map.get(diff["new"], diff["new"])
+            elif diff["name"] == 'direction_of_change':
+                diff["prev"] = self.direction_of_change_map.get(diff["prev"], diff["prev"])
+                diff["new"] = self.direction_of_change_map.get(diff["new"], diff["new"])
+            elif diff["name"] == 'targets':
                 if diff["prev"] == 'N/A':
                     diff["prev"] = {
                         n["id"]: {"name": n.get("name"), "value": 'N/A', "id": n["id"]} for k, n in diff["new"].iteritems()
@@ -362,15 +436,24 @@ class ProgramAdminAuditLog(models.Model, DiffableLog):
     previous_entry = models.TextField()
     new_entry = models.TextField()
 
-    logged_fields = (
-        'gaitid',
-        'name',
-        'funding_status',
-        'cost_center',
-        'description',
-        'sector',
-        'country',
-    )
+    field_map = {
+        'gaitid': _("GAIT ID"),
+        'name': _("Name"),
+        'funding_status': _("Funding Status"),
+        'cost_center': _("Cost Center"),
+        'description': _("Description"),
+        'sectors': _("Sectors"),
+        'countries': _("Countries")
+    }
+
+    change_type_map = {
+        "program_created": _("Program Created"),
+        "program_updated": _("Program Updated"),
+    }
+
+    @property
+    def pretty_change_type(self):
+        return self.change_type_map.get(self.change_type, self.change_type)
 
     @classmethod
     def created(cls, program, created_by, entry):
@@ -404,6 +487,26 @@ class OrganizationAdminAuditLog(models.Model, DiffableLog):
     change_type = models.CharField(_('Modification Type'), max_length=255)
     previous_entry = models.TextField()
     new_entry = models.TextField()
+
+    field_map = {
+        "name": _("Name"),
+        "primary_address": _("Primary Address"),
+        "primary_contact_name": _("Primary Contact Name"),
+        "primary_contact_email": _("Primary Contact Email"),
+        "primary_contact_phone": _("Primary Contact Phone"),
+        "mode_of_contact": _("Mode of Contact"),
+        "is_active": _("Is Active"),
+        "sectors": _("Sectors")
+    }
+
+    change_type_map = {
+        "organization_created": _("Organization Created"),
+        "organization_updated": _("Organization Updated"),
+    }
+
+    @property
+    def pretty_change_type(self):
+        return self.change_type_map.get(self.change_type, self.change_type)
 
     @classmethod
     def created(cls, organization, created_by, entry):

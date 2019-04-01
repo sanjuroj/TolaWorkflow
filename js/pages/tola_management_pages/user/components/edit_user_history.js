@@ -41,22 +41,28 @@ export class EditUserHistory extends React.Component {
     render() {
         const selected = status_options.find(option => option.value == this.state.user_data.user.is_active)
         const {history} = this.props
-        return <div className="admin-edit-pane">
+        return <div className="edit-user-history">
             <h2 className="no-bold">{this.state.user_data.name?this.state.user_data.name+': ':''}{gettext("Status and History")}</h2>
-            <div className="form-group">
-                <Select isDisabled={this.props.disabled} options={status_options} value={selected} onChange={(new_value) => this.onChange(new_value)} />
+            <div className="row">
+                <div className="col">
+                    <Select isDisabled={this.props.disabled} options={status_options} value={selected} onChange={(new_value) => this.onChange(new_value)} />
+                </div>
             </div>
-            <div className="form-group">
-                <button className="btn btn-secondary" onClick={() => this.onResendRegistrationEmail()}>{gettext("Resend Registration Email")}</button>
+            <div className="row">
+                <div className="col">
+                    <button className="btn btn-secondary" onClick={() => this.onResendRegistrationEmail()}>{gettext("Resend Registration Email")}</button>
+                </div>
             </div>
-            {!this.props.disabled &&
-                <div className="form-group">
+            <div className="row">
+                {!this.props.disabled &&
+                <div className="col">
                     <div className="form-group btn-row">
                         <button className="btn btn-primary" type="button" onClick={() => this.props.onSave(this.state.user_data)}>{gettext("Save Changes")}</button>
                         <button className="btn btn-reset" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
                     </div>
                 </div>
-            }
+                }
+            </div>
             <ChangeLog data={history} />
         </div>
     }

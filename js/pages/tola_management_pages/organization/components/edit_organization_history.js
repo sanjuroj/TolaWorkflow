@@ -53,9 +53,13 @@ export default class EditOrganizationHistory extends React.Component {
             <div className="form-group">
                 <Select options={status_options} value={this.state.data.is_active} onChange={(new_value) => this.onChange(new_value)} />
             </div>
-            <div className="form-group btn-row">
-                <button className="btn btn-primary" type="button" onClick={(e) => this.save(e)}>{gettext("Save Changes")}</button>
-                <button className="btn btn-reset" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
+            <div className="row">
+                <div className="col">
+                    <div className="form-group btn-row">
+                        <button className="btn btn-primary" type="button" onClick={(e) => this.save(e)}>{gettext("Save Changes")}</button>
+                        <button className="btn btn-reset" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
+                    </div>
+                </div>
             </div>
 
             <ChangeLog data={this.props.organizationHistoryData} />

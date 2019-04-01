@@ -73,6 +73,7 @@ python-dateutil==2.6.0
 python-ldap==3.0.0
 python-logstash==0.4.6
 python-openid==2.2.5
+python-saml==2.5.0
 pytz==2017.2
 PyYAML==3.12
 regex==2018.8.29

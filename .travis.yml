@@ -6,6 +6,7 @@ python:
 services: mysql
 
 before_install:
+  - sudo apt-get install -y libxml2-dev libxmlsec1-dev
   - export DJANGO_SETTINGS_MODULE=tola.settings.travis-ci
   - export PYTHONPATH=$HOME/builds/mercycorps/TolaActivity
   - export PIP_USE_MIRRORS=true

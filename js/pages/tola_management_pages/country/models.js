@@ -24,6 +24,9 @@ export class CountryStore {
         programs: [],
     }
 
+    @observable appliedFilters = {
+    }
+
     @observable is_superuser = false
     @observable allCountries = []
     @observable countries = []
@@ -55,6 +58,7 @@ export class CountryStore {
         this
         this.api = api
         Object.assign(this, initialData)
+        this.appliedFilters = {...this.filters}
         this.fetchCountries()
     }
 
@@ -72,7 +76,7 @@ export class CountryStore {
     @action
     fetchCountries() {
         this.fetching_main_listing = true
-        this.api.fetchCountries(this.current_page + 1, this.marshalFilters(this.filters)).then(results => {
+        this.api.fetchCountries(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(results => {
             runInAction(() => {
                 this.fetching_main_listing = false
                 this.countries = results.results
@@ -87,6 +91,7 @@ export class CountryStore {
 
     @action
     applyFilters() {
+        this.appliedFilters = {...this.filters}
         this.current_page = 0
         this.fetchCountries()
     }

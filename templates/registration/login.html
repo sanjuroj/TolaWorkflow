@@ -9,7 +9,8 @@
   <form action="" method="post">
       {% csrf_token %}
       {{ form.as_p }}
-      <input type="submit" value="login">
+      <input type="submit" value="login"><br/>
+      <a href="{{okta_url}}">{% trans "Mercy Corps Employee Login" %}</a><br/>
       {% if non_ldap %}
         <div class="social-buttons">
             <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-go"><i class="fa fa-google"></i> Google</a>

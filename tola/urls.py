@@ -113,6 +113,7 @@ urlpatterns = [
                 url(r'^i18n/', include('django.conf.urls.i18n')),
 
                 url(r'^tola_management/', include('tola_management.urls')),
+                url(r'^saml_metadata/$', tolaviews.saml_metadata_view, name="saml_metadata"),
                 # Site home page filtered by country
                 url(r'^(?P<selected_country>\w+)/$', views.index, name='index'),
 
@@ -152,8 +153,8 @@ urlpatterns = [
                 # url(r'^configurabledashboard/', include('configurabledashboard.urls')),
 
                 # local login
-                url(r'^login/$', authviews.login, name='login'),
-                url(r'^accounts/login/$', authviews.login, name='login'),
+                url(r'^login/$', tolaviews.TolaLoginView.as_view(), name='login'),
+                url(r'^accounts/login/$', tolaviews.TolaLoginView.as_view(), name='login'),
                 url(r'^accounts/logout/$', views.logout_view, name='logout'),
 
                 # accounts
@@ -171,7 +172,8 @@ urlpatterns = [
                 # Auth backend URL's
                 url('', include('django.contrib.auth.urls', namespace='auth')),
                 #url('', include('social.apps.django_app.urls', namespace='social')),
-                url('', include('social_django.urls', namespace='social'))
+                url('', include('social_django.urls', namespace='social')),
+
                 #url(r'^oauth/', include('social_django.urls', namespace='social')),
 
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

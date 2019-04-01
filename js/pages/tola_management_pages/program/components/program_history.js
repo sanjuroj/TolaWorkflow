@@ -6,8 +6,8 @@ import Expander from 'components/expander'
 import ChangeLog from 'components/changelog'
 
 const status_options = [
-    {value: 'Funded', label: 'Funded'},
-    {value: 'Completed', label: 'Completed'}
+    {value: 'Funded', label: gettext('Funded')},
+    {value: 'Completed', label: gettext('Completed')}
 ]
 
 @observer
@@ -55,9 +55,13 @@ export class ProgramHistory extends React.Component {
                     onChange={(new_value) => this.onStatusChange(new_value)}
                 />
             </div>
-            <div className="form-group btn-row">
-                <button className="btn btn-primary" type="button" onClick={() => this.onSave()}>{gettext("Save Changes")}</button>
-                <button className="btn btn-reset" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
+            <div className="row">
+                <div className="col">
+                    <div className="form-group btn-row">
+                        <button className="btn btn-primary" type="button" onClick={() => this.onSave()}>{gettext("Save Changes")}</button>
+                        <button className="btn btn-reset" type="button" onClick={() => this.onReset()}>{gettext("Reset")}</button>
+                    </div>
+                </div>
             </div>
 
             <ChangeLog data={this.props.history} />

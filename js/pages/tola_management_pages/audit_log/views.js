@@ -9,85 +9,19 @@ import Expander from 'components/expander'
 
 import LoadingSpinner from 'components/loading-spinner'
 
-const pretty_change_type = {
-    indicator_changed: gettext('Indicator changed'),
-    indicator_created: gettext('Indicator created'),
-    indicator_deleted: gettext('Indicator deleted'),
-    result_changed: gettext('Result changed'),
-    result_created: gettext('Result created'),
-    result_deleted: gettext('Result deleted'),
-    program_dates_changed: gettext('Program Dates Changed')
-}
-
-const map_pretty_change_type = change_type => pretty_change_type[change_type]
-
-const units_of_measure_type = {
-    1: gettext("Number"),
-    2: gettext("Percentage")
-}
-const map_unit_of_measure_type = id => units_of_measure_type[id]
-
-const directions_of_change = {
-    1: gettext("N/A"),
-    2: gettext("Increase (+)"),
-    3: gettext("Decrease (-)"),
-}
-const map_direction_of_change = id => directions_of_change[id]
-
-const result_changeset_name_map = {
-    'evidence_url': gettext('Evidence Url'),
-    'evidence_name': gettext('Evidence Name'),
-    'date': gettext('Date'),
-    'target': gettext('Target'),
-    'value': gettext('Value'),
-    'id': gettext('ID'),
-}
-
-const ResultChangeset = ({data, name}) => {
+const ResultChangeset = ({data, name, pretty_name}) => {
     if(name == 'evidence_url') {
-        return <div className="change__field"><strong>{result_changeset_name_map[name]}</strong>: {(data != 'N/A')?<a href={data}>Link</a>:data}</div>
+        return <div className="change__field"><strong>{pretty_name}</strong>: {(data != 'N/A')?<a href={data}>Link</a>:data}</div>
     } else {
-        return <div className="change__field"><strong>{result_changeset_name_map[name]}</strong>: {data}</div>
+        return <div className="change__field"><strong>{pretty_name}</strong>: {data}</div>
     }
 }
 
-const program_dates_changset_name_map = {
-    'start_date': gettext('Start Date'),
-    'end_date': gettext('End Date')
+const ProgramDatesChangeset = ({data, name, pretty_name}) => {
+    return <p>{pretty_name}: {data}</p>
 }
 
-const ProgramDatesChangeset = ({data, name}) => {
-    return <div className="change__field"><strong>{program_dates_changset_name_map[name]}</strong>: {data}</div>
-}
-
-const indicator_changeset_name_map = {
-    name: gettext('Name'),
-    unit_of_measure: gettext('Unit of Measure'),
-    unit_of_measure_type: gettext('Unit of Measure Type'),
-    is_cumulative: gettext('Is Cumulative'),
-    lop_target: gettext('LOP Target'),
-    direction_of_change: gettext('Direction of Change'),
-    rationale_for_target: gettext('Rationale for Target'),
-    baseline_value: gettext('Baseline Value'),
-    baseline_na: gettext('Baseline N/A'),
-}
-
-const IndicatorChangeset = ({data, name}) => {
-    const mapped_data = (() => {
-        if (data == 'N/A') return data
-
-        switch(name) {
-            case 'unit_of_measure_type':
-                return map_unit_of_measure_type(data)
-                break
-            case 'direction_of_change':
-                return map_direction_of_change(data)
-                break
-            default:
-                return data
-                break
-        }
-    })()
+const IndicatorChangeset = ({data, name, pretty_name}) => {
     if(name == 'targets') {
         return <div className="changelog__change__targets">
             <h4 className="text-small">{gettext('Targets changed')}</h4>
@@ -97,33 +31,33 @@ const IndicatorChangeset = ({data, name}) => {
         </div>
     } else {
         return <div className="change__field">
-            <strong>{indicator_changeset_name_map[name]}:</strong> {(mapped_data !== null && mapped_data !== undefined)?mapped_data.toString():'N/A'}
+            <strong>{pretty_name}:</strong> {(data !== null && data !== undefined)?data.toString():gettext('N/A')}
         </div>
     }
 }
 
 class ChangesetEntry extends React.Component {
-    renderType(type, data, name) {
+    renderType(type, data, name, pretty_name) {
         switch(type) {
             case 'indicator_changed':
             case 'indicator_created':
             case 'indicator_deleted':
-                return <IndicatorChangeset data={data} name={name}/>
+                return <IndicatorChangeset data={data} name={name} pretty_name={pretty_name} />
                 break
             case 'result_changed':
             case 'result_created':
             case 'result_deleted':
-                return <ResultChangeset data={data} name={name} />
+                return <ResultChangeset data={data} name={name} pretty_name={pretty_name} />
                 break
             case 'program_dates_changed':
-                return <ProgramDatesChangeset data={data} name={name} />
+                return <ProgramDatesChangeset data={data} name={name} pretty_name={pretty_name} />
                 break
         }
     }
 
     render() {
-        const {data, type, name} = this.props
-        return this.renderType(type, data, name)
+        const {data, type, name, pretty_name} = this.props
+        return this.renderType(type, data, name, pretty_name)
     }
 }
 
@@ -159,11 +93,11 @@ export const IndexView = observer(
                         {store.log_rows.map(data => <tbody>
                             <tr className="changelog__entry__header is-expanded">
                                 <td>{data.date}</td>
-                                <td>{(data.indicator)?data.indicator.number:'N/A'}</td>
-                                <td>{(data.indicator)?data.indicator.name:'N/A'}</td>
+                                <td>{(data.indicator)?data.indicator.number:gettext('N/A')}</td>
+                                <td>{(data.indicator)?data.indicator.name:gettext('N/A')}</td>
                                 <td>{data.user}</td>
                                 <td>{data.organization}</td>
-                                <td>{map_pretty_change_type(data.change_type)}</td>{/* SWEET FANCY MOSES WHAT IS THIS */}
+                                <td>{data.pretty_change_type}</td>{/* SWEET FANCY MOSES WHAT IS THIS */}
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -177,12 +111,12 @@ export const IndexView = observer(
                                 <td></td>
                                 <td className="changelog__change--prev">
                                     {data.diff_list.map(changeset => {
-                                        return <ChangesetEntry key={changeset.name} name={changeset.name} type={data.change_type} data={changeset.prev} />
+                                        return <ChangesetEntry key={changeset.name} name={changeset.name} pretty_name={changeset.pretty_name} type={data.change_type} data={changeset.prev} />
                                     })}
                                 </td>
                                 <td className="changelog__change--new">
                                     {data.diff_list.map(changeset => {
-                                        return <ChangesetEntry key={changeset.name} name={changeset.name} type={data.change_type} data={changeset.new} />
+                                         return <ChangesetEntry key={changeset.name} name={changeset.name} pretty_name={changeset.pretty_name} type={data.change_type} data={changeset.new} />
                                     })}
                                 </td>
                                 <td className="changelog__change--rationale">{data.rationale}</td>
