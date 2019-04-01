@@ -140,6 +140,7 @@ class Program {
     @observable indicators = null;
     @observable levels = null;
     @observable resultChainFilter = 'loading';
+    @observable resultChainHeader = 'loading';
     @observable reportsLoaded = {
         tva: [],
         timeperiods: []
@@ -201,6 +202,9 @@ class Program {
         );
         if (data.resultChainFilter) {
             this.resultChainFilter = data.resultChainFilter;
+        }
+        if (data.resultChainHeader) {
+            this.resultChainHeader = data.resultChainHeader;
         }
         this.reportsLoaded[data.reportType].push(String(data.reportFrequency));
     }
@@ -536,7 +540,7 @@ export class RootStore {
                 level => level2Pks.indexOf(level.level2parent) != -1
             ).map( level => level.id );
             indicators = indicators.filter(
-                (indicator) => levelIds.indexOf(indicator.levelId) != -1
+                (indicator) => (levelIds.indexOf(indicator.levelId) != -1 || level2Pks.indexOf(indicator.levelId) != -1)
             );
         }
         return indicators;
