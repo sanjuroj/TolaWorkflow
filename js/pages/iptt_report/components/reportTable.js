@@ -140,7 +140,7 @@ class IPTTTableBody extends React.Component {
     }
 }
 
-export const IPTTTable = () => {
+const IPTTTable = () => {
     return (
         <table className="table table-sm table-bordered table-hover table__iptt" id="iptt_table">
             <IPTTTableHead />
@@ -148,3 +148,4 @@ export const IPTTTable = () => {
         </table>
         );
 }
+export default IPTTTable;

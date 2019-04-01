@@ -1,7 +1,7 @@
 import React from 'react';
 import { inject, observer } from 'mobx-react';
-import { IPTTTable } from './reportComponents';
-import { IPTTFilterForm } from './filterForm';
+import IPTTTable from './reportTable';
+import IPTTFilterForm from './filterForm';
 import { PinButton, ExcelButton, ClearButton } from './buttons';
 
 
