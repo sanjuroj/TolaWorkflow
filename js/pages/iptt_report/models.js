@@ -58,6 +58,11 @@ class Level {
                : [];
     }
     
+    /** label for the row in the IPTT report, either Goal: goal name or Outcome 1: outcome name */
+    get titleRow() {
+        return `${this.tier}` + (this.displayOntology ? ` ${this.displayOntology}` : '') + `: ${this.name}`;
+    }
+    
     get optionName() {
         return this.tier + ' ' + this.sortIndex + ' and sub-levels: ' + this.name;
     }
@@ -82,6 +87,7 @@ class Indicator {
         this.level = data.level;
         this.tierDepth = data.tierDepth;
         this.levelId = data.levelpk;
+        this.levelOrder = data.levelOrder;
         this.sites = data.sites;
         this.types = data.indicatorTypes;
         this.sector = data.sector;
@@ -129,8 +135,16 @@ class Indicator {
         return false;
     }
     
-    @computed get isPercent() {
+    get isPercent() {
         return this.unitType == '%';
+    }
+    
+    get numberDisplay() {
+        if (this.program.levels[this.levelId]) {
+            let level = this.program.levels[this.levelId];
+            return `${level.tier} ${level.displayOntology}${this.levelOrder}`;
+        }
+        return this.number;
     }
     
 }
@@ -213,8 +227,12 @@ class Program {
         if (!this.levels || this.levels.length == 0) {
             return false;
         }
-        return Object.values(this.levels)
+        let levels = Object.values(this.levels)
                 .sort((levelA, levelB) => levelA.ontology < levelB.ontology ? -1 : 1);
+        if (false && this.rootStore.filtersApplied) {
+            levels = levels.filter(level => level.indicators.length > 0)
+        }
+        return levels;
     }
     
     @computed get levelsGrouped() {
@@ -233,8 +251,20 @@ class Program {
             }
             return 0;
         }
-        return Object.values(this.levels)
-                .sort(groupCompare);
+        let levels = Object.values(this.levels)
+                           .sort(groupCompare);
+        if (false && this.rootStore.filtersApplied) {
+            levels = levels.filter(level => level.indicators.length > 0)
+        }
+        return levels;
+    }
+    
+    @computed get allNoLevelIndicators() {
+        return this.allIndicators ? this.allIndicators.filter(indicator => !indicator.levelId) : false;
+    }
+    
+    @computed get filteredNoLevelIndicators() {
+        return this.filteredIndicators ? this.filteredIndicators.filter(indicator => !indicator.levelId) : false;
     }
     
     @computed get thisReportNotLoaded() {
@@ -309,7 +339,8 @@ class Program {
         }
         let sites = indicators.map(indicator => indicator.sites)
                         .reduce((pre, cur) => {return pre.concat(cur)})
-                        .map((elem) => ({value: elem.pk, label: elem.name}));
+                        .map((elem) => ({value: elem.pk, label: elem.name}))
+                        .filter(elem => elem.label != '');
         return [...new Set(sites.map(JSON.stringify))].map(JSON.parse);
     }
     
@@ -333,7 +364,7 @@ class Program {
         return [...new Set(
             indicators.map(
                 indicator => JSON.stringify({value: indicator.sector.pk, label:indicator.sector.name}))
-            )].map(JSON.parse);
+            )].map(JSON.parse).filter(elem => elem.label != '');
     }
     
     @computed get reportIndicatorsOptions() {
@@ -344,7 +375,8 @@ class Program {
         let indicators = levels.map(
             level => ({
                 label: level.tier + ' ' + level.displayOntology,
-                options: level.allIndicators.map(indicator => ({value: indicator.pk, label: indicator.name}))
+                options: level.allIndicators.map(indicator => ({value: indicator.pk,
+                                                               label: `${indicator.numberDisplay}: ${indicator.name}`}))
             })
         );
         return indicators;
@@ -383,6 +415,7 @@ export class RootStore {
     @observable noIndicatorsForFrequency = false;
     @observable loading = false;
     @observable initialized = false;
+    noLevelRowLabel = 'No level';
     reportType = null;
     router = null;
     currentPeriod = null;
@@ -394,6 +427,7 @@ export class RootStore {
     
     constructor(contextData, reportAPI) {
         this.programStore = new ProgramStore(this, contextData.programs);
+        this.noLevelRowLabel = contextData.labels.noLevelIndicatorsRowLabel;
         this.reportAPI = reportAPI;
         this._periodLabels = {
             [TIMEPERIODS]: contextData.labels.timeperiods,
@@ -439,6 +473,7 @@ export class RootStore {
         }
         this.setStartPeriod(params.start);
         this.setEndPeriod(params.end);
+        this.levelGrouping = params.groupby;
         if (reload) {
             router.navigate(router.getState().name, params, {reload: true});
         }
@@ -504,6 +539,15 @@ export class RootStore {
     get isTVA() {
         return (this.reportType === TVA);
     }
+
+    @computed get filtersApplied() {
+        return (this.levelFilters.length > 0 ||
+                this.tierFilters.length > 0 ||
+                this.siteFilters.length > 0 ||
+                this.typeFilters.length > 0 ||
+                this.sectorFilters.length > 0 ||
+                this.indicatorFilters.length > 0);
+    }
     
     @computed get report() {
         let levels;
@@ -515,12 +559,18 @@ export class RootStore {
         } else {
             levels = this.selectedProgram.levelsChain;
         }
+        if (this.selectedProgram.filteredNoLevelIndicators &&
+            this.selectedProgram.filteredNoLevelIndicators.length > 0) {
+            levels = levels.concat([{titleRow: this.noLevelRowLabel,
+                                    indicators: this.selectedProgram.filteredNoLevelIndicators}]);
+        }
+        if (levels && this.filtersApplied) {
+            levels = levels.filter(level => level.indicators.length > 0);
+        }
         if (levels) {
             return levels;
-        } else {
-            this.callForData();
-            return false;
         }
+        return false;
     }
     
     filterOnTiers(indicators) {
@@ -669,6 +719,9 @@ export class RootStore {
             } else if (this.selectedFrequencyId !== null) {
                 this.setFrequencyId(this.selectedFrequencyId);
                 this.updatePeriods();
+            }
+            if (this.selectedFrequencyId !== null && !this.report) {
+                this.callForData();
             }
         }
     }
@@ -891,6 +944,11 @@ export class RootStore {
             return this.endPeriod - this.startPeriod + 1;
         }
         return null;
+    }
+    
+    setLevelGrouping = (value) => {
+        this.levelGrouping = value == 1;
+        this.updateUrl('groupby', value);
     }
     
     setLevelFilters = (selected) => {

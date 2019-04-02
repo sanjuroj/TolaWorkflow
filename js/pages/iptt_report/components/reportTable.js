@@ -66,7 +66,7 @@ class IndicatorRow extends React.Component {
                         : EMPTY_CELL;
         let lopMet = indicator.lopMet ? String(Math.round(indicator.lopMet * 1000)/10) + '%' : EMPTY_CELL;
         return <tr>
-                    <IndicatorTD>{ indicator.number }</IndicatorTD>
+                    <IndicatorTD>{ indicator.numberDisplay }</IndicatorTD>
                     <IndicatorTD>{ resultsButton }  { indicator.name }</IndicatorTD>
                     <IndicatorTD>{ updateButton }</IndicatorTD>
                     <IndicatorTD>{ indicator.unitOfMeasure }</IndicatorTD>
@@ -88,8 +88,11 @@ const Loading = () => {
 
 const NoIndicatorsForFrequency = inject('labels')(({ labels }) => {
     return <tr><td colSpan="8">{ labels.noIndicatorsForFrequency }</td></tr>;
-})
+});
 
+const NoIndicatorsForFilters = inject('labels')(({ labels }) => {
+    return <tr><td colSpan="8">{ labels.noIndicatorsForFilters }</td></tr>;
+})
 
 const LevelRow = inject('rootStore')(
 observer(
@@ -104,7 +107,7 @@ observer(
             <React.Fragment>
                 <tr className="row__level">
                     <td colSpan={ width }>
-                        {level.tier} {level.displayOntology}: { level.name }
+                        { level.titleRow }
                     </td>
                 </tr>
                 { indicators }
@@ -124,6 +127,9 @@ class IPTTTableBody extends React.Component {
             return <Loading />;
         } else if (this.noIndicatorsForFrequency) {
             return <NoIndicatorsForFrequency />;
+        } else if (this.props.rootStore.filtersApplied && this.props.rootStore.report
+                   && this.props.rootStore.report.length == 0) {
+            return <NoIndicatorsForFilters />;
         } else {
             return this.props.rootStore.report.map(
                         (level, count) => <LevelRow level={ level } key={ count } />

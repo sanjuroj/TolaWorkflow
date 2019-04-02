@@ -43,7 +43,7 @@ class IPTTSubheadRow extends React.Component {
     render() {
         let colLabels = this.props.labels.columnHeaders;
         return <tr>
-                    <SubheadCell minWidth='80px' cellText={ colLabels.number } />
+                    <SubheadCell minWidth='120px' cellText={ colLabels.number } />
                     <SubheadCell minWidth='600px' classes='td-no-side-borders'
                                  cellText={ colLabels.indicator } />
                     <SubheadCell classes="td-no-side-borders" />

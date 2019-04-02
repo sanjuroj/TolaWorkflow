@@ -134,7 +134,7 @@ class TimeFrameRadio extends React.Component {
 class GroupingSelect extends React.Component {
     _id = "grouping-select1"
     onChange = (e) => {
-        this.props.rootStore.levelGrouping = (e.target.value == 1);
+        this.props.rootStore.setLevelGrouping(e.target.value);
     }
     
     render() {
@@ -164,6 +164,9 @@ class LevelSelect extends IPTTMultiselectCheckboxWrapper {
     get options() {
         let tiers = this.props.rootStore.selectedProgram.reportLevelTiers;
         let chains = this.props.rootStore.selectedProgram.reportLevelChains;
+        if (tiers.length == 0 && chains.length == 0) {
+            return [];
+        }
         return [
             {label: '',
              options: tiers},
@@ -179,6 +182,9 @@ class LevelSelect extends IPTTMultiselectCheckboxWrapper {
         } else {
             return [];
         }
+    }
+    get label() {
+        return this.props.labels.levelSelect;
     }
     
     onChange = (selected) => {
@@ -210,6 +216,9 @@ class SiteSelect extends IPTTMultiselectCheckboxWrapper {
     get options() {
         return this.props.rootStore.selectedProgram.reportSites;
     }
+    get label() {
+        return this.props.labels.siteSelect;
+    }
 }
 
 
@@ -225,6 +234,9 @@ class TypeSelect extends IPTTMultiselectCheckboxWrapper {
     get value() {
         return this.props.rootStore.typeFilters;
     }
+    get label() {
+        return this.props.labels.typeSelect;
+    }
 }
 
 @inject('labels', 'rootStore')
@@ -239,13 +251,16 @@ class SectorSelect extends IPTTMultiselectCheckboxWrapper {
     get value() {
         return this.props.rootStore.sectorFilters;
     }
+    get label() {
+        return this.props.labels.sectorSelect;
+    }
 }
 
 
 @inject('labels', 'rootStore')
 @observer
 class IndicatorSelect extends IPTTMultiselectCheckboxWrapper {
-    updateIndicatorFilters = (selected) => {
+    onChange = (selected) => {
         this.props.rootStore.setIndicatorFilters(selected);
     }
     get options() {
@@ -253,6 +268,9 @@ class IndicatorSelect extends IPTTMultiselectCheckboxWrapper {
     }
     get value() {
         return this.props.rootStore.indicatorFilters;
+    }
+    get label() {
+        return this.props.labels.indicatorSelect;
     }
 }
 

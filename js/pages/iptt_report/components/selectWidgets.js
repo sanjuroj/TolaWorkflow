@@ -48,6 +48,9 @@ export class IPTTMultiselectCheckboxWrapper extends React.Component {
     get value() {
         return {value: null, label: ''};
     }
+    get label() {
+        return '';
+    }
     getProps = () => {
         if (this.options.length == 0) {
             return {
@@ -98,7 +101,7 @@ export class IPTTMultiselectCheckboxWrapper extends React.Component {
         const formatOptionLabel = (props) => {
             return <div style={{ display: "inline-block" , float: "right", width: "90%"}}>{props.label}</div>;
         }
-        return <IPTTMultiSelectWrapper id={ this._id} label={ this.props.labels.levelSelect }>
+        return <IPTTMultiSelectWrapper id={ this._id} label={ this.label }>
                     <ReactMultiSelectCheckboxes
                             styles={ this.getBaseStyles() }
                             formatOptionLabel={ formatOptionLabel }

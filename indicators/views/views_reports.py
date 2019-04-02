@@ -178,7 +178,7 @@ def get_labels(quickstart=True):
                     'buttonCurrent': ugettext('Current view'),
                     'buttonAll': ugettext('All program data')
                 },
-                'resetButton': ugettext('Reset'),
+                'resetButton': ugettext('Clear'),
                 'periodSelect': {
                     'tva': ugettext('Target periods'),
                     'timeperiods': ugettext('Time periods')
@@ -232,7 +232,9 @@ def get_labels(quickstart=True):
                     'met': ugettext('% Met')
                 },
                 'noIndicatorsForFrequency': ugettext('No indicators for this target frequency in this program, '
-                                                     'please select a different target period frequency.')
+                                                     'please select a different target period frequency.'),
+                'noIndicatorsForFilters': ugettext('No indicators match the selected filter criteria'),
+                'noLevelIndicatorsRowLabel': ugettext('Indicators unassigned to a results framework level')
             }
         )
     return labels
@@ -329,9 +331,10 @@ class IPTTReportData(LoginRequiredMixin, View):
                 'sortIndex': sort_index,
                 'number': indicator.number,
                 'name': indicator.name,
-                'level': indicator.level.leveltier.name if indicator.level else None,
-                'tierDepth': indicator.level.get_level_depth(),
-                'levelpk': indicator.level.pk if indicator.level else None,
+                'level': indicator.leveltier_name,
+                'tierDepth': indicator.leveltier_depth,
+                'levelpk': indicator.level_pk,
+                'levelOrder': indicator.level_order_display,
                 'sites': indicator.sites,
                 'indicatorTypes': indicator.indicator_types,
                 'sector': {'pk': indicator.sector.pk, 'name': indicator.sector.sector} if indicator.sector else {},
@@ -362,8 +365,12 @@ class IPTTReportData(LoginRequiredMixin, View):
                                          for c in range(values_count)]
                     }
             indicators.append(this_indicator)
-        second_tier_name = LevelTier.objects.filter(program_id=int(request.GET.get('programId')),
-                                                    tier_depth=2).first().name
+        second_leveltier = LevelTier.objects.filter(program_id=int(request.GET.get('programId')),
+                                                    tier_depth=2)
+        if second_leveltier.exists():        
+            second_tier_name = second_leveltier.first().name
+        else:
+            second_tier_name = ugettext('Outcome')
         reportData = {
             'programId': request.GET.get('programId'),
             'reportFrequency': self.frequency,
