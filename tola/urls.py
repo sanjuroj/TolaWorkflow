@@ -107,7 +107,6 @@ urlpatterns = [
                 # enable admin documentation:
                 url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-                url(r'^bootstrap/', TemplateView.as_view(template_name="bootstrap4.html")),
                 url(r'^datedtargetinfo/(?P<pk>\w+)/$', dated_target_info, name='datedtargetinfo'),
                 # internationalization
                 url(r'^i18n/', include('django.conf.urls.i18n')),
@@ -143,14 +142,8 @@ urlpatterns = [
                 # app include of customdashboard urls
                 url(r'^customdashboard/', include('customdashboard.urls')),
 
-                # app include of reports urls
-                url(r'^reports/', include('reports.urls')),
-
                 # app include of workflow urls
                 url(r'^formlibrary/', include('formlibrary.urls')),
-
-                # app include of configurable dashboard urls
-                # url(r'^configurabledashboard/', include('configurabledashboard.urls')),
 
                 # local login
                 url(r'^login/$', tolaviews.TolaLoginView.as_view(), name='login'),
@@ -161,13 +154,6 @@ urlpatterns = [
                 url(r'^accounts/profile/$', views.profile, name='profile'),
                 url(r'^accounts/register/$', views.register, name='register'),
                 url(r'^accounts/one_time_registration/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', OneTimeRegistrationView.as_view(),name='one_time_registration'),
-
-                #bookmarks
-                url(r'^bookmark_list', BookmarkList.as_view(), name='bookmark_list'),
-                url(r'^bookmark_add', BookmarkCreate.as_view(), name='bookmark_add'),
-                url(r'^bookmark_update/(?P<pk>\w+)/$', BookmarkUpdate.as_view(), name='bookmark_update'),
-                url(r'^bookmark_delete/(?P<pk>\w+)/$', BookmarkDelete.as_view(), name='bookmark_delete'),
-
 
                 # Auth backend URL's
                 url('', include('django.contrib.auth.urls', namespace='auth')),
