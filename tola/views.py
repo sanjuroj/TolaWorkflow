@@ -88,55 +88,25 @@ class TolaLoginView(authviews.LoginView):
         return context
 
 
-def register(request):
-    """
-    Register a new User profile using built in Django Users Model
-    """
-    privacy = TolaSites.objects.get(id=1)
-    if request.method == 'POST':
-        uf = NewUserRegistrationForm(request.POST)
-        tf = NewTolaUserRegistrationForm(request.POST)
-
-        if uf.is_valid() * tf.is_valid():
-            user = uf.save()
-            user.groups.add(Group.objects.get(name='ViewOnly'))
-
-            tolauser = tf.save(commit=False)
-            tolauser.user = user
-            tolauser.save()
-            messages.error(request, _('Thank you, You have been registered as a new user.'), fail_silently=False)
-            return HttpResponseRedirect("/")
-    else:
-        uf = NewUserRegistrationForm()
-        tf = NewTolaUserRegistrationForm()
-
-    return render(request, "registration/register.html", {
-        'userform': uf,'tolaform': tf, 'helper': NewTolaUserRegistrationForm.helper,'privacy':privacy
-    })
-
-
+@login_required(login_url='/accounts/login/')
 def profile(request):
     """
     Update a User profile using built in Django Users Model if the user is logged in
     otherwise redirect them to registration version
     """
-    if request.user.is_authenticated():
-        obj = get_object_or_404(TolaUser, user=request.user)
-        form = ProfileUpdateForm(request.POST or None, instance=obj, user=request.user)
+    obj = get_object_or_404(TolaUser, user=request.user)
+    form = ProfileUpdateForm(request.POST or None, instance=obj, user=request.user)
 
-        if request.method == 'POST':
-            if form.is_valid():
-                form.save()
-                messages.error(request, _('Your profile has been updated.'), fail_silently=False,
-                               extra_tags='success')
-                # immediately redirect so user sees language change
-                return HttpResponseRedirect(reverse_lazy('profile'))
-        return render(request, "registration/profile.html", {
-            'form': form, 'helper': ProfileUpdateForm.helper
-        })
-
-    else:
-        return HttpResponseRedirect(reverse_lazy('register'))
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.error(request, _('Your profile has been updated.'), fail_silently=False,
+                           extra_tags='success')
+            # immediately redirect so user sees language change
+            return HttpResponseRedirect(reverse_lazy('profile'))
+    return render(request, "registration/profile.html", {
+        'form': form, 'helper': ProfileUpdateForm.helper
+    })
 
 
 @login_required(login_url='/accounts/login/')

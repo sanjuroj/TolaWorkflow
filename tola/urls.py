@@ -141,7 +141,6 @@ urlpatterns = [
 
                 # accounts
                 url(r'^accounts/profile/$', views.profile, name='profile'),
-                url(r'^accounts/register/$', views.register, name='register'),
                 url(r'^accounts/one_time_registration/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', OneTimeRegistrationView.as_view(),name='one_time_registration'),
 
                 # Auth backend URL's
