@@ -11,7 +11,7 @@ import Pagination from 'components/pagination'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
 
-// # Translators: Nothing selected by user [THIS TRANSLATOR NOTE DOESN'T GET PICKED UP]
+// # Translators: Nothing selected by user
 const selection_placeholder = gettext("None Selected");
 const UserFilter = observer(({store, selections}) => {
     return <div className="form-group">
