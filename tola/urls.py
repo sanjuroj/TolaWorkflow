@@ -1,15 +1,7 @@
 from tola import views
 from tola.views import *
 from feed.views import (
-    UserViewSet, ProgramViewSet, SectorViewSet, ProjectTypeViewSet, SiteProfileViewSet, OfficeViewSet,
-    CountryViewSet, AgreementViewSet, CompleteViewSet, IndicatorViewSet, ReportingFrequencyViewSet,
-    TolaUserViewSet, IndicatorTypeViewSet, ObjectiveViewSet, DisaggregationTypeViewSet, LevelViewSet,
-    ExternalServiceViewSet, ExternalServiceRecordViewSet, StrategicObjectiveViewSet, StakeholderViewSet,
-    StakeholderTypeViewSet, CapacityViewSet, EvaluateViewSet, ProfileTypeViewSet, ProvinceViewSet,
-    DistrictViewSet, AdminLevelThreeViewSet, VillageViewSet, ContactViewSet, DocumentationViewSet,
-    ResultViewSet, TolaTableViewSet, DisaggregationValueViewSet, ProjectAgreementViewSet,
-    LoggedUserViewSet, ChecklistViewSet, OrganizationViewSet, PogramIndicatorReadOnlyViewSet,
-    PeriodicTargetReadOnlyViewSet, ProgramTargetFrequencies
+    ProgramTargetFrequencies,
 )
 from tola_management.views import (
     UserAdminViewSet,
@@ -44,45 +36,45 @@ from workflow.views import dated_target_info, OneTimeRegistrationView
 
 #REST FRAMEWORK
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
-router.register(r'programs', ProgramViewSet)
-router.register(r'sector', SectorViewSet, base_name='sectors')
-router.register(r'projecttype', ProjectTypeViewSet)
-router.register(r'office', OfficeViewSet)
-router.register(r'siteprofile', SiteProfileViewSet)
-router.register(r'country', CountryViewSet)
-router.register(r'initiations', AgreementViewSet)
-router.register(r'tracking', CompleteViewSet)
-router.register(r'indicator', IndicatorViewSet)
-router.register(r'reportingfrequency', ReportingFrequencyViewSet)
-router.register(r'tolauser', TolaUserViewSet)
-router.register(r'indicatortype', IndicatorTypeViewSet)
-router.register(r'objective', ObjectiveViewSet)
-router.register(r'disaggregationtype', DisaggregationTypeViewSet)
-router.register(r'level', LevelViewSet)
-router.register(r'externalservice', ExternalServiceViewSet)
-router.register(r'externalservicerecord', ExternalServiceRecordViewSet)
-router.register(r'strategicobjective', StrategicObjectiveViewSet)
-router.register(r'stakeholder', StakeholderViewSet)
-router.register(r'stakeholdertype', StakeholderTypeViewSet)
-router.register(r'capacity', CapacityViewSet)
-router.register(r'evaluate', EvaluateViewSet)
-router.register(r'profiletype', ProfileTypeViewSet)
-router.register(r'province', ProvinceViewSet)
-router.register(r'district', DistrictViewSet)
-router.register(r'adminlevelthree', AdminLevelThreeViewSet)
-router.register(r'village', VillageViewSet)
-router.register(r'contact', ContactViewSet)
-router.register(r'documentation', DocumentationViewSet)
-router.register(r'result', ResultViewSet)
-router.register(r'tolatable', TolaTableViewSet, base_name='tolatable')
-router.register(r'disaggregationvalue', DisaggregationValueViewSet)
-router.register(r'projectagreements', ProjectAgreementViewSet)
-router.register(r'loggedusers', LoggedUserViewSet)
-router.register(r'checklist', ChecklistViewSet)
-router.register(r'organization', OrganizationViewSet)
-router.register(r'pindicators', PogramIndicatorReadOnlyViewSet, base_name='pindicators')
-router.register(r'periodictargets', PeriodicTargetReadOnlyViewSet, base_name='periodictargets')
+# router.register(r'users', UserViewSet)
+# router.register(r'programs', ProgramViewSet)
+# router.register(r'sector', SectorViewSet, base_name='sectors')
+# router.register(r'projecttype', ProjectTypeViewSet)
+# router.register(r'office', OfficeViewSet)
+# router.register(r'siteprofile', SiteProfileViewSet)
+# router.register(r'country', CountryViewSet)
+# router.register(r'initiations', AgreementViewSet)
+# router.register(r'tracking', CompleteViewSet)
+# router.register(r'indicator', IndicatorViewSet)
+# router.register(r'reportingfrequency', ReportingFrequencyViewSet)
+# router.register(r'tolauser', TolaUserViewSet)
+# router.register(r'indicatortype', IndicatorTypeViewSet)
+# router.register(r'objective', ObjectiveViewSet)
+# router.register(r'disaggregationtype', DisaggregationTypeViewSet)
+# router.register(r'level', LevelViewSet)
+# router.register(r'externalservice', ExternalServiceViewSet)
+# router.register(r'externalservicerecord', ExternalServiceRecordViewSet)
+# router.register(r'strategicobjective', StrategicObjectiveViewSet)
+# router.register(r'stakeholder', StakeholderViewSet)
+# router.register(r'stakeholdertype', StakeholderTypeViewSet)
+# router.register(r'capacity', CapacityViewSet)
+# router.register(r'evaluate', EvaluateViewSet)
+# router.register(r'profiletype', ProfileTypeViewSet)
+# router.register(r'province', ProvinceViewSet)
+# router.register(r'district', DistrictViewSet)
+# router.register(r'adminlevelthree', AdminLevelThreeViewSet)
+# router.register(r'village', VillageViewSet)
+# router.register(r'contact', ContactViewSet)
+# router.register(r'documentation', DocumentationViewSet)
+# router.register(r'result', ResultViewSet)
+# router.register(r'tolatable', TolaTableViewSet, base_name='tolatable')
+# router.register(r'disaggregationvalue', DisaggregationValueViewSet)
+# router.register(r'projectagreements', ProjectAgreementViewSet)
+# router.register(r'loggedusers', LoggedUserViewSet)
+# router.register(r'checklist', ChecklistViewSet)
+# router.register(r'organization', OrganizationViewSet)
+# router.register(r'pindicators', PogramIndicatorReadOnlyViewSet, base_name='pindicators')
+# router.register(r'periodictargets', PeriodicTargetReadOnlyViewSet, base_name='periodictargets')
 router.register(r'programtargetfrequencies', ProgramTargetFrequencies, base_name='programtargetfrequencies')
 
 #tola admin
