@@ -1168,7 +1168,6 @@ def old_program_page(request, program_id, indicator_id, indicator_type_id):
 class ProgramPage(LoginRequiredMixin, ListView):
     model = Indicator
     template_name = 'indicators/program_page.html'
-    metrics = False
 
     def get(self, request, *args, **kwargs):
         # countries = request.user.tola_user.countries.all()
@@ -1189,12 +1188,6 @@ class ProgramPage(LoginRequiredMixin, ListView):
                 )
         program = ProgramWithMetrics.program_page.get(pk=program_id)
         program.indicator_filters = {}
-        if self.metrics:
-            json_context = {
-                'metrics': program.metrics,
-                'scope_counts': program.scope_counts
-            }
-            return JsonResponse(json_context)
 
         indicators = program.annotated_indicators\
             .annotate(target_period_last_end_date=Max('periodictargets__end_date')).select_related('level')

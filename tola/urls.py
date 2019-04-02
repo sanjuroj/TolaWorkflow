@@ -99,31 +99,28 @@ urlpatterns = [
                 # enable admin documentation:
                 url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
+                # api used  by reporting period modal
                 url(r'^datedtargetinfo/(?P<pk>\w+)/$', dated_target_info, name='datedtargetinfo'),
+
                 # internationalization
                 url(r'^i18n/', include('django.conf.urls.i18n')),
 
                 url(r'^tola_management/', include('tola_management.urls')),
                 url(r'^saml_metadata/$', tolaviews.saml_metadata_view, name="saml_metadata"),
+
                 # Site home page filtered by country
                 url(r'^(?P<selected_country>\w+)/$', views.index, name='index'),
 
                 # Site home page
                 url(r'^$', views.index, name='index'),
 
+                # Program page
                 url(r'^program/(?P<program_id>\d+)/$',
                     ProgramPage.as_view(), name='program_page'),
 
+                # url redirect for people with old bookmarks
                 url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<indicator_type_id>\d+)/$',
                     old_program_page, name='old_program_page'),
-
-                # program page (deprecated - indicator_id and type_id filters unneeded now)
-                # url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<type_id>\d+)/$',
-                #     ProgramPage.as_view(), name='program_page'),
-
-                # program ajax update for metrics
-                url(r'^program/(?P<program_id>\d+)/metrics/$',
-                    ProgramPage.as_view(metrics=True), name='program_metrics'),
 
                 # app include of workflow urls
                 url(r'^workflow/', include('workflow.urls')),
