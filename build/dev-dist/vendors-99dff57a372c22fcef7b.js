@@ -12008,7 +12008,6 @@ function DropdownButton(_ref) {
       children = _ref.children,
       iconAfter = _ref.iconAfter,
       buttonStyle = _ref.style;
-
   var styles = _objectSpread({}, defaultStyles, {
     button: buttonStyle
   });
@@ -42486,7 +42485,6 @@ function (_Component) {
       // This is messy, but conceptually simple. We're just replacing react-select's defaults
       // with the defaults from defaultStyles for user-provided style functions.
       var propsStyles = _objectSpread({}, this.props.styles);
-
       Object.entries(defaultStyles).forEach(function (_ref) {
         var _ref2 = _slicedToArray(_ref, 2),
             k = _ref2[0],
@@ -63360,4 +63358,4 @@ exports.default = ExpansionHeaderCell;
 /***/ })
 
 }]);
-//# sourceMappingURL=vendors-7be923e6d13419f61ea6.js.map
+//# sourceMappingURL=vendors-99dff57a372c22fcef7b.js.map
