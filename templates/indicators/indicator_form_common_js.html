@@ -38,9 +38,9 @@
     var userLang = "{{ LANGUAGE_CODE }}";
     var targetsModified = false;
 
-    const DELETE_ALL_TARGETS_MESSAGE = "{% trans 'Any result records already assigned to the targets you are deleting will need to be replaced. Please make sure your results data will not be lost. For future reference, please provide a rationale for deleting these targets.' %}"
+    const DELETE_ALL_TARGETS_MESSAGE = "{% trans 'This action cannot be undone. Any results assigned to these targets will need to be reassigned. For future reference, please provide a rationale for deleting these targets.' %}"
     const DELETE_INDICATOR_MESSAGE = "{% trans 'All details about this indicator and results recorded to the indicator will be permanently removed. For future reference, please provide a rationale for deleting this indicator.' %}"
-    const MODIFY_TARGETS_MESSAGE = "{% trans 'This action may affect the overall program results and should only be performed to correct an error in target creation. For future reference, please provide a rationale for modifying this target value.' %}"
+    const MODIFY_TARGETS_MESSAGE = "{% trans 'Modifying target values will affect program metrics for this indicator. For future reference, please provide a rationale for modifying target values.' %}"
 
     function setupPopupCalendar() {
         $('.monthPicker').datepicker({
