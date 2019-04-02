@@ -55,12 +55,12 @@ class TVAIPTTQueryset(IPTTIndicatorQueryset):
     def with_frequency_annotations(self, frequency, start, end):
         qs = self
         if frequency == 'all':
-            for freq in Indicator.TIME_AWARE_TARGET_FREQUENCIES + tuple([Indicator.MID_END,]):
+            for freq in Indicator.REGULAR_TARGET_FREQUENCIES + tuple([Indicator.MID_END,]):
                 qs = qs.with_frequency_annotations(freq, start, end)
             return qs
         if frequency == Indicator.LOP:
             return qs
-        elif frequency in Indicator.TIME_AWARE_TARGET_FREQUENCIES:
+        elif frequency in Indicator.REGULAR_TARGET_FREQUENCIES:
             periods = self.get_periods(frequency, start, end)
             qs = qs.annotate(
                 **{'frequency_{0}_count'.format(frequency): models.Value(len(periods), output_field=models.IntegerField()),

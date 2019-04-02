@@ -460,7 +460,7 @@ class TestProgramHasTimeAwareIndicators(test.TestCase):
             self.assertFalse(program.has_time_aware_targets)
 
     def test_program_with_time_aware_indicators_returns_true(self):
-        for frequency in Indicator.TIME_AWARE_TARGET_FREQUENCIES:
+        for frequency in Indicator.REGULAR_TARGET_FREQUENCIES:
             program = w_factories.ProgramFactory(
                 reporting_period_start=datetime.date(2015, 1, 1),
                 reporting_period_end=datetime.date(2017, 12, 31)
@@ -476,7 +476,7 @@ class TestProgramHasTimeAwareIndicators(test.TestCase):
             reporting_period_start=datetime.date(2015, 1, 1),
             reporting_period_end=datetime.date(2017, 12, 31)
         )
-        for frequency in Indicator.TIME_AWARE_TARGET_FREQUENCIES:
+        for frequency in Indicator.REGULAR_TARGET_FREQUENCIES:
             i_factories.IndicatorFactory(
                 target_frequency=frequency,
                 program=program

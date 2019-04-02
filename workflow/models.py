@@ -495,7 +495,7 @@ class Program(models.Model):
         """returns true if this program has any indicators which have a time-aware target frequency - used in program
         reporting period date validation"""
         return self.indicator_set.filter(
-            target_frequency__in=Indicator.TIME_AWARE_TARGET_FREQUENCIES
+            target_frequency__in=Indicator.REGULAR_TARGET_FREQUENCIES
             ).exists()
 
     @property
@@ -504,7 +504,7 @@ class Program(models.Model):
         indicators with a time-aware frequency - used in program reporting period date validation"""
         most_recent = PeriodicTarget.objects.filter(
             indicator__program=self,
-            indicator__target_frequency__in=Indicator.TIME_AWARE_TARGET_FREQUENCIES
+            indicator__target_frequency__in=Indicator.REGULAR_TARGET_FREQUENCIES
         ).order_by('-start_date').first()
         return most_recent if most_recent is None else most_recent.start_date
 
