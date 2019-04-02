@@ -55,14 +55,11 @@ def get_kwarg_generator():
     indicator_types = itertools.cycle([it for it in IndicatorType.objects.all()])
     unit_of_measures = itertools.cycle(['bananas', 'horses', 'gallons of water', 'polka dots'])
     unit_of_measure_types = itertools.cycle([Indicator.NUMBER, Indicator.PERCENTAGE])
-    #baseline random
-    #lop_target random
     direction_of_changes = itertools.cycle([Indicator.DIRECTION_OF_CHANGE_NEGATIVE,
                                             Indicator.DIRECTION_OF_CHANGE_POSITIVE,
                                             Indicator.DIRECTION_OF_CHANGE_NEGATIVE,
                                             Indicator.DIRECTION_OF_CHANGE_POSITIVE,
                                             Indicator.DIRECTION_OF_CHANGE_NONE])
-    #is cumulative random.choice
     target_frequencys = itertools.cycle([tf[0] for tf in Indicator.TARGET_FREQUENCIES])
     sectors = itertools.cycle([sector for sector in Sector.objects.all()[:5]])
     while True:
@@ -89,12 +86,14 @@ def add_indicators(levels, program, kwarg_generator=None):
     kwargs['name'] = "Indicator A for {0} {1}".format(level.leveltier, level.display_ontology)
     kwargs['program'] = program
     kwargs['level'] = level
+    kwargs['level_order'] = 0
     indicator = Indicator.objects.create(
         **kwargs
     )
     indicator.indicator_type.add(indicator_type)
     indicator.save()
     kwargs['name'] = "Indicator B for {0} {1}".format(level.leveltier, level.display_ontology)
+    kwargs['level_order'] = 1
     indicator = Indicator.objects.create(
         **kwargs
     )

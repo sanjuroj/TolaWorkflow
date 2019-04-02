@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import string
 import uuid
 from datetime import timedelta, date
 from decimal import Decimal
@@ -545,6 +546,9 @@ class Indicator(models.Model):
         on_delete=models.SET_NULL
     )
 
+    # ordering with respect to level (determines whether indicator is 1.1a 1.1b or 1.1c)
+    level_order = models.IntegerField(default=0)
+
     # this includes a relationship to a program
     objectives = models.ManyToManyField(
         Objective, blank=True, verbose_name=_("Program Objective"),
@@ -869,6 +873,35 @@ class Indicator(models.Model):
     @cached_property
     def cached_data_count(self):
         return self.result_set.count()
+
+    @property
+    def leveltier_name(self):
+        if self.level and self.level.leveltier:
+            return self.level.leveltier.name
+        elif self.level is None and self.old_level:
+            return self.old_level
+        return None
+
+    @property
+    def leveltier_depth(self):
+        if self.level and self.level.leveltier:
+            return self.level.get_level_depth()
+        return None
+
+    @property
+    def level_pk(self):
+        if self.level:
+            return self.level.pk
+        return None
+
+    @property
+    def level_order_display(self):
+        """returns a-z for 0-25, then aa - zz for 26-676"""
+        if self.level and self.level_order is not None and self.level_order < 26:
+            return string.lowercase[self.level_order]
+        elif self.level and self.level_order and self.level_order >= 26:
+            return string.lowercase[self.level_order/26 - 1] + string.lowercase[self.level_order % 26]
+        return ''
 
 
 class PeriodicTarget(models.Model):
