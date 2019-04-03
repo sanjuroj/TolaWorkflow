@@ -244,6 +244,15 @@ def has_program_read_access(func):
     return wrapper
 
 
+def has_projects_access(func):
+    def wrapper(request, *args, **kwargs):
+        if request.user.tola_user.allow_projects_access:
+            return func(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+    return wrapper
+
+
 class HasUserAdminAccess(permissions.BasePermission):
     def has_permission(self, request, view):
         return user_has_basic_or_super_admin(request.user)
