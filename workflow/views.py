@@ -80,7 +80,7 @@ from tola_management.permissions import (
     has_site_delete_access,
     has_site_write_access,
     has_program_write_access,
-)
+    has_projects_access)
 
 APPROVALS = (
     ('in_progress',('in progress')),
@@ -99,6 +99,7 @@ def date_handler(obj):
     return obj.isoformat() if hasattr(obj, 'isoformat') else obj
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ProjectDash(LoginRequiredMixin, ListView):
 
     template_name = 'workflow/projectdashboard_list.html'
@@ -147,6 +148,7 @@ class ProjectDash(LoginRequiredMixin, ListView):
                                                     'getChecklist': getChecklist, 'getDistributionCount': getDistributionCount})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ProgramDash(LoginRequiredMixin, ListView):
     """
     Dashboard links for and status for each program with number of projects
@@ -184,6 +186,7 @@ class ProgramDash(LoginRequiredMixin, ListView):
         return render(request, self.template_name, {'getDashboard': getDashboard, 'getPrograms': getPrograms, 'APPROVALS': APPROVALS, 'program_id':  self.kwargs['pk'], 'status': status, 'filtered_program': filtered_program})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ProjectAgreementList(LoginRequiredMixin, ListView):
     """
     Project Agreement
@@ -210,6 +213,7 @@ class ProjectAgreementList(LoginRequiredMixin, ListView):
             return render(request, self.template_name, {'form': FilterForm(),'getDashboard':getDashboard,'getPrograms':getPrograms,'APPROVALS': APPROVALS})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ProjectAgreementImport(LoginRequiredMixin, ListView):
     """
     Import a project agreement from TolaData or other third party service
@@ -226,6 +230,7 @@ class ProjectAgreementImport(LoginRequiredMixin, ListView):
         return render(request, self.template_name, {'getPrograms': getPrograms, 'getServices': getServices , 'getCountries': getCountries})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ProjectAgreementCreate(LoginRequiredMixin, CreateView):
     """
     Project Agreement Form
@@ -305,6 +310,7 @@ class ProjectAgreementCreate(LoginRequiredMixin, CreateView):
     form_class = ProjectAgreementCreateForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ProjectAgreementUpdate(LoginRequiredMixin, UpdateView):
     """
     Project Initiation Form
@@ -446,6 +452,7 @@ class ProjectAgreementUpdate(LoginRequiredMixin, UpdateView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ProjectAgreementDetail(LoginRequiredMixin, DetailView):
 
     model = ProjectAgreement
@@ -491,6 +498,7 @@ class ProjectAgreementDetail(LoginRequiredMixin, DetailView):
         return context
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ProjectAgreementDelete(LoginRequiredMixin, DeleteView):
     """
     Project Agreement Delete
@@ -517,6 +525,7 @@ class ProjectAgreementDelete(LoginRequiredMixin, DeleteView):
     form_class = ProjectAgreementForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ProjectCompleteList(LoginRequiredMixin, ListView):
     """
     Project Complete
@@ -539,6 +548,7 @@ class ProjectCompleteList(LoginRequiredMixin, ListView):
             return render(request, self.template_name, {'getProgram': getProgram, 'getDashboard':getDashboard,'getPrograms':getPrograms})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ProjectCompleteCreate(LoginRequiredMixin, CreateView):
     """
     Project Complete Form
@@ -640,6 +650,7 @@ class ProjectCompleteCreate(LoginRequiredMixin, CreateView):
     form_class = ProjectCompleteCreateForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ProjectCompleteUpdate(LoginRequiredMixin, UpdateView):
     """
     Project Tracking Form
@@ -750,6 +761,7 @@ class ProjectCompleteUpdate(LoginRequiredMixin, UpdateView):
     form_class = ProjectCompleteForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ProjectCompleteDetail(LoginRequiredMixin, DetailView):
 
     model = ProjectComplete
@@ -787,6 +799,7 @@ class ProjectCompleteDetail(LoginRequiredMixin, DetailView):
         return context
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ProjectCompleteDelete(LoginRequiredMixin, DeleteView):
     """
     Project Complete Delete
@@ -813,6 +826,7 @@ class ProjectCompleteDelete(LoginRequiredMixin, DeleteView):
     form_class = ProjectCompleteForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ProjectCompleteImport(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
@@ -1362,6 +1376,7 @@ class SiteProfileDelete(LoginRequiredMixin, DeleteView):
     form_class = SiteProfileForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class MonitorList(LoginRequiredMixin, ListView):
     """
     Monitoring Data
@@ -1386,6 +1401,7 @@ class MonitorList(LoginRequiredMixin, ListView):
         return render(request, self.template_name, {'getMonitorData': getMonitorData, 'getBenchmarkData': getBenchmarkData,'project_agreement_id': project_agreement_id})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class MonitorCreate(LoginRequiredMixin, AjaxableResponseMixin,CreateView):
     """
     Monitor Form
@@ -1421,6 +1437,7 @@ class MonitorCreate(LoginRequiredMixin, AjaxableResponseMixin,CreateView):
     form_class = MonitorForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class MonitorUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     """
     Monitor Form
@@ -1445,6 +1462,7 @@ class MonitorUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     form_class = MonitorForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class MonitorDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     """
     Monitor Form
@@ -1471,6 +1489,7 @@ class MonitorDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class BenchmarkCreate(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     """
     Benchmark Form
@@ -1527,6 +1546,7 @@ class BenchmarkCreate(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     form_class = BenchmarkForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class BenchmarkUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     """
     Benchmark Form
@@ -1565,6 +1585,7 @@ class BenchmarkUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     form_class = BenchmarkForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class BenchmarkDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     """
     Benchmark Form
@@ -1593,6 +1614,7 @@ class BenchmarkDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     form_class = BenchmarkForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ContactList(LoginRequiredMixin, ListView):
     model = Contact
     template_name = 'workflow/contact_list.html'
@@ -1619,6 +1641,7 @@ class ContactList(LoginRequiredMixin, ListView):
         return render(request, self.template_name, {'getContacts': getContacts, 'getStakeholder': getStakeholder})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ContactCreate(LoginRequiredMixin, CreateView):
     """
     Contact Form
@@ -1665,6 +1688,7 @@ class ContactCreate(LoginRequiredMixin, CreateView):
     form_class = ContactForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ContactUpdate(LoginRequiredMixin, UpdateView):
     """
     Contact Form
@@ -1698,6 +1722,7 @@ class ContactUpdate(LoginRequiredMixin, UpdateView):
     form_class = ContactForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ContactDelete(LoginRequiredMixin, DeleteView):
     """
     Benchmark Form
@@ -1730,6 +1755,7 @@ class ContactDelete(LoginRequiredMixin, DeleteView):
     form_class = ContactForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class StakeholderList(LoginRequiredMixin, ListView):
     """
     getStakeholders
@@ -1760,6 +1786,7 @@ class StakeholderList(LoginRequiredMixin, ListView):
         return render(request, self.template_name, {'getStakeholders': getStakeholders, 'project_agreement_id': project_agreement_id,'program_id':program_id, 'getPrograms': getPrograms})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class StakeholderCreate(LoginRequiredMixin, CreateView):
     """
     Stakeholder Form
@@ -1812,6 +1839,7 @@ class StakeholderCreate(LoginRequiredMixin, CreateView):
     form_class = StakeholderForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class StakeholderUpdate(LoginRequiredMixin, UpdateView):
     """
     Stakeholder Form
@@ -1850,6 +1878,7 @@ class StakeholderUpdate(LoginRequiredMixin, UpdateView):
     form_class = StakeholderForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class StakeholderDelete(LoginRequiredMixin, DeleteView):
     """
     Benchmark Form
@@ -1878,6 +1907,7 @@ class StakeholderDelete(LoginRequiredMixin, DeleteView):
     form_class = StakeholderForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class BudgetList(LoginRequiredMixin, ListView):
     """
     Budget List
@@ -1897,6 +1927,7 @@ class BudgetList(LoginRequiredMixin, ListView):
         return render(request, self.template_name, {'getBudget': getBudget, 'project_agreement_id': project_agreement_id})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class BudgetCreate(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     """
     Budget Form
@@ -1945,6 +1976,7 @@ class BudgetCreate(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     form_class = BudgetForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class BudgetUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     """
     Budget Form
@@ -1983,6 +2015,7 @@ class BudgetUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     form_class = BudgetForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class BudgetDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     """
     Budget Delete
@@ -2015,6 +2048,7 @@ class BudgetDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     form_class = BudgetForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ChecklistItemList(LoginRequiredMixin, ListView):
     """
     Checklist List
@@ -2034,6 +2068,7 @@ class ChecklistItemList(LoginRequiredMixin, ListView):
         return render(request, self.template_name, {'getChecklist': getChecklist, 'project_agreement_id': self.kwargs['pk']})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ChecklistItemCreate(LoginRequiredMixin, CreateView):
     """
     Checklist Form
@@ -2088,6 +2123,7 @@ class ChecklistItemCreate(LoginRequiredMixin, CreateView):
     form_class = ChecklistItemForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ChecklistItemUpdate(LoginRequiredMixin, UpdateView):
     """
     Checklist Form
@@ -2127,6 +2163,7 @@ class ChecklistItemUpdate(LoginRequiredMixin, UpdateView):
 
 
 @login_required
+@has_projects_access
 def checklist_update_link(AjaxableResponseMixin,pk,type,value):
     """
     Checklist Update from Link
@@ -2141,6 +2178,7 @@ def checklist_update_link(AjaxableResponseMixin,pk,type,value):
     return HttpResponse(value)
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ChecklistItemDelete(LoginRequiredMixin, DeleteView):
     """
     Checklist Delete
@@ -2173,6 +2211,7 @@ class ChecklistItemDelete(LoginRequiredMixin, DeleteView):
     form_class = ChecklistItemForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class Report(LoginRequiredMixin, View, AjaxableResponseMixin):
     """
     project agreement list report
@@ -2215,6 +2254,7 @@ class Report(LoginRequiredMixin, View, AjaxableResponseMixin):
                       'getPrograms': getPrograms})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class ReportData(LoginRequiredMixin, View, AjaxableResponseMixin):
     """
     Render Agreements json object response to the report ajax call
@@ -2278,6 +2318,7 @@ def district_json(request, district):
 
 
 @login_required
+@has_projects_access
 def export_stakeholders_list(request, **kwargs):
 
     program_id = int(kwargs['program_id'])
@@ -2296,6 +2337,7 @@ def export_stakeholders_list(request, **kwargs):
 
 
 #Ajax views for single page filtering
+@method_decorator(has_projects_access, name='dispatch')
 class StakeholderObjects(LoginRequiredMixin, View, AjaxableResponseMixin):
     """
     Render Agreements json object response to the report ajax call
@@ -2412,6 +2454,7 @@ def dated_target_info(request, pk):
     return Response({
         'max_start_date': Program.objects.filter(id=pk).annotate(
             ptd=Max('indicator__periodictargets__start_date')).values_list('ptd', flat=True)[0]})
+
 
 class OneTimeRegistrationView(FormView):
     """
