@@ -14,12 +14,12 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#. Translators: Ask user to explain reason for changes being made for the#.
+#. Translators: Ask user to explain reason for changes being made for the
 #. change log
 #: js/base.js:300 js/base.js:301
 msgid ""
-"Your changes will be recorded in an audit log. Please record your rationale "
-"for future reference."
+"Your changes will be recorded in a change log. For future reference, please "
+"share your rationale for these changes."
 msgstr ""
 
 #. Translators: Confirm a permenant change
@@ -33,13 +33,13 @@ msgstr ""
 msgid "Warning"
 msgstr ""
 
-#. Translators: Modal title asking user to enter in a rational for their#.
+#. Translators: Modal title asking user to enter in a rational for their
 #. change
 #: js/base.js:445
 msgid "Share Your Rationale"
 msgstr ""
 
-#. Translators: Label for table column: timestamp showing day/month/year and#.
+#. Translators: Label for table column: timestamp showing day/month/year and
 #. time
 #: js/components/changelog.js:102
 #: js/pages/tola_management_pages/audit_log/views.js:40
@@ -52,7 +52,7 @@ msgstr ""
 msgid "Admin"
 msgstr ""
 
-#. Translators: The type of change performed by an adminstrator in a change#.
+#. Translators: The type of change performed by an adminstrator in a change
 #. log
 #: js/components/changelog.js:104
 #: js/pages/tola_management_pages/audit_log/views.js:153
@@ -401,7 +401,7 @@ msgstr ""
 msgid "Result deleted"
 msgstr ""
 
-#. Translators: Audit log change type: The start and end dates of a program#.
+#. Translators: Audit log change type: The start and end dates of a program
 #. were modified
 #: js/pages/tola_management_pages/audit_log/views.js:19
 msgid "Program Dates Changed"
@@ -484,7 +484,7 @@ msgstr "Unité de mesure"
 msgid "Unit of Measure Type"
 msgstr "Unité de mesure"
 
-#. Translators: Audit log indicator change type: If an indicator is of type#.
+#. Translators: Audit log indicator change type: If an indicator is of type
 #. cumulative or not
 #: js/pages/tola_management_pages/audit_log/views.js:67
 msgid "Is Cumulative"
@@ -502,7 +502,7 @@ msgstr "Cible"
 msgid "Direction of Change"
 msgstr ""
 
-#. Translators: Audit log indicator change type: The rational behind the#.
+#. Translators: Audit log indicator change type: The rational behind the
 #. target of a result
 #: js/pages/tola_management_pages/audit_log/views.js:70
 msgid "Rationale for Target"
@@ -522,7 +522,7 @@ msgstr "Base de référence"
 msgid "Baseline N/A"
 msgstr "Base de référence"
 
-#. Translators: One or more of the target values on an indicator have been#.
+#. Translators: One or more of the target values on an indicator have been
 #. modified
 #: js/pages/tola_management_pages/audit_log/views.js:93
 msgid "Targets changed"
@@ -688,7 +688,7 @@ msgstr ""
 msgid "Achieved"
 msgstr ""
 
-#. Translators: Strategic objective code. Example: MCAF SO 1:Agribusiness#.
+#. Translators: Strategic objective code. Example: MCAF SO 1:Agribusiness
 #. development
 #: js/pages/tola_management_pages/country/components/edit_objectives.js:74
 msgid "Code"
@@ -1059,7 +1059,7 @@ msgstr ""
 msgid "Countries and Programs"
 msgstr ""
 
-#. Translators: header for controls of a users role and permissions for#.
+#. Translators: header for controls of a users role and permissions for
 #. programs and countries
 #: js/pages/tola_management_pages/user/components/edit_user_programs.js:478
 msgid "Roles and Permissions"
@@ -1103,7 +1103,7 @@ msgstr ""
 msgid "Remove from program"
 msgstr ""
 
-#. Translators: Label for yes/no choice form input - if user is an admin or#.
+#. Translators: Label for yes/no choice form input - if user is an admin or
 #. not */}
 #: js/pages/tola_management_pages/user/views.js:218
 #: js/pages/tola_management_pages/user/views.js:257

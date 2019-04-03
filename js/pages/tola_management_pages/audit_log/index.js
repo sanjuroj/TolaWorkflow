@@ -8,6 +8,7 @@ import {IndexView} from './views'
  */
 const store = new ProgramAuditLogStore(
     jsContext.program_id,
+    jsContext.program_name,
 )
 
 ReactDOM.render(

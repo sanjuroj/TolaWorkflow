@@ -21,8 +21,8 @@ msgstr ""
 #. change log
 #: js/base.js:300 js/base.js:301
 msgid ""
-"Your changes will be recorded in an audit log. Please record your rationale "
-"for future reference."
+"Your changes will be recorded in a change log. For future reference, please "
+"share your rationale for these changes."
 msgstr ""
 
 #. Translators: Confirm a permenant change
