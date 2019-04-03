@@ -1,7 +1,10 @@
+from django.utils.decorators import method_decorator
 from django.views.generic.list import ListView
 from django.http import HttpResponse
 
 from django.shortcuts import render
+
+from tola_management.permissions import has_projects_access
 from workflow.models import ProjectAgreement, ProjectComplete, Program, SiteProfile,Country, TolaSites
 from customdashboard.models import ProgramNarratives, JupyterNotebooks
 from formlibrary.models import TrainingAttendance, Distribution, Beneficiary
@@ -18,6 +21,8 @@ import json
 from datetime import *
 import ast
 
+
+@method_decorator(has_projects_access, name='dispatch')
 class ProgramList(ListView):
     """
     List of Programs with links to the dashboards
@@ -68,6 +73,7 @@ class ProgramList(ListView):
 
 
 @login_required(login_url='/accounts/login/')
+@has_projects_access
 def DefaultCustomDashboard(request,id=0,status=0):
     """
     This is used as the workflow program dashboard
@@ -133,6 +139,7 @@ def DefaultCustomDashboard(request,id=0,status=0):
                                                                      'getSiteProfileIndicator': getSiteProfileIndicator, 'get_project_completed': get_project_completed, 'totalActuals': totalActuals, 'totalTargets': totalTargets, 'totalBudgetted': totalBudgetted, 'totalActual': totalActual})
 
 
+@has_projects_access
 def PublicDashboard(request,id=0,public=0):
     """
     This is used as the internal and external (public) dashboard view
@@ -248,6 +255,7 @@ Extremely Customized dashboards
 This section contains custom dashboards or one-off dashboard for demo, or specific
 customer requests outside the scope of customized program dashboards
 """
+@has_projects_access
 def SurveyPublicDashboard(request,id=0):
     """
     DEMO only survey for Tola survey
@@ -337,6 +345,7 @@ def SurveyPublicDashboard(request,id=0):
     return render(request, "customdashboard/themes/survey_public_dashboard.html", {'meaning':meaningcount,'join':joincount,'tola_is':tolacount, 'countries': countries, 'dashboard':dashboard})
 
 
+@has_projects_access
 def SurveyTalkPublicDashboard(request,id=0):
     """
     DEMO only survey for Tola survey for use with public talks about TolaData
@@ -427,6 +436,7 @@ def SurveyTalkPublicDashboard(request,id=0):
 
 
 #RRIMA PROJECT DASHBOARD (in use 12/16)
+@has_projects_access
 def RRIMAPublicDashboard(request,id=0):
     """
     :param request:
@@ -467,6 +477,7 @@ def RRIMAPublicDashboard(request,id=0):
         {'pageText': pageText, 'pageMap': pageMap, 'countries': countries, 'getNotebooks':getNotebooks})
 
 #RRIMA Custom Dashboard Report Page (in use 12/16)
+@has_projects_access
 def Notebook(request,id=0):
     """
     :param request:
@@ -477,6 +488,7 @@ def Notebook(request,id=0):
     return render(request, "customdashboard/notebook.html", {'getNotebook':getNotebook})
 
 #RRIMA JupyterView (in use 12/16)
+@has_projects_access
 def RRIMAJupyterView1(request,id=0):
     """
     RRIMA custom dashboard TODO: Migrate this to the existing configurable dashboard
