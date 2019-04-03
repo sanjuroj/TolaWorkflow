@@ -4,19 +4,70 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-  <h1>Login</h1>
+<h1>{% trans "Welcome to TolaActivity" %}</h1>
 
-  <form action="" method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <input type="submit" value="login"><br/>
-      <a href="{{okta_url}}">{% trans "Mercy Corps Employee Login" %}</a><br/>
-      {% if non_ldap %}
-        <div class="social-buttons">
-            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-go"><i class="fa fa-google"></i> Google</a>
-        </div>
-        or
-        <a href="{% url 'register' %}">{% trans "Register a new Tola Account" %}</a><br/>
-      {% endif %}
-  </form>
+<div class="login">
+
+    <h2>{% trans "Log in" %}</h2>
+
+    <section class="login__section">
+
+        <h3>{% trans "Mercy Corps Employees" %}</h3>
+
+        {% blocktrans %}
+            <p>If you have a <strong>mercycorps.org</strong> email address, you can log in with our single sign-on service.</p>
+        {% endblocktrans %}
+
+        {# Translators: The following is a button directing users to log in with Okta, our single-sign-on provider #}
+        <p><a href="{{okta_url}}" class="btn btn-primary">{% trans "Log in with Okta" %}</a></p>
+
+    </section>
+
+    <section class="login__section">
+
+        <h3>{% trans "Partners" %}</h3>
+
+        {% blocktrans %}
+            <p>If you’re a Partner on a Mercy Corps project, you can log in with your approved email address.</p>
+        {% endblocktrans %}
+
+        {# Translators: the following is a button directing users to log in with Google #}
+        <p><a href="{% url "social:begin" "google-oauth2" %}" class="btn btn-secondary btn-icon"><i class="fab fa-google"></i>{% trans "Log in with Google" %}</a></p>
+
+    </section>
+
+    <section class="login__section">
+        <h3>{% trans "Or log in with another email address" %}</h3>
+
+        <form action="{% url "login" %}" method="post">
+
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                <input class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.html_name }}" value="" type="text">
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                <input class="form-control" id="{{ form.password.id_for_label }}" name="{{ form.password.html_name }}" value="" type="password">
+            </div>
+
+            <input type="submit" class="btn btn-secondary" value="{% trans "Log in" %}">
+
+
+            {% comment %}
+            {# what is this? is it still used? #}
+            {% if non_ldap %}
+            <div class="social-buttons">
+                <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-go"><i class="fa fa-google"></i> Google</a>
+            </div>
+            or
+            <a href="{% url 'register' %}">{% trans "Register a new Tola Account" %}</a><br/>
+            {% endif %}
+            {% endcomment %}
+
+        </form>
+    </section>
+</div>
 {% endblock %}
