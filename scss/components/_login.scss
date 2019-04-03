@@ -1,0 +1,21 @@
+// login screen options
+.login {
+    display: grid;
+    margin-bottom: $grid-gutter-width/2;
+    @include media-breakpoint-up(md) {
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-column-gap: $grid-gutter-width;
+    }
+}
+.login__option {
+    margin-bottom: $grid-gutter-width/2;
+    &--mc {
+        background: $primary-light;
+    }
+    &--partners {
+        background: $gray-100;
+    }
+    &--email {
+        background: $gray-100;
+    }
+}

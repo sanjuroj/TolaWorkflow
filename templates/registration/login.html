@@ -8,35 +8,33 @@
 
 <div class="login">
 
-    <h2>{% trans "Log in" %}</h2>
+    <section class="login__option login__option--mc card card-body">
 
-    <section class="login__section">
-
-        <h3>{% trans "Mercy Corps Employees" %}</h3>
+        <h3>{% trans "Mercy Corps employees" %}</h3>
 
         {% blocktrans %}
             <p>If you have a <strong>mercycorps.org</strong> email address, you can log in with our single sign-on service.</p>
         {% endblocktrans %}
 
         {# Translators: The following is a button directing users to log in with Okta, our single-sign-on provider #}
-        <p><a href="{{okta_url}}" class="btn btn-primary">{% trans "Log in with Okta" %}</a></p>
+        <p><a href="{{okta_url}}" class="btn btn-block btn-primary"><i class="fas fa-sign-in-alt"></i>{% trans "Log in with Okta" %}</a></p>
 
     </section>
 
-    <section class="login__section">
+    <section class="login__option login__option--partners card card-body">
 
         <h3>{% trans "Partners" %}</h3>
 
         {% blocktrans %}
-            <p>If you’re a Partner on a Mercy Corps project, you can log in with your approved email address.</p>
+            <p>If you’re a Partner on a Mercy Corps project, you can log in with your approved Gmail email address.</p>
         {% endblocktrans %}
 
         {# Translators: the following is a button directing users to log in with Google #}
-        <p><a href="{% url "social:begin" "google-oauth2" %}" class="btn btn-secondary btn-icon"><i class="fab fa-google"></i>{% trans "Log in with Google" %}</a></p>
+        <p><a href="{% url "social:begin" "google-oauth2" %}" class="btn btn-block btn-secondary "><i class="fa fa-sign-in-alt"></i>{% trans "Log in with Google" %}</a></p>
 
     </section>
 
-    <section class="login__section">
+    <section class="login__option login__option--email card card-body">
         <h3>{% trans "Or log in with another email address" %}</h3>
 
         <form action="{% url "login" %}" method="post">
@@ -53,19 +51,7 @@
                 <input class="form-control" id="{{ form.password.id_for_label }}" name="{{ form.password.html_name }}" value="" type="password">
             </div>
 
-            <input type="submit" class="btn btn-secondary" value="{% trans "Log in" %}">
-
-
-            {% comment %}
-            {# what is this? is it still used? #}
-            {% if non_ldap %}
-            <div class="social-buttons">
-                <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-go"><i class="fa fa-google"></i> Google</a>
-            </div>
-            or
-            <a href="{% url 'register' %}">{% trans "Register a new Tola Account" %}</a><br/>
-            {% endif %}
-            {% endcomment %}
+            <input type="submit" class="btn btn-block btn-medium" value="{% trans "Log in" %}">
 
         </form>
     </section>
