@@ -6,86 +6,68 @@
 {% block content %}
 <h1>{% trans "Welcome to TolaActivity" %}</h1>
 
-<div class="login panel">
-
+<div class="login">
 
     <h2>{% trans "Log in" %}</h2>
 
+    <section class="login__section">
 
-    <nav>
-        <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="nav-mc-employees-tab" href="#mc-employees-tab">Mercy Corps Employees</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link " id="nav-partners-tab" href="#partners-tab">Partners</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link " id="nav-email-tab" href="#email-tab">Other email address</a>
-            </li>
-        </ul>
-    </nav>
-    <div class="tab-content">
-        <section class="tab-pane active" id="mc-employees-tab" role="tabpanel" aria-labelledby="nav-mc-employees-tab">
+        <h3>{% trans "Mercy Corps Employees" %}</h3>
 
-            <h3>{% trans "Mercy Corps Employees" %}</h3>
-
-            {% blocktrans %}
+        {% blocktrans %}
             <p>If you have a <strong>mercycorps.org</strong> email address, you can log in with our single sign-on service.</p>
-            {% endblocktrans %}
+        {% endblocktrans %}
 
-            {# Translators: The following is a button directing users to log in with Okta, our single-sign-on provider #}
-            <p><a href="{{okta_url}}" class="btn btn-primary">{% trans "Log in with Okta" %}</a></p>
+        {# Translators: The following is a button directing users to log in with Okta, our single-sign-on provider #}
+        <p><a href="{{okta_url}}" class="btn btn-primary">{% trans "Log in with Okta" %}</a></p>
 
-        </section>
+    </section>
 
+    <section class="login__section">
 
-        <section class="tab-pane " id="partners-tab" role="tabpanel" aria-labelledby="nav-partners-tab">
+        <h3>{% trans "Partners" %}</h3>
 
-            <h3>{% trans "Partners" %}</h3>
-
-            {% blocktrans %}
+        {% blocktrans %}
             <p>If you’re a Partner on a Mercy Corps project, you can log in with your approved email address.</p>
-            {% endblocktrans %}
+        {% endblocktrans %}
 
-            {# Translators: the following is a button directing users to log in with Google #}
-            <p><a href="{% url "social:begin" "google-oauth2" %}" class="btn btn-secondary btn-icon"><i class="fab fa-google"></i>{% trans "Log in with Google" %}</a></p>
+        {# Translators: the following is a button directing users to log in with Google #}
+        <p><a href="{% url "social:begin" "google-oauth2" %}" class="btn btn-secondary btn-icon"><i class="fab fa-google"></i>{% trans "Log in with Google" %}</a></p>
 
-        </section>
+    </section>
 
-        <section class="tab-pane " id="email-tab" role="tabpanel" aria-labelledby="nav-email-tab">
-            <h3>{% trans "Or log in with another email address" %}</h3>
+    <section class="login__section">
+        <h3>{% trans "Or log in with another email address" %}</h3>
 
-            <form action="{% url "login" %}" method="post">
+        <form action="{% url "login" %}" method="post">
 
-                {% csrf_token %}
+            {% csrf_token %}
 
-                <div class="form-group">
-                    <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
-                    <input class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.html_name }}" value="" type="text">
-                </div>
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                <input class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.html_name }}" value="" type="text">
+            </div>
 
-                <div class="form-group">
-                    <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
-                    <input class="form-control" id="{{ form.password.id_for_label }}" name="{{ form.password.html_name }}" value="" type="password">
-                </div>
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                <input class="form-control" id="{{ form.password.id_for_label }}" name="{{ form.password.html_name }}" value="" type="password">
+            </div>
 
-                <input type="submit" class="btn btn-secondary" value="{% trans "Log in" %}">
+            <input type="submit" class="btn btn-secondary" value="{% trans "Log in" %}">
 
 
-                {% comment %}
-                {# what is this? is it still used? #}
-                {% if non_ldap %}
-                <div class="social-buttons">
-                    <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-go"><i class="fa fa-google"></i> Google</a>
-                </div>
-                or
-                <a href="{% url 'register' %}">{% trans "Register a new Tola Account" %}</a><br/>
-                {% endif %}
-                {% endcomment %}
+            {% comment %}
+            {# what is this? is it still used? #}
+            {% if non_ldap %}
+            <div class="social-buttons">
+                <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-go"><i class="fa fa-google"></i> Google</a>
+            </div>
+            or
+            <a href="{% url 'register' %}">{% trans "Register a new Tola Account" %}</a><br/>
+            {% endif %}
+            {% endcomment %}
 
-            </form>
-        </section>
-    </div>
+        </form>
+    </section>
 </div>
 {% endblock %}
