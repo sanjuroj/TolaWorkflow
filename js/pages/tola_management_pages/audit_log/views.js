@@ -64,6 +64,9 @@ class ChangesetEntry extends React.Component {
 export const IndexView = observer(
     ({store}) => {
         return <div id="audit-log-index-view">
+            <header class="page-title">
+                <h1><small>{gettext("Indicator change log:")}</small> {store.program_name}</h1>
+            </header>
 
             <div className="admin-list__controls">
                 <div className="controls__bulk-actions" />
