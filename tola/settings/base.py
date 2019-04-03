@@ -278,7 +278,6 @@ LOCAL_APPS = (
     'indicators',
     'customdashboard',
     'tables',
-    'reports',
     'tola_management'
 )
 
