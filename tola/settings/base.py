@@ -160,7 +160,6 @@ TEMPLATES = [
         #'APP_DIRS': True,
         'DIRS': [
             normpath(join(SITE_ROOT, 'templates')),
-            normpath(join(SITE_ROOT, 'customdashboard','templates')),
         ],
         'OPTIONS': {
             'debug': DEBUG,
