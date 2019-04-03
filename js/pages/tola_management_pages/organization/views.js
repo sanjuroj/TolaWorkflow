@@ -85,6 +85,9 @@ export const IndexView = observer(
                 </div>
             </FoldingSidebar>
             <div className="col admin-list">
+                <header className="page-title">
+                    <h1>{gettext("Admin:")} <small>{gettext("Organizations")}</small></h1>
+                </header>
                 <div className="admin-list__controls">
                     <div className="controls__bulk-actions"></div>
                     <div className="controls__buttons">
