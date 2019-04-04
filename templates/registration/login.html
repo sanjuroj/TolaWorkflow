@@ -20,35 +20,41 @@
         {% endblocktrans %}
     </a>
 
-    <a href="{% url "social:begin" "google-oauth2" %}" class="login__option btn btn-lg btn-block btn-medium">
+    <a href="{% url "social:begin" "google-oauth2" %}" class="login__option btn btn-lg btn-block btn-primary-light">
         {# Translators: a button directing users to log in with Gmail #}
         {% blocktrans %}
         <i class="fa fa-sign-in-alt"></i><small>Log in with <strong>Gmail</strong></small>
         {% endblocktrans %}
     </a>
 
-    <section class="login__option login__option--email card card-body">
+    <a href="#username-form" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="username-form" class="login__option btn btn-lg btn-block btn-medium">
+        <i class="fa fa-sign-in-alt"></i><small>{% trans "Log in with a username and password" %}</small>
+    </a>
 
-        <h3><small>{% trans "Log in with a username and password" %}</small></h3>
+    <div class=" collapse" id="username-form">
+        <section class="login__option login__option--email card card-body">
 
-        <form action="{% url "login" %}" method="post">
+            <h3><small></small></h3>
 
-            {% csrf_token %}
+            <form action="{% url "login" %}" method="post">
 
-            <div class="form-group">
-                <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
-                <input class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.html_name }}" value="" type="text">
-            </div>
+                {% csrf_token %}
 
-            <div class="form-group">
-                <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
-                <input class="form-control" id="{{ form.password.id_for_label }}" name="{{ form.password.html_name }}" value="" type="password">
-            </div>
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                    <input class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.html_name }}" value="" type="text">
+                </div>
 
-            <input type="submit" class="btn btn-medium" value="{% trans "Log in" %}">
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                    <input class="form-control" id="{{ form.password.id_for_label }}" name="{{ form.password.html_name }}" value="" type="password">
+                </div>
 
-        </form>
-    </section>
+                <input type="submit" class="btn btn-medium" value="{% trans "Log in" %}">
+
+            </form>
+        </section>
+    </div>
 
     <section class="login__help">
 
