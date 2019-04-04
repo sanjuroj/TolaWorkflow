@@ -2414,6 +2414,7 @@ def reportingperiod_update(request, pk):
 
     if not request.POST.get('rationale') and program.indicator_set.all().exists():
         success = False
+        # Translators: Text of an error message that appears when a user hasn't provided a justification for the change they are making to some data
         failmsg.append(_('Rationale is required'))
 
     if reporting_period_start:

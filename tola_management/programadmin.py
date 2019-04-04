@@ -340,13 +340,18 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
 
         header = [
             Cell(ws, value=_("Date and Time")),
+            # Translators: Number of the indicator being shown
             Cell(ws, value=_('No.')),
             Cell(ws, value=_('Indicator')),
             Cell(ws, value=_('User')),
             Cell(ws, value=_('Organization')),
+            # Translators: Part of change log, indicates the type of change being made to a particular piece of data
             Cell(ws, value=_('Change Type')),
+            # Translators: Part of change log, shows what the data looked like before the changes
             Cell(ws, value=_('Previous Entry')),
+            # Translators: Part of change log, shows what the data looks like after the changes
             Cell(ws, value=_('New Entry')),
+            # Translators: Part of change log, reason for the change as entered by the user
             Cell(ws, value=_('Rationale'))
         ]
 
