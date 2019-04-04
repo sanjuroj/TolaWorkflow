@@ -9,6 +9,7 @@ import EditProgramProfile from './components/edit_program_profile'
 import ProgramHistory from './components/program_history'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const UserFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
@@ -262,15 +263,25 @@ export const IndexView = observer(
                                     </Col>
                                     <Col size="2" className="td--stretch">
                                         {data.id == 'new' &&
-                                            <div className="icon__disabled">
-                                                <i className="fas fa-cube"/>&nbsp;
-                                                {data.name || "New Program"}
+                                            <div className="expando-toggle icon__disabled">
+                                                <div className="expando-toggle__icon">
+                                                    <FontAwesomeIcon icon={(store.editing_target == data.id) ? 'caret-down' : 'caret-right'} />
+                                                </div>
+                                                <div className="expando-toggle__label">
+                                                    <i className="fas fa-cube"/>&nbsp;
+                                                    {data.name || "New Program"}
+                                                </div>
                                             </div>
                                         }
                                         {data.id != 'new' &&
-                                            <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                                <i className="fas fa-cube"/>&nbsp;
-                                                {data.name || "New Program"}
+                                            <div className="expando-toggle icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
+                                                <div className="expando-toggle__icon">
+                                                    <FontAwesomeIcon icon={(store.editing_target == data.id) ? 'caret-down' : 'caret-right'} />
+                                                </div>
+                                                <div className="expando-toggle__label">
+                                                    <i className="fas fa-cube"/>&nbsp;
+                                                    {data.name || "New Program"}
+                                                </div>
                                             </div>
                                         }
                                     </Col>

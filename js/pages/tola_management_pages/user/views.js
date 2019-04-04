@@ -10,6 +10,7 @@ import EditUserHistory from './components/edit_user_history'
 import Pagination from 'components/pagination'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 // # Translators: Nothing selected by user
 const selection_placeholder = gettext("None Selected");
@@ -310,10 +311,15 @@ export const IndexView = observer(
                                             <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
                                     </Col>
                                     <Col size="2" className="td--stretch">
-                                        <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                            <i className="fas fa-user"/>&nbsp;
-                                            {/* # Translators: The highest level of administrator in the system */}
-                                            {data.name || "---"} {data.is_super && <span className="badge badge-danger">{gettext("Super Admin")}</span>}
+                                        <div className="expando-toggle icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
+                                            <div className="expando-toggle__icon">
+                                                <FontAwesomeIcon icon={(store.editing_target == data.id) ? 'caret-down' : 'caret-right'} />
+                                            </div>
+                                            <div className="expando-toggle__label">
+                                                <i className="fas fa-user"/>&nbsp;
+                                                {/* # Translators: The highest level of administrator in the system */}
+                                                {data.name || "---"} {data.is_super && <span className="badge badge-danger">{gettext("Super Admin")}</span>}
+                                            </div>
                                         </div>
                                     </Col>
                                     <Col>
