@@ -1355,6 +1355,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_program_history__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/program_history */ "7Eka");
 /* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
 /* harmony import */ var components_folding_sidebar__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! components/folding-sidebar */ "tnXs");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -1382,6 +1383,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -1819,17 +1821,29 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         size: "2",
         className: "td--stretch"
       }, data.id == 'new' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "icon__disabled"
+        className: "expando-toggle icon__disabled"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "expando-toggle__icon"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
+        icon: store.editing_target == data.id ? 'caret-down' : 'caret-right'
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "expando-toggle__label"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-cube"
-      }), "\xA0", data.name || "New Program"), data.id != 'new' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "icon__clickable",
+      }), "\xA0", data.name || "New Program")), data.id != 'new' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "expando-toggle icon__clickable",
         onClick: function onClick() {
           return store.toggleEditingTarget(data.id);
         }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "expando-toggle__icon"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
+        icon: store.editing_target == data.id ? 'caret-down' : 'caret-right'
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "expando-toggle__label"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-cube"
-      }), "\xA0", data.name || "New Program")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, organizationColumn(data)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+      }), "\xA0", data.name || "New Program"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, organizationColumn(data)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         className: "text-nowrap"
       }, data.program_users ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "/tola_management/user/?programs[]=".concat(data.id)
@@ -2610,4 +2624,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-f5d3b89aaac01e2ed566.js.map
+//# sourceMappingURL=tola_management_program-896d97b6d3412f4b2d93.js.map

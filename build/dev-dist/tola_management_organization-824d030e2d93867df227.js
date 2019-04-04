@@ -798,6 +798,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_edit_organization_history__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/edit_organization_history */ "SXQ9");
 /* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
 /* harmony import */ var components_folding_sidebar__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! components/folding-sidebar */ "tnXs");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
+
 
 
 
@@ -1011,13 +1013,19 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         size: "2",
         className: "td--stretch"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "icon__clickable",
+        className: "expando-toggle icon__clickable",
         onClick: function onClick() {
           return store.toggleEditingTarget(data.id);
         }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "expando-toggle__icon"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
+        icon: store.editing_target == data.id ? 'caret-down' : 'caret-right'
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "expando-toggle__label"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-building"
-      }), "\xA0", data.name || "---")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+      }), "\xA0", data.name || "---"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "1",
         className: "text-nowrap"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
@@ -2393,4 +2401,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-258499f995a4fd6efa0f.js.map
+//# sourceMappingURL=tola_management_organization-824d030e2d93867df227.js.map

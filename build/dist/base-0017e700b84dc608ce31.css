@@ -8465,13 +8465,16 @@ table.admin-list__table {
   .objective-form-buttons .right-buttons {
     margin-left: auto; }
 
-.edit-strategic-objective__row, .edit-disaggregation__row {
+.edit-strategic-objective__row,
+.edit-disaggregation__row {
   display: flex; }
-  .edit-strategic-objective__row .row-expand__toggle, .edit-disaggregation__row .row-expand__toggle {
+  .edit-strategic-objective__row .row-expand__toggle,
+  .edit-disaggregation__row .row-expand__toggle {
     flex-basis: 1em;
     flex-grow: 0;
     flex-shrink: 0; }
-  .edit-strategic-objective__row .row__content, .edit-disaggregation__row .row__content {
+  .edit-strategic-objective__row .row__content,
+  .edit-disaggregation__row .row__content {
     flex-grow: 1; }
 
 .disaggregation-label-group {
@@ -8481,6 +8484,17 @@ table.admin-list__table {
   display: flex; }
   .disaggregation-form-buttons .right-buttons {
     margin-left: auto; }
+
+.expando-toggle {
+  display: flex; }
+
+.expando-toggle__icon {
+  flex-basis: 1em;
+  flex-grow: 0;
+  flex-shrink: 0; }
+
+.expando-toggle__label {
+  flex-grow: 1; }
 
 .admin-list__controls {
   display: flex;
@@ -8524,6 +8538,9 @@ table.admin-list__table {
   padding: 15px; }
   .login__option.btn {
     white-space: inherit; }
+
+.login__help {
+  margin-top: 30px; }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
@@ -9212,5 +9229,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-2fb1d71efec7ba46ca7c.css.map*/
