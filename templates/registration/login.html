@@ -8,22 +8,28 @@
 <div class="login">
 
     <header class="page-title">
+        {% blocktrans %}
         <h1><small>Welcome to</small> TolaActivity</h1>
+        {% endblocktrans %}
     </header>
 
-    {# Translators: The following is a button directing users to log in with Okta, our single-sign-on provider #}
     <a href="{{okta_url}}" class="login__option btn btn-lg btn-block btn-info">
+        {# Translators: a button directing Mercy Corps users to log in #}
+        {% blocktrans %}
         <i class="fas fa-sign-in-alt"></i><small>Log in with a <strong>mercycorps.org</strong> email address</small>
+        {% endblocktrans %}
     </a>
 
-    {# Translators: the following is a button directing users to log in with Gmail #}
     <a href="{% url "social:begin" "google-oauth2" %}" class="login__option btn btn-lg btn-block btn-medium">
+        {# Translators: a button directing users to log in with Gmail #}
+        {% blocktrans %}
         <i class="fa fa-sign-in-alt"></i><small>Log in with <strong>Gmail</strong></small>
+        {% endblocktrans %}
     </a>
 
     <section class="login__option login__option--email card card-body">
 
-        <h3><small>Log in with a username and password</small></h3>
+        <h3><small>{% trans "Log in with a username and password" %}</small></h3>
 
         <form action="{% url "login" %}" method="post">
 
@@ -43,5 +49,18 @@
 
         </form>
     </section>
+
+    <section class="login__help">
+
+        <h4>{% trans "Need help logging in?" %}</h4>
+
+        <p class="text-muted text-small">
+            {% blocktrans %}
+            Contact your TolaData administrator or <a href="mailto:tola@mercycorps.org">email the TolaData team.</a>
+            {% endblocktrans %}
+        </p>
+
+    </section>
+
 </div>
 {% endblock %}
