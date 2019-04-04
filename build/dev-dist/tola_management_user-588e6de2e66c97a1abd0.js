@@ -2105,6 +2105,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+ // # Translators: Nothing selected by user
 
 var selection_placeholder = gettext("None Selected");
 var UserFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref) {
@@ -2357,13 +2358,16 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
   var store = _ref5.store;
   var programOptions = store.program_selections;
   var bulk_actions = {
-    primary_options: [{
+    primary_options: [// # Translators: Set an account to active or inactive
+    {
       label: gettext('Set account status'),
       value: 'set_account_status'
-    }, {
+    }, // # Translators: Associate a user with a program granting permission
+    {
       label: gettext('Add to program'),
       value: 'add_to_program'
-    }, {
+    }, // # Translators: Disassociate a user with a program removing permission
+    {
       label: gettext('Remove from program'),
       value: 'remove_from_program'
     }],
@@ -2472,7 +2476,9 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     }
   }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "col admin-list"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
+    className: "page-title"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, gettext("Admin:"), " ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, gettext("Users")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__controls"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(BulkActions, {
     primaryOptions: bulk_actions.primary_options,
@@ -2944,6 +2950,7 @@ function () {
     key: "onSaveErrorHandler",
     value: function onSaveErrorHandler(message) {
       PNotify.error({
+        // # Translators: Saving to the server failed
         text: message || gettext('Saving Failed'),
         delay: 5000
       });
@@ -2951,6 +2958,7 @@ function () {
   }, {
     key: "onSaveSuccessHandler",
     value: function onSaveSuccessHandler(message) {
+      // # Translators: Saving to the server succeeded
       PNotify.success({
         text: message || gettext('Successfully Saved'),
         delay: 5000
@@ -3219,11 +3227,12 @@ function () {
       this.saving_user_profile = true;
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].resendRegistrationEmail(user_id).then(function (result) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this8.saving_user_profile = false;
+          _this8.saving_user_profile = false; // # Translators: An email was sent to the user to verify that the email address is valid
 
           _this8.onSaveSuccessHandler(gettext("Verification email sent"));
         });
       }).catch(function () {
+        // # Translators: Sending an email to the user did not work
         _this8.onSaveSuccessHandler(gettext("Verification email send failed"));
       });
     }
@@ -3920,4 +3929,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-1595a54a8ea7dcfd2ff5.js.map
+//# sourceMappingURL=tola_management_user-588e6de2e66c97a1abd0.js.map
