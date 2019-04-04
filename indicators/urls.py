@@ -1,13 +1,17 @@
 from django.conf.urls import url
 
-from .views.views_indicators import (
+from indicators.views import (
     indicator_create,
+    IndicatorUpdate,
+    IndicatorDelete,
+    PeriodicTargetView,
+    PeriodicTargetDeleteView
+)
+
+from .views.views_indicators import (
     ResultCreate,
     ResultUpdate,
     ResultDelete,
-    IndicatorCreate,
-    IndicatorDelete,
-    IndicatorUpdate,
     IndicatorExport,
     IndicatorReportData,
     ResultReportData,
@@ -41,21 +45,18 @@ from .views.views_reports import (
 urlpatterns = [
     url(r'^indicator_create/(?P<program>\d+)/$', indicator_create, name='indicator_create'),
 
-    url(r'^indicator_add/(?P<id>\d+)/$', IndicatorCreate.as_view(), name='indicator_add'),
-
     url(r'^indicator_update/(?P<pk>\d+)/$', IndicatorUpdate.as_view(), name='indicator_update'),
 
     url(r'^indicator_delete/(?P<pk>\d+)/$', IndicatorDelete.as_view(), name='indicator_delete'),
 
-    url(r'^periodic_target_delete/(?P<pk>\d+)/$', PeriodicTargetDeleteView.as_view(), name='pt_delete'),
-
     url(r'^periodic_target_generate/(?P<indicator>\d+)/$', PeriodicTargetView.as_view(), name='pt_generate'),
+
+    url(r'^periodic_target_delete/(?P<pk>\d+)/$', PeriodicTargetDeleteView.as_view(), name='pt_delete'),
 
     url(r'^periodic_target_deleteall/(?P<indicator>\d+)/(?P<deleteall>\w+)/$',
         PeriodicTargetView.as_view(), name='pt_deleteall'),
 
-     url(r'^result_add/(?P<program>\d+)/(?P<indicator>\d+)/$',
-        ResultCreate.as_view(), name='result_add'),
+    url(r'^result_add/(?P<indicator>\d+)/$', ResultCreate.as_view(), name='result_add'),
 
     url(r'^result_update/(?P<pk>\d+)/$', ResultUpdate.as_view(), name='result_update'),
 
