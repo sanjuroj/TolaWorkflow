@@ -277,7 +277,6 @@ LOCAL_APPS = (
     'feed',
     'indicators',
     'customdashboard',
-    'tables',
     'tola_management'
 )
 
