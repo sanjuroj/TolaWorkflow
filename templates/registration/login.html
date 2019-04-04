@@ -4,38 +4,26 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<h1>{% trans "Welcome to TolaActivity" %}</h1>
 
 <div class="login">
 
-    <section class="login__option login__option--mc card card-body">
+    <header class="page-title">
+        <h1><small>Welcome to</small> TolaActivity</h1>
+    </header>
 
-        <h3>{% trans "Mercy Corps employees" %}</h3>
+    {# Translators: The following is a button directing users to log in with Okta, our single-sign-on provider #}
+    <a href="{{okta_url}}" class="login__option btn btn-lg btn-block btn-info">
+        <i class="fas fa-sign-in-alt"></i><small>Log in with a <strong>mercycorps.org</strong> email address</small>
+    </a>
 
-        {% blocktrans %}
-            <p>If you have a <strong>mercycorps.org</strong> email address, you can log in with our single sign-on service.</p>
-        {% endblocktrans %}
-
-        {# Translators: The following is a button directing users to log in with Okta, our single-sign-on provider #}
-        <p><a href="{{okta_url}}" class="btn btn-block btn-primary"><i class="fas fa-sign-in-alt"></i>{% trans "Log in with Okta" %}</a></p>
-
-    </section>
-
-    <section class="login__option login__option--partners card card-body">
-
-        <h3>{% trans "Partners" %}</h3>
-
-        {% blocktrans %}
-            <p>If you’re a Partner on a Mercy Corps project, you can log in with your approved Gmail email address.</p>
-        {% endblocktrans %}
-
-        {# Translators: the following is a button directing users to log in with Google #}
-        <p><a href="{% url "social:begin" "google-oauth2" %}" class="btn btn-block btn-secondary "><i class="fa fa-sign-in-alt"></i>{% trans "Log in with Google" %}</a></p>
-
-    </section>
+    {# Translators: the following is a button directing users to log in with Gmail #}
+    <a href="{% url "social:begin" "google-oauth2" %}" class="login__option btn btn-lg btn-block btn-medium">
+        <i class="fa fa-sign-in-alt"></i><small>Log in with <strong>Gmail</strong></small>
+    </a>
 
     <section class="login__option login__option--email card card-body">
-        <h3>{% trans "Or log in with another email address" %}</h3>
+
+        <h3><small>Log in with a username and password</small></h3>
 
         <form action="{% url "login" %}" method="post">
 
@@ -51,7 +39,7 @@
                 <input class="form-control" id="{{ form.password.id_for_label }}" name="{{ form.password.html_name }}" value="" type="password">
             </div>
 
-            <input type="submit" class="btn btn-block btn-medium" value="{% trans "Log in" %}">
+            <input type="submit" class="btn btn-medium" value="{% trans "Log in" %}">
 
         </form>
     </section>
