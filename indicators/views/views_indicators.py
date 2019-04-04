@@ -33,11 +33,10 @@ from feed.serializers import FlatJsonSerializer
 from tola.util import getCountry, group_excluded, get_table
 
 from indicators.serializers import IndicatorSerializer, ProgramSerializer
-from indicators.views.views_utils import (
+from indicators.views.view_utils import (
     handleDataCollectedRecords,
     import_indicator,
     generate_periodic_targets,
-    generate_periodic_target
 )
 from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
