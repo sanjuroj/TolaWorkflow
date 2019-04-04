@@ -1,44 +1,12 @@
 {% load i18n %}
 
 <script>
-
-    /* Dead code (I think)
-
-    // Load Indicators
-    function loadIndicators(program, indicator, type){
-        $.get('/indicators/program_indicators/' + program + '/' + indicator + '/' + type + '/', function(data){
-            $('#hidden-' + program + ' .indicators-list__table-container').html(data);
-            $("body").removeClass("modal-open");
-        });
-
-        let icon = $(`#id_btnOpenindicatorsForProgramId_${program}`).find("svg");
-        if (icon.hasClass('fa-caret-right')) {
-            icon.attr('class', 'fa-caret-down');
-        } else {
-            icon.attr('class', 'fa-caret-right');
-        }
-    };
-
-    // Load Results
-    function loadCollected(indicator,program){
-        let url = "{% url "result_view" 0 0 %}"
-        url = url.replace(/0\/0\//, indicator + "/" + program + "/")
-        var div_name = '#hidden-indicator-' + indicator;
-        $(div_name).empty();
-        $.get(url, function(data){
-            $(div_name).html(data);
-            $("body").removeClass("modal-open");
-        });
-        $("#id_indicator_data_count_btn_"+indicator).blur();
-    };
-    */
-
     var validation_msgs = {};
     var mediaSize = window.matchMedia("(max-width: 575px)")
     var userLang = "{{ LANGUAGE_CODE }}";
     var targetsModified = false;
 
-    const DELETE_ALL_TARGETS_MESSAGE = "{% trans 'This action cannot be undone. Any results assigned to these targets will need to be reassigned. For future reference, please provide a rationale for deleting these targets.' %}"
+    const DELETE_ALL_TARGETS_MESSAGE = "{% trans 'Any results assigned to these targets will need to be reassigned. For future reference, please provide a rationale for deleting these targets.' %}"
     const DELETE_INDICATOR_MESSAGE = "{% trans 'All details about this indicator and results recorded to the indicator will be permanently removed. For future reference, please provide a rationale for deleting this indicator.' %}"
     const MODIFY_TARGETS_MESSAGE = "{% trans 'Modifying target values will affect program metrics for this indicator. For future reference, please provide a rationale for modifying target values.' %}"
 

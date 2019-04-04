@@ -13,20 +13,13 @@ from .views.views_indicators import (
     ResultUpdate,
     ResultDelete,
     IndicatorExport,
-    IndicatorReportData,
     ResultReportData,
     service_json,
     PeriodicTargetView,
     PeriodicTargetDeleteView,
     result_view,
-    program_indicators_json,
     indicator_plan,
-    indicator_report,
-    IndicatorReport,
-    IndicatorDataExport,
-    TVAReport,
     DisaggregationReport,
-    TVAPrint,
     DisaggregationPrint,
     api_indicator_view)
 
@@ -34,7 +27,6 @@ from .views.views_reports import (
     IPTTReportQuickstartView,
     IPTT_ReportView,
     IPTT_ReportIndicatorsWithVariedStartDate,
-    IPTT_ExcelExport,
     create_pinned_report,
     delete_pinned_report,
     IPTT_ExcelExport,
@@ -62,18 +54,9 @@ urlpatterns = [
 
     url(r'^result_delete/(?P<pk>\d+)/$', ResultDelete.as_view(), name='result_delete'),
 
-    url(r'^report/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$', indicator_report, name='indicator_report'),
-
-    url(r'^tvareport/$', TVAReport.as_view(), name='tvareport'),
-
-    url(r'^tvaprint/(?P<program>\d+)/$', TVAPrint.as_view(), name='tvaprint'),
-
     url(r'^disrep/(?P<program>\d+)/$', DisaggregationReport.as_view(), name='disrep'),
 
     url(r'^disrepprint/(?P<program>\d+)/$', DisaggregationPrint.as_view(), name='disrepprint'),
-
-    url(r'^report_table/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$',
-        IndicatorReport.as_view(), name='indicator_table'),
 
     url(r'^indicator_plan/(?P<program_id>\d+)/$', indicator_plan, name='indicator_plan'),
 
@@ -84,12 +67,6 @@ urlpatterns = [
 
     url(r'^result_table/(?P<indicator>\d+)/(?P<program>\d+)/',
         result_view, name='result_view'),
-
-    url(r'^program_indicators/(?P<program>\d+)/(?P<indicator>\d+)/'
-        r'(?P<type>\d+)', program_indicators_json, name='program_indicators_json'),
-
-    url(r'^report_data/(?P<id>\w+)/(?P<program>\d+)/(?P<type>\d+)/$',
-        IndicatorReportData.as_view(), name='indicator_report_data'),
 
     url(r'^result_report_data/(?P<program>\d+)/(?P<indicator>\d+)/'
         r'(?P<type>\d+)/$',

@@ -3,6 +3,7 @@ import api from './api'
 
 export class ProgramAuditLogStore {
     @observable program_id = null
+    @observable program_name = null
     @observable log_rows = []
     @observable fetching = false
     @observable current_page = 0
@@ -14,8 +15,9 @@ export class ProgramAuditLogStore {
     @observable previous_page = null
     @observable current_page = 0
 
-    constructor(program_id) {
+    constructor(program_id, program_name) {
         this.program_id = program_id
+        this.program_name = program_name
         this.fetchProgramAuditLog()
     }
 

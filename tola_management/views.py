@@ -247,11 +247,6 @@ def get_country_page_context(request):
         'programs': programs,
     }
 
-def get_audit_log_page_context(request, program_id):
-    return {
-        "program_id": program_id
-    }
-
 def send_new_user_registration_email(user, request):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
@@ -288,9 +283,12 @@ def app_host_page(request, react_app_page):
 
 @login_required(login_url='/accounts/login/')
 def audit_log_host_page(request, program_id):
-    js_context = get_audit_log_page_context(request, program_id)
-    json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
     program = get_object_or_404(Program, pk=program_id)
+    js_context = {
+        "program_id": program_id,
+        "program_name": program.name,
+    }
+    json_context = json.dumps(js_context, cls=DjangoJSONEncoder)
     if not request.user.tola_user.available_programs.filter(id=program.id).exists():
         raise PermissionDenied
     return render(request, 'react_app_base.html', {"bundle_name": "audit_log", "js_context": json_context, "report_wide": True, "page_title": program.name+" Audit Log | "})

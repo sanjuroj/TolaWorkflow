@@ -162,7 +162,7 @@ def has_site_write_access(func):
             ).exists() or request.user.is_superuser
             if request.method == 'GET':
                 return func(request, *args, **kwargs)
-            elif request.method == 'POST' and write_access:
+            elif request.method == 'POST' and request.has_write_access:
                 return func(request, *args, **kwargs)
             else:
                 raise PermissionDenied
@@ -241,6 +241,15 @@ def has_program_read_access(func):
             return func(request, *args, **kwargs)
         else:
             return redirect('index')
+    return wrapper
+
+
+def has_projects_access(func):
+    def wrapper(request, *args, **kwargs):
+        if request.user.tola_user.allow_projects_access:
+            return func(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
     return wrapper
 
 
