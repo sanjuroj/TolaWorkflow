@@ -13,7 +13,7 @@ indicators/
 from django import test
 from django.urls import reverse
 from tola.test.endpoint_permissions_test_utils import EndpointTestBase
-
+import unittest
 
 class TestIndicatorCreateEndpoint(EndpointTestBase, test.TestCase):
     url = 'indicator_create'
@@ -61,4 +61,23 @@ class TestIndicatorDeleteEndpoint(EndpointTestBase, test.TestCase):
         self.init()
 
     def test_http_methods(self):
-        self.run_post_tests(method='delete')
+        self.run_post_tests()
+
+class TestPeriodicTargetGenerateEndpoint(EndpointTestBase, test.TestCase):
+    url = 'pt_generate'
+    url_kwargs = {'indicator': None}
+    access_level = None # varies GET to POST
+    post_data = {
+        'rationale': 'pt generate delete endpoint test'
+    }
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        # QUESTION: do we want to let low-level (read-access) users "generate" (doesn't save) periodic targets?
+        self.access_level = 'low'
+        self.run_get_tests()
+        self.access_level = 'high'
+        self.run_post_tests()
+        

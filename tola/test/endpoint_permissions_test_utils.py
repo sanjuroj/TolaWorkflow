@@ -249,6 +249,8 @@ class EndpointTestBase(object):
         kwargs = {}
         if 'program' in self.url_kwargs:
             kwargs['program'] = self.context.program_out_of_country.pk
+        if 'indicator' in self.url_kwargs:
+            kwargs['indicator'] = self.context.indicator_out_of_country.pk
         if 'pk' in self.url_kwargs and self.url_kwargs['pk'] == 'indicator':
             kwargs['pk'] = self.context.indicator_out_of_country.pk
         return reverse(self.url, kwargs=kwargs)
@@ -257,6 +259,8 @@ class EndpointTestBase(object):
         kwargs = {}
         if 'program' in self.url_kwargs:
             kwargs['program'] = self.context.program_in_country.pk
+        if 'indicator' in self.url_kwargs:
+            kwargs['indicator'] = self.context.indicator_in_country.pk
         if 'pk' in self.url_kwargs and self.url_kwargs['pk'] == 'indicator':
             kwargs['pk'] = self.context.indicator_in_country.pk
         return reverse(self.url, kwargs=kwargs)
@@ -350,7 +354,7 @@ class EndpointTestBase(object):
             self.assert_forbidden(
                 response, 'user not assigned to country should redirect from {}'.format(url))
         # ensure anonymous user cannot access:
-        fetch_method(None, url)
+        response = fetch_method(None, url)
         self.assert_redirects_to_login(response, 'anonymous user should redirect from {}'.format(url), url)
         # get in country url:
         url = self.get_in_url()

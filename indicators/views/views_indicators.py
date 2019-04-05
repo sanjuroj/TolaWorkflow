@@ -37,6 +37,7 @@ from indicators.views.view_utils import (
     handleDataCollectedRecords,
     import_indicator,
     generate_periodic_targets,
+    generate_periodic_target_single
 )
 from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
@@ -153,7 +154,7 @@ def indicator_create(request, program=0):
                    'getServices': get_services,
                    'result_count': 0})
 
-class IndicatorUpdate(LoginRequiredMixin, UpdateView):
+class IndicatorUpdate(UpdateView):
     """
     Update and Edit Indicators.
     url: indicator_update/<pk>
@@ -472,8 +473,9 @@ class IndicatorDelete(LoginRequiredMixin, DeleteView):
 # PERIODIC TARGET VIEWS:
 
 
+@method_decorator(login_required, name='dispatch')
 @method_decorator(periodic_target_adapter(has_indicator_write_access), name='dispatch')
-class PeriodicTargetView(LoginRequiredMixin, View):
+class PeriodicTargetView(View):
     """
     This view generates periodic targets or deleting them (via POST)
     """
