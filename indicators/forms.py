@@ -50,7 +50,7 @@ class IndicatorForm(forms.ModelForm):
         widget=forms.RadioSelect(),
     )
 
-    rationale = forms.CharField(required=False)
+    rationale = forms.CharField(required=True)
 
     class Meta:
         model = Indicator
@@ -123,7 +123,7 @@ class IndicatorForm(forms.ModelForm):
 
 
 class ResultForm(forms.ModelForm):
-    rationale = forms.CharField(required=False)
+    rationale = forms.CharField(required=True)
 
     class Meta:
         model = Result
