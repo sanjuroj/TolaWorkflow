@@ -44,7 +44,6 @@ class TestResultCreateUpdate404(test.TestCase):
 
     def test_create_view_raises_404_with_bad_indicator_id(self):
         kwargs = {
-            'program': self.program.id,
             'indicator': self.indicator.id + 1
         }
         bad_url = reverse('result_add', kwargs=kwargs)

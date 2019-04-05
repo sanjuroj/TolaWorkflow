@@ -18,7 +18,9 @@ from workflow.models import (
     TolaUser as TolaUserM,
     Program as ProgramM,
     CountryAccess as CountryAccessM,
-    ProgramAccess as ProgramAccessM
+    ProgramAccess as ProgramAccessM,
+    PROGRAM_ROLE_CHOICES,
+    COUNTRY_ROLE_CHOICES
 )
 
 
@@ -172,3 +174,21 @@ class TolaSites(DjangoModelFactory):
 
     name = 'MercyCorps'
     site = SubFactory(Site)
+
+def grant_program_access(tolauser, program, country, role=PROGRAM_ROLE_CHOICES[0][0]):
+    access_object, _ = ProgramAccessM.objects.get_or_create(
+        program=program,
+        tolauser=tolauser,
+        country=country
+    )
+    access_object.role=role
+    access_object.save()
+
+def grant_country_access(tolauser, country, role=COUNTRY_ROLE_CHOICES[0][0]):
+    access_object, _ = CountryAccessM.objects.get_or_create(
+        country=country,
+        tolauser=tolauser
+    )
+    access_object.role = role
+    access_object.save()
+    
