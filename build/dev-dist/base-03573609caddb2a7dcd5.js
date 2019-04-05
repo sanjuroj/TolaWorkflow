@@ -360,7 +360,7 @@ var create_changeset_notice = function create_changeset_notice() {
         buttons: [{
           text: confirm_text,
           primary: true,
-          addClass: type == 'error' ? 'btn-danger' : '',
+          addClass: type == 'error' ? 'btn-danger is-disabled' : '',
           click: function click(notice) {
             var close = true;
             var textarea = $(notice.refs.elem).find('textarea[name="rationale"]');
@@ -369,7 +369,7 @@ var create_changeset_notice = function create_changeset_notice() {
 
             if (!rationale) {
               textarea.addClass('is-invalid');
-              textarea.parent().append("\n                                    <div class=\"invalid-feedback\">\n                                        Results have been recorded. Rationale is required.\n                                    </div>\n                                ");
+              textarea.parent().append('<div class="invalid-feedback">' + gettext('Rationale is required.') + '</div>');
               return false;
             } else {
               textarea.removeClass('is-invalid');
@@ -482,4 +482,4 @@ window.create_nondestructive_changeset_notice = function () {
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-3196abeee3542d567d73.js.map
+//# sourceMappingURL=base-03573609caddb2a7dcd5.js.map
