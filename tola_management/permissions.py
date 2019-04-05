@@ -9,8 +9,8 @@ from workflow.models import (
     Program,
     TolaUser,
     Country,
-    SiteProfile
-)
+    SiteProfile,
+    PROGRAM_ROLE_CHOICES)
 
 from indicators.models import (
     Result,
@@ -245,6 +245,11 @@ def has_program_read_access(func):
 
 
 def has_projects_access(func):
+    """
+    The "Projects" app exists along side Tola indicator tracking but is being deprecated
+    This limits access to existing users based on their country
+    and is unrelated to all other business logic level permissions
+    """
     def wrapper(request, *args, **kwargs):
         if request.user.tola_user.allow_projects_access:
             return func(request, *args, **kwargs)
@@ -252,6 +257,64 @@ def has_projects_access(func):
             raise PermissionDenied
     return wrapper
 
+
+#
+# Program level permission
+#
+
+
+def verify_program_level(request, program_id, level, super_admin_override=False):
+    """
+    Determine if a user has a given level of access to a Program.
+
+    Raises PermissionDenied if access is not available to the user.
+
+    :param level: PROGRAM_ROLE_CHOICES ('low', 'medium', 'high')
+    :param super_admin_override: If True, the permission check is bypassed if the user is a Super Admin
+    :return: None
+    """
+    # string typing is fun
+    assert level in [l[0] for l in PROGRAM_ROLE_CHOICES]
+
+    # none of this makes sense if not logged in
+    if not request.user.is_authenticated():
+        raise PermissionDenied
+
+    # Let super admins do all the things
+    if super_admin_override and request.user.is_superuser:
+        return
+
+    tola_user = request.user.tola_user
+    user_access_level = None
+
+    # First check for explicit program access
+    program_access_obj = tola_user.programaccess_set.filter(program_id=program_id).first()
+
+    if program_access_obj:
+        user_access_level = program_access_obj.role
+    else:
+        # Has implicit low level access via country association?
+        implicit_low = (Program.objects.filter(pk=program_id, country__in=tola_user.countries.all()) |
+                        Program.objects.filter(pk=program_id, country=tola_user.country)).exists()
+
+        if implicit_low:
+            user_access_level = 'low'
+
+    # final check
+    int_map = {
+        None: 0,
+        'low': 10,
+        'medium': 20,
+        'high': 30,
+    }
+
+    if int_map.get(user_access_level, 0) < int_map.get(level):
+        raise PermissionDenied
+
+
+#
+# Tola Admin permissions
+#
 
 class HasUserAdminAccess(permissions.BasePermission):
     def has_permission(self, request, view):

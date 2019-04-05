@@ -1184,31 +1184,3 @@ def api_indicator_view(request, indicator_id):
         .annotate(target_period_last_end_date=Max('periodictargets__end_date')).get(id=indicator_id)
 
     return JsonResponse(IndicatorSerializer(indicator).data)
-
-
-
-"""
-class CountryExport(View):
-    def get(self, *args, **kwargs):
-        country = CountryResource().export()
-        response = HttpResponse(country.csv, content_type="csv")
-        response['Content-Disposition'] = 'attachment; filename=country.csv'
-        return response
-"""
-
-
-def const_table_det_url(url):
-    url_data = urlparse(url)
-    root = url_data.scheme
-    org_host = url_data.netloc
-    path = url_data.path
-    components = re.split('/', path)
-
-    s = []
-    for c in components:
-        s.append(c)
-
-    new_url = str(root) + '://' + str(org_host) + '/silo_detail/' + str(
-        s[3]) + '/'
-
-    return new_url
