@@ -61,6 +61,3 @@ NON_LDAP: True
 TEMPLATE_DEBUG: False
 DEBUG: True
 
-EMAIL_HOST_PASSWORD: 'xxxxxxxxx'
-
-# Google Analytics Tracking code
