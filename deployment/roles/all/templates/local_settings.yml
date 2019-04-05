@@ -41,9 +41,9 @@ DATABASES:
    HOST: "localhost"
    PORT: ""
 
-GOOGLE_STEP2_URI: "http://tola.example.org/gwelcome"
-GOOGLE_CLIENT_ID: "111111111111.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET: "99999D33DDDDD88777777777"
+#GOOGLE_STEP2_URI: "http://tola.example.org/gwelcome"
+#GOOGLE_CLIENT_ID: "111111111111.apps.googleusercontent.com"
+#GOOGLE_CLIENT_SECRET: "99999D33DDDDD88777777777"
 
 
 ########## GOOGLE AUTH

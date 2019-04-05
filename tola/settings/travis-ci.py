@@ -52,9 +52,9 @@ EMAIL_BACKEND = app_settings.get('EMAIL_BACKEND', None)
 EMAIL_FILE_PATH = app_settings.get('EMAIL_FILE_PATH', None)
 
 # GOOGLE CLIENT CONFIG
-GOOGLE_CLIENT_ID = app_settings.get('GOOGLE_CLIENT_ID', None)
-GOOGLE_CLIENT_SECRET = app_settings.get('GOOGLE_CLIENT_SECRET', None)
-GOOGLE_STEP2_URI = app_settings.get('GOOGLE_STEP2_URI', None)
+# GOOGLE_CLIENT_ID = app_settings.get('GOOGLE_CLIENT_ID', None)
+# GOOGLE_CLIENT_SECRET = app_settings.get('GOOGLE_CLIENT_SECRET', None)
+# GOOGLE_STEP2_URI = app_settings.get('GOOGLE_STEP2_URI', None)
 
 # SOCIAL GOOGLE AUTH
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = app_settings.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', None)
