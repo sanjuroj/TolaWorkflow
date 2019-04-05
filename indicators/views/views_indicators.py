@@ -1062,125 +1062,6 @@ def result_view(request, indicator, program):
 
 
 @login_required
-def program_indicators_json(request, program, indicator, type):
-    template_name = 'indicators/program_indicators_table.html'
-
-    program_obj = Program.objects.get(pk=program)
-    q = {'program__id__isnull': False, 'program__id': program_obj.pk}
-
-    if int(type) != 0:
-        q['indicator_type__id'] = type
-
-    if int(indicator) != 0:
-        q['id'] = indicator
-
-    indicators = Indicator.objects \
-        .select_related('sector') \
-        .prefetch_related('result_set', 'indicator_type', 'level',
-                          'periodictargets') \
-        .filter(**q) \
-        .annotate(data_count=Count('result'),
-                  levelmin=Min('level__customsort'),
-                  target_period_last_end_date=Max('periodictargets__end_date')) \
-        .order_by('levelmin', 'number', 'name')
-
-    return render_to_response(
-        template_name,
-        {'indicators': indicators, 'program': program_obj}
-    )
-
-
-@login_required
-def indicator_report(request, program=0, indicator=0, type=0):
-    countries = request.user.tola_user.countries.all()
-    getPrograms = Program.objects.filter(funding_status="Funded",
-                                         country__in=countries).distinct()
-    getIndicatorTypes = IndicatorType.objects.all()
-
-    filters = {}
-    if int(program) != 0:
-        filters['program__id'] = program
-    if int(type) != 0:
-        filters['indicator_type'] = type
-    if int(indicator) != 0:
-        filters['id'] = indicator
-
-    filters['program__country__in'] = countries
-
-    indicator_data = Indicator.objects.filter(**filters) \
-        .prefetch_related('sector') \
-        .select_related(
-        'program', 'external_service_record', 'indicator_type',
-        'disaggregation', 'reporting_frequency') \
-        .values('id', 'program__name', 'baseline', 'level__name',
-                'lop_target', 'program__id',
-                'external_service_record__external_service__name',
-                'key_performance_indicator', 'name', 'indicator_type__id',
-                'indicator_type__indicator_type', 'sector__sector',
-                'disaggregation__disaggregation_type',
-                'means_of_verification', 'data_collection_method',
-                'reporting_frequency__frequency', 'create_date', 'edit_date',
-                'source', 'method_of_analysis'
-                )
-    data = json.dumps(list(indicator_data), cls=DjangoJSONEncoder)
-
-    # send the keys and vars from the json data to the template along with
-    # submitted feed info and silos for new form
-    return render(request, "indicators/report.html", {
-        'program': program,
-        'getPrograms': getPrograms,
-        'getIndicatorTypes': getIndicatorTypes,
-        'getIndicators': indicator_data,
-        'data': data})
-
-
-class IndicatorReport(LoginRequiredMixin, View, AjaxableResponseMixin):
-    def get(self, request, *args, **kwargs):
-        countries = getCountry(request.user)
-        program = int(self.kwargs['program'])
-        indicator = int(self.kwargs['indicator'])
-        type = int(self.kwargs['type'])
-
-        filters = {}
-        if program != 0:
-            filters['program__id'] = program
-        if type != 0:
-            filters['indicator_type'] = type
-        if indicator != 0:
-            filters['id'] = indicator
-        if program == 0 and type == 0:
-            filters['program__country__in'] = countries
-
-        getIndicators = Indicator.objects.filter(**filters) \
-            .prefetch_related('sector') \
-            .select_related('program', 'external_service_record',
-                            'indicator_type', 'disaggregation',
-                            'reporting_frequency') \
-            .values('id', 'program__name', 'baseline', 'level__name',
-                    'lop_target', 'program__id',
-                    'external_service_record__external_service__name',
-                    'key_performance_indicator', 'name',
-                    'indicator_type__indicator_type', 'sector__sector',
-                    'disaggregation__disaggregation_type',
-                    'means_of_verification', 'data_collection_method',
-                    'reporting_frequency__frequency', 'create_date',
-                    'edit_date', 'source', 'method_of_analysis')
-
-        q = request.GET.get('search', None)
-        if q:
-            getIndicators = getIndicators.filter(
-                Q(indicator_type__indicator_type__contains=q) |
-                Q(name__contains=q) |
-                Q(number__contains=q) |
-                Q(number__contains=q) |
-                Q(sector__sector__contains=q) |
-                Q(definition__contains=q)
-            )
-        get_indicators = json.dumps(list(getIndicators), cls=DjangoJSONEncoder)
-        return JsonResponse(get_indicators, safe=False)
-
-
-@login_required
 def indicator_plan(request, program_id):
     """
     This is the GRID report or indicator plan for a program.
@@ -1196,74 +1077,6 @@ def indicator_plan(request, program_id):
         'column_names': ip.column_names(),
         'rows': [ip.row(i) for i in indicators]
     })
-
-
-class IndicatorReportData(LoginRequiredMixin, View, AjaxableResponseMixin):
-    """
-    This is the Indicator Visual report data, returns a json object of
-    report data to be displayed in the table report
-    """
-
-    def get(self, request, program, type, id):
-        q = {'program__id__isnull': False}
-
-        # if we have a program filter active
-        if int(program) != 0:
-            q = {'program__id': program}
-        # if we have an indicator type active
-        if int(type) != 0:
-            r = {'indicator_type__id': type}
-            q.update(r)
-
-        # if we have an indicator id append it to the query filter
-        if int(id) != 0:
-            s = {'id': id}
-            q.update(s)
-
-        countries = getCountry(request.user)
-
-        indicator = Indicator.objects.filter(program__country__in=countries) \
-            .filter(**q).values(
-                'id', 'program__name', 'baseline', 'level__name', 'lop_target',
-                'program__id',
-                'external_service_record__external_service__name',
-                'key_performance_indicator', 'name', 'indicator_type__id',
-                'indicator_type__indicator_type', 'sector__sector')\
-            .order_by('create_date')
-
-        indicator_count = Indicator.objects \
-            .filter(program__country__in=countries) \
-            .filter(**q) \
-            .filter(result__isnull=True) \
-            .distinct() \
-            .count()
-
-        indicator_data_count = Indicator.objects \
-            .filter(program__country__in=countries) \
-            .filter(**q).filter(result__isnull=False) \
-            .distinct() \
-            .count()
-
-        indicator_serialized = json.dumps(list(indicator))
-
-        final_dict = {
-            'indicator': indicator_serialized,
-            'indicator_count': indicator_count,
-            'data_count': indicator_data_count
-        }
-
-        if request.GET.get('export'):
-            indicator_export = Indicator.objects.all().filter(**q)
-            dataset = IndicatorResource().export(indicator_export)
-            response = HttpResponse(dataset.csv,
-                                    content_type='application/ms-excel')
-
-            response['Content-Disposition'] = 'attachment; \
-                filename=indicator_data.csv'
-
-            return response
-
-        return JsonResponse(final_dict, safe=False)
 
 
 class ResultReportData(LoginRequiredMixin, View, AjaxableResponseMixin):
@@ -1355,7 +1168,6 @@ def old_program_page(request, program_id, indicator_id, indicator_type_id):
 class ProgramPage(LoginRequiredMixin, ListView):
     model = Indicator
     template_name = 'indicators/program_page.html'
-    metrics = False
 
     def get(self, request, *args, **kwargs):
         # countries = request.user.tola_user.countries.all()
@@ -1376,12 +1188,6 @@ class ProgramPage(LoginRequiredMixin, ListView):
                 )
         program = ProgramWithMetrics.program_page.get(pk=program_id)
         program.indicator_filters = {}
-        if self.metrics:
-            json_context = {
-                'metrics': program.metrics,
-                'scope_counts': program.scope_counts
-            }
-            return JsonResponse(json_context)
 
         indicators = program.annotated_indicators\
             .annotate(target_period_last_end_date=Max('periodictargets__end_date')).select_related('level')
@@ -1529,99 +1335,6 @@ class DisaggregationPrint(LoginRequiredMixin, DisaggregationReportMixin, Templat
         return res
 
 
-class TVAPrint(TemplateView):
-    template_name = 'indicators/tva_print.html'
-
-    def get(self, request, *args, **kwargs):
-        program = Program.objects.filter(
-            id=kwargs.get('program', None)).first()
-
-        indicators = Indicator.objects \
-            .select_related('sector') \
-            .prefetch_related('indicator_type', 'level', 'program') \
-            .filter(program=program) \
-            .annotate(actuals=Sum('result__achieved'))
-
-        # hmtl_string = render_to_string('indicators/tva_print.html',
-        # {'data': context['data'], 'program': context['program']})
-        hmtl_string = render(request, 'indicators/tva_print.html',
-                             {'data': indicators, 'program': program})
-
-        pdffile = HTML(string=hmtl_string.content)
-        # stylesheets=[CSS(string='@page { size: letter; margin: 1cm}')]
-        result = pdffile.write_pdf(stylesheets=[CSS(
-            string='@page {\
-                size: letter; margin: 1cm;\
-                @bottom-right{\
-                    content: "Page " counter(page) " of " counter(pages);\
-                };\
-            }'
-        )])
-        res = HttpResponse(result, content_type='application/pdf')
-        # res['Content-Disposition'] = 'inline; filename="ztvareport.pdf"'
-        res['Content-Disposition'] = 'attachment; filename=tva.pdf'
-        res['Content-Transfer-Encoding'] = 'binary'
-        """
-        with tempfile.NamedTemporaryFile(delete=True) as output:
-            output.write(result)
-            output.flush()
-            output = open(output.name, 'r')
-            res.write(output.read())
-        """
-        """
-        # Create the PDF object, using the response object as its "file."
-        p = canvas.Canvas(res)
-        p.drawString(100, 100, 'hello world!')
-        p.showPage()
-        p.save()
-        """
-        return res
-
-
-class TVAReport(TemplateView):
-    template_name = 'indicators/tva_report.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(TVAReport, self).get_context_data(**kwargs)
-        countries = getCountry(self.request.user)
-        filters = {'program__country__in': countries}
-
-        program = Program.objects.filter(
-            id=kwargs.get('program', None)).first()
-
-        indicator_type = IndicatorType.objects.filter(
-            id=kwargs.get('type', None)).first()
-
-        indicator = Indicator.objects.filter(
-            id=kwargs.get('indicator', None)).first()
-
-        if program:
-            filters['program'] = program.pk
-        if indicator_type:
-            filters['indicator__indicator_type__id'] = indicator_type.pk
-        if indicator:
-            filters['indicator'] = indicator.pk
-
-        indicators = Indicator.objects \
-            .select_related('sector') \
-            .prefetch_related('indicator_type', 'level', 'program') \
-            .filter(**filters) \
-            .annotate(actuals=Sum('result__achieved'))
-
-        context['data'] = indicators
-        context['getIndicators'] = Indicator.objects \
-            .filter(program__country__in=countries) \
-            .exclude(result__isnull=True)
-
-        context['getPrograms'] = Program.objects \
-            .filter(funding_status="Funded", country__in=countries).distinct()
-
-        context['getIndicatorTypes'] = IndicatorType.objects.all()
-        context['program'] = program
-        context['export_to_pdf_url'] = True
-        return context
-
-
 class IndicatorExport(LoginRequiredMixin, View):
     """
     Export all indicators to an XLS file
@@ -1636,36 +1349,6 @@ class IndicatorExport(LoginRequiredMixin, View):
         return response
 
 
-class IndicatorDataExport(LoginRequiredMixin, View):
-    """
-    Export all indicators to a CSV file
-    """
-
-    def get(self, request, *args, **kwargs):
-        if int(kwargs['indicator']) == 0:
-            del kwargs['indicator']
-        if int(kwargs['program']) == 0:
-            del kwargs['program']
-        if int(kwargs['type']) == 0:
-            del kwargs['type']
-        else:
-            kwargs['indicator__indicator_type__id'] = kwargs['type']
-            del kwargs['type']
-
-        countries = getCountry(request.user)
-        queryset = Result.objects \
-            .filter(**kwargs) \
-            .filter(indicator__program__country__in=countries)
-
-        dataset = ResultResource().export(queryset)
-        response = HttpResponse(dataset.csv,
-                                content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; \
-            filename=indicator_data.csv'
-        return response
-
-
-@login_required
 def api_indicator_view(request, indicator_id):
     """
     API call for viewing an indicator for the program page

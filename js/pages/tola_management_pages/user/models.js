@@ -181,10 +181,15 @@ export class UserStore {
     }
 
     onSaveErrorHandler(message) {
-        PNotify.error({text: message || gettext('Saving Failed'), delay: 5000});
+        PNotify.error({
+            // # Translators: Saving to the server failed
+            text: message || gettext('Saving Failed'),
+            delay: 5000
+        });
     }
 
     onSaveSuccessHandler(message) {
+        // # Translators: Saving to the server succeeded
         PNotify.success({text: message || gettext('Successfully Saved'), delay: 5000})
     }
 
@@ -428,9 +433,11 @@ export class UserStore {
         api.resendRegistrationEmail(user_id).then(result => {
             runInAction(() => {
                 this.saving_user_profile = false
+                // # Translators: An email was sent to the user to verify that the email address is valid
                 this.onSaveSuccessHandler(gettext("Verification email sent"))
             })
         }).catch(() => {
+            // # Translators: Sending an email to the user did not work
             this.onSaveSuccessHandler(gettext("Verification email send failed"))
         })
     }

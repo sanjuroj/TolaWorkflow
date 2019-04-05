@@ -9,6 +9,7 @@ import EditDisaggregations from './components/edit_disaggregations'
 import EditObjectives from './components/edit_objectives'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const CountryFilter = observer(({store, filterOptions}) => {
     return <div className="form-group">
@@ -65,6 +66,9 @@ export const IndexView = observer(
                 </div>
             </FoldingSidebar>
             <div className="col admin-list">
+                <header className="page-title">
+                    <h1>{gettext("Admin:")} <small>{gettext("Countries")}</small></h1>
+                </header>
                 <div className="admin-list__controls">
                     <div className="controls__bulk-actions"></div>
                     {store.is_superuser &&
@@ -149,9 +153,14 @@ export const IndexView = observer(
                                     <Col size="0.2">
                                     </Col>
                                     <Col size="2" className="td--stretch">
-                                        <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                            <i className="fas fa-globe"/>&nbsp;
-                                            {data.country || "---"}
+                                        <div className="expando-toggle icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
+                                            <div className="expando-toggle__icon">
+                                                <FontAwesomeIcon icon={(store.editing_target == data.id) ? 'caret-down' : 'caret-right'} />
+                                            </div>
+                                            <div className="expando-toggle__label">
+                                                <i className="fas fa-globe"/>&nbsp;
+                                                {data.country || "---"}
+                                            </div>
                                         </div>
                                     </Col>
                                     <Col className="text-nowrap">

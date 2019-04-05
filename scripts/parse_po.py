@@ -57,6 +57,8 @@ msgstr ""
             for row in csvreader:
                 if row[1] == 'English - Plural':
                     continue
+                if row[6]:
+                    pofile.write('{}\n'.format(row[6].encode('utf-8')))
                 pofile.write('msgid "{}"\n'.format(row[0].encode('utf-8')))
                 # If the second column has a value, it's a plurlalized translations
                 if len(row[1]) > 0:

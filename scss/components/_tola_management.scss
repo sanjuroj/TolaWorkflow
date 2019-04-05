@@ -236,7 +236,9 @@ table.admin-list__table {
     }
 }
 
-.edit-strategic-objective__row, .edit-disaggregation__row {
+.edit-strategic-objective__row,
+.edit-disaggregation__row {
+    // See .row-expand below
     display: flex;
 
     .row-expand__toggle {
@@ -260,6 +262,20 @@ table.admin-list__table {
     .right-buttons {
         margin-left: auto;
     }
+}
+
+// expand/collapse toggles
+// TODO: Lots of overlap here with other implementations
+.expando-toggle {
+    display: flex;
+}
+.expando-toggle__icon {
+    flex-basis: 1em;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+.expando-toggle__label {
+    flex-grow: 1; // ?
 }
 
 // management lists

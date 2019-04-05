@@ -217,7 +217,6 @@ $(document).ready(function() {
         $('.collapse').removeClass('in');
         $(location.hash + '.collapse').collapse('show');
         indicator_id = location.hash.split('-')
-        //loadIndicators(indicator_id[1])
     }
 
 });

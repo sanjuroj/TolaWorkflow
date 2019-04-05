@@ -297,8 +297,8 @@ window.newPopup = newPopup;
 
 // EXAMPLE: <a onclick="newPopup('https://docs.google.com/document/d/1tDwo3m1ychefNiAMr-8hCZnhEugQlt36AOyUYHlPbVo/edit?usp=sharing','Form Help/Guidance'); return false;" href="#" class="btn btn-sm btn-info">Form Help/Guidance</a>
 
-const DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in an audit log. Please record your rationale for future reference.")
-const DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in an audit log. Please record your rationale for future reference.')
+const DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.")
+const DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.')
 
 const create_changeset_notice = ({
     message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE,

@@ -162,7 +162,7 @@ def has_site_write_access(func):
             ).exists() or request.user.is_superuser
             if request.method == 'GET':
                 return func(request, *args, **kwargs)
-            elif request.method == 'POST' and write_access:
+            elif request.method == 'POST' and request.has_write_access:
                 return func(request, *args, **kwargs)
             else:
                 raise PermissionDenied

@@ -17,7 +17,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('indicators', '0041_lop_to_numeric'),
-        ('reports', '0001_initial')
     ]
 
     operations = [
