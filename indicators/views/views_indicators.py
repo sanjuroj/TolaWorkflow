@@ -90,7 +90,7 @@ def indicator_create(request, program=0):
     get_services = ExternalService.objects.all()
 
     if request.method == 'POST':
-        indicator_type = IndicatorType.objects.get(indicator_type="custom")
+        indicator_type, created = IndicatorType.objects.get_or_create(indicator_type="custom")
         program = Program.objects.get(id=request.POST['program'])
         service = request.POST['services']
         level = None
@@ -274,11 +274,11 @@ class IndicatorUpdate(LoginRequiredMixin, UpdateView):
 
     def form_invalid(self, form):
         if self.request.is_ajax():
-            print("...............%s.........................." % form.errors)
+            # print("...............%s.........................." % form.errors)
             return HttpResponse(status=400)
         else:
             messages.error(self.request, _('Invalid Form'), fail_silently=False)
-            print("...............%s.........................." % form.errors)
+            # print("...............%s.........................." % form.errors)
             return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form, **kwargs):
