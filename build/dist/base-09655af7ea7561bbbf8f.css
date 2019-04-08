@@ -8462,6 +8462,7 @@ span[data-toggle="popover"]:hover {
   margin-top: 15px; }
 
 .controls__bulk-actions {
+  align-items: flex-start;
   display: flex;
   flex-grow: 1; }
 
@@ -9206,5 +9207,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-7e4ccd46a94c9a08f838.css.map*/
