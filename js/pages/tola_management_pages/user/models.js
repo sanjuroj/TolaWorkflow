@@ -57,6 +57,15 @@ export class UserStore {
     @observable user_selections = []
     @observable program_bulk_selections = []
 
+    @observable unsaved_changes_actions = {
+        save: () => {},
+        discard: () => {}
+    }
+
+    @observable active_editor_pane = 'profile'
+
+    active_pane_is_dirty = false
+
     country_role_choices = []
     program_role_choices = []
 
@@ -161,6 +170,10 @@ export class UserStore {
         }, {})
     }
 
+    dirtyConfirm() {
+        return !this.active_pane_is_dirty || (this.active_pane_is_dirty && confirm(gettext("You have unsaved changes. Are you sure you want to discard them?")))
+    }
+
     getSelectedBulkTargetIDs() {
         return [...this.bulk_targets.entries()]
             .filter(([_, selected]) => selected)
@@ -185,24 +198,40 @@ export class UserStore {
     }
 
     @action
+    onProfilePaneChange(new_pane) {
+        if(this.dirtyConfirm()) {
+            this.active_editor_pane = new_pane
+            this.active_pane_is_dirty = false
+        }
+    }
+
+    setActiveFormIsDirty(is_dirty) {
+        this.active_pane_is_dirty = is_dirty
+    }
+
+    @action
     fetchUsers() {
-        this.fetching_users_listing = true
-        api.fetchUsersWithFilter(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(results => {
-            runInAction(() => {
-                this.fetching_users_listing = false
-                this.users = results.users.reduce((xs, x) => {
-                    xs[x.id] = x
-                    return xs
-                }, {})
-                this.users_listing = results.users.map(u => u.id)
-                this.bulk_targets_all = false
-                this.bulk_targets = new Map()
-                this.users_count = results.total_users
-                this.total_pages = results.total_pages
-                this.next_page = results.next_page
-                this.previous_page = results.previous_page
+        if(this.dirtyConfirm()) {
+            this.fetching_users_listing = true
+            api.fetchUsersWithFilter(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(results => {
+                runInAction(() => {
+                    this.active_editor_pane = 'profile'
+                    this.active_pane_is_dirty = false
+                    this.fetching_users_listing = false
+                    this.users = results.users.reduce((xs, x) => {
+                        xs[x.id] = x
+                        return xs
+                    }, {})
+                    this.users_listing = results.users.map(u => u.id)
+                    this.bulk_targets_all = false
+                    this.bulk_targets = new Map()
+                    this.users_count = results.total_users
+                    this.total_pages = results.total_pages
+                    this.next_page = results.next_page
+                    this.previous_page = results.previous_page
+                })
             })
-        })
+        }
     }
 
     @action
@@ -278,61 +307,71 @@ export class UserStore {
 
     @action
     toggleEditingTarget(user_id) {
-        this.editing_errors = {}
-        this.editing_target_data = {...default_editing_target_data}
-        if(this.editing_target == 'new') {
-            this.users_listing.shift()
-        }
+        if(this.dirtyConfirm()) {
+            this.editing_errors = {}
+            this.editing_target_data = {...default_editing_target_data}
+            this.active_pane_is_dirty = false
+            if(this.editing_target == 'new') {
+                this.users_listing.shift()
+            }
+            this.active_editor_pane = 'profile'
 
-        if(this.editing_target == user_id) {
-            this.editing_target = null
-        } else {
-            this.editing_target = user_id
-            this.fetching_editing_target = true
-            Promise.all([api.fetchUser(user_id), api.fetchUserProgramAccess(user_id), api.fetchUserHistory(user_id)]).then(([user, access_data, history_data]) => {
-                runInAction(() => {
-                    this.fetching_editing_target = false
-                    this.editing_target_data = {
-                        profile: user,
-                        access: access_data,
-                        history: history_data
-                    }
+            if(this.editing_target == user_id) {
+                this.editing_target = null
+            } else {
+                this.editing_target = user_id
+                this.fetching_editing_target = true
+                Promise.all([api.fetchUser(user_id), api.fetchUserProgramAccess(user_id), api.fetchUserHistory(user_id)]).then(([user, access_data, history_data]) => {
+                    runInAction(() => {
+                        this.fetching_editing_target = false
+                        this.editing_target_data = {
+                            profile: user,
+                            access: access_data,
+                            history: history_data
+                        }
+                    })
                 })
-            })
+            }
         }
     }
 
     @action
     updateActiveEditPage(section_name) {
         this.active_edit_page = section_name
+        this.active_pane_is_dirty = false
     }
 
     @action
     createUser() {
-        this.editing_errors = {}
-        if(this.editing_target == 'new') {
-            this.users_listing.shift()
+        if(this.dirtyConfirm()) {
+            this.editing_errors = {}
+            this.active_pane_is_dirty = false
+            this.active_editor_pane = 'profile'
+            if(this.editing_target == 'new') {
+                this.users_listing.shift()
+            }
+
+            this.editing_target_data = {...default_editing_target_data}
+
+            this.users["new"] = {
+                id: "new",
+                name: "",
+                organization_name: "",
+                user_programs: 0,
+                is_admin: false,
+                is_active: false
+            }
+
+            this.users_listing.unshift("new")
+            this.editing_target = 'new'
         }
-
-        this.editing_target_data = {...default_editing_target_data}
-
-        this.users["new"] = {
-            id: "new",
-            name: "",
-            organization_name: "",
-            user_programs: 0,
-            is_admin: false,
-            is_active: false
-        }
-
-        this.users_listing.unshift("new")
-        this.editing_target = 'new'
     }
 
     @action
     updateUserProfile(user_id, new_user_data) {
         this.saving_user_profile = true
         this.editing_errors = {}
+        this.active_pane_is_dirty = false
         api.saveUserProfile(user_id, new_user_data).then(result => Promise.all([api.fetchUserAggregates(result.id), api.fetchUserHistory(result.id)]).then(([aggregates, history]) => {
             this.onSaveSuccessHandler()
             runInAction(() => {
@@ -345,6 +384,7 @@ export class UserStore {
                     is_admin: result.user.is_staff,
                     is_active: result.user.is_active
                 }
+                this.active_pane_is_dirty = false
                 this.editing_target_data.profile = result
                 this.editing_target_data.history = history
             })
@@ -361,6 +401,7 @@ export class UserStore {
     updateUserIsActive(user_id, new_user_data) {
         this.saving_user_profile = true
         this.editing_errors = {}
+        this.active_pane_is_dirty = false
         api.updateUserIsActive(user_id, new_user_data).then(result => Promise.all([api.fetchUserAggregates(user_id), api.fetchUserHistory(user_id)]).then(([aggregates, history]) => {
             this.onSaveSuccessHandler()
             runInAction(() => {
@@ -373,6 +414,7 @@ export class UserStore {
                     is_admin: result.user.is_staff,
                     is_active: result.user.is_active
                 }
+                this.active_pane_is_dirty = false
                 this.editing_target_data.profile = result
                 this.editing_target_data.history = history
             })
@@ -404,6 +446,7 @@ export class UserStore {
     saveNewUser(new_user_data) {
         this.saving_user_profile = true
         this.editing_errors = {}
+        this.active_pane_is_dirty = false
         api.createUser(new_user_data).then(result => api.fetchUserAggregates(result.id).then(aggregates => {
             this.onSaveSuccessHandler()
             runInAction(() => {
@@ -416,6 +459,7 @@ export class UserStore {
                     is_admin: result.user.is_staff,
                     is_active: result.user.is_active
                 }
+                this.active_pane_is_dirty = false
                 this.user_selections.push({value: result.id, label: result.name})
                 this.users_listing[0] = result.id
                 this.editing_target = null
@@ -435,6 +479,7 @@ export class UserStore {
     saveNewUserAndAddAnother(new_user_data) {
         this.saving_user_profile = true
         this.editing_errors = {}
+        this.active_pane_is_dirty = false
         api.createUser(new_user_data).then(result => api.fetchUserAggregates(result.id).then(aggregates => {
             this.onSaveSuccessHandler()
             runInAction(() => {
@@ -447,6 +492,7 @@ export class UserStore {
                     is_admin: result.user.is_staff,
                     is_active: result.user.is_active
                 }
+                this.active_pane_is_dirty = false
                 this.users_listing[0] = result.id
                 delete this.users["new"]
                 this.createUser()
@@ -463,12 +509,14 @@ export class UserStore {
     @action
     saveUserPrograms(user_id, new_user_programs_data) {
         this.saving_user_programs = true
+        this.active_pane_is_dirty = false
         api.saveUserPrograms(user_id, new_user_programs_data).then(result => Promise.all([api.fetchUserAggregates(user_id), api.fetchUserHistory(user_id), api.fetchUserProgramAccess(user_id)]).then(([aggregates, history, access]) => {
             runInAction(() => {
                 this.saving_user_programs = false
                 this.users[user_id].user_programs = aggregates.program_count
                 this.editing_target_data.history = history
                 this.editing_target_data.access = access
+                this.active_pane_is_dirty = false
             })
             this.onSaveSuccessHandler()
         })).catch(errors => {

@@ -57,6 +57,10 @@ export class OrganizationStore {
         {value: 0, label: gettext('Inactive')}
     ]
 
+    @observable active_editor_pane = 'profile'
+
+    active_pane_is_dirty = false
+
     constructor(programs, organizations, sectors, countries, country_filter, program_filter) {
         this.available_programs = programs
         this.available_organizations = organizations
@@ -101,23 +105,43 @@ export class OrganizationStore {
         PNotify.success({text: gettext('Successfully Saved'), delay: 5000})
     }
 
+    dirtyConfirm() {
+        return !this.active_pane_is_dirty || (this.active_pane_is_dirty && confirm(gettext("You have unsaved changes. Are you sure you want to discard them?")))
+    }
+
+    @action
+    onProfilePaneChange(new_pane) {
+        if(this.dirtyConfirm()) {
+            this.active_editor_pane = new_pane
+            this.active_pane_is_dirty = false
+        }
+    }
+
+    setActiveFormIsDirty(is_dirty) {
+        this.active_pane_is_dirty = is_dirty
+    }
+
     @action
     fetchOrganizations() {
-        this.fetching = true
+        if(this.dirtyConfirm()) {
+            this.fetching = true
 
-        api.fetchOrganizationsWithFilter(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(results => {
-            runInAction(() => {
-                this.fetching = false
-                this.organizations = results.organizations.reduce((xs, x) => {
-                    xs[x.id] = x
-                    return xs
-                }, {})
-                this.organizations_listing = results.organizations.map(o => o.id)
-                this.organizations_count = results.total_organizations
-                this.total_pages = results.total_pages
-                this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]))
+            api.fetchOrganizationsWithFilter(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(results => {
+                runInAction(() => {
+                    this.active_editor_pane = 'profile'
+                    this.active_pane_is_dirty = false
+                    this.fetching = false
+                    this.organizations = results.organizations.reduce((xs, x) => {
+                        xs[x.id] = x
+                        return xs
+                    }, {})
+                    this.organizations_listing = results.organizations.map(o => o.id)
+                    this.organizations_count = results.total_organizations
+                    this.total_pages = results.total_pages
+                    this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]))
+                })
             })
-        })
+        }
     }
 
     @action
@@ -129,21 +153,25 @@ export class OrganizationStore {
 
     @action
     createOrganization() {
-        const new_organization = {
-            id: "new",
-            name: "",
-            program_count: 0,
-            user_count: 0,
-            is_active: false
-        }
-        if(this.editing_target !== "new") {
-            this.organizations_listing.unshift("new")
-        }
+        if(this.dirtyConfirm()) {
+            const new_organization = {
+                id: "new",
+                name: "",
+                program_count: 0,
+                user_count: 0,
+                is_active: false
+            }
+            if(this.editing_target !== "new") {
+                this.organizations_listing.unshift("new")
+            }
 
-        this.editing_errors = {}
-        this.organizations["new"] = new_organization
-        this.editing_target = new_organization.id
-        this.editing_target_data = {...default_organization}
+            this.editing_errors = {}
+            this.organizations["new"] = new_organization
+            this.editing_target = new_organization.id
+            this.editing_target_data = {...default_organization}
+            this.active_pane_is_dirty = false
+            this.active_editor_pane = 'profile'
+        }
     }
 
     @action
@@ -152,9 +180,9 @@ export class OrganizationStore {
         api.updateOrganization(id, new_data).then(updated_data => api.fetchOrganizationAggregates(id).then(aggregates => {
             runInAction(() => {
                 this.saving = false
+                this.active_pane_is_dirty = false
+                this.editing_target_data = updated_data
                 this.updateLocalOrganization(id, updated_data, aggregates)
-                this.editing_target = null
-                this.editing_target_data = {...default_organization}
             })
             this.onSaveSuccessHandler()
         })).catch((error) => {
@@ -177,9 +205,10 @@ export class OrganizationStore {
                 this.organizations_listing.shift()
                 delete this.organizations["new"]
                 this.organizations_listing.unshift(result.id)
-                this.editing_target = null
-                this.editing_target_data = {...default_organization}
+                this.editing_target = result.id
+                this.editing_target_data = result
                 this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]))
+                this.active_pane_is_dirty = false
             })
             this.onSaveSuccessHandler()
         }).catch(error => {
@@ -205,6 +234,8 @@ export class OrganizationStore {
                 this.editing_target = null
                 this.editing_target_data = {...default_organization}
                 this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]))
+                this.active_pane_is_dirty = false
+                this.createOrganization()
             })
             this.onSaveSuccessHandler()
         }).catch(error => {
@@ -265,26 +296,31 @@ export class OrganizationStore {
 
     @action
     toggleEditingTarget(organization_id) {
-        this.editing_target_data = {...default_organization}
-        this.editing_errors = {}
+        if(this.dirtyConfirm()) {
+            this.editing_target_data = {...default_organization}
+            this.editing_errors = {}
 
-        if(this.editing_target == "new") {
-            this.organizations_listing.shift()
-        }
+            if(this.editing_target == "new") {
+                this.organizations_listing.shift()
+            }
 
-        if(this.editing_target == organization_id) {
-            this.editing_target = false
-        } else {
-            this.editing_target = organization_id
-            this.fetching_editing_target = true
-            if(!(this.editing_target == 'new')) {
-                Promise.all([api.fetchOrganization(organization_id), api.fetchOrganizationHistory(organization_id)]).then(([organization, history]) => {
-                    runInAction(() => {
-                        this.fetching_editing_target = false
-                        this.editing_target_data = organization
-                        this.editing_target_history = history
+            this.active_editor_pane = 'profile'
+            this.active_pane_is_dirty = false
+
+            if(this.editing_target == organization_id) {
+                this.editing_target = false
+            } else {
+                this.editing_target = organization_id
+                this.fetching_editing_target = true
+                if(!(this.editing_target == 'new')) {
+                    Promise.all([api.fetchOrganization(organization_id), api.fetchOrganizationHistory(organization_id)]).then(([organization, history]) => {
+                        runInAction(() => {
+                            this.fetching_editing_target = false
+                            this.editing_target_data = organization
+                            this.editing_target_history = history
+                        })
                     })
-                })
+                }
             }
         }
     }

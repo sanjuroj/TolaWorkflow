@@ -143,7 +143,6 @@ class BulkActions extends React.Component {
     }
 }
 
-
 export const IndexView = observer(
     ({store}) => {
 
@@ -229,13 +228,16 @@ export const IndexView = observer(
                             Row={({Col, Row, data}) =>
                             <Row
                                 expanded={data.id == store.editing_target}
-                                Expando={({Wrapper}) =>
+                                Expando={observer(({Wrapper}) =>
                                     <Wrapper>
                                         <ProgramEditor
                                             new={data.id == 'new'}
+                                            active_pane={store.active_editor_pane}
+                                            notifyPaneChange={(new_pane) => store.onProfilePaneChange(new_pane)}
                                             ProfileSection={observer(() =>
                                                 <LoadingSpinner isLoading={store.saving}>
                                                     <EditProgramProfile
+                                                        onIsDirtyChange={is_dirty => store.setActiveFormIsDirty(is_dirty)}
                                                         new={data.id == 'new'}
                                                             program_data={data}
                                                             onUpdate={(id, data) => store.updateProgram(id, data)}
@@ -248,6 +250,7 @@ export const IndexView = observer(
                                             HistorySection={observer(() =>
                                                 <LoadingSpinner isLoading={store.saving}>
                                                     <ProgramHistory
+                                                        onIsDirtyChange={is_dirty => store.setActiveFormIsDirty(is_dirty)}
                                                         program_data={data}
                                                         fetching_history={store.fetching_editing_history}
                                                         history={store.editing_history}
@@ -257,7 +260,7 @@ export const IndexView = observer(
                                             )}
                                         />
                                     </Wrapper>
-                                }>
+                                )}>
                                     <Col size="0.5">
                                             <input type="checkbox" disabled={data.id=='new'} checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
                                     </Col>

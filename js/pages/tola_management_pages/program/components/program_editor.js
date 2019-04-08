@@ -3,24 +3,18 @@ import { observer } from "mobx-react"
 
 @observer
 export default class ProgramEditor extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            active_page: 'profile'
-        }
-    }
 
     updateActivePage(new_page) {
         if(!this.props.new) {
-            this.setState({active_page: new_page})
+            this.props.notifyPaneChange(new_page)
         }
     }
 
     render() {
-        const {ProfileSection, HistorySection} = this.props
+        const {ProfileSection, HistorySection, active_pane} = this.props
 
-        const profile_active_class = (this.state.active_page == 'profile')?'active':''
-        const history_active_class = (this.state.active_page == 'status_and_history')?'active':''
+        const profile_active_class = (active_pane == 'profile')?'active':''
+        const history_active_class = (active_pane == 'status_and_history')?'active':''
         const new_class = (this.props.new)?'disabled':''
 
         return (
@@ -40,11 +34,11 @@ export default class ProgramEditor extends React.Component {
                     </li>
                 </ul>
                 <div className="tab-content">
-                    {this.state.active_page == 'profile' &&
+                    {active_pane == 'profile' &&
                     <ProfileSection />
                     }
 
-                    {this.state.active_page == 'status_and_history' &&
+                    {active_pane == 'status_and_history' &&
                     <HistorySection />
                     }
                 </div>
