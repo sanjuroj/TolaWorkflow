@@ -275,3 +275,36 @@ class TestIPTTExcelEndpoint(EndpointTestBase, test.TestCase):
     def test_http_methods(self):
         self.run_get_tests()
         self.run_post_tests()
+
+class TestPinnedReportEndpoint(EndpointTestBase, test.TestCase):
+    url = 'create_pinned_report'
+    url_kwargs = {}
+    access_level = 'low'
+    post_data = {
+        'name': 'Test',
+        'program': None,
+        'query_string': 'test',
+        'report_type': 'test'
+    }
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_post_tests()
+
+
+class TestPinnedReportDeleteEndpoint(EndpointTestBase, test.TestCase):
+    url = 'delete_pinned_report'
+    url_kwargs = {}
+    access_level = 'low'
+    post_data = {
+        'pinned_report_id': None
+    }
+    delete = 'pinned_report'
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_post_tests()

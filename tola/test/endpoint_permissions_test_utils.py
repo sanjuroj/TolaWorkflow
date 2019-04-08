@@ -204,6 +204,14 @@ class EndpointTestContext(object):
             achieved=100
         )
 
+    def add_pinned_report(self, tolauser, out=True):
+        program = self.program_out_of_country if out else self.program_in_country
+        pinned_report = i_factories.PinnedReportFactory(
+            tola_user=tolauser,
+            program=program
+        )
+        return pinned_report.pk
+
     @property
     def high_users(self):
         for user in [self.mercy_corps_high,
@@ -404,6 +412,9 @@ class EndpointTestBase(object):
             self.context.add_results()
         if 'program' in self.post_data:
             self.post_data['program'] = self.context.program_out_of_country.pk
+        if self.delete == 'pinned_report':
+            self.post_data['pinned_report_id'] = self.context.add_pinned_report(
+                self.context.mercy_corps_super_admin, True)
         response = fetch_method(self.context.mercy_corps_super_admin, self.get_out_url())
         self.assert_post_passes(response, 'superuser should be able to {0} to {1}'.format(method, self.get_out_url()))
         # ensure all users cannot access:
@@ -412,6 +423,8 @@ class EndpointTestBase(object):
                 self.context.add_periodic_targets()
             if self.delete == 'result':
                 self.context.add_results()
+            if self.delete == 'pinned_report':
+                self.post_data['pinned_report_id'] = self.context.add_pinned_report(user, True)
             response = fetch_method(user, self.get_out_url())
             self.assert_forbidden(
                 response, 'user not assigned to country should redirect from {}'.format(self.get_out_url()))
@@ -430,6 +443,10 @@ class EndpointTestBase(object):
             self.context.add_results()
         if 'program' in self.post_data:
             self.post_data['program'] = self.context.program_in_country.pk
+        if self.delete == 'pinned_report':
+            self.post_data['pinned_report_id'] = self.context.add_pinned_report(
+                self.context.mercy_corps_super_admin, False
+            )
         response = fetch_method(self.context.mercy_corps_super_admin, self.get_in_url())
         self.assert_post_passes(response, 'superuser should be able to {0} to {1}'.format(
             method, self.get_in_url()))
@@ -439,6 +456,8 @@ class EndpointTestBase(object):
                 self.context.add_periodic_targets()
             if self.delete == 'result':
                 self.context.add_results()
+            if self.delete == 'pinned_report':
+                self.post_data['pinned_report_id'] = self.context.add_pinned_report(user, False)
             response = fetch_method(user, self.get_in_url())
             self.assert_post_passes(response, 'user level {0} should have {1} access to {2}'.format(
                 level, method, self.get_in_url()))
@@ -447,6 +466,8 @@ class EndpointTestBase(object):
                 self.context.add_periodic_targets()
             if self.delete == 'result':
                 self.context.add_results()
+            if self.delete == 'pinned_report':
+                self.post_data['pinned_report_id'] = self.context.add_pinned_report(user, False)
             response = fetch_method(user, self.get_in_url())
             self.assert_forbidden(response, 'user level {0} should not have {1} access to {2}'.format(
                 level, method, self.get_in_url()))
