@@ -155,7 +155,6 @@ class TestDisaggregationReportEndpoint(EndpointTestBase, test.TestCase):
     url = 'disrep'
     url_kwargs = {'program': None}
     access_level = 'low'
-    redirect = True
 
     def setUp(self):
         self.init()
@@ -168,7 +167,6 @@ class TestDisaggregationPrintReportEndpoint(EndpointTestBase, test.TestCase):
     url = 'disrepprint'
     url_kwargs = {'program': None}
     access_level = 'low'
-    redirect = True
 
     def setUp(self):
         self.init()
@@ -181,7 +179,6 @@ class TestIndicatorPlanEndpoint(EndpointTestBase, test.TestCase):
     url = 'indicator_plan'
     url_kwargs = {'program': None}
     access_level = 'low'
-    redirect = True
 
     def setUp(self):
         self.init()
@@ -194,7 +191,6 @@ class TestIndicatorPlanExportEndpoint(EndpointTestBase, test.TestCase):
     url = 'indicator_export'
     url_kwargs  = {'program': None}
     access_level = 'low'
-    redirect = True
 
     def setUp(self):
         self.init()
