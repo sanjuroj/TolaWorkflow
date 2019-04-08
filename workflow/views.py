@@ -80,7 +80,9 @@ from tola_management.permissions import (
     has_site_delete_access,
     has_site_write_access,
     has_program_write_access,
-    has_projects_access)
+    has_projects_access,
+    verify_program_access_level
+)
 
 APPROVALS = (
     ('in_progress',('in progress')),
@@ -860,6 +862,7 @@ def documentation_list(request):
     })
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class DocumentationAgreementList(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     """
        Documentation Modal List
@@ -878,6 +881,7 @@ class DocumentationAgreementList(LoginRequiredMixin, AjaxableResponseMixin, Crea
         return render(request, self.template_name, {'getPrograms': getPrograms, 'getDocumentation': getDocumentation})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class DocumentationAgreementCreate(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     """
     Documentation Form
@@ -932,6 +936,7 @@ class DocumentationAgreementCreate(LoginRequiredMixin, AjaxableResponseMixin, Cr
     form_class = DocumentationForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class DocumentationAgreementUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     """
     Documentation Form
@@ -977,6 +982,7 @@ class DocumentationAgreementUpdate(LoginRequiredMixin, AjaxableResponseMixin, Up
     form_class = DocumentationForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class DocumentationAgreementDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     """
     Documentation Delete popup window
@@ -2451,6 +2457,7 @@ def reportingperiod_update(request, pk):
 @login_required
 @api_view(['GET'])
 def dated_target_info(request, pk):
+    verify_program_access_level(request, pk, 'low')
     return Response({
         'max_start_date': Program.objects.filter(id=pk).annotate(
             ptd=Max('indicator__periodictargets__start_date')).values_list('ptd', flat=True)[0]})
