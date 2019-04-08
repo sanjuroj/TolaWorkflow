@@ -345,11 +345,11 @@ const create_changeset_notice = ({
                             textarea.parent().find('.invalid-feedback').remove();
                             if(!rationale) {
                                 textarea.addClass('is-invalid');
-                                textarea.parent().append(`
-                                    <div class="invalid-feedback">
-                                        Results have been recorded. Rationale is required.
-                                    </div>
-                                `);
+                                textarea.parent().append(
+                                    '<div class="invalid-feedback">'
+                                    + gettext('Rationale is required.')
+                                    + '</div>'
+                                );
                                 return false;
                             } else {
                                 textarea.removeClass('is-invalid');
