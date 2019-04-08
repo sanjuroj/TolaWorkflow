@@ -37,7 +37,8 @@ from indicators.views.view_utils import (
     handleDataCollectedRecords,
     import_indicator,
     generate_periodic_targets,
-    generate_periodic_target_single
+    generate_periodic_target_single,
+    dictfetchall
 )
 from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
@@ -860,7 +861,7 @@ def service_json(request, service):
 
 
 @login_required
-@has_result_read_access
+@indicator_adapter(has_result_read_access)
 def result_view(request, indicator, program):
     """Returns the results table for an indicator - used to expand rows on the Program Page"""
     indicator = ResultsIndicator.results_view.get(pk=indicator)
@@ -907,81 +908,6 @@ def indicator_plan(request, program):
         'rows': [ip.row(i) for i in indicators]
     })
 
-
-class ResultReportData(LoginRequiredMixin, View, AjaxableResponseMixin):
-    """
-    This is the Result reports data in JSON format for a specific
-    indicator
-    """
-
-    def get(self, request, *args, **kwargs):
-        countries = getCountry(request.user)
-        program = kwargs['program']
-        indicator = kwargs['indicator']
-        type = kwargs['type']
-
-        q = {'program__id__isnull': False}
-        # if we have a program filter active
-        if int(program) != 0:
-            q = {
-                'indicator__program__id': program,
-            }
-        # if we have an indicator type active
-        if int(type) != 0:
-            r = {
-                'indicator__indicator_type__id': type,
-            }
-            q.update(r)
-        # if we have an indicator id append it to the query filter
-        if int(indicator) != 0:
-            s = {
-                'indicator__id': indicator,
-            }
-            q.update(s)
-
-        getResult = Result.objects \
-            .select_related('periodic_target') \
-            .prefetch_related('evidence', 'indicator', 'program',
-                              'indicator__objectives',
-                              'indicator__strategic_objectives') \
-            .filter(program__country__in=countries) \
-            .filter(**q) \
-            .order_by('indicator__program__name', 'indicator__number') \
-            .values(
-                'id', 'indicator__id', 'indicator__name',
-                'indicator__program__id', 'indicator__program__name',
-                'indicator__indicator_type__indicator_type',
-                'indicator__indicator_type__id', 'indicator__level__name',
-                'indicator__sector__sector', 'date_collected',
-                'indicator__baseline', 'indicator__lop_target',
-                'indicator__key_performance_indicator',
-                'indicator__external_service_record__external_service__name',
-                'evidence', 'tola_table', 'periodic_target', 'achieved')
-
-        result_sum = Result.objects \
-            .select_related('periodic_target') \
-            .filter(program__country__in=countries) \
-            .filter(**q) \
-            .aggregate(Sum('periodic_target__target'), Sum('achieved'))
-
-        # datetime encoding breaks without using this
-        from django.core.serializers.json import DjangoJSONEncoder
-        result_serialized = json.dumps(list(getResult),
-                                          cls=DjangoJSONEncoder)
-        final_dict = {
-            'result': result_serialized,
-            'result_sum': result_sum
-        }
-        return JsonResponse(final_dict, safe=False)
-
-
-def dictfetchall(cursor):
-    "Return all rows from a cursor as a dict"
-    columns = [col[0] for col in cursor.description]
-    return [
-        dict(zip(columns, row))
-        for row in cursor.fetchall()
-    ]
 
 
 @login_required

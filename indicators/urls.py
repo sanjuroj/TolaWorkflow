@@ -13,7 +13,6 @@ from .views.views_indicators import (
     ResultUpdate,
     ResultDelete,
     IndicatorExport,
-    ResultReportData,
     service_json,
     PeriodicTargetView,
     PeriodicTargetDeleteView,
@@ -65,22 +64,17 @@ urlpatterns = [
 
     url(r'^service/(?P<service>[-\w]+)/service_json/', service_json, name='service_json'),
 
-    url(r'^result_table/(?P<indicator>\d+)/(?P<program>\d+)/',
+    url(r'^result_table/(?P<indicator>\d+)/',
         result_view, name='result_view'),
-
-    url(r'^result_report_data/(?P<program>\d+)/(?P<indicator>\d+)/'
-        r'(?P<type>\d+)/$',
-        ResultReportData.as_view(),
-        name='result_report_data'),
 
     url(r'^iptt_quickstart/', IPTTReportQuickstartView.as_view(), name='iptt_quickstart'),
 
-    url(r'^iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ReportView.as_view(), name='iptt_report'),
+    url(r'^iptt_report/(?P<program>\d+)/(?P<reporttype>\w+)/$', IPTT_ReportView.as_view(), name='iptt_report'),
 
-    url(r'^iptt_redirect/(?P<program_id>\d+)/$', IPTT_ReportIndicatorsWithVariedStartDate.as_view(),
+    url(r'^iptt_redirect/(?P<program>\d+)/$', IPTT_ReportIndicatorsWithVariedStartDate.as_view(),
         name='iptt_redirect'),
 
-    url(r'^iptt_excel/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_ExcelExport.as_view(), name='iptt_excel'),
+    url(r'^iptt_excel/(?P<program>\d+)/(?P<reporttype>\w+)/$', IPTT_ExcelExport.as_view(), name='iptt_excel'),
 
     url(r'^pinned_report/$', create_pinned_report, name='create_pinned_report'),
     url(r'^pinned_report/delete/$', delete_pinned_report, name='delete_pinned_report'),

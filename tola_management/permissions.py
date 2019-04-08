@@ -113,7 +113,7 @@ def user_has_program_roles(user, programs, roles):
 
 def has_iptt_read_access(func):
     def wrapper(request, *args, **kwargs):
-        program = kwargs['program_id']
+        program = kwargs['program']
 
         if user_has_program_access(request.user, program) or request.user.is_superuser:
             return func(request, *args, **kwargs)

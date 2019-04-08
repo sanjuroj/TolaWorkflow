@@ -625,7 +625,7 @@ class IPTT_Mixin(object):
 
         # get the program (url parameter)
         try:
-            self.program = Program.objects.get(pk=kwargs.get('program_id'))
+            self.program = Program.objects.get(pk=kwargs.get('program'))
         except Program.DoesNotExist:
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid program."))
@@ -725,8 +725,9 @@ def set_cell_value(cell, value, percent=False):
 
 
 
+@method_decorator(login_required, name='dispatch')
 @method_decorator(has_iptt_read_access, name='dispatch')
-class IPTT_ExcelExport(LoginRequiredMixin, IPTT_Mixin, TemplateView):
+class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
     # TODO: should be localize dates in the Excel format
     headers = ['Program ID', 'Indicator ID', 'No.', 'Indicator', 'Level', 'Unit of measure',
                'Change', 'C / NC', '# / %', 'Baseline']
@@ -1030,8 +1031,9 @@ class IPTTReportQuickstartView(LoginRequiredMixin, FormView):
         return self.render_to_response(context)
 
 
+@method_decorator(login_required, name='dispatch')
 @method_decorator(has_iptt_read_access, name='dispatch')
-class IPTT_ReportView(LoginRequiredMixin, IPTT_Mixin, TemplateView):
+class IPTT_ReportView(IPTT_Mixin, TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
@@ -1057,9 +1059,10 @@ class IPTT_ReportView(LoginRequiredMixin, IPTT_Mixin, TemplateView):
     def post(self, request, *args, **kwargs):
         filterdata = request.POST.copy()
         # no need to include this token in querystring
-        del (filterdata['csrfmiddlewaretoken'])
+        if 'csrfmiddlewaretoken' in filterdata:
+            del (filterdata['csrfmiddlewaretoken'])
         url_kwargs = {
-            'program_id': filterdata['program'],
+            'program': filterdata['program'],
             'reporttype': kwargs['reporttype'],
         }
         # do not include it in the querystring because it is already part of the url kwargs
