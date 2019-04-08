@@ -372,7 +372,7 @@ class EndpointTestBase(object):
         self.assertRedirects(response, reverse('login') + '?next=' + url, msg_prefix=msg)
 
     def run_get_tests(self, skip_out_country=False):
-        if skip_out_country:
+        if not skip_out_country:
             # get out of country url:
             url = self.get_out_url()
             # ensure superuser can access:

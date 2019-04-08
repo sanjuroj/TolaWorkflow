@@ -208,7 +208,7 @@ class TestServiceJsonEndpoint(EndpointTestBase, test.TestCase):
         self.init()
 
     def test_http_methods(self):
-        self.run_get_tests()
+        self.run_get_tests(skip_out_country=True)
 
 class TestResultTableEndpoint(EndpointTestBase, test.TestCase):
     url = 'result_view'
