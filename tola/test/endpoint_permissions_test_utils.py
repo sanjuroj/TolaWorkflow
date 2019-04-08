@@ -180,6 +180,8 @@ class EndpointTestContext(object):
         w_factories.grant_program_access(self.non_mercy_corps_high, self.program_in_country,
                                          self.in_country, PROGRAM_ROLE_CHOICES[2][0])
 
+        self.external_service = i_factories.ExternalServiceFactory()
+
     def add_periodic_targets(self):
         self.pt_out_of_country = i_factories.PeriodicTargetFactory(
             indicator=self.indicator_out_of_country,
@@ -305,6 +307,8 @@ class EndpointTestBase(object):
             kwargs['deleteall'] = self.url_kwargs['deleteall']
         if 'reporttype' in self.url_kwargs:
             kwargs['reporttype'] = self.url_kwargs['reporttype']
+        if 'service' in self.url_kwargs:
+            kwargs['service'] = self.context.external_service.id
         return reverse(self.url, kwargs=kwargs)
 
     def get_in_url(self):
@@ -323,6 +327,8 @@ class EndpointTestBase(object):
             kwargs['deleteall'] = self.url_kwargs['deleteall']
         if 'reporttype' in self.url_kwargs:
             kwargs['reporttype'] = self.url_kwargs['reporttype']
+        if 'service' in self.url_kwargs:
+            kwargs['service'] = self.context.external_service.id
         return reverse(self.url, kwargs=kwargs)
 
     def fetch_get_response(self, tolauser, url):
@@ -365,20 +371,21 @@ class EndpointTestBase(object):
     def assert_redirects_to_login(self, response, msg, url):
         self.assertRedirects(response, reverse('login') + '?next=' + url, msg_prefix=msg)
 
-    def run_get_tests(self):
-        # get out of country url:
-        url = self.get_out_url()
-        # ensure superuser can access:
-        response = self.fetch_get_response(self.context.mercy_corps_super_admin, url)
-        self.assert_passes(response, 'superuser should have access to {}'.format(url))
-        # ensure all users cannot access:
-        for user in self.get_all_users():
-            response = self.fetch_get_response(user, url)
-            self.assert_forbidden(
-                response, 'user not assigned to country should redirect from {}'.format(url))
-        # ensure anonymous user cannot access:
-        response = self.fetch_get_response(None, url)
-        self.assert_redirects_to_login(response, 'anonymous user should redirect from {}'.format(url), url)
+    def run_get_tests(self, skip_out_country=False):
+        if skip_out_country:
+            # get out of country url:
+            url = self.get_out_url()
+            # ensure superuser can access:
+            response = self.fetch_get_response(self.context.mercy_corps_super_admin, url)
+            self.assert_passes(response, 'superuser should have access to {}'.format(url))
+            # ensure all users cannot access:
+            for user in self.get_all_users():
+                response = self.fetch_get_response(user, url)
+                self.assert_forbidden(
+                    response, 'user not assigned to country should redirect from {}'.format(url))
+            # ensure anonymous user cannot access:
+            response = self.fetch_get_response(None, url)
+            self.assert_redirects_to_login(response, 'anonymous user should redirect from {}'.format(url), url)
         # get in country url:
         url = self.get_in_url()
         # ensure superuser can access:

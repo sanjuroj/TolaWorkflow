@@ -304,11 +304,8 @@ def verify_program_access_level_of_any_program(request, level, super_admin_overr
     # First check for explicit program access - find the highest access level for all programs
     if tola_user.programaccess_set.exists():
         program_access_obj = max(tola_user.programaccess_set.all(), key=lambda x: PROGRAM_ROLE_INT_MAP.get(x.role, 0))
-        print 'yay'
-        print program_access_obj.role, program_access_obj.program.name
     else:
         program_access_obj = None
-    print program_access_obj
 
     if program_access_obj:
         user_access_level = program_access_obj.role

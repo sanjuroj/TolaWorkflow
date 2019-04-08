@@ -199,13 +199,16 @@ class TestIndicatorPlanExportEndpoint(EndpointTestBase, test.TestCase):
         self.run_get_tests()
         self.run_post_tests()
 
-
-@unittest.skip('Ken - here is the service JSON test')
 class TestServiceJsonEndpoint(EndpointTestBase, test.TestCase):
     url = 'service_json'
-    url_kwargs = {'service': '????'}
+    url_kwargs = {'service': None}
+    access_level = 'high'
+
     def setUp(self):
         self.init()
+
+    def test_http_methods(self):
+        self.run_get_tests()
 
 class TestResultTableEndpoint(EndpointTestBase, test.TestCase):
     url = 'result_view'
