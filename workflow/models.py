@@ -550,7 +550,7 @@ class Program(models.Model):
         """used in place of get_absolute_url() because program page isn't strictly an absolute url (no editing) but
             gives a single point of reference on the model for the program page url, used in linking in various places
         """
-        return reverse('program_page', kwargs={'program_id': self.pk})
+        return reverse('program_page', kwargs={'program': self.pk})
 
     @property
     def gait_url(self):

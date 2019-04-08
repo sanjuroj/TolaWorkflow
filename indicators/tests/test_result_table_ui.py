@@ -51,7 +51,7 @@ class TestResultUnassignedUIDateFallsOutsideProgramPeriod(test.TestCase):
         self.client.login(username='tester', password='password')
 
     def test_result_table_html(self):
-        url = reverse_lazy('result_view', args=[self.indicator.id, self.program.id])
+        url = reverse_lazy('result_view', args=[self.indicator.id,])
         response = self.client.get(url)
         # result is displayed
         self.assertContains(
@@ -106,7 +106,7 @@ class TestResultUnassignedUITargetsMidlineEndline(test.TestCase):
         self.client.login(username='tester', password='password')
 
     def test_result_table_html(self):
-        url = reverse_lazy('result_view', args=[self.indicator.id, self.program.id])
+        url = reverse_lazy('result_view', args=[self.indicator.id,])
         response = self.client.get(url)
         # result is displayed
         self.assertContains(
@@ -153,7 +153,7 @@ class TestResultUnassignedUITargetsNotSetup(test.TestCase):
         self.client.login(username='tester', password='password')
 
     def test_result_table_html(self):
-        url = reverse_lazy('result_view', args=[self.indicator.id, self.program.id])
+        url = reverse_lazy('result_view', args=[self.indicator.id,])
         response = self.client.get(url)
         # result is displayed
         self.assertContains(

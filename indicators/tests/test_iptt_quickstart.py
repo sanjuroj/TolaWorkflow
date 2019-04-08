@@ -69,7 +69,7 @@ class IPTTReportQuickstartViewTests(TestCase):
         response = self.client.post(path, data=data, follow=True)
         kwargs = response.resolver_match.kwargs
         self.assertEqual(kwargs['reporttype'], IPTTReportQuickstartView.FORM_PREFIX_TARGET)
-        self.assertEqual(int(kwargs['program_id']), self.program.id)
+        self.assertEqual(int(kwargs['program']), self.program.id)
 
     def test_get_context_data(self):
         """Do we get the correct context data?"""
@@ -84,7 +84,7 @@ class IPTTReportQuickstartViewTests(TestCase):
         response = self.client.post(path, data=data, follow=True)
         context_data = response.context_data
 
-        self.assertEqual(int(context_data['program_id']), self.program.id)
+        self.assertEqual(context_data['program'], self.program)
         # self.assertEqual(context['report_wide'], ?)
         # self.assertEqual(context['report_date_ranges'], ?)
         # self.assertEqual(context['indicators'], ?)

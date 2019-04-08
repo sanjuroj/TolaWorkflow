@@ -167,22 +167,6 @@ class QueryTestsMixin:
                                  "expected {0} for {1}, got {2}".format(
                                      expected[key], key, program_response_metrics[key]))
 
-    def test_program_ajax_update_returns_correct_program_data(self):
-        client = test.Client()
-        client.force_login(self.user.user)
-        for expected in self.expected_cases:
-            program = Program.objects.filter(name=expected['name']).first()
-            response = client.get('/program/{program_id}/metrics/'.format(program_id=program.id),
-                                  HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-            self.assertEqual(response.status_code, 200)
-            json_metrics = json.loads(response.content)['metrics']
-            for key in ['targets_defined', 'reported_results', 'results_evidence', 'indicator_count']:
-                self.assertIn(
-                    key, json_metrics.keys(), "json metrics should have {0}, got {1}".format(
-                        key, json_metrics.keys()))
-                self.assertEqual(json_metrics[key], expected[key],
-                                 "expected {0} for {1}, got {2}".format(
-                                     expected[key], key, json_metrics[key]))
 
 class TestOneBareProgram(ProgramWithMetricsQueryCountsBase, QueryTestsMixin):
     skip_all = False

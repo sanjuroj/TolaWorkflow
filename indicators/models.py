@@ -1223,7 +1223,7 @@ class PinnedReport(models.Model):
         Return the fully parameterized IPTT report URL string
         """
         return "{}?{}".format(reverse('iptt_report', kwargs={
-            'program_id': self.program_id,
+            'program': self.program_id,
             'reporttype': self.report_type
         }), self.query_string)
 

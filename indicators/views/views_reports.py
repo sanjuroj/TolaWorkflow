@@ -1014,7 +1014,7 @@ class IPTTReportQuickstartView(LoginRequiredMixin, FormView):
         program = form.cleaned_data.get('program')
         num_recents = form.cleaned_data.get('numrecentperiods')
         timeframe = form.cleaned_data.get('timeframe')
-        redirect_url = reverse_lazy('iptt_report', kwargs={'program_id': program.id, 'reporttype': prefix})
+        redirect_url = reverse_lazy('iptt_report', kwargs={'program': program.id, 'reporttype': prefix})
 
         redirect_url = u"{}?{}={}&timeframe={}".format(redirect_url, prefix, period, timeframe)
         if num_recents:
@@ -1089,6 +1089,10 @@ def create_pinned_report(request):
     """
     AJAX call for creating a PinnedReport
     """
+    try:
+        program = Program.objects.get(pk=request.POST.get('program'))
+    except Program.DoesNotExist:
+        return HttpResponseBadRequest('program does not exist')
     verify_program_access_level(request, request.POST.get('program'), 'low', super_admin_override=True)
     form = PinnedReportForm(request.POST)
     if form.is_valid():

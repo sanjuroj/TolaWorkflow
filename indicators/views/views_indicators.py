@@ -2,10 +2,10 @@ import json
 import logging
 import re
 from datetime import datetime, timedelta
-from urlparse import urlparse
-
 import dateparser
 import requests
+from weasyprint import HTML, CSS
+
 from django.contrib import messages
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
@@ -13,7 +13,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from django.db import connection
 from django.db.models import (
-    Count, Min, Q, Sum, Avg, Max
+    Count, Q, Sum, Avg, Max
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -27,10 +27,9 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from weasyprint import HTML, CSS
 
 from feed.serializers import FlatJsonSerializer
-from tola.util import getCountry, group_excluded, get_table
+from tola.util import getCountry, group_excluded
 
 from indicators.serializers import IndicatorSerializer, ProgramSerializer
 from indicators.views.view_utils import (
@@ -40,11 +39,9 @@ from indicators.views.view_utils import (
     generate_periodic_target_single,
     dictfetchall
 )
-from workflow.mixins import AjaxableResponseMixin
 from workflow.models import (
     Program, Sector, TolaSites, FormGuidance
 )
-from ..export import IndicatorResource, ResultResource
 from ..forms import IndicatorForm, ResultForm
 from ..models import (
     Indicator, PeriodicTarget, DisaggregationLabel, DisaggregationValue,
@@ -934,7 +931,7 @@ class ProgramPage(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         # countries = request.user.tola_user.countries.all()
-        program_id = int(self.kwargs['program_id'])
+        program_id = int(self.kwargs['program'])
         if request.user.is_anonymous:
             return HttpResponseRedirect('/')
         unannotated_program = Program.objects.only(

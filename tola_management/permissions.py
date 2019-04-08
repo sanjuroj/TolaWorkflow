@@ -97,7 +97,7 @@ def indicator_adapter(inner):
     def outer(func):
         wrapped = inner(func)
         def wrapper(request, *args, **kwargs):
-            indicator = Indicator.objects.get(pk=kwargs['indicator'])
+            indicator = get_object_or_404(Indicator, pk=kwargs['indicator'])
             kwargs['program'] = indicator.program_id
             return wrapped(request, *args, **kwargs)
         return wrapper
