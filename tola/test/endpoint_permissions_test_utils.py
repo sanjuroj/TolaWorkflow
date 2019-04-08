@@ -11,6 +11,7 @@ class Test<YourEndpointName>Endpoints(EndpointTestBase, test.TestCase):
     # call self.run_failing_urls(urls) with a list of urls that everyone should not view
 """
 
+import datetime
 from django import test
 from django.urls import reverse
 from factories import (
@@ -38,7 +39,9 @@ class EndpointTestContext(object):
         self.program_in_country = w_factories.ProgramFactory(
             name='program in IN country',
             gaitid='inpr',
-            country=self.in_country
+            country=self.in_country,
+            reporting_period_start=datetime.date(2016, 1, 1),
+            reporting_period_end=datetime.date(2016, 12, 31)
         )
         self.program_in_country.country.add(self.in_country)
         self.indicator_in_country = i_factories.IndicatorFactory(
@@ -48,7 +51,9 @@ class EndpointTestContext(object):
         self.program_out_of_country = w_factories.ProgramFactory(
             name='program in OUT country',
             gaitid='outpr',
-            country=self.out_country
+            country=self.out_country,
+            reporting_period_start=datetime.date(2016, 1, 1),
+            reporting_period_end=datetime.date(2016, 12, 31)
         )
         self.program_out_of_country.country.clear()
         self.program_out_of_country.country.add(self.out_country)
@@ -290,6 +295,8 @@ class EndpointTestBase(object):
             kwargs['pk'] = self.context.result_out_of_country.pk
         if 'deleteall' in self.url_kwargs:
             kwargs['deleteall'] = self.url_kwargs['deleteall']
+        if 'reporttype' in self.url_kwargs:
+            kwargs['reporttype'] = self.url_kwargs['reporttype']
         return reverse(self.url, kwargs=kwargs)
 
     def get_in_url(self):
@@ -306,6 +313,8 @@ class EndpointTestBase(object):
             kwargs['pk'] = self.context.result_in_country.pk
         if 'deleteall' in self.url_kwargs:
             kwargs['deleteall'] = self.url_kwargs['deleteall']
+        if 'reporttype' in self.url_kwargs:
+            kwargs['reporttype'] = self.url_kwargs['reporttype']
         return reverse(self.url, kwargs=kwargs)
 
     def fetch_get_response(self, tolauser, url):

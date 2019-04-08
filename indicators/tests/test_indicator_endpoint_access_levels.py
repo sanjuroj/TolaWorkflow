@@ -13,6 +13,7 @@ indicators/
 from django import test
 from django.urls import reverse
 from tola.test.endpoint_permissions_test_utils import EndpointTestBase
+from factories import django_models as d_factories
 import unittest
 
 class TestIndicatorCreateEndpoint(EndpointTestBase, test.TestCase):
@@ -194,6 +195,79 @@ class TestIndicatorPlanExportEndpoint(EndpointTestBase, test.TestCase):
     url_kwargs  = {'program': None}
     access_level = 'low'
     redirect = True
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_get_tests()
+        self.run_post_tests()
+
+
+@unittest.skip('Ken - here is the service JSON test')
+class TestServiceJsonEndpoint(EndpointTestBase, test.TestCase):
+    url = 'service_json'
+    url_kwargs = {'service': '????'}
+    def setUp(self):
+        self.init()
+
+class TestResultTableEndpoint(EndpointTestBase, test.TestCase):
+    url = 'result_view'
+    url_kwargs = {'indicator': None}
+    access_level = 'low'
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_get_tests()
+        self.run_post_tests()
+
+class TestIPTTQuickstartEndpoint(test.TestCase):
+    def setUp(self):
+        self.user = d_factories.UserFactory(
+            first_name='i am',
+            last_name='a user'
+        )
+        self.client = test.Client()
+
+    def test_anonymous_user_redirected(self):
+        self.client.logout()
+        response = self.client.get(reverse('iptt_quickstart'))
+        self.assertRedirects(response, reverse('login') + '?next=' + reverse('iptt_quickstart'),
+                             msg_prefix='anonymous user should redirect from iptt quickstart')
+
+    def test_logged_in_user_not_redirected(self):
+        self.client.logout()
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('iptt_quickstart'))
+        self.assertEqual(response.status_code, 200, 'logged in user should not be redirected')
+
+class TestIPTTReportEndpoint(EndpointTestBase, test.TestCase):
+    url = 'iptt_report'
+    url_kwargs = {'program': None,
+                  'reporttype': 'targetperiods'}
+    access_level = 'low'
+    post_data = {
+        'program': None
+    }
+
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_get_tests()
+        self.run_post_tests()
+
+class TestIPTTExcelEndpoint(EndpointTestBase, test.TestCase):
+    url = 'iptt_excel'
+    url_kwargs = {'program': None,
+                  'reporttype': 'targetperiods'}
+    access_level = 'low'
+    post_data = {
+        'program': None
+    }
 
     def setUp(self):
         self.init()
