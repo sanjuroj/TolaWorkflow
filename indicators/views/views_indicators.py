@@ -60,6 +60,7 @@ from tola_management.models import (
 from tola_management.permissions import (
     indicator_pk_adapter,
     periodic_target_adapter,
+    periodic_target_pk_adapter,
     has_indicator_read_access,
     has_indicator_write_access,
     result_pk_adapter,
@@ -547,7 +548,7 @@ def reset_indicator_target_frequency(ind):
     return False
 
 
-@method_decorator(periodic_target_adapter(has_indicator_write_access), name='dispatch')
+@method_decorator(periodic_target_pk_adapter(has_indicator_write_access), name='dispatch')
 class PeriodicTargetDeleteView(LoginRequiredMixin, DeleteView):
     """
     url periodic_target_delete/<pk>

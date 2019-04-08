@@ -18,6 +18,7 @@ from factories import (
     django_models as d_factories,
     indicators_models as i_factories
     )
+from indicators.models import Indicator
 from workflow.models import Organization, PROGRAM_ROLE_CHOICES, COUNTRY_ROLE_CHOICES
 
 class EndpointTestContext(object):
@@ -41,7 +42,8 @@ class EndpointTestContext(object):
         )
         self.program_in_country.country.add(self.in_country)
         self.indicator_in_country = i_factories.IndicatorFactory(
-            program=self.program_in_country
+            program=self.program_in_country,
+            target_frequency=Indicator.LOP
         )
         self.program_out_of_country = w_factories.ProgramFactory(
             name='program in OUT country',
@@ -51,7 +53,8 @@ class EndpointTestContext(object):
         self.program_out_of_country.country.clear()
         self.program_out_of_country.country.add(self.out_country)
         self.indicator_out_of_country = i_factories.IndicatorFactory(
-            program=self.program_out_of_country
+            program=self.program_out_of_country,
+            target_frequency=Indicator.LOP
         )
         if Organization.objects.filter(pk=1).count() == 1:
             self.mercy_corps_organization = Organization.objects.get(pk=1)
@@ -170,6 +173,19 @@ class EndpointTestContext(object):
         )
         w_factories.grant_program_access(self.non_mercy_corps_high, self.program_in_country,
                                          self.in_country, PROGRAM_ROLE_CHOICES[2][0])
+
+    def add_periodic_targets(self):
+        self.pt_out_of_country = i_factories.PeriodicTargetFactory(
+            indicator=self.indicator_out_of_country,
+            start_date=self.program_out_of_country.reporting_period_start,
+            end_date=self.program_out_of_country.reporting_period_end
+        )
+        self.pt_in_country = i_factories.PeriodicTargetFactory(
+            indicator=self.indicator_in_country,
+            start_date=self.program_in_country.reporting_period_start,
+            end_date=self.program_in_country.reporting_period_end
+        )
+    
     @property
     def high_users(self):
         for user in [self.mercy_corps_high,
@@ -209,6 +225,7 @@ class EndpointTestBase(object):
     url_kwargs = {}
     access_level = None
     post_data = {}
+    delete = None
 
     def init(self):
         self.context = EndpointTestContext()
@@ -253,6 +270,8 @@ class EndpointTestBase(object):
             kwargs['indicator'] = self.context.indicator_out_of_country.pk
         if 'pk' in self.url_kwargs and self.url_kwargs['pk'] == 'indicator':
             kwargs['pk'] = self.context.indicator_out_of_country.pk
+        if 'pk' in self.url_kwargs and self.url_kwargs['pk'] == 'periodic_target':
+            kwargs['pk'] = self.context.pt_out_of_country.pk
         return reverse(self.url, kwargs=kwargs)
 
     def get_in_url(self):
@@ -263,6 +282,8 @@ class EndpointTestBase(object):
             kwargs['indicator'] = self.context.indicator_in_country.pk
         if 'pk' in self.url_kwargs and self.url_kwargs['pk'] == 'indicator':
             kwargs['pk'] = self.context.indicator_in_country.pk
+        if 'pk' in self.url_kwargs and self.url_kwargs['pk'] == 'periodic_target':
+            kwargs['pk'] = self.context.pt_in_country.pk
         return reverse(self.url, kwargs=kwargs)
 
     def fetch_get_response(self, tolauser, url):
@@ -343,31 +364,45 @@ class EndpointTestBase(object):
             fetch_method = self.fetch_delete_response
         else:
             raise ValueError('invalid method {}'.format(method))
-        # get out of country url:
-        url = self.get_out_url()
-        # ensure superuser can post:
-        response = fetch_method(self.context.mercy_corps_super_admin, url)
-        self.assert_post_passes(response, 'superuser should be able to {0} to {1}'.format(method, url))
+        if self.delete == 'periodic_target':
+            self.context.add_periodic_targets()
+        response = fetch_method(self.context.mercy_corps_super_admin, self.get_out_url())
+        self.assert_post_passes(response, 'superuser should be able to {0} to {1}'.format(method, self.get_out_url()))
         # ensure all users cannot access:
         for user in self.get_all_users():
-            response = fetch_method(user, url)
+            if self.delete == 'periodic_target':
+                self.context.add_periodic_targets()
+            response = fetch_method(user, self.get_out_url())
             self.assert_forbidden(
-                response, 'user not assigned to country should redirect from {}'.format(url))
+                response, 'user not assigned to country should redirect from {}'.format(self.get_out_url()))
         # ensure anonymous user cannot access:
-        response = fetch_method(None, url)
-        self.assert_redirects_to_login(response, 'anonymous user should redirect from {}'.format(url), url)
-        # get in country url:
-        url = self.get_in_url()
+        if self.delete == 'periodic_target':
+            self.context.add_periodic_targets()
+        response = fetch_method(None, self.get_out_url())
+        self.assert_redirects_to_login(response, 'anonymous user should redirect from {}'.format(
+            self.get_out_url()), self.get_out_url())
         # ensure superuser can access:
-        response = fetch_method(self.context.mercy_corps_super_admin, url)
-        self.assert_post_passes(response, 'superuser should be able to {0} to {1}'.format(method, url))
+        if self.delete == 'periodic_target':
+            self.context.add_periodic_targets()
+        response = fetch_method(self.context.mercy_corps_super_admin, self.get_in_url())
+        self.assert_post_passes(response, 'superuser should be able to {0} to {1}'.format(
+            method, self.get_in_url()))
         # ensure all users with appropriate access can access:
         for user, level in self.get_permissioned_users():
-            response = fetch_method(user, url)
-            self.assert_post_passes(response, 'user level {0} should have {1} access to {2}'.format(level, method, url))
+            if self.delete == 'periodic_target':
+                self.context.add_periodic_targets()
+            response = fetch_method(user, self.get_in_url())
+            self.assert_post_passes(response, 'user level {0} should have {1} access to {2}'.format(
+                level, method, self.get_in_url()))
         for user, level in self.get_non_permissioned_users():
-            response = fetch_method(user, url)
-            self.assert_forbidden(response, 'user level {0} should not have {1} access to {2}'.format(level, method, url))
+            if self.delete == 'periodic_target':
+                self.context.add_periodic_targets()
+            response = fetch_method(user, self.get_in_url())
+            self.assert_forbidden(response, 'user level {0} should not have {1} access to {2}'.format(
+                level, method, self.get_in_url()))
         # ensure anonymous user cannot acccess:
-        response = fetch_method(None, url)
-        self.assert_redirects_to_login(response, 'anonymous user should redirect from {}'.format(url), url)
+        if self.delete == 'periodic_target':
+            self.context.add_periodic_targets() 
+        response = fetch_method(None, self.get_in_url())
+        self.assert_redirects_to_login(response, 'anonymous user should redirect from {}'.format(
+            self.get_in_url()), self.get_in_url())

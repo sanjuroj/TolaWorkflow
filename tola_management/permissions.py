@@ -14,7 +14,8 @@ from workflow.models import (
 
 from indicators.models import (
     Result,
-    Indicator
+    Indicator,
+    PeriodicTarget
 )
 
 def social_auth_okta_pipeline(backend, details, user, response, *args, **kwargs):
@@ -76,6 +77,16 @@ def indicator_pk_adapter(inner):
         def wrapper(request, *args, **kwargs):
             indicator = Indicator.objects.get(pk=kwargs['pk'])
             kwargs['program'] = indicator.program_id
+            return wrapped(request, *args, **kwargs)
+        return wrapper
+    return outer
+
+def periodic_target_pk_adapter(inner):
+    def outer(func):
+        wrapped = inner(func)
+        def wrapper(request, *args, **kwargs):
+            pt = PeriodicTarget.objects.get(pk=kwargs['pk'])
+            kwargs['program'] = pt.indicator.program_id
             return wrapped(request, *args, **kwargs)
         return wrapper
     return outer

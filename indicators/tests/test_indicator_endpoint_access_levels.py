@@ -80,4 +80,15 @@ class TestPeriodicTargetGenerateEndpoint(EndpointTestBase, test.TestCase):
         self.run_get_tests()
         self.access_level = 'high'
         self.run_post_tests()
-        
+
+class TestPeriodTargetDeleteEndpoint(EndpointTestBase, test.TestCase):
+    url = 'pt_delete'
+    url_kwargs = {'pk': 'periodic_target'}
+    access_level = 'high'
+    delete = 'periodic_target'
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_post_tests()
