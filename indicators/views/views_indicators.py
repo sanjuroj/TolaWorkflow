@@ -68,7 +68,9 @@ from tola_management.permissions import (
     has_result_read_access,
     has_result_write_access,
     has_program_read_access,
-    verify_program_access_level_of_any_program)
+    verify_program_access_level_of_any_program,
+    verify_program_access_level
+)
 
 import indicators.indicator_plan as ip
 
@@ -895,7 +897,6 @@ def result_view(request, indicator, program):
 
 
 @login_required
-@has_program_read_access
 def indicator_plan(request, program):
     """
     This is the GRID report or indicator plan for a program.
@@ -903,6 +904,8 @@ def indicator_plan(request, program):
     and number. Lives in the "Indicator" home page as a link.
     """
     program = get_object_or_404(Program, id=program)
+
+    verify_program_access_level(request, program.id, 'low')
 
     indicators = ip.indicator_queryset(program.pk)
 
@@ -922,6 +925,7 @@ def old_program_page(request, program_id, indicator_id, indicator_type_id):
         logger.warn('attempt to access program page with filters indicator id {0} and indicator type id {1}'.format(
             indicator_id, indicator_type_id))
     return redirect(program.program_page_url, permanent=True)
+
 
 @method_decorator(has_program_read_access, name='dispatch')
 class ProgramPage(LoginRequiredMixin, ListView):

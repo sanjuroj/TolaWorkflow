@@ -1,7 +1,7 @@
 from rest_framework import permissions
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 
 from django.contrib.auth.models import User
 
@@ -253,7 +253,7 @@ def has_program_read_access(func):
             request.has_write_access = write_access
             return func(request, *args, **kwargs)
         else:
-            return redirect('index')
+            raise PermissionDenied
     return wrapper
 
 
@@ -276,7 +276,7 @@ def has_projects_access(func):
 #
 
 
-def verify_program_access_level_of_any_program(request, level, super_admin_override=False):
+def verify_program_access_level_of_any_program(request, level, super_admin_override=True):
     """
     Determine if a user has a given level or higher of access for any Program
 
@@ -325,7 +325,7 @@ def verify_program_access_level_of_any_program(request, level, super_admin_overr
         raise PermissionDenied
 
 
-def verify_program_access_level(request, program_id, level, super_admin_override=False):
+def verify_program_access_level(request, program_id, level, super_admin_override=True):
     """
     Determine if a user has a given level of access or higher to a Program.
 
