@@ -23,9 +23,7 @@ export default class EditUserProfile extends React.Component {
         }
     }
 
-
-    save(e) {
-        e.preventDefault()
+    save() {
         this.props.onUpdate(this.state.managed_user_data)
     }
 
@@ -45,7 +43,7 @@ export default class EditUserProfile extends React.Component {
                 ...this.state.managed_user_data,
                 first_name: new_first_name,
             }
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     updateLastName(new_last_name) {
@@ -54,7 +52,7 @@ export default class EditUserProfile extends React.Component {
                 ...this.state.managed_user_data,
                 last_name: new_last_name,
             }
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     updateOrganization(new_option) {
@@ -64,7 +62,7 @@ export default class EditUserProfile extends React.Component {
                 organization_id: new_option.value,
             },
             selected_organization: new_option
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     updateTitle(new_title) {
@@ -73,7 +71,7 @@ export default class EditUserProfile extends React.Component {
                 ...this.state.managed_user_data,
                 title: new_title,
             }
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     updateEmail(new_email) {
@@ -82,7 +80,7 @@ export default class EditUserProfile extends React.Component {
                 ...this.state.managed_user_data,
                 email: new_email,
             }
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     updatePhone(new_phone) {
@@ -91,7 +89,7 @@ export default class EditUserProfile extends React.Component {
                 ...this.state.managed_user_data,
                 phone: new_phone,
             }
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     updateModeOfContact(new_mode_of_contact) {
@@ -100,7 +98,11 @@ export default class EditUserProfile extends React.Component {
                 ...this.state.managed_user_data,
                 mode_of_contact: new_mode_of_contact,
             }
-        })
+        }, () => this.hasUnsavedDataAction())
+    }
+
+    hasUnsavedDataAction() {
+        this.props.onIsDirtyChange(JSON.stringify(this.state.managed_user_data) != JSON.stringify(this.state.original_user_data))
     }
 
     resetForm() {
@@ -108,7 +110,7 @@ export default class EditUserProfile extends React.Component {
         this.setState({
             managed_user_data: this.state.original_user_data,
             selected_organization
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     render() {
@@ -221,14 +223,14 @@ export default class EditUserProfile extends React.Component {
                     </div>
                     {this.props.new && !disabled &&
                     <div className="form-group btn-row">
-                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>{gettext("Save changes")}</button>
+                        <button className="btn btn-primary" type="button" onClick={(e) => this.saveNew()}>{gettext("Save changes")}</button>
                         <button className="btn btn-secondary" onClick={(e) => this.saveNewAndAddAnother(e)}>{gettext("Save And Add Another")}</button>
                         <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }
                     {!this.props.new && !disabled &&
                     <div className="form-group btn-row">
-                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>{gettext("Save changes")}</button>
+                        <button className="btn btn-primary" type="button" onClick={(e) => this.save()}>{gettext("Save changes")}</button>
                         <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }

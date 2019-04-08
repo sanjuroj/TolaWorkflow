@@ -1,0 +1,21 @@
+// virtualized tables on Edit User screen
+.virtualized-table__wrapper {
+    height: 50vh;
+    margin-bottom: $grid-gutter-width/2;
+}
+// The following are overloaded styles
+// React Virtualized Tables generally load styles in the style attribute
+.ReactVirtualized__Table {
+    &__Grid {
+        background-color: $white;
+        border: 1px solid $gray-300;
+    }
+    &__row {
+        border-bottom: 1px solid $gray-200;
+    }
+    &__rowColumn {
+        padding-left: 10px;
+    }
+}
+
+

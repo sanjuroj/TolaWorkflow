@@ -10,6 +10,7 @@ import EditUserHistory from './components/edit_user_history'
 import Pagination from 'components/pagination'
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 // # Translators: Nothing selected by user
 const selection_placeholder = gettext("None Selected");
@@ -264,10 +265,12 @@ export const IndexView = observer(
                             Row={({Col, Row, data}) =>
                                 <Row
                                 expanded={data.id == store.editing_target}
-                                Expando={({Wrapper}) =>
+                                Expando={observer(({Wrapper}) =>
                                     <Wrapper>
                                             <UserEditor
+                                                notifyPaneChange={(new_pane) => store.onProfilePaneChange(new_pane)}
                                                 new={data.id == 'new'}
+                                                active_pane={store.active_editor_pane}
                                                 ProfileSection={observer(() =>
                                                     <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
                                                         <EditUserProfile
@@ -280,17 +283,21 @@ export const IndexView = observer(
                                                             onUpdate={(new_user_data) => store.updateUserProfile(data.id, new_user_data)}
                                                             onCreate={(new_user_data) => store.saveNewUser(new_user_data)}
                                                             onCreateAndAddAnother={(new_user_data) => store.saveNewUserAndAddAnother(new_user_data)}
-                                                            organizations={store.organization_selections} />
+                                                            organizations={store.organization_selections}
+                                                            onIsDirtyChange={is_dirty => store.setActiveFormIsDirty(is_dirty)}
+                                                        />
                                                     </LoadingSpinner>
                                                 )}
                                                 ProgramSection={observer(() =>
                                                     <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
                                                         <EditUserPrograms
                                                             store={store}
-                                                                user={data}
-                                                                adminUserProgramRoles={store.access.program}
-                                                                adminUserCountryRoles={store.access.countries}
-                                                                onSave={(new_program_data) => store.saveUserPrograms(data.id, new_program_data)}/>
+                                                            user={data}
+                                                            adminUserProgramRoles={store.access.program}
+                                                            adminUserCountryRoles={store.access.countries}
+                                                            onSave={(new_program_data) => store.saveUserPrograms(data.id, new_program_data)}
+                                                            onIsDirtyChange={is_dirty => store.setActiveFormIsDirty(is_dirty)}
+                                                        />
                                                     </LoadingSpinner>
                                                 )}
                                                 HistorySection={observer(() =>
@@ -300,20 +307,27 @@ export const IndexView = observer(
                                                             userData={store.editing_target_data.profile}
                                                             history={store.editing_target_data.history}
                                                             onResendRegistrationEmail={() => store.resendRegistrationEmail(data.id)}
-                                                            onSave={(new_data) => store.updateUserIsActive(data.id, new_data)}/>
+                                                            onSave={(new_data) => store.updateUserIsActive(data.id, new_data)}
+                                                            onIsDirtyChange={is_dirty => store.setActiveFormIsDirty(is_dirty)}
+                                                        />
                                                     </LoadingSpinner>
                                                 )}
                                             />
                                     </Wrapper>
-                                }>
+                                )}>
                                     <Col size="0.5">
                                             <input type="checkbox" checked={store.bulk_targets.get(data.id) || false} onChange={() => store.toggleBulkTarget(data.id) }/>
                                     </Col>
                                     <Col size="2" className="td--stretch">
-                                        <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                            <i className="fas fa-user"/>&nbsp;
-                                            {/* # Translators: The highest level of administrator in the system */}
-                                            {data.name || "---"} {data.is_super && <span className="badge badge-danger">{gettext("Super Admin")}</span>}
+                                        <div className="expando-toggle icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
+                                            <div className="expando-toggle__icon">
+                                                <FontAwesomeIcon icon={(store.editing_target == data.id) ? 'caret-down' : 'caret-right'} />
+                                            </div>
+                                            <div className="expando-toggle__label">
+                                                <i className="fas fa-user"/>&nbsp;
+                                                {/* # Translators: The highest level of administrator in the system */}
+                                                {data.name || "---"} {data.is_super && <span className="badge badge-danger">{gettext("Super Admin")}</span>}
+                                            </div>
                                         </div>
                                     </Col>
                                     <Col>

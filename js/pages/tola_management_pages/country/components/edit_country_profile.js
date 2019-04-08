@@ -29,16 +29,17 @@ export default class EditCountryProfile extends React.Component {
         }
     }
 
+    hasUnsavedDataAction() {
+        this.props.onIsDirtyChange(JSON.stringify(this.state.managed_data) != JSON.stringify(this.state.original_data))
+    }
 
-    save(e) {
-        e.preventDefault()
+    save() {
         const country_id = this.props.country_data.id
         const country_data = this.state.managed_data
         this.props.onUpdate(country_id, country_data)
     }
 
-    saveNew(e) {
-        e.preventDefault()
+    saveNew() {
         const country_data = this.state.managed_data
         this.props.onCreate(country_data)
     }
@@ -46,13 +47,13 @@ export default class EditCountryProfile extends React.Component {
     updateFormField(fieldKey, val) {
         this.setState({
             managed_data: Object.assign(this.state.managed_data, {[fieldKey]: val})
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     resetForm() {
         this.setState({
             managed_data: Object.assign({}, this.state.original_data)
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     formErrors(fieldKey) {
@@ -98,14 +99,14 @@ export default class EditCountryProfile extends React.Component {
                     </div>
                     {this.props.new &&
                     <div className="form-group btn-row">
-                        <button className="btn btn-primary" onClick={(e) => this.saveNew(e)}>{gettext("Save Changes")}</button>
+                        <button className="btn btn-primary" type="button" onClick={(e) => this.saveNew(e)}>{gettext("Save Changes")}</button>
                         {/* <button className="btn btn-primary" onClick={(e) => this.saveNewAndAddAnother(e)}>Save And Add Another</button> */}
                         <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }
                     {!this.props.new &&
                     <div className="form-group btn-row">
-                        <button className="btn btn-primary" onClick={(e) => this.save(e)}>{gettext("Save Changes")}</button>
+                        <button className="btn btn-primary" type="button" onClick={(e) => this.save(e)}>{gettext("Save Changes")}</button>
                         <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
                     }

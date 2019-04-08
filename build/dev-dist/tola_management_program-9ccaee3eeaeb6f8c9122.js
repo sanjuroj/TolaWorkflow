@@ -21,6 +21,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var app_root = '#app_root';
 /*
  * Model/Store setup
  */
@@ -87,7 +88,7 @@ var initialData = {
 var store = new _models__WEBPACK_IMPORTED_MODULE_2__["ProgramStore"](_api__WEBPACK_IMPORTED_MODULE_4__["default"], initialData);
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_views__WEBPACK_IMPORTED_MODULE_3__["IndexView"], {
   store: store
-}), document.querySelector('#app_root'));
+}), document.querySelector(app_root));
 
 /***/ }),
 
@@ -293,13 +294,22 @@ function (_React$Component) {
   }
 
   _createClass(ProgramHistory, [{
+    key: "hasUnsavedDataAction",
+    value: function hasUnsavedDataAction() {
+      this.props.onIsDirtyChange(JSON.stringify(this.state.managed_status) != JSON.stringify(this.state.original_status));
+    }
+  }, {
     key: "onStatusChange",
     value: function onStatusChange(selection) {
+      var _this2 = this;
+
       var value = selection.value;
       this.setState({
         managed_status: Object.assign(this.state.managed_status, {
           'funding_status': value
         })
+      }, function () {
+        return _this2.hasUnsavedDataAction();
       });
     }
   }, {
@@ -312,18 +322,22 @@ function (_React$Component) {
   }, {
     key: "onReset",
     value: function onReset() {
+      var _this3 = this;
+
       this.setState({
         managed_status: this.state.original_status
+      }, function () {
+        return _this3.hasUnsavedDataAction();
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this4 = this;
 
       var history = this.props.history;
       var currentStatusSelection = status_options.find(function (x) {
-        return x.value == _this2.state.managed_status.funding_status;
+        return x.value == _this4.state.managed_status.funding_status;
       });
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "tab-pane--react admin-edit-pane"
@@ -341,7 +355,7 @@ function (_React$Component) {
         options: status_options,
         value: currentStatusSelection,
         onChange: function onChange(new_value) {
-          return _this2.onStatusChange(new_value);
+          return _this4.onStatusChange(new_value);
         }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
@@ -353,13 +367,13 @@ function (_React$Component) {
         className: "btn btn-primary",
         type: "button",
         onClick: function onClick() {
-          return _this2.onSave();
+          return _this4.onSave();
         }
       }, gettext("Save Changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this2.onReset();
+          return _this4.onReset();
         }
       }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_changelog__WEBPACK_IMPORTED_MODULE_5__["default"], {
         data: this.props.history
@@ -837,9 +851,13 @@ function (_React$Component) {
   }
 
   _createClass(EditProgramProfile, [{
+    key: "hasUnsavedDataAction",
+    value: function hasUnsavedDataAction() {
+      this.props.onIsDirtyChange(JSON.stringify(this.state.managed_data) != JSON.stringify(this.state.original_data));
+    }
+  }, {
     key: "save",
-    value: function save(e) {
-      e.preventDefault();
+    value: function save() {
       var program_id = this.props.program_data.id;
       var program_data = this.state.managed_data;
       this.props.onUpdate(program_id, program_data);
@@ -854,15 +872,23 @@ function (_React$Component) {
   }, {
     key: "updateFormField",
     value: function updateFormField(fieldKey, val) {
+      var _this2 = this;
+
       this.setState({
         managed_data: Object.assign(this.state.managed_data, _defineProperty({}, fieldKey, val))
+      }, function () {
+        return _this2.hasUnsavedDataAction();
       });
     }
   }, {
     key: "resetForm",
     value: function resetForm() {
+      var _this3 = this;
+
       this.setState({
         managed_data: Object.assign({}, this.state.original_data)
+      }, function () {
+        return _this3.hasUnsavedDataAction();
       });
     }
   }, {
@@ -873,19 +899,19 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this4 = this;
 
       var formdata = this.state.managed_data;
       var selectedFundingStatus = fundingStatusOptions.find(function (x) {
         return x.value == formdata.funding_status;
       });
       var selectedCountries = formdata.country.map(function (x) {
-        return _this2.props.countryOptions.find(function (y) {
+        return _this4.props.countryOptions.find(function (y) {
           return y.value == x;
         });
       });
       var selectedSectors = formdata.sector.map(function (x) {
-        return _this2.props.sectorOptions.find(function (y) {
+        return _this4.props.sectorOptions.find(function (y) {
           return y.value == x;
         });
       });
@@ -905,7 +931,7 @@ function (_React$Component) {
         type: "text",
         value: formdata.name,
         onChange: function onChange(e) {
-          return _this2.updateFormField('name', e.target.value);
+          return _this4.updateFormField('name', e.target.value);
         },
         className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('form-control', {
           'is-invalid': this.formErrors('name')
@@ -922,7 +948,7 @@ function (_React$Component) {
         type: "tel",
         value: formdata.gaitid,
         onChange: function onChange(e) {
-          return _this2.updateFormField('gaitid', e.target.value);
+          return _this4.updateFormField('gaitid', e.target.value);
         },
         className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('form-control', {
           'is-invalid': this.formErrors('gaitid')
@@ -939,7 +965,7 @@ function (_React$Component) {
         type: "tel",
         value: "",
         onChange: function onChange(e) {
-          return _this2.updateFormField('fundCode', e.target.value);
+          return _this4.updateFormField('fundCode', e.target.value);
         },
         className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('form-control', {
           'is-invalid': this.formErrors('fundCode')
@@ -955,7 +981,7 @@ function (_React$Component) {
       }, gettext("Description")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         value: formdata.description,
         onChange: function onChange(e) {
-          return _this2.updateFormField('description', e.target.value);
+          return _this4.updateFormField('description', e.target.value);
         },
         className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('form-control', {
           'is-invalid': this.formErrors('description')
@@ -973,7 +999,7 @@ function (_React$Component) {
         value: selectedCountries,
         options: this.props.countryOptions,
         onChange: function onChange(e) {
-          return _this2.updateFormField('country', e.map(function (x) {
+          return _this4.updateFormField('country', e.map(function (x) {
             return x.value;
           }));
         },
@@ -991,7 +1017,7 @@ function (_React$Component) {
         value: selectedSectors,
         options: this.props.sectorOptions,
         onChange: function onChange(e) {
-          return _this2.updateFormField('sector', e.map(function (x) {
+          return _this4.updateFormField('sector', e.map(function (x) {
             return x.value;
           }));
         },
@@ -1011,7 +1037,7 @@ function (_React$Component) {
         value: selectedFundingStatus,
         options: fundingStatusOptions,
         onChange: function onChange(e) {
-          return _this2.updateFormField('funding_status', e.value);
+          return _this4.updateFormField('funding_status', e.value);
         },
         isSearchable: false,
         className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('react-select', {
@@ -1024,27 +1050,29 @@ function (_React$Component) {
         className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
+        type: "button",
         onClick: function onClick(e) {
-          return _this2.saveNew(e);
+          return _this4.saveNew(e);
         }
       }, gettext("Save Changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this2.resetForm();
+          return _this4.resetForm();
         }
       }, gettext("Reset"))), !this.props.new && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
+        type: "button",
         onClick: function onClick(e) {
-          return _this2.save(e);
+          return _this4.save(e);
         }
       }, gettext("Save Changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this2.resetForm();
+          return _this4.resetForm();
         }
       }, gettext("Reset")))));
     }
@@ -1355,6 +1383,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_program_history__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/program_history */ "7Eka");
 /* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
 /* harmony import */ var components_folding_sidebar__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! components/folding-sidebar */ "tnXs");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -1382,6 +1411,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -1722,7 +1752,9 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     }
   }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "col admin-list"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
+    className: "page-title"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, gettext("Admin:"), " ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, gettext("Programs")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__controls"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(BulkActions, {
     primaryOptions: bulk_actions.primary_options,
@@ -1768,14 +1800,21 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
           data = _ref19.data;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Row, {
         expanded: data.id == store.editing_target,
-        Expando: function Expando(_ref20) {
+        Expando: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref20) {
           var Wrapper = _ref20.Wrapper;
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Wrapper, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_program_editor__WEBPACK_IMPORTED_MODULE_6__["default"], {
             new: data.id == 'new',
+            active_pane: store.active_editor_pane,
+            notifyPaneChange: function notifyPaneChange(new_pane) {
+              return store.onProfilePaneChange(new_pane);
+            },
             ProfileSection: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function () {
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
                 isLoading: store.saving
               }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_program_profile__WEBPACK_IMPORTED_MODULE_7__["default"], {
+                onIsDirtyChange: function onIsDirtyChange(is_dirty) {
+                  return store.setActiveFormIsDirty(is_dirty);
+                },
                 new: data.id == 'new',
                 program_data: data,
                 onUpdate: function onUpdate(id, data) {
@@ -1793,6 +1832,9 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
                 isLoading: store.saving
               }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_program_history__WEBPACK_IMPORTED_MODULE_8__["default"], {
+                onIsDirtyChange: function onIsDirtyChange(is_dirty) {
+                  return store.setActiveFormIsDirty(is_dirty);
+                },
                 program_data: data,
                 fetching_history: store.fetching_editing_history,
                 history: store.editing_history,
@@ -1803,7 +1845,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
               }));
             })
           }));
-        }
+        })
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.5"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
@@ -1817,17 +1859,29 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         size: "2",
         className: "td--stretch"
       }, data.id == 'new' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "icon__disabled"
+        className: "expando-toggle icon__disabled"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "expando-toggle__icon"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
+        icon: store.editing_target == data.id ? 'caret-down' : 'caret-right'
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "expando-toggle__label"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-cube"
-      }), "\xA0", data.name || "New Program"), data.id != 'new' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "icon__clickable",
+      }), "\xA0", data.name || "New Program")), data.id != 'new' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "expando-toggle icon__clickable",
         onClick: function onClick() {
           return store.toggleEditingTarget(data.id);
         }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "expando-toggle__icon"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
+        icon: store.editing_target == data.id ? 'caret-down' : 'caret-right'
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "expando-toggle__label"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-cube"
-      }), "\xA0", data.name || "New Program")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, organizationColumn(data)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
+      }), "\xA0", data.name || "New Program"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, organizationColumn(data)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         className: "text-nowrap"
       }, data.program_users ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "/tola_management/user/?programs[]=".concat(data.id)
@@ -1893,37 +1947,30 @@ var ProgramEditor = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(
 function (_React$Component) {
   _inherits(ProgramEditor, _React$Component);
 
-  function ProgramEditor(props) {
-    var _this;
-
+  function ProgramEditor() {
     _classCallCheck(this, ProgramEditor);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(ProgramEditor).call(this, props));
-    _this.state = {
-      active_page: 'profile'
-    };
-    return _this;
+    return _possibleConstructorReturn(this, _getPrototypeOf(ProgramEditor).apply(this, arguments));
   }
 
   _createClass(ProgramEditor, [{
     key: "updateActivePage",
     value: function updateActivePage(new_page) {
       if (!this.props.new) {
-        this.setState({
-          active_page: new_page
-        });
+        this.props.notifyPaneChange(new_page);
       }
     }
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this = this;
 
       var _this$props = this.props,
           ProfileSection = _this$props.ProfileSection,
-          HistorySection = _this$props.HistorySection;
-      var profile_active_class = this.state.active_page == 'profile' ? 'active' : '';
-      var history_active_class = this.state.active_page == 'status_and_history' ? 'active' : '';
+          HistorySection = _this$props.HistorySection,
+          active_pane = _this$props.active_pane;
+      var profile_active_class = active_pane == 'profile' ? 'active' : '';
+      var history_active_class = active_pane == 'status_and_history' ? 'active' : '';
       var new_class = this.props.new ? 'disabled' : '';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "user-editor tab-set--vertical"
@@ -1937,7 +1984,7 @@ function (_React$Component) {
         onClick: function onClick(e) {
           e.preventDefault();
 
-          _this2.updateActivePage('profile');
+          _this.updateActivePage('profile');
         }
       }, gettext("Profile"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
         className: "nav-item"
@@ -1947,11 +1994,11 @@ function (_React$Component) {
         onClick: function onClick(e) {
           e.preventDefault();
 
-          _this2.updateActivePage('status_and_history');
+          _this.updateActivePage('status_and_history');
         }
       }, gettext("Status and History")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "tab-content"
-      }, this.state.active_page == 'profile' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProfileSection, null), this.state.active_page == 'status_and_history' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(HistorySection, null)));
+      }, active_pane == 'profile' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProfileSection, null), active_pane == 'status_and_history' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(HistorySection, null)));
     }
   }]);
 
@@ -2066,7 +2113,7 @@ function (_React$Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProgramStore", function() { return ProgramStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _temp;
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -2148,6 +2195,9 @@ function () {
 
     _initializerDefineProperty(this, "bulk_targets_all", _descriptor24, this);
 
+    _initializerDefineProperty(this, "active_editor_pane", _descriptor25, this);
+
+    this.active_pane_is_dirty = false;
     this.api = api;
     Object.assign(this, initialData);
     this.appliedFilters = _objectSpread({}, this.filters);
@@ -2174,26 +2224,53 @@ function () {
       }, {});
     }
   }, {
+    key: "dirtyConfirm",
+    value: function dirtyConfirm() {
+      return !this.active_pane_is_dirty || this.active_pane_is_dirty && confirm(gettext("You have unsaved changes. Are you sure you want to discard them?"));
+    }
+  }, {
+    key: "onProfilePaneChange",
+    value: function onProfilePaneChange(new_pane) {
+      if (this.dirtyConfirm()) {
+        this.active_editor_pane = new_pane;
+        this.active_pane_is_dirty = false;
+      }
+    }
+  }, {
+    key: "setActiveFormIsDirty",
+    value: function setActiveFormIsDirty(is_dirty) {
+      this.active_pane_is_dirty = is_dirty;
+    }
+  }, {
+    key: "setActivePaneSaveAction",
+    value: function setActivePaneSaveAction(action) {
+      this.active_pane_save = action;
+    }
+  }, {
     key: "fetchPrograms",
     value: function fetchPrograms() {
       var _this = this;
 
-      this.fetching_main_listing = true;
-      this.api.fetchPrograms(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(function (results) {
-        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this.fetching_main_listing = false;
-          _this.programs = results.results;
-          _this.program_count = results.total_results;
-          _this.total_pages = results.total_pages;
-          _this.next_page = results.next_page;
-          _this.previous_page = results.previous_page;
+      if (this.dirtyConfirm()) {
+        this.fetching_main_listing = true;
+        this.api.fetchPrograms(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(function (results) {
+          Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+            _this.fetching_main_listing = false;
+            _this.programs = results.results;
+            _this.program_count = results.total_results;
+            _this.total_pages = results.total_pages;
+            _this.next_page = results.next_page;
+            _this.previous_page = results.previous_page;
+            _this.active_editor_pane = 'profile';
+            _this.active_pane_is_dirty = false;
+          });
         });
-      });
-      this.api.fetchProgramsForFilter(this.marshalFilters(this.appliedFilters)).then(function (response) {
-        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this.programFilterPrograms = response.data;
+        this.api.fetchProgramsForFilter(this.marshalFilters(this.appliedFilters)).then(function (response) {
+          Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+            _this.programFilterPrograms = response.data;
+          });
         });
-      });
+      }
     }
   }, {
     key: "applyFilters",
@@ -2237,23 +2314,27 @@ function () {
     value: function toggleEditingTarget(id) {
       var _this2 = this;
 
-      if (this.editing_target == 'new') {
-        this.programs.shift();
-        this.editing_errors = {};
-      }
+      if (this.dirtyConfirm()) {
+        if (this.editing_target == 'new') {
+          this.programs.shift();
+          this.editing_errors = {};
+        }
 
-      if (this.editing_target == id) {
-        this.editing_target = false;
-        this.editing_errors = {};
-      } else {
-        this.editing_target = id;
-        this.fetching_editing_history = true;
-        this.api.fetchProgramHistory(id).then(function (resp) {
-          Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this2.fetching_editing_history = false;
-            _this2.editing_history = resp.data;
+        this.active_editor_pane = 'profile';
+
+        if (this.editing_target == id) {
+          this.editing_target = false;
+          this.editing_errors = {};
+        } else {
+          this.editing_target = id;
+          this.fetching_editing_history = true;
+          this.api.fetchProgramHistory(id).then(function (resp) {
+            Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+              _this2.fetching_editing_history = false;
+              _this2.editing_history = resp.data;
+            });
           });
-        });
+        }
       }
     }
   }, {
@@ -2288,22 +2369,26 @@ function () {
   }, {
     key: "createProgram",
     value: function createProgram() {
-      if (this.editing_target == 'new') {
-        this.programs.shift();
-      }
+      if (this.dirtyConfirm()) {
+        if (this.editing_target == 'new') {
+          this.programs.shift();
+        }
 
-      var new_program_data = {
-        id: "new",
-        name: "",
-        gaitid: "",
-        fundcode: "",
-        funding_status: "",
-        description: "",
-        country: [],
-        sector: []
-      };
-      this.programs.unshift(new_program_data);
-      this.editing_target = 'new';
+        this.active_editor_pane = 'profile';
+        this.active_pane_is_dirty = false;
+        var new_program_data = {
+          id: "new",
+          name: "",
+          gaitid: "",
+          fundcode: "",
+          funding_status: "",
+          description: "",
+          country: [],
+          sector: []
+        };
+        this.programs.unshift(new_program_data);
+        this.editing_target = 'new';
+      }
     }
   }, {
     key: "saveNewProgram",
@@ -2315,11 +2400,14 @@ function () {
       this.api.createProgram(program_data).then(function (response) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this3.saving = false;
-          _this3.editing_target = false;
+          _this3.editing_target = response.data.id;
+          _this3.editing_target_data = response.data;
 
           _this3.programs.shift();
 
           _this3.programs.unshift(response.data);
+
+          _this3.active_pane_is_dirty = false;
         });
       }).catch(function (error) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
@@ -2338,7 +2426,8 @@ function () {
       this.api.updateProgram(id, program_data).then(function (response) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this4.saving = false;
-          _this4.editing_target = false;
+          _this4.active_pane_is_dirty = false;
+          _this4.editing_target_data = program_data;
 
           _this4.updateLocalPrograms(response.data);
 
@@ -2603,9 +2692,16 @@ function () {
   initializer: function initializer() {
     return false;
   }
-}), _applyDecoratedDescriptor(_class.prototype, "fetchPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkUpdateProgramStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkUpdateProgramStatus"), _class.prototype)), _class);
+}), _descriptor25 = _applyDecoratedDescriptor(_class.prototype, "active_editor_pane", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return 'profile';
+  }
+}), _applyDecoratedDescriptor(_class.prototype, "onProfilePaneChange", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "onProfilePaneChange"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "fetchPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkUpdateProgramStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkUpdateProgramStatus"), _class.prototype)), _class);
 
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-140955bbf1de2541dc8f.js.map
+//# sourceMappingURL=tola_management_program-9ccaee3eeaeb6f8c9122.js.map

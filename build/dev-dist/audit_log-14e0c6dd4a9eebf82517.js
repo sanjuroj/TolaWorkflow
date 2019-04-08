@@ -172,7 +172,9 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
   var store = _ref6.store;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "audit-log-index-view"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
+    class: "page-title"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, gettext("Indicator change log:")), " ", store.program_name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__controls"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "controls__bulk-actions"
@@ -408,7 +410,7 @@ __webpack_require__.r(__webpack_exports__);
  * Model/Store setup
  */
 
-var store = new _models__WEBPACK_IMPORTED_MODULE_2__["ProgramAuditLogStore"](jsContext.program_id);
+var store = new _models__WEBPACK_IMPORTED_MODULE_2__["ProgramAuditLogStore"](jsContext.program_id, jsContext.program_name);
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_views__WEBPACK_IMPORTED_MODULE_3__["IndexView"], {
   store: store
 }), document.querySelector('#app_root'));
@@ -877,7 +879,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProgramAuditLogStore", function() { return ProgramAuditLogStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./api */ "h6br");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _temp;
 
 function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -896,30 +898,33 @@ function _initializerWarningHelper(descriptor, context) { throw new Error('Decor
 var ProgramAuditLogStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
-  function ProgramAuditLogStore(program_id) {
+  function ProgramAuditLogStore(program_id, program_name) {
     _classCallCheck(this, ProgramAuditLogStore);
 
     _initializerDefineProperty(this, "program_id", _descriptor, this);
 
-    _initializerDefineProperty(this, "log_rows", _descriptor2, this);
+    _initializerDefineProperty(this, "program_name", _descriptor2, this);
 
-    _initializerDefineProperty(this, "fetching", _descriptor3, this);
+    _initializerDefineProperty(this, "log_rows", _descriptor3, this);
 
-    _initializerDefineProperty(this, "current_page", _descriptor4, this);
+    _initializerDefineProperty(this, "fetching", _descriptor4, this);
 
-    _initializerDefineProperty(this, "details_target", _descriptor5, this);
+    _initializerDefineProperty(this, "current_page", _descriptor5, this);
 
-    _initializerDefineProperty(this, "entries_count", _descriptor6, this);
+    _initializerDefineProperty(this, "details_target", _descriptor6, this);
 
-    _initializerDefineProperty(this, "total_pages", _descriptor7, this);
+    _initializerDefineProperty(this, "entries_count", _descriptor7, this);
 
-    _initializerDefineProperty(this, "next_page", _descriptor8, this);
+    _initializerDefineProperty(this, "total_pages", _descriptor8, this);
 
-    _initializerDefineProperty(this, "previous_page", _descriptor9, this);
+    _initializerDefineProperty(this, "next_page", _descriptor9, this);
 
-    _initializerDefineProperty(this, "current_page", _descriptor10, this);
+    _initializerDefineProperty(this, "previous_page", _descriptor10, this);
+
+    _initializerDefineProperty(this, "current_page", _descriptor11, this);
 
     this.program_id = program_id;
+    this.program_name = program_name;
     this.fetchProgramAuditLog();
   }
 
@@ -967,63 +972,70 @@ function () {
   initializer: function initializer() {
     return null;
   }
-}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, "log_rows", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, "program_name", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return null;
+  }
+}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "log_rows", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return [];
   }
-}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "fetching", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "fetching", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "current_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "current_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return 0;
   }
-}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "details_target", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "details_target", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "entries_count", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "entries_count", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return 0;
   }
-}), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "total_pages", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "total_pages", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return 0;
   }
-}), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "next_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, "next_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, "previous_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, "previous_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, "current_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor11 = _applyDecoratedDescriptor(_class.prototype, "current_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -1035,4 +1047,4 @@ function () {
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-b3486971f473ef642dad.js.map
+//# sourceMappingURL=audit_log-14e0c6dd4a9eebf82517.js.map

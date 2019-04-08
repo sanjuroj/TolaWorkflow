@@ -312,8 +312,8 @@ function newPopup(url, windowName) {
 
 window.newPopup = newPopup; // EXAMPLE: <a onclick="newPopup('https://docs.google.com/document/d/1tDwo3m1ychefNiAMr-8hCZnhEugQlt36AOyUYHlPbVo/edit?usp=sharing','Form Help/Guidance'); return false;" href="#" class="btn btn-sm btn-info">Form Help/Guidance</a>
 
-var DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in an audit log. Please record your rationale for future reference.");
-var DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in an audit log. Please record your rationale for future reference.');
+var DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.");
+var DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.');
 
 var create_changeset_notice = function create_changeset_notice() {
   var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -360,7 +360,7 @@ var create_changeset_notice = function create_changeset_notice() {
         buttons: [{
           text: confirm_text,
           primary: true,
-          addClass: type == 'error' ? 'btn-danger' : '',
+          addClass: type == 'error' ? 'btn-danger is-disabled' : '',
           click: function click(notice) {
             var close = true;
             var textarea = $(notice.refs.elem).find('textarea[name="rationale"]');
@@ -369,7 +369,7 @@ var create_changeset_notice = function create_changeset_notice() {
 
             if (!rationale) {
               textarea.addClass('is-invalid');
-              textarea.parent().append("\n                                    <div class=\"invalid-feedback\">\n                                        Results have been recorded. Rationale is required.\n                                    </div>\n                                ");
+              textarea.parent().append('<div class="invalid-feedback">' + gettext('Rationale is required.') + '</div>');
               return false;
             } else {
               textarea.removeClass('is-invalid');
@@ -482,4 +482,4 @@ window.create_nondestructive_changeset_notice = function () {
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-702c52ce47930ba15f84.js.map
+//# sourceMappingURL=base-4ea2b124354cef6870cc.js.map

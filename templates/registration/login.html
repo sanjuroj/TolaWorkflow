@@ -4,19 +4,69 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-  <h1>Login</h1>
 
-  <form action="" method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <input type="submit" value="login"><br/>
-      <a href="{{okta_url}}">{% trans "Mercy Corps Employee Login" %}</a><br/>
-      {% if non_ldap %}
-        <div class="social-buttons">
-            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-go"><i class="fa fa-google"></i> Google</a>
-        </div>
-        or
-        <a href="{% url 'register' %}">{% trans "Register a new Tola Account" %}</a><br/>
-      {% endif %}
-  </form>
+<div class="login">
+
+    <header class="page-title">
+        {% blocktrans %}
+        <h1><small>Welcome to</small> TolaActivity</h1>
+        {% endblocktrans %}
+    </header>
+
+    <a href="{{okta_url}}" class="login__option btn btn-lg btn-block btn-info">
+        {# Translators: a button directing Mercy Corps users to log in #}
+        {% blocktrans %}
+        <i class="fas fa-sign-in-alt"></i><small>Log in with a <strong>mercycorps.org</strong> email address</small>
+        {% endblocktrans %}
+    </a>
+
+    <a href="{% url "social:begin" "google-oauth2" %}" class="login__option btn btn-lg btn-block btn-primary-light">
+        {# Translators: a button directing users to log in with Gmail #}
+        {% blocktrans %}
+        <i class="fa fa-sign-in-alt"></i><small>Log in with <strong>Gmail</strong></small>
+        {% endblocktrans %}
+    </a>
+
+    <a href="#username-form" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="username-form" class="login__option btn btn-lg btn-block btn-medium">
+        <i class="fa fa-sign-in-alt"></i><small>{% trans "Log in with a username and password" %}</small>
+    </a>
+
+    <div class=" collapse" id="username-form">
+        <section class="login__option login__option--email card card-body">
+
+            <h3><small></small></h3>
+
+            <form action="{% url "login" %}" method="post">
+
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                    <input class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.html_name }}" value="" type="text">
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                    <input class="form-control" id="{{ form.password.id_for_label }}" name="{{ form.password.html_name }}" value="" type="password">
+                </div>
+
+                <input type="submit" class="btn btn-medium" value="{% trans "Log in" %}">
+
+            </form>
+        </section>
+    </div>
+
+    <section class="login__help">
+
+        <h4>{% trans "Need help logging in?" %}</h4>
+
+        <p class="text-muted text-small">
+            {% blocktrans %}
+            Contact your TolaData administrator or <a href="mailto:tola@mercycorps.org">email the TolaData team.</a>
+            {% endblocktrans %}
+        </p>
+
+    </section>
+
+</div>
 {% endblock %}

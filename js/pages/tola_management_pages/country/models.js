@@ -40,7 +40,7 @@ export class CountryStore {
 
     @observable editing_target = null
     @observable editing_errors = {}
-    @observable fetching_editing_data = true
+    @observable fetching_editing_data = false
     @observable editing_objectives_data = []
     @observable editing_objectives_errors = {}
     @observable editing_disaggregations_data = []
@@ -75,17 +75,21 @@ export class CountryStore {
 
     @action
     fetchCountries() {
-        this.fetching_main_listing = true
-        this.api.fetchCountries(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(results => {
-            runInAction(() => {
-                this.fetching_main_listing = false
-                this.countries = results.results
-                this.country_count = results.total_results
-                this.total_pages = results.total_pages
-                this.next_page =results.next_page
-                this.previous_page = results.previous_page
+        if(this.dirtyConfirm()) {
+            this.fetching_main_listing = true
+            this.api.fetchCountries(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(results => {
+                runInAction(() => {
+                    this.active_editor_pane = 'profile'
+                    this.active_pane_is_dirty = false
+                    this.fetching_main_listing = false
+                    this.countries = results.results
+                    this.country_count = results.total_results
+                    this.total_pages = results.total_pages
+                    this.next_page =results.next_page
+                    this.previous_page = results.previous_page
+                })
             })
-        })
+        }
 
     }
 
@@ -126,27 +130,32 @@ export class CountryStore {
 
     @action
     toggleEditingTarget(id) {
-        if(this.editing_target == 'new') {
-            this.countries.shift()
-            this.editing_errors = {}
-        }
+        if(this.dirtyConfirm()){
+            if(this.editing_target == 'new') {
+                this.countries.shift()
+                this.editing_errors = {}
+            }
 
-        if(this.editing_target == id) {
-            this.editing_target = false
-            this.editing_errors = {}
-        } else {
-            this.editing_target = id
-            this.fetching_editing_data = true
-            Promise.all([
-                this.api.fetchCountryObjectives(id),
-                this.api.fetchCountryDisaggregations(id),
-            ]).then(([objectives_resp, disaggregations_resp]) => {
-                runInAction(() => {
-                    this.fetching_editing_data = false
-                    this.editing_objectives_data = objectives_resp.data
-                    this.editing_disaggregations_data = disaggregations_resp.data
+            this.active_editor_pane = 'profile'
+            this.active_pane_is_dirty = false
+
+            if(this.editing_target == id) {
+                this.editing_target = false
+                this.editing_errors = {}
+            } else {
+                this.editing_target = id
+                this.fetching_editing_data = true
+                Promise.all([
+                    this.api.fetchCountryObjectives(id),
+                    this.api.fetchCountryDisaggregations(id),
+                ]).then(([objectives_resp, disaggregations_resp]) => {
+                    runInAction(() => {
+                        this.fetching_editing_data = false
+                        this.editing_objectives_data = objectives_resp.data
+                        this.editing_disaggregations_data = disaggregations_resp.data
+                    })
                 })
-            })
+            }
         }
     }
 
@@ -173,21 +182,46 @@ export class CountryStore {
         PNotify.success({text: gettext("Successfully Deleted"), delay: 5000})
     }
 
+    @observable active_editor_pane = 'profile'
+
+    active_pane_is_dirty = false
+
+    dirtyConfirm() {
+        return !this.active_pane_is_dirty || (this.active_pane_is_dirty && confirm(gettext("You have unsaved changes. Are you sure you want to discard them?")))
+    }
+
+    @action
+    onProfilePaneChange(new_pane) {
+        if(this.dirtyConfirm()) {
+            this.active_editor_pane = new_pane
+            this.active_pane_is_dirty = false
+        }
+    }
+
+    setActiveFormIsDirty(is_dirty) {
+        this.active_pane_is_dirty = is_dirty
+    }
+
     @action
     addCountry() {
-        if(this.editing_target == 'new') {
-            this.countries.shift()
-        }
+        if(this.dirtyConfirm()) {
+            if(this.editing_target == 'new') {
+                this.countries.shift()
+            }
 
-        let new_country_data = {
-            id: "new",
-            country: "",
-            description: "",
-            code: "",
-            organizations: [],
+            this.active_editor_pane = 'profile'
+            this.active_pane_is_dirty = false
+
+            let new_country_data = {
+                id: "new",
+                country: "",
+                description: "",
+                code: "",
+                organizations: [],
+            }
+            this.countries.unshift(new_country_data)
+            this.editing_target = 'new'
         }
-        this.countries.unshift(new_country_data)
-        this.editing_target = 'new'
     }
 
     @action
@@ -197,7 +231,7 @@ export class CountryStore {
         this.api.createCountry(country_data).then(response => {
             runInAction(()=> {
                 this.saving = false
-                this.editing_target = false
+                this.active_pane_is_dirty = false
                 this.countries.shift()
                 this.countries.unshift(response.data)
             })
@@ -215,7 +249,7 @@ export class CountryStore {
         this.api.updateCountry(id, country_data).then(response => {
             runInAction(() => {
                 this.saving = false
-                this.editing_target = false
+                this.active_pane_is_dirty = false
                 this.updateLocalList(response.data)
                 this.onSaveSuccessHandler()
             })
@@ -241,6 +275,7 @@ export class CountryStore {
             runInAction(() => {
                 this.onSaveSuccessHandler()
                 let updatedObjective = response.data
+                this.active_pane_is_dirty = false
                 this.editing_objectives_data = this.editing_objectives_data.map(objective => {
                     if (objective.id == updatedObjective.id) {
                         return updatedObjective
@@ -262,6 +297,7 @@ export class CountryStore {
         this.api.createObjective(data).then(response => {
             runInAction(() => {
                 this.onSaveSuccessHandler()
+                this.active_pane_is_dirty = false
                 let newObjective = response.data
                 this.editing_objectives_data = [...this.editing_objectives_data.filter(objective => objective.id!='new'), newObjective]
             })
@@ -332,6 +368,7 @@ export class CountryStore {
             runInAction(() => {
                 this.onSaveSuccessHandler()
                 let updatedDisaggregation = response.data
+                this.active_pane_is_dirty = false
                 this.editing_disaggregations_data = this.editing_disaggregations_data.map(disaggregation => {
                     if (disaggregation.id == updatedDisaggregation.id) {
                         return updatedDisaggregation
@@ -352,6 +389,7 @@ export class CountryStore {
             runInAction(() => {
                 this.onSaveSuccessHandler()
                 const newDisaggregation = response.data
+                this.active_pane_is_dirty = false
                 this.editing_disaggregations_data = [...this.editing_disaggregations_data.filter(disaggregation => disaggregation.id!='new'), newDisaggregation]
             })
         }).catch((errors) => {

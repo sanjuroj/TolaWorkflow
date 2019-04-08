@@ -30,13 +30,18 @@ class DisaggregationType extends React.Component {
         }
     }
 
+    hasUnsavedDataAction() {
+        const labels = this.props.disaggregation.labels.map(x => ({...x}))
+        this.props.onIsDirtyChange(JSON.stringify(this.state.managed_data) != JSON.stringify({...this.props.disaggregation, labels: [...labels]}))
+    }
+
     resetForm() {
         this.props.clearErrors()
         const {disaggregation} = this.props
         const labels = disaggregation.labels.map(x => ({...x}))
         this.setState({
             managed_data: {...disaggregation, labels: [...labels]},
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     formErrors(fieldKey) {
@@ -49,7 +54,7 @@ class DisaggregationType extends React.Component {
                 ...this.state.managed_data,
                 disaggregation_type: value,
             },
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     updateLabel(labelIndex, value) {
@@ -62,7 +67,7 @@ class DisaggregationType extends React.Component {
         })
         this.setState({
             managed_data: {...managed_data, labels: [...updatedLabels]}
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     appendLabel() {
@@ -73,7 +78,7 @@ class DisaggregationType extends React.Component {
         const {managed_data} = this.state
         this.setState({
             managed_data: {...managed_data, labels: [...managed_data.labels, newLabel]}
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     deleteLabel(labelIndex) {
@@ -81,7 +86,7 @@ class DisaggregationType extends React.Component {
         const updatedLabels = managed_data.labels.filter((label,idx) => idx!=labelIndex || label.in_use)
         this.setState({
             managed_data: {...managed_data, labels: [...updatedLabels]}
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     save() {
@@ -187,30 +192,50 @@ export default class EditDisaggregations extends React.Component {
 
         this.state = {
             expanded_id: null,
+            is_dirty: false
         }
+    }
+
+    handleDirtyUpdate(is_dirty) {
+        this.setState({is_dirty: is_dirty})
+        this.props.onIsDirtyChange(is_dirty)
+    }
+
+    dirtyConfirm() {
+        return !this.state.is_dirty || (this.state.is_dirty && confirm(gettext("You have unsaved changes. Are you sure you want to discard them?")))
     }
 
     toggleExpand(id) {
         this.props.clearErrors()
-        const {expanded_id} = this.state
-        if (id == expanded_id) {
-            this.setState({expanded_id: null})
-        } else {
-            this.setState({expanded_id: id})
+        if(this.dirtyConfirm()) {
+            const {expanded_id} = this.state
+            if (id == expanded_id) {
+                this.setState({expanded_id: null})
+            } else {
+                this.setState({expanded_id: id})
+            }
+            if(expanded_id == 'new') {
+                this.props.onDelete(expanded_id)
+            }
+            this.handleDirtyUpdate(false)
         }
     }
 
     addDisaggregation() {
-        this.props.addDisaggregation()
-        this.setState({expanded_id: 'new'})
+        if(this.dirtyConfirm()) {
+            this.props.addDisaggregation()
+            this.setState({expanded_id: 'new'})
+        }
     }
 
     saveDisaggregation(data) {
         const withCountry = Object.assign(data, {country: this.props.country_id})
         if (data.id == 'new') {
-            return this.props.onCreate(withCountry)
+            this.props.onCreate(withCountry)
+        } else {
+            this.props.onUpdate(data.id, withCountry)
         }
-        return this.props.onUpdate(data.id, withCountry)
+        this.setState({is_dirty: false})
     }
 
     render() {
@@ -230,6 +255,7 @@ export default class EditDisaggregations extends React.Component {
                         saveDisaggregation={(data) => this.saveDisaggregation(data)}
                         errors={this.props.errors}
                         clearErrors={this.props.clearErrors}
+                        onIsDirtyChange={(is_dirty) => this.handleDirtyUpdate(is_dirty)}
                     />
                 )}
                 <div>

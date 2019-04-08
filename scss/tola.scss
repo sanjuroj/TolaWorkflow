@@ -94,6 +94,11 @@
 @import 'components/tab_set'; // wraps & overclasses BS nav-tabs and nav-content for e.g. vertical tabs
 @import 'components/management_table'; // Management table component
 @import 'components/tola_management'; // Tola Managament pages (user, organization, program, and countries)
+@import 'components/virtualized_tables'; // Virtualized tables in Edit User (programs & roles)
+@import 'components/admin_list'; // List styles in Admin Lite
+@import 'components/folding_sidebar'; // Flyout filters for Admin lite. IPTT implementation is different
+@import 'components/changelog'; // custom styles for change logs/audit logs
+@import 'components/login'; // login page
 
 /* Local custom CSS and overloads for non-BS libraries */
 @import 'mixins';

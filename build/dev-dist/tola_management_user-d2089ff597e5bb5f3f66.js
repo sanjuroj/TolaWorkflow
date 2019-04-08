@@ -238,6 +238,8 @@ function (_React$Component) {
   _createClass(EditUserPrograms, [{
     key: "componentWillReceiveProps",
     value: function componentWillReceiveProps(next_props) {
+      var _this2 = this;
+
       var store = next_props.store;
       var countries_obj = create_country_objects(store.countries, store);
       var programs_obj = create_program_objects(store.programs, store);
@@ -270,12 +272,14 @@ function (_React$Component) {
         }), programs),
         original_user_program_access: create_user_access(store.editing_target_data.access),
         user_program_access: create_user_access(store.editing_target_data.access)
+      }, function () {
+        return _this2.hasUnsavedDataAction();
       });
     }
   }, {
     key: "saveForm",
     value: function saveForm() {
-      var _this2 = this;
+      var _this3 = this;
 
       //marshal the data back into the format we received it
       //filtering out all !has_access
@@ -286,7 +290,7 @@ function (_React$Component) {
               _ = _ref20[0],
               country = _ref20[1];
 
-          return _this2.props.store.is_superuser;
+          return _this3.props.store.is_superuser;
         }).filter(function (_ref21) {
           var _ref22 = _slicedToArray(_ref21, 2),
               _ = _ref22[0],
@@ -314,20 +318,60 @@ function (_React$Component) {
           return program;
         })
       });
+      this.hasUnsavedDataAction();
+    }
+  }, {
+    key: "hasUnsavedDataAction",
+    value: function hasUnsavedDataAction() {
+      var access = {
+        countries: Object.entries(this.state.user_program_access.countries).filter(function (_ref29) {
+          var _ref30 = _slicedToArray(_ref29, 2),
+              _ = _ref30[0],
+              country = _ref30[1];
+
+          return country.has_access;
+        }).reduce(function (countries, _ref31) {
+          var _ref32 = _slicedToArray(_ref31, 2),
+              id = _ref32[0],
+              country = _ref32[1];
+
+          return _objectSpread({}, countries, _defineProperty({}, id, country));
+        }, {}),
+        programs: Object.entries(this.state.user_program_access.programs).filter(function (_ref33) {
+          var _ref34 = _slicedToArray(_ref33, 2),
+              _ = _ref34[0],
+              program = _ref34[1];
+
+          return program.has_access;
+        }).reduce(function (programs, _ref35) {
+          var _ref36 = _slicedToArray(_ref35, 2),
+              id = _ref36[0],
+              program = _ref36[1];
+
+          return _objectSpread({}, programs, _defineProperty({}, id, program));
+        }, {})
+      };
+      this.props.onIsDirtyChange(JSON.stringify(access) != JSON.stringify(this.state.original_user_program_access));
     }
   }, {
     key: "resetForm",
     value: function resetForm() {
+      var _this4 = this;
+
       this.setState({
         user_program_access: {
           countries: _objectSpread({}, this.state.original_user_program_access.countries),
           programs: _objectSpread({}, this.state.original_user_program_access.programs)
         }
+      }, function () {
+        return _this4.hasUnsavedDataAction();
       });
     }
   }, {
     key: "toggleProgramAccess",
     value: function toggleProgramAccess(program_key) {
+      var _this5 = this;
+
       var current_program_access = this.state.user_program_access.programs;
 
       var updated_program_access = function () {
@@ -355,25 +399,27 @@ function (_React$Component) {
         user_program_access: _objectSpread({}, this.state.user_program_access, {
           programs: _objectSpread({}, current_program_access, _defineProperty({}, program_key, updated_program_access))
         })
+      }, function () {
+        return _this5.hasUnsavedDataAction();
       });
     }
   }, {
     key: "toggleAllProgramsForCountry",
     value: function toggleAllProgramsForCountry(country_id) {
-      var _this3 = this;
+      var _this6 = this;
 
       var country = this.state.countries[country_id];
 
       var new_program_access = function () {
-        var country_has_all_checked = country_has_all_access(country, _this3.state.filtered_programs, _this3.state.user_program_access);
+        var country_has_all_checked = country_has_all_access(country, _this6.state.filtered_programs, _this6.state.user_program_access);
 
         if (country_has_all_checked) {
           //toggle all off
           return Array.from(country.programs).filter(function (program_id) {
-            return !!_this3.state.filtered_programs[program_id];
+            return !!_this6.state.filtered_programs[program_id];
           }).reduce(function (programs, program_id) {
             var program_key = "".concat(country.id, "_").concat(program_id);
-            var program = _this3.state.user_program_access.programs[program_key];
+            var program = _this6.state.user_program_access.programs[program_key];
 
             if (program) {
               return _objectSpread({}, programs, _defineProperty({}, program_key, _objectSpread({}, program, {
@@ -386,10 +432,10 @@ function (_React$Component) {
         } else {
           //toggle all on
           return Array.from(country.programs).filter(function (program_id) {
-            return !!_this3.state.filtered_programs[program_id];
+            return !!_this6.state.filtered_programs[program_id];
           }).reduce(function (programs, program_id) {
             var program_key = "".concat(country.id, "_").concat(program_id);
-            var program = _this3.state.user_program_access.programs[program_key];
+            var program = _this6.state.user_program_access.programs[program_key];
 
             if (program) {
               return _objectSpread({}, programs, _defineProperty({}, program_key, _objectSpread({}, program, {
@@ -411,11 +457,15 @@ function (_React$Component) {
         user_program_access: _objectSpread({}, this.state.user_program_access, {
           programs: _objectSpread({}, this.state.user_program_access.programs, new_program_access)
         })
+      }, function () {
+        return _this6.hasUnsavedDataAction();
       });
     }
   }, {
     key: "changeCountryRole",
     value: function changeCountryRole(country_id, new_val) {
+      var _this7 = this;
+
       var country = _objectSpread({}, this.state.user_program_access.countries[country_id]);
 
       var new_country_access = function () {
@@ -436,11 +486,15 @@ function (_React$Component) {
         user_program_access: _objectSpread({}, this.state.user_program_access, {
           countries: _objectSpread({}, this.state.user_program_access.countries, _defineProperty({}, country_id, new_country_access))
         })
+      }, function () {
+        return _this7.hasUnsavedDataAction();
       });
     }
   }, {
     key: "changeProgramRole",
     value: function changeProgramRole(program_key, new_val) {
+      var _this8 = this;
+
       var _program_key$split3 = program_key.split('_'),
           _program_key$split4 = _slicedToArray(_program_key$split3, 2),
           country_id = _program_key$split4[0],
@@ -470,6 +524,8 @@ function (_React$Component) {
         user_program_access: _objectSpread({}, this.state.user_program_access, {
           programs: _objectSpread({}, this.state.user_program_access.programs, _defineProperty({}, program_key, new_program_access))
         })
+      }, function () {
+        return _this8.hasUnsavedDataAction();
       });
     }
   }, {
@@ -535,19 +591,19 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this9 = this;
 
       var _this$props = this.props,
           user = _this$props.user,
           onSave = _this$props.onSave;
 
       var is_checked = function is_checked(data) {
-        var access = _this4.state.user_program_access;
+        var access = _this9.state.user_program_access;
 
         if (data.type == 'country') {
           return access.countries[data.id] && access.countries[data.id].has_access || false;
         } else {
-          if (_this4.state.user_program_access.countries[data.country_id] && _this4.state.user_program_access.countries[data.country_id].has_access) {
+          if (_this9.state.user_program_access.countries[data.country_id] && _this9.state.user_program_access.countries[data.country_id].has_access) {
             return true;
           }
 
@@ -557,27 +613,27 @@ function (_React$Component) {
 
       var is_check_disabled = function is_check_disabled(data) {
         if (data.type == 'country') {
-          return !(_this4.state.countries[data.id].programs.size > 0) || !(_this4.props.store.access.countries[data.id] && _this4.props.store.access.countries[data.id].role == 'basic_admin') || _this4.state.user_program_access.countries[data.id] && _this4.state.user_program_access.countries[data.id].has_access;
+          return !(_this9.state.countries[data.id].programs.size > 0) || !(_this9.props.store.access.countries[data.id] && _this9.props.store.access.countries[data.id].role == 'basic_admin') || _this9.state.user_program_access.countries[data.id] && _this9.state.user_program_access.countries[data.id].has_access;
         } else {
-          if (_this4.state.user_program_access.countries[data.country_id] && _this4.state.user_program_access.countries[data.country_id].has_access) {
+          if (_this9.state.user_program_access.countries[data.country_id] && _this9.state.user_program_access.countries[data.country_id].has_access) {
             return true;
           }
 
-          return !_this4.props.store.access.countries[data.country_id] || _this4.props.store.access.countries[data.country_id].role != 'basic_admin';
+          return !_this9.props.store.access.countries[data.country_id] || _this9.props.store.access.countries[data.country_id].role != 'basic_admin';
         }
       };
 
       var is_role_disabled = function is_role_disabled(data) {
         if (data.type == 'country') {
-          return !_this4.props.store.is_superuser;
+          return !_this9.props.store.is_superuser;
         } else {
-          return !_this4.props.store.access.countries[data.country_id] || _this4.props.store.access.countries[data.country_id].role != 'basic_admin' || !(_this4.state.user_program_access.programs[data.id] && _this4.state.user_program_access.programs[data.id].has_access) && !(_this4.state.user_program_access.countries[data.country_id] && _this4.state.user_program_access.countries[data.country_id].has_access);
+          return !_this9.props.store.access.countries[data.country_id] || _this9.props.store.access.countries[data.country_id].role != 'basic_admin' || !(_this9.state.user_program_access.programs[data.id] && _this9.state.user_program_access.programs[data.id].has_access) && !(_this9.state.user_program_access.countries[data.country_id] && _this9.state.user_program_access.countries[data.country_id].has_access);
         }
       };
 
       var get_role = function get_role(data) {
         if (data.type == 'country') {
-          var country_access = _this4.state.user_program_access.countries;
+          var country_access = _this9.state.user_program_access.countries;
 
           if (!country_access[data.id]) {
             return 'none';
@@ -585,10 +641,10 @@ function (_React$Component) {
             return country_access[data.id].role;
           }
         } else {
-          var program_access = _this4.state.user_program_access.programs;
+          var program_access = _this9.state.user_program_access.programs;
 
           if (!program_access[data.id]) {
-            return _this4.props.store.program_role_choices[0].value;
+            return _this9.props.store.program_role_choices[0].value;
           } else {
             return program_access[data.id].role;
           }
@@ -609,7 +665,7 @@ function (_React$Component) {
         value: this.state.country_filter,
         options: this.state.country_selections,
         onChange: function onChange(e) {
-          return _this4.changeCountryFilter(e);
+          return _this9.changeCountryFilter(e);
         }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group edit-user-programs__program-filter"
@@ -621,7 +677,7 @@ function (_React$Component) {
         value: this.state.program_filter,
         className: "form-control",
         onChange: function onChange(e) {
-          return _this4.updateProgramFilter(e.target.value);
+          return _this9.updateProgramFilter(e.target.value);
         }
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "input-group-append"
@@ -629,7 +685,7 @@ function (_React$Component) {
         onClick: function onClick(e) {
           e.preventDefault();
 
-          _this4.clearFilter();
+          _this9.clearFilter();
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "input-group-text"
@@ -637,37 +693,37 @@ function (_React$Component) {
         className: "fa fa-times-circle"
       }))))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "virtualized-table__wrapper"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_virtualized__WEBPACK_IMPORTED_MODULE_2__["AutoSizer"], null, function (_ref29) {
-        var height = _ref29.height,
-            width = _ref29.width;
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_virtualized__WEBPACK_IMPORTED_MODULE_2__["AutoSizer"], null, function (_ref37) {
+        var height = _ref37.height,
+            width = _ref37.width;
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_virtualized__WEBPACK_IMPORTED_MODULE_2__["Table"], {
           height: height,
           headerHeight: 50,
           width: width,
-          rowGetter: function rowGetter(_ref30) {
-            var index = _ref30.index;
-            return _this4.state.flattened_programs[index];
+          rowGetter: function rowGetter(_ref38) {
+            var index = _ref38.index;
+            return _this9.state.flattened_programs[index];
           },
           rowHeight: 50,
-          rowCount: _this4.state.flattened_programs.length
+          rowCount: _this9.state.flattened_programs.length
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_virtualized__WEBPACK_IMPORTED_MODULE_2__["Column"], {
           dataKey: "not_applicable_but_required",
           width: 100,
-          cellDataGetter: function cellDataGetter(_ref31) {
-            var rowData = _ref31.rowData;
+          cellDataGetter: function cellDataGetter(_ref39) {
+            var rowData = _ref39.rowData;
             return {
               checked: is_checked(rowData),
               disabled: is_check_disabled(rowData),
               id: rowData.id,
               type: rowData.type,
-              action: rowData.type == "country" ? _this4.toggleAllProgramsForCountry.bind(_this4) : _this4.toggleProgramAccess.bind(_this4)
+              action: rowData.type == "country" ? _this9.toggleAllProgramsForCountry.bind(_this9) : _this9.toggleProgramAccess.bind(_this9)
             };
           },
-          cellRenderer: function cellRenderer(_ref32) {
-            var cellData = _ref32.cellData;
+          cellRenderer: function cellRenderer(_ref40) {
+            var cellData = _ref40.cellData;
 
             if (cellData.type == 'country') {
-              var country_has_all_checked = country_has_all_access(_this4.state.countries[cellData.id], _this4.state.filtered_programs, _this4.state.user_program_access);
+              var country_has_all_checked = country_has_all_access(_this9.state.countries[cellData.id], _this9.state.filtered_programs, _this9.state.user_program_access);
               var button_label = country_has_all_checked ? gettext('Deselect All') : gettext('Select All');
 
               if (cellData.disabled) {
@@ -700,15 +756,15 @@ function (_React$Component) {
           label: gettext("Countries and Programs"),
           width: 200,
           flexGrow: 2,
-          cellDataGetter: function cellDataGetter(_ref33) {
-            var rowData = _ref33.rowData;
+          cellDataGetter: function cellDataGetter(_ref41) {
+            var rowData = _ref41.rowData;
             return {
               bold: rowData.type == "country",
               name: rowData.name
             };
           },
-          cellRenderer: function cellRenderer(_ref34) {
-            var cellData = _ref34.cellData;
+          cellRenderer: function cellRenderer(_ref42) {
+            var cellData = _ref42.cellData;
 
             if (cellData.bold) {
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, cellData.name);
@@ -721,18 +777,18 @@ function (_React$Component) {
           flexGrow: 1,
           dataKey: "not_applicable_but_required",
           label: gettext("Roles and Permissions"),
-          cellDataGetter: function cellDataGetter(_ref35) {
-            var rowData = _ref35.rowData;
+          cellDataGetter: function cellDataGetter(_ref43) {
+            var rowData = _ref43.rowData;
             return {
               id: rowData.id,
               disabled: is_role_disabled(rowData),
               type: rowData.type,
               options: rowData.options,
-              action: rowData.type == "country" ? _this4.changeCountryRole.bind(_this4) : _this4.changeProgramRole.bind(_this4)
+              action: rowData.type == "country" ? _this9.changeCountryRole.bind(_this9) : _this9.changeProgramRole.bind(_this9)
             };
           },
-          cellRenderer: function cellRenderer(_ref36) {
-            var cellData = _ref36.cellData;
+          cellRenderer: function cellRenderer(_ref44) {
+            var cellData = _ref44.cellData;
             return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
               disabled: cellData.disabled,
               value: get_role(cellData),
@@ -753,13 +809,13 @@ function (_React$Component) {
         type: "button",
         className: "btn btn-primary",
         onClick: function onClick() {
-          return _this4.saveForm();
+          return _this9.saveForm();
         }
       }, "Save Changes"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "button",
         className: "btn btn-reset",
         onClick: function onClick() {
-          return _this4.resetForm();
+          return _this9.resetForm();
         }
       }, "Reset")));
     }
@@ -983,8 +1039,7 @@ function (_React$Component) {
 
   _createClass(EditUserProfile, [{
     key: "save",
-    value: function save(e) {
-      e.preventDefault();
+    value: function save() {
       this.props.onUpdate(this.state.managed_user_data);
     }
   }, {
@@ -1002,84 +1057,119 @@ function (_React$Component) {
   }, {
     key: "updateFirstName",
     value: function updateFirstName(new_first_name) {
+      var _this2 = this;
+
       this.setState({
         managed_user_data: _objectSpread({}, this.state.managed_user_data, {
           first_name: new_first_name
         })
+      }, function () {
+        return _this2.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updateLastName",
     value: function updateLastName(new_last_name) {
+      var _this3 = this;
+
       this.setState({
         managed_user_data: _objectSpread({}, this.state.managed_user_data, {
           last_name: new_last_name
         })
+      }, function () {
+        return _this3.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updateOrganization",
     value: function updateOrganization(new_option) {
+      var _this4 = this;
+
       this.setState({
         managed_user_data: _objectSpread({}, this.state.managed_user_data, {
           organization_id: new_option.value
         }),
         selected_organization: new_option
+      }, function () {
+        return _this4.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updateTitle",
     value: function updateTitle(new_title) {
+      var _this5 = this;
+
       this.setState({
         managed_user_data: _objectSpread({}, this.state.managed_user_data, {
           title: new_title
         })
+      }, function () {
+        return _this5.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updateEmail",
     value: function updateEmail(new_email) {
+      var _this6 = this;
+
       this.setState({
         managed_user_data: _objectSpread({}, this.state.managed_user_data, {
           email: new_email
         })
+      }, function () {
+        return _this6.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updatePhone",
     value: function updatePhone(new_phone) {
+      var _this7 = this;
+
       this.setState({
         managed_user_data: _objectSpread({}, this.state.managed_user_data, {
           phone: new_phone
         })
+      }, function () {
+        return _this7.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updateModeOfContact",
     value: function updateModeOfContact(new_mode_of_contact) {
+      var _this8 = this;
+
       this.setState({
         managed_user_data: _objectSpread({}, this.state.managed_user_data, {
           mode_of_contact: new_mode_of_contact
         })
+      }, function () {
+        return _this8.hasUnsavedDataAction();
       });
+    }
+  }, {
+    key: "hasUnsavedDataAction",
+    value: function hasUnsavedDataAction() {
+      this.props.onIsDirtyChange(JSON.stringify(this.state.managed_user_data) != JSON.stringify(this.state.original_user_data));
     }
   }, {
     key: "resetForm",
     value: function resetForm() {
-      var _this2 = this;
+      var _this9 = this;
 
       var selected_organization = this.state.organization_listing.find(function (o) {
-        return o.value == _this2.state.original_user_data.organization_id;
+        return o.value == _this9.state.original_user_data.organization_id;
       });
       this.setState({
         managed_user_data: this.state.original_user_data,
         selected_organization: selected_organization
+      }, function () {
+        return _this9.hasUnsavedDataAction();
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this10 = this;
 
       var ud = this.state.managed_user_data;
       var e = this.props.errors;
@@ -1108,7 +1198,7 @@ function (_React$Component) {
         type: "text",
         value: ud.first_name,
         onChange: function onChange(e) {
-          return _this3.updateFirstName(e.target.value);
+          return _this10.updateFirstName(e.target.value);
         },
         id: "user-first-name-input",
         required: true
@@ -1126,7 +1216,7 @@ function (_React$Component) {
         type: "text",
         value: ud.last_name,
         onChange: function onChange(e) {
-          return _this3.updateLastName(e.target.value);
+          return _this10.updateLastName(e.target.value);
         },
         id: "user-last-name-input",
         required: true
@@ -1144,7 +1234,7 @@ function (_React$Component) {
         value: this.state.selected_organization,
         options: this.state.organization_listing,
         onChange: function onChange(e) {
-          return _this3.updateOrganization(e);
+          return _this10.updateOrganization(e);
         },
         placeholder: "None Selected",
         id: "user-organization-input"
@@ -1160,7 +1250,7 @@ function (_React$Component) {
         type: "text",
         value: ud.title,
         onChange: function onChange(e) {
-          return _this3.updateTitle(e.target.value);
+          return _this10.updateTitle(e.target.value);
         },
         className: "form-control",
         id: "user-title-input"
@@ -1176,7 +1266,7 @@ function (_React$Component) {
         type: "email",
         value: ud.email,
         onChange: function onChange(e) {
-          return _this3.updateEmail(e.target.value);
+          return _this10.updateEmail(e.target.value);
         },
         id: "user-email-input"
       }), e.email && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -1190,7 +1280,7 @@ function (_React$Component) {
         type: "tel",
         value: ud.phone,
         onChange: function onChange(e) {
-          return _this3.updatePhone(e.target.value);
+          return _this10.updatePhone(e.target.value);
         },
         className: "form-control",
         id: "user-phone-input"
@@ -1203,7 +1293,7 @@ function (_React$Component) {
         type: "text",
         value: ud.mode_of_contact,
         onChange: function onChange(e) {
-          return _this3.updateModeOfContact(e.target.value);
+          return _this10.updateModeOfContact(e.target.value);
         },
         className: "form-control",
         id: "user-mode-of-contact-input"
@@ -1211,32 +1301,34 @@ function (_React$Component) {
         className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
+        type: "button",
         onClick: function onClick(e) {
-          return _this3.saveNew(e);
+          return _this10.saveNew();
         }
       }, gettext("Save changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-secondary",
         onClick: function onClick(e) {
-          return _this3.saveNewAndAddAnother(e);
+          return _this10.saveNewAndAddAnother(e);
         }
       }, gettext("Save And Add Another")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this3.resetForm();
+          return _this10.resetForm();
         }
       }, gettext("Reset"))), !this.props.new && !disabled && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
+        type: "button",
         onClick: function onClick(e) {
-          return _this3.save(e);
+          return _this10.save();
         }
       }, gettext("Save changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this3.resetForm();
+          return _this10.resetForm();
         }
       }, gettext("Reset")))));
     }
@@ -1268,6 +1360,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var app_root = '#app_root';
 /*
  * Model/Store setup
  */
@@ -1275,7 +1368,7 @@ __webpack_require__.r(__webpack_exports__);
 var store = new _models__WEBPACK_IMPORTED_MODULE_2__["UserStore"](jsContext);
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_views__WEBPACK_IMPORTED_MODULE_3__["IndexView"], {
   store: store
-}), document.querySelector('#app_root'));
+}), document.querySelector(app_root));
 
 /***/ }),
 
@@ -1391,14 +1484,23 @@ function (_React$Component) {
   }
 
   _createClass(EditUserHistory, [{
+    key: "save",
+    value: function save() {
+      this.props.onSave(this.state.user_data);
+    }
+  }, {
     key: "onChange",
     value: function onChange(new_value) {
+      var _this2 = this;
+
       this.setState({
         user_data: {
           user: {
             is_active: new_value.value
           }
         }
+      }, function () {
+        return _this2.hasUnsavedDataAction();
       });
     }
   }, {
@@ -1407,19 +1509,28 @@ function (_React$Component) {
       this.props.onResendRegistrationEmail();
     }
   }, {
+    key: "hasUnsavedDataAction",
+    value: function hasUnsavedDataAction() {
+      this.props.onIsDirtyChange(this.state.user_data.user.is_active == this.state.user_data.user.is_active);
+    }
+  }, {
     key: "onReset",
     value: function onReset() {
+      var _this3 = this;
+
       this.setState({
         user_data: this.state.original_user_data
+      }, function () {
+        return _this3.hasUnsavedDataAction();
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this4 = this;
 
       var selected = status_options.find(function (option) {
-        return option.value == _this2.state.user_data.user.is_active;
+        return option.value == _this4.state.user_data.user.is_active;
       });
       var history = this.props.history;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -1435,7 +1546,7 @@ function (_React$Component) {
         options: status_options,
         value: selected,
         onChange: function onChange(new_value) {
-          return _this2.onChange(new_value);
+          return _this4.onChange(new_value);
         }
       }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
@@ -1444,7 +1555,7 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-secondary",
         onClick: function onClick() {
-          return _this2.onResendRegistrationEmail();
+          return _this4.onResendRegistrationEmail();
         }
       }, gettext("Resend Registration Email")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
@@ -1456,13 +1567,13 @@ function (_React$Component) {
         className: "btn btn-primary",
         type: "button",
         onClick: function onClick() {
-          return _this2.props.onSave(_this2.state.user_data);
+          return _this4.save();
         }
       }, gettext("Save Changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this2.onReset();
+          return _this4.onReset();
         }
       }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_changelog__WEBPACK_IMPORTED_MODULE_4__["default"], {
         data: history
@@ -2074,6 +2185,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var components_pagination__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! components/pagination */ "RCjz");
 /* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
 /* harmony import */ var components_folding_sidebar__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! components/folding-sidebar */ "tnXs");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2105,6 +2217,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
+ // # Translators: Nothing selected by user
 
 var selection_placeholder = gettext("None Selected");
 var UserFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref) {
@@ -2357,13 +2471,16 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
   var store = _ref5.store;
   var programOptions = store.program_selections;
   var bulk_actions = {
-    primary_options: [{
+    primary_options: [// # Translators: Set an account to active or inactive
+    {
       label: gettext('Set account status'),
       value: 'set_account_status'
-    }, {
+    }, // # Translators: Associate a user with a program granting permission
+    {
       label: gettext('Add to program'),
       value: 'add_to_program'
-    }, {
+    }, // # Translators: Disassociate a user with a program removing permission
+    {
       label: gettext('Remove from program'),
       value: 'remove_from_program'
     }],
@@ -2472,7 +2589,9 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     }
   }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "col admin-list"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
+    className: "page-title"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, gettext("Admin:"), " ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, gettext("Users")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__controls"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(BulkActions, {
     primaryOptions: bulk_actions.primary_options,
@@ -2523,10 +2642,14 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
           data = _ref7.data;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Row, {
         expanded: data.id == store.editing_target,
-        Expando: function Expando(_ref8) {
+        Expando: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref8) {
           var Wrapper = _ref8.Wrapper;
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Wrapper, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_user_editor__WEBPACK_IMPORTED_MODULE_5__["default"], {
+            notifyPaneChange: function notifyPaneChange(new_pane) {
+              return store.onProfilePaneChange(new_pane);
+            },
             new: data.id == 'new',
+            active_pane: store.active_editor_pane,
             ProfileSection: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function () {
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
                 isLoading: store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs
@@ -2546,7 +2669,10 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
                 onCreateAndAddAnother: function onCreateAndAddAnother(new_user_data) {
                   return store.saveNewUserAndAddAnother(new_user_data);
                 },
-                organizations: store.organization_selections
+                organizations: store.organization_selections,
+                onIsDirtyChange: function onIsDirtyChange(is_dirty) {
+                  return store.setActiveFormIsDirty(is_dirty);
+                }
               }));
             }),
             ProgramSection: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function () {
@@ -2559,6 +2685,9 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
                 adminUserCountryRoles: store.access.countries,
                 onSave: function onSave(new_program_data) {
                   return store.saveUserPrograms(data.id, new_program_data);
+                },
+                onIsDirtyChange: function onIsDirtyChange(is_dirty) {
+                  return store.setActiveFormIsDirty(is_dirty);
                 }
               }));
             }),
@@ -2574,11 +2703,14 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
                 },
                 onSave: function onSave(new_data) {
                   return store.updateUserIsActive(data.id, new_data);
+                },
+                onIsDirtyChange: function onIsDirtyChange(is_dirty) {
+                  return store.setActiveFormIsDirty(is_dirty);
                 }
               }));
             })
           }));
-        }
+        })
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.5"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
@@ -2591,15 +2723,21 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         size: "2",
         className: "td--stretch"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "icon__clickable",
+        className: "expando-toggle icon__clickable",
         onClick: function onClick() {
           return store.toggleEditingTarget(data.id);
         }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "expando-toggle__icon"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__["FontAwesomeIcon"], {
+        icon: store.editing_target == data.id ? 'caret-down' : 'caret-right'
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "expando-toggle__label"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-user"
       }), "\xA0", data.name || "---", " ", data.is_super && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "badge badge-danger"
-      }, gettext("Super Admin")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+      }, gettext("Super Admin"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-building"
       }), "\xA0", data.organization_name || "---"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         className: "text-nowrap"
@@ -2642,7 +2780,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UserStore", function() { return UserStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./api */ "LX42");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _descriptor26, _descriptor27, _descriptor28, _descriptor29, _descriptor30, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _descriptor26, _descriptor27, _descriptor28, _descriptor29, _descriptor30, _descriptor31, _descriptor32, _temp;
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -2777,6 +2915,11 @@ function () {
 
     _initializerDefineProperty(this, "program_bulk_selections", _descriptor28, this);
 
+    _initializerDefineProperty(this, "unsaved_changes_actions", _descriptor29, this);
+
+    _initializerDefineProperty(this, "active_editor_pane", _descriptor30, this);
+
+    this.active_pane_is_dirty = false;
     this.country_role_choices = [];
     this.program_role_choices = [];
     this.user_status_options = [{
@@ -2794,9 +2937,9 @@ function () {
       label: 'No'
     }];
 
-    _initializerDefineProperty(this, "filters", _descriptor29, this);
+    _initializerDefineProperty(this, "filters", _descriptor31, this);
 
-    _initializerDefineProperty(this, "appliedFilters", _descriptor30, this);
+    _initializerDefineProperty(this, "appliedFilters", _descriptor32, this);
 
     this.countries = countries;
     this.ordered_country_ids = Object.values(countries).sort(function (a, b) {
@@ -2924,6 +3067,11 @@ function () {
       }, {});
     }
   }, {
+    key: "dirtyConfirm",
+    value: function dirtyConfirm() {
+      return !this.active_pane_is_dirty || this.active_pane_is_dirty && confirm(gettext("You have unsaved changes. Are you sure you want to discard them?"));
+    }
+  }, {
     key: "getSelectedBulkTargetIDs",
     value: function getSelectedBulkTargetIDs() {
       return _toConsumableArray(this.bulk_targets.entries()).filter(function (_ref6) {
@@ -2944,6 +3092,7 @@ function () {
     key: "onSaveErrorHandler",
     value: function onSaveErrorHandler(message) {
       PNotify.error({
+        // # Translators: Saving to the server failed
         text: message || gettext('Saving Failed'),
         delay: 5000
       });
@@ -2951,6 +3100,7 @@ function () {
   }, {
     key: "onSaveSuccessHandler",
     value: function onSaveSuccessHandler(message) {
+      // # Translators: Saving to the server succeeded
       PNotify.success({
         text: message || gettext('Successfully Saved'),
         delay: 5000
@@ -2967,29 +3117,46 @@ function () {
       });
     }
   }, {
+    key: "onProfilePaneChange",
+    value: function onProfilePaneChange(new_pane) {
+      if (this.dirtyConfirm()) {
+        this.active_editor_pane = new_pane;
+        this.active_pane_is_dirty = false;
+      }
+    }
+  }, {
+    key: "setActiveFormIsDirty",
+    value: function setActiveFormIsDirty(is_dirty) {
+      this.active_pane_is_dirty = is_dirty;
+    }
+  }, {
     key: "fetchUsers",
     value: function fetchUsers() {
       var _this2 = this;
 
-      this.fetching_users_listing = true;
-      _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUsersWithFilter(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(function (results) {
-        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this2.fetching_users_listing = false;
-          _this2.users = results.users.reduce(function (xs, x) {
-            xs[x.id] = x;
-            return xs;
-          }, {});
-          _this2.users_listing = results.users.map(function (u) {
-            return u.id;
+      if (this.dirtyConfirm()) {
+        this.fetching_users_listing = true;
+        _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUsersWithFilter(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(function (results) {
+          Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+            _this2.active_editor_pane = 'profile';
+            _this2.active_pane_is_dirty = false;
+            _this2.fetching_users_listing = false;
+            _this2.users = results.users.reduce(function (xs, x) {
+              xs[x.id] = x;
+              return xs;
+            }, {});
+            _this2.users_listing = results.users.map(function (u) {
+              return u.id;
+            });
+            _this2.bulk_targets_all = false;
+            _this2.bulk_targets = new Map();
+            _this2.users_count = results.total_users;
+            _this2.total_pages = results.total_pages;
+            _this2.next_page = results.next_page;
+            _this2.previous_page = results.previous_page;
           });
-          _this2.bulk_targets_all = false;
-          _this2.bulk_targets = new Map();
-          _this2.users_count = results.total_users;
-          _this2.total_pages = results.total_pages;
-          _this2.next_page = results.next_page;
-          _this2.previous_page = results.previous_page;
         });
-      });
+      }
     }
   }, {
     key: "applyFilters",
@@ -3080,60 +3247,70 @@ function () {
     value: function toggleEditingTarget(user_id) {
       var _this5 = this;
 
-      this.editing_errors = {};
-      this.editing_target_data = _objectSpread({}, default_editing_target_data);
+      if (this.dirtyConfirm()) {
+        this.editing_errors = {};
+        this.editing_target_data = _objectSpread({}, default_editing_target_data);
+        this.active_pane_is_dirty = false;
 
-      if (this.editing_target == 'new') {
-        this.users_listing.shift();
-      }
+        if (this.editing_target == 'new') {
+          this.users_listing.shift();
+        }
 
-      if (this.editing_target == user_id) {
-        this.editing_target = null;
-      } else {
-        this.editing_target = user_id;
-        this.fetching_editing_target = true;
-        Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUser(user_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserProgramAccess(user_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserHistory(user_id)]).then(function (_ref10) {
-          var _ref11 = _slicedToArray(_ref10, 3),
-              user = _ref11[0],
-              access_data = _ref11[1],
-              history_data = _ref11[2];
+        this.active_editor_pane = 'profile';
 
-          Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this5.fetching_editing_target = false;
-            _this5.editing_target_data = {
-              profile: user,
-              access: access_data,
-              history: history_data
-            };
+        if (this.editing_target == user_id) {
+          this.editing_target = null;
+        } else {
+          this.editing_target = user_id;
+          this.fetching_editing_target = true;
+          Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUser(user_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserProgramAccess(user_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserHistory(user_id)]).then(function (_ref10) {
+            var _ref11 = _slicedToArray(_ref10, 3),
+                user = _ref11[0],
+                access_data = _ref11[1],
+                history_data = _ref11[2];
+
+            Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+              _this5.fetching_editing_target = false;
+              _this5.editing_target_data = {
+                profile: user,
+                access: access_data,
+                history: history_data
+              };
+            });
           });
-        });
+        }
       }
     }
   }, {
     key: "updateActiveEditPage",
     value: function updateActiveEditPage(section_name) {
       this.active_edit_page = section_name;
+      this.active_pane_is_dirty = false;
     }
   }, {
     key: "createUser",
     value: function createUser() {
-      this.editing_errors = {};
+      if (this.dirtyConfirm()) {
+        this.editing_errors = {};
+        this.active_pane_is_dirty = false;
+        this.active_editor_pane = 'profile';
 
-      if (this.editing_target == 'new') {
-        this.users_listing.shift();
+        if (this.editing_target == 'new') {
+          this.users_listing.shift();
+        }
+
+        this.editing_target_data = _objectSpread({}, default_editing_target_data);
+        this.users["new"] = {
+          id: "new",
+          name: "",
+          organization_name: "",
+          user_programs: 0,
+          is_admin: false,
+          is_active: false
+        };
+        this.users_listing.unshift("new");
+        this.editing_target = 'new';
       }
-
-      this.editing_target_data = _objectSpread({}, default_editing_target_data);
-      this.users["new"] = {
-        id: "new",
-        name: "",
-        organization_name: "",
-        user_programs: 0,
-        is_admin: false,
-        is_active: false
-      };
-      this.users_listing.unshift("new");
-      this.editing_target = 'new';
     }
   }, {
     key: "updateUserProfile",
@@ -3142,6 +3319,7 @@ function () {
 
       this.saving_user_profile = true;
       this.editing_errors = {};
+      this.active_pane_is_dirty = false;
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].saveUserProfile(user_id, new_user_data).then(function (result) {
         return Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserAggregates(result.id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserHistory(result.id)]).then(function (_ref12) {
           var _ref13 = _slicedToArray(_ref12, 2),
@@ -3160,6 +3338,7 @@ function () {
               is_admin: result.user.is_staff,
               is_active: result.user.is_active
             };
+            _this6.active_pane_is_dirty = false;
             _this6.editing_target_data.profile = result;
             _this6.editing_target_data.history = history;
           });
@@ -3180,6 +3359,7 @@ function () {
 
       this.saving_user_profile = true;
       this.editing_errors = {};
+      this.active_pane_is_dirty = false;
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].updateUserIsActive(user_id, new_user_data).then(function (result) {
         return Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserAggregates(user_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserHistory(user_id)]).then(function (_ref14) {
           var _ref15 = _slicedToArray(_ref14, 2),
@@ -3198,6 +3378,7 @@ function () {
               is_admin: result.user.is_staff,
               is_active: result.user.is_active
             };
+            _this7.active_pane_is_dirty = false;
             _this7.editing_target_data.profile = result;
             _this7.editing_target_data.history = history;
           });
@@ -3219,11 +3400,12 @@ function () {
       this.saving_user_profile = true;
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].resendRegistrationEmail(user_id).then(function (result) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this8.saving_user_profile = false;
+          _this8.saving_user_profile = false; // # Translators: An email was sent to the user to verify that the email address is valid
 
           _this8.onSaveSuccessHandler(gettext("Verification email sent"));
         });
       }).catch(function () {
+        // # Translators: Sending an email to the user did not work
         _this8.onSaveSuccessHandler(gettext("Verification email send failed"));
       });
     }
@@ -3234,6 +3416,7 @@ function () {
 
       this.saving_user_profile = true;
       this.editing_errors = {};
+      this.active_pane_is_dirty = false;
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].createUser(new_user_data).then(function (result) {
         return _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserAggregates(result.id).then(function (aggregates) {
           _this9.onSaveSuccessHandler();
@@ -3248,6 +3431,7 @@ function () {
               is_admin: result.user.is_staff,
               is_active: result.user.is_active
             };
+            _this9.active_pane_is_dirty = false;
 
             _this9.user_selections.push({
               value: result.id,
@@ -3278,6 +3462,7 @@ function () {
 
       this.saving_user_profile = true;
       this.editing_errors = {};
+      this.active_pane_is_dirty = false;
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].createUser(new_user_data).then(function (result) {
         return _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserAggregates(result.id).then(function (aggregates) {
           _this10.onSaveSuccessHandler();
@@ -3294,6 +3479,7 @@ function () {
               is_admin: result.user.is_staff,
               is_active: result.user.is_active
             };
+            _this10.active_pane_is_dirty = false;
             _this10.users_listing[0] = result.id;
             delete _this10.users["new"];
 
@@ -3315,6 +3501,7 @@ function () {
       var _this11 = this;
 
       this.saving_user_programs = true;
+      this.active_pane_is_dirty = false;
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].saveUserPrograms(user_id, new_user_programs_data).then(function (result) {
         return Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserAggregates(user_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserHistory(user_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchUserProgramAccess(user_id)]).then(function (_ref16) {
           var _ref17 = _slicedToArray(_ref16, 3),
@@ -3327,6 +3514,7 @@ function () {
             _this11.users[user_id].user_programs = aggregates.program_count;
             _this11.editing_target_data.history = history;
             _this11.editing_target_data.access = access;
+            _this11.active_pane_is_dirty = false;
           });
 
           _this11.onSaveSuccessHandler();
@@ -3678,7 +3866,24 @@ function () {
   initializer: function initializer() {
     return [];
   }
-}), _descriptor29 = _applyDecoratedDescriptor(_class.prototype, "filters", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor29 = _applyDecoratedDescriptor(_class.prototype, "unsaved_changes_actions", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return {
+      save: function save() {},
+      discard: function discard() {}
+    };
+  }
+}), _descriptor30 = _applyDecoratedDescriptor(_class.prototype, "active_editor_pane", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return 'profile';
+  }
+}), _descriptor31 = _applyDecoratedDescriptor(_class.prototype, "filters", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -3693,14 +3898,14 @@ function () {
       users: []
     };
   }
-}), _descriptor30 = _applyDecoratedDescriptor(_class.prototype, "appliedFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor32 = _applyDecoratedDescriptor(_class.prototype, "appliedFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _applyDecoratedDescriptor(_class.prototype, "fetchUsers", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchUsers"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeBaseCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeBaseCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeProgramFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeProgramFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserStatusFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserStatusFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeAdminRoleFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeAdminRoleFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateActiveEditPage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateActiveEditPage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserProfile", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserProfile"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserIsActive", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserIsActive"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "resendRegistrationEmail", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "resendRegistrationEmail"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUserAndAddAnother", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUserAndAddAnother"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveUserPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveUserPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkUpdateUserStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkUpdateUserStatus"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkAddPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkAddPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkRemovePrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkRemovePrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype)), _class);
+}), _applyDecoratedDescriptor(_class.prototype, "onProfilePaneChange", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "onProfilePaneChange"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "fetchUsers", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchUsers"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeBaseCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeBaseCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeProgramFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeProgramFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserStatusFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserStatusFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeAdminRoleFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeAdminRoleFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateActiveEditPage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateActiveEditPage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserProfile", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserProfile"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserIsActive", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserIsActive"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "resendRegistrationEmail", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "resendRegistrationEmail"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUserAndAddAnother", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUserAndAddAnother"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveUserPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveUserPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkUpdateUserStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkUpdateUserStatus"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkAddPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkAddPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkRemovePrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkRemovePrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype)), _class);
 
 /***/ }),
 
@@ -3745,39 +3950,32 @@ var UserEditor = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(_cl
 function (_React$Component) {
   _inherits(UserEditor, _React$Component);
 
-  function UserEditor(props) {
-    var _this;
-
+  function UserEditor() {
     _classCallCheck(this, UserEditor);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(UserEditor).call(this, props));
-    _this.state = {
-      active_page: 'profile'
-    };
-    return _this;
+    return _possibleConstructorReturn(this, _getPrototypeOf(UserEditor).apply(this, arguments));
   }
 
   _createClass(UserEditor, [{
     key: "updateActivePage",
     value: function updateActivePage(new_page) {
       if (!this.props.new) {
-        this.setState({
-          active_page: new_page
-        });
+        this.props.notifyPaneChange(new_page);
       }
     }
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this = this;
 
       var _this$props = this.props,
           ProfileSection = _this$props.ProfileSection,
           ProgramSection = _this$props.ProgramSection,
-          HistorySection = _this$props.HistorySection;
-      var profile_active_class = this.state.active_page == 'profile' ? 'active' : '';
-      var programs_active_class = this.state.active_page == 'programs_and_roles' ? 'active' : '';
-      var history_active_class = this.state.active_page == 'status_and_history' ? 'active' : '';
+          HistorySection = _this$props.HistorySection,
+          active_pane = _this$props.active_pane;
+      var profile_active_class = active_pane == 'profile' ? 'active' : '';
+      var programs_active_class = active_pane == 'programs_and_roles' ? 'active' : '';
+      var history_active_class = active_pane == 'status_and_history' ? 'active' : '';
       var new_class = this.props.new ? 'disabled' : '';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "tab-set--vertical"
@@ -3791,7 +3989,7 @@ function (_React$Component) {
         onClick: function onClick(e) {
           e.preventDefault();
 
-          _this2.updateActivePage('profile');
+          _this.updateActivePage('profile');
         }
       }, gettext("Profile"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
         className: "nav-item"
@@ -3801,7 +3999,7 @@ function (_React$Component) {
         onClick: function onClick(e) {
           e.preventDefault();
 
-          _this2.updateActivePage('programs_and_roles');
+          _this.updateActivePage('programs_and_roles');
         }
       }, gettext("Programs and Roles"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
         className: "nav-item"
@@ -3811,11 +4009,11 @@ function (_React$Component) {
         onClick: function onClick(e) {
           e.preventDefault();
 
-          _this2.updateActivePage('status_and_history');
+          _this.updateActivePage('status_and_history');
         }
       }, gettext("Status and History")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "tab-content"
-      }, this.state.active_page == 'profile' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProfileSection, null), this.state.active_page == 'programs_and_roles' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProgramSection, null), this.state.active_page == 'status_and_history' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(HistorySection, null)));
+      }, active_pane == 'profile' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProfileSection, null), active_pane == 'programs_and_roles' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProgramSection, null), active_pane == 'status_and_history' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(HistorySection, null)));
     }
   }]);
 
@@ -3920,4 +4118,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-1595a54a8ea7dcfd2ff5.js.map
+//# sourceMappingURL=tola_management_user-d2089ff597e5bb5f3f66.js.map

@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom';
 import {OrganizationStore} from './models';
 import {IndexView} from './views';
 
+const app_root = '#app_root'
+
+
 /*
  * Model/Store setup
  */
@@ -17,5 +20,5 @@ const store = new OrganizationStore(
 
 ReactDOM.render(
     <IndexView store={store} />,
-    document.querySelector('#app_root')
+    document.querySelector(app_root)
 )

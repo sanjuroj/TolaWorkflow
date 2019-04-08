@@ -24,22 +24,25 @@ export default class EditOrganizationHistory extends React.Component {
         }
     }
 
+    hasUnsavedDataAction() {
+        this.props.onIsDirtyChange(JSON.stringify(this.state.data) != JSON.stringify(this.state.initial_data))
+    }
+
     onChange(new_value) {
         this.state.data.is_active = new_value
 
         this.setState({
             data: this.state.data
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     onReset() {
         this.setState({
             data: this.state.initial_data
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
-    save(e) {
-        e.preventDefault()
+    save() {
         this.props.onSave({
             ...this.state.data,
             is_active: this.state.data.is_active.value,

@@ -125,7 +125,7 @@ export default class EditUserPrograms extends React.Component {
             flattened_programs: flattened_listing(store.ordered_country_ids.filter(id => id in countries).map(id => countries[id]), programs),
             original_user_program_access: create_user_access(store.editing_target_data.access),
             user_program_access: create_user_access(store.editing_target_data.access)
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     saveForm() {
@@ -141,6 +141,15 @@ export default class EditUserPrograms extends React.Component {
                             .filter(([_, program]) => program.has_access)
                             .map(([_, program]) => program)
         })
+        this.hasUnsavedDataAction()
+    }
+
+    hasUnsavedDataAction() {
+        const access = {
+            countries: Object.entries(this.state.user_program_access.countries).filter(([_, country]) => country.has_access).reduce((countries, [id, country]) => ({...countries, [id]: country}), {}),
+            programs: Object.entries(this.state.user_program_access.programs).filter(([_, program]) => program.has_access).reduce((programs, [id, program]) => ({...programs, [id]: program}), {})
+        }
+        this.props.onIsDirtyChange(JSON.stringify(access) != JSON.stringify(this.state.original_user_program_access))
     }
 
     resetForm() {
@@ -149,7 +158,8 @@ export default class EditUserPrograms extends React.Component {
                 countries: {...this.state.original_user_program_access.countries},
                 programs: {...this.state.original_user_program_access.programs}
             }
-        })
+        }, () => this.hasUnsavedDataAction())
+
 
     }
 
@@ -173,7 +183,7 @@ export default class EditUserPrograms extends React.Component {
                     [program_key]: updated_program_access
                 }
             }
-        })
+        }, () => this.hasUnsavedDataAction())
     }
 
     toggleAllProgramsForCountry(country_id) {
@@ -219,7 +229,8 @@ export default class EditUserPrograms extends React.Component {
                 ...this.state.user_program_access,
                 programs: {...this.state.user_program_access.programs, ...new_program_access}
             }
-        })
+        }, () => this.hasUnsavedDataAction())
+
     }
 
     changeCountryRole(country_id, new_val) {
@@ -240,7 +251,8 @@ export default class EditUserPrograms extends React.Component {
                     [country_id]: new_country_access
                 }
             },
-        })
+        }, () => this.hasUnsavedDataAction())
+
     }
 
     changeProgramRole(program_key, new_val) {
@@ -274,7 +286,8 @@ export default class EditUserPrograms extends React.Component {
                     [program_key]: new_program_access
                 }
             }
-        })
+        }, () => this.hasUnsavedDataAction())
+
     }
 
     clearFilter() {

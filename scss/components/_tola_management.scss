@@ -1,13 +1,7 @@
-#user-management-index-view,
-#program-management-index-view,
-#country-management-index-view {
-    .edit-user-history table {
-    }
-
-
-}
-
+// This was the original scss from Parthenon
+// UNSORTED
 .edit-user-programs { // Program and Country access pane
+    // TODO: too specific?
     .check-column {
         text-align: center;
     }
@@ -45,23 +39,8 @@
     }
 }
 
-// virtualized tables on Edit User screen
-.virtualized-table__wrapper {
-    height: 50vh;
-    margin-bottom: $grid-gutter-width/2;
-}
-.ReactVirtualized__Table__Grid {
-    background-color: $white;
-    border: 1px solid $gray-300;
-}
-.ReactVirtualized__Table__row {
-    border-bottom: 1px solid $gray-200;
-}
-.ReactVirtualized__Table__rowColumn {
-    padding-left: 10px;
-}
-
 #organization-management-index-view {
+    // TODO: id, too specific
     .edit-organization table {
         width: 100%;
         td {
@@ -70,10 +49,8 @@
     }
 }
 
-#audit-log-index-view {
-}
-
 .icon {
+    // TODO: too general
     &__clickable {
         cursor: pointer;
         color: $blue;
@@ -99,63 +76,7 @@
     justify-content: space-around;
 }
 
-.folding-sidebar {
-    $trigger_width: 40px;
-    position: relative;
-    margin-right: $trigger_width;
 
-    &__trigger {
-        background-color: #00a49f; // TODO
-        color: white;
-        font-size: 2em;
-        display: inline-block;
-        padding: 5px;
-        position: absolute;
-        top: 0;
-        right: -$trigger_width;
-        cursor: pointer;
-        width: $trigger_width;
-    }
-}
-
-// Expanding change logs
-// OLD SELECTORS, DELETE US!
-.changelog-entry {}
-.changelog-entry__expanding {
-    // expanding child element
-    overflow: hidden;
-}
-.changelog-entry__expand-trigger {}
-
-// NEW SELECTORS
-.changelog { // <table>
-}
-.changelog__entry { // each timestamped batch of DB updates; <tbody>
-}
-.changelog__entry__header { // title row for changelog__entry; <tr>
-    &.is-expanded {
-        background-color: $gray-200;
-    }
-}
-.changelog__entry__row { // each DB row change; <tr>
-}
-.changelog__change {
-    // inside a row
-    // collects a group of changes made at the same time
-}
-.changelog__change--prev {
-    // previous values
-}
-.changelog__change--new {
-    // new values
-}
-.changelog__change--rationale {
-    // only on indicator report, ie. from IPTT
-}
-.changelog__change__targets {
-    // only on indicator report, ie. from IPTT
-    // group of targets inside the prev/new component
-}
 
 /* Safari */
 @-webkit-keyframes spin {
@@ -199,35 +120,6 @@
     }
 }
 
-.editor__navigation {
-    background-color: #eee;
-
-    .list-group-item {
-        cursor: pointer;
-        color: #888;
-        background-color: transparent;
-        border: none;
-    }
-
-    .list-group-item.selected {
-        color: darkblue;
-        cursor: default;
-    }
-
-    .list-group-item.disabled {
-        cursor: default;
-        color: #888;
-    }
-}
-
-table.admin-list__table {
-    table-layout: fixed;
-    vertical-align: top;
-    th, td {
-        vertical-align: top;
-    }
-}
-
 .objective-form-buttons {
     display: flex;
 
@@ -236,7 +128,10 @@ table.admin-list__table {
     }
 }
 
-.edit-strategic-objective__row, .edit-disaggregation__row {
+// TODO: Edit SOs and disaggregations could be a single shared component
+.edit-strategic-objective__row,
+.edit-disaggregation__row {
+    // See .row-expand below
     display: flex;
 
     .row-expand__toggle {
@@ -262,50 +157,20 @@ table.admin-list__table {
     }
 }
 
-// management lists
-.admin-list { // was: .list-section; provides page layout to admin list tables
-}
-.admin-list__controls { // was: .list-controls; contains add button & bulk actions
+// expand/collapse toggles
+// TODO: Lots of overlap here with other implementations
+.expando-toggle {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: $grid-gutter-width; // NOTE: will overlap with following table top margin
-    margin-top: $grid-gutter-width/2;
 }
-.controls__bulk-actions { // was: .bulk-controls; wraps bulk action controls
-    display: flex;
-    flex-grow: 1;
+.expando-toggle__icon {
+    flex-basis: 1em;
+    flex-grow: 0;
+    flex-shrink: 0;
 }
-.controls__buttons { // contains buttons like "add [object]"
-}
-.bulk__select { // was: .bulk-select; wraps custom select element
-    flex-grow: 1;
-    margin-right: $grid-gutter-width/4;
-    min-width: 15vw; // TODO: this is fragile
-}
-.loading-spinner__container  { // DO NOT CHANGE; sometimes wraps list-table
-}
-.admin-list__table { // was: .list-table; the admin list itself
-    // usually .mgmt-table component
-    // See also _list_table.scss !
-    margin-bottom: $grid-gutter-width;
-    margin-top: $grid-gutter-width;
+.expando-toggle__label {
+    flex-grow: 1; // ?
 }
 
-.admin-list__metadata { // was: .list-metadata; contains metadata (e.g. count) & pagination
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-}
-.metadata__count { // number of results
-    .pagination {
-        align-items: center;
-    }
-}
-.metadata__controls { // wraps pagination controls
-    .pagination {
-        align-items: center;
-    }
-}
 
 
 // admin panes on individual edit items

@@ -11,6 +11,7 @@ import EditOrganizationHistory from './components/edit_organization_history'
 
 import LoadingSpinner from 'components/loading-spinner'
 import FoldingSidebar from 'components/folding-sidebar'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const CountryFilter = observer(({store, selections}) => {
     return <div className="form-group">
@@ -114,40 +115,49 @@ export const IndexView = observer(
                             Row={({Col, Row, data}) =>
                                 <Row
                                     expanded={data.id == store.editing_target}
-                                             Expando={({Wrapper}) =>
-                                                 <Wrapper>
-                                                     <OrganizationEditor
-                                                         new={data.id == 'new'}
-                                                             ProfileSection={observer(() =>
-                                                                 <LoadingSpinner isLoading={store.fetching_editing_target || store.saving}>
-                                                                     <EditOrganizationProfile
-                                                                        new={data.id == 'new'}
-                                                                        sectorSelections={store.sector_selections}
-                                                                        organizationData={store.editing_target_data}
-                                                                        errors={store.editing_errors}
-                                                                        key={store.editing_target_data.id}
-                                                                        onSave={(new_organization_data) => store.updateOrganizationProfile(data.id, new_organization_data)}
-                                                                        onSaveNew={(new_organization_data) => store.saveNewOrganization(new_organization_data)}
-                                                                        onSaveNewAndAddAnother={(new_organization_data) => store.saveNewOrganizationAndAddAnother(new_organization_data)} />
-                                                                 </LoadingSpinner>
-                                                             )}
-                                                             HistorySection={observer(() =>
-                                                                 <LoadingSpinner isLoading={store.fetching_editing_target || store.saving}>
-                                                                    <EditOrganizationHistory
-                                                                        organizationData={store.editing_target_data}
-                                                                        organizationHistoryData={store.editing_target_history}
-                                                                                         onSave={(new_organization_data) => store.updateOrganizationProfile(data.id, new_organization_data)}/>
-                                                                 </LoadingSpinner>
-                                                             )}
-                                                     />
-                                                 </Wrapper>
-                                             }>
+                                    Expando={observer(({Wrapper}) =>
+                                        <Wrapper>
+                                            <OrganizationEditor
+                                                active_pane={store.active_editor_pane}
+                                                notifyPaneChange={(new_pane) => store.onProfilePaneChange(new_pane)}
+                                                new={data.id == 'new'}
+                                                    ProfileSection={observer(() =>
+                                                        <LoadingSpinner isLoading={store.fetching_editing_target || store.saving}>
+                                                            <EditOrganizationProfile
+                                                                onIsDirtyChange={is_dirty => store.setActiveFormIsDirty(is_dirty)}
+                                                                new={data.id == 'new'}
+                                                                sectorSelections={store.sector_selections}
+                                                                organizationData={store.editing_target_data}
+                                                                errors={store.editing_errors}
+                                                                key={store.editing_target_data.id}
+                                                                onSave={(new_organization_data) => store.updateOrganizationProfile(data.id, new_organization_data)}
+                                                                onSaveNew={(new_organization_data) => store.saveNewOrganization(new_organization_data)}
+                                                                onSaveNewAndAddAnother={(new_organization_data) => store.saveNewOrganizationAndAddAnother(new_organization_data)} />
+                                                        </LoadingSpinner>
+                                                    )}
+                                                    HistorySection={observer(() =>
+                                                        <LoadingSpinner isLoading={store.fetching_editing_target || store.saving}>
+                                                            <EditOrganizationHistory
+                                                                onIsDirtyChange={is_dirty => store.setActiveFormIsDirty(is_dirty)}
+                                                                organizationData={store.editing_target_data}
+                                                                organizationHistoryData={store.editing_target_history}
+                                                                onSave={(new_organization_data) => store.updateOrganizationProfile(data.id, new_organization_data)}/>
+                                                        </LoadingSpinner>
+                                                    )}
+                                            />
+                                        </Wrapper>
+                                )}>
                                     <Col size="0.15">
                                     </Col>
                                     <Col size="2" className="td--stretch">
-                                        <div className="icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
-                                            <i className="fas fa-building"/>&nbsp;
-                                            {data.name || "---"}
+                                        <div className="expando-toggle icon__clickable" onClick={() => store.toggleEditingTarget(data.id)} >
+                                            <div className="expando-toggle__icon">
+                                                <FontAwesomeIcon icon={(store.editing_target == data.id) ? 'caret-down' : 'caret-right'} />
+                                            </div>
+                                            <div className="expando-toggle__label">
+                                                <i className="fas fa-building"/>&nbsp;
+                                                {data.name || "---"}
+                                            </div>
                                         </div>
                                     </Col>
                                     <Col size="1" className="text-nowrap">
