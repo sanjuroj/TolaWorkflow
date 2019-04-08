@@ -123,7 +123,7 @@ class TestQuarterlyTimePeriodsIPTT(iptt_utility.TestIPTTTimePeriodsReportRespons
         response = self.get_showall_response()
         for indicator in range(4):
             lop_value, period_value = self.get_indicator_results(response, indicator)
-            self.assertEqual(int(period_value[2]['actual']) if period_value[2]['actual'] is not None else 0,
+            self.assertEqual(int(period_value[2]['actual']) if period_value[2]['actual'] != 'N/A' else 0,
                              quarter3_totals[indicator],
                              self.format_assert_message("Expected {0} for indicator {1} third quarter, got {2}".format(
                                  quarter3_totals[indicator], indicator, period_value[2]['actual'])))
