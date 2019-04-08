@@ -58,7 +58,7 @@ urlpatterns = [
 
     url(r'^disrepprint/(?P<program>\d+)/$', DisaggregationPrint.as_view(), name='disrepprint'),
 
-    url(r'^indicator_plan/(?P<program_id>\d+)/$', indicator_plan, name='indicator_plan'),
+    url(r'^indicator_plan/(?P<program>\d+)/$', indicator_plan, name='indicator_plan'),
 
     url(r'^indicator_plan/export/(?P<program>\d+)/$',
         IndicatorExport.as_view(), name='indicator_export'),

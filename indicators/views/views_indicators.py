@@ -59,7 +59,7 @@ from tola_management.models import (
 
 from tola_management.permissions import (
     indicator_pk_adapter,
-    periodic_target_adapter,
+    indicator_adapter,
     periodic_target_pk_adapter,
     has_indicator_read_access,
     has_indicator_write_access,
@@ -475,7 +475,7 @@ class IndicatorDelete(LoginRequiredMixin, DeleteView):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(periodic_target_adapter(has_indicator_write_access), name='dispatch')
+@method_decorator(indicator_adapter(has_indicator_write_access), name='dispatch')
 class PeriodicTargetView(View):
     """
     This view generates periodic targets or deleting them (via POST)
@@ -548,8 +548,9 @@ def reset_indicator_target_frequency(ind):
     return False
 
 
+@method_decorator(login_required, name='dispatch')
 @method_decorator(periodic_target_pk_adapter(has_indicator_write_access), name='dispatch')
-class PeriodicTargetDeleteView(LoginRequiredMixin, DeleteView):
+class PeriodicTargetDeleteView(DeleteView):
     """
     url periodic_target_delete/<pk>
     """
@@ -598,7 +599,7 @@ class ResultCreate(LoginRequiredMixin, ResultFormMixin, CreateView):
     form_class = ResultForm
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
-    @method_decorator(has_result_write_access)
+    @method_decorator(indicator_adapter(has_result_write_access))
     def dispatch(self, request, *args, **kwargs):
         if not request.has_write_access:
             raise PermissionDenied
@@ -774,6 +775,7 @@ class ResultUpdate(LoginRequiredMixin, ResultFormMixin, UpdateView):
 
 
 class ResultDelete(LoginRequiredMixin, DeleteView):
+    """TODO: This should handle GET differently - currently returns a nonexistent template"""
     model = Result
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
@@ -888,15 +890,16 @@ def result_view(request, indicator, program):
 
 
 @login_required
-def indicator_plan(request, program_id):
+@has_program_read_access
+def indicator_plan(request, program):
     """
     This is the GRID report or indicator plan for a program.
     Shows a simple list of indicators sorted by level
     and number. Lives in the "Indicator" home page as a link.
     """
-    program = get_object_or_404(Program, id=program_id)
+    program = get_object_or_404(Program, id=program)
 
-    indicators = ip.indicator_queryset(program_id)
+    indicators = ip.indicator_queryset(program.pk)
 
     return render(request, "indicators/indicator_plan.html", {
         'program': program,
@@ -1122,8 +1125,9 @@ class DisaggregationReportMixin(object):
 
         return context
 
-
-class DisaggregationReport(LoginRequiredMixin, DisaggregationReportMixin, TemplateView):
+@method_decorator(login_required, name='dispatch')
+@method_decorator(has_program_read_access, name='dispatch')
+class DisaggregationReport(DisaggregationReportMixin, TemplateView):
     template_name = 'indicators/disaggregation_report.html'
 
     def get_context_data(self, **kwargs):
@@ -1132,6 +1136,8 @@ class DisaggregationReport(LoginRequiredMixin, DisaggregationReportMixin, Templa
         return context
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(has_program_read_access, name='dispatch')
 class DisaggregationPrint(LoginRequiredMixin, DisaggregationReportMixin, TemplateView):
     template_name = 'indicators/disaggregation_print.html'
 
@@ -1161,7 +1167,9 @@ class DisaggregationPrint(LoginRequiredMixin, DisaggregationReportMixin, Templat
         return res
 
 
-class IndicatorExport(LoginRequiredMixin, View):
+@method_decorator(login_required, name='dispatch')
+@method_decorator(has_program_read_access, name='dispatch')
+class IndicatorExport(View):
     """
     Export all indicators to an XLS file
     """

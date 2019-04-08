@@ -91,7 +91,7 @@ def periodic_target_pk_adapter(inner):
         return wrapper
     return outer
 
-def periodic_target_adapter(inner):
+def indicator_adapter(inner):
     def outer(func):
         wrapped = inner(func)
         def wrapper(request, *args, **kwargs):
@@ -246,8 +246,8 @@ def has_program_write_access(func):
 
 def has_program_read_access(func):
     def wrapper(request, *args, **kwargs):
-        if user_has_program_access(request.user, kwargs['program_id']) or request.user.is_superuser:
-            write_access = (user_has_program_roles(request.user, [kwargs['program_id']], ['high']) or request.user.is_superuser)
+        if user_has_program_access(request.user, kwargs['program']) or request.user.is_superuser:
+            write_access = (user_has_program_roles(request.user, [kwargs['program']], ['high']) or request.user.is_superuser)
             request.has_write_access = write_access
             return func(request, *args, **kwargs)
         else:
