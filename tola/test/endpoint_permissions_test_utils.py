@@ -253,8 +253,10 @@ class EndpointTestBase(object):
     url_kwargs = {}
     access_level = None
     post_data = {}
+    get_params = {}
     delete = None
     redirect = False
+    no_login_redirect = False
 
     def init(self):
         self.context = EndpointTestContext()
@@ -309,6 +311,8 @@ class EndpointTestBase(object):
             kwargs['reporttype'] = self.url_kwargs['reporttype']
         if 'service' in self.url_kwargs:
             kwargs['service'] = self.context.external_service.id
+        if 'program_id' in self.get_params:
+            self.get_params['program_id'] = self.context.program_out_of_country.pk
         return reverse(self.url, kwargs=kwargs)
 
     def get_in_url(self):
@@ -329,13 +333,15 @@ class EndpointTestBase(object):
             kwargs['reporttype'] = self.url_kwargs['reporttype']
         if 'service' in self.url_kwargs:
             kwargs['service'] = self.context.external_service.id
+        if 'program_id' in self.get_params:
+            self.get_params['program_id'] = self.context.program_in_country.pk
         return reverse(self.url, kwargs=kwargs)
 
     def fetch_get_response(self, tolauser, url):
         self.client.logout()
         if tolauser is not None:
             self.client.force_login(tolauser.user)
-        return self.client.get(url)
+        return self.client.get(url, self.get_params)
 
     def fetch_post_response(self, tolauser, url):
         self.client.logout()
@@ -369,7 +375,14 @@ class EndpointTestBase(object):
                              '{msg} but got response {code}'.format(msg=msg, code=response.status_code))
 
     def assert_redirects_to_login(self, response, msg, url):
-        self.assertRedirects(response, reverse('login') + '?next=' + url, msg_prefix=msg)
+        # for AJAX views where "continue on after login" makes no sense:
+        if self.no_login_redirect:
+            self.assertEqual(response.status_code, 403,
+                             msg + "anonymous user should get 403 at this endpoint, got {}".format(
+                                response.status_code))
+        # otherwise:
+        else:
+            self.assertRedirects(response, reverse('login') + '?next=' + url, msg_prefix=msg)
 
     def run_get_tests(self, skip_out_country=False):
         if not skip_out_country:

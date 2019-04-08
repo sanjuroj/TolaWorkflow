@@ -319,3 +319,18 @@ class TestAPIIndicatorViewEndpoint(EndpointTestBase, test.TestCase):
     def test_http_methods(self):
         self.run_get_tests()
         self.run_post_tests()
+
+class TestProgramTargetFrequenciesFeedEndpoint(EndpointTestBase, test.TestCase):
+    url = 'programtargetfrequencies-list'
+    url_kwargs = {}
+    get_params = {
+        'program_id': None
+    }
+    access_level = 'low'
+    no_login_redirect = True
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_get_tests()
