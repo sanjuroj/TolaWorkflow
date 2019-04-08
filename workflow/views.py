@@ -80,7 +80,9 @@ from tola_management.permissions import (
     has_site_delete_access,
     has_site_write_access,
     has_program_write_access,
-    has_projects_access)
+    has_projects_access,
+    verify_program_access_level
+)
 
 APPROVALS = (
     ('in_progress',('in progress')),
@@ -2451,6 +2453,7 @@ def reportingperiod_update(request, pk):
 @login_required
 @api_view(['GET'])
 def dated_target_info(request, pk):
+    verify_program_access_level(request, pk, 'low')
     return Response({
         'max_start_date': Program.objects.filter(id=pk).annotate(
             ptd=Max('indicator__periodictargets__start_date')).values_list('ptd', flat=True)[0]})
