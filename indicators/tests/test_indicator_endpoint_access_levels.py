@@ -22,7 +22,7 @@ class TestIndicatorCreateEndpoint(EndpointTestBase, test.TestCase):
     post_data = {
         'services': 0,
         'name': 'endpoint test indicator',
-        'program': '2'
+        'program': None
     }
 
     def setUp(self):
@@ -91,4 +91,113 @@ class TestPeriodTargetDeleteEndpoint(EndpointTestBase, test.TestCase):
         self.init()
 
     def test_http_methods(self):
+        self.run_post_tests()
+
+class TestPeriodicTargetDeleteAllEndpoint(EndpointTestBase, test.TestCase):
+    url = 'pt_deleteall'
+    url_kwargs = {'indicator': None,
+                  'deleteall': 'True'}
+    access_level = 'high'
+    delete = 'periodic_target'
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_post_tests()
+
+class TestResultCreateEndpoint(EndpointTestBase, test.TestCase):
+    url = 'result_add'
+    url_kwargs = {'indicator': None}
+    access_level = 'medium'
+    post_data = {
+        'achieved': 100
+    }
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_get_tests()
+        self.run_post_tests()
+
+class TestResultUpdateEndpoint(EndpointTestBase, test.TestCase):
+    url = 'result_update'
+    url_kwargs = {'pk': 'result'}
+    access_level = None # varies
+    post_data = {
+        'achieved': 80
+    }
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.access_level = 'low'
+        self.run_get_tests()
+        self.access_level = 'medium'
+        self.run_post_tests()
+
+class TestResultDeleteEndpoint(EndpointTestBase, test.TestCase):
+    url = 'result_delete'
+    url_kwargs = {'pk': 'result'}
+    access_level = 'medium'
+    delete = 'result'
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_post_tests()
+
+class TestDisaggregationReportEndpoint(EndpointTestBase, test.TestCase):
+    url = 'disrep'
+    url_kwargs = {'program': None}
+    access_level = 'low'
+    redirect = True
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_get_tests()
+        self.run_post_tests()
+
+class TestDisaggregationPrintReportEndpoint(EndpointTestBase, test.TestCase):
+    url = 'disrepprint'
+    url_kwargs = {'program': None}
+    access_level = 'low'
+    redirect = True
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_get_tests()
+        self.run_post_tests()
+
+class TestIndicatorPlanEndpoint(EndpointTestBase, test.TestCase):
+    url = 'indicator_plan'
+    url_kwargs = {'program': None}
+    access_level = 'low'
+    redirect = True
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_get_tests()
+        self.run_post_tests()
+
+class TestIndicatorPlanExportEndpoint(EndpointTestBase, test.TestCase):
+    url = 'indicator_export'
+    url_kwargs  = {'program': None}
+    access_level = 'low'
+    redirect = True
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_get_tests()
         self.run_post_tests()

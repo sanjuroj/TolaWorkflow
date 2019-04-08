@@ -56,6 +56,7 @@ class EndpointTestContext(object):
             program=self.program_out_of_country,
             target_frequency=Indicator.LOP
         )
+        self.add_results()
         if Organization.objects.filter(pk=1).count() == 1:
             self.mercy_corps_organization = Organization.objects.get(pk=1)
         else:
@@ -185,7 +186,19 @@ class EndpointTestContext(object):
             start_date=self.program_in_country.reporting_period_start,
             end_date=self.program_in_country.reporting_period_end
         )
-    
+
+    def add_results(self):
+        self.result_out_of_country = i_factories.ResultFactory(
+            indicator=self.indicator_out_of_country,
+            program=self.program_out_of_country,
+            achieved=100
+        )
+        self.result_in_country = i_factories.ResultFactory(
+            indicator=self.indicator_in_country,
+            program=self.program_in_country,
+            achieved=100
+        )
+
     @property
     def high_users(self):
         for user in [self.mercy_corps_high,
@@ -226,6 +239,7 @@ class EndpointTestBase(object):
     access_level = None
     post_data = {}
     delete = None
+    redirect = False
 
     def init(self):
         self.context = EndpointTestContext()
@@ -272,6 +286,10 @@ class EndpointTestBase(object):
             kwargs['pk'] = self.context.indicator_out_of_country.pk
         if 'pk' in self.url_kwargs and self.url_kwargs['pk'] == 'periodic_target':
             kwargs['pk'] = self.context.pt_out_of_country.pk
+        if 'pk' in self.url_kwargs and self.url_kwargs['pk'] == 'result':
+            kwargs['pk'] = self.context.result_out_of_country.pk
+        if 'deleteall' in self.url_kwargs:
+            kwargs['deleteall'] = self.url_kwargs['deleteall']
         return reverse(self.url, kwargs=kwargs)
 
     def get_in_url(self):
@@ -284,6 +302,10 @@ class EndpointTestBase(object):
             kwargs['pk'] = self.context.indicator_in_country.pk
         if 'pk' in self.url_kwargs and self.url_kwargs['pk'] == 'periodic_target':
             kwargs['pk'] = self.context.pt_in_country.pk
+        if 'pk' in self.url_kwargs and self.url_kwargs['pk'] == 'result':
+            kwargs['pk'] = self.context.result_in_country.pk
+        if 'deleteall' in self.url_kwargs:
+            kwargs['deleteall'] = self.url_kwargs['deleteall']
         return reverse(self.url, kwargs=kwargs)
 
     def fetch_get_response(self, tolauser, url):
@@ -317,8 +339,11 @@ class EndpointTestBase(object):
                             msg=msg, code=response.status_code))
 
     def assert_forbidden(self, response, msg):
-        self.assertEqual(response.status_code, 403,
-                         '{msg} but got response {code}'.format(msg=msg, code=response.status_code))
+        if self.redirect:
+            self.assertRedirects(response, reverse('index'), msg_prefix=msg)
+        else:
+            self.assertEqual(response.status_code, 403,
+                             '{msg} but got response {code}'.format(msg=msg, code=response.status_code))
 
     def assert_redirects_to_login(self, response, msg, url):
         self.assertRedirects(response, reverse('login') + '?next=' + url, msg_prefix=msg)
@@ -366,24 +391,36 @@ class EndpointTestBase(object):
             raise ValueError('invalid method {}'.format(method))
         if self.delete == 'periodic_target':
             self.context.add_periodic_targets()
+        if self.delete == 'result':
+            self.context.add_results()
+        if 'program' in self.post_data:
+            self.post_data['program'] = self.context.program_out_of_country.pk
         response = fetch_method(self.context.mercy_corps_super_admin, self.get_out_url())
         self.assert_post_passes(response, 'superuser should be able to {0} to {1}'.format(method, self.get_out_url()))
         # ensure all users cannot access:
         for user in self.get_all_users():
             if self.delete == 'periodic_target':
                 self.context.add_periodic_targets()
+            if self.delete == 'result':
+                self.context.add_results()
             response = fetch_method(user, self.get_out_url())
             self.assert_forbidden(
                 response, 'user not assigned to country should redirect from {}'.format(self.get_out_url()))
         # ensure anonymous user cannot access:
         if self.delete == 'periodic_target':
             self.context.add_periodic_targets()
+        if self.delete == 'result':
+            self.context.add_results()
         response = fetch_method(None, self.get_out_url())
         self.assert_redirects_to_login(response, 'anonymous user should redirect from {}'.format(
             self.get_out_url()), self.get_out_url())
         # ensure superuser can access:
         if self.delete == 'periodic_target':
             self.context.add_periodic_targets()
+        if self.delete == 'result':
+            self.context.add_results()
+        if 'program' in self.post_data:
+            self.post_data['program'] = self.context.program_in_country.pk
         response = fetch_method(self.context.mercy_corps_super_admin, self.get_in_url())
         self.assert_post_passes(response, 'superuser should be able to {0} to {1}'.format(
             method, self.get_in_url()))
@@ -391,18 +428,24 @@ class EndpointTestBase(object):
         for user, level in self.get_permissioned_users():
             if self.delete == 'periodic_target':
                 self.context.add_periodic_targets()
+            if self.delete == 'result':
+                self.context.add_results()
             response = fetch_method(user, self.get_in_url())
             self.assert_post_passes(response, 'user level {0} should have {1} access to {2}'.format(
                 level, method, self.get_in_url()))
         for user, level in self.get_non_permissioned_users():
             if self.delete == 'periodic_target':
                 self.context.add_periodic_targets()
+            if self.delete == 'result':
+                self.context.add_results()
             response = fetch_method(user, self.get_in_url())
             self.assert_forbidden(response, 'user level {0} should not have {1} access to {2}'.format(
                 level, method, self.get_in_url()))
         # ensure anonymous user cannot acccess:
         if self.delete == 'periodic_target':
-            self.context.add_periodic_targets() 
+            self.context.add_periodic_targets()
+        if self.delete == 'result':
+            self.context.add_results()
         response = fetch_method(None, self.get_in_url())
         self.assert_redirects_to_login(response, 'anonymous user should redirect from {}'.format(
             self.get_in_url()), self.get_in_url())
