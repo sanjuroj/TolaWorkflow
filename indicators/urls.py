@@ -79,5 +79,5 @@ urlpatterns = [
     url(r'^pinned_report/delete/$', delete_pinned_report, name='delete_pinned_report'),
 
     # API call for program page
-    url(r'^api/indicator/(?P<indicator_id>\d+)', api_indicator_view, name='api_indicator_view'),
+    url(r'^api/indicator/(?P<indicator>\d+)', api_indicator_view, name='api_indicator_view'),
 ]

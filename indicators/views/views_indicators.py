@@ -1117,15 +1117,17 @@ class IndicatorExport(View):
         return response
 
 
-def api_indicator_view(request, indicator_id):
+@login_required
+@indicator_adapter(has_program_read_access)
+def api_indicator_view(request, indicator, program):
     """
     API call for viewing an indicator for the program page
     """
-    indicator = Indicator.objects.only('program_id', 'sector_id').get(id=indicator_id)
+    indicator = Indicator.objects.only('program_id', 'sector_id').get(pk=indicator)
     program = ProgramWithMetrics.program_page.get(pk=indicator.program_id)
     program.indicator_filters = {}
 
     indicator = program.annotated_indicators \
-        .annotate(target_period_last_end_date=Max('periodictargets__end_date')).get(id=indicator_id)
+        .annotate(target_period_last_end_date=Max('periodictargets__end_date')).get(pk=indicator.pk)
 
     return JsonResponse(IndicatorSerializer(indicator).data)

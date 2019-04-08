@@ -304,3 +304,15 @@ class TestPinnedReportDeleteEndpoint(EndpointTestBase, test.TestCase):
 
     def test_http_methods(self):
         self.run_post_tests()
+
+class TestAPIIndicatorViewEndpoint(EndpointTestBase, test.TestCase):
+    url = 'api_indicator_view'
+    url_kwargs = {'indicator': None}
+    access_level = 'low'
+
+    def setUp(self):
+        self.init()
+
+    def test_http_methods(self):
+        self.run_get_tests()
+        self.run_post_tests()
