@@ -29,7 +29,6 @@ from .views.views_reports import (
     create_pinned_report,
     delete_pinned_report,
     IPTT_ExcelExport,
-    IPTT_CSVExport
 )
 
 
@@ -78,8 +77,6 @@ urlpatterns = [
 
     url(r'^pinned_report/$', create_pinned_report, name='create_pinned_report'),
     url(r'^pinned_report/delete/$', delete_pinned_report, name='delete_pinned_report'),
-
-    url(r'^iptt_csv/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', IPTT_CSVExport.as_view(), name='iptt_csv'),
 
     # API call for program page
     url(r'^api/indicator/(?P<indicator_id>\d+)', api_indicator_view, name='api_indicator_view'),
