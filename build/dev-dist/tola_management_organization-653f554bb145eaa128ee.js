@@ -12,7 +12,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OrganizationStore", function() { return OrganizationStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./api */ "zUdS");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _temp;
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -108,6 +108,10 @@ function () {
       value: 0,
       label: gettext('Inactive')
     }];
+
+    _initializerDefineProperty(this, "active_editor_pane", _descriptor17, this);
+
+    this.active_pane_is_dirty = false;
     this.available_programs = programs;
     this.available_organizations = organizations;
     this.available_sectors = sectors;
@@ -215,32 +219,54 @@ function () {
       });
     }
   }, {
+    key: "dirtyConfirm",
+    value: function dirtyConfirm() {
+      return !this.active_pane_is_dirty || this.active_pane_is_dirty && confirm(gettext("You have unsaved changes. Are you sure you want to discard them?"));
+    }
+  }, {
+    key: "onProfilePaneChange",
+    value: function onProfilePaneChange(new_pane) {
+      if (this.dirtyConfirm()) {
+        this.active_editor_pane = new_pane;
+        this.active_pane_is_dirty = false;
+      }
+    }
+  }, {
+    key: "setActiveFormIsDirty",
+    value: function setActiveFormIsDirty(is_dirty) {
+      this.active_pane_is_dirty = is_dirty;
+    }
+  }, {
     key: "fetchOrganizations",
     value: function fetchOrganizations() {
       var _this2 = this;
 
-      this.fetching = true;
-      _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationsWithFilter(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(function (results) {
-        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this2.fetching = false;
-          _this2.organizations = results.organizations.reduce(function (xs, x) {
-            xs[x.id] = x;
-            return xs;
-          }, {});
-          _this2.organizations_listing = results.organizations.map(function (o) {
-            return o.id;
-          });
-          _this2.organizations_count = results.total_organizations;
-          _this2.total_pages = results.total_pages;
-          _this2.bulk_targets = new Map(Object.entries(_this2.organizations).map(function (_ref9) {
-            var _ref10 = _slicedToArray(_ref9, 2),
-                _ = _ref10[0],
-                organization = _ref10[1];
+      if (this.dirtyConfirm()) {
+        this.fetching = true;
+        _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationsWithFilter(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(function (results) {
+          Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+            _this2.active_editor_pane = 'profile';
+            _this2.active_pane_is_dirty = false;
+            _this2.fetching = false;
+            _this2.organizations = results.organizations.reduce(function (xs, x) {
+              xs[x.id] = x;
+              return xs;
+            }, {});
+            _this2.organizations_listing = results.organizations.map(function (o) {
+              return o.id;
+            });
+            _this2.organizations_count = results.total_organizations;
+            _this2.total_pages = results.total_pages;
+            _this2.bulk_targets = new Map(Object.entries(_this2.organizations).map(function (_ref9) {
+              var _ref10 = _slicedToArray(_ref9, 2),
+                  _ = _ref10[0],
+                  organization = _ref10[1];
 
-            return [organization.id, false];
-          }));
+              return [organization.id, false];
+            }));
+          });
         });
-      });
+      }
     }
   }, {
     key: "applyFilters",
@@ -252,22 +278,26 @@ function () {
   }, {
     key: "createOrganization",
     value: function createOrganization() {
-      var new_organization = {
-        id: "new",
-        name: "",
-        program_count: 0,
-        user_count: 0,
-        is_active: false
-      };
+      if (this.dirtyConfirm()) {
+        var new_organization = {
+          id: "new",
+          name: "",
+          program_count: 0,
+          user_count: 0,
+          is_active: false
+        };
 
-      if (this.editing_target !== "new") {
-        this.organizations_listing.unshift("new");
+        if (this.editing_target !== "new") {
+          this.organizations_listing.unshift("new");
+        }
+
+        this.editing_errors = {};
+        this.organizations["new"] = new_organization;
+        this.editing_target = new_organization.id;
+        this.editing_target_data = _objectSpread({}, default_organization);
+        this.active_pane_is_dirty = false;
+        this.active_editor_pane = 'profile';
       }
-
-      this.editing_errors = {};
-      this.organizations["new"] = new_organization;
-      this.editing_target = new_organization.id;
-      this.editing_target_data = _objectSpread({}, default_organization);
     }
   }, {
     key: "updateOrganizationProfile",
@@ -279,11 +309,10 @@ function () {
         return _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationAggregates(id).then(function (aggregates) {
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
             _this3.saving = false;
+            _this3.active_pane_is_dirty = false;
+            _this3.editing_target_data = updated_data;
 
             _this3.updateLocalOrganization(id, updated_data, aggregates);
-
-            _this3.editing_target = null;
-            _this3.editing_target_data = _objectSpread({}, default_organization);
           });
 
           _this3.onSaveSuccessHandler();
@@ -319,8 +348,8 @@ function () {
 
           _this4.organizations_listing.unshift(result.id);
 
-          _this4.editing_target = null;
-          _this4.editing_target_data = _objectSpread({}, default_organization);
+          _this4.editing_target = result.id;
+          _this4.editing_target_data = result;
           _this4.bulk_targets = new Map(Object.entries(_this4.organizations).map(function (_ref11) {
             var _ref12 = _slicedToArray(_ref11, 2),
                 _ = _ref12[0],
@@ -328,6 +357,7 @@ function () {
 
             return [organization.id, false];
           }));
+          _this4.active_pane_is_dirty = false;
         });
 
         _this4.onSaveSuccessHandler();
@@ -371,6 +401,9 @@ function () {
 
             return [organization.id, false];
           }));
+          _this5.active_pane_is_dirty = false;
+
+          _this5.createOrganization();
         });
 
         _this5.onSaveSuccessHandler();
@@ -436,31 +469,36 @@ function () {
     value: function toggleEditingTarget(organization_id) {
       var _this6 = this;
 
-      this.editing_target_data = _objectSpread({}, default_organization);
-      this.editing_errors = {};
+      if (this.dirtyConfirm()) {
+        this.editing_target_data = _objectSpread({}, default_organization);
+        this.editing_errors = {};
 
-      if (this.editing_target == "new") {
-        this.organizations_listing.shift();
-      }
+        if (this.editing_target == "new") {
+          this.organizations_listing.shift();
+        }
 
-      if (this.editing_target == organization_id) {
-        this.editing_target = false;
-      } else {
-        this.editing_target = organization_id;
-        this.fetching_editing_target = true;
+        this.active_editor_pane = 'profile';
+        this.active_pane_is_dirty = false;
 
-        if (!(this.editing_target == 'new')) {
-          Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganization(organization_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationHistory(organization_id)]).then(function (_ref15) {
-            var _ref16 = _slicedToArray(_ref15, 2),
-                organization = _ref16[0],
-                history = _ref16[1];
+        if (this.editing_target == organization_id) {
+          this.editing_target = false;
+        } else {
+          this.editing_target = organization_id;
+          this.fetching_editing_target = true;
 
-            Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-              _this6.fetching_editing_target = false;
-              _this6.editing_target_data = organization;
-              _this6.editing_target_history = history;
+          if (!(this.editing_target == 'new')) {
+            Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganization(organization_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationHistory(organization_id)]).then(function (_ref15) {
+              var _ref16 = _slicedToArray(_ref15, 2),
+                  organization = _ref16[0],
+                  history = _ref16[1];
+
+              Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+                _this6.fetching_editing_target = false;
+                _this6.editing_target_data = organization;
+                _this6.editing_target_history = history;
+              });
             });
-          });
+          }
         }
       }
     }
@@ -601,7 +639,14 @@ function () {
   initializer: function initializer() {
     return {};
   }
-}), _applyDecoratedDescriptor(_class.prototype, "fetchOrganizations", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchOrganizations"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createOrganization", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createOrganization"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateOrganizationProfile", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateOrganizationProfile"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewOrganization", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewOrganization"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewOrganizationAndAddAnother", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewOrganizationAndAddAnother"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeSectorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeSectorFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeProgramFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeProgramFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationStatusFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationStatusFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype)), _class);
+}), _descriptor17 = _applyDecoratedDescriptor(_class.prototype, "active_editor_pane", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return 'profile';
+  }
+}), _applyDecoratedDescriptor(_class.prototype, "onProfilePaneChange", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "onProfilePaneChange"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "fetchOrganizations", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchOrganizations"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createOrganization", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createOrganization"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateOrganizationProfile", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateOrganizationProfile"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewOrganization", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewOrganization"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewOrganizationAndAddAnother", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewOrganizationAndAddAnother"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeSectorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeSectorFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeProgramFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeProgramFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationStatusFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationStatusFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype)), _class);
 
 /***/ }),
 
@@ -970,14 +1015,21 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
           data = _ref7.data;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Row, {
         expanded: data.id == store.editing_target,
-        Expando: function Expando(_ref8) {
+        Expando: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref8) {
           var Wrapper = _ref8.Wrapper;
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Wrapper, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_organization_editor__WEBPACK_IMPORTED_MODULE_6__["default"], {
+            active_pane: store.active_editor_pane,
+            notifyPaneChange: function notifyPaneChange(new_pane) {
+              return store.onProfilePaneChange(new_pane);
+            },
             new: data.id == 'new',
             ProfileSection: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function () {
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
                 isLoading: store.fetching_editing_target || store.saving
               }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_organization_profile__WEBPACK_IMPORTED_MODULE_7__["default"], {
+                onIsDirtyChange: function onIsDirtyChange(is_dirty) {
+                  return store.setActiveFormIsDirty(is_dirty);
+                },
                 new: data.id == 'new',
                 sectorSelections: store.sector_selections,
                 organizationData: store.editing_target_data,
@@ -998,6 +1050,9 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
                 isLoading: store.fetching_editing_target || store.saving
               }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_organization_history__WEBPACK_IMPORTED_MODULE_8__["default"], {
+                onIsDirtyChange: function onIsDirtyChange(is_dirty) {
+                  return store.setActiveFormIsDirty(is_dirty);
+                },
                 organizationData: store.editing_target_data,
                 organizationHistoryData: store.editing_target_history,
                 onSave: function onSave(new_organization_data) {
@@ -1006,7 +1061,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
               }));
             })
           }));
-        }
+        })
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.15"
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
@@ -1418,37 +1473,30 @@ var OrganizationEditor = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observe
 function (_React$Component) {
   _inherits(OrganizationEditor, _React$Component);
 
-  function OrganizationEditor(props) {
-    var _this;
-
+  function OrganizationEditor() {
     _classCallCheck(this, OrganizationEditor);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(OrganizationEditor).call(this, props));
-    _this.state = {
-      active_page: 'profile'
-    };
-    return _this;
+    return _possibleConstructorReturn(this, _getPrototypeOf(OrganizationEditor).apply(this, arguments));
   }
 
   _createClass(OrganizationEditor, [{
     key: "updateActivePage",
     value: function updateActivePage(new_page) {
       if (!this.props.new) {
-        this.setState({
-          active_page: new_page
-        });
+        this.props.notifyPaneChange(new_page);
       }
     }
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this = this;
 
       var _this$props = this.props,
           ProfileSection = _this$props.ProfileSection,
-          HistorySection = _this$props.HistorySection;
-      var profile_active_class = this.state.active_page == 'profile' ? 'active' : '';
-      var history_active_class = this.state.active_page == 'status_and_history' ? 'active' : '';
+          HistorySection = _this$props.HistorySection,
+          active_pane = _this$props.active_pane;
+      var profile_active_class = active_pane == 'profile' ? 'active' : '';
+      var history_active_class = active_pane == 'status_and_history' ? 'active' : '';
       var new_class = this.props.new ? 'disabled' : '';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "user-editor tab-set--vertical"
@@ -1462,7 +1510,7 @@ function (_React$Component) {
         onClick: function onClick(e) {
           e.preventDefault();
 
-          _this2.updateActivePage('profile');
+          _this.updateActivePage('profile');
         }
       }, gettext("Profile")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
@@ -1470,11 +1518,11 @@ function (_React$Component) {
         onClick: function onClick(e) {
           e.preventDefault();
 
-          _this2.updateActivePage('status_and_history');
+          _this.updateActivePage('status_and_history');
         }
       }, gettext("Status and History")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "tab-content"
-      }, this.state.active_page == 'profile' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProfileSection, null), this.state.active_page == 'status_and_history' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(HistorySection, null)));
+      }, active_pane == 'profile' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProfileSection, null), active_pane == 'status_and_history' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(HistorySection, null)));
     }
   }]);
 
@@ -1564,24 +1612,36 @@ function (_React$Component) {
   }
 
   _createClass(EditOrganizationHistory, [{
+    key: "hasUnsavedDataAction",
+    value: function hasUnsavedDataAction() {
+      this.props.onIsDirtyChange(JSON.stringify(this.state.data) != JSON.stringify(this.state.initial_data));
+    }
+  }, {
     key: "onChange",
     value: function onChange(new_value) {
+      var _this2 = this;
+
       this.state.data.is_active = new_value;
       this.setState({
         data: this.state.data
+      }, function () {
+        return _this2.hasUnsavedDataAction();
       });
     }
   }, {
     key: "onReset",
     value: function onReset() {
+      var _this3 = this;
+
       this.setState({
         data: this.state.initial_data
+      }, function () {
+        return _this3.hasUnsavedDataAction();
       });
     }
   }, {
     key: "save",
-    value: function save(e) {
-      e.preventDefault();
+    value: function save() {
       this.props.onSave(_objectSpread({}, this.state.data, {
         is_active: this.state.data.is_active.value,
         sectors: this.state.data.sectors.map(function (sector) {
@@ -1592,7 +1652,7 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this4 = this;
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "tab-pane--react"
@@ -1604,7 +1664,7 @@ function (_React$Component) {
         options: status_options,
         value: this.state.data.is_active,
         onChange: function onChange(new_value) {
-          return _this2.onChange(new_value);
+          return _this4.onChange(new_value);
         }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
@@ -1616,13 +1676,13 @@ function (_React$Component) {
         className: "btn btn-primary",
         type: "button",
         onClick: function onClick(e) {
-          return _this2.save(e);
+          return _this4.save(e);
         }
       }, gettext("Save Changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this2.onReset();
+          return _this4.onReset();
         }
       }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_changelog__WEBPACK_IMPORTED_MODULE_5__["default"], {
         data: this.props.organizationHistoryData
@@ -1880,6 +1940,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var app_root = '#app_root';
 /*
  * Model/Store setup
  */
@@ -1887,7 +1948,7 @@ __webpack_require__.r(__webpack_exports__);
 var store = new _models__WEBPACK_IMPORTED_MODULE_2__["OrganizationStore"](jsContext.programs, jsContext.organizations, jsContext.sectors, jsContext.countries, jsContext.country_filter, jsContext.program_filter);
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_views__WEBPACK_IMPORTED_MODULE_3__["IndexView"], {
   store: store
-}), document.querySelector('#app_root'));
+}), document.querySelector(app_root));
 
 /***/ }),
 
@@ -2054,9 +2115,13 @@ function (_React$Component) {
   }
 
   _createClass(EditOrganizationProfile, [{
+    key: "hasUnsavedDataAction",
+    value: function hasUnsavedDataAction() {
+      this.props.onIsDirtyChange(JSON.stringify(this.state.managed_data) != JSON.stringify(this.state.initial_data));
+    }
+  }, {
     key: "save",
-    value: function save(e) {
-      e.preventDefault();
+    value: function save() {
       this.props.onSave(_objectSpread({}, this.state.managed_data, {
         sectors: this.state.managed_data.sectors.map(function (sector) {
           return sector.value;
@@ -2086,77 +2151,109 @@ function (_React$Component) {
   }, {
     key: "resetForm",
     value: function resetForm() {
+      var _this2 = this;
+
       this.setState({
         managed_data: this.state.initial_data
+      }, function () {
+        return _this2.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updateName",
     value: function updateName(new_name) {
+      var _this3 = this;
+
       var new_data = this.state.managed_data;
       new_data.name = new_name;
       this.setState({
         managed_data: new_data
+      }, function () {
+        return _this3.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updateSectors",
     value: function updateSectors(new_sectors) {
+      var _this4 = this;
+
       var new_data = this.state.managed_data;
       new_data.sectors = new_sectors;
       this.setState({
         managed_data: new_data
+      }, function () {
+        return _this4.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updatePrimaryAddress",
     value: function updatePrimaryAddress(new_address) {
+      var _this5 = this;
+
       var new_data = this.state.managed_data;
       new_data.primary_address = new_address;
       this.setState({
         managed_data: new_data
+      }, function () {
+        return _this5.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updatePrimaryContactName",
     value: function updatePrimaryContactName(new_name) {
+      var _this6 = this;
+
       var new_data = this.state.managed_data;
       new_data.primary_contact_name = new_name;
       this.setState({
         managed_data: new_data
+      }, function () {
+        return _this6.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updatePrimaryContactEmail",
     value: function updatePrimaryContactEmail(new_email) {
+      var _this7 = this;
+
       var new_data = this.state.managed_data;
       new_data.primary_contact_email = new_email;
       this.setState({
         managed_data: new_data
+      }, function () {
+        return _this7.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updatePrimaryContactPhone",
     value: function updatePrimaryContactPhone(new_phone) {
+      var _this8 = this;
+
       var new_data = this.state.managed_data;
       new_data.primary_contact_phone = new_phone;
       this.setState({
         managed_data: new_data
+      }, function () {
+        return _this8.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updateModeOfContact",
     value: function updateModeOfContact(new_mode_of_contact) {
+      var _this9 = this;
+
       var new_data = this.state.managed_data;
       new_data.mode_of_contact = new_mode_of_contact;
       this.setState({
         managed_data: new_data
+      }, function () {
+        return _this9.hasUnsavedDataAction();
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this10 = this;
 
       var od = this.state.managed_data;
       var errors = this.props.errors;
@@ -2184,7 +2281,7 @@ function (_React$Component) {
         type: "text",
         value: od.name,
         onChange: function onChange(e) {
-          return _this2.updateName(e.target.value);
+          return _this10.updateName(e.target.value);
         },
         className: "form-control " + error_classes.name,
         id: "organization-name-input",
@@ -2199,7 +2296,7 @@ function (_React$Component) {
         value: od.sectors,
         options: this.props.sectorSelections,
         onChange: function onChange(e) {
-          return _this2.updateSectors(e);
+          return _this10.updateSectors(e);
         },
         placeholder: gettext("None Selected"),
         id: "sectors-input"
@@ -2212,7 +2309,7 @@ function (_React$Component) {
       }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         value: od.primary_address,
         onChange: function onChange(e) {
-          return _this2.updatePrimaryAddress(e.target.value);
+          return _this10.updatePrimaryAddress(e.target.value);
         },
         className: "form-control " + error_classes.primary_address,
         id: "primary-address-input",
@@ -2229,7 +2326,7 @@ function (_React$Component) {
         type: "text",
         value: od.primary_contact_name,
         onChange: function onChange(e) {
-          return _this2.updatePrimaryContactName(e.target.value);
+          return _this10.updatePrimaryContactName(e.target.value);
         },
         className: "form-control " + error_classes.primary_contact_name,
         id: "primary-contact-name-input",
@@ -2246,7 +2343,7 @@ function (_React$Component) {
         type: "text",
         value: od.primary_contact_email,
         onChange: function onChange(e) {
-          return _this2.updatePrimaryContactEmail(e.target.value);
+          return _this10.updatePrimaryContactEmail(e.target.value);
         },
         className: "form-control " + error_classes.primary_contact_email,
         id: "primary-contact-email-input",
@@ -2263,7 +2360,7 @@ function (_React$Component) {
         type: "text",
         value: od.primary_contact_phone,
         onChange: function onChange(e) {
-          return _this2.updatePrimaryContactPhone(e.target.value);
+          return _this10.updatePrimaryContactPhone(e.target.value);
         },
         className: "form-control " + error_classes.primary_contact_phone,
         id: "primary-contact-phone-input",
@@ -2278,7 +2375,7 @@ function (_React$Component) {
         type: "text",
         value: od.mode_of_contact,
         onChange: function onChange(e) {
-          return _this2.updateModeOfContact(e.target.value);
+          return _this10.updateModeOfContact(e.target.value);
         },
         className: "form-control",
         id: "mode-of-contact-input"
@@ -2286,32 +2383,34 @@ function (_React$Component) {
         className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
+        type: "button",
         onClick: function onClick(e) {
-          return _this2.saveNew(e);
+          return _this10.saveNew(e);
         }
       }, gettext("Save Changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-secondary",
         onClick: function onClick(e) {
-          return _this2.saveNewAndAddAnother(e);
+          return _this10.saveNewAndAddAnother(e);
         }
       }, gettext("Save and Add Another")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this2.resetForm();
+          return _this10.resetForm();
         }
       }, gettext("Reset"))), !this.props.new && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
+        type: "button",
         onClick: function onClick(e) {
-          return _this2.save(e);
+          return _this10.save(e);
         }
       }, gettext("Save Changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this2.resetForm();
+          return _this10.resetForm();
         }
       }, gettext("Reset")))));
     }
@@ -2401,4 +2500,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-824d030e2d93867df227.js.map
+//# sourceMappingURL=tola_management_organization-653f554bb145eaa128ee.js.map

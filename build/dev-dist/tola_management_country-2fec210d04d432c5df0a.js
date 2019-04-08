@@ -191,12 +191,18 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
           data = _ref10.data;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Row, {
         expanded: data.id == store.editing_target,
-        Expando: function Expando(_ref11) {
+        Expando: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref11) {
           var Wrapper = _ref11.Wrapper;
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Wrapper, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_country_editor__WEBPACK_IMPORTED_MODULE_5__["default"], {
+            notifyPaneChange: function notifyPaneChange(new_pane) {
+              return store.onProfilePaneChange(new_pane);
+            },
+            active_pane: store.active_editor_pane,
             new: data.id == 'new',
             ProfileSection: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function () {
-              return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_country_profile__WEBPACK_IMPORTED_MODULE_6__["default"], {
+              return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
+                isLoading: store.fetching_editing_data || store.saving
+              }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_country_profile__WEBPACK_IMPORTED_MODULE_6__["default"], {
                 new: data.id == 'new',
                 country_data: data,
                 organizationOptions: organizationFilterOptions,
@@ -206,12 +212,15 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
                 onCreate: function onCreate(new_country_data) {
                   return store.saveNewCountry(new_country_data);
                 },
-                errors: store.editing_errors
-              });
+                errors: store.editing_errors,
+                onIsDirtyChange: function onIsDirtyChange(is_dirty) {
+                  return store.setActiveFormIsDirty(is_dirty);
+                }
+              }));
             }),
             StrategicObjectiveSection: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function () {
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
-                isLoading: store.fetching_editing_data
+                isLoading: store.fetching_editing_data || store.saving
               }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_objectives__WEBPACK_IMPORTED_MODULE_8__["default"], {
                 country_id: data.id,
                 objectives: store.editing_objectives_data,
@@ -230,12 +239,15 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
                 errors: store.editing_objectives_errors,
                 clearErrors: function clearErrors() {
                   return store.clearObjectiveEditingErrors();
+                },
+                onIsDirtyChange: function onIsDirtyChange(is_dirty) {
+                  return store.setActiveFormIsDirty(is_dirty);
                 }
               }));
             }),
             DisaggregationSection: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function () {
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
-                isLoading: store.fetching_editing_data
+                isLoading: store.fetching_editing_data || store.saving
               }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_disaggregations__WEBPACK_IMPORTED_MODULE_7__["default"], {
                 country_id: data.id,
                 disaggregations: store.editing_disaggregations_data,
@@ -254,6 +266,9 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
                 errors: store.editing_disaggregations_errors,
                 clearErrors: function clearErrors() {
                   return store.clearDisaggregationEditingErrors();
+                },
+                onIsDirtyChange: function onIsDirtyChange(is_dirty) {
+                  return store.setActiveFormIsDirty(is_dirty);
                 }
               }));
             }),
@@ -261,7 +276,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
               return store.fetchObjectives(countryId);
             }
           }));
-        }
+        })
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.2"
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
@@ -397,32 +412,43 @@ function (_React$Component) {
   }
 
   _createClass(EditCountryProfile, [{
+    key: "hasUnsavedDataAction",
+    value: function hasUnsavedDataAction() {
+      this.props.onIsDirtyChange(JSON.stringify(this.state.managed_data) != JSON.stringify(this.state.original_data));
+    }
+  }, {
     key: "save",
-    value: function save(e) {
-      e.preventDefault();
+    value: function save() {
       var country_id = this.props.country_data.id;
       var country_data = this.state.managed_data;
       this.props.onUpdate(country_id, country_data);
     }
   }, {
     key: "saveNew",
-    value: function saveNew(e) {
-      e.preventDefault();
+    value: function saveNew() {
       var country_data = this.state.managed_data;
       this.props.onCreate(country_data);
     }
   }, {
     key: "updateFormField",
     value: function updateFormField(fieldKey, val) {
+      var _this2 = this;
+
       this.setState({
         managed_data: Object.assign(this.state.managed_data, _defineProperty({}, fieldKey, val))
+      }, function () {
+        return _this2.hasUnsavedDataAction();
       });
     }
   }, {
     key: "resetForm",
     value: function resetForm() {
+      var _this3 = this;
+
       this.setState({
         managed_data: Object.assign({}, this.state.original_data)
+      }, function () {
+        return _this3.hasUnsavedDataAction();
       });
     }
   }, {
@@ -433,7 +459,7 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this4 = this;
 
       var formdata = this.state.managed_data;
       var selectedOrganization = this.props.organizationOptions.find(function (x) {
@@ -453,7 +479,7 @@ function (_React$Component) {
         type: "text",
         value: formdata.country,
         onChange: function onChange(e) {
-          return _this2.updateFormField('country', e.target.value);
+          return _this4.updateFormField('country', e.target.value);
         },
         className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('form-control', {
           'is-invalid': this.formErrors('country')
@@ -469,7 +495,7 @@ function (_React$Component) {
       }, gettext("Description")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         value: formdata.description,
         onChange: function onChange(e) {
-          return _this2.updateFormField('description', e.target.value);
+          return _this4.updateFormField('description', e.target.value);
         },
         className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('form-control', {
           'is-invalid': this.formErrors('description')
@@ -484,7 +510,7 @@ function (_React$Component) {
       }, gettext("Country Code")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         value: formdata.code,
         onChange: function onChange(e) {
-          return _this2.updateFormField('code', e.target.value);
+          return _this4.updateFormField('code', e.target.value);
         },
         className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('form-control', {
           'is-invalid': this.formErrors('code')
@@ -496,27 +522,29 @@ function (_React$Component) {
         className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
+        type: "button",
         onClick: function onClick(e) {
-          return _this2.saveNew(e);
+          return _this4.saveNew(e);
         }
       }, gettext("Save Changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this2.resetForm();
+          return _this4.resetForm();
         }
       }, gettext("Reset"))), !this.props.new && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
+        type: "button",
         onClick: function onClick(e) {
-          return _this2.save(e);
+          return _this4.save(e);
         }
       }, gettext("Save Changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this2.resetForm();
+          return _this4.resetForm();
         }
       }, gettext("Reset")))));
     }
@@ -540,7 +568,7 @@ function (_React$Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CountryStore", function() { return CountryStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _descriptor26, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _descriptor26, _descriptor27, _temp;
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -640,6 +668,9 @@ function () {
 
     _initializerDefineProperty(this, "bulk_targets_all", _descriptor26, this);
 
+    _initializerDefineProperty(this, "active_editor_pane", _descriptor27, this);
+
+    this.active_pane_is_dirty = false;
     this;
     this.api = api;
     Object.assign(this, initialData);
@@ -671,17 +702,21 @@ function () {
     value: function fetchCountries() {
       var _this = this;
 
-      this.fetching_main_listing = true;
-      this.api.fetchCountries(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(function (results) {
-        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this.fetching_main_listing = false;
-          _this.countries = results.results;
-          _this.country_count = results.total_results;
-          _this.total_pages = results.total_pages;
-          _this.next_page = results.next_page;
-          _this.previous_page = results.previous_page;
+      if (this.dirtyConfirm()) {
+        this.fetching_main_listing = true;
+        this.api.fetchCountries(this.current_page + 1, this.marshalFilters(this.appliedFilters)).then(function (results) {
+          Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+            _this.active_editor_pane = 'profile';
+            _this.active_pane_is_dirty = false;
+            _this.fetching_main_listing = false;
+            _this.countries = results.results;
+            _this.country_count = results.total_results;
+            _this.total_pages = results.total_pages;
+            _this.next_page = results.next_page;
+            _this.previous_page = results.previous_page;
+          });
         });
-      });
+      }
     }
   }, {
     key: "applyFilters",
@@ -724,28 +759,33 @@ function () {
     value: function toggleEditingTarget(id) {
       var _this2 = this;
 
-      if (this.editing_target == 'new') {
-        this.countries.shift();
-        this.editing_errors = {};
-      }
+      if (this.dirtyConfirm()) {
+        if (this.editing_target == 'new') {
+          this.countries.shift();
+          this.editing_errors = {};
+        }
 
-      if (this.editing_target == id) {
-        this.editing_target = false;
-        this.editing_errors = {};
-      } else {
-        this.editing_target = id;
-        this.fetching_editing_data = true;
-        Promise.all([this.api.fetchCountryObjectives(id), this.api.fetchCountryDisaggregations(id)]).then(function (_ref3) {
-          var _ref4 = _slicedToArray(_ref3, 2),
-              objectives_resp = _ref4[0],
-              disaggregations_resp = _ref4[1];
+        this.active_editor_pane = 'profile';
+        this.active_pane_is_dirty = false;
 
-          Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this2.fetching_editing_data = false;
-            _this2.editing_objectives_data = objectives_resp.data;
-            _this2.editing_disaggregations_data = disaggregations_resp.data;
+        if (this.editing_target == id) {
+          this.editing_target = false;
+          this.editing_errors = {};
+        } else {
+          this.editing_target = id;
+          this.fetching_editing_data = true;
+          Promise.all([this.api.fetchCountryObjectives(id), this.api.fetchCountryDisaggregations(id)]).then(function (_ref3) {
+            var _ref4 = _slicedToArray(_ref3, 2),
+                objectives_resp = _ref4[0],
+                disaggregations_resp = _ref4[1];
+
+            Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+              _this2.fetching_editing_data = false;
+              _this2.editing_objectives_data = objectives_resp.data;
+              _this2.editing_disaggregations_data = disaggregations_resp.data;
+            });
           });
-        });
+        }
       }
     }
   }, {
@@ -786,21 +826,43 @@ function () {
       });
     }
   }, {
+    key: "dirtyConfirm",
+    value: function dirtyConfirm() {
+      return !this.active_pane_is_dirty || this.active_pane_is_dirty && confirm(gettext("You have unsaved changes. Are you sure you want to discard them?"));
+    }
+  }, {
+    key: "onProfilePaneChange",
+    value: function onProfilePaneChange(new_pane) {
+      if (this.dirtyConfirm()) {
+        this.active_editor_pane = new_pane;
+        this.active_pane_is_dirty = false;
+      }
+    }
+  }, {
+    key: "setActiveFormIsDirty",
+    value: function setActiveFormIsDirty(is_dirty) {
+      this.active_pane_is_dirty = is_dirty;
+    }
+  }, {
     key: "addCountry",
     value: function addCountry() {
-      if (this.editing_target == 'new') {
-        this.countries.shift();
-      }
+      if (this.dirtyConfirm()) {
+        if (this.editing_target == 'new') {
+          this.countries.shift();
+        }
 
-      var new_country_data = {
-        id: "new",
-        country: "",
-        description: "",
-        code: "",
-        organizations: []
-      };
-      this.countries.unshift(new_country_data);
-      this.editing_target = 'new';
+        this.active_editor_pane = 'profile';
+        this.active_pane_is_dirty = false;
+        var new_country_data = {
+          id: "new",
+          country: "",
+          description: "",
+          code: "",
+          organizations: []
+        };
+        this.countries.unshift(new_country_data);
+        this.editing_target = 'new';
+      }
     }
   }, {
     key: "saveNewCountry",
@@ -812,7 +874,7 @@ function () {
       this.api.createCountry(country_data).then(function (response) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this3.saving = false;
-          _this3.editing_target = false;
+          _this3.active_pane_is_dirty = false;
 
           _this3.countries.shift();
 
@@ -836,7 +898,7 @@ function () {
       this.api.updateCountry(id, country_data).then(function (response) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this4.saving = false;
-          _this4.editing_target = false;
+          _this4.active_pane_is_dirty = false;
 
           _this4.updateLocalList(response.data);
 
@@ -873,6 +935,7 @@ function () {
           _this5.onSaveSuccessHandler();
 
           var updatedObjective = response.data;
+          _this5.active_pane_is_dirty = false;
           _this5.editing_objectives_data = _this5.editing_objectives_data.map(function (objective) {
             if (objective.id == updatedObjective.id) {
               return updatedObjective;
@@ -900,6 +963,7 @@ function () {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this6.onSaveSuccessHandler();
 
+          _this6.active_pane_is_dirty = false;
           var newObjective = response.data;
           _this6.editing_objectives_data = [].concat(_toConsumableArray(_this6.editing_objectives_data.filter(function (objective) {
             return objective.id != 'new';
@@ -997,6 +1061,7 @@ function () {
           _this8.onSaveSuccessHandler();
 
           var updatedDisaggregation = response.data;
+          _this8.active_pane_is_dirty = false;
           _this8.editing_disaggregations_data = _this8.editing_disaggregations_data.map(function (disaggregation) {
             if (disaggregation.id == updatedDisaggregation.id) {
               return updatedDisaggregation;
@@ -1023,6 +1088,7 @@ function () {
           _this9.onSaveSuccessHandler();
 
           var newDisaggregation = response.data;
+          _this9.active_pane_is_dirty = false;
           _this9.editing_disaggregations_data = [].concat(_toConsumableArray(_this9.editing_disaggregations_data.filter(function (disaggregation) {
             return disaggregation.id != 'new';
           })), [newDisaggregation]);
@@ -1169,7 +1235,7 @@ function () {
   enumerable: true,
   writable: true,
   initializer: function initializer() {
-    return true;
+    return false;
   }
 }), _descriptor19 = _applyDecoratedDescriptor(_class.prototype, "editing_objectives_data", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
@@ -1227,7 +1293,14 @@ function () {
   initializer: function initializer() {
     return false;
   }
-}), _applyDecoratedDescriptor(_class.prototype, "fetchCountries", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchCountries"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "addCountry", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "addCountry"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewCountry", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewCountry"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateCountry", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateCountry"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "addObjective", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "addObjective"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateObjective", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateObjective"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createObjective", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createObjective"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "deleteObjective", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "deleteObjective"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearObjectiveEditingErrors", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearObjectiveEditingErrors"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearDisaggregationEditingErrors", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearDisaggregationEditingErrors"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "addDisaggregation", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "addDisaggregation"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "deleteDisaggregation", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "deleteDisaggregation"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateDisaggregation", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateDisaggregation"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createDisaggregation", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createDisaggregation"), _class.prototype)), _class);
+}), _applyDecoratedDescriptor(_class.prototype, "fetchCountries", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchCountries"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _descriptor27 = _applyDecoratedDescriptor(_class.prototype, "active_editor_pane", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return 'profile';
+  }
+}), _applyDecoratedDescriptor(_class.prototype, "onProfilePaneChange", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "onProfilePaneChange"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "addCountry", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "addCountry"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewCountry", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewCountry"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateCountry", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateCountry"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "addObjective", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "addObjective"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateObjective", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateObjective"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createObjective", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createObjective"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "deleteObjective", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "deleteObjective"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearObjectiveEditingErrors", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearObjectiveEditingErrors"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearDisaggregationEditingErrors", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearDisaggregationEditingErrors"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "addDisaggregation", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "addDisaggregation"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "deleteDisaggregation", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "deleteDisaggregation"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateDisaggregation", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateDisaggregation"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createDisaggregation", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createDisaggregation"), _class.prototype)), _class);
 
 /***/ }),
 
@@ -1322,12 +1395,21 @@ function (_React$Component) {
   }
 
   _createClass(StrategicObjectiveForm, [{
+    key: "hasUnsavedDataAction",
+    value: function hasUnsavedDataAction() {
+      this.props.onIsDirtyChange(JSON.stringify(this.state.managed_data) != JSON.stringify(this.props.objective));
+    }
+  }, {
     key: "updateFormField",
     value: function updateFormField(fieldKey, value) {
+      var _this2 = this;
+
       var managed_data = this.state.managed_data;
       var modified = Object.assign(managed_data, _defineProperty({}, fieldKey, value));
       this.setState({
         managed_data: modified
+      }, function () {
+        return _this2.hasUnsavedDataAction();
       });
     }
   }, {
@@ -1338,16 +1420,20 @@ function (_React$Component) {
   }, {
     key: "resetForm",
     value: function resetForm() {
+      var _this3 = this;
+
       this.props.clearErrors();
       var objective = this.props.objective;
       this.setState({
         managed_data: _objectSpread({}, objective)
+      }, function () {
+        return _this3.hasUnsavedDataAction();
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this4 = this;
 
       var _this$props = this.props,
           objective = _this$props.objective,
@@ -1387,7 +1473,7 @@ function (_React$Component) {
         }),
         value: managed_data.name,
         onChange: function onChange(e) {
-          return _this2.updateFormField('name', e.target.value);
+          return _this4.updateFormField('name', e.target.value);
         },
         type: "text",
         required: true
@@ -1404,7 +1490,7 @@ function (_React$Component) {
         }),
         value: managed_data.description,
         onChange: function onChange(e) {
-          return _this2.updateFormField('description', e.target.value);
+          return _this4.updateFormField('description', e.target.value);
         },
         type: "text"
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ErrorFeedback, {
@@ -1417,7 +1503,7 @@ function (_React$Component) {
         value: selectedStatus,
         options: statusOptions,
         onChange: function onChange(e) {
-          return _this2.updateFormField('status', e.value);
+          return _this4.updateFormField('status', e.value);
         },
         className: classnames__WEBPACK_IMPORTED_MODULE_3___default()('react-select', {
           'is-invalid': this.formErrors('status')
@@ -1447,7 +1533,7 @@ function (_React$Component) {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this2.resetForm();
+          return _this4.resetForm();
         }
       }, gettext("Reset"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "right-buttons"
@@ -1470,41 +1556,67 @@ function (_React$Component2) {
   _inherits(EditObjectives, _React$Component2);
 
   function EditObjectives(props) {
-    var _this3;
+    var _this5;
 
     _classCallCheck(this, EditObjectives);
 
-    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(EditObjectives).call(this, props));
-    _this3.state = {
-      expanded_id: null
+    _this5 = _possibleConstructorReturn(this, _getPrototypeOf(EditObjectives).call(this, props));
+    _this5.state = {
+      expanded_id: null,
+      is_dirty: false
     };
-    return _this3;
+    return _this5;
   }
 
   _createClass(EditObjectives, [{
+    key: "handleDirtyUpdate",
+    value: function handleDirtyUpdate(is_dirty) {
+      this.setState({
+        is_dirty: is_dirty
+      });
+      this.props.onIsDirtyChange(is_dirty);
+    }
+  }, {
+    key: "dirtyConfirm",
+    value: function dirtyConfirm() {
+      return !this.state.is_dirty || this.state.is_dirty && confirm(gettext("You have unsaved changes. Are you sure you want to discard them?"));
+    }
+  }, {
     key: "toggleExpand",
     value: function toggleExpand(id) {
       this.props.clearErrors();
-      var expanded_id = this.state.expanded_id;
 
-      if (id == expanded_id) {
-        this.setState({
-          expanded_id: null
-        });
-      } else {
-        this.setState({
-          expanded_id: id
-        });
+      if (this.dirtyConfirm()) {
+        var expanded_id = this.state.expanded_id;
+
+        if (id == expanded_id) {
+          this.setState({
+            expanded_id: null
+          });
+        } else {
+          this.setState({
+            expanded_id: id
+          });
+        }
+
+        if (expanded_id == 'new') {
+          this.props.onDelete(expanded_id);
+        }
+
+        this.handleDirtyUpdate(false);
       }
     }
   }, {
     key: "addObjective",
     value: function addObjective() {
-      this.props.clearErrors();
-      this.props.addObjective();
-      this.setState({
-        expanded_id: 'new'
-      });
+      if (this.dirtyConfirm()) {
+        this.props.clearErrors();
+        this.props.addObjective();
+        this.setState({
+          expanded_id: 'new'
+        });
+        this.handleDirtyUpdate(false);
+      }
     }
   }, {
     key: "deleteObjectiveAction",
@@ -1522,6 +1634,9 @@ function (_React$Component2) {
     key: "updateObjective",
     value: function updateObjective(objectiveId, data) {
       this.props.onUpdate(objectiveId, data);
+      this.setState({
+        is_dirty: false
+      });
     }
   }, {
     key: "createObjective",
@@ -1530,11 +1645,14 @@ function (_React$Component2) {
         country: this.props.country_id
       });
       this.props.onCreate(objectiveData);
+      this.setState({
+        is_dirty: false
+      });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this6 = this;
 
       var _this$state = this.state,
           expanded_id = _this$state.expanded_id,
@@ -1548,24 +1666,27 @@ function (_React$Component2) {
           objective: objective,
           expanded: objective.id == expanded_id,
           expandAction: function expandAction() {
-            return _this4.toggleExpand(objective.id);
+            return _this6.toggleExpand(objective.id);
           },
           deleteAction: function deleteAction() {
-            return _this4.deleteObjectiveAction(objective.id);
+            return _this6.deleteObjectiveAction(objective.id);
           },
           saveObjective: function saveObjective(data) {
-            return _this4.updateObjective(objective.id, data);
+            return _this6.updateObjective(objective.id, data);
           },
           createObjective: function createObjective(data) {
-            return _this4.createObjective(data);
+            return _this6.createObjective(data);
           },
-          errors: _this4.props.errors,
-          clearErrors: _this4.props.clearErrors
+          errors: _this6.props.errors,
+          clearErrors: _this6.props.clearErrors,
+          onIsDirtyChange: function onIsDirtyChange(is_dirty) {
+            return _this6.handleDirtyUpdate(is_dirty);
+          }
         });
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         tabIndex: "0",
         onClick: function onClick() {
-          return _this4.addObjective();
+          return _this6.addObjective();
         },
         className: "btn btn-link btn-add"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
@@ -1773,6 +1894,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var app_root = '#app_root';
 /*
  * Model/Store setup
  */
@@ -1786,7 +1908,7 @@ var initialData = {
 var store = new _models__WEBPACK_IMPORTED_MODULE_2__["CountryStore"](_api__WEBPACK_IMPORTED_MODULE_4__["default"], initialData);
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_views__WEBPACK_IMPORTED_MODULE_3__["IndexView"], {
   store: store
-}), document.querySelector('#app_root'));
+}), document.querySelector(app_root));
 
 /***/ }),
 
@@ -2256,8 +2378,20 @@ function (_React$Component) {
   }
 
   _createClass(DisaggregationType, [{
+    key: "hasUnsavedDataAction",
+    value: function hasUnsavedDataAction() {
+      var labels = this.props.disaggregation.labels.map(function (x) {
+        return _objectSpread({}, x);
+      });
+      this.props.onIsDirtyChange(JSON.stringify(this.state.managed_data) != JSON.stringify(_objectSpread({}, this.props.disaggregation, {
+        labels: _toConsumableArray(labels)
+      })));
+    }
+  }, {
     key: "resetForm",
     value: function resetForm() {
+      var _this2 = this;
+
       this.props.clearErrors();
       var disaggregation = this.props.disaggregation;
       var labels = disaggregation.labels.map(function (x) {
@@ -2267,6 +2401,8 @@ function (_React$Component) {
         managed_data: _objectSpread({}, disaggregation, {
           labels: _toConsumableArray(labels)
         })
+      }, function () {
+        return _this2.hasUnsavedDataAction();
       });
     }
   }, {
@@ -2277,15 +2413,21 @@ function (_React$Component) {
   }, {
     key: "updateDisaggregationTypeField",
     value: function updateDisaggregationTypeField(value) {
+      var _this3 = this;
+
       this.setState({
         managed_data: _objectSpread({}, this.state.managed_data, {
           disaggregation_type: value
         })
+      }, function () {
+        return _this3.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updateLabel",
     value: function updateLabel(labelIndex, value) {
+      var _this4 = this;
+
       var managed_data = this.state.managed_data;
       var updatedLabels = this.state.managed_data.labels.map(function (label, idx) {
         if (idx == labelIndex) {
@@ -2300,11 +2442,15 @@ function (_React$Component) {
         managed_data: _objectSpread({}, managed_data, {
           labels: _toConsumableArray(updatedLabels)
         })
+      }, function () {
+        return _this4.hasUnsavedDataAction();
       });
     }
   }, {
     key: "appendLabel",
     value: function appendLabel() {
+      var _this5 = this;
+
       var newLabel = {
         id: 'new',
         label: ''
@@ -2314,11 +2460,15 @@ function (_React$Component) {
         managed_data: _objectSpread({}, managed_data, {
           labels: [].concat(_toConsumableArray(managed_data.labels), [newLabel])
         })
+      }, function () {
+        return _this5.hasUnsavedDataAction();
       });
     }
   }, {
     key: "deleteLabel",
     value: function deleteLabel(labelIndex) {
+      var _this6 = this;
+
       var managed_data = this.state.managed_data;
       var updatedLabels = managed_data.labels.filter(function (label, idx) {
         return idx != labelIndex || label.in_use;
@@ -2327,6 +2477,8 @@ function (_React$Component) {
         managed_data: _objectSpread({}, managed_data, {
           labels: _toConsumableArray(updatedLabels)
         })
+      }, function () {
+        return _this6.hasUnsavedDataAction();
       });
     }
   }, {
@@ -2348,7 +2500,7 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this7 = this;
 
       var _this$props = this.props,
           disaggregation = _this$props.disaggregation,
@@ -2381,7 +2533,7 @@ function (_React$Component) {
         }),
         value: managed_data.disaggregation_type,
         onChange: function onChange(e) {
-          return _this2.updateDisaggregationTypeField(e.target.value);
+          return _this7.updateDisaggregationTypeField(e.target.value);
         },
         type: "text",
         required: true
@@ -2394,7 +2546,7 @@ function (_React$Component) {
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           value: label.label,
           onChange: function onChange(e) {
-            return _this2.updateLabel(labelIndex, e.target.value);
+            return _this7.updateLabel(labelIndex, e.target.value);
           },
           className: classnames__WEBPACK_IMPORTED_MODULE_2___default()("form-control", {
             "is-invalid": errors.labels ? Object.keys(errors.labels[labelIndex]).length : false
@@ -2402,7 +2554,7 @@ function (_React$Component) {
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
           tabIndex: "0",
           onClick: function onClick() {
-            return _this2.deleteLabel(labelIndex);
+            return _this7.deleteLabel(labelIndex);
           },
           className: classnames__WEBPACK_IMPORTED_MODULE_2___default()("btn btn-link btn-danger", {
             'disabled': label.in_use
@@ -2414,7 +2566,7 @@ function (_React$Component) {
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         tabIndex: "0",
         onClick: function onClick() {
-          return _this2.appendLabel();
+          return _this7.appendLabel();
         },
         className: "btn btn-link btn-add"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
@@ -2426,20 +2578,20 @@ function (_React$Component) {
       }, disaggregation.id == 'new' ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
         onClick: function onClick(e) {
-          return _this2.save();
+          return _this7.save();
         },
         type: "button"
       }, gettext('Save Changes')) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
         onClick: function onClick(e) {
-          return _this2.save();
+          return _this7.save();
         },
         type: "button"
       }, gettext('Save Changes')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this2.resetForm();
+          return _this7.resetForm();
         }
       }, gettext('Reset'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "right-buttons"
@@ -2462,40 +2614,65 @@ function (_React$Component2) {
   _inherits(EditDisaggregations, _React$Component2);
 
   function EditDisaggregations(props) {
-    var _this3;
+    var _this8;
 
     _classCallCheck(this, EditDisaggregations);
 
-    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(EditDisaggregations).call(this, props));
-    _this3.state = {
-      expanded_id: null
+    _this8 = _possibleConstructorReturn(this, _getPrototypeOf(EditDisaggregations).call(this, props));
+    _this8.state = {
+      expanded_id: null,
+      is_dirty: false
     };
-    return _this3;
+    return _this8;
   }
 
   _createClass(EditDisaggregations, [{
+    key: "handleDirtyUpdate",
+    value: function handleDirtyUpdate(is_dirty) {
+      this.setState({
+        is_dirty: is_dirty
+      });
+      this.props.onIsDirtyChange(is_dirty);
+    }
+  }, {
+    key: "dirtyConfirm",
+    value: function dirtyConfirm() {
+      return !this.state.is_dirty || this.state.is_dirty && confirm(gettext("You have unsaved changes. Are you sure you want to discard them?"));
+    }
+  }, {
     key: "toggleExpand",
     value: function toggleExpand(id) {
       this.props.clearErrors();
-      var expanded_id = this.state.expanded_id;
 
-      if (id == expanded_id) {
-        this.setState({
-          expanded_id: null
-        });
-      } else {
-        this.setState({
-          expanded_id: id
-        });
+      if (this.dirtyConfirm()) {
+        var expanded_id = this.state.expanded_id;
+
+        if (id == expanded_id) {
+          this.setState({
+            expanded_id: null
+          });
+        } else {
+          this.setState({
+            expanded_id: id
+          });
+        }
+
+        if (expanded_id == 'new') {
+          this.props.onDelete(expanded_id);
+        }
+
+        this.handleDirtyUpdate(false);
       }
     }
   }, {
     key: "addDisaggregation",
     value: function addDisaggregation() {
-      this.props.addDisaggregation();
-      this.setState({
-        expanded_id: 'new'
-      });
+      if (this.dirtyConfirm()) {
+        this.props.addDisaggregation();
+        this.setState({
+          expanded_id: 'new'
+        });
+      }
     }
   }, {
     key: "saveDisaggregation",
@@ -2505,15 +2682,19 @@ function (_React$Component2) {
       });
 
       if (data.id == 'new') {
-        return this.props.onCreate(withCountry);
+        this.props.onCreate(withCountry);
+      } else {
+        this.props.onUpdate(data.id, withCountry);
       }
 
-      return this.props.onUpdate(data.id, withCountry);
+      this.setState({
+        is_dirty: false
+      });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this9 = this;
 
       var disaggregations = this.props.disaggregations;
       var expanded_id = this.state.expanded_id;
@@ -2525,19 +2706,22 @@ function (_React$Component2) {
           disaggregation: disaggregation,
           expanded: disaggregation.id == expanded_id,
           expandAction: function expandAction() {
-            return _this4.toggleExpand(disaggregation.id);
+            return _this9.toggleExpand(disaggregation.id);
           },
           updateLabel: function updateLabel(labelIndex, value) {
-            return _this4.updateLabel(disaggregation.id, labelIndex, value);
+            return _this9.updateLabel(disaggregation.id, labelIndex, value);
           },
           deleteAction: function deleteAction() {
-            return _this4.props.onDelete(disaggregation.id);
+            return _this9.props.onDelete(disaggregation.id);
           },
           saveDisaggregation: function saveDisaggregation(data) {
-            return _this4.saveDisaggregation(data);
+            return _this9.saveDisaggregation(data);
           },
-          errors: _this4.props.errors,
-          clearErrors: _this4.props.clearErrors
+          errors: _this9.props.errors,
+          clearErrors: _this9.props.clearErrors,
+          onIsDirtyChange: function onIsDirtyChange(is_dirty) {
+            return _this9.handleDirtyUpdate(is_dirty);
+          }
         });
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, !disaggregations.find(function (d) {
         return d.id == 'new';
@@ -2545,7 +2729,7 @@ function (_React$Component2) {
         tabIndex: "0",
         className: "btn btn-link btn-add",
         onClick: function onClick() {
-          return _this4.addDisaggregation();
+          return _this9.addDisaggregation();
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-plus-circle"
@@ -2604,37 +2788,29 @@ var CountryEditor = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(
 function (_React$Component) {
   _inherits(CountryEditor, _React$Component);
 
-  function CountryEditor(props) {
-    var _this;
-
+  function CountryEditor() {
     _classCallCheck(this, CountryEditor);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(CountryEditor).call(this, props));
-    _this.state = {
-      active_page: 'profile'
-    };
-    return _this;
+    return _possibleConstructorReturn(this, _getPrototypeOf(CountryEditor).apply(this, arguments));
   }
 
   _createClass(CountryEditor, [{
     key: "updateActivePage",
     value: function updateActivePage(new_page) {
       if (!this.props.new) {
-        this.setState({
-          active_page: new_page
-        });
+        this.props.notifyPaneChange(new_page);
       }
     }
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this = this;
 
       var _this$props = this.props,
           ProfileSection = _this$props.ProfileSection,
           StrategicObjectiveSection = _this$props.StrategicObjectiveSection,
-          DisaggregationSection = _this$props.DisaggregationSection;
-      var active_page = this.state.active_page;
+          DisaggregationSection = _this$props.DisaggregationSection,
+          active_pane = _this$props.active_pane;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "tab-set--vertical"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
@@ -2644,42 +2820,42 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
         className: classnames__WEBPACK_IMPORTED_MODULE_2___default()('nav-link', {
-          'active': active_page == 'profile'
+          'active': active_pane == 'profile'
         }),
         onClick: function onClick(e) {
           e.preventDefault();
 
-          _this2.updateActivePage('profile');
+          _this.updateActivePage('profile');
         }
       }, gettext("Profile"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
         className: "nav-item"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
         className: classnames__WEBPACK_IMPORTED_MODULE_2___default()('nav-link', {
-          'active': active_page == 'objectives',
+          'active': active_pane == 'objectives',
           'disabled': this.props.new
         }),
         onClick: function onClick(e) {
           e.preventDefault();
 
-          _this2.updateActivePage('objectives');
+          _this.updateActivePage('objectives');
         }
       }, gettext("Strategic Objectives"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
         className: "nav-item"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
         className: classnames__WEBPACK_IMPORTED_MODULE_2___default()('nav-link', {
-          'active': active_page == 'disaggregations',
+          'active': active_pane == 'disaggregations',
           'disabled': this.props.new
         }),
         onClick: function onClick(e) {
           e.preventDefault();
 
-          _this2.updateActivePage('disaggregations');
+          _this.updateActivePage('disaggregations');
         }
       }, gettext("Country Disaggregations")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "tab-content"
-      }, this.state.active_page == 'profile' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProfileSection, null), this.state.active_page == 'objectives' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StrategicObjectiveSection, null), this.state.active_page == 'disaggregations' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DisaggregationSection, null)));
+      }, active_pane == 'profile' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProfileSection, null), active_pane == 'objectives' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StrategicObjectiveSection, null), active_pane == 'disaggregations' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DisaggregationSection, null)));
     }
   }]);
 
@@ -2784,4 +2960,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-3820bd9ce784517445f0.js.map
+//# sourceMappingURL=tola_management_country-2fec210d04d432c5df0a.js.map
