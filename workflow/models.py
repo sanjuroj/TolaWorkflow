@@ -673,6 +673,13 @@ PROGRAM_ROLE_CHOICES = (
     ('high', _('High'))
 )
 
+PROGRAM_ROLE_INT_MAP = {
+    None: 0,
+    'low': 10,
+    'medium': 20,
+    'high': 30,
+}
+
 class ProgramAccess(models.Model):
     program = models.ForeignKey(Program)
     tolauser = models.ForeignKey(TolaUser)

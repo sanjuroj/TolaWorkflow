@@ -67,8 +67,8 @@ from tola_management.permissions import (
     result_pk_adapter,
     has_result_read_access,
     has_result_write_access,
-    has_program_read_access
-)
+    has_program_read_access,
+    verify_program_access_level_of_any_program)
 
 import indicators.indicator_plan as ip
 
@@ -856,6 +856,10 @@ def service_json(request, service):
     if service == 0:
         # no service (this is selecting a custom indicator)
         return HttpResponse(status=204)
+
+    # Permission check
+    verify_program_access_level_of_any_program(request, 'high')
+
     service_indicators = import_indicator(service)
     return JsonResponse(service_indicators, safe=False)
 

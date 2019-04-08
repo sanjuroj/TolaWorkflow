@@ -10,7 +10,9 @@ from workflow.models import (
     TolaUser,
     Country,
     SiteProfile,
-    PROGRAM_ROLE_CHOICES)
+    PROGRAM_ROLE_CHOICES,
+    PROGRAM_ROLE_INT_MAP
+)
 
 from indicators.models import (
     Result,
@@ -274,12 +276,62 @@ def has_projects_access(func):
 #
 
 
-def verify_program_level(request, program_id, level, super_admin_override=False):
+def verify_program_access_level_of_any_program(request, level, super_admin_override=False):
     """
-    Determine if a user has a given level of access to a Program.
+    Determine if a user has a given level or higher of access for any Program
 
     Raises PermissionDenied if access is not available to the user.
 
+    :param request: Django request
+    :param level: PROGRAM_ROLE_CHOICES ('low', 'medium', 'high')
+    :param super_admin_override: If True, the permission check is bypassed if the user is a Super Admin
+    :return: None
+    """
+    # string typing is fun
+    assert level in [l[0] for l in PROGRAM_ROLE_CHOICES]
+
+    # none of this makes sense if not logged in
+    if not request.user.is_authenticated():
+        raise PermissionDenied
+
+    # Let super admins do all the things
+    if super_admin_override and request.user.is_superuser:
+        return
+
+    tola_user = request.user.tola_user
+    user_access_level = None
+
+    # First check for explicit program access - find the highest access level for all programs
+    if tola_user.programaccess_set.exists():
+        program_access_obj = max(tola_user.programaccess_set.all(), key=lambda x: PROGRAM_ROLE_INT_MAP.get(x.role, 0))
+        print 'yay'
+        print program_access_obj.role, program_access_obj.program.name
+    else:
+        program_access_obj = None
+    print program_access_obj
+
+    if program_access_obj:
+        user_access_level = program_access_obj.role
+    else:
+        # Has implicit low level access via country association?
+        implicit_low = (Program.objects.filter(country__in=tola_user.countries.all()) |
+                        Program.objects.filter(country=tola_user.country)).exists()
+
+        if implicit_low:
+            user_access_level = 'low'
+
+    # final check
+    if PROGRAM_ROLE_INT_MAP.get(user_access_level, 0) < PROGRAM_ROLE_INT_MAP.get(level):
+        raise PermissionDenied
+
+
+def verify_program_access_level(request, program_id, level, super_admin_override=False):
+    """
+    Determine if a user has a given level of access or higher to a Program.
+
+    Raises PermissionDenied if access is not available to the user.
+
+    :param request: Django request
     :param level: PROGRAM_ROLE_CHOICES ('low', 'medium', 'high')
     :param super_admin_override: If True, the permission check is bypassed if the user is a Super Admin
     :return: None
@@ -312,14 +364,7 @@ def verify_program_level(request, program_id, level, super_admin_override=False)
             user_access_level = 'low'
 
     # final check
-    int_map = {
-        None: 0,
-        'low': 10,
-        'medium': 20,
-        'high': 30,
-    }
-
-    if int_map.get(user_access_level, 0) < int_map.get(level):
+    if PROGRAM_ROLE_INT_MAP.get(user_access_level, 0) < PROGRAM_ROLE_INT_MAP.get(level):
         raise PermissionDenied
 
 
