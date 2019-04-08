@@ -1,0 +1,18 @@
+.folding-sidebar {
+    $trigger_width: 40px;
+    position: relative;
+    margin-right: $trigger_width;
+
+    &__trigger {
+        background-color: #00a49f; // TODO
+        color: white;
+        font-size: 2em;
+        display: inline-block;
+        padding: 5px;
+        position: absolute;
+        top: 0;
+        right: -$trigger_width;
+        cursor: pointer;
+        width: $trigger_width;
+    }
+}
