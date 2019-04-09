@@ -56,7 +56,11 @@ EMAIL_FILE_PATH = app_settings['EMAIL_FILE_PATH']
 # SOCIAL GOOGLE AUTH
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = app_settings['SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = app_settings['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
-SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = app_settings['SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS']
+# whitelisted domains no longer whitelisted because mercycorps.org should be okta, and we are allowing non-
+#  mercycorps domains to access as partners using google
+# SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = app_settings['SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS']
+# domains listed here will fail auth IF settings.DEBUG is off (mercycorps users should use Okta on production)
+SOCIAL_AUTH_GOOGLE_OAUTH2_OKTA_DOMAINS = ["mercycorps.org"]
 
 # TOLA TABLES AUTH
 # TOLA_TABLES_TOKEN = app_settings['TOLA_TABLES_TOKEN']
