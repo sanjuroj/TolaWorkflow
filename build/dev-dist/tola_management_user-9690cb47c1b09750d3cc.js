@@ -1303,7 +1303,7 @@ function (_React$Component) {
         className: "btn btn-primary",
         type: "button",
         onClick: function onClick(e) {
-          return _this10.saveNew();
+          return _this10.saveNew(e);
         }
       }, gettext("Save changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-secondary",
@@ -4118,4 +4118,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-af331a501f23d963a301.js.map
+//# sourceMappingURL=tola_management_user-9690cb47c1b09750d3cc.js.map
