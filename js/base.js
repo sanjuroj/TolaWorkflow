@@ -32,7 +32,13 @@ $( document )
                 // HTTP error (can be checked by XMLHttpRequest.status and XMLHttpRequest.statusText)
                 // TODO: Give better error mssages based on HTTP status code
                 let errorStr = `${jqxhr.status}: ${jqxhr.statusText}`;
-                notifyError(js_context.strings.serverError, errorStr);
+
+                // Permission denied
+                if (jqxhr.status === 403) {
+                    notifyError(js_context.strings.permissionError, js_context.strings.permissionErrorDescription);
+                } else {
+                    notifyError(js_context.strings.serverError, errorStr);
+                }
             }
             else if (jqxhr.readyState === 0) {
                 // Network error (i.e. connection refused, access denied due to CORS, etc.)
