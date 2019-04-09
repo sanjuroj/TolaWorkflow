@@ -369,23 +369,23 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         )
 
         for row in program.audit_logs.all().order_by('-date'):
-            prev_string = ''
+            prev_string = u''
             for entry in row.diff_list:
                 if entry['name'] == 'targets':
                     for k, target in entry['prev'].iteritems():
-                        prev_string += target['name']+": "+str(target['value'])+"\r\n"
+                        prev_string += unicode(target['name'])+u": "+unicode(target['value'])+u"\r\n"
 
                 else:
-                    prev_string += entry['pretty_name']+": "+str(entry['prev'] if entry['prev'] else _('N/A'))+"\r\n"
+                    prev_string += unicode(entry['pretty_name'])+u": "+unicode(entry['prev'] if entry['prev'] else _('N/A'))+u"\r\n"
 
-            new_string = ''
+            new_string = u''
             for entry in row.diff_list:
                 if entry['name'] == 'targets':
                     for k, target in entry['new'].iteritems():
-                        new_string += target['name']+": "+str(target['value'])+"\r\n"
+                        new_string += unicode(target['name'])+u": "+unicode(target['value'])+u"\r\n"
 
                 else:
-                    new_string += entry['pretty_name']+": "+str(entry['new'] if entry['new'] else _('N/A'))+"\r\n"
+                    new_string += unicode(entry['pretty_name'])+u": "+unicode(entry['new'] if entry['new'] else _('N/A'))+u"\r\n"
 
             xl_row = [
                 Cell(ws, value=row.date),
