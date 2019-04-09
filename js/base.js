@@ -337,7 +337,7 @@ const create_changeset_notice = ({
                     {
                         text: confirm_text,
                         primary: true,
-                        addClass:(type == 'error')?'btn-danger is-disabled':'',
+                        addClass:(type == 'error')?'btn-danger':'',
                         click: function (notice) {
                             var close = true;
                             var textarea = $(notice.refs.elem).find('textarea[name="rationale"]')
@@ -347,8 +347,8 @@ const create_changeset_notice = ({
                                 textarea.addClass('is-invalid');
                                 textarea.parent().append(
                                     '<div class="invalid-feedback">'
-                                    + gettext('Rationale is required.') +
-                                    '</div>'
+                                    + gettext('Rationale is required.')
+                                    + '</div>'
                                 );
                                 return false;
                             } else {
