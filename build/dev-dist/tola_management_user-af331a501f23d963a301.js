@@ -1620,7 +1620,7 @@ var ChangeLogEntryHeader = function ChangeLogEntryHeader(_ref2) {
   var data = _ref2.data;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
     className: "changelog__entry__header is-expanded"
-  }, " ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "text-nowrap text-action"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
     className: "fas fa-caret-down"
@@ -4118,4 +4118,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-d2089ff597e5bb5f3f66.js.map
+//# sourceMappingURL=tola_management_user-af331a501f23d963a301.js.map
