@@ -46,7 +46,7 @@ export default class EditOrganizationHistory extends React.Component {
         this.props.onSave({
             ...this.state.data,
             is_active: this.state.data.is_active.value,
-            sectors: this.state.data.sectors.map(sector => sector.id)
+            sectors: this.state.data.sectors
         })
     }
 
