@@ -1127,7 +1127,7 @@ function (_React$Component) {
 
       this.setState({
         managed_user_data: _objectSpread({}, this.state.managed_user_data, {
-          phone: new_phone
+          phone_number: new_phone
         })
       }, function () {
         return _this7.hasUnsavedDataAction();
@@ -1278,7 +1278,7 @@ function (_React$Component) {
       }, gettext("Phone")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         disabled: disabled,
         type: "tel",
-        value: ud.phone,
+        value: ud.phone_number,
         onChange: function onChange(e) {
           return _this10.updatePhone(e.target.value);
         },
@@ -4118,4 +4118,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-9690cb47c1b09750d3cc.js.map
+//# sourceMappingURL=tola_management_user-2a9fb9f32b29c7eba783.js.map

@@ -87,7 +87,7 @@ export default class EditUserProfile extends React.Component {
         this.setState({
             managed_user_data: {
                 ...this.state.managed_user_data,
-                phone: new_phone,
+                phone_number: new_phone,
             }
         }, () => this.hasUnsavedDataAction())
     }
@@ -206,7 +206,7 @@ export default class EditUserProfile extends React.Component {
                         <input
                             disabled={disabled}
                             type="tel"
-                            value={ud.phone}
+                            value={ud.phone_number}
                             onChange={(e) => this.updatePhone(e.target.value)}
                             className="form-control"
                             id="user-phone-input" />
