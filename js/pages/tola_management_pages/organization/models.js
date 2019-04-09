@@ -177,11 +177,12 @@ export class OrganizationStore {
     @action
     updateOrganizationProfile(id, new_data) {
         this.saving = true
-        api.updateOrganization(id, new_data).then(updated_data => api.fetchOrganizationAggregates(id).then(aggregates => {
+        api.updateOrganization(id, new_data).then( updated_data => Promise.all([api.fetchOrganizationAggregates(id), api.fetchOrganizationHistory(id)]).then(([aggregates, history]) => {
             runInAction(() => {
                 this.saving = false
                 this.active_pane_is_dirty = false
                 this.editing_target_data = updated_data
+                this.editing_target_history = history
                 this.updateLocalOrganization(id, updated_data, aggregates)
             })
             this.onSaveSuccessHandler()
