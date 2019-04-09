@@ -10,7 +10,6 @@ from django.utils import formats, timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max, Value, IntegerField
 from django.views.decorators.http import require_POST
@@ -908,7 +907,8 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         return response
 
 
-class IPTT_ReportIndicatorsWithVariedStartDate(LoginRequiredMixin, TemplateView):
+@method_decorator(login_required, name='dispatch')
+class IPTT_ReportIndicatorsWithVariedStartDate(TemplateView):
     template_name = "indicators/iptt_indicators_varied_startdates.html"
 
     def get_context_data(self, **kwargs):
@@ -938,7 +938,8 @@ class IPTT_ReportIndicatorsWithVariedStartDate(LoginRequiredMixin, TemplateView)
         return self.render_to_response(context)
 
 
-class IPTTReportQuickstartView(LoginRequiredMixin, FormView):
+@method_decorator(login_required, name='dispatch')
+class IPTTReportQuickstartView(FormView):
     template_name = 'indicators/iptt_quickstart.html'
     form_class = IPTTReportQuickstartForm
     FORM_PREFIX_TIME = 'timeperiods'

@@ -16,7 +16,6 @@ from django.contrib.auth import views as authviews
 from indicators.queries import ProgramWithMetrics
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 
 from django.contrib.admin.views.decorators import staff_member_required
