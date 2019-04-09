@@ -67,14 +67,14 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = app_settings['SOCIAL_AUTH_GOOGLE
 DEV_APPS = app_settings.get('DEV_APPS', None)
 
 LOCAL_APPS = (
-    'silk',
+    # 'silk',
 )
 
 #INSTALLED_APPS = INSTALLED_APPS #+ tuple(DEV_APPS)
 INSTALLED_APPS = INSTALLED_APPS + LOCAL_APPS
 
 LOCAL_MIDDLEWARE = (
-    'silk.middleware.SilkyMiddleware',
+    # 'silk.middleware.SilkyMiddleware',
 )
 
 MIDDLEWARE =  LOCAL_MIDDLEWARE + MIDDLEWARE
