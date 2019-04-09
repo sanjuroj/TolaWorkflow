@@ -223,7 +223,7 @@ export default class EditUserProfile extends React.Component {
                     </div>
                     {this.props.new && !disabled &&
                     <div className="form-group btn-row">
-                        <button className="btn btn-primary" type="button" onClick={(e) => this.saveNew()}>{gettext("Save changes")}</button>
+                        <button className="btn btn-primary" type="button" onClick={(e) => this.saveNew(e)}>{gettext("Save changes")}</button>
                         <button className="btn btn-secondary" onClick={(e) => this.saveNewAndAddAnother(e)}>{gettext("Save And Add Another")}</button>
                         <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>
                     </div>
