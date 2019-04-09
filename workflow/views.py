@@ -73,7 +73,6 @@ from rest_framework.response import Response
 
 from tola_management.models import ProgramAuditLog
 from tola_management.permissions import (
-    user_has_program_access,
     user_has_program_roles,
     has_site_read_access,
     has_site_create_access,
@@ -81,7 +80,8 @@ from tola_management.permissions import (
     has_site_write_access,
     has_program_write_access,
     has_projects_access,
-    verify_program_access_level
+    verify_program_access_level,
+    verify_program_access_level_of_any_program
 )
 
 APPROVALS = (
@@ -1279,6 +1279,12 @@ class SiteProfileCreate(LoginRequiredMixin, CreateView):
         except FormGuidance.DoesNotExist:
             self.guidance = None
         return super(SiteProfileCreate, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        # permission check that includes checking the user is associated with the sites Country
+        verify_program_access_level_of_any_program(request, 'high', country_id=request.POST['country'])
+
+        return super(SiteProfileCreate, self).post(request, *args, **kwargs)
 
     # add the request to the kwargs
     def get_form_kwargs(self):

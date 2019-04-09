@@ -276,7 +276,7 @@ def has_projects_access(func):
 #
 
 
-def verify_program_access_level_of_any_program(request, level, super_admin_override=True):
+def verify_program_access_level_of_any_program(request, level, country_id=None, super_admin_override=True):
     """
     Determine if a user has a given level or higher of access for any Program
 
@@ -284,6 +284,7 @@ def verify_program_access_level_of_any_program(request, level, super_admin_overr
 
     :param request: Django request
     :param level: PROGRAM_ROLE_CHOICES ('low', 'medium', 'high')
+    :param country_id: Only look at program access for a given country, or all countries if None
     :param super_admin_override: If True, the permission check is bypassed if the user is a Super Admin
     :return: None
     """
@@ -303,7 +304,11 @@ def verify_program_access_level_of_any_program(request, level, super_admin_overr
 
     # First check for explicit program access - find the highest access level for all programs
     if tola_user.programaccess_set.exists():
-        program_access_obj = max(tola_user.programaccess_set.all(), key=lambda x: PROGRAM_ROLE_INT_MAP.get(x.role, 0))
+        if country_id:
+            qs = tola_user.programaccess_set.filter(country_id=country_id)
+        else:
+            qs = tola_user.programaccess_set.all()
+        program_access_obj = max(qs, key=lambda x: PROGRAM_ROLE_INT_MAP.get(x.role, 0))
     else:
         program_access_obj = None
 
@@ -311,8 +316,11 @@ def verify_program_access_level_of_any_program(request, level, super_admin_overr
         user_access_level = program_access_obj.role
     else:
         # Has implicit low level access via country association?
-        implicit_low = (Program.objects.filter(country__in=tola_user.countries.all()) |
-                        Program.objects.filter(country=tola_user.country)).exists()
+        if country_id:
+            implicit_low = tola_user.country_id == country_id or tola_user.countries.filter(country_id=country_id).exists()
+        else:
+            implicit_low = (Program.objects.filter(country__in=tola_user.countries.all()) |
+                            Program.objects.filter(country=tola_user.country)).exists()
 
         if implicit_low:
             user_access_level = 'low'
