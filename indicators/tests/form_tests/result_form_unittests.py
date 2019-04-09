@@ -44,7 +44,6 @@ class TestResultCreateUpdate404(test.TestCase):
 
     def test_create_view_raises_404_with_bad_indicator_id(self):
         kwargs = {
-            'program': self.program.id,
             'indicator': self.indicator.id + 1
         }
         bad_url = reverse('result_add', kwargs=kwargs)
@@ -135,6 +134,7 @@ class TestCreateValidation(test.TestCase):
             'achieved': '30',
             'indicator': self.indicator.id,
             'program': self.program.id,
+            'rationale': 'this is a rationale'
         }
         form = ResultForm(minimal_data, **self.form_kwargs)
         self.assertTrue(form.is_valid(), "errors {0}".format(form.errors))
@@ -152,6 +152,7 @@ class TestCreateValidation(test.TestCase):
             'program': self.program.id,
             'record_name': 'new record',
             'evidence_url': 'http://google.com',
+            'rationale': 'this is a rationale'
         }
         form = ResultForm(minimal_data, **self.form_kwargs)
         self.assertTrue(form.is_valid(), "errors {0}".format(form.errors))
@@ -168,6 +169,7 @@ class TestCreateValidation(test.TestCase):
             'program': self.program.id,
             'record_name': 'existing record',
             'evidence_url': 'http://google.com',
+            'rationale': 'this is a rationale'
         }
         form = ResultForm(minimal_data, **self.form_kwargs)
         self.assertTrue(form.is_valid(), "errors {0}".format(form.errors))
@@ -184,6 +186,7 @@ class TestCreateValidation(test.TestCase):
             'indicator': self.indicator.id,
             'program': self.program.id,
             'evidence_url': 'http://google.com',
+            'rationale': 'this is a rationale'
         }
         form = ResultForm(bad_data, **self.form_kwargs)
         self.assertTrue(form.is_valid())

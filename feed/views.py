@@ -1,3 +1,4 @@
+from tola_management.permissions import verify_program_access_level
 from .serializers import (
     PeriodicTargetSerializer, ProgramIndicatorSerializer, ProgramSerializer, UserSerializer,
     SectorSerializer, ProjectTypeSerializer, OfficeSerializer, SiteProfileSerializer, CountrySerializer,
@@ -21,16 +22,14 @@ from indicators.models import (
     Level, ExternalService, ExternalServiceRecord, StrategicObjective, Result, TolaTable,
     DisaggregationValue, PeriodicTarget
 )
-
+from tola_management.permissions import verify_program_access_level
 from django.contrib.auth.models import User
 from django.db import models
-from django.shortcuts import get_object_or_404
 from tola.util import getCountry
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import list_route
 from rest_framework.pagination import PageNumberPagination
 import django_filters
 
@@ -581,6 +580,7 @@ class OrganizationViewSet(APIDefaultsMixin, viewsets.ModelViewSet):
 class ProgramTargetFrequencies(viewsets.ViewSet):
     def list(self, request):
         program = get_object_or_404(Program, pk=request.query_params.get('program_id', None))
+        verify_program_access_level(request, program.pk, 'low')
         queryset = program.indicator_set.exclude(
             models.Q(target_frequency=Indicator.EVENT) | models.Q(target_frequency__isnull=True)
             ).values('target_frequency').distinct().order_by('target_frequency')

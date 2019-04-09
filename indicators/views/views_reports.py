@@ -19,6 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, PatternFill, Alignment
@@ -34,6 +35,7 @@ from indicators.queries import IPTTIndicator
 
 from tola_management.permissions import (
     has_iptt_read_access,
+    verify_program_access_level
 )
 
 class IPTT_Mixin(object):
@@ -625,7 +627,7 @@ class IPTT_Mixin(object):
 
         # get the program (url parameter)
         try:
-            self.program = Program.objects.get(pk=kwargs.get('program_id'))
+            self.program = Program.objects.get(pk=kwargs.get('program'))
         except Program.DoesNotExist:
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid program."))
@@ -725,8 +727,9 @@ def set_cell_value(cell, value, percent=False):
 
 
 
+@method_decorator(login_required, name='dispatch')
 @method_decorator(has_iptt_read_access, name='dispatch')
-class IPTT_ExcelExport(LoginRequiredMixin, IPTT_Mixin, TemplateView):
+class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
     # TODO: should be localize dates in the Excel format
     headers = ['Program ID', 'Indicator ID', 'No.', 'Indicator', 'Level', 'Unit of measure',
                'Change', 'C / NC', '# / %', 'Baseline']
@@ -1011,7 +1014,7 @@ class IPTTReportQuickstartView(LoginRequiredMixin, FormView):
         program = form.cleaned_data.get('program')
         num_recents = form.cleaned_data.get('numrecentperiods')
         timeframe = form.cleaned_data.get('timeframe')
-        redirect_url = reverse_lazy('iptt_report', kwargs={'program_id': program.id, 'reporttype': prefix})
+        redirect_url = reverse_lazy('iptt_report', kwargs={'program': program.id, 'reporttype': prefix})
 
         redirect_url = u"{}?{}={}&timeframe={}".format(redirect_url, prefix, period, timeframe)
         if num_recents:
@@ -1030,8 +1033,9 @@ class IPTTReportQuickstartView(LoginRequiredMixin, FormView):
         return self.render_to_response(context)
 
 
+@method_decorator(login_required, name='dispatch')
 @method_decorator(has_iptt_read_access, name='dispatch')
-class IPTT_ReportView(LoginRequiredMixin, IPTT_Mixin, TemplateView):
+class IPTT_ReportView(IPTT_Mixin, TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
@@ -1057,9 +1061,10 @@ class IPTT_ReportView(LoginRequiredMixin, IPTT_Mixin, TemplateView):
     def post(self, request, *args, **kwargs):
         filterdata = request.POST.copy()
         # no need to include this token in querystring
-        del (filterdata['csrfmiddlewaretoken'])
+        if 'csrfmiddlewaretoken' in filterdata:
+            del (filterdata['csrfmiddlewaretoken'])
         url_kwargs = {
-            'program_id': filterdata['program'],
+            'program': filterdata['program'],
             'reporttype': kwargs['reporttype'],
         }
         # do not include it in the querystring because it is already part of the url kwargs
@@ -1078,68 +1083,17 @@ class IPTT_ReportView(LoginRequiredMixin, IPTT_Mixin, TemplateView):
                                       filterdata.urlencode())
         return HttpResponseRedirect(redirect_url)
 
-@method_decorator(has_iptt_read_access, name='dispatch')
-class IPTT_CSVExport(LoginRequiredMixin, IPTT_Mixin, TemplateView):
-    header_row = ["Program:"]
-    subheader_row = ['id', 'number', 'name', 'level_name', 'unit_of_measure', 'unit_of_measure_type',
-                     'sector', 'disaggregations', 'baseline', 'baseline_na', 'lop_target', 'target_frequency',
-                     'lop_sum', 'lop_target', 'lop_met']
-
-    def _update_filter_form_initial(self, formdata):
-        super(IPTT_CSVExport, self)._update_filter_form_initial(formdata)
-        default_values = {
-            'timeperiods': Indicator.MONTHLY,
-            'timeframe': 2,
-        }
-        default_values.update(self.filter_form_initial_data)
-        self.filter_form_initial_data = default_values
-
-    def get_context_data(self, **kwargs):
-        self.program = Program.objects.get(pk=kwargs.get('program_id'))
-        self.reporttype = kwargs['reporttype']
-        if self.reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            end_date, all_date_ranges, periods_date_ranges = self._generate_timeperiods(
-            self.program.reporting_period_start,
-            self.program.reporting_period_end,
-            Indicator.MONTHLY, None, None)
-            indicators = IPTTIndicator.notargets.filter(program_id=self.program.id).period(Indicator.MONTHLY)
-        context = {
-            'program': self.program,
-            'indicators': indicators,
-            'report_date_ranges': periods_date_ranges
-        }
-        return context
-
-    def get_indicator_row(self, indicator, timeperiods):
-        row = []
-        for field in self.subheader_row:
-            value = getattr(indicator, field, 'N/A')
-            value = value if value is not None else 'N/A'
-            row.append(value)
-        for timeperiod in timeperiods:
-            row.append(getattr(indicator, u"{}_sum".format(timeperiod), 'N/A'))
-        return row
-
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        header_row = self.header_row + [self.program.name] + [''] * (len(self.subheader_row)-2)
-        header_row.extend(context['report_date_ranges'].keys())
-        subheader_row = self.subheader_row + ['Actual'] * len(context['report_date_ranges'].keys())
-        response = HttpResponse(content_type="text/csv")
-        writer = csv.writer(response)
-        writer.writerow(header_row)
-        writer.writerow(subheader_row)
-        for indicator in context['indicators']:
-            writer.writerow(self.get_indicator_row(indicator, context['report_date_ranges']))
-        return response
-
-
 @login_required
 @require_POST
 def create_pinned_report(request):
     """
     AJAX call for creating a PinnedReport
     """
+    try:
+        program = Program.objects.get(pk=request.POST.get('program'))
+    except Program.DoesNotExist:
+        return HttpResponseBadRequest('program does not exist')
+    verify_program_access_level(request, request.POST.get('program'), 'low', super_admin_override=True)
     form = PinnedReportForm(request.POST)
     if form.is_valid():
         pr = form.save(commit=False)
@@ -1157,6 +1111,8 @@ def delete_pinned_report(request):
     """
     AJAX call for deleting a PinnedReport
     """
-    pinned_report_id = request.POST.get('pinned_report_id')
-    PinnedReport.objects.filter(id=pinned_report_id, tola_user_id=request.user.tola_user.id).delete()
+    pinned_report = get_object_or_404(PinnedReport, pk=request.POST.get('pinned_report_id'),
+                                       tola_user_id=request.user.tola_user.id)
+    verify_program_access_level(request, pinned_report.program.pk, 'low', super_admin_override=True)
+    pinned_report.delete()
     return HttpResponse()

@@ -101,7 +101,7 @@
         action="{% if object.id %}
                     {% url 'result_update' object.id %}
                 {% else %}
-                    {% url 'result_add' indicator.program.id indicator.id %}
+                    {% url 'result_add' indicator.id %}
                 {% endif %}
                 "
         id="result_update_form"

@@ -1,5 +1,7 @@
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
+
+from tola_management.permissions import has_projects_access
 from .models import TrainingAttendance, Beneficiary, Distribution
 from django.core.urlresolvers import reverse_lazy
 
@@ -12,13 +14,14 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.db.models import Q
 
-from django.http import  HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.views.generic.detail import View
 from mixins import AjaxableResponseMixin
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class TrainingList(ListView):
     """
     Training Attendance
@@ -39,6 +42,7 @@ class TrainingList(ListView):
         return render(request, self.template_name, {'getTraining': getTraining, 'project_agreement_id': project_agreement_id, 'getPrograms': getPrograms})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class TrainingCreate(CreateView):
     """
     Training Form
@@ -82,6 +86,7 @@ class TrainingCreate(CreateView):
     form_class = TrainingAttendanceForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class TrainingUpdate(UpdateView):
     """
     Training Form
@@ -115,6 +120,7 @@ class TrainingUpdate(UpdateView):
     form_class = TrainingAttendanceForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class TrainingDelete(DeleteView):
     """
     Training Delete
@@ -139,6 +145,7 @@ class TrainingDelete(DeleteView):
     form_class = TrainingAttendanceForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class BeneficiaryList(ListView):
     """
     Beneficiary
@@ -161,6 +168,7 @@ class BeneficiaryList(ListView):
         return render(request, self.template_name, {'getBeneficiaries': getBeneficiaries, 'project_agreement_id': project_agreement_id, 'getPrograms': getPrograms})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class BeneficiaryCreate(CreateView):
     """
     Beneficiary Form
@@ -204,6 +212,7 @@ class BeneficiaryCreate(CreateView):
     form_class = BeneficiaryForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class BeneficiaryUpdate(UpdateView):
     """
     Training Form
@@ -237,6 +246,7 @@ class BeneficiaryUpdate(UpdateView):
     form_class = BeneficiaryForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class BeneficiaryDelete(DeleteView):
     """
     Beneficiary Delete
@@ -264,6 +274,7 @@ class BeneficiaryDelete(DeleteView):
     form_class = BeneficiaryForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class DistributionList(ListView):
     """
     Distribution
@@ -285,6 +296,7 @@ class DistributionList(ListView):
         return render(request, self.template_name, {'getDistribution': getDistribution, 'program_id': program_id, 'getPrograms': getPrograms})
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class DistributionCreate(CreateView):
     """
     Distribution Form
@@ -328,6 +340,7 @@ class DistributionCreate(CreateView):
     form_class = DistributionForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class DistributionUpdate(UpdateView):
     """
     Distribution Form
@@ -361,6 +374,7 @@ class DistributionUpdate(UpdateView):
     form_class = DistributionForm
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class DistributionDelete(DeleteView):
     """
     Distribution Delete
@@ -384,7 +398,9 @@ class DistributionDelete(DeleteView):
 
     form_class = DistributionForm
 
+
 #Ajax views for ajax filters and paginators
+@method_decorator(has_projects_access, name='dispatch')
 class TrainingListObjects(View, AjaxableResponseMixin):
 
     def get(self, request, *args, **kwargs):
@@ -407,6 +423,7 @@ class TrainingListObjects(View, AjaxableResponseMixin):
         return JsonResponse(final_dict, safe=False)
 
 
+@method_decorator(has_projects_access, name='dispatch')
 class BeneficiaryListObjects(View, AjaxableResponseMixin):
     
     def get(self, request, *args, **kwargs):
@@ -428,6 +445,8 @@ class BeneficiaryListObjects(View, AjaxableResponseMixin):
 
         return JsonResponse(final_dict, safe=False)
 
+
+@method_decorator(has_projects_access, name='dispatch')
 class DistributionListObjects(View, AjaxableResponseMixin):
 
     def get(self, request, *args, **kwargs):
@@ -451,6 +470,7 @@ class DistributionListObjects(View, AjaxableResponseMixin):
 
 
 #program and project & training filters
+@method_decorator(has_projects_access, name='dispatch')
 class GetAgreements(View, AjaxableResponseMixin):
 
     def get(self, request, *args, **kwargs):

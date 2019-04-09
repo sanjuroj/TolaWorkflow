@@ -1,7 +1,7 @@
 from rest_framework import permissions
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 
 from django.contrib.auth.models import User
 
@@ -9,12 +9,15 @@ from workflow.models import (
     Program,
     TolaUser,
     Country,
-    SiteProfile
+    SiteProfile,
+    PROGRAM_ROLE_CHOICES,
+    PROGRAM_ROLE_INT_MAP
 )
 
 from indicators.models import (
     Result,
-    Indicator
+    Indicator,
+    PeriodicTarget
 )
 
 def social_auth_okta_pipeline(backend, details, user, response, *args, **kwargs):
@@ -80,11 +83,21 @@ def indicator_pk_adapter(inner):
         return wrapper
     return outer
 
-def periodic_target_adapter(inner):
+def periodic_target_pk_adapter(inner):
     def outer(func):
         wrapped = inner(func)
         def wrapper(request, *args, **kwargs):
-            indicator = Indicator.objects.get(pk=kwargs['indicator'])
+            pt = PeriodicTarget.objects.get(pk=kwargs['pk'])
+            kwargs['program'] = pt.indicator.program_id
+            return wrapped(request, *args, **kwargs)
+        return wrapper
+    return outer
+
+def indicator_adapter(inner):
+    def outer(func):
+        wrapped = inner(func)
+        def wrapper(request, *args, **kwargs):
+            indicator = get_object_or_404(Indicator, pk=kwargs['indicator'])
             kwargs['program'] = indicator.program_id
             return wrapped(request, *args, **kwargs)
         return wrapper
@@ -102,7 +115,7 @@ def user_has_program_roles(user, programs, roles):
 
 def has_iptt_read_access(func):
     def wrapper(request, *args, **kwargs):
-        program = kwargs['program_id']
+        program = kwargs['program']
 
         if user_has_program_access(request.user, program) or request.user.is_superuser:
             return func(request, *args, **kwargs)
@@ -235,14 +248,126 @@ def has_program_write_access(func):
 
 def has_program_read_access(func):
     def wrapper(request, *args, **kwargs):
-        if user_has_program_access(request.user, kwargs['program_id']) or request.user.is_superuser:
-            write_access = (user_has_program_roles(request.user, [kwargs['program_id']], ['high']) or request.user.is_superuser)
+        if user_has_program_access(request.user, kwargs['program']) or request.user.is_superuser:
+            write_access = (user_has_program_roles(request.user, [kwargs['program']], ['high']) or request.user.is_superuser)
             request.has_write_access = write_access
             return func(request, *args, **kwargs)
         else:
-            return redirect('index')
+            raise PermissionDenied
     return wrapper
 
+
+def has_projects_access(func):
+    """
+    The "Projects" app exists along side Tola indicator tracking but is being deprecated
+    This limits access to existing users based on their country
+    and is unrelated to all other business logic level permissions
+    """
+    def wrapper(request, *args, **kwargs):
+        if request.user.tola_user.allow_projects_access:
+            return func(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+    return wrapper
+
+
+#
+# Program level permission
+#
+
+
+def verify_program_access_level_of_any_program(request, level, super_admin_override=True):
+    """
+    Determine if a user has a given level or higher of access for any Program
+
+    Raises PermissionDenied if access is not available to the user.
+
+    :param request: Django request
+    :param level: PROGRAM_ROLE_CHOICES ('low', 'medium', 'high')
+    :param super_admin_override: If True, the permission check is bypassed if the user is a Super Admin
+    :return: None
+    """
+    # string typing is fun
+    assert level in [l[0] for l in PROGRAM_ROLE_CHOICES]
+
+    # none of this makes sense if not logged in
+    if not request.user.is_authenticated():
+        raise PermissionDenied
+
+    # Let super admins do all the things
+    if super_admin_override and request.user.is_superuser:
+        return
+
+    tola_user = request.user.tola_user
+    user_access_level = None
+
+    # First check for explicit program access - find the highest access level for all programs
+    if tola_user.programaccess_set.exists():
+        program_access_obj = max(tola_user.programaccess_set.all(), key=lambda x: PROGRAM_ROLE_INT_MAP.get(x.role, 0))
+    else:
+        program_access_obj = None
+
+    if program_access_obj:
+        user_access_level = program_access_obj.role
+    else:
+        # Has implicit low level access via country association?
+        implicit_low = (Program.objects.filter(country__in=tola_user.countries.all()) |
+                        Program.objects.filter(country=tola_user.country)).exists()
+
+        if implicit_low:
+            user_access_level = 'low'
+
+    # final check
+    if PROGRAM_ROLE_INT_MAP.get(user_access_level, 0) < PROGRAM_ROLE_INT_MAP.get(level):
+        raise PermissionDenied
+
+
+def verify_program_access_level(request, program_id, level, super_admin_override=True):
+    """
+    Determine if a user has a given level of access or higher to a Program.
+
+    Raises PermissionDenied if access is not available to the user.
+
+    :param request: Django request
+    :param level: PROGRAM_ROLE_CHOICES ('low', 'medium', 'high')
+    :param super_admin_override: If True, the permission check is bypassed if the user is a Super Admin
+    :return: None
+    """
+    # string typing is fun
+    assert level in [l[0] for l in PROGRAM_ROLE_CHOICES]
+
+    # none of this makes sense if not logged in
+    if not request.user.is_authenticated():
+        raise PermissionDenied
+
+    # Let super admins do all the things
+    if super_admin_override and request.user.is_superuser:
+        return
+
+    tola_user = request.user.tola_user
+    user_access_level = None
+
+    # First check for explicit program access
+    program_access_obj = tola_user.programaccess_set.filter(program_id=program_id).first()
+
+    if program_access_obj:
+        user_access_level = program_access_obj.role
+    else:
+        # Has implicit low level access via country association?
+        implicit_low = (Program.objects.filter(pk=program_id, country__in=tola_user.countries.all()) |
+                        Program.objects.filter(pk=program_id, country=tola_user.country)).exists()
+
+        if implicit_low:
+            user_access_level = 'low'
+
+    # final check
+    if PROGRAM_ROLE_INT_MAP.get(user_access_level, 0) < PROGRAM_ROLE_INT_MAP.get(level):
+        raise PermissionDenied
+
+
+#
+# Tola Admin permissions
+#
 
 class HasUserAdminAccess(permissions.BasePermission):
     def has_permission(self, request, view):

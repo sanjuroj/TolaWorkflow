@@ -39,7 +39,7 @@ class IPTT_ReportViewTests(TestCase):
         """Does get return 200 and the right template?"""
 
         url_kwargs = {
-            'program_id': self.program.id,
+            'program': self.program.id,
             'reporttype': 'targetperiods',
         }
         filterdata = {'targetperiods': 1, 'timeframe': 1}
@@ -62,7 +62,7 @@ class IPTT_ReportViewTests(TestCase):
     def test_post(self):
         """Does post return 200 show the requested report?"""
         url_kwargs = {
-            'program_id': self.program.id,
+            'program': self.program.id,
             'reporttype': 'targetperiods',
         }
 
