@@ -360,7 +360,7 @@ var create_changeset_notice = function create_changeset_notice() {
         buttons: [{
           text: confirm_text,
           primary: true,
-          addClass: type == 'error' ? 'btn-danger is-disabled' : '',
+          addClass: type == 'error' ? 'btn-danger' : '',
           click: function click(notice) {
             var close = true;
             var textarea = $(notice.refs.elem).find('textarea[name="rationale"]');
@@ -482,4 +482,4 @@ window.create_nondestructive_changeset_notice = function () {
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-cabeac34a45ed4677f38.js.map
+//# sourceMappingURL=base-800e877d867e6e034d78.js.map
