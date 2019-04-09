@@ -78,6 +78,13 @@ def index(request, selected_country=None):
 
 
 class TolaLoginView(authviews.LoginView):
+    def get(self, *args, **kwargs):
+        response = super(TolaLoginView, self).get(*args, **kwargs)
+        # Header that jQuery AJAX can look for to see if a request was 302 redirected
+        # due to a user not being logged in
+        response['Login-Screen'] = 'Login-Screen'
+        return response
+
     def get_context_data(self, *args, **kwargs):
         context = super(TolaLoginView, self).get_context_data(*args, **kwargs)
         context['okta_url'] = u"{base}?{params}".format(

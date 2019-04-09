@@ -33,10 +33,15 @@ $( document )
                 // TODO: Give better error mssages based on HTTP status code
                 let errorStr = `${jqxhr.status}: ${jqxhr.statusText}`;
 
-                // Permission denied
                 if (jqxhr.status === 403) {
+                    // Permission denied
                     notifyError(js_context.strings.permissionError, js_context.strings.permissionErrorDescription);
+                } else if(jqxhr.getResponseHeader("Login-Screen") != null && jqxhr.getResponseHeader("Login-Screen").length) {
+                    // Not logged in - the 302 redirect is implicit and jQuery has no way to know it happened
+                    // check special header set by our login view to see if that's where we ended up
+                    notifyLoginRequired();
                 } else {
+                    // all other errors
                     notifyError(js_context.strings.serverError, errorStr);
                 }
             }
@@ -282,6 +287,42 @@ function notifyError(title, msg) {
     });
 }
 window.notifyError = notifyError;
+
+function notifyLoginRequired() {
+    PNotify.alert({
+        text: js_context.strings.notLoggedInErrorDescription,
+        title: js_context.strings.notLoggedInError,
+        hide: false,
+        type: 'error',
+        modules: {
+            Buttons: {
+                closer: true,
+                sticker: false
+            },
+            Confirm: {
+                confirm: true,
+                buttons: [
+                    {
+                        // # Translators: OK button label - confirm performing an action
+                        text: gettext('OK'),
+                        primary: true,
+                        addClass:'',
+                        click: function () {
+                            window.location = '/accounts/login/?next=' + window.location.pathname;
+                        }
+                    },
+                    {
+                        // # Translators: Cancel button label - do not perform an operation
+                        text: gettext('Cancel'),
+                        click: function (notice) {
+                            notice.close();
+                        }
+                    }
+                ]
+            }
+        }
+    });
+}
 
 
 $(document).ready(function() {
