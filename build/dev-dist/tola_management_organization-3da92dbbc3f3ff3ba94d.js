@@ -306,11 +306,16 @@ function () {
 
       this.saving = true;
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].updateOrganization(id, new_data).then(function (updated_data) {
-        return _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationAggregates(id).then(function (aggregates) {
+        return Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationAggregates(id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationHistory(id)]).then(function (_ref11) {
+          var _ref12 = _slicedToArray(_ref11, 2),
+              aggregates = _ref12[0],
+              history = _ref12[1];
+
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
             _this3.saving = false;
             _this3.active_pane_is_dirty = false;
             _this3.editing_target_data = updated_data;
+            _this3.editing_target_history = history;
 
             _this3.updateLocalOrganization(id, updated_data, aggregates);
           });
@@ -350,10 +355,10 @@ function () {
 
           _this4.editing_target = result.id;
           _this4.editing_target_data = result;
-          _this4.bulk_targets = new Map(Object.entries(_this4.organizations).map(function (_ref11) {
-            var _ref12 = _slicedToArray(_ref11, 2),
-                _ = _ref12[0],
-                organization = _ref12[1];
+          _this4.bulk_targets = new Map(Object.entries(_this4.organizations).map(function (_ref13) {
+            var _ref14 = _slicedToArray(_ref13, 2),
+                _ = _ref14[0],
+                organization = _ref14[1];
 
             return [organization.id, false];
           }));
@@ -394,10 +399,10 @@ function () {
 
           _this5.editing_target = null;
           _this5.editing_target_data = _objectSpread({}, default_organization);
-          _this5.bulk_targets = new Map(Object.entries(_this5.organizations).map(function (_ref13) {
-            var _ref14 = _slicedToArray(_ref13, 2),
-                _ = _ref14[0],
-                organization = _ref14[1];
+          _this5.bulk_targets = new Map(Object.entries(_this5.organizations).map(function (_ref15) {
+            var _ref16 = _slicedToArray(_ref15, 2),
+                _ = _ref16[0],
+                organization = _ref16[1];
 
             return [organization.id, false];
           }));
@@ -487,10 +492,10 @@ function () {
           this.fetching_editing_target = true;
 
           if (!(this.editing_target == 'new')) {
-            Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganization(organization_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationHistory(organization_id)]).then(function (_ref15) {
-              var _ref16 = _slicedToArray(_ref15, 2),
-                  organization = _ref16[0],
-                  history = _ref16[1];
+            Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganization(organization_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationHistory(organization_id)]).then(function (_ref17) {
+              var _ref18 = _slicedToArray(_ref17, 2),
+                  organization = _ref18[0],
+                  history = _ref18[1];
 
               Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
                 _this6.fetching_editing_target = false;
@@ -1224,6 +1229,7 @@ function (_React$Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -1231,6 +1237,7 @@ function _nonIterableRest() { throw new TypeError("Invalid attempt to destructur
 function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -1354,7 +1361,7 @@ var ChangeLogEntry = function ChangeLogEntry(_ref8) {
   }));
 };
 
-var ChangeLog = function ChangeLog(_ref9) {
+var ChangeLog = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref9) {
   var data = _ref9.data;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
     className: "table table-sm bg-white table-bordered text-small changelog"
@@ -1374,8 +1381,7 @@ var ChangeLog = function ChangeLog(_ref9) {
       data: entry
     });
   }));
-};
-
+});
 /* harmony default export */ __webpack_exports__["default"] = (ChangeLog);
 
 /***/ }),
@@ -2498,4 +2504,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-c3570979d00c4eee55c1.js.map
+//# sourceMappingURL=tola_management_organization-3da92dbbc3f3ff3ba94d.js.map

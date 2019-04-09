@@ -1,4 +1,5 @@
 import React from 'react'
+import { observer } from 'mobx-react';
 
 const ChangeField = ({name, data}) => {
     return <div className="change__field">
@@ -95,7 +96,7 @@ const ChangeLogEntry = ({data}) => {
     </tbody>
 }
 
-const ChangeLog = ({data}) => {
+const ChangeLog = observer(({data}) => {
     return <table className="table table-sm bg-white table-bordered text-small changelog">
         <thead>
             <tr>
@@ -110,6 +111,6 @@ const ChangeLog = ({data}) => {
             <ChangeLogEntry key={id} data={entry} />
         )}
     </table>
-}
+});
 
 export default ChangeLog
