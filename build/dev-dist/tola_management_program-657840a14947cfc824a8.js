@@ -630,7 +630,7 @@ var ChangeLogEntryHeader = function ChangeLogEntryHeader(_ref2) {
   var data = _ref2.data;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
     className: "changelog__entry__header is-expanded"
-  }, " ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "text-nowrap text-action"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
     className: "fas fa-caret-down"
@@ -2704,4 +2704,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-9ccaee3eeaeb6f8c9122.js.map
+//# sourceMappingURL=tola_management_program-657840a14947cfc824a8.js.map

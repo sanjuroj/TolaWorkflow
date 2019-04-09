@@ -1246,7 +1246,7 @@ var ChangeLogEntryHeader = function ChangeLogEntryHeader(_ref2) {
   var data = _ref2.data;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
     className: "changelog__entry__header is-expanded"
-  }, " ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "text-nowrap text-action"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
     className: "fas fa-caret-down"
@@ -1644,9 +1644,7 @@ function (_React$Component) {
     value: function save() {
       this.props.onSave(_objectSpread({}, this.state.data, {
         is_active: this.state.data.is_active.value,
-        sectors: this.state.data.sectors.map(function (sector) {
-          return sector.id;
-        })
+        sectors: this.state.data.sectors
       }));
     }
   }, {
@@ -2500,4 +2498,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-653f554bb145eaa128ee.js.map
+//# sourceMappingURL=tola_management_organization-c3570979d00c4eee55c1.js.map
