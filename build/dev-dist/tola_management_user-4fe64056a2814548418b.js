@@ -2130,35 +2130,123 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-select */ "y2Vs");
 /* harmony import */ var _virtualized_react_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./virtualized-react-select */ "5Xg7");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! mobx-react */ "okNM");
+/* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-multiselect-checkboxes */ "VCnP");
+/* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! mobx-react */ "okNM");
+var _class, _temp;
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 
 
 
 
-var Option = function Option(props) {
-  return react_select__WEBPACK_IMPORTED_MODULE_1__["components"].Option && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["components"].Option, props, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-    className: "checkboxed-multi-select-checkbox",
-    type: "checkbox",
-    checked: props.isSelected,
-    onChange: function onChange(e) {//we can let the outer component manage state
-    }
-  }), "\xA0", props.data.label);
+
+
+var CountLabel = function CountLabel(props) {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "count__label"
+  }, props.children, props.clearable && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    onClick: props.clearSelect
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fa fa-times",
+    "aria-hidden": "true"
+  })));
 };
 
-var CheckboxedMultiSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_3__["observer"])(function (props) {
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], _extends({
-    isMulti: true,
-    closeMenuOnSelect: false,
-    hideSelectedOptions: false,
-    components: {
-      MenuList: _virtualized_react_select__WEBPACK_IMPORTED_MODULE_2__["VirtualizedMenuList"],
-      Option: Option
+var CheckboxedMultiSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_4__["observer"])(_class = (_temp =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(CheckboxedMultiSelect, _React$Component);
+
+  function CheckboxedMultiSelect(props) {
+    var _this;
+
+    _classCallCheck(this, CheckboxedMultiSelect);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(CheckboxedMultiSelect).call(this, props));
+
+    _this.clearSelect = function (e) {
+      e.stopPropagation();
+
+      _this.props.onChange([]);
+
+      ;
+    };
+
+    _this.makeLabel = function (_ref3) {
+      var placeholderButtonLabel = _ref3.placeholderButtonLabel,
+          thisValue = _ref3.value;
+
+      if (!thisValue) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+          clearable: false
+        }, placeholderButtonLabel);
+      }
+
+      if (Array.isArray(thisValue)) {
+        if (thisValue.length === 0) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+            clearable: false
+          }, placeholderButtonLabel);
+        }
+
+        if (thisValue.length === 1) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+            clearable: true,
+            clearSelect: _this.clearSelect
+          }, thisValue[0].label);
+        }
+
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+          clearable: true,
+          clearSelect: _this.clearSelect
+        }, "".concat(thisValue.length, " ", gettext("selected")));
+      }
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+        clearable: false
+      }, thisValue.label);
+    };
+
+    return _this;
+  }
+
+  _createClass(CheckboxedMultiSelect, [{
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3___default.a, _extends({}, this.props, {
+        placeholder: gettext("Search"),
+        placeholderButtonLabel: this.props.placeholder,
+        getDropdownButtonLabel: this.makeLabel,
+        components: {
+          MenuList: _virtualized_react_select__WEBPACK_IMPORTED_MODULE_2__["VirtualizedMenuList"]
+        }
+      }));
     }
-  }, props));
-});
+  }]);
+
+  return CheckboxedMultiSelect;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class;
+
 /* harmony default export */ __webpack_exports__["default"] = (CheckboxedMultiSelect);
 
 /***/ }),
@@ -2226,11 +2314,11 @@ var UserFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(fun
   var store = _ref.store,
       selections = _ref.selections;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "users_filter"
   }, gettext("Users")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
-    value: store.filters.user,
+    value: store.filters.users,
     options: selections,
     onChange: function onChange(e) {
       return store.changeUserFilter(e);
@@ -2243,7 +2331,7 @@ var CountryFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(
   var store = _ref2.store,
       selections = _ref2.selections;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "countries_permitted_filter"
   }, gettext("Countries Permitted")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -2260,7 +2348,7 @@ var BaseCountryFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer
   var store = _ref3.store,
       selections = _ref3.selections;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "base_country_filter"
   }, gettext("Base Country")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -2277,7 +2365,7 @@ var ProgramFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(
   var store = _ref4.store,
       selections = _ref4.selections;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "programs_filter"
   }, gettext("Programs")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -2537,16 +2625,15 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     store: store,
     selections: store.program_selections
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "organization_filter"
-  }, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
+  }, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
     value: store.filters.organizations,
     options: store.organization_selections,
     onChange: function onChange(e) {
       return store.changeOrganizationFilter(e);
     },
-    isMulti: true,
     placeholder: selection_placeholder,
     id: "organization_filter"
   })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -4119,4 +4206,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-7eebdcafffefdc0bdb9e.js.map
+//# sourceMappingURL=tola_management_user-4fe64056a2814548418b.js.map

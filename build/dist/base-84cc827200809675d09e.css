@@ -8265,6 +8265,33 @@ span[data-toggle="popover"]:hover {
   .input--inline:last-child {
     margin-right: 0; }
 
+.react-multiselect-checkbox > div {
+  width: 100%;
+  color: #000;
+  border-radius: 4px;
+  border: 1px solid #b8babd;
+  outline: 0 !important; }
+  .react-multiselect-checkbox > div > button {
+    width: 100%; }
+    .react-multiselect-checkbox > div > button svg {
+      color: #b8babd; }
+  .react-multiselect-checkbox > div > div {
+    width: 100%; }
+
+.react-multiselect-checkbox .count__label {
+  width: 100%;
+  border-right: 1px solid #b8babd;
+  padding-right: 20px;
+  font-size: 16px;
+  line-height: 24px;
+  color: #71757b;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+  .react-multiselect-checkbox .count__label > div {
+    position: absolute;
+    right: 41px;
+    top: 8px; }
+
 .nav-tabs {
   margin-bottom: 15px; }
   .nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
