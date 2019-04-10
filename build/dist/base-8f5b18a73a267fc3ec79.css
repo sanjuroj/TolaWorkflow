@@ -7133,6 +7133,13 @@ body > .container {
 .select2-container--default .select2-results > .select2-results__options {
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2); }
 
+.select2-wrapper {
+  display: block;
+  width: 100%; }
+  .select2-wrapper .select2-container {
+    max-width: 100%;
+    width: 100% !important; }
+
 .nav-tabs .tab-pane {
   margin-bottom: -1px; }
   .nav-tabs .tab-pane a {
@@ -9227,5 +9234,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-7de7d0864e2f3a5febc1.css.map*/

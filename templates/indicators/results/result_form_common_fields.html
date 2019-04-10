@@ -55,7 +55,7 @@
     {% include 'indicators/results/result_form_disaggregation_fields.html' %}
     <div class="form-group" id="div_id_site">
         <label for="id_site">{{ form.site.label }}</label>
-        <div> {# extra div to provide width to child select2 widget #}
+        <div class="select2-wrapper"> {# extra div to provide width to child select2 widget #}
             {% render_field form.site class+="form-control" %}
         </div>
         <small class="form-text text-muted">{{ form.site.help_text }}</small>
