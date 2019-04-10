@@ -12,7 +12,7 @@ from tola.util import getCountry
 from django.contrib.auth.decorators import login_required
 
 
-@login_required(login_url='/accounts/login/')
+@login_required
 @has_projects_access
 def DefaultCustomDashboard(request,id=0,status=0):
     """

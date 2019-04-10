@@ -1012,12 +1012,13 @@ class DocumentationAgreementDelete(LoginRequiredMixin, AjaxableResponseMixin, De
     form_class = DocumentationForm
 
 
-class DocumentationCreate(LoginRequiredMixin, CreateView):
+class DocumentationCreate(CreateView):
     """
     Documentation Form
     """
     model = Documentation
 
+    @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
         if not user_has_program_roles(request.user, request.user.tola_user.available_programs, ['medium', 'high']):
@@ -1058,13 +1059,14 @@ class DocumentationCreate(LoginRequiredMixin, CreateView):
     form_class = DocumentationForm
 
 
-class DocumentationUpdate(LoginRequiredMixin, UpdateView):
+class DocumentationUpdate(UpdateView):
     """
     Documentation Form
     """
     model = Documentation
     queryset = Documentation.objects.select_related()
 
+    @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
         if not user_has_program_roles(request.user, Program.objects.filter(id=Documentation.objects.get(id=kwargs['pk']).program.id), ['medium', 'high']):
@@ -1098,13 +1100,14 @@ class DocumentationUpdate(LoginRequiredMixin, UpdateView):
     form_class = DocumentationForm
 
 
-class DocumentationDelete(LoginRequiredMixin, DeleteView):
+class DocumentationDelete(DeleteView):
     """
     Documentation Form
     """
     model = Documentation
     success_url = '/workflow/documentation_list/'
 
+    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
 
         if not user_has_program_roles(request.user, Program.objects.filter(id=Documentation.objects.get(id=kwargs['pk']).program.id), ['medium', 'high']):
@@ -1155,7 +1158,8 @@ class ProjectCompleteBySite(LoginRequiredMixin, ListView):
         return q
 
 
-class SiteProfileList(LoginRequiredMixin, ListView):
+@method_decorator(login_required, name='dispatch')
+class SiteProfileList(ListView):
     """
     SiteProfile list creates a map and list of sites by user country access and filters
     by either direct link from project or by program dropdown filter
@@ -1241,8 +1245,9 @@ class SiteProfileList(LoginRequiredMixin, ListView):
                 'user_list': user_list})
 
 
+@method_decorator(login_required, name='dispatch')
 @method_decorator(has_site_read_access, name='dispatch')
-class SiteProfileReport(LoginRequiredMixin, ListView):
+class SiteProfileReport(ListView):
     """
     SiteProfile Report filtered by project
     """
@@ -1265,8 +1270,9 @@ class SiteProfileReport(LoginRequiredMixin, ListView):
         return render(request, self.template_name, {'getSiteProfile':getSiteProfile, 'getSiteProfileIndicator':getSiteProfileIndicator,'project_agreement_id': project_agreement_id,'id':id,'country': countries})
 
 
+@method_decorator(login_required, name='dispatch')
 @method_decorator(has_site_create_access, name='dispatch')
-class SiteProfileCreate(LoginRequiredMixin, CreateView):
+class SiteProfileCreate(CreateView):
     """
     Using SiteProfile Form, create a new site profile
     """
@@ -1321,8 +1327,9 @@ class SiteProfileCreate(LoginRequiredMixin, CreateView):
     form_class = SiteProfileForm
 
 
+@method_decorator(login_required, name='dispatch')
 @method_decorator(has_site_write_access, name='dispatch')
-class SiteProfileUpdate(LoginRequiredMixin, UpdateView):
+class SiteProfileUpdate(UpdateView):
     """
     SiteProfile Form Update an existing site profile
     """
@@ -1361,8 +1368,9 @@ class SiteProfileUpdate(LoginRequiredMixin, UpdateView):
     form_class = SiteProfileForm
 
 
+@method_decorator(login_required, name='dispatch')
 @method_decorator(has_site_delete_access, name='dispatch')
-class SiteProfileDelete(LoginRequiredMixin, DeleteView):
+class SiteProfileDelete(DeleteView):
     """
     SiteProfile Form Delete an existing community
     """

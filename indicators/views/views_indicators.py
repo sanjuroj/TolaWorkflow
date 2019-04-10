@@ -15,7 +15,6 @@ from django.db import connection
 from django.db.models import (
     Count, Q, Sum, Avg, Max
 )
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, render_to_response, get_object_or_404, redirect, reverse
@@ -431,10 +430,11 @@ class IndicatorUpdate(UpdateView):
             messages.success(self.request, _('Success, Indicator Updated!'))
         return self.render_to_response(self.get_context_data(form=form))
 
-class IndicatorDelete(LoginRequiredMixin, DeleteView):
+class IndicatorDelete(DeleteView):
     model = Indicator
     form_class = IndicatorForm
 
+    @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     @method_decorator(indicator_pk_adapter(has_indicator_write_access))
     def dispatch(self, request, *args, **kwargs):
@@ -593,11 +593,12 @@ class ResultFormMixin(object):
         return self.render_to_response(self.get_context_data(form=form))
 
 
-class ResultCreate(LoginRequiredMixin, ResultFormMixin, CreateView):
+class ResultCreate(ResultFormMixin, CreateView):
     """Create new Result called by result_add as modal"""
     model = Result
     form_class = ResultForm
 
+    @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     @method_decorator(indicator_adapter(has_result_write_access))
     def dispatch(self, request, *args, **kwargs):
@@ -682,11 +683,12 @@ class ResultCreate(LoginRequiredMixin, ResultFormMixin, CreateView):
         return HttpResponseRedirect(redirect_url)
 
 
-class ResultUpdate(LoginRequiredMixin, ResultFormMixin, UpdateView):
+class ResultUpdate(ResultFormMixin, UpdateView):
     """Update Result view called by result_update as modal"""
     model = Result
     form_class = ResultForm
 
+    @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     @method_decorator(result_pk_adapter(has_result_write_access))
     def dispatch(self, request, *args, **kwargs):
@@ -774,10 +776,11 @@ class ResultUpdate(LoginRequiredMixin, ResultFormMixin, UpdateView):
         return HttpResponseRedirect(redirect_url)
 
 
-class ResultDelete(LoginRequiredMixin, DeleteView):
+class ResultDelete(DeleteView):
     """TODO: This should handle GET differently - currently returns a nonexistent template"""
     model = Result
 
+    @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     @method_decorator(result_pk_adapter(has_result_write_access))
     def dispatch(self, request, *args, **kwargs):
@@ -924,8 +927,9 @@ def old_program_page(request, program_id, indicator_id, indicator_type_id):
     return redirect(program.program_page_url, permanent=True)
 
 
+@method_decorator(login_required, name='dispatch')
 @method_decorator(has_program_read_access, name='dispatch')
-class ProgramPage(LoginRequiredMixin, ListView):
+class ProgramPage(ListView):
     model = Indicator
     template_name = 'indicators/program_page.html'
 
@@ -1069,7 +1073,7 @@ class DisaggregationReport(DisaggregationReportMixin, TemplateView):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(has_program_read_access, name='dispatch')
-class DisaggregationPrint(LoginRequiredMixin, DisaggregationReportMixin, TemplateView):
+class DisaggregationPrint(DisaggregationReportMixin, TemplateView):
     template_name = 'indicators/disaggregation_print.html'
 
     def get(self, request, *args, **kwargs):

@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from rest_framework import permissions
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
@@ -268,7 +269,8 @@ def has_projects_access(func):
             return func(request, *args, **kwargs)
         else:
             raise PermissionDenied
-    return wrapper
+    # instead of adding @login_required to all project URLs, just do it here
+    return login_required(wrapper)
 
 
 #
