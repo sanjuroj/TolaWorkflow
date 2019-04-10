@@ -2079,6 +2079,7 @@ function (_React$Component) {
 
       var icon = this.state.folded ? this.state.folding ? "fa-angle-double-left" : "fa-chevron-right" : this.state.folding ? "fa-angle-double-right" : "fa-chevron-left";
       var width = this.state.folded ? "0px" : this.state.resize ? "auto" : this.contentWidth + "px";
+      var overflow = this.state.folded || this.state.folding ? "hidden" : "visible";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", _extends({
         className: "folding-sidebar " + (className || '')
       }, props), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -2088,7 +2089,8 @@ function (_React$Component) {
         },
         ref: this.contentsContainer,
         style: {
-          width: width
+          width: width,
+          overflow: overflow
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, this.props.children)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "folding-sidebar__trigger",
@@ -2565,4 +2567,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-1036eb898802168132e9.js.map
+//# sourceMappingURL=tola_management_organization-2a03dc7398c73a39636b.js.map

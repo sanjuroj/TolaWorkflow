@@ -59,12 +59,13 @@ class FoldingSidebar extends React.Component {
                      : this.state.folding
                         ? "fa-angle-double-right" : "fa-chevron-left";
         const width = this.state.folded ? "0px" : this.state.resize ? "auto" : this.contentWidth + "px";
+        const overflow = (this.state.folded || this.state.folding) ? "hidden" : "visible";
         return (
         <div className={"folding-sidebar "+(className || '')} {...props}>
             <div className={"folding-sidebar__contents"}
                  onTransitionEnd={() => this.foldComplete()}
                  ref={this.contentsContainer}
-                style={{width: width }}
+                style={{width: width, overflow: overflow }}
             >
                 <React.Fragment>{this.props.children}</React.Fragment>
             </div>

@@ -2133,6 +2133,7 @@ function (_React$Component) {
 
       var icon = this.state.folded ? this.state.folding ? "fa-angle-double-left" : "fa-chevron-right" : this.state.folding ? "fa-angle-double-right" : "fa-chevron-left";
       var width = this.state.folded ? "0px" : this.state.resize ? "auto" : this.contentWidth + "px";
+      var overflow = this.state.folded || this.state.folding ? "hidden" : "visible";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", _extends({
         className: "folding-sidebar " + (className || '')
       }, props), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -2142,7 +2143,8 @@ function (_React$Component) {
         },
         ref: this.contentsContainer,
         style: {
-          width: width
+          width: width,
+          overflow: overflow
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, this.props.children)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "folding-sidebar__trigger",
@@ -2766,4 +2768,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-ee31c7c0a3d052ac5759.js.map
+//# sourceMappingURL=tola_management_program-bfc6b4d590e41413d332.js.map

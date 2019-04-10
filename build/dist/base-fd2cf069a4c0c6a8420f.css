@@ -8507,8 +8507,7 @@ span[data-toggle="popover"]:hover {
     -moz-transition: all 0.2s ease;
     -ms-transition: all 0.2s ease;
     -o-transition: all 0.2s ease;
-    transition: all 0.2s ease;
-    overflow: hidden; }
+    transition: all 0.2s ease; }
 
 .filter-section {
   background-color: #54585a;
