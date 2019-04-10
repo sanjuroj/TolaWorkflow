@@ -71,8 +71,7 @@
 }
 
 
-@media (max-width:768px) {
-    // TODO: breakpoint
+@include media-breakpoint-down(md) {
     .iptt_table_wrapper {
         padding-left: 0;
     }

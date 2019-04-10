@@ -1,9 +1,13 @@
 //TODO: breakpoints? min-width?
 //TODO: this should be combined with IPTT style sidebar in _sidebar.scss
-.folding-sidebar { // approximately analog to _sidebar.scs/#sidebar
+.folding-sidebar { // approximately analog to _sidebar.scs/#sidebar_wrapper
     $trigger_width: 40px;
     position: relative;
     margin-right: $trigger_width;
+    @include media-breakpoint-down(md) {
+        position: fixed;
+        z-index: $zindex-modal;
+    }
     &__trigger {
         background-color: $teal-500;
         color: $white;
