@@ -10,6 +10,7 @@ const status_options = [
 ]
 
 
+@observer
 export class EditUserHistory extends React.Component {
 
     constructor(props) {
@@ -46,9 +47,14 @@ export class EditUserHistory extends React.Component {
         }, () => this.hasUnsavedDataAction())
     }
 
+    toggleChangeLogRowExpando = (row_id) => {
+        this.props.store.toggleChangeLogRowExpando(row_id);
+    }
+
     render() {
         const selected = status_options.find(option => option.value == this.state.user_data.user.is_active)
-        const {history} = this.props
+        const {history, store} = this.props
+        const changelog_expanded_rows = store.changelog_expanded_rows;
         return <div className="edit-user-history">
             <h2 className="no-bold">{this.state.user_data.name?this.state.user_data.name+': ':''}{gettext("Status and History")}</h2>
             <div className="row">
@@ -71,7 +77,7 @@ export class EditUserHistory extends React.Component {
                 </div>
                 }
             </div>
-            <ChangeLog data={history} />
+            <ChangeLog data={history} expanded_rows={changelog_expanded_rows} toggle_expando_cb={(row_id) => store.toggleChangeLogRowExpando(row_id)} />
         </div>
     }
 }
