@@ -79,10 +79,10 @@ export const IndexView = observer(
                         placeholder={gettext("None Selected")}
                         id="status_filter" />
                     </div>
-                    <div className="filter-buttons">
-                        <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
-                        <button className="btn btn-inverse" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
-                    </div>
+                </div>
+                <div className="filter-section filter-buttons">
+                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
+                    <button className="btn btn-inverse" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
                 </div>
             </FoldingSidebar>
             <div className="col admin-list">

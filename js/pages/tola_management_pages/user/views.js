@@ -225,10 +225,10 @@ export const IndexView = observer(
                         id="admin_role_filter" />
                     </div>
                     <UserFilter store={store} selections={store.user_selections} />
-                    <div className="filter-buttons">
-                        <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
-                        <button className="btn btn-inverse" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
-                    </div>
+                </div>
+                <div className="filter-section filter-buttons">
+                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
+                    <button className="btn btn-inverse" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
                 </div>
             </FoldingSidebar>
             <div className="col admin-list">

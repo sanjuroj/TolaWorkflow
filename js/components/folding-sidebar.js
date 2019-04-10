@@ -17,16 +17,16 @@ class FoldingSidebar extends React.Component {
         };
         this.contentsContainer = React.createRef();
     }
-    
+
     componentDidMount() {
         this.contentWidth = this.contentsContainer.current.offsetWidth;
         window.addEventListener("resize", this.updateDimensions);
     }
-    
+
     componentWillUnmount() {
         window.removeEventListener("resize", this.updateDimensions);
     }
-    
+
     updateDimensions = () => {
         if (!this.state.folded && !this.state.folding) {
             this.setState(() => ({resize: true}),
@@ -64,7 +64,8 @@ class FoldingSidebar extends React.Component {
             <div className={"folding-sidebar__contents"}
                  onTransitionEnd={() => this.foldComplete()}
                  ref={this.contentsContainer}
-                 style={{width: width }}>
+                style={{width: width }}
+            >
                 <React.Fragment>{this.props.children}</React.Fragment>
             </div>
             <div className="folding-sidebar__trigger" onClick={() => this.toggleFolded()}>
