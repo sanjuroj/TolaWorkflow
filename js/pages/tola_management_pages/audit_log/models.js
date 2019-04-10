@@ -13,7 +13,6 @@ export class ProgramAuditLogStore {
     @observable total_pages = 0
     @observable next_page = null
     @observable previous_page = null
-    @observable current_page = 0
 
     constructor(program_id, program_name) {
         this.program_id = program_id
