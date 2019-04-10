@@ -6,6 +6,7 @@ import ManagementTable from 'components/management-table'
 import Pagination from 'components/pagination'
 import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
 import Expander from 'components/expander'
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 
 import LoadingSpinner from 'components/loading-spinner'
 
@@ -61,10 +62,32 @@ class ChangesetEntry extends React.Component {
     }
 }
 
+const ExpandAllButton = observer(
+    ({store}) => {
+        {/* # Translators: button label to show the details of all rows in a list */}
+        return <button className="btn btn-secondary btn-sm"
+                       onClick={() => store.expandAllExpandos()}
+                       disabled={store.log_rows.length === store.expando_rows.size}>
+            {gettext('Expand all')}
+        </button>
+    }
+);
+
+const CollapseAllButton = observer(
+    ({store}) => {
+        {/* # Translators: button label to hide the details of all rows in a list */}
+        return <button className="btn btn-secondary btn-sm"
+                       onClick={() => store.collapsAllExpandos()}
+                       disabled={store.expando_rows.size === 0}>
+            {gettext('Collapse all')}
+        </button>
+    }
+);
+
 export const IndexView = observer(
     ({store}) => {
         return <div id="audit-log-index-view">
-            <header class="page-title">
+            <header className="page-title">
                 <h1><small>{gettext("Indicator change log:")}</small> {store.program_name}</h1>
             </header>
 
@@ -75,6 +98,8 @@ export const IndexView = observer(
                         <i className="fas fa-download"></i>
                         {gettext("Excel")}
                     </a>
+                    <ExpandAllButton store={store} />
+                    <CollapseAllButton store={store} />
                 </div>
             </div>
             <div className="admin-list__table">
@@ -93,39 +118,50 @@ export const IndexView = observer(
                                 <th className="text-nowrap">{gettext("Rationale")}</th>
                             </tr>
                         </thead>
-                        {store.log_rows.map(data => <tbody>
-                            <tr className="changelog__entry__header is-expanded">
-                                <td>{data.date}</td>
-                                <td>{(data.indicator)?data.indicator.number:gettext('N/A')}</td>
-                                <td>{(data.indicator)?data.indicator.name:gettext('N/A')}</td>
-                                <td>{data.user}</td>
-                                <td>{data.organization}</td>
-                                <td>{data.pretty_change_type}</td>{/* SWEET FANCY MOSES WHAT IS THIS */}
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr className="changelog__entry__row" key={data.id}>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td className="changelog__change--prev">
-                                    {data.diff_list.map(changeset => {
-                                        return <ChangesetEntry key={changeset.name} name={changeset.name} pretty_name={changeset.pretty_name} type={data.change_type} data={changeset.prev} />
-                                    })}
-                                </td>
-                                <td className="changelog__change--new">
-                                    {data.diff_list.map(changeset => {
-                                         return <ChangesetEntry key={changeset.name} name={changeset.name} pretty_name={changeset.pretty_name} type={data.change_type} data={changeset.new} />
-                                    })}
-                                </td>
-                                <td className="changelog__change--rationale">{data.rationale}</td>
-                            </tr>
-                        </tbody>
-                        )}
+                        {store.log_rows.map(data => {
+                                let is_expanded = store.expando_rows.has(data.id);
+                                return <tbody key={data.id}>
+                                <tr className="changelog__entry__header is-expanded" onClick={() => store.toggleRowExpando(data.id)}>
+                                    <td>
+                                        <FontAwesomeIcon icon={is_expanded ? 'caret-down' : 'caret-right'} />&nbsp;{data.date}
+                                    </td>
+                                    <td>{(data.indicator) ? data.indicator.number : gettext('N/A')}</td>
+                                    <td>{(data.indicator) ? data.indicator.name : gettext('N/A')}</td>
+                                    <td>{data.user}</td>
+                                    <td>{data.organization}</td>
+                                    <td>{data.pretty_change_type}</td>
+                                    {/* SWEET FANCY MOSES WHAT IS THIS */}
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                {is_expanded &&
+                                <tr className="changelog__entry__row" key={data.id}>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td className="changelog__change--prev">
+                                        {data.diff_list.map(changeset => {
+                                            return <ChangesetEntry key={changeset.name} name={changeset.name}
+                                                                   pretty_name={changeset.pretty_name}
+                                                                   type={data.change_type} data={changeset.prev}/>
+                                        })}
+                                    </td>
+                                    <td className="changelog__change--new">
+                                        {data.diff_list.map(changeset => {
+                                            return <ChangesetEntry key={changeset.name} name={changeset.name}
+                                                                   pretty_name={changeset.pretty_name}
+                                                                   type={data.change_type} data={changeset.new}/>
+                                        })}
+                                    </td>
+                                    <td className="changelog__change--rationale">{data.rationale}</td>
+                                </tr>
+                                }
+                                </tbody>
+                            })}
                     </table>
                 </LoadingSpinner>
                 <div className="admin-list__metadata">
