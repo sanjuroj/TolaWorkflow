@@ -128,7 +128,7 @@ export default class EditOrganizationProfile extends React.Component {
                         </div>
                         }
                     </div>
-                    <div className="form-group">
+                    <div className="form-group react-multiselect-checkbox">
                         <label htmlFor="sectors-input">Sectors</label>
                         <CheckboxedMultiSelect
                             value={od.sectors}

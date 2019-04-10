@@ -14,7 +14,7 @@ import FoldingSidebar from 'components/folding-sidebar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const CountryFilter = observer(({store, selections}) => {
-    return <div className="form-group">
+    return <div className="form-group react-multiselect-checkbox">
         <label htmlFor="countries_permitted_filter">{gettext("Countries")}</label>
         <CheckboxedMultiSelect
             value={store.filters.countries}
@@ -26,7 +26,7 @@ const CountryFilter = observer(({store, selections}) => {
 })
 
 const ProgramFilter = observer(({store, selections}) => {
-    return <div className="form-group">
+    return <div className="form-group react-multiselect-checkbox">
         <label htmlFor="programs_filter">{gettext("Programs")}</label>
         <CheckboxedMultiSelect
             value={store.filters.programs}
@@ -38,7 +38,7 @@ const ProgramFilter = observer(({store, selections}) => {
 })
 
 const OrganizationFilter = observer(({store, selections}) => {
-    return <div className="form-group">
+    return <div className="form-group react-multiselect-checkbox">
         <label htmlFor="organizations_filter">{gettext("Organizations")}</label>
         <CheckboxedMultiSelect
             value={store.filters.organizations}
@@ -50,7 +50,7 @@ const OrganizationFilter = observer(({store, selections}) => {
 })
 
 const SectorFilter = observer(({store, selections}) => {
-    return <div className="form-group">
+    return <div className="form-group react-multiselect-checkbox">
         <label htmlFor="sector_filter">{gettext("Sectors")}</label>
         <CheckboxedMultiSelect
             value={store.filters.sectors}
