@@ -325,6 +325,45 @@ function notifyLoginRequired() {
 }
 
 
+function notifySuccessAfterRedirect() {
+    let qs = document.location.search.split('+').join(' ');
+
+    var params = {},
+        tokens,
+        re = /[?&]?([^=]+)=([^&]*)/g;
+
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+    }
+    if ('success' in params && params.success == "true") {
+        let {success, msg, ...newparams} = params;
+        let newLocation = window.location.href;
+        newLocation = newLocation.substring(newLocation.lastIndexOf('/') + 1);
+        newLocation = newLocation.split("?")[0];
+        if (Object.getOwnPropertyNames(newparams).length > 0) {
+            newLocation = newLocation + '?' + Object.keys(newparams).map(key => key + '=' + newparams[key]).join('&')
+        }
+        window.history.replaceState({}, document.title, '/' + newLocation);
+        $(document).ready(function() {
+            var success = PNotify.alert({
+                title: gettext('Success'),
+                text: msg,
+                type: 'success',
+                stack: {
+                    'dir1': 'right',
+                    'dir2': 'up',
+                    'firstpos1': 0,
+                    'firstpos2': 0
+                    },
+                });
+        });
+    }
+    
+}
+window.notifySuccessAfterRedirect = notifySuccessAfterRedirect;
+
+notifySuccessAfterRedirect();
+
 $(document).ready(function() {
     $(document).on('hidden.bs.modal', '.modal', function () {
         $('.modal:visible').length && $(document.body).addClass('modal-open');
@@ -346,6 +385,7 @@ window.newPopup = newPopup;
 
 const DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.")
 const DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.')
+const DEFAULT_NO_RATIONALE_TEXT = gettext("This action cannot be undone");
 
 const create_changeset_notice = ({
     message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE,
@@ -355,7 +395,8 @@ const create_changeset_notice = ({
     cancel_text = 'Cancel',
     type = 'notice',
     inner = '',
-    context = null
+    context = null,
+    rationale_required = true
 } = {}) => {
     var notice = PNotify.alert({
         text: $(`<div><form action="" method="post" class="form container">${inner}</form></div>`).html(),
@@ -390,7 +431,7 @@ const create_changeset_notice = ({
                             var textarea = $(notice.refs.elem).find('textarea[name="rationale"]')
                             var rationale = textarea.val();
                             textarea.parent().find('.invalid-feedback').remove();
-                            if(!rationale) {
+                            if(!rationale && rationale_required) {
                                 textarea.addClass('is-invalid');
                                 textarea.parent().append(
                                     '<div class="invalid-feedback">'
@@ -516,4 +557,45 @@ window.create_nondestructive_changeset_notice = ({
         inner: inner,
         context: context
     })
+}
+
+window.create_no_rationale_changeset_notice = ({
+    message_text = DEFAULT_NO_RATIONALE_TEXT,
+    on_submit = () => {},
+    on_cancel = () => {},
+    is_indicator = false,
+    confirm_text = 'Ok',
+    cancel_text = 'Cancel',
+    context = null,
+    preamble = false,
+} = {}) => {
+    if (!message_text) {message_text = DEFAULT_NO_RATIONALE_TEXT}
+    if (!preamble) {preamble = gettext("This action cannot be undone.")};
+    const inner = `
+        <div class="row">
+            <div class="col">
+                <h2><i class="fas fa-exclamation-triangle"></i>${gettext("Warning")}</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span class='text-danger'>
+                    ${preamble}
+                </span>
+                ${message_text}
+            </div>
+        </div>
+    `;
+    return create_changeset_notice({
+        message_text: message_text,
+        on_submit: on_submit,
+        on_cancel: on_cancel,
+        is_indicator: is_indicator,
+        confirm_text: confirm_text,
+        cancel_text: cancel_text,
+        type: 'error',
+        inner: inner,
+        context: context,
+        rationale_required: false
+        });
 }

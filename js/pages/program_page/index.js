@@ -197,7 +197,8 @@ const onNavigation = (navRoutes) => {
     let routeObj = routes.find(r => r.name === routeName);
     eventBus.emit('apply-gauge-tank-filter', routeObj.filterType);
 };
-
+// this handles a specific query indicating success from a previous page
+notifySuccessAfterRedirect();
 router.usePlugin(browserPlugin({useHash: true, base:'/program/'+jsContext.program.id+'/'}));
 router.subscribe(onNavigation);
 router.start();

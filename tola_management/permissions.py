@@ -78,7 +78,7 @@ def indicator_pk_adapter(inner):
     def outer(func):
         wrapped = inner(func)
         def wrapper(request, *args, **kwargs):
-            indicator = Indicator.objects.get(pk=kwargs['pk'])
+            indicator = get_object_or_404(Indicator, pk=kwargs.get('pk'))
             kwargs['program'] = indicator.program_id
             return wrapped(request, *args, **kwargs)
         return wrapper
@@ -88,7 +88,7 @@ def periodic_target_pk_adapter(inner):
     def outer(func):
         wrapped = inner(func)
         def wrapper(request, *args, **kwargs):
-            pt = PeriodicTarget.objects.get(pk=kwargs['pk'])
+            pt = get_object_or_404(PeriodicTarget, pk=kwargs.get('pk'))
             kwargs['program'] = pt.indicator.program_id
             return wrapped(request, *args, **kwargs)
         return wrapper

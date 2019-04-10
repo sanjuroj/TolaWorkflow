@@ -452,18 +452,26 @@ class IndicatorDelete(DeleteView):
     def delete(self, request, *args, **kwargs):
         if request.is_ajax():
             indicator = self.get_object()
-            if not request.POST.get('rationale') and (indicator.result_set.all().count() > 0 or indicator.periodictargets.all().count() > 0):
-                return JsonResponse(
-                    {"status": "failed", "msg": "Rationale is required"},
-                    status=400
-                )
-
+            skip_log = False
+            if not request.POST.get('rationale'):
+                if (indicator.result_set.all().count() > 0 or indicator.periodictargets.all().count() > 0):
+                    return JsonResponse(
+                        {"status": "failed", "msg": "Rationale is required"},
+                        status=400
+                    )
+                elif indicator.lop_target is None:
+                    skip_log = True
+                else:
+                    rationale = 'no rationale required'
+            else:
+                rationale = request.POST.get('rationale')
             indicator_values = indicator.logged_fields
+            program_page = indicator.program.program_page_url
             indicator.delete()
-            ProgramAuditLog.log_indicator_deleted(self.request.user, indicator, indicator_values, self.request.POST['rationale'])
-
+            if not skip_log:
+                ProgramAuditLog.log_indicator_deleted(self.request.user, indicator, indicator_values, rationale)
             return JsonResponse(
-                {"status": "success", "msg": "Indicator Deleted"}
+                {"status": "success", "msg": "Indicator Deleted", "program_page": program_page}
             )
         else:
             return super(IndicatorDelete, self).delete(request, *args, **kwargs)

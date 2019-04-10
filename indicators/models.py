@@ -20,6 +20,8 @@ import django.template.defaultfilters
 
 from simple_history.models import HistoricalRecords
 from safedelete.models import SafeDeleteModel
+from safedelete.managers import SafeDeleteManager
+from safedelete.queryset import SafeDeleteQueryset
 
 from workflow.models import (
     Program, Sector, SiteProfile, ProjectAgreement, ProjectComplete, Country,
@@ -389,13 +391,16 @@ class IndicatorSortingManagerMixin(object):
         qs = self.get_queryset()
         return qs.with_logframe_sorting()
 
-class IndicatorQuerySet(models.QuerySet, IndicatorSortingQSMixin):
+class IndicatorQuerySet(SafeDeleteQueryset, IndicatorSortingQSMixin):
     pass
 
-class IndicatorManager(models.Manager, IndicatorSortingManagerMixin):
+class IndicatorManager(SafeDeleteManager, IndicatorSortingManagerMixin):
 
     def get_queryset(self):
-        return IndicatorQuerySet(self.model, using=self._db).select_related('program', 'sector')
+        queryset = IndicatorQuerySet(self.model, using=self._db)
+        queryset._safedelete_visibility = self._safedelete_visibility
+        queryset._safedelete_visibility_field = self._safedelete_visibility_field        
+        return queryset.select_related('program', 'sector')
 
 
 class Indicator(SafeDeleteModel):
