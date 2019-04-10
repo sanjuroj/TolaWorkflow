@@ -44,6 +44,9 @@ export class ProgramStore {
 
     @observable active_editor_pane = 'profile'
 
+    // UI state - track what history rows are expanded
+    @observable changelog_expanded_rows = new Set();
+
     active_pane_is_dirty = false
 
     constructor(
@@ -302,4 +305,12 @@ export class ProgramStore {
         }
     }
 
+    @action
+    toggleChangeLogRowExpando(row_id) {
+        if (this.changelog_expanded_rows.has(row_id)) {
+            this.changelog_expanded_rows.delete(row_id);
+        } else {
+            this.changelog_expanded_rows.add(row_id);
+        }
+    }
 }

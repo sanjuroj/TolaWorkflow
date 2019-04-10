@@ -250,6 +250,7 @@ export const IndexView = observer(
                                             HistorySection={observer(() =>
                                                 <LoadingSpinner isLoading={store.saving}>
                                                     <ProgramHistory
+                                                        store={store}
                                                         onIsDirtyChange={is_dirty => store.setActiveFormIsDirty(is_dirty)}
                                                         program_data={data}
                                                         fetching_history={store.fetching_editing_history}
