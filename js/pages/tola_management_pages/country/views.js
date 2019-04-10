@@ -59,10 +59,10 @@ export const IndexView = observer(
                     <OrganizationFilter store={store} filterOptions={organizationFilterOptions} />
                     <ProgramFilter store={store} filterOptions={programFilterOptions} />
                     <CountryFilter store={store} filterOptions={countryFilterOptions} />
-                    <div className="filter-buttons">
-                        <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
-                        <button className="btn btn-inverse" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
-                    </div>
+                </div>
+                <div className="filter-section filter-buttons">
+                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
+                    <button className="btn btn-inverse" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
                 </div>
             </FoldingSidebar>
             <div className="col admin-list">

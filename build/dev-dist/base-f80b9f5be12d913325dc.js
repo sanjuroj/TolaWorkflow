@@ -53,7 +53,18 @@ $(document).ajaxStart(function () {
       // HTTP error (can be checked by XMLHttpRequest.status and XMLHttpRequest.statusText)
       // TODO: Give better error mssages based on HTTP status code
       var errorStr = "".concat(jqxhr.status, ": ").concat(jqxhr.statusText);
-      notifyError(js_context.strings.serverError, errorStr);
+
+      if (jqxhr.status === 403) {
+        // Permission denied
+        notifyError(js_context.strings.permissionError, js_context.strings.permissionErrorDescription);
+      } else if (jqxhr.getResponseHeader("Login-Screen") != null && jqxhr.getResponseHeader("Login-Screen").length) {
+        // Not logged in - the 302 redirect is implicit and jQuery has no way to know it happened
+        // check special header set by our login view to see if that's where we ended up
+        notifyLoginRequired();
+      } else {
+        // all other errors
+        notifyError(js_context.strings.serverError, errorStr);
+      }
     } else if (jqxhr.readyState === 0) {
       // Network error (i.e. connection refused, access denied due to CORS, etc.)
       notifyError(js_context.strings.networkError, js_context.strings.networkErrorTryAgain);
@@ -297,6 +308,40 @@ function notifyError(title, msg) {
 }
 
 window.notifyError = notifyError;
+
+function notifyLoginRequired() {
+  PNotify.alert({
+    text: js_context.strings.notLoggedInErrorDescription,
+    title: js_context.strings.notLoggedInError,
+    hide: false,
+    type: 'error',
+    modules: {
+      Buttons: {
+        closer: true,
+        sticker: false
+      },
+      Confirm: {
+        confirm: true,
+        buttons: [{
+          // # Translators: OK button label - confirm performing an action
+          text: gettext('OK'),
+          primary: true,
+          addClass: '',
+          click: function click() {
+            window.location = '/accounts/login/?next=' + window.location.pathname;
+          }
+        }, {
+          // # Translators: Cancel button label - do not perform an operation
+          text: gettext('Cancel'),
+          click: function click(notice) {
+            notice.close();
+          }
+        }]
+      }
+    }
+  });
+}
+
 $(document).ready(function () {
   $(document).on('hidden.bs.modal', '.modal', function () {
     $('.modal:visible').length && $(document.body).addClass('modal-open');
@@ -482,4 +527,4 @@ window.create_nondestructive_changeset_notice = function () {
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-800e877d867e6e034d78.js.map
+//# sourceMappingURL=base-f80b9f5be12d913325dc.js.map
