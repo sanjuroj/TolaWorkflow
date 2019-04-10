@@ -15,10 +15,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // # Translators: Nothing selected by user
 const selection_placeholder = gettext("None Selected");
 const UserFilter = observer(({store, selections}) => {
-    return <div className="form-group">
+    return <div className="form-group react-multiselect-checkbox">
         <label htmlFor="users_filter">{gettext("Users")}</label>
         <CheckboxedMultiSelect
-            value={store.filters.user}
+            value={store.filters.users}
             options={selections}
             onChange={(e) => store.changeUserFilter(e)}
             placeholder={selection_placeholder}
@@ -27,7 +27,7 @@ const UserFilter = observer(({store, selections}) => {
 })
 
 const CountryFilter = observer(({store, selections}) => {
-    return <div className="form-group">
+    return <div className="form-group react-multiselect-checkbox">
         {/* # Translators: The countries a user is allowed to access */}
         <label htmlFor="countries_permitted_filter">{gettext("Countries Permitted")}</label>
         <CheckboxedMultiSelect
@@ -40,7 +40,7 @@ const CountryFilter = observer(({store, selections}) => {
 })
 
 const BaseCountryFilter = observer(({store, selections}) => {
-    return <div className="form-group">
+    return <div className="form-group react-multiselect-checkbox">
         {/* # Translators: Primary country of the user */}
         <label htmlFor="base_country_filter">{gettext("Base Country")}</label>
         <CheckboxedMultiSelect
@@ -53,7 +53,7 @@ const BaseCountryFilter = observer(({store, selections}) => {
 })
 
 const ProgramFilter = observer(({store, selections}) => {
-    return <div className="form-group">
+    return <div className="form-group react-multiselect-checkbox">
         <label htmlFor="programs_filter">{gettext("Programs")}</label>
         <CheckboxedMultiSelect
             value={store.filters.programs}
@@ -196,13 +196,12 @@ export const IndexView = observer(
                     <CountryFilter store={store} selections={store.countries_selections} />
                     <BaseCountryFilter store={store} selections={store.countries_selections} />
                     <ProgramFilter store={store} selections={store.program_selections} />
-                    <div className="form-group">
+                    <div className="form-group react-multiselect-checkbox">
                         <label htmlFor="organization_filter">{gettext("Organization")}</label>
-                        <Select
+                        <CheckboxedMultiSelect
                         value={store.filters.organizations}
                         options={store.organization_selections}
                         onChange={(e) => store.changeOrganizationFilter(e)}
-                        isMulti={true}
                         placeholder={selection_placeholder}
                         id="organization_filter" />
                     </div>
