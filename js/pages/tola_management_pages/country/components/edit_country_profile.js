@@ -1,7 +1,6 @@
 import React from 'react'
 import Select from 'react-select'
 import { observer } from "mobx-react"
-import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
 import classNames from 'classnames'
 
 
