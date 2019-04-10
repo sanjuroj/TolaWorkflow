@@ -8356,17 +8356,6 @@ span[data-toggle="popover"]:hover {
 .icon__disabled {
   opacity: 0.5; }
 
-.filter-section {
-  width: 20vw;
-  padding: 10px;
-  background-color: #54585a; }
-  .filter-section label {
-    color: white; }
-
-.filter-buttons {
-  display: flex;
-  justify-content: space-around; }
-
 /* Safari */
 @-webkit-keyframes spin {
   0% {
@@ -8489,17 +8478,48 @@ span[data-toggle="popover"]:hover {
 .folding-sidebar {
   position: relative;
   margin-right: 40px; }
+  @media (max-width: 991.98px) {
+    .folding-sidebar {
+      position: fixed;
+      z-index: 1050; } }
   .folding-sidebar__trigger {
     background-color: #00a49f;
-    color: white;
-    font-size: 2em;
+    color: #fff;
+    font-size: 1.25rem;
     display: inline-block;
-    padding: 5px;
+    padding: 0.3em 0.5em;
     position: absolute;
     top: 0;
     right: -40px;
     cursor: pointer;
-    width: 40px; }
+    width: 40px;
+    text-align: center; }
+  .folding-sidebar__contents {
+    will-change: width;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+    -ms-transition: all 0.2s ease;
+    -o-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+    overflow: hidden; }
+
+.filter-section {
+  background-color: #54585a;
+  max-width: calc(330px - 2rem);
+  min-width: calc(330px - 2rem);
+  padding: 1rem; }
+  .filter-section label {
+    color: #fff; }
+
+.filter-buttons {
+  background-color: #71757b;
+  display: flex;
+  justify-content: space-around; }
+  .filter-buttons .btn {
+    display: block;
+    width: 100%; }
+    .filter-buttons .btn + .btn {
+      margin-left: 1rem; }
 
 .changelog__entry__header.is-expanded {
   background-color: #ebedf0; }
@@ -8789,7 +8809,7 @@ body.page_iptt_table {
   #sidebar .list-group .collapse > .collapse > .collapse .list-group-item {
     padding-left: 40px; }
 
-@media (max-width: 768px) {
+@media (max-width: 991.98px) {
   .iptt_table_wrapper {
     padding-left: 0; }
   #id_span_iptt_date_range {
@@ -9207,5 +9227,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-e4f80f1d8bf4aad8e76b.css.map*/
