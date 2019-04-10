@@ -1,18 +1,24 @@
+//TODO: breakpoints? min-width?
 .folding-sidebar {
     $trigger_width: 40px;
     position: relative;
     margin-right: $trigger_width;
-
     &__trigger {
-        background-color: #00a49f; // TODO
+        background-color: $teal-500;
         color: white;
-        font-size: 2em;
+        font-size: 1.25rem;
         display: inline-block;
-        padding: 5px;
+        padding: 0.3em 0.5em;
         position: absolute;
         top: 0;
         right: -$trigger_width;
         cursor: pointer;
         width: $trigger_width;
+        text-align: center;
+    }
+    &__contents {
+        will-change: width;
+        @include alltransitions (all, 0.2s, ease);
+        overflow: hidden;
     }
 }

@@ -67,6 +67,8 @@
 /* Local Bootstrap overrides */
 @import '_bootstrap_multiselect.scss'; // my what a mess this is
 @import 'bootstrap_overrides'; // overload BS selectors.
+// load mixins before other scss to use them in other files:
+@import 'mixins';
 
 // Select2 multi-select menus
 // AFAIK used only in Program menu and IPTT quickstart page
@@ -101,7 +103,6 @@
 @import 'components/login'; // login page
 
 /* Local custom CSS and overloads for non-BS libraries */
-@import 'mixins';
 @import 'mc_tola_forms'; // extremely custom!
 @import 'maps';
 @import 'charts';
