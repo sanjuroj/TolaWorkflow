@@ -7183,7 +7183,7 @@ span[data-toggle="popover"]:hover {
 
 .select2-container {
   box-sizing: border-box;
-  display: inline-block;
+  display: block;
   margin: 0;
   position: relative;
   vertical-align: middle; }
@@ -8590,7 +8590,8 @@ span[data-toggle="popover"]:hover {
   padding: 1rem; }
 
 .has-crispy-form .nav-tabs {
-  width: 100%; }
+  width: 100%;
+  margin-bottom: 0; }
 
 .has-crispy-form .input-group {
   align-items: center; }
@@ -9263,3 +9264,5 @@ a:hover {
 
 /* Unsorted custom selectors */
 
+
+/*# sourceMappingURL=base-6381810db72f4ca41872.css.map*/
