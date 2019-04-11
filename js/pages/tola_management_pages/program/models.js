@@ -35,12 +35,10 @@ export class ProgramStore {
     @observable editing_target = null
     @observable editing_errors = {}
     @observable fetching_editing_history = true
-    @observable editing_target_history = null
+    @observable editing_history = []
     @observable saving = false
 
-    @observable bulk_targets = new Map()
     @observable applying_bulk_updates = false
-    @observable bulk_targets_all = false
 
     @observable active_editor_pane = 'profile'
 
