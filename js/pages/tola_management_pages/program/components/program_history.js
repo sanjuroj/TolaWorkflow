@@ -52,7 +52,7 @@ export class ProgramHistory extends React.Component {
         return <div className="tab-pane--react admin-edit-pane">
             <h2 className="no-bold">{this.props.program_data.name ? this.props.program_data.name+': ' : ''}{gettext("Status and History")}</h2>
             <div className="form-group">
-                <label htmlFor="status-input" required>{gettext("Program Status")}<span className="required">*</span></label>
+                <label htmlFor="status-input" className="label--required" required>{gettext("Program Status")}</label>
                 <Select
                     isSearchable={false}
                     options={status_options}

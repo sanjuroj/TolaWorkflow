@@ -56,7 +56,12 @@ export default class EditOrganizationHistory extends React.Component {
         return <div className="tab-pane--react">
             <h2 className="no-bold">{this.state.data.name ? this.state.data.name+": ": ""}{gettext("Status and history")}</h2>
             <div className="form-group">
-                <Select options={status_options} value={this.state.data.is_active} onChange={(new_value) => this.onChange(new_value)} />
+                <label className="label--required" htmlFor="organization-status-input">{gettext("Status")}</label>
+                <Select
+                    options={status_options}
+                    value={this.state.data.is_active}
+                    id="organization-status-input"
+                    onChange={(new_value) => this.onChange(new_value)} />
             </div>
             <div className="row">
                 <div className="col">

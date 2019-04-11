@@ -76,7 +76,7 @@ export default class EditProgramProfile extends React.Component {
                 <h2 className="no-bold">{this.props.program_data.name ? this.props.program_data.name+': ' : ''}{gettext("Profile")}</h2>
                 <form className="form">
                     <div className="form-group">
-                        <label htmlFor="program-name-input">{gettext("Program name")}<span className="required">*</span></label>
+                        <label className="label--required" htmlFor="program-name-input">{gettext("Program name")}</label>
                         <input
                             type="text"
                             value={formdata.name}
@@ -121,7 +121,7 @@ export default class EditProgramProfile extends React.Component {
                         <ErrorFeedback errorMessages={this.formErrors('description')} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="program-county-input">{gettext("Countries")}<span className="required">*</span></label>
+                        <label className="label--required" htmlFor="program-county-input">{gettext("Countries")}</label>
                         <CheckboxedMultiSelect
                             value={selectedCountries}
                             options={this.props.countryOptions}
@@ -143,7 +143,7 @@ export default class EditProgramProfile extends React.Component {
                         <ErrorFeedback errorMessages={this.formErrors('sector')} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="program-funding-status-input">{gettext("Funding Status")}<span className="required">*</span></label>
+                        <label className="label--required" htmlFor="program-funding-status-input">{gettext("Funding Status")}</label>
                         <Select
                             value={selectedFundingStatus}
                             options={fundingStatusOptions}

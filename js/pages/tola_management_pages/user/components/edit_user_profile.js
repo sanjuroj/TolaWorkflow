@@ -128,7 +128,7 @@ export default class EditUserProfile extends React.Component {
                 <h2 className="no-bold">{ud.name? ud.name+': ':''}Profile</h2>
                 <form className="form">
                     <div className="form-group">
-                        <label htmlFor="user-first-name-input">{gettext("Preferred First Name")}<span className="required">*</span></label>
+                        <label className="label--required" htmlFor="user-first-name-input">{gettext("Preferred First Name")}</label>
                         <input
                             disabled={disabled}
                             className={"form-control "+error_classes.first_name}
@@ -144,7 +144,7 @@ export default class EditUserProfile extends React.Component {
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-last-name-input">{gettext("Preferred Last Name")}<span className="required">*</span></label>
+                        <label className="label--required" htmlFor="user-last-name-input">{gettext("Preferred Last Name")}</label>
                         <input
                             disabled={disabled}
                             className={"form-control "+error_classes.last_name}
@@ -160,7 +160,7 @@ export default class EditUserProfile extends React.Component {
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-organization-input">{gettext("Organization")}<span className="required">*</span></label>
+                        <label className="label--required" htmlFor="user-organization-input">{gettext("Organization")}</label>
                         <Select
                             isDisabled={disabled}
                             className={"form-control "+error_classes.organization}
@@ -187,7 +187,7 @@ export default class EditUserProfile extends React.Component {
                             id="user-title-input" />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-email-input">{gettext("Email")}<span className="required">*</span></label>
+                        <label className="label--required" htmlFor="user-email-input">{gettext("Email")}</label>
                         <input
                             disabled={disabled}
                             className={"form-control "+error_classes.email}
