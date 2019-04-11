@@ -92,6 +92,9 @@ export class UserStore {
     @observable appliedFilters = {
     }
 
+    // UI state - track what history rows are expanded
+    @observable changelog_expanded_rows = new Set();
+
     constructor({
         countries,
         organizations,
@@ -635,6 +638,15 @@ export class UserStore {
             user_status: '',
             admin_role: '',
             users: []
+        }
+    }
+
+    @action
+    toggleChangeLogRowExpando(row_id) {
+        if (this.changelog_expanded_rows.has(row_id)) {
+            this.changelog_expanded_rows.delete(row_id);
+        } else {
+            this.changelog_expanded_rows.add(row_id);
         }
     }
 }

@@ -59,6 +59,9 @@ export class OrganizationStore {
 
     @observable active_editor_pane = 'profile'
 
+    // UI state - track what history rows are expanded
+    @observable changelog_expanded_rows = new Set();
+
     active_pane_is_dirty = false
 
     constructor(programs, organizations, sectors, countries, country_filter, program_filter) {
@@ -339,6 +342,15 @@ export class OrganizationStore {
             programs: [],
             sectors: [],
             organization_status: '',
+        }
+    }
+
+    @action
+    toggleChangeLogRowExpando(row_id) {
+        if (this.changelog_expanded_rows.has(row_id)) {
+            this.changelog_expanded_rows.delete(row_id);
+        } else {
+            this.changelog_expanded_rows.add(row_id);
         }
     }
 }

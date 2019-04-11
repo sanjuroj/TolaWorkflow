@@ -302,6 +302,7 @@ export const IndexView = observer(
                                                 HistorySection={observer(() =>
                                                     <LoadingSpinner isLoading={store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs}>
                                                         <EditUserHistory
+                                                            store={store}
                                                             disabled={data.organization_id == 1 && !store.is_superuser}
                                                             userData={store.editing_target_data.profile}
                                                             history={store.editing_target_data.history}
