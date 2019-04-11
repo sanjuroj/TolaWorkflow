@@ -8530,6 +8530,9 @@ span[data-toggle="popover"]:hover {
 .changelog__entry__header.is-expanded {
   background-color: #ebedf0; }
 
+.changelog__entry__header .text-action:hover {
+  cursor: pointer; }
+
 .login {
   margin-left: auto;
   margin-right: auto;
@@ -9233,5 +9236,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-d7745463b4e21c80793c.css.map*/

@@ -12,7 +12,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OrganizationStore", function() { return OrganizationStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./api */ "zUdS");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _temp;
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -55,6 +55,7 @@ var default_organization = {
 var OrganizationStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
+  // UI state - track what history rows are expanded
   function OrganizationStore(programs, organizations, sectors, countries, country_filter, program_filter) {
     var _this = this;
 
@@ -110,6 +111,8 @@ function () {
     }];
 
     _initializerDefineProperty(this, "active_editor_pane", _descriptor17, this);
+
+    _initializerDefineProperty(this, "changelog_expanded_rows", _descriptor18, this);
 
     this.active_pane_is_dirty = false;
     this.available_programs = programs;
@@ -523,6 +526,15 @@ function () {
         organization_status: ''
       };
     }
+  }, {
+    key: "toggleChangeLogRowExpando",
+    value: function toggleChangeLogRowExpando(row_id) {
+      if (this.changelog_expanded_rows.has(row_id)) {
+        this.changelog_expanded_rows.delete(row_id);
+      } else {
+        this.changelog_expanded_rows.add(row_id);
+      }
+    }
   }]);
 
   return OrganizationStore;
@@ -651,7 +663,14 @@ function () {
   initializer: function initializer() {
     return 'profile';
   }
-}), _applyDecoratedDescriptor(_class.prototype, "onProfilePaneChange", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "onProfilePaneChange"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "fetchOrganizations", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchOrganizations"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createOrganization", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createOrganization"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateOrganizationProfile", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateOrganizationProfile"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewOrganization", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewOrganization"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewOrganizationAndAddAnother", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewOrganizationAndAddAnother"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeSectorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeSectorFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeProgramFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeProgramFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationStatusFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationStatusFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype)), _class);
+}), _descriptor18 = _applyDecoratedDescriptor(_class.prototype, "changelog_expanded_rows", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return new Set();
+  }
+}), _applyDecoratedDescriptor(_class.prototype, "onProfilePaneChange", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "onProfilePaneChange"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "fetchOrganizations", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchOrganizations"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createOrganization", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createOrganization"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateOrganizationProfile", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateOrganizationProfile"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewOrganization", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewOrganization"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewOrganizationAndAddAnother", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewOrganizationAndAddAnother"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeSectorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeSectorFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeProgramFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeProgramFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationStatusFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationStatusFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleChangeLogRowExpando", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleChangeLogRowExpando"), _class.prototype)), _class);
 
 /***/ }),
 
@@ -1055,6 +1074,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
                 isLoading: store.fetching_editing_target || store.saving
               }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_organization_history__WEBPACK_IMPORTED_MODULE_8__["default"], {
+                store: store,
                 onIsDirtyChange: function onIsDirtyChange(is_dirty) {
                   return store.setActiveFormIsDirty(is_dirty);
                 },
@@ -1230,6 +1250,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -1237,6 +1258,7 @@ function _nonIterableRest() { throw new TypeError("Invalid attempt to destructur
 function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -1250,16 +1272,23 @@ var ChangeField = function ChangeField(_ref) {
 };
 
 var ChangeLogEntryHeader = function ChangeLogEntryHeader(_ref2) {
-  var data = _ref2.data;
+  var data = _ref2.data,
+      is_expanded = _ref2.is_expanded,
+      toggle_expando_cb = _ref2.toggle_expando_cb;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
-    className: "changelog__entry__header is-expanded"
+    className: is_expanded ? 'changelog__entry__header is-expanded' : 'changelog__entry__header',
+    onClick: function onClick() {
+      return toggle_expando_cb(data.id);
+    }
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "text-nowrap text-action"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-    className: "fas fa-caret-down"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__["FontAwesomeIcon"], {
+    icon: is_expanded ? 'caret-down' : 'caret-right'
   }), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, data.date)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "text-nowrap"
-  }, data.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null));
+  }, data.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+    className: "text-nowrap"
+  }, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null));
 };
 
 var ChangeLogEntryRow = function ChangeLogEntryRow(_ref3) {
@@ -1350,19 +1379,27 @@ var ChangeLogEntryRow = function ChangeLogEntryRow(_ref3) {
 };
 
 var ChangeLogEntry = function ChangeLogEntry(_ref8) {
-  var data = _ref8.data;
+  var data = _ref8.data,
+      is_expanded = _ref8.is_expanded,
+      toggle_expando_cb = _ref8.toggle_expando_cb;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
     className: "changelog__entry",
     key: data.id
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryHeader, {
-    data: data
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryRow, {
+    data: data,
+    is_expanded: is_expanded,
+    toggle_expando_cb: toggle_expando_cb
+  }), is_expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryRow, {
     data: data
   }));
 };
 
 var ChangeLog = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref9) {
-  var data = _ref9.data;
+  var data = _ref9.data,
+      expanded_rows = _ref9.expanded_rows,
+      toggle_expando_cb = _ref9.toggle_expando_cb;
+  // If expanded_rows is not null/undefined then use it to control expansion/collapse of entries
+  // otherwise, default it to "open"
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
     className: "table table-sm bg-white table-bordered text-small changelog"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
@@ -1375,10 +1412,18 @@ var ChangeLog = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     className: "text-nowrap td--half-stretch"
   }, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap td--half-stretch"
-  }, gettext("New Entry")))), data.map(function (entry, id) {
+  }, gettext("New Entry")))), data.map(function (entry) {
+    var is_expanded = true;
+
+    if (expanded_rows) {
+      is_expanded = expanded_rows.has(entry.id);
+    }
+
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntry, {
-      key: id,
-      data: entry
+      key: entry.id,
+      data: entry,
+      is_expanded: is_expanded,
+      toggle_expando_cb: toggle_expando_cb
     });
   }));
 });
@@ -1658,15 +1703,23 @@ function (_React$Component) {
     value: function render() {
       var _this4 = this;
 
+      var _this$props = this.props,
+          organizationHistoryData = _this$props.organizationHistoryData,
+          store = _this$props.store;
+      var changelog_expanded_rows = store.changelog_expanded_rows;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "tab-pane--react"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", {
         className: "no-bold"
       }, this.state.data.name ? this.state.data.name + ": " : "", gettext("Status and history")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
+        htmlFor: "organization-status-input"
+      }, gettext("Status")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
         options: status_options,
         value: this.state.data.is_active,
+        id: "organization-status-input",
         onChange: function onChange(new_value) {
           return _this4.onChange(new_value);
         }
@@ -1689,7 +1742,11 @@ function (_React$Component) {
           return _this4.onReset();
         }
       }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_changelog__WEBPACK_IMPORTED_MODULE_5__["default"], {
-        data: this.props.organizationHistoryData
+        data: organizationHistoryData,
+        expanded_rows: changelog_expanded_rows,
+        toggle_expando_cb: function toggle_expando_cb(row_id) {
+          return store.toggleChangeLogRowExpando(row_id);
+        }
       }));
     }
   }]);
@@ -2341,10 +2398,9 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "organization-name-input"
-      }, gettext("Organization name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "required"
-      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Organization name")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
         value: od.name,
         onChange: function onChange(e) {
@@ -2370,10 +2426,9 @@ function (_React$Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "primary-address-input"
-      }, gettext("Primary Address"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "required"
-      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
+      }, gettext("Primary Address")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         value: od.primary_address,
         onChange: function onChange(e) {
           return _this10.updatePrimaryAddress(e.target.value);
@@ -2386,10 +2441,9 @@ function (_React$Component) {
       }, errors.primary_address)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "primary-contact-name-input"
-      }, gettext("Primary Contact Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "required"
-      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Primary Contact Name")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
         value: od.primary_contact_name,
         onChange: function onChange(e) {
@@ -2403,10 +2457,9 @@ function (_React$Component) {
       }, errors.primary_contact_name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "primary-contact-email-input"
-      }, gettext("Primary Contact Email"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "required"
-      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Primary Contact Email")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
         value: od.primary_contact_email,
         onChange: function onChange(e) {
@@ -2420,10 +2473,9 @@ function (_React$Component) {
       }, errors.primary_contact_email)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "primary-contact-phone-input"
-      }, gettext("Primary Contact Phone Number"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "required"
-      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Primary Contact Phone Number")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
         value: od.primary_contact_phone,
         onChange: function onChange(e) {
@@ -2567,4 +2619,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-2a03dc7398c73a39636b.js.map
+//# sourceMappingURL=tola_management_organization-d8f3bc9458be6c801897.js.map
