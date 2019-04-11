@@ -136,8 +136,8 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountryFilter, {
     store: store,
     filterOptions: countryFilterOptions
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "filter-buttons"
+  })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "filter-section filter-buttons"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     className: "btn btn-primary",
     onClick: function onClick() {
@@ -148,7 +148,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     onClick: function onClick() {
       return store.clearFilters();
     }
-  }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, gettext("Reset")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "col admin-list"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
     className: "page-title"
@@ -2988,30 +2988,81 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 
+/* Sidebar expando/collapso mimicking bootstrap behavior
+ * CSS in components/_folding_sidebar.scss
+ * Usage: <FoldingSidebar>
+ *          children to be hidden when toggle is clicked
+ *         </FoldingSidebar>
+ */
 
-var Expander =
+var FoldingSidebar =
 /*#__PURE__*/
 function (_React$Component) {
-  _inherits(Expander, _React$Component);
+  _inherits(FoldingSidebar, _React$Component);
 
-  function Expander(props) {
+  function FoldingSidebar(props) {
     var _this;
 
-    _classCallCheck(this, Expander);
+    _classCallCheck(this, FoldingSidebar);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Expander).call(this, props));
-    _this.state = {
-      folded: false
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(FoldingSidebar).call(this, props));
+
+    _this.updateDimensions = function () {
+      if (!_this.state.folded && !_this.state.folding) {
+        _this.setState(function () {
+          return {
+            resize: true
+          };
+        }, function () {
+          _this.contentWidth = _this.contentsContainer.current.offsetWidth;
+
+          _this.setState({
+            resize: false
+          });
+        });
+      }
     };
+
+    _this.state = {
+      folding: false,
+      folded: false,
+      resize: false
+    };
+    _this.contentsContainer = react__WEBPACK_IMPORTED_MODULE_0___default.a.createRef();
     return _this;
   }
 
-  _createClass(Expander, [{
+  _createClass(FoldingSidebar, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.contentWidth = this.contentsContainer.current.offsetWidth;
+      window.addEventListener("resize", this.updateDimensions);
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      window.removeEventListener("resize", this.updateDimensions);
+    }
+  }, {
     key: "toggleFolded",
     value: function toggleFolded() {
-      this.setState({
-        folded: !this.state.folded
-      });
+      if (!this.state.folding) {
+        this.setState({
+          folding: true,
+          folded: !this.state.folded
+        });
+      } else {
+        this.foldComplete();
+      }
+    }
+  }, {
+    key: "foldComplete",
+    value: function foldComplete() {
+      this.setState(function () {
+        return {
+          folding: false
+        };
+      }, this.updateDimensions);
     }
   }, {
     key: "render",
@@ -3022,10 +3073,22 @@ function (_React$Component) {
           className = _this$props.className,
           props = _objectWithoutProperties(_this$props, ["className"]);
 
-      var icon = this.state.folded ? "fa-chevron-right" : "fa-chevron-left";
+      var icon = this.state.folded ? this.state.folding ? "fa-angle-double-left" : "fa-chevron-right" : this.state.folding ? "fa-angle-double-right" : "fa-chevron-left";
+      var width = this.state.folded ? "0px" : this.state.resize ? "auto" : this.contentWidth + "px";
+      var overflow = this.state.folded || this.state.folding ? "hidden" : "visible";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", _extends({
         className: "folding-sidebar " + (className || '')
-      }, props), !this.state.folded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, this.props.children), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, props), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "folding-sidebar__contents",
+        onTransitionEnd: function onTransitionEnd() {
+          return _this2.foldComplete();
+        },
+        ref: this.contentsContainer,
+        style: {
+          width: width,
+          overflow: overflow
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, this.props.children)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "folding-sidebar__trigger",
         onClick: function onClick() {
           return _this2.toggleFolded();
@@ -3038,12 +3101,12 @@ function (_React$Component) {
     }
   }]);
 
-  return Expander;
+  return FoldingSidebar;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
-/* harmony default export */ __webpack_exports__["default"] = (Expander);
+/* harmony default export */ __webpack_exports__["default"] = (FoldingSidebar);
 
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-ae289ae56087af2c0ff8.js.map
+//# sourceMappingURL=tola_management_country-b72cd13a7d61e208ec6d.js.map
