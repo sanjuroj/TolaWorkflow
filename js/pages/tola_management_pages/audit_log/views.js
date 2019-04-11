@@ -65,9 +65,10 @@ class ChangesetEntry extends React.Component {
 const ExpandAllButton = observer(
     ({store}) => {
         {/* # Translators: button label to show the details of all rows in a list */}
-        return <button className="btn btn-secondary btn-sm"
+        return <button className="btn btn-medium text-action btn-sm"
                        onClick={() => store.expandAllExpandos()}
                        disabled={store.log_rows.length === store.expando_rows.size}>
+            <i className="fas fa-plus-square"></i>
             {gettext('Expand all')}
         </button>
     }
@@ -76,9 +77,10 @@ const ExpandAllButton = observer(
 const CollapseAllButton = observer(
     ({store}) => {
         {/* # Translators: button label to hide the details of all rows in a list */}
-        return <button className="btn btn-secondary btn-sm"
+        return <button className="btn btn-medium text-action btn-sm"
                        onClick={() => store.collapsAllExpandos()}
                        disabled={store.expando_rows.size === 0}>
+            <i className="fas fa-minus-square"></i>
             {gettext('Collapse all')}
         </button>
     }
@@ -92,16 +94,20 @@ export const IndexView = observer(
             </header>
 
             <div className="admin-list__controls">
-                <div className="controls__bulk-actions" />
+                <div className="controls__bulk-actions">
+                    <div className="btn-group">
+                        <ExpandAllButton store={store} />
+                        <CollapseAllButton store={store} />
+                    </div>
+                </div>
                 <div className="controls__buttons">
                     <a className="btn btn-secondary btn-sm" href={`/api/tola_management/program/${store.program_id}/export_audit_log`}>
                         <i className="fas fa-download"></i>
                         {gettext("Excel")}
                     </a>
-                    <ExpandAllButton store={store} />
-                    <CollapseAllButton store={store} />
                 </div>
             </div>
+
             <div className="admin-list__table">
                 <LoadingSpinner isLoading={store.fetching}>
                     <table className="table table-sm table-bordered bg-white text-small changelog">
@@ -122,15 +128,14 @@ export const IndexView = observer(
                                 let is_expanded = store.expando_rows.has(data.id);
                                 return <tbody key={data.id}>
                                 <tr className="changelog__entry__header is-expanded" onClick={() => store.toggleRowExpando(data.id)}>
-                                    <td>
+                                    <td class="text-action">
                                         <FontAwesomeIcon icon={is_expanded ? 'caret-down' : 'caret-right'} />&nbsp;{data.date}
                                     </td>
                                     <td>{(data.indicator) ? data.indicator.number : gettext('N/A')}</td>
                                     <td>{(data.indicator) ? data.indicator.name : gettext('N/A')}</td>
                                     <td>{data.user}</td>
                                     <td>{data.organization}</td>
-                                    <td>{data.pretty_change_type}</td>
-                                    {/* SWEET FANCY MOSES WHAT IS THIS */}
+                                    <td className="text-nowrap">{data.pretty_change_type}</td>
                                     <td></td>
                                     <td></td>
                                     <td></td>

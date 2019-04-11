@@ -14,7 +14,7 @@ const ChangeLogEntryHeader = ({data, is_expanded, toggle_expando_cb}) => {
             <FontAwesomeIcon icon={is_expanded ? 'caret-down' : 'caret-right'} />&nbsp;<strong>{data.date}</strong>
         </td>
         <td className="text-nowrap">{data.admin_user}</td>
-        <td>{data.pretty_change_type}</td>
+        <td className="text-nowrap">{data.pretty_change_type}</td>
         <td></td>
         <td></td>
     </tr>
