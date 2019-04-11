@@ -73,12 +73,6 @@ $(document).ajaxStart(function () {
       notifyError(js_context.strings.unknownNetworkError, jqxhr.statusText);
     }
   }
-}).ajaxSuccess(function (event, jqxhr) {
-  if (jqxhr.getResponseHeader("Login-Screen") != null && jqxhr.getResponseHeader("Login-Screen").length) {
-    // Not logged in - the 302 redirect is implicit and jQuery has no way to know it happened
-    // check special header set by our login view to see if that's where we ended up
-    notifyLoginRequired();
-  }
 });
 
 if (!Date.prototype.toISODate) {
@@ -533,4 +527,4 @@ window.create_nondestructive_changeset_notice = function () {
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-99487a2499faa1e046b4.js.map
+//# sourceMappingURL=base-3a023a1fb476b927efc3.js.map
