@@ -20,8 +20,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var components_pagination__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! components/pagination */ "RCjz");
 /* harmony import */ var components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! components/checkboxed-multi-select */ "Z2Y6");
 /* harmony import */ var components_expander__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! components/expander */ "H4hL");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
-/* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
+/* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -47,7 +46,6 @@ function _nonIterableRest() { throw new TypeError("Invalid attempt to destructur
 function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 
 
 
@@ -170,53 +168,17 @@ function (_React$Component) {
   return ChangesetEntry;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
-var ExpandAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref6) {
+var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref6) {
   var store = _ref6.store;
-  {
-    /* # Translators: button label to show the details of all rows in a list */
-  }
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-    className: "btn btn-medium text-action btn-sm",
-    onClick: function onClick() {
-      return store.expandAllExpandos();
-    },
-    disabled: store.log_rows.length === store.expando_rows.size
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-    className: "fas fa-plus-square"
-  }), gettext('Expand all'));
-});
-var CollapseAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref7) {
-  var store = _ref7.store;
-  {
-    /* # Translators: button label to hide the details of all rows in a list */
-  }
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-    className: "btn btn-medium text-action btn-sm",
-    onClick: function onClick() {
-      return store.collapsAllExpandos();
-    },
-    disabled: store.expando_rows.size === 0
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-    className: "fas fa-minus-square"
-  }), gettext('Collapse all'));
-});
-var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref8) {
-  var store = _ref8.store;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "audit-log-index-view"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
-    className: "page-title"
+    class: "page-title"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, gettext("Indicator change log:")), " ", store.program_name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__controls"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "controls__bulk-actions"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "btn-group"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ExpandAllButton, {
-    store: store
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CollapseAllButton, {
-    store: store
-  }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "controls__buttons"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
     className: "btn btn-secondary btn-sm",
@@ -225,7 +187,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     className: "fas fa-download"
   }), gettext("Excel")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__table"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_8__["default"], {
     isLoading: store.fetching
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
     className: "table table-sm table-bordered bg-white text-small changelog"
@@ -248,21 +210,9 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
   }, gettext("New Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
   }, gettext("Rationale")))), store.log_rows.map(function (data) {
-    var is_expanded = store.expando_rows.has(data.id);
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
-      key: data.id
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
-      className: is_expanded ? 'changelog__entry__header is-expanded' : 'changelog__entry__header',
-      onClick: function onClick() {
-        return store.toggleRowExpando(data.id);
-      }
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-      class: "text-action"
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__["FontAwesomeIcon"], {
-      icon: is_expanded ? 'caret-down' : 'caret-right'
-    }), "\xA0", data.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.number : gettext('N/A')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.name : gettext('N/A')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.organization), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-      className: "text-nowrap"
-    }, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null)), is_expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+      className: "changelog__entry__header is-expanded"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.number : gettext('N/A')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.name : gettext('N/A')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.organization), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
       className: "changelog__entry__row",
       key: data.id
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
@@ -929,7 +879,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProgramAuditLogStore", function() { return ProgramAuditLogStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./api */ "h6br");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _temp;
 
 function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -948,7 +898,6 @@ function _initializerWarningHelper(descriptor, context) { throw new Error('Decor
 var ProgramAuditLogStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
-  // UI state - track what history rows are expanded
   function ProgramAuditLogStore(program_id, program_name) {
     _classCallCheck(this, ProgramAuditLogStore);
 
@@ -962,15 +911,17 @@ function () {
 
     _initializerDefineProperty(this, "current_page", _descriptor5, this);
 
-    _initializerDefineProperty(this, "entries_count", _descriptor6, this);
+    _initializerDefineProperty(this, "details_target", _descriptor6, this);
 
-    _initializerDefineProperty(this, "total_pages", _descriptor7, this);
+    _initializerDefineProperty(this, "entries_count", _descriptor7, this);
 
-    _initializerDefineProperty(this, "next_page", _descriptor8, this);
+    _initializerDefineProperty(this, "total_pages", _descriptor8, this);
 
-    _initializerDefineProperty(this, "previous_page", _descriptor9, this);
+    _initializerDefineProperty(this, "next_page", _descriptor9, this);
 
-    _initializerDefineProperty(this, "expando_rows", _descriptor10, this);
+    _initializerDefineProperty(this, "previous_page", _descriptor10, this);
+
+    _initializerDefineProperty(this, "current_page", _descriptor11, this);
 
     this.program_id = program_id;
     this.program_name = program_name;
@@ -995,35 +946,21 @@ function () {
       });
     }
   }, {
+    key: "toggleDetailsTarget",
+    value: function toggleDetailsTarget(row_id) {
+      if (this.details_target == row_id) {
+        this.details_target = null;
+      } else {
+        this.details_target = row_id;
+      }
+    }
+  }, {
     key: "changePage",
     value: function changePage(page) {
       if (page.selected != this.current_page) {
         this.current_page = page.selected;
         this.fetchProgramAuditLog();
       }
-    }
-  }, {
-    key: "toggleRowExpando",
-    value: function toggleRowExpando(row_id) {
-      if (this.expando_rows.has(row_id)) {
-        this.expando_rows.delete(row_id);
-      } else {
-        this.expando_rows.add(row_id);
-      }
-    }
-  }, {
-    key: "expandAllExpandos",
-    value: function expandAllExpandos() {
-      var _this2 = this;
-
-      this.log_rows.forEach(function (row) {
-        return _this2.expando_rows.add(row.id);
-      });
-    }
-  }, {
-    key: "collapsAllExpandos",
-    value: function collapsAllExpandos() {
-      this.expando_rows.clear();
     }
   }]);
 
@@ -1063,44 +1000,51 @@ function () {
   initializer: function initializer() {
     return 0;
   }
-}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "entries_count", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return 0;
-  }
-}), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "total_pages", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return 0;
-  }
-}), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "next_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "details_target", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, "previous_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "entries_count", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return 0;
+  }
+}), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "total_pages", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return 0;
+  }
+}), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, "next_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, "expando_rows", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, "previous_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
-    return new Set();
+    return null;
   }
-}), _applyDecoratedDescriptor(_class.prototype, "fetchProgramAuditLog", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchProgramAuditLog"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleRowExpando", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleRowExpando"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "expandAllExpandos", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "expandAllExpandos"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "collapsAllExpandos", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "collapsAllExpandos"), _class.prototype)), _class);
+}), _descriptor11 = _applyDecoratedDescriptor(_class.prototype, "current_page", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return 0;
+  }
+}), _applyDecoratedDescriptor(_class.prototype, "fetchProgramAuditLog", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchProgramAuditLog"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleDetailsTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleDetailsTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype)), _class);
 
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-2013be9d96117272344a.js.map
+//# sourceMappingURL=audit_log-14e0c6dd4a9eebf82517.js.map

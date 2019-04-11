@@ -335,10 +335,7 @@ function (_React$Component) {
     value: function render() {
       var _this4 = this;
 
-      var _this$props = this.props,
-          history = _this$props.history,
-          store = _this$props.store;
-      var changelog_expanded_rows = store.changelog_expanded_rows;
+      var history = this.props.history;
       var currentStatusSelection = status_options.find(function (x) {
         return x.value == _this4.state.managed_status.funding_status;
       });
@@ -350,9 +347,10 @@ function (_React$Component) {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         htmlFor: "status-input",
-        className: "label--required",
         required: true
-      }, gettext("Program Status")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, gettext("Program Status"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "required"
+      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
         isSearchable: false,
         options: status_options,
         value: currentStatusSelection,
@@ -378,11 +376,7 @@ function (_React$Component) {
           return _this4.onReset();
         }
       }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_changelog__WEBPACK_IMPORTED_MODULE_5__["default"], {
-        data: history,
-        expanded_rows: changelog_expanded_rows,
-        toggle_expando_cb: function toggle_expando_cb(row_id) {
-          return store.toggleChangeLogRowExpando(row_id);
-        }
+        data: this.props.history
       }));
     }
   }]);
@@ -615,7 +609,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -623,7 +616,6 @@ function _nonIterableRest() { throw new TypeError("Invalid attempt to destructur
 function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 
 
 
@@ -637,23 +629,16 @@ var ChangeField = function ChangeField(_ref) {
 };
 
 var ChangeLogEntryHeader = function ChangeLogEntryHeader(_ref2) {
-  var data = _ref2.data,
-      is_expanded = _ref2.is_expanded,
-      toggle_expando_cb = _ref2.toggle_expando_cb;
+  var data = _ref2.data;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
-    className: is_expanded ? 'changelog__entry__header is-expanded' : 'changelog__entry__header',
-    onClick: function onClick() {
-      return toggle_expando_cb(data.id);
-    }
+    className: "changelog__entry__header is-expanded"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "text-nowrap text-action"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__["FontAwesomeIcon"], {
-    icon: is_expanded ? 'caret-down' : 'caret-right'
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-caret-down"
   }), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, data.date)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "text-nowrap"
-  }, data.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-    className: "text-nowrap"
-  }, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null));
+  }, data.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null));
 };
 
 var ChangeLogEntryRow = function ChangeLogEntryRow(_ref3) {
@@ -744,27 +729,19 @@ var ChangeLogEntryRow = function ChangeLogEntryRow(_ref3) {
 };
 
 var ChangeLogEntry = function ChangeLogEntry(_ref8) {
-  var data = _ref8.data,
-      is_expanded = _ref8.is_expanded,
-      toggle_expando_cb = _ref8.toggle_expando_cb;
+  var data = _ref8.data;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
     className: "changelog__entry",
     key: data.id
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryHeader, {
-    data: data,
-    is_expanded: is_expanded,
-    toggle_expando_cb: toggle_expando_cb
-  }), is_expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryRow, {
+    data: data
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryRow, {
     data: data
   }));
 };
 
 var ChangeLog = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref9) {
-  var data = _ref9.data,
-      expanded_rows = _ref9.expanded_rows,
-      toggle_expando_cb = _ref9.toggle_expando_cb;
-  // If expanded_rows is not null/undefined then use it to control expansion/collapse of entries
-  // otherwise, default it to "open"
+  var data = _ref9.data;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
     className: "table table-sm bg-white table-bordered text-small changelog"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
@@ -777,18 +754,10 @@ var ChangeLog = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     className: "text-nowrap td--half-stretch"
   }, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap td--half-stretch"
-  }, gettext("New Entry")))), data.map(function (entry) {
-    var is_expanded = true;
-
-    if (expanded_rows) {
-      is_expanded = expanded_rows.has(entry.id);
-    }
-
+  }, gettext("New Entry")))), data.map(function (entry, id) {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntry, {
-      key: entry.id,
-      data: entry,
-      is_expanded: is_expanded,
-      toggle_expando_cb: toggle_expando_cb
+      key: id,
+      data: entry
     });
   }));
 });
@@ -956,9 +925,10 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "label--required",
         htmlFor: "program-name-input"
-      }, gettext("Program name")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Program name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "required"
+      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
         value: formdata.name,
         onChange: function onChange(e) {
@@ -1023,9 +993,10 @@ function (_React$Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "label--required",
         htmlFor: "program-county-input"
-      }, gettext("Countries")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }, gettext("Countries"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "required"
+      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
         value: selectedCountries,
         options: this.props.countryOptions,
         onChange: function onChange(e) {
@@ -1060,9 +1031,10 @@ function (_React$Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "label--required",
         htmlFor: "program-funding-status-input"
-      }, gettext("Funding Status")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, gettext("Funding Status"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "required"
+      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
         value: selectedFundingStatus,
         options: fundingStatusOptions,
         onChange: function onChange(e) {
@@ -1861,7 +1833,6 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
                 isLoading: store.saving
               }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_program_history__WEBPACK_IMPORTED_MODULE_8__["default"], {
-                store: store,
                 onIsDirtyChange: function onIsDirtyChange(is_dirty) {
                   return store.setActiveFormIsDirty(is_dirty);
                 },
@@ -2206,7 +2177,7 @@ function (_React$Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProgramStore", function() { return ProgramStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _descriptor26, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _temp;
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -2237,7 +2208,6 @@ var ProgramStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
   //filter options
-  // UI state - track what history rows are expanded
   function ProgramStore(api, initialData) {
     _classCallCheck(this, ProgramStore);
 
@@ -2290,8 +2260,6 @@ function () {
     _initializerDefineProperty(this, "bulk_targets_all", _descriptor24, this);
 
     _initializerDefineProperty(this, "active_editor_pane", _descriptor25, this);
-
-    _initializerDefineProperty(this, "changelog_expanded_rows", _descriptor26, this);
 
     this.active_pane_is_dirty = false;
     this.api = api;
@@ -2610,15 +2578,6 @@ function () {
         });
       }
     }
-  }, {
-    key: "toggleChangeLogRowExpando",
-    value: function toggleChangeLogRowExpando(row_id) {
-      if (this.changelog_expanded_rows.has(row_id)) {
-        this.changelog_expanded_rows.delete(row_id);
-      } else {
-        this.changelog_expanded_rows.add(row_id);
-      }
-    }
   }]);
 
   return ProgramStore;
@@ -2804,16 +2763,9 @@ function () {
   initializer: function initializer() {
     return 'profile';
   }
-}), _descriptor26 = _applyDecoratedDescriptor(_class.prototype, "changelog_expanded_rows", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return new Set();
-  }
-}), _applyDecoratedDescriptor(_class.prototype, "onProfilePaneChange", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "onProfilePaneChange"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "fetchPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkUpdateProgramStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkUpdateProgramStatus"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleChangeLogRowExpando", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleChangeLogRowExpando"), _class.prototype)), _class);
+}), _applyDecoratedDescriptor(_class.prototype, "onProfilePaneChange", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "onProfilePaneChange"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "fetchPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkUpdateProgramStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkUpdateProgramStatus"), _class.prototype)), _class);
 
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-c21bf9055dd80c4149a4.js.map
+//# sourceMappingURL=tola_management_program-bfc6b4d590e41413d332.js.map

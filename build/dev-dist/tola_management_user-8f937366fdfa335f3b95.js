@@ -1189,9 +1189,10 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "label--required",
         htmlFor: "user-first-name-input"
-      }, gettext("Preferred First Name")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Preferred First Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "required"
+      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         disabled: disabled,
         className: "form-control " + error_classes.first_name,
         type: "text",
@@ -1206,9 +1207,10 @@ function (_React$Component) {
       }, e.first_name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "label--required",
         htmlFor: "user-last-name-input"
-      }, gettext("Preferred Last Name")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Preferred Last Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "required"
+      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         disabled: disabled,
         className: "form-control " + error_classes.last_name,
         type: "text",
@@ -1223,9 +1225,10 @@ function (_React$Component) {
       }, e.last_name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "label--required",
         htmlFor: "user-organization-input"
-      }, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, gettext("Organization"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "required"
+      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
         isDisabled: disabled,
         className: "form-control " + error_classes.organization,
         value: this.state.selected_organization,
@@ -1254,9 +1257,10 @@ function (_React$Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "label--required",
         htmlFor: "user-email-input"
-      }, gettext("Email")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Email"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "required"
+      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         disabled: disabled,
         className: "form-control " + error_classes.email,
         type: "email",
@@ -1423,8 +1427,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-select */ "y2Vs");
 /* harmony import */ var react_virtualized__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-virtualized */ "c7k8");
 /* harmony import */ var components_changelog__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! components/changelog */ "KnAV");
-var _class, _temp;
-
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1455,7 +1457,7 @@ var status_options = [{
   value: false,
   label: gettext('Inactive')
 }];
-var EditUserHistory = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(_class = (_temp =
+var EditUserHistory =
 /*#__PURE__*/
 function (_React$Component) {
   _inherits(EditUserHistory, _React$Component);
@@ -1466,11 +1468,6 @@ function (_React$Component) {
     _classCallCheck(this, EditUserHistory);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(EditUserHistory).call(this, props));
-
-    _this.toggleChangeLogRowExpando = function (row_id) {
-      _this.props.store.toggleChangeLogRowExpando(row_id);
-    };
-
     _this.state = {
       original_user_data: {
         user: {
@@ -1535,36 +1532,37 @@ function (_React$Component) {
       var selected = status_options.find(function (option) {
         return option.value == _this4.state.user_data.user.is_active;
       });
-      var _this$props = this.props,
-          history = _this$props.history,
-          store = _this$props.store;
-      var changelog_expanded_rows = store.changelog_expanded_rows;
+      var history = this.props.history;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "edit-user-history"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", {
         className: "no-bold"
       }, this.state.user_data.name ? this.state.user_data.name + ': ' : '', gettext("Status and History")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
+        className: "row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        isDisabled: this.props.disabled,
+        options: status_options,
+        value: selected,
+        onChange: function onChange(new_value) {
+          return _this4.onChange(new_value);
+        }
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-secondary",
         onClick: function onClick() {
           return _this4.onResendRegistrationEmail();
         }
-      }, gettext("Resend Registration Email"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "label--required",
-        htmlFor: "user-status-input"
-      }, gettext("Status")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        isDisabled: this.props.disabled,
-        options: status_options,
-        value: selected,
-        id: "user-status-input",
-        onChange: function onChange(new_value) {
-          return _this4.onChange(new_value);
-        }
-      })), !this.props.disabled && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
+      }, gettext("Resend Registration Email")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row"
+      }, !this.props.disabled && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
         type: "button",
@@ -1577,18 +1575,14 @@ function (_React$Component) {
         onClick: function onClick() {
           return _this4.onReset();
         }
-      }, gettext("Reset"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_changelog__WEBPACK_IMPORTED_MODULE_4__["default"], {
-        data: history,
-        expanded_rows: changelog_expanded_rows,
-        toggle_expando_cb: function toggle_expando_cb(row_id) {
-          return store.toggleChangeLogRowExpando(row_id);
-        }
+      }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_changelog__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        data: history
       }));
     }
   }]);
 
   return EditUserHistory;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 /* harmony default export */ __webpack_exports__["default"] = (EditUserHistory);
 
 /***/ }),
@@ -1605,7 +1599,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -1613,7 +1606,6 @@ function _nonIterableRest() { throw new TypeError("Invalid attempt to destructur
 function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 
 
 
@@ -1627,23 +1619,16 @@ var ChangeField = function ChangeField(_ref) {
 };
 
 var ChangeLogEntryHeader = function ChangeLogEntryHeader(_ref2) {
-  var data = _ref2.data,
-      is_expanded = _ref2.is_expanded,
-      toggle_expando_cb = _ref2.toggle_expando_cb;
+  var data = _ref2.data;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
-    className: is_expanded ? 'changelog__entry__header is-expanded' : 'changelog__entry__header',
-    onClick: function onClick() {
-      return toggle_expando_cb(data.id);
-    }
+    className: "changelog__entry__header is-expanded"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "text-nowrap text-action"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__["FontAwesomeIcon"], {
-    icon: is_expanded ? 'caret-down' : 'caret-right'
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-caret-down"
   }), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, data.date)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "text-nowrap"
-  }, data.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-    className: "text-nowrap"
-  }, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null));
+  }, data.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null));
 };
 
 var ChangeLogEntryRow = function ChangeLogEntryRow(_ref3) {
@@ -1734,27 +1719,19 @@ var ChangeLogEntryRow = function ChangeLogEntryRow(_ref3) {
 };
 
 var ChangeLogEntry = function ChangeLogEntry(_ref8) {
-  var data = _ref8.data,
-      is_expanded = _ref8.is_expanded,
-      toggle_expando_cb = _ref8.toggle_expando_cb;
+  var data = _ref8.data;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
     className: "changelog__entry",
     key: data.id
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryHeader, {
-    data: data,
-    is_expanded: is_expanded,
-    toggle_expando_cb: toggle_expando_cb
-  }), is_expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryRow, {
+    data: data
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryRow, {
     data: data
   }));
 };
 
 var ChangeLog = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref9) {
-  var data = _ref9.data,
-      expanded_rows = _ref9.expanded_rows,
-      toggle_expando_cb = _ref9.toggle_expando_cb;
-  // If expanded_rows is not null/undefined then use it to control expansion/collapse of entries
-  // otherwise, default it to "open"
+  var data = _ref9.data;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
     className: "table table-sm bg-white table-bordered text-small changelog"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
@@ -1767,18 +1744,10 @@ var ChangeLog = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     className: "text-nowrap td--half-stretch"
   }, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap td--half-stretch"
-  }, gettext("New Entry")))), data.map(function (entry) {
-    var is_expanded = true;
-
-    if (expanded_rows) {
-      is_expanded = expanded_rows.has(entry.id);
-    }
-
+  }, gettext("New Entry")))), data.map(function (entry, id) {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntry, {
-      key: entry.id,
-      data: entry,
-      is_expanded: is_expanded,
-      toggle_expando_cb: toggle_expando_cb
+      key: id,
+      data: entry
     });
   }));
 });
@@ -2727,7 +2696,6 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
                 isLoading: store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs
               }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_user_history__WEBPACK_IMPORTED_MODULE_8__["default"], {
-                store: store,
                 disabled: data.organization_id == 1 && !store.is_superuser,
                 userData: store.editing_target_data.profile,
                 history: store.editing_target_data.history,
@@ -2813,7 +2781,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UserStore", function() { return UserStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./api */ "LX42");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _descriptor26, _descriptor27, _descriptor28, _descriptor29, _descriptor30, _descriptor31, _descriptor32, _descriptor33, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _descriptor26, _descriptor27, _descriptor28, _descriptor29, _descriptor30, _descriptor31, _descriptor32, _temp;
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -2875,7 +2843,6 @@ var UserStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
   //filter options
-  // UI state - track what history rows are expanded
   function UserStore(_ref) {
     var _this = this;
 
@@ -2974,8 +2941,6 @@ function () {
     _initializerDefineProperty(this, "filters", _descriptor31, this);
 
     _initializerDefineProperty(this, "appliedFilters", _descriptor32, this);
-
-    _initializerDefineProperty(this, "changelog_expanded_rows", _descriptor33, this);
 
     this.countries = countries;
     this.ordered_country_ids = Object.values(countries).sort(function (a, b) {
@@ -3700,15 +3665,6 @@ function () {
         users: []
       };
     }
-  }, {
-    key: "toggleChangeLogRowExpando",
-    value: function toggleChangeLogRowExpando(row_id) {
-      if (this.changelog_expanded_rows.has(row_id)) {
-        this.changelog_expanded_rows.delete(row_id);
-      } else {
-        this.changelog_expanded_rows.add(row_id);
-      }
-    }
   }]);
 
   return UserStore;
@@ -3950,14 +3906,7 @@ function () {
   initializer: function initializer() {
     return {};
   }
-}), _descriptor33 = _applyDecoratedDescriptor(_class.prototype, "changelog_expanded_rows", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return new Set();
-  }
-}), _applyDecoratedDescriptor(_class.prototype, "onProfilePaneChange", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "onProfilePaneChange"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "fetchUsers", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchUsers"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeBaseCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeBaseCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeProgramFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeProgramFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserStatusFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserStatusFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeAdminRoleFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeAdminRoleFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateActiveEditPage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateActiveEditPage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserProfile", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserProfile"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserIsActive", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserIsActive"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "resendRegistrationEmail", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "resendRegistrationEmail"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUserAndAddAnother", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUserAndAddAnother"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveUserPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveUserPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkUpdateUserStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkUpdateUserStatus"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkAddPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkAddPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkRemovePrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkRemovePrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleChangeLogRowExpando", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleChangeLogRowExpando"), _class.prototype)), _class);
+}), _applyDecoratedDescriptor(_class.prototype, "onProfilePaneChange", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "onProfilePaneChange"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "fetchUsers", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchUsers"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeBaseCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeBaseCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeProgramFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeProgramFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserStatusFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserStatusFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeAdminRoleFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeAdminRoleFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateActiveEditPage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateActiveEditPage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserProfile", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserProfile"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserIsActive", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserIsActive"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "resendRegistrationEmail", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "resendRegistrationEmail"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUserAndAddAnother", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUserAndAddAnother"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveUserPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveUserPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkUpdateUserStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkUpdateUserStatus"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkAddPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkAddPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkRemovePrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkRemovePrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype)), _class);
 
 /***/ }),
 
@@ -4233,4 +4182,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-ce60d3679e40cb2e4d64.js.map
+//# sourceMappingURL=tola_management_user-8f937366fdfa335f3b95.js.map
