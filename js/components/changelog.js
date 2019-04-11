@@ -9,7 +9,7 @@ const ChangeField = ({name, data}) => {
 }
 
 const ChangeLogEntryHeader = ({data, is_expanded, toggle_expando_cb}) => {
-    return <tr className="changelog__entry__header is-expanded" onClick={() => toggle_expando_cb(data.id)}>{/* TODO: apply is-expanded dynamically */}
+    return <tr className={is_expanded ? 'changelog__entry__header is-expanded' : 'changelog__entry__header'} onClick={() => toggle_expando_cb(data.id)}>{/* TODO: apply is-expanded dynamically */}
         <td className="text-nowrap text-action">
             <FontAwesomeIcon icon={is_expanded ? 'caret-down' : 'caret-right'} />&nbsp;<strong>{data.date}</strong>
         </td>
