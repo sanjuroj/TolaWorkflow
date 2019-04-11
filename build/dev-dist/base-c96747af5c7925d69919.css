@@ -8512,7 +8512,7 @@ span[data-toggle="popover"]:hover {
 .folding-sidebar {
   position: relative;
   margin-right: 40px; }
-  @media (max-width: 991.98px) {
+  @media (max-width: 1199.98px) {
     .folding-sidebar {
       position: fixed;
       z-index: 1050; } }
@@ -9264,3 +9264,5 @@ a:hover {
 
 /* Unsorted custom selectors */
 
+
+/*# sourceMappingURL=base-c96747af5c7925d69919.css.map*/
