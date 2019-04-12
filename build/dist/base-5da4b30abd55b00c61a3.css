@@ -7820,6 +7820,10 @@ span[data-toggle="popover"]:hover {
   margin-left: 7.5px;
   margin-right: 7.5px; }
 
+.page-footer__actions {
+  margin-bottom: 15px;
+  margin-top: 15px; }
+
 .gauge {
   border: 2px solid transparent;
   display: flex;
@@ -9264,5 +9268,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-168c50a7399cee9db603.css.map*/
