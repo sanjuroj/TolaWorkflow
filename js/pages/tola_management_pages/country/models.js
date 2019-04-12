@@ -234,6 +234,7 @@ export class CountryStore {
                 this.active_pane_is_dirty = false
                 this.countries.shift()
                 this.countries.unshift(response.data)
+                this.allCountries.unshift(response.data)
             })
         }).catch(errors => {
             runInAction(()=> {
