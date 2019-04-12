@@ -167,7 +167,7 @@ export const IndexView = observer(
                     onApply: (option) => store.bulkUpdateProgramStatus(option.value)
                 },
             }
-        }
+        };
 
         const organizationColumn = (data) => {
             if (data.organizations) {
@@ -179,7 +179,7 @@ export const IndexView = observer(
                 )
             }
             return "---"
-        }
+        };
 
         return <div id="program-management-index-view" className="row">
             <FoldingSidebar>
