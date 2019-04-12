@@ -223,12 +223,13 @@ export class ProgramStore {
         this.saving = true
         this.api.createProgram(program_data).then(response => {
             runInAction(()=> {
-                this.saving = false
-                this.editing_target = response.data.id
-                this.editing_target_data = response.data
-                this.programs.shift()
-                this.programs.unshift(response.data)
-                this.active_pane_is_dirty = false
+                this.saving = false;
+                this.editing_target = response.data.id;
+                this.editing_target_data = response.data;
+                this.programs.shift();
+                this.programs.unshift(response.data);
+                this.programFilterPrograms.unshift(response.data);
+                this.active_pane_is_dirty = false;
             })
         }).catch(error => {
             runInAction(()=> {
