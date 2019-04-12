@@ -241,21 +241,24 @@ export class ProgramStore {
 
     @action updateProgram(id, program_data) {
         this.saving = true
-        this.api.updateProgram(id, program_data).then(response => {
-            runInAction(() => {
-                this.saving = false
-                this.active_pane_is_dirty = false
-                this.editing_target_data = program_data
-                this.updateLocalPrograms(response.data)
-                this.onSaveSuccessHandler()
+        this.api.updateProgram(id, program_data)
+            .then(response => this.api.fetchProgramHistory(id)
+                .then(history =>
+                    runInAction(() => {
+                        this.saving = false;
+                        this.active_pane_is_dirty = false;
+                        this.editing_target_data = program_data;
+                        this.updateLocalPrograms(response.data);
+                        this.editing_history = history.data;
+                        this.onSaveSuccessHandler();
+                    })))
+            .catch((errors) => {
+                runInAction(() => {
+                    this.saving = false
+                    this.editing_errors = errors.response.data
+                    this.onSaveErrorHandler()
+                })
             })
-        }).catch((errors) => {
-            runInAction(() => {
-                this.saving = false
-                this.editing_errors = errors.response.data
-                this.onSaveErrorHandler()
-            })
-        })
     }
 
     @action

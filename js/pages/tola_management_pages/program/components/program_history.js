@@ -34,8 +34,6 @@ export class ProgramHistory extends React.Component {
     }
 
     onSave() {
-        const program_id = this.state.original_status.id
-        const program_data = this.state.managed_status
         this.props.onSave(this.state.original_status.id, this.state.managed_status)
     }
 
@@ -48,7 +46,7 @@ export class ProgramHistory extends React.Component {
     render() {
         const {history, store} = this.props
         const changelog_expanded_rows = store.changelog_expanded_rows;
-        const currentStatusSelection = status_options.find(x=> x.value == this.state.managed_status.funding_status)
+        const currentStatusSelection = status_options.find(x=> x.value == this.state.managed_status.funding_status);
         return <div className="tab-pane--react admin-edit-pane">
             <h2 className="no-bold">{this.props.program_data.name ? this.props.program_data.name+': ' : ''}{gettext("Status and History")}</h2>
             <div className="form-group">

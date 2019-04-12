@@ -315,8 +315,6 @@ function (_React$Component) {
   }, {
     key: "onSave",
     value: function onSave() {
-      var program_id = this.state.original_status.id;
-      var program_data = this.state.managed_status;
       this.props.onSave(this.state.original_status.id, this.state.managed_status);
     }
   }, {
@@ -2605,14 +2603,18 @@ function () {
 
       this.saving = true;
       this.api.updateProgram(id, program_data).then(function (response) {
-        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this4.saving = false;
-          _this4.active_pane_is_dirty = false;
-          _this4.editing_target_data = program_data;
+        return _this4.api.fetchProgramHistory(id).then(function (history) {
+          return Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+            _this4.saving = false;
+            _this4.active_pane_is_dirty = false;
+            _this4.editing_target_data = program_data;
 
-          _this4.updateLocalPrograms(response.data);
+            _this4.updateLocalPrograms(response.data);
 
-          _this4.onSaveSuccessHandler();
+            _this4.editing_history = history.data;
+
+            _this4.onSaveSuccessHandler();
+          });
         });
       }).catch(function (errors) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
@@ -2887,4 +2889,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-e56c6fc5e34656910319.js.map
+//# sourceMappingURL=tola_management_program-a4d57c62d8392f0850fd.js.map
