@@ -108,21 +108,17 @@ class DisaggregationType extends React.Component {
         const {disaggregation, expanded, expandAction, deleteAction, errors} = this.props
         const {managed_data} = this.state
         return (
-            <div className="edit-disaggregation__row">
-                <div className="row-expand__toggle">
-                    <span onClick={expandAction}>
+            <div className="accordion-row">
+                <div className="accordion-row__content">
+                    <a onClick={expandAction} className="btn btn-link" tabIndex='0'>
                         <FontAwesomeIcon icon={expanded ? 'caret-down' : 'caret-right'} />
-                    </span>
-                </div>
-                <div className="row__content">
-                    <a onClick={expandAction} tabIndex='0'>
                         {(disaggregation.id == 'new') ? "New Disaggregation type" : disaggregation.disaggregation_type}
                     </a>
                     {expanded && (
-                        <form>
+                        <form className="form card card-body bg-white">
                             <div className="form-group">
-                                <label htmlFor="disaggregation-type-input">
-                                    {gettext('Disaggregation Type')}*
+                                <label className="label--required" htmlFor="disaggregation-type-input">
+                                    {gettext('Disaggregation Type')}
                                 </label>
                                 <input
                                     id="disaggregation-type-input"
@@ -134,46 +130,49 @@ class DisaggregationType extends React.Component {
                                 />
                                 <ErrorFeedback errorMessages={this.formErrors('disaggregation_type')} />
                             </div>
-                            <label>
-                                Labels
-                            </label>
-                            {managed_data.labels.map((label, labelIndex) =>
-                                <div key={labelIndex} className="form-group disaggregation-label-group">
-                                    <input
-                                        value={label.label}
-                                        onChange={(e) => this.updateLabel(labelIndex, e.target.value)}
-                                        className={classNames("form-control", {"is-invalid": (errors.labels ? Object.keys(errors.labels[labelIndex]).length : false)})}
-                                    />
-                                    <a
-                                        tabIndex="0"
-                                        onClick={() => this.deleteLabel(labelIndex)}
-                                        className={classNames("btn btn-link btn-danger", {'disabled': label.in_use})}
-                                        disabled={label.in_use}
-                                    >
-                                        <i className="fas fa-trash"/>{gettext('Remove')}
+
+                            <div className="form-group">
+                                <label>
+                                    Labels
+                                </label>
+                                {managed_data.labels.map((label, labelIndex) =>
+                                    <div key={labelIndex} className="form-group disaggregation-label-group">
+                                        <input
+                                            value={label.label}
+                                            onChange={(e) => this.updateLabel(labelIndex, e.target.value)}
+                                            className={classNames("form-control", {"is-invalid": (errors.labels ? Object.keys(errors.labels[labelIndex]).length : false)})}
+                                        />
+                                        <a
+                                            tabIndex="0"
+                                            onClick={() => this.deleteLabel(labelIndex)}
+                                            className={classNames("btn btn-link btn-danger", {'disabled': label.in_use})}
+                                            disabled={label.in_use}
+                                        >
+                                            <i className="fas fa-trash"/>{gettext('Remove')}
+                                        </a>
+                                    </div>
+                                )}
+                                <div>
+                                    <a tabIndex="0" onClick={() => this.appendLabel()} className="btn btn-link btn-add">
+                                        <i className="fas fa-plus-circle"/>{gettext('Add another option')}
                                     </a>
                                 </div>
-                            )}
-                            <div>
-                                <a tabIndex="0" onClick={() => this.appendLabel()} className="btn btn-link btn-add">
-                                    <i className="fas fa-plus-circle"/>{gettext('Add another option')}
-                                </a>
-                            </div>
-                            <div className="disaggregation-form-buttons">
-                                <div className="form-row btn-row">
-                                    {disaggregation.id=='new' ? (
-                                        <button className="btn btn-primary" onClick={(e) => this.save()} type="button">{gettext('Save Changes')}</button>
-                                    ) : (
-                                        <button className="btn btn-primary" onClick={(e) => this.save()} type="button">{gettext('Save Changes')}</button>
-                                    )}
-                                    <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext('Reset')}</button>
-                                </div>
-                                <div className="right-buttons">
-                                    {disaggregation.id=='new' && (
-                                        <a tabIndex="0" onClick={deleteAction} className="btn btn-link btn-danger">
-                                            <i className="fas fa-trash"/>{gettext('Delete')}
-                                        </a>
-                                    )}
+                                <div className="disaggregation-form-buttons">
+                                    <div className="form-row btn-row">
+                                        {disaggregation.id=='new' ? (
+                                            <button className="btn btn-primary" onClick={(e) => this.save()} type="button">{gettext('Save Changes')}</button>
+                                        ) : (
+                                            <button className="btn btn-primary" onClick={(e) => this.save()} type="button">{gettext('Save Changes')}</button>
+                                        )}
+                                        <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext('Reset')}</button>
+                                    </div>
+                                    <div className="right-buttons">
+                                        {disaggregation.id=='new' && (
+                                            <a tabIndex="0" onClick={deleteAction} className="btn btn-link btn-danger">
+                                                <i className="fas fa-trash"/>{gettext('Delete')}
+                                            </a>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </form>
