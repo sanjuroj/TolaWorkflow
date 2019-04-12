@@ -1446,25 +1446,23 @@ function (_React$Component) {
         return x.value == objective_status;
       }) : {};
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "edit-strategic-objective__row"
+        className: "accordion-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row-expand__toggle"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        onClick: expandAction
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__["FontAwesomeIcon"], {
-        icon: expanded ? 'caret-down' : 'caret-right'
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row__content"
+        className: "accordion-row__content"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         onClick: expandAction,
+        className: "btn btn-link",
         tabIndex: "0"
-      }, objective.id == 'new' ? "New Strategic Objective" : objective.name), expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
-        className: "form"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__["FontAwesomeIcon"], {
+        icon: expanded ? 'caret-down' : 'caret-right'
+      }), objective.id == 'new' ? "New Strategic Objective" : objective.name), expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+        className: "form card card-body bg-white"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "objective-name-input"
-      }, gettext("Code"), "*"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Code")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         id: "objective-name-input",
         className: classnames__WEBPACK_IMPORTED_MODULE_3___default()('form-control', {
           'is-invalid': this.formErrors('name')
@@ -1480,8 +1478,9 @@ function (_React$Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "objective-description-input"
-      }, gettext("Objective"), "*"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
+      }, gettext("Objective")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         id: "objective-description-input",
         className: classnames__WEBPACK_IMPORTED_MODULE_3___default()('form-control', {
           'is-invalid': this.formErrors('description')
@@ -1490,7 +1489,8 @@ function (_React$Component) {
         onChange: function onChange(e) {
           return _this4.updateFormField('description', e.target.value);
         },
-        type: "text"
+        type: "text",
+        required: true
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ErrorFeedback, {
         errorMessages: this.formErrors('description')
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -2596,23 +2596,23 @@ function (_React$Component) {
           errors = _this$props.errors;
       var managed_data = this.state.managed_data;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "edit-disaggregation__row"
+        className: "accordion-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row-expand__toggle"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        onClick: expandAction
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__["FontAwesomeIcon"], {
-        icon: expanded ? 'caret-down' : 'caret-right'
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row__content"
+        className: "accordion-row__content"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         onClick: expandAction,
+        className: "btn btn-link",
         tabIndex: "0"
-      }, disaggregation.id == 'new' ? "New Disaggregation type" : disaggregation.disaggregation_type), expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__["FontAwesomeIcon"], {
+        icon: expanded ? 'caret-down' : 'caret-right'
+      }), disaggregation.id == 'new' ? "New Disaggregation type" : disaggregation.disaggregation_type), expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+        className: "form card card-body bg-white"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "disaggregation-type-input"
-      }, gettext('Disaggregation Type'), "*"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext('Disaggregation Type')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         id: "disaggregation-type-input",
         className: classnames__WEBPACK_IMPORTED_MODULE_2___default()('form-control', {
           'is-invalid': this.formErrors('disaggregation_type')
@@ -2625,7 +2625,9 @@ function (_React$Component) {
         required: true
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ErrorFeedback, {
         errorMessages: this.formErrors('disaggregation_type')
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Labels"), managed_data.labels.map(function (label, labelIndex) {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Labels"), managed_data.labels.map(function (label, labelIndex) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           key: labelIndex,
           className: "form-group disaggregation-label-group"
@@ -2687,7 +2689,7 @@ function (_React$Component) {
         className: "btn btn-link btn-danger"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-trash"
-      }), gettext('Delete')))))));
+      }), gettext('Delete'))))))));
     }
   }]);
 
@@ -3109,4 +3111,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-b72cd13a7d61e208ec6d.js.map
+//# sourceMappingURL=tola_management_country-5a850f46112b3101f52a.js.map

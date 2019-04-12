@@ -7958,10 +7958,6 @@ span[data-toggle="popover"]:hover {
 .btn-white, .btn-white:hover, .btn-white:active, .btn-white:focus {
   color: #fff; }
 
-.div-expand-symbol {
-  width: .7rem;
-  display: inline-block; }
-
 #id_reporting_period_modal {
   line-height: 1.2; }
 
@@ -8436,18 +8432,6 @@ span[data-toggle="popover"]:hover {
   display: flex; }
   .objective-form-buttons .right-buttons {
     margin-left: auto; }
-
-.edit-strategic-objective__row,
-.edit-disaggregation__row {
-  display: flex; }
-  .edit-strategic-objective__row .row-expand__toggle,
-  .edit-disaggregation__row .row-expand__toggle {
-    flex-basis: 1em;
-    flex-grow: 0;
-    flex-shrink: 0; }
-  .edit-strategic-objective__row .row__content,
-  .edit-disaggregation__row .row__content {
-    flex-grow: 1; }
 
 .disaggregation-label-group {
   display: flex; }
@@ -9268,5 +9252,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-896700a9ed00be818da6.css.map*/
