@@ -113,20 +113,11 @@
     }
 }
 
-// TODO: Edit SOs and disaggregations could be a single shared component
-.edit-strategic-objective__row,
-.edit-disaggregation__row {
-    // See .row-expand below
-    display: flex;
-
-    .row-expand__toggle {
-        flex-basis: 1em;
-        flex-grow: 0;
-        flex-shrink: 0;
-    }
-
-    .row__content {
-        flex-grow: 1;
+// accordions used only for disaggregations & SOs in admin lite
+// needs no styling
+// Similar to styling used on "Add Result" form
+.accordion-row {
+    &__content {
     }
 }
 

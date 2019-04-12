@@ -39,6 +39,66 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 /*
+ * Global AJAX handlers for CSRF handling and redirection on logout for AJAX requests
+ */
+
+function getCookie(name) {
+  var cookieValue = null;
+
+  if (document.cookie && document.cookie != '') {
+    var cookies = document.cookie.split(';');
+
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = jQuery.trim(cookies[i]); // Does this cookie string begin with the name we want?
+
+      if (cookie.substring(0, name.length + 1) == name + '=') {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+
+  return cookieValue;
+}
+
+function csrfSafeMethod(method) {
+  // these HTTP methods do not require CSRF protection
+  return /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
+}
+
+function redirectToLoginOnLoginScreenHeader(jqxhr) {
+  if (jqxhr.getResponseHeader("Login-Screen") != null && jqxhr.getResponseHeader("Login-Screen").length) {
+    // Not logged in - the 302 redirect is implicit and jQuery has no way to know it happened
+    // check special header set by our login view to see if that's where we ended up
+    window.location = js_context.loginUrl;
+  }
+}
+/*
+ * Set the csrf header before sending the actual ajax request
+ * while protecting csrf token from being sent to other domains
+ *
+ * Attach to success/error here instead of ajaxSuccess()/ajaxError() below
+ * as these take priority and will not fail to run if an exception is
+ * thrown in the app code handler
+ */
+
+
+$.ajaxSetup({
+  crossDomain: false,
+  // obviates need for sameOrigin test
+  beforeSend: function beforeSend(xhr, settings) {
+    if (!csrfSafeMethod(settings.type)) {
+      xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    }
+  },
+  success: function success(data, status, jqxhr) {
+    redirectToLoginOnLoginScreenHeader(jqxhr);
+  },
+  error: function error(jqxhr) {
+    redirectToLoginOnLoginScreenHeader(jqxhr);
+  }
+});
+/*
  * Global AJAX handlers for indicating a request in progress + error reporting
  */
 
@@ -57,10 +117,6 @@ $(document).ajaxStart(function () {
       if (jqxhr.status === 403) {
         // Permission denied
         notifyError(js_context.strings.permissionError, js_context.strings.permissionErrorDescription);
-      } else if (jqxhr.getResponseHeader("Login-Screen") != null && jqxhr.getResponseHeader("Login-Screen").length) {
-        // Not logged in - the 302 redirect is implicit and jQuery has no way to know it happened
-        // check special header set by our login view to see if that's where we ended up
-        notifyLoginRequired();
       } else {
         // all other errors
         notifyError(js_context.strings.serverError, errorStr);
@@ -72,12 +128,6 @@ $(document).ajaxStart(function () {
       // something weird is happening
       notifyError(js_context.strings.unknownNetworkError, jqxhr.statusText);
     }
-  }
-}).ajaxSuccess(function (event, jqxhr) {
-  if (jqxhr.getResponseHeader("Login-Screen") != null && jqxhr.getResponseHeader("Login-Screen").length) {
-    // Not logged in - the 302 redirect is implicit and jQuery has no way to know it happened
-    // check special header set by our login view to see if that's where we ended up
-    notifyLoginRequired();
   }
 });
 
@@ -249,46 +299,7 @@ function createAlert(type, message, fade, whereToAppend) {
   }
 }
 
-window.createAlert = createAlert; // using jQuery
-
-function getCookie(name) {
-  var cookieValue = null;
-
-  if (document.cookie && document.cookie != '') {
-    var cookies = document.cookie.split(';');
-
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = jQuery.trim(cookies[i]); // Does this cookie string begin with the name we want?
-
-      if (cookie.substring(0, name.length + 1) == name + '=') {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-
-  return cookieValue;
-}
-
-function csrfSafeMethod(method) {
-  // these HTTP methods do not require CSRF protection
-  return /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
-}
-/*
- * Set the csrf header before sending the actual ajax request
- * while protecting csrf token from being sent to other domains
- */
-
-
-$.ajaxSetup({
-  crossDomain: false,
-  // obviates need for sameOrigin test
-  beforeSend: function beforeSend(xhr, settings) {
-    if (!csrfSafeMethod(settings.type)) {
-      xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-    }
-  }
-});
+window.createAlert = createAlert;
 /* Configure PNotify global settings */
 
 /* Do so on document ready since lib is included after app.js */
@@ -314,40 +325,6 @@ function notifyError(title, msg) {
 }
 
 window.notifyError = notifyError;
-
-function notifyLoginRequired() {
-  PNotify.alert({
-    text: js_context.strings.notLoggedInErrorDescription,
-    title: js_context.strings.notLoggedInError,
-    hide: false,
-    type: 'error',
-    modules: {
-      Buttons: {
-        closer: true,
-        sticker: false
-      },
-      Confirm: {
-        confirm: true,
-        buttons: [{
-          // # Translators: OK button label - confirm performing an action
-          text: gettext('OK'),
-          primary: true,
-          addClass: '',
-          click: function click() {
-            window.location = '/accounts/login/?next=' + window.location.pathname;
-          }
-        }, {
-          // # Translators: Cancel button label - do not perform an operation
-          text: gettext('Cancel'),
-          click: function click(notice) {
-            notice.close();
-          }
-        }]
-      }
-    }
-  });
-}
-
 $(document).ready(function () {
   $(document).on('hidden.bs.modal', '.modal', function () {
     $('.modal:visible').length && $(document.body).addClass('modal-open');
@@ -533,4 +510,4 @@ window.create_nondestructive_changeset_notice = function () {
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-99487a2499faa1e046b4.js.map
+//# sourceMappingURL=base-54d55ca3aeb6f34034fe.js.map

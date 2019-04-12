@@ -114,7 +114,7 @@ export default class EditOrganizationProfile extends React.Component {
                 <h2 className="no-bold">{od.name ? od.name+": ": ""}{gettext("Profile")}</h2>
                 <form className="form needs-validation" noValidate>
                     <div className="form-group">
-                        <label htmlFor="organization-name-input">{gettext("Organization name")}<span className="required">*</span></label>
+                        <label className="label--required" htmlFor="organization-name-input">{gettext("Organization name")}</label>
                         <input
                             type="text"
                             value={od.name}
@@ -128,7 +128,7 @@ export default class EditOrganizationProfile extends React.Component {
                         </div>
                         }
                     </div>
-                    <div className="form-group">
+                    <div className="form-group react-multiselect-checkbox">
                         <label htmlFor="sectors-input">Sectors</label>
                         <CheckboxedMultiSelect
                             value={od.sectors}
@@ -138,7 +138,7 @@ export default class EditOrganizationProfile extends React.Component {
                             id="sectors-input" />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="primary-address-input">{gettext("Primary Address")}<span className="required">*</span></label>
+                        <label className="label--required" htmlFor="primary-address-input">{gettext("Primary Address")}</label>
                         <textarea
                             value={od.primary_address}
                             onChange={(e) => this.updatePrimaryAddress(e.target.value)}
@@ -152,7 +152,7 @@ export default class EditOrganizationProfile extends React.Component {
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="primary-contact-name-input">{gettext("Primary Contact Name")}<span className="required">*</span></label>
+                        <label className="label--required" htmlFor="primary-contact-name-input">{gettext("Primary Contact Name")}</label>
                         <input
                             type="text"
                             value={od.primary_contact_name}
@@ -167,7 +167,7 @@ export default class EditOrganizationProfile extends React.Component {
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="primary-contact-email-input">{gettext("Primary Contact Email")}<span className="required">*</span></label>
+                        <label className="label--required" htmlFor="primary-contact-email-input">{gettext("Primary Contact Email")}</label>
                         <input
                             type="text"
                             value={od.primary_contact_email}
@@ -182,7 +182,7 @@ export default class EditOrganizationProfile extends React.Component {
                         }
                     </div>
                     <div className="form-group">
-                        <label htmlFor="primary-contact-phone-input">{gettext("Primary Contact Phone Number")}<span className="required">*</span></label>
+                        <label className="label--required" htmlFor="primary-contact-phone-input">{gettext("Primary Contact Phone Number")}</label>
                         <input
                             type="text"
                             value={od.primary_contact_phone}

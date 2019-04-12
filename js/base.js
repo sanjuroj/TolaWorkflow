@@ -13,6 +13,61 @@ import 'react-virtualized/styles.css'
  */
 
 
+/*
+ * Global AJAX handlers for CSRF handling and redirection on logout for AJAX requests
+ */
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+function redirectToLoginOnLoginScreenHeader(jqxhr) {
+    if (jqxhr.getResponseHeader("Login-Screen") != null && jqxhr.getResponseHeader("Login-Screen").length) {
+        // Not logged in - the 302 redirect is implicit and jQuery has no way to know it happened
+        // check special header set by our login view to see if that's where we ended up
+        window.location = js_context.loginUrl;
+    }
+}
+
+/*
+ * Set the csrf header before sending the actual ajax request
+ * while protecting csrf token from being sent to other domains
+ *
+ * Attach to success/error here instead of ajaxSuccess()/ajaxError() below
+ * as these take priority and will not fail to run if an exception is
+ * thrown in the app code handler
+ */
+$.ajaxSetup({
+    crossDomain: false, // obviates need for sameOrigin test
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type)) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        }
+    },
+    success: function(data, status, jqxhr) {
+        redirectToLoginOnLoginScreenHeader(jqxhr);
+    },
+    error: function(jqxhr) {
+        redirectToLoginOnLoginScreenHeader(jqxhr);
+    }
+});
+
 
 /*
  * Global AJAX handlers for indicating a request in progress + error reporting
@@ -36,10 +91,6 @@ $( document )
                 if (jqxhr.status === 403) {
                     // Permission denied
                     notifyError(js_context.strings.permissionError, js_context.strings.permissionErrorDescription);
-                } else if(jqxhr.getResponseHeader("Login-Screen") != null && jqxhr.getResponseHeader("Login-Screen").length) {
-                    // Not logged in - the 302 redirect is implicit and jQuery has no way to know it happened
-                    // check special header set by our login view to see if that's where we ended up
-                    notifyLoginRequired();
                 } else {
                     // all other errors
                     notifyError(js_context.strings.serverError, errorStr);
@@ -54,14 +105,9 @@ $( document )
                 notifyError(js_context.strings.unknownNetworkError, jqxhr.statusText);
             }
         }
-    })
-    .ajaxSuccess(function(event, jqxhr) {
-        if(jqxhr.getResponseHeader("Login-Screen") != null && jqxhr.getResponseHeader("Login-Screen").length) {
-            // Not logged in - the 302 redirect is implicit and jQuery has no way to know it happened
-            // check special header set by our login view to see if that's where we ended up
-            notifyLoginRequired();
-        }
     });
+
+
 
 if (!Date.prototype.toISODate) {
   Date.prototype.toISODate = function() {
@@ -234,43 +280,6 @@ function createAlert (type, message, fade, whereToAppend) {
 window.createAlert = createAlert;
 
 
-// using jQuery
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
-
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-
-/*
- * Set the csrf header before sending the actual ajax request
- * while protecting csrf token from being sent to other domains
- */
-$.ajaxSetup({
-    crossDomain: false, // obviates need for sameOrigin test
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type)) {
-            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-        }
-    }
-});
-
-
 /* Configure PNotify global settings */
 /* Do so on document ready since lib is included after app.js */
 $(function() {
@@ -294,42 +303,6 @@ function notifyError(title, msg) {
     });
 }
 window.notifyError = notifyError;
-
-function notifyLoginRequired() {
-    PNotify.alert({
-        text: js_context.strings.notLoggedInErrorDescription,
-        title: js_context.strings.notLoggedInError,
-        hide: false,
-        type: 'error',
-        modules: {
-            Buttons: {
-                closer: true,
-                sticker: false
-            },
-            Confirm: {
-                confirm: true,
-                buttons: [
-                    {
-                        // # Translators: OK button label - confirm performing an action
-                        text: gettext('OK'),
-                        primary: true,
-                        addClass:'',
-                        click: function () {
-                            window.location = '/accounts/login/?next=' + window.location.pathname;
-                        }
-                    },
-                    {
-                        // # Translators: Cancel button label - do not perform an operation
-                        text: gettext('Cancel'),
-                        click: function (notice) {
-                            notice.close();
-                        }
-                    }
-                ]
-            }
-        }
-    });
-}
 
 
 $(document).ready(function() {

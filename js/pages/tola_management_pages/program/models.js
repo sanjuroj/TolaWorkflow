@@ -35,14 +35,15 @@ export class ProgramStore {
     @observable editing_target = null
     @observable editing_errors = {}
     @observable fetching_editing_history = true
-    @observable editing_target_history = null
+    @observable editing_history = []
     @observable saving = false
 
-    @observable bulk_targets = new Map()
     @observable applying_bulk_updates = false
-    @observable bulk_targets_all = false
 
     @observable active_editor_pane = 'profile'
+
+    // UI state - track what history rows are expanded
+    @observable changelog_expanded_rows = new Set();
 
     active_pane_is_dirty = false
 
@@ -240,21 +241,24 @@ export class ProgramStore {
 
     @action updateProgram(id, program_data) {
         this.saving = true
-        this.api.updateProgram(id, program_data).then(response => {
-            runInAction(() => {
-                this.saving = false
-                this.active_pane_is_dirty = false
-                this.editing_target_data = program_data
-                this.updateLocalPrograms(response.data)
-                this.onSaveSuccessHandler()
+        this.api.updateProgram(id, program_data)
+            .then(response => this.api.fetchProgramHistory(id)
+                .then(history =>
+                    runInAction(() => {
+                        this.saving = false;
+                        this.active_pane_is_dirty = false;
+                        this.editing_target_data = program_data;
+                        this.updateLocalPrograms(response.data);
+                        this.editing_history = history.data;
+                        this.onSaveSuccessHandler();
+                    })))
+            .catch((errors) => {
+                runInAction(() => {
+                    this.saving = false
+                    this.editing_errors = errors.response.data
+                    this.onSaveErrorHandler()
+                })
             })
-        }).catch((errors) => {
-            runInAction(() => {
-                this.saving = false
-                this.editing_errors = errors.response.data
-                this.onSaveErrorHandler()
-            })
-        })
     }
 
     @action
@@ -302,4 +306,12 @@ export class ProgramStore {
         }
     }
 
+    @action
+    toggleChangeLogRowExpando(row_id) {
+        if (this.changelog_expanded_rows.has(row_id)) {
+            this.changelog_expanded_rows.delete(row_id);
+        } else {
+            this.changelog_expanded_rows.add(row_id);
+        }
+    }
 }
