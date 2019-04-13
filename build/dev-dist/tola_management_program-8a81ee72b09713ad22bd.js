@@ -2586,6 +2586,8 @@ function () {
 
           _this3.programs.unshift(response.data);
 
+          _this3.programFilterPrograms.unshift(response.data);
+
           _this3.active_pane_is_dirty = false;
         });
       }).catch(function (error) {
@@ -2889,4 +2891,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-a4d57c62d8392f0850fd.js.map
+//# sourceMappingURL=tola_management_program-8a81ee72b09713ad22bd.js.map
