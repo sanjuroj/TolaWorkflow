@@ -118,13 +118,13 @@
                                 <li class="nav-item">
                                       <span class="nav-link" >
                                             {% if "demo" in request.build_absolute_uri %}
-                                                <span class="badge badge-danger text-uppercase">Demo server</span>
+                                                <span class="badge badge-warning text-uppercase">Demo server</span>
                                             {% elif  "127." in request.build_absolute_uri %}
-                                                <span class="badge badge-danger text-uppercase">Local server</span>
+                                                <span class="badge badge-warning text-uppercase">Local server</span>
                                             {% elif "dev" in request.build_absolute_uri %}
-                                                <span class="badge badge-danger text-uppercase">Dev server</span>
+                                                <span class="badge badge-warning text-uppercase">Dev server</span>
                                             {% elif "local" in request.build_absolute_uri %}
-                                                <span class="badge badge-danger text-uppercase">Local</span>
+                                                <span class="badge badge-warning text-uppercase">Local</span>
                                             {% endif %}
                                       </span>
                                 </li>
