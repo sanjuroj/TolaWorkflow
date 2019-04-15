@@ -47,7 +47,7 @@ var CountryFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(
   var store = _ref.store,
       filterOptions = _ref.filterOptions;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "countries_filter"
   }, gettext("Countries")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
@@ -64,7 +64,7 @@ var OrganizationFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observe
   var store = _ref2.store,
       filterOptions = _ref2.filterOptions;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "organizations_filter"
   }, gettext("Organizations")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
@@ -81,7 +81,7 @@ var ProgramFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(
   var store = _ref3.store,
       filterOptions = _ref3.filterOptions;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "programs-filter"
   }, gettext("Programs")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
@@ -136,8 +136,8 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountryFilter, {
     store: store,
     filterOptions: countryFilterOptions
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "filter-buttons"
+  })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "filter-section filter-buttons"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     className: "btn btn-primary",
     onClick: function onClick() {
@@ -148,7 +148,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     onClick: function onClick() {
       return store.clearFilters();
     }
-  }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, gettext("Reset")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "col admin-list"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
     className: "page-title"
@@ -346,9 +346,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-select */ "y2Vs");
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! mobx-react */ "okNM");
-/* harmony import */ var components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! components/checkboxed-multi-select */ "Z2Y6");
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! classnames */ "TSYQ");
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! classnames */ "TSYQ");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_3__);
 var _class;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -370,7 +369,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
 
 
 
@@ -481,7 +479,7 @@ function (_React$Component) {
         onChange: function onChange(e) {
           return _this4.updateFormField('country', e.target.value);
         },
-        className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('form-control', {
+        className: classnames__WEBPACK_IMPORTED_MODULE_3___default()('form-control', {
           'is-invalid': this.formErrors('country')
         }),
         id: "country-name-input",
@@ -497,7 +495,7 @@ function (_React$Component) {
         onChange: function onChange(e) {
           return _this4.updateFormField('description', e.target.value);
         },
-        className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('form-control', {
+        className: classnames__WEBPACK_IMPORTED_MODULE_3___default()('form-control', {
           'is-invalid': this.formErrors('description')
         }),
         id: "country-description-input"
@@ -512,7 +510,7 @@ function (_React$Component) {
         onChange: function onChange(e) {
           return _this4.updateFormField('code', e.target.value);
         },
-        className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('form-control', {
+        className: classnames__WEBPACK_IMPORTED_MODULE_3___default()('form-control', {
           'is-invalid': this.formErrors('code')
         }),
         id: "country-code-input"
@@ -879,6 +877,10 @@ function () {
           _this3.countries.shift();
 
           _this3.countries.unshift(response.data);
+
+          _this3.allCountries.unshift(response.data);
+
+          _this3.onSaveSuccessHandler();
         });
       }).catch(function (errors) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
@@ -1448,25 +1450,23 @@ function (_React$Component) {
         return x.value == objective_status;
       }) : {};
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "edit-strategic-objective__row"
+        className: "accordion-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row-expand__toggle"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        onClick: expandAction
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__["FontAwesomeIcon"], {
-        icon: expanded ? 'caret-down' : 'caret-right'
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row__content"
+        className: "accordion-row__content"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         onClick: expandAction,
+        className: "btn btn-link",
         tabIndex: "0"
-      }, objective.id == 'new' ? "New Strategic Objective" : objective.name), expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
-        className: "form"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__["FontAwesomeIcon"], {
+        icon: expanded ? 'caret-down' : 'caret-right'
+      }), objective.id == 'new' ? "New Strategic Objective" : objective.name), expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+        className: "form card card-body bg-white"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "objective-name-input"
-      }, gettext("Code"), "*"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Code")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         id: "objective-name-input",
         className: classnames__WEBPACK_IMPORTED_MODULE_3___default()('form-control', {
           'is-invalid': this.formErrors('name')
@@ -1482,8 +1482,9 @@ function (_React$Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "objective-description-input"
-      }, gettext("Objective"), "*"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
+      }, gettext("Objective")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         id: "objective-description-input",
         className: classnames__WEBPACK_IMPORTED_MODULE_3___default()('form-control', {
           'is-invalid': this.formErrors('description')
@@ -1492,7 +1493,8 @@ function (_React$Component) {
         onChange: function onChange(e) {
           return _this4.updateFormField('description', e.target.value);
         },
-        type: "text"
+        type: "text",
+        required: true
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ErrorFeedback, {
         errorMessages: this.formErrors('description')
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -2155,35 +2157,123 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-select */ "y2Vs");
 /* harmony import */ var _virtualized_react_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./virtualized-react-select */ "5Xg7");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! mobx-react */ "okNM");
+/* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-multiselect-checkboxes */ "VCnP");
+/* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! mobx-react */ "okNM");
+var _class, _temp;
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 
 
 
 
-var Option = function Option(props) {
-  return react_select__WEBPACK_IMPORTED_MODULE_1__["components"].Option && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["components"].Option, props, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-    className: "checkboxed-multi-select-checkbox",
-    type: "checkbox",
-    checked: props.isSelected,
-    onChange: function onChange(e) {//we can let the outer component manage state
-    }
-  }), "\xA0", props.data.label);
+
+
+var CountLabel = function CountLabel(props) {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "count__label"
+  }, props.children, props.clearable && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    onClick: props.clearSelect
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fa fa-times",
+    "aria-hidden": "true"
+  })));
 };
 
-var CheckboxedMultiSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_3__["observer"])(function (props) {
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], _extends({
-    isMulti: true,
-    closeMenuOnSelect: false,
-    hideSelectedOptions: false,
-    components: {
-      MenuList: _virtualized_react_select__WEBPACK_IMPORTED_MODULE_2__["VirtualizedMenuList"],
-      Option: Option
+var CheckboxedMultiSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_4__["observer"])(_class = (_temp =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(CheckboxedMultiSelect, _React$Component);
+
+  function CheckboxedMultiSelect(props) {
+    var _this;
+
+    _classCallCheck(this, CheckboxedMultiSelect);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(CheckboxedMultiSelect).call(this, props));
+
+    _this.clearSelect = function (e) {
+      e.stopPropagation();
+
+      _this.props.onChange([]);
+
+      ;
+    };
+
+    _this.makeLabel = function (_ref3) {
+      var placeholderButtonLabel = _ref3.placeholderButtonLabel,
+          thisValue = _ref3.value;
+
+      if (!thisValue) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+          clearable: false
+        }, placeholderButtonLabel);
+      }
+
+      if (Array.isArray(thisValue)) {
+        if (thisValue.length === 0) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+            clearable: false
+          }, placeholderButtonLabel);
+        }
+
+        if (thisValue.length === 1) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+            clearable: true,
+            clearSelect: _this.clearSelect
+          }, thisValue[0].label);
+        }
+
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+          clearable: true,
+          clearSelect: _this.clearSelect
+        }, "".concat(thisValue.length, " ", gettext("selected")));
+      }
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+        clearable: false
+      }, thisValue.label);
+    };
+
+    return _this;
+  }
+
+  _createClass(CheckboxedMultiSelect, [{
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3___default.a, _extends({}, this.props, {
+        placeholder: gettext("Search"),
+        placeholderButtonLabel: this.props.placeholder,
+        getDropdownButtonLabel: this.makeLabel,
+        components: {
+          MenuList: _virtualized_react_select__WEBPACK_IMPORTED_MODULE_2__["VirtualizedMenuList"]
+        }
+      }));
     }
-  }, props));
-});
+  }]);
+
+  return CheckboxedMultiSelect;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class;
+
 /* harmony default export */ __webpack_exports__["default"] = (CheckboxedMultiSelect);
 
 /***/ }),
@@ -2510,23 +2600,23 @@ function (_React$Component) {
           errors = _this$props.errors;
       var managed_data = this.state.managed_data;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "edit-disaggregation__row"
+        className: "accordion-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row-expand__toggle"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        onClick: expandAction
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__["FontAwesomeIcon"], {
-        icon: expanded ? 'caret-down' : 'caret-right'
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row__content"
+        className: "accordion-row__content"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         onClick: expandAction,
+        className: "btn btn-link",
         tabIndex: "0"
-      }, disaggregation.id == 'new' ? "New Disaggregation type" : disaggregation.disaggregation_type), expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__["FontAwesomeIcon"], {
+        icon: expanded ? 'caret-down' : 'caret-right'
+      }), disaggregation.id == 'new' ? "New Disaggregation type" : disaggregation.disaggregation_type), expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+        className: "form card card-body bg-white"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "disaggregation-type-input"
-      }, gettext('Disaggregation Type'), "*"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext('Disaggregation Type')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         id: "disaggregation-type-input",
         className: classnames__WEBPACK_IMPORTED_MODULE_2___default()('form-control', {
           'is-invalid': this.formErrors('disaggregation_type')
@@ -2539,7 +2629,9 @@ function (_React$Component) {
         required: true
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ErrorFeedback, {
         errorMessages: this.formErrors('disaggregation_type')
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Labels"), managed_data.labels.map(function (label, labelIndex) {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Labels"), managed_data.labels.map(function (label, labelIndex) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           key: labelIndex,
           className: "form-group disaggregation-label-group"
@@ -2601,7 +2693,7 @@ function (_React$Component) {
         className: "btn btn-link btn-danger"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-trash"
-      }), gettext('Delete')))))));
+      }), gettext('Delete'))))))));
     }
   }]);
 
@@ -2902,30 +2994,81 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 
+/* Sidebar expando/collapso mimicking bootstrap behavior
+ * CSS in components/_folding_sidebar.scss
+ * Usage: <FoldingSidebar>
+ *          children to be hidden when toggle is clicked
+ *         </FoldingSidebar>
+ */
 
-var Expander =
+var FoldingSidebar =
 /*#__PURE__*/
 function (_React$Component) {
-  _inherits(Expander, _React$Component);
+  _inherits(FoldingSidebar, _React$Component);
 
-  function Expander(props) {
+  function FoldingSidebar(props) {
     var _this;
 
-    _classCallCheck(this, Expander);
+    _classCallCheck(this, FoldingSidebar);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Expander).call(this, props));
-    _this.state = {
-      folded: false
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(FoldingSidebar).call(this, props));
+
+    _this.updateDimensions = function () {
+      if (!_this.state.folded && !_this.state.folding) {
+        _this.setState(function () {
+          return {
+            resize: true
+          };
+        }, function () {
+          _this.contentWidth = _this.contentsContainer.current.offsetWidth;
+
+          _this.setState({
+            resize: false
+          });
+        });
+      }
     };
+
+    _this.state = {
+      folding: false,
+      folded: false,
+      resize: false
+    };
+    _this.contentsContainer = react__WEBPACK_IMPORTED_MODULE_0___default.a.createRef();
     return _this;
   }
 
-  _createClass(Expander, [{
+  _createClass(FoldingSidebar, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.contentWidth = this.contentsContainer.current.offsetWidth;
+      window.addEventListener("resize", this.updateDimensions);
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      window.removeEventListener("resize", this.updateDimensions);
+    }
+  }, {
     key: "toggleFolded",
     value: function toggleFolded() {
-      this.setState({
-        folded: !this.state.folded
-      });
+      if (!this.state.folding) {
+        this.setState({
+          folding: true,
+          folded: !this.state.folded
+        });
+      } else {
+        this.foldComplete();
+      }
+    }
+  }, {
+    key: "foldComplete",
+    value: function foldComplete() {
+      this.setState(function () {
+        return {
+          folding: false
+        };
+      }, this.updateDimensions);
     }
   }, {
     key: "render",
@@ -2936,10 +3079,22 @@ function (_React$Component) {
           className = _this$props.className,
           props = _objectWithoutProperties(_this$props, ["className"]);
 
-      var icon = this.state.folded ? "fa-chevron-right" : "fa-chevron-left";
+      var icon = this.state.folded ? this.state.folding ? "fa-angle-double-left" : "fa-chevron-right" : this.state.folding ? "fa-angle-double-right" : "fa-chevron-left";
+      var width = this.state.folded ? "0px" : this.state.resize ? "auto" : this.contentWidth + "px";
+      var overflow = this.state.folded || this.state.folding ? "hidden" : "visible";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", _extends({
         className: "folding-sidebar " + (className || '')
-      }, props), !this.state.folded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, this.props.children), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, props), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "folding-sidebar__contents",
+        onTransitionEnd: function onTransitionEnd() {
+          return _this2.foldComplete();
+        },
+        ref: this.contentsContainer,
+        style: {
+          width: width,
+          overflow: overflow
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, this.props.children)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "folding-sidebar__trigger",
         onClick: function onClick() {
           return _this2.toggleFolded();
@@ -2952,12 +3107,12 @@ function (_React$Component) {
     }
   }]);
 
-  return Expander;
+  return FoldingSidebar;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
-/* harmony default export */ __webpack_exports__["default"] = (Expander);
+/* harmony default export */ __webpack_exports__["default"] = (FoldingSidebar);
 
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-2fec210d04d432c5df0a.js.map
+//# sourceMappingURL=tola_management_country-1a5a02ad456a1379d153.js.map

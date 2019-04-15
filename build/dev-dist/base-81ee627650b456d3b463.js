@@ -39,6 +39,66 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 /*
+ * Global AJAX handlers for CSRF handling and redirection on logout for AJAX requests
+ */
+
+function getCookie(name) {
+  var cookieValue = null;
+
+  if (document.cookie && document.cookie != '') {
+    var cookies = document.cookie.split(';');
+
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = jQuery.trim(cookies[i]); // Does this cookie string begin with the name we want?
+
+      if (cookie.substring(0, name.length + 1) == name + '=') {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+
+  return cookieValue;
+}
+
+function csrfSafeMethod(method) {
+  // these HTTP methods do not require CSRF protection
+  return /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
+}
+
+function redirectToLoginOnLoginScreenHeader(jqxhr) {
+  if (jqxhr.getResponseHeader("Login-Screen") != null && jqxhr.getResponseHeader("Login-Screen").length) {
+    // Not logged in - the 302 redirect is implicit and jQuery has no way to know it happened
+    // check special header set by our login view to see if that's where we ended up
+    window.location = js_context.loginUrl;
+  }
+}
+/*
+ * Set the csrf header before sending the actual ajax request
+ * while protecting csrf token from being sent to other domains
+ *
+ * Attach to success/error here instead of ajaxSuccess()/ajaxError() below
+ * as these take priority and will not fail to run if an exception is
+ * thrown in the app code handler
+ */
+
+
+$.ajaxSetup({
+  crossDomain: false,
+  // obviates need for sameOrigin test
+  beforeSend: function beforeSend(xhr, settings) {
+    if (!csrfSafeMethod(settings.type)) {
+      xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    }
+  },
+  success: function success(data, status, jqxhr) {
+    redirectToLoginOnLoginScreenHeader(jqxhr);
+  },
+  error: function error(jqxhr) {
+    redirectToLoginOnLoginScreenHeader(jqxhr);
+  }
+});
+/*
  * Global AJAX handlers for indicating a request in progress + error reporting
  */
 
@@ -53,7 +113,14 @@ $(document).ajaxStart(function () {
       // HTTP error (can be checked by XMLHttpRequest.status and XMLHttpRequest.statusText)
       // TODO: Give better error mssages based on HTTP status code
       var errorStr = "".concat(jqxhr.status, ": ").concat(jqxhr.statusText);
-      notifyError(js_context.strings.serverError, errorStr);
+
+      if (jqxhr.status === 403) {
+        // Permission denied
+        notifyError(js_context.strings.permissionError, js_context.strings.permissionErrorDescription);
+      } else {
+        // all other errors
+        notifyError(js_context.strings.serverError, errorStr);
+      }
     } else if (jqxhr.readyState === 0) {
       // Network error (i.e. connection refused, access denied due to CORS, etc.)
       notifyError(js_context.strings.networkError, js_context.strings.networkErrorTryAgain);
@@ -232,46 +299,7 @@ function createAlert(type, message, fade, whereToAppend) {
   }
 }
 
-window.createAlert = createAlert; // using jQuery
-
-function getCookie(name) {
-  var cookieValue = null;
-
-  if (document.cookie && document.cookie != '') {
-    var cookies = document.cookie.split(';');
-
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = jQuery.trim(cookies[i]); // Does this cookie string begin with the name we want?
-
-      if (cookie.substring(0, name.length + 1) == name + '=') {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-
-  return cookieValue;
-}
-
-function csrfSafeMethod(method) {
-  // these HTTP methods do not require CSRF protection
-  return /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
-}
-/*
- * Set the csrf header before sending the actual ajax request
- * while protecting csrf token from being sent to other domains
- */
-
-
-$.ajaxSetup({
-  crossDomain: false,
-  // obviates need for sameOrigin test
-  beforeSend: function beforeSend(xhr, settings) {
-    if (!csrfSafeMethod(settings.type)) {
-      xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-    }
-  }
-});
+window.createAlert = createAlert;
 /* Configure PNotify global settings */
 
 /* Do so on document ready since lib is included after app.js */
@@ -314,6 +342,7 @@ window.newPopup = newPopup; // EXAMPLE: <a onclick="newPopup('https://docs.googl
 
 var DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.");
 var DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.');
+var DEFAULT_NO_RATIONALE_TEXT = gettext("This action cannot be undone");
 
 var create_changeset_notice = function create_changeset_notice() {
   var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -332,7 +361,11 @@ var create_changeset_notice = function create_changeset_notice() {
       _ref$inner = _ref.inner,
       inner = _ref$inner === void 0 ? '' : _ref$inner,
       _ref$context = _ref.context,
-      context = _ref$context === void 0 ? null : _ref$context;
+      context = _ref$context === void 0 ? null : _ref$context,
+      _ref$rationale_requir = _ref.rationale_required,
+      rationale_required = _ref$rationale_requir === void 0 ? true : _ref$rationale_requir,
+      _ref$showCloser = _ref.showCloser,
+      showCloser = _ref$showCloser === void 0 ? false : _ref$showCloser;
 
   var notice = PNotify.alert({
     text: $("<div><form action=\"\" method=\"post\" class=\"form container\">".concat(inner, "</form></div>")).html(),
@@ -352,7 +385,8 @@ var create_changeset_notice = function create_changeset_notice() {
     },
     modules: {
       Buttons: {
-        closer: false,
+        closer: showCloser,
+        closerHover: false,
         sticker: false
       },
       Confirm: {
@@ -367,7 +401,7 @@ var create_changeset_notice = function create_changeset_notice() {
             var rationale = textarea.val();
             textarea.parent().find('.invalid-feedback').remove();
 
-            if (!rationale) {
+            if (!rationale && rationale_required) {
               textarea.addClass('is-invalid');
               textarea.parent().append('<div class="invalid-feedback">' + gettext('Rationale is required.') + '</div>');
               return false;
@@ -423,7 +457,9 @@ window.create_destructive_changeset_notice = function () {
       _ref2$context = _ref2.context,
       context = _ref2$context === void 0 ? null : _ref2$context,
       _ref2$no_preamble = _ref2.no_preamble,
-      no_preamble = _ref2$no_preamble === void 0 ? false : _ref2$no_preamble;
+      no_preamble = _ref2$no_preamble === void 0 ? false : _ref2$no_preamble,
+      _ref2$showCloser = _ref2.showCloser,
+      showCloser = _ref2$showCloser === void 0 ? false : _ref2$showCloser;
 
   if (!message_text) {
     message_text = DEFAULT_DESTRUCTIVE_MESSAGE;
@@ -440,7 +476,8 @@ window.create_destructive_changeset_notice = function () {
     cancel_text: cancel_text,
     type: 'error',
     inner: inner,
-    context: context
+    context: context,
+    showCloser: showCloser
   });
 };
 
@@ -479,7 +516,51 @@ window.create_nondestructive_changeset_notice = function () {
   });
 };
 
+window.create_no_rationale_changeset_notice = function () {
+  var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      _ref4$message_text = _ref4.message_text,
+      message_text = _ref4$message_text === void 0 ? DEFAULT_NO_RATIONALE_TEXT : _ref4$message_text,
+      _ref4$on_submit = _ref4.on_submit,
+      on_submit = _ref4$on_submit === void 0 ? function () {} : _ref4$on_submit,
+      _ref4$on_cancel = _ref4.on_cancel,
+      on_cancel = _ref4$on_cancel === void 0 ? function () {} : _ref4$on_cancel,
+      _ref4$is_indicator = _ref4.is_indicator,
+      is_indicator = _ref4$is_indicator === void 0 ? false : _ref4$is_indicator,
+      _ref4$confirm_text = _ref4.confirm_text,
+      confirm_text = _ref4$confirm_text === void 0 ? 'Ok' : _ref4$confirm_text,
+      _ref4$cancel_text = _ref4.cancel_text,
+      cancel_text = _ref4$cancel_text === void 0 ? 'Cancel' : _ref4$cancel_text,
+      _ref4$context = _ref4.context,
+      context = _ref4$context === void 0 ? null : _ref4$context,
+      _ref4$preamble = _ref4.preamble,
+      preamble = _ref4$preamble === void 0 ? false : _ref4$preamble;
+
+  if (!message_text) {
+    message_text = DEFAULT_NO_RATIONALE_TEXT;
+  }
+
+  if (!preamble) {
+    preamble = gettext("This action cannot be undone.");
+  }
+
+  ;
+  var inner = "\n        <div class=\"row\">\n            <div class=\"col\">\n                <h2><i class=\"fas fa-exclamation-triangle\"></i>".concat(gettext("Warning"), "</h2>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span class='text-danger'>\n                    ").concat(preamble, "\n                </span>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span>\n                    ").concat(message_text, "\n                </span>\n            </div>\n        </div>\n    ");
+  return create_changeset_notice({
+    message_text: message_text,
+    on_submit: on_submit,
+    on_cancel: on_cancel,
+    is_indicator: is_indicator,
+    confirm_text: confirm_text,
+    cancel_text: cancel_text,
+    type: 'error',
+    inner: inner,
+    context: context,
+    rationale_required: false,
+    showCloser: true
+  });
+};
+
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-800e877d867e6e034d78.js.map
+//# sourceMappingURL=base-81ee627650b456d3b463.js.map

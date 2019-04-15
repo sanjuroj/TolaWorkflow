@@ -1189,10 +1189,9 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "user-first-name-input"
-      }, gettext("Preferred First Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "required"
-      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Preferred First Name")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         disabled: disabled,
         className: "form-control " + error_classes.first_name,
         type: "text",
@@ -1207,10 +1206,9 @@ function (_React$Component) {
       }, e.first_name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "user-last-name-input"
-      }, gettext("Preferred Last Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "required"
-      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Preferred Last Name")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         disabled: disabled,
         className: "form-control " + error_classes.last_name,
         type: "text",
@@ -1225,10 +1223,9 @@ function (_React$Component) {
       }, e.last_name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "user-organization-input"
-      }, gettext("Organization"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "required"
-      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
         isDisabled: disabled,
         className: "form-control " + error_classes.organization,
         value: this.state.selected_organization,
@@ -1257,10 +1254,9 @@ function (_React$Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "user-email-input"
-      }, gettext("Email"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "required"
-      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Email")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         disabled: disabled,
         className: "form-control " + error_classes.email,
         type: "email",
@@ -1427,6 +1423,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-select */ "y2Vs");
 /* harmony import */ var react_virtualized__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-virtualized */ "c7k8");
 /* harmony import */ var components_changelog__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! components/changelog */ "KnAV");
+var _class, _temp;
+
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1457,7 +1455,7 @@ var status_options = [{
   value: false,
   label: gettext('Inactive')
 }];
-var EditUserHistory =
+var EditUserHistory = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(_class = (_temp =
 /*#__PURE__*/
 function (_React$Component) {
   _inherits(EditUserHistory, _React$Component);
@@ -1468,6 +1466,11 @@ function (_React$Component) {
     _classCallCheck(this, EditUserHistory);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(EditUserHistory).call(this, props));
+
+    _this.toggleChangeLogRowExpando = function (row_id) {
+      _this.props.store.toggleChangeLogRowExpando(row_id);
+    };
+
     _this.state = {
       original_user_data: {
         user: {
@@ -1532,37 +1535,36 @@ function (_React$Component) {
       var selected = status_options.find(function (option) {
         return option.value == _this4.state.user_data.user.is_active;
       });
-      var history = this.props.history;
+      var _this$props = this.props,
+          history = _this$props.history,
+          store = _this$props.store;
+      var changelog_expanded_rows = store.changelog_expanded_rows;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "edit-user-history"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", {
         className: "no-bold"
       }, this.state.user_data.name ? this.state.user_data.name + ': ' : '', gettext("Status and History")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        isDisabled: this.props.disabled,
-        options: status_options,
-        value: selected,
-        onChange: function onChange(new_value) {
-          return _this4.onChange(new_value);
-        }
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col"
+        className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-secondary",
         onClick: function onClick() {
           return _this4.onResendRegistrationEmail();
         }
-      }, gettext("Resend Registration Email")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row"
-      }, !this.props.disabled && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group btn-row"
+      }, gettext("Resend Registration Email"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
+        htmlFor: "user-status-input"
+      }, gettext("Status")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        isDisabled: this.props.disabled,
+        options: status_options,
+        value: selected,
+        id: "user-status-input",
+        onChange: function onChange(new_value) {
+          return _this4.onChange(new_value);
+        }
+      })), !this.props.disabled && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
         type: "button",
@@ -1575,14 +1577,18 @@ function (_React$Component) {
         onClick: function onClick() {
           return _this4.onReset();
         }
-      }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_changelog__WEBPACK_IMPORTED_MODULE_4__["default"], {
-        data: history
+      }, gettext("Reset"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_changelog__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        data: history,
+        expanded_rows: changelog_expanded_rows,
+        toggle_expando_cb: function toggle_expando_cb(row_id) {
+          return store.toggleChangeLogRowExpando(row_id);
+        }
       }));
     }
   }]);
 
   return EditUserHistory;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class;
 /* harmony default export */ __webpack_exports__["default"] = (EditUserHistory);
 
 /***/ }),
@@ -1599,6 +1605,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -1606,6 +1613,7 @@ function _nonIterableRest() { throw new TypeError("Invalid attempt to destructur
 function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -1619,16 +1627,23 @@ var ChangeField = function ChangeField(_ref) {
 };
 
 var ChangeLogEntryHeader = function ChangeLogEntryHeader(_ref2) {
-  var data = _ref2.data;
+  var data = _ref2.data,
+      is_expanded = _ref2.is_expanded,
+      toggle_expando_cb = _ref2.toggle_expando_cb;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
-    className: "changelog__entry__header is-expanded"
+    className: is_expanded ? 'changelog__entry__header is-expanded' : 'changelog__entry__header',
+    onClick: function onClick() {
+      return toggle_expando_cb(data.id);
+    }
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "text-nowrap text-action"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-    className: "fas fa-caret-down"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__["FontAwesomeIcon"], {
+    icon: is_expanded ? 'caret-down' : 'caret-right'
   }), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, data.date)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "text-nowrap"
-  }, data.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null));
+  }, data.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+    className: "text-nowrap"
+  }, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null));
 };
 
 var ChangeLogEntryRow = function ChangeLogEntryRow(_ref3) {
@@ -1719,19 +1734,27 @@ var ChangeLogEntryRow = function ChangeLogEntryRow(_ref3) {
 };
 
 var ChangeLogEntry = function ChangeLogEntry(_ref8) {
-  var data = _ref8.data;
+  var data = _ref8.data,
+      is_expanded = _ref8.is_expanded,
+      toggle_expando_cb = _ref8.toggle_expando_cb;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
     className: "changelog__entry",
     key: data.id
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryHeader, {
-    data: data
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryRow, {
+    data: data,
+    is_expanded: is_expanded,
+    toggle_expando_cb: toggle_expando_cb
+  }), is_expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryRow, {
     data: data
   }));
 };
 
 var ChangeLog = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref9) {
-  var data = _ref9.data;
+  var data = _ref9.data,
+      expanded_rows = _ref9.expanded_rows,
+      toggle_expando_cb = _ref9.toggle_expando_cb;
+  // If expanded_rows is not null/undefined then use it to control expansion/collapse of entries
+  // otherwise, default it to "open"
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
     className: "table table-sm bg-white table-bordered text-small changelog"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
@@ -1744,10 +1767,18 @@ var ChangeLog = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     className: "text-nowrap td--half-stretch"
   }, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap td--half-stretch"
-  }, gettext("New Entry")))), data.map(function (entry, id) {
+  }, gettext("New Entry")))), data.map(function (entry) {
+    var is_expanded = true;
+
+    if (expanded_rows) {
+      is_expanded = expanded_rows.has(entry.id);
+    }
+
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntry, {
-      key: id,
-      data: entry
+      key: entry.id,
+      data: entry,
+      is_expanded: is_expanded,
+      toggle_expando_cb: toggle_expando_cb
     });
   }));
 });
@@ -2130,35 +2161,123 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-select */ "y2Vs");
 /* harmony import */ var _virtualized_react_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./virtualized-react-select */ "5Xg7");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! mobx-react */ "okNM");
+/* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-multiselect-checkboxes */ "VCnP");
+/* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! mobx-react */ "okNM");
+var _class, _temp;
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 
 
 
 
-var Option = function Option(props) {
-  return react_select__WEBPACK_IMPORTED_MODULE_1__["components"].Option && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["components"].Option, props, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-    className: "checkboxed-multi-select-checkbox",
-    type: "checkbox",
-    checked: props.isSelected,
-    onChange: function onChange(e) {//we can let the outer component manage state
-    }
-  }), "\xA0", props.data.label);
+
+
+var CountLabel = function CountLabel(props) {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "count__label"
+  }, props.children, props.clearable && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    onClick: props.clearSelect
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fa fa-times",
+    "aria-hidden": "true"
+  })));
 };
 
-var CheckboxedMultiSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_3__["observer"])(function (props) {
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], _extends({
-    isMulti: true,
-    closeMenuOnSelect: false,
-    hideSelectedOptions: false,
-    components: {
-      MenuList: _virtualized_react_select__WEBPACK_IMPORTED_MODULE_2__["VirtualizedMenuList"],
-      Option: Option
+var CheckboxedMultiSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_4__["observer"])(_class = (_temp =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(CheckboxedMultiSelect, _React$Component);
+
+  function CheckboxedMultiSelect(props) {
+    var _this;
+
+    _classCallCheck(this, CheckboxedMultiSelect);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(CheckboxedMultiSelect).call(this, props));
+
+    _this.clearSelect = function (e) {
+      e.stopPropagation();
+
+      _this.props.onChange([]);
+
+      ;
+    };
+
+    _this.makeLabel = function (_ref3) {
+      var placeholderButtonLabel = _ref3.placeholderButtonLabel,
+          thisValue = _ref3.value;
+
+      if (!thisValue) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+          clearable: false
+        }, placeholderButtonLabel);
+      }
+
+      if (Array.isArray(thisValue)) {
+        if (thisValue.length === 0) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+            clearable: false
+          }, placeholderButtonLabel);
+        }
+
+        if (thisValue.length === 1) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+            clearable: true,
+            clearSelect: _this.clearSelect
+          }, thisValue[0].label);
+        }
+
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+          clearable: true,
+          clearSelect: _this.clearSelect
+        }, "".concat(thisValue.length, " ", gettext("selected")));
+      }
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+        clearable: false
+      }, thisValue.label);
+    };
+
+    return _this;
+  }
+
+  _createClass(CheckboxedMultiSelect, [{
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3___default.a, _extends({}, this.props, {
+        placeholder: gettext("Search"),
+        placeholderButtonLabel: this.props.placeholder,
+        getDropdownButtonLabel: this.makeLabel,
+        components: {
+          MenuList: _virtualized_react_select__WEBPACK_IMPORTED_MODULE_2__["VirtualizedMenuList"]
+        }
+      }));
     }
-  }, props));
-});
+  }]);
+
+  return CheckboxedMultiSelect;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class;
+
 /* harmony default export */ __webpack_exports__["default"] = (CheckboxedMultiSelect);
 
 /***/ }),
@@ -2226,11 +2345,11 @@ var UserFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(fun
   var store = _ref.store,
       selections = _ref.selections;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "users_filter"
   }, gettext("Users")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
-    value: store.filters.user,
+    value: store.filters.users,
     options: selections,
     onChange: function onChange(e) {
       return store.changeUserFilter(e);
@@ -2243,7 +2362,7 @@ var CountryFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(
   var store = _ref2.store,
       selections = _ref2.selections;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "countries_permitted_filter"
   }, gettext("Countries Permitted")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -2260,7 +2379,7 @@ var BaseCountryFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer
   var store = _ref3.store,
       selections = _ref3.selections;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "base_country_filter"
   }, gettext("Base Country")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -2277,7 +2396,7 @@ var ProgramFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(
   var store = _ref4.store,
       selections = _ref4.selections;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "programs_filter"
   }, gettext("Programs")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -2537,16 +2656,15 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     store: store,
     selections: store.program_selections
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "organization_filter"
-  }, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
+  }, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
     value: store.filters.organizations,
     options: store.organization_selections,
     onChange: function onChange(e) {
       return store.changeOrganizationFilter(e);
     },
-    isMulti: true,
     placeholder: selection_placeholder,
     id: "organization_filter"
   })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -2576,8 +2694,8 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
   })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(UserFilter, {
     store: store,
     selections: store.user_selections
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "filter-buttons"
+  })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "filter-section filter-buttons"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     className: "btn btn-primary",
     onClick: function onClick() {
@@ -2588,7 +2706,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     onClick: function onClick() {
       return store.clearFilters();
     }
-  }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, gettext("Reset")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "col admin-list"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
     className: "page-title"
@@ -2696,6 +2814,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
                 isLoading: store.fetching_editing_target || store.saving_user_profile || store.saving_user_programs
               }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_user_history__WEBPACK_IMPORTED_MODULE_8__["default"], {
+                store: store,
                 disabled: data.organization_id == 1 && !store.is_superuser,
                 userData: store.editing_target_data.profile,
                 history: store.editing_target_data.history,
@@ -2781,7 +2900,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UserStore", function() { return UserStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./api */ "LX42");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _descriptor26, _descriptor27, _descriptor28, _descriptor29, _descriptor30, _descriptor31, _descriptor32, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _descriptor26, _descriptor27, _descriptor28, _descriptor29, _descriptor30, _descriptor31, _descriptor32, _descriptor33, _temp;
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -2843,6 +2962,7 @@ var UserStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
   //filter options
+  // UI state - track what history rows are expanded
   function UserStore(_ref) {
     var _this = this;
 
@@ -2941,6 +3061,8 @@ function () {
     _initializerDefineProperty(this, "filters", _descriptor31, this);
 
     _initializerDefineProperty(this, "appliedFilters", _descriptor32, this);
+
+    _initializerDefineProperty(this, "changelog_expanded_rows", _descriptor33, this);
 
     this.countries = countries;
     this.ordered_country_ids = Object.values(countries).sort(function (a, b) {
@@ -3473,14 +3595,18 @@ function () {
             _this10.users[result.id] = {
               id: result.id,
               name: result.name,
-              organization_name: _this10.organizations.find(function (o) {
-                return o.id = result.organization_id;
-              }).name,
+              organization_name: _this10.organizations[result.organization_id].name,
               user_programs: aggregates.program_count,
               is_admin: result.user.is_staff,
               is_active: result.user.is_active
             };
             _this10.active_pane_is_dirty = false;
+
+            _this10.user_selections.push({
+              value: result.id,
+              label: result.name
+            });
+
             _this10.users_listing[0] = result.id;
             delete _this10.users["new"];
 
@@ -3664,6 +3790,15 @@ function () {
         admin_role: '',
         users: []
       };
+    }
+  }, {
+    key: "toggleChangeLogRowExpando",
+    value: function toggleChangeLogRowExpando(row_id) {
+      if (this.changelog_expanded_rows.has(row_id)) {
+        this.changelog_expanded_rows.delete(row_id);
+      } else {
+        this.changelog_expanded_rows.add(row_id);
+      }
     }
   }]);
 
@@ -3906,7 +4041,14 @@ function () {
   initializer: function initializer() {
     return {};
   }
-}), _applyDecoratedDescriptor(_class.prototype, "onProfilePaneChange", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "onProfilePaneChange"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "fetchUsers", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchUsers"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeBaseCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeBaseCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeProgramFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeProgramFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserStatusFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserStatusFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeAdminRoleFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeAdminRoleFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateActiveEditPage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateActiveEditPage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserProfile", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserProfile"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserIsActive", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserIsActive"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "resendRegistrationEmail", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "resendRegistrationEmail"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUserAndAddAnother", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUserAndAddAnother"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveUserPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveUserPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkUpdateUserStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkUpdateUserStatus"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkAddPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkAddPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkRemovePrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkRemovePrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype)), _class);
+}), _descriptor33 = _applyDecoratedDescriptor(_class.prototype, "changelog_expanded_rows", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return new Set();
+  }
+}), _applyDecoratedDescriptor(_class.prototype, "onProfilePaneChange", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "onProfilePaneChange"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "fetchUsers", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchUsers"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeBaseCountryFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeBaseCountryFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeOrganizationFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeOrganizationFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeProgramFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeProgramFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserStatusFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserStatusFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeAdminRoleFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeAdminRoleFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeUserFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeUserFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateActiveEditPage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateActiveEditPage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserProfile", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserProfile"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateUserIsActive", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateUserIsActive"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "resendRegistrationEmail", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "resendRegistrationEmail"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUser", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUser"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewUserAndAddAnother", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewUserAndAddAnother"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveUserPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveUserPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkUpdateUserStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkUpdateUserStatus"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkAddPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkAddPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkRemovePrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkRemovePrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleChangeLogRowExpando", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleChangeLogRowExpando"), _class.prototype)), _class);
 
 /***/ }),
 
@@ -4061,30 +4203,81 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 
+/* Sidebar expando/collapso mimicking bootstrap behavior
+ * CSS in components/_folding_sidebar.scss
+ * Usage: <FoldingSidebar>
+ *          children to be hidden when toggle is clicked
+ *         </FoldingSidebar>
+ */
 
-var Expander =
+var FoldingSidebar =
 /*#__PURE__*/
 function (_React$Component) {
-  _inherits(Expander, _React$Component);
+  _inherits(FoldingSidebar, _React$Component);
 
-  function Expander(props) {
+  function FoldingSidebar(props) {
     var _this;
 
-    _classCallCheck(this, Expander);
+    _classCallCheck(this, FoldingSidebar);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Expander).call(this, props));
-    _this.state = {
-      folded: false
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(FoldingSidebar).call(this, props));
+
+    _this.updateDimensions = function () {
+      if (!_this.state.folded && !_this.state.folding) {
+        _this.setState(function () {
+          return {
+            resize: true
+          };
+        }, function () {
+          _this.contentWidth = _this.contentsContainer.current.offsetWidth;
+
+          _this.setState({
+            resize: false
+          });
+        });
+      }
     };
+
+    _this.state = {
+      folding: false,
+      folded: false,
+      resize: false
+    };
+    _this.contentsContainer = react__WEBPACK_IMPORTED_MODULE_0___default.a.createRef();
     return _this;
   }
 
-  _createClass(Expander, [{
+  _createClass(FoldingSidebar, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.contentWidth = this.contentsContainer.current.offsetWidth;
+      window.addEventListener("resize", this.updateDimensions);
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      window.removeEventListener("resize", this.updateDimensions);
+    }
+  }, {
     key: "toggleFolded",
     value: function toggleFolded() {
-      this.setState({
-        folded: !this.state.folded
-      });
+      if (!this.state.folding) {
+        this.setState({
+          folding: true,
+          folded: !this.state.folded
+        });
+      } else {
+        this.foldComplete();
+      }
+    }
+  }, {
+    key: "foldComplete",
+    value: function foldComplete() {
+      this.setState(function () {
+        return {
+          folding: false
+        };
+      }, this.updateDimensions);
     }
   }, {
     key: "render",
@@ -4095,10 +4288,22 @@ function (_React$Component) {
           className = _this$props.className,
           props = _objectWithoutProperties(_this$props, ["className"]);
 
-      var icon = this.state.folded ? "fa-chevron-right" : "fa-chevron-left";
+      var icon = this.state.folded ? this.state.folding ? "fa-angle-double-left" : "fa-chevron-right" : this.state.folding ? "fa-angle-double-right" : "fa-chevron-left";
+      var width = this.state.folded ? "0px" : this.state.resize ? "auto" : this.contentWidth + "px";
+      var overflow = this.state.folded || this.state.folding ? "hidden" : "visible";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", _extends({
         className: "folding-sidebar " + (className || '')
-      }, props), !this.state.folded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, this.props.children), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, props), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "folding-sidebar__contents",
+        onTransitionEnd: function onTransitionEnd() {
+          return _this2.foldComplete();
+        },
+        ref: this.contentsContainer,
+        style: {
+          width: width,
+          overflow: overflow
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, this.props.children)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "folding-sidebar__trigger",
         onClick: function onClick() {
           return _this2.toggleFolded();
@@ -4111,12 +4316,12 @@ function (_React$Component) {
     }
   }]);
 
-  return Expander;
+  return FoldingSidebar;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
-/* harmony default export */ __webpack_exports__["default"] = (Expander);
+/* harmony default export */ __webpack_exports__["default"] = (FoldingSidebar);
 
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-7eebdcafffefdc0bdb9e.js.map
+//# sourceMappingURL=tola_management_user-e45b09ccdaee508bb172.js.map

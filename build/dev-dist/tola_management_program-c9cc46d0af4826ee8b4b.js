@@ -315,8 +315,6 @@ function (_React$Component) {
   }, {
     key: "onSave",
     value: function onSave() {
-      var program_id = this.state.original_status.id;
-      var program_data = this.state.managed_status;
       this.props.onSave(this.state.original_status.id, this.state.managed_status);
     }
   }, {
@@ -335,7 +333,10 @@ function (_React$Component) {
     value: function render() {
       var _this4 = this;
 
-      var history = this.props.history;
+      var _this$props = this.props,
+          history = _this$props.history,
+          store = _this$props.store;
+      var changelog_expanded_rows = store.changelog_expanded_rows;
       var currentStatusSelection = status_options.find(function (x) {
         return x.value == _this4.state.managed_status.funding_status;
       });
@@ -347,10 +348,9 @@ function (_React$Component) {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         htmlFor: "status-input",
+        className: "label--required",
         required: true
-      }, gettext("Program Status"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "required"
-      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, gettext("Program Status")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
         isSearchable: false,
         options: status_options,
         value: currentStatusSelection,
@@ -376,7 +376,11 @@ function (_React$Component) {
           return _this4.onReset();
         }
       }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_changelog__WEBPACK_IMPORTED_MODULE_5__["default"], {
-        data: this.props.history
+        data: history,
+        expanded_rows: changelog_expanded_rows,
+        toggle_expando_cb: function toggle_expando_cb(row_id) {
+          return store.toggleChangeLogRowExpando(row_id);
+        }
       }));
     }
   }]);
@@ -609,6 +613,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -616,6 +621,7 @@ function _nonIterableRest() { throw new TypeError("Invalid attempt to destructur
 function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -629,16 +635,23 @@ var ChangeField = function ChangeField(_ref) {
 };
 
 var ChangeLogEntryHeader = function ChangeLogEntryHeader(_ref2) {
-  var data = _ref2.data;
+  var data = _ref2.data,
+      is_expanded = _ref2.is_expanded,
+      toggle_expando_cb = _ref2.toggle_expando_cb;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
-    className: "changelog__entry__header is-expanded"
+    className: is_expanded ? 'changelog__entry__header is-expanded' : 'changelog__entry__header',
+    onClick: function onClick() {
+      return toggle_expando_cb(data.id);
+    }
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "text-nowrap text-action"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-    className: "fas fa-caret-down"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__["FontAwesomeIcon"], {
+    icon: is_expanded ? 'caret-down' : 'caret-right'
   }), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, data.date)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "text-nowrap"
-  }, data.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null));
+  }, data.admin_user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+    className: "text-nowrap"
+  }, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null));
 };
 
 var ChangeLogEntryRow = function ChangeLogEntryRow(_ref3) {
@@ -729,19 +742,27 @@ var ChangeLogEntryRow = function ChangeLogEntryRow(_ref3) {
 };
 
 var ChangeLogEntry = function ChangeLogEntry(_ref8) {
-  var data = _ref8.data;
+  var data = _ref8.data,
+      is_expanded = _ref8.is_expanded,
+      toggle_expando_cb = _ref8.toggle_expando_cb;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
     className: "changelog__entry",
     key: data.id
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryHeader, {
-    data: data
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryRow, {
+    data: data,
+    is_expanded: is_expanded,
+    toggle_expando_cb: toggle_expando_cb
+  }), is_expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntryRow, {
     data: data
   }));
 };
 
 var ChangeLog = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref9) {
-  var data = _ref9.data;
+  var data = _ref9.data,
+      expanded_rows = _ref9.expanded_rows,
+      toggle_expando_cb = _ref9.toggle_expando_cb;
+  // If expanded_rows is not null/undefined then use it to control expansion/collapse of entries
+  // otherwise, default it to "open"
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
     className: "table table-sm bg-white table-bordered text-small changelog"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
@@ -754,10 +775,18 @@ var ChangeLog = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     className: "text-nowrap td--half-stretch"
   }, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap td--half-stretch"
-  }, gettext("New Entry")))), data.map(function (entry, id) {
+  }, gettext("New Entry")))), data.map(function (entry) {
+    var is_expanded = true;
+
+    if (expanded_rows) {
+      is_expanded = expanded_rows.has(entry.id);
+    }
+
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogEntry, {
-      key: id,
-      data: entry
+      key: entry.id,
+      data: entry,
+      is_expanded: is_expanded,
+      toggle_expando_cb: toggle_expando_cb
     });
   }));
 });
@@ -925,10 +954,9 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "program-name-input"
-      }, gettext("Program name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "required"
-      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Program name")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
         value: formdata.name,
         onChange: function onChange(e) {
@@ -991,7 +1019,7 @@ function (_React$Component) {
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ErrorFeedback, {
         errorMessages: this.formErrors('description')
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
+        className: "form-group react-multiselect-checkbox"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         htmlFor: "program-county-input"
       }, gettext("Countries"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
@@ -1011,7 +1039,7 @@ function (_React$Component) {
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ErrorFeedback, {
         errorMessages: this.formErrors('country')
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
+        className: "form-group react-multiselect-checkbox"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         htmlFor: "program-sectors-input"
       }, gettext("Sectors")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -1031,10 +1059,9 @@ function (_React$Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "program-funding-status-input"
-      }, gettext("Funding Status"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "required"
-      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, gettext("Funding Status")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
         value: selectedFundingStatus,
         options: fundingStatusOptions,
         onChange: function onChange(e) {
@@ -1329,35 +1356,123 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-select */ "y2Vs");
 /* harmony import */ var _virtualized_react_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./virtualized-react-select */ "5Xg7");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! mobx-react */ "okNM");
+/* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-multiselect-checkboxes */ "VCnP");
+/* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! mobx-react */ "okNM");
+var _class, _temp;
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 
 
 
 
-var Option = function Option(props) {
-  return react_select__WEBPACK_IMPORTED_MODULE_1__["components"].Option && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["components"].Option, props, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-    className: "checkboxed-multi-select-checkbox",
-    type: "checkbox",
-    checked: props.isSelected,
-    onChange: function onChange(e) {//we can let the outer component manage state
-    }
-  }), "\xA0", props.data.label);
+
+
+var CountLabel = function CountLabel(props) {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "count__label"
+  }, props.children, props.clearable && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    onClick: props.clearSelect
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fa fa-times",
+    "aria-hidden": "true"
+  })));
 };
 
-var CheckboxedMultiSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_3__["observer"])(function (props) {
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], _extends({
-    isMulti: true,
-    closeMenuOnSelect: false,
-    hideSelectedOptions: false,
-    components: {
-      MenuList: _virtualized_react_select__WEBPACK_IMPORTED_MODULE_2__["VirtualizedMenuList"],
-      Option: Option
+var CheckboxedMultiSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_4__["observer"])(_class = (_temp =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(CheckboxedMultiSelect, _React$Component);
+
+  function CheckboxedMultiSelect(props) {
+    var _this;
+
+    _classCallCheck(this, CheckboxedMultiSelect);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(CheckboxedMultiSelect).call(this, props));
+
+    _this.clearSelect = function (e) {
+      e.stopPropagation();
+
+      _this.props.onChange([]);
+
+      ;
+    };
+
+    _this.makeLabel = function (_ref3) {
+      var placeholderButtonLabel = _ref3.placeholderButtonLabel,
+          thisValue = _ref3.value;
+
+      if (!thisValue) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+          clearable: false
+        }, placeholderButtonLabel);
+      }
+
+      if (Array.isArray(thisValue)) {
+        if (thisValue.length === 0) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+            clearable: false
+          }, placeholderButtonLabel);
+        }
+
+        if (thisValue.length === 1) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+            clearable: true,
+            clearSelect: _this.clearSelect
+          }, thisValue[0].label);
+        }
+
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+          clearable: true,
+          clearSelect: _this.clearSelect
+        }, "".concat(thisValue.length, " ", gettext("selected")));
+      }
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
+        clearable: false
+      }, thisValue.label);
+    };
+
+    return _this;
+  }
+
+  _createClass(CheckboxedMultiSelect, [{
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3___default.a, _extends({}, this.props, {
+        placeholder: gettext("Search"),
+        placeholderButtonLabel: this.props.placeholder,
+        getDropdownButtonLabel: this.makeLabel,
+        components: {
+          MenuList: _virtualized_react_select__WEBPACK_IMPORTED_MODULE_2__["VirtualizedMenuList"]
+        }
+      }));
     }
-  }, props));
-});
+  }]);
+
+  return CheckboxedMultiSelect;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class;
+
 /* harmony default export */ __webpack_exports__["default"] = (CheckboxedMultiSelect);
 
 /***/ }),
@@ -1429,7 +1544,7 @@ var UserFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(fun
   var store = _ref.store,
       filterOptions = _ref.filterOptions;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "users_filter"
   }, gettext("Users")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -1446,7 +1561,7 @@ var CountryFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(
   var store = _ref2.store,
       filterOptions = _ref2.filterOptions;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "countries_filter"
   }, gettext("Countries")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -1463,7 +1578,7 @@ var OrganizationFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observe
   var store = _ref3.store,
       filterOptions = _ref3.filterOptions;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "organizations_filter"
   }, gettext("Organizations")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -1480,7 +1595,7 @@ var SectorFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(f
   var store = _ref4.store,
       filterOptions = _ref4.filterOptions;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "sector-filter"
   }, gettext("Sectors")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -1521,7 +1636,7 @@ var ProgramFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(
   var store = _ref6.store,
       filterOptions = _ref6.filterOptions;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
+    className: "form-group react-multiselect-checkbox"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: "programs-filter"
   }, gettext("Programs")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -1739,8 +1854,8 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProgramFilter, {
     store: store,
     filterOptions: programFilterOptions
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "filter-buttons"
+  })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "filter-section filter-buttons"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     className: "btn btn-primary",
     onClick: function onClick() {
@@ -1751,7 +1866,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     onClick: function onClick() {
       return store.clearFilters();
     }
-  }, gettext("Reset"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, gettext("Reset")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "col admin-list"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
     className: "page-title"
@@ -1833,6 +1948,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
               return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
                 isLoading: store.saving
               }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_program_history__WEBPACK_IMPORTED_MODULE_8__["default"], {
+                store: store,
                 onIsDirtyChange: function onIsDirtyChange(is_dirty) {
                   return store.setActiveFormIsDirty(is_dirty);
                 },
@@ -2046,30 +2162,81 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 
+/* Sidebar expando/collapso mimicking bootstrap behavior
+ * CSS in components/_folding_sidebar.scss
+ * Usage: <FoldingSidebar>
+ *          children to be hidden when toggle is clicked
+ *         </FoldingSidebar>
+ */
 
-var Expander =
+var FoldingSidebar =
 /*#__PURE__*/
 function (_React$Component) {
-  _inherits(Expander, _React$Component);
+  _inherits(FoldingSidebar, _React$Component);
 
-  function Expander(props) {
+  function FoldingSidebar(props) {
     var _this;
 
-    _classCallCheck(this, Expander);
+    _classCallCheck(this, FoldingSidebar);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Expander).call(this, props));
-    _this.state = {
-      folded: false
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(FoldingSidebar).call(this, props));
+
+    _this.updateDimensions = function () {
+      if (!_this.state.folded && !_this.state.folding) {
+        _this.setState(function () {
+          return {
+            resize: true
+          };
+        }, function () {
+          _this.contentWidth = _this.contentsContainer.current.offsetWidth;
+
+          _this.setState({
+            resize: false
+          });
+        });
+      }
     };
+
+    _this.state = {
+      folding: false,
+      folded: false,
+      resize: false
+    };
+    _this.contentsContainer = react__WEBPACK_IMPORTED_MODULE_0___default.a.createRef();
     return _this;
   }
 
-  _createClass(Expander, [{
+  _createClass(FoldingSidebar, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.contentWidth = this.contentsContainer.current.offsetWidth;
+      window.addEventListener("resize", this.updateDimensions);
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      window.removeEventListener("resize", this.updateDimensions);
+    }
+  }, {
     key: "toggleFolded",
     value: function toggleFolded() {
-      this.setState({
-        folded: !this.state.folded
-      });
+      if (!this.state.folding) {
+        this.setState({
+          folding: true,
+          folded: !this.state.folded
+        });
+      } else {
+        this.foldComplete();
+      }
+    }
+  }, {
+    key: "foldComplete",
+    value: function foldComplete() {
+      this.setState(function () {
+        return {
+          folding: false
+        };
+      }, this.updateDimensions);
     }
   }, {
     key: "render",
@@ -2080,10 +2247,22 @@ function (_React$Component) {
           className = _this$props.className,
           props = _objectWithoutProperties(_this$props, ["className"]);
 
-      var icon = this.state.folded ? "fa-chevron-right" : "fa-chevron-left";
+      var icon = this.state.folded ? this.state.folding ? "fa-angle-double-left" : "fa-chevron-right" : this.state.folding ? "fa-angle-double-right" : "fa-chevron-left";
+      var width = this.state.folded ? "0px" : this.state.resize ? "auto" : this.contentWidth + "px";
+      var overflow = this.state.folded || this.state.folding ? "hidden" : "visible";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", _extends({
         className: "folding-sidebar " + (className || '')
-      }, props), !this.state.folded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, this.props.children), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, props), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "folding-sidebar__contents",
+        onTransitionEnd: function onTransitionEnd() {
+          return _this2.foldComplete();
+        },
+        ref: this.contentsContainer,
+        style: {
+          width: width,
+          overflow: overflow
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, this.props.children)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "folding-sidebar__trigger",
         onClick: function onClick() {
           return _this2.toggleFolded();
@@ -2096,10 +2275,10 @@ function (_React$Component) {
     }
   }]);
 
-  return Expander;
+  return FoldingSidebar;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
-/* harmony default export */ __webpack_exports__["default"] = (Expander);
+/* harmony default export */ __webpack_exports__["default"] = (FoldingSidebar);
 
 /***/ }),
 
@@ -2114,7 +2293,7 @@ function (_React$Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProgramStore", function() { return ProgramStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _temp;
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -2145,6 +2324,7 @@ var ProgramStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
   //filter options
+  // UI state - track what history rows are expanded
   function ProgramStore(api, initialData) {
     _classCallCheck(this, ProgramStore);
 
@@ -2186,17 +2366,15 @@ function () {
 
     _initializerDefineProperty(this, "fetching_editing_history", _descriptor19, this);
 
-    _initializerDefineProperty(this, "editing_target_history", _descriptor20, this);
+    _initializerDefineProperty(this, "editing_history", _descriptor20, this);
 
     _initializerDefineProperty(this, "saving", _descriptor21, this);
 
-    _initializerDefineProperty(this, "bulk_targets", _descriptor22, this);
+    _initializerDefineProperty(this, "applying_bulk_updates", _descriptor22, this);
 
-    _initializerDefineProperty(this, "applying_bulk_updates", _descriptor23, this);
+    _initializerDefineProperty(this, "active_editor_pane", _descriptor23, this);
 
-    _initializerDefineProperty(this, "bulk_targets_all", _descriptor24, this);
-
-    _initializerDefineProperty(this, "active_editor_pane", _descriptor25, this);
+    _initializerDefineProperty(this, "changelog_expanded_rows", _descriptor24, this);
 
     this.active_pane_is_dirty = false;
     this.api = api;
@@ -2408,7 +2586,11 @@ function () {
 
           _this3.programs.unshift(response.data);
 
+          _this3.programFilterPrograms.unshift(response.data);
+
           _this3.active_pane_is_dirty = false;
+
+          _this3.onSaveSuccessHandler();
         });
       }).catch(function (error) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
@@ -2425,14 +2607,18 @@ function () {
 
       this.saving = true;
       this.api.updateProgram(id, program_data).then(function (response) {
-        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this4.saving = false;
-          _this4.active_pane_is_dirty = false;
-          _this4.editing_target_data = program_data;
+        return _this4.api.fetchProgramHistory(id).then(function (history) {
+          return Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+            _this4.saving = false;
+            _this4.active_pane_is_dirty = false;
+            _this4.editing_target_data = program_data;
 
-          _this4.updateLocalPrograms(response.data);
+            _this4.updateLocalPrograms(response.data);
 
-          _this4.onSaveSuccessHandler();
+            _this4.editing_history = history.data;
+
+            _this4.onSaveSuccessHandler();
+          });
         });
       }).catch(function (errors) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
@@ -2513,6 +2699,15 @@ function () {
             _this6.onSaveErrorHandler();
           });
         });
+      }
+    }
+  }, {
+    key: "toggleChangeLogRowExpando",
+    value: function toggleChangeLogRowExpando(row_id) {
+      if (this.changelog_expanded_rows.has(row_id)) {
+        this.changelog_expanded_rows.delete(row_id);
+      } else {
+        this.changelog_expanded_rows.add(row_id);
       }
     }
   }]);
@@ -2658,12 +2853,12 @@ function () {
   initializer: function initializer() {
     return true;
   }
-}), _descriptor20 = _applyDecoratedDescriptor(_class.prototype, "editing_target_history", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor20 = _applyDecoratedDescriptor(_class.prototype, "editing_history", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
-    return null;
+    return [];
   }
 }), _descriptor21 = _applyDecoratedDescriptor(_class.prototype, "saving", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
@@ -2672,37 +2867,30 @@ function () {
   initializer: function initializer() {
     return false;
   }
-}), _descriptor22 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return new Map();
-  }
-}), _descriptor23 = _applyDecoratedDescriptor(_class.prototype, "applying_bulk_updates", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor22 = _applyDecoratedDescriptor(_class.prototype, "applying_bulk_updates", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor24 = _applyDecoratedDescriptor(_class.prototype, "bulk_targets_all", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return false;
-  }
-}), _descriptor25 = _applyDecoratedDescriptor(_class.prototype, "active_editor_pane", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor23 = _applyDecoratedDescriptor(_class.prototype, "active_editor_pane", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return 'profile';
   }
-}), _applyDecoratedDescriptor(_class.prototype, "onProfilePaneChange", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "onProfilePaneChange"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "fetchPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkUpdateProgramStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkUpdateProgramStatus"), _class.prototype)), _class);
+}), _descriptor24 = _applyDecoratedDescriptor(_class.prototype, "changelog_expanded_rows", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return new Set();
+  }
+}), _applyDecoratedDescriptor(_class.prototype, "onProfilePaneChange", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "onProfilePaneChange"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "fetchPrograms", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "fetchPrograms"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "applyFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "applyFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changePage", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changePage"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeFilter"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "clearFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleEditingTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleEditingTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "createProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "createProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "saveNewProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "saveNewProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleBulkTargetsAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleBulkTargetsAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "bulkUpdateProgramStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "bulkUpdateProgramStatus"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "toggleChangeLogRowExpando", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "toggleChangeLogRowExpando"), _class.prototype)), _class);
 
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-a63b96b97c437a9475ea.js.map
+//# sourceMappingURL=tola_management_program-c9cc46d0af4826ee8b4b.js.map
