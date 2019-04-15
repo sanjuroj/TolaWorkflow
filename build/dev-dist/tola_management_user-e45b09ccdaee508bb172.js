@@ -3601,6 +3601,12 @@ function () {
               is_active: result.user.is_active
             };
             _this10.active_pane_is_dirty = false;
+
+            _this10.user_selections.push({
+              value: result.id,
+              label: result.name
+            });
+
             _this10.users_listing[0] = result.id;
             delete _this10.users["new"];
 
@@ -4318,4 +4324,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-ab8e9426b5e73f10a9ad.js.map
+//# sourceMappingURL=tola_management_user-e45b09ccdaee508bb172.js.map
