@@ -257,7 +257,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         return store.toggleRowExpando(data.id);
       }
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-      class: "text-action"
+      className: "text-action"
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__["FontAwesomeIcon"], {
       icon: is_expanded ? 'caret-down' : 'caret-right'
     }), "\xA0", data.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.number : gettext('N/A')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.name : gettext('N/A')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.organization), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
@@ -1191,4 +1191,4 @@ function () {
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-d68cf66cabd51f5fa4c8.js.map
+//# sourceMappingURL=audit_log-cd8704850c144f99603c.js.map

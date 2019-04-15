@@ -57,6 +57,7 @@ class TestIndicatorDeleteEndpoint(EndpointTestBase, test.TestCase):
     post_data = {
         'rationale': 'end point test deletion'
     }
+    delete = 'indicator'
 
     def setUp(self):
         self.init()

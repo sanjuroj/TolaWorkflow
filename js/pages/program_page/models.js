@@ -20,6 +20,7 @@ export class IndicatorStore {
         this.indicators = indicators;
 
         this.updateIndicator = this.updateIndicator.bind(this);
+        this.removeIndicator = this.removeIndicator.bind(this);
         this.filterIndicators = this.filterIndicators.bind(this);
     }
 
@@ -29,6 +30,11 @@ export class IndicatorStore {
         if (i > -1) {
             this.indicators[i] = indicator;
         }
+    }
+    
+    @action
+    removeIndicator(indicatorId) {
+        this.indicators = this.indicators.filter(e => e.id != indicatorId);
     }
 
     @computed

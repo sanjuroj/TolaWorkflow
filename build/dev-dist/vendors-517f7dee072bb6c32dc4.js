@@ -5104,7 +5104,7 @@ exports.default = SizePerPageDropDown;
 /*!**********************************************!*\
   !*** ./node_modules/mobx/lib/mobx.module.js ***!
   \**********************************************/
-/*! exports provided: Reaction, untracked, IDerivationState, createAtom, spy, comparer, isObservableObject, isBoxedObservable, isObservableArray, ObservableMap, isObservableMap, ObservableSet, isObservableSet, transaction, observable, computed, isObservable, isObservableProp, isComputed, isComputedProp, extendObservable, observe, intercept, autorun, reaction, when, action, isAction, runInAction, keys, values, entries, set, remove, has, get, decorate, configure, onBecomeObserved, onBecomeUnobserved, flow, toJS, trace, getDependencyTree, getObserverTree, _resetGlobalState, _getGlobalState, getDebugName, getAtom, _getAdministration, _allowStateChanges, _allowStateChangesInsideComputed, isArrayLike, $mobx, _isComputingDerivation, onReactionError, _interceptReads */
+/*! exports provided: Reaction, untracked, IDerivationState, createAtom, spy, comparer, isObservableObject, isBoxedObservable, isObservableArray, ObservableMap, isObservableMap, transaction, observable, computed, isObservable, isObservableProp, isComputed, isComputedProp, extendObservable, observe, intercept, autorun, reaction, when, action, isAction, runInAction, keys, values, entries, set, remove, has, get, decorate, configure, onBecomeObserved, onBecomeUnobserved, flow, toJS, trace, getDependencyTree, getObserverTree, _resetGlobalState, _getGlobalState, getDebugName, getAtom, _getAdministration, _allowStateChanges, _allowStateChangesInsideComputed, isArrayLike, $mobx, _isComputingDerivation, onReactionError, _interceptReads */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5120,8 +5120,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isObservableArray", function() { return isObservableArray$$1; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ObservableMap", function() { return ObservableMap$$1; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isObservableMap", function() { return isObservableMap$$1; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ObservableSet", function() { return ObservableSet$$1; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isObservableSet", function() { return isObservableSet$$1; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "transaction", function() { return transaction$$1; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "observable", function() { return observable$$1; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "computed", function() { return computed$$1; });
@@ -5353,9 +5351,6 @@ function isArrayLike$$1(x) {
 function isES6Map$$1(thing) {
     return thing instanceof Map;
 }
-function isES6Set$$1(thing) {
-    return thing instanceof Set;
-}
 function getMapLikeKeys$$1(map) {
     if (isPlainObject$$1(map))
         return Object.keys(map);
@@ -5534,14 +5529,12 @@ function deepEnhancer$$1(v, _, name) {
         return observable$$1.object(v, undefined, { name: name });
     if (isES6Map$$1(v))
         return observable$$1.map(v, { name: name });
-    if (isES6Set$$1(v))
-        return observable$$1.set(v, { name: name });
     return v;
 }
 function shallowEnhancer$$1(v, _, name) {
     if (v === undefined || v === null)
         return v;
-    if (isObservableObject$$1(v) || isObservableArray$$1(v) || isObservableMap$$1(v) || isObservableSet$$1(v))
+    if (isObservableObject$$1(v) || isObservableArray$$1(v) || isObservableMap$$1(v))
         return v;
     if (Array.isArray(v))
         return observable$$1.array(v, { name: name, deep: false });
@@ -5549,10 +5542,8 @@ function shallowEnhancer$$1(v, _, name) {
         return observable$$1.object(v, undefined, { name: name, deep: false });
     if (isES6Map$$1(v))
         return observable$$1.map(v, { name: name, deep: false });
-    if (isES6Set$$1(v))
-        return observable$$1.set(v, { name: name, deep: false });
     return fail$$1( true &&
-        "The shallow modifier / decorator can only used in combination with arrays, objects, maps and sets");
+        "The shallow modifier / decorator can only used in combination with arrays, objects and maps");
 }
 function referenceEnhancer$$1(newValue) {
     // never turn into an observable
@@ -5604,7 +5595,7 @@ var defaultCreateObservableOptions$$1 = {
 };
 Object.freeze(defaultCreateObservableOptions$$1);
 function assertValidOption(key) {
-    if (!/^(deep|name|equals|defaultDecorator|proxy)$/.test(key))
+    if (!/^(deep|name|defaultDecorator|proxy)$/.test(key))
         fail$$1("invalid option for (extend)observable: " + key);
 }
 function asCreateObservableOptions$$1(thing) {
@@ -5649,9 +5640,7 @@ function createObservable(v, arg2, arg3) {
             ? observable$$1.array(v, arg2)
             : isES6Map$$1(v)
                 ? observable$$1.map(v, arg2)
-                : isES6Set$$1(v)
-                    ? observable$$1.set(v, arg2)
-                    : v;
+                : v;
     // this value could be converted to a new observable data structure, return it
     if (res !== v)
         return res;
@@ -5664,7 +5653,7 @@ var observableFactories = {
         if (arguments.length > 2)
             incorrectlyUsedAsDecorator("box");
         var o = asCreateObservableOptions$$1(options);
-        return new ObservableValue$$1(value, getEnhancerFromOptions(o), o.name, true, o.equals);
+        return new ObservableValue$$1(value, getEnhancerFromOptions(o), o.name);
     },
     array: function (initialValues, options) {
         if (arguments.length > 2)
@@ -5677,12 +5666,6 @@ var observableFactories = {
             incorrectlyUsedAsDecorator("map");
         var o = asCreateObservableOptions$$1(options);
         return new ObservableMap$$1(initialValues, getEnhancerFromOptions(o), o.name);
-    },
-    set: function (initialValues, options) {
-        if (arguments.length > 2)
-            incorrectlyUsedAsDecorator("set");
-        var o = asCreateObservableOptions$$1(options);
-        return new ObservableSet$$1(initialValues, getEnhancerFromOptions(o), o.name);
     },
     object: function (props, decorators, options) {
         if (typeof arguments[1] === "string")
@@ -5749,35 +5732,25 @@ var computed$$1 = function computed$$1(arg1, arg2, arg3) {
 };
 computed$$1.struct = computedStructDecorator;
 
-function createAction$$1(actionName, fn, ref) {
+function createAction$$1(actionName, fn) {
     if (true) {
         invariant$$1(typeof fn === "function", "`action` can only be invoked on functions");
         if (typeof actionName !== "string" || !actionName)
             fail$$1("actions should have valid names, got: '" + actionName + "'");
     }
     var res = function () {
-        return executeAction$$1(actionName, fn, ref || this, arguments);
+        return executeAction$$1(actionName, fn, this, arguments);
     };
     res.isMobxAction = true;
     return res;
 }
 function executeAction$$1(actionName, fn, scope, args) {
     var runInfo = startAction(actionName, fn, scope, args);
-    var shouldSupressReactionError = true;
     try {
-        var res = fn.apply(scope, args);
-        shouldSupressReactionError = false;
-        return res;
+        return fn.apply(scope, args);
     }
     finally {
-        if (shouldSupressReactionError) {
-            globalState$$1.suppressReactionErrors = shouldSupressReactionError;
-            endAction(runInfo);
-            globalState$$1.suppressReactionErrors = false;
-        }
-        else {
-            endAction(runInfo);
-        }
+        endAction(runInfo);
     }
 }
 function startAction(actionName, fn, scope, args) {
@@ -5848,14 +5821,11 @@ function allowStateChangesInsideComputed$$1(func) {
 
 var ObservableValue$$1 = /** @class */ (function (_super) {
     __extends(ObservableValue$$1, _super);
-    function ObservableValue$$1(value, enhancer, name, notifySpy, equals) {
+    function ObservableValue$$1(value, enhancer, name, notifySpy) {
         if (name === void 0) { name = "ObservableValue@" + getNextId$$1(); }
         if (notifySpy === void 0) { notifySpy = true; }
-        if (equals === void 0) { equals = comparer$$1.default; }
         var _this = _super.call(this, name) || this;
         _this.enhancer = enhancer;
-        _this.name = name;
-        _this.equals = equals;
         _this.hasUnreportedChange = false;
         _this.value = enhancer(value, undefined, name);
         if (notifySpy && isSpyEnabled$$1() && "development" !== "production") {
@@ -5901,7 +5871,7 @@ var ObservableValue$$1 = /** @class */ (function (_super) {
         }
         // apply modifier
         newValue = this.enhancer(newValue, this.value, this.name);
-        return this.equals(this.value, newValue) ? globalState$$1.UNCHANGED : newValue;
+        return this.value !== newValue ? newValue : globalState$$1.UNCHANGED;
     };
     ObservableValue$$1.prototype.setNewValue = function (newValue) {
         var oldValue = this.value;
@@ -6504,11 +6474,6 @@ var MobXGlobals$$1 = /** @class */ (function () {
          * the stack when an exception occurs while debugging.
          */
         this.disableErrorBoundaries = false;
-        /*
-         * If true, we are already handling an exception in an action. Any errors in reactions should be supressed, as
-         * they are not the cause, see: https://github.com/mobxjs/mobx/issues/1836
-         */
-        this.suppressReactionErrors = false;
     }
     return MobXGlobals$$1;
 }());
@@ -6753,7 +6718,7 @@ function logTraceInfo(derivation, observable$$1) {
         var lines = [];
         printDepTree(getDependencyTree$$1(derivation), lines, 1);
         // prettier-ignore
-        new Function("debugger;\n/*\nTracing '" + derivation.name + "'\n\nYou are entering this break point because derivation '" + derivation.name + "' is being traced and '" + observable$$1.name + "' is now forcing it to update.\nJust follow the stacktrace you should now see in the devtools to see precisely what piece of your code is causing this update\nThe stackframe you are looking for is at least ~6-8 stack-frames up.\n\n" + (derivation instanceof ComputedValue$$1 ? derivation.derivation.toString().replace(/[*]\//g, "/") : "") + "\n\nThe dependencies for this derivation are:\n\n" + lines.join("\n") + "\n*/\n    ")();
+        new Function("debugger;\n/*\nTracing '" + derivation.name + "'\n\nYou are entering this break point because derivation '" + derivation.name + "' is being traced and '" + observable$$1.name + "' is now forcing it to update.\nJust follow the stacktrace you should now see in the devtools to see precisely what piece of your code is causing this update\nThe stackframe you are looking for is at least ~6-8 stack-frames up.\n\n" + (derivation instanceof ComputedValue$$1 ? derivation.derivation.toString() : "") + "\n\nThe dependencies for this derivation are:\n\n" + lines.join("\n") + "\n*/\n    ")();
     }
 }
 function printDepTree(tree, lines, depth) {
@@ -6827,9 +6792,6 @@ var Reaction$$1 = /** @class */ (function () {
         }
     };
     Reaction$$1.prototype.track = function (fn) {
-        if (this.isDisposed) {
-            fail$$1("Reaction already disposed");
-        }
         startBatch$$1();
         var notify = isSpyEnabled$$1();
         var startTime;
@@ -6865,14 +6827,9 @@ var Reaction$$1 = /** @class */ (function () {
         }
         if (globalState$$1.disableErrorBoundaries)
             throw error;
-        var message = "[mobx] Encountered an uncaught exception that was thrown by a reaction or observer component, in: '" + this + "'";
-        if (globalState$$1.suppressReactionErrors) {
-            console.warn("[mobx] (error in reaction '" + this.name + "' suppressed, fix error of causing action below)"); // prettier-ignore
-        }
-        else {
-            console.error(message, error);
-            /** If debugging brought you here, please, read the above message :-). Tnx! */
-        }
+        var message = "[mobx] Encountered an uncaught exception that was thrown by a reaction or observer component, in: '" + this;
+        console.error(message, error);
+        /** If debugging brought you here, please, read the above message :-). Tnx! */
         if (isSpyEnabled$$1()) {
             spyReport$$1({
                 type: "error",
@@ -7087,7 +7044,7 @@ var action$$1 = function action$$1(arg1, arg2, arg3, arg4) {
     // @action fn() {}
     if (arg4 === true) {
         // apply to instance immediately
-        addHiddenProp$$1(arg1, arg2, createAction$$1(arg1.name || arg2, arg3.value, this));
+        addHiddenProp$$1(arg1, arg2, createAction$$1(arg1.name || arg2, arg3.value));
     }
     else {
         return namedActionDecorator$$1(arg2).apply(null, arguments);
@@ -7249,9 +7206,6 @@ function interceptHook(hook, thing, arg2, arg3) {
 
 function configure$$1(options) {
     var enforceActions = options.enforceActions, computedRequiresReaction = options.computedRequiresReaction, disableErrorBoundaries = options.disableErrorBoundaries, reactionScheduler = options.reactionScheduler;
-    if (options.isolateGlobalState === true) {
-        isolateGlobalState$$1();
-    }
     if (enforceActions !== undefined) {
         if (typeof enforceActions === "boolean" || enforceActions === "strict")
             deprecated$$1("Deprecated value for 'enforceActions', use 'false' => '\"never\"', 'true' => '\"observed\"', '\"strict\"' => \"'always'\" instead");
@@ -7277,6 +7231,9 @@ function configure$$1(options) {
     }
     if (computedRequiresReaction !== undefined) {
         globalState$$1.computedRequiresReaction = !!computedRequiresReaction;
+    }
+    if (options.isolateGlobalState === true) {
+        isolateGlobalState$$1();
     }
     if (disableErrorBoundaries !== undefined) {
         if (disableErrorBoundaries === true)
@@ -7399,7 +7356,7 @@ function flow$$1(generator) {
         var gen = action$$1(name + " - runid: " + runId + " - init", generator).apply(ctx, args);
         var rejector;
         var pendingPromise = undefined;
-        var promise = new Promise(function (resolve, reject) {
+        var res = new Promise(function (resolve, reject) {
             var stepId = 0;
             rejector = reject;
             function onFulfilled(res) {
@@ -7437,14 +7394,14 @@ function flow$$1(generator) {
             }
             onFulfilled(undefined); // kick off the process
         });
-        promise.cancel = action$$1(name + " - runid: " + runId + " - cancel", function () {
+        res.cancel = action$$1(name + " - runid: " + runId + " - cancel", function () {
             try {
                 if (pendingPromise)
                     cancelPromise(pendingPromise);
                 // Finally block can return (or yield) stuff..
-                var res = gen.return();
+                var res_1 = gen.return();
                 // eat anything that promise would do, it's cancelled!
-                var yieldedPromise = Promise.resolve(res.value);
+                var yieldedPromise = Promise.resolve(res_1.value);
                 yieldedPromise.then(noop$$1, noop$$1);
                 cancelPromise(yieldedPromise); // maybe it can be cancelled :)
                 // reject our original promise
@@ -7454,7 +7411,7 @@ function flow$$1(generator) {
                 rejector(e); // there could be a throwing finally block
             }
         });
-        return promise;
+        return res;
     };
 }
 function cancelPromise(promise) {
@@ -7562,14 +7519,11 @@ function keys$$1(obj) {
     if (isObservableMap$$1(obj)) {
         return Array.from(obj.keys());
     }
-    if (isObservableSet$$1(obj)) {
-        return Array.from(obj.keys());
-    }
     if (isObservableArray$$1(obj)) {
         return obj.map(function (_, index) { return index; });
     }
     return fail$$1( true &&
-        "'keys()' can only be used on observable objects, arrays, sets and maps");
+        "'keys()' can only be used on observable objects, arrays and maps");
 }
 function values$$1(obj) {
     if (isObservableObject$$1(obj)) {
@@ -7578,14 +7532,11 @@ function values$$1(obj) {
     if (isObservableMap$$1(obj)) {
         return keys$$1(obj).map(function (key) { return obj.get(key); });
     }
-    if (isObservableSet$$1(obj)) {
-        return Array.from(obj.values());
-    }
     if (isObservableArray$$1(obj)) {
         return obj.slice();
     }
     return fail$$1( true &&
-        "'values()' can only be used on observable objects, arrays, sets and maps");
+        "'values()' can only be used on observable objects, arrays and maps");
 }
 function entries$$1(obj) {
     if (isObservableObject$$1(obj)) {
@@ -7593,9 +7544,6 @@ function entries$$1(obj) {
     }
     if (isObservableMap$$1(obj)) {
         return keys$$1(obj).map(function (key) { return [key, obj.get(key)]; });
-    }
-    if (isObservableSet$$1(obj)) {
-        return Array.from(obj.entries());
     }
     if (isObservableArray$$1(obj)) {
         return obj.map(function (key, index) { return [index, key]; });
@@ -7652,9 +7600,6 @@ function remove$$1(obj, key) {
     else if (isObservableMap$$1(obj)) {
         obj.delete(key);
     }
-    else if (isObservableSet$$1(obj)) {
-        obj.delete(key);
-    }
     else if (isObservableArray$$1(obj)) {
         if (typeof key !== "number")
             key = parseInt(key, 10);
@@ -7673,9 +7618,6 @@ function has$$1(obj, key) {
         return adm.has(key);
     }
     else if (isObservableMap$$1(obj)) {
-        return obj.has(key);
-    }
-    else if (isObservableSet$$1(obj)) {
         return obj.has(key);
     }
     else if (isObservableArray$$1(obj)) {
@@ -7755,36 +7697,20 @@ function toJSHelper(source, options, __alreadySeen) {
             res_1[i] = toAdd[i];
         return res_1;
     }
-    if (isObservableSet$$1(source) || Object.getPrototypeOf(source) === Set.prototype) {
+    if (isObservableMap$$1(source) || Object.getPrototypeOf(source) === Map.prototype) {
         if (options.exportMapsAsObjects === false) {
-            var res_2 = cache(__alreadySeen, source, new Set(), options);
-            source.forEach(function (value) {
-                res_2.add(toJSHelper(value, options, __alreadySeen));
+            var res_2 = cache(__alreadySeen, source, new Map(), options);
+            source.forEach(function (value, key) {
+                res_2.set(key, toJSHelper(value, options, __alreadySeen));
             });
             return res_2;
         }
         else {
-            var res_3 = cache(__alreadySeen, source, [], options);
-            source.forEach(function (value) {
-                res_3.push(toJSHelper(value, options, __alreadySeen));
+            var res_3 = cache(__alreadySeen, source, {}, options);
+            source.forEach(function (value, key) {
+                res_3[key] = toJSHelper(value, options, __alreadySeen);
             });
             return res_3;
-        }
-    }
-    if (isObservableMap$$1(source) || Object.getPrototypeOf(source) === Map.prototype) {
-        if (options.exportMapsAsObjects === false) {
-            var res_4 = cache(__alreadySeen, source, new Map(), options);
-            source.forEach(function (value, key) {
-                res_4.set(key, toJSHelper(value, options, __alreadySeen));
-            });
-            return res_4;
-        }
-        else {
-            var res_5 = cache(__alreadySeen, source, {}, options);
-            source.forEach(function (value, key) {
-                res_5[key] = toJSHelper(value, options, __alreadySeen);
-            });
-            return res_5;
         }
     }
     // Fallback to the situation that source is an ObservableObject or a plain object
@@ -8512,7 +8438,7 @@ var ObservableMap$$1 = /** @class */ (function () {
             entry.setNewValue(value);
         }
         else {
-            entry = new ObservableValue$$1(value, referenceEnhancer$$1, this.name + "." + stringifyKey(key) + "?", false);
+            entry = new ObservableValue$$1(value, referenceEnhancer$$1, this.name + "." + key + "?", false);
             this._hasMap.set(key, entry);
         }
         return entry;
@@ -8545,7 +8471,7 @@ var ObservableMap$$1 = /** @class */ (function () {
         var _this = this;
         checkIfStateModificationsAreAllowed$$1(this._keysAtom);
         transaction$$1(function () {
-            var observable$$1 = new ObservableValue$$1(newValue, _this.enhancer, _this.name + "." + stringifyKey(key), false);
+            var observable$$1 = new ObservableValue$$1(newValue, _this.enhancer, _this.name + "." + key, false);
             _this._data.set(key, observable$$1);
             newValue = observable$$1.value; // value might have been changed
             _this._updateHasMapEntry(key, true);
@@ -8645,11 +8571,8 @@ var ObservableMap$$1 = /** @class */ (function () {
                     var _b = __read(_a, 2), key = _b[0], value = _b[1];
                     return _this.set(key, value);
                 });
-            else if (isES6Map$$1(other)) {
-                if (other.constructor !== Map)
-                    fail$$1("Cannot initialize from classes that inherit from Map: " + other.constructor.name); // prettier-ignore
+            else if (isES6Map$$1(other))
                 other.forEach(function (value, key) { return _this.set(key, value); });
-            }
             else if (other !== null && other !== undefined)
                 fail$$1("Cannot initialize map from " + other);
         });
@@ -8709,8 +8632,7 @@ var ObservableMap$$1 = /** @class */ (function () {
         try {
             for (var _b = __values(this), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
-                // We lie about symbol key types due to https://github.com/Microsoft/TypeScript/issues/1863
-                res[typeof key === "symbol" ? key : stringifyKey(key)] = value;
+                res["" + key] = value;
             }
         }
         catch (e_3_1) { e_3 = { error: e_3_1 }; }
@@ -8738,7 +8660,7 @@ var ObservableMap$$1 = /** @class */ (function () {
         return (this.name +
             "[{ " +
             Array.from(this.keys())
-                .map(function (key) { return stringifyKey(key) + ": " + ("" + _this.get(key)); })
+                .map(function (key) { return key + ": " + ("" + _this.get(key)); })
                 .join(", ") +
             " }]");
     };
@@ -8757,232 +8679,8 @@ var ObservableMap$$1 = /** @class */ (function () {
     };
     return ObservableMap$$1;
 }());
-function stringifyKey(key) {
-    if (key && key.toString)
-        return key.toString();
-    else
-        return new String(key).toString();
-}
 /* 'var' fixes small-build issue */
 var isObservableMap$$1 = createInstanceofPredicate$$1("ObservableMap", ObservableMap$$1);
-
-var _a$1;
-var ObservableSetMarker = {};
-var ObservableSet$$1 = /** @class */ (function () {
-    function ObservableSet$$1(initialData, enhancer, name) {
-        if (enhancer === void 0) { enhancer = deepEnhancer$$1; }
-        if (name === void 0) { name = "ObservableSet@" + getNextId$$1(); }
-        this.name = name;
-        this[_a$1] = ObservableSetMarker;
-        this._data = new Set();
-        this._atom = createAtom$$1(this.name);
-        this[Symbol.toStringTag] = "Set";
-        if (typeof Set !== "function") {
-            throw new Error("mobx.set requires Set polyfill for the current browser. Check babel-polyfill or core-js/es6/set.js");
-        }
-        this.enhancer = function (newV, oldV) { return enhancer(newV, oldV, name); };
-        if (initialData) {
-            this.replace(initialData);
-        }
-    }
-    ObservableSet$$1.prototype.dehanceValue = function (value) {
-        if (this.dehancer !== undefined) {
-            return this.dehancer(value);
-        }
-        return value;
-    };
-    ObservableSet$$1.prototype.clear = function () {
-        var _this = this;
-        transaction$$1(function () {
-            untracked$$1(function () {
-                var e_1, _a;
-                try {
-                    for (var _b = __values(_this._data.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                        var value = _c.value;
-                        _this.delete(value);
-                    }
-                }
-                catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                finally {
-                    try {
-                        if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-                    }
-                    finally { if (e_1) throw e_1.error; }
-                }
-            });
-        });
-    };
-    ObservableSet$$1.prototype.forEach = function (callbackFn, thisArg) {
-        var e_2, _a;
-        try {
-            for (var _b = __values(this), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var value = _c.value;
-                callbackFn.call(thisArg, value, value, this);
-            }
-        }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-    };
-    Object.defineProperty(ObservableSet$$1.prototype, "size", {
-        get: function () {
-            this._atom.reportObserved();
-            return this._data.size;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ObservableSet$$1.prototype.add = function (value) {
-        var _this = this;
-        checkIfStateModificationsAreAllowed$$1(this._atom);
-        if (hasInterceptors$$1(this)) {
-            var change = interceptChange$$1(this, {
-                type: "add",
-                object: this,
-                newValue: value
-            });
-            if (!change)
-                return this;
-            // TODO: ideally, value = change.value would be done here, so that values can be
-            // changed by interceptor. Same applies for other Set and Map api's.
-        }
-        if (!this.has(value)) {
-            transaction$$1(function () {
-                _this._data.add(_this.enhancer(value, undefined));
-                _this._atom.reportChanged();
-            });
-            var notifySpy = isSpyEnabled$$1();
-            var notify = hasListeners$$1(this);
-            var change = notify || notifySpy
-                ? {
-                    type: "add",
-                    object: this,
-                    newValue: value
-                }
-                : null;
-            if (notifySpy && "development" !== "production")
-                spyReportStart$$1(change);
-            if (notify)
-                notifyListeners$$1(this, change);
-            if (notifySpy && "development" !== "production")
-                spyReportEnd$$1();
-        }
-        return this;
-    };
-    ObservableSet$$1.prototype.delete = function (value) {
-        var _this = this;
-        if (hasInterceptors$$1(this)) {
-            var change = interceptChange$$1(this, {
-                type: "delete",
-                object: this,
-                oldValue: value
-            });
-            if (!change)
-                return false;
-        }
-        if (this.has(value)) {
-            var notifySpy = isSpyEnabled$$1();
-            var notify = hasListeners$$1(this);
-            var change = notify || notifySpy
-                ? {
-                    type: "delete",
-                    object: this,
-                    oldValue: value
-                }
-                : null;
-            if (notifySpy && "development" !== "production")
-                spyReportStart$$1(__assign({}, change, { name: this.name }));
-            transaction$$1(function () {
-                _this._atom.reportChanged();
-                _this._data.delete(value);
-            });
-            if (notify)
-                notifyListeners$$1(this, change);
-            if (notifySpy && "development" !== "production")
-                spyReportEnd$$1();
-            return true;
-        }
-        return false;
-    };
-    ObservableSet$$1.prototype.has = function (value) {
-        this._atom.reportObserved();
-        return this._data.has(this.dehanceValue(value));
-    };
-    ObservableSet$$1.prototype.entries = function () {
-        var nextIndex = 0;
-        var keys$$1 = Array.from(this.keys());
-        var values$$1 = Array.from(this.values());
-        return makeIterable({
-            next: function () {
-                var index = nextIndex;
-                nextIndex += 1;
-                return index < values$$1.length
-                    ? { value: [keys$$1[index], values$$1[index]], done: false }
-                    : { done: true };
-            }
-        });
-    };
-    ObservableSet$$1.prototype.keys = function () {
-        return this.values();
-    };
-    ObservableSet$$1.prototype.values = function () {
-        this._atom.reportObserved();
-        var self = this;
-        var nextIndex = 0;
-        var observableValues = Array.from(this._data.values());
-        return makeIterable({
-            next: function () {
-                return nextIndex < observableValues.length
-                    ? { value: self.dehanceValue(observableValues[nextIndex++]), done: false }
-                    : { done: true };
-            }
-        });
-    };
-    ObservableSet$$1.prototype.replace = function (other) {
-        var _this = this;
-        if (isObservableSet$$1(other)) {
-            other = other.toJS();
-        }
-        transaction$$1(function () {
-            if (Array.isArray(other)) {
-                _this.clear();
-                other.forEach(function (value) { return _this.add(value); });
-            }
-            else if (isES6Set$$1(other)) {
-                _this.clear();
-                other.forEach(function (value) { return _this.add(value); });
-            }
-            else if (other !== null && other !== undefined) {
-                fail$$1("Cannot initialize set from " + other);
-            }
-        });
-        return this;
-    };
-    ObservableSet$$1.prototype.observe = function (listener, fireImmediately) {
-        // TODO 'fireImmediately' can be true?
-         true &&
-            invariant$$1(fireImmediately !== true, "`observe` doesn't support fireImmediately=true in combination with sets.");
-        return registerListener$$1(this, listener);
-    };
-    ObservableSet$$1.prototype.intercept = function (handler) {
-        return registerInterceptor$$1(this, handler);
-    };
-    ObservableSet$$1.prototype.toJS = function () {
-        return new Set(this);
-    };
-    ObservableSet$$1.prototype.toString = function () {
-        return this.name + "[ " + Array.from(this).join(", ") + " ]";
-    };
-    ObservableSet$$1.prototype[(_a$1 = $mobx$$1, Symbol.iterator)] = function () {
-        return this.values();
-    };
-    return ObservableSet$$1;
-}());
-var isObservableSet$$1 = createInstanceofPredicate$$1("ObservableSet", ObservableSet$$1);
 
 var ObservableObjectAdministration$$1 = /** @class */ (function () {
     function ObservableObjectAdministration$$1(target, values$$1, name, defaultEnhancer) {
@@ -9255,7 +8953,7 @@ function getAdministrationForComputedPropOwner(owner) {
 function generateComputedPropConfig$$1(propName) {
     return (computedPropertyConfigs[propName] ||
         (computedPropertyConfigs[propName] = {
-            configurable: false,
+            configurable: true,
             enumerable: false,
             get: function () {
                 return getAdministrationForComputedPropOwner(this).read(propName);
@@ -9282,9 +8980,6 @@ function getAtom$$1(thing, property) {
                 fail$$1( true &&
                     "It is not possible to get index atoms from arrays");
             return thing[$mobx$$1].atom;
-        }
-        if (isObservableSet$$1(thing)) {
-            return thing[$mobx$$1];
         }
         if (isObservableMap$$1(thing)) {
             var anyThing = thing;
@@ -9328,7 +9023,7 @@ function getAdministration$$1(thing, property) {
         return getAdministration$$1(getAtom$$1(thing, property));
     if (isAtom$$1(thing) || isComputedValue$$1(thing) || isReaction$$1(thing))
         return thing;
-    if (isObservableMap$$1(thing) || isObservableSet$$1(thing))
+    if (isObservableMap$$1(thing))
         return thing;
     // Initializers run lazily when transpiling to babel, so make sure they are run...
     initializeInstance$$1(thing);
@@ -9340,7 +9035,7 @@ function getDebugName$$1(thing, property) {
     var named;
     if (property !== undefined)
         named = getAtom$$1(thing, property);
-    else if (isObservableObject$$1(thing) || isObservableMap$$1(thing) || isObservableSet$$1(thing))
+    else if (isObservableObject$$1(thing) || isObservableMap$$1(thing))
         named = getAdministration$$1(thing);
     else
         named = getAtom$$1(thing); // valid for arrays as well
@@ -9449,8 +9144,7 @@ function deepEq(a, b, aStack, bStack) {
     }
     else {
         // Deep compare objects.
-        var keys$$1 = Object.keys(a);
-        var key = void 0;
+        var keys$$1 = Object.keys(a), key;
         length = keys$$1.length;
         // Ensure that both objects contain the same number of properties before comparing deep equality.
         if (Object.keys(b).length !== length)
@@ -9471,8 +9165,6 @@ function unwrap(a) {
     if (isObservableArray$$1(a))
         return a.slice();
     if (isES6Map$$1(a) || isObservableMap$$1(a))
-        return Array.from(a.entries());
-    if (isES6Set$$1(a) || isObservableSet$$1(a))
         return Array.from(a.entries());
     return a;
 }
@@ -9514,7 +9206,7 @@ but at least in this file we can magically reorder the imports with trial and er
  *
  */
 if (typeof Proxy === "undefined" || typeof Symbol === "undefined") {
-    throw new Error("[mobx] MobX 5+ requires Proxy and Symbol objects. If your environment doesn't support Symbol or Proxy objects, please downgrade to MobX 4. For React Native Android, consider upgrading JSCore.");
+    throw new Error("[mobx] MobX 5+ requires Proxy and Symbol objects. If your environment doesn't support Proxy objects, please downgrade to MobX 4. For React Native Android, consider upgrading JSCore.");
 }
 try {
     // define process.env if needed
@@ -87595,4 +87287,4 @@ exports.default = ExpansionHeaderCell;
 /***/ })
 
 }]);
-//# sourceMappingURL=vendors-214e7eb7dcd84162628a.js.map
+//# sourceMappingURL=vendors-517f7dee072bb6c32dc4.js.map

@@ -453,19 +453,31 @@ class IndicatorDelete(DeleteView):
     def delete(self, request, *args, **kwargs):
         if request.is_ajax():
             indicator = self.get_object()
-            if not request.POST.get('rationale') and (indicator.result_set.all().count() > 0 or indicator.periodictargets.all().count() > 0):
-                return JsonResponse(
-                    {"status": "failed", "msg": "Rationale is required"},
-                    status=400
-                )
-
+            if not request.POST.get('rationale'):
+                # if an indicator has results and no rationale is provided, fail:
+                if indicator.result_set.all().count() > 0:
+                    return JsonResponse(
+                        {"status": "failed", "msg": _("Rationale is required.")},
+                        status=400
+                    )
+                # otherwise the rationale is this default:
+                else:
+                    rationale = "A rationale is not required when deleting an indicator with no linked results."
+            else:
+                rationale = request.POST.get('rationale')
             indicator_values = indicator.logged_fields
+            program_page_url = indicator.program.program_page_url
             indicator.delete()
-            ProgramAuditLog.log_indicator_deleted(self.request.user, indicator, indicator_values, self.request.POST['rationale'])
-
-            return JsonResponse(
-                {"status": "success", "msg": "Indicator Deleted"}
-            )
+            ProgramAuditLog.log_indicator_deleted(self.request.user, indicator, indicator_values, rationale)
+            success_message = _("The indicator was successfully deleted.")
+            response_context = {'status': 'success'}
+            if request.POST.get('redirect'):
+                response_context['redirect_url'] = program_page_url
+                # message tagged "pnotify" to display a success popup after redirect
+                messages.success(request, success_message, extra_tags="pnotify pnotify-success")
+            else:
+                response_context['msg'] = success_message
+            return JsonResponse(response_context)
         else:
             return super(IndicatorDelete, self).delete(request, *args, **kwargs)
 
