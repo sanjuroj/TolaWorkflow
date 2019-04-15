@@ -235,6 +235,7 @@ export class CountryStore {
                 this.countries.shift()
                 this.countries.unshift(response.data)
                 this.allCountries.unshift(response.data)
+                this.onSaveSuccessHandler();
             })
         }).catch(errors => {
             runInAction(()=> {

@@ -230,6 +230,7 @@ export class ProgramStore {
                 this.programs.unshift(response.data);
                 this.programFilterPrograms.unshift(response.data);
                 this.active_pane_is_dirty = false;
+                this.onSaveSuccessHandler();
             })
         }).catch(error => {
             runInAction(()=> {
