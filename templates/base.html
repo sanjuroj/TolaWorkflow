@@ -46,7 +46,7 @@
     </head>
     <body class="{% block bodyclasses %}{% endblock %}">
 
-        <nav class="navbar navbar-dark navbar-expand-sm navbar-tola">
+        <nav class="navbar navbar-dark navbar-expand-sm navbar-tola {% if user.is_superuser %}for-superadmin{% endif %}">
             <div class="container-fluid navbar-tola--container">
                 <button
                     class="navbar-toggler m-1"
