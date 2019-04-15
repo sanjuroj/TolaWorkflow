@@ -64,7 +64,7 @@ class ChangesetEntry extends React.Component {
 export const IndexView = observer(
     ({store}) => {
         return <div id="audit-log-index-view">
-            <header class="page-title">
+            <header className="page-title">
                 <h1><small>{gettext("Indicator change log:")}</small> {store.program_name}</h1>
             </header>
 
@@ -93,8 +93,8 @@ export const IndexView = observer(
                                 <th className="text-nowrap">{gettext("Rationale")}</th>
                             </tr>
                         </thead>
-                        {store.log_rows.map(data => <tbody>
-                            <tr className="changelog__entry__header is-expanded">
+                        {store.log_rows.map((data, index) => <tbody key={`${index}tbody`}>
+                            <tr className="changelog__entry__header is-expanded" key={`${index}header`}>
                                 <td>{data.date}</td>
                                 <td>{(data.indicator)?data.indicator.number:gettext('N/A')}</td>
                                 <td>{(data.indicator)?data.indicator.name:gettext('N/A')}</td>

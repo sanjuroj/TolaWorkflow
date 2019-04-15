@@ -325,45 +325,6 @@ function notifyLoginRequired() {
 }
 
 
-function notifySuccessAfterRedirect() {
-    let qs = document.location.search.split('+').join(' ');
-
-    var params = {},
-        tokens,
-        re = /[?&]?([^=]+)=([^&]*)/g;
-
-    while (tokens = re.exec(qs)) {
-        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-    }
-    if ('success' in params && params.success == "true") {
-        let {success, msg, ...newparams} = params;
-        let newLocation = window.location.href;
-        newLocation = newLocation.substring(newLocation.lastIndexOf('/') + 1);
-        newLocation = newLocation.split("?")[0];
-        if (Object.getOwnPropertyNames(newparams).length > 0) {
-            newLocation = newLocation + '?' + Object.keys(newparams).map(key => key + '=' + newparams[key]).join('&')
-        }
-        window.history.replaceState({}, document.title, '/' + newLocation);
-        $(document).ready(function() {
-            var success = PNotify.alert({
-                title: gettext('Success'),
-                text: msg,
-                type: 'success',
-                stack: {
-                    'dir1': 'right',
-                    'dir2': 'up',
-                    'firstpos1': 0,
-                    'firstpos2': 0
-                    },
-                });
-        });
-    }
-    
-}
-window.notifySuccessAfterRedirect = notifySuccessAfterRedirect;
-
-notifySuccessAfterRedirect();
-
 $(document).ready(function() {
     $(document).on('hidden.bs.modal', '.modal', function () {
         $('.modal:visible').length && $(document.body).addClass('modal-open');
@@ -396,7 +357,8 @@ const create_changeset_notice = ({
     type = 'notice',
     inner = '',
     context = null,
-    rationale_required = true
+    rationale_required = true,
+    showCloser = false,
 } = {}) => {
     var notice = PNotify.alert({
         text: $(`<div><form action="" method="post" class="form container">${inner}</form></div>`).html(),
@@ -416,7 +378,8 @@ const create_changeset_notice = ({
         },
         modules: {
             Buttons: {
-                closer: false,
+                closer: showCloser,
+                closerHover: false,
                 sticker: false
             },
             Confirm: {
@@ -480,7 +443,8 @@ window.create_destructive_changeset_notice = ({
     confirm_text = 'Ok',
     cancel_text = 'Cancel',
     context = null,
-    no_preamble = false
+    no_preamble = false,
+    showCloser = false
 } = {}) => {
     if(!message_text) {message_text = DEFAULT_DESTRUCTIVE_MESSAGE}
     const preamble = (no_preamble)?'':`<span class='text-danger'>${gettext("This action cannot be undone.")}</span>`
@@ -513,7 +477,8 @@ window.create_destructive_changeset_notice = ({
         cancel_text: cancel_text,
         type: 'error',
         inner: inner,
-        context: context
+        context: context,
+        showCloser: showCloser
     })
 }
 
@@ -567,7 +532,7 @@ window.create_no_rationale_changeset_notice = ({
     confirm_text = 'Ok',
     cancel_text = 'Cancel',
     context = null,
-    preamble = false,
+    preamble = false
 } = {}) => {
     if (!message_text) {message_text = DEFAULT_NO_RATIONALE_TEXT}
     if (!preamble) {preamble = gettext("This action cannot be undone.")};
@@ -582,7 +547,13 @@ window.create_no_rationale_changeset_notice = ({
                 <span class='text-danger'>
                     ${preamble}
                 </span>
-                ${message_text}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span>
+                    ${message_text}
+                </span>
             </div>
         </div>
     `;
@@ -596,6 +567,7 @@ window.create_no_rationale_changeset_notice = ({
         type: 'error',
         inner: inner,
         context: context,
-        rationale_required: false
+        rationale_required: false,
+        showCloser: true
         });
 }

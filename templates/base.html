@@ -166,6 +166,36 @@
                             {% for message in messages %}
                                     {% if 'safe' in message.tags %}
                                         <div class="alert alert-{{message.tags}}">{{ message|safe }}</div>
+                                    {% elif 'pnotify' in message.tags and 'pnotify-success' in message.tags %}
+                                        <script type="text/javascript">
+                                            $(function() {
+                                                PNotify.defaults.styling = 'bootstrap4'; // Bootstrap version 4
+                                                PNotify.defaults.icons = 'fontawesome5'; // Font Awesome 5
+                                                PNotify.success({
+                                                     title: gettext('Success'),
+                                                     text: `{{ message|safe }}`,
+                                                     type: 'success',
+                                                     hide: true,
+                                                     textTrusted: true,
+                                                     width: '350px',
+                                                     minHeight: '150px',
+                                                     stack: {    
+                                                         'overlayClose': true,
+                                                         'dir1': 'right',
+                                                         'dir2': 'up',
+                                                         'firstpos1': 0,
+                                                         'firstpos2': 0
+                                                     },
+                                                     modules: {
+                                                         Buttons: {
+                                                             closer: true,
+                                                             closerHover: false,
+                                                             sticker: false
+                                                         }
+                                                     }
+                                                });
+                                            });
+                                        </script>
                                     {% else %}
                                         <div class="alert alert-{{message.tags}}">{{ message|safe }}</div>
                                     {% endif %}

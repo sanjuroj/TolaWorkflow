@@ -77,8 +77,7 @@
 
     function confirmAndRedirect(delete_indicator) {
         var has_results = parseInt($('#numDataPoints').text()) > 0;
-        var has_targets = $('.periodic-targets').length > 0;
-        if(!has_targets && !has_results) {
+        if(!has_results) {
             create_no_rationale_changeset_notice({
                 preamble: DELETE_INDICATOR_PREAMBLE,
                 message_text: DELETE_INDICATOR_NO_RATIONALE,
@@ -89,24 +88,20 @@
             create_destructive_changeset_notice({
                 message_text: DELETE_INDICATOR_MESSAGE,
                 context: document.getElementById('indicator_update_form'),
-                on_submit: delete_indicator
+                on_submit: delete_indicator,
+                showCloser: true
             });
         }
     }
     
     $("#indicator_form").on("click", "#id_delete_indicator_btn", function(e){
         e.preventDefault();
-         // $(e.target).closest("tr").prev("tr").find("a").show(); //.css("display", "block");
         const delete_indicator = (rationale) => {
             var url = $(this).attr('href');
-            $.post(url, {rationale: rationale})
+            $.post(url, {rationale: rationale, redirect: true})
              .done(function(data, textStatus, jqXHR){
                  if (data.status == "success") {
-                     //ugly, but with no way to coordinate with the mobx data
-                     //store, this is probably the only way until the entire
-                     //thing gets replace with react
-                     //PNotify.success({text: "Indicator successfully deleted"})
-                    window.location = data.program_page + '?success=true&msg=' + encodeURI(gettext('The indicator was deleted.'));
+                    window.location = data.redirect_url;
                  } else {
                      createAlert("danger", data.msg, true, "#modalmessages");
                      $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
@@ -117,29 +112,55 @@
     });
     $('#indicator_modal_content').on("click", "#id_delete_indicator_btn", function(e) {
         e.preventDefault();
-         // $(e.target).closest("tr").prev("tr").find("a").show(); //.css("display", "block");
-        const delete_indicator = (rationale) => {
-            var url = $(this).attr('href');
-            $.post(url, {rationale: rationale})
-             .done(function(data, textStatus, jqXHR){
+        var url = $(this).attr('href');
+        var delete_indicator;
+        if ($('#indicator_modal_content').attr('iptt-modal') === 'true') {
+            console.log("true");
+            delete_indicator = (rationale) => {
+                $.post(url, {rationale: rationale, redirect: true})
+                .done(function(data, textStatus, jqXHR){
                  if (data.status == "success") {
-                    var success = PNotify.alert({
-                        title: gettext('Success'),
-                        text: gettext('The indicator was deleted'),
-                        type: 'success',
-                        stack: {
-                            'dir1': 'right',
-                            'dir2': 'up',
-                            'firstpos1': 0,
-                            'firstpos2': 0
-                            },
-                        });
-                    $('#indicator_modal_div').modal('hide');
+                    window.location.reload();
                  } else {
                      createAlert("danger", data.msg, true, "#modalmessages");
                      $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
                  }
              });
+            }
+        } else {
+            delete_indicator = (rationale) => {
+                var url = $(this).attr('href');
+                $.post(url, {rationale: rationale})
+                 .done(function(data, textStatus, jqXHR){
+                     if (data.status == "success") {
+                        var success = PNotify.success({
+                            title: gettext('Success'),
+                            text: data.msg,
+                            type: 'success',
+                            width: '350px',
+                            minHeight: '150px',
+                            stack: {
+                                'dir1': 'right',
+                                'dir2': 'up',
+                                'firstpos1': 0,
+                                'firstpos2': 0
+                                },
+                            modules: {
+                                Buttons: {
+                                    closer: true,
+                                    closerHover: false,
+                                    sticker: false
+                                }
+                            }
+                            });
+                        $('#indicator_modal_div').find('form').attr('deleted', true);
+                        $('#indicator_modal_div').modal('hide');
+                     } else {
+                         createAlert("danger", data.msg, true, "#modalmessages");
+                         $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
+                     }
+                 });
+            }
         }
         confirmAndRedirect(delete_indicator);
     });

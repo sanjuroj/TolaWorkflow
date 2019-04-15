@@ -56,6 +56,9 @@ eventBus.on('reload-indicator', indicatorId => {
     $.get(`/indicators/api/indicator/${indicatorId}`, rootStore.indicatorStore.updateIndicator);
 });
 
+// remove an indicator from the list
+eventBus.on('indicator-deleted', rootStore.indicatorStore.removeIndicator);
+
 // close all expanded indicators in the table
 eventBus.on('close-all-indicators', () => {
     rootStore.deleteAllResultsHTML();
@@ -143,11 +146,15 @@ $('#indicator_modal_div').on('hide.bs.modal', function (e) {
     let form = $(this).find('form');
     let form_action = form.attr('action').split('/');
     let indicator_id = parseInt(form_action[form_action.length -2]);
-
-    eventBus.emit('reload-indicator', indicator_id);
-
-    if (rootStore.resultsMap.has(indicator_id)) {
-        eventBus.emit('load-indicator-results', indicator_id);
+    // if this form has just successfully deleted this indicator, don't update it, remove it
+    if (form.attr('deleted') === 'true') {
+        eventBus.emit('indicator-deleted', indicator_id);
+    } else {
+        eventBus.emit('reload-indicator', indicator_id);
+        
+        if (rootStore.resultsMap.has(indicator_id)) {
+            eventBus.emit('load-indicator-results', indicator_id);
+        }
     }
 });
 
@@ -197,8 +204,6 @@ const onNavigation = (navRoutes) => {
     let routeObj = routes.find(r => r.name === routeName);
     eventBus.emit('apply-gauge-tank-filter', routeObj.filterType);
 };
-// this handles a specific query indicating success from a previous page
-notifySuccessAfterRedirect();
 router.usePlugin(browserPlugin({useHash: true, base:'/program/'+jsContext.program.id+'/'}));
 router.subscribe(onNavigation);
 router.start();
