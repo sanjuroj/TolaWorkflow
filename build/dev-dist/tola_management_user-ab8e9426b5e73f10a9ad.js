@@ -3595,9 +3595,7 @@ function () {
             _this10.users[result.id] = {
               id: result.id,
               name: result.name,
-              organization_name: _this10.organizations.find(function (o) {
-                return o.id = result.organization_id;
-              }).name,
+              organization_name: _this10.organizations[result.organization_id].name,
               user_programs: aggregates.program_count,
               is_admin: result.user.is_staff,
               is_active: result.user.is_active
@@ -4320,4 +4318,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-bf4cdcf457d439ef2733.js.map
+//# sourceMappingURL=tola_management_user-ab8e9426b5e73f10a9ad.js.map
