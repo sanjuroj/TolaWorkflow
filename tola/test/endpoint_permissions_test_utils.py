@@ -44,10 +44,6 @@ class EndpointTestContext(object):
             reporting_period_end=datetime.date(2016, 12, 31)
         )
         self.program_in_country.country.add(self.in_country)
-        self.indicator_in_country = i_factories.IndicatorFactory(
-            program=self.program_in_country,
-            target_frequency=Indicator.LOP
-        )
         self.program_out_of_country = w_factories.ProgramFactory(
             name='program in OUT country',
             gaitid='outpr',
@@ -57,10 +53,7 @@ class EndpointTestContext(object):
         )
         self.program_out_of_country.country.clear()
         self.program_out_of_country.country.add(self.out_country)
-        self.indicator_out_of_country = i_factories.IndicatorFactory(
-            program=self.program_out_of_country,
-            target_frequency=Indicator.LOP
-        )
+        self.add_indicators()
         self.add_results()
         if Organization.objects.filter(pk=1).count() == 1:
             self.mercy_corps_organization = Organization.objects.get(pk=1)
@@ -181,6 +174,16 @@ class EndpointTestContext(object):
                                          self.in_country, PROGRAM_ROLE_CHOICES[2][0])
 
         self.external_service = i_factories.ExternalServiceFactory()
+
+    def add_indicators(self):
+        self.indicator_in_country = i_factories.IndicatorFactory(
+            program=self.program_in_country,
+            target_frequency=Indicator.LOP
+        )
+        self.indicator_out_of_country = i_factories.IndicatorFactory(
+            program=self.program_out_of_country,
+            target_frequency=Indicator.LOP
+        )
 
     def add_periodic_targets(self):
         self.pt_out_of_country = i_factories.PeriodicTargetFactory(
@@ -426,6 +429,8 @@ class EndpointTestBase(object):
             fetch_method = self.fetch_delete_response
         else:
             raise ValueError('invalid method {}'.format(method))
+        if self.delete == 'indicator':
+            self.context.add_indicators()
         if self.delete == 'periodic_target':
             self.context.add_periodic_targets()
         if self.delete == 'result':
@@ -439,6 +444,8 @@ class EndpointTestBase(object):
         self.assert_post_passes(response, 'superuser should be able to {0} to {1}'.format(method, self.get_out_url()))
         # ensure all users cannot access:
         for user in self.get_all_users():
+            if self.delete == 'indicator':
+                self.context.add_indicators()
             if self.delete == 'periodic_target':
                 self.context.add_periodic_targets()
             if self.delete == 'result':
@@ -449,6 +456,8 @@ class EndpointTestBase(object):
             self.assert_forbidden(
                 response, 'user not assigned to country should redirect from {}'.format(self.get_out_url()))
         # ensure anonymous user cannot access:
+        if self.delete == 'indicator':
+            self.context.add_indicators()
         if self.delete == 'periodic_target':
             self.context.add_periodic_targets()
         if self.delete == 'result':
@@ -457,6 +466,8 @@ class EndpointTestBase(object):
         self.assert_redirects_to_login(response, 'anonymous user should redirect from {}'.format(
             self.get_out_url()), self.get_out_url())
         # ensure superuser can access:
+        if self.delete == 'indicator':
+            self.context.add_indicators()
         if self.delete == 'periodic_target':
             self.context.add_periodic_targets()
         if self.delete == 'result':
@@ -472,6 +483,8 @@ class EndpointTestBase(object):
             method, self.get_in_url()))
         # ensure all users with appropriate access can access:
         for user, level in self.get_permissioned_users():
+            if self.delete == 'indicator':
+                self.context.add_indicators()
             if self.delete == 'periodic_target':
                 self.context.add_periodic_targets()
             if self.delete == 'result':
@@ -482,6 +495,8 @@ class EndpointTestBase(object):
             self.assert_post_passes(response, 'user level {0} should have {1} access to {2}'.format(
                 level, method, self.get_in_url()))
         for user, level in self.get_non_permissioned_users():
+            if self.delete == 'indicator':
+                self.context.add_indicators()
             if self.delete == 'periodic_target':
                 self.context.add_periodic_targets()
             if self.delete == 'result':
@@ -492,6 +507,8 @@ class EndpointTestBase(object):
             self.assert_forbidden(response, 'user level {0} should not have {1} access to {2}'.format(
                 level, method, self.get_in_url()))
         # ensure anonymous user cannot acccess:
+        if self.delete == 'indicator':
+            self.context.add_indicators()
         if self.delete == 'periodic_target':
             self.context.add_periodic_targets()
         if self.delete == 'result':
