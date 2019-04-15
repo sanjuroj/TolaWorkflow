@@ -2586,7 +2586,11 @@ function () {
 
           _this3.programs.unshift(response.data);
 
+          _this3.programFilterPrograms.unshift(response.data);
+
           _this3.active_pane_is_dirty = false;
+
+          _this3.onSaveSuccessHandler();
         });
       }).catch(function (error) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
@@ -2889,4 +2893,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-a4d57c62d8392f0850fd.js.map
+//# sourceMappingURL=tola_management_program-c9cc46d0af4826ee8b4b.js.map

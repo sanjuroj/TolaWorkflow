@@ -490,7 +490,7 @@ export class UserStore {
                 this.users[result.id] = {
                     id: result.id,
                     name: result.name,
-                    organization_name: this.organizations.find(o => o.id = result.organization_id).name,
+                    organization_name: this.organizations[result.organization_id].name,
                     user_programs: aggregates.program_count,
                     is_admin: result.user.is_staff,
                     is_active: result.user.is_active

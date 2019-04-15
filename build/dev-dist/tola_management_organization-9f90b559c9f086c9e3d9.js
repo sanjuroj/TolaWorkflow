@@ -365,6 +365,16 @@ function () {
 
             return [organization.id, false];
           }));
+          _this4.organization_selections = Object.entries(_this4.organizations).map(function (_ref15) {
+            var _ref16 = _slicedToArray(_ref15, 2),
+                id = _ref16[0],
+                org = _ref16[1];
+
+            return {
+              value: org.id,
+              label: org.name
+            };
+          });
           _this4.active_pane_is_dirty = false;
         });
 
@@ -402,10 +412,10 @@ function () {
 
           _this5.editing_target = null;
           _this5.editing_target_data = _objectSpread({}, default_organization);
-          _this5.bulk_targets = new Map(Object.entries(_this5.organizations).map(function (_ref15) {
-            var _ref16 = _slicedToArray(_ref15, 2),
-                _ = _ref16[0],
-                organization = _ref16[1];
+          _this5.bulk_targets = new Map(Object.entries(_this5.organizations).map(function (_ref17) {
+            var _ref18 = _slicedToArray(_ref17, 2),
+                _ = _ref18[0],
+                organization = _ref18[1];
 
             return [organization.id, false];
           }));
@@ -495,10 +505,10 @@ function () {
           this.fetching_editing_target = true;
 
           if (!(this.editing_target == 'new')) {
-            Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganization(organization_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationHistory(organization_id)]).then(function (_ref17) {
-              var _ref18 = _slicedToArray(_ref17, 2),
-                  organization = _ref18[0],
-                  history = _ref18[1];
+            Promise.all([_api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganization(organization_id), _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationHistory(organization_id)]).then(function (_ref19) {
+              var _ref20 = _slicedToArray(_ref19, 2),
+                  organization = _ref20[0],
+                  history = _ref20[1];
 
               Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
                 _this6.fetching_editing_target = false;
@@ -2707,4 +2717,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-b7af29fc4ba403740726.js.map
+//# sourceMappingURL=tola_management_organization-9f90b559c9f086c9e3d9.js.map

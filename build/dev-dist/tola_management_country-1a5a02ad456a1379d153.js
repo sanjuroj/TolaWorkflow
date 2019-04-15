@@ -877,6 +877,10 @@ function () {
           _this3.countries.shift();
 
           _this3.countries.unshift(response.data);
+
+          _this3.allCountries.unshift(response.data);
+
+          _this3.onSaveSuccessHandler();
         });
       }).catch(function (errors) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
@@ -3111,4 +3115,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-5a850f46112b3101f52a.js.map
+//# sourceMappingURL=tola_management_country-1a5a02ad456a1379d153.js.map
