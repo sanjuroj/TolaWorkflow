@@ -496,6 +496,7 @@ export class UserStore {
                     is_active: result.user.is_active
                 }
                 this.active_pane_is_dirty = false
+                this.user_selections.push({value: result.id, label: result.name})
                 this.users_listing[0] = result.id
                 delete this.users["new"]
                 this.createUser()
