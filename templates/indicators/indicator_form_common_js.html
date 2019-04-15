@@ -450,8 +450,7 @@
             method: 'POST',
             url: form_url,
             data: form_data,
-            global: false, }
-        ).done(function(data, textStatus, jqXHR) {
+        }).done(function(data, textStatus, jqXHR) {
             //undisable submit button as the response is returned:
             disabledButton.submit.attr('disabled', false);
             var alertsElement = "#alerts";
@@ -516,12 +515,6 @@
             }
 
             $(alertsElement).html('');
-
-            if(xhr.status == 403) {
-                PNotify.error("Permission denied")
-            } else {
-                PNotify.error(error)
-            }
         });
     }
 

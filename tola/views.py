@@ -78,12 +78,18 @@ def index(request, selected_country=None):
 
 
 class TolaLoginView(authviews.LoginView):
-    def get(self, *args, **kwargs):
-        response = super(TolaLoginView, self).get(*args, **kwargs)
-        # Header that jQuery AJAX can look for to see if a request was 302 redirected
-        # due to a user not being logged in
-        response['Login-Screen'] = 'Login-Screen'
-        return response
+    def get(self, request, *args, **kwargs):
+        if request.is_ajax():
+            # Some places of our code loads HTML directly into a modal via $.load()
+            # loading the login page (which uses base.html) blows up a lot of things
+            # so avoid this by sending back a simple string instead
+            response = HttpResponse(_('You are not logged in.'))
+            # Header that jQuery AJAX can look for to see if a request was 302 redirected
+            # responseURL could also be used but is not supported in older browsers
+            response['Login-Screen'] = 'Login-Screen'
+            return response
+
+        return super(TolaLoginView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super(TolaLoginView, self).get_context_data(*args, **kwargs)

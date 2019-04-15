@@ -7,6 +7,11 @@
     &.is-expanded {
         background-color: $gray-200;
     }
+    .text-action { // expando links
+        &:hover {
+            cursor: pointer;
+        }
+    }
 }
 .changelog__entry__row { // each DB row change; <tr>
 }

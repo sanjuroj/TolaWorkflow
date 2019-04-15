@@ -167,6 +167,7 @@ class IndicatorUpdate(UpdateView):
             return 'indicators/indicator_form_modal.html'
         return 'indicators/indicator_form.html'
 
+    @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     @method_decorator(indicator_pk_adapter(has_indicator_write_access))
     def dispatch(self, request, *args, **kwargs):

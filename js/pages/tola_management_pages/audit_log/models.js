@@ -7,13 +7,14 @@ export class ProgramAuditLogStore {
     @observable log_rows = []
     @observable fetching = false
     @observable current_page = 0
-    @observable details_target = null
 
     @observable entries_count = 0
     @observable total_pages = 0
     @observable next_page = null
     @observable previous_page = null
-    @observable current_page = 0
+
+    // UI state - track what history rows are expanded
+    @observable expando_rows = new Set();
 
     constructor(program_id, program_name) {
         this.program_id = program_id
@@ -38,19 +39,29 @@ export class ProgramAuditLogStore {
     }
 
     @action
-    toggleDetailsTarget(row_id) {
-        if(this.details_target == row_id) {
-            this.details_target = null
-        } else {
-            this.details_target = row_id
-        }
-    }
-
-    @action
     changePage(page) {
         if(page.selected != this.current_page) {
             this.current_page = page.selected
             this.fetchProgramAuditLog()
         }
+    }
+
+    @action
+    toggleRowExpando(row_id) {
+        if (this.expando_rows.has(row_id)) {
+            this.expando_rows.delete(row_id);
+        } else {
+            this.expando_rows.add(row_id);
+        }
+    }
+
+    @action
+    expandAllExpandos() {
+        this.log_rows.forEach((row) => this.expando_rows.add(row.id));
+    }
+
+    @action
+    collapsAllExpandos() {
+        this.expando_rows.clear();
     }
 }

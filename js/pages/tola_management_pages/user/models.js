@@ -92,6 +92,9 @@ export class UserStore {
     @observable appliedFilters = {
     }
 
+    // UI state - track what history rows are expanded
+    @observable changelog_expanded_rows = new Set();
+
     constructor({
         countries,
         organizations,
@@ -487,12 +490,13 @@ export class UserStore {
                 this.users[result.id] = {
                     id: result.id,
                     name: result.name,
-                    organization_name: this.organizations.find(o => o.id = result.organization_id).name,
+                    organization_name: this.organizations[result.organization_id].name,
                     user_programs: aggregates.program_count,
                     is_admin: result.user.is_staff,
                     is_active: result.user.is_active
                 }
                 this.active_pane_is_dirty = false
+                this.user_selections.push({value: result.id, label: result.name})
                 this.users_listing[0] = result.id
                 delete this.users["new"]
                 this.createUser()
@@ -635,6 +639,15 @@ export class UserStore {
             user_status: '',
             admin_role: '',
             users: []
+        }
+    }
+
+    @action
+    toggleChangeLogRowExpando(row_id) {
+        if (this.changelog_expanded_rows.has(row_id)) {
+            this.changelog_expanded_rows.delete(row_id);
+        } else {
+            this.changelog_expanded_rows.add(row_id);
         }
     }
 }

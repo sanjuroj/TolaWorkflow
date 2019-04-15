@@ -48,3 +48,9 @@
     margin-left: $grid-gutter-width/4;
     margin-right: $grid-gutter-width/4;
 }
+
+.page-footer__actions {
+    // only in use on IPTT RN
+    margin-bottom: $grid-gutter-width/2;
+    margin-top: $grid-gutter-width/2;
+}

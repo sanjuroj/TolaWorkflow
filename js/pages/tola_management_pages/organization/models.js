@@ -59,6 +59,9 @@ export class OrganizationStore {
 
     @observable active_editor_pane = 'profile'
 
+    // UI state - track what history rows are expanded
+    @observable changelog_expanded_rows = new Set();
+
     active_pane_is_dirty = false
 
     constructor(programs, organizations, sectors, countries, country_filter, program_filter) {
@@ -197,19 +200,20 @@ export class OrganizationStore {
 
     @action
     saveNewOrganization(new_data) {
-        this.saving = true
+        this.saving = true;
         new_data.is_active = true;
         api.createOrganization(new_data).then(result => {
             runInAction(() => {
-                this.saving = false
-                this.updateLocalOrganization(result.id, result, {program_count: 0, user_count: 0})
-                this.organizations_listing.shift()
-                delete this.organizations["new"]
-                this.organizations_listing.unshift(result.id)
-                this.editing_target = result.id
-                this.editing_target_data = result
-                this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]))
-                this.active_pane_is_dirty = false
+                this.saving = false;
+                this.updateLocalOrganization(result.id, result, {program_count: 0, user_count: 0});
+                this.organizations_listing.shift();
+                delete this.organizations["new"];
+                this.organizations_listing.unshift(result.id);
+                this.editing_target = result.id;
+                this.editing_target_data = result;
+                this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]));
+                this.organization_selections = Object.entries(this.organizations).map(([id, org]) => ({value: org.id, label: org.name}));
+                this.active_pane_is_dirty = false;
             })
             this.onSaveSuccessHandler()
         }).catch(error => {
@@ -339,6 +343,15 @@ export class OrganizationStore {
             programs: [],
             sectors: [],
             organization_status: '',
+        }
+    }
+
+    @action
+    toggleChangeLogRowExpando(row_id) {
+        if (this.changelog_expanded_rows.has(row_id)) {
+            this.changelog_expanded_rows.delete(row_id);
+        } else {
+            this.changelog_expanded_rows.add(row_id);
         }
     }
 }

@@ -78,9 +78,6 @@ body > .container {
     padding-left: 0;
     padding-right: 0;
 }
-.btn-toggle {
-    // usually used with .btn-link
-}
 
 .btn-danger.btn-link {
     // special danger links for remove actions
@@ -125,6 +122,17 @@ body > .container {
         box-shadow: 0 1px 5px rgba(0,0,0,0.2);
     }
 }
+.select2-wrapper {
+    // in some contexts the .select2-container can't get its parent's width
+    // use .select2-wrapper to force the container to fill its parent
+    display: block;
+    width: 100%;
+    .select2-container {
+        max-width: 100%;
+        width: 100% !important;
+    }
+}
+
 
 // Crispy forms does not apply the appropriate classes to its tabs so we have to fake it
 .nav-tabs {

@@ -12,7 +12,7 @@ import FoldingSidebar from 'components/folding-sidebar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const CountryFilter = observer(({store, filterOptions}) => {
-    return <div className="form-group">
+    return <div className="form-group react-multiselect-checkbox">
         <label htmlFor="countries_filter">{gettext("Countries")}</label>
         <CheckboxedMultiSelect
             value={store.filters.countries}
@@ -24,7 +24,7 @@ const CountryFilter = observer(({store, filterOptions}) => {
 })
 
 const OrganizationFilter = observer(({store, filterOptions}) => {
-    return <div className="form-group">
+    return <div className="form-group react-multiselect-checkbox">
         <label htmlFor="organizations_filter">{gettext("Organizations")}</label>
         <CheckboxedMultiSelect
             value={store.filters.organizations}
@@ -36,7 +36,7 @@ const OrganizationFilter = observer(({store, filterOptions}) => {
 })
 
 const ProgramFilter = observer(({store, filterOptions}) => {
-    return <div className="form-group">
+    return <div className="form-group react-multiselect-checkbox">
         <label htmlFor="programs-filter">{gettext("Programs")}</label>
         <CheckboxedMultiSelect
             value={store.filters.programs}
@@ -59,10 +59,10 @@ export const IndexView = observer(
                     <OrganizationFilter store={store} filterOptions={organizationFilterOptions} />
                     <ProgramFilter store={store} filterOptions={programFilterOptions} />
                     <CountryFilter store={store} filterOptions={countryFilterOptions} />
-                    <div className="filter-buttons">
-                        <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
-                        <button className="btn btn-inverse" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
-                    </div>
+                </div>
+                <div className="filter-section filter-buttons">
+                    <button className="btn btn-primary" onClick={() => store.applyFilters()}>{gettext("Apply")}</button>
+                    <button className="btn btn-inverse" onClick={() => store.clearFilters()}>{gettext("Reset")}</button>
                 </div>
             </FoldingSidebar>
             <div className="col admin-list">

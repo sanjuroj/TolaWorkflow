@@ -34,8 +34,6 @@ export class ProgramHistory extends React.Component {
     }
 
     onSave() {
-        const program_id = this.state.original_status.id
-        const program_data = this.state.managed_status
         this.props.onSave(this.state.original_status.id, this.state.managed_status)
     }
 
@@ -46,12 +44,13 @@ export class ProgramHistory extends React.Component {
     }
 
     render() {
-        const {history} = this.props
-        const currentStatusSelection = status_options.find(x=> x.value == this.state.managed_status.funding_status)
+        const {history, store} = this.props
+        const changelog_expanded_rows = store.changelog_expanded_rows;
+        const currentStatusSelection = status_options.find(x=> x.value == this.state.managed_status.funding_status);
         return <div className="tab-pane--react admin-edit-pane">
             <h2 className="no-bold">{this.props.program_data.name ? this.props.program_data.name+': ' : ''}{gettext("Status and History")}</h2>
             <div className="form-group">
-                <label htmlFor="status-input" required>{gettext("Program Status")}<span className="required">*</span></label>
+                <label htmlFor="status-input" className="label--required" required>{gettext("Program Status")}</label>
                 <Select
                     isSearchable={false}
                     options={status_options}
@@ -68,7 +67,7 @@ export class ProgramHistory extends React.Component {
                 </div>
             </div>
 
-            <ChangeLog data={this.props.history} />
+            <ChangeLog data={history} expanded_rows={changelog_expanded_rows} toggle_expando_cb={(row_id) => store.toggleChangeLogRowExpando(row_id)} />
 
         </div>
     }

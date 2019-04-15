@@ -65,76 +65,73 @@ class StrategicObjectiveForm extends React.Component {
         const objective_status = managed_data.status
         const selectedStatus = objective_status ? statusOptions.find(x=>x.value==objective_status) : {}
         return (
-        <div className="edit-strategic-objective__row">
-            <div className="row-expand__toggle">
-                <span onClick={expandAction}>
+        <div className="accordion-row">
+            <div className="accordion-row__content">
+                <a onClick={expandAction} className="btn btn-link" tabIndex="0">
                     <FontAwesomeIcon icon={expanded ? 'caret-down' : 'caret-right'} />
-                </span>
-            </div>
-            <div className="row__content">
-            <a onClick={expandAction} tabIndex="0">
-                {(objective.id == 'new')? "New Strategic Objective" : objective.name}
-            </a>
-            { expanded && (
-                <form className="form">
-                    <div className="form-group">
-                        <label htmlFor="objective-name-input">
-                            {gettext("Code")}*
-                        </label>
-                        <input
-                            id="objective-name-input"
-                            className={classNames('form-control', {'is-invalid':this.formErrors('name')})}
-                            value={managed_data.name}
-                            onChange={(e) => this.updateFormField('name', e.target.value)}
-                            type="text"
-                            required
-                        />
-                        <ErrorFeedback errorMessages={this.formErrors('name')} />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="objective-description-input">
-                            {gettext("Objective")}*
-                        </label>
-                        <textarea
-                            id="objective-description-input"
-                            className={classNames('form-control', {'is-invalid': this.formErrors('description')})}
-                            value={managed_data.description}
-                            onChange={(e) => this.updateFormField('description', e.target.value)}
-                            type="text"
-                        />
-                        <ErrorFeedback errorMessages={this.formErrors('description')} />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="objective-status-input">{gettext("Status")}</label>
-                        <Select
-                            value={selectedStatus}
-                            options={statusOptions}
-                            onChange={(e) => this.updateFormField('status', e.value) }
-                            className={classNames('react-select', {'is-invalid': this.formErrors('status')})}
-                            id="objective-status-input"
-                        />
-                        <ErrorFeedback errorMessages={this.formErrors('status')} />
-                    </div>
-                    <div className="objective-form-buttons">
-                        {objective.id=='new' && (
-                            <div className="form-group btn-row">
-                                <button className="btn btn-primary" type="button" onClick={() => createObjective(managed_data)}>{gettext("Save Changes")}</button>
-                            </div>
-                        )}
-                        {objective.id!='new' && (
-                            <div className="form-group btn-row">
-                                <button className="btn btn-primary" type="button" onClick={() => saveObjective(managed_data)}>{gettext("Save Changes")}</button>
-                                <button className="btn btn-reset" type="button" onClick={()=> this.resetForm()}>{gettext("Reset")}</button>
-                            </div>
-                        )}
-                        <div className="right-buttons">
-                            <a tabIndex="0" onClick={deleteAction} className="btn btn-link btn-danger">
-                                <i className="fas fa-trash"/>{gettext("Delete")}
-                            </a>
+                    {(objective.id == 'new')? "New Strategic Objective" : objective.name}
+                </a>
+                { expanded && (
+                    <form className="form card card-body bg-white">
+                        <div className="form-group">
+                            <label className="label--required" htmlFor="objective-name-input">
+                                {gettext("Code")}
+                            </label>
+                            <input
+                                id="objective-name-input"
+                                className={classNames('form-control', {'is-invalid':this.formErrors('name')})}
+                                value={managed_data.name}
+                                onChange={(e) => this.updateFormField('name', e.target.value)}
+                                type="text"
+                                required
+                            />
+                            <ErrorFeedback errorMessages={this.formErrors('name')} />
                         </div>
-                    </div>
-                </form>
-            )}
+                        <div className="form-group">
+                            <label className="label--required" htmlFor="objective-description-input">
+                                {gettext("Objective")}
+                            </label>
+                            <textarea
+                                id="objective-description-input"
+                                className={classNames('form-control', {'is-invalid': this.formErrors('description')})}
+                                value={managed_data.description}
+                                onChange={(e) => this.updateFormField('description', e.target.value)}
+                                type="text"
+                                required
+                            />
+                            <ErrorFeedback errorMessages={this.formErrors('description')} />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="objective-status-input">{gettext("Status")}</label>
+                            <Select
+                                value={selectedStatus}
+                                options={statusOptions}
+                                onChange={(e) => this.updateFormField('status', e.value) }
+                                className={classNames('react-select', {'is-invalid': this.formErrors('status')})}
+                                id="objective-status-input"
+                            />
+                            <ErrorFeedback errorMessages={this.formErrors('status')} />
+                        </div>
+                        <div className="objective-form-buttons">
+                            {objective.id=='new' && (
+                                <div className="form-group btn-row">
+                                    <button className="btn btn-primary" type="button" onClick={() => createObjective(managed_data)}>{gettext("Save Changes")}</button>
+                                </div>
+                            )}
+                            {objective.id!='new' && (
+                                <div className="form-group btn-row">
+                                    <button className="btn btn-primary" type="button" onClick={() => saveObjective(managed_data)}>{gettext("Save Changes")}</button>
+                                    <button className="btn btn-reset" type="button" onClick={()=> this.resetForm()}>{gettext("Reset")}</button>
+                                </div>
+                            )}
+                            <div className="right-buttons">
+                                <a tabIndex="0" onClick={deleteAction} className="btn btn-link btn-danger">
+                                    <i className="fas fa-trash"/>{gettext("Delete")}
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                )}
             </div>
         </div>
         )

@@ -693,9 +693,7 @@ class UserAdminViewSet(viewsets.ModelViewSet):
             #dont
             country_data = request.data["countries"]
 
-            if country_data and not request.user.is_superuser:
-                raise PermissionDenied
-            else:
+            if request.user.is_superuser:
                 try:
                     user.countryaccess_set.all().delete()
                     for country_id, access in country_data.iteritems():
@@ -708,6 +706,8 @@ class UserAdminViewSet(viewsets.ModelViewSet):
                         )
                 except SuspiciousOperation, e:
                     return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            elif country_data and not request.user.is_superuser:
+                raise PermissionDenied
 
             program_data = request.data["programs"]
 
