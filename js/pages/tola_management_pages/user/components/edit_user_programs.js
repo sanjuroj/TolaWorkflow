@@ -396,14 +396,18 @@ export default class EditUserPrograms extends React.Component {
         const get_role = (data) => {
             if(data.type == 'country') {
                 const country_access = this.state.user_program_access.countries
-                if(!country_access[data.id]) {
+                if (this.props.store.is_superuser) {
+                    return 'basic_admin' // TODO: this should be "super_admin" or similar
+                } else if(!country_access[data.id]) {
                     return 'none'
                 } else {
                     return country_access[data.id].role
                 }
             } else {
                 const program_access = this.state.user_program_access.programs
-                if(!program_access[data.id]) {
+                if (this.props.store.is_superuser) {
+                    return 'high'
+                } else if(!program_access[data.id]) {
                     return this.props.store.program_role_choices[0].value
                 } else {
                     return program_access[data.id].role
