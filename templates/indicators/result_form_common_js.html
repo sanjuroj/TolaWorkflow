@@ -109,6 +109,7 @@
                 context: document.getElementById('result_update_form'),
                 on_submit: save
             });
+            scrollToResultFormBottom();
         }
     });
 
@@ -150,6 +151,7 @@
                 });
             }
         });
+        scrollToResultFormBottom();
     });
 
 
@@ -352,6 +354,10 @@
             }
         }
         return true;
+    }
+
+    function scrollToResultFormBottom() {
+        $("#indicator_results_div").animate({ scrollTop: $('#indicator_results_div').height() }, "slow");
     }
 
     // called from result_form_modal.html

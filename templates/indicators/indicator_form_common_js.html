@@ -92,6 +92,7 @@
                 showCloser: true
             });
         }
+        scrollToIndicatorFormBottom();
     }
     
     $("#indicator_form").on("click", "#id_delete_indicator_btn", function(e){
@@ -191,6 +192,7 @@
                     }
                 });
             }
+            scrollToIndicatorFormBottom();
         } else {
             submitForm(this, false, '');
         }
@@ -223,6 +225,7 @@
                     }
                 });
             }
+            scrollToIndicatorFormBottom();
         } else {
             submitForm(this, false, '');
         }
@@ -338,6 +341,7 @@
                 context: document.getElementById('indicator_update_form'),
                 on_submit: save
             });
+            scrollToIndicatorFormBottom();
         } else {
             save('')
         }
@@ -972,4 +976,8 @@
             }
         }
     })
+
+    function scrollToIndicatorFormBottom() {
+        $("#indicator_modal_div").animate({ scrollTop: $('#indicator_modal_div').height() }, "slow");
+    }
 </script>
