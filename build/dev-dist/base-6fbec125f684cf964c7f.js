@@ -459,13 +459,18 @@ window.create_destructive_changeset_notice = function () {
       _ref2$no_preamble = _ref2.no_preamble,
       no_preamble = _ref2$no_preamble === void 0 ? false : _ref2$no_preamble,
       _ref2$showCloser = _ref2.showCloser,
-      showCloser = _ref2$showCloser === void 0 ? false : _ref2$showCloser;
+      showCloser = _ref2$showCloser === void 0 ? false : _ref2$showCloser,
+      _ref2$preamble = _ref2.preamble,
+      preamble = _ref2$preamble === void 0 ? false : _ref2$preamble;
 
   if (!message_text) {
     message_text = DEFAULT_DESTRUCTIVE_MESSAGE;
   }
 
-  var preamble = no_preamble ? '' : "<span class='text-danger'>".concat(gettext("This action cannot be undone."), "</span>");
+  if (!preamble) {
+    preamble = no_preamble ? '' : "<span class='text-danger'>".concat(gettext("This action cannot be undone."), "</span>");
+  }
+
   var inner = "\n        <div class=\"row\">\n            <div class=\"col\">\n                <h2 class=\"text-danger\">".concat(gettext("Warning"), "</h2>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                ").concat(preamble, "\n                ").concat(message_text, "\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div class=\"form-group\">\n                    <textarea class=\"form-control\" name=\"rationale\"></textarea>\n                </div>\n            </div>\n        </div>\n    ");
   return create_changeset_notice({
     message_text: message_text,
@@ -563,4 +568,4 @@ window.create_no_rationale_changeset_notice = function () {
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-81ee627650b456d3b463.js.map
+//# sourceMappingURL=base-6fbec125f684cf964c7f.js.map
