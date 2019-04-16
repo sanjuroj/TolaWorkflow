@@ -202,7 +202,7 @@ export class OrganizationStore {
     saveNewOrganization(new_data) {
         this.saving = true;
         new_data.is_active = true;
-        api.createOrganization(new_data).then(result => {
+        api.createOrganization(new_data).then(result => api.fetchOrganizationHistory(result.id).then( history => {
             runInAction(() => {
                 this.saving = false;
                 this.updateLocalOrganization(result.id, result, {program_count: 0, user_count: 0});
@@ -211,12 +211,13 @@ export class OrganizationStore {
                 this.organizations_listing.unshift(result.id);
                 this.editing_target = result.id;
                 this.editing_target_data = result;
+                this.editing_target_history = history;
                 this.bulk_targets = new Map(Object.entries(this.organizations).map(([_, organization]) => [organization.id, false]));
                 this.organization_selections = Object.entries(this.organizations).map(([id, org]) => ({value: org.id, label: org.name}));
                 this.active_pane_is_dirty = false;
             })
             this.onSaveSuccessHandler()
-        }).catch(error => {
+        })).catch(error => {
             runInAction(() => {
                 this.saving = false
                 this.editing_errors = error.response.data

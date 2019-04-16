@@ -221,18 +221,21 @@ export class ProgramStore {
     saveNewProgram(program_data) {
         program_data.id = null
         this.saving = true
-        this.api.createProgram(program_data).then(response => {
+        this.api.createProgram(program_data)
+            .then(response => this.api.fetchProgramHistory(response.data.id)
+                .then(history => {
             runInAction(()=> {
                 this.saving = false;
                 this.editing_target = response.data.id;
                 this.editing_target_data = response.data;
+                this.editing_history = history.data;
                 this.programs.shift();
                 this.programs.unshift(response.data);
                 this.programFilterPrograms.unshift(response.data);
                 this.active_pane_is_dirty = false;
                 this.onSaveSuccessHandler();
             })
-        }).catch(error => {
+        })).catch(error => {
             runInAction(()=> {
                 let errors = error.response.data
                 this.saving = false
