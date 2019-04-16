@@ -2577,20 +2577,23 @@ function () {
       program_data.id = null;
       this.saving = true;
       this.api.createProgram(program_data).then(function (response) {
-        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this3.saving = false;
-          _this3.editing_target = response.data.id;
-          _this3.editing_target_data = response.data;
+        return _this3.api.fetchProgramHistory(response.data.id).then(function (history) {
+          Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+            _this3.saving = false;
+            _this3.editing_target = response.data.id;
+            _this3.editing_target_data = response.data;
+            _this3.editing_history = history.data;
 
-          _this3.programs.shift();
+            _this3.programs.shift();
 
-          _this3.programs.unshift(response.data);
+            _this3.programs.unshift(response.data);
 
-          _this3.programFilterPrograms.unshift(response.data);
+            _this3.programFilterPrograms.unshift(response.data);
 
-          _this3.active_pane_is_dirty = false;
+            _this3.active_pane_is_dirty = false;
 
-          _this3.onSaveSuccessHandler();
+            _this3.onSaveSuccessHandler();
+          });
         });
       }).catch(function (error) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
@@ -2893,4 +2896,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-c9cc46d0af4826ee8b4b.js.map
+//# sourceMappingURL=tola_management_program-4653f3a9d09cf6d8b506.js.map

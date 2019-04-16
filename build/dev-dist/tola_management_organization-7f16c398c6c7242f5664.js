@@ -342,43 +342,46 @@ function () {
       this.saving = true;
       new_data.is_active = true;
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].createOrganization(new_data).then(function (result) {
-        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this4.saving = false;
+        return _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationHistory(result.id).then(function (history) {
+          Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+            _this4.saving = false;
 
-          _this4.updateLocalOrganization(result.id, result, {
-            program_count: 0,
-            user_count: 0
+            _this4.updateLocalOrganization(result.id, result, {
+              program_count: 0,
+              user_count: 0
+            });
+
+            _this4.organizations_listing.shift();
+
+            delete _this4.organizations["new"];
+
+            _this4.organizations_listing.unshift(result.id);
+
+            _this4.editing_target = result.id;
+            _this4.editing_target_data = result;
+            _this4.editing_target_history = history;
+            _this4.bulk_targets = new Map(Object.entries(_this4.organizations).map(function (_ref13) {
+              var _ref14 = _slicedToArray(_ref13, 2),
+                  _ = _ref14[0],
+                  organization = _ref14[1];
+
+              return [organization.id, false];
+            }));
+            _this4.organization_selections = Object.entries(_this4.organizations).map(function (_ref15) {
+              var _ref16 = _slicedToArray(_ref15, 2),
+                  id = _ref16[0],
+                  org = _ref16[1];
+
+              return {
+                value: org.id,
+                label: org.name
+              };
+            });
+            _this4.active_pane_is_dirty = false;
           });
 
-          _this4.organizations_listing.shift();
-
-          delete _this4.organizations["new"];
-
-          _this4.organizations_listing.unshift(result.id);
-
-          _this4.editing_target = result.id;
-          _this4.editing_target_data = result;
-          _this4.bulk_targets = new Map(Object.entries(_this4.organizations).map(function (_ref13) {
-            var _ref14 = _slicedToArray(_ref13, 2),
-                _ = _ref14[0],
-                organization = _ref14[1];
-
-            return [organization.id, false];
-          }));
-          _this4.organization_selections = Object.entries(_this4.organizations).map(function (_ref15) {
-            var _ref16 = _slicedToArray(_ref15, 2),
-                id = _ref16[0],
-                org = _ref16[1];
-
-            return {
-              value: org.id,
-              label: org.name
-            };
-          });
-          _this4.active_pane_is_dirty = false;
+          _this4.onSaveSuccessHandler();
         });
-
-        _this4.onSaveSuccessHandler();
       }).catch(function (error) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this4.saving = false;
@@ -2717,4 +2720,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-9f90b559c9f086c9e3d9.js.map
+//# sourceMappingURL=tola_management_organization-7f16c398c6c7242f5664.js.map
