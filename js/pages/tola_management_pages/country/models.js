@@ -231,6 +231,7 @@ export class CountryStore {
         this.api.createCountry(country_data).then(response => {
             runInAction(()=> {
                 this.saving = false
+                this.editing_target = response.data.id;
                 this.active_pane_is_dirty = false
                 this.countries.shift()
                 this.countries.unshift(response.data)
