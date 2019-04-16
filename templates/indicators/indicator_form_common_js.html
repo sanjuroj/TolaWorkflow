@@ -9,8 +9,12 @@
     const DELETE_ALL_TARGETS_MESSAGE = "{% trans 'Any results assigned to these targets will need to be reassigned. For future reference, please provide a rationale for deleting these targets.' %}"
     const DELETE_INDICATOR_MESSAGE = "{% trans 'All details about this indicator and results recorded to the indicator will be permanently removed. For future reference, please provide a rationale for deleting this indicator.' %}"
     const MODIFY_TARGETS_MESSAGE = "{% trans 'Modifying target values will affect program metrics for this indicator. For future reference, please provide a rationale for modifying target values.' %}"
-    const DELETE_INDICATOR_PREAMBLE = "{% trans 'This action cannot be undone.  All details about this indicator will be permanently removed.' %}"
+    const DESTRUCTIVE_PREAMBLE = "{% trans 'This action cannot be undone.' %}"
+    const DELETE_INDICATOR_PREAMBLE = "{% trans 'All details about this indicator will be permanently removed.' %}"
     const DELETE_INDICATOR_NO_RATIONALE = "{% trans 'Are you sure you want to delete this indicator?' %}"
+    const DELETE_TARGETS_NO_RATIONALE = "{% trans 'Are you sure you want to remove all targets?' %}"
+    const DELETE_TARGET_MESSAGE = "{% trans 'For future reference, please provide a rationale for deleting this target.' %}"
+
     function setupPopupCalendar() {
         $('.monthPicker').datepicker({
             changeMonth: true,
@@ -70,16 +74,12 @@
         setupPopupCalendar();
     });
 
-    // when a user clicks the 'Attach evidence' button in the indicator from.
-    $("#indicator_modal_content, #indicator_form").on("click", "#id_add_evidence_btn", function(e){
-        alert('Not implemented yet!');
-    });
 
     function confirmAndRedirect(delete_indicator) {
         var has_results = parseInt($('#numDataPoints').text()) > 0;
         if(!has_results) {
             create_no_rationale_changeset_notice({
-                preamble: DELETE_INDICATOR_PREAMBLE,
+                preamble: [DESTRUCTIVE_PREAMBLE, DELETE_INDICATOR_PREAMBLE].join(' '),
                 message_text: DELETE_INDICATOR_NO_RATIONALE,
                 context: document.getElementById('indicator_update_form'),
                 on_submit: delete_indicator
@@ -164,6 +164,52 @@
             }
         }
         confirmAndRedirect(delete_indicator);
+    });
+    
+    $('#indicator_modal_content, #indicator_form').on('click', '.event-target-delete-button', function(e) {
+        e.preventDefault();
+        const updateIfLastEvent = () => {
+            if ($('.periodic-target').length == 0) {
+                $('.periodic-targets').remove();
+                reset_frequency_fields();
+                show_hide_frequency_fields();
+            }
+        }
+        var url = $(this).attr('href');
+        let row = $(e.currentTarget).closest('tr');
+        let numData = parseInt(row.data('collected-count'));
+        const delete_target_row = (url, row) => {
+            return (rationale) => {
+                $.post(url, {rationale: rationale})
+                    .done(function(data) {
+                        if (data.status == "success") {
+                            row.remove();
+                            updateIfLastEvent();
+                        }
+                    });
+                };
+        };
+        if (url == '#') {
+            // if this is a newly generated event target (url is #) merely remove: 
+            row.remove();
+            updateIfLastEvent();
+        } else if (numData === 0) {
+            // if there are no data points, make delete call and remove row on return:
+            delete_target_row(url, row)(null);
+        } else {
+            // if there are data points, show confirmation
+            let preamble = ngettext('Removing this target means that %s result will no longer have targets associated with it.',
+                                    'Removing this target means that %s results will no longer have targets associated with them.', numData);
+            preamble = interpolate(preamble, [numData]);
+            window.create_destructive_changeset_notice({
+                preamble: preamble,
+                message_text: DELETE_TARGET_MESSAGE,
+                context: document.getElementById('indicator_update_form'),
+                on_submit: (rationale) => {
+                    delete_target_row(url, row)(rationale);
+                }
+            });
+        }
     });
 
 
@@ -277,20 +323,15 @@
     });
 
 
-    function createPeriodicTargetRow(pt, target_frequency, isLastIteration, rowNum) {
+    function createPeriodicTargetRow(pt, isLastIteration, rowNum) {
         var markup = `
-                <tr class="periodic-target">
-                    <td class="text-left d-flex align-items-center">
-                        <a href="/indicators/periodic_target_delete/${pt.id}/" class="deletebtn btn btn-sm" style="display: ${(isLastIteration && target_frequency != 2 || target_frequency == 8) ? 'block' : 'none'}">
+                <tr class="periodic-target" data-collected-count="0" data-ptid="0">
+                    <td class="text-left d-flex align-items-center td--stretch">
+                        <a href="#" class="deletebtn btn btn-sm event-target-delete-button">
                             <i class="fas fa-times text-danger"></i>
                         </a>
-                        ${(target_frequency != 8) ? `
-                            <strong>${pt.period }</strong></div>
-                            <div>${formatDate(pt.start_date)} ${ pt.start_date ? '-' : ''} ${formatDate(pt.end_date)}</div>`
-                            :
-                            `<input type="text" name="${pt.period}" placeholder="Enter event name" value="${(rowNum == 0) ? pt.period : (pt.id ? pt.period : '') }" class="form-control input-text">
-                                <span style="margin:0px;" class="help-block"> </span>`
-                        }
+                        <input type="text" placeholder="Enter event name" class="form-control input-text">
+                                <span style="margin:0px;" class="help-block"> </span>
                     </td>
 
                     <td class="text-right">
@@ -298,11 +339,7 @@
                             <input
                                 type="number"
                                 id="pt-${pt.id}"
-                                value="${parseFloat(pt.target).toFixed(2).replace(/[.,]00$/, "")}"
-                                data-start-date="${formatDate(pt.start_date)}"
-                                data-end-date="${formatDate(pt.end_date)}"
                                 data-periodictarget="pt"
-                                name="${pt.period}"
                                 placeholder="{% trans 'Enter target'|escapejs %}"
                                 class="form-control input-value">
                         </span>
@@ -343,12 +380,18 @@
             });
             scrollToIndicatorFormBottom();
         } else {
-            save('')
+            window.create_no_rationale_changeset_notice({
+                preamble: DESTRUCTIVE_PREAMBLE,
+                message_text: DELETE_TARGETS_NO_RATIONALE,
+                context: document.getElementById('indicator_update_form'),
+                on_submit: save
+            });
         }
     });
 
     // add new periodic target
     $("#indicator_modal_content, #indicator_form").on("click", "#addNewPeriodicTarget", function(e) {
+        console.log("add new target line 361");
         e.preventDefault();
         var numTargets = $("#periodic_targets_table tbody tr").length-1;
         var form_url = $("#indicator_update_form").attr('action');
@@ -359,8 +402,7 @@
             $.get('/indicators/periodic_target_generate/' + indicator_id + '/?numTargets=' + numTargets, function(data){
                 var pt = $.parseJSON(data);
                 var isLastIteration = true;
-                var target_frequency = $("#id_target_frequency").val();
-                var markup = createPeriodicTargetRow(pt, target_frequency, isLastIteration);
+                var markup = createPeriodicTargetRow(pt, isLastIteration);
                 $("#periodic_targets_table tbody tr:nth-last-child(2)").before(markup);
             });
         }
@@ -546,8 +588,6 @@
 
     function show_hide_frequency_fields(lock = false) {
         // set the text for the 'create new target' button.
-        var label = '<i class="fas fa-plus-circle"></i> ' + getNewTargetBtnLabel($("#id_target_frequency").val());
-        $("#addNewPeriodicTarget").html(label);
         var selected_option = parseInt($("#id_target_frequency").find("option:selected").val()) || 0;
         if ( (lock == true || $('#id_target_frequency').attr('readonly'))
                  && selected_option != 1) {
@@ -568,7 +608,9 @@
             }
 
             if (selected_option == 8) {
-                $("#div_id_target_frequency_num_periods label").text("Number of events*");
+                $("#div_id_target_frequency_num_periods label").text("Number of events")
+                .addClass('label--required');
+                $("#div_id_target_frequency_custom label").addClass('label--required');
                 $("#div_id_create_targets_btn").show();
             } else {
                 $("#div_id_target_frequency_num_periods").hide();
@@ -597,25 +639,6 @@
         }
     }
 
-    function getNewTargetBtnLabel(index) {
-        var label = '';
-        if (index == 3 ) {
-            label += '{% trans "Add a year"|escapejs %}';
-        } else if (index == 4) {
-            label += '{% trans "Add a semi-annual period"|escapejs %}';
-        } else if (index == 5) {
-            label += '{% trans "Add a tri-annual period"|escapejs %}';
-        } else if (index == 6) {
-            label += '{% trans "Add a quarter"|escapejs %}';
-        } else if (index == 7) {
-            label += '{% trans "Add a month"|escapejs %}';
-        } else if (index == 8) {
-            label += '{% trans "Add an event"|escapejs %}';
-        } else {
-            label = '{% trans "Add a target"|escapejs %}';
-        }
-        return label;
-    }
     $("#indicator_modal_content, #indicator_form").on("change blur", "#id_target_frequency", function(e){
       if ($("#id_target_frequency option:selected").text().indexOf("---") < 0) {
         $("#id_target_frequency").removeClass('is-invalid');

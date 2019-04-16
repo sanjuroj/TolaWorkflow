@@ -14,19 +14,33 @@
             <table class="table table-sm periodic-targets__table" id="periodic_targets_table">
                 <tbody>
                     {% for pt in periodic_targets %}
-                    <tr id="{{ pt.id }}" data-collected-count="{{ pt.num_data }}" class="periodic-target">
-                        {% if indicator.target_frequency == 8 %} {# 8 is a stand alone EVENT #}
-                        <td class="text-left d-flex align-items-center td--stretch">
-                            <a href=
-                            "{% if pt.id %} {% url 'pt_delete' pt.id %} {% else %} # {% endif %}"
-                                id="deleteLastPT"
-                                class="deletebtn btn btn-sm" >
-                                <i class="fas fa-times text-danger"></i>
-                            </a>
+                    {% if indicator.target_frequency == 8 %} {# 8 is an EVENT #}
+                        {% if pt.id %}
+                            <tr data-collected-count="{{ pt.num_data }}"
+                                data-ptid="{{ pt.id }}"
+                                class="periodic-target">
+                                <td class="text-left d-flex align-items-center td--stretch">
+                                    <a href="{% url 'pt_delete' pt.id %}" id="delete_event_{{ pt.id }}"
+                                       class="deletebtn btn btn-sm event-target-delete-button">
+                                        <i class="fas fa-times text-danger"></i>
+                                    </a>
+                        {% else %}
+                            <tr id="target_row_{{forloop.counter0}}"
+                                data-collected-count="0"
+                                data-ptid="0"
+                                class="periodic-target">
+                                <td class="text-left d-flex align-items-center td--stretch">
+                                    <a href="#" id="delete_event_{{forloop.counter0}}"
+                                       data-target-row="target_row_{{forloop.counter0}}"
+                                       class="deletebtn btn btn-sm event-target-delete-button">
+                                        <i class="fas fa-times text-danger"></i>
+                                    </a>
+                        {% endif %}
                             <input type="text" name="{{ pt.period }}" value="{{ pt.period }}" class="form-control input-text">
                             <span style="" class="help-block"> </span>
                         </td>
-                        {% else %}
+                    {% else %}
+                    <tr id="{{ pt.id }}" data-collected-count="{{ pt.num_data }}" class="periodic-target">
                         <td class="text-left align-middle td--stretch">
                             <strong>{{ pt.period_name }}</strong>
                             {% if pt.start_date %}
@@ -96,7 +110,7 @@
 
         {% if indicator.target_frequency == 8 %}
         <div class="text-right">
-            <a href="#" id="addNewPeriodicTarget" class="btn btn-add btn-link"><i class="fas fa-plus-circle"></i> {% trans "Add a target" %}</a>
+            <a href="#" id="addNewPeriodicTarget" class="btn btn-add btn-link"><i class="fas fa-plus-circle"></i> {% trans "Add an event" %}</a>
         </div>
         {% endif %}
 
