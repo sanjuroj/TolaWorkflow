@@ -15,9 +15,12 @@ from indicators.queries import (
 )
 from django.db import models
 from django.utils.functional import cached_property
+from safedelete.managers import SafeDeleteManager
+from safedelete.queryset import SafeDeleteQueryset
 
 
-class MetricsIndicatorQuerySet(models.QuerySet, IndicatorSortingQSMixin):
+
+class MetricsIndicatorQuerySet(SafeDeleteQueryset, IndicatorSortingQSMixin):
     """QuerySet for indicators returned for Program Page with annotated metrics"""
 
     def with_annotations(self, *annotations):
@@ -60,9 +63,12 @@ class MetricsIndicatorQuerySet(models.QuerySet, IndicatorSortingQSMixin):
         return qs
 
 
-class MetricsIndicatorManager(models.Manager, IndicatorSortingManagerMixin):
+class MetricsIndicatorManager(SafeDeleteManager, IndicatorSortingManagerMixin):
     def get_queryset(self):
-        return MetricsIndicatorQuerySet(self.model, using=self._db)
+        queryset = MetricsIndicatorQuerySet(self.model, using=self._db)
+        queryset._safedelete_visibility = self._safedelete_visibility
+        queryset._safedelete_visibility_field = self._safedelete_visibility_field     
+        return queryset
 
     def with_annotations(self, *annotations):
         return self.get_queryset().with_annotations(*annotations)
@@ -88,7 +94,7 @@ class MetricsIndicator(Indicator):
             return self.data_count
         return self.result_set.count()
 
-class ResultsIndicatorQuerySet(models.QuerySet):
+class ResultsIndicatorQuerySet(SafeDeleteQueryset):
     def annotated(self):
         qs = self.filter(deleted__isnull=True)
         # add lop_target_calculated annotation (not used yet, but will replace deprecated lop_target value):
@@ -101,9 +107,12 @@ class ResultsIndicatorQuerySet(models.QuerySet):
         qs = qs.annotate(is_complete=indicator_is_complete_annotation())
         return qs
 
-class ResultsIndicatorManager(models.Manager):
+class ResultsIndicatorManager(SafeDeleteManager):
     def get_queryset(self):
-        return ResultsIndicatorQuerySet(self.model, using=self._db).annotated()
+        queryset = ResultsIndicatorQuerySet(self.model, using=self._db)
+        queryset._safedelete_visibility = self._safedelete_visibility
+        queryset._safedelete_visibility_field = self._safedelete_visibility_field     
+        return queryset.annotated()
 
 class ResultsIndicator(Indicator):
     """Indicator for displaying Results in the Results View"""

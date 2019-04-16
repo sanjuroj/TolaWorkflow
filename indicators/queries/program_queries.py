@@ -135,8 +135,12 @@ class ProgramForHomePageQuerySet(ProgramMetricsQuerySet):
         if not annotations:
             annotations = ['targets', 'results', 'evidence', 'scope']
         qs = self
-        if any(key in annotations for key in ['count', 'targets', 'results', 'evidence', 'reporting', 'scope']):
-            qs = qs.annotate(indicator_count=models.Count('indicator'))
+        # this needs to be cleaned up if we want queries to be lightning fast again
+        #nondeleted_indicators = Indicator.objects.filter(deleted__isnull=True, program_id=models.OuterRef('pk'))
+        #if any(key in annotations for key in ['count', 'targets', 'results', 'evidence', 'reporting', 'scope']):
+        #    qs = qs.annotate(
+        #        indicator_count=models.Subquery(
+        #            nondeleted_indicators.annotate(i_cnt=models.Count('pk')).values('i_cnt')[:1]))
         if any(key in annotations for key in ['results_count', 'results', 'evidence']):
             qs = qs.annotate(reported_results_sum=program_results_annotation(False))
         if 'targets' in annotations:
@@ -227,7 +231,7 @@ class ProgramWithMetrics(Program):
 
     @cached_property
     def indicator_count(self):
-        return self.indicator_set.count()
+        return self.indicator_set.filter(deleted__isnull=True).count()
 
     @cached_property
     def annotated_indicators(self):
@@ -299,7 +303,7 @@ class ProgramWithMetrics(Program):
         else:
             scope_indicators = self.annotated_indicators
         return {
-            'indicator_count': getattr(self, 'indicator_count', None),
+            'indicator_count': len(scope_indicators),
             'nonreporting_count': len(
                 [indicator for indicator in scope_indicators if not indicator.reporting]
             ),
@@ -406,7 +410,7 @@ def program_evidence_annotation():
 
 def program_scope_annotations(*annotations):
     """annotates a program's indicators prefetch query with the required annotations to report their on scope status"""
-    indicators_subquery = iq.MetricsIndicator.objects.select_related('program').with_annotations(*annotations)
+    indicators_subquery = iq.MetricsIndicator.objects.filter(deleted__isnull=True).select_related('program').with_annotations(*annotations)
     return models.Prefetch(
         'indicator_set', queryset=indicators_subquery, to_attr='scope_indicators'
     )
