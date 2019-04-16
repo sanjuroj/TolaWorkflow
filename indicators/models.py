@@ -560,7 +560,7 @@ class Indicator(SafeDeleteModel):
 
     target_frequency_custom = models.CharField(
         null=True, blank=True, max_length=100,
-        verbose_name=_("First event name*"), help_text=" "
+        verbose_name=_("First event name"), help_text=" "
     )
 
     target_frequency_start = models.DateField(
