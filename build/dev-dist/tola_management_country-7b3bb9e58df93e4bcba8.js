@@ -872,6 +872,7 @@ function () {
       this.api.createCountry(country_data).then(function (response) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this3.saving = false;
+          _this3.editing_target = response.data.id;
           _this3.active_pane_is_dirty = false;
 
           _this3.countries.shift();
@@ -3115,4 +3116,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-1a5a02ad456a1379d153.js.map
+//# sourceMappingURL=tola_management_country-7b3bb9e58df93e4bcba8.js.map
