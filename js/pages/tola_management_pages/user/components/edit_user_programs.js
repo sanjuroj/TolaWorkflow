@@ -1,7 +1,7 @@
 import React from 'react'
 import { observer } from "mobx-react"
 import {AutoSizer, Table, Column, CellMeasurer, CellMeasurerCache} from 'react-virtualized'
-import Select from 'components/virtualized-react-select'
+import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
 
 //we need a pretty peculiar structure to accommodate the virtualized table
 const create_country_objects = (countries, store) => Object.entries(countries)
@@ -416,8 +416,8 @@ export default class EditUserPrograms extends React.Component {
                 <h2 className="no-bold">{user.name?user.name+': ':''}{gettext("Programs and Roles")}</h2>
 
                 <div className="edit-user-programs__filter-form">
-                    <div className="edit-user-programs__country-filter form-group">
-                        <Select placeholder={gettext("Filter countries")} isMulti={true} value={this.state.country_filter} options={this.state.country_selections} onChange={(e) => this.changeCountryFilter(e)} />
+                    <div className="edit-user-programs__country-filter form-group react-multiselect-checkbox">
+                        <CheckboxedMultiSelect placeholder={gettext("Filter countries")} isMulti={true} value={this.state.country_filter} options={this.state.country_selections} onChange={(e) => this.changeCountryFilter(e)} />
                     </div>
                     <div className="form-group edit-user-programs__program-filter">
                         <div className="input-group">

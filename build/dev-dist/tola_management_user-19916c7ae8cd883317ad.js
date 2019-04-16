@@ -14,7 +14,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
 /* harmony import */ var react_virtualized__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-virtualized */ "c7k8");
-/* harmony import */ var components_virtualized_react_select__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! components/virtualized-react-select */ "5Xg7");
+/* harmony import */ var components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! components/checkboxed-multi-select */ "Z2Y6");
 var _class;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -658,8 +658,8 @@ function (_React$Component) {
       }, user.name ? user.name + ': ' : '', gettext("Programs and Roles")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "edit-user-programs__filter-form"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "edit-user-programs__country-filter form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_virtualized_react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        className: "edit-user-programs__country-filter form-group react-multiselect-checkbox"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
         placeholder: gettext("Filter countries"),
         isMulti: true,
         value: this.state.country_filter,
@@ -4324,4 +4324,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-e45b09ccdaee508bb172.js.map
+//# sourceMappingURL=tola_management_user-19916c7ae8cd883317ad.js.map
