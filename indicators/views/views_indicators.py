@@ -524,11 +524,14 @@ class PeriodicTargetView(View):
             pk=self.kwargs.get('indicator', None))
 
         rationale = request.POST.get('rationale')
-        if not rationale and indicator.result_set.all().exists():
-            return JsonResponse(
-                {"status": "failed", "msg": "Rationale is required"},
-                status=400
-            )
+        if not rationale:
+            if indicator.result_set.all().exists():
+                return JsonResponse(
+                    {"status": "failed", "msg": "Rationale is required"},
+                    status=400
+                )
+            else:
+                rationale = 'No rationale required.'
 
         deleteall = self.kwargs.get('deleteall', None)
         if deleteall == 'true':
@@ -571,12 +574,20 @@ class PeriodicTargetDeleteView(DeleteView):
 
     def delete(self, request, *args, **kwargs):
         result_count = self.get_object().result_set.count()
-        if result_count > 0:
-            self.get_object().result_set.all().update(
-                periodic_target=None)
-
-        # super(PeriodicTargetDeleteView).delete(request, args, kwargs)
+        rationale = request.POST.get('rationale')
         indicator = self.get_object().indicator
+        old_indicator_values = indicator.logged_fields
+        if result_count > 0:
+            if not rationale:
+                return JsonResponse(
+                    {"status": "failed", "msg": "Rationale is required"},
+                    status=400
+                )
+            else:
+                self.get_object().result_set.all().update(
+                    periodic_target=None)
+        if not rationale and result_count == 0:
+            rationale = 'No rationale required.'
         self.get_object().delete()
         if indicator.periodictargets.count() == 0:
             indicator.target_frequency = None
@@ -584,15 +595,16 @@ class PeriodicTargetDeleteView(DeleteView):
             indicator.target_frequency_start = None
             indicator.target_frequency_custom = None
             indicator.save()
-
-        targets_sum = PeriodicTarget.objects.filter(indicator=indicator) \
-            .aggregate(Sum('target'))['target__sum']
+        ProgramAuditLog.log_indicator_updated(
+                request.user,
+                indicator,
+                old_indicator_values,
+                indicator.logged_fields,
+                rationale
+            )
 
         indicator = None
-        return JsonResponse(
-            {"status": "success", "msg": "Periodic Target deleted\
-             successfully.", "targets_sum": targets_sum}
-            )
+        return JsonResponse({"status": "success"})
 
 
 class ResultFormMixin(object):

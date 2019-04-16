@@ -424,10 +424,11 @@ window.create_destructive_changeset_notice = ({
     cancel_text = 'Cancel',
     context = null,
     no_preamble = false,
-    showCloser = false
+    showCloser = false,
+    preamble = false
 } = {}) => {
     if(!message_text) {message_text = DEFAULT_DESTRUCTIVE_MESSAGE}
-    const preamble = (no_preamble)?'':`<span class='text-danger'>${gettext("This action cannot be undone.")}</span>`
+    if (!preamble) { preamble = (no_preamble)?'':`<span class='text-danger'>${gettext("This action cannot be undone.")}</span>`}
     const inner = `
         <div class="row">
             <div class="col">
