@@ -349,10 +349,10 @@ class ProgramAuditLog(models.Model, DiffableLog):
         new_program_log_entry.save()
 
     @staticmethod
-    def log_indicator_updated(user, indicator, old_indicator_values, new_indicator_values, rationale):
+    def log_indicator_updated(user, indicator, old_indicator_values, new_indicator_values, rationale, force=False):
         previous_entry_json = json.dumps(old_indicator_values, cls=DjangoJSONEncoder)
         new_entry_json = json.dumps(new_indicator_values, cls=DjangoJSONEncoder)
-        if new_entry_json != previous_entry_json:
+        if new_entry_json != previous_entry_json or force:
             new_program_log_entry = ProgramAuditLog(
                 program=indicator.program,
                 user=user.tola_user,
