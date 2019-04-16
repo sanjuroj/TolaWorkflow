@@ -261,14 +261,14 @@
                     no_preamble: true,
                     context: document.getElementById('indicator_update_form'),
                     on_submit: (rationale) => {
-                        submitForm(this, false, rationale);
+                        submitForm(this, true, rationale);
                     }
                 });
             } else {
                 window.create_nondestructive_changeset_notice({
                     context: document.getElementById('indicator_update_form'),
                     on_submit: (rationale) => {
-                        submitForm(this, false, rationale);
+                        submitForm(this, true, rationale);
                     }
                 });
             }
