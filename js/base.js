@@ -552,3 +552,16 @@ window.create_no_rationale_changeset_notice = ({
         showCloser: true
         });
 }
+
+
+/*
+ * Take a jquery element and scroll the to the bottom of said element
+ * The element should represent the top level element controlled by a scroll bar
+ * One might think that is always 'html' but can also be a modal div overlay or possibly
+ * a div with overflow: scroll
+ */
+function scrollToBottom($el) {
+    let height = $el.prop('scrollHeight');
+    $el.animate({ scrollTop: height }, 'slow');
+}
+window.scrollToBottom = scrollToBottom;

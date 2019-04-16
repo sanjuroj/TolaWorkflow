@@ -209,6 +209,7 @@
                     delete_target_row(url, row)(rationale);
                 }
             });
+            scrollToIndicatorFormBottom();
         }
     });
 
@@ -317,6 +318,7 @@
                     submitForm($("#indicator_update_form"), true, rationale);
                 }
             });
+            scrollToIndicatorFormBottom();
         } else {
             submitForm($("#indicator_update_form"), true, '');
         }
@@ -387,6 +389,7 @@
                 on_submit: save
             });
         }
+        scrollToIndicatorFormBottom();
     });
 
     // add new periodic target
@@ -985,6 +988,8 @@
     })
 
     function scrollToIndicatorFormBottom() {
-        $("#indicator_modal_div").animate({ scrollTop: $('#indicator_modal_div').height() }, "slow");
+        // Handle either full page form or modal
+        let $el = $('#indicator_modal_div').length ? $('#indicator_modal_div') : $('html');
+        scrollToBottom($el);
     }
 </script>
