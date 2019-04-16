@@ -391,32 +391,16 @@
 
     // add new periodic target
     $("#indicator_modal_content, #indicator_form").on("click", "#addNewPeriodicTarget", function(e) {
-        console.log("add new target line 361");
         e.preventDefault();
         var numTargets = $("#periodic_targets_table tbody tr").length-1;
         var form_url = $("#indicator_update_form").attr('action');
         var indicator_id = form_url.split('/').slice(-2, -1)[0]
-
-
-        const save = (rationale) => {
-            $.get('/indicators/periodic_target_generate/' + indicator_id + '/?numTargets=' + numTargets, function(data){
-                var pt = $.parseJSON(data);
-                var isLastIteration = true;
-                var markup = createPeriodicTargetRow(pt, isLastIteration);
-                $("#periodic_targets_table tbody tr:nth-last-child(2)").before(markup);
-            });
-        }
-        var has_results = parseInt($('#numDataPoints').text()) > 0;
-        if(has_results) {
-            window.create_nondestructive_changeset_notice({
-                context: document.getElementById('indicator_update_form'),
-                on_submit: save
-            });
-
-        } else {
-            save('')
-        }
-
+        $.get('/indicators/periodic_target_generate/' + indicator_id + '/?numTargets=' + numTargets, function(data){
+            var pt = $.parseJSON(data);
+            var isLastIteration = true;
+            var markup = createPeriodicTargetRow(pt, isLastIteration);
+            $("#periodic_targets_table tbody tr:nth-last-child(2)").before(markup);
+        });
     });
 
     $('#indicator_modal_content, #indicator_form').on('click', "input[type='reset']", function(e) {
