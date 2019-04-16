@@ -137,10 +137,20 @@ class ProgramForHomePageQuerySet(ProgramMetricsQuerySet):
         qs = self
         # this needs to be cleaned up if we want queries to be lightning fast again
         #nondeleted_indicators = Indicator.objects.filter(deleted__isnull=True, program_id=models.OuterRef('pk'))
-        #if any(key in annotations for key in ['count', 'targets', 'results', 'evidence', 'reporting', 'scope']):
-        #    qs = qs.annotate(
-        #        indicator_count=models.Subquery(
-        #            nondeleted_indicators.annotate(i_cnt=models.Count('pk')).values('i_cnt')[:1]))
+        if any(key in annotations for key in ['count', 'targets', 'results', 'evidence', 'reporting', 'scope']):
+            qs = qs.annotate(
+                indicator_count=models.functions.Coalesce(
+                    models.Subquery(
+                        Indicator.objects.filter(
+                            deleted__isnull=True
+                        ).filter(
+                            program_id=models.OuterRef('pk')
+                        ).order_by().values('program').annotate(
+                            i_cnt=models.Count('id')
+                        ).values('i_cnt')[:1],
+                        output_field=models.IntegerField()
+                    ), 0)
+            )
         if any(key in annotations for key in ['results_count', 'results', 'evidence']):
             qs = qs.annotate(reported_results_sum=program_results_annotation(False))
         if 'targets' in annotations:
