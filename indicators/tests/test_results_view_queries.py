@@ -328,7 +328,7 @@ class ResultsTestBase:
     def test_result_rows_percents_values(self):
         for count, pt_row in enumerate(self.results_indicator.annotated_targets):
             if count < len(self.expected_result_values) and self.target_values[count] == 0:
-                expected = 0
+                expected = None
             elif count < len(self.expected_result_values):
                 expected = round(float(self.expected_result_values[count])/self.target_values[count], 2)
             else:
