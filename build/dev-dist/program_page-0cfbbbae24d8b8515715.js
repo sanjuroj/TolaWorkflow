@@ -1006,6 +1006,16 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('nav-select-indicator-to-fi
     'indicator_id': selectedIndicatorId
   });
 });
+/*
+ * Are we loading a cached page? If so, reload to avoid displaying stale indicator data
+ * See ticket #1423
+ */
+
+var isCached = window.performance.getEntriesByType("navigation")[0].transferSize === 0;
+
+if (isCached) {
+  window.location.reload();
+}
 
 /***/ }),
 
@@ -1481,4 +1491,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-2e156cc6d0a758d12925.js.map
+//# sourceMappingURL=program_page-0cfbbbae24d8b8515715.js.map

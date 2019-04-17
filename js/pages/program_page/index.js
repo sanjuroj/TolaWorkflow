@@ -224,3 +224,13 @@ eventBus.on('nav-clear-all-indicator-filters', () => {
 eventBus.on('nav-select-indicator-to-filter', (selectedIndicatorId) => {
     router.navigate('indicator', {'indicator_id': selectedIndicatorId})
 });
+
+
+/*
+ * Are we loading a cached page? If so, reload to avoid displaying stale indicator data
+ * See ticket #1423
+ */
+let isCached = window.performance.getEntriesByType("navigation")[0].transferSize === 0;
+if (isCached) {
+    window.location.reload();
+}
