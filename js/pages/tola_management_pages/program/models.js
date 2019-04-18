@@ -216,32 +216,69 @@ export class ProgramStore {
             this.editing_target = 'new'
         }
     }
+    
+    /*
+     * if there is no GAIT Id, resolve and move on,
+     * if there is a GAIT ID, call to see if it is unique, and if not confirm that the user wants to enter a
+     * duplicate GAIT ID for this program (displaying the link to view programs with the same ID in GAIT)
+     */
+    
+    validateGaitId(program_data) {
+        if (program_data.gaitid) {
+            let id = program_data.id || 0;
+            return new Promise((resolve, reject) => {
+                    this.api.validateGaitId(program_data.gaitid, id).then(response => {
+                        if (response.data.unique === false) {
+                        let message_intro = gettext('The GAIT ID for this program is shared with at least one other program.')
+                        let link_text = gettext('View programs with this ID in GAIT.');
+                        let message_text = `${message_intro} <a href="${response.data.gait_link}" target="_blank">${link_text}</a>`;
+                        window.create_no_rationale_changeset_notice({
+                            message_text: message_text,
+                            on_submit: resolve,
+                            on_cancel: reject,
+                            preamble: ' '
+                        });
+                        } else {
+                            resolve();
+                        }
+                    }
+                )
+            });
+        } else {
+            return new Promise((resolve, reject) => resolve());
+        }
+    }
 
     @action
     saveNewProgram(program_data) {
         program_data.id = null
         this.saving = true
-        this.api.createProgram(program_data)
-            .then(response => this.api.fetchProgramHistory(response.data.id)
-                .then(history => {
-            runInAction(()=> {
-                this.saving = false;
-                this.editing_target = response.data.id;
-                this.editing_target_data = response.data;
-                this.editing_history = history.data;
-                this.programs.shift();
-                this.programs.unshift(response.data);
-                this.programFilterPrograms.unshift(response.data);
-                this.active_pane_is_dirty = false;
-                this.onSaveSuccessHandler();
-            })
-        })).catch(error => {
-            runInAction(()=> {
-                let errors = error.response.data
-                this.saving = false
-                this.editing_errors = errors
-            })
-        })
+        this.validateGaitId(program_data).then(() => {
+            this.api.createProgram(program_data)
+                .then(response => this.api.fetchProgramHistory(response.data.id)
+                      .then(history => {
+                            runInAction(()=> {
+                                this.saving = false;
+                                this.editing_target = response.data.id;
+                                this.editing_target_data = response.data;
+                                this.editing_history = history.data;
+                                this.programs.shift();
+                                this.programs.unshift(response.data);
+                                this.programFilterPrograms.unshift(response.data);
+                                this.active_pane_is_dirty = false;
+                                this.onSaveSuccessHandler();
+                            });
+                      })).catch(error => {
+                            runInAction(()=> {
+                                let errors = error.response.data
+                                this.saving = false
+                                this.editing_errors = errors
+                            })
+                })
+        }).catch(() => {
+            //user canceled because of GAIT ID validation failure
+            this.saving = false;
+        });
     }
 
     @action updateProgram(id, program_data) {

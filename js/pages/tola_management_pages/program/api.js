@@ -28,6 +28,9 @@ export const createProgram = (data) => api.post('/tola_management/program/', dat
 
 export const updateProgram = (id, data) => api.put(`/tola_management/program/${id}/`, data)
 
+// endpoint to check if gait ID is unique and return a GAIT link to view similar programs if it is not.
+export const validateGaitId = (gaitId, id) => api.get(`/tola_management/program/${id}/gait/${gaitId}/`)
+
 export const updateProgramFundingStatusBulk = (ids, funding_status) => {
     return api.post('/tola_management/program/bulk_update_status/', {ids, funding_status})
 }
@@ -42,4 +45,5 @@ export default {
     createProgram,
     updateProgram,
     updateProgramFundingStatusBulk,
+    validateGaitId
 }

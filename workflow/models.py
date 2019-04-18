@@ -486,7 +486,7 @@ class ActiveProgramsManager(models.Manager):
             funding_status__iexact=self.ACTIVE_FUNDING_STATUS)
 
 class Program(models.Model):
-    gaitid = models.CharField(_("ID"), max_length=255, null=True, blank=True, unique=True)
+    gaitid = models.CharField(_("ID"), max_length=255, null=True, blank=True)
     name = models.CharField(_("Program Name"), max_length=255, blank=True)
     funding_status = models.CharField(_("Funding Status"), max_length=255, blank=True)
     cost_center = models.CharField(_("Fund Code"), max_length=255, blank=True, null=True)
