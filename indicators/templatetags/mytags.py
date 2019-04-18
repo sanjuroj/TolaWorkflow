@@ -242,10 +242,14 @@ def gauge_tank(context, metric, has_filters=True):
     filled_value = program.metrics[metric]
     results_count = program.metrics['results_count']
     indicator_count = program.metrics['indicator_count']
-    unfilled_value = indicator_count - filled_value
-    filter_title_count = program.metrics['needs_evidence'] if metric == 'results_evidence' else unfilled_value
     denominator = results_count if metric == 'results_evidence' else indicator_count
-    filled_percent = make_percent(filled_value, denominator)
+    unfilled_value = denominator - filled_value
+    filter_title_count = program.metrics['needs_evidence'] if metric == 'results_evidence' else unfilled_value
+    #filled_percent = make_percent(filled_value, denominator)
+    filled_percent = 0 if denominator == 0 else (100 - make_percent(unfilled_value, denominator))
+    if metric == 'results_evidence':
+        print "filled {0} percent {1} unfilled {2} denominator {3}".format(filled_value, filled_percent, unfilled_value, denominator)
+    
     filter_active = filled_percent != 100 and (
         metric == 'targets_defined' or (
             metric == 'reported_results' and program.metrics.get('targets_defined', False)
