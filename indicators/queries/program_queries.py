@@ -366,6 +366,7 @@ def program_results_annotation(total=True):
         or the count of reported results for the program in total
         Total=True: all results for program, Total=False: number of indicators with results"""
     data_subquery = Result.objects.filter(
+        indicator__deleted__isnull=True,
         indicator__program=models.OuterRef('pk')
     ).order_by().values('indicator__program').annotate(
         data_count=models.Count('indicator_id', distinct=total)).values('data_count')[:1]
@@ -382,11 +383,13 @@ def program_get_program_months_annotation():
 def program_all_targets_defined_annotation():
     """annotates a queryset of programs with whether all targets are defined for all indicators for that program"""
     targets_subquery = PeriodicTarget.objects.filter(
+        indicator__deleted__isnull=True,
         indicator_id=models.OuterRef('pk')
     ).order_by().values('indicator_id').annotate(
         target_count=models.Count('pk')
     ).values('target_count')[:1]
     target_subquery = Indicator.objects.filter(
+        deleted__isnull=True,
         program_id=models.OuterRef('pk')
     ).order_by().values('program_id').annotate(
         defined_targets=models.Subquery(
@@ -407,6 +410,7 @@ def program_all_targets_defined_annotation():
 def program_evidence_annotation():
     """annotates a program with the count of results for any of the program's indicators which have evidence"""
     rs = Result.objects.filter(
+        indicator__deleted__isnull=True,
         indicator__program_id=models.OuterRef('pk')
     ).exclude(
         evidence_url=''
@@ -420,7 +424,9 @@ def program_evidence_annotation():
 
 def program_scope_annotations(*annotations):
     """annotates a program's indicators prefetch query with the required annotations to report their on scope status"""
-    indicators_subquery = iq.MetricsIndicator.objects.filter(deleted__isnull=True).select_related('program').with_annotations(*annotations)
+    indicators_subquery = iq.MetricsIndicator.objects.filter(
+        deleted__isnull=True
+    ).select_related('program').with_annotations(*annotations)
     return models.Prefetch(
         'indicator_set', queryset=indicators_subquery, to_attr='scope_indicators'
     )
