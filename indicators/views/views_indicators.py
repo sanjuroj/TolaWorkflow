@@ -368,13 +368,20 @@ class IndicatorUpdate(UpdateView):
         self.object.refresh_from_db()
 
         if not periodic_targets == 'generateTargets' or new_target_frequency == Indicator.LOP:
-            ProgramAuditLog.log_indicator_updated(
-                self.request.user,
-                self.object,
-                old_indicator_values,
-                self.object.logged_fields,
-                rationale
-            )
+            previous_entry_json = json.dumps(old_indicator_values, cls=DjangoJSONEncoder)
+            new_entry_json = json.dumps(self.object.logged_fields, cls=DjangoJSONEncoder)
+            if new_entry_json != previous_entry_json:
+                if rationale == '':
+                    # front end validation was bypassed?
+                    return HttpResponse('rationale string missing', status=400)
+
+                ProgramAuditLog.log_indicator_updated(
+                    self.request.user,
+                    self.object,
+                    old_indicator_values,
+                    self.object.logged_fields,
+                    rationale
+                )
 
         # fetch all existing periodic_targets for this indicator
         periodic_targets = PeriodicTarget.objects.filter(indicator=indicatr) \
