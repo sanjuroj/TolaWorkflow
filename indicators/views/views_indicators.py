@@ -363,15 +363,6 @@ class IndicatorUpdate(UpdateView):
             handleDataCollectedRecords(indicatr, lop, existing_target_frequency, new_target_frequency,
                                        generated_pt_ids)
 
-        # check to see if values of any of these fields have changed.
-        fields_to_watch = set(['indicator_type', 'level', 'name', 'number', 'sector'])
-        changed_fields = set(form.changed_data)
-        if fields_to_watch.intersection(changed_fields):
-            update_indicator_row = '1'
-        else:
-            # for  now do not care about which fields have changed. just indicate that some fields have changed
-            update_indicator_row = '1'
-
         # save the indicator form
         self.object = form.save()
         self.object.refresh_from_db()
@@ -422,7 +413,6 @@ class IndicatorUpdate(UpdateView):
                 "indicatorjson": str(indicatorjson),
                 "targets_sum": str(targets_sum),
                 "targets_avg": str(targets_avg),
-                "update_indicator_row": str(update_indicator_row),
                 "content": content,
                 "remove_missing_targts_link": remove_missing_targts_link
             }
