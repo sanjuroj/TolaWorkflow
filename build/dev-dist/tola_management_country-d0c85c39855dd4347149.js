@@ -1456,7 +1456,7 @@ function (_React$Component) {
         className: "accordion-row__content"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         onClick: expandAction,
-        className: "btn btn-link",
+        className: "btn accordion-row__btn btn-link",
         tabIndex: "0"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__["FontAwesomeIcon"], {
         icon: expanded ? 'caret-down' : 'caret-right'
@@ -2606,7 +2606,7 @@ function (_React$Component) {
         className: "accordion-row__content"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         onClick: expandAction,
-        className: "btn btn-link",
+        className: "btn accordion-row__btn btn-link",
         tabIndex: "0"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__["FontAwesomeIcon"], {
         icon: expanded ? 'caret-down' : 'caret-right'
@@ -3116,4 +3116,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-7b3bb9e58df93e4bcba8.js.map
+//# sourceMappingURL=tola_management_country-d0c85c39855dd4347149.js.map
