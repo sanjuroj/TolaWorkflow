@@ -382,8 +382,7 @@ class IndicatorUpdate(UpdateView):
                 self.object,
                 old_indicator_values,
                 self.object.logged_fields,
-                rationale,
-                force=True
+                rationale
             )
 
         # fetch all existing periodic_targets for this indicator
