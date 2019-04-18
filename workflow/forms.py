@@ -1693,8 +1693,8 @@ class OneTimeRegistrationForm(forms.Form):
     password
     """
     error_messages = {
-        'password_mismatch': "The two password fields didn't match.",
-        'password_too_similar': "The password is too similar to information in your user profile."
+        'password_mismatch': _("The two password fields didn't match."),
+        'password_too_similar': _("The password is too similar to information in your user profile.")
         }
     new_password1 = forms.CharField(label=("New password"),
                                     widget=forms.PasswordInput)
