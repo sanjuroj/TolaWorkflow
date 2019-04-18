@@ -6,7 +6,7 @@ from StringIO import StringIO
 from collections import OrderedDict
 from django.db import transaction
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
@@ -412,3 +412,21 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
         workbook.save(response)
         return response
+
+    @detail_route(methods=['get'], url_path='gait/(?P<gaitid>[^/.]+)')
+    def gait(self, request, pk=None, gaitid=None):
+        response = {}
+        if gaitid is None:
+            response['unique'] = True
+        else:
+            programs = Program.objects.filter(gaitid=gaitid)
+            if pk is not None:
+                programs = programs.exclude(pk=pk)
+            if programs.count() == 0:
+                response['unique'] = True
+            else:
+                response['unique'] = False
+                response['gait_link'] = ('https://gait.mercycorps.org/search.vm?Mode=edit&sort_by=g.GrantTitle'
+                                         '&q=&kw=&GrantNumber=&CostCenter=&GrantID={0}&GrantMin=&SSD=&USD=&'
+                                         'SED=&UED=&Emergency=').format(gaitid)
+        return JsonResponse(response)
