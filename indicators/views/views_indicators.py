@@ -376,7 +376,7 @@ class IndicatorUpdate(UpdateView):
         self.object = form.save()
         self.object.refresh_from_db()
 
-        if not periodic_targets == 'generateTargets':
+        if not periodic_targets == 'generateTargets' or new_target_frequency == Indicator.LOP:
             ProgramAuditLog.log_indicator_updated(
                 self.request.user,
                 self.object,
