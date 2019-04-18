@@ -1010,12 +1010,18 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('nav-select-indicator-to-fi
  * Are we loading a cached page? If so, reload to avoid displaying stale indicator data
  * See ticket #1423
  */
+// moving the cache check to after page load as firefox calculates transfer size at the end
 
-var isCached = window.performance.getEntriesByType("navigation")[0].transferSize === 0;
+$(function () {
+  var isCached = window.performance.getEntriesByType("navigation")[0].transferSize === 0; //adding a second check to ensure that if for whatever reason teh transfersize reads wrong, we don't reload on
+  //a reload:
 
-if (isCached) {
-  window.location.reload();
-}
+  var isReload = window.performance.getEntriesByType("navigation")[0].type === "reload";
+
+  if (isCached && !isReload) {
+    window.location.reload();
+  }
+});
 
 /***/ }),
 
@@ -1491,4 +1497,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-0cfbbbae24d8b8515715.js.map
+//# sourceMappingURL=program_page-bc399799210ceb7f41e7.js.map
