@@ -3,6 +3,7 @@ from crispy_forms.layout import *
 from crispy_forms.bootstrap import *
 from crispy_forms.layout import Layout, Submit, Reset, Field
 from django.forms import HiddenInput, URLInput
+from django.contrib.auth.password_validation import validate_password
 from django.utils.translation import ugettext_lazy as _
 from functools import partial
 from widgets import GoogleMapsWidget
@@ -1692,7 +1693,8 @@ class OneTimeRegistrationForm(forms.Form):
     password
     """
     error_messages = {
-        'password_mismatch': ("The two password fields didn't match."),
+        'password_mismatch': "The two password fields didn't match.",
+        'password_too_similar': "The password is too similar to information in your user profile."
         }
     new_password1 = forms.CharField(label=("New password"),
                                     widget=forms.PasswordInput)
@@ -1702,10 +1704,17 @@ class OneTimeRegistrationForm(forms.Form):
     def clean_new_password2(self):
         password1 = self.cleaned_data.get('new_password1')
         password2 = self.cleaned_data.get('new_password2')
+
         if password1 and password2:
             if password1 != password2:
                 raise forms.ValidationError(
                     self.error_messages['password_mismatch'],
                     code='password_mismatch',
                     )
+            if not validate_password(password2):
+                # TODO: this would be better handled in the view, as a list of errors
+                raise forms.ValidationError(
+                    self.error_messages['password_too_similar'],
+                    code='password_too_similar',
+                )
         return password2
