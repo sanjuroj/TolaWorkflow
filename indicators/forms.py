@@ -113,13 +113,13 @@ class IndicatorForm(forms.ModelForm):
             raise forms.ValidationError(_('Please enter a number larger than zero.'))
         return data
 
-    def clean_rationale(self):
-        data = self.cleaned_data.get('rationale')
-        periodic_targets = self.request.POST.get('periodic_targets')
-        if not periodic_targets == 'generateTargets' and len(self.instance.result_set.all()) > 0 and (not data or len(data) <= 0):
-            # Translators: Input form error message that the "rationale" form field is empty when results have already been saved
-            raise forms.ValidationError(_('Results have been recorded, rationale is required.'))
-        return data
+    # def clean_rationale(self):
+    #     data = self.cleaned_data.get('rationale')
+    #     periodic_targets = self.request.POST.get('periodic_targets')
+    #     if not periodic_targets == 'generateTargets' and len(self.instance.result_set.all()) > 0 and (not data or len(data) <= 0):
+    #         # Translators: Input form error message that the "rationale" form field is empty when results have already been saved
+    #         raise forms.ValidationError(_('Results have been recorded, rationale is required.'))
+    #     return data
 
 
 class ResultForm(forms.ModelForm):

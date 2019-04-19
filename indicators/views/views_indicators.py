@@ -11,7 +11,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import PermissionDenied
-from django.db import connection
+from django.db import connection, transaction
 from django.db.models import (
     Count, Q, Sum, Avg, Max
 )
@@ -170,6 +170,7 @@ class IndicatorUpdate(UpdateView):
     @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     @method_decorator(indicator_pk_adapter(has_indicator_write_access))
+    @transaction.atomic
     def dispatch(self, request, *args, **kwargs):
 
         if request.method == 'GET':
@@ -363,28 +364,33 @@ class IndicatorUpdate(UpdateView):
             handleDataCollectedRecords(indicatr, lop, existing_target_frequency, new_target_frequency,
                                        generated_pt_ids)
 
-        # check to see if values of any of these fields have changed.
-        fields_to_watch = set(['indicator_type', 'level', 'name', 'number', 'sector'])
-        changed_fields = set(form.changed_data)
-        if fields_to_watch.intersection(changed_fields):
-            update_indicator_row = '1'
-        else:
-            # for  now do not care about which fields have changed. just indicate that some fields have changed
-            update_indicator_row = '1'
-
         # save the indicator form
         self.object = form.save()
         self.object.refresh_from_db()
 
-        if not periodic_targets == 'generateTargets':
-            ProgramAuditLog.log_indicator_updated(
-                self.request.user,
-                self.object,
-                old_indicator_values,
-                self.object.logged_fields,
-                rationale,
-                force=True
-            )
+        results_count = Result.objects.filter(indicator=self.object).count()
+
+        # Conditions for logging:
+        # * Results are attached
+        # * tracked fields have changed
+        # * the indicator form is being saved (as opposed to targets generated - this view handles both)
+        if not periodic_targets == 'generateTargets' or new_target_frequency == Indicator.LOP:
+            if results_count > 0:
+                previous_entry_json = json.dumps(old_indicator_values, cls=DjangoJSONEncoder)
+                new_entry_json = json.dumps(self.object.logged_fields, cls=DjangoJSONEncoder)
+                if new_entry_json != previous_entry_json:
+                    if rationale == '':
+                        # front end validation was bypassed?
+                        # raise exception here instead of returning an HttpResponse to rollback DB transaction
+                        raise Exception('rationale string missing on indicator form')
+
+                    ProgramAuditLog.log_indicator_updated(
+                        self.request.user,
+                        self.object,
+                        old_indicator_values,
+                        self.object.logged_fields,
+                        rationale
+                    )
 
         # fetch all existing periodic_targets for this indicator
         periodic_targets = PeriodicTarget.objects.filter(indicator=indicatr) \
@@ -423,7 +429,6 @@ class IndicatorUpdate(UpdateView):
                 "indicatorjson": str(indicatorjson),
                 "targets_sum": str(targets_sum),
                 "targets_avg": str(targets_avg),
-                "update_indicator_row": str(update_indicator_row),
                 "content": content,
                 "remove_missing_targts_link": remove_missing_targts_link
             }
