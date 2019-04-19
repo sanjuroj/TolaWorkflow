@@ -25,6 +25,7 @@
         'baseline',
         'baseline_na',
         'periodic_targets',
+        'target_frequency',
     ]);
 
     function setupPopupCalendar() {
@@ -1062,8 +1063,16 @@
 
     // have targets or target values changed in the form?
     function hasTargetsChanged() {
-        let prevState = initialTrackedFieldsFormState.periodic_targets;
-        let currState = getTrackedFieldsObject().periodic_targets;
-        return prevState !== currState;
+        let currTrackedFieldsFormState = getTrackedFieldsObject();
+
+        // look at values of targets in table
+        let prevTargetFieldsState = initialTrackedFieldsFormState.periodic_targets;
+        let currTargetFieldsState = currTrackedFieldsFormState.periodic_targets;
+
+        // LoP has not values, so look at changes in the target type itself
+        let prevTargetType = initialTrackedFieldsFormState.target_frequency;
+        let currTargetType = currTrackedFieldsFormState.target_frequency;
+        
+        return prevTargetFieldsState !== currTargetFieldsState || prevTargetType !== currTargetType;
     }
 </script>
