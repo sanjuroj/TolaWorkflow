@@ -530,7 +530,6 @@
 
     $( document ).ready(function() {
         var unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
-        console.log(unit_of_measure_type);
         if (unit_of_measure_type == 2){
             show_hide_cummulative_inputs('percent')
             $('#span_id_lop_target').addClass('input-symbol-percent');

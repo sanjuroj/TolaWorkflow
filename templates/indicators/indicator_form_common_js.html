@@ -428,7 +428,7 @@
         // warning when changing for LoP target value to something non-LoP
         if (numDataPoints > 0 && initalTargetFrequency == 1 && target_frequency != 1) {
             if (!confirm(`{% trans "Warning: This action cannot be undone. If we make these changes,"|escapejs %} ${numDataPoints} {% trans "data record/s will no longer be associated with the Life of Program target, and will need to be reassigned to new targets."|escapejs %} \n\n {% trans "Proceed anyway?"|escapejs %}`)) {
-                initalTargetFrequency = undefined;
+                $('#id_create_targets_btn').attr("disabled", false);
                 return;
             }
         }
