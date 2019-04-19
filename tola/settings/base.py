@@ -312,21 +312,6 @@ SOCIAL_AUTH_PIPELINE = (
 
 ############ END OF AUTHENTICATION BACKEND ##############
 
-
-# AUTHENTICATION VALIDATION #
-# Note: independent of backend
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {
-            'min_length': 9,
-        }
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-]
-
 ########## Login redirect ###########
 LOGIN_REDIRECT_URL = '/'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'

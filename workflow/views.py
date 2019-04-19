@@ -2498,7 +2498,7 @@ class OneTimeRegistrationView(FormView):
 
         if user is not None and default_token_generator.check_token(user, token):
             if form.is_valid():
-                new_password = form.cleaned_data['new_password2']
+                new_password= form.cleaned_data['new_password2']
                 user.set_password(new_password)
                 user.save()
                 return self.form_valid(form)
