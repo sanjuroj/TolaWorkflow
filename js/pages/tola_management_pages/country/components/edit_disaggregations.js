@@ -110,7 +110,7 @@ class DisaggregationType extends React.Component {
         return (
             <div className="accordion-row">
                 <div className="accordion-row__content">
-                    <a onClick={expandAction} className="btn btn-link" tabIndex='0'>
+                    <a onClick={expandAction} className="btn accordion-row__btn btn-link" tabIndex='0'>
                         <FontAwesomeIcon icon={expanded ? 'caret-down' : 'caret-right'} />
                         {(disaggregation.id == 'new') ? "New Disaggregation type" : disaggregation.disaggregation_type}
                     </a>

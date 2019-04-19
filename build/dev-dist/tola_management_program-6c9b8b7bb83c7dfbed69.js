@@ -434,7 +434,7 @@ var LoadingSpinner = function LoadingSpinner(_ref) {
 /*!*******************************************************!*\
   !*** ./js/pages/tola_management_pages/program/api.js ***!
   \*******************************************************/
-/*! exports provided: fetchPrograms, fetchProgramsForFilter, createProgram, updateProgram, updateProgramFundingStatusBulk, fetchProgramHistory, default */
+/*! exports provided: fetchPrograms, fetchProgramsForFilter, createProgram, updateProgram, validateGaitId, updateProgramFundingStatusBulk, fetchProgramHistory, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -443,6 +443,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchProgramsForFilter", function() { return fetchProgramsForFilter; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createProgram", function() { return createProgram; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateProgram", function() { return updateProgram; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "validateGaitId", function() { return validateGaitId; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateProgramFundingStatusBulk", function() { return updateProgramFundingStatusBulk; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchProgramHistory", function() { return fetchProgramHistory; });
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../api */ "XoI5");
@@ -482,6 +483,10 @@ var createProgram = function createProgram(data) {
 };
 var updateProgram = function updateProgram(id, data) {
   return _api__WEBPACK_IMPORTED_MODULE_0__["api"].put("/tola_management/program/".concat(id, "/"), data);
+}; // endpoint to check if gait ID is unique and return a GAIT link to view similar programs if it is not.
+
+var validateGaitId = function validateGaitId(gaitId, id) {
+  return _api__WEBPACK_IMPORTED_MODULE_0__["api"].get("/tola_management/program/".concat(id, "/gait/").concat(gaitId, "/"));
 };
 var updateProgramFundingStatusBulk = function updateProgramFundingStatusBulk(ids, funding_status) {
   return _api__WEBPACK_IMPORTED_MODULE_0__["api"].post('/tola_management/program/bulk_update_status/', {
@@ -498,7 +503,8 @@ var fetchProgramHistory = function fetchProgramHistory(id) {
   fetchProgramHistory: fetchProgramHistory,
   createProgram: createProgram,
   updateProgram: updateProgram,
-  updateProgramFundingStatusBulk: updateProgramFundingStatusBulk
+  updateProgramFundingStatusBulk: updateProgramFundingStatusBulk,
+  validateGaitId: validateGaitId
 });
 
 /***/ }),
@@ -2569,66 +2575,107 @@ function () {
         this.editing_target = 'new';
       }
     }
+    /*
+     * if there is no GAIT Id, resolve and move on,
+     * if there is a GAIT ID, call to see if it is unique, and if not confirm that the user wants to enter a
+     * duplicate GAIT ID for this program (displaying the link to view programs with the same ID in GAIT)
+     */
+
+  }, {
+    key: "validateGaitId",
+    value: function validateGaitId(program_data) {
+      var _this3 = this;
+
+      if (program_data.gaitid) {
+        var id = program_data.id || 0;
+        return new Promise(function (resolve, reject) {
+          _this3.api.validateGaitId(program_data.gaitid, id).then(function (response) {
+            if (response.data.unique === false) {
+              var message_intro = gettext('The GAIT ID for this program is shared with at least one other program.');
+              var link_text = gettext('View programs with this ID in GAIT.');
+              var preamble_text = "".concat(message_intro, " <a href=\"").concat(response.data.gait_link, "\" target=\"_blank\">").concat(link_text, "</a>");
+              window.create_no_rationale_changeset_notice({
+                message_text: gettext('Are you sure you want to continue?'),
+                on_submit: resolve,
+                on_cancel: reject,
+                preamble: preamble_text
+              });
+            } else {
+              resolve();
+            }
+          });
+        });
+      } else {
+        return new Promise(function (resolve, reject) {
+          return resolve();
+        });
+      }
+    }
   }, {
     key: "saveNewProgram",
     value: function saveNewProgram(program_data) {
-      var _this3 = this;
+      var _this4 = this;
 
       program_data.id = null;
       this.saving = true;
-      this.api.createProgram(program_data).then(function (response) {
-        return _this3.api.fetchProgramHistory(response.data.id).then(function (history) {
+      this.validateGaitId(program_data).then(function () {
+        _this4.api.createProgram(program_data).then(function (response) {
+          return _this4.api.fetchProgramHistory(response.data.id).then(function (history) {
+            Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+              _this4.saving = false;
+              _this4.editing_target = response.data.id;
+              _this4.editing_target_data = response.data;
+              _this4.editing_history = history.data;
+
+              _this4.programs.shift();
+
+              _this4.programs.unshift(response.data);
+
+              _this4.programFilterPrograms.unshift(response.data);
+
+              _this4.active_pane_is_dirty = false;
+
+              _this4.onSaveSuccessHandler();
+            });
+          });
+        }).catch(function (error) {
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this3.saving = false;
-            _this3.editing_target = response.data.id;
-            _this3.editing_target_data = response.data;
-            _this3.editing_history = history.data;
-
-            _this3.programs.shift();
-
-            _this3.programs.unshift(response.data);
-
-            _this3.programFilterPrograms.unshift(response.data);
-
-            _this3.active_pane_is_dirty = false;
-
-            _this3.onSaveSuccessHandler();
+            var errors = error.response.data;
+            _this4.saving = false;
+            _this4.editing_errors = errors;
           });
         });
-      }).catch(function (error) {
-        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          var errors = error.response.data;
-          _this3.saving = false;
-          _this3.editing_errors = errors;
-        });
+      }).catch(function () {
+        //user canceled because of GAIT ID validation failure
+        _this4.saving = false;
       });
     }
   }, {
     key: "updateProgram",
     value: function updateProgram(id, program_data) {
-      var _this4 = this;
+      var _this5 = this;
 
       this.saving = true;
       this.api.updateProgram(id, program_data).then(function (response) {
-        return _this4.api.fetchProgramHistory(id).then(function (history) {
+        return _this5.api.fetchProgramHistory(id).then(function (history) {
           return Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this4.saving = false;
-            _this4.active_pane_is_dirty = false;
-            _this4.editing_target_data = program_data;
+            _this5.saving = false;
+            _this5.active_pane_is_dirty = false;
+            _this5.editing_target_data = program_data;
 
-            _this4.updateLocalPrograms(response.data);
+            _this5.updateLocalPrograms(response.data);
 
-            _this4.editing_history = history.data;
+            _this5.editing_history = history.data;
 
-            _this4.onSaveSuccessHandler();
+            _this5.onSaveSuccessHandler();
           });
         });
       }).catch(function (errors) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this4.saving = false;
-          _this4.editing_errors = errors.response.data;
+          _this5.saving = false;
+          _this5.editing_errors = errors.response.data;
 
-          _this4.onSaveErrorHandler();
+          _this5.onSaveErrorHandler();
         });
       });
     }
@@ -2640,11 +2687,11 @@ function () {
   }, {
     key: "toggleBulkTargetsAll",
     value: function toggleBulkTargetsAll() {
-      var _this5 = this;
+      var _this6 = this;
 
       this.bulk_targets_all = !this.bulk_targets_all;
       this.bulk_targets = new Map(this.programs.map(function (program) {
-        return [program.id, _this5.bulk_targets_all];
+        return [program.id, _this6.bulk_targets_all];
       }));
     }
   }, {
@@ -2668,7 +2715,7 @@ function () {
   }, {
     key: "bulkUpdateProgramStatus",
     value: function bulkUpdateProgramStatus(new_status) {
-      var _this6 = this;
+      var _this7 = this;
 
       var ids = Array.from(this.bulk_targets.entries()).filter(function (_ref3) {
         var _ref4 = _slicedToArray(_ref3, 2),
@@ -2689,17 +2736,17 @@ function () {
         this.api.updateProgramFundingStatusBulk(ids, new_status).then(function (response) {
           var updatedPrograms = response.data;
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this6.postBulkUpdateLocalPrograms(updatedPrograms);
+            _this7.postBulkUpdateLocalPrograms(updatedPrograms);
 
-            _this6.applying_bulk_updates = false;
+            _this7.applying_bulk_updates = false;
 
-            _this6.onSaveSuccessHandler();
+            _this7.onSaveSuccessHandler();
           });
         }).catch(function (error) {
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this6.applying_bulk_updates = false;
+            _this7.applying_bulk_updates = false;
 
-            _this6.onSaveErrorHandler();
+            _this7.onSaveErrorHandler();
           });
         });
       }
@@ -2896,4 +2943,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-4653f3a9d09cf6d8b506.js.map
+//# sourceMappingURL=tola_management_program-6c9b8b7bb83c7dfbed69.js.map
