@@ -739,7 +739,6 @@ class Indicator(SafeDeleteModel):
             "is_cumulative": s.is_cumulative,
             "lop_target": s.lop_target,
             "direction_of_change": s.direction_of_change,
-            "rationale_for_target": s.rationale_for_target,
             "baseline_value": s.baseline,
             "baseline_na": s.baseline_na,
             "targets": {
