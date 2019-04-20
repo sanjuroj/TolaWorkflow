@@ -2477,32 +2477,3 @@ def dated_target_info(request, pk):
             ptd=Max('indicator__periodictargets__start_date')).values_list('ptd', flat=True)[0]})
 
 
-class OneTimeRegistrationView(FormView):
-    """
-    View that checks the hash in a password reset link and presents a
-    form for entering a new password.
-    """
-    template_name = "registration/one_time_registration_form.html"
-    success_url = '/'
-    form_class = OneTimeRegistrationForm
-
-    def post(self, request, uidb64=None, token=None, *arg, **kwargs):
-        UserModel = get_user_model()
-        form = self.form_class(request.POST)
-        assert uidb64 is not None and token is not None  # checked by URLconf
-        try:
-            uid = urlsafe_base64_decode(uidb64)
-            user = UserModel._default_manager.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
-            user = None
-
-        if user is not None and default_token_generator.check_token(user, token):
-            if form.is_valid():
-                new_password= form.cleaned_data['new_password2']
-                user.set_password(new_password)
-                user.save()
-                return self.form_valid(form)
-            else:
-                return self.form_invalid(form)
-        else:
-            return self.form_invalid(form)

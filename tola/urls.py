@@ -23,7 +23,6 @@ from rest_framework import routers
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.authtoken import views as auth_views
-from django.contrib.auth import views as authviews
 
 from tola import views as tolaviews
 from indicators.views.views_indicators import ProgramPage, old_program_page
@@ -32,7 +31,7 @@ from indicators.views.views_indicators import ProgramPage, old_program_page
 from django.contrib import admin
 admin.autodiscover()
 admin.site.site_header = 'Tola Activity administration'
-from workflow.views import dated_target_info, OneTimeRegistrationView
+from workflow.views import dated_target_info
 
 #REST FRAMEWORK
 router = routers.DefaultRouter()
@@ -141,10 +140,9 @@ urlpatterns = [
 
                 # accounts
                 url(r'^accounts/profile/$', views.profile, name='profile'),
-                url(r'^accounts/one_time_registration/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', OneTimeRegistrationView.as_view(),name='one_time_registration'),
 
                 # Auth backend URL's
-                url('', include('django.contrib.auth.urls', namespace='auth')),
+                url('', include('django.contrib.auth.urls', namespace='auth')), # this namespace is unused
                 #url('', include('social.apps.django_app.urls', namespace='social')),
                 url('', include('social_django.urls', namespace='social')),
 
