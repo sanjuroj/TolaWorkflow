@@ -35,8 +35,11 @@
         <section class="login__option login__option--email card card-body">
 
             {% if form.errors %}
-            <div class="alert alert-danger" role="alert">
-                {% trans "Please enter a correct username and password. Note that both fields may be case-sensitive." %}
+            <div class="alert alert-danger text-small" role="alert">
+                {% url "password_reset" as password_reset_url %}
+                {% blocktrans %}
+                <p>Please enter a correct username and password. Note that both fields may be case-sensitive. Did you forgot your password? <a href="{{ password_reset_url }}">Click here to reset it.</a></p>
+                {% endblocktrans %}
             </div>
             {% endif %}
 
