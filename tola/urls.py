@@ -110,9 +110,6 @@ urlpatterns = [
                 # Site home page filtered by country
                 url(r'^(?P<selected_country>\w+)/$', views.index, name='index'),
 
-                # Site home page
-                url(r'^$', views.index, name='index'),
-
                 # Program page
                 url(r'^program/(?P<program>\d+)/$',
                     ProgramPage.as_view(), name='program_page'),
@@ -142,11 +139,13 @@ urlpatterns = [
                 url(r'^accounts/profile/$', views.profile, name='profile'),
 
                 # Auth backend URL's
-                url('', include('django.contrib.auth.urls', namespace='auth')), # this namespace is unused
-                #url('', include('social.apps.django_app.urls', namespace='social')),
+                url(r'auth/', include('django.contrib.auth.urls')),
                 url('', include('social_django.urls', namespace='social')),
 
                 #url(r'^oauth/', include('social_django.urls', namespace='social')),
+                # Site home page
+                url(r'^$', views.index, name='index'),
+
 
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
