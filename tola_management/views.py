@@ -248,8 +248,16 @@ def get_country_page_context(request):
     }
 
 def send_new_user_registration_email(user, request):
-    # TODO!!
-    pass
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    one_time_url = request.build_absolute_uri(reverse('password_reset_confirm', kwargs={"uidb64": uid, "token": token}))
+    gmail_url = request.build_absolute_uri(reverse('social:begin', args=['google-oauth2']))
+    c = {'one_time_url': one_time_url, 'user': user, 'gmail_url': gmail_url}
+    subject=_('Mercy Corps - Tola New Account Registration')
+    email_template_name='registration/one_time_login_email.html'
+    email = loader.render_to_string(email_template_name, c)
+
+    send_mail(subject, email, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False, html_message=email)
 
 # Create your views here.
 @login_required(login_url='/accounts/login/')
