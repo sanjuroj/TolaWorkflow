@@ -8299,6 +8299,12 @@ span[data-toggle="popover"]:hover {
     right: 41px;
     top: 8px; }
 
+.form-group__error {
+  color: #c8102e;
+  font-size: 85%;
+  margin-top: 7.5px;
+  padding-inline-start: 1rem; }
+
 .nav-tabs {
   margin-bottom: 15px; }
   .nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
