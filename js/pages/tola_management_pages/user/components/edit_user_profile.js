@@ -163,7 +163,7 @@ export default class EditUserProfile extends React.Component {
                         <label className="label--required" htmlFor="user-organization-input">{gettext("Organization")}</label>
                         <Select
                             isDisabled={disabled}
-                            className={"form-control "+error_classes.organization}
+                            className={error_classes.organization}
                             value={this.state.selected_organization}
                             options={this.state.organization_listing}
                             onChange={(e) => this.updateOrganization(e)}
