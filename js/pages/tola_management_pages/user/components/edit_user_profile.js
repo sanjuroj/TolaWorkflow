@@ -55,6 +55,15 @@ export default class EditUserProfile extends React.Component {
         }, () => this.hasUnsavedDataAction())
     }
 
+    updateUsername(new_username) {
+        this.setState({
+            managed_user_data: {
+                ...this.state.managed_user_data,
+                username: new_username,
+            }
+        }, () => this.hasUnsavedDataAction())
+    }
+
     updateOrganization(new_option) {
         this.setState({
             managed_user_data: {
@@ -120,6 +129,7 @@ export default class EditUserProfile extends React.Component {
         const error_classes = {
             first_name: (e.first_name)?'is-invalid':'',
             last_name: (e.last_name)?'is-invalid':'',
+            username: (e.username)?'is-invalid':'',
             email: (e.email)?'is-invalid':'',
             organization: (e.organization_id)?'is-invalid':''
         }
@@ -156,6 +166,22 @@ export default class EditUserProfile extends React.Component {
                         {e.last_name &&
                          <div className="invalid-feedback">
                              {e.last_name}
+                         </div>
+                        }
+                     </div>
+                     <div className="form-group">
+                        <label className="label--required" htmlFor="user-username-input">{gettext("Username")}</label>
+                        <input
+                            disabled={disabled}
+                            className={"form-control "+error_classes.username}
+                            type="text"
+                            value={ud.username}
+                            onChange={(e) => this.updateUsername(e.target.value) }
+                            id="user-username-input"
+                            required />
+                        {e.username &&
+                         <div className="invalid-feedback">
+                             {e.username}
                          </div>
                         }
                     </div>
