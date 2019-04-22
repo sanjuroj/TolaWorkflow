@@ -52,6 +52,8 @@ from .models import (
     ProgramAuditLog
 )
 
+from tola.util import append_GAIT_dates
+
 from .permissions import (
     HasProgramAdminAccess
 )
@@ -138,6 +140,8 @@ class ProgramAdminSerializer(ModelSerializer):
         program = super(ProgramAdminSerializer, self).create(validated_data)
         program.country.add(*country)
         program.sector.add(*sector)
+        gait_error = append_GAIT_dates(program)
+        program.save()
         ProgramAdminAuditLog.created(
             program=program,
             created_by=self.context.get('request').user.tola_user,
@@ -166,6 +170,11 @@ class ProgramAdminSerializer(ModelSerializer):
         instance.sector.add(*added_sectors)
 
         ProgramAccess.objects.filter(program=instance, country__in=removed_countries).delete()
+
+        new_gaitid = validated_data.get('gaitid', None)
+        if instance.gaitid != new_gaitid:
+            gait_error = append_GAIT_dates(new_gaitid)
+
         updated_instance = super(ProgramAdminSerializer, self).update(instance, validated_data)
         ProgramAdminAuditLog.updated(
             program=instance,

@@ -208,25 +208,9 @@ class ProgramAdmin(admin.ModelAdmin):
     # Non-destructively save the GAIT start and end dates based on the value entered in the ID field.
     # Non-destructively populate the reporting start and end dates based on the GAIT dates.
     def save_model(self, request, obj, form, change):
-        gait_data = util.get_GAIT_data([obj.gaitid])
-        if len(gait_data) == 1:
-            dates = util.get_dates_from_gait_response(gait_data[0])
-            if not obj.start_date:
-                obj.start_date = dates['start_date']
-
-            if not obj.end_date:
-                obj.end_date = dates['end_date']
-            reporting_dates = util.get_reporting_dates(obj)
-            if not obj.reporting_period_start:
-                obj.reporting_period_start = reporting_dates['reporting_period_start']
-
-            if not obj.reporting_period_end:
-                obj.reporting_period_end = reporting_dates['reporting_period_end']
-        else:
-            messages.add_message(
-                request, messages.ERROR,
-                'Error pulling data from GAIT server for ID {gait_id} during Program creation.'.format(
-                    gait_id=obj.gaitid))
+        message = util.append_GAIT_dates(obj)
+        if message:
+            messages.add_message(request, messages.ERROR, message)
 
         super(ProgramAdmin, self).save_model(request, obj, form, change)
 

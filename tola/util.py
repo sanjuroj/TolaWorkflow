@@ -169,6 +169,29 @@ def get_dates_from_gait_response(gait_response):
         'end_date': end_date
     }
 
+def append_GAIT_dates(program):
+    gait_data = get_GAIT_data([program.gaitid])
+
+    # Return an error message if more than one GAIT record was fetched based on the GAIT id provided.
+    if len(gait_data) != 1:
+        return 'Error pulling data from GAIT server for ID {gait_id} during Program creation.'.format(
+            gait_id=program.gaitid)
+
+    dates = get_dates_from_gait_response(gait_data[0])
+    if not program.start_date:
+        program.start_date = dates['start_date']
+
+    if not program.end_date:
+        program.end_date = dates['end_date']
+    reporting_dates = get_reporting_dates(program)
+    if not program.reporting_period_start:
+        program.reporting_period_start = reporting_dates['reporting_period_start']
+
+    if not program.reporting_period_end:
+        program.reporting_period_end = reporting_dates['reporting_period_end']
+
+    return None
+
 def get_reporting_dates(program):
     """takes a program with start and end dates and returns default reporting_period start and end dates"""
     if program.start_date is None:
