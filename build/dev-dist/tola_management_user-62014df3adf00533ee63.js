@@ -1081,9 +1081,22 @@ function (_React$Component) {
       });
     }
   }, {
+    key: "updateUsername",
+    value: function updateUsername(new_username) {
+      var _this4 = this;
+
+      this.setState({
+        managed_user_data: _objectSpread({}, this.state.managed_user_data, {
+          username: new_username
+        })
+      }, function () {
+        return _this4.hasUnsavedDataAction();
+      });
+    }
+  }, {
     key: "updateOrganization",
     value: function updateOrganization(new_option) {
-      var _this4 = this;
+      var _this5 = this;
 
       this.setState({
         managed_user_data: _objectSpread({}, this.state.managed_user_data, {
@@ -1091,59 +1104,59 @@ function (_React$Component) {
         }),
         selected_organization: new_option
       }, function () {
-        return _this4.hasUnsavedDataAction();
+        return _this5.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updateTitle",
     value: function updateTitle(new_title) {
-      var _this5 = this;
+      var _this6 = this;
 
       this.setState({
         managed_user_data: _objectSpread({}, this.state.managed_user_data, {
           title: new_title
         })
       }, function () {
-        return _this5.hasUnsavedDataAction();
+        return _this6.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updateEmail",
     value: function updateEmail(new_email) {
-      var _this6 = this;
+      var _this7 = this;
 
       this.setState({
         managed_user_data: _objectSpread({}, this.state.managed_user_data, {
           email: new_email
         })
       }, function () {
-        return _this6.hasUnsavedDataAction();
+        return _this7.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updatePhone",
     value: function updatePhone(new_phone) {
-      var _this7 = this;
+      var _this8 = this;
 
       this.setState({
         managed_user_data: _objectSpread({}, this.state.managed_user_data, {
           phone_number: new_phone
         })
       }, function () {
-        return _this7.hasUnsavedDataAction();
+        return _this8.hasUnsavedDataAction();
       });
     }
   }, {
     key: "updateModeOfContact",
     value: function updateModeOfContact(new_mode_of_contact) {
-      var _this8 = this;
+      var _this9 = this;
 
       this.setState({
         managed_user_data: _objectSpread({}, this.state.managed_user_data, {
           mode_of_contact: new_mode_of_contact
         })
       }, function () {
-        return _this8.hasUnsavedDataAction();
+        return _this9.hasUnsavedDataAction();
       });
     }
   }, {
@@ -1154,22 +1167,22 @@ function (_React$Component) {
   }, {
     key: "resetForm",
     value: function resetForm() {
-      var _this9 = this;
+      var _this10 = this;
 
       var selected_organization = this.state.organization_listing.find(function (o) {
-        return o.value == _this9.state.original_user_data.organization_id;
+        return o.value == _this10.state.original_user_data.organization_id;
       });
       this.setState({
         managed_user_data: this.state.original_user_data,
         selected_organization: selected_organization
       }, function () {
-        return _this9.hasUnsavedDataAction();
+        return _this10.hasUnsavedDataAction();
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this10 = this;
+      var _this11 = this;
 
       var ud = this.state.managed_user_data;
       var e = this.props.errors;
@@ -1177,6 +1190,7 @@ function (_React$Component) {
       var error_classes = {
         first_name: e.first_name ? 'is-invalid' : '',
         last_name: e.last_name ? 'is-invalid' : '',
+        username: e.username ? 'is-invalid' : '',
         email: e.email ? 'is-invalid' : '',
         organization: e.organization_id ? 'is-invalid' : ''
       };
@@ -1197,7 +1211,7 @@ function (_React$Component) {
         type: "text",
         value: ud.first_name,
         onChange: function onChange(e) {
-          return _this10.updateFirstName(e.target.value);
+          return _this11.updateFirstName(e.target.value);
         },
         id: "user-first-name-input",
         required: true
@@ -1214,7 +1228,7 @@ function (_React$Component) {
         type: "text",
         value: ud.last_name,
         onChange: function onChange(e) {
-          return _this10.updateLastName(e.target.value);
+          return _this11.updateLastName(e.target.value);
         },
         id: "user-last-name-input",
         required: true
@@ -1224,19 +1238,36 @@ function (_React$Component) {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         className: "label--required",
+        htmlFor: "user-username-input"
+      }, gettext("Username")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        disabled: disabled,
+        className: "form-control " + error_classes.username,
+        type: "text",
+        value: ud.username,
+        onChange: function onChange(e) {
+          return _this11.updateUsername(e.target.value);
+        },
+        id: "user-username-input",
+        required: true
+      }), e.username && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "invalid-feedback"
+      }, e.username)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "label--required",
         htmlFor: "user-organization-input"
       }, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
         isDisabled: disabled,
-        className: "form-control " + error_classes.organization,
+        className: "react-select " + error_classes.organization,
         value: this.state.selected_organization,
         options: this.state.organization_listing,
         onChange: function onChange(e) {
-          return _this10.updateOrganization(e);
+          return _this11.updateOrganization(e);
         },
         placeholder: "None Selected",
         id: "user-organization-input"
       }), e.organization_id && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "invalid-feedback"
+        className: "invalid-feedback feedback--react-select"
       }, e.organization_id)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
@@ -1247,7 +1278,7 @@ function (_React$Component) {
         type: "text",
         value: ud.title,
         onChange: function onChange(e) {
-          return _this10.updateTitle(e.target.value);
+          return _this11.updateTitle(e.target.value);
         },
         className: "form-control",
         id: "user-title-input"
@@ -1262,7 +1293,7 @@ function (_React$Component) {
         type: "email",
         value: ud.email,
         onChange: function onChange(e) {
-          return _this10.updateEmail(e.target.value);
+          return _this11.updateEmail(e.target.value);
         },
         id: "user-email-input"
       }), e.email && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -1276,7 +1307,7 @@ function (_React$Component) {
         type: "tel",
         value: ud.phone_number,
         onChange: function onChange(e) {
-          return _this10.updatePhone(e.target.value);
+          return _this11.updatePhone(e.target.value);
         },
         className: "form-control",
         id: "user-phone-input"
@@ -1289,7 +1320,7 @@ function (_React$Component) {
         type: "text",
         value: ud.mode_of_contact,
         onChange: function onChange(e) {
-          return _this10.updateModeOfContact(e.target.value);
+          return _this11.updateModeOfContact(e.target.value);
         },
         className: "form-control",
         id: "user-mode-of-contact-input"
@@ -1299,18 +1330,18 @@ function (_React$Component) {
         className: "btn btn-primary",
         type: "button",
         onClick: function onClick(e) {
-          return _this10.saveNew(e);
+          return _this11.saveNew(e);
         }
       }, gettext("Save changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-secondary",
         onClick: function onClick(e) {
-          return _this10.saveNewAndAddAnother(e);
+          return _this11.saveNewAndAddAnother(e);
         }
       }, gettext("Save And Add Another")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this10.resetForm();
+          return _this11.resetForm();
         }
       }, gettext("Reset"))), !this.props.new && !disabled && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group btn-row"
@@ -1318,13 +1349,13 @@ function (_React$Component) {
         className: "btn btn-primary",
         type: "button",
         onClick: function onClick(e) {
-          return _this10.save();
+          return _this11.save();
         }
       }, gettext("Save changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-reset",
         type: "button",
         onClick: function onClick() {
-          return _this10.resetForm();
+          return _this11.resetForm();
         }
       }, gettext("Reset")))));
     }
@@ -2726,7 +2757,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     }
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
     className: "fas fa-plus-circle"
-  }), gettext("Add User")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
+  }), gettext("Add user")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
     isLoading: store.fetching_users_listing || store.applying_bulk_updates
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__table"
@@ -2940,6 +2971,7 @@ var default_user = {
   id: null,
   first_name: "",
   last_name: "",
+  username: "",
   email: "",
   phone_number: "",
   organization_id: null,
@@ -4324,4 +4356,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-19916c7ae8cd883317ad.js.map
+//# sourceMappingURL=tola_management_user-62014df3adf00533ee63.js.map

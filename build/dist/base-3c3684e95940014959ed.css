@@ -8577,6 +8577,9 @@ span[data-toggle="popover"]:hover {
 .login__help {
   margin-top: 30px; }
 
+.react-select.is-invalid > div {
+  border-color: #c8102e; }
+
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
   color: #71757b !important;
@@ -9258,5 +9261,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-99c0b810d7cb22034d2b.css.map*/
