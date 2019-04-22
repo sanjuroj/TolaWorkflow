@@ -733,19 +733,19 @@ class Indicator(SafeDeleteModel):
     def logged_fields(self):
         s = self
         return {
-            "name": s.name,
-            "unit_of_measure": s.unit_of_measure,
+            "name": s.name.strip(),
+            "unit_of_measure": s.unit_of_measure.strip() if s.unit_of_measure else s.unit_of_measure,
             "unit_of_measure_type": s.unit_of_measure_type,
             "is_cumulative": s.is_cumulative,
             "lop_target": s.lop_target,
             "direction_of_change": s.direction_of_change,
-            "baseline_value": s.baseline,
+            "baseline_value": s.baseline.strip() if s.baseline else s.baseline,
             "baseline_na": s.baseline_na,
             "targets": {
                 t.id: {
                     "id": t.id,
                     "value": t.target,
-                    "name": t.period_name
+                    "name": t.period_name.strip(),
                 }
                 for t in s.periodictargets.all()
             }
