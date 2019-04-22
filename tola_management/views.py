@@ -400,6 +400,9 @@ class UserAdminSerializer(ModelSerializer):
         user.phone_number = validated_data["phone_number"]
         user.save()
 
+        # organization fk obj is not reloaded without this
+        user.refresh_from_db()
+
         UserManagementAuditLog.profile_updated(
             user=user,
             changed_by=self.context["request"].user.tola_user,
