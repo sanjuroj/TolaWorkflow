@@ -5,6 +5,7 @@ const default_user = {
     id: null,
     first_name: "",
     last_name: "",
+    username: "",
     email: "",
     phone_number: "",
     organization_id: null,

@@ -239,7 +239,7 @@ export const IndexView = observer(
                     <div className="controls__buttons">
                         <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.createUser()}>
                             <i className="fas fa-plus-circle"/>
-                            {gettext("Add User")}
+                            {gettext("Add user")}
                         </a>
                     </div>
                 </div>

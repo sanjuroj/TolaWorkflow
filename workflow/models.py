@@ -303,7 +303,9 @@ class TolaUser(models.Model):
     def logged_fields(self):
         return {
             "title": self.title,
-            "name": self.name,
+            "first_name": self.user.first_name,
+            "last_name": self.user.last_name,
+            "user": self.user.username,
             "mode_of_address": self.mode_of_address,
             "mode_of_contact": self.mode_of_contact,
             "phone_number": self.phone_number,

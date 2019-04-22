@@ -101,6 +101,7 @@
 @import 'components/folding_sidebar'; // Flyout filters for Admin lite. IPTT implementation is different
 @import 'components/changelog'; // custom styles for change logs/audit logs
 @import 'components/login'; // login page
+@import 'components/react-select'; // overrides and extensions to react-select
 
 /* Local custom CSS and overloads for non-BS libraries */
 @import 'mc_tola_forms'; // extremely custom!

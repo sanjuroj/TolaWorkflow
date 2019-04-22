@@ -250,12 +250,13 @@ def get_country_page_context(request):
 def send_new_user_registration_email(user, request):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
-    one_time_url = request.build_absolute_uri(reverse('one_time_registration', kwargs={"uidb64": uid, "token": token}))
-    #fire off registration link email
-    c = {'one_time_link': one_time_url, 'user': user}
-    subject='Mercy Corps - Tola New Account Registration'
+    one_time_url = request.build_absolute_uri(reverse('password_reset_confirm', kwargs={"uidb64": uid, "token": token}))
+    gmail_url = request.build_absolute_uri(reverse('social:begin', args=['google-oauth2']))
+    c = {'one_time_url': one_time_url, 'user': user, 'gmail_url': gmail_url}
+    subject=_('Mercy Corps - Tola New Account Registration')
     email_template_name='registration/one_time_login_email.html'
     email = loader.render_to_string(email_template_name, c)
+
     send_mail(subject, email, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False, html_message=email)
 
 # Create your views here.
@@ -323,20 +324,43 @@ class UserAdminSerializer(ModelSerializer):
     name = CharField(max_length=255, required=False)
     first_name = CharField(source="user.first_name", max_length=100, required=True)
     last_name = CharField(source="user.last_name", max_length=100, required=True)
+    username = CharField(source="user.username", max_length=100, required=True)
     organization_id = IntegerField(required=True)
     email = EmailField(source="user.email", max_length=255, required=True)
     user = AuthUserSerializer()
 
     def validate(self, data):
+        # TODO: this was used to enforce uniqueness only on the email field, which is NOT enforced in the backend
+
         out_data = super(UserAdminSerializer, self).validate(data)
+
         if self.instance:
-            others = list(User.objects.filter(email=data['user']['email']))
-            if len(others) > 1 or (len(others) > 0 and others[0].id != self.instance.user.id):
-                raise ValidationError({"email": _('This field must be unique')})
+            others_username = list(User.objects.filter(username=data['user']['username']))
+            others_email = list(User.objects.filter(email=data['user']['email']))
+            validation_errors = {}
+
+            if len(others_username) > 1 or (len(others_username) > 0 and others_username[0].id != self.instance.user.id):
+                validation_errors.update({"username": _('This field must be unique')})
+
+            if len(others_email) > 1 or (len(others_email) > 0 and others_email[0].id != self.instance.user.id):
+                validation_errors.update({"email": _('This field must be unique')})
+
+            if len(validation_errors) > 0:
+                raise ValidationError(validation_errors)
+
         else:
-            others = list(User.objects.filter(email=data['user']['email']))
-            if len(others) > 0:
-                raise ValidationError({"email": _('This field must be unique')})
+            others_username = list(User.objects.filter(username=data['user']['username']))
+            others_email = list(User.objects.filter(email=data['user']['email']))
+            validation_errors = {}
+
+            if len(others_username) > 0:
+                validation_errors.update({"username": _('This field must be unique')})
+
+            if len(others_email) > 0:
+                validation_errors.update({"email": _('This field must be unique')})
+
+            if len(validation_errors) > 0:
+                raise ValidationError(validation_errors)
 
         return out_data
 
@@ -350,11 +374,11 @@ class UserAdminSerializer(ModelSerializer):
 
         #create auth user
         new_django_user = User(
-            username=auth_user_data["email"],
             email=auth_user_data["email"],
             is_active=auth_user_data["is_active"],
             first_name=auth_user_data["first_name"],
             last_name=auth_user_data["last_name"],
+            username=auth_user_data["username"],
         )
         new_django_user.save()
 
@@ -392,6 +416,7 @@ class UserAdminSerializer(ModelSerializer):
         user.user.is_active = auth_user_data["is_active"]
         user.user.first_name = auth_user_data["first_name"]
         user.user.last_name = auth_user_data["last_name"]
+        user.user.username = auth_user_data["username"]
         user.user.save()
 
         user.organization_id = validated_data["organization_id"]
@@ -420,6 +445,7 @@ class UserAdminSerializer(ModelSerializer):
             'name',
             'first_name',
             'last_name',
+            'username',
             'organization_id',
             'mode_of_contact',
             'phone_number',

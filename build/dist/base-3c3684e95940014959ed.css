@@ -8299,6 +8299,12 @@ span[data-toggle="popover"]:hover {
     right: 41px;
     top: 8px; }
 
+.form-group__error {
+  color: #c8102e;
+  font-size: 85%;
+  margin-top: 7.5px;
+  padding-inline-start: 1rem; }
+
 .nav-tabs {
   margin-bottom: 15px; }
   .nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
@@ -8570,6 +8576,9 @@ span[data-toggle="popover"]:hover {
 
 .login__help {
   margin-top: 30px; }
+
+.react-select.is-invalid > div {
+  border-color: #c8102e; }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
@@ -9252,5 +9261,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-46b7e94d1778583b5d54.css.map*/
