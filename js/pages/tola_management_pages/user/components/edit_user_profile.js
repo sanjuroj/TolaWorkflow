@@ -190,14 +190,14 @@ export default class EditUserProfile extends React.Component {
                         { /* TODO: log changes to this field */ }
                         <Select
                             isDisabled={disabled}
-                            className={error_classes.organization}
+                            className={"react-select "+error_classes.organization}
                             value={this.state.selected_organization}
                             options={this.state.organization_listing}
                             onChange={(e) => this.updateOrganization(e)}
                             placeholder="None Selected"
                             id="user-organization-input" />
                         {e.organization_id &&
-                        <div className="invalid-feedback">
+                        <div className="invalid-feedback feedback--react-select">
                             {e.organization_id}
                         </div>
                         }
