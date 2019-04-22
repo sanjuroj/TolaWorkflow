@@ -187,6 +187,7 @@ export default class EditUserProfile extends React.Component {
                     </div>
                     <div className="form-group">
                         <label className="label--required" htmlFor="user-organization-input">{gettext("Organization")}</label>
+                        { /* TODO: log changes to this field */ }
                         <Select
                             isDisabled={disabled}
                             className={error_classes.organization}

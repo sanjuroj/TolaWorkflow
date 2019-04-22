@@ -76,6 +76,9 @@ class UserManagementAuditLog(models.Model, DiffableLog):
     field_map = {
         "title": _("Title"),
         "name": _("Name"),
+        "first_name": _("First Name"),
+        "last_name": _("Last Name"),
+        "user": _("Username"),
         "mode_of_address": _("Mode of Address"),
         "mode_of_contact": _("Mode of Contact"),
         "phone_number": _("Phone Number"),
