@@ -328,6 +328,25 @@ const DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a 
 const DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.')
 const DEFAULT_NO_RATIONALE_TEXT = gettext("This action cannot be undone");
 
+// This is only until we get indicator_form_common_js moved to webpack and out of html (makemessages bug)
+// these translation strings are used exclusively in the indicator setup form:
+const target_with_results_text = (numResults) => {
+    return interpolate(
+        ngettext('Removing this target means that %s result will no longer have targets associated with it.',
+                 'Removing this target means that %s results will no longer have targets associated with them.',
+                 numResults),
+        [numResults]);
+}
+window.target_with_results_text = target_with_results_text;
+
+const lop_to_non_lop_with_results_text = (numResults) => {
+    return interpolate(
+        ngettext('If we make these changes, %s data record will no longer be associated with the Life of Program target, and will need to be reassigned to a new target. Proceed anyway?',
+                 'If we make these changes, %s data records will no longer be associated with the Life of Program target, and will need to be reassigned to new targets. Proceed anyway?',
+                 numResults),
+        [numResults]);
+}
+window.lop_to_non_lop_with_results_text = lop_to_non_lop_with_results_text;
 const create_changeset_notice = ({
     message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE,
     on_submit = () => {},
