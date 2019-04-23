@@ -670,9 +670,12 @@ class Program(models.Model):
 
 
 PROGRAM_ROLE_CHOICES = (
-    ('low', _('Low')),
-    ('medium', _('Medium')),
-    ('high', _('High'))
+    # Translators: Refers to a user permission role with limited access to view data only
+    ('low', _('Low (view only)')),
+    # Translators: Refers to a user permission role with limited access to add or edit result data
+    ('medium', _('Medium (add and edit results)')),
+    # Translators: Refers to a user permission role with access to edit any data
+    ('high', _('High (edit anything)'))
 )
 
 PROGRAM_ROLE_INT_MAP = {
