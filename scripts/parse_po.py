@@ -86,6 +86,7 @@ def po_to_csv(args, basedir, basefile):
             'Translation - Singluar',
             'Translation - Plural',
             'Similar to',
+            'Needs work',
             'Note to Translator',
         ])
         # skip the first one, it's housekeeping
@@ -105,6 +106,7 @@ def po_to_csv(args, basedir, basefile):
                     components['msgstr[0]'],
                     components['msgstr[1]'],
                     components['similar'],
+                    components['fuzzy'],
                     components['note']
                 ])
 
@@ -121,10 +123,11 @@ def stanza_to_components(stanza):
     lines = stanza.split('\n')
     components = {
         'similar': '',
+        'fuzzy': None,
         'msgid': '',
-        'msgid_plural': "",
-        'msgstr[0]': "",
-        'msgstr[1]': "",
+        'msgid_plural': '',
+        'msgstr[0]': '',
+        'msgstr[1]': '',
         'msgstr': '',
         'note': '',
     }
@@ -147,8 +150,15 @@ def stanza_to_components(stanza):
             current_componenet = 'msgstr[1]'
             if not re.search('^msgstr\[1\] ""', line):
                 components[current_componenet] += strip_quotes(line)
-        elif '#:' in line or '#,' in line:
-            continue
+        elif '#:' in line:
+             continue
+        elif '#,' in line:
+            if re.search('#,.*fuzzy', line):
+                current_componenet = 'fuzzy'
+                components[current_componenet] = "Yes"
+            else:
+                # skip if the #, value is something other than fuzzy (e.g. "python-format")
+                continue
         elif '#|' in line:
             current_componenet = 'similar'
             components[current_componenet] += line

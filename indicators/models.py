@@ -83,7 +83,7 @@ class StrategicObjective(SafeDeleteModel):
     name = models.CharField(_("Name"), max_length=135, blank=True)
     country = models.ForeignKey(Country, null=True, blank=True, verbose_name=_("Country"))
     description = models.TextField(_("Description"), max_length=765, blank=True)
-    status = models.CharField(_("status"), max_length=255, blank=True)
+    status = models.CharField(_("Status"), max_length=255, blank=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 

@@ -228,6 +228,7 @@ export default class EditObjectives extends React.Component {
                 )}
                 <div>
                     <a tabIndex="0" onClick={() => this.addObjective()} className="btn btn-link btn-add">
+                        // # Translators: This is a button that allows the user to add a strategic objective.
                         <i className="fas fa-plus-circle"/>{gettext("Add strategic objective")}
                     </a>
                 </div>
