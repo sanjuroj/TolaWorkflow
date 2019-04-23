@@ -13,7 +13,7 @@
     const DELETE_TARGETS_NO_RATIONALE = "{% trans 'Are you sure you want to remove all targets?' %}"
     const DELETE_TARGET_NO_RATIONALE = "{% trans 'Are you sure you want to remove this target?' %}"
     const DELETE_TARGET_MESSAGE = "{% trans 'For future reference, please provide a rationale for deleting this target.' %}"
-
+    
     // Indicator fields tracked in the admin changelog, which require prompting for a rationale if modified
     let TRACKED_FIELDS = new Set([
         'name',
@@ -147,7 +147,7 @@
                  .done(function(data, textStatus, jqXHR){
                      if (data.status == "success") {
                         var success = PNotify.success({
-                            title: gettext('Success'),
+                            title: "{% trans 'Success' %}",
                             text: data.msg,
                             type: 'success',
                             width: '350px',
@@ -219,10 +219,7 @@
          * otherwise merely confirm:
          */
         const preamble = numDataTarget == 0 ? DESTRUCTIVE_PREAMBLE :
-            interpolate(ngettext('Removing this target means that %s result will no longer have targets associated with it.',
-                                 'Removing this target means that %s results will no longer have targets associated with them.',
-                                 numDataTarget),
-                        [numDataTarget]);
+            window.target_with_results_text(numDataTarget);
         const message_text = (url == '#' || numDataIndicator == 0) ?
                 DELETE_TARGET_NO_RATIONALE :
                 DELETE_TARGET_MESSAGE;
@@ -445,13 +442,10 @@
 
         // warning when changing for LoP target value to something non-LoP
         if (numDataPoints > 0 && initalTargetFrequency == 1 && target_frequency != 1) {
+            const message_text = window.lop_to_non_lop_with_results_text(numDataPoints);
             window.create_no_rationale_changeset_notice({
                 preamble: DESTRUCTIVE_PREAMBLE,
-                message_text: interpolate(
-                    ngettext('If we make these changes, %s data record will no longer be associated with the Life of Program target, and will need to be reassigned to a new target. Proceed anyway?',
-                             'If we make these changes, %s data records will no longer be associated with the Life of Program target, and will need to be reassigned to new targets. Proceed anyway?',
-                                 numDataPoints),
-                        [numDataPoints]),
+                message_text: message_text,
                 context: document.getElementById('indicator_update_form'),
                 on_submit: () => {
                     formSubmitContinue(isModal, rationale);
