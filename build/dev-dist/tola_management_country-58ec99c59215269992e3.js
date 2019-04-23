@@ -1467,7 +1467,7 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         className: "label--required",
         htmlFor: "objective-name-input"
-      }, gettext("Code")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Short name")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         id: "objective-name-input",
         className: classnames__WEBPACK_IMPORTED_MODULE_3___default()('form-control', {
           'is-invalid': this.formErrors('name')
@@ -1483,9 +1483,8 @@ function (_React$Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "label--required",
         htmlFor: "objective-description-input"
-      }, gettext("Objective")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
+      }, gettext("Description")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         id: "objective-description-input",
         className: classnames__WEBPACK_IMPORTED_MODULE_3___default()('form-control', {
           'is-invalid': this.formErrors('description')
@@ -3116,4 +3115,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-d0c85c39855dd4347149.js.map
+//# sourceMappingURL=tola_management_country-58ec99c59215269992e3.js.map
