@@ -128,6 +128,7 @@ class GoogleMapsWidget(forms.HiddenInput):
 
             """ % {'latitude': self.attrs['latitude'], 'longitude': self.attrs['longitude'], 'base_longitude': self.attrs['base_longitude'],
                    'base_latitude': self.attrs['base_latitude'], 'width': self.attrs['width'], 'height': self.attrs['height'], 'country': self.attrs['country'],
+                   # Translators: Used as a verb, a button label for a search function
                    'find': _('Find'),
                    'city_country': _('City, Country:')}
 

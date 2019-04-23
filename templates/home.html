@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n mytags has_program_role %}
+{# Translators: Page title if the user has not selected country #}
 {% block title %}{{ active_country|default:_("No active country") }} | {% endblock %}
 {% block page_title %}{{ active_country|default:_("No active country") }}{% endblock %}
 
@@ -106,6 +107,7 @@
                             {% endblocktrans %}
                         </p>
                     {% else %}
+                        {# Translators: This message appears if users are trying to edit a program that isn't ready for viewing/editing. #}
                         <p>{% trans "Your program administrator must initialize this program before you will be able to view or edit it" %}</p>
                     {% endif %}
                 {% elif program.metrics.indicator_count == 0 %}

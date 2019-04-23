@@ -183,6 +183,7 @@ export class OrganizationStore {
         api.updateOrganization(id, new_data).then( updated_data => Promise.all([api.fetchOrganizationAggregates(id), api.fetchOrganizationHistory(id)]).then(([aggregates, history]) => {
             runInAction(() => {
                 this.saving = false
+                this.editing_errors = {};
                 this.active_pane_is_dirty = false
                 this.editing_target_data = updated_data
                 this.editing_target_history = history
@@ -205,6 +206,7 @@ export class OrganizationStore {
         api.createOrganization(new_data).then(result => api.fetchOrganizationHistory(result.id).then( history => {
             runInAction(() => {
                 this.saving = false;
+                this.editing_errors = {};
                 this.updateLocalOrganization(result.id, result, {program_count: 0, user_count: 0});
                 this.organizations_listing.shift();
                 delete this.organizations["new"];
@@ -233,6 +235,7 @@ export class OrganizationStore {
         api.createOrganization(new_data).then(result => {
             runInAction(() => {
                 this.saving = false
+                this.editing_errors = {};
                 this.updateLocalOrganization(result.id, result, {program_count: 0, user_count: 0})
                 this.organizations_listing.shift()
                 delete this.organizations["new"]
