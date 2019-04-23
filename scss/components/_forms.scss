@@ -20,7 +20,10 @@
 }
 
 .react-multiselect-checkbox {
-    & > div {
+    & > div.invalid-feedback {
+        display: block;
+    }
+    & > div:not(.invalid-feedback) {
         width: 100%;
         color: $black;
         border-radius: 4px;

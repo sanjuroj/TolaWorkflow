@@ -316,6 +316,7 @@ function () {
 
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
             _this3.saving = false;
+            _this3.editing_errors = {};
             _this3.active_pane_is_dirty = false;
             _this3.editing_target_data = updated_data;
             _this3.editing_target_history = history;
@@ -345,6 +346,7 @@ function () {
         return _api__WEBPACK_IMPORTED_MODULE_1__["default"].fetchOrganizationHistory(result.id).then(function (history) {
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
             _this4.saving = false;
+            _this4.editing_errors = {};
 
             _this4.updateLocalOrganization(result.id, result, {
               program_count: 0,
@@ -401,6 +403,7 @@ function () {
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].createOrganization(new_data).then(function (result) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this5.saving = false;
+          _this5.editing_errors = {};
 
           _this5.updateLocalOrganization(result.id, result, {
             program_count: 0,
@@ -2720,4 +2723,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-7f16c398c6c7242f5664.js.map
+//# sourceMappingURL=tola_management_organization-acea1659a0c677432a3a.js.map

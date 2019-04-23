@@ -6,8 +6,8 @@ import Expander from 'components/expander'
 import ChangeLog from 'components/changelog'
 
 const status_options = [
-    {value: 'Funded', label: gettext('Funded')},
-    {value: 'Completed', label: gettext('Completed')}
+    {value: 'Funded', label: gettext('Active')},
+    {value: 'Completed', label: gettext('Inactive')}
 ]
 
 @observer
@@ -50,7 +50,7 @@ export class ProgramHistory extends React.Component {
         return <div className="tab-pane--react admin-edit-pane">
             <h2 className="no-bold">{this.props.program_data.name ? this.props.program_data.name+': ' : ''}{gettext("Status and History")}</h2>
             <div className="form-group">
-                <label htmlFor="status-input" className="label--required" required>{gettext("Program Status")}</label>
+                <label htmlFor="status-input" className="label--required" required>{gettext("Status")}</label>
                 <Select
                     isSearchable={false}
                     options={status_options}
