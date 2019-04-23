@@ -75,7 +75,7 @@ class StrategicObjectiveForm extends React.Component {
                     <form className="form card card-body bg-white">
                         <div className="form-group">
                             <label className="label--required" htmlFor="objective-name-input">
-                                {gettext("Code")}
+                                {gettext("Short name")}
                             </label>
                             <input
                                 id="objective-name-input"
@@ -88,8 +88,8 @@ class StrategicObjectiveForm extends React.Component {
                             <ErrorFeedback errorMessages={this.formErrors('name')} />
                         </div>
                         <div className="form-group">
-                            <label className="label--required" htmlFor="objective-description-input">
-                                {gettext("Objective")}
+                            <label htmlFor="objective-description-input">
+                                {gettext("Description")}
                             </label>
                             <textarea
                                 id="objective-description-input"
