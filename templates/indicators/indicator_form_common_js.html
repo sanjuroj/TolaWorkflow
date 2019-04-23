@@ -11,6 +11,7 @@
     const DELETE_INDICATOR_PREAMBLE = "{% trans 'All details about this indicator will be permanently removed.' %}"
     const DELETE_INDICATOR_NO_RATIONALE = "{% trans 'Are you sure you want to delete this indicator?' %}"
     const DELETE_TARGETS_NO_RATIONALE = "{% trans 'Are you sure you want to remove all targets?' %}"
+    const DELETE_TARGET_NO_RATIONALE = "{% trans 'Are you sure you want to remove this target?' %}"
     const DELETE_TARGET_MESSAGE = "{% trans 'For future reference, please provide a rationale for deleting this target.' %}"
 
     // Indicator fields tracked in the admin changelog, which require prompting for a rationale if modified
@@ -185,43 +186,61 @@
                 reset_frequency_fields();
                 show_hide_frequency_fields();
             }
-        }
+        };
         var url = $(this).attr('href');
         let row = $(e.currentTarget).closest('tr');
-        let numData = parseInt(row.data('collected-count'));
-        const delete_target_row = (url, row) => {
-            return (rationale) => {
+        let numDataTarget = parseInt(row.data('collected-count'));
+        // if no other targets have changed, we'll update the snapshot so we don't double-prompt for rationale
+        const updateSnapshot = !(
+            JSON.stringify(getFormPeriodicTargets(row)) == initialTrackedFieldsFormState.periodic_targets &&
+            initialTrackedFieldsFormState.target_frequency == getTrackedFieldsObject().target_frequency
+            );
+         /* If target is new, delete means just remove row,
+         * If target is saved, delete means call to delete
+         */
+        const delete_callback = url == '#' ?
+            (url, row) => () => {
+                row.remove();
+                updateIfLastEvent();
+            } :
+            (url, row) => (rationale) => {
                 $.post(url, {rationale: rationale})
-                    .done(function(data) {
+                    .done((data) => {
                         if (data.status == "success") {
                             row.remove();
+                            if (updateSnapshot) updateTargetSnapshot();
                             updateIfLastEvent();
                         }
                     });
-                };
-        };
-        if (url == '#') {
-            // if this is a newly generated event target (url is #) merely remove: 
-            row.remove();
-            updateIfLastEvent();
-        } else if (numData === 0) {
-            // if there are no data points, make delete call and remove row on return:
-            delete_target_row(url, row)(null);
-        } else {
-            // if there are data points, show confirmation
-            let preamble = ngettext('Removing this target means that %s result will no longer have targets associated with it.',
-                                    'Removing this target means that %s results will no longer have targets associated with them.', numData);
-            preamble = interpolate(preamble, [numData]);
-            window.create_destructive_changeset_notice({
-                preamble: preamble,
-                message_text: DELETE_TARGET_MESSAGE,
-                context: document.getElementById('indicator_update_form'),
-                on_submit: (rationale) => {
-                    delete_target_row(url, row)(rationale);
-                }
-            });
-            scrollToIndicatorFormBottom();
-        }
+            };
+        let numDataIndicator = parseInt($('#numDataPoints').text());
+        /* If target has results, message refers to number of results,
+         * Otherwise, if indicator has results and target is not brand new, record rationale
+         * otherwise merely confirm:
+         */
+        const preamble = numDataTarget == 0 ? DESTRUCTIVE_PREAMBLE :
+            interpolate(ngettext('Removing this target means that %s result will no longer have targets associated with it.',
+                                 'Removing this target means that %s results will no longer have targets associated with them.',
+                                 numDataTarget),
+                        [numDataTarget]);
+        const message_text = (url == '#' || numDataIndicator == 0) ?
+                DELETE_TARGET_NO_RATIONALE :
+                DELETE_TARGET_MESSAGE;
+        /* If the indicator has any results linked to it, we prompt for a rationale,
+         * otherwise we do not.
+         */
+        const changeset_notice_function = (url == '#' || numDataIndicator === 0) ?
+                window.create_no_rationale_changeset_notice :
+                window.create_destructive_changeset_notice;
+        changeset_notice_function({
+            preamble: preamble,
+            message_text: message_text,
+            context: document.getElementById('indicator_update_form'),
+            on_submit: (rationale = null) => {
+                delete_callback(url, row)(rationale);
+            }
+        });
+        scrollToIndicatorFormBottom();
     });
 
 
@@ -420,19 +439,36 @@
     })
 
  function submitForm(isModal, rationale = '') {
-        let $form = $('#indicator_update_form');
         var numDataPoints = parseInt($("#numDataPoints").text());
         var initalTargetFrequency = parseInt($("#initialTargetFrequencyValue").text());
         var target_frequency = $("#id_target_frequency").val();
 
         // warning when changing for LoP target value to something non-LoP
         if (numDataPoints > 0 && initalTargetFrequency == 1 && target_frequency != 1) {
-            if (!confirm(`{% trans "Warning: This action cannot be undone. If we make these changes,"|escapejs %} ${numDataPoints} {% trans "data record/s will no longer be associated with the Life of Program target, and will need to be reassigned to new targets."|escapejs %} \n\n {% trans "Proceed anyway?"|escapejs %}`)) {
-                $('#id_create_targets_btn').attr("disabled", false);
-                return;
-            }
+            window.create_no_rationale_changeset_notice({
+                preamble: DESTRUCTIVE_PREAMBLE,
+                message_text: interpolate(
+                    ngettext('If we make these changes, %s data record will no longer be associated with the Life of Program target, and will need to be reassigned to a new target. Proceed anyway?',
+                             'If we make these changes, %s data records will no longer be associated with the Life of Program target, and will need to be reassigned to new targets. Proceed anyway?',
+                                 numDataPoints),
+                        [numDataPoints]),
+                context: document.getElementById('indicator_update_form'),
+                on_submit: () => {
+                    formSubmitContinue(isModal, rationale);
+                },
+                on_cancel: () => {
+                    $('#id_target_frequency').val('1');
+                    $('#id_create_targets_btn').attr("disabled", false);
+                    show_hide_frequency_fields();
+                }
+            });
+        } else {
+            formSubmitContinue(isModal, rationale);
         }
-
+ }
+ 
+function formSubmitContinue(isModal, rationale = '') {
+        let $form = $('#indicator_update_form');
         var submitBtnName = $form.find("input[type=submit]:focus" );
         var form_url = $form.attr('action');
 
@@ -967,43 +1003,46 @@
      */
 
     // Returns an array of objects of periodic target form values
-    function getFormPeriodicTargets() {
+    // can be called with a row to exclude from the list (to check if _other_ targets have changed)
+    function getFormPeriodicTargets(excluded_row=null) {
         let periodic_targets = [];
 
         // Collect all existing periodic_targets into an array.
         $('#periodic_targets_table tbody tr.periodic-target').each(function () {
             let $this = $(this);
-            let eventNameElement = $($this.find('input[type=text]'));
-            let targetValueSelector = $($this.find('input[type=number]'));
-
-            let pt_id;
-            let pt_name;
-            try {
-                pt_id = parseInt(targetValueSelector.attr('id').split('-')[1]);
-                if (!$.isNumeric(pt_id)) {
+            if (excluded_row === null || excluded_row[0] !== $this[0]) {
+                let eventNameElement = $($this.find('input[type=text]'));
+                let targetValueSelector = $($this.find('input[type=number]'));
+    
+                let pt_id;
+                let pt_name;
+                try {
+                    pt_id = parseInt(targetValueSelector.attr('id').split('-')[1]);
+                    if (!$.isNumeric(pt_id)) {
+                        pt_id = 0;
+                    }
+                } catch (err) {
                     pt_id = 0;
                 }
-            } catch (err) {
-                pt_id = 0;
+    
+                if (eventNameElement.length > 0) {
+                    pt_name = eventNameElement.val();
+                } else {
+                    pt_name = targetValueSelector.attr('name');
+                }
+    
+                let pt_value = targetValueSelector.val();
+                let start_date = targetValueSelector.data("startDate");
+                let end_date = targetValueSelector.data("endDate");
+    
+                periodic_targets.push({
+                    'id': pt_id,
+                    'period': pt_name,
+                    'target': pt_value,
+                    'start_date': start_date,
+                    'end_date': end_date
+                });
             }
-
-            if (eventNameElement.length > 0) {
-                pt_name = eventNameElement.val();
-            } else {
-                pt_name = targetValueSelector.attr('name');
-            }
-
-            let pt_value = targetValueSelector.val();
-            let start_date = targetValueSelector.data("startDate");
-            let end_date = targetValueSelector.data("endDate");
-
-            periodic_targets.push({
-                'id': pt_id,
-                'period': pt_name,
-                'target': pt_value,
-                'start_date': start_date,
-                'end_date': end_date
-            });
         });
 
         return periodic_targets;
@@ -1051,6 +1090,12 @@
     // remember the initial state of tracked fields on the form
     function recordTrackedFieldsSnapshot() {
         initialTrackedFieldsFormState = getTrackedFieldsObject();
+    }
+    
+    // update just the targets portion of the form object:
+    function updateTargetSnapshot() {
+        let periodic_targets = getFormPeriodicTargets();
+        initialTrackedFieldsFormState.periodic_targets = $.isEmptyObject(periodic_targets) ? 'generateTargets' : JSON.stringify(periodic_targets);
     }
 
     // have any tracked fields changed in the form?
