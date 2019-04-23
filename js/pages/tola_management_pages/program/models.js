@@ -207,7 +207,7 @@ export class ProgramStore {
                 name: "",
                 gaitid: "",
                 fundcode: "",
-                funding_status: "",
+                funding_status: "Funded",
                 description: "",
                 country: [],
                 sector: [],
