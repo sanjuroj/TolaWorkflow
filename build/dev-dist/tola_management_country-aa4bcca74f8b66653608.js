@@ -872,6 +872,7 @@ function () {
       this.api.createCountry(country_data).then(function (response) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this3.saving = false;
+          _this3.editing_errors = {};
           _this3.editing_target = response.data.id;
           _this3.active_pane_is_dirty = false;
 
@@ -901,6 +902,7 @@ function () {
       this.api.updateCountry(id, country_data).then(function (response) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this4.saving = false;
+          _this4.editing_errors = {};
           _this4.active_pane_is_dirty = false;
 
           _this4.updateLocalList(response.data);
@@ -3116,4 +3118,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-d0c85c39855dd4347149.js.map
+//# sourceMappingURL=tola_management_country-aa4bcca74f8b66653608.js.map

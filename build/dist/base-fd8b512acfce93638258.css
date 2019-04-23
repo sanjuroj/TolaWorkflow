@@ -8272,17 +8272,20 @@ span[data-toggle="popover"]:hover {
   .input--inline:last-child {
     margin-right: 0; }
 
-.react-multiselect-checkbox > div {
+.react-multiselect-checkbox > div.invalid-feedback {
+  display: block; }
+
+.react-multiselect-checkbox > div:not(.invalid-feedback) {
   width: 100%;
   color: #000;
   border-radius: 4px;
   border: 1px solid #b8babd;
   outline: 0 !important; }
-  .react-multiselect-checkbox > div > button {
+  .react-multiselect-checkbox > div:not(.invalid-feedback) > button {
     width: 100%; }
-    .react-multiselect-checkbox > div > button svg {
+    .react-multiselect-checkbox > div:not(.invalid-feedback) > button svg {
       color: #b8babd; }
-  .react-multiselect-checkbox > div > div {
+  .react-multiselect-checkbox > div:not(.invalid-feedback) > div {
     width: 100%; }
 
 .react-multiselect-checkbox .count__label {
@@ -9261,5 +9264,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-8cdd2716f8df8feae705.css.map*/
