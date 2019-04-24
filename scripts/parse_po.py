@@ -89,10 +89,9 @@ def po_to_csv(args, basedir, basefile):
             'Needs work',
             'Note to Translator',
         ])
-        # skip the first one, it's housekeeping
+        # skip the first stanza, it's housekeeping
         for i in range(1, len(stanzas)):
             stanza = stanzas[i]
-            # print 'stanza', stanza
             # Skip output of translated strings if only new and fuzzy are to be exported
             if args.only_new_or_fuzzy and not is_untranslated(stanza) and not 'fuzzy' in stanza:
                 continue
@@ -135,6 +134,9 @@ def stanza_to_components(stanza):
     current_componenet = ''
     for line in lines:
         line = line
+        # skip obsolete lines, they begin with #~
+        if '#~' in line:
+            continue
         if 'msgid_plural' in line:
             # if this line begins with "#", the whole thing is an old (commented) translation and should be skipped.
             if re.search('^#', line):
@@ -150,14 +152,15 @@ def stanza_to_components(stanza):
             current_componenet = 'msgstr[1]'
             if not re.search('^msgstr\[1\] ""', line):
                 components[current_componenet] += strip_quotes(line)
+        # skip location lines
         elif '#:' in line:
-             continue
+            continue
         elif '#,' in line:
             if re.search('#,.*fuzzy', line):
                 current_componenet = 'fuzzy'
-                components[current_componenet] = "Yes"
+                components[current_componenet] = "Fuzzy"
             else:
-                # skip if the #, value is something other than fuzzy (e.g. "python-format")
+                # skip if the #, value is something other than fuzzy (e.g. "#, python-format")
                 continue
         elif '#|' in line:
             current_componenet = 'similar'
@@ -179,7 +182,13 @@ def stanza_to_components(stanza):
         else:
             if current_componenet != '':
                 components[current_componenet] += strip_quotes(line)
+    else:
+        # clear out fuzzy tags on obsolete translations
+        if len(components['msgid']) == 0:
+            components['fuzzy'] = ''
 
+        if is_untranslated(stanza):
+            components['fuzzy'] = 'Untranslated'
     return components
 
 
