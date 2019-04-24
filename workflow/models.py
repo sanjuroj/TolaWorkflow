@@ -362,7 +362,7 @@ class CountryAccess(models.Model):
     def save(self, *args, **kwargs):
         #requirements that country access be given only to mercy corps users (id = 1)
         if self.id is None and self.tolauser.organization_id != 1:
-            raise SuspiciousOperation(_("Only Mercy Corps users can be given country access"))
+            raise SuspiciousOperation(_("Only Mercy Corps users can be given country-level access"))
         super(CountryAccess, self).save(*args, **kwargs)
 
     class Meta:
