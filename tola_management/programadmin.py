@@ -52,6 +52,8 @@ from .models import (
     ProgramAuditLog
 )
 
+from tola.util import append_GAIT_dates
+
 from .permissions import (
     HasProgramAdminAccess
 )
@@ -138,6 +140,7 @@ class ProgramAdminSerializer(ModelSerializer):
         program = super(ProgramAdminSerializer, self).create(validated_data)
         program.country.add(*country)
         program.sector.add(*sector)
+        program.save()
         ProgramAdminAuditLog.created(
             program=program,
             created_by=self.context.get('request').user.tola_user,
@@ -166,6 +169,7 @@ class ProgramAdminSerializer(ModelSerializer):
         instance.sector.add(*added_sectors)
 
         ProgramAccess.objects.filter(program=instance, country__in=removed_countries).delete()
+
         updated_instance = super(ProgramAdminSerializer, self).update(instance, validated_data)
         ProgramAdminAuditLog.updated(
             program=instance,
@@ -435,3 +439,14 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
                                          '&q=&kw=&GrantNumber=&CostCenter=&GrantID={0}&GrantMin=&SSD=&USD=&'
                                          'SED=&UED=&Emergency=').format(gaitid)
         return JsonResponse(response)
+
+    @detail_route(methods=['put'], url_path='sync_gait_dates')
+    def sync_gait_dates(self, request, pk):
+        program = Program.objects.get(pk=pk)
+
+        # TODO: do something better than strings here...
+        gait_error = append_GAIT_dates(program)
+
+        return JsonResponse({
+            'gait_error': gait_error,
+        })

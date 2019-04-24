@@ -186,11 +186,47 @@ export class ProgramStore {
     }
 
     onSaveSuccessHandler() {
-        PNotify.success({text: gettext("Successfully Saved"), delay: 5000})
+        PNotify.success({text: gettext("Successfully saved"), delay: 5000})
     }
 
     onSaveErrorHandler() {
-        PNotify.error({text: gettext("Saving Failed"), delay: 5000})
+        PNotify.error({text: gettext("Saving failed"), delay: 5000})
+    }
+
+    onGAITDatesSyncSuccess() {
+        // # Translators: Notify user that the program start and end date were successfully retrieved from the GAIT service and added to the newly saved Program
+        PNotify.success({text: gettext("Successfully synced GAIT program start and end dates"), delay: 5000})
+    }
+
+    onGAITDatesSyncFailure(reason, program_id) {
+        PNotify.notice({
+            // # Translators: Notify user that the program start and end date failed to be retrieved from the GAIT service with a specific reason appended after the :
+            text: gettext("Failed to sync GAIT program start and end dates: " + reason),
+            hide: false,
+            modules: {
+                Confirm: {
+                    confirm: true,
+                    buttons: [
+                        {
+                            // # Translators: A request failed, ask the user if they want to try the request again
+                            text: gettext('Retry'),
+                            primary: true,
+                            click: (notice) => {
+                                this.syncGAITDates(program_id);
+                                notice.close();
+                            }
+                        },
+                        {
+                            // # Translators: button label - ignore the current warning modal on display
+                            text: gettext('Ignore'),
+                            click: (notice) => {
+                                notice.close();
+                            }
+                        }
+                    ]
+                }
+            },
+        })
     }
 
     @action
@@ -242,44 +278,87 @@ export class ProgramStore {
                             resolve();
                         }
                     }
-                )
+                ).catch(e => reject(e))
             });
         } else {
             return new Promise((resolve, reject) => resolve());
         }
     }
 
+    /*
+     * Returns a promise that requests that GAIT start/end dates are synced to the
+     * existing program with the given program id
+     */
+
+    syncGAITDates(program_id) {
+        // get GAIT dates into the program model on the server
+        return this.api.syncGAITDates(program_id).then((gaitSyncResponse) => {
+            let gait_error = gaitSyncResponse.data.gait_error;
+            if (! gait_error) {
+                this.onGAITDatesSyncSuccess();
+            } else {
+                this.onGAITDatesSyncFailure(gait_error, program_id);
+            }
+        }).catch(error => {
+            // # Translators: error message when trying to connect to the server
+            this.onGAITDatesSyncFailure(gettext('There was a network or server connection error.'), program_id)
+
+            return Promise.reject('Request error to sync GAIT dates')
+        })
+    }
+
     @action
     saveNewProgram(program_data) {
         program_data.id = null
         this.saving = true
-        this.validateGaitId(program_data).then(() => {
-            this.api.createProgram(program_data)
-                .then(response => this.api.fetchProgramHistory(response.data.id)
-                      .then(history => {
-                            runInAction(()=> {
-                                this.saving = false;
-                                this.editing_errors = {};
-                                this.editing_target = response.data.id;
-                                this.editing_target_data = response.data;
-                                this.editing_history = history.data;
-                                this.programs.shift();
-                                this.programs.unshift(response.data);
-                                this.programFilterPrograms.unshift(response.data);
-                                this.active_pane_is_dirty = false;
-                                this.onSaveSuccessHandler();
-                            });
-                      })).catch(error => {
-                            runInAction(()=> {
-                                let errors = error.response.data
-                                this.saving = false
-                                this.editing_errors = errors
-                            })
-                })
-        }).catch(() => {
-            //user canceled because of GAIT ID validation failure
-            this.saving = false;
-        });
+        this.validateGaitId(
+            program_data
+        ).then(() => {
+            // create program
+            return this.api.createProgram(program_data).catch(error => {
+                // form validation error handling
+                if (error.response) {
+                    runInAction(() => {
+                        this.editing_errors = error.response.data
+                    })
+                }
+
+                // propagate error to avoid trying to continue
+                return Promise.reject('program creation failed')
+            })
+        }).then(response => {
+            // now pull history data of newly created program
+            return Promise.all([response, this.api.fetchProgramHistory(response.data.id)])
+        }).then(([response, history]) => {
+            // update the model
+            runInAction(() => {
+                this.editing_errors = {};
+                this.editing_target = response.data.id;
+                this.editing_target_data = response.data;
+                this.editing_history = history.data;
+                this.programs.shift();
+                this.programs.unshift(response.data);
+                this.programFilterPrograms.unshift(response.data);
+                this.active_pane_is_dirty = false;
+                this.onSaveSuccessHandler();
+            })
+
+            return response
+        }).then((response) => {
+            // don't try to sync gait dates without an id
+            if (! response.data.gaitid) {
+                return Promise.reject('No GAIT id on program')
+            }
+
+            return this.syncGAITDates(response.data.id);
+        }).finally(() => {
+            runInAction(() => {
+                this.saving = false
+            })
+        }).catch(error => {
+            console.log('bottom level catch')
+            console.log(error);
+        })
     }
 
     @action updateProgram(id, program_data) {
