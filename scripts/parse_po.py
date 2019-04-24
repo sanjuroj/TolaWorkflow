@@ -92,10 +92,12 @@ def po_to_csv(args, basedir, basefile):
         # skip the first stanza, it's housekeeping
         for i in range(1, len(stanzas)):
             stanza = stanzas[i]
+            untranslated_flag = is_untranslated(stanza)
             # Skip output of translated strings if only new and fuzzy are to be exported
-            if args.only_new_or_fuzzy and not is_untranslated(stanza) and not 'fuzzy' in stanza:
+            # TODO: checking for fuzzy in stanza is probably too imprecise
+            if args.only_new_or_fuzzy and not untranslated_flag and not 'fuzzy' in stanza:
                 continue
-            components = stanza_to_components(stanza)
+            components = stanza_to_components(stanza, untranslated_flag)
             # stanza_to_components could will return None if the whole stanza is a component
             if components:
                 csv_writer.writerow([
@@ -118,7 +120,7 @@ def strip_quotes(target):
         return None
 
 
-def stanza_to_components(stanza):
+def stanza_to_components(stanza, untranslated_flag):
     lines = stanza.split('\n')
     components = {
         'similar': '',
@@ -187,7 +189,7 @@ def stanza_to_components(stanza):
         if len(components['msgid']) == 0:
             components['fuzzy'] = ''
 
-        if is_untranslated(stanza):
+        if untranslated_flag:
             components['fuzzy'] = 'Untranslated'
     return components
 
