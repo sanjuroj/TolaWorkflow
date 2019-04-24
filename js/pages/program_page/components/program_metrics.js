@@ -239,7 +239,8 @@ class GaugeBand extends React.Component {
             { gaugeHasErrors ?
                 <div className="gauge__labels">
                     <div className="gauge__label">
-                        {/* # Translators: message describing why this display does not show any data. # */}
+                        {
+                            /* # Translators: message describing why this display does not show any data. # */}
                         <p className="text-muted">{gettext("Unavailable until the first target period ends with results reported.")}</p>
                     </div>
                 </div>

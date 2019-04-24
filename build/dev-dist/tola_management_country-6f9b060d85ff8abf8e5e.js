@@ -1693,7 +1693,7 @@ function (_React$Component2) {
           return _this6.addObjective();
         },
         className: "btn btn-link btn-add"
-      }, "// # Translators: This is a button that allows the user to add a strategic objective.", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-plus-circle"
       }), gettext("Add strategic objective"))));
     }
@@ -3117,4 +3117,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-b9310090a064c709d0cd.js.map
+//# sourceMappingURL=tola_management_country-6f9b060d85ff8abf8e5e.js.map
