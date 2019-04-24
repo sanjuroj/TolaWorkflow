@@ -434,7 +434,7 @@ var LoadingSpinner = function LoadingSpinner(_ref) {
 /*!*******************************************************!*\
   !*** ./js/pages/tola_management_pages/program/api.js ***!
   \*******************************************************/
-/*! exports provided: fetchPrograms, fetchProgramsForFilter, createProgram, updateProgram, validateGaitId, updateProgramFundingStatusBulk, fetchProgramHistory, default */
+/*! exports provided: fetchPrograms, fetchProgramsForFilter, createProgram, updateProgram, validateGaitId, updateProgramFundingStatusBulk, fetchProgramHistory, syncGAITDates, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -446,6 +446,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "validateGaitId", function() { return validateGaitId; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateProgramFundingStatusBulk", function() { return updateProgramFundingStatusBulk; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchProgramHistory", function() { return fetchProgramHistory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "syncGAITDates", function() { return syncGAITDates; });
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../api */ "XoI5");
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -497,6 +498,9 @@ var updateProgramFundingStatusBulk = function updateProgramFundingStatusBulk(ids
 var fetchProgramHistory = function fetchProgramHistory(id) {
   return _api__WEBPACK_IMPORTED_MODULE_0__["api"].get("/tola_management/program/".concat(id, "/history/"));
 };
+var syncGAITDates = function syncGAITDates(id) {
+  return _api__WEBPACK_IMPORTED_MODULE_0__["api"].put("/tola_management/program/".concat(id, "/sync_gait_dates/"));
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
   fetchPrograms: fetchPrograms,
   fetchProgramsForFilter: fetchProgramsForFilter,
@@ -504,7 +508,8 @@ var fetchProgramHistory = function fetchProgramHistory(id) {
   createProgram: createProgram,
   updateProgram: updateProgram,
   updateProgramFundingStatusBulk: updateProgramFundingStatusBulk,
-  validateGaitId: validateGaitId
+  validateGaitId: validateGaitId,
+  syncGAITDates: syncGAITDates
 });
 
 /***/ }),
@@ -2510,7 +2515,7 @@ function () {
     key: "onSaveSuccessHandler",
     value: function onSaveSuccessHandler() {
       PNotify.success({
-        text: gettext("Successfully Saved"),
+        text: gettext("Successfully saved"),
         delay: 5000
       });
     }
@@ -2518,8 +2523,49 @@ function () {
     key: "onSaveErrorHandler",
     value: function onSaveErrorHandler() {
       PNotify.error({
-        text: gettext("Saving Failed"),
+        text: gettext("Saving failed"),
         delay: 5000
+      });
+    }
+  }, {
+    key: "onGAITDatesSyncSuccess",
+    value: function onGAITDatesSyncSuccess() {
+      // # Translators: Notify user that the program start and end date were successfully retrieved from the GAIT service and added to the newly saved Program
+      PNotify.success({
+        text: gettext("Successfully synced GAIT program start and end dates"),
+        delay: 5000
+      });
+    }
+  }, {
+    key: "onGAITDatesSyncFailure",
+    value: function onGAITDatesSyncFailure(reason, program_id) {
+      var _this3 = this;
+
+      PNotify.notice({
+        // # Translators: Notify user that the program start and end date failed to be retrieved from the GAIT service with a specific reason appended after the :
+        text: gettext("Failed to sync GAIT program start and end dates: " + reason),
+        hide: false,
+        modules: {
+          Confirm: {
+            confirm: true,
+            buttons: [{
+              // # Translators: A request failed, ask the user if they want to try the request again
+              text: gettext('Retry'),
+              primary: true,
+              click: function click(notice) {
+                _this3.syncGAITDates(program_id);
+
+                notice.close();
+              }
+            }, {
+              // # Translators: button label - ignore the current warning modal on display
+              text: gettext('Ignore'),
+              click: function click(notice) {
+                notice.close();
+              }
+            }]
+          }
+        }
       });
     }
   }, {
@@ -2555,12 +2601,12 @@ function () {
   }, {
     key: "validateGaitId",
     value: function validateGaitId(program_data) {
-      var _this3 = this;
+      var _this4 = this;
 
       if (program_data.gaitid) {
         var id = program_data.id || 0;
         return new Promise(function (resolve, reject) {
-          _this3.api.validateGaitId(program_data.gaitid, id).then(function (response) {
+          _this4.api.validateGaitId(program_data.gaitid, id).then(function (response) {
             if (response.data.unique === false) {
               var message_intro = gettext('The GAIT ID for this program is shared with at least one other program.');
               var link_text = gettext('View programs with this ID in GAIT.');
@@ -2574,6 +2620,8 @@ function () {
             } else {
               resolve();
             }
+          }).catch(function (e) {
+            return reject(e);
           });
         });
       } else {
@@ -2582,73 +2630,121 @@ function () {
         });
       }
     }
+    /*
+     * Returns a promise that requests that GAIT start/end dates are synced to the
+     * existing program with the given program id
+     */
+
+  }, {
+    key: "syncGAITDates",
+    value: function syncGAITDates(program_id) {
+      var _this5 = this;
+
+      // get GAIT dates into the program model on the server
+      return this.api.syncGAITDates(program_id).then(function (gaitSyncResponse) {
+        var gait_error = gaitSyncResponse.data.gait_error;
+
+        if (!gait_error) {
+          _this5.onGAITDatesSyncSuccess();
+        } else {
+          _this5.onGAITDatesSyncFailure(gait_error, program_id);
+        }
+      }).catch(function (error) {
+        // # Translators: error message when trying to connect to the server
+        _this5.onGAITDatesSyncFailure(gettext('There was a network or server connection error.'), program_id);
+
+        return Promise.reject('Request error to sync GAIT dates');
+      });
+    }
   }, {
     key: "saveNewProgram",
     value: function saveNewProgram(program_data) {
-      var _this4 = this;
+      var _this6 = this;
 
       program_data.id = null;
       this.saving = true;
       this.validateGaitId(program_data).then(function () {
-        _this4.api.createProgram(program_data).then(function (response) {
-          return _this4.api.fetchProgramHistory(response.data.id).then(function (history) {
+        // create program
+        return _this6.api.createProgram(program_data).catch(function (error) {
+          // form validation error handling
+          if (error.response) {
             Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-              _this4.saving = false;
-              _this4.editing_errors = {};
-              _this4.editing_target = response.data.id;
-              _this4.editing_target_data = response.data;
-              _this4.editing_history = history.data;
-
-              _this4.programs.shift();
-
-              _this4.programs.unshift(response.data);
-
-              _this4.programFilterPrograms.unshift(response.data);
-
-              _this4.active_pane_is_dirty = false;
-
-              _this4.onSaveSuccessHandler();
+              _this6.editing_errors = error.response.data;
             });
-          });
-        }).catch(function (error) {
-          Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            var errors = error.response.data;
-            _this4.saving = false;
-            _this4.editing_errors = errors;
-          });
+          } // propagate error to avoid trying to continue
+
+
+          return Promise.reject('program creation failed');
         });
-      }).catch(function () {
-        //user canceled because of GAIT ID validation failure
-        _this4.saving = false;
+      }).then(function (response) {
+        // now pull history data of newly created program
+        return Promise.all([response, _this6.api.fetchProgramHistory(response.data.id)]);
+      }).then(function (_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 2),
+            response = _ref4[0],
+            history = _ref4[1];
+
+        // update the model
+        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+          _this6.editing_errors = {};
+          _this6.editing_target = response.data.id;
+          _this6.editing_target_data = response.data;
+          _this6.editing_history = history.data;
+
+          _this6.programs.shift();
+
+          _this6.programs.unshift(response.data);
+
+          _this6.programFilterPrograms.unshift(response.data);
+
+          _this6.active_pane_is_dirty = false;
+
+          _this6.onSaveSuccessHandler();
+        });
+        return response;
+      }).then(function (response) {
+        // don't try to sync gait dates without an id
+        if (!response.data.gaitid) {
+          return Promise.reject('No GAIT id on program');
+        }
+
+        return _this6.syncGAITDates(response.data.id);
+      }).finally(function () {
+        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+          _this6.saving = false;
+        });
+      }).catch(function (error) {
+        console.log('bottom level catch');
+        console.log(error);
       });
     }
   }, {
     key: "updateProgram",
     value: function updateProgram(id, program_data) {
-      var _this5 = this;
+      var _this7 = this;
 
       this.saving = true;
       this.api.updateProgram(id, program_data).then(function (response) {
-        return _this5.api.fetchProgramHistory(id).then(function (history) {
+        return _this7.api.fetchProgramHistory(id).then(function (history) {
           return Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this5.saving = false;
-            _this5.editing_errors = {};
-            _this5.active_pane_is_dirty = false;
-            _this5.editing_target_data = program_data;
+            _this7.saving = false;
+            _this7.editing_errors = {};
+            _this7.active_pane_is_dirty = false;
+            _this7.editing_target_data = program_data;
 
-            _this5.updateLocalPrograms(response.data);
+            _this7.updateLocalPrograms(response.data);
 
-            _this5.editing_history = history.data;
+            _this7.editing_history = history.data;
 
-            _this5.onSaveSuccessHandler();
+            _this7.onSaveSuccessHandler();
           });
         });
       }).catch(function (errors) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          _this5.saving = false;
-          _this5.editing_errors = errors.response.data;
+          _this7.saving = false;
+          _this7.editing_errors = errors.response.data;
 
-          _this5.onSaveErrorHandler();
+          _this7.onSaveErrorHandler();
         });
       });
     }
@@ -2660,11 +2756,11 @@ function () {
   }, {
     key: "toggleBulkTargetsAll",
     value: function toggleBulkTargetsAll() {
-      var _this6 = this;
+      var _this8 = this;
 
       this.bulk_targets_all = !this.bulk_targets_all;
       this.bulk_targets = new Map(this.programs.map(function (program) {
-        return [program.id, _this6.bulk_targets_all];
+        return [program.id, _this8.bulk_targets_all];
       }));
     }
   }, {
@@ -2688,18 +2784,18 @@ function () {
   }, {
     key: "bulkUpdateProgramStatus",
     value: function bulkUpdateProgramStatus(new_status) {
-      var _this7 = this;
+      var _this9 = this;
 
-      var ids = Array.from(this.bulk_targets.entries()).filter(function (_ref3) {
-        var _ref4 = _slicedToArray(_ref3, 2),
-            id = _ref4[0],
-            targeted = _ref4[1];
-
-        return targeted;
-      }).map(function (_ref5) {
+      var ids = Array.from(this.bulk_targets.entries()).filter(function (_ref5) {
         var _ref6 = _slicedToArray(_ref5, 2),
             id = _ref6[0],
             targeted = _ref6[1];
+
+        return targeted;
+      }).map(function (_ref7) {
+        var _ref8 = _slicedToArray(_ref7, 2),
+            id = _ref8[0],
+            targeted = _ref8[1];
 
         return id;
       });
@@ -2709,17 +2805,17 @@ function () {
         this.api.updateProgramFundingStatusBulk(ids, new_status).then(function (response) {
           var updatedPrograms = response.data;
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this7.postBulkUpdateLocalPrograms(updatedPrograms);
+            _this9.postBulkUpdateLocalPrograms(updatedPrograms);
 
-            _this7.applying_bulk_updates = false;
+            _this9.applying_bulk_updates = false;
 
-            _this7.onSaveSuccessHandler();
+            _this9.onSaveSuccessHandler();
           });
         }).catch(function (error) {
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this7.applying_bulk_updates = false;
+            _this9.applying_bulk_updates = false;
 
-            _this7.onSaveErrorHandler();
+            _this9.onSaveErrorHandler();
           });
         });
       }
@@ -2916,4 +3012,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-bc222113cf9d85fbc4e9.js.map
+//# sourceMappingURL=tola_management_program-ff54be279d5baedc96ac.js.map
