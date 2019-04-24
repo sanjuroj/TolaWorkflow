@@ -12,6 +12,8 @@ from django.core.mail import send_mail, mail_admins, mail_managers, EmailMessage
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import user_passes_test
 
+from django.utils.translation import ugettext as _
+
 logger = logging.getLogger(__name__)
 
 #CREATE NEW DATA DICTIONARY OBJECT
