@@ -340,8 +340,8 @@ function newPopup(url, windowName) {
 
 window.newPopup = newPopup; // EXAMPLE: <a onclick="newPopup('https://docs.google.com/document/d/1tDwo3m1ychefNiAMr-8hCZnhEugQlt36AOyUYHlPbVo/edit?usp=sharing','Form Help/Guidance'); return false;" href="#" class="btn btn-sm btn-info">Form Help/Guidance</a>
 
-var DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.");
-var DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.');
+var DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a change log. For future reference, please share your reason for these changes.");
+var DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your reason for these changes.');
 var DEFAULT_NO_RATIONALE_TEXT = gettext("This action cannot be undone"); // This is only until we get indicator_form_common_js moved to webpack and out of html (makemessages bug)
 // these translation strings are used exclusively in the indicator setup form:
 
@@ -416,7 +416,7 @@ var create_changeset_notice = function create_changeset_notice() {
 
             if (!rationale && rationale_required) {
               textarea.addClass('is-invalid');
-              textarea.parent().append('<div class="invalid-feedback">' + gettext('Rationale is required.') + '</div>');
+              textarea.parent().append('<div class="invalid-feedback">' + gettext('A reason is required.') + '</div>');
               return false;
             } else {
               textarea.removeClass('is-invalid');
@@ -532,7 +532,7 @@ window.create_nondestructive_changeset_notice = function () {
     message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE;
   }
 
-  var inner = "\n        <div class=\"row\">\n            <div class=\"col\">\n                <h2>".concat(gettext("Share Your Rationale"), "</h2>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                ").concat(message_text, "\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div class=\"form-group\">\n                    <textarea class=\"form-control\" name=\"rationale\"></textarea>\n                </div>\n            </div>\n        </div>\n    ");
+  var inner = "\n        <div class=\"row\">\n            <div class=\"col\">\n                <h2>".concat(gettext("Reason for change"), "</h2>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                ").concat(message_text, "\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div class=\"form-group\">\n                    <textarea class=\"form-control\" name=\"rationale\"></textarea>\n                </div>\n            </div>\n        </div>\n    ");
   return create_changeset_notice({
     message_text: message_text,
     on_submit: on_submit,
@@ -609,4 +609,4 @@ window.scrollToBottom = scrollToBottom;
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-9bd0f3b0aa192917721f.js.map
+//# sourceMappingURL=base-e8981361f8b66ec69d6c.js.map

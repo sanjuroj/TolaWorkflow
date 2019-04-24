@@ -271,7 +271,8 @@ export const ProgramMetrics = observer(function (props) {
         /* # Translators: a label in a graphic. Example: 31% no targets */
         unfilledLabel: gettext("no targets"),
 
-        cta: gettext("Add missing targets"),
+        /* # Translators: a link that displays a filtered list of indicators which are missing targets */
+        cta: gettext("Indicators missing targets"),
 
         emptyLabel: gettext("No targets"),
     };
@@ -286,7 +287,8 @@ export const ProgramMetrics = observer(function (props) {
         /* # Translators: a label in a graphic. Example: 31% no results */
         unfilledLabel: gettext("no results"),
 
-        cta: gettext("Add missing results"),
+        /* # Translators: a link that displays a filtered list of indicators which are missing results */
+        cta: gettext("Indicators missing results"),
 
         emptyLabel: gettext("No results"),
     };
@@ -301,7 +303,8 @@ export const ProgramMetrics = observer(function (props) {
         /* # Translators: a label in a graphic. Example: 31% no evidence */
         unfilledLabel: gettext("no evidence"),
 
-        cta: gettext("Add missing evidence"),
+        /* # Translators: a link that displays a filtered list of indicators which are missing evidence */
+        cta: gettext("Indicators missing evidence"),
 
         emptyLabel: gettext("No evidence"),
     };

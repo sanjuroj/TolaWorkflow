@@ -4,15 +4,15 @@
     var validation_msgs = {};
     let initialTrackedFieldsFormState;
 
-    const DELETE_ALL_TARGETS_MESSAGE = "{% trans 'Any results assigned to these targets will need to be reassigned. For future reference, please provide a rationale for deleting these targets.' %}"
-    const DELETE_INDICATOR_MESSAGE = "{% trans 'All details about this indicator and results recorded to the indicator will be permanently removed. For future reference, please provide a rationale for deleting this indicator.' %}"
-    const MODIFY_TARGETS_MESSAGE = "{% trans 'Modifying target values will affect program metrics for this indicator. For future reference, please provide a rationale for modifying target values.' %}"
+    const DELETE_ALL_TARGETS_MESSAGE = "{% trans 'Any results assigned to these targets will need to be reassigned. For future reference, please provide a reason for deleting these targets.' %}"
+    const DELETE_INDICATOR_MESSAGE = "{% trans 'All details about this indicator and results recorded to the indicator will be permanently removed. For future reference, please provide a reason for deleting this indicator.' %}"
+    const MODIFY_TARGETS_MESSAGE = "{% trans 'Modifying target values will affect program metrics for this indicator. For future reference, please provide a reason for modifying target values.' %}"
     const DESTRUCTIVE_PREAMBLE = "{% trans 'This action cannot be undone.' %}"
     const DELETE_INDICATOR_PREAMBLE = "{% trans 'All details about this indicator will be permanently removed.' %}"
     const DELETE_INDICATOR_NO_RATIONALE = "{% trans 'Are you sure you want to delete this indicator?' %}"
     const DELETE_TARGETS_NO_RATIONALE = "{% trans 'Are you sure you want to remove all targets?' %}"
     const DELETE_TARGET_NO_RATIONALE = "{% trans 'Are you sure you want to remove this target?' %}"
-    const DELETE_TARGET_MESSAGE = "{% trans 'For future reference, please provide a rationale for deleting this target.' %}"
+    const DELETE_TARGET_MESSAGE = "{% trans 'For future reference, please provide a reason for deleting this target.' %}"
     
     // Indicator fields tracked in the admin changelog, which require prompting for a rationale if modified
     let TRACKED_FIELDS = new Set([
