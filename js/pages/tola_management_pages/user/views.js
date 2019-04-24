@@ -259,9 +259,6 @@ export const IndexView = observer(
                                     <Col>{gettext("Organization")}</Col>
                                     <Col>{gettext("Programs")}</Col>
                                     {
-                                        /* # Translators: Label for yes/no choice form input - if user is an admin or not */}
-                                    <Col size="0.5">{gettext("Admin Role")}</Col>
-                                    {
                                         /* # Translators: Label for column identifying "active" or "inactive" user status */}
                                     <Col size="0.25">{gettext("Status")}</Col>
                                 </Row>
@@ -346,7 +343,6 @@ export const IndexView = observer(
                                             {data.user_programs} {gettext("programs")}
                                         </a>
                                     </Col>
-                                    <Col size="0.5">{data.is_admin?gettext('Yes'):gettext('No')}</Col>
                                     <Col size="0.25">{data.is_active?gettext('Active'):gettext('Inactive')}</Col>
                                 </Row>
                             }
