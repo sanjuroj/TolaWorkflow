@@ -342,7 +342,20 @@ window.newPopup = newPopup; // EXAMPLE: <a onclick="newPopup('https://docs.googl
 
 var DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.");
 var DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.');
-var DEFAULT_NO_RATIONALE_TEXT = gettext("This action cannot be undone");
+var DEFAULT_NO_RATIONALE_TEXT = gettext("This action cannot be undone"); // This is only until we get indicator_form_common_js moved to webpack and out of html (makemessages bug)
+// these translation strings are used exclusively in the indicator setup form:
+
+var target_with_results_text = function target_with_results_text(numResults) {
+  return interpolate(ngettext('Removing this target means that %s result will no longer have targets associated with it.', 'Removing this target means that %s results will no longer have targets associated with them.', numResults), [numResults]);
+};
+
+window.target_with_results_text = target_with_results_text;
+
+var lop_to_non_lop_with_results_text = function lop_to_non_lop_with_results_text(numResults) {
+  return interpolate(ngettext('If we make these changes, %s data record will no longer be associated with the Life of Program target, and will need to be reassigned to a new target.\n\n Proceed anyway?', 'If we make these changes, %s data records will no longer be associated with the Life of Program target, and will need to be reassigned to new targets.\n\n Proceed anyway?', numResults), [numResults]);
+};
+
+window.lop_to_non_lop_with_results_text = lop_to_non_lop_with_results_text;
 
 var create_changeset_notice = function create_changeset_notice() {
   var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -438,6 +451,18 @@ var create_changeset_notice = function create_changeset_notice() {
       }
     }
   });
+
+  if (on_cancel) {
+    notice.on('click', function (e) {
+      if ($(e.target).is('.ui-pnotify-closer *')) {
+        var _close = on_cancel();
+
+        if (_close || _close === undefined) {
+          notice.close();
+        }
+      }
+    });
+  }
 };
 
 window.create_destructive_changeset_notice = function () {
@@ -584,4 +609,4 @@ window.scrollToBottom = scrollToBottom;
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-e6cc79ee3838a5818ba2.js.map
+//# sourceMappingURL=base-28a9a643e117b7f2f4b2.js.map

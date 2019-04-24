@@ -1469,7 +1469,7 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         className: "label--required",
         htmlFor: "objective-name-input"
-      }, gettext("Code")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Short name")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         id: "objective-name-input",
         className: classnames__WEBPACK_IMPORTED_MODULE_3___default()('form-control', {
           'is-invalid': this.formErrors('name')
@@ -1485,9 +1485,8 @@ function (_React$Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "label--required",
         htmlFor: "objective-description-input"
-      }, gettext("Objective")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
+      }, gettext("Description")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         id: "objective-description-input",
         className: classnames__WEBPACK_IMPORTED_MODULE_3___default()('form-control', {
           'is-invalid': this.formErrors('description')
@@ -1694,7 +1693,7 @@ function (_React$Component2) {
           return _this6.addObjective();
         },
         className: "btn btn-link btn-add"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+      }, "// # Translators: This is a button that allows the user to add a strategic objective.", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-plus-circle"
       }), gettext("Add strategic objective"))));
     }
@@ -3118,4 +3117,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-aa4bcca74f8b66653608.js.map
+//# sourceMappingURL=tola_management_country-b9310090a064c709d0cd.js.map

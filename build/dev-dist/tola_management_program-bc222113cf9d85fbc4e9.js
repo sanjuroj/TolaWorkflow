@@ -1017,10 +1017,9 @@ function (_React$Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group react-multiselect-checkbox"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        htmlFor: "program-county-input"
-      }, gettext("Countries"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "required"
-      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        htmlFor: "program-county-input",
+        className: "label--required"
+      }, gettext("Countries")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
         value: selectedCountries,
         options: this.props.countryOptions,
         onChange: function onChange(e) {
@@ -2917,4 +2916,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-da37ac2b59c375ae0e10.js.map
+//# sourceMappingURL=tola_management_program-bc222113cf9d85fbc4e9.js.map
