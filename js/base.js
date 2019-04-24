@@ -324,8 +324,8 @@ window.newPopup = newPopup;
 
 // EXAMPLE: <a onclick="newPopup('https://docs.google.com/document/d/1tDwo3m1ychefNiAMr-8hCZnhEugQlt36AOyUYHlPbVo/edit?usp=sharing','Form Help/Guidance'); return false;" href="#" class="btn btn-sm btn-info">Form Help/Guidance</a>
 
-const DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.")
-const DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.')
+const DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a change log. For future reference, please share your reason for these changes.")
+const DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your reason for these changes.')
 const DEFAULT_NO_RATIONALE_TEXT = gettext("This action cannot be undone");
 
 // This is only until we get indicator_form_common_js moved to webpack and out of html (makemessages bug)
@@ -398,7 +398,7 @@ const create_changeset_notice = ({
                                 textarea.addClass('is-invalid');
                                 textarea.parent().append(
                                     '<div class="invalid-feedback">'
-                                    + gettext('Rationale is required.')
+                                    + gettext('A reason is required.')
                                     + '</div>'
                                 );
                                 return false;
@@ -505,7 +505,7 @@ window.create_nondestructive_changeset_notice = ({
     const inner = `
         <div class="row">
             <div class="col">
-                <h2>${gettext("Share Your Rationale")}</h2>
+                <h2>${gettext("Reason for change")}</h2>
             </div>
         </div>
         <div class="row">
