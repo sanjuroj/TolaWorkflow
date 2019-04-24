@@ -186,19 +186,21 @@ export class ProgramStore {
     }
 
     onSaveSuccessHandler() {
-        PNotify.success({text: gettext("Successfully Saved"), delay: 5000})
+        PNotify.success({text: gettext("Successfully saved"), delay: 5000})
     }
 
     onSaveErrorHandler() {
-        PNotify.error({text: gettext("Saving Failed"), delay: 5000})
+        PNotify.error({text: gettext("Saving failed"), delay: 5000})
     }
 
     onGAITDatesSyncSuccess() {
-        PNotify.success({text: gettext("Successfully synced GAIT dates to Program"), delay: 5000})
+        // # Translators: Notify user that the program start and end date were successfully retrieved from the GAIT service and added to the newly saved Program
+        PNotify.success({text: gettext("Successfully synced GAIT program start and end dates"), delay: 5000})
     }
 
     onGAITDatesSyncFailure(reason) {
-        PNotify.notice({text: gettext("Failed to sync GAIT dates to Program: " + reason), delay: 5000})
+        // # Translators: Notify user that the program start and end date failed to be retrieved from the GAIT service with a specific reason appended after the :
+        PNotify.notice({text: gettext("Failed to sync GAIT program start and end dates: " + reason), delay: 5000})
     }
 
     @action
@@ -301,7 +303,8 @@ export class ProgramStore {
 
             // get GAIT dates into the program model on the server
             return this.api.syncGAITDates(response.data.id).catch(error => {
-                this.onGAITDatesSyncFailure(gettext('Error attempting to sync GAIT dates'))
+                // # Translators: error message when trying to connect to the server
+                this.onGAITDatesSyncFailure(gettext('There was a network or server connection error.'))
 
                 return Promise.reject('Request error to sync GAIT dates')
             })
