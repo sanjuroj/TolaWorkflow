@@ -655,7 +655,13 @@ function (_React$Component) {
         className: "tab-pane--react edit-user-programs"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", {
         className: "no-bold"
-      }, user.name ? user.name + ': ' : '', gettext("Programs and Roles")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, user.name ? user.name + ': ' : '', gettext("Programs and Roles"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("sup", null, "   ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        target: "_blank",
+        href: "https://learn.mercycorps.org/site/tola/index.php/TOLA:Section_05/en#5.4_User_Roles_Matrix_.28Program_Permissions.29"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        "aria-label": gettext('More information on Program Roles'),
+        className: "far fa-question-circle"
+      })))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "edit-user-programs__filter-form"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "edit-user-programs__country-filter form-group react-multiselect-checkbox"
@@ -4347,4 +4353,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-8da30290ef6857d1a2eb.js.map
+//# sourceMappingURL=tola_management_user-eeb34102bcbc6a6e8c33.js.map
