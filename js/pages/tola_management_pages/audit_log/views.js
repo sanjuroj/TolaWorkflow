@@ -113,15 +113,15 @@ export const IndexView = observer(
                     <table className="table table-sm table-bordered bg-white text-small changelog">
                         <thead>
                             <tr>
-                                <th className="text-nowrap">{gettext("Date and Time")}</th>
+                                <th className="text-nowrap">{gettext("Date and time")}</th>
                                 <th className="text-nowrap">{gettext("No.")}</th>
                                 <th className="text-nowrap">{gettext("Indicator")}</th>
                                 <th className="text-nowrap">{gettext("User")}</th>
                                 <th className="text-nowrap">{gettext("Organization")}</th>
-                                <th className="text-nowrap">{gettext("Change Type")}</th>
-                                <th className="text-nowrap">{gettext("Previous Entry")}</th>
-                                <th className="text-nowrap">{gettext("New Entry")}</th>
-                                <th className="text-nowrap">{gettext("Rationale")}</th>
+                                <th className="text-nowrap">{gettext("Change type")}</th>
+                                <th className="text-nowrap">{gettext("Previous entry")}</th>
+                                <th className="text-nowrap">{gettext("New entry")}</th>
+                                <th className="text-nowrap">{gettext("Reason for change")}</th>
                             </tr>
                         </thead>
                         {store.log_rows.map(data => {
