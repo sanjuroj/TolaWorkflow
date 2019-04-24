@@ -253,31 +253,38 @@ export class ProgramStore {
     saveNewProgram(program_data) {
         program_data.id = null
         this.saving = true
+        // TODO: I think there's a chance that errors may be swallowed in the nested promises
+        // see http://jamesknelson.com/are-es6-promises-swallowing-your-errors/
         this.validateGaitId(program_data).then(() => {
             this.api.createProgram(program_data)
                 .then(response => this.api.fetchProgramHistory(response.data.id)
-                      .then(history => {
-                            runInAction(()=> {
-                                this.saving = false;
-                                this.editing_target = response.data.id;
-                                this.editing_target_data = response.data;
-                                this.editing_history = history.data;
-                                this.programs.shift();
-                                this.programs.unshift(response.data);
-                                this.programFilterPrograms.unshift(response.data);
-                                this.active_pane_is_dirty = false;
-                                this.onSaveSuccessHandler();
-                            });
-                      })).catch(error => {
-                            runInAction(()=> {
-                                let errors = error.response.data
-                                this.saving = false
-                                this.editing_errors = errors
-                            })
+                    .then(history => {
+                        runInAction(() => {
+                            this.saving = false;
+                            this.editing_target = response.data.id;
+                            this.editing_target_data = response.data;
+                            this.editing_history = history.data;
+                            this.programs.shift();
+                            this.programs.unshift(response.data);
+                            this.programFilterPrograms.unshift(response.data);
+                            this.active_pane_is_dirty = false;
+                            this.onSaveSuccessHandler();
+                        });
+                    }).then(() => this.api.syncGAITDates(response.data.id).then(
+                        (gaitSyncResponse) => console.log(gaitSyncResponse)
+                    ))
+                ).catch(error => {
+                    runInAction(() => {
+                        let errors = error.response.data
+                        this.saving = false
+                        this.editing_errors = errors
+                    })
                 })
         }).catch(() => {
             //user canceled because of GAIT ID validation failure
-            this.saving = false;
+            runInAction(() => {
+                this.saving = false;
+            })
         });
     }
 

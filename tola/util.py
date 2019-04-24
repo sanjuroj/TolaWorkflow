@@ -138,6 +138,9 @@ def formatFloat(value):
 
 # Get GAIT data from mcapi
 def get_GAIT_data(gait_ids):
+    """
+    May throw requests.exceptions.RequestException
+    """
 
     cleaned_ids = []
     for id in gait_ids:
@@ -147,12 +150,8 @@ def get_GAIT_data(gait_ids):
             pass
     base_url = 'https://mcapi.mercycorps.org/gaitprogram/?gaitids='
 
-    try:
-        response = requests.get(base_url + ','.join(cleaned_ids))
-        return json.loads(response.content)
-    except requests.exceptions.RequestException as e:
-        logger.exception('Error reaching GAIT service')
-        return []
+    response = requests.get(base_url + ','.join(cleaned_ids))
+    return json.loads(response.content)
 
 def get_dates_from_gait_response(gait_response):
     """take a gait response (from get_GAIT_data) and parse out start and end dates, return dict"""
@@ -170,7 +169,11 @@ def get_dates_from_gait_response(gait_response):
     }
 
 def append_GAIT_dates(program):
-    gait_data = get_GAIT_data([program.gaitid])
+    try:
+        gait_data = get_GAIT_data([program.gaitid])
+    except requests.exceptions.RequestException as e:
+        logger.exception('Error reaching GAIT service')
+        return 'Server/network error reaching GAIT server'
 
     # Return an error message if more than one GAIT record was fetched based on the GAIT id provided.
     if len(gait_data) != 1:
