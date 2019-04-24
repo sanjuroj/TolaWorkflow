@@ -172,9 +172,6 @@ function (_React$Component) {
 
 var ExpandAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref6) {
   var store = _ref6.store;
-  {
-    /* # Translators: button label to show the details of all rows in a list */
-  }
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     className: "btn btn-medium text-action btn-sm",
     onClick: function onClick() {
@@ -187,9 +184,6 @@ var ExpandAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"]
 });
 var CollapseAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref7) {
   var store = _ref7.store;
-  {
-    /* # Translators: button label to hide the details of all rows in a list */
-  }
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     className: "btn btn-medium text-action btn-sm",
     onClick: function onClick() {
@@ -251,7 +245,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     var is_expanded = store.expando_rows.has(data.id);
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
       key: data.id
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+    }, "`", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
       className: is_expanded ? 'changelog__entry__header is-expanded' : 'changelog__entry__header',
       onClick: function onClick() {
         return store.toggleRowExpando(data.id);
@@ -1191,4 +1185,4 @@ function () {
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-cd8704850c144f99603c.js.map
+//# sourceMappingURL=audit_log-e1ed7732b28301483256.js.map
