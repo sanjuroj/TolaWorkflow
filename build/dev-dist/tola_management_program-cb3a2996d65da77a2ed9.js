@@ -1596,8 +1596,8 @@ var ProgramStatusFilter = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observ
     value: 'Active',
     label: gettext('Active')
   }, {
-    value: 'Closed',
-    label: gettext('Closed')
+    value: 'Inactive',
+    label: gettext('Inactive')
   }];
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "form-group"
@@ -1778,11 +1778,16 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
   });
   var bulkProgramStatusOptions = [{
     value: 'Funded',
-    label: gettext('Funded')
+    label: gettext('Active')
   }, {
     value: 'Completed',
-    label: gettext('Completed')
-  }];
+    label: gettext('Inactive')
+  }]; // See #1479 as to why this makes sense
+
+  var fundingStatusDisplayStr = function fundingStatusDisplayStr(funding_status_str) {
+    return funding_status_str.toLowerCase() === 'funded' ? gettext('Active') : gettext('Inactive');
+  };
+
   var bulk_actions = {
     primary_options: [{
       label: gettext('Set program status'),
@@ -1986,7 +1991,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         href: "/tola_management/user/?programs[]=".concat(data.id)
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-users"
-      }), "\xA0", data.program_users, " users") : '---'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, data.funding_status ? data.funding_status : '---'));
+      }), "\xA0", data.program_users, " users") : '---'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, fundingStatusDisplayStr(data.funding_status)));
     }
   }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__metadata"
@@ -3012,4 +3017,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-ff54be279d5baedc96ac.js.map
+//# sourceMappingURL=tola_management_program-cb3a2996d65da77a2ed9.js.map
