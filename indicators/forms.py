@@ -117,8 +117,8 @@ class IndicatorForm(forms.ModelForm):
     #     data = self.cleaned_data.get('rationale')
     #     periodic_targets = self.request.POST.get('periodic_targets')
     #     if not periodic_targets == 'generateTargets' and len(self.instance.result_set.all()) > 0 and (not data or len(data) <= 0):
-    #         # Translators: Input form error message that the "rationale" form field is empty when results have already been saved
-    #         raise forms.ValidationError(_('Results have been recorded, rationale is required.'))
+    #         # Translators: Input form error message that the "reason for change" form field is empty when results have already been saved
+    #         raise forms.ValidationError(_('Results have been recorded, reason for change is required.'))
     #     return data
 
 

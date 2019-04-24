@@ -15,8 +15,8 @@
         setViewButtonDisabledState();
     }
 
-    const DELETE_RESULT_MESSAGE = "{% trans 'This action cannot be undone. The result value and any information associated with it will be permanently removed. For future reference, please provide a rationale for deleting this result.' %}"
-    const MODIFY_RESULT_DATE_MESSAGE = "{% trans 'Modifying results will affect program metrics for this indicator and should only be done to correct a data entry error. For future reference, please provide a rationale for modifying this result.' %}"
+    const DELETE_RESULT_MESSAGE = "{% trans 'This action cannot be undone. The result value and any information associated with it will be permanently removed. For future reference, please provide a reason for deleting this result.' %}"
+    const MODIFY_RESULT_DATE_MESSAGE = "{% trans 'Modifying results will affect program metrics for this indicator and should only be done to correct a data entry error. For future reference, please provide a reason for modifying this result.' %}"
 
     $("#indicator_results_div").on('click', '#id_browse_google_drive', function(e) {
         e.preventDefault();
