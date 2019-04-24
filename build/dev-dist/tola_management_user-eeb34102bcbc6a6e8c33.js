@@ -2787,8 +2787,6 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         size: "2",
         className: "td--stretch"
       }, gettext("User")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, gettext("Programs")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
-        size: "0.5"
-      }, gettext("Administrator?")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.25"
       }, gettext("Status")));
     },
@@ -2903,8 +2901,6 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-cubes"
       }), "\xA0", data.user_programs, " ", gettext("programs"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
-        size: "0.5"
-      }, data.is_admin ? gettext('Yes') : gettext('No')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.25"
       }, data.is_active ? gettext('Active') : gettext('Inactive')));
     }
@@ -3466,7 +3462,6 @@ function () {
           name: "",
           organization_name: "",
           user_programs: 0,
-          is_admin: false,
           is_active: false
         };
         this.users_listing.unshift("new");
@@ -3496,7 +3491,6 @@ function () {
               name: result.name,
               organization_name: _this6.organizations[result.organization_id].name,
               user_programs: aggregates.program_count,
-              is_admin: result.user.is_staff,
               is_active: result.user.is_active
             };
             _this6.active_pane_is_dirty = false;
@@ -3536,7 +3530,6 @@ function () {
               name: result.name,
               organization_name: _this7.organizations[result.organization_id].name,
               user_programs: aggregates.program_count,
-              is_admin: result.user.is_staff,
               is_active: result.user.is_active
             };
             _this7.active_pane_is_dirty = false;
@@ -3589,7 +3582,6 @@ function () {
               name: result.name,
               organization_name: _this9.organizations[result.organization_id].name,
               user_programs: aggregates.program_count,
-              is_admin: result.user.is_staff,
               is_active: result.user.is_active
             };
             _this9.active_pane_is_dirty = false;
@@ -3635,7 +3627,6 @@ function () {
               name: result.name,
               organization_name: _this10.organizations[result.organization_id].name,
               user_programs: aggregates.program_count,
-              is_admin: result.user.is_staff,
               is_active: result.user.is_active
             };
             _this10.active_pane_is_dirty = false;
@@ -4362,4 +4353,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-d0b6a19ee6ebeca2db96.js.map
+//# sourceMappingURL=tola_management_user-eeb34102bcbc6a6e8c33.js.map
