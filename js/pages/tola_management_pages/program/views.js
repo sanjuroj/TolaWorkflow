@@ -62,7 +62,7 @@ const SectorFilter = observer(({store, filterOptions}) => {
 const ProgramStatusFilter = observer(({store}) => {
     const statusFilterOptions = [
         {value: 'Active', label: gettext('Active')},
-        {value: 'Closed', label: gettext('Closed')},
+        {value: 'Inactive', label: gettext('Inactive')},
     ]
     return <div className="form-group">
         <label htmlFor="program-status-filter">{gettext("Status")}</label>
@@ -153,9 +153,13 @@ export const IndexView = observer(
         const programFilterOptions = Object.entries(store.programFilterPrograms).map(([id, program]) => ({value: program.id, label: program.name}))
         const userFilterOptions = Object.entries(store.users).map(([id, user]) => ({value: user.id, label: user.name}))
         const bulkProgramStatusOptions = [
-            {value: 'Funded', label: gettext('Funded')},
-            {value: 'Completed', label: gettext('Completed')},
+            {value: 'Funded', label: gettext('Active')},
+            {value: 'Completed', label: gettext('Inactive')},
         ]
+
+        // See #1479 as to why this makes sense
+        const fundingStatusDisplayStr = (funding_status_str) =>
+            funding_status_str.toLowerCase() === 'funded' ? gettext('Active') : gettext('Inactive');
 
         const bulk_actions = {
             primary_options: [
@@ -295,7 +299,7 @@ export const IndexView = observer(
                                     <Col className="text-nowrap">
                                         {data.program_users ? <a href={`/tola_management/user/?programs[]=${data.id}`}><i className="fas fa-users"/>&nbsp;{data.program_users} users</a> : '---'  }
                                     </Col>
-                                    <Col>{data.funding_status ? data.funding_status : '---'}</Col>
+                                    <Col>{fundingStatusDisplayStr(data.funding_status)}</Col>
                                 </Row>
                             }
                         />
