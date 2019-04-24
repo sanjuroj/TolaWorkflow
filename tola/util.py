@@ -169,15 +169,18 @@ def get_dates_from_gait_response(gait_response):
     }
 
 def append_GAIT_dates(program):
+    if not program.gaitid:
+        return _('Program does not have a GAIT id')
+
     try:
         gait_data = get_GAIT_data([program.gaitid])
     except requests.exceptions.RequestException as e:
         logger.exception('Error reaching GAIT service')
-        return 'Server/network error reaching GAIT server'
+        return _('Server/network error reaching GAIT server')
 
     # Return an error message if more than one GAIT record was fetched based on the GAIT id provided.
     if len(gait_data) != 1:
-        return 'Error pulling data from GAIT server for ID {gait_id} during Program creation.'.format(
+        return _('Error pulling data from GAIT server for ID {gait_id} during Program creation.').format(
             gait_id=program.gaitid)
 
     dates = get_dates_from_gait_response(gait_data[0])
