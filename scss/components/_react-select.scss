@@ -7,3 +7,6 @@
         }
     }
 }
+.react-select.is-invalid~.invalid-feedback {
+    display: block;
+}

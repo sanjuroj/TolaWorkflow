@@ -115,7 +115,7 @@ export default class EditProgramProfile extends React.Component {
                         <ErrorFeedback errorMessages={this.formErrors('description')} />
                     </div>
                     <div className="form-group react-multiselect-checkbox">
-                        <label htmlFor="program-county-input">{gettext("Countries")}<span className="required">*</span></label>
+                        <label htmlFor="program-county-input" className="label--required">{gettext("Countries")}</label>
                         <CheckboxedMultiSelect
                             value={selectedCountries}
                             options={this.props.countryOptions}
