@@ -198,9 +198,35 @@ export class ProgramStore {
         PNotify.success({text: gettext("Successfully synced GAIT program start and end dates"), delay: 5000})
     }
 
-    onGAITDatesSyncFailure(reason) {
-        // # Translators: Notify user that the program start and end date failed to be retrieved from the GAIT service with a specific reason appended after the :
-        PNotify.notice({text: gettext("Failed to sync GAIT program start and end dates: " + reason), delay: 5000})
+    onGAITDatesSyncFailure(reason, program_id) {
+        PNotify.notice({
+            // # Translators: Notify user that the program start and end date failed to be retrieved from the GAIT service with a specific reason appended after the :
+            text: gettext("Failed to sync GAIT program start and end dates: " + reason),
+            hide: false,
+            modules: {
+                Confirm: {
+                    confirm: true,
+                    buttons: [
+                        {
+                            // # Translators: A request failed, ask the user if they want to try the request again
+                            text: gettext('Retry'),
+                            primary: true,
+                            click: (notice) => {
+                                this.syncGAITDates(program_id);
+                                notice.close();
+                            }
+                        },
+                        {
+                            // # Translators: button label - ignore the current warning modal on display
+                            text: gettext('Ignore'),
+                            click: (notice) => {
+                                notice.close();
+                            }
+                        }
+                    ]
+                }
+            },
+        })
     }
 
     @action
@@ -259,6 +285,28 @@ export class ProgramStore {
         }
     }
 
+    /*
+     * Returns a promise that requests that GAIT start/end dates are synced to the
+     * existing program with the given program id
+     */
+
+    syncGAITDates(program_id) {
+        // get GAIT dates into the program model on the server
+        return this.api.syncGAITDates(program_id).then((gaitSyncResponse) => {
+            let gait_error = gaitSyncResponse.data.gait_error;
+            if (! gait_error) {
+                this.onGAITDatesSyncSuccess();
+            } else {
+                this.onGAITDatesSyncFailure(gait_error, program_id);
+            }
+        }).catch(error => {
+            // # Translators: error message when trying to connect to the server
+            this.onGAITDatesSyncFailure(gettext('There was a network or server connection error.'), program_id)
+
+            return Promise.reject('Request error to sync GAIT dates')
+        })
+    }
+
     @action
     saveNewProgram(program_data) {
         program_data.id = null
@@ -301,20 +349,7 @@ export class ProgramStore {
                 return Promise.reject('No GAIT id on program')
             }
 
-            // get GAIT dates into the program model on the server
-            return this.api.syncGAITDates(response.data.id).catch(error => {
-                // # Translators: error message when trying to connect to the server
-                this.onGAITDatesSyncFailure(gettext('There was a network or server connection error.'))
-
-                return Promise.reject('Request error to sync GAIT dates')
-            })
-        }).then((gaitSyncResponse) => {
-            let gait_error = gaitSyncResponse.data.gait_error;
-            if (! gait_error) {
-                this.onGAITDatesSyncSuccess();
-            } else {
-                this.onGAITDatesSyncFailure(gait_error);
-            }
+            return this.syncGAITDates(response.data.id);
         }).finally(() => {
             runInAction(() => {
                 this.saving = false
