@@ -324,9 +324,29 @@ window.newPopup = newPopup;
 
 // EXAMPLE: <a onclick="newPopup('https://docs.google.com/document/d/1tDwo3m1ychefNiAMr-8hCZnhEugQlt36AOyUYHlPbVo/edit?usp=sharing','Form Help/Guidance'); return false;" href="#" class="btn btn-sm btn-info">Form Help/Guidance</a>
 
-const DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.")
-const DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.')
+const DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a change log. For future reference, please share your reason for these changes.")
+const DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your reason for these changes.')
 const DEFAULT_NO_RATIONALE_TEXT = gettext("This action cannot be undone");
+
+// This is only until we get indicator_form_common_js moved to webpack and out of html (makemessages bug)
+// these translation strings are used exclusively in the indicator setup form:
+const target_with_results_text = (numResults) => {
+    return interpolate(
+        ngettext('Removing this target means that %s result will no longer have targets associated with it.',
+                 'Removing this target means that %s results will no longer have targets associated with them.',
+                 numResults),
+        [numResults]);
+}
+window.target_with_results_text = target_with_results_text;
+
+const lop_to_non_lop_with_results_text = (numResults) => {
+    return interpolate(
+        ngettext('If we make these changes, %s data record will no longer be associated with the Life of Program target, and will need to be reassigned to a new target.\n\n Proceed anyway?',
+                 'If we make these changes, %s data records will no longer be associated with the Life of Program target, and will need to be reassigned to new targets.\n\n Proceed anyway?',
+                 numResults),
+        [numResults]);
+}
+window.lop_to_non_lop_with_results_text = lop_to_non_lop_with_results_text;
 
 const create_changeset_notice = ({
     message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE,
@@ -378,7 +398,7 @@ const create_changeset_notice = ({
                                 textarea.addClass('is-invalid');
                                 textarea.parent().append(
                                     '<div class="invalid-feedback">'
-                                    + gettext('Rationale is required.')
+                                    + gettext('A reason is required.')
                                     + '</div>'
                                 );
                                 return false;
@@ -412,7 +432,16 @@ const create_changeset_notice = ({
                 ]
             }
         }
-    })
+    });
+    if (on_cancel) {
+        notice.on('click', function(e) {
+            if ($(e.target).is('.ui-pnotify-closer *')) {
+                let close = on_cancel();
+                if (close || close === undefined) {
+                    notice.close();
+                }
+        }});
+    }
 }
 
 window.create_destructive_changeset_notice = ({
@@ -476,7 +505,7 @@ window.create_nondestructive_changeset_notice = ({
     const inner = `
         <div class="row">
             <div class="col">
-                <h2>${gettext("Share Your Rationale")}</h2>
+                <h2>${gettext("Reason for change")}</h2>
             </div>
         </div>
         <div class="row">

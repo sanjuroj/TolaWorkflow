@@ -5,6 +5,7 @@ const default_user = {
     id: null,
     first_name: "",
     last_name: "",
+    username: "",
     email: "",
     phone_number: "",
     organization_id: null,
@@ -361,7 +362,6 @@ export class UserStore {
                 name: "",
                 organization_name: "",
                 user_programs: 0,
-                is_admin: false,
                 is_active: false
             }
 
@@ -384,7 +384,6 @@ export class UserStore {
                     name: result.name,
                     organization_name: this.organizations[result.organization_id].name,
                     user_programs: aggregates.program_count,
-                    is_admin: result.user.is_staff,
                     is_active: result.user.is_active
                 }
                 this.active_pane_is_dirty = false
@@ -414,7 +413,6 @@ export class UserStore {
                     name: result.name,
                     organization_name: this.organizations[result.organization_id].name,
                     user_programs: aggregates.program_count,
-                    is_admin: result.user.is_staff,
                     is_active: result.user.is_active
                 }
                 this.active_pane_is_dirty = false
@@ -459,7 +457,6 @@ export class UserStore {
                     name: result.name,
                     organization_name: this.organizations[result.organization_id].name,
                     user_programs: aggregates.program_count,
-                    is_admin: result.user.is_staff,
                     is_active: result.user.is_active
                 }
                 this.active_pane_is_dirty = false
@@ -492,7 +489,6 @@ export class UserStore {
                     name: result.name,
                     organization_name: this.organizations[result.organization_id].name,
                     user_programs: aggregates.program_count,
-                    is_admin: result.user.is_staff,
                     is_active: result.user.is_active
                 }
                 this.active_pane_is_dirty = false

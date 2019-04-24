@@ -8,9 +8,6 @@
     }
 }
 
-.react-select.is-invalid~.invalid-feedback {
-    display: block;
-}
 .input--inline {
     // subclass form-group or input for inline form elements inside a d-flex container
     margin-right: $grid-gutter-width/3;
@@ -19,37 +16,11 @@
     }
 }
 
-.react-multiselect-checkbox {
-    & > div {
-        width: 100%;
-        color: $black;
-        border-radius: 4px;
-        border: 1px solid $gray-500;
-        outline: 0 !important;
-        
-        > button {
-            width: 100%;
-            svg {
-               color: $gray-500;
-            }
-        }
-        > div {
-            width: 100%;    
-        }
-    }
-    .count__label {
-        width: 100%;
-        border-right: 1px solid $gray-500;
-        padding-right: 20px;
-        font-size: 16px;
-        line-height: 24px;
-        color: $gray-600;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        > div {
-            position: absolute;
-            right: 41px;
-            top: 8px;
-        }
-    }
+
+// Custom error styling outside BS styles
+.form-group__error {
+    color: $danger;
+    font-size: $small-font-size;
+    margin-top: $grid-gutter-width/4;
+    padding-inline-start: 1rem;
 }

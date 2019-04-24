@@ -243,7 +243,7 @@ export class ProgramStore {
                 name: "",
                 gaitid: "",
                 fundcode: "",
-                funding_status: "",
+                funding_status: "Funded",
                 description: "",
                 country: [],
                 sector: [],
@@ -332,6 +332,7 @@ export class ProgramStore {
         }).then(([response, history]) => {
             // update the model
             runInAction(() => {
+                this.editing_errors = {};
                 this.editing_target = response.data.id;
                 this.editing_target_data = response.data;
                 this.editing_history = history.data;
@@ -367,6 +368,7 @@ export class ProgramStore {
                 .then(history =>
                     runInAction(() => {
                         this.saving = false;
+                        this.editing_errors = {};
                         this.active_pane_is_dirty = false;
                         this.editing_target_data = program_data;
                         this.updateLocalPrograms(response.data);

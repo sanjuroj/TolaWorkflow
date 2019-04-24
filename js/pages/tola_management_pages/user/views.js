@@ -28,7 +28,8 @@ const UserFilter = observer(({store, selections}) => {
 
 const CountryFilter = observer(({store, selections}) => {
     return <div className="form-group react-multiselect-checkbox">
-        {/* # Translators: The countries a user is allowed to access */}
+        {
+            /* # Translators: The countries a user is allowed to access */}
         <label htmlFor="countries_permitted_filter">{gettext("Countries Permitted")}</label>
         <CheckboxedMultiSelect
             value={store.filters.countries}
@@ -41,7 +42,8 @@ const CountryFilter = observer(({store, selections}) => {
 
 const BaseCountryFilter = observer(({store, selections}) => {
     return <div className="form-group react-multiselect-checkbox">
-        {/* # Translators: Primary country of the user */}
+        {
+            /* # Translators: Primary country of the user */}
         <label htmlFor="base_country_filter">{gettext("Base Country")}</label>
         <CheckboxedMultiSelect
             value={store.filters.base_countries}
@@ -215,7 +217,7 @@ export const IndexView = observer(
                         id="status_filter" />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="admin_role_filter">{gettext("Admin Role")}</label>
+                        <label htmlFor="admin_role_filter">{gettext("Administrator?")}</label>
                         <Select
                         value={store.filters.admin_role}
                         options={store.admin_role_options}
@@ -239,7 +241,7 @@ export const IndexView = observer(
                     <div className="controls__buttons">
                         <a href="#" tabIndex="0" className="btn btn-link btn-add" onClick={() => store.createUser()}>
                             <i className="fas fa-plus-circle"/>
-                            {gettext("Add User")}
+                            {gettext("Add user")}
                         </a>
                     </div>
                 </div>
@@ -256,8 +258,8 @@ export const IndexView = observer(
                                     <Col size="2" className="td--stretch">{gettext("User")}</Col>
                                     <Col>{gettext("Organization")}</Col>
                                     <Col>{gettext("Programs")}</Col>
-                                    {/* # Translators: Label for yes/no choice form input - if user is an admin or not */}
-                                    <Col size="0.5">{gettext("Admin Role")}</Col>
+                                    {
+                                        /* # Translators: Label for column identifying "active" or "inactive" user status */}
                                     <Col size="0.25">{gettext("Status")}</Col>
                                 </Row>
                             }
@@ -325,7 +327,8 @@ export const IndexView = observer(
                                             </div>
                                             <div className="expando-toggle__label">
                                                 <i className="fas fa-user"/>&nbsp;
-                                                {/* # Translators: The highest level of administrator in the system */}
+                                                {
+                                                    /* # Translators: The highest level of administrator in the system */}
                                                 {data.name || "---"} {data.is_super && <span className="badge badge-danger">{gettext("Super Admin")}</span>}
                                             </div>
                                         </div>
@@ -340,7 +343,6 @@ export const IndexView = observer(
                                             {data.user_programs} {gettext("programs")}
                                         </a>
                                     </Col>
-                                    <Col size="0.5">{data.is_admin?gettext('Yes'):gettext('No')}</Col>
                                     <Col size="0.25">{data.is_active?gettext('Active'):gettext('Inactive')}</Col>
                                 </Row>
                             }

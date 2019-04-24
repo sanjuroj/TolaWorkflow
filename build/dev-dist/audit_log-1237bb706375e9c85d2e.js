@@ -172,9 +172,6 @@ function (_React$Component) {
 
 var ExpandAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref6) {
   var store = _ref6.store;
-  {
-    /* # Translators: button label to show the details of all rows in a list */
-  }
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     className: "btn btn-medium text-action btn-sm",
     onClick: function onClick() {
@@ -187,9 +184,6 @@ var ExpandAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"]
 });
 var CollapseAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref7) {
   var store = _ref7.store;
-  {
-    /* # Translators: button label to hide the details of all rows in a list */
-  }
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     className: "btn btn-medium text-action btn-sm",
     onClick: function onClick() {
@@ -231,7 +225,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     className: "table table-sm table-bordered bg-white text-small changelog"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
-  }, gettext("Date and Time")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+  }, gettext("Date and time")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
   }, gettext("No.")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
@@ -241,17 +235,17 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     className: "text-nowrap"
   }, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
-  }, gettext("Change Type")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+  }, gettext("Change type")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
-  }, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+  }, gettext("Previous entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
-  }, gettext("New Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+  }, gettext("New entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
-  }, gettext("Rationale")))), store.log_rows.map(function (data) {
+  }, gettext("Reason for change")))), store.log_rows.map(function (data) {
     var is_expanded = store.expando_rows.has(data.id);
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
       key: data.id
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+    }, "`", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
       className: is_expanded ? 'changelog__entry__header is-expanded' : 'changelog__entry__header',
       onClick: function onClick() {
         return store.toggleRowExpando(data.id);
@@ -1191,4 +1185,4 @@ function () {
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-cd8704850c144f99603c.js.map
+//# sourceMappingURL=audit_log-1237bb706375e9c85d2e.js.map

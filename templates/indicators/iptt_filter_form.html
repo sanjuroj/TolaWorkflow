@@ -135,6 +135,12 @@
         </button>
       </div>
     </div>
+    <div id="filter-extra" class=" d-flex justify-content-between no-gutters p-3">
+        <a href="{% url 'tola_management_audit_log' program_id=program.id %}"
+           class="btn-link">
+              <i class="fas fa-history"></i> {% trans "Change log" %}
+        </a>
+    </div>
   </form>
 </nav>
 

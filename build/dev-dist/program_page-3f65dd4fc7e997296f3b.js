@@ -1424,7 +1424,9 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 
     /* # Translators: a label in a graphic. Example: 31% no targets */
     unfilledLabel: gettext("no targets"),
-    cta: gettext("Add missing targets"),
+
+    /* # Translators: a link that displays a filtered list of indicators which are missing targets */
+    cta: gettext("Indicators missing targets"),
     emptyLabel: gettext("No targets")
   };
   var resultsLabels = {
@@ -1436,7 +1438,9 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 
     /* # Translators: a label in a graphic. Example: 31% no results */
     unfilledLabel: gettext("no results"),
-    cta: gettext("Add missing results"),
+
+    /* # Translators: a link that displays a filtered list of indicators which are missing results */
+    cta: gettext("Indicators missing results"),
     emptyLabel: gettext("No results")
   };
   var evidenceLabels = {
@@ -1448,7 +1452,9 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 
     /* # Translators: a label in a graphic. Example: 31% no evidence */
     unfilledLabel: gettext("no evidence"),
-    cta: gettext("Add missing evidence"),
+
+    /* # Translators: a link that displays a filtered list of indicators which are missing evidence */
+    cta: gettext("Indicators missing evidence"),
     emptyLabel: gettext("No evidence")
   }; // Are some targets defined on any indicators?
   // all_targets_defined is an int (1,0) instead of bool
@@ -1497,4 +1503,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-bc399799210ceb7f41e7.js.map
+//# sourceMappingURL=program_page-3f65dd4fc7e997296f3b.js.map

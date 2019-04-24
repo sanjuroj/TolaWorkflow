@@ -5,11 +5,6 @@ import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
 import classNames from 'classnames'
 
 
- const fundingStatusOptions = [
-    {value: 'Funded', label: gettext('Funded')},
-    {value: 'Completed', label: gettext('Completed')},
-]
-
 const ErrorFeedback = observer(({errorMessages}) => {
     if (!errorMessages) {
         return null
@@ -68,7 +63,6 @@ export default class EditProgramProfile extends React.Component {
 
     render() {
         const formdata = this.state.managed_data
-        const selectedFundingStatus = fundingStatusOptions.find(x=> x.value == formdata.funding_status)
         const selectedCountries = formdata.country.map(x=>this.props.countryOptions.find(y=>y.value==x))
         const selectedSectors = formdata.sector.map(x=>this.props.sectorOptions.find(y=>y.value==x))
         return (
@@ -121,7 +115,7 @@ export default class EditProgramProfile extends React.Component {
                         <ErrorFeedback errorMessages={this.formErrors('description')} />
                     </div>
                     <div className="form-group react-multiselect-checkbox">
-                        <label htmlFor="program-county-input">{gettext("Countries")}<span className="required">*</span></label>
+                        <label htmlFor="program-county-input" className="label--required">{gettext("Countries")}</label>
                         <CheckboxedMultiSelect
                             value={selectedCountries}
                             options={this.props.countryOptions}
@@ -141,18 +135,6 @@ export default class EditProgramProfile extends React.Component {
                             id="program-sectors-input"
                             />
                         <ErrorFeedback errorMessages={this.formErrors('sector')} />
-                    </div>
-                    <div className="form-group">
-                        <label className="label--required" htmlFor="program-funding-status-input">{gettext("Funding Status")}</label>
-                        <Select
-                            value={selectedFundingStatus}
-                            options={fundingStatusOptions}
-                            onChange={(e) => this.updateFormField('funding_status', e.value) }
-                            isSearchable={false}
-                            className={classNames('react-select', {'is-invalid': this.formErrors('funding_status')})}
-                            id="program-funding-status-input"
-                            />
-                            <ErrorFeedback errorMessages={this.formErrors('funding_status')} />
                     </div>
                     {this.props.new &&
                     <div className="form-group btn-row">

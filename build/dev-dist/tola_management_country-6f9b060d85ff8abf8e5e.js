@@ -872,6 +872,7 @@ function () {
       this.api.createCountry(country_data).then(function (response) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this3.saving = false;
+          _this3.editing_errors = {};
           _this3.editing_target = response.data.id;
           _this3.active_pane_is_dirty = false;
 
@@ -901,6 +902,7 @@ function () {
       this.api.updateCountry(id, country_data).then(function (response) {
         Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
           _this4.saving = false;
+          _this4.editing_errors = {};
           _this4.active_pane_is_dirty = false;
 
           _this4.updateLocalList(response.data);
@@ -1467,7 +1469,7 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         className: "label--required",
         htmlFor: "objective-name-input"
-      }, gettext("Code")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext("Short name")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         id: "objective-name-input",
         className: classnames__WEBPACK_IMPORTED_MODULE_3___default()('form-control', {
           'is-invalid': this.formErrors('name')
@@ -1483,9 +1485,8 @@ function (_React$Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "label--required",
         htmlFor: "objective-description-input"
-      }, gettext("Objective")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
+      }, gettext("Description")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         id: "objective-description-input",
         className: classnames__WEBPACK_IMPORTED_MODULE_3___default()('form-control', {
           'is-invalid': this.formErrors('description')
@@ -3116,4 +3117,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-d0c85c39855dd4347149.js.map
+//# sourceMappingURL=tola_management_country-6f9b060d85ff8abf8e5e.js.map

@@ -64,11 +64,12 @@ class ChangesetEntry extends React.Component {
 
 const ExpandAllButton = observer(
     ({store}) => {
-        {/* # Translators: button label to show the details of all rows in a list */}
         return <button className="btn btn-medium text-action btn-sm"
                        onClick={() => store.expandAllExpandos()}
                        disabled={store.log_rows.length === store.expando_rows.size}>
             <i className="fas fa-plus-square"></i>
+            {
+                /* # Translators: button label to show the details of all rows in a list */}
             {gettext('Expand all')}
         </button>
     }
@@ -76,11 +77,12 @@ const ExpandAllButton = observer(
 
 const CollapseAllButton = observer(
     ({store}) => {
-        {/* # Translators: button label to hide the details of all rows in a list */}
         return <button className="btn btn-medium text-action btn-sm"
                        onClick={() => store.collapsAllExpandos()}
                        disabled={store.expando_rows.size === 0}>
             <i className="fas fa-minus-square"></i>
+            {
+                /* # Translators: button label to hide the details of all rows in a list */}
             {gettext('Collapse all')}
         </button>
     }
@@ -113,20 +115,20 @@ export const IndexView = observer(
                     <table className="table table-sm table-bordered bg-white text-small changelog">
                         <thead>
                             <tr>
-                                <th className="text-nowrap">{gettext("Date and Time")}</th>
+                                <th className="text-nowrap">{gettext("Date and time")}</th>
                                 <th className="text-nowrap">{gettext("No.")}</th>
                                 <th className="text-nowrap">{gettext("Indicator")}</th>
                                 <th className="text-nowrap">{gettext("User")}</th>
                                 <th className="text-nowrap">{gettext("Organization")}</th>
-                                <th className="text-nowrap">{gettext("Change Type")}</th>
-                                <th className="text-nowrap">{gettext("Previous Entry")}</th>
-                                <th className="text-nowrap">{gettext("New Entry")}</th>
-                                <th className="text-nowrap">{gettext("Rationale")}</th>
+                                <th className="text-nowrap">{gettext("Change type")}</th>
+                                <th className="text-nowrap">{gettext("Previous entry")}</th>
+                                <th className="text-nowrap">{gettext("New entry")}</th>
+                                <th className="text-nowrap">{gettext("Reason for change")}</th>
                             </tr>
                         </thead>
                         {store.log_rows.map(data => {
                                 let is_expanded = store.expando_rows.has(data.id);
-                                return <tbody key={data.id}>
+                                return <tbody key={data.id}>`
                                 <tr className={is_expanded ? 'changelog__entry__header is-expanded' : 'changelog__entry__header'} onClick={() => store.toggleRowExpando(data.id)}>
                                     <td className="text-action">
                                         <FontAwesomeIcon icon={is_expanded ? 'caret-down' : 'caret-right'} />&nbsp;{data.date}

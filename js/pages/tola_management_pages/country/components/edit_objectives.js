@@ -75,7 +75,7 @@ class StrategicObjectiveForm extends React.Component {
                     <form className="form card card-body bg-white">
                         <div className="form-group">
                             <label className="label--required" htmlFor="objective-name-input">
-                                {gettext("Code")}
+                                {gettext("Short name")}
                             </label>
                             <input
                                 id="objective-name-input"
@@ -88,8 +88,8 @@ class StrategicObjectiveForm extends React.Component {
                             <ErrorFeedback errorMessages={this.formErrors('name')} />
                         </div>
                         <div className="form-group">
-                            <label className="label--required" htmlFor="objective-description-input">
-                                {gettext("Objective")}
+                            <label htmlFor="objective-description-input">
+                                {gettext("Description")}
                             </label>
                             <textarea
                                 id="objective-description-input"
@@ -228,6 +228,8 @@ export default class EditObjectives extends React.Component {
                 )}
                 <div>
                     <a tabIndex="0" onClick={() => this.addObjective()} className="btn btn-link btn-add">
+                        {
+                        /* # Translators: This is a button that allows the user to add a strategic objective. */}
                         <i className="fas fa-plus-circle"/>{gettext("Add strategic objective")}
                     </a>
                 </div>

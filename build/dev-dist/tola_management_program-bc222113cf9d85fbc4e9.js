@@ -269,10 +269,10 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 var status_options = [{
   value: 'Funded',
-  label: gettext('Funded')
+  label: gettext('Active')
 }, {
   value: 'Completed',
-  label: gettext('Completed')
+  label: gettext('Inactive')
 }];
 var ProgramHistory = Object(mobx_react__WEBPACK_IMPORTED_MODULE_3__["observer"])(_class =
 /*#__PURE__*/
@@ -350,7 +350,7 @@ function (_React$Component) {
         htmlFor: "status-input",
         className: "label--required",
         required: true
-      }, gettext("Program Status")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, gettext("Status")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
         isSearchable: false,
         options: status_options,
         value: currentStatusSelection,
@@ -844,13 +844,6 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-var fundingStatusOptions = [{
-  value: 'Funded',
-  label: gettext('Funded')
-}, {
-  value: 'Completed',
-  label: gettext('Completed')
-}];
 var ErrorFeedback = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(function (_ref) {
   var errorMessages = _ref.errorMessages;
 
@@ -938,9 +931,6 @@ function (_React$Component) {
       var _this4 = this;
 
       var formdata = this.state.managed_data;
-      var selectedFundingStatus = fundingStatusOptions.find(function (x) {
-        return x.value == formdata.funding_status;
-      });
       var selectedCountries = formdata.country.map(function (x) {
         return _this4.props.countryOptions.find(function (y) {
           return y.value == x;
@@ -1027,10 +1017,9 @@ function (_React$Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group react-multiselect-checkbox"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        htmlFor: "program-county-input"
-      }, gettext("Countries"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "required"
-      }, "*")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        htmlFor: "program-county-input",
+        className: "label--required"
+      }, gettext("Countries")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
         value: selectedCountries,
         options: this.props.countryOptions,
         onChange: function onChange(e) {
@@ -1062,24 +1051,6 @@ function (_React$Component) {
         id: "program-sectors-input"
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ErrorFeedback, {
         errorMessages: this.formErrors('sector')
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "label--required",
-        htmlFor: "program-funding-status-input"
-      }, gettext("Funding Status")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
-        value: selectedFundingStatus,
-        options: fundingStatusOptions,
-        onChange: function onChange(e) {
-          return _this4.updateFormField('funding_status', e.value);
-        },
-        isSearchable: false,
-        className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('react-select', {
-          'is-invalid': this.formErrors('funding_status')
-        }),
-        id: "program-funding-status-input"
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ErrorFeedback, {
-        errorMessages: this.formErrors('funding_status')
       })), this.props.new && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
@@ -2566,7 +2537,7 @@ function () {
           name: "",
           gaitid: "",
           fundcode: "",
-          funding_status: "",
+          funding_status: "Funded",
           description: "",
           country: [],
           sector: []
@@ -2623,6 +2594,7 @@ function () {
           return _this4.api.fetchProgramHistory(response.data.id).then(function (history) {
             Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
               _this4.saving = false;
+              _this4.editing_errors = {};
               _this4.editing_target = response.data.id;
               _this4.editing_target_data = response.data;
               _this4.editing_history = history.data;
@@ -2660,6 +2632,7 @@ function () {
         return _this5.api.fetchProgramHistory(id).then(function (history) {
           return Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
             _this5.saving = false;
+            _this5.editing_errors = {};
             _this5.active_pane_is_dirty = false;
             _this5.editing_target_data = program_data;
 
@@ -2943,4 +2916,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-6c9b8b7bb83c7dfbed69.js.map
+//# sourceMappingURL=tola_management_program-bc222113cf9d85fbc4e9.js.map

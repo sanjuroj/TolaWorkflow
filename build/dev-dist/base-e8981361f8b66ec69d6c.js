@@ -340,9 +340,22 @@ function newPopup(url, windowName) {
 
 window.newPopup = newPopup; // EXAMPLE: <a onclick="newPopup('https://docs.google.com/document/d/1tDwo3m1ychefNiAMr-8hCZnhEugQlt36AOyUYHlPbVo/edit?usp=sharing','Form Help/Guidance'); return false;" href="#" class="btn btn-sm btn-info">Form Help/Guidance</a>
 
-var DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.");
-var DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your rationale for these changes.');
-var DEFAULT_NO_RATIONALE_TEXT = gettext("This action cannot be undone");
+var DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a change log. For future reference, please share your reason for these changes.");
+var DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your reason for these changes.');
+var DEFAULT_NO_RATIONALE_TEXT = gettext("This action cannot be undone"); // This is only until we get indicator_form_common_js moved to webpack and out of html (makemessages bug)
+// these translation strings are used exclusively in the indicator setup form:
+
+var target_with_results_text = function target_with_results_text(numResults) {
+  return interpolate(ngettext('Removing this target means that %s result will no longer have targets associated with it.', 'Removing this target means that %s results will no longer have targets associated with them.', numResults), [numResults]);
+};
+
+window.target_with_results_text = target_with_results_text;
+
+var lop_to_non_lop_with_results_text = function lop_to_non_lop_with_results_text(numResults) {
+  return interpolate(ngettext('If we make these changes, %s data record will no longer be associated with the Life of Program target, and will need to be reassigned to a new target.\n\n Proceed anyway?', 'If we make these changes, %s data records will no longer be associated with the Life of Program target, and will need to be reassigned to new targets.\n\n Proceed anyway?', numResults), [numResults]);
+};
+
+window.lop_to_non_lop_with_results_text = lop_to_non_lop_with_results_text;
 
 var create_changeset_notice = function create_changeset_notice() {
   var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -403,7 +416,7 @@ var create_changeset_notice = function create_changeset_notice() {
 
             if (!rationale && rationale_required) {
               textarea.addClass('is-invalid');
-              textarea.parent().append('<div class="invalid-feedback">' + gettext('Rationale is required.') + '</div>');
+              textarea.parent().append('<div class="invalid-feedback">' + gettext('A reason is required.') + '</div>');
               return false;
             } else {
               textarea.removeClass('is-invalid');
@@ -438,6 +451,18 @@ var create_changeset_notice = function create_changeset_notice() {
       }
     }
   });
+
+  if (on_cancel) {
+    notice.on('click', function (e) {
+      if ($(e.target).is('.ui-pnotify-closer *')) {
+        var _close = on_cancel();
+
+        if (_close || _close === undefined) {
+          notice.close();
+        }
+      }
+    });
+  }
 };
 
 window.create_destructive_changeset_notice = function () {
@@ -507,7 +532,7 @@ window.create_nondestructive_changeset_notice = function () {
     message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE;
   }
 
-  var inner = "\n        <div class=\"row\">\n            <div class=\"col\">\n                <h2>".concat(gettext("Share Your Rationale"), "</h2>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                ").concat(message_text, "\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div class=\"form-group\">\n                    <textarea class=\"form-control\" name=\"rationale\"></textarea>\n                </div>\n            </div>\n        </div>\n    ");
+  var inner = "\n        <div class=\"row\">\n            <div class=\"col\">\n                <h2>".concat(gettext("Reason for change"), "</h2>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                ").concat(message_text, "\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div class=\"form-group\">\n                    <textarea class=\"form-control\" name=\"rationale\"></textarea>\n                </div>\n            </div>\n        </div>\n    ");
   return create_changeset_notice({
     message_text: message_text,
     on_submit: on_submit,
@@ -584,4 +609,4 @@ window.scrollToBottom = scrollToBottom;
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-44464b65ae1e896374f3.js.map
+//# sourceMappingURL=base-e8981361f8b66ec69d6c.js.map

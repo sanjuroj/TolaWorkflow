@@ -303,7 +303,9 @@ class TolaUser(models.Model):
     def logged_fields(self):
         return {
             "title": self.title,
-            "name": self.name,
+            "first_name": self.user.first_name,
+            "last_name": self.user.last_name,
+            "user": self.user.username,
             "mode_of_address": self.mode_of_address,
             "mode_of_contact": self.mode_of_contact,
             "phone_number": self.phone_number,
@@ -360,7 +362,7 @@ class CountryAccess(models.Model):
     def save(self, *args, **kwargs):
         #requirements that country access be given only to mercy corps users (id = 1)
         if self.id is None and self.tolauser.organization_id != 1:
-            raise SuspiciousOperation(_("Only Mercy Corps users can be given country access"))
+            raise SuspiciousOperation(_("Only Mercy Corps users can be given country-level access"))
         super(CountryAccess, self).save(*args, **kwargs)
 
     class Meta:
@@ -668,9 +670,12 @@ class Program(models.Model):
 
 
 PROGRAM_ROLE_CHOICES = (
-    ('low', _('Low')),
-    ('medium', _('Medium')),
-    ('high', _('High'))
+    # Translators: Refers to a user permission role with limited access to view data only
+    ('low', _('Low (view only)')),
+    # Translators: Refers to a user permission role with limited access to add or edit result data
+    ('medium', _('Medium (add and edit results)')),
+    # Translators: Refers to a user permission role with access to edit any data
+    ('high', _('High (edit anything)'))
 )
 
 PROGRAM_ROLE_INT_MAP = {

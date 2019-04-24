@@ -463,12 +463,12 @@ class IndicatorDelete(DeleteView):
                 # if an indicator has results and no rationale is provided, fail:
                 if indicator.result_set.all().count() > 0:
                     return JsonResponse(
-                        {"status": "failed", "msg": _("Rationale is required.")},
+                        {"status": "failed", "msg": _("Reason for change is required.")},
                         status=400
                     )
                 # otherwise the rationale is this default:
                 else:
-                    rationale = "A rationale is not required when deleting an indicator with no linked results."
+                    rationale = "Reason for change is not required when deleting an indicator with no linked results."
             else:
                 rationale = request.POST.get('rationale')
             indicator_values = indicator.logged_fields
@@ -533,11 +533,11 @@ class PeriodicTargetView(View):
         if not rationale:
             if indicator.result_set.all().exists():
                 return JsonResponse(
-                    {"status": "failed", "msg": "Rationale is required"},
+                    {"status": "failed", "msg": _("Reason for change is required")},
                     status=400
                 )
             else:
-                rationale = 'No rationale required.'
+                rationale = 'No reason for change required.'
 
         deleteall = self.kwargs.get('deleteall', None)
         if deleteall == 'true':
@@ -586,14 +586,14 @@ class PeriodicTargetDeleteView(DeleteView):
         if result_count > 0:
             if not rationale:
                 return JsonResponse(
-                    {"status": "failed", "msg": "Rationale is required"},
+                    {"status": "failed", "msg": _("Reason for change is required")},
                     status=400
                 )
             else:
                 self.get_object().result_set.all().update(
                     periodic_target=None)
         if not rationale and result_count == 0:
-            rationale = 'No rationale required.'
+            rationale = 'No reason for change required.'
         self.get_object().delete()
         if indicator.periodictargets.count() == 0:
             indicator.target_frequency = None
@@ -822,7 +822,7 @@ class ResultDelete(DeleteView):
         if request.is_ajax():
             if not request.POST.get('rationale'):
                 return JsonResponse(
-                    {"status": "failed", "msg": "Rationale is required"},
+                    {"status": "failed", "msg": _("Reason for change is required")},
                     status=401
                 )
 
