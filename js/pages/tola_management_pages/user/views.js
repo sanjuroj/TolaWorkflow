@@ -217,7 +217,7 @@ export const IndexView = observer(
                         id="status_filter" />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="admin_role_filter">{gettext("Admin Role")}</label>
+                        <label htmlFor="admin_role_filter">{gettext("Administrator?")}</label>
                         <Select
                         value={store.filters.admin_role}
                         options={store.admin_role_options}
@@ -260,7 +260,7 @@ export const IndexView = observer(
                                     <Col>{gettext("Programs")}</Col>
                                     {
                                         /* # Translators: Label for yes/no choice form input - if user is an admin or not */}
-                                    <Col size="0.5">{gettext("Admin Role")}</Col>
+                                    <Col size="0.5">{gettext("Administrator?")}</Col>
                                     {
                                         /* # Translators: Label for column identifying "active" or "inactive" user status */}
                                     <Col size="0.25">{gettext("Status")}</Col>
