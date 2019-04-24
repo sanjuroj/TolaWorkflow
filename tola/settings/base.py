@@ -397,5 +397,15 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
+        'workflow': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'indicators': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
     },
 }
