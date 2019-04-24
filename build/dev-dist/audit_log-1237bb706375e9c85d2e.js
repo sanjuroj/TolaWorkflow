@@ -225,7 +225,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     className: "table table-sm table-bordered bg-white text-small changelog"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
-  }, gettext("Date and Time")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+  }, gettext("Date and time")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
   }, gettext("No.")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
@@ -235,13 +235,13 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     className: "text-nowrap"
   }, gettext("Organization")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
-  }, gettext("Change Type")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+  }, gettext("Change type")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
-  }, gettext("Previous Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+  }, gettext("Previous entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
-  }, gettext("New Entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+  }, gettext("New entry")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
-  }, gettext("Rationale")))), store.log_rows.map(function (data) {
+  }, gettext("Reason for change")))), store.log_rows.map(function (data) {
     var is_expanded = store.expando_rows.has(data.id);
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
       key: data.id
@@ -1185,4 +1185,4 @@ function () {
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-e1ed7732b28301483256.js.map
+//# sourceMappingURL=audit_log-1237bb706375e9c85d2e.js.map
