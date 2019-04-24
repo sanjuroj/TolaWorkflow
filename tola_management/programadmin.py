@@ -248,7 +248,7 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         programStatus = params.get('programStatus')
         if programStatus == 'Active':
             queryset = queryset.filter(funding_status='Funded')
-        elif programStatus == 'Closed':
+        elif programStatus == 'Inactive':
             queryset = queryset.exclude(funding_status='Funded')
 
         programParam = params.getlist('programs[]')
