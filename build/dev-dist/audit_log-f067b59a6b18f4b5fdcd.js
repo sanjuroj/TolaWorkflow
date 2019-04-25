@@ -245,7 +245,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     var is_expanded = store.expando_rows.has(data.id);
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
       key: data.id
-    }, "`", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
       className: is_expanded ? 'changelog__entry__header is-expanded' : 'changelog__entry__header',
       onClick: function onClick() {
         return store.toggleRowExpando(data.id);
@@ -1185,4 +1185,4 @@ function () {
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-1237bb706375e9c85d2e.js.map
+//# sourceMappingURL=audit_log-f067b59a6b18f4b5fdcd.js.map
