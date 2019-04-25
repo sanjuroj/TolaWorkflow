@@ -175,7 +175,7 @@ function () {
         value: id
       };
     });
-    this.appliedFilters = _objectSpread({}, this.filter);
+    this.appliedFilters = _objectSpread({}, this.filters);
     this.fetchOrganizations();
   }
 
@@ -2723,4 +2723,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-acea1659a0c677432a3a.js.map
+//# sourceMappingURL=tola_management_organization-47ff3909fa3c65fb16cc.js.map
