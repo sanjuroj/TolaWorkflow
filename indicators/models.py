@@ -1193,7 +1193,16 @@ class Result(models.Model):
             "date": self.date_collected,
             "target": self.periodic_target.period_name if self.periodic_target else 'N/A',
             "evidence_name": self.record_name,
-            "evidence_url": self.evidence_url
+            "evidence_url": self.evidence_url,
+            "sites": ', '.join(site.name for site in self.site.all()) if self.site.exists() else '',
+            "disaggregation_values": {
+                dv.disaggregation_label.id: {
+                    "id": dv.disaggregation_label.id,
+                    "value": dv.value,
+                    "name": dv.disaggregation_label.label,
+                }
+                for dv in self.disaggregation_value.all()
+            }
         }
 
 

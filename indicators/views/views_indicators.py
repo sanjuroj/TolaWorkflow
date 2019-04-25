@@ -764,8 +764,6 @@ class ResultUpdate(ResultFormMixin, UpdateView):
             Q(disaggregation_type__indicator__id=indicator) |
             Q(disaggregation_type__standard=True)).distinct()
 
-        getIndicator = Result.objects.get(id=self.kwargs['pk'])
-
         # update the count with the value of Table unique count
         if form.instance.update_count_tola_table and form.instance.tola_table:
             try:
@@ -782,27 +780,35 @@ class ResultUpdate(ResultFormMixin, UpdateView):
             else:
                 count = 0
             form.instance.achieved = count
+
         # save the form then update manytomany relationships
         old_values = getResult.logged_fields
         new = form.save()
-        ProgramAuditLog.log_result_updated(self.request.user, getResult.indicator, old_values, new.logged_fields, form.cleaned_data.get('rationale'))
+
+        # The below code makes no sense, yet somehow still works
+        # the first time disaggregation_value.create() is called,
+        # it does the equiv of disaggregation_value.clear()
+        # and the whole list of values is rebuilt to the correct count
 
         # Insert or update disagg values
         for label in getDisaggregationLabel:
-            for key, value in self.request.POST.iteritems():
-                if key == str(label.id):
-                    value_to_insert = value
-                    save = getResult.disaggregation_value.create(
-                        disaggregation_label=label, value=value_to_insert)
+            form_id_for_label = str(label.id)
+            form_disagg_value = self.request.POST.get(form_id_for_label)
+            if form_disagg_value:
+                getResult.disaggregation_value.create(
+                    disaggregation_label=label, value=form_disagg_value)
 
-                    getResult.disaggregation_value.add(save.id)
+        # Result.achieved comes back different from the DB than from the ResultForm
+        new.refresh_from_db()
+        ProgramAuditLog.log_result_updated(self.request.user, getResult.indicator, old_values,
+                                           new.logged_fields, form.cleaned_data.get('rationale'))
 
         if self.request.is_ajax():
             data = serializers.serialize('json', [self.object])
             return HttpResponse(data)
 
         messages.success(self.request, _('Success, Data Updated!'))
-        redirect_url = getIndicator.program.program_page_url
+        redirect_url = getResult.program.program_page_url
 
         return HttpResponseRedirect(redirect_url)
 
