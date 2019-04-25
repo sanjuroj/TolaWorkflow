@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% load i18n mytags has_program_role %}
 {# Translators: Page title if the user has not selected country #}
-{% block title %}{{ active_country|default:_("No active country") }} | {% endblock %}
-{% block page_title %}{{ active_country|default:_("No active country") }}{% endblock %}
+{% block title %}{{ active_country|default:_("No available programs") }} | {% endblock %}
+{% block page_title %}{{ active_country|default:_("No available programs") }}{% endblock %}
 
 {% block bodyclasses %}home{% endblock %}
 
@@ -49,10 +49,14 @@
         </div>
     </div>
 </section><!--/.home__featured-country-->
-{% endif %}
-
 <section class="home__program-list">
+    {% if no_programs > 0 %}
     <h2>{% blocktrans %}{{ no_programs }} active programs{% endblocktrans %}</h2>
+    {% else %}
+    {% blocktrans %}
+    <h2>No available programs</h2>
+    {% endblocktrans %}
+    {% endif %}
     {% for program in programs %}
         {% has_program_role user program "high" as has_high_role %}
         <article class="program-list__program card">
@@ -148,6 +152,20 @@
     {% endfor %}
     <!--/.program-list__program-->
 </section>
+{% else %}
+<section class="home__no-access">
+    {# Translators: message shown when there are no programs available to the user, or no active programs in a country #}
+    {% blocktrans %}
+    <p>
+        You do not have permission to view any programs. You can request permission from your TolaData administrator.
+    </p>
+    <p>
+        You can also reach the TolaData team by using the <a href="https://docs.google.com/forms/d/e/1FAIpQLSclm2PAT9TJ9q23TT6YWQg6hj3EndUAdyF5k6kvNJHu6njNtw/viewform">feedback form.</a>
+    </p>
+    {% endblocktrans %}
+</section>
+{% endif %}
+
 {% include "indicators/indicator_list_modals.html" %}
 
 {% endblock content %}
