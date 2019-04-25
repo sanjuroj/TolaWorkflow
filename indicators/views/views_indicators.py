@@ -1017,12 +1017,8 @@ class DisaggregationReportMixin(object):
     def get_context_data(self, **kwargs):
         context = super(DisaggregationReportMixin, self) \
             .get_context_data(**kwargs)
-
-        countries = getCountry(self.request.user)
-        programs = Program.objects.filter(funding_status="Funded",
-                                          country__in=countries).distinct()
-
-        indicators = Indicator.objects.filter(program__country__in=countries)
+        programs = self.request.user.tola_user.available_programs
+        indicators = Indicator.objects.filter(program__in=programs)
 
         programId = int(kwargs.get('program', 0))
         program_selected = None
@@ -1092,6 +1088,19 @@ class DisaggregationReportMixin(object):
         return context
 
 @method_decorator(login_required, name='dispatch')
+class DisaggregationReportQuickstart(TemplateView):
+    template_name = 'indicators/disaggregation_report.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(DisaggregationReportQuickstart, self).get_context_data(**kwargs)
+        context['program_id'] = 0
+        context['data'] = []
+        context['getPrograms'] = self.request.user.tola_user.available_programs
+        context['disaggregationprint_button'] = False
+        context['disaggregationcsv_button'] = False
+        return context
+
+@method_decorator(login_required, name='dispatch')
 @method_decorator(has_program_read_access, name='dispatch')
 class DisaggregationReport(DisaggregationReportMixin, TemplateView):
     template_name = 'indicators/disaggregation_report.html'
@@ -1099,6 +1108,7 @@ class DisaggregationReport(DisaggregationReportMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(DisaggregationReport, self).get_context_data(**kwargs)
         context['disaggregationprint_button'] = True
+        context['disaggregationcsv_button'] = True
         return context
 
 
