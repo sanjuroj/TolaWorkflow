@@ -75,7 +75,7 @@ export class OrganizationStore {
         this.country_selections = Object.entries(countries).map(([id, country]) => ({value: country.id, label: country.name}))
         this.filters.countries = country_filter.map(id => this.available_countries[id]).map(country => ({label: country.name, value: country.id}))
         this.filters.programs = program_filter.filter(id => programs[id]).map(id => ({label: programs[id].name, value: id}))
-        this.appliedFilters = {...this.filter}
+        this.appliedFilters = {...this.filters}
         this.fetchOrganizations()
     }
 
