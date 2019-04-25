@@ -132,6 +132,10 @@ class Organization(models.Model):
     def __unicode__(self):
         return self.name
 
+    @classmethod
+    def mercy_corps(cls):
+        return cls.objects.get(pk=1)
+
 
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('name', 'create_date', 'edit_date')
