@@ -12,7 +12,8 @@ from workflow.models import (
     Country,
     SiteProfile,
     PROGRAM_ROLE_CHOICES,
-    PROGRAM_ROLE_INT_MAP
+    PROGRAM_ROLE_INT_MAP,
+    Organization
 )
 
 from indicators.models import (
@@ -32,7 +33,7 @@ def social_auth_okta_pipeline(backend, details, user, response, *args, **kwargs)
         except User.DoesNotExist:
             user = User(username=attributes.get('email'), email=attributes.get('email'))
             user.save()
-            tola_user = TolaUser(user=user)
+            tola_user = TolaUser(user=user, organization=Organization.mercy_corps())
 
         user.first_name = attributes['firstName']
         user.last_name = attributes['lastName']

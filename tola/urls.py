@@ -139,6 +139,7 @@ urlpatterns = [
                 url(r'^accounts/profile/$', views.profile, name='profile'),
 
                 # Auth backend URL's
+                url(r'^accounts/invalid_user/$', views.invalid_user_view, name='invalid_user'),
                 url(r'accounts/', include('django.contrib.auth.urls')),
                 url('', include('social_django.urls', namespace='social')),
 

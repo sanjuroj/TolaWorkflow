@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}User Not Found{% endblock %}
+
+{% block page_title %}{% trans "This Gmail address is not associated with a TolaActivity user account." %}{% endblock page_title %}
+
+
+{% block content %}
+<p>
+    {% trans 'You can request an account from your TolaData administrator.' %}
+    <br/>
+    <br/>
+    {% blocktrans %} You can also reach the TolaData team by using the <a href="https://docs.google.com/forms/d/e/1FAIpQLSclm2PAT9TJ9q23TT6YWQg6hj3EndUAdyF5k6kvNJHu6njNtw/viewform">feedback form.</a>
+    {% endblocktrans %}
+</p>
+
+{% endblock content %}
