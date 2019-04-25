@@ -132,6 +132,10 @@ class Organization(models.Model):
     def __unicode__(self):
         return self.name
 
+    @classmethod
+    def mercy_corps(cls):
+        return cls.objects.get(pk=1)
+
 
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('name', 'create_date', 'edit_date')
@@ -171,7 +175,7 @@ class TolaUser(models.Model):
     employee_number = models.IntegerField(_("Employee Number"), blank=True, null=True)
     user = models.OneToOneField(User, unique=True, related_name='tola_user', verbose_name=_("User"))
     organization = models.ForeignKey(
-        Organization, default=1, blank=True, null=True, verbose_name=_("Organization"))
+        Organization, verbose_name=_("Organization"))
     language = models.CharField(max_length=2, choices=settings.LANGUAGES, default='en')
     country = models.ForeignKey(Country, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Country"))
     active_country = models.ForeignKey( Country, blank=True, null=True, on_delete=models.SET_NULL,\
