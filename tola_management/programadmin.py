@@ -447,6 +447,8 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         # TODO: do something better than strings here...
         gait_error = append_GAIT_dates(program)
 
+        program.save()
+
         return JsonResponse({
             'gait_error': gait_error,
         })
