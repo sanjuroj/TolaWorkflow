@@ -173,7 +173,8 @@ class TolaUser(models.Model):
     title = models.CharField(_("Title"), blank=True, null=True, max_length=50)
     name = models.CharField(_("Given Name"), blank=True, null=True, max_length=100)
     employee_number = models.IntegerField(_("Employee Number"), blank=True, null=True)
-    user = models.OneToOneField(User, unique=True, related_name='tola_user', verbose_name=_("User"))
+    user = models.OneToOneField(User, unique=True, null=True, related_name='tola_user', verbose_name=_("User"),
+                                on_delete=models.SET_NULL)
     organization = models.ForeignKey(
         Organization, verbose_name=_("Organization"))
     language = models.CharField(max_length=2, choices=settings.LANGUAGES, default='en')
