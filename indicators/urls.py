@@ -19,6 +19,7 @@ from .views.views_indicators import (
     result_view,
     indicator_plan,
     DisaggregationReport,
+    DisaggregationReportQuickstart,
     DisaggregationPrint,
     api_indicator_view)
 
@@ -52,6 +53,7 @@ urlpatterns = [
 
     url(r'^result_delete/(?P<pk>\d+)/$', ResultDelete.as_view(), name='result_delete'),
 
+    url(r'^disrep_quickstart/$', DisaggregationReportQuickstart.as_view(), name='disrep_quickstart'),
     url(r'^disrep/(?P<program>\d+)/$', DisaggregationReport.as_view(), name='disrep'),
 
     url(r'^disrepprint/(?P<program>\d+)/$', DisaggregationPrint.as_view(), name='disrepprint'),
