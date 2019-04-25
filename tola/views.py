@@ -145,3 +145,6 @@ def logout_view(request):
     logout(request)
     # Redirect to a success page.
     return HttpResponseRedirect("/")
+
+def invalid_user_view(request):
+    return render(request, 'registration/invalid_user.html')
