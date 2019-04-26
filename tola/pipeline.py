@@ -2,7 +2,7 @@
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from social_core.pipeline.social_auth import associate_by_email
+from social_core.pipeline.social_auth import associate_by_email, social_user, associate_user
 
 def domains_allowed(backend, details, response, *args, **kwargs):
     if 'email' in details and details['email'] and len(details['email'].split('@')) > 1:
@@ -11,7 +11,9 @@ def domains_allowed(backend, details, response, *args, **kwargs):
             # redirects user to okta login if they are in OKTA domains
             return HttpResponseRedirect('/login/saml/?idp=okta')
 
+
 def associate_email_or_redirect(backend, details, user=None, *args, **kwargs):
+    """extension of the associate_email step in the pipeline to add redirect if user not found"""
     if user:
         return None
     else:
@@ -20,3 +22,24 @@ def associate_email_or_redirect(backend, details, user=None, *args, **kwargs):
             return tola_user
         else:
             return HttpResponseRedirect(reverse("invalid_user"))
+
+
+def social_user_tola(backend, uid, user=None, *args, **kwargs):
+    """extension of the social user lookup in the pipeline to clear bad associations"""
+    # try to get user from social auth storage:
+    provider = backend.name
+    social = backend.strategy.storage.user.get_social_auth(provider, uid)
+    if social and social.user.email.lower() != uid.lower():
+        # we found a match, but the emails are different, delete the bad data:
+        social.delete()
+    # call the original social_user now that we know bad data has been expunged:
+    return social_user(backend, uid, user, *args, **kwargs)
+
+
+def associate_user_tola(backend, uid, user=None, social=None, *args, **kwargs):
+    """extension of the user-association step of the pipeline to avoid associating to previously logged-in users"""
+    if user and user.email and user.email.lower() != uid.lower():
+        # if we have a user logged in (sessioning!) and they don't match the uid entered
+        # zero out the user so we don't associate badly a user with a bad social auth:
+        user = None
+    return associate_user(backend, uid, user, social, *args, **kwargs)
