@@ -130,13 +130,17 @@
                                             {% endif %}
                                       </span>
                                 </li>
-                                <li class="nav-item">
-                                  <a class="nav-link" href="{% url 'profile' %}">
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspop="true" aria-expanded="false" id="navbarUserDropdown">
                                         {% if user.is_superuser %}
                                               <span class="badge badge-danger text-uppercase">Super admin</span>
                                         {% endif %}
-                                        {% trans "Settings" %}
+                                        {% firstof user.tola_user.name user.username %}
                                     </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarUserDropdown">
+                                        <a class="dropdown-item" href="{% url 'profile' %}">{% trans "Settings" %}</a>
+                                        <a class="dropdown-item" href="{% url 'logout' %}">{% trans "Log out" %}</a>
+                                    </div>
                                 </li>
                             {% else %}
                             <li class="nav-item">
