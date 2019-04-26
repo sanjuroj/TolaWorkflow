@@ -323,7 +323,7 @@
         }
         $(this).attr("disabled", true);
 
-        submitForm(true, '');
+        submitForm(true, {% trans 'N/A' %});
     });
 
     $("#indicator_form").on("click", "#id_create_targets_btn", function(e) {
@@ -337,18 +337,7 @@
         // Even though #indicator_form selector catches case when not a modal, pretend like it's a modal
         // The reason being is to not display the link to program page when creating targets, regardless of context
 
-        var has_results = parseInt($('#numDataPoints').text()) > 0;
-        if(has_results) {
-            window.create_nondestructive_changeset_notice({
-                context: document.getElementById('indicator_update_form'),
-                on_submit: (rationale) => {
-                    submitForm(true, rationale);
-                }
-            });
-            scrollToIndicatorFormBottom();
-        } else {
-            submitForm(true, '');
-        }
+        submitForm(true, {% trans 'N/A' %});
     });
 
 

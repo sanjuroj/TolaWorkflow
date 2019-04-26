@@ -370,27 +370,27 @@ class IndicatorUpdate(UpdateView):
 
         results_count = Result.objects.filter(indicator=self.object).count()
 
+        # Logging now happens when either when the "save changes" or "create targets" is pressed
+        # this is done since other form changes could have happened when the create targets button was pressed
         # Conditions for logging:
         # * Results are attached
         # * tracked fields have changed
-        # * the indicator form is being saved (as opposed to targets generated - this view handles both)
-        if not periodic_targets == 'generateTargets' or new_target_frequency == Indicator.LOP:
-            if results_count > 0:
-                previous_entry_json = json.dumps(old_indicator_values, cls=DjangoJSONEncoder)
-                new_entry_json = json.dumps(self.object.logged_fields, cls=DjangoJSONEncoder)
-                if new_entry_json != previous_entry_json:
-                    if rationale == '':
-                        # front end validation was bypassed?
-                        # raise exception here instead of returning an HttpResponse to rollback DB transaction
-                        raise Exception('rationale string missing on indicator form')
+        if results_count > 0:
+            previous_entry_json = json.dumps(old_indicator_values, cls=DjangoJSONEncoder)
+            new_entry_json = json.dumps(self.object.logged_fields, cls=DjangoJSONEncoder)
+            if new_entry_json != previous_entry_json:
+                if rationale == '':
+                    # front end validation was bypassed?
+                    # raise exception here instead of returning an HttpResponse to rollback DB transaction
+                    raise Exception('rationale string missing on indicator form')
 
-                    ProgramAuditLog.log_indicator_updated(
-                        self.request.user,
-                        self.object,
-                        old_indicator_values,
-                        self.object.logged_fields,
-                        rationale
-                    )
+                ProgramAuditLog.log_indicator_updated(
+                    self.request.user,
+                    self.object,
+                    old_indicator_values,
+                    self.object.logged_fields,
+                    rationale
+                )
 
         # fetch all existing periodic_targets for this indicator
         periodic_targets = PeriodicTarget.objects.filter(indicator=indicatr) \
