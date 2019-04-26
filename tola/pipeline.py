@@ -28,12 +28,15 @@ def social_user_tola(backend, uid, user=None, *args, **kwargs):
     """extension of the social user lookup in the pipeline to clear bad associations"""
     # try to get user from social auth storage:
     provider = backend.name
-    social = backend.strategy.storage.user.get_social_auth(provider, uid)
-    if social and social.user.email.lower() != uid.lower():
-        # we found a match, but the emails are different, delete the bad data:
-        social.delete()
+    if provider == 'google-oauth2':
+        social = backend.strategy.storage.user.get_social_auth(provider, uid)
+        if social and social.user.email.lower() != uid.lower():
+            # we found a match, but the emails are different, delete the bad data:
+            social.delete()
+            user = None
     # call the original social_user now that we know bad data has been expunged:
-    return social_user(backend, uid, user, *args, **kwargs)
+    social = social_user(backend, uid, user, *args, **kwargs)
+    return social
 
 
 def associate_user_tola(backend, uid, user=None, social=None, *args, **kwargs):
