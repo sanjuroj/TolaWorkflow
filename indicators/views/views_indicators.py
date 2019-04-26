@@ -758,11 +758,10 @@ class ResultUpdate(ResultFormMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        getResult = Result.objects.get(id=self.kwargs['pk'])
-        indicator = self.request.POST['indicator']
+        old_result = Result.objects.get(id=self.kwargs['pk'])
 
         getDisaggregationLabel = DisaggregationLabel.objects.filter(
-            Q(disaggregation_type__indicator__id=indicator) |
+            Q(disaggregation_type__indicator__id=old_result.indicator_id) |
             Q(disaggregation_type__standard=True)).distinct()
 
         # update the count with the value of Table unique count
@@ -783,8 +782,10 @@ class ResultUpdate(ResultFormMixin, UpdateView):
             form.instance.achieved = count
 
         # save the form then update manytomany relationships
-        old_values = getResult.logged_fields
-        new = form.save()
+        old_values = old_result.logged_fields
+        new_result = form.save()  # internally this clears disaggregation_value m2m relationships!
+
+        # like the create view, create disaggregation values as all or nothing
 
         disaggregation_label_ids = set([str(dl.id) for dl in getDisaggregationLabel])
         process_disaggregation = False
@@ -793,30 +794,24 @@ class ResultUpdate(ResultFormMixin, UpdateView):
                 process_disaggregation = True
                 break
 
-        # The below code makes no sense, yet somehow still works
-        # the first time disaggregation_value.create() is called,
-        # it does the equiv of disaggregation_value.clear()
-        # and the whole list of values is rebuilt to the correct count
-
-        # Insert or update disagg values
         if process_disaggregation:
             for label in getDisaggregationLabel:
                 form_id_for_label = str(label.id)
                 form_disagg_value = self.request.POST.get(form_id_for_label, '')
-                getResult.disaggregation_value.create(
+                new_result.disaggregation_value.create(
                     disaggregation_label=label, value=form_disagg_value)
 
         # Result.achieved comes back different from the DB than from the ResultForm
-        new.refresh_from_db()
-        ProgramAuditLog.log_result_updated(self.request.user, getResult.indicator, old_values,
-                                           new.logged_fields, form.cleaned_data.get('rationale'))
+        new_result.refresh_from_db()
+        ProgramAuditLog.log_result_updated(self.request.user, new_result.indicator, old_values,
+                                           new_result.logged_fields, form.cleaned_data.get('rationale'))
 
         if self.request.is_ajax():
             data = serializers.serialize('json', [self.object])
             return HttpResponse(data)
 
         messages.success(self.request, _('Success, Data Updated!'))
-        redirect_url = getResult.program.program_page_url
+        redirect_url = new_result.program.program_page_url
 
         return HttpResponseRedirect(redirect_url)
 
