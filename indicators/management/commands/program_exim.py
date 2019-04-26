@@ -5,11 +5,11 @@ import sys
 import json
 
 from django.core.management.base import BaseCommand
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from rest_framework import serializers
 
-from workflow.models import Program, Sector, FundCode, Country, SiteProfile, TolaUser
+from workflow.models import Program, Sector, FundCode, Country, SiteProfile, TolaUser, ProfileType, Office
 from indicators.models import PeriodicTarget, Indicator, Result, IndicatorType, Level, Objective, \
     DataCollectionFrequency, StrategicObjective, ReportingFrequency, ExternalService
 
@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
             serialized = ProgramSerializer(program).data
 
-            with open('project_export.json', 'w') as fh:
+            with open('program_export.json', 'w') as fh:
                 fh.write(json.dumps(serialized))
         else:
             with open(options['json_filepath'], 'r') as fh:
@@ -49,14 +49,15 @@ class Command(BaseCommand):
         for index, choice in enumerate(choices):
             choice_labels = []
             for field in fields:
-                choice_labels.append(getattr(choice, field))
-            print '{}. {}'.format(index, ' - '.join(choice_labels))
+                choice_labels.append('%s: %s' % (field, unicode(getattr(choice, field))))
+            print '%s. %s' % (index + 1, ' - '.join(choice_labels))
         selection = raw_input("Number: ")
-        return choices[selection-1]
+        return choices[int(selection)-1]
 
     def save_program(self, program_json):
         # TODO: ensure ecoding working properly
         indicators_json = program_json.pop('indicator_set')
+        objectives_json = program_json.pop('objective_set')
 
         program_json['sector'] = self.replace_names_with_values(program_json['sector'], Sector, 'sector', ['sector'])
         program_json['country'] = self.replace_names_with_values(
@@ -69,6 +70,9 @@ class Command(BaseCommand):
         countries = program_json.pop('country')
         program = Program(**program_json)
         program.save()
+
+        for objective_data in objectives_json:
+            program.objective_set.add(Objective(**objective_data), bulk=False)
 
         program.fund_code.add(*fund_codes)
         program.sector.add(*sectors)
@@ -116,7 +120,7 @@ class Command(BaseCommand):
             indicator_types = self.replace_names_with_values(
                 indicator_types, IndicatorType, 'indicator_type', ['indicator_type'])
             objectives = self.replace_names_with_values(
-                objectives, Objective, 'name', ['name'])
+                objectives, Objective, 'name', ['name', 'program_id'])
             strategic_objectives = self.replace_names_with_values(
                 strategic_objectives, StrategicObjective, 'name', ['name'])
 
@@ -146,13 +150,32 @@ class Command(BaseCommand):
 
             result = Result(**result_data)
             result.indicator = indicator
+            result.program = indicator.program
             result.periodic_target = pt
             result.save()
 
-            sites = self.replace_names_with_values(sites, SiteProfile, 'name', ['name'])
+            self.save_sites(sites, result)
 
-            result.site = sites
-            result.save()
+    def save_sites(self, sites_json, result):
+        for site_data in sites_json:
+            site_data['type'] = self.replace_names_with_values(
+                site_data['type'], ProfileType, 'profile', ['profile', 'siteprofile'])
+            site_data['office'] = self.replace_names_with_values(
+                site_data['office'], ProfileType, 'name', ['name', 'province_id'])
+            site_data['country'] = self.replace_names_with_values(
+                site_data['country'], Country, 'country', ['country'])
+
+            try:
+                site = SiteProfile.objects.get(**site_data)
+            except ObjectDoesNotExist:
+                site = SiteProfile(**site_data)
+                site.program = result.indicator.program
+                site.save()
+
+            site.result_set.add(result)
+            # site = SiteProfile(**site_data)
+            # site.save()
+
 
     def replace_names_with_values(self, target_object, *args, **kwargs):
         # Return the same target object if it's falsey (empty list, None value, etc...)
@@ -172,12 +195,12 @@ class Command(BaseCommand):
             model_obj = target_model.objects.get(**{name_field: target_name})
         except ObjectDoesNotExist:
             print 'Could not find a {} named {}.  Skipping.'.format(target_model, target_name)
-            return None
-        except Sector.MultipleObjectsReturned:
+            return
+        except MultipleObjectsReturned:
             # TODO: finish working on this interactive element
             # The intent is to ask the user which object to use for the related field.  Because this hasn't
             # been needed yet, it hasn't really been tested or even tried, so more development work will be required.
-            print 'There were multiple {}s with the name `{}`'.format(target_model, target_name)
+            print 'There were multiple {}s with the name `{}`'.format(target_model, target_name.encode('utf-8'))
             model_obj = self.chooseFromMulti(target_model.objects.filter(**{name_field: target_name}), label_fields)
         if return_obj:
             return model_obj
@@ -235,19 +258,34 @@ class FundCodeNameSerializer(serializers.RelatedField):
         return value.name
 
 
-class SiteProfileNameSerializer(serializers.RelatedField):
-    def to_representation(self, value):
-        return value.name
-
-
 class TolaUserNameSerializer(serializers.RelatedField):
     def to_representation(self, value):
         return value.name
 
 
+class SiteTypeNameSerializer(serializers.RelatedField):
+    def to_representation(self, value):
+        return value.profile
+
+
+class OfficeNameSerializer(serializers.RelatedField):
+    def to_representation(self, value):
+        return value.name
+
+
+class SiteSerializer(serializers.ModelSerializer):
+    type = SiteTypeNameSerializer(queryset=ProfileType.objects.all)
+    office = OfficeNameSerializer(queryset=Office.objects.all)
+    country = CountryNameSerializer(queryset=Country.objects.all)
+
+    class Meta:
+        model = SiteProfile
+        fields = '__all__'
+
+
 class ResultNameSerializer(serializers.ModelSerializer):
     # TODO: implement disaggregation serializier
-    site = SiteProfileNameSerializer(queryset=SiteProfile.objects.all, many=True)
+    site = SiteSerializer(many=True)
 
     class Meta:
 
@@ -272,6 +310,13 @@ class PeriodicTargetNameSerializer(serializers.ModelSerializer):
         skipped_fields = {'indicator', 'result', 'id'}
         extra_fields = ['result_set']
         fields = list(all_fields - skipped_fields) + extra_fields
+
+
+class ObjectiveSerializer (serializers.ModelSerializer):
+
+    class Meta:
+        model = Objective
+        fields = ['name', 'description', 'create_date', 'edit_date']
 
 
 class IndicatorNameSerializer(serializers.ModelSerializer):
@@ -307,6 +352,8 @@ class ProgramSerializer(serializers.ModelSerializer):
     country = CountryNameSerializer(queryset=Country.objects.all, many=True)
     fund_code = CountryNameSerializer(queryset=FundCode.objects.all, many=True)
     indicator_set = IndicatorNameSerializer(many=True)
+    objective_set = ObjectiveSerializer(many=True)
+
 
     class Meta:
         model = Program
@@ -317,5 +364,5 @@ class ProgramSerializer(serializers.ModelSerializer):
             'beneficiary', 'programaccess', 'documentation', 'distribution', 'objective', 'trainingattendance',
             'i_program', 'pinned_reports', 'id',
         }
-        extra_fields = ['sector', 'country', 'fund_code', 'indicator_set']
+        extra_fields = ['sector', 'country', 'fund_code', 'indicator_set', 'objective_set']
         fields = list(all_fields - skipped_fields) + extra_fields
