@@ -323,7 +323,7 @@
         }
         $(this).attr("disabled", true);
 
-        submitForm(true, {% trans 'N/A' %});
+        submitForm(true, "{% trans 'N/A' %}");
     });
 
     $("#indicator_form").on("click", "#id_create_targets_btn", function(e) {
