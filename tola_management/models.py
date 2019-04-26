@@ -252,7 +252,7 @@ class ProgramAuditLog(models.Model, DiffableLog):
             elif diff["name"] == 'direction_of_change':
                 diff["prev"] = self.direction_of_change_map.get(diff["prev"], diff["prev"])
                 diff["new"] = self.direction_of_change_map.get(diff["new"], diff["new"])
-            elif diff["name"] == 'targets':
+            elif diff["name"] == 'targets' or diff["name"] == 'disaggregation_values':
                 if diff["prev"] == 'N/A':
                     diff["prev"] = {
                         n["id"]: {"name": n.get("name"), "value": 'N/A', "id": n["id"]} for k, n in diff["new"].iteritems()

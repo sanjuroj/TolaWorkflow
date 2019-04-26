@@ -13,15 +13,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
-/* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-select */ "y2Vs");
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! classnames */ "TSYQ");
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var components_management_table__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! components/management-table */ "TGVD");
-/* harmony import */ var components_pagination__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! components/pagination */ "RCjz");
-/* harmony import */ var components_checkboxed_multi_select__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! components/checkboxed-multi-select */ "Z2Y6");
-/* harmony import */ var components_expander__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! components/expander */ "H4hL");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
-/* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
+/* harmony import */ var components_pagination__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! components/pagination */ "RCjz");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
+/* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -54,11 +48,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-
-
-
-
-
 var ResultChangeset = function ResultChangeset(_ref) {
   var data = _ref.data,
       name = _ref.name,
@@ -67,9 +56,29 @@ var ResultChangeset = function ResultChangeset(_ref) {
   if (name == 'evidence_url') {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
       className: "change__field"
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, pretty_name), ": ", data != 'N/A' ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-      href: data
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, pretty_name), ": ", data != 'N/A' && data !== '' ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      href: data,
+      target: "_blank"
     }, "Link") : data);
+  } else if (name === 'disaggregation_values') {
+    if (Object.entries(data).length) {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "changelog__change__targets"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
+        className: "text-small"
+      }, gettext('Disaggregated values changed')), Object.entries(data).map(function (_ref2) {
+        var _ref3 = _slicedToArray(_ref2, 2),
+            id = _ref3[0],
+            dv = _ref3[1];
+
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "change__field",
+          key: id
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, dv.name, ":"), " ", dv.value);
+      }));
+    } else {
+      return null;
+    }
   } else {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
       className: "change__field"
@@ -77,27 +86,27 @@ var ResultChangeset = function ResultChangeset(_ref) {
   }
 };
 
-var ProgramDatesChangeset = function ProgramDatesChangeset(_ref2) {
-  var data = _ref2.data,
-      name = _ref2.name,
-      pretty_name = _ref2.pretty_name;
+var ProgramDatesChangeset = function ProgramDatesChangeset(_ref4) {
+  var data = _ref4.data,
+      name = _ref4.name,
+      pretty_name = _ref4.pretty_name;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, pretty_name, ": ", data);
 };
 
-var IndicatorChangeset = function IndicatorChangeset(_ref3) {
-  var data = _ref3.data,
-      name = _ref3.name,
-      pretty_name = _ref3.pretty_name;
+var IndicatorChangeset = function IndicatorChangeset(_ref5) {
+  var data = _ref5.data,
+      name = _ref5.name,
+      pretty_name = _ref5.pretty_name;
 
   if (name == 'targets') {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
       className: "changelog__change__targets"
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
       className: "text-small"
-    }, gettext('Targets changed')), Object.entries(data).map(function (_ref4) {
-      var _ref5 = _slicedToArray(_ref4, 2),
-          id = _ref5[0],
-          target = _ref5[1];
+    }, gettext('Targets changed')), Object.entries(data).map(function (_ref6) {
+      var _ref7 = _slicedToArray(_ref6, 2),
+          id = _ref7[0],
+          target = _ref7[1];
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "change__field",
@@ -170,8 +179,8 @@ function (_React$Component) {
   return ChangesetEntry;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
-var ExpandAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref6) {
-  var store = _ref6.store;
+var ExpandAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref8) {
+  var store = _ref8.store;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     className: "btn btn-medium text-action btn-sm",
     onClick: function onClick() {
@@ -182,8 +191,8 @@ var ExpandAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"]
     className: "fas fa-plus-square"
   }), gettext('Expand all'));
 });
-var CollapseAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref7) {
-  var store = _ref7.store;
+var CollapseAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref9) {
+  var store = _ref9.store;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     className: "btn btn-medium text-action btn-sm",
     onClick: function onClick() {
@@ -194,8 +203,8 @@ var CollapseAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer
     className: "fas fa-minus-square"
   }), gettext('Collapse all'));
 });
-var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref8) {
-  var store = _ref8.store;
+var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref10) {
+  var store = _ref10.store;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "audit-log-index-view"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
@@ -219,7 +228,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     className: "fas fa-download"
   }), gettext("Excel")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__table"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_4__["default"], {
     isLoading: store.fetching
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
     className: "table table-sm table-bordered bg-white text-small changelog"
@@ -252,7 +261,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
       }
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
       className: "text-action"
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__["FontAwesomeIcon"], {
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__["FontAwesomeIcon"], {
       icon: is_expanded ? 'caret-down' : 'caret-right'
     }), "\xA0", data.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.number : gettext('N/A')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.name : gettext('N/A')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.organization), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
       className: "text-nowrap"
@@ -288,7 +297,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     className: "metadata__count text-muted text-small"
   }, store.entries_count ? "".concat(store.entries_count, " ").concat(gettext("entries")) : "--"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "metadata__controls"
-  }, store.total_pages && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_pagination__WEBPACK_IMPORTED_MODULE_5__["default"], {
+  }, store.total_pages && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_pagination__WEBPACK_IMPORTED_MODULE_2__["default"], {
     pageCount: store.total_pages,
     initialPage: store.current_page,
     onPageChange: function onPageChange(page) {
@@ -296,138 +305,6 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     }
   })))));
 });
-
-/***/ }),
-
-/***/ "5Xg7":
-/*!***************************************************!*\
-  !*** ./js/components/virtualized-react-select.js ***!
-  \***************************************************/
-/*! exports provided: VirtualizedMenuList, default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VirtualizedMenuList", function() { return VirtualizedMenuList; });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react_virtualized__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-virtualized */ "c7k8");
-/* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-select */ "y2Vs");
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
-
-var VirtualizedMenuList =
-/*#__PURE__*/
-function (_React$PureComponent) {
-  _inherits(VirtualizedMenuList, _React$PureComponent);
-
-  function VirtualizedMenuList(props) {
-    var _this;
-
-    _classCallCheck(this, VirtualizedMenuList);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(VirtualizedMenuList).call(this, props));
-    _this.cache = new react_virtualized__WEBPACK_IMPORTED_MODULE_1__["CellMeasurerCache"]({
-      fixedWidth: true,
-      defaultHeight: 35
-    });
-    _this.filter_val = "";
-    return _this;
-  }
-
-  _createClass(VirtualizedMenuList, [{
-    key: "render",
-    value: function render() {
-      var _this2 = this;
-
-      var _this$props = this.props,
-          options = _this$props.options,
-          children = _this$props.children,
-          maxHeight = _this$props.maxHeight,
-          getValue = _this$props.getValue,
-          selectProps = _this$props.selectProps;
-      var rowCount = children.length || 0; //gotta be a way to improve this. it's ok after the first couple of
-      //characters search, but it's slow prior to that
-
-      if (selectProps.inputValue !== this.filter_val) {
-        this.filter_val = selectProps.inputValue;
-        this.cache.clearAll();
-      }
-
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        style: {
-          display: "flex",
-          height: "100vh",
-          maxHeight: maxHeight + "px"
-        }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        style: {
-          flex: "1 1 auto"
-        }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_virtualized__WEBPACK_IMPORTED_MODULE_1__["AutoSizer"], null, function (_ref) {
-        var width = _ref.width,
-            height = _ref.height;
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_virtualized__WEBPACK_IMPORTED_MODULE_1__["List"], {
-          height: height,
-          width: width,
-          deferredMeasurementCache: _this2.cache,
-          rowCount: rowCount,
-          rowHeight: _this2.cache.rowHeight,
-          noRowsRenderer: function noRowsRenderer() {
-            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "No selections available");
-          },
-          rowRenderer: function rowRenderer(_ref2) {
-            var index = _ref2.index,
-                parent = _ref2.parent,
-                key = _ref2.key,
-                style = _ref2.style;
-            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_virtualized__WEBPACK_IMPORTED_MODULE_1__["CellMeasurer"], {
-              key: key,
-              cache: _this2.cache,
-              parent: parent,
-              columnIndex: 0,
-              rowIndex: index
-            }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-              style: style
-            }, children[index]));
-          }
-        });
-      })));
-    }
-  }]);
-
-  return VirtualizedMenuList;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.PureComponent);
-
-var VirtualizedSelect = function VirtualizedSelect(props) {
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({
-    components: {
-      VirtualizedMenuList: VirtualizedMenuList
-    }
-  }, props));
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (VirtualizedSelect);
 
 /***/ }),
 
@@ -500,104 +377,6 @@ var LoadingSpinner = function LoadingSpinner(_ref) {
 
 /***/ }),
 
-/***/ "H4hL":
-/*!***********************************!*\
-  !*** ./js/components/expander.js ***!
-  \***********************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
-var Expander =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(Expander, _React$Component);
-
-  function Expander(props) {
-    var _this;
-
-    _classCallCheck(this, Expander);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Expander).call(this, props));
-    _this.state = {
-      expanded: false,
-      overflowing: false
-    };
-    _this.ref = react__WEBPACK_IMPORTED_MODULE_0___default.a.createRef();
-    return _this;
-  }
-
-  _createClass(Expander, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      if (this.ref.current.scrollHeight > this.ref.current.clientHeight) {
-        this.setState({
-          overflowing: true
-        });
-      }
-    }
-  }, {
-    key: "toggleExpanded",
-    value: function toggleExpanded(e) {
-      e.preventDefault();
-      this.setState({
-        expanded: !this.state.expanded
-      });
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this2 = this;
-
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "changelog-entry"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        ref: this.ref,
-        className: "changelog-entry__expanding",
-        style: {
-          height: !this.state.expanded && (this.props.height || 50)
-        }
-      }, this.props.children), this.state.overflowing && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "changelog-entry__expand-trigger"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        href: "",
-        onClick: function onClick(e) {
-          return _this2.toggleExpanded(e);
-        }
-      }, this.state.expanded ? 'Show Less' : 'Show More')));
-    }
-  }]);
-
-  return Expander;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
-
-/* harmony default export */ __webpack_exports__["default"] = (Expander);
-
-/***/ }),
-
 /***/ "RCjz":
 /*!*************************************!*\
   !*** ./js/components/pagination.js ***!
@@ -650,161 +429,6 @@ var Pagination = function Pagination(props) {
 
 /***/ }),
 
-/***/ "TGVD":
-/*!*******************************************!*\
-  !*** ./js/components/management-table.js ***!
-  \*******************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx-react */ "okNM");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "q1tI");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "TSYQ");
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
-function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
-
-function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
-
-
-
- // TODO: "size" is no longer used
-
-var ColumnComponent = function ColumnComponent(_ref) {
-  var className = _ref.className,
-      size = _ref.size,
-      props = _objectWithoutProperties(_ref, ["className", "size"]);
-
-  return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", _extends({
-    className: ["mgmt-table__col", className].join(' ')
-  }, props), props.children);
-}; // TODO: this is redundant with ColumnComponent
-
-
-var HeaderColumnComponent = function HeaderColumnComponent(_ref2) {
-  var className = _ref2.className,
-      size = _ref2.size,
-      props = _objectWithoutProperties(_ref2, ["className", "size"]);
-
-  return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("th", _extends({
-    className: ["mgmt-table__col", className].join(' ')
-  }, props), props.children);
-};
-
-var InnerRowComponent = function InnerRowComponent(_ref3) {
-  var className = _ref3.className,
-      props = _objectWithoutProperties(_ref3, ["className"]);
-
-  return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tr", _extends({
-    className: ["mgmt-table__row", className].join(' ')
-  }, props), props.children);
-}; // TODO: this is redundant with InnerRowComponent
-
-
-var HeaderRowComponent = function HeaderRowComponent(_ref4) {
-  var className = _ref4.className,
-      props = _objectWithoutProperties(_ref4, ["className"]);
-
-  return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tr", _extends({
-    className: ["mgmt-table__row table-header", className].join(' ')
-  }, props), props.children);
-};
-/***
-    A wrapper for the rendering of the given row renderer, it takes and expando
-    renderer used to render expanded content
-
-    Props:
-    - expanded: whether the expando content is shown or not
-    - Expando: The content to render when the expando is shown
-*/
-
-
-var RowComponent = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(function (_ref5) {
-  var className = _ref5.className,
-      expanded = _ref5.expanded,
-      Expando = _ref5.Expando,
-      props = _objectWithoutProperties(_ref5, ["className", "expanded", "Expando"]);
-
-  if (Expando) {
-    var ObservedExpando = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(Expando);
-    return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tbody", _extends({
-      className: classnames__WEBPACK_IMPORTED_MODULE_2___default()(["mgmt-table__body", className].join(' '), {
-        "is-expanded": expanded
-      })
-    }, props), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(InnerRowComponent, null, props.children), expanded && react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(ObservedExpando, {
-      Wrapper: ExpandoWrapper
-    }));
-  } else {
-    return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tbody", _extends({
-      className: ["mgmt-table__body", className].join(' ')
-    }, props), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(InnerRowComponent, null, props.children));
-  }
-});
-
-var ExpandoWrapper = function ExpandoWrapper(_ref6) {
-  var className = _ref6.className,
-      props = _objectWithoutProperties(_ref6, ["className"]);
-
-  return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tr", _extends({
-    className: ["mgmt-table__row--expanded", className].join(' ')
-  }, props), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", {
-    colSpan: "6"
-  }, props.children));
-};
-
-var RowList = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(function (_ref7) {
-  var data = _ref7.data,
-      Row = _ref7.Row,
-      keyField = _ref7.keyField,
-      props = _objectWithoutProperties(_ref7, ["data", "Row", "keyField"]);
-
-  var ObservedRow = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(Row);
-  return data.map(function (row_data) {
-    return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(ObservedRow, {
-      key: row_data[keyField],
-      data: row_data,
-      Col: ColumnComponent,
-      Row: RowComponent
-    });
-  });
-});
-/*
-   Props:
-
-   - HeaderRow: a function to render the header row. it receives a component
-   prop to render the header column and row
-
-   - Row: a function used to render each row. it receives a component prop to
-    render the row (see RowComponent), it receives the relevant data for that
-    row as a prop: data
-
-   - data: the dataset used to render the table, it must be an array
-
-   - keyField: field to use for key on rows and expando checking
-
- */
-
-var ManagementTable = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(function (_ref8) {
-  var HeaderRow = _ref8.HeaderRow,
-      className = _ref8.className,
-      props = _objectWithoutProperties(_ref8, ["HeaderRow", "className"]);
-
-  var ObservedHeaderRow = Object(mobx_react__WEBPACK_IMPORTED_MODULE_0__["observer"])(HeaderRow);
-  return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("table", {
-    className: ['table bg-white', className].join(' ')
-  }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(ObservedHeaderRow, {
-    Col: HeaderColumnComponent,
-    Row: HeaderRowComponent
-  })), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(RowList, props));
-});
-/* harmony default export */ __webpack_exports__["default"] = (ManagementTable);
-
-/***/ }),
-
 /***/ "XoI5":
 /*!*******************!*\
   !*** ./js/api.js ***!
@@ -825,140 +449,6 @@ var api = axios__WEBPACK_IMPORTED_MODULE_0___default.a.create({
     "X-CSRFToken": document.cookie.replace(/(?:(?:^|.*;\s*)csrftoken\s*\=\s*([^;]*).*$)|^.*$/, "$1")
   }
 });
-
-/***/ }),
-
-/***/ "Z2Y6":
-/*!**************************************************!*\
-  !*** ./js/components/checkboxed-multi-select.js ***!
-  \**************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-select */ "y2Vs");
-/* harmony import */ var _virtualized_react_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./virtualized-react-select */ "5Xg7");
-/* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-multiselect-checkboxes */ "VCnP");
-/* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! mobx-react */ "okNM");
-var _class, _temp;
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
-
-
-
-
-var CountLabel = function CountLabel(props) {
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "count__label"
-  }, props.children, props.clearable && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    onClick: props.clearSelect
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-    className: "fa fa-times",
-    "aria-hidden": "true"
-  })));
-};
-
-var CheckboxedMultiSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_4__["observer"])(_class = (_temp =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(CheckboxedMultiSelect, _React$Component);
-
-  function CheckboxedMultiSelect(props) {
-    var _this;
-
-    _classCallCheck(this, CheckboxedMultiSelect);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(CheckboxedMultiSelect).call(this, props));
-
-    _this.clearSelect = function (e) {
-      e.stopPropagation();
-
-      _this.props.onChange([]);
-
-      ;
-    };
-
-    _this.makeLabel = function (_ref3) {
-      var placeholderButtonLabel = _ref3.placeholderButtonLabel,
-          thisValue = _ref3.value;
-
-      if (!thisValue) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
-          clearable: false
-        }, placeholderButtonLabel);
-      }
-
-      if (Array.isArray(thisValue)) {
-        if (thisValue.length === 0) {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
-            clearable: false
-          }, placeholderButtonLabel);
-        }
-
-        if (thisValue.length === 1) {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
-            clearable: true,
-            clearSelect: _this.clearSelect
-          }, thisValue[0].label);
-        }
-
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
-          clearable: true,
-          clearSelect: _this.clearSelect
-        }, "".concat(thisValue.length, " ", gettext("selected")));
-      }
-
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountLabel, {
-        clearable: false
-      }, thisValue.label);
-    };
-
-    return _this;
-  }
-
-  _createClass(CheckboxedMultiSelect, [{
-    key: "render",
-    value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_3___default.a, _extends({}, this.props, {
-        placeholder: gettext("Search"),
-        placeholderButtonLabel: this.props.placeholder,
-        getDropdownButtonLabel: this.makeLabel,
-        components: {
-          MenuList: _virtualized_react_select__WEBPACK_IMPORTED_MODULE_2__["VirtualizedMenuList"]
-        }
-      }));
-    }
-  }]);
-
-  return CheckboxedMultiSelect;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class;
-
-/* harmony default export */ __webpack_exports__["default"] = (CheckboxedMultiSelect);
 
 /***/ }),
 
@@ -1185,4 +675,4 @@ function () {
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-f067b59a6b18f4b5fdcd.js.map
+//# sourceMappingURL=audit_log-30d53ab584b2b6871c44.js.map

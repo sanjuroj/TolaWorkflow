@@ -5,7 +5,7 @@
 
 <script>
 
-    var resultDateModified = false;
+    let resultFormSnapshot;
 
     // gdrive picker
     function filePickerCallback(fileName, url) {
@@ -38,7 +38,6 @@
     }
 
     $("#indicator_results_div").on('shown.bs.modal', function() {
-        resultDateModified = false;
     });
 
     $("#indicator_results_div").on('change keyup paste', '#id_evidence_url', function () {
@@ -74,10 +73,15 @@
         const save = (rationale) => {
             $('#submit-id-submit').attr('disabled', 'disabled');
             let form_url = $(this).attr('action');
-            let form_data = $(this).serialize();
-            form_data += '&rationale='+rationale;
+
+            let form_data = getResultFormAsObject();
+
+            // tack on rationale
+            form_data['rationale'] = rationale;
+
             // mark that the form data has changed so that when the modal is closed the list view can be updated
             $(this).data('recordchanged', true);
+
             $.post(form_url, form_data,
                 function(response, status, jqXHR) { // success callback
                     $('#submit-id-submit').removeAttr('disabled');
@@ -90,6 +94,9 @@
                     } else {
                         createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, "#modalmessages");
                     }
+
+                    // record new base state
+                    recordResultFormSnapshot();
                 })
             .fail(function(error){
                 $('#submit-id-submit').removeAttr('disabled');
@@ -98,10 +105,10 @@
             $('#indicator_results_div').animate({ scrollTop: 0 }, 'slow');
         }
 
-        const message_text = (resultDateModified)?MODIFY_RESULT_DATE_MESSAGE:'';
-        const result_is_new = $('#id_delete_result_btn').length == 0;
+        const message_text = hasResultDateFormFieldChanged() ? MODIFY_RESULT_DATE_MESSAGE : '';
+        const result_is_new = $(this).attr('action').indexOf('result_add') !== -1;
 
-        if(result_is_new) {
+        if(result_is_new || ! hasResultFormChanged()) {
             save('');
         } else {
             window.create_nondestructive_changeset_notice({
@@ -116,7 +123,6 @@
     $("#indicator_results_div").on("change", "#id_date_collected", function(e){
         validatePeriodicTarget(onlyPeriodic = true);
         validateDateCollected();
-        resultDateModified = true;
     });
 
     $("#indicator_results_div").on("change", "#id_periodic_target", function(e){
@@ -364,4 +370,55 @@
         $("#id_periodic_target option:not(:selected)").attr("disabled", true);
         $("#id_periodic_target").attr("readonly", true);
     }
+
+
+    /*
+     * Change tracking functions
+     */
+
+    // return a JS obj of key/vals of indicator form
+    function getResultFormAsObject() {
+        let $form = $('#result_update_form');
+        let formObj = {};
+        $form.serializeArray().forEach(function (x) {
+            formObj[x.name] = x.value;
+        });
+
+        return formObj;
+    }
+
+    // same as getIndicatorFormAsObject() but containing only tracked fields
+    // can be used to snapshot form state for later comparison
+    function getTrackedResultFieldsObject() {
+        let formObj = getResultFormAsObject();
+
+        let excluded_fields = [
+            'csrfmiddlewaretoken',
+            'comments',
+            'complete',
+        ];
+
+        excluded_fields.forEach(function(key) {
+            delete formObj[key];
+        });
+
+        return formObj;
+    }
+
+    // remember the initial state of the form
+    function recordResultFormSnapshot() {
+        resultFormSnapshot = getTrackedResultFieldsObject();
+    }
+
+    // have any tracked fields changed in the form?
+    function hasResultFormChanged() {
+        let prevState = JSON.stringify(resultFormSnapshot);
+        let currState = JSON.stringify(getTrackedResultFieldsObject());
+        return prevState !== currState;
+    }
+
+    function hasResultDateFormFieldChanged() {
+        return resultFormSnapshot.date_collected !== getResultFormAsObject().date_collected;
+    }
+
 </script>

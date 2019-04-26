@@ -93,6 +93,9 @@
 
             // make tooltips work
             $('#result_update_form [data-toggle="popover"]').popover({html: true}).click(function(e) {e.preventDefault();});
+
+            // record current state of form for later comparision
+            recordResultFormSnapshot();
         });
 
     </script>

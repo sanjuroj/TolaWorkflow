@@ -1,18 +1,24 @@
 import React from 'react';
 import { observer } from "mobx-react"
-import Select from 'react-select'
-import classNames from 'classnames'
-import ManagementTable from 'components/management-table'
 import Pagination from 'components/pagination'
-import CheckboxedMultiSelect from 'components/checkboxed-multi-select'
-import Expander from 'components/expander'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 
 import LoadingSpinner from 'components/loading-spinner'
 
 const ResultChangeset = ({data, name, pretty_name}) => {
     if(name == 'evidence_url') {
-        return <div className="change__field"><strong>{pretty_name}</strong>: {(data != 'N/A')?<a href={data}>Link</a>:data}</div>
+        return <div className="change__field"><strong>{pretty_name}</strong>: {(data != 'N/A' && data !== '')?<a href={data} target="_blank">Link</a>:data}</div>
+    } else if (name === 'disaggregation_values') {
+        if (Object.entries(data).length) {
+            return <div className="changelog__change__targets">
+                <h4 className="text-small">{gettext('Disaggregated values changed')}</h4>
+                {Object.entries(data).map(([id, dv]) => {
+                    return <div className="change__field" key={id}><strong>{dv.name}:</strong> {dv.value}</div>
+                })}
+            </div>
+        } else {
+            return null;
+        }
     } else {
         return <div className="change__field"><strong>{pretty_name}</strong>: {data}</div>
     }

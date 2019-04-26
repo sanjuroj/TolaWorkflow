@@ -315,7 +315,7 @@ class TolaUser(models.Model):
             "mode_of_contact": self.mode_of_contact,
             "phone_number": self.phone_number,
             "email": self.user.email,
-            "organization": self.organization.name if self.organization else 'No Organization for this user',
+            "organization": self.organization.name if self.organization else _('No Organization for this user'),
             "active": self.user.is_active
         }
 
