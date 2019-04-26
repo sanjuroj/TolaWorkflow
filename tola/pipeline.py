@@ -41,7 +41,7 @@ def social_user_tola(backend, uid, user=None, *args, **kwargs):
 
 def associate_user_tola(backend, uid, user=None, social=None, *args, **kwargs):
     """extension of the user-association step of the pipeline to avoid associating to previously logged-in users"""
-    if user and user.email and user.email.lower() != uid.lower():
+    if backend.name == 'google-oauth2' and user and user.email and user.email.lower() != uid.lower():
         # if we have a user logged in (sessioning!) and they don't match the uid entered
         # zero out the user so we don't associate badly a user with a bad social auth:
         user = None
