@@ -1178,7 +1178,7 @@ class SiteProfileList(ListView):
         program_id = int(self.kwargs['program_id'])
 
         countries = request.user.tola_user.available_countries
-        getPrograms = Program.objects.filter(funding_status="Funded", country__in=countries)
+        getPrograms = request.user.tola_user.available_programs.all() # or filter(funding_status="Funded") ?
 
         #this date, 3 months ago, a site is considered inactive
         inactiveSite = timezone.now() - relativedelta(months=3)
