@@ -688,15 +688,12 @@ class ResultCreate(ResultFormMixin, CreateView):
         # otherwise leave the disaggregation_value associates completely empty
         # In other words, save key/vals as all or nothing
 
+        disaggregation_label_ids = set([str(dl.id) for dl in disaggregation_labels])
         process_disaggregation = False
-
-        for label in disaggregation_labels:
-            if process_disaggregation is True:
+        for k, v in self.request.POST.iteritems():
+            if k in disaggregation_label_ids and v:
+                process_disaggregation = True
                 break
-            for k, v in self.request.POST.iteritems():
-                if k == str(label.id) and len(v) > 0:
-                    process_disaggregation = True
-                    break
 
         if process_disaggregation is True:
             for label in disaggregation_labels:
@@ -789,17 +786,25 @@ class ResultUpdate(ResultFormMixin, UpdateView):
         old_values = getResult.logged_fields
         new = form.save()
 
+        disaggregation_label_ids = set([str(dl.id) for dl in getDisaggregationLabel])
+        process_disaggregation = False
+        for k, v in self.request.POST.iteritems():
+            if k in disaggregation_label_ids and v:
+                process_disaggregation = True
+                break
+
         # The below code makes no sense, yet somehow still works
         # the first time disaggregation_value.create() is called,
         # it does the equiv of disaggregation_value.clear()
         # and the whole list of values is rebuilt to the correct count
 
         # Insert or update disagg values
-        for label in getDisaggregationLabel:
-            form_id_for_label = str(label.id)
-            form_disagg_value = self.request.POST.get(form_id_for_label, '')
-            getResult.disaggregation_value.create(
-                disaggregation_label=label, value=form_disagg_value)
+        if process_disaggregation:
+            for label in getDisaggregationLabel:
+                form_id_for_label = str(label.id)
+                form_disagg_value = self.request.POST.get(form_id_for_label, '')
+                getResult.disaggregation_value.create(
+                    disaggregation_label=label, value=form_disagg_value)
 
         # Result.achieved comes back different from the DB than from the ResultForm
         new.refresh_from_db()
