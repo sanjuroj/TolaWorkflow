@@ -744,7 +744,7 @@ class Indicator(SafeDeleteModel):
             "targets": {
                 t.id: {
                     "id": t.id,
-                    "value": t.target,
+                    "value": t.target_display_str,
                     "name": t.period_name.strip(),
                 }
                 for t in s.periodictargets.all()
@@ -859,6 +859,12 @@ class PeriodicTarget(models.Model):
         ordering = ('customsort', '-create_date')
         verbose_name = _("Periodic Target")
         unique_together = (('indicator', 'customsort'),)
+
+    @property
+    def target_display_str(self):
+        """Return str of target decimal value, rounded if a whole number"""
+        s = str(self.target)
+        return s.rstrip('0').rstrip('.') if '.' in s else s
 
     @staticmethod
     def generate_monthly_period_name(start_date):
