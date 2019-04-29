@@ -52,9 +52,9 @@ EMAIL_BACKEND = app_settings.get('EMAIL_BACKEND', None)
 EMAIL_FILE_PATH = app_settings.get('EMAIL_FILE_PATH', None)
 
 # GOOGLE CLIENT CONFIG
-GOOGLE_CLIENT_ID = app_settings.get('GOOGLE_CLIENT_ID', None)
-GOOGLE_CLIENT_SECRET = app_settings.get('GOOGLE_CLIENT_SECRET', None)
-GOOGLE_STEP2_URI = app_settings.get('GOOGLE_STEP2_URI', None)
+# GOOGLE_CLIENT_ID = app_settings.get('GOOGLE_CLIENT_ID', None)
+# GOOGLE_CLIENT_SECRET = app_settings.get('GOOGLE_CLIENT_SECRET', None)
+# GOOGLE_STEP2_URI = app_settings.get('GOOGLE_STEP2_URI', None)
 
 # SOCIAL GOOGLE AUTH
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = app_settings.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', None)
@@ -62,20 +62,20 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = app_settings.get('SOCIAL_AUTH_GOOGLE_OAUTH2_S
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = app_settings.get('SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS', None)
 
 # TOLA TABLES AUTH
-TOLA_TABLES_TOKEN = app_settings.get('TOLA_TABLES_TOKEN', None)
-TOLA_TABLES_USER = app_settings.get('TOLA_TABLES_USER', None)
+# TOLA_TABLES_TOKEN = app_settings.get('TOLA_TABLES_TOKEN', None)
+# TOLA_TABLES_USER = app_settings.get('TOLA_TABLES_USER', None)
 
 # LOCAL APPS DEPENDING ON SERVER DEBUG FOR DEV BOXES,
 # REPORT BUILDER FOR REPORT SERVER
-DEV_APPS = app_settings.get('DEV_APPS', None)
+# DEV_APPS = app_settings.get('DEV_APPS', None)
 
-INSTALLED_APPS = INSTALLED_APPS #+ tuple(DEV_APPS)
+# INSTALLED_APPS = INSTALLED_APPS #+ tuple(DEV_APPS)
 
-LDAP_LOGIN = app_settings.get('LDAP_LOGIN', None)
-LDAP_SERVER = app_settings.get('LDAP_SERVER', None)
-LDAP_PASSWORD = app_settings.get('LDAP_PASSWORD', None)
-LDAP_USER_GROUP = app_settings.get('LDAP_USER_GROUP', None)
-LDAP_ADMIN_GROUP = app_settings.get('LDAP_ADMIN_GROUP', None)
+# LDAP_LOGIN = app_settings.get('LDAP_LOGIN', None)
+# LDAP_SERVER = app_settings.get('LDAP_SERVER', None)
+# LDAP_PASSWORD = app_settings.get('LDAP_PASSWORD', None)
+# LDAP_USER_GROUP = app_settings.get('LDAP_USER_GROUP', None)
+# LDAP_ADMIN_GROUP = app_settings.get('LDAP_ADMIN_GROUP', None)
 
 AUTHENTICATION_BACKENDS = app_settings.get('AUTHENTICATION_BACKENDS', None)
 

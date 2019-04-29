@@ -1,0 +1,34 @@
+// Expanding change logs
+.changelog { // <table>
+}
+.changelog__entry { // each timestamped batch of DB updates; <tbody>
+}
+.changelog__entry__header { // title row for changelog__entry; <tr>
+    &.is-expanded {
+        background-color: $gray-200;
+    }
+    .text-action { // expando links
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}
+.changelog__entry__row { // each DB row change; <tr>
+}
+.changelog__change {
+    // inside a row
+    // collects a group of changes made at the same time
+}
+.changelog__change--prev {
+    // previous values
+}
+.changelog__change--new {
+    // new values
+}
+.changelog__change--rationale {
+    // only on indicator report, ie. from IPTT
+}
+.changelog__change__targets {
+    // only on indicator report, ie. from IPTT
+    // group of targets inside the prev/new component
+}

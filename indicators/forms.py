@@ -50,6 +50,8 @@ class IndicatorForm(forms.ModelForm):
         widget=forms.RadioSelect(),
     )
 
+    rationale = forms.CharField(required=False)
+
     class Meta:
         model = Indicator
         exclude = ['create_date', 'edit_date']
@@ -77,11 +79,17 @@ class IndicatorForm(forms.ModelForm):
 
         super(IndicatorForm, self).__init__(*args, **kwargs)
 
+        if not self.request.has_write_access:
+            for name, field in self.fields.items():
+                field.disabled = True
+
         countries = getCountry(self.request.user)
         self.fields['disaggregation'].queryset = DisaggregationType.objects\
             .filter(country__in=countries, standard=False)
         self.fields['program'].queryset = Program.objects.filter(
-            funding_status="Funded", country__in=countries).distinct()
+            Q(country__in=countries) | Q(user_access=self.request.user.tola_user),
+            funding_status="Funded"
+        ).distinct()
         self.fields['program'].disabled = True
         self.fields['objectives'].queryset = Objective.objects.filter(program__id__in=[self.programval.id])
         self.fields['strategic_objectives'].queryset = StrategicObjective.objects.filter(country__in=countries)
@@ -101,11 +109,21 @@ class IndicatorForm(forms.ModelForm):
     def clean_lop_target(self):
         data = self.cleaned_data['lop_target']
         if data < 0:
+            # Translators: Input form error message
             raise forms.ValidationError(_('Please enter a number larger than zero.'))
         return data
 
+    # def clean_rationale(self):
+    #     data = self.cleaned_data.get('rationale')
+    #     periodic_targets = self.request.POST.get('periodic_targets')
+    #     if not periodic_targets == 'generateTargets' and len(self.instance.result_set.all()) > 0 and (not data or len(data) <= 0):
+    #         # Translators: Input form error message that the "reason for change" form field is empty when results have already been saved
+    #         raise forms.ValidationError(_('Results have been recorded, reason for change is required.'))
+    #     return data
+
 
 class ResultForm(forms.ModelForm):
+    rationale = forms.CharField(required=False)
 
     class Meta:
         model = Result
@@ -141,7 +159,12 @@ class ResultForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         self.indicator = kwargs.pop('indicator')
         self.program = kwargs.pop('program')
+        self.request = kwargs.pop('request')
         super(ResultForm, self).__init__(*args, **kwargs)
+
+        if not self.request.has_write_access:
+            for name, field in self.fields.items():
+                field.disabled = True
 
         self.set_initial_querysets()
         self.set_periodic_target_widget()
@@ -152,6 +175,14 @@ class ResultForm(forms.ModelForm):
     def set_initial_querysets(self):
         """populate foreign key fields with limited quersets based on user / country / program"""
         # provide only in-program Documentation objects for the evidence queryset
+
+        self.fields['site'].queryset = SiteProfile.objects.filter(
+            country__in=self.indicator.program.country.filter(
+                Q(id__in=self.request.user.tola_user.managed_countries.all().values('id'))
+                | Q(id__in=self.request.user.tola_user.programaccess_set.filter(Q(role='high') | Q(role='medium')).values('country_id'))
+            )
+        )
+
         self.fields['evidence'].queryset = Documentation.objects\
             .filter(program=self.indicator.program)
         # only display Project field to existing users
@@ -160,9 +191,6 @@ class ResultForm(forms.ModelForm):
         else:
             # provide only in-program projects for the complete queryset:
             self.fields['complete'].queryset = ProjectComplete.objects.filter(program=self.program)
-        self.fields['site'].queryset = SiteProfile._base_manager.filter(
-            country__in=self.indicator.program.country.all()
-        ).only('id', 'name')
 
     def set_periodic_target_widget(self):
         # Django will deliver localized strings to the template but the form needs to be able to compare the date
@@ -263,9 +291,8 @@ class ReportFormCommon(forms.Form):
         self.fields['timeperiods'].choices = ((k, v.capitalize()) for k, v in self.TIMEPERIODS_CHOICES)
         self.fields['numrecentperiods'].widget.attrs['placeholder'] = _("enter a number")
         self.fields['targetperiods'].label = _("Target periods")
-        self.fields['program'].queryset = Program.objects \
-            .filter(country__in=countries,
-                    funding_status="Funded",
+        self.fields['program'].queryset = self.request.user.tola_user.available_programs \
+            .filter(funding_status="Funded",
                     reporting_period_start__isnull=False,
                     reporting_period_end__isnull=False,
                     reporting_period_start__lte=timezone.localdate(),

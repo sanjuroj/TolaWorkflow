@@ -3,17 +3,19 @@
 
 import openpyxl
 from openpyxl import styles
-
-from tola.l10n_utils import l10n_date_medium, l10n_date_long, l10n_monthname
 from workflow.models import Program
 from indicators.models import Indicator, PeriodicTarget, PinnedReport, Level, LevelTier
 from indicators.forms import PinnedReportForm
 from indicators.queries import IPTTIndicator
+from tola.l10n_utils import l10n_date_medium, l10n_date_long, l10n_monthname
+from tola_management.permissions import verify_program_access_level
 
-from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, View
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.utils.translation import (
     ugettext,
     ugettext_lazy as _
@@ -22,11 +24,17 @@ from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
+@login_required
 @require_POST
 def create_pinned_report(request):
     """
     AJAX call for creating a PinnedReport
     """
+    try:
+        Program.objects.get(pk=request.POST.get('program'))
+    except Program.DoesNotExist:
+        return HttpResponseBadRequest('program does not exist')
+    verify_program_access_level(request, request.POST.get('program'), 'low', super_admin_override=True)
     form = PinnedReportForm(request.POST)
     if form.is_valid():
         pr = form.save(commit=False)
@@ -38,13 +46,16 @@ def create_pinned_report(request):
     return HttpResponse()
 
 
+@login_required
 @require_POST
 def delete_pinned_report(request):
     """
     AJAX call for deleting a PinnedReport
     """
-    pinned_report_id = request.POST.get('pinned_report_id')
-    PinnedReport.objects.filter(id=pinned_report_id, tola_user_id=request.user.tola_user.id).delete()
+    pinned_report = get_object_or_404(PinnedReport, pk=request.POST.get('pinned_report_id'),
+                                      tola_user_id=request.user.tola_user.id)
+    verify_program_access_level(request, pinned_report.program.pk, 'low', super_admin_override=True)
+    pinned_report.delete()
     return HttpResponse()
 
 
@@ -300,7 +311,7 @@ class IPTTReportData(LoginRequiredMixin, View):
         levels = Level.objects.filter(program_id=int(program_id))
         level_data = []
         for level in levels:
-            level_item ={
+            level_item = {
                 'id': level.pk,
                 'name': level.name,
                 'tier': level.leveltier.name,
@@ -367,7 +378,7 @@ class IPTTReportData(LoginRequiredMixin, View):
             indicators.append(this_indicator)
         second_leveltier = LevelTier.objects.filter(program_id=int(request.GET.get('programId')),
                                                     tier_depth=2)
-        if second_leveltier.exists():        
+        if second_leveltier.exists():
             second_tier_name = second_leveltier.first().name
         else:
             second_tier_name = ugettext('Outcome')

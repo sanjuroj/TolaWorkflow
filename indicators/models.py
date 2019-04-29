@@ -21,6 +21,9 @@ import django.template.defaultfilters
 
 
 from simple_history.models import HistoricalRecords
+from safedelete.models import SafeDeleteModel
+from safedelete.managers import SafeDeleteManager
+from safedelete.queryset import SafeDeleteQueryset
 
 from workflow.models import (
     Program, Sector, SiteProfile, ProjectAgreement, ProjectComplete, Country,
@@ -78,10 +81,11 @@ class IndicatorTypeAdmin(admin.ModelAdmin):
     display = 'Indicator Type'
 
 
-class StrategicObjective(models.Model):
+class StrategicObjective(SafeDeleteModel):
     name = models.CharField(_("Name"), max_length=135, blank=True)
     country = models.ForeignKey(Country, null=True, blank=True, verbose_name=_("Country"))
     description = models.TextField(_("Description"), max_length=765, blank=True)
+    status = models.CharField(_("Status"), max_length=255, blank=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
@@ -92,10 +96,10 @@ class StrategicObjective(models.Model):
     def __unicode__(self):
         return self.name
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if self.create_date is None:
             self.create_date = timezone.now()
-        super(StrategicObjective, self).save()
+        super(StrategicObjective, self).save(*args, **kwargs)
 
 
 class Objective(models.Model):
@@ -464,16 +468,19 @@ class IndicatorSortingManagerMixin(object):
         qs = self.get_queryset()
         return qs.with_logframe_sorting()
 
-class IndicatorQuerySet(models.QuerySet, IndicatorSortingQSMixin):
+class IndicatorQuerySet(SafeDeleteQueryset, IndicatorSortingQSMixin):
     pass
 
-class IndicatorManager(models.Manager, IndicatorSortingManagerMixin):
+class IndicatorManager(SafeDeleteManager, IndicatorSortingManagerMixin):
 
     def get_queryset(self):
-        return IndicatorQuerySet(self.model, using=self._db).select_related('program', 'sector')
+        queryset = IndicatorQuerySet(self.model, using=self._db)
+        queryset._safedelete_visibility = self._safedelete_visibility
+        queryset._safedelete_visibility_field = self._safedelete_visibility_field        
+        return queryset.select_related('program', 'sector')
 
 
-class Indicator(models.Model):
+class Indicator(SafeDeleteModel):
     LOP = 1
     MID_END = 2
     ANNUAL = 3
@@ -630,7 +637,7 @@ class Indicator(models.Model):
 
     target_frequency_custom = models.CharField(
         null=True, blank=True, max_length=100,
-        verbose_name=_("First event name*"), help_text=" "
+        verbose_name=_("First event name"), help_text=" "
     )
 
     target_frequency_start = models.DateField(
@@ -803,6 +810,28 @@ class Indicator(models.Model):
     def disaggregations(self):
         disaggregations = self.disaggregation.all()
         return self.SEPARATOR.join([x.disaggregation_type for x in disaggregations])
+
+    @property
+    def logged_fields(self):
+        s = self
+        return {
+            "name": s.name.strip(),
+            "unit_of_measure": s.unit_of_measure.strip() if s.unit_of_measure else s.unit_of_measure,
+            "unit_of_measure_type": s.unit_of_measure_type,
+            "is_cumulative": s.is_cumulative,
+            "lop_target": s.lop_target,
+            "direction_of_change": s.direction_of_change,
+            "baseline_value": s.baseline.strip() if s.baseline else s.baseline,
+            "baseline_na": s.baseline_na,
+            "targets": {
+                t.id: {
+                    "id": t.id,
+                    "value": t.target,
+                    "name": t.period_name.strip(),
+                }
+                for t in s.periodictargets.all()
+            }
+        }
 
     @property
     def get_target_frequency_label(self):
@@ -1267,6 +1296,26 @@ class Result(models.Model):
         disaggs = self.disaggregation_value.all()
         return ', '.join([y.disaggregation_label.label + ': ' + y.value for y in disaggs])
 
+    @property
+    def logged_fields(self):
+        return {
+            "id": self.id,
+            "value": self.achieved,
+            "date": self.date_collected,
+            "target": self.periodic_target.period_name if self.periodic_target else 'N/A',
+            "evidence_name": self.record_name,
+            "evidence_url": self.evidence_url,
+            "sites": ', '.join(site.name for site in self.site.all()) if self.site.exists() else '',
+            "disaggregation_values": {
+                dv.disaggregation_label.id: {
+                    "id": dv.disaggregation_label.id,
+                    "value": dv.value,
+                    "name": dv.disaggregation_label.label,
+                }
+                for dv in self.disaggregation_value.all()
+            }
+        }
+
 
 
 class ResultAdmin(admin.ModelAdmin):
@@ -1298,7 +1347,7 @@ class PinnedReport(models.Model):
         Return the fully parameterized IPTT report URL string
         """
         return "{}?{}".format(reverse('iptt_report', kwargs={
-            'program_id': self.program_id,
+            'program': self.program_id,
             'reporttype': self.report_type
         }), self.query_string)
 

@@ -56,6 +56,9 @@ eventBus.on('reload-indicator', indicatorId => {
     $.get(`/indicators/api/indicator/${indicatorId}`, rootStore.indicatorStore.updateIndicator);
 });
 
+// remove an indicator from the list
+eventBus.on('indicator-deleted', rootStore.indicatorStore.removeIndicator);
+
 // close all expanded indicators in the table
 eventBus.on('close-all-indicators', () => {
     rootStore.deleteAllResultsHTML();
@@ -95,7 +98,7 @@ eventBus.on('select-indicator-to-filter', (selectedIndicatorId) => {
  * React components on page
  */
 
-ReactDOM.render(<IndicatorList rootStore={rootStore} uiStore={uiStore} />,
+ReactDOM.render(<IndicatorList rootStore={rootStore} uiStore={uiStore} readonly={jsContext.readonly} />,
     document.querySelector('#indicator-list-react-component'));
 
 ReactDOM.render(<ProgramMetrics rootStore={rootStore}
@@ -143,11 +146,15 @@ $('#indicator_modal_div').on('hide.bs.modal', function (e) {
     let form = $(this).find('form');
     let form_action = form.attr('action').split('/');
     let indicator_id = parseInt(form_action[form_action.length -2]);
-
-    eventBus.emit('reload-indicator', indicator_id);
-
-    if (rootStore.resultsMap.has(indicator_id)) {
-        eventBus.emit('load-indicator-results', indicator_id);
+    // if this form has just successfully deleted this indicator, don't update it, remove it
+    if (form.attr('deleted') === 'true') {
+        eventBus.emit('indicator-deleted', indicator_id);
+    } else {
+        eventBus.emit('reload-indicator', indicator_id);
+        
+        if (rootStore.resultsMap.has(indicator_id)) {
+            eventBus.emit('load-indicator-results', indicator_id);
+        }
     }
 });
 
@@ -197,7 +204,6 @@ const onNavigation = (navRoutes) => {
     let routeObj = routes.find(r => r.name === routeName);
     eventBus.emit('apply-gauge-tank-filter', routeObj.filterType);
 };
-
 router.usePlugin(browserPlugin({useHash: true, base:'/program/'+jsContext.program.id+'/'}));
 router.subscribe(onNavigation);
 router.start();
@@ -217,4 +223,20 @@ eventBus.on('nav-clear-all-indicator-filters', () => {
 
 eventBus.on('nav-select-indicator-to-filter', (selectedIndicatorId) => {
     router.navigate('indicator', {'indicator_id': selectedIndicatorId})
+});
+
+
+/*
+ * Are we loading a cached page? If so, reload to avoid displaying stale indicator data
+ * See ticket #1423
+ */
+// moving the cache check to after page load as firefox calculates transfer size at the end
+$(function() {
+    let isCached = window.performance.getEntriesByType("navigation")[0].transferSize === 0;
+    //adding a second check to ensure that if for whatever reason teh transfersize reads wrong, we don't reload on
+    //a reload:
+    let isReload = window.performance.getEntriesByType("navigation")[0].type === "reload";
+    if (isCached && !isReload) {        
+        window.location.reload();
+    }
 });

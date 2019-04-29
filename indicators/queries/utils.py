@@ -241,6 +241,11 @@ def indicator_reporting_annotation():
             lop_actual_progress__isnull=True,
             then=models.Value(False)
         ),
+        models.When(
+            # if the target over all to date is 0, can't calculate over/under
+            lop_target_progress=0,
+            then=models.Value(False)
+        ),
         default=models.Value(True),
         output_field=models.BooleanField()
     )

@@ -14,6 +14,7 @@ from factories import (
     )
 from indicators.models import Indicator, PeriodicTarget
 from indicators.queries import ProgramWithMetrics
+from safedelete.models import HARD_DELETE
 from django import test
 
 
@@ -89,7 +90,7 @@ class ReportingIndicatorBase(test.TestCase):
             )
         self.targets.append(target)
         return target
-        
+
 
     def get_time_aware_dates(self, target_frequency):
         start_date = self.program.reporting_period_start
@@ -128,7 +129,7 @@ class ReportingIndicatorBase(test.TestCase):
         )
 
     def get_annotated_program(self):
-        return ProgramWithMetrics.home_page.with_annotations('reporting').get(pk=self.program.pk) 
+        return ProgramWithMetrics.home_page.with_annotations('reporting').get(pk=self.program.pk)
 
 class TestSingleNonReportingIndicator(ReportingIndicatorBase):
     """test conditions under which indicator should report reporting as false"""
@@ -356,7 +357,7 @@ class TestSingleReportingIndicator(ReportingIndicatorBase):
                 datum.delete()
             self.data = []
             self.targets = []
-            self.indicator.delete()
+            self.indicator.delete(force_policy=HARD_DELETE)
             self.indicator = None
 
 class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):

@@ -9,6 +9,7 @@ from indicators.models import Indicator
 from indicators.views.views_reports import IPTT_Mixin
 from factories.indicators_models import IndicatorFactory, ResultFactory
 from factories.workflow_models import ProgramFactory
+from factories import UserFactory, TolaUserFactory
 from django import test
 
 
@@ -117,7 +118,16 @@ class IPTTResponse(object):
 class TestIPTTTargetPeriodsReportResponseBase(test.TestCase):
     indicator_frequency = Indicator.LOP
     def setUp(self):
+
+        self.user = UserFactory(first_name="FN", last_name="LN", username="iptt_tester", is_superuser=True)
+        self.user.set_password('password')
+        self.user.save()
+
+        self.tola_user = TolaUserFactory(user=self.user)
+        self.tola_user.save()
+
         self.client = test.Client(enforce_csrf_checks=False)
+        self.client.login(username='iptt_tester', password='password')
         self.response = None
         startdate = datetime.strptime('2017-02-04', '%Y-%m-%d')
         enddate = datetime.strptime('2019-10-01', '%Y-%m-%d')
@@ -159,7 +169,15 @@ class TestIPTTTimePeriodsReportResponseBase(test.TestCase):
     timeperiods = Indicator.ANNUAL
 
     def setUp(self):
+        self.user = UserFactory(first_name="FN", last_name="LN", username="iptt_tester", is_superuser=True)
+        self.user.set_password('password')
+        self.user.save()
+
+        self.tola_user = TolaUserFactory(user=self.user)
+        self.tola_user.save()
+
         self.client = test.Client(enforce_csrf_checks=False)
+        self.client.login(username='iptt_tester', password='password')
         self.response = None
         startdate = datetime.strptime('2017-02-04', '%Y-%m-%d')
         enddate = datetime.strptime('2019-10-01', '%Y-%m-%d')
