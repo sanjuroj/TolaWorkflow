@@ -13,7 +13,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from django.db import connection, transaction
 from django.db.models import (
-    Count, Q, Sum, Avg, Max
+    Count, Q, Sum, Avg, Max, Min
 )
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -28,7 +28,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 from feed.serializers import FlatJsonSerializer
-from tola.util import group_excluded
+from tola.util import group_excluded, getCountry
 
 from indicators.serializers import IndicatorSerializer, ProgramSerializer
 from indicators.views.view_utils import (
@@ -1022,6 +1022,101 @@ class ProgramPage(ListView):
             "readonly": readonly
         }
         return render(request, self.template_name, c_data)
+
+
+def program_indicators_json(request, program, indicator, type):
+    template_name = 'indicators/program_indicators_table.html'
+
+    program_obj = Program.objects.get(pk=program)
+    q = {'program__id__isnull': False, 'program__id': program_obj.pk}
+
+    if int(type) != 0:
+        q['indicator_type__id'] = type
+
+    if int(indicator) != 0:
+        q['id'] = indicator
+
+    indicators = Indicator.objects \
+        .select_related('sector') \
+        .prefetch_related('result_set', 'indicator_type', 'level',
+                          'periodictargets') \
+        .filter(**q) \
+        .annotate(data_count=Count('result'),
+                  levelmin=Min('level__customsort'),
+                  target_period_last_end_date=Max('periodictargets__end_date')) \
+        .order_by('levelmin', 'number', 'name')
+
+    return render_to_response(
+        template_name,
+        {'indicators': indicators, 'program': program_obj}
+    )
+
+class IndicatorReportData(View, AjaxableResponseMixin):
+    """
+    This is the Indicator Visual report data, returns a json object of
+    report data to be displayed in the table report
+    """
+
+    def get(self, request, program, type, id):
+        q = {'program__id__isnull': False}
+
+        # if we have a program filter active
+        if int(program) != 0:
+            q = {'program__id': program}
+        # if we have an indicator type active
+        if int(type) != 0:
+            r = {'indicator_type__id': type}
+            q.update(r)
+
+        # if we have an indicator id append it to the query filter
+        if int(id) != 0:
+            s = {'id': id}
+            q.update(s)
+
+        countries = getCountry(request.user)
+
+        indicator = Indicator.objects.filter(program__country__in=countries) \
+            .filter(**q).values(
+                'id', 'program__name', 'baseline', 'level__name', 'lop_target',
+                'program__id',
+                'external_service_record__external_service__name',
+                'key_performance_indicator', 'name', 'indicator_type__id',
+                'indicator_type__indicator_type', 'sector__sector')\
+            .order_by('create_date')
+
+        indicator_count = Indicator.objects \
+            .filter(program__country__in=countries) \
+            .filter(**q) \
+            .filter(result__isnull=True) \
+            .distinct() \
+            .count()
+
+        indicator_data_count = Indicator.objects \
+            .filter(program__country__in=countries) \
+            .filter(**q).filter(result__isnull=False) \
+            .distinct() \
+            .count()
+
+        indicator_serialized = json.dumps(list(indicator))
+
+        final_dict = {
+            'indicator': indicator_serialized,
+            'indicator_count': indicator_count,
+            'data_count': indicator_data_count
+        }
+
+        if request.GET.get('export'):
+            indicator_export = Indicator.objects.all().filter(**q)
+            dataset = IndicatorResource().export(indicator_export)
+            response = HttpResponse(dataset.csv,
+                                    content_type='application/ms-excel')
+
+            response['Content-Disposition'] = 'attachment; \
+                filename=indicator_data.csv'
+
+            return response
+
+        return JsonResponse(final_dict, safe=False)
 
 
 class DisaggregationReportMixin(object):
