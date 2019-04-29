@@ -213,27 +213,12 @@ class IndicatorTypeNameSerializer(serializers.RelatedField):
         return value.indicator_type
 
 
-class LevelNameSerializer(serializers.RelatedField):
+class NameSerializer(serializers.RelatedField):
     def to_representation(self, value):
         return value.name
 
 
-class ObjectiveNameSerializer(serializers.RelatedField):
-    def to_representation(self, value):
-        return value.name
-
-
-class StrategicObjectiveNameSerializer(serializers.RelatedField):
-    def to_representation(self, value):
-        return value.name
-
-
-class DataCollectionFrequencyNameSerializer(serializers.RelatedField):
-    def to_representation(self, value):
-        return value.frequency
-
-
-class ReportingFrequencyNameSerializer(serializers.RelatedField):
+class FrequencyNameSerializer(serializers.RelatedField):
     def to_representation(self, value):
         return value.frequency
 
@@ -243,39 +228,19 @@ class SectorNameSerializer(serializers.RelatedField):
         return value.sector
 
 
-class ExternalServiceNameSerializer(serializers.RelatedField):
-    def to_representation(self, value):
-        return value.name
-
-
 class CountryNameSerializer(serializers.RelatedField):
     def to_representation(self, value):
         return value.country
 
 
-class FundCodeNameSerializer(serializers.RelatedField):
-    def to_representation(self, value):
-        return value.name
-
-
-class TolaUserNameSerializer(serializers.RelatedField):
-    def to_representation(self, value):
-        return value.name
-
-
-class SiteTypeNameSerializer(serializers.RelatedField):
+class ProfileNameSerializer(serializers.RelatedField):
     def to_representation(self, value):
         return value.profile
 
 
-class OfficeNameSerializer(serializers.RelatedField):
-    def to_representation(self, value):
-        return value.name
-
-
 class SiteSerializer(serializers.ModelSerializer):
-    type = SiteTypeNameSerializer(queryset=ProfileType.objects.all)
-    office = OfficeNameSerializer(queryset=Office.objects.all)
+    type = ProfileNameSerializer(queryset=ProfileType.objects.all)
+    office = NameSerializer(queryset=Office.objects.all)
     country = CountryNameSerializer(queryset=Country.objects.all)
 
     class Meta:
@@ -323,16 +288,16 @@ class IndicatorNameSerializer(serializers.ModelSerializer):
     # TODO: include disaggregations
     periodictargets = PeriodicTargetNameSerializer(many=True)
     indicator_type = IndicatorTypeNameSerializer(queryset=IndicatorType.objects.all, many=True)
-    level = LevelNameSerializer(queryset=Level.objects.all)
-    objectives = ObjectiveNameSerializer(queryset=Objective.objects.all, many=True)
-    strategic_objectives = StrategicObjectiveNameSerializer(queryset=StrategicObjective.objects.all, many=True)
-    data_collection_frequency = DataCollectionFrequencyNameSerializer(queryset=DataCollectionFrequency.objects.all)
-    reporting_frequency = ReportingFrequencyNameSerializer(queryset=ReportingFrequency.objects.all)
+    level = NameSerializer(queryset=Level.objects.all)
+    objectives = NameSerializer(queryset=Objective.objects.all, many=True)
+    strategic_objectives = NameSerializer(queryset=StrategicObjective.objects.all, many=True)
+    data_collection_frequency = FrequencyNameSerializer(queryset=DataCollectionFrequency.objects.all)
+    reporting_frequency = FrequencyNameSerializer(queryset=ReportingFrequency.objects.all)
     sector = SectorNameSerializer(queryset=Sector.objects.all)
-    external_service_record = ExternalServiceNameSerializer(queryset=ExternalService.objects.all)
+    external_service_record = NameSerializer(queryset=ExternalService.objects.all)
     result_set = serializers.SerializerMethodField()
-    approved_by = TolaUserNameSerializer(queryset=TolaUser.objects.all)
-    approval_submitted_by = TolaUserNameSerializer(queryset=TolaUser.objects.all)
+    approved_by = NameSerializer(queryset=TolaUser.objects.all)
+    approval_submitted_by = NameSerializer(queryset=TolaUser.objects.all)
 
     class Meta:
         model = Indicator
@@ -350,7 +315,7 @@ class IndicatorNameSerializer(serializers.ModelSerializer):
 class ProgramSerializer(serializers.ModelSerializer):
     sector = SectorNameSerializer(queryset=Sector.objects.all, many=True)
     country = CountryNameSerializer(queryset=Country.objects.all, many=True)
-    fund_code = CountryNameSerializer(queryset=FundCode.objects.all, many=True)
+    fund_code = NameSerializer(queryset=FundCode.objects.all, many=True)
     indicator_set = IndicatorNameSerializer(many=True)
     objective_set = ObjectiveSerializer(many=True)
 
