@@ -17,7 +17,7 @@ class TestBase(object):
     fixtures = ['indicatortype.json']
 
     def setUp(self):
-        self.user = UserFactory(first_name="Indicator", last_name="CreateTest", username="IC")
+        self.user = UserFactory(first_name="Indicator", last_name="CreateTest", username="IC", is_superuser=True)
         self.user.set_password('password')
         self.user.save()
         self.tola_user = TolaUserFactory(user=self.user)
@@ -177,4 +177,3 @@ class IndicatorStatsMixin(object):
         buckets_percents = {k: float(v)/len(self.indicator_ids) for (k, v) in buckets_values.iteritems()}
 
         self.assertEqual(buckets_percents, self.response.context['scope_counts'])
-

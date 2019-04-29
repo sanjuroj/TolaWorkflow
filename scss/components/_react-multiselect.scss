@@ -1,0 +1,39 @@
+.react-multiselect-checkbox {
+    & > div.invalid-feedback {
+        display: block;
+    }
+    & > div:not(.invalid-feedback) {
+        width: 100%;
+        color: $black;
+        border-radius: $border-radius;
+        border: 1px solid $gray-500;
+        outline: 0 !important;
+        > button {
+            width: 100%;
+            svg {
+               color: $gray-500;
+            }
+        }
+        > div {
+            width: 100%;
+        }
+    }
+    .invalid-feedback {
+        display: block;
+    }
+    .count__label {
+        width: 100%;
+        border-right: 1px solid $gray-500;
+        padding-right: 20px;
+        font-size: 16px;
+        line-height: 24px;
+        color: $gray-600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        > div {
+            position: absolute;
+            right: 41px;
+            top: 8px;
+        }
+    }
+}

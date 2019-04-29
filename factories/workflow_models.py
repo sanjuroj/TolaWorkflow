@@ -17,6 +17,10 @@ from workflow.models import (
     TolaSites as TolaSitesM,
     TolaUser as TolaUserM,
     Program as ProgramM,
+    CountryAccess as CountryAccessM,
+    ProgramAccess as ProgramAccessM,
+    PROGRAM_ROLE_CHOICES,
+    COUNTRY_ROLE_CHOICES
 )
 
 
@@ -27,6 +31,10 @@ class CountryFactory(DjangoModelFactory):
 
     country = 'Afghanistan'
     code = 'AF'
+
+class CountryAccessFactory(DjangoModelFactory):
+    class Meta:
+        model = CountryAccessM
 
 
 class Contact(DjangoModelFactory):
@@ -62,13 +70,8 @@ class TolaUserFactory(DjangoModelFactory):
 
     user = SubFactory(UserFactory)
     name = LazyAttribute(lambda o: o.user.first_name + " " + o.user.last_name)
-    organization = SubFactory(OrganizationFactory)
+    organization = SubFactory(OrganizationFactory, id=1)
     country = SubFactory(CountryFactory, country='United States', code='US')
-
-    @post_generation
-    def countries(self, create, extracted, **kwargs):
-        self.countries.add(CountryFactory(country='United States', code='US'))
-
 
 class ProgramFactory(DjangoModelFactory):
     class Meta:
@@ -171,3 +174,21 @@ class TolaSites(DjangoModelFactory):
 
     name = 'MercyCorps'
     site = SubFactory(Site)
+
+def grant_program_access(tolauser, program, country, role=PROGRAM_ROLE_CHOICES[0][0]):
+    access_object, _ = ProgramAccessM.objects.get_or_create(
+        program=program,
+        tolauser=tolauser,
+        country=country
+    )
+    access_object.role=role
+    access_object.save()
+
+def grant_country_access(tolauser, country, role=COUNTRY_ROLE_CHOICES[0][0]):
+    access_object, _ = CountryAccessM.objects.get_or_create(
+        country=country,
+        tolauser=tolauser
+    )
+    access_object.role = role
+    access_object.save()
+    

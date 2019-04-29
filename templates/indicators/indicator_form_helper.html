@@ -7,6 +7,7 @@
         class="form-horizontal"
         method="post"
         novalidate>
+
     <div class="indicator-setup tab-set--vertical" id="indicator_modal_body">
 
         {% csrf_token %}
@@ -74,15 +75,15 @@
                         <span id="validation_id_strategic_objectives" class="has-error"></span>
                     </div>
 
+                    {% if not readonly %}
                     <div class="form-group text-right" id="div_id_remove_indicator">
-                        <button
-                            type="button"
+                        <a href="/indicators/indicator_delete/{{ indicator.id }}/"
                             id="id_delete_indicator_btn"
-                            onclick='location.href="/indicators/indicator_delete/{{ indicator.id }}"'
                             class="btn btn-sm btn-link btn-danger">
                                 <i class="fas fa-trash-alt"></i> {% trans "Delete this indicator" %}</a>
-                        </button>
+                        </a>
                     </div>
+                    {% endif %}
 
                 </fieldset>
             </div><!--/#summaryTab-->
@@ -190,6 +191,7 @@
                                         id="{{ form.lop_target.id_for_label }}"
                                         class="form-control"
                                         min="1"
+                                        {% if readonly %}disabled="disabled"{% endif %}
                                         {% if form.lop_target.value != None %} value="{{ form.lop_target.value|stringformat:'s' }}"{% endif %}
                                         required
                                         onblur="this.checkValidity();">
@@ -214,6 +216,7 @@
                             <div id="div_id_baseline">
                                 <span id="span_{{ form.baseline.id_for_label }}">
                                     <input type="number"
+                                           {% if readonly %}disabled="disabled"{% endif %}
                                            name="{{ form.baseline.name }}"
                                            id="{{ form.baseline.id_for_label }}"
                                            class="form-control"
@@ -249,10 +252,12 @@
                         <span id="validation_id_target_frequency_num_periods" class="has-error"></span>
                     </div>
 
+                    {% if not readonly %}
                     <div class="form-group" id="div_id_create_targets_btn">
                         <button type="button" id="id_create_targets_btn" class="btn btn-secondary">{% trans "Create targets" %}</button>
                         <button type="button" id="id_delete_targets_btn" class="btn btn-sm btn-link btn-danger"><i class="fas fa-trash-alt"></i> {% trans "Remove all targets" %}</button>
                     </div>
+                    {% endif %}
 
                     <div id="id_div_periodic_tables_placeholder">
                         {% include "indicators/indicatortargets.html" %}
@@ -384,6 +389,7 @@
         </div>
 
     </div> <!-- /#indicator_modal_body -->
+    {% if not readonly %}
     <div class="form-actions">
         <div>
             <!-- <input type="submit" class="btn btn-primary" value="Save changes"> -->
@@ -392,6 +398,7 @@
         </div>
         <div class="text-muted">{% include "form_guidance.html" %}</div>
     </div>
+    {% endif %}
 </form>
 
 <script>
@@ -452,6 +459,7 @@
             $("#id_div_is_cumulative_section3").hide();
         }
         else {
+            {# Translators: This is the title of some informational text describing what it means when an indicator is being measured as a percentage e.g. % of population with access to water  #}
             $("#id_span_is_cumulative_header").text("{% trans 'Percentage (%) indicators'|escapejs %}");
             $("#id_div_is_cumulative_section3").show();
             $("#id_div_is_cumulative_section1").hide();
@@ -523,7 +531,6 @@
 
     $( document ).ready(function() {
         var unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
-        console.log(unit_of_measure_type);
         if (unit_of_measure_type == 2){
             show_hide_cummulative_inputs('percent')
             $('#span_id_lop_target').addClass('input-symbol-percent');
@@ -589,70 +596,10 @@
     $('#id_indicator_type').multiselect(multiselectOptions);
     $('#id_strategic_objectives').multiselect(multiselectOptions);
 
-    /*
-    var alerts = {};
-
-    function setTabAlert(tabId, tabName){
-        alerts[tabId] = 'Please complete all required fields in the ' + tabName;
-    }
-
-    function unSetTabAlert(tabId){
-        delete alerts[tabId];
-    }
-
-    function showAlerts(messagesDiv) {
-        var msg = '';
-        $.each(alerts, function(k,v) {
-            msg += v + '<br>';
-        });
-        $(messagesDiv).empty();
-        if (!jQuery.isEmptyObject(alerts)) {
-            createAlert('danger', msg, false, messagesDiv);
-        }
-        alerts = {};
-    }
-
-    $("#indicator_update_form").on("blur", ":input", function(e){
-        var isvalid = e.target.validity.valid;
-        var element = $(e.target);
-        var elementId = element.attr('id');
-        // console.log(element.attr('id'), isvalid);
-
-        element.parent().addClass('was-validated');
-        $('label[for="'+ elementId + '"]').toggleClass('has-error', !isvalid);
-        if (isvalid == false) {
-            var tabPane = element.closest('.tab-pane');
-            var tabId = tabPane.attr('id');
-            var tabName = tabPane.attr('name');
-            setTabAlert(tabId, tabName);
-        }
-
-        if (elementId == 'id_baseline' || elementId == 'id_baseline_na') {
-            $('label[for="id_baseline_na"]').toggleClass('has-error', !isvalid);
-            $('label[for="id_baseline"]').toggleClass('has-error', !isvalid);
-        }
+    // used for tracking if changes were made to the form
+    // see indicator_form_common_js.html for def
+    $(document).ready(function() {
+        recordTrackedFieldsSnapshot();
     });
-
-    $("#indicator_modal_content").on("submit", "#indicator_update_form", function(e){
-        e.preventDefault();
-        var form = e.target;
-        form.classList.add('was-validated');
-
-        if (form.checkValidity() == false) {
-            const tabs = $(".tab-pane");
-            $.each(tabs, (i, tab) => {
-                const tabId = tab.id;
-                const tabName = $(tab).attr('name');
-                if ($(tab).find('.form-control:invalid').length > 0) {
-                    setTabAlert(tabId, tabName);
-                } else {
-                    unSetTabAlert(tabId);
-                }
-            });
-            showAlerts("#modalmessages");
-        }
-
-    });
-    */
 
 </script>

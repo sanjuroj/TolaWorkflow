@@ -4,6 +4,9 @@
 {% include 'validation_js.html' %}
 
 <script>
+
+    let resultFormSnapshot;
+
     // gdrive picker
     function filePickerCallback(fileName, url) {
         document.getElementById('id_evidence_url').value = url;
@@ -11,6 +14,9 @@
         validateEvidence()
         setViewButtonDisabledState();
     }
+
+    const DELETE_RESULT_MESSAGE = "{% trans 'This action cannot be undone. The result value and any information associated with it will be permanently removed. For future reference, please provide a reason for deleting this result.' %}"
+    const MODIFY_RESULT_DATE_MESSAGE = "{% trans 'Modifying results will affect program metrics for this indicator and should only be done to correct a data entry error. For future reference, please provide a reason for modifying this result.' %}"
 
     $("#indicator_results_div").on('click', '#id_browse_google_drive', function(e) {
         e.preventDefault();
@@ -31,6 +37,9 @@
         $('#id_view_evidence_button').prop('disabled', ! evidenceURLHasValue);
     }
 
+    $("#indicator_results_div").on('shown.bs.modal', function() {
+    });
+
     $("#indicator_results_div").on('change keyup paste', '#id_evidence_url', function () {
         setViewButtonDisabledState();
     });
@@ -41,7 +50,6 @@
 
     // Intercept ResultsUpdate form submission and then use ajax to submit it.
     $("#indicator_results_div").on("submit", "#result_update_form", function(e){
-        $('#submit-id-submit').attr('disabled', 'disabled');
         e.preventDefault();
         {#let isFormValid = true;#}
         $("#modalmessages").empty();
@@ -62,30 +70,55 @@
         $(this.date_collected).val(date_collected_db_format);
         */
 
-        let form_url = $(this).attr('action');
-        let form_data = $(this).serialize();
-        // mark that the form data has changed so that when the modal is closed the list view can be updated
-        $(this).data('recordchanged', true);
-        $.post(form_url, form_data,
-            function(response, status, jqXHR) { // success callback
-                $('#submit-id-submit').removeAttr('disabled');
-                if (response.url) {
-                    $('#result_update_form').attr('action', response.url);
-                }
-                $("#modalmessages").empty();
-                if ($("#result_update_form div").hasClass('has-warning')) {
-                    createAlert("warning", "{% trans 'Result saved - however please review warnings below.'|escapejs %}", true, "#modalmessages");
-                } else {
-                    createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, "#modalmessages");
-                }
-            })
-        .fail(function(error){
-            $('#submit-id-submit').removeAttr('disabled');
-            createAlert("danger", "{% trans 'Could not save form.'|escapejs %}", true, "#modalmessages");
-        });
-        $('#indicator_results_div').animate({ scrollTop: 0 }, 'slow');
-    });
+        const save = (rationale) => {
+            $('#submit-id-submit').attr('disabled', 'disabled');
+            let form_url = $(this).attr('action');
 
+            let form_data = getResultFormAsObject();
+
+            // tack on rationale
+            form_data['rationale'] = rationale;
+
+            // mark that the form data has changed so that when the modal is closed the list view can be updated
+            $(this).data('recordchanged', true);
+
+            $.post(form_url, form_data,
+                function(response, status, jqXHR) { // success callback
+                    $('#submit-id-submit').removeAttr('disabled');
+                    if (response.url) {
+                        $('#result_update_form').attr('action', response.url);
+                    }
+                    $("#modalmessages").empty();
+                    if ($("#result_update_form div").hasClass('has-warning')) {
+                        createAlert("warning", "{% trans 'Result saved - however please review warnings below.'|escapejs %}", true, "#modalmessages");
+                    } else {
+                        createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, "#modalmessages");
+                    }
+
+                    // record new base state
+                    recordResultFormSnapshot();
+                })
+            .fail(function(error){
+                $('#submit-id-submit').removeAttr('disabled');
+                createAlert("danger", "{% trans 'Could not save form.'|escapejs %}", true, "#modalmessages");
+            });
+            $('#indicator_results_div').animate({ scrollTop: 0 }, 'slow');
+        }
+
+        const message_text = hasResultDateFormFieldChanged() ? MODIFY_RESULT_DATE_MESSAGE : '';
+        const result_is_new = $(this).attr('action').indexOf('result_add') !== -1;
+
+        if(result_is_new || ! hasResultFormChanged()) {
+            save('');
+        } else {
+            window.create_nondestructive_changeset_notice({
+                message_text: message_text,
+                context: document.getElementById('result_update_form'),
+                on_submit: save
+            });
+            scrollToResultFormBottom();
+        }
+    });
 
     $("#indicator_results_div").on("change", "#id_date_collected", function(e){
         validatePeriodicTarget(onlyPeriodic = true);
@@ -106,52 +139,25 @@
 
         let resultId = $('#id_delete_result_btn').data('result-id');
 
-        PNotify.alert({
-            text: "{% trans 'This action cannot be undone. Are you sure you want to delete this result?' %}",
-            title: "{% trans 'Warning' %}",
-            icon: 'fa fa-exclamation-circle',
-            hide: false,
-            type: 'error',
-            stack: {
-                {#'modal': true,#}
-                'overlayClose': true,
-                {#'dir1': 'down',#}
-                'dir1': 'right',
-                'dir2': 'up',
-                'firstpos1': 0,
-                'firstpos2': 0,
-                {#'push': 'top',#}
-                'context': document.getElementById('result_update_form')
-            },
-            modules: {
-                Confirm: {
-                    confirm: true,
-                    buttons: [
-                        {
-                            text: "{% trans 'Delete result' %}",
-                            primary: true,
-                            click: function (notice) {
-                                notice.close();
-
-                                // Mark the record being changed so results table is reloaded on modal close
-                                $('#indicator_results_div form').data('recordchanged', true);
-
-                                $.post("/indicators/result_delete/" + resultId + "/", function (data) {
-                                    // Close modal
-                                    $('#indicator_results_div').modal('hide')
-                                });
-                            }
-                        },
-                        {
-                            text: "{% trans 'Cancel' %}",
-                            click: function (notice) {
-                                notice.close();
-                            }
-                        }
-                    ]
-                }
+        var url = "/indicators/result_delete/" + resultId + "/"
+        window.create_destructive_changeset_notice({
+            message_text: DELETE_RESULT_MESSAGE,
+            context: document.getElementById('result_update_form'),
+            on_submit: (rationale) => {
+                // Mark the record being changed so results table is reloaded on modal close
+                $('#indicator_results_div form').data('recordchanged', true);
+                $.post(url, {rationale: rationale},
+                    function(response, status, jqXHR) { // success callback
+                        // Close modal
+                        $('#indicator_results_div').modal('hide')
+                        PNotify.success("Result deleted")
+                    })
+                .fail(function(error){
+                    createAlert("danger", "{% trans 'Could not save form.'|escapejs %}"  + error, true, "#modalmessages");
+                });
             }
         });
+        scrollToResultFormBottom();
     });
 
 
@@ -170,8 +176,7 @@
 
             $("#div_id_periodic_target").addClass('has-error');
         } else if ($("#id_periodic_target").val() == '' && onlyPeriodic == false) {
-            // This is triggered with midline/endline or event target frequencies when user tries to
-            // submit data without selecting a target period.
+            {# Translators: This is error message is triggered with midline/endline or event target frequencies when user tries to submit data without selecting a target period. #}
             $("#hint_id_periodic_target").html("<small>{% trans 'Please select a target.'|escapejs %}</small>");
             $("#div_id_periodic_target").addClass('has-error');
             $("#id_periodic_target").addClass('is-invalid');
@@ -356,9 +361,64 @@
         return true;
     }
 
+    function scrollToResultFormBottom() {
+        scrollToBottom($('#indicator_results_div'));
+    }
+
     // called from result_form_modal.html
     function lockPeriodicTargetDropdown(){
         $("#id_periodic_target option:not(:selected)").attr("disabled", true);
         $("#id_periodic_target").attr("readonly", true);
     }
+
+
+    /*
+     * Change tracking functions
+     */
+
+    // return a JS obj of key/vals of indicator form
+    function getResultFormAsObject() {
+        let $form = $('#result_update_form');
+        let formObj = {};
+        $form.serializeArray().forEach(function (x) {
+            formObj[x.name] = x.value;
+        });
+
+        return formObj;
+    }
+
+    // same as getIndicatorFormAsObject() but containing only tracked fields
+    // can be used to snapshot form state for later comparison
+    function getTrackedResultFieldsObject() {
+        let formObj = getResultFormAsObject();
+
+        let excluded_fields = [
+            'csrfmiddlewaretoken',
+            'comments',
+            'complete',
+        ];
+
+        excluded_fields.forEach(function(key) {
+            delete formObj[key];
+        });
+
+        return formObj;
+    }
+
+    // remember the initial state of the form
+    function recordResultFormSnapshot() {
+        resultFormSnapshot = getTrackedResultFieldsObject();
+    }
+
+    // have any tracked fields changed in the form?
+    function hasResultFormChanged() {
+        let prevState = JSON.stringify(resultFormSnapshot);
+        let currState = JSON.stringify(getTrackedResultFieldsObject());
+        return prevState !== currState;
+    }
+
+    function hasResultDateFormFieldChanged() {
+        return resultFormSnapshot.date_collected !== getResultFormAsObject().date_collected;
+    }
+
 </script>

@@ -1,5 +1,7 @@
 // Page regions and sub-regions
-
+#nonfooter {
+    flex-grow: 1;
+}
 .region--main {
     // contains most of the page except for top/bottom nav
     // defined in {% block mainclasses %}
@@ -45,4 +47,10 @@
 .subheader__actions {
     margin-left: $grid-gutter-width/4;
     margin-right: $grid-gutter-width/4;
+}
+
+.page-footer__actions {
+    // only in use on IPTT RN
+    margin-bottom: $grid-gutter-width/2;
+    margin-top: $grid-gutter-width/2;
 }

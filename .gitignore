@@ -53,4 +53,7 @@ log_convert_lop_to_numeric
 node_modules
 
 webpack-stats-local.json
+webpack-stats-vagrant.json
+.vagrant
+site.retry
 .eslintrc.yml
