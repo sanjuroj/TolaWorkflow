@@ -34,12 +34,12 @@ def create_user_okta(backend, details, user, response, *args, **kwargs):
             logger.error("In trying to log in {}, could not retrieve Country object for {}.".format(
                 attributes['email'], attributes.get("mcCountryCode")
             ))
-            return HttpResponseRedirect(reverse("invalid_user"))
+            return HttpResponseRedirect(reverse("invalid_user_okta"))
 
         user_count = User.objects.filter(email=email).count()
         if user_count > 1:
             logger.error("Found too many users for {}".format(email))
-            return HttpResponseRedirect(reverse("invalid_user"))
+            return HttpResponseRedirect(reverse("invalid_user_okta"))
         elif user_count == 1:
             user = User.objects.get(email=email)
         else:
@@ -48,7 +48,7 @@ def create_user_okta(backend, details, user, response, *args, **kwargs):
                 user.save()
             except Exception as e:
                 logger.error("Exception while saving the Auth.User {}".format(email), e)
-                return HttpResponseRedirect(reverse("invalid_user"))
+                return HttpResponseRedirect(reverse("invalid_user_okta"))
 
         if hasattr(user, 'tola_user'):
             tola_user = user.tola_user
@@ -59,7 +59,7 @@ def create_user_okta(backend, details, user, response, *args, **kwargs):
             except Exception as e:
                 transaction.savepoint_rollback(savepoint)
                 logger.error("Exception while saving the TolaUser {}".format(email), e)
-                return HttpResponseRedirect(reverse("invalid_user"))
+                return HttpResponseRedirect(reverse("invalid_user_okta"))
 
         # If any of these fail, the transaction should roll back the whole thing
 
@@ -69,7 +69,7 @@ def create_user_okta(backend, details, user, response, *args, **kwargs):
         except Exception as e:
             transaction.savepoint_rollback(savepoint)
             logger.error("Exception while saving the TolaUser country of {}".format(email), e)
-            return HttpResponseRedirect(reverse("invalid_user"))
+            return HttpResponseRedirect(reverse("invalid_user_okta"))
         try:
             user.first_name = first_name[:30]
             user.last_name = last_name[:30]
@@ -78,7 +78,7 @@ def create_user_okta(backend, details, user, response, *args, **kwargs):
             if not user.first_name and not user.last_name:
                 transaction.savepoint_rollback(savepoint)
                 logger.error("Exception while saving the Auth.User first or last name of {}".format(email), e)
-                return HttpResponseRedirect(reverse("invalid_user"))
+                return HttpResponseRedirect(reverse("invalid_user_okta"))
             else:
                 # It's ok if we can't get name info if there's already something in the database.
                 pass

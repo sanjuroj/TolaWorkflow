@@ -141,6 +141,7 @@ urlpatterns = [
 
                 # Auth backend URL's
                 url(r'^accounts/invalid_user/$', views.invalid_user_view, name='invalid_user'),
+                url(r'^accounts/invalid_user/okta/$', TemplateView.as_view(template_name='registration/invalid_okta_user.html'), name='invalid_user_okta'),
                 url(r'^accounts/password_reset/$', views.TolaPasswordResetView.as_view(), name='password_reset'),
                 url(r'accounts/', include('django.contrib.auth.urls')),
                 url('', include('social_django.urls', namespace='social')),
