@@ -1697,6 +1697,7 @@ function (_React$Component) {
       })), selected && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "bulk__select"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SecondaryComponent, {
+        placeholder: gettext("Select..."),
         value: this.state.current_vals,
         onChange: function onChange(vals) {
           return _this2.onChange(vals);
@@ -1704,7 +1705,10 @@ function (_React$Component) {
       })), !selected && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "bulk__select"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        placeholder: "---"
+        placeholder: "---",
+        noOptionsMessage: function noOptionsMessage() {
+          return gettext('No options');
+        }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-secondary",
         disabled: !this.state.current_action,
@@ -1991,7 +1995,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         href: "/tola_management/user/?programs[]=".concat(data.id)
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-users"
-      }), "\xA0", data.program_users, " users") : '---'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, fundingStatusDisplayStr(data.funding_status)));
+      }), "\xA0", data.program_users, " ", gettext("users")) : '---'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, null, fundingStatusDisplayStr(data.funding_status)));
     }
   }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__metadata"
@@ -3017,4 +3021,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-cb3a2996d65da77a2ed9.js.map
+//# sourceMappingURL=tola_management_program-16256b1509da825b1dab.js.map
