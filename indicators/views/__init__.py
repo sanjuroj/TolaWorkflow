@@ -8,7 +8,6 @@ from views_indicators import (
     ResultUpdate,
     ResultDelete,
     service_json,
-    program_indicators_json,
     result_view,
     indicator_plan,
     DisaggregationReportQuickstart,

@@ -38,15 +38,6 @@ urlpatterns = [
     url(r'^result_table/(?P<indicator>\d+)/',
         views.result_view, name='result_view'),
 
-    url(r'^program_indicators/(?P<program>\d+)/(?P<indicator>\d+)/'
-        r'(?P<type>\d+)', views.program_indicators_json, name='program_indicators_json'),
-
-    url(r'^report_data/(?P<id>\w+)/(?P<program>\d+)/(?P<type>\d+)/$',
-        views.IndicatorReportData.as_view(), name='indicator_report_data'),
-
-    url(r'^result_report_data/(?P<program>\d+)/(?P<indicator>\d+)/(?P<type>\d+)/$',
-        views.ResultReportData.as_view(), name='result_report_data'),
-
     url(r'^iptt_quickstart/', views.IPTTQuickstart.as_view(), name='iptt_quickstart'),
     url(r'^iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', views.IPTTReport.as_view(), name='iptt_report'),
     url(r'^iptt_report_data/$', views.IPTTReportData.as_view(), name='iptt_ajax'),
