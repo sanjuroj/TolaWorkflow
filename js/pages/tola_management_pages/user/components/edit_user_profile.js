@@ -135,7 +135,7 @@ export default class EditUserProfile extends React.Component {
         }
         return (
             <div className="tab-pane--react">
-                <h2 className="no-bold">{ud.name? ud.name+': ':''}Profile</h2>
+                <h2 className="no-bold">{ud.name? ud.name+': ':''}{gettext('Profile')}</h2>
                 <form className="form">
                     <div className="form-group">
                         <label className="label--required" htmlFor="user-first-name-input">{gettext("Preferred First Name")}</label>
