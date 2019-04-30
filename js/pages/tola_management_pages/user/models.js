@@ -71,13 +71,13 @@ export class UserStore {
     program_role_choices = []
 
     user_status_options = [
-        {value: 1, label: 'Active'},
-        {value: 0, label: 'Inactive'}
+        {value: 1, label: gettext('Active')},
+        {value: 0, label: gettext('Inactive')}
     ]
 
     admin_role_options = [
-        {value: 1, label: 'Yes'},
-        {value: 0, label: 'No'}
+        {value: 1, label: gettext('Yes')},
+        {value: 0, label: gettext('No')}
     ]
 
     @observable filters = {
