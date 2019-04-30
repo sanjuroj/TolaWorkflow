@@ -10,7 +10,6 @@ from workflow.models import TolaUser, Organization, Country
 
 logger = logging.getLogger('django')
 
-
 def domains_allowed(backend, details, response, *args, **kwargs):
     if 'email' in details and details['email'] and len(details['email'].split('@')) > 1:
         domain = details['email'].split('@')[-1]
@@ -22,7 +21,6 @@ def domains_allowed(backend, details, response, *args, **kwargs):
 def create_user_okta(backend, details, user, response, *args, **kwargs):
 
     if backend.name == 'saml' and response.get('idp_name') == 'okta':
-
         #annoyingly the attributes are coming back as arrays, so let's flatten them
         attributes = {k: v[0] if len(v) > 0 else None for k,v in response['attributes'].iteritems()}
         savepoint = transaction.savepoint()
@@ -52,7 +50,7 @@ def create_user_okta(backend, details, user, response, *args, **kwargs):
                 logger.error("Exception while saving the Auth.User {}".format(email), e)
                 return HttpResponseRedirect(reverse("invalid_user"))
 
-        if user.tola_user:
+        if hasattr(user, 'tola_user'):
             tola_user = user.tola_user
         else:
             try:
