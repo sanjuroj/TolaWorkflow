@@ -124,8 +124,12 @@
                 {% else %}
                     {% if program.metrics.targets_defined %}
                         <h4>
-                            {% blocktrans %}Program metrics <small>for target periods completed to date</small>{% endblocktrans %}
+                            {% blocktrans %}
+                            Program metrics
+                            <small>for target periods completed to date
+                            {% endblocktrans %}
                             {% include "indicators/program_target_period_info_helptext.html" %}
+                            </small>
                         </h4>
                         <div class="status__gauges">
                             {% gauge_band False %}
