@@ -159,7 +159,7 @@ class BulkActions extends React.Component {
                 <Select placeholder="---" noOptionsMessage={() => gettext('No options')}/>
             </div>
             }
-            <button className="btn btn-secondary" disabled={apply_disabled} onClick={() => this.onApply()}>Apply</button>
+            <button className="btn btn-secondary" disabled={apply_disabled} onClick={() => this.onApply()}>{gettext('Apply')}</button>
         </div>
     }
 }
