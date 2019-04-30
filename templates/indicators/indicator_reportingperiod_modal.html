@@ -297,6 +297,7 @@
             $("#reportingperiod_update_form").attr("action", base_url + source_data['program']);
             var testDate = "";
             if ((testDate = new Date(source_data['progstart'])) == "Invalid Date"){
+                // # Translators: Data is currently unavailable to display (i.e. system error)
                 $("#id_gait_start_date").html("{% trans 'Unavailable' %}");
                 $("#id_gait_start_date").addClass("color-red");
             }
@@ -304,6 +305,7 @@
                 $("#id_gait_start_date").html(formatDate(testDate)); // TODO: shouldn't use formatDate
             }
             if ((testDate = new Date(source_data['progend'])) == "Invalid Date"){
+                // # Translators: Data is currently unavailable to display (i.e. system error)
                 $("#id_gait_end_date").html("{% trans 'Unavailable' %}");
                 $("#id_gait_end_date").addClass("color-red");
             }
