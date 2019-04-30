@@ -35,7 +35,7 @@ class TolaTable(models.Model):
     owner = models.ForeignKey('auth.User', verbose_name=_("Owner"))
     remote_owner = models.CharField(_("Remote owner"), max_length=255, blank=True)
     country = models.ManyToManyField(Country, blank=True, verbose_name=_("Country"))
-    url = models.CharField(_("Url"), max_length=255, blank=True)
+    url = models.CharField(_("URL"), max_length=255, blank=True)
     unique_count = models.IntegerField(_("Unique count"), blank=True, null=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
@@ -256,8 +256,8 @@ class ReportingPeriodAdmin(admin.ModelAdmin):
 
 class ExternalService(models.Model):
     name = models.CharField(_("Name"), max_length=255, blank=True)
-    url = models.CharField(_("Url"), max_length=765, blank=True)
-    feed_url = models.CharField(_("Feed url"), max_length=765, blank=True)
+    url = models.CharField(_("URL"), max_length=765, blank=True)
+    feed_url = models.CharField(_("Feed URL"), max_length=765, blank=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
@@ -279,8 +279,8 @@ class ExternalServiceRecord(models.Model):
         verbose_name=_("External service"))
     full_url = models.CharField(_("Full URL"), max_length=765, blank=True)
     record_id = models.CharField(_("Unique ID"), max_length=765, blank=True)
-    create_date = models.DateTimeField(null=True, blank=True)
-    edit_date = models.DateTimeField(null=True, blank=True)
+    create_date = models.DateTimeField(null=True, blank=True, verbose_name=_("Create date"))
+    edit_date = models.DateTimeField(null=True, blank=True, verbose_name=_("Edit date"))
 
     class Meta:
         verbose_name = _("External Service Record")
@@ -399,7 +399,7 @@ class IndicatorManager(SafeDeleteManager, IndicatorSortingManagerMixin):
     def get_queryset(self):
         queryset = IndicatorQuerySet(self.model, using=self._db)
         queryset._safedelete_visibility = self._safedelete_visibility
-        queryset._safedelete_visibility_field = self._safedelete_visibility_field        
+        queryset._safedelete_visibility_field = self._safedelete_visibility_field
         return queryset.select_related('program', 'sector')
 
 
@@ -461,7 +461,7 @@ class Indicator(SafeDeleteModel):
 
 
     indicator_key = models.UUIDField(
-        default=uuid.uuid4, unique=True, help_text=" "),
+        default=uuid.uuid4, unique=True, help_text=" ", verbose_name=_("Indicator key")),
 
     # i.e. Alpha, Donor, Standard
     # TODO: make this a foreign key
@@ -1093,7 +1093,7 @@ class ResultManager(models.Manager):
 
 class Result(models.Model):
     data_key = models.UUIDField(
-        default=uuid.uuid4, unique=True, help_text=" "),
+        default=uuid.uuid4, unique=True, help_text=" ", verbose_name=_("Data key")),
 
     periodic_target = models.ForeignKey(
         PeriodicTarget, null=True, blank=True, on_delete=models.SET_NULL, help_text=" ",
@@ -1151,12 +1151,12 @@ class Result(models.Model):
         verbose_name=_("Would you like to update the achieved total with the \
         row count from TolaTables?"), default=False, help_text=" ")
 
-    record_name = models.CharField(max_length=135, blank=True)
-    evidence_url = models.CharField(max_length=255, blank=True)
+    record_name = models.CharField(max_length=135, blank=True, verbose_name=_("Record name"))
+    evidence_url = models.CharField(max_length=255, blank=True, verbose_name=_("Evidence URL"))
 
-    create_date = models.DateTimeField(null=True, blank=True, help_text=" ")
-    edit_date = models.DateTimeField(null=True, blank=True, help_text=" ")
-    site = models.ManyToManyField(SiteProfile, blank=True, help_text=" ")
+    create_date = models.DateTimeField(null=True, blank=True, help_text=" ", verbose_name=_("Create date"))
+    edit_date = models.DateTimeField(null=True, blank=True, help_text=" ", verbose_name=_("Edit date"))
+    site = models.ManyToManyField(SiteProfile, blank=True, help_text=" ", verbose_name=_("Site"))
 
     history = HistoricalRecords()
     objects = ResultManager()
