@@ -17,7 +17,6 @@ def domains_allowed(backend, details, response, *args, **kwargs):
             # redirects user to okta login if they are in OKTA domains
             return HttpResponseRedirect('/login/saml/?idp=okta')
 
-# TODO: In base.py, should this step come after the associate_by_email step?  In which case we might already have the user?
 def create_user_okta(backend, details, user, response, *args, **kwargs):
 
     if backend.name == 'saml' and response.get('idp_name') == 'okta':
@@ -71,8 +70,8 @@ def create_user_okta(backend, details, user, response, *args, **kwargs):
             logger.error("Exception while saving the TolaUser country of {}".format(email), e)
             return HttpResponseRedirect(reverse("invalid_user"))
         try:
-            user.first_name = first_name[-30:]
-            user.last_name = last_name[-30:]
+            user.first_name = first_name[:30]
+            user.last_name = last_name[:30]
             user.save()
         except Exception as e:
             if not user.first_name and not user.last_name:
@@ -82,7 +81,6 @@ def create_user_okta(backend, details, user, response, *args, **kwargs):
             else:
                 # It's ok if we can't get name info if there's already something in the database.
                 pass
-        # TODO: why aren't we returning user?
         return None
     else:
         return None
@@ -93,10 +91,9 @@ def associate_email_or_redirect(backend, details, user=None, *args, **kwargs):
     if user:
         return None
     else:
-        # TODO: Should this just be 'user', rather than 'tola_user'?  I don't think it's actually associating a TolaUser.
-        tola_user = associate_by_email(backend, details, user, *args, **kwargs)
-        if tola_user is not None:
-            return tola_user
+        associated_user = associate_by_email(backend, details, user, *args, **kwargs)
+        if associated_user is not None:
+            return associated_user
         else:
             return HttpResponseRedirect(reverse("invalid_user"))
 
@@ -105,7 +102,6 @@ def social_user_tola(backend, uid, user=None, *args, **kwargs):
     """extension of the social user lookup in the pipeline to clear bad associations"""
     # try to get user from social auth storage:
     provider = backend.name
-    # TODO: Is there any harm in doing this for Okta as well?  Is it possible for someone to be logged into two Okta accounts?
     if provider == 'google-oauth2':
         social = backend.strategy.storage.user.get_social_auth(provider, uid)
         if social and social.user.email.lower() != uid.lower():
@@ -119,7 +115,6 @@ def social_user_tola(backend, uid, user=None, *args, **kwargs):
 
 def associate_user_tola(backend, uid, user=None, social=None, *args, **kwargs):
     """extension of the user-association step of the pipeline to avoid associating to previously logged-in users"""
-    # TODO: Same as above, any harm in doing this for Okta?
     if backend.name == 'google-oauth2' and user and user.email and user.email.lower() != uid.lower():
         # if we have a user logged in (sessioning!) and they don't match the uid entered
         # zero out the user so we don't associate badly a user with a bad social auth:

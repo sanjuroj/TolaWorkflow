@@ -12,14 +12,11 @@ class MockBackend(object):
 
 class ImportIndicatorTests(TestCase):
 
-
     def setUp(self):
-
         self.country = CountryFactory()
         self.backend = MockBackend('saml')
         self.details = None
         self.organization = OrganizationFactory(id=1)
-
 
     def test_good_login(self):
         with mock.patch('tola.pipeline.logger') as log_mock:
@@ -32,7 +29,7 @@ class ImportIndicatorTests(TestCase):
             }
             user = None
 
-            okta_result =  create_user_okta(self.backend, self.details, user, okta_response)
+            okta_result = create_user_okta(self.backend, self.details, user, okta_response)
             self.assertEqual(okta_result, None)
 
             okta_response = {
@@ -83,7 +80,7 @@ class ImportIndicatorTests(TestCase):
             }
             user = None
             okta_result = create_user_okta(self.backend, self.details, user, okta_response)
-            self.assertEqual(okta_result.status_code, 302)
+            self.assertEqual(okta_result.status_code, 302, msg="Failed to error on blank name")
 
             # First create user and tola_user
             okta_response = {
@@ -95,7 +92,7 @@ class ImportIndicatorTests(TestCase):
             }
             user = None
             okta_result = create_user_okta(self.backend, self.details, user, okta_response)
-            self.assertEqual(okta_result, None)
+            self.assertEqual(okta_result, None, msg="Failed to pass on normal name")
 
             # Now simulate lack of names
             okta_response = {
@@ -106,4 +103,16 @@ class ImportIndicatorTests(TestCase):
                 'idp_name': 'okta',
             }
             okta_result = create_user_okta(self.backend, self.details, user, okta_response)
-            self.assertEqual(okta_result, None)
+            self.assertEqual(okta_result, None, msg="Failed to pass on blank name with good name in DB")
+
+            # It should work even when the names are very long.
+            okta_response = {
+                'attributes': {
+                    'email': ['test@example.com', 0], 'firstName': ['abcdefabcdefabcdefabcdefabcdefabcdefabcdefab', 0],
+                    'lastName': ['abcdefabcdefabcdefabcdefabcdefabcdefabcdefab', 0],
+                    'mcCountryCode': ['AF', 0],
+                },
+                'idp_name': 'okta',
+            }
+            okta_result = create_user_okta(self.backend, self.details, user, okta_response)
+            self.assertEqual(okta_result, None, msg="Failed to pass on long name")
