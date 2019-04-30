@@ -32,7 +32,7 @@
                 <i class="fas fa-thumbtack"></i> {% trans "Pin" %}
               </button>
               <a href="{% url 'iptt_excel' program.id reporttype %}?{{ request.GET.urlencode }}" class="btn btn-sm btn-secondary">
-                <i class="fas fa-download"></i> {% trans "Excel" %}
+                <i class="fas fa-download"></i> Excel {# this isn't translated because it's a program name #}
               </a>
             </div>
         </div>

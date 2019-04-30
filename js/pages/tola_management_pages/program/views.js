@@ -135,7 +135,7 @@ class BulkActions extends React.Component {
             }
             {!selected &&
             <div className="bulk__select">
-                <Select placeholder="---"/>
+                <Select placeholder="---"  noOptionsMessage={() => gettext('No options')}/>
             </div>
             }
             <button className="btn btn-secondary" disabled={!this.state.current_action} onClick={() => this.onApply()}>{gettext("Apply")}</button>
