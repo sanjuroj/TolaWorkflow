@@ -297,7 +297,7 @@ export const IndexView = observer(
                                         { organizationColumn(data)}
                                     </Col>
                                     <Col className="text-nowrap">
-                                        {data.program_users ? <a href={`/tola_management/user/?programs[]=${data.id}`}><i className="fas fa-users"/>&nbsp;{data.program_users} users</a> : '---'  }
+                                        {data.program_users ? <a href={`/tola_management/user/?programs[]=${data.id}`}><i className="fas fa-users"/>&nbsp;{data.program_users} {gettext("users")}</a> : '---'  }
                                     </Col>
                                     <Col>{fundingStatusDisplayStr(data.funding_status)}</Col>
                                 </Row>
