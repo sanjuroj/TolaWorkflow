@@ -536,7 +536,7 @@ class Indicator(SafeDeleteModel):
 
     lop_target = models.DecimalField(
         blank=True, decimal_places=2, help_text=b' ',
-        max_digits=20, null=True, verbose_name='Life of Program (LoP) target')
+        max_digits=20, null=True, verbose_name=_('Life of Program (LoP) target'))
 
     direction_of_change = models.IntegerField(
         blank=False, null=True, choices=DIRECTION_OF_CHANGE,
