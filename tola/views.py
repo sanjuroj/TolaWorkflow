@@ -100,6 +100,21 @@ class TolaLoginView(authviews.LoginView):
         return context
 
 
+class TolaPasswordResetView(authviews.PasswordResetView):
+
+    def dispatch(self, request, *args, **kwargs):
+        hostname = request.get_host()
+        scheme = request.scheme
+        self.extra_email_context = {
+            'scheme': scheme,
+            'hostname': hostname
+        }
+        return super(TolaPasswordResetView, self).dispatch(request, *args, **kwargs)
+
+
+
+
+
 @login_required(login_url='/accounts/login/')
 def profile(request):
     """
