@@ -116,22 +116,22 @@
                         {% endif %}
 
                         <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                  <span class="nav-link" >
+                                        {% if "demo" in request.build_absolute_uri %}
+                                            <span class="badge badge-warning text-uppercase">Demo</span>
+                                        {% elif  "qa" in request.build_absolute_uri %}
+                                            <span class="badge badge-warning text-uppercase">QA</span>
+                                        {% elif "dev" in request.build_absolute_uri %}
+                                            <span class="badge badge-warning text-uppercase">Dev</span>
+                                        {% elif  "127." in request.build_absolute_uri %}
+                                            <span class="badge badge-warning text-uppercase">Local</span>
+                                        {% elif "local" in request.build_absolute_uri %}
+                                            <span class="badge badge-warning text-uppercase">Local</span>
+                                        {% endif %}
+                                  </span>
+                            </li>
                             {% if user.is_authenticated  %}
-                                <li class="nav-item">
-                                      <span class="nav-link" >
-                                            {% if "demo" in request.build_absolute_uri %}
-                                                <span class="badge badge-warning text-uppercase">Demo</span>
-                                            {% elif  "qa" in request.build_absolute_uri %}
-                                                <span class="badge badge-warning text-uppercase">QA</span>
-                                            {% elif "dev" in request.build_absolute_uri %}
-                                                <span class="badge badge-warning text-uppercase">Dev</span>
-                                            {% elif  "127." in request.build_absolute_uri %}
-                                                <span class="badge badge-warning text-uppercase">Local</span>
-                                            {% elif "local" in request.build_absolute_uri %}
-                                                <span class="badge badge-warning text-uppercase">Local</span>
-                                            {% endif %}
-                                      </span>
-                                </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspop="true" aria-expanded="false" id="navbarUserDropdown">
                                         {% if user.is_superuser %}
