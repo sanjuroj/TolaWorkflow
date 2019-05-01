@@ -135,6 +135,12 @@
         </button>
       </div>
     </div>
+    <div id="filter-extra" class=" d-flex justify-content-between no-gutters p-3">
+        <a href="{% url 'tola_management_audit_log' program_id=program.id %}"
+           class="btn-link">
+              <i class="fas fa-history"></i> {% trans "Change log" %} 
+        </a>
+    </div>
   </form>
 </nav>
 
@@ -157,8 +163,12 @@
     const start_period = $(`#${start_period_id}`);
     const end_period_id = `{{ form.end_period.auto_id }}`;
     const end_period = $(`#${end_period_id}`);
-
+    
+    // this string is translated in title case but should be sentence case, doing so manually:
+    var noneSelected = gettext('None Selected').toLowerCase();
+    noneSelected = noneSelected.charAt(0).toUpperCase() + noneSelected.slice(1);
     var multiselectOptions = {
+      nonSelectedText: noneSelected,
       includeSelectAllOption: true,
       enableFiltering: true,
       enableCaseInsensitiveFiltering: true,

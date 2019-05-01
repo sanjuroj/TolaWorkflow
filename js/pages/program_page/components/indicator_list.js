@@ -66,6 +66,7 @@ class StatusHeader extends React.Component {
             programId,
             currentIndicatorFilter,
             filterApplied,
+            readonly,
         } = this.props;
 
         return <div className="indicators-list__header">
@@ -74,13 +75,16 @@ class StatusHeader extends React.Component {
 
                 {filterApplied &&
                 <a href="#" id="show-all-indicators" onClick={this.onShowAllClick}>
-                    <small>Show all</small>
+                    <small>{gettext('Show all')}</small>
                 </a>
                 }
             </h3>
             <div>
-                <a href={`/indicators/indicator_create/${programId}`} role="button" className="btn-link btn-add"><i
-                    className="fas fa-plus-circle"/> {gettext("Add indicator")}</a>
+            {!readonly &&
+            <a href={`/indicators/indicator_create/${programId}`} role="button" className="btn-link btn-add">
+                <i className="fas fa-plus-circle"/> {gettext("Add indicator")}
+            </a>
+            }
             </div>
         </div>
     }
@@ -201,7 +205,7 @@ class IndicatorListTable extends React.Component {
                             {indicator.key_performance_indicator &&
                             <span className="badge">KPI</span>
                             }
-    
+
                             {targetPeriodLastEndDate && programReportingPeriodEndDate > targetPeriodLastEndDate &&
                             <a href={`/indicators/indicator_update/${indicator.id}/`}
                                className="indicator-link color-red missing_targets"
@@ -221,7 +225,7 @@ class IndicatorListTable extends React.Component {
                         <td className="text-right">{indicator.baseline_display}</td>
                         <td className="text-right">{indicator.lop_target_display}</td>
                     </tr>
-        
+
                     {resultsExist &&
                     <tr className="indicators-list__row indicators-list__indicator-body">
                         <td colSpan="6" ref={el => $(el).find('[data-toggle="popover"]').popover({html:true})}>
@@ -259,7 +263,8 @@ export const IndicatorList = observer(function (props) {
         <StatusHeader indicatorCount={filteredIndicators.length}
                       programId={program.id}
                       currentIndicatorFilter={currentIndicatorFilter}
-                      filterApplied={currentIndicatorFilter || selectedIndicatorId} />
+                      filterApplied={currentIndicatorFilter || selectedIndicatorId}
+                      readonly={props.readonly}/>
 
         <IndicatorFilter uiStore={props.uiStore} rootStore={props.rootStore} />
 

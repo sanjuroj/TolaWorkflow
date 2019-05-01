@@ -194,10 +194,12 @@ def gauge_tank(context, metric, has_filters=True):
             'filled_label': _('have targets'),
             # Translators: a label in a graphic. Example: 31% no targets
             'unfilled_label': _('no targets'),
-            'cta': _('Add missing targets'),
+            # Translators: a link that displays a filtered list of indicators which are missing targets
+            'cta': _('Indicators missing targets'),
             # Translators: a label in a graphic. Example: 31% have missing targets
             'filter_title': _('have missing targets'),
-            'link_title': _('Add missing targets'),
+            # Translators: a link that displays a filtered list of indicators which are missing targets
+            'link_title': _('Indicators missing targets'),
             'empty': _('No targets'),
             'help_text': '', # currently unused
             'data_target': 'defined-targets',
@@ -209,10 +211,12 @@ def gauge_tank(context, metric, has_filters=True):
             'filled_label': _('have results'),
             # Translators: a label in a graphic. Example: 31% no results
             'unfilled_label': _('no results'),
-            'cta': _('Add missing results'),
+            # Translators: a link that displays a filtered list of indicators which are missing results
+            'cta': _('Indicators missing results'),
             # Translators: a label in a graphic. Example: 31% have missing results
             'filter_title': _('have missing results'),
-            'link_title': _('Add missing results'),
+            # Translators: a link that displays a filtered list of indicators which are missing results
+            'link_title': _('Indicators missing results'),
             'empty': _('No results'),
             'help_text': '', # currently unused
             'data_target': 'reported-results',
@@ -224,10 +228,12 @@ def gauge_tank(context, metric, has_filters=True):
             'filled_label': _('have evidence'),
             # Translators: a label in a graphic. Example: 31% no evidence
             'unfilled_label': _('no evidence'),
-            'cta': _('Add missing evidence'),
+            # Translators: a link that displays a filtered list of indicators which are missing evidence
+            'cta': _('Indicators missing evidence'),
             # Translators: a label in a graphic. Example: 31% have missing evidence
             'filter_title': _('have missing evidence'),
-            'link_title': _('Add missing evidence'),
+            # Translators: a link that displays a filtered list of indicators which are missing evidence
+            'link_title': _('Indicators missing evidence'),
             'empty': _('No evidence'),
             'help_text': '', # currently unused
             'data_target': 'has-evidence',
@@ -242,10 +248,12 @@ def gauge_tank(context, metric, has_filters=True):
     filled_value = program.metrics[metric]
     results_count = program.metrics['results_count']
     indicator_count = program.metrics['indicator_count']
-    unfilled_value = indicator_count - filled_value
-    filter_title_count = program.metrics['needs_evidence'] if metric == 'results_evidence' else unfilled_value
     denominator = results_count if metric == 'results_evidence' else indicator_count
-    filled_percent = make_percent(filled_value, denominator)
+    unfilled_value = denominator - filled_value
+    filter_title_count = program.metrics['needs_evidence'] if metric == 'results_evidence' else unfilled_value
+    #filled_percent = make_percent(filled_value, denominator)
+    filled_percent = 0 if denominator == 0 else (100 - make_percent(unfilled_value, denominator))
+    
     filter_active = filled_percent != 100 and (
         metric == 'targets_defined' or (
             metric == 'reported_results' and program.metrics.get('targets_defined', False)
@@ -290,17 +298,20 @@ def gauge_tank_small(context, metric):
         'targets_defined': {
             # Translators: a label in a graphic. Example: 31% of programs have all targets defined
             'filled_label': _('of programs have all targets defined'),
+            # Translators: help text explaining why a certain percentage of indicators are marked "missing targets"
             'help_text': _('Each indicator must have a target frequency selected and targets entered for all periods.'),
         },
         'reported_results': {
             # Translators: a label in a graphic. Example: 31% of indicators have reported results
             'filled_label': _('of indicators have reported results'),
-            'help_text': ('Each indicator must have at least one reported result.'),
+            # Translators: help text explaining why a certain percentage of indicators are marked "missing results"
+            'help_text': _('Each indicator must have at least one reported result.'),
         },
         'results_evidence': {
             # Translators: a label in a graphic. Example: 31% of results are backed up with evidence
             'filled_label': _('of results are backed up with evidence'),
-            'help_text': ('Each result must include a link to an evidence file or folder.'),
+            # Translators: help text explaining why a certain percentage of indicators are marked "missing evidence"
+            'help_text': _('Each result must include a link to an evidence file or folder.'),
         },
     }
     if metric == 'targets_defined':

@@ -1,5 +1,7 @@
 // Run the app's SCSS through webpack
+import '@babel/polyfill'
 import '../scss/tola.scss';
+import 'react-virtualized/styles.css'
 
 
 /*
@@ -10,6 +12,61 @@ import '../scss/tola.scss';
  * template code, make sure to add it to the `window` obj to make it globally accessible
  */
 
+
+/*
+ * Global AJAX handlers for CSRF handling and redirection on logout for AJAX requests
+ */
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+function redirectToLoginOnLoginScreenHeader(jqxhr) {
+    if (jqxhr.getResponseHeader("Login-Screen") != null && jqxhr.getResponseHeader("Login-Screen").length) {
+        // Not logged in - the 302 redirect is implicit and jQuery has no way to know it happened
+        // check special header set by our login view to see if that's where we ended up
+        window.location = js_context.loginUrl;
+    }
+}
+
+/*
+ * Set the csrf header before sending the actual ajax request
+ * while protecting csrf token from being sent to other domains
+ *
+ * Attach to success/error here instead of ajaxSuccess()/ajaxError() below
+ * as these take priority and will not fail to run if an exception is
+ * thrown in the app code handler
+ */
+$.ajaxSetup({
+    crossDomain: false, // obviates need for sameOrigin test
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type)) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        }
+    },
+    success: function(data, status, jqxhr) {
+        redirectToLoginOnLoginScreenHeader(jqxhr);
+    },
+    error: function(jqxhr) {
+        redirectToLoginOnLoginScreenHeader(jqxhr);
+    }
+});
 
 
 /*
@@ -30,7 +87,14 @@ $( document )
                 // HTTP error (can be checked by XMLHttpRequest.status and XMLHttpRequest.statusText)
                 // TODO: Give better error mssages based on HTTP status code
                 let errorStr = `${jqxhr.status}: ${jqxhr.statusText}`;
-                notifyError(js_context.strings.serverError, errorStr);
+
+                if (jqxhr.status === 403) {
+                    // Permission denied
+                    notifyError(js_context.strings.permissionError, js_context.strings.permissionErrorDescription);
+                } else {
+                    // all other errors
+                    notifyError(js_context.strings.serverError, errorStr);
+                }
             }
             else if (jqxhr.readyState === 0) {
                 // Network error (i.e. connection refused, access denied due to CORS, etc.)
@@ -42,6 +106,8 @@ $( document )
             }
         }
     });
+
+
 
 if (!Date.prototype.toISODate) {
   Date.prototype.toISODate = function() {
@@ -214,43 +280,6 @@ function createAlert (type, message, fade, whereToAppend) {
 window.createAlert = createAlert;
 
 
-// using jQuery
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
-
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-
-/*
- * Set the csrf header before sending the actual ajax request
- * while protecting csrf token from being sent to other domains
- */
-$.ajaxSetup({
-    crossDomain: false, // obviates need for sameOrigin test
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type)) {
-            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-        }
-    }
-});
-
-
 /* Configure PNotify global settings */
 /* Do so on document ready since lib is included after app.js */
 $(function() {
@@ -294,3 +323,274 @@ function newPopup(url, windowName) {
 window.newPopup = newPopup;
 
 // EXAMPLE: <a onclick="newPopup('https://docs.google.com/document/d/1tDwo3m1ychefNiAMr-8hCZnhEugQlt36AOyUYHlPbVo/edit?usp=sharing','Form Help/Guidance'); return false;" href="#" class="btn btn-sm btn-info">Form Help/Guidance</a>
+
+const DEFAULT_DESTRUCTIVE_MESSAGE = gettext("Your changes will be recorded in a change log. For future reference, please share your reason for these changes.")
+const DEFAULT_NONDESTRUCTIVE_MESSAGE = gettext('Your changes will be recorded in a change log. For future reference, please share your reason for these changes.')
+const DEFAULT_NO_RATIONALE_TEXT = gettext("This action cannot be undone");
+
+// This is only until we get indicator_form_common_js moved to webpack and out of html (makemessages bug)
+// these translation strings are used exclusively in the indicator setup form:
+const target_with_results_text = (numResults) => {
+    return interpolate(
+        ngettext('Removing this target means that %s result will no longer have targets associated with it.',
+                 'Removing this target means that %s results will no longer have targets associated with them.',
+                 numResults),
+        [numResults]);
+}
+window.target_with_results_text = target_with_results_text;
+
+const lop_to_non_lop_with_results_text = (numResults) => {
+    return interpolate(
+        ngettext('If we make these changes, %s data record will no longer be associated with the Life of Program target, and will need to be reassigned to a new target.\n\n Proceed anyway?',
+                 'If we make these changes, %s data records will no longer be associated with the Life of Program target, and will need to be reassigned to new targets.\n\n Proceed anyway?',
+                 numResults),
+        [numResults]);
+}
+window.lop_to_non_lop_with_results_text = lop_to_non_lop_with_results_text;
+
+const create_changeset_notice = ({
+    message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE,
+    on_submit = () => {},
+    on_cancel = () => {},
+    confirm_text = 'Ok',
+    cancel_text = 'Cancel',
+    type = 'notice',
+    inner = '',
+    context = null,
+    rationale_required = true,
+    showCloser = false,
+} = {}) => {
+    var notice = PNotify.alert({
+        text: $(`<div><form action="" method="post" class="form container">${inner}</form></div>`).html(),
+        textTrusted: true,
+        icon: false,
+        width: '350px',
+        hide: false,
+        type: type,
+        addClass: 'program-page__rationale-form',
+        stack: {
+            'overlayClose': true,
+            'dir1': 'right',
+            'dir2': 'up',
+            'firstpos1': 0,
+            'firstpos2': 0,
+            'context': context
+        },
+        modules: {
+            Buttons: {
+                closer: showCloser,
+                closerHover: false,
+                sticker: false
+            },
+            Confirm: {
+                confirm: true,
+                buttons: [
+                    {
+                        text: confirm_text,
+                        primary: true,
+                        addClass:(type == 'error')?'btn-danger':'',
+                        click: function (notice) {
+                            var close = true;
+                            var textarea = $(notice.refs.elem).find('textarea[name="rationale"]')
+                            var rationale = textarea.val();
+                            textarea.parent().find('.invalid-feedback').remove();
+                            if(!rationale && rationale_required) {
+                                textarea.addClass('is-invalid');
+                                textarea.parent().append(
+                                    '<div class="invalid-feedback">'
+                                    + gettext('A reason is required.')
+                                    + '</div>'
+                                );
+                                return false;
+                            } else {
+                                textarea.removeClass('is-invalid');
+                            }
+                            if(on_submit) {
+                                close = on_submit(rationale);
+                                if(close === undefined) {
+                                    close = true;
+                                }
+                            }
+                            if(close) {
+                                notice.close();
+                            }
+                        }
+                    },
+                    {
+                        text: cancel_text,
+                        click: function (notice) {
+                            close = on_cancel()
+                            if(close === undefined) {
+                                close = true;
+                            }
+
+                            if(close) {
+                                notice.close();
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    });
+    if (on_cancel) {
+        notice.on('click', function(e) {
+            if ($(e.target).is('.ui-pnotify-closer *')) {
+                let close = on_cancel();
+                if (close || close === undefined) {
+                    notice.close();
+                }
+        }});
+    }
+}
+
+window.create_destructive_changeset_notice = ({
+    message_text = DEFAULT_DESTRUCTIVE_MESSAGE,
+    on_submit = () => {},
+    on_cancel = () => {},
+    is_indicator = false,
+    confirm_text = 'Ok',
+    cancel_text = 'Cancel',
+    context = null,
+    no_preamble = false,
+    showCloser = false,
+    preamble = false
+} = {}) => {
+    if(!message_text) {message_text = DEFAULT_DESTRUCTIVE_MESSAGE}
+    if (!preamble) { preamble = (no_preamble)?'':`<span class='text-danger'>${gettext("This action cannot be undone.")}</span>`}
+    const inner = `
+        <div class="row">
+            <div class="col">
+                <h2 class="text-danger">${gettext("Warning")}</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                ${preamble}
+                ${message_text}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <textarea class="form-control" name="rationale"></textarea>
+                </div>
+            </div>
+        </div>
+    `;
+    return create_changeset_notice({
+        message_text: message_text,
+        on_submit: on_submit,
+        on_cancel: on_cancel,
+        is_indicator: is_indicator,
+        confirm_text: confirm_text,
+        cancel_text: cancel_text,
+        type: 'error',
+        inner: inner,
+        context: context,
+        showCloser: showCloser
+    })
+}
+
+window.create_nondestructive_changeset_notice = ({
+    message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE,
+    on_submit = () => {},
+    on_cancel = () => {},
+    is_indicator = false,
+    confirm_text = 'Ok',
+    cancel_text = 'Cancel',
+    context = null
+} = {}) => {
+    if(!message_text) {message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE}
+    const inner = `
+        <div class="row">
+            <div class="col">
+                <h2>${gettext("Reason for change")}</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                ${message_text}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <textarea class="form-control" name="rationale"></textarea>
+                </div>
+            </div>
+        </div>
+    `;
+    return create_changeset_notice({
+        message_text: message_text,
+        on_submit: on_submit,
+        on_cancel: on_cancel,
+        is_indicator: is_indicator,
+        confirm_text: confirm_text,
+        cancel_text: cancel_text,
+        type: 'notice',
+        inner: inner,
+        context: context
+    })
+}
+
+window.create_no_rationale_changeset_notice = ({
+    message_text = DEFAULT_NO_RATIONALE_TEXT,
+    on_submit = () => {},
+    on_cancel = () => {},
+    is_indicator = false,
+    confirm_text = 'Ok',
+    cancel_text = 'Cancel',
+    context = null,
+    preamble = false
+} = {}) => {
+    if (!message_text) {message_text = DEFAULT_NO_RATIONALE_TEXT}
+    if (!preamble) {preamble = gettext("This action cannot be undone.")};
+    const inner = `
+        <div class="row">
+            <div class="col">
+                <h2><i class="fas fa-exclamation-triangle"></i>${gettext("Warning")}</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span class='text-danger'>
+                    ${preamble}
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span>
+                    ${message_text}
+                </span>
+            </div>
+        </div>
+    `;
+    return create_changeset_notice({
+        message_text: message_text,
+        on_submit: on_submit,
+        on_cancel: on_cancel,
+        is_indicator: is_indicator,
+        confirm_text: confirm_text,
+        cancel_text: cancel_text,
+        type: 'error',
+        inner: inner,
+        context: context,
+        rationale_required: false,
+        showCloser: true
+        });
+}
+
+
+/*
+ * Take a jquery element and scroll the to the bottom of said element
+ * The element should represent the top level element controlled by a scroll bar
+ * One might think that is always 'html' but can also be a modal div overlay or possibly
+ * a div with overflow: scroll
+ */
+function scrollToBottom($el) {
+    let height = $el.prop('scrollHeight');
+    $el.animate({ scrollTop: height }, 'slow');
+}
+window.scrollToBottom = scrollToBottom;

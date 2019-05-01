@@ -241,13 +241,13 @@
                 if (this.id == 'id_form_program_target_overview') {
                     if (mostRecentTargets.prop('checked') == true && numRecentPeriodsTargets.val() == ''){
                         e.preventDefault();
-                        $("#id_validation_numrecent_targets").text("Please complete this field.");
+                        $("#id_validation_numrecent_targets").text("{% trans 'Please complete this field.' %}");
                         return;
                     }
                 } else {
                     if (numRecentPeriods.attr('disabled') == null && !numRecentPeriods.val()){
                         e.preventDefault();
-                        $("#id_validation_numrecent_timeperiods").text("Please complete this field.");
+                        $("#id_validation_numrecent_timeperiods").text("{% trans 'Please complete this field.' %}");
                         return;
                     }
                 }

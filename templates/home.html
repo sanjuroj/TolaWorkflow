@@ -1,7 +1,8 @@
 {% extends "base.html" %}
-{% load i18n mytags %}
-{% block title %}{{ active_country|default:_("No active country") }} | {% endblock %}
-{% block page_title %}{{ active_country|default:_("No active country") }}{% endblock %}
+{% load i18n mytags has_program_role %}
+{# Translators: Page title if the user has not selected country #}
+{% block title %}{{ active_country|default:_("No available programs") }} | {% endblock %}
+{% block page_title %}{{ active_country|default:_("No available programs") }}{% endblock %}
 
 {% block bodyclasses %}home{% endblock %}
 
@@ -48,11 +49,16 @@
         </div>
     </div>
 </section><!--/.home__featured-country-->
-{% endif %}
-
 <section class="home__program-list">
+    {% if no_programs > 0 %}
     <h2>{% blocktrans %}{{ no_programs }} active programs{% endblocktrans %}</h2>
+    {% else %}
+    {% blocktrans %}
+    <h2>No available programs</h2>
+    {% endblocktrans %}
+    {% endif %}
     {% for program in programs %}
+        {% has_program_role user program "high" as has_high_role %}
         <article class="program-list__program card">
             <div class="card-header">
                 <div class="program-header__info">
@@ -76,43 +82,50 @@
                         </ul>
                     {% endif %}
                 </div>
-                {% if program.reporting_period_start and program.reporting_period_end %}
-                    {% program_complete %}
+                {% if has_high_role %}
+                    {% if program.reporting_period_start and program.reporting_period_end %}
+                        {% program_complete %}
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="card-body">
                 {% if not program.reporting_period_start or not program.reporting_period_end %}
-                    <p>
-                        {% blocktrans with id=program.id start_date=program.start_date end_date=program.end_date reporting_period_start=program.reporting_period_start reporting_period_end=program.reporting_period_end %}
-                        Before adding indicators and performance results, we need to know your program's
-                        <a
-                            id="id_link_reporting_period_{{ id }}"
-                            class=""
-                            href="#"
-                            data-toggle="modal"
-                            data-program="{{ id }}"
-                            data-progstart="{{ start_date }}"
-                            data-progend="{{ end_date }}"
-                            data-rptstart="{{ reporting_period_start }}"
-                            data-rptend="{{ reporting_period_end }}"
-                            data-target="#id_reporting_period_modal"
-                        >
-                            reporting start and end dates.
-                        </a>
-                        {% endblocktrans %}
-                    </p>
+                    {% if has_high_role %}
+                        <p>
+                            {% blocktrans with id=program.id start_date=program.start_date end_date=program.end_date reporting_period_start=program.reporting_period_start reporting_period_end=program.reporting_period_end %}
+                            Before adding indicators and performance results, we need to know your program's
+                            <a
+                                id="id_link_reporting_period_{{ id }}"
+                                class=""
+                                href="#"
+                                data-toggle="modal"
+                                data-program="{{ id }}"
+                                data-progstart="{{ start_date }}"
+                                data-progend="{{ end_date }}"
+                                data-rptstart="{{ reporting_period_start }}"
+                                data-rptend="{{ reporting_period_end }}"
+                                data-indicator_count="{{program.indicator_count}}"
+                                data-target="#id_reporting_period_modal">
+                                reporting start and end dates.
+                            </a>
+                            {% endblocktrans %}
+                        </p>
+                    {% else %}
+                        {# Translators: This message appears if users are trying to edit a program that isn't ready for viewing/editing. #}
+                        <p>{% trans "Your program administrator must initialize this program before you will be able to view or edit it" %}</p>
+                    {% endif %}
                 {% elif program.metrics.indicator_count == 0 %}
-                    <h4>{% trans "No indicators have been entered for this program." %}</h4>
-                    <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
+                    {% if has_high_role %}
+                        <h4>{% trans "No indicators have been entered for this program." %}</h4>
+                        <a href="{% url 'indicator_create' program.id %}" role="button" class="btn-link btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add indicator" %}</a>
+                    {% else %}
+                        <p>{% trans "Your program administrator must initialize this program before you will be able to view or edit it" %}</p>
+                    {% endif %}
                 {% else %}
                     {% if program.metrics.targets_defined %}
                         <h4>
-                            {% blocktrans %}
-                            Program metrics
-                            <small>for target periods completed to date
-                            {% endblocktrans %}
+                            {% blocktrans %}Program metrics <small>for target periods completed to date</small>{% endblocktrans %}
                             {% include "indicators/program_target_period_info_helptext.html" %}
-                            </small>
                         </h4>
                         <div class="status__gauges">
                             {% gauge_band False %}
@@ -135,6 +148,20 @@
     {% endfor %}
     <!--/.program-list__program-->
 </section>
+{% else %}
+<section class="home__no-access">
+    {# Translators: message shown when there are no programs available to the user, or no active programs in a country #}
+    {% blocktrans %}
+    <p>
+        You do not have permission to view any programs. You can request permission from your TolaData administrator.
+    </p>
+    <p>
+        You can also reach the TolaData team by using the <a href="https://docs.google.com/forms/d/e/1FAIpQLSclm2PAT9TJ9q23TT6YWQg6hj3EndUAdyF5k6kvNJHu6njNtw/viewform">feedback form.</a>
+    </p>
+    {% endblocktrans %}
+</section>
+{% endif %}
+
 {% include "indicators/indicator_list_modals.html" %}
 
 {% endblock content %}

@@ -7,7 +7,7 @@ import datetime
 from django import test
 from django.urls import reverse_lazy
 
-from factories import ProgramFactory, IndicatorFactory, ResultFactory, PeriodicTargetFactory
+from factories import ProgramFactory, IndicatorFactory, ResultFactory, PeriodicTargetFactory, UserFactory, TolaUserFactory
 from indicators.models import Indicator
 
 
@@ -44,9 +44,14 @@ class TestResultUnassignedUIDateFallsOutsideProgramPeriod(test.TestCase):
             record_name='My Test Record',
             evidence_url='http://my_evidence_url',
         )
+        self.user = UserFactory(first_name="FN", last_name="LN", username="tester", is_superuser=True)
+        self.user.set_password('password')
+        self.user.save()
+        self.tola_user = TolaUserFactory(user=self.user)
+        self.client.login(username='tester', password='password')
 
     def test_result_table_html(self):
-        url = reverse_lazy('result_view', args=[self.indicator.id, self.program.id])
+        url = reverse_lazy('result_view', args=[self.indicator.id,])
         response = self.client.get(url)
         # result is displayed
         self.assertContains(
@@ -94,9 +99,14 @@ class TestResultUnassignedUITargetsMidlineEndline(test.TestCase):
             record_name='My Test Record',
             evidence_url='http://my_evidence_url',
         )
+        self.user = UserFactory(first_name="FN", last_name="LN", username="tester", is_superuser=True)
+        self.user.set_password('password')
+        self.user.save()
+        self.tola_user = TolaUserFactory(user=self.user)
+        self.client.login(username='tester', password='password')
 
     def test_result_table_html(self):
-        url = reverse_lazy('result_view', args=[self.indicator.id, self.program.id])
+        url = reverse_lazy('result_view', args=[self.indicator.id,])
         response = self.client.get(url)
         # result is displayed
         self.assertContains(
@@ -136,9 +146,14 @@ class TestResultUnassignedUITargetsNotSetup(test.TestCase):
             record_name='My Test Record',
             evidence_url='http://my_evidence_url',
         )
+        self.user = UserFactory(first_name="FN", last_name="LN", username="tester", is_superuser=True)
+        self.user.set_password('password')
+        self.user.save()
+        self.tola_user = TolaUserFactory(user=self.user)
+        self.client.login(username='tester', password='password')
 
     def test_result_table_html(self):
-        url = reverse_lazy('result_view', args=[self.indicator.id, self.program.id])
+        url = reverse_lazy('result_view', args=[self.indicator.id,])
         response = self.client.get(url)
         # result is displayed
         self.assertContains(

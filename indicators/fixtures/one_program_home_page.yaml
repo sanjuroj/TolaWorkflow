@@ -24,7 +24,6 @@
     fund_code: []
     sector: []
     country: [1]
-    user_access: []
 - model: indicators.indicator
   pk: 1
   fields:
@@ -540,4 +539,3 @@
 # rep results: 12
 # res count: 22
 # evidence count: 2
-

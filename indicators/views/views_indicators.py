@@ -2,19 +2,20 @@ import json
 import logging
 import re
 from datetime import datetime, timedelta
-from urlparse import urlparse
-
 import dateparser
 import requests
-from dateutil.relativedelta import relativedelta
+from weasyprint import HTML, CSS
+
 from django.contrib import messages
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse_lazy
-from django.db import connection
+from django.core.exceptions import PermissionDenied
+from django.db import connection, transaction
 from django.db.models import (
-    Count, Min, Q, Sum, Avg, Max
+    Count, Q, Sum, Avg, Max
 )
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, render_to_response, get_object_or_404, redirect, reverse
 from django.template.loader import render_to_string
@@ -25,17 +26,21 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from weasyprint import HTML, CSS
 
 from feed.serializers import FlatJsonSerializer
-from util import getCountry, group_excluded, get_table
+from tola.util import getCountry, group_excluded
 
 from indicators.serializers import IndicatorSerializer, ProgramSerializer
-from workflow.mixins import AjaxableResponseMixin
+from indicators.views.view_utils import (
+    handleDataCollectedRecords,
+    import_indicator,
+    generate_periodic_targets,
+    generate_periodic_target_single,
+    dictfetchall
+)
 from workflow.models import (
     Program, Sector, TolaSites, FormGuidance
 )
-from ..export import IndicatorResource, ResultResource
 from ..forms import IndicatorForm, ResultForm
 from ..models import (
     Indicator, PeriodicTarget, DisaggregationLabel, DisaggregationValue,
@@ -44,115 +49,49 @@ from ..models import (
 )
 from indicators.queries import ProgramWithMetrics, ResultsIndicator
 from .views_reports import IPTT_ReportView
+
+from tola_management.models import (
+    ProgramAuditLog
+)
+
+from tola_management.permissions import (
+    indicator_pk_adapter,
+    indicator_adapter,
+    periodic_target_pk_adapter,
+    has_indicator_read_access,
+    has_indicator_write_access,
+    result_pk_adapter,
+    has_result_read_access,
+    has_result_write_access,
+    has_program_read_access,
+    verify_program_access_level_of_any_program,
+    verify_program_access_level
+)
+
 import indicators.indicator_plan as ip
 
 logger = logging.getLogger(__name__)
 
 
-def generate_periodic_target_single(tf, start_date, nthTargetPeriod, event_name='', num_existing_targets=0):
-    i = nthTargetPeriod
-    j = i + 1
-    target_period = ''
-    period_num = num_existing_targets
-    if period_num == 0:
-        period_num = j
+# INDICATOR VIEWS:
 
-    if tf == Indicator.LOP:
-        return {'period': PeriodicTarget.LOP_PERIOD, 'period_name': PeriodicTarget.generate_lop_period_name()}
-    elif tf == Indicator.MID_END:
-        return [{'period': PeriodicTarget.MIDLINE, 'period_name': PeriodicTarget.generate_midline_period_name()},
-                {'period': PeriodicTarget.ENDLINE, 'period_name': PeriodicTarget.generate_endline_period_name()}]
-    elif tf == Indicator.EVENT:
-        if i == 0:
-            return {'period': event_name, 'period_name': PeriodicTarget.generate_event_period_name(event_name)}
-        else:
-            return {'period': ''}
-
-    if tf == Indicator.ANNUAL:
-        start = ((start_date + relativedelta(years=+i)).replace(day=1)).strftime('%Y-%m-%d')
-        end = ((start_date + relativedelta(years=+j)) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        period_label = '{period} {period_num}'.format(
-            period=PeriodicTarget.ANNUAL_PERIOD, period_num=period_num
-        )
-        target_period = {'period': period_label, 'start_date': start, 'end_date': end, 'period_name': PeriodicTarget.generate_annual_quarterly_period_name(tf, period_num)}
-
-    elif tf == Indicator.SEMI_ANNUAL:
-        start = ((start_date + relativedelta(months=+(i * 6))).replace(day=1)).strftime('%Y-%m-%d')
-        end = ((start_date + relativedelta(months=+(j * 6))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        period_label = '{period} {period_num}'.format(
-            period=PeriodicTarget.SEMI_ANNUAL_PERIOD, period_num=period_num
-        )
-        target_period = {'period': period_label, 'start_date': start, 'end_date': end, 'period_name': PeriodicTarget.generate_annual_quarterly_period_name(tf, period_num)}
-
-    elif tf == Indicator.TRI_ANNUAL:
-        start = ((start_date + relativedelta(months=+(i * 4))).replace(day=1)).strftime('%Y-%m-%d')
-        end = ((start_date + relativedelta(months=+(j * 4))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        period_label = '{period} {period_num}'.format(
-            period=PeriodicTarget.TRI_ANNUAL_PERIOD, period_num=period_num
-        )
-        target_period = {'period': period_label, 'start_date': start, 'end_date': end, 'period_name': PeriodicTarget.generate_annual_quarterly_period_name(tf, period_num)}
-
-    elif tf == Indicator.QUARTERLY:
-        start = ((start_date + relativedelta(months=+(i * 3))).replace(day=1)).strftime('%Y-%m-%d')
-        end = ((start_date + relativedelta(months=+(j * 3))) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        period_label = '{period} {period_num}'.format(
-            period=PeriodicTarget.QUARTERLY_PERIOD, period_num=period_num
-        )
-        target_period = {'period': period_label, 'start_date': start, 'end_date': end, 'period_name': PeriodicTarget.generate_annual_quarterly_period_name(tf, period_num)}
-
-    elif tf == Indicator.MONTHLY:
-        target_period_start_date = start_date + relativedelta(months=+i)
-        name = PeriodicTarget.generate_monthly_period_name(target_period_start_date)
-
-        start = ((start_date + relativedelta(months=+i)).replace(day=1)).strftime('%Y-%m-%d')
-        end = ((start_date + relativedelta(months=+j)) + relativedelta(days=-1)).strftime('%Y-%m-%d')
-        target_period = {'period': name, 'start_date': start, 'end_date': end, 'period_name': name}
-
-    return target_period
-
-
-def generate_periodic_targets(tf, start_date, numTargets, event_name='', num_existing_targets=0):
-    gentargets = []
-
-    if tf == Indicator.LOP or tf == Indicator.MID_END:
-        target_period = generate_periodic_target_single(tf, start_date, numTargets)
-        return target_period
-
-    for i in range(numTargets):
-        num_existing_targets += 1
-        target_period = generate_periodic_target_single(tf, start_date, i, event_name, num_existing_targets)
-
-        gentargets.append(target_period)
-    return gentargets
-
-
-def import_indicator(service=1):
+@login_required
+@has_indicator_write_access
+def indicator_create(request, program=0):
     """
-    Imports an indicator from a web service (the dig only for now)
-    """
-    service = ExternalService.objects.get(id=service)
-
-    try:
-        response = requests.get(service.feed_url)
-    except requests.exceptions.RequestException as e:
-        logger.exception('Error reaching DIG service')
-        return []
-
-    return response.json()
-
-
-def indicator_create(request, id=0):
-    """
+    url: indicator_create/<program>
     Step one in Indicator creation.
     Passed on to IndicatorCreate to do the creation [or  not]
     """
+    if not request.has_write_access:
+        raise PermissionDenied
     get_indicator_types = IndicatorType.objects.all()
-    program = Program.objects.get(pk=id)
+    program = Program.objects.get(pk=program)
     countries = ', '.join(program.country.all().order_by('country').values_list('country', flat=True))
     get_services = ExternalService.objects.all()
 
     if request.method == 'POST':
-        indicator_type = IndicatorType.objects.get(indicator_type="custom")
+        indicator_type, created = IndicatorType.objects.get_or_create(indicator_type="custom")
         program = Program.objects.get(id=request.POST['program'])
         service = request.POST['services']
         level = None
@@ -193,6 +132,13 @@ def indicator_create(request, id=0):
         new_indicator.save()
         new_indicator.indicator_type.add(indicator_type)
 
+
+        ProgramAuditLog.log_indicator_created(
+            request.user,
+            new_indicator,
+            'N/A'
+        )
+
         latest = new_indicator.id
 
         # redirect to update page
@@ -205,164 +151,13 @@ def indicator_create(request, id=0):
     return render(request, "indicators/indicator_create.html",
                   {'country': countries, 'program': program,
                    'getIndicatorTypes': get_indicator_types,
-                   'getServices': get_services})
-
-
-class IndicatorCreate(CreateView):
-    """
-    Indicator Form not using a template or service indicator first as well as
-    the post reciever for creating an indicator.
-    Then redirect back to edit view in IndicatorUpdate.
-    """
-
-    # DELETE THIS CLASS?  UNUSED? #
-
-    model = Indicator
-    template_name = 'indicators/indicator_form.html'
-    form_class = IndicatorForm
-
-    # pre-populate parts of the form
-    def get_initial(self):
-        # user_profile = TolaUser.objects.get(user=self.request.user)
-        initial = {
-            'program': self.kwargs['id'],
-            'unit_of_measure_type': 1
-        }
-        return initial
-
-    def get_context_data(self, **kwargs):
-        context = super(IndicatorCreate, self).get_context_data(**kwargs)
-        context.update({'id': self.kwargs['id']})
-        return context
-
-    @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
-    def dispatch(self, request, *args, **kwargs):
-        return super(IndicatorCreate, self).dispatch(request, *args, **kwargs)
-
-    # add the request to the kwargs
-    def get_form_kwargs(self):
-        kwargs = super(IndicatorCreate, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        program = Indicator.objects.all().filter(id=self.kwargs['pk']) \
-            .values("program__id")
-        kwargs['program'] = program
-        return kwargs
-
-    def form_invalid(self, form):
-        messages.error(self.request, 'Invalid Form', fail_silently=False)
-
-        return self.render_to_response(self.get_context_data(form=form))
-
-    def form_valid(self, form):
-        form.save()
-        messages.success(self.request, _('Success, Indicator Created!'))
-        form = ""
-        return self.render_to_response(self.get_context_data(form=form))
-
-
-class PeriodicTargetView(View):
-    """
-    This view generates periodic targets or deleting them (via POST)
-    """
-    model = PeriodicTarget
-
-    def get(self, request, *args, **kwargs):
-        indicator = Indicator.objects.get(
-            pk=self.kwargs.get('indicator', None))
-
-        if request.GET.get('existingTargetsOnly'):
-            pts = FlatJsonSerializer().serialize(
-                indicator.periodictargets.all()
-                .order_by('customsort', 'create_date', 'period'))
-
-            return HttpResponse(pts)
-        try:
-            numTargets = int(request.GET.get('numTargets', None))
-        except Exception:
-            numTargets = PeriodicTarget.objects.filter(
-                indicator=indicator).count() + 1
-
-        pt_generated = generate_periodic_target_single(
-            indicator.target_frequency, indicator.target_frequency_start,
-            (numTargets - 1), ''
-        )
-
-        pt_generated_json = json.dumps(pt_generated, cls=DjangoJSONEncoder)
-        return HttpResponse(pt_generated_json)
-
-    def post(self, request, *args, **kwargs):
-        indicator = Indicator.objects.get(
-            pk=self.kwargs.get('indicator', None))
-
-        deleteall = self.kwargs.get('deleteall', None)
-        if deleteall == 'true':
-            periodic_targets = PeriodicTarget.objects.filter(
-                indicator=indicator)
-
-            for pt in periodic_targets:
-                pt.result_set.all().update(periodic_target=None)
-                pt.delete()
-            indicator.target_frequency = None
-            indicator.target_frequency_num_periods = 1
-            indicator.target_frequency_start = None
-            indicator.target_frequency_custom = None
-            indicator.save()
-        return HttpResponse('{"status": "success", \
-                            "message": "Request processed successfully!"}')
-
-
-def handleDataCollectedRecords(indicatr, lop, existing_target_frequency,
-                               new_target_frequency, generated_pt_ids=[]):
-    """
-    If the target_frequency is changed from LOP to something else then
-    disassociate all results from the LOP periodic_target and then
-    delete the LOP periodic_target
-    if existing_target_frequency == Indicator.LOP
-    and new_target_frequency != Indicator.LOP:
-    """
-    if existing_target_frequency != new_target_frequency:
-        Result.objects.filter(indicator=indicatr) \
-            .update(periodic_target=None)
-
-        PeriodicTarget.objects.filter(indicator=indicatr).delete()
-
-    # If the user sets target_frequency to LOP then create a LOP
-    # periodic_target and associate all results for this indicator with
-    # this single LOP periodic_target
-    if existing_target_frequency != Indicator.LOP and \
-            new_target_frequency == Indicator.LOP:
-
-        lop_pt = PeriodicTarget.objects.create(
-            indicator=indicatr, period=Indicator.TARGET_FREQUENCIES[0][1],
-            target=lop, create_date=timezone.now()
-        )
-        Result.objects.filter(indicator=indicatr) \
-            .update(periodic_target=lop_pt)
-
-    if generated_pt_ids:
-        pts = PeriodicTarget.objects.filter(indicator=indicatr,
-                                            pk__in=generated_pt_ids)
-        for pt in pts:
-            Result.objects.filter(
-                indicator=indicatr,
-                date_collected__range=[pt.start_date, pt.end_date]) \
-                .update(periodic_target=pt)
-
-
-def reset_indicator_target_frequency(ind):
-    if ind.target_frequency and ind.target_frequency != 1 and \
-        not ind.periodictargets.count():
-            ind.target_frequency = None
-            ind.target_frequency_start = None
-            ind.target_frequency_num_periods = 1
-            ind.save()
-            return True
-    return False
-
+                   'getServices': get_services,
+                   'result_count': 0})
 
 class IndicatorUpdate(UpdateView):
     """
     Update and Edit Indicators.
+    url: indicator_update/<pk>
     """
     model = Indicator
     form_class = IndicatorForm
@@ -372,7 +167,10 @@ class IndicatorUpdate(UpdateView):
             return 'indicators/indicator_form_modal.html'
         return 'indicators/indicator_form.html'
 
+    @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(indicator_pk_adapter(has_indicator_write_access))
+    @transaction.atomic
     def dispatch(self, request, *args, **kwargs):
 
         if request.method == 'GET':
@@ -454,6 +252,9 @@ class IndicatorUpdate(UpdateView):
             context['targetsonly'] = True
         elif self.request.GET.get('targetsactive') == 'true':
             context['targetsactive'] = True
+
+        context['readonly'] = not self.request.has_write_access
+
         return context
 
     def get_initial(self):
@@ -476,11 +277,11 @@ class IndicatorUpdate(UpdateView):
 
     def form_invalid(self, form):
         if self.request.is_ajax():
-            print("...............%s.........................." % form.errors)
-            return HttpResponse(status=400)
+            # print("...............%s.........................." % form.errors)
+            return JsonResponse(form.errors, status=400)
         else:
             messages.error(self.request, _('Invalid Form'), fail_silently=False)
-            print("...............%s.........................." % form.errors)
+            # print("...............%s.........................." % form.errors)
             return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form, **kwargs):
@@ -491,6 +292,8 @@ class IndicatorUpdate(UpdateView):
         new_target_frequency = form.cleaned_data.get('target_frequency', None)
         lop = form.cleaned_data.get('lop_target', None)
         program = pk=form.cleaned_data.get('program')
+        rationale = form.cleaned_data.get('rationale')
+        old_indicator_values = indicatr.logged_fields
 
         if periodic_targets == 'generateTargets':
             # handle (delete) association of colelctedData records if necessary
@@ -561,17 +364,33 @@ class IndicatorUpdate(UpdateView):
             handleDataCollectedRecords(indicatr, lop, existing_target_frequency, new_target_frequency,
                                        generated_pt_ids)
 
-        # check to see if values of any of these fields have changed.
-        fields_to_watch = set(['indicator_type', 'level', 'name', 'number', 'sector'])
-        changed_fields = set(form.changed_data)
-        if fields_to_watch.intersection(changed_fields):
-            update_indicator_row = '1'
-        else:
-            # for  now do not care about which fields have changed. just indicate that some fields have changed
-            update_indicator_row = '1'
-
         # save the indicator form
         self.object = form.save()
+        self.object.refresh_from_db()
+
+        results_count = Result.objects.filter(indicator=self.object).count()
+
+        # Logging now happens when either when the "save changes" or "create targets" is pressed
+        # this is done since other form changes could have happened when the create targets button was pressed
+        # Conditions for logging:
+        # * Results are attached
+        # * tracked fields have changed
+        if results_count > 0:
+            previous_entry_json = json.dumps(old_indicator_values, cls=DjangoJSONEncoder)
+            new_entry_json = json.dumps(self.object.logged_fields, cls=DjangoJSONEncoder)
+            if new_entry_json != previous_entry_json:
+                if rationale == '':
+                    # front end validation was bypassed?
+                    # raise exception here instead of returning an HttpResponse to rollback DB transaction
+                    raise Exception('rationale string missing on indicator form')
+
+                ProgramAuditLog.log_indicator_updated(
+                    self.request.user,
+                    self.object,
+                    old_indicator_values,
+                    self.object.logged_fields,
+                    rationale
+                )
 
         # fetch all existing periodic_targets for this indicator
         periodic_targets = PeriodicTarget.objects.filter(indicator=indicatr) \
@@ -610,7 +429,6 @@ class IndicatorUpdate(UpdateView):
                 "indicatorjson": str(indicatorjson),
                 "targets_sum": str(targets_sum),
                 "targets_avg": str(targets_avg),
-                "update_indicator_row": str(update_indicator_row),
                 "content": content,
                 "remove_missing_targts_link": remove_missing_targts_link
             }
@@ -619,12 +437,13 @@ class IndicatorUpdate(UpdateView):
             messages.success(self.request, _('Success, Indicator Updated!'))
         return self.render_to_response(self.get_context_data(form=form))
 
-
 class IndicatorDelete(DeleteView):
     model = Indicator
     form_class = IndicatorForm
 
+    @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(indicator_pk_adapter(has_indicator_write_access))
     def dispatch(self, request, *args, **kwargs):
         return super(IndicatorDelete, self).dispatch(request, *args, **kwargs)
 
@@ -637,21 +456,144 @@ class IndicatorDelete(DeleteView):
         messages.success(self.request, _('Success, Indicator Deleted!'))
         return self.render_to_response(self.get_context_data(form=form))
 
+    def delete(self, request, *args, **kwargs):
+        if request.is_ajax():
+            indicator = self.get_object()
+            if not request.POST.get('rationale'):
+                # if an indicator has results and no rationale is provided, fail:
+                if indicator.result_set.all().count() > 0:
+                    return JsonResponse(
+                        {"status": "failed", "msg": _("Reason for change is required.")},
+                        status=400
+                    )
+                # otherwise the rationale is this default:
+                else:
+                    rationale = "Reason for change is not required when deleting an indicator with no linked results."
+            else:
+                rationale = request.POST.get('rationale')
+            indicator_values = indicator.logged_fields
+            program_page_url = indicator.program.program_page_url
+            indicator.delete()
+            ProgramAuditLog.log_indicator_deleted(self.request.user, indicator, indicator_values, rationale)
+            success_message = _("The indicator was successfully deleted.")
+            response_context = {'status': 'success'}
+            if request.POST.get('redirect'):
+                response_context['redirect_url'] = program_page_url
+                # message tagged "pnotify" to display a success popup after redirect
+                messages.success(request, success_message, extra_tags="pnotify pnotify-success")
+            else:
+                response_context['msg'] = success_message
+            return JsonResponse(response_context)
+        else:
+            return super(IndicatorDelete, self).delete(request, *args, **kwargs)
+
     def get_success_url(self):
         return self.object.program.program_page_url
 
+# PERIODIC TARGET VIEWS:
 
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(indicator_adapter(has_indicator_write_access), name='dispatch')
+class PeriodicTargetView(View):
+    """
+    This view generates periodic targets or deleting them (via POST)
+    """
+    model = PeriodicTarget
+
+    def get(self, request, *args, **kwargs):
+        indicator = Indicator.objects.get(
+            pk=self.kwargs.get('indicator', None))
+
+        if request.GET.get('existingTargetsOnly'):
+            pts = FlatJsonSerializer().serialize(
+                indicator.periodictargets.all()
+                .order_by('customsort', 'create_date', 'period'))
+
+            return HttpResponse(pts)
+        try:
+            numTargets = int(request.GET.get('numTargets', None))
+        except Exception:
+            numTargets = PeriodicTarget.objects.filter(
+                indicator=indicator).count() + 1
+
+        pt_generated = generate_periodic_target_single(
+            indicator.target_frequency, indicator.target_frequency_start,
+            (numTargets - 1), ''
+        )
+
+        pt_generated_json = json.dumps(pt_generated, cls=DjangoJSONEncoder)
+        return HttpResponse(pt_generated_json)
+
+    def post(self, request, *args, **kwargs):
+        indicator = Indicator.objects.get(
+            pk=self.kwargs.get('indicator', None))
+
+        rationale = request.POST.get('rationale')
+        if not rationale:
+            if indicator.result_set.all().exists():
+                return JsonResponse(
+                    {"status": "failed", "msg": _("Reason for change is required")},
+                    status=400
+                )
+            else:
+                rationale = 'No reason for change required.'
+
+        deleteall = self.kwargs.get('deleteall', None)
+        if deleteall == 'true':
+            periodic_targets = PeriodicTarget.objects.filter(
+                indicator=indicator)
+
+            old = indicator.logged_fields
+
+            for pt in periodic_targets:
+                pt.result_set.all().update(periodic_target=None)
+                pt.delete()
+            indicator.target_frequency = None
+            indicator.target_frequency_num_periods = 1
+            indicator.target_frequency_start = None
+            indicator.target_frequency_custom = None
+            indicator.save()
+            ProgramAuditLog.log_indicator_updated(self.request.user, indicator, old, indicator.logged_fields, rationale)
+
+        return HttpResponse('{"status": "success", \
+                            "message": "Request processed successfully!"}')
+
+
+def reset_indicator_target_frequency(ind):
+    if ind.target_frequency and ind.target_frequency != 1 and not ind.periodictargets.count():
+        ind.target_frequency = None
+        ind.target_frequency_start = None
+        ind.target_frequency_num_periods = 1
+        ind.save()
+        return True
+    return False
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(periodic_target_pk_adapter(has_indicator_write_access), name='dispatch')
 class PeriodicTargetDeleteView(DeleteView):
+    """
+    url periodic_target_delete/<pk>
+    """
     model = PeriodicTarget
 
     def delete(self, request, *args, **kwargs):
         result_count = self.get_object().result_set.count()
-        if result_count > 0:
-            self.get_object().result_set.all().update(
-                periodic_target=None)
-
-        # super(PeriodicTargetDeleteView).delete(request, args, kwargs)
+        rationale = request.POST.get('rationale')
         indicator = self.get_object().indicator
+        old_indicator_values = indicator.logged_fields
+        if result_count > 0:
+            if not rationale:
+                return JsonResponse(
+                    {"status": "failed", "msg": _("Reason for change is required")},
+                    status=400
+                )
+            else:
+                self.get_object().result_set.all().update(
+                    periodic_target=None)
+        if not rationale and result_count == 0:
+            rationale = 'No reason for change required.'
         self.get_object().delete()
         if indicator.periodictargets.count() == 0:
             indicator.target_frequency = None
@@ -659,15 +601,16 @@ class PeriodicTargetDeleteView(DeleteView):
             indicator.target_frequency_start = None
             indicator.target_frequency_custom = None
             indicator.save()
-
-        targets_sum = PeriodicTarget.objects.filter(indicator=indicator) \
-            .aggregate(Sum('target'))['target__sum']
+        ProgramAuditLog.log_indicator_updated(
+                request.user,
+                indicator,
+                old_indicator_values,
+                indicator.logged_fields,
+                rationale
+            )
 
         indicator = None
-        return JsonResponse(
-            {"status": "success", "msg": "Periodic Target deleted\
-             successfully.", "targets_sum": targets_sum}
-            )
+        return JsonResponse({"status": "success"})
 
 
 class ResultFormMixin(object):
@@ -686,8 +629,13 @@ class ResultCreate(ResultFormMixin, CreateView):
     model = Result
     form_class = ResultForm
 
+    @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(indicator_adapter(has_result_write_access))
     def dispatch(self, request, *args, **kwargs):
+        if not request.has_write_access:
+            raise PermissionDenied
+
         self.indicator = get_object_or_404(Indicator, pk=self.kwargs['indicator'])
         return super(ResultCreate, self).dispatch(request, *args, **kwargs)
 
@@ -706,6 +654,7 @@ class ResultCreate(ResultFormMixin, CreateView):
         kwargs['user'] = self.request.user
         kwargs['indicator'] = self.indicator
         kwargs['program'] = self.indicator.program
+        kwargs['request'] = self.request
         return kwargs
 
     def form_valid(self, form):
@@ -732,27 +681,29 @@ class ResultCreate(ResultFormMixin, CreateView):
             form.instance.achieved = count
 
         new = form.save()
-        process_disaggregation = False
 
-        for label in disaggregation_labels:
-            if process_disaggregation is True:
+        # The following code appears to be accomplishing the following
+        # The for submitted contains key/vals for all disaggregation_labels on creation
+        # if 1 or more values are present, create values in the DB for all key/vals
+        # otherwise leave the disaggregation_value associates completely empty
+        # In other words, save key/vals as all or nothing
+
+        disaggregation_label_ids = set([str(dl.id) for dl in disaggregation_labels])
+        process_disaggregation = False
+        for k, v in self.request.POST.iteritems():
+            if k in disaggregation_label_ids and v:
+                process_disaggregation = True
                 break
-            for k, v in self.request.POST.iteritems():
-                if k == str(label.id) and len(v) > 0:
-                    process_disaggregation = True
-                    break
 
         if process_disaggregation is True:
             for label in disaggregation_labels:
-                for k, v in self.request.POST.iteritems():
-                    if k == str(label.id):
-                        save = new.disaggregation_value.create(
-                            disaggregation_label=label, value=v)
-                        new.disaggregation_value.add(save.id)
-            process_disaggregation = False
+                form_id_for_label = str(label.id)
+                form_disagg_value = self.request.POST.get(form_id_for_label, '')
+                new.disaggregation_value.create(disaggregation_label=label, value=form_disagg_value)
+
+        ProgramAuditLog.log_result_created(self.request.user, new.indicator, new)
 
         if self.request.is_ajax():
-            #data = serializers.serialize('json', [new])
             data = {
                 'pk' : new.pk,
                 'url': reverse('result_update', kwargs={'pk': new.pk})
@@ -769,7 +720,9 @@ class ResultUpdate(ResultFormMixin, UpdateView):
     model = Result
     form_class = ResultForm
 
+    @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(result_pk_adapter(has_result_write_access))
     def dispatch(self, request, *args, **kwargs):
         self.result = get_object_or_404(Result, pk=self.kwargs.get('pk'))
         self.indicator = self.result.indicator
@@ -788,6 +741,8 @@ class ResultUpdate(ResultFormMixin, UpdateView):
             disaggregation_type__indicator=self.indicator.id)
         context = super(ResultUpdate, self).get_context_data(**kwargs)
         context['indicator'] = self.indicator
+
+        context['readonly'] = not self.request.has_write_access
         context['custom_disaggregation_labels'] = custom_disaggregation_labels
         context['custom_disaggregation_values'] = custom_disaggregation_values
         context['standard_disaggregation_labels'] = standard_disaggregation_labels
@@ -799,17 +754,15 @@ class ResultUpdate(ResultFormMixin, UpdateView):
         kwargs['user'] = self.request.user
         kwargs['indicator'] = self.indicator
         kwargs['program'] = self.indicator.program
+        kwargs['request'] = self.request
         return kwargs
 
     def form_valid(self, form):
-        getResult = Result.objects.get(id=self.kwargs['pk'])
-        indicator = self.request.POST['indicator']
+        old_result = Result.objects.get(id=self.kwargs['pk'])
 
         getDisaggregationLabel = DisaggregationLabel.objects.filter(
-            Q(disaggregation_type__indicator__id=indicator) |
+            Q(disaggregation_type__indicator__id=old_result.indicator_id) |
             Q(disaggregation_type__standard=True)).distinct()
-
-        getIndicator = Result.objects.get(id=self.kwargs['pk'])
 
         # update the count with the value of Table unique count
         if form.instance.update_count_tola_table and form.instance.tola_table:
@@ -827,41 +780,71 @@ class ResultUpdate(ResultFormMixin, UpdateView):
             else:
                 count = 0
             form.instance.achieved = count
+
         # save the form then update manytomany relationships
-        form.save()
+        old_values = old_result.logged_fields
+        new_result = form.save()  # internally this clears disaggregation_value m2m relationships!
 
-        # Insert or update disagg values
-        for label in getDisaggregationLabel:
-            for key, value in self.request.POST.iteritems():
-                if key == str(label.id):
-                    value_to_insert = value
-                    save = getResult.disaggregation_value.create(
-                        disaggregation_label=label, value=value_to_insert)
+        # like the create view, create disaggregation values as all or nothing
 
-                    getResult.disaggregation_value.add(save.id)
+        disaggregation_label_ids = set([str(dl.id) for dl in getDisaggregationLabel])
+        process_disaggregation = False
+        for k, v in self.request.POST.iteritems():
+            if k in disaggregation_label_ids and v:
+                process_disaggregation = True
+                break
+
+        if process_disaggregation:
+            for label in getDisaggregationLabel:
+                form_id_for_label = str(label.id)
+                form_disagg_value = self.request.POST.get(form_id_for_label, '')
+                new_result.disaggregation_value.create(
+                    disaggregation_label=label, value=form_disagg_value)
+
+        # Result.achieved comes back different from the DB than from the ResultForm
+        new_result.refresh_from_db()
+        ProgramAuditLog.log_result_updated(self.request.user, new_result.indicator, old_values,
+                                           new_result.logged_fields, form.cleaned_data.get('rationale'))
 
         if self.request.is_ajax():
             data = serializers.serialize('json', [self.object])
             return HttpResponse(data)
 
         messages.success(self.request, _('Success, Data Updated!'))
-        redirect_url = getIndicator.program.program_page_url
+        redirect_url = new_result.program.program_page_url
 
         return HttpResponseRedirect(redirect_url)
 
 
 class ResultDelete(DeleteView):
+    """TODO: This should handle GET differently - currently returns a nonexistent template"""
     model = Result
 
+    @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
+    @method_decorator(result_pk_adapter(has_result_write_access))
     def dispatch(self, request, *args, **kwargs):
         return super(ResultDelete, self).dispatch(
             request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        self.get_object().delete()
-        payload = {'delete': 'ok'}
-        return JsonResponse(payload)
+        if request.is_ajax():
+            if not request.POST.get('rationale'):
+                return JsonResponse(
+                    {"status": "failed", "msg": _("Reason for change is required")},
+                    status=401
+                )
+
+            result = self.get_object()
+            result_values = result.logged_fields
+            result.delete()
+            ProgramAuditLog.log_result_deleted(self.request.user, result.indicator, result_values, self.request.POST['rationale'])
+
+            return JsonResponse(
+                {"status": "success", "msg": "Result Deleted"}
+            )
+        else:
+            return super(ResultDelete, self).delete(request, *args, **kwargs)
 
     def get_success_url(self):
         return self.object.program.program_page_url
@@ -905,6 +888,7 @@ def merge_two_dicts(x, y):
     return z
 
 
+@login_required
 def service_json(request, service):
     """
     For populating service indicators in dropdown
@@ -914,10 +898,16 @@ def service_json(request, service):
     if service == 0:
         # no service (this is selecting a custom indicator)
         return HttpResponse(status=204)
+
+    # Permission check
+    verify_program_access_level_of_any_program(request, 'high')
+
     service_indicators = import_indicator(service)
     return JsonResponse(service_indicators, safe=False)
 
 
+@login_required
+@indicator_adapter(has_result_read_access)
 def result_view(request, indicator, program):
     """Returns the results table for an indicator - used to expand rows on the Program Page"""
     indicator = ResultsIndicator.results_view.get(pk=indicator)
@@ -931,6 +921,8 @@ def result_view(request, indicator, program):
     on_track = True if (on_track_lower <= indicator.lop_percent_met <= on_track_upper) else False
     is_editable = False if request.GET.get('edit') == 'false' else True
 
+    readonly = not request.has_write_access
+
     return render_to_response(
         template_name, {
             'indicator': indicator,
@@ -939,136 +931,23 @@ def result_view(request, indicator, program):
             'program': program_obj,
             'is_editable': is_editable,
             'on_track': on_track,
+            'readonly': readonly
         }
     )
 
 
-def program_indicators_json(request, program, indicator, type):
-    template_name = 'indicators/program_indicators_table.html'
-
-    program_obj = Program.objects.get(pk=program)
-    q = {'program__id__isnull': False, 'program__id': program_obj.pk}
-
-    if int(type) != 0:
-        q['indicator_type__id'] = type
-
-    if int(indicator) != 0:
-        q['id'] = indicator
-
-    indicators = Indicator.objects \
-        .select_related('sector') \
-        .prefetch_related('result_set', 'indicator_type', 'level',
-                          'periodictargets') \
-        .filter(**q) \
-        .annotate(data_count=Count('result'),
-                  levelmin=Min('level__customsort'),
-                  target_period_last_end_date=Max('periodictargets__end_date')) \
-        .order_by('levelmin', 'number', 'name')
-
-    return render_to_response(
-        template_name,
-        {'indicators': indicators, 'program': program_obj}
-    )
-
-
-def indicator_report(request, program=0, indicator=0, type=0):
-    countries = request.user.tola_user.countries.all()
-    getPrograms = Program.objects.filter(funding_status="Funded",
-                                         country__in=countries).distinct()
-    getIndicatorTypes = IndicatorType.objects.all()
-
-    filters = {}
-    if int(program) != 0:
-        filters['program__id'] = program
-    if int(type) != 0:
-        filters['indicator_type'] = type
-    if int(indicator) != 0:
-        filters['id'] = indicator
-
-    filters['program__country__in'] = countries
-
-    indicator_data = Indicator.objects.filter(**filters) \
-        .prefetch_related('sector') \
-        .select_related(
-        'program', 'external_service_record', 'indicator_type',
-        'disaggregation', 'reporting_frequency') \
-        .values('id', 'program__name', 'baseline', 'level__name',
-                'lop_target', 'program__id',
-                'external_service_record__external_service__name',
-                'key_performance_indicator', 'name', 'indicator_type__id',
-                'indicator_type__indicator_type', 'sector__sector',
-                'disaggregation__disaggregation_type',
-                'means_of_verification', 'data_collection_method',
-                'reporting_frequency__frequency', 'create_date', 'edit_date',
-                'source', 'method_of_analysis'
-                )
-    data = json.dumps(list(indicator_data), cls=DjangoJSONEncoder)
-
-    # send the keys and vars from the json data to the template along with
-    # submitted feed info and silos for new form
-    return render(request, "indicators/report.html", {
-        'program': program,
-        'getPrograms': getPrograms,
-        'getIndicatorTypes': getIndicatorTypes,
-        'getIndicators': indicator_data,
-        'data': data})
-
-
-class IndicatorReport(View, AjaxableResponseMixin):
-    def get(self, request, *args, **kwargs):
-        countries = getCountry(request.user)
-        program = int(self.kwargs['program'])
-        indicator = int(self.kwargs['indicator'])
-        type = int(self.kwargs['type'])
-
-        filters = {}
-        if program != 0:
-            filters['program__id'] = program
-        if type != 0:
-            filters['indicator_type'] = type
-        if indicator != 0:
-            filters['id'] = indicator
-        if program == 0 and type == 0:
-            filters['program__country__in'] = countries
-
-        getIndicators = Indicator.objects.filter(**filters) \
-            .prefetch_related('sector') \
-            .select_related('program', 'external_service_record',
-                            'indicator_type', 'disaggregation',
-                            'reporting_frequency') \
-            .values('id', 'program__name', 'baseline', 'level__name',
-                    'lop_target', 'program__id',
-                    'external_service_record__external_service__name',
-                    'key_performance_indicator', 'name',
-                    'indicator_type__indicator_type', 'sector__sector',
-                    'disaggregation__disaggregation_type',
-                    'means_of_verification', 'data_collection_method',
-                    'reporting_frequency__frequency', 'create_date',
-                    'edit_date', 'source', 'method_of_analysis')
-
-        q = request.GET.get('search', None)
-        if q:
-            getIndicators = getIndicators.filter(
-                Q(indicator_type__indicator_type__contains=q) |
-                Q(name__contains=q) |
-                Q(number__contains=q) |
-                Q(number__contains=q) |
-                Q(sector__sector__contains=q) |
-                Q(definition__contains=q)
-            )
-        get_indicators = json.dumps(list(getIndicators), cls=DjangoJSONEncoder)
-        return JsonResponse(get_indicators, safe=False)
-
-
-def indicator_plan(request, program_id):
+@login_required
+def indicator_plan(request, program):
     """
     This is the GRID report or indicator plan for a program.
     Shows a simple list of indicators sorted by level
     and number. Lives in the "Indicator" home page as a link.
     """
-    program = get_object_or_404(Program, id=program_id)
+    program = get_object_or_404(Program, id=program)
 
-    indicators = ip.indicator_queryset(program_id)
+    verify_program_access_level(request, program.id, 'low')
+
+    indicators = ip.indicator_queryset(program.pk)
 
     return render(request, "indicators/indicator_plan.html", {
         'program': program,
@@ -1077,150 +956,8 @@ def indicator_plan(request, program_id):
     })
 
 
-class IndicatorReportData(View, AjaxableResponseMixin):
-    """
-    This is the Indicator Visual report data, returns a json object of
-    report data to be displayed in the table report
-    """
 
-    def get(self, request, program, type, id):
-        q = {'program__id__isnull': False}
-
-        # if we have a program filter active
-        if int(program) != 0:
-            q = {'program__id': program}
-        # if we have an indicator type active
-        if int(type) != 0:
-            r = {'indicator_type__id': type}
-            q.update(r)
-
-        # if we have an indicator id append it to the query filter
-        if int(id) != 0:
-            s = {'id': id}
-            q.update(s)
-
-        countries = getCountry(request.user)
-
-        indicator = Indicator.objects.filter(program__country__in=countries) \
-            .filter(**q).values(
-                'id', 'program__name', 'baseline', 'level__name', 'lop_target',
-                'program__id',
-                'external_service_record__external_service__name',
-                'key_performance_indicator', 'name', 'indicator_type__id',
-                'indicator_type__indicator_type', 'sector__sector')\
-            .order_by('create_date')
-
-        indicator_count = Indicator.objects \
-            .filter(program__country__in=countries) \
-            .filter(**q) \
-            .filter(result__isnull=True) \
-            .distinct() \
-            .count()
-
-        indicator_data_count = Indicator.objects \
-            .filter(program__country__in=countries) \
-            .filter(**q).filter(result__isnull=False) \
-            .distinct() \
-            .count()
-
-        indicator_serialized = json.dumps(list(indicator))
-
-        final_dict = {
-            'indicator': indicator_serialized,
-            'indicator_count': indicator_count,
-            'data_count': indicator_data_count
-        }
-
-        if request.GET.get('export'):
-            indicator_export = Indicator.objects.all().filter(**q)
-            dataset = IndicatorResource().export(indicator_export)
-            response = HttpResponse(dataset.csv,
-                                    content_type='application/ms-excel')
-
-            response['Content-Disposition'] = 'attachment; \
-                filename=indicator_data.csv'
-
-            return response
-
-        return JsonResponse(final_dict, safe=False)
-
-
-class ResultReportData(View, AjaxableResponseMixin):
-    """
-    This is the Result reports data in JSON format for a specific
-    indicator
-    """
-
-    def get(self, request, *args, **kwargs):
-        countries = getCountry(request.user)
-        program = kwargs['program']
-        indicator = kwargs['indicator']
-        type = kwargs['type']
-
-        q = {'program__id__isnull': False}
-        # if we have a program filter active
-        if int(program) != 0:
-            q = {
-                'indicator__program__id': program,
-            }
-        # if we have an indicator type active
-        if int(type) != 0:
-            r = {
-                'indicator__indicator_type__id': type,
-            }
-            q.update(r)
-        # if we have an indicator id append it to the query filter
-        if int(indicator) != 0:
-            s = {
-                'indicator__id': indicator,
-            }
-            q.update(s)
-
-        getResult = Result.objects \
-            .select_related('periodic_target') \
-            .prefetch_related('evidence', 'indicator', 'program',
-                              'indicator__objectives',
-                              'indicator__strategic_objectives') \
-            .filter(program__country__in=countries) \
-            .filter(**q) \
-            .order_by('indicator__program__name', 'indicator__number') \
-            .values(
-                'id', 'indicator__id', 'indicator__name',
-                'indicator__program__id', 'indicator__program__name',
-                'indicator__indicator_type__indicator_type',
-                'indicator__indicator_type__id', 'indicator__level__name',
-                'indicator__sector__sector', 'date_collected',
-                'indicator__baseline', 'indicator__lop_target',
-                'indicator__key_performance_indicator',
-                'indicator__external_service_record__external_service__name',
-                'evidence', 'tola_table', 'periodic_target', 'achieved')
-
-        result_sum = Result.objects \
-            .select_related('periodic_target') \
-            .filter(program__country__in=countries) \
-            .filter(**q) \
-            .aggregate(Sum('periodic_target__target'), Sum('achieved'))
-
-        # datetime encoding breaks without using this
-        from django.core.serializers.json import DjangoJSONEncoder
-        result_serialized = json.dumps(list(getResult),
-                                          cls=DjangoJSONEncoder)
-        final_dict = {
-            'result': result_serialized,
-            'result_sum': result_sum
-        }
-        return JsonResponse(final_dict, safe=False)
-
-
-def dictfetchall(cursor):
-    "Return all rows from a cursor as a dict"
-    columns = [col[0] for col in cursor.description]
-    return [
-        dict(zip(columns, row))
-        for row in cursor.fetchall()
-    ]
-
-
+@login_required
 def old_program_page(request, program_id, indicator_id, indicator_type_id):
     """ redirect for old /program/<program_id>/<indicator_id>/<indicator_type_id>/ urls to new program page url"""
     program = get_object_or_404(Program, pk=program_id)
@@ -1229,15 +966,17 @@ def old_program_page(request, program_id, indicator_id, indicator_type_id):
             indicator_id, indicator_type_id))
     return redirect(program.program_page_url, permanent=True)
 
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(has_program_read_access, name='dispatch')
 class ProgramPage(ListView):
     model = Indicator
     template_name = 'indicators/program_page.html'
-    metrics = False
 
     def get(self, request, *args, **kwargs):
         # countries = request.user.tola_user.countries.all()
-        program_id = int(self.kwargs['program_id'])
-        if request.user.is_anonymous or not request.user.tola_user.has_access(program_id=program_id):
+        program_id = int(self.kwargs['program'])
+        if request.user.is_anonymous:
             return HttpResponseRedirect('/')
         unannotated_program = Program.objects.only(
             'reporting_period_start', 'reporting_period_end',
@@ -1253,12 +992,6 @@ class ProgramPage(ListView):
                 )
         program = ProgramWithMetrics.program_page.get(pk=program_id)
         program.indicator_filters = {}
-        if self.metrics:
-            json_context = {
-                'metrics': program.metrics,
-                'scope_counts': program.scope_counts
-            }
-            return JsonResponse(json_context)
 
         indicators = program.annotated_indicators\
             .annotate(target_period_last_end_date=Max('periodictargets__end_date')).select_related('level')
@@ -1266,12 +999,17 @@ class ProgramPage(ListView):
 
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
                          [PinnedReport.default_report(program.id)]
+
+        readonly = not request.has_write_access
+
         js_context = {
             'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
             'program': ProgramSerializer(program).data,
             'indicators': IndicatorSerializer(indicators, many=True).data,
             'indicator_on_scope_margin': Indicator.ONSCOPE_MARGIN,
+            'readonly': readonly,
         }
+
         #program.set_metrics(indicators)
         c_data = {
             'program': program,
@@ -1279,6 +1017,7 @@ class ProgramPage(ListView):
             'percent_complete': program.percent_complete,
             'pinned_reports': pinned_reports,
             'js_context': js_context,
+            "readonly": readonly
         }
         return render(request, self.template_name, c_data)
 
@@ -1287,12 +1026,8 @@ class DisaggregationReportMixin(object):
     def get_context_data(self, **kwargs):
         context = super(DisaggregationReportMixin, self) \
             .get_context_data(**kwargs)
-
-        countries = getCountry(self.request.user)
-        programs = Program.objects.filter(funding_status="Funded",
-                                          country__in=countries).distinct()
-
-        indicators = Indicator.objects.filter(program__country__in=countries)
+        programs = self.request.user.tola_user.available_programs
+        indicators = Indicator.objects.filter(program__in=programs)
 
         programId = int(kwargs.get('program', 0))
         program_selected = None
@@ -1361,16 +1096,33 @@ class DisaggregationReportMixin(object):
 
         return context
 
+@method_decorator(login_required, name='dispatch')
+class DisaggregationReportQuickstart(TemplateView):
+    template_name = 'indicators/disaggregation_report.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(DisaggregationReportQuickstart, self).get_context_data(**kwargs)
+        context['program_id'] = 0
+        context['data'] = []
+        context['getPrograms'] = self.request.user.tola_user.available_programs
+        context['disaggregationprint_button'] = False
+        context['disaggregationcsv_button'] = False
+        return context
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(has_program_read_access, name='dispatch')
 class DisaggregationReport(DisaggregationReportMixin, TemplateView):
     template_name = 'indicators/disaggregation_report.html'
 
     def get_context_data(self, **kwargs):
         context = super(DisaggregationReport, self).get_context_data(**kwargs)
         context['disaggregationprint_button'] = True
+        context['disaggregationcsv_button'] = True
         return context
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(has_program_read_access, name='dispatch')
 class DisaggregationPrint(DisaggregationReportMixin, TemplateView):
     template_name = 'indicators/disaggregation_print.html'
 
@@ -1400,99 +1152,8 @@ class DisaggregationPrint(DisaggregationReportMixin, TemplateView):
         return res
 
 
-class TVAPrint(TemplateView):
-    template_name = 'indicators/tva_print.html'
-
-    def get(self, request, *args, **kwargs):
-        program = Program.objects.filter(
-            id=kwargs.get('program', None)).first()
-
-        indicators = Indicator.objects \
-            .select_related('sector') \
-            .prefetch_related('indicator_type', 'level', 'program') \
-            .filter(program=program) \
-            .annotate(actuals=Sum('result__achieved'))
-
-        # hmtl_string = render_to_string('indicators/tva_print.html',
-        # {'data': context['data'], 'program': context['program']})
-        hmtl_string = render(request, 'indicators/tva_print.html',
-                             {'data': indicators, 'program': program})
-
-        pdffile = HTML(string=hmtl_string.content)
-        # stylesheets=[CSS(string='@page { size: letter; margin: 1cm}')]
-        result = pdffile.write_pdf(stylesheets=[CSS(
-            string='@page {\
-                size: letter; margin: 1cm;\
-                @bottom-right{\
-                    content: "Page " counter(page) " of " counter(pages);\
-                };\
-            }'
-        )])
-        res = HttpResponse(result, content_type='application/pdf')
-        # res['Content-Disposition'] = 'inline; filename="ztvareport.pdf"'
-        res['Content-Disposition'] = 'attachment; filename=tva.pdf'
-        res['Content-Transfer-Encoding'] = 'binary'
-        """
-        with tempfile.NamedTemporaryFile(delete=True) as output:
-            output.write(result)
-            output.flush()
-            output = open(output.name, 'r')
-            res.write(output.read())
-        """
-        """
-        # Create the PDF object, using the response object as its "file."
-        p = canvas.Canvas(res)
-        p.drawString(100, 100, 'hello world!')
-        p.showPage()
-        p.save()
-        """
-        return res
-
-
-class TVAReport(TemplateView):
-    template_name = 'indicators/tva_report.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(TVAReport, self).get_context_data(**kwargs)
-        countries = getCountry(self.request.user)
-        filters = {'program__country__in': countries}
-
-        program = Program.objects.filter(
-            id=kwargs.get('program', None)).first()
-
-        indicator_type = IndicatorType.objects.filter(
-            id=kwargs.get('type', None)).first()
-
-        indicator = Indicator.objects.filter(
-            id=kwargs.get('indicator', None)).first()
-
-        if program:
-            filters['program'] = program.pk
-        if indicator_type:
-            filters['indicator__indicator_type__id'] = indicator_type.pk
-        if indicator:
-            filters['indicator'] = indicator.pk
-
-        indicators = Indicator.objects \
-            .select_related('sector') \
-            .prefetch_related('indicator_type', 'level', 'program') \
-            .filter(**filters) \
-            .annotate(actuals=Sum('result__achieved'))
-
-        context['data'] = indicators
-        context['getIndicators'] = Indicator.objects \
-            .filter(program__country__in=countries) \
-            .exclude(result__isnull=True)
-
-        context['getPrograms'] = Program.objects \
-            .filter(funding_status="Funded", country__in=countries).distinct()
-
-        context['getIndicatorTypes'] = IndicatorType.objects.all()
-        context['program'] = program
-        context['export_to_pdf_url'] = True
-        return context
-
-
+@method_decorator(login_required, name='dispatch')
+@method_decorator(has_program_read_access, name='dispatch')
 class IndicatorExport(View):
     """
     Export all indicators to an XLS file
@@ -1507,72 +1168,17 @@ class IndicatorExport(View):
         return response
 
 
-class IndicatorDataExport(View):
-    """
-    Export all indicators to a CSV file
-    """
-
-    def get(self, request, *args, **kwargs):
-        if int(kwargs['indicator']) == 0:
-            del kwargs['indicator']
-        if int(kwargs['program']) == 0:
-            del kwargs['program']
-        if int(kwargs['type']) == 0:
-            del kwargs['type']
-        else:
-            kwargs['indicator__indicator_type__id'] = kwargs['type']
-            del kwargs['type']
-
-        countries = getCountry(request.user)
-        queryset = Result.objects \
-            .filter(**kwargs) \
-            .filter(indicator__program__country__in=countries)
-
-        dataset = ResultResource().export(queryset)
-        response = HttpResponse(dataset.csv,
-                                content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; \
-            filename=indicator_data.csv'
-        return response
-
-
-def api_indicator_view(request, indicator_id):
+@login_required
+@indicator_adapter(has_program_read_access)
+def api_indicator_view(request, indicator, program):
     """
     API call for viewing an indicator for the program page
     """
-    indicator = Indicator.objects.only('program_id', 'sector_id').get(id=indicator_id)
+    indicator = Indicator.objects.only('program_id', 'sector_id').get(pk=indicator)
     program = ProgramWithMetrics.program_page.get(pk=indicator.program_id)
     program.indicator_filters = {}
 
     indicator = program.annotated_indicators \
-        .annotate(target_period_last_end_date=Max('periodictargets__end_date')).get(id=indicator_id)
+        .annotate(target_period_last_end_date=Max('periodictargets__end_date')).get(pk=indicator.pk)
 
     return JsonResponse(IndicatorSerializer(indicator).data)
-
-
-
-"""
-class CountryExport(View):
-    def get(self, *args, **kwargs):
-        country = CountryResource().export()
-        response = HttpResponse(country.csv, content_type="csv")
-        response['Content-Disposition'] = 'attachment; filename=country.csv'
-        return response
-"""
-
-
-def const_table_det_url(url):
-    url_data = urlparse(url)
-    root = url_data.scheme
-    org_host = url_data.netloc
-    path = url_data.path
-    components = re.split('/', path)
-
-    s = []
-    for c in components:
-        s.append(c)
-
-    new_url = str(root) + '://' + str(org_host) + '/silo_detail/' + str(
-        s[3]) + '/'
-
-    return new_url

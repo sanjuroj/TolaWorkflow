@@ -7,10 +7,11 @@ from django.utils.translation import ugettext_lazy as _
 from functools import partial
 from widgets import GoogleMapsWidget
 from django import forms
+from django.db.models import Q
 from .models import (
     ProjectAgreement, ProjectComplete, Program, SiteProfile, Documentation, Benchmarks,
     Monitor, Budget, Capacity, Evaluate, Office, Checklist, ChecklistItem, Province, Stakeholder,
-    TolaUser, Contact, Sector
+    TolaUser, Contact, Sector, Country
 )
 from indicators.models import Result, Indicator, PeriodicTarget
 from crispy_forms.layout import LayoutObject, TEMPLATE_PACK
@@ -1333,6 +1334,16 @@ class SiteProfileForm(forms.ModelForm):
         self.helper.help_text_inline = True
         self.helper.html5_required = True
 
+        submit_section = Div()
+        if self.request.has_write_access:
+            submit_section = Div(
+                FormActions(
+                    Submit('submit', _('Save changes'), css_class=''),
+                    Reset('reset', _('Reset'), css_class='')
+                ),
+                css_class='form-actions',
+            )
+
         # Organize the fields in the site profile form using a layout class
         self.helper.layout = Layout(
 
@@ -1371,16 +1382,9 @@ class SiteProfileForm(forms.ModelForm):
                     ),
                 ),
 
-            ),
-            Div(
-                FormActions(
-                    Submit('submit', _('Save changes'), css_class=''),
-                    Reset('reset', _('Reset'), css_class='')
-                ),
-                css_class='form-actions',
-            ),
+            ), submit_section,
 
-             HTML("""
+             HTML(u"""
                   <div class='card mt-4'>
 
                   <!-- Default panel contents -->
@@ -1413,13 +1417,21 @@ class SiteProfileForm(forms.ModelForm):
 
         super(SiteProfileForm, self).__init__(*args, **kwargs)
 
+        if not self.request.has_write_access:
+            for name, field in self.fields.items():
+                field.disabled = True
+
         #override the office queryset to use request.user for country
-        countries = getCountry(self.request.user)
+        countries = (
+            self.request.user.tola_user.managed_countries.all()
+            | Country.objects.filter(id__in=self.request.user.tola_user.programaccess_set.filter(role='high').values('country_id'))
+        ).distinct()
         self.fields['date_of_firstcontact'].label = _("Date of First Contact")
         self.fields['office'].queryset = Office.objects.filter(province__country__in=countries)
         self.fields['province'].queryset = Province.objects.filter(country__in=countries)
         self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
         self.fields['filled_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
+        self.fields['country'].queryset = countries
 
 
 class DocumentationForm(forms.ModelForm):
@@ -1458,80 +1470,20 @@ class DocumentationForm(forms.ModelForm):
         super(DocumentationForm, self).__init__(*args, **kwargs)
 
         #override the program queryset to use request.user for country
-        countries = getCountry(self.request.user)
         self.fields['name'].required = True
         self.fields['url'].required = True
-        self.fields['project'].queryset = ProjectAgreement.objects.filter(program__country__in=countries)
-        self.fields['program'].queryset = Program.active_programs.filter(country__in=countries).distinct()
+        self.fields['project'].queryset = ProjectAgreement.objects.filter(
+            Q(program_id__in=self.request.user.tola_user.programaccess_set.filter(role='high').values('program_id'))
+            | Q(program_id__in=self.request.user.tola_user.programaccess_set.filter(role='medium').values('program_id'))
+        )
+        self.fields['program'].queryset = Program.active_programs.filter(
+            Q(id__in=self.request.user.tola_user.programaccess_set.filter(role='high').values('program_id'))
+            | Q(id__in=self.request.user.tola_user.programaccess_set.filter(role='medium').values('program_id'))
+        ).distinct()
 
         # only display Project field to existing users
         if not self.request.user.tola_user.allow_projects_access:
             self.fields.pop('project')
-
-
-class QuantitativeOutputsForm(forms.ModelForm):
-    is_it_project_complete_form = forms.CharField(required=False)
-
-    class Meta:
-        model = Result
-        exclude = ['create_date', 'edit_date']
-
-    def __init__(self, *args, **kwargs):
-        self.helper = FormHelper()
-        self.request = kwargs.pop('request')
-        self.helper.form_method = 'post'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-sm-2'
-        self.helper.field_class = 'col-sm-6'
-        self.helper.form_error_title = 'Form Errors'
-        self.helper.error_text_inline = True
-        self.helper.help_text_inline = True
-        self.helper.html5_required = True
-        self.helper.form_tag = False
-        instance = kwargs.get('instance', None)
-        options = ""
-        if instance:
-            pts = PeriodicTarget.objects.filter(indicator=instance.indicator)
-            for pt in pts:
-                if instance.periodic_target:
-                    selected = "selected" if pt.id == instance.periodic_target.id else ""
-                else:
-                    selected = ""
-                # pt.period is deprecated, transition to pt.period_name
-                options += "<option value=%s %s>%s</option>" % (pt.id, selected, pt.period)
-        self.helper.layout = Layout(
-            'indicator',
-            'periodic_target',
-            HTML("""
-                <div id="div_id_pt" class="form-group">
-                    <label for="id_pt" class="control-label col-sm-2">Periodic Target</label>
-                     <div class="controls col-sm-6">
-                        <select name="periodic_target_dropdown" class="select form-control" id="id_periodic_target_dropdown">
-                            <option value="">---------</option>
-                            %s
-                        </select>
-                    </div>
-                </div>
-            """ % options),
-            'achieved',
-            'agreement',
-            'complete',
-            'program',
-            'is_it_project_complete_form'
-        )
-        super(QuantitativeOutputsForm, self).__init__(*args, **kwargs)
-        countries = getCountry(self.request.user)
-        self.fields['indicator'].queryset = Indicator.objects.filter(program__id=kwargs['initial']['program'])
-        self.fields['agreement'].queryset = ProjectAgreement.objects.filter(program__country__in=countries)
-        #self.fields['periodic_target'].queryset = PeriodicTarget.objects.all()
-        self.fields['periodic_target'].widget = HiddenInput() #forms.NumberInput()
-        #self.fields['program'].widget.attrs['disabled'] = "disabled"
-        self.fields['program'].widget = HiddenInput()
-        self.fields['agreement'].widget = HiddenInput()
-        self.fields['complete'].widget = HiddenInput()
-        self.fields['is_it_project_complete_form'].initial = kwargs['initial']['is_it_project_complete_form']
-        self.fields['is_it_project_complete_form'].widget = HiddenInput()
-
 
 
 class BenchmarkForm(forms.ModelForm):
@@ -1733,3 +1685,27 @@ class ProjectCompleteTable(forms.ModelForm):
     class Meta:
         model = ProjectComplete
         fields = '__all__'
+
+class OneTimeRegistrationForm(forms.Form):
+    """
+    A form that lets a user change set their password without entering the old
+    password
+    """
+    error_messages = {
+        'password_mismatch': ("The two password fields didn't match."),
+        }
+    new_password1 = forms.CharField(label=("New password"),
+                                    widget=forms.PasswordInput)
+    new_password2 = forms.CharField(label=("New password confirmation"),
+                                    widget=forms.PasswordInput)
+
+    def clean_new_password2(self):
+        password1 = self.cleaned_data.get('new_password1')
+        password2 = self.cleaned_data.get('new_password2')
+        if password1 and password2:
+            if password1 != password2:
+                raise forms.ValidationError(
+                    self.error_messages['password_mismatch'],
+                    code='password_mismatch',
+                    )
+        return password2

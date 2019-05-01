@@ -67,6 +67,8 @@
 /* Local Bootstrap overrides */
 @import '_bootstrap_multiselect.scss'; // my what a mess this is
 @import 'bootstrap_overrides'; // overload BS selectors.
+// load mixins before other scss to use them in other files:
+@import 'mixins';
 
 // Select2 multi-select menus
 // AFAIK used only in Program menu and IPTT quickstart page
@@ -92,9 +94,17 @@
 @import 'components/list_filters'; // List filters
 @import 'components/forms';
 @import 'components/tab_set'; // wraps & overclasses BS nav-tabs and nav-content for e.g. vertical tabs
+@import 'components/management_table'; // Management table component
+@import 'components/tola_management'; // Tola Managament pages (user, organization, program, and countries)
+@import 'components/virtualized_tables'; // Virtualized tables in Edit User (programs & roles)
+@import 'components/admin_list'; // List styles in Admin Lite
+@import 'components/folding_sidebar'; // Flyout filters for Admin lite. IPTT implementation is different
+@import 'components/changelog'; // custom styles for change logs/audit logs
+@import 'components/login'; // login page
+@import 'components/react-select'; // overrides and extensions to react-select
+@import 'components/react-multiselect'; // overrides and extensions to react-multiselect
 
 /* Local custom CSS and overloads for non-BS libraries */
-@import 'mixins';
 @import 'mc_tola_forms'; // extremely custom!
 @import 'maps';
 @import 'charts';
@@ -105,4 +115,3 @@
 @import 'custom'; // misc. elements & unsorted selectors
 
 /* Unsorted custom selectors */
-

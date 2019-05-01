@@ -1,36 +1,56 @@
-import collections
 import operator
 import unicodedata
 
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.utils.translation import gettext as _
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 
 from workflow.serializers import DocumentListProgramSerializer, DocumentListDocumentSerializer
 from .models import Program, Country, Province, AdminLevelThree, District, ProjectAgreement, ProjectComplete, SiteProfile, \
     Documentation, Monitor, Benchmarks, Budget, ApprovalAuthority, Checklist, ChecklistItem, Contact, Stakeholder, FormGuidance, \
-    TolaBookmarks, TolaUser
+    TolaUser
 from formlibrary.models import TrainingAttendance, Distribution
 from indicators.models import Result, ExternalService, Indicator
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.urls import reverse
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.http import urlsafe_base64_decode
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
 
-from .forms import ProjectAgreementForm, ProjectAgreementSimpleForm, ProjectAgreementCreateForm, ProjectCompleteForm, ProjectCompleteSimpleForm, ProjectCompleteCreateForm, DocumentationForm, \
-    SiteProfileForm, MonitorForm, BenchmarkForm, BudgetForm, FilterForm, \
-    QuantitativeOutputsForm, ChecklistItemForm, StakeholderForm, ContactForm
+from .forms import (
+    ProjectAgreementForm,
+    ProjectAgreementSimpleForm,
+    ProjectAgreementCreateForm,
+    ProjectCompleteForm,
+    ProjectCompleteSimpleForm,
+    ProjectCompleteCreateForm,
+    DocumentationForm,
+    SiteProfileForm,
+    MonitorForm,
+    BenchmarkForm,
+    BudgetForm,
+    FilterForm,
+    ChecklistItemForm,
+    StakeholderForm,
+    ContactForm,
+    OneTimeRegistrationForm
+)
 
 import pytz # TODO: not used, keeping this import for potential regressions
 
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.db.models import Count, Q, Max, Prefetch
+from django.db.models import Count, Q, Max
 from tables import ProjectAgreementTable
 from filters import ProjectAgreementFilter
 import json
-import requests
 import logging
 
 from django.core import serializers
@@ -51,6 +71,18 @@ from export import ProjectAgreementResource, StakeholderResource
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from tola_management.models import ProgramAuditLog
+from tola_management.permissions import (
+    user_has_program_roles,
+    has_site_read_access,
+    has_site_create_access,
+    has_site_delete_access,
+    has_site_write_access,
+    has_program_write_access,
+    has_projects_access,
+    verify_program_access_level,
+    verify_program_access_level_of_any_program
+)
 
 APPROVALS = (
     ('in_progress',('in progress')),
@@ -69,14 +101,15 @@ def date_handler(obj):
     return obj.isoformat() if hasattr(obj, 'isoformat') else obj
 
 
-class ProjectDash(ListView):
+@method_decorator(has_projects_access, name='dispatch')
+class ProjectDash(LoginRequiredMixin, ListView):
 
     template_name = 'workflow/projectdashboard_list.html'
 
     def get(self, request, *args, **kwargs):
 
         countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries)
+        getPrograms = self.request.user.tola_user.available_programs.filter(funding_status="Funded")
         project_id = int(self.kwargs['pk'])
 
         if project_id == 0:
@@ -89,22 +122,27 @@ class ProjectDash(ListView):
             getDistributionCount = 0
             getChecklistCount = 0
         else:
-            getAgreement = ProjectAgreement.objects.get(id=project_id)
+
             try:
-                getComplete = ProjectComplete.objects.get(project_agreement__id=self.kwargs['pk'])
+                getAgreement = ProjectAgreement.objects.get(id=project_id, program__in=getPrograms)
+            except ProjectAgreement.DoesNotExist:
+                getAgreement = None
+
+            try:
+                getComplete = ProjectComplete.objects.get(project_agreement__id=self.kwargs['pk'], program__in=getPrograms)
             except ProjectComplete.DoesNotExist:
                 getComplete = None
-            getDocumentCount = Documentation.objects.all().filter(project_id=self.kwargs['pk']).count()
-            getCommunityCount = SiteProfile.objects.all().filter(projectagreement__id=self.kwargs['pk']).count()
-            getTrainingCount = TrainingAttendance.objects.all().filter(project_agreement_id=self.kwargs['pk']).count()
-            getDistributionCount = Distribution.objects.all().filter(initiation_id=self.kwargs['pk']).count()
-            getChecklistCount = ChecklistItem.objects.all().filter(checklist__agreement_id=self.kwargs['pk']).count()
-            getChecklist = ChecklistItem.objects.all().filter(checklist__agreement_id=self.kwargs['pk'])
+            getDocumentCount = Documentation.objects.all().filter(project_id=self.kwargs['pk'], program__in=getPrograms).count()
+            getCommunityCount = SiteProfile.objects.all().filter(projectagreement__id=self.kwargs['pk'], projectagreement__program__in=getPrograms).count()
+            getTrainingCount = TrainingAttendance.objects.all().filter(project_agreement_id=self.kwargs['pk'], program__in=getPrograms).count()
+            getDistributionCount = Distribution.objects.all().filter(initiation_id=self.kwargs['pk'], program__in=getPrograms).count()
+            getChecklistCount = ChecklistItem.objects.all().filter(checklist__agreement_id=self.kwargs['pk'], checklist__agreement__program__in=getPrograms).count()
+            getChecklist = ChecklistItem.objects.all().filter(checklist__agreement_id=self.kwargs['pk'], checklist__agreement__program__in=getPrograms)
 
         if int(self.kwargs['pk']) == 0:
-            getProgram =Program.objects.all().filter(funding_status="Funded", country__in=countries).distinct()
+            getProgram =getPrograms.filter(funding_status="Funded").distinct()
         else:
-            getProgram =Program.objects.get(agreement__id=self.kwargs['pk'])
+            getProgram = get_object_or_404(Program, agreement__id=self.kwargs['pk'], id__in=getPrograms.values('id'))
 
         return render(request, self.template_name, {'getProgram': getProgram, 'getAgreement': getAgreement,'getComplete': getComplete,
                                                     'getPrograms':getPrograms, 'getDocumentCount':getDocumentCount,'getChecklistCount': getChecklistCount,
@@ -112,7 +150,8 @@ class ProjectDash(ListView):
                                                     'getChecklist': getChecklist, 'getDistributionCount': getDistributionCount})
 
 
-class ProgramDash(ListView):
+@method_decorator(has_projects_access, name='dispatch')
+class ProgramDash(LoginRequiredMixin, ListView):
     """
     Dashboard links for and status for each program with number of projects
     :param request:
@@ -124,14 +163,13 @@ class ProgramDash(ListView):
 
     def get(self, request, *args, **kwargs):
 
-        countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries).distinct()
+        getPrograms = self.request.user.tola_user.available_programs.filter(Q(agreement__isnull=False) | Q(complete__isnull=False), funding_status="Funded").distinct()
         filtered_program = None
         if int(self.kwargs['pk']) == 0:
-            getDashboard = Program.objects.all().prefetch_related('agreement','agreement__projectcomplete','agreement__office').filter(funding_status="Funded", country__in=countries).order_by('name').annotate(has_agreement=Count('agreement'),has_complete=Count('complete'))
+            getDashboard = getPrograms.prefetch_related('agreement','agreement__projectcomplete','agreement__office').filter(funding_status="Funded").order_by('name').annotate(has_agreement=Count('agreement'),has_complete=Count('complete'))
         else:
-            getDashboard = Program.objects.all().prefetch_related('agreement','agreement__projectcomplete','agreement__office').filter(id=self.kwargs['pk'], funding_status="Funded", country__in=countries).order_by('name')
-            filtered_program = Program.objects.only('name').get(pk=self.kwargs['pk']).name
+            getDashboard = getPrograms.prefetch_related('agreement','agreement__projectcomplete','agreement__office').filter(id=self.kwargs['pk'], funding_status="Funded").order_by('name')
+            filtered_program = getPrograms.only('name').get(pk=self.kwargs['pk']).name
 
         if self.kwargs.get('status', None):
 
@@ -150,7 +188,8 @@ class ProgramDash(ListView):
         return render(request, self.template_name, {'getDashboard': getDashboard, 'getPrograms': getPrograms, 'APPROVALS': APPROVALS, 'program_id':  self.kwargs['pk'], 'status': status, 'filtered_program': filtered_program})
 
 
-class ProjectAgreementList(ListView):
+@method_decorator(has_projects_access, name='dispatch')
+class ProjectAgreementList(LoginRequiredMixin, ListView):
     """
     Project Agreement
     :param request:
@@ -159,25 +198,25 @@ class ProjectAgreementList(ListView):
     template_name = 'workflow/projectagreement_list.html'
 
     def get(self, request, *args, **kwargs):
-        countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries).distinct()
+        getPrograms = request.user.tola_user.available_programs.filter(funding_status="Funded").distinct()
 
         if int(self.kwargs['pk']) != 0:
-            getDashboard = ProjectAgreement.objects.all().filter(program__id=self.kwargs['pk'])
-            getProgram =Program.objects.get(id=self.kwargs['pk'])
+            getDashboard = ProjectAgreement.objects.all().filter(program__id=self.kwargs['pk'], program__in=getPrograms)
+            getProgram =get_object_or_404(Program, id=self.kwargs['pk'], id__in=getPrograms.values('id'))
             return render(request, self.template_name, {'form': FilterForm(),'getProgram': getProgram, 'getDashboard':getDashboard,'getPrograms':getPrograms,'APPROVALS': APPROVALS})
 
         elif self.kwargs['status'] != 'none':
-            getDashboard = ProjectAgreement.objects.all().filter(approval=self.kwargs['status'])
+            getDashboard = ProjectAgreement.objects.all().filter(approval=self.kwargs['status'], program__in=getPrograms)
             return render(request, self.template_name, {'form': FilterForm(), 'getDashboard':getDashboard,'getPrograms':getPrograms,'APPROVALS': APPROVALS})
 
         else:
-            getDashboard = ProjectAgreement.objects.all().filter(program__country__in=countries)
+            getDashboard = ProjectAgreement.objects.all().filter(program__in=getPrograms)
 
             return render(request, self.template_name, {'form': FilterForm(),'getDashboard':getDashboard,'getPrograms':getPrograms,'APPROVALS': APPROVALS})
 
 
-class ProjectAgreementImport(ListView):
+@method_decorator(has_projects_access, name='dispatch')
+class ProjectAgreementImport(LoginRequiredMixin, ListView):
     """
     Import a project agreement from TolaData or other third party service
     """
@@ -193,7 +232,8 @@ class ProjectAgreementImport(ListView):
         return render(request, self.template_name, {'getPrograms': getPrograms, 'getServices': getServices , 'getCountries': getCountries})
 
 
-class ProjectAgreementCreate(CreateView):
+@method_decorator(has_projects_access, name='dispatch')
+class ProjectAgreementCreate(LoginRequiredMixin, CreateView):
     """
     Project Agreement Form
     :param request:
@@ -272,7 +312,8 @@ class ProjectAgreementCreate(CreateView):
     form_class = ProjectAgreementCreateForm
 
 
-class ProjectAgreementUpdate(UpdateView):
+@method_decorator(has_projects_access, name='dispatch')
+class ProjectAgreementUpdate(LoginRequiredMixin, UpdateView):
     """
     Project Initiation Form
     :param request:
@@ -413,7 +454,8 @@ class ProjectAgreementUpdate(UpdateView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
-class ProjectAgreementDetail(DetailView):
+@method_decorator(has_projects_access, name='dispatch')
+class ProjectAgreementDetail(LoginRequiredMixin, DetailView):
 
     model = ProjectAgreement
     context_object_name = 'agreement'
@@ -458,7 +500,8 @@ class ProjectAgreementDetail(DetailView):
         return context
 
 
-class ProjectAgreementDelete(DeleteView):
+@method_decorator(has_projects_access, name='dispatch')
+class ProjectAgreementDelete(LoginRequiredMixin, DeleteView):
     """
     Project Agreement Delete
     """
@@ -484,7 +527,8 @@ class ProjectAgreementDelete(DeleteView):
     form_class = ProjectAgreementForm
 
 
-class ProjectCompleteList(ListView):
+@method_decorator(has_projects_access, name='dispatch')
+class ProjectCompleteList(LoginRequiredMixin, ListView):
     """
     Project Complete
     :param request:
@@ -494,20 +538,20 @@ class ProjectCompleteList(ListView):
     template_name = 'workflow/projectcomplete_list.html'
 
     def get(self, request, *args, **kwargs):
-        countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries)
+        getPrograms = request.user.tola_user.available_programs.filter(funding_status="Funded")
 
         if int(self.kwargs['pk']) == 0:
-            getDashboard = ProjectComplete.objects.all().filter(program__country__in=countries)
+            getDashboard = ProjectComplete.objects.all().filter(program__in=getPrograms)
             return render(request, self.template_name, {'getDashboard':getDashboard,'getPrograms':getPrograms})
         else:
-            getDashboard = ProjectComplete.objects.all().filter(program__id=self.kwargs['pk'])
-            getProgram =Program.objects.get(id=self.kwargs['pk'])
+            getDashboard = ProjectComplete.objects.all().filter(program__id=self.kwargs['pk'], program__in=getPrograms)
+            getProgram =get_object_or_404(id=self.kwargs['pk'], id__in=getPrograms.values('id'))
 
             return render(request, self.template_name, {'getProgram': getProgram, 'getDashboard':getDashboard,'getPrograms':getPrograms})
 
 
-class ProjectCompleteCreate(CreateView):
+@method_decorator(has_projects_access, name='dispatch')
+class ProjectCompleteCreate(LoginRequiredMixin, CreateView):
     """
     Project Complete Form
     """
@@ -608,7 +652,8 @@ class ProjectCompleteCreate(CreateView):
     form_class = ProjectCompleteCreateForm
 
 
-class ProjectCompleteUpdate(UpdateView):
+@method_decorator(has_projects_access, name='dispatch')
+class ProjectCompleteUpdate(LoginRequiredMixin, UpdateView):
     """
     Project Tracking Form
     """
@@ -718,7 +763,8 @@ class ProjectCompleteUpdate(UpdateView):
     form_class = ProjectCompleteForm
 
 
-class ProjectCompleteDetail(DetailView):
+@method_decorator(has_projects_access, name='dispatch')
+class ProjectCompleteDetail(LoginRequiredMixin, DetailView):
 
     model = ProjectComplete
     context_object_name = 'complete'
@@ -755,7 +801,8 @@ class ProjectCompleteDetail(DetailView):
         return context
 
 
-class ProjectCompleteDelete(DeleteView):
+@method_decorator(has_projects_access, name='dispatch')
+class ProjectCompleteDelete(LoginRequiredMixin, DeleteView):
     """
     Project Complete Delete
     """
@@ -781,7 +828,8 @@ class ProjectCompleteDelete(DeleteView):
     form_class = ProjectCompleteForm
 
 
-class ProjectCompleteImport(ListView):
+@method_decorator(has_projects_access, name='dispatch')
+class ProjectCompleteImport(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ProjectCompleteImport, self).get_context_data(**kwargs)
@@ -791,18 +839,22 @@ class ProjectCompleteImport(ListView):
     template_name = 'workflow/projectcomplete_import.html'
 
 
+@login_required
 def documentation_list(request):
-    user_countries = request.user.tola_user.countries.all()
 
-    programs = Program.objects.filter(funding_status="Funded", country__in=user_countries)
+    programs = request.user.tola_user.available_programs.filter(funding_status="Funded")
 
     # distinct() needed as a program in multiple countries causes duplicate documents returned
-    documents = Documentation.objects.all().select_related('project').filter(program__country__in=user_countries).distinct()
+    documents = Documentation.objects.all().select_related('project').filter(program__in=programs).distinct()
+
+    readonly = not user_has_program_roles(request.user, programs, ['medium', 'high'])
 
     js_context = {
         'allowProjectsAccess': request.user.tola_user.allow_projects_access,
         'programs': DocumentListProgramSerializer(programs, many=True).data,
         'documents': DocumentListDocumentSerializer(documents, many=True).data,
+        'access': request.user.tola_user.access_data,
+        'readonly': readonly,
     }
 
     return render(request, 'workflow/documentation_list.html', {
@@ -810,7 +862,8 @@ def documentation_list(request):
     })
 
 
-class DocumentationAgreementList(AjaxableResponseMixin, CreateView):
+@method_decorator(has_projects_access, name='dispatch')
+class DocumentationAgreementList(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     """
        Documentation Modal List
     """
@@ -828,7 +881,8 @@ class DocumentationAgreementList(AjaxableResponseMixin, CreateView):
         return render(request, self.template_name, {'getPrograms': getPrograms, 'getDocumentation': getDocumentation})
 
 
-class DocumentationAgreementCreate(AjaxableResponseMixin, CreateView):
+@method_decorator(has_projects_access, name='dispatch')
+class DocumentationAgreementCreate(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     """
     Documentation Form
     """
@@ -882,7 +936,8 @@ class DocumentationAgreementCreate(AjaxableResponseMixin, CreateView):
     form_class = DocumentationForm
 
 
-class DocumentationAgreementUpdate(AjaxableResponseMixin, UpdateView):
+@method_decorator(has_projects_access, name='dispatch')
+class DocumentationAgreementUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     """
     Documentation Form
     """
@@ -927,7 +982,8 @@ class DocumentationAgreementUpdate(AjaxableResponseMixin, UpdateView):
     form_class = DocumentationForm
 
 
-class DocumentationAgreementDelete(AjaxableResponseMixin, DeleteView):
+@method_decorator(has_projects_access, name='dispatch')
+class DocumentationAgreementDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     """
     Documentation Delete popup window
     """
@@ -962,8 +1018,12 @@ class DocumentationCreate(CreateView):
     """
     model = Documentation
 
+    @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
+        if not user_has_program_roles(request.user, request.user.tola_user.available_programs, ['medium', 'high']):
+            raise PermissionDenied
+
         try:
             self.guidance = FormGuidance.objects.get(form="Documentation")
         except FormGuidance.DoesNotExist:
@@ -1006,8 +1066,12 @@ class DocumentationUpdate(UpdateView):
     model = Documentation
     queryset = Documentation.objects.select_related()
 
+    @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
+        if not user_has_program_roles(request.user, Program.objects.filter(id=Documentation.objects.get(id=kwargs['pk']).program.id), ['medium', 'high']):
+            raise PermissionDenied
+
         try:
             self.guidance = FormGuidance.objects.get(form="Documentation")
         except FormGuidance.DoesNotExist:
@@ -1043,6 +1107,14 @@ class DocumentationDelete(DeleteView):
     model = Documentation
     success_url = '/workflow/documentation_list/'
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+
+        if not user_has_program_roles(request.user, Program.objects.filter(id=Documentation.objects.get(id=kwargs['pk']).program.id), ['medium', 'high']):
+            raise PermissionDenied
+
+        return super(DocumentationDelete, self).dispatch(request, *args, **kwargs)
+
     def form_invalid(self, form):
 
         messages.error(self.request, 'Invalid Form', fail_silently=False)
@@ -1058,9 +1130,9 @@ class DocumentationDelete(DeleteView):
 
     form_class = DocumentationForm
 
-class IndicatorDataBySite(ListView):
+class IndicatorDataBySite(LoginRequiredMixin, ListView):
     template_name = 'workflow/site_indicatordata.html'
-    context_object_name = 'result'
+    context_object_name = 'results'
 
     def get_context_data(self, **kwargs):
         context = super(IndicatorDataBySite, self).get_context_data(**kwargs)
@@ -1068,11 +1140,11 @@ class IndicatorDataBySite(ListView):
         return context
 
     def get_queryset(self):
-        q = Result.objects.filter(site__id = self.kwargs.get('site_id')).order_by('program', 'indicator')
+        q = Result.objects.filter(site__id=self.kwargs.get('site_id'), program__in=self.request.user.tola_user.available_programs).order_by('program', 'indicator')
         return q
 
 
-class ProjectCompleteBySite(ListView):
+class ProjectCompleteBySite(LoginRequiredMixin, ListView):
     template_name = 'workflow/site_projectcomplete.html'
     context_object_name = 'projects'
 
@@ -1082,10 +1154,11 @@ class ProjectCompleteBySite(ListView):
         return context
 
     def get_queryset(self):
-        q = ProjectComplete.objects.filter(site__id = self.kwargs.get('site_id')).order_by('program')
+        q = ProjectComplete.objects.filter(site__id=self.kwargs.get('site_id'), program__in=self.request.user.tola_user.available_programs).order_by('program')
         return q
 
 
+@method_decorator(login_required, name='dispatch')
 class SiteProfileList(ListView):
     """
     SiteProfile list creates a map and list of sites by user country access and filters
@@ -1104,8 +1177,8 @@ class SiteProfileList(ListView):
         activity_id = int(self.kwargs['activity_id'])
         program_id = int(self.kwargs['program_id'])
 
-        countries = getCountry(request.user)
-        getPrograms = Program.objects.filter(funding_status="Funded", country__in=countries)
+        countries = request.user.tola_user.available_countries
+        getPrograms = request.user.tola_user.available_programs.all() # or filter(funding_status="Funded") ?
 
         #this date, 3 months ago, a site is considered inactive
         inactiveSite = timezone.now() - relativedelta(months=3)
@@ -1172,6 +1245,8 @@ class SiteProfileList(ListView):
                 'user_list': user_list})
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(has_site_read_access, name='dispatch')
 class SiteProfileReport(ListView):
     """
     SiteProfile Report filtered by project
@@ -1195,6 +1270,8 @@ class SiteProfileReport(ListView):
         return render(request, self.template_name, {'getSiteProfile':getSiteProfile, 'getSiteProfileIndicator':getSiteProfileIndicator,'project_agreement_id': project_agreement_id,'id':id,'country': countries})
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(has_site_create_access, name='dispatch')
 class SiteProfileCreate(CreateView):
     """
     Using SiteProfile Form, create a new site profile
@@ -1208,6 +1285,12 @@ class SiteProfileCreate(CreateView):
         except FormGuidance.DoesNotExist:
             self.guidance = None
         return super(SiteProfileCreate, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        # permission check that includes checking the user is associated with the sites Country
+        verify_program_access_level_of_any_program(request, 'high', country_id=request.POST['country'])
+
+        return super(SiteProfileCreate, self).post(request, *args, **kwargs)
 
     # add the request to the kwargs
     def get_form_kwargs(self):
@@ -1244,6 +1327,8 @@ class SiteProfileCreate(CreateView):
     form_class = SiteProfileForm
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(has_site_write_access, name='dispatch')
 class SiteProfileUpdate(UpdateView):
     """
     SiteProfile Form Update an existing site profile
@@ -1283,6 +1368,8 @@ class SiteProfileUpdate(UpdateView):
     form_class = SiteProfileForm
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(has_site_delete_access, name='dispatch')
 class SiteProfileDelete(DeleteView):
     """
     SiteProfile Form Delete an existing community
@@ -1290,7 +1377,6 @@ class SiteProfileDelete(DeleteView):
     model = SiteProfile
     success_url = "/workflow/siteprofile_list/0/0/"
 
-    @method_decorator(group_required('Country',url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
         return super(SiteProfileDelete, self).dispatch(request, *args, **kwargs)
 
@@ -1310,7 +1396,8 @@ class SiteProfileDelete(DeleteView):
     form_class = SiteProfileForm
 
 
-class MonitorList(ListView):
+@method_decorator(has_projects_access, name='dispatch')
+class MonitorList(LoginRequiredMixin, ListView):
     """
     Monitoring Data
     """
@@ -1334,7 +1421,8 @@ class MonitorList(ListView):
         return render(request, self.template_name, {'getMonitorData': getMonitorData, 'getBenchmarkData': getBenchmarkData,'project_agreement_id': project_agreement_id})
 
 
-class MonitorCreate(AjaxableResponseMixin,CreateView):
+@method_decorator(has_projects_access, name='dispatch')
+class MonitorCreate(LoginRequiredMixin, AjaxableResponseMixin,CreateView):
     """
     Monitor Form
     """
@@ -1369,7 +1457,8 @@ class MonitorCreate(AjaxableResponseMixin,CreateView):
     form_class = MonitorForm
 
 
-class MonitorUpdate(AjaxableResponseMixin, UpdateView):
+@method_decorator(has_projects_access, name='dispatch')
+class MonitorUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     """
     Monitor Form
     """
@@ -1393,7 +1482,8 @@ class MonitorUpdate(AjaxableResponseMixin, UpdateView):
     form_class = MonitorForm
 
 
-class MonitorDelete(AjaxableResponseMixin, DeleteView):
+@method_decorator(has_projects_access, name='dispatch')
+class MonitorDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     """
     Monitor Form
     """
@@ -1419,7 +1509,8 @@ class MonitorDelete(AjaxableResponseMixin, DeleteView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
-class BenchmarkCreate(AjaxableResponseMixin, CreateView):
+@method_decorator(has_projects_access, name='dispatch')
+class BenchmarkCreate(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     """
     Benchmark Form
     """
@@ -1475,7 +1566,8 @@ class BenchmarkCreate(AjaxableResponseMixin, CreateView):
     form_class = BenchmarkForm
 
 
-class BenchmarkUpdate(AjaxableResponseMixin, UpdateView):
+@method_decorator(has_projects_access, name='dispatch')
+class BenchmarkUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     """
     Benchmark Form
     """
@@ -1513,7 +1605,8 @@ class BenchmarkUpdate(AjaxableResponseMixin, UpdateView):
     form_class = BenchmarkForm
 
 
-class BenchmarkDelete(AjaxableResponseMixin, DeleteView):
+@method_decorator(has_projects_access, name='dispatch')
+class BenchmarkDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     """
     Benchmark Form
     """
@@ -1541,7 +1634,8 @@ class BenchmarkDelete(AjaxableResponseMixin, DeleteView):
     form_class = BenchmarkForm
 
 
-class ContactList(ListView):
+@method_decorator(has_projects_access, name='dispatch')
+class ContactList(LoginRequiredMixin, ListView):
     model = Contact
     template_name = 'workflow/contact_list.html'
 
@@ -1567,7 +1661,8 @@ class ContactList(ListView):
         return render(request, self.template_name, {'getContacts': getContacts, 'getStakeholder': getStakeholder})
 
 
-class ContactCreate(CreateView):
+@method_decorator(has_projects_access, name='dispatch')
+class ContactCreate(LoginRequiredMixin, CreateView):
     """
     Contact Form
     """
@@ -1613,7 +1708,8 @@ class ContactCreate(CreateView):
     form_class = ContactForm
 
 
-class ContactUpdate(UpdateView):
+@method_decorator(has_projects_access, name='dispatch')
+class ContactUpdate(LoginRequiredMixin, UpdateView):
     """
     Contact Form
     """
@@ -1646,7 +1742,8 @@ class ContactUpdate(UpdateView):
     form_class = ContactForm
 
 
-class ContactDelete(DeleteView):
+@method_decorator(has_projects_access, name='dispatch')
+class ContactDelete(LoginRequiredMixin, DeleteView):
     """
     Benchmark Form
     """
@@ -1678,7 +1775,8 @@ class ContactDelete(DeleteView):
     form_class = ContactForm
 
 
-class StakeholderList(ListView):
+@method_decorator(has_projects_access, name='dispatch')
+class StakeholderList(LoginRequiredMixin, ListView):
     """
     getStakeholders
     """
@@ -1694,24 +1792,22 @@ class StakeholderList(ListView):
         else:
             program_id = 0
 
-        countries = getCountry(request.user)
-        getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries)
-
-        countries = getCountry(request.user)
+        getPrograms = request.user.tola_user.available_programs.filter(funding_status="Funded")
 
         if program_id != 0:
-            getStakeholders = Stakeholder.objects.all().filter(projectagreement__program__id=program_id).distinct()
+            getStakeholders = Stakeholder.objects.all().filter(projectagreement__program__id=program_id, projectagreement__program__in=getPrograms).distinct()
 
         elif int(self.kwargs['pk']) != 0:
-            getStakeholders = Stakeholder.objects.all().filter(projectagreement=self.kwargs['pk']).distinct()
+            getStakeholders = Stakeholder.objects.all().filter(projectagreement=self.kwargs['pk'], projectagreement__program__in=getPrograms).distinct()
 
         else:
-            getStakeholders = Stakeholder.objects.all().filter(country__in=countries)
+            getStakeholders = Stakeholder.objects.all().filter(projectagreement__program__in=getPrograms).distinct()
 
         return render(request, self.template_name, {'getStakeholders': getStakeholders, 'project_agreement_id': project_agreement_id,'program_id':program_id, 'getPrograms': getPrograms})
 
 
-class StakeholderCreate(CreateView):
+@method_decorator(has_projects_access, name='dispatch')
+class StakeholderCreate(LoginRequiredMixin, CreateView):
     """
     Stakeholder Form
     """
@@ -1763,7 +1859,8 @@ class StakeholderCreate(CreateView):
     form_class = StakeholderForm
 
 
-class StakeholderUpdate(UpdateView):
+@method_decorator(has_projects_access, name='dispatch')
+class StakeholderUpdate(LoginRequiredMixin, UpdateView):
     """
     Stakeholder Form
     """
@@ -1801,7 +1898,8 @@ class StakeholderUpdate(UpdateView):
     form_class = StakeholderForm
 
 
-class StakeholderDelete(DeleteView):
+@method_decorator(has_projects_access, name='dispatch')
+class StakeholderDelete(LoginRequiredMixin, DeleteView):
     """
     Benchmark Form
     """
@@ -1829,153 +1927,8 @@ class StakeholderDelete(DeleteView):
     form_class = StakeholderForm
 
 
-class QuantitativeOutputsCreate(AjaxableResponseMixin, CreateView):
-    """
-    QuantitativeOutput Form
-    """
-    model = Result
-    template_name = 'workflow/quantitativeoutputs_form.html'
-
-    # add the request to the kwargs
-    def get_form_kwargs(self):
-        kwargs = super(QuantitativeOutputsCreate, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super(QuantitativeOutputsCreate, self).get_context_data(**kwargs)
-        is_it_project_complete_form = self.request.GET.get('is_it_project_complete_form', None) or \
-            self.request.POST.get('is_it_project_complete_form', None)
-        if is_it_project_complete_form == 'true':
-            getProgram = Program.objects.get(complete__id = self.kwargs['id'])
-        else:
-            getProgram = Program.objects.get(agreement__id = self.kwargs['id'])
-        context.update({'id': self.kwargs['id']})
-        context.update({'program': getProgram})
-        return context
-
-    @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
-    def dispatch(self, request, *args, **kwargs):
-        return super(QuantitativeOutputsCreate, self).dispatch(request, *args, **kwargs)
-
-    def get_initial(self):
-        getProgram = None
-        is_it_project_complete_form = self.request.GET.get('is_it_project_complete_form', None) or \
-            self.request.POST.get('is_it_project_complete_form', None)
-
-        if is_it_project_complete_form == 'true':
-            getProgram = Program.objects.get(complete__id = self.kwargs['id'])
-            initial = {
-                'complete': self.kwargs['id'],
-                'program': getProgram.id,
-                'is_it_project_complete_form': 'true',
-            }
-        else:
-            getProgram = Program.objects.get(agreement__id = self.kwargs['id'])
-            initial = {
-                'agreement': self.kwargs['id'],
-                'program': getProgram.id,
-                'is_it_project_complete_form': 'false',
-            }
-        return initial
-
-    def form_invalid(self, form):
-        messages.error(self.request, 'Invalid Form', fail_silently=False)
-        return self.render_to_response(self.get_context_data(form=form))
-
-    def form_valid(self, form):
-        form.save()
-        messages.success(self.request, 'Success, Quantitative Output Created!')
-        form = ""
-        return self.render_to_response(self.get_context_data(form=form))
-
-
-    form_class = QuantitativeOutputsForm
-
-
-class QuantitativeOutputsUpdate(AjaxableResponseMixin, UpdateView):
-    """
-    QuantitativeOutput Form
-    """
-    model = Result
-    template_name = 'workflow/quantitativeoutputs_form.html'
-
-    # add the request to the kwargs
-    def get_form_kwargs(self):
-        kwargs = super(QuantitativeOutputsUpdate, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        return kwargs
-
-    @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
-    def dispatch(self, request, *args, **kwargs):
-        return super(QuantitativeOutputsUpdate, self).dispatch(request, *args, **kwargs)
-
-
-    def get_initial(self):
-        """
-        get the program to filter the list and indicators by.. the FK to colelcteddata is i_program
-        we should change that name at somepoint as it is very confusing
-        """
-        getProgram = Program.objects.get(i_program__pk=self.kwargs['pk'])
-        # indicator = Indicator.objects.get(id)
-        is_it_project_complete_form = self.request.GET.get('is_it_project_complete_form', None) or \
-            self.request.POST.get('is_it_project_complete_form', None)
-
-        initial = {
-            'program': getProgram.id,
-            'is_it_project_complete_form': 'true' if is_it_project_complete_form else 'false',
-            }
-        return initial
-
-    def get_context_data(self, **kwargs):
-        context = super(QuantitativeOutputsUpdate, self).get_context_data(**kwargs)
-        context.update({'id': self.kwargs['pk']})
-        return context
-
-    def form_invalid(self, form):
-        messages.error(self.request, 'Invalid Form', fail_silently=False)
-        return self.render_to_response(self.get_context_data(form=form))
-
-    def form_valid(self, form):
-        form.save()
-        messages.success(self.request, 'Success, Quantitative Output Updated!')
-
-        return self.render_to_response(self.get_context_data(form=form))
-
-    form_class = QuantitativeOutputsForm
-
-
-class QuantitativeOutputsDelete(AjaxableResponseMixin, DeleteView):
-    """
-    QuantitativeOutput Delete
-    """
-    model = Result
-    # success_url = '/'
-
-    def get_success_url(self):
-        return self.request.GET.get('redirect_uri', '/')
-
-    @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
-    def dispatch(self, request, *args, **kwargs):
-        return super(QuantitativeOutputsDelete, self).dispatch(request, *args, **kwargs)
-
-    def form_invalid(self, form):
-
-        messages.error(self.request, 'Invalid Form', fail_silently=False)
-
-        return self.render_to_response(self.get_context_data(form=form))
-
-    def form_valid(self, form):
-
-        form.save()
-
-        messages.success(self.request, 'Success, Quantitative Output Deleted!')
-        return self.render_to_response(self.get_context_data(form=form))
-
-    form_class = QuantitativeOutputsForm
-
-
-class BudgetList(ListView):
+@method_decorator(has_projects_access, name='dispatch')
+class BudgetList(LoginRequiredMixin, ListView):
     """
     Budget List
     """
@@ -1994,7 +1947,8 @@ class BudgetList(ListView):
         return render(request, self.template_name, {'getBudget': getBudget, 'project_agreement_id': project_agreement_id})
 
 
-class BudgetCreate(AjaxableResponseMixin, CreateView):
+@method_decorator(has_projects_access, name='dispatch')
+class BudgetCreate(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     """
     Budget Form
     """
@@ -2042,7 +1996,8 @@ class BudgetCreate(AjaxableResponseMixin, CreateView):
     form_class = BudgetForm
 
 
-class BudgetUpdate(AjaxableResponseMixin, UpdateView):
+@method_decorator(has_projects_access, name='dispatch')
+class BudgetUpdate(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     """
     Budget Form
     """
@@ -2080,7 +2035,8 @@ class BudgetUpdate(AjaxableResponseMixin, UpdateView):
     form_class = BudgetForm
 
 
-class BudgetDelete(AjaxableResponseMixin, DeleteView):
+@method_decorator(has_projects_access, name='dispatch')
+class BudgetDelete(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
     """
     Budget Delete
     """
@@ -2112,7 +2068,8 @@ class BudgetDelete(AjaxableResponseMixin, DeleteView):
     form_class = BudgetForm
 
 
-class ChecklistItemList(ListView):
+@method_decorator(has_projects_access, name='dispatch')
+class ChecklistItemList(LoginRequiredMixin, ListView):
     """
     Checklist List
     """
@@ -2131,7 +2088,8 @@ class ChecklistItemList(ListView):
         return render(request, self.template_name, {'getChecklist': getChecklist, 'project_agreement_id': self.kwargs['pk']})
 
 
-class ChecklistItemCreate(CreateView):
+@method_decorator(has_projects_access, name='dispatch')
+class ChecklistItemCreate(LoginRequiredMixin, CreateView):
     """
     Checklist Form
     """
@@ -2185,7 +2143,8 @@ class ChecklistItemCreate(CreateView):
     form_class = ChecklistItemForm
 
 
-class ChecklistItemUpdate(UpdateView):
+@method_decorator(has_projects_access, name='dispatch')
+class ChecklistItemUpdate(LoginRequiredMixin, UpdateView):
     """
     Checklist Form
     """
@@ -2223,6 +2182,8 @@ class ChecklistItemUpdate(UpdateView):
     form_class = ChecklistItemForm
 
 
+@login_required
+@has_projects_access
 def checklist_update_link(AjaxableResponseMixin,pk,type,value):
     """
     Checklist Update from Link
@@ -2237,7 +2198,8 @@ def checklist_update_link(AjaxableResponseMixin,pk,type,value):
     return HttpResponse(value)
 
 
-class ChecklistItemDelete(DeleteView):
+@method_decorator(has_projects_access, name='dispatch')
+class ChecklistItemDelete(LoginRequiredMixin, DeleteView):
     """
     Checklist Delete
     """
@@ -2269,7 +2231,8 @@ class ChecklistItemDelete(DeleteView):
     form_class = ChecklistItemForm
 
 
-class Report(View, AjaxableResponseMixin):
+@method_decorator(has_projects_access, name='dispatch')
+class Report(LoginRequiredMixin, View, AjaxableResponseMixin):
     """
     project agreement list report
     """
@@ -2311,7 +2274,8 @@ class Report(View, AjaxableResponseMixin):
                       'getPrograms': getPrograms})
 
 
-class ReportData(View, AjaxableResponseMixin):
+@method_decorator(has_projects_access, name='dispatch')
+class ReportData(LoginRequiredMixin, View, AjaxableResponseMixin):
     """
     Render Agreements json object response to the report ajax call
     """
@@ -2340,6 +2304,7 @@ class ReportData(View, AjaxableResponseMixin):
         return JsonResponse(final_dict, safe=False)
 
 
+@login_required
 def country_json(request, country):
     """
     For populating the province dropdown based  country dropdown value
@@ -2350,6 +2315,7 @@ def country_json(request, country):
     return HttpResponse(provinces_json, content_type="application/json")
 
 
+@login_required
 def province_json(request, province):
     """
     For populating the office district based  country province value
@@ -2360,6 +2326,7 @@ def province_json(request, province):
     return HttpResponse(districts_json, content_type="application/json")
 
 
+@login_required
 def district_json(request, district):
     """
     For populating the office dropdown based  country dropdown value
@@ -2370,15 +2337,17 @@ def district_json(request, district):
     return HttpResponse(adminthree_json, content_type="application/json")
 
 
+@login_required
+@has_projects_access
 def export_stakeholders_list(request, **kwargs):
 
     program_id = int(kwargs['program_id'])
-    countries = getCountry(request.user)
+    programs = request.user.tola_user.available_programs
 
     if program_id != 0:
-        getStakeholders = Stakeholder.objects.prefetch_related('sector').filter(projectagreement__program__id=program_id).distinct()
+        getStakeholders = Stakeholder.objects.prefetch_related('sector').filter(projectagreement__program__id=program_id, projectagreement__program__in=programs).distinct()
     else:
-        getStakeholders = Stakeholder.objects.prefetch_related('sector').filter(country__in=countries)
+        getStakeholders = Stakeholder.objects.prefetch_related('sector').filter(projectagreement__program__in=programs).distinct()
 
     dataset = StakeholderResource().export(getStakeholders)
     response = HttpResponse(dataset.csv, content_type='application/ms-excel')
@@ -2387,21 +2356,9 @@ def export_stakeholders_list(request, **kwargs):
     return response
 
 
-def save_bookmark(request):
-    """
-    Create Bookmark from Link
-    """
-    url = request.POST['url']
-    username = request.user
-    tola_user = TolaUser.objects.get(user=username)
-
-    TolaBookmarks.objects.create(bookmark_url=url, name=url, user=tola_user)
-
-    return HttpResponse(url)
-
-
 #Ajax views for single page filtering
-class StakeholderObjects(View, AjaxableResponseMixin):
+@method_decorator(has_projects_access, name='dispatch')
+class StakeholderObjects(LoginRequiredMixin, View, AjaxableResponseMixin):
     """
     Render Agreements json object response to the report ajax call
     """
@@ -2417,19 +2374,17 @@ class StakeholderObjects(View, AjaxableResponseMixin):
         else:
             program_id = 0
 
-        countries = getCountry(request.user)
-
-        countries = getCountry(request.user)
+        programs = request.user.tola_user.available_programs
 
         if program_id != 0:
-            getStakeholders = Stakeholder.objects.all().filter(projectagreement__program__id=program_id).distinct().values('id', 'create_date', 'type__name', 'name', 'sectors__sector')
+            getStakeholders = Stakeholder.objects.all().filter(projectagreement__program__id=program_id, projectagreement__program__in=programs).distinct().values('id', 'create_date', 'type__name', 'name', 'sectors__sector')
 
         elif int(self.kwargs['pk']) != 0:
-            getStakeholders = Stakeholder.objects.all().filter(projectagreement=self.kwargs['pk']).distinct().values('id', 'create_date', 'type__name', 'name', 'sectors__sector')
+            getStakeholders = Stakeholder.objects.all().filter(projectagreement=self.kwargs['pk'], projectagreement__program__in=programs).distinct().values('id', 'create_date', 'type__name', 'name', 'sectors__sector')
 
 
         else:
-            getStakeholders = Stakeholder.objects.all().filter(country__in=countries).values('id', 'create_date', 'type__name', 'name', 'sectors__sector')
+            getStakeholders = Stakeholder.objects.all().filter(projectagreement__program__in=programs).values('id', 'create_date', 'type__name', 'name', 'sectors__sector').distinct()
 
 
         getStakeholders = json.dumps(list(getStakeholders), cls=DjangoJSONEncoder)
@@ -2439,8 +2394,11 @@ class StakeholderObjects(View, AjaxableResponseMixin):
         return JsonResponse(final_dict, safe=False)
 
 
+@login_required
+@has_program_write_access
 def reportingperiod_update(request, pk):
     program = Program.objects.get(pk=pk)
+    old_dates = program.dates_for_logging
 
     # In some cases the start date input will be disabled and won't come through POST
     reporting_period_start = False
@@ -2453,6 +2411,12 @@ def reportingperiod_update(request, pk):
     success = True
     failmsg = []
     failfields = []
+
+    if not request.POST.get('rationale') and program.indicator_set.all().exists():
+        success = False
+        # Translators: Text of an error message that appears when a user hasn't provided a justification for the change they are making to some data
+        failmsg.append(_('Reason for change is required'))
+
     if reporting_period_start:
         if reporting_period_start.day != 1:
             success = False
@@ -2493,6 +2457,8 @@ def reportingperiod_update(request, pk):
         failfields.append('reporting_period_end')
     if success:
         program.save()
+        ProgramAuditLog.log_program_dates_updated(request.user, program, old_dates, program.dates_for_logging, request.POST.get('rationale'))
+
     return JsonResponse({
         'msg': 'success' if success else 'fail',
         'failmsg': failmsg,
@@ -2503,8 +2469,12 @@ def reportingperiod_update(request, pk):
         status=200 if success else 422)
 
 
+@login_required
 @api_view(['GET'])
 def dated_target_info(request, pk):
+    verify_program_access_level(request, pk, 'low')
     return Response({
         'max_start_date': Program.objects.filter(id=pk).annotate(
             ptd=Max('indicator__periodictargets__start_date')).values_list('ptd', flat=True)[0]})
+
+
