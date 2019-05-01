@@ -43,7 +43,7 @@ class ImportIndicatorTests(TestCase):
             self.assertEqual(okta_result, None)
 
     def test_bad_country(self):
-        # Test a country that doesn't exist
+        # Test a country that doesn't exist - UPDATE: does not redirect because bad countries are ok
         with mock.patch('tola.pipeline.logger') as log_mock:
             okta_response = {
                 'attributes': {
@@ -54,7 +54,8 @@ class ImportIndicatorTests(TestCase):
             }
             user = None
             okta_result = create_user_okta(self.backend, self.details, user, okta_response)
-            self.assertEqual(okta_result.status_code, 302)
+            # self.assertEqual(okta_result.status_code, 302)
+            self.assertIsNone(okta_result)
 
             # Test no country for old men
             okta_response = {
@@ -66,7 +67,9 @@ class ImportIndicatorTests(TestCase):
             }
             user = None
             okta_result = create_user_okta(self.backend, self.details, user, okta_response)
-            self.assertEqual(okta_result.status_code, 302)
+            # UPDATE: does not redirect because no countries are ok
+            # self.assertEqual(okta_result.status_code, 302)
+            self.assertIsNone(okta_result)
 
     def test_bad_names(self):
         # First test a new user but with no names comeing from Okta
