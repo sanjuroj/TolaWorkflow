@@ -11,9 +11,8 @@
 
 <aside class="program__status">
     <h3>
-        Program metrics
-        <small>for target periods completed to date
-            {% include "indicators/program_target_period_info_helptext.html" %}
+        {% blocktrans %}Program metrics <small>for target periods completed to date</small>{% endblocktrans %}
+        {% include "indicators/program_target_period_info_helptext.html" %}
         </small>
     </h3>
     <div id="program-metrics-react-component"></div>
@@ -23,42 +22,51 @@
     <div class="program-page__sidebar">
         <section class="sidebar__detail">
             <h3>{% trans "Program details" %}</h3>
-            <p><a href="{% url 'indicator_plan' program.id %}">{% trans "Indicator plan" %}</a></p>
+            <ul class="list-unstyled">
+                <li><a href="{% url 'indicator_plan' program.id %}">{% trans "Indicator plan" %}</a></li>
+                <li><a href="{% url 'tola_management_audit_log' program_id=program.id %}"><i class="fas fa-history"></i> {% trans "Change log" %}</a> </li>
             {% if program.gait_url %}
                 {% comment %}Translators: GAIT is the Grant and Award Information Tracker system used by MercyCorps {% endcomment %}
-                <p><a href="{{ program.gait_url }}">{% trans "View program in GAIT" %}</a></p>
+                <li><a href="{{ program.gait_url }}">{% trans "View program in GAIT" %}</a></li>
             {% endif %}
+            </ul>
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Sites" %}</h3>
-            {% if site_count > 0 %}
-                <p><a href="{% url 'siteprofile_list' program.id 0 %}">{% trans "View program sites" %}</a></p>
-            {% else %}
-                <p class="text-muted">{% trans "There are no program sites." %}</p>
+            <ul class="list-unstyled">
+                {% if site_count > 0 %}
+                    <li><a href="{% url 'siteprofile_list' program.id 0 %}">{% trans "View program sites" %}</a></li>
+                {% else %}
+                    <li class="text-muted">{% trans "There are no program sites." %}</li>
+                {% endif %}
+                {% if not readonly %}
+                    <li class="pt-2"><a href="{% url 'siteprofile_add' %}" class="btn-link text-success"><i class="fas fa-plus-circle"></i> {% trans "Add site" %}</a></li>
+            </ul>
             {% endif %}
-            <a href="{% url 'siteprofile_add' %}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Add site" %}</a>
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Pinned reports" %}</h3>
             {% if program.has_started %}
                 <ul class="pinned-reports">
                     {% for pr in pinned_reports %}
-                        <li class="pinned-report">
-                            <a href="{% url 'iptt_report' pr.program_id pr.report_type %}?{{ pr.query_string }}" class="pinned-report__link">
-                                <h4>{% trans "IPTT:" %} {{ pr.name }}</h4>
-                               {{ pr.date_range_str }}
-                            </a>
-                            {% if pr.id %}
-                            <a href="#"
-                               class="pinned-report__remove text-danger"
-                               data-delete-pinned-report="{{ pr.id }}">
-                                <i class="fa fa-times"></i>
-                            </a>
-                            {% endif %}
-                        </li>
+                    <li class="pinned-report list-unstyled">
+                        <a href="{% url 'iptt_report' pr.program_id pr.report_type %}?{{ pr.query_string }}" class="pinned-report__link">
+                            <h4>{% trans "IPTT:" %} {{ pr.name }}</h4>
+                           {{ pr.date_range_str }}
+                        </a>
+                        {% if pr.id %}
+                        <a href="#"
+                           class="pinned-report__remove text-danger"
+                           data-delete-pinned-report="{{ pr.id }}">
+                            <i class="fa fa-times"></i>
+                        </a>
+                        {% endif %}
+                    </li>
                     {% endfor %}
+                    <li class="pt-2">
+                        <a href="{% url 'iptt_quickstart' %}?program_id={{ program.id }}" class="btn-link text-success"><i class="fas fa-plus-circle"></i> {% trans "Create an IPTT report" %}</a>
+                    </li>
                 </ul>
-                <a href="{% url 'iptt_quickstart' %}?program_id={{ program.id }}" class="btn-add"><i class="fas fa-plus-circle"></i> {% trans "Create an IPTT report" %}</a>
             {% else %}
                 <p class="text-muted">{% trans "Reports will be available after the program start date." %}</p>
             {% endif %}

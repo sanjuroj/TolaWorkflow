@@ -75,9 +75,6 @@ body > .container {
 }
 .btn-link {
     font-weight: bold;
-}
-.btn-toggle {
-    // usually used with .btn-link
     padding-left: 0;
     padding-right: 0;
 }
@@ -125,6 +122,17 @@ body > .container {
         box-shadow: 0 1px 5px rgba(0,0,0,0.2);
     }
 }
+.select2-wrapper {
+    // in some contexts the .select2-container can't get its parent's width
+    // use .select2-wrapper to force the container to fill its parent
+    display: block;
+    width: 100%;
+    .select2-container {
+        max-width: 100%;
+        width: 100% !important;
+    }
+}
+
 
 // Crispy forms does not apply the appropriate classes to its tabs so we have to fake it
 .nav-tabs {
@@ -149,6 +157,17 @@ body > .container {
 }
 .tab-content.panel-body {
     margin-top: 1rem;
+}
+
+// Overrides for tables
+// For add-ons (not overrides, see components/tables
+.table {
+    tbody + tbody {
+        border-top: none; // no special styling for multiple tbodys
+    }
+  .table {
+    background-color: inherit;
+  }
 }
 
 // Overrides for Indicator tables

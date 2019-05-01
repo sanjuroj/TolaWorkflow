@@ -1,6 +1,6 @@
 from django import test
 
-from factories import UserFactory, TolaUserFactory, CountryFactory
+from factories import UserFactory, TolaUserFactory, CountryFactory, CountryAccessFactory
 
 
 class TestProjectUserAccess(test.TestCase):
@@ -21,7 +21,7 @@ class TestProjectUserAccess(test.TestCase):
     def test_can_access_projects_countries(self):
         self.assertEquals(self.tola_user.allow_projects_access, False)
 
-        self.tola_user.countries.add(self.afghanistan)
+        self.tola_user.countryaccess_set.add(CountryAccessFactory(country=self.afghanistan, tolauser=self.tola_user))
 
         self.assertEquals(self.tola_user.allow_projects_access, True)
 

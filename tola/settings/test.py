@@ -25,8 +25,6 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "tola_activity",
-        "USER": "root",
-        "PASSWORD": "NewPassword",
         "HOST": "localhost",
         "PORT": "",
     },
@@ -80,10 +78,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 ########## END DATABASE CONFIGURATION
 
 ########## GOOGLE CLIENT CONFIG ###########
-GOOGLE_STEP2_URI = ''
-GOOGLE_CLIENT_ID = ''
-GOOGLE_CLIENT_SECRET = ''
-
 
 ########## CACHE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#caches
@@ -93,7 +87,6 @@ CACHES = {
     }
 }
 ########## END CACHE CONFIGURATION
-
 
 try:
     from .test_local import *

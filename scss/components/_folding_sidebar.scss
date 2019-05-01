@@ -1,0 +1,53 @@
+//TODO: breakpoints? min-width?
+//TODO: this should be combined with IPTT style sidebar in _sidebar.scss
+.folding-sidebar { // approximately analog to _sidebar.scs/#sidebar_wrapper
+    $trigger_width: 40px;
+    position: relative;
+    margin-right: $trigger_width;
+    @include media-breakpoint-down(lg) {
+        position: fixed;
+        z-index: $zindex-modal;
+    }
+    &__trigger {
+        background-color: $teal-500;
+        color: $white;
+        font-size: 1.25rem;
+        display: inline-block;
+        padding: 0.3em 0.5em;
+        position: absolute;
+        top: 0;
+        right: -$trigger_width;
+        cursor: pointer;
+        width: $trigger_width;
+        text-align: center;
+    }
+    &__contents {
+        will-change: width;
+        @include alltransitions (all, 0.2s, ease);
+    }
+}
+
+.filter-section {
+    background-color: $gray-700;
+    max-width: calc(330px - 2rem);
+    min-width: calc(330px - 2rem);
+    padding: 1rem;
+
+    label {
+        color: $white;
+    }
+}
+
+.filter-buttons { // analog to _sidebar.scss/#filter-bottom
+    background-color: $gray-600;
+    display: flex;
+    justify-content: space-around;
+    .btn {
+        display: block;
+        width: 100%;
+        & + .btn {
+            margin-left: 1rem;
+        }
+    }
+}
+

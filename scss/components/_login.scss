@@ -1,0 +1,19 @@
+// login screen options
+.login {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: map-get($grid-breakpoints, sm);
+    .page-title {
+        margin-bottom: $grid-gutter-width;
+    }
+}
+.login__option {
+    margin-bottom: $grid-gutter-width/2;
+    padding: $grid-gutter-width/2;
+    &.btn {
+        white-space: inherit;
+    }
+}
+.login__help {
+    margin-top: $grid-gutter-width;
+}

@@ -17,7 +17,7 @@
             $("#id_site").select2();
 
             // rotate disaggregation toggle
-            $('.accordion-toggle').on('click', function(e) {
+            $('.is-accordion-toggle').on('click', function(e) {
                 let icon = $(this).find("svg");
                 if (icon.hasClass('fa-caret-right')) {
                     icon.attr('class', 'fa-caret-down');
@@ -93,14 +93,18 @@
 
             // make tooltips work
             $('#result_update_form [data-toggle="popover"]').popover({html: true}).click(function(e) {e.preventDefault();});
+
+            // record current state of form for later comparision
+            recordResultFormSnapshot();
         });
+
     </script>
 
     <form
         action="{% if object.id %}
                     {% url 'result_update' object.id %}
                 {% else %}
-                    {% url 'result_add' indicator.program.id indicator.id %}
+                    {% url 'result_add' indicator.id %}
                 {% endif %}
                 "
         id="result_update_form"
@@ -132,7 +136,7 @@
             </p>
             {% include 'indicators/results/result_form_evidence_fields.html' %}
         </div>
-        {% if object.indicator %}
+        {% if object.indicator and not readonly %}
         <fieldset class="pb-2 pt-2">
             <strong>
                 <a href="#" id="id_delete_result_btn" data-result-id="{{ object.id }}" class="text-danger float-right">
@@ -141,6 +145,7 @@
             </strong>
         </fieldset>
         {% endif %}
+        {% if not readonly %}
         <div class="form-actions">
             <div>
                 <input type="submit" name="submit" value="{% trans 'Save changes' %}" class="btn btn-primary" id="submit-id-submit">
@@ -148,6 +153,7 @@
             </div>
           <div>{# help link goes here #}</div>
         </div>
+        {% endif %}
     </form>
 
 {% endblock content %}

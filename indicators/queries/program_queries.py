@@ -135,8 +135,22 @@ class ProgramForHomePageQuerySet(ProgramMetricsQuerySet):
         if not annotations:
             annotations = ['targets', 'results', 'evidence', 'scope']
         qs = self
+        # this needs to be cleaned up if we want queries to be lightning fast again
+        #nondeleted_indicators = Indicator.objects.filter(deleted__isnull=True, program_id=models.OuterRef('pk'))
         if any(key in annotations for key in ['count', 'targets', 'results', 'evidence', 'reporting', 'scope']):
-            qs = qs.annotate(indicator_count=models.Count('indicator'))
+            qs = qs.annotate(
+                indicator_count=models.functions.Coalesce(
+                    models.Subquery(
+                        Indicator.objects.filter(
+                            deleted__isnull=True
+                        ).filter(
+                            program_id=models.OuterRef('pk')
+                        ).order_by().values('program').annotate(
+                            i_cnt=models.Count('id')
+                        ).values('i_cnt')[:1],
+                        output_field=models.IntegerField()
+                    ), 0)
+            )
         if any(key in annotations for key in ['results_count', 'results', 'evidence']):
             qs = qs.annotate(reported_results_sum=program_results_annotation(False))
         if 'targets' in annotations:
@@ -227,12 +241,13 @@ class ProgramWithMetrics(Program):
 
     @cached_property
     def indicator_count(self):
-        return self.indicator_set.count()
+        return self.indicator_set.filter(deleted__isnull=True).count()
 
     @cached_property
     def annotated_indicators(self):
         if self.cached_annotated_indicators is None:
             self.indicator_filters['program'] = self
+            self.indicator_filters['deleted'] = None
             program_page_annotations = ['targets', 'results', 'evidence', 'scope', 'table']
             self.cached_annotated_indicators = iq.MetricsIndicator.objects.filter(
                 **self.indicator_filters
@@ -298,7 +313,7 @@ class ProgramWithMetrics(Program):
         else:
             scope_indicators = self.annotated_indicators
         return {
-            'indicator_count': getattr(self, 'indicator_count', None),
+            'indicator_count': len(scope_indicators),
             'nonreporting_count': len(
                 [indicator for indicator in scope_indicators if not indicator.reporting]
             ),
@@ -351,6 +366,7 @@ def program_results_annotation(total=True):
         or the count of reported results for the program in total
         Total=True: all results for program, Total=False: number of indicators with results"""
     data_subquery = Result.objects.filter(
+        indicator__deleted__isnull=True,
         indicator__program=models.OuterRef('pk')
     ).order_by().values('indicator__program').annotate(
         data_count=models.Count('indicator_id', distinct=total)).values('data_count')[:1]
@@ -367,11 +383,13 @@ def program_get_program_months_annotation():
 def program_all_targets_defined_annotation():
     """annotates a queryset of programs with whether all targets are defined for all indicators for that program"""
     targets_subquery = PeriodicTarget.objects.filter(
+        indicator__deleted__isnull=True,
         indicator_id=models.OuterRef('pk')
     ).order_by().values('indicator_id').annotate(
         target_count=models.Count('pk')
     ).values('target_count')[:1]
     target_subquery = Indicator.objects.filter(
+        deleted__isnull=True,
         program_id=models.OuterRef('pk')
     ).order_by().values('program_id').annotate(
         defined_targets=models.Subquery(
@@ -392,6 +410,7 @@ def program_all_targets_defined_annotation():
 def program_evidence_annotation():
     """annotates a program with the count of results for any of the program's indicators which have evidence"""
     rs = Result.objects.filter(
+        indicator__deleted__isnull=True,
         indicator__program_id=models.OuterRef('pk')
     ).exclude(
         evidence_url=''
@@ -405,7 +424,9 @@ def program_evidence_annotation():
 
 def program_scope_annotations(*annotations):
     """annotates a program's indicators prefetch query with the required annotations to report their on scope status"""
-    indicators_subquery = iq.MetricsIndicator.objects.select_related('program').with_annotations(*annotations)
+    indicators_subquery = iq.MetricsIndicator.objects.filter(
+        deleted__isnull=True
+    ).select_related('program').with_annotations(*annotations)
     return models.Prefetch(
         'indicator_set', queryset=indicators_subquery, to_attr='scope_indicators'
     )

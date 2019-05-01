@@ -16,17 +16,24 @@ from tola import util
 
 class TestReportingPeriodDatesValidate(test.TestCase):
     def setUp(self):
-        self.factory = test.RequestFactory()
+        self.user = w_factories.UserFactory(first_name="FN", last_name="LN", username="iptt_tester", is_superuser=True)
+        self.user.set_password('password')
+        self.user.save()
+
+        self.tola_user = w_factories.TolaUserFactory(user=self.user)
+        self.tola_user.save()
+
+        self.client = test.Client(enforce_csrf_checks=False)
+        self.client.login(username='iptt_tester', password='password')
 
     def test_reporting_period_updates_with_good_start_data(self):
         program = w_factories.ProgramFactory(
             reporting_period_start=datetime.date(2015, 1, 1),
             reporting_period_end=datetime.date(2017, 12, 31)
         )
-        request = self.factory.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
+        response = self.client.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
                                     {'reporting_period_start': '2016-01-01',
                                      'reporting_period_end': '2017-12-31'})
-        response = reportingperiod_update(request, program.pk)
         self.assertEqual(json.loads(response.content)['msg'], 'success')
         self.assertEqual(response.status_code, 200)
         refreshed = Program.objects.get(pk=program.pk)
@@ -38,10 +45,9 @@ class TestReportingPeriodDatesValidate(test.TestCase):
             reporting_period_start=datetime.date(2015, 1, 1),
             reporting_period_end=datetime.date(2017, 12, 31)
         )
-        request = self.factory.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
+        response = self.client.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
                                     {'reporting_period_start': '2015-01-01',
                                      'reporting_period_end': '2016-12-31'})
-        response = reportingperiod_update(request, program.pk)
         self.assertEqual(json.loads(response.content)['msg'], 'success')
         self.assertEqual(response.status_code, 200)
         refreshed = Program.objects.get(pk=program.pk)
@@ -53,10 +59,9 @@ class TestReportingPeriodDatesValidate(test.TestCase):
             reporting_period_start=datetime.date(2015, 1, 1),
             reporting_period_end=datetime.date(2017, 12, 31)
         )
-        request = self.factory.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
+        response = self.client.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
                                     {'reporting_period_start': '2014-02-01',
                                      'reporting_period_end': '2018-10-31'})
-        response = reportingperiod_update(request, program.pk)
         self.assertEqual(json.loads(response.content)['msg'], 'success')
         self.assertEqual(response.status_code, 200)
         refreshed = Program.objects.get(pk=program.pk)
@@ -68,10 +73,9 @@ class TestReportingPeriodDatesValidate(test.TestCase):
             reporting_period_start=datetime.date(2015, 1, 1),
             reporting_period_end=datetime.date(2017, 12, 31)
         )
-        request = self.factory.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
+        response = self.client.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
                                     {'reporting_period_start': '2015-02-15',
                                      'reporting_period_end': '2017-12-31'})
-        response = reportingperiod_update(request, program.pk)
         self.assertEqual(json.loads(response.content)['msg'], 'fail')
         self.assertEqual(len(json.loads(response.content)['failmsg']), 1)
         self.assertEqual(response.status_code, 422)
@@ -84,10 +88,9 @@ class TestReportingPeriodDatesValidate(test.TestCase):
             reporting_period_start=datetime.date(2015, 1, 1),
             reporting_period_end=datetime.date(2017, 12, 31)
         )
-        request = self.factory.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
+        response = self.client.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
                                     {'reporting_period_start': '2015-01-01',
                                      'reporting_period_end': '2017-10-15'})
-        response = reportingperiod_update(request, program.pk)
         self.assertEqual(json.loads(response.content)['msg'], 'fail')
         self.assertEqual(len(json.loads(response.content)['failmsg']), 1)
         self.assertEqual(response.status_code, 422)
@@ -100,10 +103,9 @@ class TestReportingPeriodDatesValidate(test.TestCase):
             reporting_period_start=datetime.date(2015, 1, 1),
             reporting_period_end=datetime.date(2017, 12, 31)
         )
-        request = self.factory.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
+        response = self.client.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
                                     {'reporting_period_start': '2015-02-15',
                                      'reporting_period_end': '2017-10-15'})
-        response = reportingperiod_update(request, program.pk)
         self.assertEqual(json.loads(response.content)['msg'], 'fail')
         self.assertEqual(len(json.loads(response.content)['failmsg']), 2)
         self.assertEqual(response.status_code, 422)
@@ -116,10 +118,9 @@ class TestReportingPeriodDatesValidate(test.TestCase):
             reporting_period_start=datetime.date(2015, 1, 1),
             reporting_period_end=datetime.date(2017, 12, 31)
         )
-        request = self.factory.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
+        response = self.client.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
                                     {'reporting_period_start': '2016-01-01',
                                      'reporting_period_end': '2015-10-31'})
-        response = reportingperiod_update(request, program.pk)
         self.assertEqual(json.loads(response.content)['msg'], 'fail')
         self.assertEqual(len(json.loads(response.content)['failmsg']), 1)
         self.assertEqual(response.status_code, 422)
@@ -144,10 +145,10 @@ class TestReportingPeriodDatesValidate(test.TestCase):
                 end_date=end,
                 indicator=indicator
             )
-        request = self.factory.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
+        response = self.client.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
                                     {'reporting_period_start': '2016-01-01',
-                                     'reporting_period_end': '2017-12-31'})
-        response = reportingperiod_update(request, program.pk)
+                                     'reporting_period_end': '2017-12-31',
+                                     'rationale': 'test'})
         self.assertEqual(json.loads(response.content)['msg'], 'fail')
         self.assertEqual(len(json.loads(response.content)['failmsg']), 1)
         self.assertEqual(response.status_code, 422)
@@ -170,10 +171,10 @@ class TestReportingPeriodDatesValidate(test.TestCase):
             customsort=0,
             indicator=indicator
         )
-        request = self.factory.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
+        response = self.client.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
                                     {'reporting_period_start': '2016-01-01',
-                                     'reporting_period_end': '2017-12-31'})
-        response = reportingperiod_update(request, program.pk)
+                                     'reporting_period_end': '2017-12-31',
+                                     'rationale': 'test'})
         self.assertEqual(json.loads(response.content)['msg'], 'success')
         self.assertEqual(len(json.loads(response.content)['failmsg']), 0)
         self.assertEqual(response.status_code, 200)
@@ -198,10 +199,10 @@ class TestReportingPeriodDatesValidate(test.TestCase):
                 end_date=end,
                 indicator=indicator
             )
-        request = self.factory.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
+        response = self.client.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
                                     {'reporting_period_start': '2015-01-01',
-                                     'reporting_period_end': '2016-10-31'})
-        response = reportingperiod_update(request, program.pk)
+                                     'reporting_period_end': '2016-10-31',
+                                     'rationale': 'test'})
         self.assertEqual(json.loads(response.content)['msg'], 'fail')
         self.assertEqual(len(json.loads(response.content)['failmsg']), 1)
         self.assertEqual(response.status_code, 422)
@@ -226,10 +227,10 @@ class TestReportingPeriodDatesValidate(test.TestCase):
                 end_date=end,
                 indicator=indicator
             )
-        request = self.factory.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
+        response = self.client.post(reverse('reportingperiod_update', kwargs={'pk': program.pk}),
                                     {'reporting_period_start': '2015-01-01',
-                                     'reporting_period_end': '2017-10-31'})
-        response = reportingperiod_update(request, program.pk)
+                                     'reporting_period_end': '2017-10-31',
+                                     'rationale': 'test'})
         self.assertEqual(json.loads(response.content)['msg'], 'success')
         self.assertEqual(len(json.loads(response.content)['failmsg']), 0)
         self.assertEqual(response.status_code, 200)

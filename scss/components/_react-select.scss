@@ -1,0 +1,12 @@
+.react-select { // this wraps the element that actually receives styling e.g. outlines
+    & > div { // analog to <select>
+    }
+    &.is-invalid {
+        & > div { // analog to <select>, same as above
+            border-color: $red;
+        }
+    }
+}
+.react-select.is-invalid~.invalid-feedback {
+    display: block;
+}

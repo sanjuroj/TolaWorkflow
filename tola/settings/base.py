@@ -160,7 +160,6 @@ TEMPLATES = [
         #'APP_DIRS': True,
         'DIRS': [
             normpath(join(SITE_ROOT, 'templates')),
-            normpath(join(SITE_ROOT, 'customdashboard','templates')),
         ],
         'OPTIONS': {
             'debug': DEBUG,
@@ -267,6 +266,7 @@ THIRD_PARTY_APPS = (
     #'user_language_middleware',
     'widget_tweaks',
     'webpack_loader',
+    'safedelete'
 )
 
 # Apps specific for this project go here.
@@ -277,10 +277,7 @@ LOCAL_APPS = (
     'feed',
     'indicators',
     'customdashboard',
-    #'configurabledashboard',
-    'tables',
-    'reports',
-
+    'tola_management'
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -302,17 +299,35 @@ AUTHENTICATION_BACKENDS = (
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
+    'tola.pipeline.domains_allowed',
     'social_core.pipeline.social_auth.auth_allowed',
-    'social_core.pipeline.social_auth.social_user',
-    'social_core.pipeline.social_auth.associate_by_email',
+    'tola.pipeline.create_user_okta',
+    #'social_core.pipeline.social_auth.social_user',
+    'tola.pipeline.social_user_tola',
+    'tola.pipeline.associate_email_or_redirect',
+    #'social_core.pipeline.social_auth.associate_by_email',
     'social_core.pipeline.user.get_username',
-    'social_core.pipeline.user.create_user',
-    'social_core.pipeline.social_auth.associate_user',
+    #'social_core.pipeline.social_auth.associate_user',
+    'tola.pipeline.associate_user_tola',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
 
 ############ END OF AUTHENTICATION BACKEND ##############
+
+### PASSWORD VALIDATION ###
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 9,
+        }
+    },
+]
+
 
 ########## Login redirect ###########
 LOGIN_REDIRECT_URL = '/'
@@ -381,6 +396,16 @@ LOGGING = {
     },
     'loggers': {
         'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'workflow': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'indicators': {
             'handlers': ['file'],
             'level': 'ERROR',
             'propagate': True,

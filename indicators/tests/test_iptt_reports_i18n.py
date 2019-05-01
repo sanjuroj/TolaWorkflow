@@ -34,15 +34,6 @@ class TestIPTTTimePeriodReportsI18N(iptt_utility.TestIPTTTimePeriodsReportRespon
         # create indicators w/ results
         self.add_indicator_with_data(Indicator.MONTHLY, [100]*24)
 
-        # create and login user (defaulted to 'en' language)
-        self.user = UserFactory(first_name="FN", last_name="LN", username="tester")
-        self.user.set_password('password')
-        self.user.save()
-
-        self.tola_user = TolaUserFactory(user=self.user)
-
-        self.client.login(username="tester", password='password')
-
     def _set_user_language(self, language):
         self.tola_user.language = language
         self.tola_user.save()
@@ -91,21 +82,22 @@ class TestIPTTTargetReportsI18N(test.TestCase):
         self.program = ProgramFactory(reporting_period_start=startdate,
                                       reporting_period_end=enddate)
 
+
+        self.user = UserFactory(first_name="FN", last_name="LN", username="iptt_tester", is_superuser=True)
+        self.user.set_password('password')
+        self.user.save()
+
+        self.tola_user = TolaUserFactory(user=self.user)
+        self.tola_user.save()
+
+        self.client.login(username='iptt_tester', password='password')
+
         # setting up an indicator of each target type should allow the view to load w/ that target period (I think...)
         for indicator_frequency in self.test_target_periods:
             indicator = IndicatorFactory(target_frequency=indicator_frequency, program=self.program)
 
             # make periodic target w/ unicode in the period names - this was causing an exception!
             PeriodicTargetFactory(period='Año unicode name', indicator=indicator, start_date=startdate, end_date=enddate)
-
-        # create and login user (defaulted to 'en' language)
-        self.user = UserFactory(first_name="FN", last_name="LN", username="tester")
-        self.user.set_password('password')
-        self.user.save()
-
-        self.tola_user = TolaUserFactory(user=self.user)
-
-        self.client.login(username="tester", password='password')
 
     def _set_user_language(self, language):
         self.tola_user.language = language

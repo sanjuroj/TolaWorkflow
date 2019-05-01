@@ -32,7 +32,7 @@
                 <i class="fas fa-thumbtack"></i> {% trans "Pin" %}
               </button>
               <a href="{% url 'iptt_excel' program.id reporttype %}?{{ request.GET.urlencode }}" class="btn btn-sm btn-secondary">
-                <i class="fas fa-download"></i> {% trans "Excel" %}
+                <i class="fas fa-download"></i> Excel {# this isn't translated because it's a program name #}
               </a>
             </div>
         </div>
@@ -164,7 +164,7 @@
 
       <div id="indicator_modal_div" class="modal fade" role="dialog" aria-labelledby="myLargeModalLabel">
         <div class="modal-dialog modal-lg" role="document">
-          <div class="modal-content" id="indicator_modal_content">
+          <div class="modal-content" id="indicator_modal_content" iptt-modal="true">
 
           </div> <!-- modal content -->
         </div>

@@ -69,7 +69,7 @@ class IPTTReportQuickstartViewTests(TestCase):
         response = self.client.post(path, data=data, follow=True)
         kwargs = response.resolver_match.kwargs
         self.assertEqual(kwargs['reporttype'], IPTTReportQuickstartView.FORM_PREFIX_TARGET)
-        self.assertEqual(int(kwargs['program_id']), self.program.id)
+        self.assertEqual(int(kwargs['program']), self.program.id)
 
     def test_get_context_data(self):
         """Do we get the correct context data?"""
@@ -84,7 +84,7 @@ class IPTTReportQuickstartViewTests(TestCase):
         response = self.client.post(path, data=data, follow=True)
         context_data = response.context_data
 
-        self.assertEqual(int(context_data['program_id']), self.program.id)
+        self.assertEqual(context_data['program'], self.program)
         # self.assertEqual(context['report_wide'], ?)
         # self.assertEqual(context['report_date_ranges'], ?)
         # self.assertEqual(context['indicators'], ?)
@@ -124,39 +124,6 @@ class IPTTReportQuickstartViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'indicators/iptt_quickstart.html')
 
-@tag('targets', 'iptt', 'fast')
-class TargetFrequencyAPITests(TestCase):
-    """Tests for the api call /api/programtargetfrequencies/?program_id=#"""
-    def setUp(self):
-        self.program = ProgramFactory()
-        self.url = '/api/programtargetfrequencies/?program_id={pk}'.format(pk=self.program.pk)
-        user = UserFactory()
-        self.client = Client()
-        self.client.force_login(user=user)
-
-    def test_one_indicator_of_each_frequency(self):
-        indicator = IndicatorFactory(
-            program=self.program
-        )
-        for frequency, name in Indicator.TARGET_FREQUENCIES:
-            if frequency != Indicator.EVENT:
-                indicator.target_frequency = frequency
-                indicator.save()
-                response = self.client.get(self.url).json()
-                expected = [{'frequency_name': name, 'target_frequency': frequency}]
-                self.assertEqual(
-                    response, expected,
-                    "One {0} indicator expected {1} but got {2}".format(
-                        name, expected, response)
-                )
-
-    def test_multiple_indicators(self):
-        for frequency in [Indicator.LOP, Indicator.LOP, Indicator.MID_END, Indicator.SEMI_ANNUAL]:
-            IndicatorFactory(program=self.program, target_frequency=frequency)
-        response = self.client.get(self.url).json()
-        self.assertEqual(len(response), 3)
-        self.assertEqual(set([x['target_frequency'] for x in response]),
-                             set([Indicator.LOP, Indicator.MID_END, Indicator.SEMI_ANNUAL]))
 
 @tag('iptt', 'fast')
 class TestIPTTGenerateTargetPeriods(TestCase):

@@ -280,16 +280,29 @@
 
             disrep_table = $("#disrep_table").DataTable({
                 bSort: true,
+                language: {
+                    emptyTable: "{% trans 'No data available' %}",
+                    paginate: {
+                        next: "{% trans 'Next' %}",
+                        previous: "{% trans 'Previous' %}"
+                    },
+                    // # Translators: "_MENU_" will be replaced with a number of entries to display (i.e. show 10 entries)
+                    lengthMenu: "{% trans 'Show _MENU_ entries' %}",
+                    // # Translators: e.g. "showing 10 to 20 of 100 entries" for a paginated table
+                    info: "{% trans 'Showing _START_ to _END_ of _TOTAL_ entries' %}"
+                },
                 iDisplayLength: 100,
                 lengthMenu: [[20, 50, 100, -1], [20, 50, 100, "All"]],
                 dom: "<'row'<'col-sm-2'B><'col-sm-5'l><'col-sm-5'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
                 buttons: [
+                    {% if disaggregationcsv_button %}
                     {
                         extend: 'csv',
                         title: '{% trans "Indicator Disaggregation Report"|escapejs %}',
                         text: '{% trans "Export to CSV"|escapejs %}',
                         exportOptions: { columns: "thead th:not(.noExport)" }
                     }
+                    {% endif %}
                 ]
             });
         });

@@ -1,41 +1,32 @@
 {% load i18n %}
 
 <script>
-
-    /* Dead code (I think)
-
-    // Load Indicators
-    function loadIndicators(program, indicator, type){
-        $.get('/indicators/program_indicators/' + program + '/' + indicator + '/' + type + '/', function(data){
-            $('#hidden-' + program + ' .indicators-list__table-container').html(data);
-            $("body").removeClass("modal-open");
-        });
-
-        let icon = $(`#id_btnOpenindicatorsForProgramId_${program}`).find("svg");
-        if (icon.hasClass('fa-caret-right')) {
-            icon.attr('class', 'fa-caret-down');
-        } else {
-            icon.attr('class', 'fa-caret-right');
-        }
-    };
-
-    // Load Results
-    function loadCollected(indicator,program){
-        let url = "{% url "result_view" 0 0 %}"
-        url = url.replace(/0\/0\//, indicator + "/" + program + "/")
-        var div_name = '#hidden-indicator-' + indicator;
-        $(div_name).empty();
-        $.get(url, function(data){
-            $(div_name).html(data);
-            $("body").removeClass("modal-open");
-        });
-        $("#id_indicator_data_count_btn_"+indicator).blur();
-    };
-    */
-
     var validation_msgs = {};
-    var mediaSize = window.matchMedia("(max-width: 575px)")
-    var userLang = "{{ LANGUAGE_CODE }}";
+    let initialTrackedFieldsFormState;
+
+    const DELETE_ALL_TARGETS_MESSAGE = "{% trans 'Any results assigned to these targets will need to be reassigned. For future reference, please provide a reason for deleting these targets.' %}"
+    const DELETE_INDICATOR_MESSAGE = "{% trans 'All details about this indicator and results recorded to the indicator will be permanently removed. For future reference, please provide a reason for deleting this indicator.' %}"
+    const MODIFY_TARGETS_MESSAGE = "{% trans 'Modifying target values will affect program metrics for this indicator. For future reference, please provide a reason for modifying target values.' %}"
+    const DESTRUCTIVE_PREAMBLE = "{% trans 'This action cannot be undone.' %}"
+    const DELETE_INDICATOR_PREAMBLE = "{% trans 'All details about this indicator will be permanently removed.' %}"
+    const DELETE_INDICATOR_NO_RATIONALE = "{% trans 'Are you sure you want to delete this indicator?' %}"
+    const DELETE_TARGETS_NO_RATIONALE = "{% trans 'Are you sure you want to remove all targets?' %}"
+    const DELETE_TARGET_NO_RATIONALE = "{% trans 'Are you sure you want to remove this target?' %}"
+    const DELETE_TARGET_MESSAGE = "{% trans 'For future reference, please provide a reason for deleting this target.' %}"
+    
+    // Indicator fields tracked in the admin changelog, which require prompting for a rationale if modified
+    let TRACKED_FIELDS = new Set([
+        'name',
+        'unit_of_measure',
+        'unit_of_measure_type',
+        'is_cumulative',
+        'lop_target',
+        'direction_of_change',
+        'baseline',
+        'baseline_na',
+        'periodic_targets',
+        'target_frequency',
+    ]);
 
     function setupPopupCalendar() {
         $('.monthPicker').datepicker({
@@ -87,63 +78,166 @@
 
     });
 
+    $("#indicator_modal_div").on('shown.bs.modal', function() {
+
+    });
+
     $("#indicator_modal_div").on('shown.bs.tab', function() {
         show_hide_frequency_fields();
         setupPopupCalendar();
     });
 
-    // when a user clicks the 'Attach evidence' button in the indicator from.
-    $("#indicator_modal_content, #indicator_form").on("click", "#id_add_evidence_btn", function(e){
-        alert('Not implemented yet!');
-    });
 
-    $("#indicator_modal_content, #indicator_form").on("click", "a.deletebtn", function(e){
-        e.preventDefault();
-         // $(e.target).closest("tr").prev("tr").find("a").show(); //.css("display", "block");
-        var url = $(this).attr('href');
-        var id = url.split('/')[url.split('/').length - 2];
-        var currentRow = $(e.target).closest("tr");
-        var dataCount = parseInt(currentRow.data("collectedCount"));
-        if ( dataCount != NaN && dataCount > 0) {
-            // # Translators: This is a popup warning message that warns users if there is data associated with the thing they are about to delete.
-            let message = ngettext('Warning: This action cannot be undone. Removing this target means that %s data record will no longer have targets associated with it.\n\nProceed anyway?',
-                'Warning: This action cannot be undone. Removing this target means that %s data records will no longer have targets associated with them.\n\nProceed anyway?',
-                dataCount);
-            let interpolated_message = interpolate(message, [dataCount]);
-            if (!confirm(interpolated_message)) {
-                dataCount = NaN;
-                return;
-            }
-        }
-        var prevDeleteBtn = currentRow.prev("tr").find("a");
-
-        if (id == 'undefined' || id == undefined) {
-            currentRow.remove();
-            if ($('#periodic_targets_table tbody tr.periodic-target').length == 0) {
-                $("#id_div_periodic_tables_placeholder").empty();
-                reset_frequency_fields();
-            }
-            updateAggregateRowValueAndLabel()
-            prevDeleteBtn.show();
-            return;
-        }
-
-        $.post(url)
-            .done(function(data, textStatus, jqXHR){
-                if (data.status == "success") {
-                    currentRow.remove();
-                    prevDeleteBtn.show();
-                    $("#indicator_update_form").data('indicatorchanged', true);
-                    updateAggregateRowValueAndLabel()
-                    if ($('#periodic_targets_table tbody tr.periodic-target').length == 0) {
-                        $("#id_div_periodic_tables_placeholder").empty();
-                        reset_frequency_fields();
-                    }
-                } else {
-                    createAlert("danger", data.msg, true, "#modalmessages");
-                    $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
-                }
+    function confirmAndRedirect(delete_indicator) {
+        var has_results = parseInt($('#numDataPoints').text()) > 0;
+        if(!has_results) {
+            create_no_rationale_changeset_notice({
+                preamble: [DESTRUCTIVE_PREAMBLE, DELETE_INDICATOR_PREAMBLE].join(' '),
+                message_text: DELETE_INDICATOR_NO_RATIONALE,
+                context: document.getElementById('indicator_update_form'),
+                on_submit: delete_indicator
             });
+        } else {
+            create_destructive_changeset_notice({
+                message_text: DELETE_INDICATOR_MESSAGE,
+                context: document.getElementById('indicator_update_form'),
+                on_submit: delete_indicator,
+                showCloser: true
+            });
+        }
+        scrollToIndicatorFormBottom();
+    }
+    
+    $("#indicator_form").on("click", "#id_delete_indicator_btn", function(e){
+        e.preventDefault();
+        const delete_indicator = (rationale) => {
+            var url = $(this).attr('href');
+            $.post(url, {rationale: rationale, redirect: true})
+             .done(function(data, textStatus, jqXHR){
+                 if (data.status == "success") {
+                    window.location = data.redirect_url;
+                 } else {
+                     createAlert("danger", data.msg, true, "#modalmessages");
+                     $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
+                 }
+             });
+        }
+        confirmAndRedirect(delete_indicator);
+    });
+    $('#indicator_modal_content').on("click", "#id_delete_indicator_btn", function(e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        var delete_indicator;
+        if ($('#indicator_modal_content').attr('iptt-modal') === 'true') {
+            delete_indicator = (rationale) => {
+                $.post(url, {rationale: rationale, redirect: true})
+                .done(function(data, textStatus, jqXHR){
+                 if (data.status == "success") {
+                    window.location.reload();
+                 } else {
+                     createAlert("danger", data.msg, true, "#modalmessages");
+                     $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
+                 }
+             });
+            }
+        } else {
+            delete_indicator = (rationale) => {
+                var url = $(this).attr('href');
+                $.post(url, {rationale: rationale})
+                 .done(function(data, textStatus, jqXHR){
+                     if (data.status == "success") {
+                        var success = PNotify.success({
+                            title: "{% trans 'Success' %}",
+                            text: data.msg,
+                            type: 'success',
+                            width: '350px',
+                            minHeight: '150px',
+                            stack: {
+                                'dir1': 'right',
+                                'dir2': 'up',
+                                'firstpos1': 0,
+                                'firstpos2': 0
+                                },
+                            modules: {
+                                Buttons: {
+                                    closer: true,
+                                    closerHover: false,
+                                    sticker: false
+                                }
+                            }
+                            });
+                        $('#indicator_modal_div').find('form').attr('deleted', true);
+                        $('#indicator_modal_div').modal('hide');
+                     } else {
+                         createAlert("danger", data.msg, true, "#modalmessages");
+                         $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
+                     }
+                 });
+            }
+        }
+        confirmAndRedirect(delete_indicator);
+    });
+    
+    $('#indicator_modal_content, #indicator_form').on('click', '.event-target-delete-button', function(e) {
+        e.preventDefault();
+        const updateIfLastEvent = () => {
+            if ($('.periodic-target').length == 0) {
+                $('.periodic-targets').remove();
+                reset_frequency_fields();
+                show_hide_frequency_fields();
+            }
+        };
+        var url = $(this).attr('href');
+        let row = $(e.currentTarget).closest('tr');
+        let numDataTarget = parseInt(row.data('collected-count'));
+        // if no other targets have changed, we'll update the snapshot so we don't double-prompt for rationale
+        const updateSnapshot = !(
+            JSON.stringify(getFormPeriodicTargets(row)) == initialTrackedFieldsFormState.periodic_targets &&
+            initialTrackedFieldsFormState.target_frequency == getTrackedFieldsObject().target_frequency
+            );
+         /* If target is new, delete means just remove row,
+         * If target is saved, delete means call to delete
+         */
+        const delete_callback = url == '#' ?
+            (url, row) => () => {
+                row.remove();
+                updateIfLastEvent();
+            } :
+            (url, row) => (rationale) => {
+                $.post(url, {rationale: rationale})
+                    .done((data) => {
+                        if (data.status == "success") {
+                            row.remove();
+                            if (updateSnapshot) updateTargetSnapshot();
+                            updateIfLastEvent();
+                        }
+                    });
+            };
+        let numDataIndicator = parseInt($('#numDataPoints').text());
+        /* If target has results, message refers to number of results,
+         * Otherwise, if indicator has results and target is not brand new, record rationale
+         * otherwise merely confirm:
+         */
+        const preamble = numDataTarget == 0 ? DESTRUCTIVE_PREAMBLE :
+            window.target_with_results_text(numDataTarget);
+        const message_text = (url == '#' || numDataIndicator == 0) ?
+                DELETE_TARGET_NO_RATIONALE :
+                DELETE_TARGET_MESSAGE;
+        /* If the indicator has any results linked to it, we prompt for a rationale,
+         * otherwise we do not.
+         */
+        const changeset_notice_function = (url == '#' || numDataIndicator === 0) ?
+                window.create_no_rationale_changeset_notice :
+                window.create_destructive_changeset_notice;
+        changeset_notice_function({
+            preamble: preamble,
+            message_text: message_text,
+            context: document.getElementById('indicator_update_form'),
+            on_submit: (rationale = null) => {
+                delete_callback(url, row)(rationale);
+            }
+        });
+        scrollToIndicatorFormBottom();
     });
 
 
@@ -153,7 +247,29 @@
             showValidations("#alerts");
             return;
         }
-        submitForm(this, false);
+        var has_results = parseInt($('#numDataPoints').text()) > 0;
+        if(has_results && hasTrackedFieldsChanged()) {
+            if(hasTargetsChanged()) {
+                window.create_destructive_changeset_notice({
+                    message_text: MODIFY_TARGETS_MESSAGE,
+                    no_preamble: true,
+                    context: document.getElementById('indicator_update_form'),
+                    on_submit: (rationale) => {
+                        submitForm(false, rationale);
+                    }
+                });
+            } else {
+                window.create_nondestructive_changeset_notice({
+                    context: document.getElementById('indicator_update_form'),
+                    on_submit: (rationale) => {
+                        submitForm(false, rationale);
+                    }
+                });
+            }
+            scrollToIndicatorFormBottom();
+        } else {
+            submitForm(false, '');
+        }
     });
 
     // Intercept IndicatorUpdate form submission and then use ajax to submit it.
@@ -163,7 +279,30 @@
             showValidations("#modalmessages");
             return;
         }
-        submitForm(this, true);
+
+        var has_results = parseInt($('#numDataPoints').text()) > 0;
+        if(has_results && hasTrackedFieldsChanged()) {
+            if(hasTargetsChanged()) {
+                window.create_destructive_changeset_notice({
+                    message_text: MODIFY_TARGETS_MESSAGE,
+                    no_preamble: true,
+                    context: document.getElementById('indicator_update_form'),
+                    on_submit: (rationale) => {
+                        submitForm(true, rationale);
+                    }
+                });
+            } else {
+                window.create_nondestructive_changeset_notice({
+                    context: document.getElementById('indicator_update_form'),
+                    on_submit: (rationale) => {
+                        submitForm(true, rationale);
+                    }
+                });
+            }
+            scrollToIndicatorFormBottom();
+        } else {
+            submitForm(true, '');
+        }
     });
 
 
@@ -184,7 +323,7 @@
         }
         $(this).attr("disabled", true);
 
-        submitForm($("#indicator_update_form"), true);
+        submitForm(true, "{% trans 'N/A' %}");
     });
 
     $("#indicator_form").on("click", "#id_create_targets_btn", function(e) {
@@ -197,24 +336,20 @@
 
         // Even though #indicator_form selector catches case when not a modal, pretend like it's a modal
         // The reason being is to not display the link to program page when creating targets, regardless of context
-        submitForm($("#indicator_update_form"), true);
+
+        submitForm(true, "{% trans 'N/A' %}");
     });
 
 
-    function createPeriodicTargetRow(pt, target_frequency, isLastIteration, rowNum) {
+    function createPeriodicTargetRow(pt, isLastIteration, rowNum) {
         var markup = `
-                <tr class="periodic-target">
-                    <td class="text-left d-flex align-items-center">
-                        <a href="/indicators/periodic_target_delete/${pt.id}/" class="deletebtn btn btn-sm" style="display: ${(isLastIteration && target_frequency != 2 || target_frequency == 8) ? 'block' : 'none'}">
+                <tr class="periodic-target" data-collected-count="0" data-ptid="0">
+                    <td class="text-left d-flex align-items-center td--stretch">
+                        <a href="#" class="deletebtn btn btn-sm event-target-delete-button">
                             <i class="fas fa-times text-danger"></i>
                         </a>
-                        ${(target_frequency != 8) ? `
-                            <strong>${pt.period }</strong></div>
-                            <div>${formatDate(pt.start_date)} ${ pt.start_date ? '-' : ''} ${formatDate(pt.end_date)}</div>`
-                            :
-                            `<input type="text" name="${pt.period}" placeholder="Enter event name" value="${(rowNum == 0) ? pt.period : (pt.id ? pt.period : '') }" class="form-control input-text">
-                                <span style="margin:0px;" class="help-block"> </span>`
-                        }
+                        <input type="text" placeholder="{% trans 'Enter event name' %}" class="form-control input-text">
+                                <span style="margin:0px;" class="help-block"> </span>
                     </td>
 
                     <td class="text-right">
@@ -222,12 +357,8 @@
                             <input
                                 type="number"
                                 id="pt-${pt.id}"
-                                value="${parseFloat(pt.target).toFixed(2).replace(/[.,]00$/, "")}"
-                                data-start-date="${formatDate(pt.start_date)}"
-                                data-end-date="${formatDate(pt.end_date)}"
                                 data-periodictarget="pt"
-                                name="${pt.period}"
-                                placeholder="{% trans 'Enter target'|escapejs %}"
+                                placeholder="{% trans 'Enter target' %}"
                                 class="form-control input-value">
                         </span>
                         <span id="hint_id_pt_${pt.period}" style="margin:0px;" class="help-block"> </span>
@@ -244,25 +375,36 @@
         var indicator_id = form_url.split('/').slice(-2, -1)[0];
         var dataCountAttribute = $("#periodic_targets_table tr").attr("data-collected-count");
         var msg = '';
-        if (typeof dataCountAttribute !== typeof undefined && dataCountAttribute !== false) {
-            msg = '{% trans "Warning: This action cannot be undone. Any data records assigned to a target will need to be reassigned."|escapejs %} \n\n {% trans "Are you sure you want to remove all targets?"|escapejs %}';
+
+        const save = (rationale) => {
+            $.post('/indicators/periodic_target_deleteall/' + indicator_id + '/true/', {rationale}, function(data){
+                var res = $.parseJSON(data);
+                if (res['status'] == 'success') {
+                    $("#id_div_periodic_tables_placeholder").empty();
+                    reset_frequency_fields();
+                    show_hide_frequency_fields();
+                }
+
+            });
+        }
+
+        var has_results = parseInt($('#numDataPoints').text()) > 0;
+        if(has_results) {
+            window.create_destructive_changeset_notice({
+                message_text: DELETE_ALL_TARGETS_MESSAGE,
+                context: document.getElementById('indicator_update_form'),
+                on_submit: save
+            });
+            scrollToIndicatorFormBottom();
         } else {
-            msg = '{% trans "Warning: This action cannot be undone. Are you sure you want to remove all targets?"|escapejs %}';
+            window.create_no_rationale_changeset_notice({
+                preamble: DESTRUCTIVE_PREAMBLE,
+                message_text: DELETE_TARGETS_NO_RATIONALE,
+                context: document.getElementById('indicator_update_form'),
+                on_submit: save
+            });
         }
-        if (!confirm(msg)){
-            return;
-        }
-
-        $.post('/indicators/periodic_target_deleteall/' + indicator_id + '/true/', function(data){
-            var res = $.parseJSON(data);
-            if (res['status'] == 'success') {
-                $("#id_div_periodic_tables_placeholder").empty();
-                reset_frequency_fields();
-                show_hide_frequency_fields();
-                $("#indicator_update_form").data('indicatorchanged', true);
-            }
-
-        });
+        scrollToIndicatorFormBottom();
     });
 
     // add new periodic target
@@ -272,91 +414,65 @@
         var form_url = $("#indicator_update_form").attr('action');
         var indicator_id = form_url.split('/').slice(-2, -1)[0]
         $.get('/indicators/periodic_target_generate/' + indicator_id + '/?numTargets=' + numTargets, function(data){
-
             var pt = $.parseJSON(data);
             var isLastIteration = true;
-            var target_frequency = $("#id_target_frequency").val();
-            var markup = createPeriodicTargetRow(pt, target_frequency, isLastIteration);
+            var markup = createPeriodicTargetRow(pt, isLastIteration);
             $("#periodic_targets_table tbody tr:nth-last-child(2)").before(markup);
         });
-
     });
 
-    function submitForm(form, isModal) {
+    $('#indicator_modal_content, #indicator_form').on('click', "input[type='reset']", function(e) {
+    })
+
+ function submitForm(isModal, rationale = '') {
         var numDataPoints = parseInt($("#numDataPoints").text());
         var initalTargetFrequency = parseInt($("#initialTargetFrequencyValue").text());
         var target_frequency = $("#id_target_frequency").val();
 
+        // warning when changing for LoP target value to something non-LoP
         if (numDataPoints > 0 && initalTargetFrequency == 1 && target_frequency != 1) {
-            if (!confirm(`{% trans "Warning: This action cannot be undone. If we make these changes,"|escapejs %} ${numDataPoints} {% trans "data record/s will no longer be associated with the Life of Program target, and will need to be reassigned to new targets."|escapejs %} \n\n {% trans "Proceed anyway?"|escapejs %}`)) {
-                initalTargetFrequency = undefined;
-                return;
-            }
+            const message_text = window.lop_to_non_lop_with_results_text(numDataPoints);
+            window.create_no_rationale_changeset_notice({
+                preamble: DESTRUCTIVE_PREAMBLE,
+                message_text: message_text,
+                context: document.getElementById('indicator_update_form'),
+                on_submit: () => {
+                    formSubmitContinue(isModal, rationale);
+                },
+                on_cancel: () => {
+                    $('#id_target_frequency').val('1');
+                    $('#id_create_targets_btn').attr("disabled", false);
+                    show_hide_frequency_fields();
+                }
+            });
+        } else {
+            formSubmitContinue(isModal, rationale);
         }
-        // $("#id_create_targets_btn").attr("disabled", true);
-        var submitBtnName = $(form).find("input[type=submit]:focus" );
-        var form_url = $(form).attr('action');
-        var form_data = $(form).serialize();
-        // mark that the form data has changed so that when the modal is closed the list view can be updated
-        $(form).data('indicatorchanged', true);
+ }
+ 
+function formSubmitContinue(isModal, rationale = '') {
+        let $form = $('#indicator_update_form');
+        var submitBtnName = $form.find("input[type=submit]:focus" );
+        var form_url = $form.attr('action');
 
-        var periodic_targets = [];
-
-        // Collect all existing periodic_targets into an array.
-        $('#periodic_targets_table tbody tr.periodic-target').each(function () {
-            var $this = $(this);
-            var values = [];
-            var eventNameElement = $($this.find('input[type=text]'));
-            var targetValueSelector = $($this.find('input[type=number]'));
-
-            var pt_id;
-            var pt_name;
-            try {
-                pt_id = parseInt(targetValueSelector.attr('id').split('-')[1]);
-                if (!$.isNumeric(pt_id)) { pt_id = 0; }
-            } catch (err) {
-                pt_id = 0;
-            }
-
-            if (eventNameElement.length > 0) {
-                pt_name = eventNameElement.val();
-            } else {
-                pt_name = targetValueSelector.attr('name');
-            }
-
-            var pt_value = targetValueSelector.val();
-            var start_date = targetValueSelector.data("startDate");
-            var end_date = targetValueSelector.data("endDate");
-
-            periodic_targets.push({'id': pt_id, 'period': pt_name, 'target': pt_value, 'start_date': start_date, 'end_date': end_date } );
-        });
         // if there are errors in periodic targets then do not submit the form
         if ($("#id_div_periodic_tables_placeholder input").parent().hasClass('has-error')) { return; }
 
-        // If there aren't any existing periodic_targets then set the flag to generate them.
-        if ($.isEmptyObject(periodic_targets)) {
-            form_data += "&periodic_targets=generateTargets";
-        } else {
-            form_data += "&periodic_targets=" + JSON.stringify(periodic_targets);
-        }
+        let formObj = getIndicatorFormAsObject();
 
-        // Set is_cumulative if it's not already set
-        if (form_data.indexOf('is_cumulative') == -1) {
-            form_data += "&is_cumulative=3"
-        }
+        // user entered rationale for change
+        formObj['rationale'] = rationale;
+
         //disable submit button as we are posting and want to prevent double-saves while waiting:
         submitBtnName.attr('disabled', true);
-        // adding button to an Object so it is available inside the success callback
-        var disabledButton = {'submit': submitBtnName};
-        $("#modalmessages").html("<img src='{{ STATIC_URL }}/img/ajax-loader.gif'>  <span>{% trans 'Saving form... please wait.'|escapejs %}</span>");
+
         $.ajax({
             method: 'POST',
             url: form_url,
-            data: form_data,
-            global: false, }
-        ).done(function(data, textStatus, jqXHR) {
+            data: formObj,
+        }).done(function(data, textStatus, jqXHR) {
             //undisable submit button as the response is returned:
-            disabledButton.submit.attr('disabled', false);
+            submitBtnName.attr('disabled', false);
             var alertsElement = "#alerts";
             if ( $("#modalmessages").length) {
                 alertsElement = "#modalmessages";
@@ -373,7 +489,7 @@
             if (isModal) {
                 createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, alertsElement);
             } else {
-                let programId = $(form).find('[name="program"]').val();
+                let programId = $form.find('[name="program"]').val();
                 createAlert("success", `{% trans 'Success!' %} <a href='/program/${programId}/0/0/'>{% trans 'View your indicator on the program page.' %}</a>`, true, alertsElement);
             }
 
@@ -381,10 +497,8 @@
             var indicator = $.parseJSON(jsondata["indicatorjson"])[0];
             var targets_sum = jsondata["targets_sum"];
             var targets_avg = jsondata["targets_avg"];
-            var update_indicator_row = jsondata["update_indicator_row"];
             var content = jsondata["content"];
             var remove_missing_targts_link = jsondata["remove_missing_targts_link"];
-            $(form).data('update_indicator_row', parseInt(update_indicator_row));
 
             $("#initialTargetFrequencyValue").text(indicator.fields.target_frequency);
             if ($("#id_target_frequency").val() != 1) {
@@ -412,6 +526,18 @@
             if (remove_missing_targts_link == true) {
                 $(`#id_missing_target_periods_for_indicator_id_${indicator.pk}`).html('');
             }
+
+            // this is our new base state
+            recordTrackedFieldsSnapshot();
+        }).fail((xhr, text, error) => {
+            var alertsElement = "#alerts";
+            if ( $("#modalmessages").length) {
+                alertsElement = "#modalmessages";
+            }
+
+            $(alertsElement).html('');
+
+            submitBtnName.attr('disabled', false);
         });
     }
 
@@ -439,8 +565,6 @@
 
     function show_hide_frequency_fields(lock = false) {
         // set the text for the 'create new target' button.
-        var label = '<i class="fas fa-plus-circle"></i> ' + getNewTargetBtnLabel($("#id_target_frequency").val());
-        $("#addNewPeriodicTarget").html(label);
         var selected_option = parseInt($("#id_target_frequency").find("option:selected").val()) || 0;
         if ( (lock == true || $('#id_target_frequency').attr('readonly'))
                  && selected_option != 1) {
@@ -461,7 +585,9 @@
             }
 
             if (selected_option == 8) {
-                $("#div_id_target_frequency_num_periods label").text("Number of events*");
+                $("#div_id_target_frequency_num_periods label").text("{% trans 'Number of events' %}")
+                .addClass('label--required');
+                $("#div_id_target_frequency_custom label").addClass('label--required');
                 $("#div_id_create_targets_btn").show();
             } else {
                 $("#div_id_target_frequency_num_periods").hide();
@@ -490,25 +616,6 @@
         }
     }
 
-    function getNewTargetBtnLabel(index) {
-        var label = '';
-        if (index == 3 ) {
-            label += '{% trans "Add a year"|escapejs %}';
-        } else if (index == 4) {
-            label += '{% trans "Add a semi-annual period"|escapejs %}';
-        } else if (index == 5) {
-            label += '{% trans "Add a tri-annual period"|escapejs %}';
-        } else if (index == 6) {
-            label += '{% trans "Add a quarter"|escapejs %}';
-        } else if (index == 7) {
-            label += '{% trans "Add a month"|escapejs %}';
-        } else if (index == 8) {
-            label += '{% trans "Add an event"|escapejs %}';
-        } else {
-            label = '{% trans "Add a target"|escapejs %}';
-        }
-        return label;
-    }
     $("#indicator_modal_content, #indicator_form").on("change blur", "#id_target_frequency", function(e){
       if ($("#id_target_frequency option:selected").text().indexOf("---") < 0) {
         $("#id_target_frequency").removeClass('is-invalid');
@@ -868,4 +975,131 @@
         }
     })
 
+    function scrollToIndicatorFormBottom() {
+        // Handle either full page form or modal
+        let $el = $('#indicator_modal_div').length ? $('#indicator_modal_div') : $('html');
+        scrollToBottom($el);
+    }
+
+    /*
+     * Change tracking functions
+     */
+
+    // Returns an array of objects of periodic target form values
+    // can be called with a row to exclude from the list (to check if _other_ targets have changed)
+    function getFormPeriodicTargets(excluded_row=null) {
+        let periodic_targets = [];
+
+        // Collect all existing periodic_targets into an array.
+        $('#periodic_targets_table tbody tr.periodic-target').each(function () {
+            let $this = $(this);
+            if (excluded_row === null || excluded_row[0] !== $this[0]) {
+                let eventNameElement = $($this.find('input[type=text]'));
+                let targetValueSelector = $($this.find('input[type=number]'));
+    
+                let pt_id;
+                let pt_name;
+                try {
+                    pt_id = parseInt(targetValueSelector.attr('id').split('-')[1]);
+                    if (!$.isNumeric(pt_id)) {
+                        pt_id = 0;
+                    }
+                } catch (err) {
+                    pt_id = 0;
+                }
+    
+                if (eventNameElement.length > 0) {
+                    pt_name = eventNameElement.val();
+                } else {
+                    pt_name = targetValueSelector.attr('name');
+                }
+    
+                let pt_value = targetValueSelector.val();
+                let start_date = targetValueSelector.data("startDate");
+                let end_date = targetValueSelector.data("endDate");
+    
+                periodic_targets.push({
+                    'id': pt_id,
+                    'period': pt_name,
+                    'target': pt_value,
+                    'start_date': start_date,
+                    'end_date': end_date
+                });
+            }
+        });
+
+        return periodic_targets;
+    }
+
+    // return a JS obj of key/vals of indicator form
+    function getIndicatorFormAsObject() {
+        let $form = $('#indicator_update_form');
+        let formObj = {};
+        $form.serializeArray().forEach(function (x) {
+            formObj[x.name] = x.value;
+        });
+
+        // Set is_cumulative if it's not already set
+        // This is a null boolean in the DB. Django has:
+        // 1: null
+        // 2: true
+        // 3: false
+        if (formObj['is_cumulative'] === undefined) {
+            formObj['is_cumulative'] = 3;
+        }
+
+        let periodic_targets = getFormPeriodicTargets();
+
+        formObj['periodic_targets'] = $.isEmptyObject(periodic_targets) ? 'generateTargets' : JSON.stringify(periodic_targets);
+
+        return formObj;
+    }
+
+    // same as getIndicatorFormAsObject() but containing only tracked fields
+    // can be used to snapshot form state for later comparison
+    function getTrackedFieldsObject() {
+        let formObj = getIndicatorFormAsObject();
+        let trackFieldsObj = {};
+
+        Object.keys(formObj).forEach(function(key) {
+            if (TRACKED_FIELDS.has(key)) {
+                trackFieldsObj[key] = formObj[key];
+            }
+        });
+
+        return trackFieldsObj;
+    }
+
+    // remember the initial state of tracked fields on the form
+    function recordTrackedFieldsSnapshot() {
+        initialTrackedFieldsFormState = getTrackedFieldsObject();
+    }
+        
+    // update just the targets portion of the form object:
+    function updateTargetSnapshot() {
+        let periodic_targets = getFormPeriodicTargets();
+        initialTrackedFieldsFormState.periodic_targets = $.isEmptyObject(periodic_targets) ? 'generateTargets' : JSON.stringify(periodic_targets);
+    }
+
+    // have any tracked fields changed in the form?
+    function hasTrackedFieldsChanged() {
+        let prevState = JSON.stringify(initialTrackedFieldsFormState);
+        let currState = JSON.stringify(getTrackedFieldsObject());
+        return prevState !== currState;
+    }
+
+    // have targets or target values changed in the form?
+    function hasTargetsChanged() {
+        let currTrackedFieldsFormState = getTrackedFieldsObject();
+
+        // look at values of targets in table
+        let prevTargetFieldsState = initialTrackedFieldsFormState.periodic_targets;
+        let currTargetFieldsState = currTrackedFieldsFormState.periodic_targets;
+
+        // LoP has not values, so look at changes in the target type itself
+        let prevTargetType = initialTrackedFieldsFormState.target_frequency;
+        let currTargetType = currTrackedFieldsFormState.target_frequency;
+
+        return prevTargetFieldsState !== currTargetFieldsState || prevTargetType !== currTargetType;
+    }
 </script>

@@ -1,0 +1,4 @@
+- name: Install App Server
+  hosts: app-servers
+  roles:
+    - all
