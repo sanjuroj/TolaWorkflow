@@ -6,10 +6,13 @@ import dateutil
 import datetime
 
 from workflow.models import Country, TolaUser, TolaSites
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.core.mail import send_mail, mail_admins, mail_managers, EmailMessage
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import user_passes_test
+
+from django.utils.translation import ugettext as _
 
 logger = logging.getLogger(__name__)
 
@@ -33,12 +36,11 @@ def getCountry(user):
         Returns the object the view is displaying.
         """
         # get users country from django cosign module
-        user_countries = TolaUser.objects.all().filter(user__id=user.id).values('countries')
-
-        get_countries = Country.objects.all().filter(id__in=user_countries)
-
-        return get_countries
-
+        if user.is_authenticated():
+            return Country.objects.filter(Q(id__in=user.tola_user.countries.all().values('id')) | Q(id__in=user.tola_user.programaccess_set.all().values('country__id')))
+            # return user.tola_user.countries.all()
+        else:
+            return Country.objects.none()
 
 def emailGroup(country,group,link,subject,message,submiter=None):
         #email incident to admins in each country assoicated with the projects program
@@ -138,6 +140,9 @@ def formatFloat(value):
 
 # Get GAIT data from mcapi
 def get_GAIT_data(gait_ids):
+    """
+    May throw requests.exceptions.RequestException
+    """
 
     cleaned_ids = []
     for id in gait_ids:
@@ -147,12 +152,8 @@ def get_GAIT_data(gait_ids):
             pass
     base_url = 'https://mcapi.mercycorps.org/gaitprogram/?gaitids='
 
-    try:
-        response = requests.get(base_url + ','.join(cleaned_ids))
-        return json.loads(response.content)
-    except requests.exceptions.RequestException as e:
-        logger.exception('Error reaching GAIT service')
-        return []
+    response = requests.get(base_url + ','.join(cleaned_ids))
+    return json.loads(response.content)
 
 def get_dates_from_gait_response(gait_response):
     """take a gait response (from get_GAIT_data) and parse out start and end dates, return dict"""
@@ -168,6 +169,37 @@ def get_dates_from_gait_response(gait_response):
         'start_date': start_date,
         'end_date': end_date
     }
+
+def append_GAIT_dates(program):
+    if not program.gaitid:
+        return _('Program does not have a GAIT id')
+
+    try:
+        gait_data = get_GAIT_data([program.gaitid])
+    except requests.exceptions.RequestException as e:
+        logger.exception('Error reaching GAIT service')
+        # Translators: There was a network or server error trying to reach the GAIT service
+        return _('There was a problem connecting to the GAIT server.')
+
+    if len(gait_data) != 1:
+        # Translators: A request for {gait_id} to the GAIT server returned no results
+        return _('The GAIT ID {gait_id} could not be found.').format(
+            gait_id=program.gaitid)
+
+    dates = get_dates_from_gait_response(gait_data[0])
+    if not program.start_date:
+        program.start_date = dates['start_date']
+
+    if not program.end_date:
+        program.end_date = dates['end_date']
+    reporting_dates = get_reporting_dates(program)
+    if not program.reporting_period_start:
+        program.reporting_period_start = reporting_dates['reporting_period_start']
+
+    if not program.reporting_period_end:
+        program.reporting_period_end = reporting_dates['reporting_period_end']
+
+    return None
 
 def get_reporting_dates(program):
     """takes a program with start and end dates and returns default reporting_period start and end dates"""

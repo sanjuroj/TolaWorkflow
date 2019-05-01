@@ -148,36 +148,6 @@ body.loading {
     overflow: auto;
 }
 
-// paginate
-ul.paginate {
-    display: inline-block;
-    padding: 0;
-    margin: 0;
-    li {
-        display: inline;
-        a {
-            color: black;
-            float: left;
-            padding: 8px 16px;
-            text-decoration: none;
-            transition: background-color .3s;
-            border: 1px solid $gray-300;
-            &.active {
-                background-color: $green-450;
-                color: white;
-                border: 1px solid $green-450;// was: #4CAF50;
-            }
-            &:hover:not(.active) {
-                background-color: $gray-300;
-            }
-        }
-    }
-}
-.per_page {
-    float: right;
-    margin-right: 15px;
-}
-
 // Keep the picker on top of other elements
 .ui-datepicker{
     z-index: 10000 !important
@@ -269,6 +239,11 @@ select.listoption_filters {
     }
 }
 
+// hover effect for <a> tags without href attributes
+a:hover {
+    cursor: pointer;
+}
+
 // "add a thing" buttons
 // Leave off the 'btn' parent class for a non-bold, non-padded version
 .btn-add {
@@ -277,6 +252,39 @@ select.listoption_filters {
     //padding-right: 0.625rem;
     &:hover {
         color: $green-700;
+    }
+}
+
+// reset button
+// use with .btn as per usual
+.btn-reset {
+    background-color: $white;
+    color: $text-muted;
+    text-transform: uppercase;
+    &:hover {
+        color: darken($text-muted, 20%);
+        background-color: $gray-300;
+    }
+}
+
+// Button row
+// just a row of buttons without the special styling of btn-group
+// adds a little margin between buttons
+.btn-row {
+    .btn {
+        margin-left: $grid-gutter-width/4;
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+}
+
+// icons inside buttons
+.btn, .btn-add {
+    .svg-inline--fa {
+        display: inline-block;
+        margin-left: $grid-gutter-width/4;
+        margin-right: $grid-gutter-width/4;
     }
 }
 
@@ -295,9 +303,6 @@ select.listoption_filters {
     display: block;
     text-indent: -15px;
     margin-left: 15px;
-    .svg-inline--fa {
-        margin-right: 5px;
-    }
 }
 
 // conditional styling to hide modal titles in nonmodal contexts.
@@ -343,3 +348,4 @@ select.listoption_filters {
 .picker-dialog {
     z-index: 20001 !important;
 }
+

@@ -279,9 +279,11 @@
             </span>
             {% endif %}
         </div>
-        <div class="cd-actions__button{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
-            <a href="{% url 'result_add' program_id indicator.id %}" class="btn-link btn-add results__link"><i class="fas fa-plus-circle"></i> {% trans "Add result" %}</a>
-        </div>
+        {% if not readonly %}
+            <div class="cd-actions__button{% if indicator.target_frequency == None or err == 'Error_1' %} disable-span {% endif %}">
+                <a href="{% url 'result_add' indicator.id %}" class="btn-link btn-add results__link"><i class="fas fa-plus-circle"></i> {% trans "Add result" %}</a>
+            </div>
+        {% endif %}
     </div>
     {% else %}
     <div class="text-danger">

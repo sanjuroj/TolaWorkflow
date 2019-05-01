@@ -162,7 +162,7 @@ def target_percent_met_annotation():
                 models.Q(target=0) &
                 models.Q(actual__isnull=False)
             ),
-            then=models.Value(0)
+            then=models.Value(None)
         ),
         models.When(
             models.Q(

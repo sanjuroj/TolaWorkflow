@@ -9,19 +9,18 @@
     <p>{% trans "Standard disaggregations are entered by the administrator for the entire organizations.  If you are not seeing any here, please contact your system administrator." %}</p>
 {% else %}
     <fieldset class="">
-        <div
+        <a
+            href="#"
             id="disagg_toggle"
-            class="accordion-toggle btn btn-toggle btn-link"
+            class="is-accordion-toggle btn btn-link"
             data-toggle="collapse"
             data-target="#standardDisagg"
             aria-expanded="false"
             aria-controls="standardDisagg">
-            <!-- Need the div to make ensure rotating symbol doesn't push text to the right -->
-            <div class="div-expand-symbol"><i class="fas fa-caret-right"></i></div>
-            {% trans "Sex and Age Disaggregated Data (SADD)" %}
-            </div>
+            <i class="fas fa-caret-right"></i>{% trans "Sex and Age Disaggregated Data (SADD)" %}
+        </a>
         <div class="collapse" id="standardDisagg">
-            <table class="table table-sm table-hover table-striped">
+            <table class="table table-bordered table-sm table-hover table-striped">
                 <tr>
                     <th>{% trans "Disaggregation level" %}</th>
                     {% comment %}Translators: in the sense of "actual values"{% endcomment %}
@@ -34,6 +33,7 @@
                             <td>{{ item.disaggregation_label.label }}</td>
                             <td>
                                 <input type="number" min="0"
+                                    {% if readonly %}disabled="disabled"{% endif %}
                                     class="form-control form-control-sm"
                                     name="{{ item.disaggregation_label.id }}"
                                     value="{{ item.value }}">
@@ -47,6 +47,7 @@
                             <td>{{ item.label }}</td>
                             <td>
                                 <input type="number" min="0"
+                                    {% if readonly %}disabled="disabled"{% endif %}
                                     class="form-control form-control-sm"
                                     name="{{ item.id }}"
                                     value="">
@@ -63,16 +64,16 @@
     {# no custom disaggregations associated with this indicator.  current behavior: pass #}
 {% else %}
     <fieldset class="">
-        <div
-            class="accordion-toggle btn btn-toggle btn-link"
+        <a
+            href="#"
+            class="is-accordion-toggle btn btn-link"
             data-toggle="collapse"
             data-target="#customDisagg"
             aria-expanded="false"
             aria-controls="customDisagg">
-            <div class="div-expand-symbol"><i class="fas fa-caret-right"></i></div>
+            <i class="fas fa-caret-right"></i>{% trans "Custom disaggregations" %}
             {% comment %} These are "custom" in the sense that they are specific to this indicator{% endcomment %}
-            {% trans "Custom disaggregations" %}
-        </div>
+        </a>
         <div class="collapse" id="customDisagg">
             <table class="table table-sm table-hover table-striped">
                 <tr>
@@ -87,9 +88,10 @@
                             <td>{{ item.disaggregation_label.label }}</td>
                             <td>
                                 <input type="number" min="0"
-                                                     class="form-control form-controm-sm"
-                                                     name="{{ item.disaggregation_label.id }}"
-                                                     value="{{ item.value }}">
+                                    {% if readonly %}disabled="disabled"{% endif %}
+                                    class="form-control form-controm-sm"
+                                    name="{{ item.disaggregation_label.id }}"
+                                    value="{{ item.value }}">
                             </td>
                         </tr>
                     {% endfor %}
@@ -100,9 +102,10 @@
                         <td>{{ item.label }}</td>
                         <td>
                             <input type="number" min="0"
-                                                 class="form-control form-control-sm"
-                                                 name="{{ item.id }}"
-                                                 value="">
+                                {% if readonly %}disabled="disabled"{% endif %}
+                                class="form-control form-control-sm"
+                                name="{{ item.id }}"
+                                value="">
                         </td>
                     </tr>
                     {% endfor %}

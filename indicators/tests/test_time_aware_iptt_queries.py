@@ -181,8 +181,8 @@ class TestIndicatorInstance(test.TestCase):
         self.indicator = IndicatorFactory(name="testname", level=self.level)
 
     def tearDown(self):
-        self.level.delete()
         self.indicator.delete()
+        self.level.delete()
 
     def test_instances(self):
         indicators = IPTTIndicator.notargets.all()

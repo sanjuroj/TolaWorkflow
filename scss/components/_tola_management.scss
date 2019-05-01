@@ -1,0 +1,162 @@
+// This was the original scss from Parthenon
+// UNSORTED
+.edit-user-programs { // Program and Country access pane
+    // TODO: too specific?
+    .check-column {
+        text-align: center;
+    }
+
+    &__filter-form {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__select-all {
+        color: $blue !important;
+        font-weight: bold;
+        cursor: pointer
+    }
+
+    &__country-filter {
+        flex-basis: 50%;
+        margin-right: $grid-gutter-width/4;
+        > div { // React multiselect
+            width: 100%; // ... hates being flexed
+        }
+    }
+
+    &__program-filter {
+        flex-basis: 50%;
+        margin-left: $grid-gutter-width/4;
+        .input-group {
+            flex-grow: 1;
+        }
+    }
+
+    .input-group-text {
+        height: 100%;
+        cursor: pointer;
+    }
+}
+
+#organization-management-index-view {
+    // TODO: id, too specific
+    .edit-organization table {
+        width: 100%;
+        td {
+            vertical-align: top;
+        }
+    }
+}
+
+.icon {
+    // TODO: too general
+    &__clickable {
+        cursor: pointer;
+        color: $blue;
+    }
+
+    &__disabled {
+        opacity: 0.5;
+    }
+}
+
+
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+    $this: &;
+    &__container.loading {
+        position: relative;
+        height: auto;
+
+        #{$this}__overlay {
+            position: absolute;
+            top:0px;
+            left:0px;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            opacity: .2;
+            z-index: 10;
+        }
+        #{$this}__spinner {
+            position: relative;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 70px;
+            height: 70px;
+            left:50%;
+            top:50%;
+            -webkit-animation: spin 2s linear infinite; /* Safari */
+            animation: spin 2s linear infinite;
+        }
+    }
+}
+
+.objective-form-buttons {
+    display: flex;
+
+    .right-buttons {
+        margin-left: auto;
+    }
+}
+
+// accordions used only for disaggregations & SOs in admin lite
+// needs no styling
+// Similar to styling used on "Add Result" form
+.accordion-row {
+    &__content {
+    }
+    &__btn {
+        display: inline-block;
+        padding-left: 1.2rem;
+        text-align: left;
+        text-indent: -1.2rem;
+        white-space: normal;
+    }
+}
+
+.disaggregation-label-group {
+    display: flex;
+}
+
+.disaggregation-form-buttons {
+    display: flex;
+
+    .right-buttons {
+        margin-left: auto;
+    }
+}
+
+// expand/collapse toggles
+// TODO: Lots of overlap here with other implementations
+.expando-toggle {
+    display: flex;
+}
+.expando-toggle__icon {
+    flex-basis: 1em;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+.expando-toggle__label {
+    flex-grow: 1; // ?
+}
+
+
+
+// admin panes on individual edit items
+// TODO: this needs a parent class
+
+.admin-edit-pane {}

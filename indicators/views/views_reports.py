@@ -10,12 +10,15 @@ from django.utils import formats, timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
+from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Avg, Subquery, OuterRef, Case, When, Q, F, Max, Value, IntegerField
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, FormView
 from django.utils.translation import ugettext_lazy as _
+from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, PatternFill, Alignment
@@ -29,6 +32,10 @@ from ..forms import IPTTReportQuickstartForm, IPTTReportFilterForm, PinnedReport
 from ..templatetags.mytags import symbolize_change, symbolize_measuretype
 from indicators.queries import IPTTIndicator
 
+from tola_management.permissions import (
+    has_iptt_read_access,
+    verify_program_access_level
+)
 
 class IPTT_Mixin(object):
     """
@@ -460,11 +467,11 @@ class IPTT_Mixin(object):
                 else:
                     ind['lop_target'] = formatFloat(lop_target)
             except (ValueError, TypeError):
-                lop_target = u'—'
+                lop_target = u'N/A'
                 ind['lop_target'] = lop_target
 
             # process lop_actual
-            lop_actual = u'—'
+            lop_actual = u'N/A'
             percent = u''
             if ind['unit_of_measure_type'] == Indicator.NUMBER:
                 if ind['actualsum'] is not None:
@@ -476,7 +483,7 @@ class IPTT_Mixin(object):
             try:
                 ind['lop_actual'] = u"{}{}".format(formatFloat(lop_actual), percent)
             except TypeError:
-                ind['lop_actual'] = u'—'
+                ind['lop_actual'] = u'N/A'
 
             # process lop_percent_met
             try:
@@ -522,7 +529,7 @@ class IPTT_Mixin(object):
                     if actual_val is not None and actual_val != '':
                         ind[actual] = u"{}{}".format(formatFloat(actual_val), percent_sign)
                     else:
-                        ind[actual] = u'—'
+                        ind[actual] = u'N/A'
 
                     if reporttype == self.REPORT_TYPE_TARGETPERIODS:
                         # process target_period target value
@@ -619,7 +626,7 @@ class IPTT_Mixin(object):
 
         # get the program (url parameter)
         try:
-            self.program = Program.objects.get(pk=kwargs.get('program_id'))
+            self.program = Program.objects.get(pk=kwargs.get('program'))
         except Program.DoesNotExist:
             context['redirect'] = reverse_lazy('iptt_quickstart')
             messages.info(self.request, _("Please select a valid program."))
@@ -713,12 +720,14 @@ def set_cell_value(cell, value, percent=False):
     else:
         # more catches?
         value = str(value)
-    if percent and len(value) > 1 and value[-1] != '%' and value not in ['N/A', '—']:
+    if percent and len(value) > 1 and value[-1] != '%' and value not in ['N/A', 'N/A']:
         value = value + '%'
     cell.value = value
 
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(has_iptt_read_access, name='dispatch')
 class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
     # TODO: should be localize dates in the Excel format
     headers = ['Program ID', 'Indicator ID', 'No.', 'Indicator', 'Level', 'Unit of measure',
@@ -804,13 +813,16 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
             ws.cell(row=3, column=col).alignment = alignment
             ws.cell(row=3, column=col).font = headers_font
             if data['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
-                ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col + 2)                
+                ws.merge_cells(start_row=2, start_column=col, end_row=2, end_column=col + 2)
                 ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col + 2)
 
+                # Translators: The goal value the user wishes to reach
                 set_cell_value(ws.cell(row=4, column=col), _('Target'))
                 ws.cell(row=4, column=col).alignment = alignment_right
+                # Translators: The current value of the indicator
                 set_cell_value(ws.cell(row=4, column=col + 1), _('Actual'))
                 ws.cell(row=4, column=col + 1).alignment = alignment_right
+                # Translators: The ratio of the actual value to the target value as a precentage
                 set_cell_value(ws.cell(row=4, column=col + 2), _('% Met'))
                 ws.cell(row=4, column=col + 2).alignment = alignment_right
                 col_offset += 3
@@ -853,7 +865,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
             for c, period in enumerate(periods):
                 col = period_column_start + col_offset
                 if context['reporttype'] == self.REPORT_TYPE_TARGETPERIODS:
-                    set_cell_value(ws.cell(row=row, column=col), 
+                    set_cell_value(ws.cell(row=row, column=col),
                                    indicator.get(u'{0}_period_target'.format(period['customsort'])))
                     set_cell_value(ws.cell(row=row, column=col+1),
                                            indicator.get(u'{0}_actual'.format(period['customsort'])),
@@ -895,6 +907,7 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         return response
 
 
+@method_decorator(login_required, name='dispatch')
 class IPTT_ReportIndicatorsWithVariedStartDate(TemplateView):
     template_name = "indicators/iptt_indicators_varied_startdates.html"
 
@@ -925,6 +938,7 @@ class IPTT_ReportIndicatorsWithVariedStartDate(TemplateView):
         return self.render_to_response(context)
 
 
+@method_decorator(login_required, name='dispatch')
 class IPTTReportQuickstartView(FormView):
     template_name = 'indicators/iptt_quickstart.html'
     form_class = IPTTReportQuickstartForm
@@ -1001,7 +1015,7 @@ class IPTTReportQuickstartView(FormView):
         program = form.cleaned_data.get('program')
         num_recents = form.cleaned_data.get('numrecentperiods')
         timeframe = form.cleaned_data.get('timeframe')
-        redirect_url = reverse_lazy('iptt_report', kwargs={'program_id': program.id, 'reporttype': prefix})
+        redirect_url = reverse_lazy('iptt_report', kwargs={'program': program.id, 'reporttype': prefix})
 
         redirect_url = u"{}?{}={}&timeframe={}".format(redirect_url, prefix, period, timeframe)
         if num_recents:
@@ -1020,6 +1034,8 @@ class IPTTReportQuickstartView(FormView):
         return self.render_to_response(context)
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(has_iptt_read_access, name='dispatch')
 class IPTT_ReportView(IPTT_Mixin, TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
@@ -1046,9 +1062,10 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
     def post(self, request, *args, **kwargs):
         filterdata = request.POST.copy()
         # no need to include this token in querystring
-        del (filterdata['csrfmiddlewaretoken'])
+        if 'csrfmiddlewaretoken' in filterdata:
+            del (filterdata['csrfmiddlewaretoken'])
         url_kwargs = {
-            'program_id': filterdata['program'],
+            'program': filterdata['program'],
             'reporttype': kwargs['reporttype'],
         }
         # do not include it in the querystring because it is already part of the url kwargs
@@ -1067,66 +1084,17 @@ class IPTT_ReportView(IPTT_Mixin, TemplateView):
                                       filterdata.urlencode())
         return HttpResponseRedirect(redirect_url)
 
-class IPTT_CSVExport(IPTT_Mixin, TemplateView):
-    header_row = ["Program:"]
-    subheader_row = ['id', 'number', 'name', 'level_name', 'unit_of_measure', 'unit_of_measure_type',
-                     'sector', 'disaggregations', 'baseline', 'baseline_na', 'lop_target', 'target_frequency',
-                     'lop_sum', 'lop_target', 'lop_met']
-
-    def _update_filter_form_initial(self, formdata):
-        super(IPTT_CSVExport, self)._update_filter_form_initial(formdata)
-        default_values = {
-            'timeperiods': Indicator.MONTHLY,
-            'timeframe': 2,
-        }
-        default_values.update(self.filter_form_initial_data)
-        self.filter_form_initial_data = default_values
-
-    def get_context_data(self, **kwargs):
-        self.program = Program.objects.get(pk=kwargs.get('program_id'))
-        self.reporttype = kwargs['reporttype']
-        if self.reporttype == self.REPORT_TYPE_TIMEPERIODS:
-            end_date, all_date_ranges, periods_date_ranges = self._generate_timeperiods(
-            self.program.reporting_period_start,
-            self.program.reporting_period_end,
-            Indicator.MONTHLY, None, None)
-            indicators = IPTTIndicator.notargets.filter(program_id=self.program.id).period(Indicator.MONTHLY)
-        context = {
-            'program': self.program,
-            'indicators': indicators,
-            'report_date_ranges': periods_date_ranges
-        }
-        return context
-
-    def get_indicator_row(self, indicator, timeperiods):
-        row = []
-        for field in self.subheader_row:
-            value = getattr(indicator, field, 'N/A')
-            value = value if value is not None else 'N/A'
-            row.append(value)
-        for timeperiod in timeperiods:
-            row.append(getattr(indicator, u"{}_sum".format(timeperiod), 'N/A'))
-        return row
-
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        header_row = self.header_row + [self.program.name] + [''] * (len(self.subheader_row)-2)
-        header_row.extend(context['report_date_ranges'].keys())
-        subheader_row = self.subheader_row + ['Actual'] * len(context['report_date_ranges'].keys())
-        response = HttpResponse(content_type="text/csv")
-        writer = csv.writer(response)
-        writer.writerow(header_row)
-        writer.writerow(subheader_row)
-        for indicator in context['indicators']:
-            writer.writerow(self.get_indicator_row(indicator, context['report_date_ranges']))
-        return response
-
-
+@login_required
 @require_POST
 def create_pinned_report(request):
     """
     AJAX call for creating a PinnedReport
     """
+    try:
+        program = Program.objects.get(pk=request.POST.get('program'))
+    except Program.DoesNotExist:
+        return HttpResponseBadRequest('program does not exist')
+    verify_program_access_level(request, request.POST.get('program'), 'low', super_admin_override=True)
     form = PinnedReportForm(request.POST)
     if form.is_valid():
         pr = form.save(commit=False)
@@ -1138,11 +1106,14 @@ def create_pinned_report(request):
     return HttpResponse()
 
 
+@login_required
 @require_POST
 def delete_pinned_report(request):
     """
     AJAX call for deleting a PinnedReport
     """
-    pinned_report_id = request.POST.get('pinned_report_id')
-    PinnedReport.objects.filter(id=pinned_report_id, tola_user_id=request.user.tola_user.id).delete()
+    pinned_report = get_object_or_404(PinnedReport, pk=request.POST.get('pinned_report_id'),
+                                       tola_user_id=request.user.tola_user.id)
+    verify_program_access_level(request, pinned_report.program.pk, 'low', super_admin_override=True)
+    pinned_report.delete()
     return HttpResponse()

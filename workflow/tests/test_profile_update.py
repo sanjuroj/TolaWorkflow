@@ -1,7 +1,7 @@
 from django import test
 from django.urls import reverse
 
-from factories import UserFactory, TolaUserFactory, CountryFactory
+from factories import UserFactory, TolaUserFactory, CountryFactory, CountryAccessFactory
 
 
 class TestProfileUpdates(test.TestCase):
@@ -16,7 +16,9 @@ class TestProfileUpdates(test.TestCase):
         self.user.set_password('password')
         self.user.save()
         self.tola_user = TolaUserFactory(user=self.user, country=self.usa)
-        self.tola_user.countries.add(self.afghanistan, self.usa)
+        self.af_access = CountryAccessFactory(country=self.afghanistan, tolauser=self.tola_user)
+        self.us_access = CountryAccessFactory(country=self.usa, tolauser=self.tola_user)
+        self.tola_user.countryaccess_set.add(self.af_access, self.us_access)
         self.tola_user.save()
 
         self.countries_assigned = {self.afghanistan.id, self.usa.id}

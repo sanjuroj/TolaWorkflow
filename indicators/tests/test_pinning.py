@@ -373,7 +373,7 @@ class TestDeletePinnedReportAPI(PinnedReportTestCase):
 
         response = self.client.post(reverse('delete_pinned_report'), data=data)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
 
         # nothing deleted!
         self.assertEquals(models.PinnedReport.objects.count(), 1)

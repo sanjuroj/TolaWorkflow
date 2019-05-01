@@ -1,12 +1,15 @@
 {% load i18n %}
 
+{% if countries %}
 <select class="" id="goto-country-program" style="display: none">
     <option value=""></option>
+    {% if countries %}
     <optgroup label="{% trans 'Countries' %}">
         {% for country in countries %}
             <option value="{% url 'index' country.id %}" class="">{{ country }}</option>
         {% endfor %}
     </optgroup>
+    {% endif %}
 
     {% for country_name, programs in programs_by_country.items %}
         <optgroup label="{{ country_name }}">
@@ -80,7 +83,7 @@
         $('#goto-country-program').select2({
             width: '300',
             theme: 'dark',
-            placeholder: '{% trans "Program or country…" %}',
+            placeholder: '{% trans "Program or country" %}',
             matcher: modelMatcher,
             // built-in translation files can be used instead if re-use becomes important
             language: {
@@ -98,3 +101,4 @@
         $('#goto-country-program').show();
     });
 </script>
+{% endif %}

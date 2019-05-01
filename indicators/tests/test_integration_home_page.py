@@ -58,6 +58,9 @@ class TestHomepageViewContext(test.TestCase):
             country="Inactive",
             code="IT"
         )
+        country_access_active = w_factories.CountryAccessFactory(country=active_country, tolauser=self.tola_user)
+        country_access_inactive = w_factories.CountryAccessFactory(country=inactive_country, tolauser=self.tola_user)
+        self.tola_user.countryaccess_set.add(country_access_active, country_access_inactive)
         self.tola_user.active_country = active_country
         self.tola_user.save()
         active_program = w_factories.ProgramFactory(
@@ -86,6 +89,8 @@ class TestHomepageViewContext(test.TestCase):
             country="Active",
             code="AT",
         )
+        country_access_active = w_factories.CountryAccessFactory(country=active_country, tolauser=self.tola_user)
+        self.tola_user.countryaccess_set.add(country_access_active)
         self.tola_user.active_country = active_country
         self.tola_user.save()
         two_id, one_id, zero_id = get_programs_for_country(active_country)
