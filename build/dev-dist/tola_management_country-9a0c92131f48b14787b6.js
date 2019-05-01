@@ -2794,7 +2794,7 @@ function (_React$Component2) {
       var expanded_id = this.state.expanded_id;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "tab-pane--react"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Country Disaggregations"), disaggregations.map(function (disaggregation) {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, gettext('Country Disaggregations')), disaggregations.map(function (disaggregation) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DisaggregationType, {
           key: disaggregation.id,
           disaggregation: disaggregation,
@@ -3117,4 +3117,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-6f9b060d85ff8abf8e5e.js.map
+//# sourceMappingURL=tola_management_country-9a0c92131f48b14787b6.js.map

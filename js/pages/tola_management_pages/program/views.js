@@ -130,12 +130,12 @@ class BulkActions extends React.Component {
             </div>
             {selected &&
             <div className="bulk__select">
-                <SecondaryComponent value={this.state.current_vals} onChange={(vals) => this.onChange(vals)}/>
+                <SecondaryComponent placeholder={gettext("Select...")} value={this.state.current_vals} onChange={(vals) => this.onChange(vals)}/>
             </div>
             }
             {!selected &&
             <div className="bulk__select">
-                <Select placeholder="---"/>
+                <Select placeholder="---"  noOptionsMessage={() => gettext('No options')}/>
             </div>
             }
             <button className="btn btn-secondary" disabled={!this.state.current_action} onClick={() => this.onApply()}>{gettext("Apply")}</button>
@@ -297,7 +297,7 @@ export const IndexView = observer(
                                         { organizationColumn(data)}
                                     </Col>
                                     <Col className="text-nowrap">
-                                        {data.program_users ? <a href={`/tola_management/user/?programs[]=${data.id}`}><i className="fas fa-users"/>&nbsp;{data.program_users} users</a> : '---'  }
+                                        {data.program_users ? <a href={`/tola_management/user/?programs[]=${data.id}`}><i className="fas fa-users"/>&nbsp;{data.program_users} {gettext("users")}</a> : '---'  }
                                     </Col>
                                     <Col>{fundingStatusDisplayStr(data.funding_status)}</Col>
                                 </Row>

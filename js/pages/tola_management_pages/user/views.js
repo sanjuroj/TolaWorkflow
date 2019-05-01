@@ -151,12 +151,12 @@ class BulkActions extends React.Component {
             </div>
             {selected &&
             <div className="bulk__select">
-                <SecondaryComponent value={this.state.current_vals} onChange={(vals) => this.onChange(vals)}/>
+                <SecondaryComponent placeholder={gettext("Select...")} value={this.state.current_vals} onChange={(vals) => this.onChange(vals)}/>
             </div>
             }
             {!selected &&
             <div className="bulk__select">
-                <Select placeholder="---"/>
+                <Select placeholder="---" noOptionsMessage={() => gettext('No options')}/>
             </div>
             }
             <button className="btn btn-secondary" disabled={apply_disabled} onClick={() => this.onApply()}>{gettext('Apply')}</button>
