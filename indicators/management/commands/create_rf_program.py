@@ -3,7 +3,7 @@
 import datetime
 import itertools
 import random
-from workflow.models import Program, Country, Organization, Sector, TolaUser
+from workflow.models import Program, Country, Organization, Sector, TolaUser, CountryAccess
 from indicators.models import LevelTier, Level, Indicator, IndicatorType
 from django.core.management.base import BaseCommand
 
@@ -120,11 +120,13 @@ class Command(BaseCommand):
             'Cameron McFee',
         ]
         for user_name in users:
-            tola_user = TolaUser.objects.filter(name=user_name)
-            if tola_user.count() > 0:
-                tola_user = tola_user.first()
-                tola_user.countries.add(tolaland)
-                tola_user.save()
+            tola_users = TolaUser.objects.filter(name=user_name)
+            if tola_users.count() > 0:
+                CountryAccess.objects.create(
+                    tolauser=tola_users.first(),
+                    country_id=tolaland.id,
+                    role='basic_admin'
+                )
         old_program = Program.objects.filter(name='RF Program - Mercy Corps Framework')
         if old_program.count() == 1:
             old_program.first().delete()
