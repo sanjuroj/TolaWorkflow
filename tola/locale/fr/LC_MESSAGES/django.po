@@ -356,7 +356,7 @@ msgstr "Créer un rendez-vous"
 #: indicators/models.py:283 indicators/models.py:669 indicators/models.py:856
 #: indicators/models.py:1158 workflow/models.py:95 workflow/models.py:153
 msgid "Edit date"
-msgstr "Date d'édition"
+msgstr "Date d’édition"
 
 #: indicators/models.py:64 indicators/models.py:470
 msgid "Indicator type"
@@ -572,7 +572,7 @@ msgstr "C/NC"
 
 #: indicators/models.py:563
 msgid "First event name"
-msgstr "Premier nom de l'événement"
+msgstr "Premier nom de l’événement"
 
 #: indicators/models.py:568
 msgid "First target period begins*"
@@ -1124,7 +1124,7 @@ msgid ""
 "You are authenticated as %(username)s, but are not authorized to access this "
 "page. Would you like to log in to a different account?"
 msgstr ""
-"Vous êtes connecté en tant que %(username)s, mais vous n'êtes pas autorisé à "
+"Vous êtes connecté en tant que %(username)s, mais vous n’êtes pas autorisé à "
 "accéder à cette page. Souhaitez-vous vous connecter à un autre compte ?"
 
 #: templates/admin/login.html:60
@@ -1292,7 +1292,7 @@ msgstr "Erreur de requête réseau inconnue"
 #: templates/base.html:298
 msgid "Sorry, you do not have permission to perform this action."
 msgstr ""
-"Nous sommes désolés, vous n'êtes pas autorisé à réaliser cette opération."
+"Nous sommes désolés, vous n’êtes pas autorisé à réaliser cette opération."
 
 #: templates/contact.html:15
 msgid ""
@@ -1326,7 +1326,7 @@ msgstr "Sites sans résultats"
 
 #: templates/home.html:39
 msgid "Monitoring and Evaluation Status"
-msgstr "Statut de suivi et d'évaluation"
+msgstr "Statut de suivi et d’évaluation"
 
 #: templates/home.html:40
 msgid "Are programs trackable and backed up with evidence?"
@@ -1479,11 +1479,11 @@ msgid ""
 msgstr ""
 "\n"
 "    <p>\n"
-"        Vous n'êtes pas autorisé à visionner ces programmes. Vous pouvez en "
+"        Vous n’êtes pas autorisé à visionner ces programmes. Vous pouvez en "
 "obtenir l´autorisation en contactant votre administrateur TolaData.\n"
 "    </p>\n"
 "    <p>\n"
-"        Vous pouvez également contacter l'équipe de TolaData en utilisant le "
+"        Vous pouvez également contacter l’équipe de TolaData en utilisant le "
 "<a href=\"https://docs.google.com/forms/d/"
 "e/1FAIpQLSclm2PAT9TJ9q23TT6YWQg6hj3EndUAdyF5k6kvNJHu6njNtw/viewform"
 "\">formulaire de commentaires.</a>\n"
@@ -1660,7 +1660,7 @@ msgstr "Hors ligne (aucune carte fournie)"
 #: templates/indicators/dashboard.html:6
 msgid "Dashboard report on indicator status by Country and Program"
 msgstr ""
-"Rapport de tableau de bord sur l'état des indicateurs par pays et par "
+"Rapport de tableau de bord sur l’état des indicateurs par pays et par "
 "programme"
 
 #: templates/indicators/disaggregation_print.html:5
@@ -1875,7 +1875,7 @@ msgstr "Succès"
 #, fuzzy
 #| msgid "First event name"
 msgid "Enter event name"
-msgstr "Premier nom de l'événement"
+msgstr "Premier nom de l’événement"
 
 #: templates/indicators/indicator_form_common_js.html:361
 #: templates/indicators/indicatortargets.html:63
@@ -1925,7 +1925,7 @@ msgstr "Veuillez compléter ce champ."
 
 #: templates/indicators/indicator_form_common_js.html:717
 msgid "You can start with up to 12 targets and add more later."
-msgstr "Vous pouvez commencer avec jusqu'à 12 cibles et en ajouter plus tard."
+msgstr "Vous pouvez commencer avec jusqu’à 12 cibles et en ajouter plus tard."
 
 #: templates/indicators/indicator_form_common_js.html:772
 msgid ""
@@ -2060,7 +2060,7 @@ msgid ""
 "the Grant and Award Information Tracker (GAIT) system. The program period "
 "may be adjusted to align with the program’s indicator plan."
 msgstr ""
-"La période de déclaration du programme est utilisée dans l'établissement des "
+"La période de déclaration du programme est utilisée dans l’établissement des "
 "cibles périodiques et dans les tableaux de suivi des performances des "
 "indicateurs (IPTT). TolaActivity définit initialement la période de "
 "déclaration pour inclure les dates de début et de fin officielles du "
@@ -2096,7 +2096,7 @@ msgid ""
 "on the last day of the month. Please note that the program start date can "
 "only be adjusted <span class=\"color-red\">before periodic targets are set "
 "up and a program begins submitting performance results.</span> The program "
-"end date can be moved later at any time, but can't be moved earlier once "
+"end date can be moved later at any time, but can’t be moved earlier once "
 "periodic targets are set up.\n"
 "                                "
 msgstr ""
@@ -2145,7 +2145,7 @@ msgid ""
 "team."
 msgstr ""
 "Erreur. Impossible de récupérer les données à partir du serveur. Veuillez le "
-"signaler à l'équipe de Tola."
+"signaler à l’équipe de Tola."
 
 #: templates/indicators/indicator_reportingperiod_modal.html:301
 #: templates/indicators/indicator_reportingperiod_modal.html:309
@@ -2840,7 +2840,7 @@ msgstr ""
 #: templates/indicators/tags/gauge-band.html:81
 msgid "Unavailable until the first target period ends with results reported."
 msgstr ""
-"Indisponible jusqu'à la fin de la première période cible avec publication "
+"Indisponible jusqu’à la fin de la première période cible avec publication "
 "des résultats."
 
 #: templates/indicators/tags/program-complete.html:5
@@ -2996,7 +2996,7 @@ msgid ""
 msgstr ""
 "\n"
 "            Contactez votre administrateur TolaData ou <a href=\"mailto:"
-"tola@mercycorps.org\">envoyez un e-mail à l'équipe TolaData.</a>\n"
+"tola@mercycorps.org\">envoyez un e-mail à l’équipe TolaData.</a>\n"
 "            "
 
 #: templates/registration/password_reset_complete.html:4
@@ -3138,7 +3138,7 @@ msgstr ""
 "général, cela se produit lorsque vous cliquez sur le lien « oubli du mot de "
 "passe ».\n"
 "\n"
-"Si vous n'êtes pas à l´origine de cette demande, vous pouvez ignorer cet e-"
+"Si vous n’êtes pas à l´origine de cette demande, vous pouvez ignorer cet e-"
 "mail.\n"
 "\n"
 "Si vous souhaitez modifier votre mot de passe, veuillez cliquer sur le lien "
@@ -3158,7 +3158,7 @@ msgstr ""
 "navigateur.\n"
 "\n"
 "Merci,\n"
-"l'équipe Mercy Corps\n"
+"l’équipe Mercy Corps\n"
 
 #: templates/registration/password_reset_form.html:10
 msgid ""
@@ -3593,7 +3593,7 @@ msgstr "Impossible de trouver l´ID GAIT {gait_id}."
 
 #: tola/views.py:86
 msgid "You are not logged in."
-msgstr "Vous n'êtes pas connecté."
+msgstr "Vous n’êtes pas connecté."
 
 #: tola/views.py:130
 msgid "Your profile has been updated."
@@ -3819,12 +3819,12 @@ msgstr "Ce champ doit être unique"
 #: tola_management/views.py:374
 msgid "Only superusers can create Mercy Corps staff profiles."
 msgstr ""
-"Seul les super-utilisateurs peuvent créer des profils d'équipe Mercy Corps."
+"Seul les super-utilisateurs peuvent créer des profils d’équipe Mercy Corps."
 
 #: tola_management/views.py:410
 msgid "Only superusers can edit Mercy Corps staff profiles."
 msgstr ""
-"Seul les super-utilisateurs peuvent modifier des profils d'équipe Mercy "
+"Seul les super-utilisateurs peuvent modifier des profils d’équipe Mercy "
 "Corps."
 
 #: workflow/forms.py:1303
@@ -4717,7 +4717,7 @@ msgstr "Décrivez le projet que vous aimeriez que le programme considère"
 
 #: workflow/models.py:1401 workflow/models.py:1572
 msgid "Last Edit Date"
-msgstr "Dernière date d'édition"
+msgstr "Dernière date d’édition"
 
 #: workflow/models.py:1483
 msgid "Expected start date"
