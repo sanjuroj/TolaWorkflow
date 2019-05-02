@@ -1146,6 +1146,7 @@ msgstr ""
 " de nouveaux outils d´administration améliorés au sein de TolaActivity. "
 "Veuillez accéder à TolaActivity et rechercher la section\n"
 " Administrateur.\n"
+"    "
 
 #: templates/base.html:82
 msgid "Browse"
