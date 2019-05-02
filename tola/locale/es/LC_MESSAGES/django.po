@@ -439,8 +439,6 @@ msgid "Reporting Period"
 msgstr "Período de información"
 
 #: indicators/models.py:260
-#, fuzzy
-#| msgid "Feed url"
 msgid "Feed URL"
 msgstr "URL de la fuente"
 
@@ -793,8 +791,6 @@ msgid "Record name"
 msgstr "Nombre de agencia"
 
 #: indicators/models.py:1155
-#, fuzzy
-#| msgid "Evidence Url"
 msgid "Evidence URL"
 msgstr "URL de la Evidencia"
 
@@ -1115,10 +1111,7 @@ msgid "Please correct the errors below."
 msgstr "Por favor corrija los siguientes errores."
 
 #: templates/admin/login.html:40
-#, fuzzy, python-format
-#| msgid ""
-#| "You are authenticated as %(username)s, but are not authorized to access "
-#| "this page. Would you like to login to a different account?"
+#, python-format
 msgid ""
 "You are authenticated as %(username)s, but are not authorized to access this "
 "page. Would you like to log in to a different account?"
@@ -2858,13 +2851,7 @@ msgid "Log in with a username and password"
 msgstr "Ingresar con usuario y contraseña"
 
 #: templates/registration/login.html:40
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "                <p>Please enter a correct username and password. Note "
-#| "that both fields may be case-sensitive. Did you forgot your password? <a "
-#| "href=\"%(password_reset_url)s\">Click here to reset it.</a></p>\n"
-#| "                "
+#, python-format
 msgid ""
 "\n"
 "                <p>Please enter a correct username and password. Note that "
@@ -3039,19 +3026,14 @@ msgid "Collected Indicator Data Site"
 msgstr "Sitio de datos del indicador recopilados"
 
 #: templates/validation_js.html:17
-#, fuzzy
-#| msgid ""
-#| "Warning: This may be a badly formatted web address. It should be "
-#| "something like 'https://domain.com/path/to/file' or 'https://docs.google."
-#| "com/spreadsheets/d/OIjwljwoihgIHOEies'"
 msgid ""
 "Warning: This may be a badly formatted web address. It should be something "
 "like https://domain.com/path/to/file or https://docs.google.com/spreadsheets/"
 "d/OIjwljwoihgIHOEies"
 msgstr ""
 "Advertencia: Esta dirección web podría tener un formato incorrecto. Debería "
-"ser algo como \\’https://dominio.com/camino/al/archivo' o 'https://docs."
-"google.com/spreadsheets/d/OIjwljwoihgIHOEies'"
+"ser algo como ‘https://dominio.com/camino/al/archivo’ o ‘https://docs."
+"google.com/spreadsheets/d/OIjwljwoihgIHOEies’"
 
 #: templates/validation_js.html:26
 msgid ""
