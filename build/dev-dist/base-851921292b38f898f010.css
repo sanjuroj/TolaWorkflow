@@ -8275,6 +8275,10 @@ span[data-toggle="popover"]:hover {
   margin-top: 7.5px;
   padding-inline-start: 1rem; }
 
+input[type=checkbox]:disabled,
+input[type=radio]:disabled {
+  opacity: 0.7; }
+
 .nav-tabs {
   margin-bottom: 15px; }
   .nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
@@ -9272,4 +9276,4 @@ a:hover {
 /* Unsorted custom selectors */
 
 
-/*# sourceMappingURL=base-323e9ff4a51292ba7c23.css.map*/
+/*# sourceMappingURL=base-851921292b38f898f010.css.map*/
