@@ -473,7 +473,8 @@ export class RootStore {
         }
         this.setStartPeriod(params.start);
         this.setEndPeriod(params.end);
-        this.levelGrouping = params.groupby;
+        this.levelGrouping = params.groupby || 0;
+        this.updateUrl('groupby', this.levelGrouping);
         if (reload) {
             router.navigate(router.getState().name, params, {reload: true});
         }
