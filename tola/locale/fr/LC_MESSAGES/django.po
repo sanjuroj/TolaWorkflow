@@ -3155,19 +3155,14 @@ msgid "Collected Indicator Data Site"
 msgstr "Site de données des indicateurs collectés"
 
 #: templates/validation_js.html:17
-#, fuzzy
-#| msgid ""
-#| "Warning: This may be a badly formatted web address. It should be "
-#| "something like \\'https://domain.com/path/to/file\\' or \\'https://docs."
-#| "google.com/spreadsheets/d/OIjwljwoihgIHOEies\\'"
 msgid ""
 "Warning: This may be a badly formatted web address. It should be something "
 "like https://domain.com/path/to/file or https://docs.google.com/spreadsheets/"
 "d/OIjwljwoihgIHOEies"
 msgstr ""
 "Avertissement : Cette adresse Web semble ne pas être formatée correctement. "
-"Elle devrait être au format : \\'https://domain.com/path/to/file\\' or "
-"\\'https://docs.google.com/spreadsheets/d/OIjwljwoihgIHOEies\\'"
+"Elle devrait être au format : «https://domain.com/path/to/file» or "
+"«https://docs.google.com/spreadsheets/d/OIjwljwoihgIHOEies»"
 
 #: templates/validation_js.html:26
 msgid ""
