@@ -8439,6 +8439,10 @@ span[data-toggle="popover"]:hover {
   height: 50vh;
   margin-bottom: 15px; }
 
+.ReactVirtualized__Table__headerRow {
+  font-size: 0.875rem;
+  text-transform: none !important; }
+
 .ReactVirtualized__Table__Grid {
   background-color: #fff;
   border: 1px solid #dbdcde; }
@@ -9268,4 +9272,4 @@ a:hover {
 /* Unsorted custom selectors */
 
 
-/*# sourceMappingURL=base-a88d8870c56a5047e8c0.css.map*/
+/*# sourceMappingURL=base-323e9ff4a51292ba7c23.css.map*/
