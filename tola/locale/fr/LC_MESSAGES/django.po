@@ -1872,10 +1872,8 @@ msgid "Success"
 msgstr "Succès"
 
 #: templates/indicators/indicator_form_common_js.html:351
-#, fuzzy
-#| msgid "First event name"
 msgid "Enter event name"
-msgstr "Premier nom de l’événement"
+msgstr "Entrer le nom de l’événement"
 
 #: templates/indicators/indicator_form_common_js.html:361
 #: templates/indicators/indicatortargets.html:63
@@ -1899,10 +1897,8 @@ msgid "View your indicator on the program page."
 msgstr "Visualisez vos indicateurs sur la page du programme."
 
 #: templates/indicators/indicator_form_common_js.html:588
-#, fuzzy
-#| msgid "Number of Members"
 msgid "Number of events"
-msgstr "Nombre de membres"
+msgstr "Nombre d’événements"
 
 #: templates/indicators/indicator_form_common_js.html:651
 #: templates/indicators/indicator_form_common_js.html:653
@@ -2046,13 +2042,6 @@ msgstr ""
 "statistiques du programme"
 
 #: templates/indicators/indicator_reportingperiod_modal.html:22
-#, fuzzy
-#| msgid ""
-#| "The program period is used in the setup of periodic targets and in "
-#| "Indicator Performance Tracking Tables (IPTT). TolaActivity initially sets "
-#| "the program period to include the program's official start and end dates, "
-#| "as recorded in the Grant and Award Information Tracker (GAIT) system. The "
-#| "program period may be adjusted to align with the program's indicator plan."
 msgid ""
 "The program period is used in the setup of periodic targets and in Indicator "
 "Performance Tracking Tables (IPTT). TolaActivity initially sets the program "
@@ -2416,10 +2405,6 @@ msgstr ""
 
 #. Translators: Explains why some target periods are not included in a certain calculation
 #: templates/indicators/program_target_period_info_helptext.html:11
-#, fuzzy
-#| msgid ""
-#| "Only completed target periods are included in the indicators on "
-#| "track calculations."
 msgid ""
 "Only completed target periods are included in the “indicators on "
 "track” calculations."
@@ -2792,16 +2777,7 @@ msgstr ""
 
 #. Translators: Help text explaining what an "on track" indicator is.
 #: templates/indicators/tags/gauge-band.html:63
-#, fuzzy, python-format
-#| msgid ""
-#| "The actual value matches the target value, plus or minus 15%%. So if your "
-#| "target is 100 and your result is 110, the indicator is 10%% above target "
-#| "and on track.  <br><br>Please note that if your indicator has a "
-#| "decreasing direction of change, then above and below are switched. In "
-#| "that case, if your target is 100 and your result is 200, your indicator "
-#| "is 50%% below target and not on track.<br><br><a href='https://docs."
-#| "google.com/document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' "
-#| "target='_blank'>See our documentation for more information.</a>"
+#, python-format
 msgid ""
 "The actual value matches the target value, plus or minus 15%%. So if your "
 "target is 100 and your result is 110, the indicator is 10%% above target and "

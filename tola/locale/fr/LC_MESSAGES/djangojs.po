@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-01 19:48-0700\n"
+"POT-Creation-Date: 2019-05-02 10:20-0700\n"
 "PO-Revision-Date: 2018-12-20 13:56-0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -52,19 +52,29 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: js/base.js:401
+#. Translators: Button to approve a form
+#: js/base.js:356 js/base.js:455 js/base.js:505 js/base.js:549
+msgid "Ok"
+msgstr "Confirmer"
+
+#. Translators: Button to cancel a form submission
+#: js/base.js:358 js/base.js:457 js/base.js:507 js/base.js:551
+msgid "Cancel"
+msgstr "Annuler"
+
+#: js/base.js:403
 msgid "A reason is required."
 msgstr "Une justification est nécessaire."
 
-#: js/base.js:460 js/base.js:548
+#: js/base.js:464 js/base.js:556
 msgid "This action cannot be undone."
 msgstr "Cette action est irréversible."
 
-#: js/base.js:464 js/base.js:552
+#: js/base.js:468 js/base.js:560
 msgid "Warning"
 msgstr "Attention"
 
-#: js/base.js:508 js/pages/tola_management_pages/audit_log/views.js:132
+#: js/base.js:514 js/pages/tola_management_pages/audit_log/views.js:132
 msgid "Reason for change"
 msgstr "Justification de la modification"
 
@@ -833,7 +843,8 @@ msgstr ""
 #. Translators: Notify user that the program start and end date failed to be retrieved from the GAIT service with a specific reason appended after the :
 #: js/pages/tola_management_pages/program/models.js:204
 msgid "Failed to sync GAIT program start and end dates: "
-msgstr "Échec de la synchronisation des dates de début et de fin du programme GAIT :"
+msgstr ""
+"Échec de la synchronisation des dates de début et de fin du programme GAIT :"
 
 #. Translators: A request failed, ask the user if they want to try the request again
 #: js/pages/tola_management_pages/program/models.js:212
@@ -872,10 +883,8 @@ msgstr "Actions groupées"
 
 #: js/pages/tola_management_pages/program/views.js:133
 #: js/pages/tola_management_pages/user/views.js:154
-#, fuzzy
-#| msgid "Select All"
 msgid "Select..."
-msgstr "Tout sélectionner"
+msgstr "Sélectionnez..."
 
 #: js/pages/tola_management_pages/program/views.js:138
 #: js/pages/tola_management_pages/user/views.js:159
