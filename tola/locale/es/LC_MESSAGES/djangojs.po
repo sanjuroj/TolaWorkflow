@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-05-02 10:20-0700\n"
-"PO-Revision-Date: 2019-05-01 19:35-0700\n"
+"PO-Revision-Date: 2019-05-02 11:26-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -30,7 +30,7 @@ msgid "This action cannot be undone"
 msgstr "Advertencia: esta acción no se puede deshacer"
 
 #: js/base.js:335
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "Removing this target means that %s result will no longer have targets "
 "associated with it."
