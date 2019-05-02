@@ -1023,17 +1023,9 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(EditUserProfile).call(this, props));
     var userData = props.userData;
-
-    var organization_listing = function () {
-      if (props.new) {
-        return props.organizations.filter(function (o) {
-          return o.value != 1 || props.is_superuser;
-        });
-      } else {
-        return props.organizations;
-      }
-    }();
-
+    var organization_listing = props.organizations.filter(function (o) {
+      return o.value != 1 || props.is_superuser;
+    });
     var selected_organization = organization_listing.find(function (o) {
       return o.value == userData.organization_id;
     });
@@ -4360,4 +4352,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-c9e285abcdadb4d43bcb.js.map
+//# sourceMappingURL=tola_management_user-8466dcc9b65315c252bc.js.map
