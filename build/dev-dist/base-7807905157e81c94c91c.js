@@ -366,9 +366,9 @@ var create_changeset_notice = function create_changeset_notice() {
       _ref$on_cancel = _ref.on_cancel,
       on_cancel = _ref$on_cancel === void 0 ? function () {} : _ref$on_cancel,
       _ref$confirm_text = _ref.confirm_text,
-      confirm_text = _ref$confirm_text === void 0 ? 'Ok' : _ref$confirm_text,
+      confirm_text = _ref$confirm_text === void 0 ? gettext('Ok') : _ref$confirm_text,
       _ref$cancel_text = _ref.cancel_text,
-      cancel_text = _ref$cancel_text === void 0 ? 'Cancel' : _ref$cancel_text,
+      cancel_text = _ref$cancel_text === void 0 ? gettext('Cancel') : _ref$cancel_text,
       _ref$type = _ref.type,
       type = _ref$type === void 0 ? 'notice' : _ref$type,
       _ref$inner = _ref.inner,
@@ -476,9 +476,9 @@ window.create_destructive_changeset_notice = function () {
       _ref2$is_indicator = _ref2.is_indicator,
       is_indicator = _ref2$is_indicator === void 0 ? false : _ref2$is_indicator,
       _ref2$confirm_text = _ref2.confirm_text,
-      confirm_text = _ref2$confirm_text === void 0 ? 'Ok' : _ref2$confirm_text,
+      confirm_text = _ref2$confirm_text === void 0 ? gettext('Ok') : _ref2$confirm_text,
       _ref2$cancel_text = _ref2.cancel_text,
-      cancel_text = _ref2$cancel_text === void 0 ? 'Cancel' : _ref2$cancel_text,
+      cancel_text = _ref2$cancel_text === void 0 ? gettext('Cancel') : _ref2$cancel_text,
       _ref2$context = _ref2.context,
       context = _ref2$context === void 0 ? null : _ref2$context,
       _ref2$no_preamble = _ref2.no_preamble,
@@ -522,9 +522,9 @@ window.create_nondestructive_changeset_notice = function () {
       _ref3$is_indicator = _ref3.is_indicator,
       is_indicator = _ref3$is_indicator === void 0 ? false : _ref3$is_indicator,
       _ref3$confirm_text = _ref3.confirm_text,
-      confirm_text = _ref3$confirm_text === void 0 ? 'Ok' : _ref3$confirm_text,
+      confirm_text = _ref3$confirm_text === void 0 ? gettext('Ok') : _ref3$confirm_text,
       _ref3$cancel_text = _ref3.cancel_text,
-      cancel_text = _ref3$cancel_text === void 0 ? 'Cancel' : _ref3$cancel_text,
+      cancel_text = _ref3$cancel_text === void 0 ? gettext('Cancel') : _ref3$cancel_text,
       _ref3$context = _ref3.context,
       context = _ref3$context === void 0 ? null : _ref3$context;
 
@@ -557,9 +557,9 @@ window.create_no_rationale_changeset_notice = function () {
       _ref4$is_indicator = _ref4.is_indicator,
       is_indicator = _ref4$is_indicator === void 0 ? false : _ref4$is_indicator,
       _ref4$confirm_text = _ref4.confirm_text,
-      confirm_text = _ref4$confirm_text === void 0 ? 'Ok' : _ref4$confirm_text,
+      confirm_text = _ref4$confirm_text === void 0 ? gettext('Ok') : _ref4$confirm_text,
       _ref4$cancel_text = _ref4.cancel_text,
-      cancel_text = _ref4$cancel_text === void 0 ? 'Cancel' : _ref4$cancel_text,
+      cancel_text = _ref4$cancel_text === void 0 ? gettext('Cancel') : _ref4$cancel_text,
       _ref4$context = _ref4.context,
       context = _ref4$context === void 0 ? null : _ref4$context,
       _ref4$preamble = _ref4.preamble,
@@ -609,4 +609,4 @@ window.scrollToBottom = scrollToBottom;
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-e8981361f8b66ec69d6c.js.map
+//# sourceMappingURL=base-7807905157e81c94c91c.js.map
