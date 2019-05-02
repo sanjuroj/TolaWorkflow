@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-04-25 13:30-0700\n"
-"PO-Revision-Date: 2019-04-23 14:55-0700\n"
+"PO-Revision-Date: 2019-05-01 19:35-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -18,77 +18,69 @@ msgstr ""
 "X-Generator: Poedit 2.2.1\n"
 
 #: js/base.js:327 js/base.js:328
-#, fuzzy
 #| msgid ""
-#| "Your changes will be recorded in a change log. For future reference, "
-#| "please share your rationale for these changes."
+#| "Your changes will be recorded in a change log. For future reference, please share your rationale for "
+#| "these changes."
 msgid ""
-"Your changes will be recorded in a change log. For future reference, please "
-"share your reason for these changes."
+"Your changes will be recorded in a change log. For future reference, please share your reason for these "
+"changes."
 msgstr ""
-"Sus cambios serán guardados en un registro de cambios. Para referencia "
-"futura, indique la justificación para estos cambios."
+"Sus cambios serán guardados en un registro de cambios. Para referencia futura, indique la justificación para "
+"estos cambios."
 
 #: js/base.js:329
-#, fuzzy
 #| msgid "This action cannot be undone."
 msgid "This action cannot be undone"
-msgstr "Advertencia: esta acción no se puede deshacer."
+msgstr "Advertencia: esta acción no se puede deshacer"
 
 #: js/base.js:335
-#, fuzzy, python-format
+#, python-format
 #| msgid ""
-#| "Warning: This action cannot be undone. Removing this target means that %s "
-#| "data record will no longer have targets associated with it.\n"
+#| "Warning: This action cannot be undone. Removing this target means that %s data record will no longer have "
+#| "targets associated with it.\n"
 #| "\n"
 #| "Proceed anyway?"
 #| msgid_plural ""
-#| "Warning: This action cannot be undone. Removing this target means that %s "
-#| "data records will no longer have targets associated with them.\n"
+#| "Warning: This action cannot be undone. Removing this target means that %s data records will no longer "
+#| "have targets associated with them.\n"
 #| "\n"
 #| "Proceed anyway?"
-msgid ""
-"Removing this target means that %s result will no longer have targets "
-"associated with it."
-msgid_plural ""
-"Removing this target means that %s results will no longer have targets "
-"associated with them."
-msgstr[0] ""
-"Advertencia: Esta acción no se puede deshacer. Eliminar este objetivo "
-"significa que %s registro de datos ya no tendrá objetivos asociados.\n"
-"\n"
-"¿Proceder de todos modos?"
+msgid "Removing this target means that %s result will no longer have targets associated with it."
+msgid_plural "Removing this target means that %s results will no longer have targets associated with them."
+msgstr[0] "Eliminar este objetivo implica que %s resultado no tedrá más objetivos asociados."
 msgstr[1] ""
-"Advertencia: Esta acción no se puede deshacer. Eliminar este objetivo "
-"significa que %s registros de datos ya no tendrán objetivos asociados.\n"
+"Advertencia: Esta acción no se puede deshacer. Eliminar este objetivo significa que %s registros de datos ya "
+"no tendrán objetivos asociados.\n"
 "\n"
 "¿Proceder de todos modos?"
 
 #: js/base.js:344
 #, fuzzy, python-format
 #| msgid ""
-#| "data record/s will no longer be associated with the Life of Program "
-#| "target, and will need to be reassigned to new targets."
+#| "data record/s will no longer be associated with the Life of Program target, and will need to be "
+#| "reassigned to new targets."
 msgid ""
-"If we make these changes, %s data record will no longer be associated with "
-"the Life of Program target, and will need to be reassigned to a new target.\n"
+"If we make these changes, %s data record will no longer be associated with the Life of Program target, and "
+"will need to be reassigned to a new target.\n"
 "\n"
 " Proceed anyway?"
 msgid_plural ""
-"If we make these changes, %s data records will no longer be associated with "
-"the Life of Program target, and will need to be reassigned to new targets.\n"
+"If we make these changes, %s data records will no longer be associated with the Life of Program target, and "
+"will need to be reassigned to new targets.\n"
 "\n"
 " Proceed anyway?"
 msgstr[0] ""
-"los registros de datos ya no estarán asociados con el objetivo de vida del "
-"programa, y ​​deberán reasignarse a nuevos objetivos."
+"Si hacemos estos cambios, %s registro de datos no estará más asociado con el objetivo de vida del programa "
+"(LoP), y necesitará reasignarse a un nuevo objetivo.\n"
+"\n"
+" Proceder de todos modos?"
 msgstr[1] ""
-"los registros de datos ya no estarán asociados con el objetivo de vida del "
-"programa, y ​​deberán reasignarse a nuevos objetivos."
+"los registros de datos ya no estarán asociados con el objetivo de vida del programa, y ​​deberán reasignarse a "
+"nuevos objetivos."
 
 #: js/base.js:401
 msgid "A reason is required."
-msgstr ""
+msgstr "Se requiere una justificación."
 
 #: js/base.js:460 js/base.js:548
 msgid "This action cannot be undone."
@@ -99,10 +91,9 @@ msgid "Warning"
 msgstr "Advertencia"
 
 #: js/base.js:508 js/pages/tola_management_pages/audit_log/views.js:126
-#, fuzzy
 #| msgid "Rationale for Target"
 msgid "Reason for change"
-msgstr "Justificación del Objetivo"
+msgstr "Justificación para el cambio"
 
 #: js/components/changelog.js:110
 msgid "Date"
@@ -125,10 +116,9 @@ msgid "New Entry"
 msgstr "Nuevo Valor"
 
 #: js/components/checkboxed-multi-select.js:55
-#, fuzzy
 #| msgid "None Selected"
 msgid "selected"
-msgstr "Ninguno/a Seleccionado"
+msgstr "seleccionado"
 
 #: js/components/checkboxed-multi-select.js:67
 msgid "Search"
@@ -240,8 +230,7 @@ msgstr "Encontrar un indicador:"
 msgid "None"
 msgstr "Ninguno"
 
-#: js/pages/program_page/components/indicator_list.js:174
-#: js/pages/tola_management_pages/audit_log/views.js:120
+#: js/pages/program_page/components/indicator_list.js:174 js/pages/tola_management_pages/audit_log/views.js:120
 msgid "Indicator"
 msgstr "Indicador"
 
@@ -263,11 +252,10 @@ msgstr "Objetivo"
 
 #: js/pages/program_page/components/indicator_list.js:274
 msgid ""
-"Some indicators have missing targets. To enter these values, click the "
-"target icon near the indicator name."
+"Some indicators have missing targets. To enter these values, click the target icon near the indicator name."
 msgstr ""
-"Algunos indicadores faltan objetivos. Para ingresar estos valores, haga clic "
-"en el ícono de objetivo cerca del nombre del indicador."
+"Algunos indicadores faltan objetivos. Para ingresar estos valores, haga clic en el ícono de objetivo cerca "
+"del nombre del indicador."
 
 #: js/pages/program_page/components/program_metrics.js:140
 msgid "Indicators on track"
@@ -280,41 +268,31 @@ msgstr "%(percentNonReporting)s% no disponible"
 
 #. Translators: help text for the percentage of indicators with no targets reporting data. */
 #: js/pages/program_page/components/program_metrics.js:164
-msgid ""
-"The indicator has no targets, no completed target periods, or no results "
-"reported."
-msgstr ""
-"El indicador no tiene objetivos, ni períodos objetivo completos o no se "
-"informan resultados."
+msgid "The indicator has no targets, no completed target periods, or no results reported."
+msgstr "El indicador no tiene objetivos, ni períodos objetivo completos o no se informan resultados."
 
 #. Translators: Help text explaining what an "on track" indicator is. */
 #: js/pages/program_page/components/program_metrics.js:190
 msgid ""
-"The actual value matches the target value, plus or minus 15%. So if your "
-"target is 100 and your result is 110, the indicator is 10% above target and "
-"on track.  <br><br>Please note that if your indicator has a decreasing "
-"direction of change, then “above” and “below” are switched. In that case, if "
-"your target is 100 and your result is 200, your indicator is 50% below "
-"target and not on track.<br><br><a href='https://docs.google.com/document/"
-"d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our "
-"documentation for more information.</a>"
+"The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is "
+"110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a "
+"decreasing direction of change, then “above” and “below” are switched. In that case, if your target is 100 "
+"and your result is 200, your indicator is 50% below target and not on track.<br><br><a href='https://docs."
+"google.com/document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our documentation "
+"for more information.</a>"
 msgstr ""
-"El valor real coincide con el valor objetivo, más o menos 15%. Entonces, si "
-"su objetivo es 100 y su resultado es 110, el indicador está 10% por encima "
-"del objetivo y está encaminado.   <br><br>Tenga en cuenta que si su "
-"indicador tiene una dirección de cambio decreciente, entonces se transponen "
-"“arriba” y “abajo”. En ese caso, si su objetivo es 100 y su resultado es "
-"200, su indicador está 50% por debajo del objetivo y no está encaminado."
-"<br><br><a href='https://docs.google.com/document/"
-"d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>Vea nuestra "
-"documentación para mayor información.</a>"
+"El valor real coincide con el valor objetivo, más o menos 15%. Entonces, si su objetivo es 100 y su "
+"resultado es 110, el indicador está 10% por encima del objetivo y está encaminado.   <br><br>Tenga en cuenta "
+"que si su indicador tiene una dirección de cambio decreciente, entonces se transponen “arriba” y “abajo”. En "
+"ese caso, si su objetivo es 100 y su resultado es 200, su indicador está 50% por debajo del objetivo y no "
+"está encaminado.<br><br><a href='https://docs.google.com/document/"
+"d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>Vea nuestra documentación para mayor "
+"información.</a>"
 
 #. Translators: variable %(percentHigh)s shows what percentage of indicators are a certain percentage above target percent %(marginPercent)s. Example: 31% are >15% above target */
 #: js/pages/program_page/components/program_metrics.js:210
 msgid "<strong>%(percentHigh)s%</strong> are >%(marginPercent)s% above target"
-msgstr ""
-"<strong>%(percentHigh)s%</strong> está >%(marginPercent)s% por encima del "
-"objetivo"
+msgstr "<strong>%(percentHigh)s%</strong> está >%(marginPercent)s% por encima del objetivo"
 
 #. Translators: variable %s shows what percentage of indicators are within a set range of target. Example: 31%  are on track */
 #: js/pages/program_page/components/program_metrics.js:216
@@ -324,16 +302,12 @@ msgstr "<strong>%s%</strong> está encaminado"
 #. Translators: variable %(percentBelow)s shows what percentage of indicators are a certain percentage below target. The variable %(marginPercent)s is that percentage. Example: 31% are >15% below target */
 #: js/pages/program_page/components/program_metrics.js:222
 msgid "<strong>%(percentBelow)s%</strong> are >%(marginPercent)s% below target"
-msgstr ""
-"<strong>%(percentBelow)s%</strong> está >%(marginPercent)s% por debajo del "
-"objetivo"
+msgstr "<strong>%(percentBelow)s%</strong> está >%(marginPercent)s% por debajo del objetivo"
 
 #. Translators: message describing why this display does not show any data. # */}
 #: js/pages/program_page/components/program_metrics.js:244
 msgid "Unavailable until the first target period ends with results reported."
-msgstr ""
-"No disponible hasta finalizar el primer período objetivo con reporte de "
-"resultados."
+msgstr "No disponible hasta finalizar el primer período objetivo con reporte de resultados."
 
 #. Translators: title of a graphic showing indicators with targets */
 #: js/pages/program_page/components/program_metrics.js:266
@@ -352,11 +326,10 @@ msgstr "sin objetivos"
 
 #. Translators: a link that displays a filtered list of indicators which are missing targets */
 #: js/pages/program_page/components/program_metrics.js:275
-#, fuzzy
 #| msgid "%s indicator has missing targets"
 #| msgid_plural "%s indicators have missing targets"
 msgid "Indicators missing targets"
-msgstr "%s indicador no tiene objetivos"
+msgstr "Indicadores sin objetivos"
 
 #: js/pages/program_page/components/program_metrics.js:277
 msgid "No targets"
@@ -379,11 +352,10 @@ msgstr "sin resultados"
 
 #. Translators: a link that displays a filtered list of indicators which are missing results */
 #: js/pages/program_page/components/program_metrics.js:291
-#, fuzzy
 #| msgid "%s indicator has missing results"
 #| msgid_plural "%s indicators have missing results"
 msgid "Indicators missing results"
-msgstr "%s indicador no tiene resultados"
+msgstr "Indicadores sin resultados"
 
 #: js/pages/program_page/components/program_metrics.js:293
 msgid "No results"
@@ -406,30 +378,24 @@ msgstr "no hay evidencia adjunta"
 
 #. Translators: a link that displays a filtered list of indicators which are missing evidence */
 #: js/pages/program_page/components/program_metrics.js:307
-#, fuzzy
 #| msgid "%s indicator has missing evidence"
 #| msgid_plural "%s indicators have missing evidence"
 msgid "Indicators missing evidence"
-msgstr "%s indicador no tiene evidencias"
+msgstr "Indicadores sin evidencias"
 
 #: js/pages/program_page/components/program_metrics.js:309
 msgid "No evidence"
 msgstr "Sin evidencia"
 
 #: js/pages/program_page/pinned_reports.js:9
-msgid ""
-"Warning: This action cannot be undone. Are you sure you want to delete this "
-"pinned report?"
-msgstr ""
-"Advertencia: esta acción no se puede deshacer. ¿Está seguro que quiere "
-"borrar este informe fijado?"
+msgid "Warning: This action cannot be undone. Are you sure you want to delete this pinned report?"
+msgstr "Advertencia: esta acción no se puede deshacer. ¿Está seguro que quiere borrar este informe fijado?"
 
 #: js/pages/tola_management_pages/audit_log/views.js:28
 msgid "Targets changed"
 msgstr "Objetivos modificados"
 
-#: js/pages/tola_management_pages/audit_log/views.js:35
-#: js/pages/tola_management_pages/audit_log/views.js:136
+#: js/pages/tola_management_pages/audit_log/views.js:35 js/pages/tola_management_pages/audit_log/views.js:136
 #: js/pages/tola_management_pages/audit_log/views.js:137
 msgid "N/A"
 msgstr "N/A"
@@ -437,63 +403,56 @@ msgstr "N/A"
 #. Translators: button label to show the details of all rows in a list */}
 #: js/pages/tola_management_pages/audit_log/views.js:73
 msgid "Expand all"
-msgstr ""
+msgstr "Expandir todos"
 
 #. Translators: button label to hide the details of all rows in a list */}
 #: js/pages/tola_management_pages/audit_log/views.js:86
 msgid "Collapse all"
-msgstr ""
+msgstr "Colapsar todos"
 
 #: js/pages/tola_management_pages/audit_log/views.js:95
-#, fuzzy
 #| msgid "Indicator changed"
 msgid "Indicator change log:"
-msgstr "Indicador modificado"
+msgstr "Registro de cambios de indicadores:"
 
 #: js/pages/tola_management_pages/audit_log/views.js:108
 msgid "Excel"
 msgstr "Sobresalir"
 
 #: js/pages/tola_management_pages/audit_log/views.js:118
-#, fuzzy
 #| msgid "Date and Time"
 msgid "Date and time"
-msgstr "Fecha y Hora"
+msgstr "Fecha y hora"
 
 #: js/pages/tola_management_pages/audit_log/views.js:119
 msgid "No."
 msgstr "No."
 
-#: js/pages/tola_management_pages/audit_log/views.js:121
-#: js/pages/tola_management_pages/user/views.js:258
+#: js/pages/tola_management_pages/audit_log/views.js:121 js/pages/tola_management_pages/user/views.js:258
 msgid "User"
 msgstr "Usuario"
 
 #: js/pages/tola_management_pages/audit_log/views.js:122
 #: js/pages/tola_management_pages/organization/views.js:109
 #: js/pages/tola_management_pages/user/components/edit_user_profile.js:189
-#: js/pages/tola_management_pages/user/views.js:202
-#: js/pages/tola_management_pages/user/views.js:259
+#: js/pages/tola_management_pages/user/views.js:202 js/pages/tola_management_pages/user/views.js:259
 msgid "Organization"
 msgstr "Organización"
 
 #: js/pages/tola_management_pages/audit_log/views.js:123
-#, fuzzy
 #| msgid "Change Type"
 msgid "Change type"
-msgstr "Tipo de Cambio"
+msgstr "Tipo de cambio"
 
 #: js/pages/tola_management_pages/audit_log/views.js:124
-#, fuzzy
 #| msgid "Previous Entry"
 msgid "Previous entry"
-msgstr "Valor Anterior"
+msgstr "Valor anterior"
 
 #: js/pages/tola_management_pages/audit_log/views.js:125
-#, fuzzy
 #| msgid "New Entry"
 msgid "New entry"
-msgstr "Nuevo Valor"
+msgstr "Nuevo valor"
 
 #: js/pages/tola_management_pages/audit_log/views.js:175
 msgid "entries"
@@ -583,12 +542,10 @@ msgstr "Agregar otra opción"
 #: js/pages/tola_management_pages/country/components/edit_objectives.js:158
 #: js/pages/tola_management_pages/country/models.js:190
 #: js/pages/tola_management_pages/organization/models.js:112
-#: js/pages/tola_management_pages/program/models.js:72
-#: js/pages/tola_management_pages/user/models.js:178
-#, fuzzy
+#: js/pages/tola_management_pages/program/models.js:72 js/pages/tola_management_pages/user/models.js:178
 #| msgid "Are you sure you want to delete?"
 msgid "You have unsaved changes. Are you sure you want to discard them?"
-msgstr "¿Está seguro que quiere eliminarlo?"
+msgstr "Tiene cambios sin guardar. ¿Está seguro que desea descartarlos?"
 
 #: js/pages/tola_management_pages/country/components/edit_disaggregations.js:263
 msgid "Add country disaggregation"
@@ -602,8 +559,7 @@ msgstr "Propuesto"
 #: js/pages/tola_management_pages/organization/components/edit_organization_history.js:9
 #: js/pages/tola_management_pages/organization/models.js:56
 #: js/pages/tola_management_pages/program/components/program_history.js:9
-#: js/pages/tola_management_pages/program/views.js:64
-#: js/pages/tola_management_pages/program/views.js:156
+#: js/pages/tola_management_pages/program/views.js:64 js/pages/tola_management_pages/program/views.js:156
 #: js/pages/tola_management_pages/program/views.js:162
 #: js/pages/tola_management_pages/user/components/edit_user_history.js:8
 #: js/pages/tola_management_pages/user/views.js:346
@@ -615,10 +571,9 @@ msgid "Achieved"
 msgstr "Logrado"
 
 #: js/pages/tola_management_pages/country/components/edit_objectives.js:78
-#, fuzzy
 #| msgid "Site name"
 msgid "Short name"
-msgstr "Nombre del sitio"
+msgstr "Nombre corto"
 
 #. Translators: Label for column identifying "active" or "inactive" user status */}
 #: js/pages/tola_management_pages/country/components/edit_objectives.js:105
@@ -626,11 +581,9 @@ msgstr "Nombre del sitio"
 #: js/pages/tola_management_pages/organization/views.js:74
 #: js/pages/tola_management_pages/organization/views.js:112
 #: js/pages/tola_management_pages/program/components/program_history.js:53
-#: js/pages/tola_management_pages/program/views.js:68
-#: js/pages/tola_management_pages/program/views.js:229
+#: js/pages/tola_management_pages/program/views.js:68 js/pages/tola_management_pages/program/views.js:229
 #: js/pages/tola_management_pages/user/components/edit_user_history.js:64
-#: js/pages/tola_management_pages/user/views.js:211
-#: js/pages/tola_management_pages/user/views.js:263
+#: js/pages/tola_management_pages/user/views.js:211 js/pages/tola_management_pages/user/views.js:263
 msgid "Status"
 msgstr "Estado"
 
@@ -645,15 +598,13 @@ msgstr "Agregar objetivo estratégico"
 
 #. Translators: Saving to the server succeeded
 #: js/pages/tola_management_pages/country/models.js:174
-#: js/pages/tola_management_pages/organization/models.js:108
-#: js/pages/tola_management_pages/user/models.js:197
+#: js/pages/tola_management_pages/organization/models.js:108 js/pages/tola_management_pages/user/models.js:197
 msgid "Successfully Saved"
 msgstr "Guardado Exitosamente"
 
 #. Translators: Saving to the server failed
 #: js/pages/tola_management_pages/country/models.js:178
-#: js/pages/tola_management_pages/organization/models.js:104
-#: js/pages/tola_management_pages/user/models.js:190
+#: js/pages/tola_management_pages/organization/models.js:104 js/pages/tola_management_pages/user/models.js:190
 msgid "Saving Failed"
 msgstr "Falló Operación de Guardado"
 
@@ -661,8 +612,7 @@ msgstr "Falló Operación de Guardado"
 msgid "Successfully Deleted"
 msgstr "Eliminado Exitosamente"
 
-#: js/pages/tola_management_pages/country/views.js:16
-#: js/pages/tola_management_pages/country/views.js:70
+#: js/pages/tola_management_pages/country/views.js:16 js/pages/tola_management_pages/country/views.js:70
 #: js/pages/tola_management_pages/organization/views.js:18
 #: js/pages/tola_management_pages/program/components/edit_program_profile.js:118
 #: js/pages/tola_management_pages/program/views.js:28
@@ -670,63 +620,46 @@ msgid "Countries"
 msgstr "Países"
 
 #. Translators: Nothing selected by user
-#: js/pages/tola_management_pages/country/views.js:21
-#: js/pages/tola_management_pages/country/views.js:33
+#: js/pages/tola_management_pages/country/views.js:21 js/pages/tola_management_pages/country/views.js:33
 #: js/pages/tola_management_pages/country/views.js:45
 #: js/pages/tola_management_pages/organization/components/edit_organization_profile.js:137
 #: js/pages/tola_management_pages/organization/views.js:23
 #: js/pages/tola_management_pages/organization/views.js:35
 #: js/pages/tola_management_pages/organization/views.js:47
 #: js/pages/tola_management_pages/organization/views.js:59
-#: js/pages/tola_management_pages/organization/views.js:79
-#: js/pages/tola_management_pages/program/views.js:21
-#: js/pages/tola_management_pages/program/views.js:33
-#: js/pages/tola_management_pages/program/views.js:45
-#: js/pages/tola_management_pages/program/views.js:57
-#: js/pages/tola_management_pages/program/views.js:74
-#: js/pages/tola_management_pages/program/views.js:86
-#: js/pages/tola_management_pages/user/views.js:16
+#: js/pages/tola_management_pages/organization/views.js:79 js/pages/tola_management_pages/program/views.js:21
+#: js/pages/tola_management_pages/program/views.js:33 js/pages/tola_management_pages/program/views.js:45
+#: js/pages/tola_management_pages/program/views.js:57 js/pages/tola_management_pages/program/views.js:74
+#: js/pages/tola_management_pages/program/views.js:86 js/pages/tola_management_pages/user/views.js:16
 msgid "None Selected"
 msgstr "Ninguno/a Seleccionado"
 
-#: js/pages/tola_management_pages/country/views.js:28
-#: js/pages/tola_management_pages/country/views.js:92
-#: js/pages/tola_management_pages/country/views.js:170
-#: js/pages/tola_management_pages/organization/views.js:42
-#: js/pages/tola_management_pages/organization/views.js:90
-#: js/pages/tola_management_pages/program/views.js:40
+#: js/pages/tola_management_pages/country/views.js:28 js/pages/tola_management_pages/country/views.js:92
+#: js/pages/tola_management_pages/country/views.js:170 js/pages/tola_management_pages/organization/views.js:42
+#: js/pages/tola_management_pages/organization/views.js:90 js/pages/tola_management_pages/program/views.js:40
 #: js/pages/tola_management_pages/program/views.js:227
 msgid "Organizations"
 msgstr "Organizaciones"
 
-#: js/pages/tola_management_pages/country/views.js:40
-#: js/pages/tola_management_pages/country/views.js:93
-#: js/pages/tola_management_pages/country/views.js:178
-#: js/pages/tola_management_pages/organization/views.js:30
-#: js/pages/tola_management_pages/organization/views.js:110
-#: js/pages/tola_management_pages/program/views.js:81
-#: js/pages/tola_management_pages/program/views.js:205
-#: js/pages/tola_management_pages/user/views.js:59
+#: js/pages/tola_management_pages/country/views.js:40 js/pages/tola_management_pages/country/views.js:93
+#: js/pages/tola_management_pages/country/views.js:178 js/pages/tola_management_pages/organization/views.js:30
+#: js/pages/tola_management_pages/organization/views.js:110 js/pages/tola_management_pages/program/views.js:81
+#: js/pages/tola_management_pages/program/views.js:205 js/pages/tola_management_pages/user/views.js:59
 #: js/pages/tola_management_pages/user/views.js:260
 msgid "Programs"
 msgstr "Programas"
 
-#: js/pages/tola_management_pages/country/views.js:64
-#: js/pages/tola_management_pages/organization/views.js:84
-#: js/pages/tola_management_pages/program/views.js:141
-#: js/pages/tola_management_pages/program/views.js:199
+#: js/pages/tola_management_pages/country/views.js:64 js/pages/tola_management_pages/organization/views.js:84
+#: js/pages/tola_management_pages/program/views.js:141 js/pages/tola_management_pages/program/views.js:199
 #: js/pages/tola_management_pages/user/views.js:231
 msgid "Apply"
 msgstr "Aplicar"
 
-#: js/pages/tola_management_pages/country/views.js:70
-#: js/pages/tola_management_pages/organization/views.js:90
-#: js/pages/tola_management_pages/program/views.js:205
-#: js/pages/tola_management_pages/user/views.js:237
-#, fuzzy
+#: js/pages/tola_management_pages/country/views.js:70 js/pages/tola_management_pages/organization/views.js:90
+#: js/pages/tola_management_pages/program/views.js:205 js/pages/tola_management_pages/user/views.js:237
 #| msgid "Admin"
 msgid "Admin:"
-msgstr "Administrador"
+msgstr "Administrador:"
 
 #: js/pages/tola_management_pages/country/views.js:77
 msgid "Add Country"
@@ -736,12 +669,9 @@ msgstr "Agregar País"
 msgid "Country"
 msgstr "País"
 
-#: js/pages/tola_management_pages/country/views.js:94
-#: js/pages/tola_management_pages/country/views.js:186
-#: js/pages/tola_management_pages/organization/views.js:111
-#: js/pages/tola_management_pages/program/views.js:16
-#: js/pages/tola_management_pages/program/views.js:228
-#: js/pages/tola_management_pages/user/views.js:19
+#: js/pages/tola_management_pages/country/views.js:94 js/pages/tola_management_pages/country/views.js:186
+#: js/pages/tola_management_pages/organization/views.js:111 js/pages/tola_management_pages/program/views.js:16
+#: js/pages/tola_management_pages/program/views.js:228 js/pages/tola_management_pages/user/views.js:19
 #: js/pages/tola_management_pages/user/views.js:237
 msgid "Users"
 msgstr "Usuarios"
@@ -753,8 +683,7 @@ msgstr "países"
 #: js/pages/tola_management_pages/organization/components/edit_organization_history.js:10
 #: js/pages/tola_management_pages/organization/models.js:57
 #: js/pages/tola_management_pages/program/components/program_history.js:10
-#: js/pages/tola_management_pages/program/views.js:65
-#: js/pages/tola_management_pages/program/views.js:157
+#: js/pages/tola_management_pages/program/views.js:65 js/pages/tola_management_pages/program/views.js:157
 #: js/pages/tola_management_pages/program/views.js:162
 #: js/pages/tola_management_pages/user/components/edit_user_history.js:9
 #: js/pages/tola_management_pages/user/views.js:346
@@ -812,14 +741,12 @@ msgstr "Sectores"
 msgid "Add Organization"
 msgstr "Agregar Organización"
 
-#: js/pages/tola_management_pages/organization/views.js:167
-#: js/pages/tola_management_pages/program/views.js:309
+#: js/pages/tola_management_pages/organization/views.js:167 js/pages/tola_management_pages/program/views.js:309
 #: js/pages/tola_management_pages/user/views.js:343
 msgid "programs"
 msgstr "programas"
 
-#: js/pages/tola_management_pages/organization/views.js:173
-#: js/pages/tola_management_pages/user/views.js:353
+#: js/pages/tola_management_pages/organization/views.js:173 js/pages/tola_management_pages/user/views.js:353
 msgid "users"
 msgstr "usuarios"
 
@@ -840,60 +767,55 @@ msgid "Fund Code"
 msgstr "Código del fondo"
 
 #: js/pages/tola_management_pages/program/models.js:189
-#, fuzzy
 #| msgid "Successfully Saved"
 msgid "Successfully saved"
-msgstr "Guardado Exitosamente"
+msgstr "Guardado exitosamente"
 
 #: js/pages/tola_management_pages/program/models.js:193
-#, fuzzy
 #| msgid "Saving Failed"
 msgid "Saving failed"
-msgstr "Falló Operación de Guardado"
+msgstr "Falló operación de guardado"
 
 #. Translators: Notify user that the program start and end date were successfully retrieved from the GAIT service and added to the newly saved Program
 #: js/pages/tola_management_pages/program/models.js:198
 msgid "Successfully synced GAIT program start and end dates"
-msgstr ""
+msgstr "Se sincronizaron satisfactoriamente las fechas de inicio y fin del programa desde el servicio GAIT"
 
 #. Translators: Notify user that the program start and end date failed to be retrieved from the GAIT service with a specific reason appended after the :
 #: js/pages/tola_management_pages/program/models.js:204
-#, fuzzy
 #| msgid "Reporting start and end dates"
 msgid "Failed to sync GAIT program start and end dates: "
-msgstr "Informes de fechas de inicio y finalización"
+msgstr "Hubo un fallo en la sincronización de las fechas de inicio y fin del programa desde el servicio GAIT: "
 
 #. Translators: A request failed, ask the user if they want to try the request again
 #: js/pages/tola_management_pages/program/models.js:212
 msgid "Retry"
-msgstr ""
+msgstr "Reintentar"
 
 #. Translators: button label - ignore the current warning modal on display
 #: js/pages/tola_management_pages/program/models.js:221
 msgid "Ignore"
-msgstr ""
+msgstr "Ignorar"
 
 #: js/pages/tola_management_pages/program/models.js:268
 msgid "The GAIT ID for this program is shared with at least one other program."
-msgstr ""
+msgstr "El ID GAIT para este programa está compartido con al menos un programa más."
 
 #: js/pages/tola_management_pages/program/models.js:269
 msgid "View programs with this ID in GAIT."
-msgstr ""
+msgstr "Ver programas con este ID en GAIT."
 
 #: js/pages/tola_management_pages/program/models.js:272
-#, fuzzy
 #| msgid "Are you sure you want to delete?"
 msgid "Are you sure you want to continue?"
-msgstr "¿Está seguro que quiere eliminarlo?"
+msgstr "¿Está seguro que quiere continuar?"
 
 #. Translators: error message when trying to connect to the server
 #: js/pages/tola_management_pages/program/models.js:304
 msgid "There was a network or server connection error."
-msgstr ""
+msgstr "Hubo un error de red o conectividad con el servidor."
 
-#: js/pages/tola_management_pages/program/views.js:127
-#: js/pages/tola_management_pages/user/views.js:148
+#: js/pages/tola_management_pages/program/views.js:127 js/pages/tola_management_pages/user/views.js:148
 msgid "Bulk Actions"
 msgstr "Acciones Masivas"
 
@@ -953,7 +875,7 @@ msgstr "Programas y Roles"
 
 #: js/pages/tola_management_pages/user/components/edit_user_programs.js:418
 msgid "More information on Program Roles"
-msgstr ""
+msgstr "Más Información sobre los Roles en los Programas"
 
 #: js/pages/tola_management_pages/user/components/edit_user_programs.js:423
 msgid "Filter countries"
@@ -1015,13 +937,11 @@ msgid "Remove from program"
 msgstr "Eliminar del programa"
 
 #: js/pages/tola_management_pages/user/views.js:220
-#, fuzzy
 #| msgid "Add indicator"
 msgid "Administrator?"
-msgstr "Agregar indicador"
+msgstr "¿Administrador?"
 
 #: js/pages/tola_management_pages/user/views.js:244
-#, fuzzy
 #| msgid "Add User"
 msgid "Add user"
 msgstr "Agregar Usuario"
@@ -1032,17 +952,15 @@ msgid "Super Admin"
 msgstr "Super Administrador"
 
 #: templates/base.html:174
-#, fuzzy
 #| msgid "Success!"
 msgid "Success"
 msgstr "¡Éxito!"
 
 #. Translators: Page title if the user has not selected country #}
 #: templates/home.html:4 templates/home.html:5
-#, fuzzy
 #| msgid "Filter programs"
 msgid "No available programs"
-msgstr "Filtrar programas"
+msgstr "No hay programas disponibles"
 
 #~ msgid "Share Your Rationale"
 #~ msgstr "Indique la Justificación"
@@ -1527,12 +1445,8 @@ msgstr "Filtrar programas"
 #~ msgid "TolaTable"
 #~ msgstr "Tabla Tola"
 
-#~ msgid ""
-#~ "Would you like to update the achieved total with the         row count "
-#~ "from TolaTables?"
-#~ msgstr ""
-#~ "¿Desea actualizar el total alcanzado con el recuento de      filas de las "
-#~ "tablas Tola?"
+#~ msgid "Would you like to update the achieved total with the         row count from TolaTables?"
+#~ msgstr "¿Desea actualizar el total alcanzado con el recuento de      filas de las tablas Tola?"
 
 #~ msgid "Report Name"
 #~ msgstr "Nombre del Informe"
@@ -1558,12 +1472,10 @@ msgstr "Filtrar programas"
 #~ msgid "of programs have all targets defined"
 #~ msgstr "de los programas tienen todos los objetivos definidos"
 
-#~ msgid ""
-#~ "Each indicator must have a target frequency selected and targets entered "
-#~ "for all periods."
+#~ msgid "Each indicator must have a target frequency selected and targets entered for all periods."
 #~ msgstr ""
-#~ "Cada indicador debe tener una frecuencia objetivo seleccionada y debe "
-#~ "haber objetivos ingresados para todos los períodos."
+#~ "Cada indicador debe tener una frecuencia objetivo seleccionada y debe haber objetivos ingresados para "
+#~ "todos los períodos."
 
 #~ msgid "of indicators have reported results"
 #~ msgstr "de los indicadores han reportado resultados"
@@ -1620,27 +1532,22 @@ msgstr "Filtrar programas"
 #~ msgstr "Permisos Adicionales Requeridos"
 
 #~ msgid "You don't appear to have the proper permissions to access this page."
-#~ msgstr ""
-#~ "Parece que no tiene los permisos adecuados para acceder a esta página."
+#~ msgstr "Parece que no tiene los permisos adecuados para acceder a esta página."
 
 #~ msgid ""
-#~ "Please check with your organization or country admin if you think you "
-#~ "should have access to this section."
+#~ "Please check with your organization or country admin if you think you should have access to this section."
 #~ msgstr ""
-#~ "Por favor consulte con su organización o administrador de país si cree "
-#~ "que debería tener acceso a esta sección."
+#~ "Por favor consulte con su organización o administrador de país si cree que debería tener acceso a esta "
+#~ "sección."
 
 #~ msgid ""
-#~ " You can also reach the TolaData team by using the <a href=\"https://docs."
-#~ "google.com/forms/d/"
-#~ "e/1FAIpQLSclm2PAT9TJ9q23TT6YWQg6hj3EndUAdyF5k6kvNJHu6njNtw/viewform"
-#~ "\">feedback form.</a>\n"
+#~ " You can also reach the TolaData team by using the <a href=\"https://docs.google.com/forms/d/"
+#~ "e/1FAIpQLSclm2PAT9TJ9q23TT6YWQg6hj3EndUAdyF5k6kvNJHu6njNtw/viewform\">feedback form.</a>\n"
 #~ "    "
 #~ msgstr ""
 #~ " También puede utilizar el <a href=\"https://docs.google.com/forms/d/"
-#~ "e/1FAIpQLSclm2PAT9TJ9q23TT6YWQg6hj3EndUAdyF5k6kvNJHu6njNtw/viewform"
-#~ "\">formulario de comentarios</a> para ponerse en contacto con el equipo "
-#~ "de TolaData\n"
+#~ "e/1FAIpQLSclm2PAT9TJ9q23TT6YWQg6hj3EndUAdyF5k6kvNJHu6njNtw/viewform\">formulario de comentarios</a> para "
+#~ "ponerse en contacto con el equipo de TolaData\n"
 #~ "  "
 
 #~ msgid "Page Not found"
@@ -1653,11 +1560,11 @@ msgstr "Filtrar programas"
 #~ msgstr "Error 500... Whoops algo salió mal..."
 
 #~ msgid ""
-#~ "There was a problem loading this page.  Please notify a systems "
-#~ "administrator if you think you should not be seeing this page."
+#~ "There was a problem loading this page.  Please notify a systems administrator if you think you should not "
+#~ "be seeing this page."
 #~ msgstr ""
-#~ "Hubo un problema al cargar esta página. Por favor notifique a un "
-#~ "administrador de sistemas si cree que no debería estar viendo esta página."
+#~ "Hubo un problema al cargar esta página. Por favor notifique a un administrador de sistemas si cree que no "
+#~ "debería estar viendo esta página."
 
 #~ msgid "Browse"
 #~ msgstr "Explorar"
@@ -1710,11 +1617,8 @@ msgstr "Filtrar programas"
 #~ msgid "Unknown network request error"
 #~ msgstr "Error de solicitud de red desconocido"
 
-#~ msgid ""
-#~ "Let us know if you are having a problem or would like to see something "
-#~ "change."
-#~ msgstr ""
-#~ "Háganos saber si tiene algún problema o le gustaría ver algo cambiar."
+#~ msgid "Let us know if you are having a problem or would like to see something change."
+#~ msgstr "Háganos saber si tiene algún problema o le gustaría ver algo cambiar."
 
 #~ msgid "Public Dashboards"
 #~ msgstr "Tableros públicos"
@@ -1825,9 +1729,7 @@ msgstr "Filtrar programas"
 #~ msgstr "Objetivo/Datos reales"
 
 #~ msgid "No indicators currently aligned with country strategic objectives."
-#~ msgstr ""
-#~ "No hay indicadores actualmente alineados con los objetivos estratégicos "
-#~ "del país."
+#~ msgstr "No hay indicadores actualmente alineados con los objetivos estratégicos del país."
 
 #~ msgid "Milestones"
 #~ msgstr "Hitos"
@@ -1877,27 +1779,22 @@ msgstr "Filtrar programas"
 #~ msgid "Life of Program"
 #~ msgstr "Vida del programa"
 
-#~ msgid ""
-#~ "Results are cumulative. The Life of Program result mirrors the latest "
-#~ "period result."
+#~ msgid "Results are cumulative. The Life of Program result mirrors the latest period result."
 #~ msgstr ""
-#~ "Los resultados son acumulativos. El resultado de la vida del programa "
-#~ "refleja el último resultado del período."
+#~ "Los resultados son acumulativos. El resultado de la vida del programa refleja el último resultado del "
+#~ "período."
+
+#~ msgid "Results are non-cumulative. The Life of Program result is the sum of target periods results."
+#~ msgstr ""
+#~ "Los resultados no son acumulativos. El resultado de la vida del programa es la suma de los resultados de "
+#~ "los períodos objetivo."
 
 #~ msgid ""
-#~ "Results are non-cumulative. The Life of Program result is the sum of "
-#~ "target periods results."
+#~ "Results are non-cumulative. Target period and Life of Program results are calculated from the average of "
+#~ "collected data."
 #~ msgstr ""
-#~ "Los resultados no son acumulativos. El resultado de la vida del programa "
-#~ "es la suma de los resultados de los períodos objetivo."
-
-#~ msgid ""
-#~ "Results are non-cumulative. Target period and Life of Program results are "
-#~ "calculated from the average of collected data."
-#~ msgstr ""
-#~ "Los resultados no son acumulativos. Los resultados del período objetivo y "
-#~ "de la vida del programa se calculan a partir del promedio de los datos "
-#~ "recopilados."
+#~ "Los resultados no son acumulativos. Los resultados del período objetivo y de la vida del programa se "
+#~ "calculan a partir del promedio de los datos recopilados."
 
 #~ msgid "Targets are not set up for this indicator."
 #~ msgstr "Los objetivos no están configurados para este indicador."
@@ -1906,18 +1803,14 @@ msgstr "Filtrar programas"
 #~ msgstr "Comience seleccionando una frecuencia objetivo."
 
 #~ msgid ""
-#~ "This record is not associated with a target. Open the data record and "
-#~ "select an option from the \"Measure against target\" menu."
+#~ "This record is not associated with a target. Open the data record and select an option from the \"Measure "
+#~ "against target\" menu."
 #~ msgstr ""
-#~ "Este registro no está asociado con un objetivo. Abra el registro de datos "
-#~ "y seleccione una opción del menú \"Medida contra el objetivo \"."
+#~ "Este registro no está asociado con un objetivo. Abra el registro de datos y seleccione una opción del "
+#~ "menú \"Medida contra el objetivo \"."
 
-#~ msgid ""
-#~ "This date falls outside the range of your target periods. Please select a "
-#~ "date between "
-#~ msgstr ""
-#~ "Esta fecha queda fuera del rango de sus períodos objetivo. Por favor "
-#~ "seleccione una fecha entre "
+#~ msgid "This date falls outside the range of your target periods. Please select a date between "
+#~ msgstr "Esta fecha queda fuera del rango de sus períodos objetivo. Por favor seleccione una fecha entre "
 
 #~ msgid "and "
 #~ msgstr "y "
@@ -1946,12 +1839,8 @@ msgstr "Filtrar programas"
 #~ msgid "Could not save form."
 #~ msgstr "No se pudo guardar el formulario."
 
-#~ msgid ""
-#~ "This date falls outside the range of your target periods. You can change "
-#~ "the date or"
-#~ msgstr ""
-#~ "Esta fecha queda fuera del rango de sus períodos objetivo. Puede cambiar "
-#~ "la fecha o"
+#~ msgid "This date falls outside the range of your target periods. You can change the date or"
+#~ msgstr "Esta fecha queda fuera del rango de sus períodos objetivo. Puede cambiar la fecha o"
 
 #~ msgid "Please enter a number with no letters or symbols."
 #~ msgstr "Por favor ingrese un número sin letras ni símbolos."
@@ -1984,13 +1873,11 @@ msgstr "Filtrar programas"
 #~ msgstr "Niveles de desagregación estándar no ingresados"
 
 #~ msgid ""
-#~ "Standard disaggregations are entered by the administrator for the entire "
-#~ "organizations.  If you are not seeing any here, please contact your "
-#~ "system administrator."
+#~ "Standard disaggregations are entered by the administrator for the entire organizations.  If you are not "
+#~ "seeing any here, please contact your system administrator."
 #~ msgstr ""
-#~ "El administrador introduce las desagregaciones estándar para todas las "
-#~ "organizaciones. Si no ve ninguna aquí, contáctese con el administrador "
-#~ "del sistema."
+#~ "El administrador introduce las desagregaciones estándar para todas las organizaciones. Si no ve ninguna "
+#~ "aquí, contáctese con el administrador del sistema."
 
 #~ msgid "New disaggregations"
 #~ msgstr "Nuevas desagregaciones"
@@ -2016,12 +1903,8 @@ msgstr "Filtrar programas"
 #~ msgid "Tola Tables"
 #~ msgstr "Tablas Tola"
 
-#~ msgid ""
-#~ "Link one of your Tola Tables or a Table shared with you as your indicator "
-#~ "evidence."
-#~ msgstr ""
-#~ "Enlaza una de tus tablas Tola o una tabla compartida contigo como tu "
-#~ "evidencia indicadora."
+#~ msgid "Link one of your Tola Tables or a Table shared with you as your indicator evidence."
+#~ msgstr "Enlaza una de tus tablas Tola o una tabla compartida contigo como tu evidencia indicadora."
 
 #~ msgid "Type the name of the Table in the box above to search."
 #~ msgstr "Escriba el nombre de la tabla en el cuadro de arriba para buscar."
@@ -2030,8 +1913,7 @@ msgstr "Filtrar programas"
 #~ msgstr "guardar"
 
 #~ msgid "Dashboard report on indicator status by Country and Program"
-#~ msgstr ""
-#~ "Informe del tablero sobre el estado del indicador por país y programa"
+#~ msgstr "Informe del tablero sobre el estado del indicador por país y programa"
 
 #~ msgid "TvA Report"
 #~ msgstr "Informe TvA"
@@ -2099,12 +1981,9 @@ msgstr "Filtrar programas"
 #~ msgid "Program based in"
 #~ msgstr "Programa ubicado en"
 
-#~ msgid ""
-#~ "Are you adding a custom indicator or an indicator from the \"Design for "
-#~ "Impact Guide (DIG)\"?"
+#~ msgid "Are you adding a custom indicator or an indicator from the \"Design for Impact Guide (DIG)\"?"
 #~ msgstr ""
-#~ "¿Está agregando un indicador personalizado o un indicador de la \"Guía de "
-#~ "Diseño Para Impacto (DIG)\"?"
+#~ "¿Está agregando un indicador personalizado o un indicador de la \"Guía de Diseño Para Impacto (DIG)\"?"
 
 #~ msgid "Custom indicator"
 #~ msgstr "Indicador personalizado"
@@ -2131,21 +2010,17 @@ msgstr "Filtrar programas"
 #~ msgstr "Ingrese el objetivo"
 
 #~ msgid ""
-#~ "Warning: This action cannot be undone. Any data records assigned to a "
-#~ "target will need to be reassigned."
+#~ "Warning: This action cannot be undone. Any data records assigned to a target will need to be reassigned."
 #~ msgstr ""
-#~ "Advertencia: esta acción no se puede deshacer. Todos los registros de "
-#~ "datos asignados a un objetivo deberán reasignarse."
+#~ "Advertencia: esta acción no se puede deshacer. Todos los registros de datos asignados a un objetivo "
+#~ "deberán reasignarse."
 
 #~ msgid "Are you sure you want to remove all targets?"
 #~ msgstr "¿Está seguro de que desea eliminar todos los objetivos?"
 
-#~ msgid ""
-#~ "Warning: This action cannot be undone. Are you sure you want to remove "
-#~ "all targets?"
+#~ msgid "Warning: This action cannot be undone. Are you sure you want to remove all targets?"
 #~ msgstr ""
-#~ "Advertencia: esta acción no se puede deshacer. ¿Está seguro de que desea "
-#~ "eliminar todos los objetivos?"
+#~ "Advertencia: esta acción no se puede deshacer. ¿Está seguro de que desea eliminar todos los objetivos?"
 
 #~ msgid "Saving form... please wait."
 #~ msgstr "Guardando formulario... por favor espere."
@@ -2181,25 +2056,21 @@ msgstr "Filtrar programas"
 #~ msgstr "Por favor ingrese un número mayor que cero."
 
 #~ msgid ""
-#~ "Please enter a number larger than zero with no letters or symbols. If "
-#~ "your target is a percentage, describe it in the unit of measure field."
+#~ "Please enter a number larger than zero with no letters or symbols. If your target is a percentage, "
+#~ "describe it in the unit of measure field."
 #~ msgstr ""
-#~ "Por favor ingrese un número mayor que cero sin letras ni símbolos. Si su "
-#~ "objetivo es un porcentaje, descríbalo en el campo de unidad de medida."
+#~ "Por favor ingrese un número mayor que cero sin letras ni símbolos. Si su objetivo es un porcentaje, "
+#~ "descríbalo en el campo de unidad de medida."
 
 #~ msgid "You can start with up to 12 targets and add more later."
 #~ msgstr "Puede comenzar con hasta 12 objetivos y agregar más en el futuro."
 
-#~ msgid ""
-#~ "Please enter a name and target number for every event. Your target value "
-#~ "can be zero."
+#~ msgid "Please enter a name and target number for every event. Your target value can be zero."
 #~ msgstr ""
-#~ "Por favor ingrese un nombre y un número objetivo para cada evento. Su "
-#~ "valor objetivo puede ser cero."
+#~ "Por favor ingrese un nombre y un número objetivo para cada evento. Su valor objetivo puede ser cero."
 
 #~ msgid "Please enter a target value. Your target value can be zero."
-#~ msgstr ""
-#~ "Por favor ingrese un valor objetivo. Su valor objetivo puede ser cero."
+#~ msgstr "Por favor ingrese un valor objetivo. Su valor objetivo puede ser cero."
 
 #~ msgid "Please complete all required fields in the Targets tab."
 #~ msgstr "Complete todos los campos obligatorios en la pestaña Objetivos."
@@ -2259,11 +2130,11 @@ msgstr "Filtrar programas"
 #~ msgstr "Indicadores de programa"
 
 #~ msgid ""
-#~ "Before adding indicators and performance results, we need to know your "
-#~ "program's reporting start and end dates."
+#~ "Before adding indicators and performance results, we need to know your program's reporting start and end "
+#~ "dates."
 #~ msgstr ""
-#~ "Antes de agregar indicadores y resultados de rendimiento, necesitamos "
-#~ "saber las fechas de inicio y fin de reporte de su programa."
+#~ "Antes de agregar indicadores y resultados de rendimiento, necesitamos saber las fechas de inicio y fin de "
+#~ "reporte de su programa."
 
 #~ msgid "reporting start and end dates."
 #~ msgstr "las fechas de inicio y finalización de su programa."
@@ -2303,85 +2174,63 @@ msgstr "Filtrar programas"
 #~ msgid "Are you sure?"
 #~ msgstr "¿Está seguro?"
 
-#~ msgid ""
-#~ "Program reporting dates are required in order to view program metrics"
-#~ msgstr ""
-#~ "Las fechas de informes del programa son necesarias para ver las métricas "
-#~ "del programa"
+#~ msgid "Program reporting dates are required in order to view program metrics"
+#~ msgstr "Las fechas de informes del programa son necesarias para ver las métricas del programa"
 
 #~ msgid ""
-#~ "The program reporting period is used in the setup of periodic targets and "
-#~ "in Indicator Performance Tracking Tables (IPTT). TolaActivity initially "
-#~ "sets the reporting period to include the program’s official start and end "
-#~ "dates, as recorded in the Grant and Award Information Tracker (GAIT) "
-#~ "system. The reporting period may be adjusted to align with the program’s "
-#~ "indicator plan."
+#~ "The program reporting period is used in the setup of periodic targets and in Indicator Performance "
+#~ "Tracking Tables (IPTT). TolaActivity initially sets the reporting period to include the program’s "
+#~ "official start and end dates, as recorded in the Grant and Award Information Tracker (GAIT) system. The "
+#~ "reporting period may be adjusted to align with the program’s indicator plan."
 #~ msgstr ""
-#~ "El período de informe del programa se usa en la configuración de "
-#~ "objetivos periódicos y en tablas de seguimiento del rendimiento del "
-#~ "indicador (IPTT). TolaActivity establece inicialmente el período de "
-#~ "informe para incluir las fechas de inicio y finalización oficiales del "
-#~ "programa, tal como se registra en el sistema de rastreo de información de "
-#~ "concesiones y adjudicaciones (GAIT). El período del informe puede "
+#~ "El período de informe del programa se usa en la configuración de objetivos periódicos y en tablas de "
+#~ "seguimiento del rendimiento del indicador (IPTT). TolaActivity establece inicialmente el período de "
+#~ "informe para incluir las fechas de inicio y finalización oficiales del programa, tal como se registra en "
+#~ "el sistema de rastreo de información de concesiones y adjudicaciones (GAIT). El período del informe puede "
 #~ "ajustarse para alinearse con el plan de indicadores del programa."
 
 #~ msgid "GAIT program dates"
 #~ msgstr "Fechas del programa GAIT"
 
 #~ msgid ""
-#~ "While a program may begin and end any day of the month, reporting periods "
-#~ "must begin on the first day of the month and end on the last day of the "
-#~ "month. Please note that the reporting start date can only be adjusted "
+#~ "While a program may begin and end any day of the month, reporting periods must begin on the first day of "
+#~ "the month and end on the last day of the month. Please note that the reporting start date can only be "
+#~ "adjusted "
 #~ msgstr ""
-#~ "Si bien un programa puede comenzar y finalizar en cualquier día del mes, "
-#~ "los períodos de informe deben comenzar el primer día del mes y finalizar "
-#~ "el último día del mes. Tenga en cuenta que la fecha de inicio de informe "
-#~ "solo se puede ajustar "
+#~ "Si bien un programa puede comenzar y finalizar en cualquier día del mes, los períodos de informe deben "
+#~ "comenzar el primer día del mes y finalizar el último día del mes. Tenga en cuenta que la fecha de inicio "
+#~ "de informe solo se puede ajustar "
+
+#~ msgid "before periodic targets are set up and a program begins submitting performance results. "
+#~ msgstr ""
+#~ "antes de que se establezcan objetivos periódicos y un programa comience a enviar resultados de "
+#~ "rendimiento. "
 
 #~ msgid ""
-#~ "before periodic targets are set up and a program begins submitting "
-#~ "performance results. "
+#~ "The reporting end date can be moved later at any time, but can't be moved earlier once periodic targets "
+#~ "are set up."
 #~ msgstr ""
-#~ "antes de que se establezcan objetivos periódicos y un programa comience a "
-#~ "enviar resultados de rendimiento. "
+#~ "La fecha de finalización del informe se puede mover más adelante en cualquier momento, pero no se puede "
+#~ "mover antes una vez que se configuran los objetivos periódicos."
+
+#~ msgid "before targets are set up and a program begins submitting performance results. "
+#~ msgstr ""
+#~ "antes de que los objetivos estén configurados y un programa comience a enviar resultados de rendimiento. "
 
 #~ msgid ""
-#~ "The reporting end date can be moved later at any time, but can't be moved "
-#~ "earlier once periodic targets are set up."
+#~ "Because this program already has periodic targets set up, only the reporting end date can be moved later."
 #~ msgstr ""
-#~ "La fecha de finalización del informe se puede mover más adelante en "
-#~ "cualquier momento, pero no se puede mover antes una vez que se configuran "
-#~ "los objetivos periódicos."
-
-#~ msgid ""
-#~ "before targets are set up and a program begins submitting performance "
-#~ "results. "
-#~ msgstr ""
-#~ "antes de que los objetivos estén configurados y un programa comience a "
-#~ "enviar resultados de rendimiento. "
-
-#~ msgid ""
-#~ "Because this program already has periodic targets set up, only the "
-#~ "reporting end date can be moved later."
-#~ msgstr ""
-#~ "Debido a que este programa ya tiene configurados objetivos periódicos, "
-#~ "solo la fecha de finalización del informe se puede mover más tarde."
+#~ "Debido a que este programa ya tiene configurados objetivos periódicos, solo la fecha de finalización del "
+#~ "informe se puede mover más tarde."
 
 #~ msgid "Back to Homepage"
 #~ msgstr "Volver a la página de inicio"
 
-#~ msgid ""
-#~ "Error. Could not retrieve data from server. Please report this to the "
-#~ "Tola team."
-#~ msgstr ""
-#~ "Error. No se pudieron recuperar los datos del servidor. Por favor informe "
-#~ "esto al equipo de Tola."
+#~ msgid "Error. Could not retrieve data from server. Please report this to the Tola team."
+#~ msgstr "Error. No se pudieron recuperar los datos del servidor. Por favor informe esto al equipo de Tola."
 
-#~ msgid ""
-#~ "You must enter values for the reporting start and end dates before saving."
-#~ msgstr ""
-#~ "Debe ingresar valores para las fechas de inicio y finalización del "
-#~ "informe antes de guardar."
+#~ msgid "You must enter values for the reporting start and end dates before saving."
+#~ msgstr "Debe ingresar valores para las fechas de inicio y finalización del informe antes de guardar."
 
 #~ msgid "Success. Reporting period changes were saved."
 #~ msgstr "Éxito. Se guardaron los cambios del período de informes."
@@ -2396,61 +2245,53 @@ msgstr "Filtrar programas"
 #~ msgstr "Objetivo de la vida del programa (LoP)"
 
 #~ msgid ""
-#~ "NON-CUMULATIVE (NC): Target period results are automatically calculated "
-#~ "from data collected during the period. The Life of Program result is the "
-#~ "sum of target period values."
+#~ "NON-CUMULATIVE (NC): Target period results are automatically calculated from data collected during the "
+#~ "period. The Life of Program result is the sum of target period values."
 #~ msgstr ""
-#~ "NO ACUMULATIVO (NC): los resultados del período objetivo se calculan "
-#~ "automáticamente a partir de los datos recopilados durante el período. El "
-#~ "resultado de la vida del programa es la suma de los valores del período "
-#~ "objetivo."
+#~ "NO ACUMULATIVO (NC): los resultados del período objetivo se calculan automáticamente a partir de los "
+#~ "datos recopilados durante el período. El resultado de la vida del programa es la suma de los valores del "
+#~ "período objetivo."
 
 #~ msgid ""
-#~ "CUMULATIVE (C): Target period results automatically include data from "
-#~ "previous periods. The Life of Program result mirrors the latest period "
-#~ "value."
+#~ "CUMULATIVE (C): Target period results automatically include data from previous periods. The Life of "
+#~ "Program result mirrors the latest period value."
 #~ msgstr ""
-#~ "ACUMULATIVO (C): los resultados del período objetivo incluyen "
-#~ "automáticamente datos de períodos anteriores. El resultado de vida del "
-#~ "programa refleja el último valor del período."
+#~ "ACUMULATIVO (C): los resultados del período objetivo incluyen automáticamente datos de períodos "
+#~ "anteriores. El resultado de vida del programa refleja el último valor del período."
 
 #~ msgid ""
-#~ "CUMULATIVE (C): The Life of Program result mirrors the latest period "
-#~ "result. No calculations are performed with collected data."
+#~ "CUMULATIVE (C): The Life of Program result mirrors the latest period result. No calculations are "
+#~ "performed with collected data."
 #~ msgstr ""
-#~ "ACUMULATIVO (C): el resultado de la vida del programa refleja el último "
-#~ "resultado del período. No se realizan cálculos con los datos recopilados."
+#~ "ACUMULATIVO (C): el resultado de la vida del programa refleja el último resultado del período. No se "
+#~ "realizan cálculos con los datos recopilados."
 
 #~ msgid "Report Options"
 #~ msgstr "Opciones de informe"
 
 #~ msgid ""
-#~ "To see program results, please update your periodic targets to match your "
-#~ "reporting start and end dates:"
+#~ "To see program results, please update your periodic targets to match your reporting start and end dates:"
 #~ msgstr ""
-#~ "Para ver los resultados del programa, actualice sus objetivos periódicos "
-#~ "para que coincidan con las fechas de inicio y finalización de sus "
-#~ "informes:"
+#~ "Para ver los resultados del programa, actualice sus objetivos periódicos para que coincidan con las "
+#~ "fechas de inicio y finalización de sus informes:"
 
 #~ msgid "Periodic targets vs. actuals"
 #~ msgstr "Objetivos periódicos frente a datos reales"
 
-#~ msgid ""
-#~ "View results organized by target period for indicators that share the "
-#~ "same target frequency."
+#~ msgid "View results organized by target period for indicators that share the same target frequency."
 #~ msgstr ""
-#~ "Ver los resultados organizados por período objetivo para los indicadores "
-#~ "que comparten la misma frecuencia objetivo."
+#~ "Ver los resultados organizados por período objetivo para los indicadores que comparten la misma "
+#~ "frecuencia objetivo."
 
 #~ msgid "View Report"
 #~ msgstr "Ver informe"
 
 #~ msgid ""
-#~ "View the most recent two months of results. (You can customize your time "
-#~ "periods.) This report does not include periodic targets."
+#~ "View the most recent two months of results. (You can customize your time periods.) This report does not "
+#~ "include periodic targets."
 #~ msgstr ""
-#~ "Ver los últimos dos meses de resultados. (Puede personalizar sus períodos "
-#~ "de tiempo). Este informe no incluye objetivos periódicos."
+#~ "Ver los últimos dos meses de resultados. (Puede personalizar sus períodos de tiempo). Este informe no "
+#~ "incluye objetivos periódicos."
 
 #~ msgid "Pin"
 #~ msgstr "Fijar"
@@ -2462,8 +2303,7 @@ msgstr "Filtrar programas"
 #~ msgstr "Afiler a la página del programa"
 
 #~ msgid "Success! This report is now pinned to the program page."
-#~ msgstr ""
-#~ "¡Satisfactorio! Este informe ahora se encuentra en la página del programa."
+#~ msgstr "¡Satisfactorio! Este informe ahora se encuentra en la página del programa."
 
 #~ msgid "Visit the program page now."
 #~ msgstr "Visitar la página del programa ahora."
@@ -2484,9 +2324,7 @@ msgstr "Filtrar programas"
 #~ msgstr "Crear un informe de IPTT"
 
 #~ msgid "Reports will be available after the program start date"
-#~ msgstr ""
-#~ "Los informes estarán disponibles a partir de la fecha de inicio del "
-#~ "programa"
+#~ msgstr "Los informes estarán disponibles a partir de la fecha de inicio del programa"
 
 #~ msgid "%(indicator_count)s indicators"
 #~ msgstr "%(indicator_count)s indicadores"
@@ -2494,12 +2332,8 @@ msgstr "Filtrar programas"
 #~ msgid "Program setup"
 #~ msgstr "Configuración del programa"
 
-#~ msgid ""
-#~ "Before adding indicators and performance results, we need to know your "
-#~ "program's "
-#~ msgstr ""
-#~ "Antes de agregar indicadores y resultados de rendimiento, necesitamos "
-#~ "saber "
+#~ msgid "Before adding indicators and performance results, we need to know your program's "
+#~ msgstr "Antes de agregar indicadores y resultados de rendimiento, necesitamos saber "
 
 #~ msgid "Indicator Library"
 #~ msgstr "Biblioteca de indicadores"
@@ -2542,13 +2376,11 @@ msgstr "Filtrar programas"
 
 #~ msgid ""
 #~ "\n"
-#~ "                                <strong>%(high)s%%</strong> are &gt;"
-#~ "%(margin)s%% above target\n"
+#~ "                                <strong>%(high)s%%</strong> are &gt;%(margin)s%% above target\n"
 #~ "                            "
 #~ msgstr ""
 #~ "\n"
-#~ "                        <strong>%(high)s%%</strong> están &gt;%(margin)s%"
-#~ "% por encima del objetivo\n"
+#~ "                        <strong>%(high)s%%</strong> están &gt;%(margin)s%% por encima del objetivo\n"
 #~ "                    "
 
 #~ msgid "%(filter_title_count)s indicator is on track"
@@ -2558,24 +2390,20 @@ msgstr "Filtrar programas"
 
 #~ msgid ""
 #~ "\n"
-#~ "                                <strong>%(on_scope)s%%</strong> are on "
-#~ "track\n"
+#~ "                                <strong>%(on_scope)s%%</strong> are on track\n"
 #~ "                            "
 #~ msgstr ""
 #~ "\n"
-#~ "                        <strong>%(on_scope)s%%</strong> están "
-#~ "encaminados\n"
+#~ "                        <strong>%(on_scope)s%%</strong> están encaminados\n"
 #~ "                    "
 
 #~ msgid ""
 #~ "\n"
-#~ "                                <strong>%(low)s%%</strong> are &gt;"
-#~ "%(margin)s%% below target\n"
+#~ "                                <strong>%(low)s%%</strong> are &gt;%(margin)s%% below target\n"
 #~ "                            "
 #~ msgstr ""
 #~ "\n"
-#~ "                        <strong>%(low)s%%</strong> están >%(margin)s%% "
-#~ "por debajo del objetivo\n"
+#~ "                        <strong>%(low)s%%</strong> están >%(margin)s%% por debajo del objetivo\n"
 #~ "                    "
 
 #~ msgid "%(filter_title_count)s indicators %(filter_title)s"
@@ -2596,8 +2424,7 @@ msgstr "Filtrar programas"
 #~ "        data-target=\"#id_reporting_period_modal\">\n"
 #~ "        Program period\n"
 #~ "    </a>\n"
-#~ "    is <br><strong class=\"text-dark\">%(program.percent_complete)s%% "
-#~ "complete</strong>"
+#~ "    is <br><strong class=\"text-dark\">%(program.percent_complete)s%% complete</strong>"
 #~ msgstr ""
 #~ "\n"
 #~ "    <a\n"
@@ -2613,8 +2440,7 @@ msgstr "Filtrar programas"
 #~ "        data-target=\"#id_reporting_period_modal\">\n"
 #~ "        El período del programa\n"
 #~ " </a>\n"
-#~ "    está <br><strong class=\"text-dark\">%(program.percent_complete)s%% "
-#~ "completado</strong>"
+#~ "    está <br><strong class=\"text-dark\">%(program.percent_complete)s%% completado</strong>"
 
 #~ msgid "Indicator Target vs Actual Report for "
 #~ msgstr "Indicador objetivo frente al informe real para "
@@ -2650,11 +2476,11 @@ msgstr "Filtrar programas"
 #~ msgstr "Importar una tabla de datos desde"
 
 #~ msgid ""
-#~ "Import one of your Tola Tables or a Table shared with you as a Project "
-#~ "Initiation, Indicator, Site Profile or Indicator Evidence."
+#~ "Import one of your Tola Tables or a Table shared with you as a Project Initiation, Indicator, Site "
+#~ "Profile or Indicator Evidence."
 #~ msgstr ""
-#~ "Importar una de sus Tablas Tola o una Tabla compartida con usted como "
-#~ "Iniciación de Proyecto, Indicador, Perfil de Sitio o Evidencia Indicadora."
+#~ "Importar una de sus Tablas Tola o una Tabla compartida con usted como Iniciación de Proyecto, Indicador, "
+#~ "Perfil de Sitio o Evidencia Indicadora."
 
 #~ msgid "Delete Documentation"
 #~ msgstr "Borrado de Documentación"
@@ -2675,21 +2501,18 @@ msgstr "Filtrar programas"
 #~ msgstr "Confirmar"
 
 #~ msgid ""
-#~ "Warning: The file you are linking to should be on external storage. The "
-#~ "file path you provided looks like it might be on your local hard drive."
+#~ "Warning: The file you are linking to should be on external storage. The file path you provided looks like "
+#~ "it might be on your local hard drive."
 #~ msgstr ""
-#~ "Advertencia: El archivo al que se está vinculando debe estar en "
-#~ "almacenamiento externo. La ruta del archivo que proporcionó parece que "
-#~ "podría estar en su disco duro local."
+#~ "Advertencia: El archivo al que se está vinculando debe estar en almacenamiento externo. La ruta del "
+#~ "archivo que proporcionó parece que podría estar en su disco duro local."
 
 #~ msgid ""
-#~ "Warning: You should be providing a location or path to a file that is not "
-#~ "on your hard drive.  The link you provided does not appear to be a file "
-#~ "path or web link."
+#~ "Warning: You should be providing a location or path to a file that is not on your hard drive.  The link "
+#~ "you provided does not appear to be a file path or web link."
 #~ msgstr ""
-#~ "Advertencia: Debe proporcionar una ubicación o ruta a un archivo que no "
-#~ "se encuentra en su disco duro. El enlace que proporcionó no parece ser "
-#~ "una ruta de archivo o un enlace web."
+#~ "Advertencia: Debe proporcionar una ubicación o ruta a un archivo que no se encuentra en su disco duro. El "
+#~ "enlace que proporcionó no parece ser una ruta de archivo o un enlace web."
 
 #~ msgid "Please complete this field"
 #~ msgstr "Por favor complete este campo"
@@ -2747,10 +2570,8 @@ msgstr "Filtrar programas"
 #~ msgstr "Filtrado por <b>(Status):%(status|default_if_none:'')s</ b>"
 
 # "(Program)" should be translated
-#~ msgid ""
-#~ "Filtered by <b>(Program): %(filtered_program|default_if_none:'')s</b>"
-#~ msgstr ""
-#~ "Filtrado por <b>(Programa): %(filtered_program|default_if_none:'')s</ b>"
+#~ msgid "Filtered by <b>(Program): %(filtered_program|default_if_none:'')s</b>"
+#~ msgstr "Filtrado por <b>(Programa): %(filtered_program|default_if_none:'')s</ b>"
 
 #~ msgid "Project Name"
 #~ msgstr "Nombre del proyecto"
@@ -3277,20 +3098,16 @@ msgstr "Filtrar programas"
 #~ msgid "Date of Request"
 #~ msgstr "Fecha de solicitud"
 
-#~ msgid ""
-#~ "Please be specific in your name.  Consider that your Project Name "
-#~ "includes WHO, WHAT, WHERE, HOW"
+#~ msgid "Please be specific in your name.  Consider that your Project Name includes WHO, WHAT, WHERE, HOW"
 #~ msgstr ""
-#~ "Por favor elija un nombre específico. Considere que su nombre de proyecto "
-#~ "debe incluir QUIÉN, QUÉ, DÓNDE, CÓMO"
+#~ "Por favor elija un nombre específico. Considere que su nombre de proyecto debe incluir QUIÉN, QUÉ, DÓNDE, "
+#~ "CÓMO"
 
 #~ msgid "Project Activity"
 #~ msgstr "Actividad del proyecto"
 
 #~ msgid "This should come directly from the activities listed in the Logframe"
-#~ msgstr ""
-#~ "Esto debe provenir directamente de las actividades enumeradas en el "
-#~ "Logframe"
+#~ msgstr "Esto debe provenir directamente de las actividades enumeradas en el Logframe"
 
 #~ msgid "Project Description"
 #~ msgstr "Descripción del proyecto"
@@ -3340,11 +3157,8 @@ msgstr "Filtrar programas"
 #~ msgid "Estimated number of direct beneficiaries"
 #~ msgstr "Número estimado de beneficiarios directos"
 
-#~ msgid ""
-#~ "Please provide achievable estimates as we will use these as our 'Targets'"
-#~ msgstr ""
-#~ "Proporcione estimaciones alcanzables ya que las usaremos como nuestros "
-#~ "'Objetivos'"
+#~ msgid "Please provide achievable estimates as we will use these as our 'Targets'"
+#~ msgstr "Proporcione estimaciones alcanzables ya que las usaremos como nuestros 'Objetivos'"
 
 #~ msgid "Refer to Form 01 - Community Profile"
 #~ msgstr "Consulte el formulario 01 - Perfil de la comunidad"
@@ -3352,12 +3166,8 @@ msgstr "Filtrar programas"
 #~ msgid "Estimated Number of indirect beneficiaries"
 #~ msgstr "Número estimado de beneficiarios indirectos"
 
-#~ msgid ""
-#~ "This is a calculation - multiply direct beneficiaries by average "
-#~ "household size"
-#~ msgstr ""
-#~ "Este es un cálculo: multiplique los beneficiarios directos por el tamaño "
-#~ "promedio del hogar"
+#~ msgid "This is a calculation - multiply direct beneficiaries by average household size"
+#~ msgstr "Este es un cálculo: multiplique los beneficiarios directos por el tamaño promedio del hogar"
 
 #~ msgid "Total Project Budget"
 #~ msgstr "Presupuesto total del proyecto"
@@ -3673,35 +3483,26 @@ msgstr "Filtrar programas"
 #~ msgstr "Realimentación"
 
 #~ msgid ""
-#~ "External template indicators include agency standard indicator feeds or "
-#~ "donor required indicators from a web service.  Skip The service section "
-#~ "if creating a 'custom' indicator."
+#~ "External template indicators include agency standard indicator feeds or donor required indicators from a "
+#~ "web service.  Skip The service section if creating a 'custom' indicator."
 #~ msgstr ""
-#~ "Los indicadores de plantillas externas incluyen los indicadores de "
-#~ "agencia estándar o los indicadores requeridos por los donantes de un "
-#~ "servicio web. Omita la sección de servicio si está creando un indicador "
+#~ "Los indicadores de plantillas externas incluyen los indicadores de agencia estándar o los indicadores "
+#~ "requeridos por los donantes de un servicio web. Omita la sección de servicio si está creando un indicador "
 #~ "'personalizado'."
 
 #~ msgid "Indicator Service Templates (leave blank for custom indicators)"
-#~ msgstr ""
-#~ "Plantillas de servicios de indicadores (dejar en blanco para indicadores "
-#~ "personalizados)"
+#~ msgstr "Plantillas de servicios de indicadores (dejar en blanco para indicadores personalizados)"
 
 #~ msgid "Select an indicator service to select a pre-defined indicator from."
-#~ msgstr ""
-#~ "Seleccione un servicio de indicadores para seleccionar un indicador "
-#~ "predefinido."
+#~ msgstr "Seleccione un servicio de indicadores para seleccionar un indicador predefinido."
 
 #~ msgid "Service Indicator (leave blank for custom indicators)"
-#~ msgstr ""
-#~ "Indicador de servicio (dejar en blanco para indicadores personalizados)"
+#~ msgstr "Indicador de servicio (dejar en blanco para indicadores personalizados)"
 
-#~ msgid ""
-#~ "Type the name of the Indicator in the box above to search, starting with "
-#~ "type then level then title."
+#~ msgid "Type the name of the Indicator in the box above to search, starting with type then level then title."
 #~ msgstr ""
-#~ "Escriba el nombre del indicador en el cuadro de arriba para buscar, "
-#~ "comenzando con el tipo, luego el nivel y luego el título."
+#~ "Escriba el nombre del indicador en el cuadro de arriba para buscar, comenzando con el tipo, luego el "
+#~ "nivel y luego el título."
 
 #~ msgid "Please select a target"
 #~ msgstr "Por favor seleccione un objetivo"
