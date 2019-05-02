@@ -352,8 +352,10 @@ const create_changeset_notice = ({
     message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE,
     on_submit = () => {},
     on_cancel = () => {},
-    confirm_text = 'Ok',
-    cancel_text = 'Cancel',
+    // # Translators: Button to approve a form
+    confirm_text = gettext('Ok'),
+    // # Translators: Button to cancel a form submission
+    cancel_text = gettext('Cancel'),
     type = 'notice',
     inner = '',
     context = null,
@@ -449,8 +451,10 @@ window.create_destructive_changeset_notice = ({
     on_submit = () => {},
     on_cancel = () => {},
     is_indicator = false,
-    confirm_text = 'Ok',
-    cancel_text = 'Cancel',
+    // # Translators: Button to approve a form
+    confirm_text = gettext('Ok'),
+    // # Translators: Button to cancel a form submission
+    cancel_text = gettext('Cancel'),
     context = null,
     no_preamble = false,
     showCloser = false,
@@ -497,8 +501,10 @@ window.create_nondestructive_changeset_notice = ({
     on_submit = () => {},
     on_cancel = () => {},
     is_indicator = false,
-    confirm_text = 'Ok',
-    cancel_text = 'Cancel',
+    // # Translators: Button to approve a form
+    confirm_text = gettext('Ok'),
+    // # Translators: Button to cancel a form submission
+    cancel_text = gettext('Cancel'),
     context = null
 } = {}) => {
     if(!message_text) {message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE}
@@ -539,8 +545,10 @@ window.create_no_rationale_changeset_notice = ({
     on_submit = () => {},
     on_cancel = () => {},
     is_indicator = false,
-    confirm_text = 'Ok',
-    cancel_text = 'Cancel',
+    // # Translators: Button to approve a form
+    confirm_text = gettext('Ok'),
+    // # Translators: Button to cancel a form submission
+    cancel_text = gettext('Cancel'),
     context = null,
     preamble = false
 } = {}) => {
