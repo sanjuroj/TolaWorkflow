@@ -32,7 +32,7 @@ class TestIPTTReportviewURL(test.TestCase):
         """Does get return 200 and the right template?"""
 
         url_kwargs = {
-            'program_id': self.program.id,
+            'program': self.program.id,
             'reporttype': 'targetperiods',
         }
         filterdata = {'frequency': 3, 'timeframe': 1}
