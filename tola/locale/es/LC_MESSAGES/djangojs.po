@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-01 19:48-0700\n"
+"POT-Creation-Date: 2019-05-02 10:20-0700\n"
 "PO-Revision-Date: 2019-05-01 19:35-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -71,19 +71,29 @@ msgstr[1] ""
 "los registros de datos ya no estarán asociados con el objetivo de vida del "
 "programa, y ​​deberán reasignarse a nuevos objetivos."
 
-#: js/base.js:401
+#. Translators: Button to approve a form
+#: js/base.js:356 js/base.js:455 js/base.js:505 js/base.js:549
+msgid "Ok"
+msgstr ""
+
+#. Translators: Button to cancel a form submission
+#: js/base.js:358 js/base.js:457 js/base.js:507 js/base.js:551
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: js/base.js:403
 msgid "A reason is required."
 msgstr "Se requiere una justificación."
 
-#: js/base.js:460 js/base.js:548
+#: js/base.js:464 js/base.js:556
 msgid "This action cannot be undone."
 msgstr "Advertencia: esta acción no se puede deshacer."
 
-#: js/base.js:464 js/base.js:552
+#: js/base.js:468 js/base.js:560
 msgid "Warning"
 msgstr "Advertencia"
 
-#: js/base.js:508 js/pages/tola_management_pages/audit_log/views.js:132
+#: js/base.js:514 js/pages/tola_management_pages/audit_log/views.js:132
 msgid "Reason for change"
 msgstr "Justificación para el cambio"
 
@@ -870,10 +880,8 @@ msgstr "Acciones Masivas"
 
 #: js/pages/tola_management_pages/program/views.js:133
 #: js/pages/tola_management_pages/user/views.js:154
-#, fuzzy
-#| msgid "Select All"
 msgid "Select..."
-msgstr "Seleccionar todo"
+msgstr "Seleccionar..."
 
 #: js/pages/tola_management_pages/program/views.js:138
 #: js/pages/tola_management_pages/user/views.js:159
@@ -2630,9 +2638,6 @@ msgstr "Super Administrador"
 
 #~ msgid "Documentation Delete"
 #~ msgstr "Borrado de Documentación"
-
-#~ msgid "Cancel"
-#~ msgstr "Cancelar"
 
 #~ msgid "Document Confirm Delete"
 #~ msgstr "Confirmación de Borrado de Documento"

@@ -1832,10 +1832,8 @@ msgid "Success"
 msgstr "¡Éxito!"
 
 #: templates/indicators/indicator_form_common_js.html:351
-#, fuzzy
-#| msgid "First event name"
 msgid "Enter event name"
-msgstr "Nombre del primer evento"
+msgstr "Ingrese el nombre del evento"
 
 #: templates/indicators/indicator_form_common_js.html:361
 #: templates/indicators/indicatortargets.html:63
@@ -1859,10 +1857,8 @@ msgid "View your indicator on the program page."
 msgstr "Vea su indicador en la página del programa."
 
 #: templates/indicators/indicator_form_common_js.html:588
-#, fuzzy
-#| msgid "Number of Members"
 msgid "Number of events"
-msgstr "Número de miembros"
+msgstr "Número de eventos"
 
 #: templates/indicators/indicator_form_common_js.html:651
 #: templates/indicators/indicator_form_common_js.html:653
