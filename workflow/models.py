@@ -355,8 +355,8 @@ class TolaUser(models.Model):
 
 
 COUNTRY_ROLE_CHOICES = (
-    ('user', _('User')),
-    ('basic_admin', _('Basic Admin')),
+    ('user', _('User (all programs)')),
+    ('basic_admin', _('Basic Admin (all programs)')),
 )
 
 class CountryAccess(models.Model):

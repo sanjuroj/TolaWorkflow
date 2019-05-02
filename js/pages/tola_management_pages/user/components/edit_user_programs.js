@@ -10,7 +10,7 @@ const create_country_objects = (countries, store) => Object.entries(countries)
                                                         [id]: {
                                                             ...country,
                                                             type: 'country',
-                                                            options: [{label: '', value: 'none'}, ...store.country_role_choices],
+                                                            options: [{label: gettext('Individual programs only'), value: 'none'}, ...store.country_role_choices],
                                                             admin_access: store.is_superuser,
                                                             programs: new Set(country.programs)
                                                         }
