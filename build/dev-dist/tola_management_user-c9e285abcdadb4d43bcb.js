@@ -69,7 +69,7 @@ var create_country_objects = function create_country_objects(countries, store) {
     return _objectSpread({}, countries, _defineProperty({}, id, _objectSpread({}, country, {
       type: 'country',
       options: [{
-        label: '',
+        label: gettext('Individual programs only'),
         value: 'none'
       }].concat(_toConsumableArray(store.country_role_choices)),
       admin_access: store.is_superuser,
@@ -4360,4 +4360,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-8c716b5e108f8910e4be.js.map
+//# sourceMappingURL=tola_management_user-c9e285abcdadb4d43bcb.js.map
