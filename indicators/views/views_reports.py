@@ -63,7 +63,7 @@ def get_program_filter_data(request):
     """uses request user to populate program data for filter dropdowns in IPTT Quickstart / IPTT Reeport"""
 
     programs = []
-    countries = request.user.tola_user.countries.all()
+    countries = request.user.tola_user.available_countries
     programs_qs = Program.objects.filter(
         funding_status="Funded", country__in=countries,
         reporting_period_start__isnull=False, reporting_period_end__isnull=False

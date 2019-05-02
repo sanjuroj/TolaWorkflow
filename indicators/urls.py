@@ -39,7 +39,7 @@ urlpatterns = [
         views.result_view, name='result_view'),
 
     url(r'^iptt_quickstart/', views.IPTTQuickstart.as_view(), name='iptt_quickstart'),
-    url(r'^iptt_report/(?P<program_id>\d+)/(?P<reporttype>\w+)/$', views.IPTTReport.as_view(), name='iptt_report'),
+    url(r'^iptt_report/(?P<program>\d+)/(?P<reporttype>\w+)/$', views.IPTTReport.as_view(), name='iptt_report'),
     url(r'^iptt_report_data/$', views.IPTTReportData.as_view(), name='iptt_ajax'),
     url(r'^iptt_excel/$', views.IPTTExcelExport.as_view(), name='iptt_excel'),
 

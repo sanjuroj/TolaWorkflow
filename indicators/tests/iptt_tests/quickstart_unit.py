@@ -62,7 +62,8 @@ class TestIPTTQuickstartJSContext(test.TestCase):
         self.assertEqual(js_context['labels']['programSelect'], 'Program', 'programSelect label is required')
         self.assertIn('programs', js_context, 'Program data required to fill out forms')
         programs = js_context['programs']
-        self.assertEqual(len(programs), 1, 'One program created means 1 program in js context')
+        self.assertEqual(len(programs), 1,
+                         'One program created means 1 program in js context, got {0}'.format(programs))
         program = programs[0]
         self.assertIn('frequencies', program, 'Frequencies key required to list correct Target Frequencies')
         frequencies = program['frequencies']
