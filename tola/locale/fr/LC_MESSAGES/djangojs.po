@@ -265,16 +265,6 @@ msgstr ""
 
 #. Translators: Help text explaining what an "on track" indicator is. */
 #: js/pages/program_page/components/program_metrics.js:190
-#, fuzzy
-#| msgid ""
-#| "The actual value matches the target value, plus or minus 15%. So if your "
-#| "target is 100 and your result is 110, the indicator is 10% above target "
-#| "and on track.  <br><br>Please note that if your indicator has a "
-#| "decreasing direction of change, then above and below are switched. In "
-#| "that case, if your target is 100 and your result is 200, your indicator "
-#| "is 50% below target and not on track.<br><br><a href='https://docs.google."
-#| "com/document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' "
-#| "target='_blank'>See our documentation for more information.</a>"
 msgid ""
 "The actual value matches the target value, plus or minus 15%. So if your "
 "target is 100 and your result is 110, the indicator is 10% above target and "
@@ -978,10 +968,8 @@ msgid "Yes"
 msgstr "Oui"
 
 #: js/pages/tola_management_pages/user/models.js:80
-#, fuzzy
-#| msgid "No."
 msgid "No"
-msgstr "Nº"
+msgstr "Non"
 
 #. Translators: An email was sent to the user to verify that the email address is valid
 #: js/pages/tola_management_pages/user/models.js:438
