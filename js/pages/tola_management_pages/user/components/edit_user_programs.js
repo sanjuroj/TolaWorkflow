@@ -447,6 +447,10 @@ export default class EditUserPrograms extends React.Component {
 
                                 <Column
                                 dataKey="not_applicable_but_required"
+                                label={
+                                    /* # Translators: Column header for a checkbox indicating if a user has access to a program */
+                                    gettext("Has access?")
+                                }
                                 width={100}
                                 cellDataGetter={({rowData}) => ({
                                     checked: is_checked(rowData),
