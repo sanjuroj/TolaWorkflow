@@ -328,11 +328,8 @@ msgstr "pas de cibles"
 
 #. Translators: a link that displays a filtered list of indicators which are missing targets */
 #: js/pages/program_page/components/program_metrics.js:275
-#, fuzzy
-#| msgid "%s indicator has missing targets"
-#| msgid_plural "%s indicators have missing targets"
 msgid "Indicators missing targets"
-msgstr "%s indicateur a des cibles manquantes"
+msgstr "Indicateurs avec cibles manquantes"
 
 #: js/pages/program_page/components/program_metrics.js:277
 msgid "No targets"
@@ -355,11 +352,8 @@ msgstr "aucun résultat"
 
 #. Translators: a link that displays a filtered list of indicators which are missing results */
 #: js/pages/program_page/components/program_metrics.js:291
-#, fuzzy
-#| msgid "%s indicator has missing results"
-#| msgid_plural "%s indicators have missing results"
 msgid "Indicators missing results"
-msgstr "%s indicateur a des résultats manquants"
+msgstr "Indicateurs avec résultats manquants"
 
 #: js/pages/program_page/components/program_metrics.js:293
 msgid "No results"
