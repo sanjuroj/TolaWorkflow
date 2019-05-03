@@ -62,7 +62,7 @@ class Command(makemessages.Command):
 
         options['domain'] = 'djangojs'
         options['ignore_patterns'] = DIRECTORIES_TO_IGNORE
-        options['extensions'] = ['js', 'jsx', 'html']
+        options['extensions'] = ['js', 'jsx']
 
         # keep the pot file around until parsing it for stats
         orig_keep_pot = options['keep_pot']
@@ -110,13 +110,21 @@ class Command(makemessages.Command):
                     continue
                 with open(potfile) as f:
                     file_lines = f.readlines()
-                    for lineno, line in enumerate(file_lines):
+                    comment = False
+                    for line in file_lines:
+                        if line == '\n':
+                            comment = False
+                            continue
+
+                        if line.startswith('#. '):
+                            comment = True
+
                         if line.startswith('#: '):
                             js_file_name = line[3:].split(':')[0]
                             pot_file_str_counts[js_file_name] += 1
 
-                            # Check to see if the prev line is a comment
-                            if file_lines[lineno-1].startswith('#. '):
+                            # Count the single comment for all the JS files
+                            if comment:
                                 pot_file_comment_counts[js_file_name] += 1
 
                     seen_pot_files.add(potfile)
