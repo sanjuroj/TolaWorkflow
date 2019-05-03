@@ -376,11 +376,8 @@ msgstr "aucune preuve"
 
 #. Translators: a link that displays a filtered list of indicators which are missing evidence */
 #: js/pages/program_page/components/program_metrics.js:307
-#, fuzzy
-#| msgid "%s indicator has missing evidence"
-#| msgid_plural "%s indicators have missing evidence"
 msgid "Indicators missing evidence"
-msgstr "%s indicateur a des preuves manquantes"
+msgstr "Indicateurs avec preuves manquantes"
 
 #: js/pages/program_page/components/program_metrics.js:309
 msgid "No evidence"
