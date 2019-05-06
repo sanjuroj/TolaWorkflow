@@ -64,13 +64,6 @@ def create_user_okta(backend, details, user, response, *args, **kwargs):
         # If any of these fail, the transaction should roll back the whole thing
 
         try:
-            tola_user.country = country
-            tola_user.save()
-        except Exception as e:
-            transaction.savepoint_rollback(savepoint)
-            logger.error("Exception while saving the TolaUser country of {}".format(email), e)
-            return HttpResponseRedirect(reverse("invalid_user_okta"))
-        try:
             user.first_name = first_name[:30]
             user.last_name = last_name[:30]
             user.save()
@@ -82,6 +75,14 @@ def create_user_okta(backend, details, user, response, *args, **kwargs):
             else:
                 # It's ok if we can't get name info if there's already something in the database.
                 pass
+        try:
+            tola_user.country = country
+            tola_user.save()
+        except Exception as e:
+            transaction.savepoint_rollback(savepoint)
+            logger.error("Exception while saving the TolaUser country of {}".format(email), e)
+            return HttpResponseRedirect(reverse("invalid_user_okta"))
+
         return None
     else:
         return None

@@ -57,8 +57,9 @@ msgstr ""
             for row in csvreader:
                 if row[1] == 'English - Plural':
                     continue
-                if row[6]:
-                    pofile.write('{}\n'.format(row[6].encode('utf-8')))
+                # Translator notes go at the top
+                if row[7]:
+                    pofile.write('{}\n'.format(row[7].encode('utf-8')))
                 pofile.write('msgid "{}"\n'.format(row[0].encode('utf-8')))
                 # If the second column has a value, it's a plurlalized translations
                 if len(row[1]) > 0:
@@ -198,14 +199,25 @@ def is_untranslated(stanza):
     # print '-----', stanza, '========'
     lines = stanza.split('\n')
     for i, line in enumerate(lines):
+        # For a non-plural string, check if it's an empty string and the next line is empty
         if 'msgstr' in line:
-            # print 'msgstrline', line
-            # print 'i={}, len lines={}'.format(i, len(lines))
             if (line == 'msgstr ""' and len(lines) == i+1) or \
                     (line == 'msgstr ""' and len(lines[i+1]) == 0):
                 return True
-            else:
-                return False
+        # Check for plural values being blank
+        if 'msgstr[0]' in line:
+            if (line == 'msgstr[0] ""' and len(lines) == i + 1) or \
+                    (line == 'msgstr[0] ""' and 'msgstr[1]' in lines[i+1]):
+                return True
+        if 'msgstr[1]' in line:
+            if (line == 'msgstr[1] ""' and len(lines) == i+1) or \
+                    (line == 'msgstr[1] ""' and len(lines[i+1]) == 0):
+                return True
+
+    # Return false if none you haven't returned True yet
+    return False
+
+
 
 
 if __name__ == '__main__':
