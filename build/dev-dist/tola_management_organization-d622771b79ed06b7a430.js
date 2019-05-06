@@ -1137,7 +1137,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         className: "fas fa-users"
       }), "\xA0", data.user_count, " ", gettext("users"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Col, {
         size: "0.25"
-      }, data.is_active ? 'Active' : 'Inactive'));
+      }, data.is_active ? gettext('Active') : gettext('Inactive')));
     }
   }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__metadata"
@@ -2723,4 +2723,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-47ff3909fa3c65fb16cc.js.map
+//# sourceMappingURL=tola_management_organization-d622771b79ed06b7a430.js.map

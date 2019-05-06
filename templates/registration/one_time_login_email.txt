@@ -1,0 +1,17 @@
+{% load i18n %}{% autoescape on %}
+A user account was created for you on Mercy Corps’ Tola Activity application.  Your username is: {{ user }}
+
+If you are using a mercycorps.org email address to access Tola Activity, you use the same Okta login that you use for other Mercy Corps websites.
+
+If you are using a Gmail account to access Tola Activity, please use this link to connect your Gmail account:
+
+{{ gmail_url }}
+
+If you are using another email account, please use this link to choose a new password:
+
+{{ one_time_url }}
+
+
+Thank you,
+The Mercy Corps team
+{% endautoescape %}

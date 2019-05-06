@@ -21,6 +21,7 @@ headers = {'Accept': 'application/vnd.github.inertia-preview+json'}
 
 parser = argparse.ArgumentParser(description='Parse a .po file')
 parser.add_argument('--column', help='the column name of the tickets you want to extract')
+parser.add_argument('--closeissues', action='store_true', help='Close all of the issues in the column')
 args = parser.parse_args()
 
 project_name = raw_input('Enter the project name: ')
@@ -98,6 +99,8 @@ for col_id in column_ids:
             issue_url = issue_template.format(issue_num)
             issue_response = requests.get(issue_url, headers=headers, auth=auth)
             issues.append((issue_num, json.loads(issue_response.text)['title']))
+            if args.closeissues:
+                response = requests.patch(issue_url, headers=headers, auth=auth, json={'state': 'closed'})
 
         if 'next' in cards_response.links:
             page_num += 1
