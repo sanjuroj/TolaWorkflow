@@ -77,8 +77,6 @@
                                 <span id="id_span_targets_sum" class="periodic-targets__sum__value {% if indicator.unit_of_measure_type == 2 %}input-symbol-percent{% endif %}">
                                     {% if indicator.unit_of_measure_type == 1%}
                                         {{ targets_sum|floatformat:"-2" }}
-                                    {% else %}
-                                        {{ targets_avg|floatformat:"-2" }}
                                     {% endif %}
                                 </span>
                             </strong>

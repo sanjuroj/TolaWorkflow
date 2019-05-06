@@ -3,19 +3,7 @@
 <script type="text/javascript">
     //Searchable select option for service indicator
     $(document).ready(function() {
-        var targetsonly = `{{targetsonly|safe}}`;
         var targetsactive = `{{targetsactive|safe}}`;
-        if (targetsonly == 'True') {
-            // $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                $('#indicatorTabs a[href="#targetsTab"][data-toggle="tab"]').tab('show');
-                // $('a[href!="#targets"][data-toggle="tab"]').hide();
-                // $('a[href="#targets"][data-toggle="tab"]').hide();
-                $('ul.nav.nav-tabs').hide();
-                $('#indicator_modal_header').html('<a id="backToResultsLink" href="/indicators/periodic_target_generate/' + $("#id_indicator").val() + '/" style="font-size: 21px;"><< Back to Results</a>');
-                // e.target // newly activated tab
-                // e.relatedTarget // previous active tab
-            // });
-        }
 
         if (targetsactive == 'True') {
             $('#indicatorTabs a[href="#targetsTab"][data-toggle="tab"]').tab('show');

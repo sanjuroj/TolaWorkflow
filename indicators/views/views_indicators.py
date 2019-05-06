@@ -154,6 +154,7 @@ def indicator_create(request, program=0):
                    'getServices': get_services,
                    'result_count': 0})
 
+
 class IndicatorUpdate(UpdateView):
     """
     Update and Edit Indicators.
@@ -178,10 +179,12 @@ class IndicatorUpdate(UpdateView):
             # unset target_frequency too.
             indicator = self.get_object()
             reset_indicator_target_frequency(indicator)
+
         try:
             self.guidance = FormGuidance.objects.get(form="Indicator")
         except FormGuidance.DoesNotExist:
             self.guidance = None
+
         return super(IndicatorUpdate, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -197,7 +200,6 @@ class IndicatorUpdate(UpdateView):
             .annotate(num_data=Count('result')).order_by('customsort', 'create_date', 'period')
 
         ptargets = []
-        # context['periodic_targets']
         for pt in pts:
             ptargets.append({
                 'id': pt.pk,
@@ -237,20 +239,8 @@ class IndicatorUpdate(UpdateView):
         context['targets_sum'] = PeriodicTarget.objects \
             .filter(indicator=getIndicator).aggregate(Sum('target'))['target__sum']
 
-        context['targets_avg'] = PeriodicTarget.objects \
-            .filter(indicator=getIndicator).aggregate(Avg('target'))['target__avg']
-
-        # get external service data if any
-        try:
-            getExternalServiceRecord = ExternalServiceRecord.objects \
-                .filter(indicator__id=self.kwargs['pk'])
-        except ExternalServiceRecord.DoesNotExist:
-            getExternalServiceRecord = None
-
-        context.update({'getExternalServiceRecord': getExternalServiceRecord})
-        if self.request.GET.get('targetsonly') == 'true':
-            context['targetsonly'] = True
-        elif self.request.GET.get('targetsactive') == 'true':
+        # redirect user to certain tabs of the form given GET params
+        if self.request.GET.get('targetsactive') == 'true':
             context['targetsactive'] = True
 
         context['readonly'] = not self.request.has_write_access
@@ -399,16 +389,6 @@ class IndicatorUpdate(UpdateView):
 
         if self.request.is_ajax():
             indicatorjson = serializers.serialize('json', [self.object])
-            # pts = FlatJsonSerializer().serialize(periodic_targets)
-
-            try:
-                last_targetperiod_enddate = indicatr.periodictargets.aggregate(lastpt=Max('end_date'))['lastpt']
-                if program.reporting_period_end > last_targetperiod_enddate:
-                    remove_missing_targts_link = False
-                else:
-                    remove_missing_targts_link = True
-            except TypeError:
-                remove_missing_targts_link = True
 
             if generatedTargets:
                 params = {'indicator': self.object, 'periodic_targets': generatedTargets}
@@ -421,21 +401,16 @@ class IndicatorUpdate(UpdateView):
             if targets_sum is None:
                 targets_sum = "0"
 
-            targets_avg = self.get_context_data().get('targets_avg')
-            if targets_avg is None:
-                targets_avg = "0"
-
             data = {
                 "indicatorjson": str(indicatorjson),
                 "targets_sum": str(targets_sum),
-                "targets_avg": str(targets_avg),
                 "content": content,
-                "remove_missing_targts_link": remove_missing_targts_link
             }
             return HttpResponse(json.dumps(data))
         else:
             messages.success(self.request, _('Success, Indicator Updated!'))
         return self.render_to_response(self.get_context_data(form=form))
+
 
 class IndicatorDelete(DeleteView):
     model = Indicator

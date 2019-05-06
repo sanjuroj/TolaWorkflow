@@ -487,16 +487,6 @@
     }
 
     /*
-    Calculates the average of all targets
-    */
-    function getTargetsAverage() {
-        var sumAndNum = getTargetsSumAndNum();
-        var avgTargets = sumAndNum[0]/sumAndNum[1];
-        avgTargets = parseFloat(avgTargets).toFixed(2).replace(/[.,]00$/, "");
-        return avgTargets;
-    }
-
-    /*
     Toggles the Aggregate (Totals) row of the targets table depending on
     whether the indicator is set as CUMULATIVE or NON-CUMULATIVE
     */
@@ -509,11 +499,6 @@
             $("#pt_sum_targets").show();
         }
     }
-
-    // $("#id_delete_indicator_btn").on("click", function () {
-    //     console.log('this')
-    //     location.href = "/indicators/indicator_delete/{{ indicator.id }}"
-    // })
 
     /*
     Update the periodic_targets totals row depending on whether it a
