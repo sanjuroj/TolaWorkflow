@@ -75,7 +75,7 @@ class StatusHeader extends React.Component {
 
                 {filterApplied &&
                 <a href="#" id="show-all-indicators" onClick={this.onShowAllClick}>
-                    <small>Show all</small>
+                    <small>{gettext('Show all')}</small>
                 </a>
                 }
             </h3>

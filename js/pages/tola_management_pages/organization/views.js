@@ -173,7 +173,7 @@ export const IndexView = observer(
                                             {data.user_count} {gettext("users")}
                                         </a>
                                     </Col>
-                                    <Col size="0.25">{data.is_active?'Active':'Inactive'}</Col>
+                                    <Col size="0.25">{data.is_active ? gettext('Active') : gettext('Inactive')}</Col>
                                 </Row>
                             }
                         />

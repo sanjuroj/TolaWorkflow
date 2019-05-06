@@ -73,25 +73,29 @@ class UserManagementAuditLog(models.Model, DiffableLog):
     previous_entry = models.TextField()
     new_entry = models.TextField()
 
-    field_map = {
-        "title": _("Title"),
-        "name": _("Name"),
-        "first_name": _("First Name"),
-        "last_name": _("Last Name"),
-        "user": _("Username"),
-        "mode_of_address": _("Mode of Address"),
-        "mode_of_contact": _("Mode of Contact"),
-        "phone_number": _("Phone Number"),
-        "email": _("Email"),
-        "organization": _("Organization"),
-        "active": _("Is Active")
-    }
+    @property
+    def field_map(self):
+        return {
+            "title": _("Title"),
+            "name": _("Name"),
+            "first_name": _("First Name"),
+            "last_name": _("Last Name"),
+            "user": _("Username"),
+            "mode_of_address": _("Mode of Address"),
+            "mode_of_contact": _("Mode of Contact"),
+            "phone_number": _("Phone Number"),
+            "email": _("Email"),
+            "organization": _("Organization"),
+            "active": _("Is Active")
+        }
 
-    change_type_map = {
-        "user_created": _("User Created"),
-        "user_programs_updated": _("User Programs Updated"),
-        "user_profile_updated": _("User Profile Updated")
-    }
+    @property
+    def change_type_map(self):
+        return {
+            "user_created": _("User Created"),
+            "user_programs_updated": _("User Programs Updated"),
+            "user_profile_updated": _("User Profile Updated")
+        }
 
     @property
     def pretty_change_type(self):
@@ -197,45 +201,53 @@ class ProgramAuditLog(models.Model, DiffableLog):
     new_entry = models.TextField(null=True, blank=True)
     rationale = models.TextField(null=True)
 
-    field_map = {
-        "name": _("Name"),
-        "unit_of_measure": _("Unit of Measure"),
-        "unit_of_measure_type": _("Unit of Measure Type"),
-        "is_cumulative": _("Is Cumulative"),
-        "lop_target": _("LOP Target"),
-        "direction_of_change": _("Direction of Change"),
-        "rationale_for_target": _("Rationale for Target"),
-        "baseline_value": _("Baseline"),
-        "baseline_na": _("Baseline N/A"),
-        "evidence_url": _('Evidence Url'),
-        "evidence_name": _('Evidence Name'),
-        "date": _('Date'),
-        "target": _('Target'),
-        "value": _('Value'),
-        "start_date": _('Start Date'),
-        "end_date": _('End Date')
-    }
+    @property
+    def field_map(self):
+        return {
+            "name": _("Name"),
+            "unit_of_measure": _("Unit of Measure"),
+            "unit_of_measure_type": _("Unit of Measure Type"),
+            "is_cumulative": _("Is Cumulative"),
+            "lop_target": _("LOP Target"),
+            "direction_of_change": _("Direction of Change"),
+            "rationale_for_target": _("Rationale for Target"),
+            "baseline_value": _("Baseline"),
+            "baseline_na": _("Baseline N/A"),
+            "evidence_url": _('Evidence Url'),
+            "evidence_name": _('Evidence Name'),
+            "date": _('Date'),
+            "target": _('Target'),
+            "value": _('Value'),
+            "start_date": _('Start Date'),
+            "end_date": _('End Date')
+        }
 
-    change_type_map = {
-        "indicator_created": _("Indicator Created"),
-        "indicator_changed": _('Indicator Changed'),
-        "indicator_deleted": _('Indicator Deleted'),
-        "result_changed": _('Result Changed'),
-        "result_created": _('Result Created'),
-        "result_deleted": _('Result Deleted'),
-        "program_dates_changed": _('Program Dates Changed')
-    }
+    @property
+    def change_type_map(self):
+        return {
+            "indicator_created": _("Indicator Created"),
+            "indicator_changed": _('Indicator Changed'),
+            "indicator_deleted": _('Indicator Deleted'),
+            "result_changed": _('Result Changed'),
+            "result_created": _('Result Created'),
+            "result_deleted": _('Result Deleted'),
+            "program_dates_changed": _('Program Dates Changed')
+        }
 
-    unit_of_measure_type_map = {
-        1: _("Number"),
-        2: _("Percentage")
-    }
+    @property
+    def unit_of_measure_type_map(self):
+        return {
+            1: _("Number"),
+            2: _("Percentage")
+        }
 
-    direction_of_change_map = {
-        1: _("N/A"),
-        2: _("Increase (+)"),
-        3: _("Decrease (-)"),
-    }
+    @property
+    def direction_of_change_map(self):
+        return {
+            1: _("N/A"),
+            2: _("Increase (+)"),
+            3: _("Decrease (-)"),
+        }
 
     @property
     def pretty_change_type(self):
@@ -439,20 +451,24 @@ class ProgramAdminAuditLog(models.Model, DiffableLog):
     previous_entry = models.TextField()
     new_entry = models.TextField()
 
-    field_map = {
-        'gaitid': _("GAIT ID"),
-        'name': _("Name"),
-        'funding_status': _("Funding Status"),
-        'cost_center': _("Cost Center"),
-        'description': _("Description"),
-        'sectors': _("Sectors"),
-        'countries': _("Countries")
-    }
+    @property
+    def field_map(self):
+        return {
+            'gaitid': _("GAIT ID"),
+            'name': _("Name"),
+            'funding_status': _("Funding Status"),
+            'cost_center': _("Cost Center"),
+            'description': _("Description"),
+            'sectors': _("Sectors"),
+            'countries': _("Countries")
+        }
 
-    change_type_map = {
-        "program_created": _("Program Created"),
-        "program_updated": _("Program Updated"),
-    }
+    @property
+    def change_type_map(self):
+        return {
+            "program_created": _("Program Created"),
+            "program_updated": _("Program Updated"),
+        }
 
     @property
     def pretty_change_type(self):
@@ -491,21 +507,25 @@ class OrganizationAdminAuditLog(models.Model, DiffableLog):
     previous_entry = models.TextField()
     new_entry = models.TextField()
 
-    field_map = {
-        "name": _("Name"),
-        "primary_address": _("Primary Address"),
-        "primary_contact_name": _("Primary Contact Name"),
-        "primary_contact_email": _("Primary Contact Email"),
-        "primary_contact_phone": _("Primary Contact Phone"),
-        "mode_of_contact": _("Mode of Contact"),
-        "is_active": _("Is Active"),
-        "sectors": _("Sectors")
-    }
+    @property
+    def field_map(self):
+        return {
+            "name": _("Name"),
+            "primary_address": _("Primary Address"),
+            "primary_contact_name": _("Primary Contact Name"),
+            "primary_contact_email": _("Primary Contact Email"),
+            "primary_contact_phone": _("Primary Contact Phone"),
+            "mode_of_contact": _("Mode of Contact"),
+            "is_active": _("Is Active"),
+            "sectors": _("Sectors")
+        }
 
-    change_type_map = {
-        "organization_created": _("Organization Created"),
-        "organization_updated": _("Organization Updated"),
-    }
+    @property
+    def change_type_map(self):
+        return {
+            "organization_created": _("Organization Created"),
+            "organization_updated": _("Organization Updated"),
+        }
 
     @property
     def pretty_change_type(self):

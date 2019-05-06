@@ -301,7 +301,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_uid',
     'tola.pipeline.domains_allowed',
     'social_core.pipeline.social_auth.auth_allowed',
-    'tola_management.permissions.social_auth_okta_pipeline',
+    'tola.pipeline.create_user_okta',
     #'social_core.pipeline.social_auth.social_user',
     'tola.pipeline.social_user_tola',
     'tola.pipeline.associate_email_or_redirect',

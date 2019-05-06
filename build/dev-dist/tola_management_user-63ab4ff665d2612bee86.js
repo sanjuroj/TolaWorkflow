@@ -1204,7 +1204,7 @@ function (_React$Component) {
         className: "tab-pane--react"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", {
         className: "no-bold"
-      }, ud.name ? ud.name + ': ' : '', "Profile"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+      }, ud.name ? ud.name + ': ' : '', gettext("Profile")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
         className: "form"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
@@ -2603,6 +2603,7 @@ function (_React$Component3) {
       })), selected && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "bulk__select"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SecondaryComponent, {
+        placeholder: gettext("Select..."),
         value: this.state.current_vals,
         onChange: function onChange(vals) {
           return _this6.onChange(vals);
@@ -2610,14 +2611,17 @@ function (_React$Component3) {
       })), !selected && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "bulk__select"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        placeholder: "---"
+        placeholder: "---",
+        noOptionsMessage: function noOptionsMessage() {
+          return gettext('No options');
+        }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-secondary",
         disabled: apply_disabled,
         onClick: function onClick() {
           return _this6.onApply();
         }
-      }, "Apply"));
+      }, gettext('Apply')));
     }
   }]);
 
@@ -3079,17 +3083,17 @@ function () {
     this.program_role_choices = [];
     this.user_status_options = [{
       value: 1,
-      label: 'Active'
+      label: gettext('Active')
     }, {
       value: 0,
-      label: 'Inactive'
+      label: gettext('Inactive')
     }];
     this.admin_role_options = [{
       value: 1,
-      label: 'Yes'
+      label: gettext('Yes')
     }, {
       value: 0,
-      label: 'No'
+      label: gettext('No')
     }];
 
     _initializerDefineProperty(this, "filters", _descriptor31, this);
@@ -4353,4 +4357,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-eeb34102bcbc6a6e8c33.js.map
+//# sourceMappingURL=tola_management_user-63ab4ff665d2612bee86.js.map

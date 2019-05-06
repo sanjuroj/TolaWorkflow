@@ -298,17 +298,20 @@ def gauge_tank_small(context, metric):
         'targets_defined': {
             # Translators: a label in a graphic. Example: 31% of programs have all targets defined
             'filled_label': _('of programs have all targets defined'),
+            # Translators: help text explaining why a certain percentage of indicators are marked "missing targets"
             'help_text': _('Each indicator must have a target frequency selected and targets entered for all periods.'),
         },
         'reported_results': {
             # Translators: a label in a graphic. Example: 31% of indicators have reported results
             'filled_label': _('of indicators have reported results'),
-            'help_text': ('Each indicator must have at least one reported result.'),
+            # Translators: help text explaining why a certain percentage of indicators are marked "missing results"
+            'help_text': _('Each indicator must have at least one reported result.'),
         },
         'results_evidence': {
             # Translators: a label in a graphic. Example: 31% of results are backed up with evidence
             'filled_label': _('of results are backed up with evidence'),
-            'help_text': ('Each result must include a link to an evidence file or folder.'),
+            # Translators: help text explaining why a certain percentage of indicators are marked "missing evidence"
+            'help_text': _('Each result must include a link to an evidence file or folder.'),
         },
     }
     if metric == 'targets_defined':
