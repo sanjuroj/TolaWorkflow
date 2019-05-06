@@ -89,9 +89,9 @@ class GaugeBand extends React.Component {
         ]);
     }
 
-    onFilterLinkClick = (e) => {
+    onFilterLinkClick = (e, filterType) => {
         e.preventDefault();
-        eventBus.emit('nav-apply-gauge-tank-filter', parseInt(e.target.getAttribute('data-filter-type')));
+        eventBus.emit('nav-apply-gauge-tank-filter', filterType);
     };
 
     componentDidUpdate() {
@@ -168,16 +168,14 @@ class GaugeBand extends React.Component {
                 </div>
                 <div className="gauge__label">
                     <span className="gauge__value--above filter-trigger--band"
-                          data-filter-type={ IndicatorFilterType.aboveTarget }
-                          onClick={ this.onFilterLinkClick }
-                          dangerouslySetInnerHTML={ aboveTargetMarkup() }>
+                        onClick={ e => this.onFilterLinkClick(e, IndicatorFilterType.aboveTarget) }
+                        dangerouslySetInnerHTML={ aboveTargetMarkup() }>
                     </span>
                 </div>
                 <div className="gauge__label">
                     <span className="gauge__value filter-trigger--band"
-                          data-filter-type={ IndicatorFilterType.onTarget }
-                          onClick={ this.onFilterLinkClick }
-                          dangerouslySetInnerHTML={ onTargetMarkup() }>
+                        onClick={ e => this.onFilterLinkClick(e, IndicatorFilterType.onTarget) }
+                        dangerouslySetInnerHTML={ onTargetMarkup() }>
                     </span>
                     {' '}
                     <a href="#"
@@ -194,9 +192,8 @@ class GaugeBand extends React.Component {
                 </div>
                 <div className="gauge__label">
                     <span className="gauge__value--below filter-trigger--band"
-                          data-filter-type={ IndicatorFilterType.belowTarget }
-                          onClick={ this.onFilterLinkClick }
-                          dangerouslySetInnerHTML={belowTargetMarkup()}>
+                        onClick={ e => this.onFilterLinkClick(e, IndicatorFilterType.belowTarget) }
+                        dangerouslySetInnerHTML={belowTargetMarkup()}>
                     </span>
                 </div>
             </div>
