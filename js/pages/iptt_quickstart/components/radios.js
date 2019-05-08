@@ -4,12 +4,8 @@ import { inject, observer } from 'mobx-react';
 @inject('labels', 'rootStore')
 @observer
 export class QSTVATimeFrameRadio extends React.Component {
-    checkMostRecent = () => {
-        //default value of 2 in case of clicking "most recent" radio box - default behavior
-        this.props.rootStore.setTVAMostRecent(null);
-    }
-    updateMostRecentCount = (e) => {
-        this.props.rootStore.setTVAMostRecent(e.target.value);
+    setMostRecentCount = (e) => {
+        this.props.rootStore.setMostRecentCount(e.target.value);
     }
     render() {
         return <div className="form-row mb-3">
@@ -17,9 +13,9 @@ export class QSTVATimeFrameRadio extends React.Component {
                         <div className="form-check form-check-inline pt-1">
                             <span className="form-check-input">
                                 <input type="radio"
-                                       checked={ this.props.rootStore.tvaShowAll }
-                                       disabled={ this.props.rootStore.tvaRadioDisabled }
-                                       onChange={ this.props.rootStore.setTVAShowAll }
+                                       checked={ this.props.rootStore.showAll }
+                                       disabled={ this.props.rootStore.periodCountDisabled }
+                                       onChange={ this.props.rootStore.setShowAll }
                                        />
                             </span>
                             <label className="form-check-label">
@@ -31,9 +27,9 @@ export class QSTVATimeFrameRadio extends React.Component {
                         <div className="form-check form-check-inline pt-1">
                             <span className="form-check-input">
                                 <input type="radio"
-                                       checked={ this.props.rootStore.tvaMostRecent }
-                                       disabled={ this.props.rootStore.tvaRadioDisabled }
-                                       onChange={ this.checkMostRecent }
+                                       checked={ this.props.rootStore.mostRecent }
+                                       disabled={ this.props.rootStore.periodCountDisabled }
+                                       onChange={ this.props.rootStore.setMostRecent }
                                        />
                             </span>
                             <label className="form-check-label">
@@ -43,10 +39,10 @@ export class QSTVATimeFrameRadio extends React.Component {
                     </div>
                     <div className="col-sm-4">
                         <input type="number" className="form-control"
-                               value={ this.props.rootStore.tvaMostRecentCountDisplay }
-                               disabled={ this.props.rootStore.tvaRadioDisabled }
+                               value={ this.props.rootStore.mostRecentCountDisplay }
+                               disabled={ this.props.rootStore.periodCountDisabled }
                                placeholder={ this.props.labels.mostRecentPlaceholder }
-                               onChange={ this.updateMostRecentCount }
+                               onChange={ this.setMostRecentCount }
                                />
                     </div>
                </div>;

@@ -16,12 +16,12 @@ const IPTTSelectWrapper = (props) => {
 @observer
 export class QSTVAProgramSelect extends React.Component {
     selectProgram = (selected) => {
-        this.props.rootStore.setTVAProgramId(selected.value);
+        this.props.rootStore.setTVAProgram(selected.value);
     }
     render() {
         return <IPTTSelectWrapper label={ this.props.labels.programSelect }>
                     <Select options={ this.props.rootStore.tvaProgramOptions }
-                            value={ this.props.rootStore.selectedTVAProgramOption }
+                            value={ this.props.rootStore.selectedTVAProgram }
                             onChange={ this.selectProgram }
                             className="iptt-react-select" />
                </IPTTSelectWrapper>;
@@ -33,12 +33,12 @@ export class QSTVAProgramSelect extends React.Component {
 @observer
 export class QSTimeperiodsProgramSelect extends React.Component {
     selectProgram = (selected) => {
-        this.props.rootStore.setTimeperiodsProgramId(selected.value);
+        this.props.rootStore.setTimeperiodsProgram(selected.value);
     }
     render() {
         return <IPTTSelectWrapper label={ this.props.labels.programSelect }>
                     <Select options={ this.props.rootStore.timeperiodsProgramOptions }
-                            value={ this.props.rootStore.selectedTimeperiodsProgramOption }
+                            value={ this.props.rootStore.selectedTimeperiodsProgram }
                             onChange={ this.selectProgram }
                             className="iptt-react-select" />
                </IPTTSelectWrapper>;
@@ -50,13 +50,13 @@ export class QSTimeperiodsProgramSelect extends React.Component {
 @observer
 export class QSTVAPeriodSelect extends React.Component {
     selectFrequency = (selected) => {
-        this.props.rootStore.setTVAFrequencyId(selected.value);
+        this.props.rootStore.setFrequency(selected.value);
     }
     render() {
 
         return <IPTTSelectWrapper label={ this.props.labels.periodSelect }>
-                    <Select options={ this.props.rootStore.tvaFrequencyOptions }
-                            value={ this.props.rootStore.tvaSelectedFrequencyOption }
+                    <Select options={ this.props.rootStore.frequencyOptions }
+                            value={ this.props.rootStore.selectedFrequency }
                             onChange={ this.selectFrequency }
                             className="iptt-react-select" />
                </IPTTSelectWrapper>;

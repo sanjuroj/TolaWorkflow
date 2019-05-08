@@ -275,7 +275,8 @@ class IPTTQuickstart(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         js_context = {
             'labels': get_labels(quickstart=True),
-            'programs': get_program_filter_data(request)
+            'programs': get_program_filter_data(request),
+            'iptt_url': '/indicators/iptt_report/'
         }
         return self.render_to_response({'js_context': js_context})
 
@@ -286,7 +287,8 @@ class IPTTReport(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         js_context = {
             'labels': get_labels(quickstart=False),
-            'programs': get_program_filter_data(request)
+            'programs': get_program_filter_data(request),
+            'api_url': reverse('iptt_ajax')
         }
         return self.render_to_response({'js_context': js_context})
 
