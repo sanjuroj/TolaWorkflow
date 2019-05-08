@@ -1599,7 +1599,9 @@ function () {
 
       _this7.setEndPeriod(params.end);
 
-      _this7.levelGrouping = params.groupby;
+      _this7.levelGrouping = params.groupby || 0;
+
+      _this7.updateUrl('groupby', _this7.levelGrouping);
 
       if (reload) {
         router.navigate(router.getState().name, params, {
@@ -2885,7 +2887,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var labels = jsContext.labels;
-var reportAPI = new _models__WEBPACK_IMPORTED_MODULE_5__["ReportAPI"]('/indicators/iptt_report_data/');
+var reportAPI = new _models__WEBPACK_IMPORTED_MODULE_5__["ReportAPI"](jsContext.api_url);
 var rootStore = new _models__WEBPACK_IMPORTED_MODULE_5__["RootStore"](jsContext, reportAPI);
 var routes = [{
   name: 'iptt',
@@ -3543,4 +3545,4 @@ function (_React$Component3) {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-1700a86bf94b358d44b9.js.map
+//# sourceMappingURL=iptt_report-8edb3a9b8721ccad1321.js.map

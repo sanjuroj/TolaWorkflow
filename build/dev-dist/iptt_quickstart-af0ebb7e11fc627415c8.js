@@ -14,7 +14,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "i8i4");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! mobx-react */ "okNM");
-/* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./models */ "a4Ke");
+/* harmony import */ var _models_root_store__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./models/root_store */ "xL1x");
 /* harmony import */ var _components_main__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/main */ "kvAA");
 
 
@@ -22,11 +22,92 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var labels = jsContext.labels;
-var rootStore = new _models__WEBPACK_IMPORTED_MODULE_3__["QSRootStore"](jsContext);
+var rootStore = new _models_root_store__WEBPACK_IMPORTED_MODULE_3__["default"](jsContext);
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(mobx_react__WEBPACK_IMPORTED_MODULE_2__["Provider"], {
   labels: labels,
   rootStore: rootStore
 }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_main__WEBPACK_IMPORTED_MODULE_4__["IPTTQuickstartForm"], null)), document.querySelector('#id_div_top_quickstart_iptt'));
+
+/***/ }),
+
+/***/ "CozX":
+/*!***********************************************************!*\
+  !*** ./js/pages/iptt_quickstart/models/program_models.js ***!
+  \***********************************************************/
+/*! exports provided: QSProgram, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "QSProgram", function() { return QSProgram; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return QSProgramStore; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var QSProgram =
+/*#__PURE__*/
+function () {
+  function QSProgram(rootStore, programJSON) {
+    _classCallCheck(this, QSProgram);
+
+    this.rootStore = rootStore;
+    this.id = parseInt(programJSON.id);
+    this.name = programJSON.name;
+    this.frequencies = programJSON.frequencies;
+    this.periodDateRanges = programJSON.periodDateRanges;
+  }
+
+  _createClass(QSProgram, [{
+    key: "periods",
+    value: function periods(frequency) {
+      return frequency in this.periodDateRanges ? this.periodDateRanges[frequency] : false;
+    }
+  }, {
+    key: "periodCount",
+    value: function periodCount(frequency) {
+      return this.periods(frequency) ? this.periods(frequency).length : 0;
+    }
+  }]);
+
+  return QSProgram;
+}();
+
+var QSProgramStore =
+/*#__PURE__*/
+function () {
+  function QSProgramStore(rootStore, programsJSON) {
+    var _this = this;
+
+    _classCallCheck(this, QSProgramStore);
+
+    this.rootStore = rootStore;
+    this.programs = {};
+    programsJSON.forEach(function (programJSON) {
+      _this.programs[programJSON.id] = new QSProgram(_this.rootStore, programJSON);
+    });
+  }
+
+  _createClass(QSProgramStore, [{
+    key: "getProgram",
+    value: function getProgram(id) {
+      return this.programs[id];
+    }
+  }, {
+    key: "programList",
+    get: function get() {
+      return Object.values(this.programs).sort(function (a, b) {
+        return a.name.toUpperCase() < b.name.toUpperCase() ? -1 : a.name.toUpperCase() > b.name.toUpperCase() ? 1 : 0;
+      });
+    }
+  }]);
+
+  return QSProgramStore;
+}();
+
+
 
 /***/ }),
 
@@ -136,7 +217,7 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(QSTVAProgramSelect)).call.apply(_getPrototypeOf2, [this].concat(args)));
 
     _this.selectProgram = function (selected) {
-      _this.props.rootStore.setTVAProgramId(selected.value);
+      _this.props.rootStore.setTVAProgram(selected.value);
     };
 
     return _this;
@@ -149,7 +230,7 @@ function (_React$Component) {
         label: this.props.labels.programSelect
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
         options: this.props.rootStore.tvaProgramOptions,
-        value: this.props.rootStore.selectedTVAProgramOption,
+        value: this.props.rootStore.selectedTVAProgram,
         onChange: this.selectProgram,
         className: "iptt-react-select"
       }));
@@ -177,7 +258,7 @@ function (_React$Component2) {
     _this2 = _possibleConstructorReturn(this, (_getPrototypeOf3 = _getPrototypeOf(QSTimeperiodsProgramSelect)).call.apply(_getPrototypeOf3, [this].concat(args)));
 
     _this2.selectProgram = function (selected) {
-      _this2.props.rootStore.setTimeperiodsProgramId(selected.value);
+      _this2.props.rootStore.setTimeperiodsProgram(selected.value);
     };
 
     return _this2;
@@ -190,7 +271,7 @@ function (_React$Component2) {
         label: this.props.labels.programSelect
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
         options: this.props.rootStore.timeperiodsProgramOptions,
-        value: this.props.rootStore.selectedTimeperiodsProgramOption,
+        value: this.props.rootStore.selectedTimeperiodsProgram,
         onChange: this.selectProgram,
         className: "iptt-react-select"
       }));
@@ -218,7 +299,7 @@ function (_React$Component3) {
     _this3 = _possibleConstructorReturn(this, (_getPrototypeOf4 = _getPrototypeOf(QSTVAPeriodSelect)).call.apply(_getPrototypeOf4, [this].concat(args)));
 
     _this3.selectFrequency = function (selected) {
-      _this3.props.rootStore.setTVAFrequencyId(selected.value);
+      _this3.props.rootStore.setFrequency(selected.value);
     };
 
     return _this3;
@@ -230,8 +311,8 @@ function (_React$Component3) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IPTTSelectWrapper, {
         label: this.props.labels.periodSelect
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        options: this.props.rootStore.tvaFrequencyOptions,
-        value: this.props.rootStore.tvaSelectedFrequencyOption,
+        options: this.props.rootStore.frequencyOptions,
+        value: this.props.rootStore.selectedFrequency,
         onChange: this.selectFrequency,
         className: "iptt-react-select"
       }));
@@ -296,13 +377,8 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(QSTVATimeFrameRadio)).call.apply(_getPrototypeOf2, [this].concat(args)));
 
-    _this.checkMostRecent = function () {
-      //default value of 2 in case of clicking "most recent" radio box - default behavior
-      _this.props.rootStore.setTVAMostRecent(null);
-    };
-
-    _this.updateMostRecentCount = function (e) {
-      _this.props.rootStore.setTVAMostRecent(e.target.value);
+    _this.setMostRecentCount = function (e) {
+      _this.props.rootStore.setMostRecentCount(e.target.value);
     };
 
     return _this;
@@ -321,9 +397,9 @@ function (_React$Component) {
         className: "form-check-input"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "radio",
-        checked: this.props.rootStore.tvaShowAll,
-        disabled: this.props.rootStore.tvaRadioDisabled,
-        onChange: this.props.rootStore.setTVAShowAll
+        checked: this.props.rootStore.showAll,
+        disabled: this.props.rootStore.periodCountDisabled,
+        onChange: this.props.rootStore.setShowAll
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         className: "form-check-label"
       }, this.props.labels.showAll))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -334,9 +410,9 @@ function (_React$Component) {
         className: "form-check-input"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "radio",
-        checked: this.props.rootStore.tvaMostRecent,
-        disabled: this.props.rootStore.tvaRadioDisabled,
-        onChange: this.checkMostRecent
+        checked: this.props.rootStore.mostRecent,
+        disabled: this.props.rootStore.periodCountDisabled,
+        onChange: this.props.rootStore.setMostRecent
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         className: "form-check-label"
       }, this.props.labels.mostRecent))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -344,379 +420,16 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "number",
         className: "form-control",
-        value: this.props.rootStore.tvaMostRecentCountDisplay,
-        disabled: this.props.rootStore.tvaRadioDisabled,
+        value: this.props.rootStore.mostRecentCountDisplay,
+        disabled: this.props.rootStore.periodCountDisabled,
         placeholder: this.props.labels.mostRecentPlaceholder,
-        onChange: this.updateMostRecentCount
+        onChange: this.setMostRecentCount
       })));
     }
   }]);
 
   return QSTVATimeFrameRadio;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class) || _class);
-
-/***/ }),
-
-/***/ "a4Ke":
-/*!********************************************!*\
-  !*** ./js/pages/iptt_quickstart/models.js ***!
-  \********************************************/
-/*! exports provided: QSRootStore */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "QSRootStore", function() { return QSRootStore; });
-/* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _temp;
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
-
-function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object['ke' + 'ys'](descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if ('value' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object['define' + 'Property'](target, property, desc); desc = null; } return desc; }
-
-function _initializerWarningHelper(descriptor, context) { throw new Error('Decorating class property failed. Please ensure that ' + 'proposal-class-properties is enabled and set to use loose mode. ' + 'To use proposal-class-properties in spec mode with decorators, wait for ' + 'the next major version of decorators in stage 2.'); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-/**
- * IPTT Quickstart React data models
- * @module: iptt_quickstart/models
- */
-
-var BLANK_LABEL = '---------';
-var TVA = 1;
-var TIMEPERIODS = 2;
-
-var QSProgram =
-/*#__PURE__*/
-function () {
-  function QSProgram(rootStore, programJSON) {
-    _classCallCheck(this, QSProgram);
-
-    this.rootStore = rootStore;
-    this.id = programJSON.id;
-    this.name = programJSON.name;
-    this.frequencies = programJSON.frequencies;
-    this.periodDateRanges = programJSON.periodDateRanges;
-  }
-
-  _createClass(QSProgram, [{
-    key: "periods",
-    value: function periods(frequency) {
-      return frequency in this.periodDateRanges ? this.periodDateRanges[frequency] : false;
-    }
-  }, {
-    key: "periodCount",
-    value: function periodCount(frequency) {
-      return this.periods(frequency) ? this.periods(frequency).length : 0;
-    }
-  }]);
-
-  return QSProgram;
-}();
-
-var QSProgramStore =
-/*#__PURE__*/
-function () {
-  function QSProgramStore(rootStore, programsJSON) {
-    var _this = this;
-
-    _classCallCheck(this, QSProgramStore);
-
-    this.rootStore = rootStore;
-    this.programs = {};
-    programsJSON.forEach(function (programJSON) {
-      _this.programs[programJSON.id] = new QSProgram(_this.rootStore, programJSON);
-    });
-  }
-
-  _createClass(QSProgramStore, [{
-    key: "getProgram",
-    value: function getProgram(id) {
-      return this.programs[id];
-    }
-  }]);
-
-  return QSProgramStore;
-}();
-
-var QSRootStore = (_class = (_temp =
-/*#__PURE__*/
-function () {
-  function QSRootStore(contextData) {
-    var _this2 = this;
-
-    _classCallCheck(this, QSRootStore);
-
-    _initializerDefineProperty(this, "reportType", _descriptor, this);
-
-    _initializerDefineProperty(this, "tvaSelectedProgram", _descriptor2, this);
-
-    _initializerDefineProperty(this, "timeperiodsSelectedProgram", _descriptor3, this);
-
-    _initializerDefineProperty(this, "tvaSelectedFrequencyId", _descriptor4, this);
-
-    _initializerDefineProperty(this, "tvaShowAll", _descriptor5, this);
-
-    _initializerDefineProperty(this, "tvaMostRecent", _descriptor6, this);
-
-    _initializerDefineProperty(this, "tvaMostRecentCount", _descriptor7, this);
-
-    this.setTVAShowAll = function () {
-      _this2.tvaShowAll = true;
-      _this2.tvaMostRecent = false;
-    };
-
-    this.setTVAMostRecent = function (count) {
-      _this2.tvaMostRecent = true;
-      _this2.tvaShowAll = false;
-
-      if (count !== undefined && count !== null) {
-        _this2.tvaMostRecentCount = count;
-      }
-    };
-
-    this.programStore = new QSProgramStore(this, contextData.programs);
-    this.periodLabels = contextData.labels.targetperiods;
-  }
-
-  _createClass(QSRootStore, [{
-    key: "setTVAProgramId",
-    value: function setTVAProgramId(id) {
-      if (id === null) {
-        this.tvaSelectedProgram = null;
-      } else if (this.tvaSelectedProgram == null || this.tvaSelectedProgram.id != id) {
-        this.tvaSelectedProgram = this.programStore.getProgram(id);
-
-        if (this.tvaSelectedFrequencyId && this.tvaSelectedProgram.frequencies.indexOf(parseInt(this.tvaSelectedFrequencyId)) == -1) {
-          this.setTVAFrequencyId(null);
-        }
-      }
-
-      this.reportType = TVA;
-    }
-  }, {
-    key: "setTimeperiodsProgramId",
-    value: function setTimeperiodsProgramId(id) {
-      if (id === null) {
-        this.timeperiodsSelectedProgram = null;
-      } else if (this.timeperiodsSelectedProgram == null || this.timeperiodsSelectedProgram.id != id) {
-        this.timeperiodsSelectedProgram = this.programStore.getProgram(id);
-      }
-
-      this.reportType = TIMEPERIODS;
-    }
-  }, {
-    key: "setTVAFrequencyId",
-    value: function setTVAFrequencyId(id) {
-      if (id === null) {
-        this.tvaSelectedFrequencyId = null;
-      } else if (this.tvaSelectedFrequencyId != id) {
-        this.tvaSelectedFrequencyId = id;
-      }
-
-      this.reportType = TVA;
-    }
-  }, {
-    key: "selectedTVAProgramOption",
-    get: function get() {
-      if (this.tvaSelectedProgram === null || this.reportType == TIMEPERIODS) {
-        return {
-          value: null,
-          label: BLANK_LABEL
-        };
-      }
-
-      return {
-        value: this.tvaSelectedProgram.id,
-        label: this.tvaSelectedProgram.name
-      };
-    }
-  }, {
-    key: "selectedTimeperiodsProgramOption",
-    get: function get() {
-      if (this.timeperiodsSelectedProgram === null || this.reportType == TVA) {
-        return {
-          value: null,
-          label: BLANK_LABEL
-        };
-      }
-
-      return {
-        value: this.timeperiodsSelectedProgram.id,
-        label: this.timeperiodsSelectedProgram.name
-      };
-    }
-  }, {
-    key: "timeperiodsProgramOptions",
-    get: function get() {
-      return Object.entries(this.programStore.programs).map(function (_ref) {
-        var _ref2 = _slicedToArray(_ref, 2),
-            id = _ref2[0],
-            program = _ref2[1];
-
-        return {
-          value: id,
-          label: program.name
-        };
-      });
-    }
-  }, {
-    key: "tvaProgramOptions",
-    get: function get() {
-      return Object.entries(this.programStore.programs).filter(function (_ref3) {
-        var _ref4 = _slicedToArray(_ref3, 2),
-            id = _ref4[0],
-            program = _ref4[1];
-
-        return program.frequencies.length > 0;
-      }).map(function (_ref5) {
-        var _ref6 = _slicedToArray(_ref5, 2),
-            id = _ref6[0],
-            program = _ref6[1];
-
-        return {
-          value: id,
-          label: program.name
-        };
-      });
-    }
-  }, {
-    key: "tvaSelectedFrequencyOption",
-    get: function get() {
-      if (this.reportType == TIMEPERIODS || this.tvaSelectedProgram === null || this.tvaSelectedFrequencyId === null) {
-        return {
-          value: null,
-          label: BLANK_LABEL
-        };
-      }
-
-      return {
-        value: this.tvaSelectedFrequencyId,
-        label: this.periodLabels[this.tvaSelectedFrequencyId]
-      };
-    }
-  }, {
-    key: "tvaFrequencyOptions",
-    get: function get() {
-      var _this3 = this;
-
-      if (this.tvaSelectedProgram === null || this.reportType == TIMEPERIODS) {
-        return [{
-          value: null,
-          label: BLANK_LABEL
-        }];
-      } else {
-        return this.tvaSelectedProgram.frequencies.map(function (id) {
-          return {
-            value: id,
-            label: _this3.periodLabels[id]
-          };
-        });
-      }
-    }
-  }, {
-    key: "tvaRadioDisabled",
-    get: function get() {
-      return !(this.reportType == TVA && this.tvaSelectedProgram != null && this.tvaSelectedFrequencyId !== null);
-    }
-  }, {
-    key: "tvaMostRecentCountDisplay",
-    get: function get() {
-      return this.tvaMostRecent ? this.tvaMostRecentCount : '';
-    }
-  }, {
-    key: "tvaURL",
-    get: function get() {
-      if (this.reportType == TIMEPERIODS || this.tvaSelectedProgram == null || this.tvaSelectedFrequencyId == null) {
-        return false;
-      }
-
-      var url = '/indicators/iptt_report/' + this.tvaSelectedProgram.id + '/targetperiods/?frequency=' + this.tvaSelectedFrequencyId;
-
-      if (this.tvaShowAll) {
-        return url + '&timeframe=1';
-      } else if (this.tvaMostRecent) {
-        return url + '&timeframe=2&numrecentcount=' + this.tvaMostRecentCount;
-      }
-
-      return url;
-    }
-  }, {
-    key: "timeperiodsURL",
-    get: function get() {
-      if (this.reportType == TVA || this.timeperiodsSelectedProgram == null) {
-        return false;
-      }
-
-      var url = '/indicators/iptt_report/' + this.timeperiodsSelectedProgram.id + '/timeperiods/?frequency=';
-      return url + '7&timeframe=2&numrecentcount=2';
-    }
-  }]);
-
-  return QSRootStore;
-}(), _temp), (_descriptor = _applyDecoratedDescriptor(_class.prototype, "reportType", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return null;
-  }
-}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, "tvaSelectedProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return null;
-  }
-}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "timeperiodsSelectedProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return null;
-  }
-}), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "tvaSelectedFrequencyId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return null;
-  }
-}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "tvaShowAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return true;
-  }
-}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "tvaMostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return null;
-  }
-}), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "tvaMostRecentCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return 2;
-  }
-}), _applyDecoratedDescriptor(_class.prototype, "selectedTVAProgramOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTVAProgramOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedTimeperiodsProgramOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTimeperiodsProgramOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaSelectedFrequencyOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaSelectedFrequencyOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaFrequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaFrequencyOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaRadioDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaRadioDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaMostRecentCountDisplay", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaMostRecentCountDisplay"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaURL", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaURL"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "timeperiodsURL", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "timeperiodsURL"), _class.prototype)), _class);
 
 /***/ }),
 
@@ -779,7 +492,320 @@ var IPTTQuickstartForm = function IPTTQuickstartForm() {
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(TVAQuickstartForm, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(TimeperiodsQuickstartForm, null));
 };
 
+/***/ }),
+
+/***/ "xL1x":
+/*!*******************************************************!*\
+  !*** ./js/pages/iptt_quickstart/models/root_store.js ***!
+  \*******************************************************/
+/*! exports provided: BLANK_LABEL, TVA, TIMEPERIODS, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BLANK_LABEL", function() { return BLANK_LABEL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TVA", function() { return TVA; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TIMEPERIODS", function() { return TIMEPERIODS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return QSRootStore; });
+/* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
+/* harmony import */ var _program_models__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./program_models */ "CozX");
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _temp;
+
+function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object['ke' + 'ys'](descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if ('value' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object['define' + 'Property'](target, property, desc); desc = null; } return desc; }
+
+function _initializerWarningHelper(descriptor, context) { throw new Error('Decorating class property failed. Please ensure that ' + 'proposal-class-properties is enabled and set to use loose mode. ' + 'To use proposal-class-properties in spec mode with decorators, wait for ' + 'the next major version of decorators in stage 2.'); }
+
+/**
+ * IPTT Quickstart React data models
+ * @module: iptt_quickstart/models
+ */
+
+
+var BLANK_LABEL = '---------';
+var TVA = 1;
+var TIMEPERIODS = 2;
+var BLANK_OPTION = {
+  value: null,
+  label: BLANK_LABEL
+};
+var QSRootStore = (_class = (_temp =
+/*#__PURE__*/
+function () {
+  function QSRootStore(contextData) {
+    var _this = this;
+
+    _classCallCheck(this, QSRootStore);
+
+    _initializerDefineProperty(this, "reportType", _descriptor, this);
+
+    _initializerDefineProperty(this, "tvaProgramId", _descriptor2, this);
+
+    _initializerDefineProperty(this, "timeperiodsProgramId", _descriptor3, this);
+
+    _initializerDefineProperty(this, "frequencyId", _descriptor4, this);
+
+    _initializerDefineProperty(this, "showAll", _descriptor5, this);
+
+    _initializerDefineProperty(this, "mostRecent", _descriptor6, this);
+
+    _initializerDefineProperty(this, "mostRecentCount", _descriptor7, this);
+
+    this.programStore = new _program_models__WEBPACK_IMPORTED_MODULE_1__["default"](this, contextData.programs);
+    this.periodLabels = contextData.labels.targetperiods;
+    this.iptt_url = contextData.iptt_url;
+    var resetFrequency = Object(mobx__WEBPACK_IMPORTED_MODULE_0__["reaction"])(function () {
+      return _this.tvaProgramId;
+    }, function (programId) {
+      if (programId !== null && _this.frequencyId !== null && _this.programStore.getProgram(programId).frequencies.indexOf(_this.frequencyId) == -1) {
+        _this.setFrequency(null);
+      }
+    });
+  }
+  /* options for program selection in TIMEPERIODS form */
+
+
+  _createClass(QSRootStore, [{
+    key: "setTVAProgram",
+
+    /* SET tva program to the designated ID, and make the report type TVA */
+    value: function setTVAProgram(id) {
+      if (id === null) {
+        this.tvaProgramId = null;
+      } else {
+        this.tvaProgramId = id;
+        this.reportType = TVA;
+      }
+    }
+    /* SET tva program to the designated ID, and make the report type Timeperiods */
+
+  }, {
+    key: "setTimeperiodsProgram",
+    value: function setTimeperiodsProgram(id) {
+      if (id === null) {
+        this.timeperiodsProgramId = null;
+      } else {
+        this.timeperiodsProgramId = id;
+        this.reportType = TIMEPERIODS;
+      }
+    }
+    /* SET frequency in TVA form */
+
+  }, {
+    key: "setFrequency",
+    value: function setFrequency(id) {
+      this.frequencyId = id;
+    }
+  }, {
+    key: "setMostRecent",
+    value: function setMostRecent() {
+      this.showAll = false;
+      this.mostRecent = true;
+    }
+  }, {
+    key: "setMostRecentCount",
+    value: function setMostRecentCount(count) {
+      this.setMostRecent();
+      count = Math.min(count, this.programStore.getProgram(this.tvaProgramId).periodCount(this.frequencyId));
+      this.mostRecentCount = count;
+    }
+  }, {
+    key: "setShowAll",
+    value: function setShowAll() {
+      this.mostRecent = false;
+      this.showAll = true;
+    }
+  }, {
+    key: "timeperiodsProgramOptions",
+    get: function get() {
+      return this.programStore.programList.map(function (program) {
+        return {
+          value: program.id,
+          label: program.name
+        };
+      });
+    }
+    /* options for program selection in TVA form (must have available frequencies) */
+
+  }, {
+    key: "tvaProgramOptions",
+    get: function get() {
+      return this.programStore.programList.filter(function (program) {
+        return program.frequencies.length > 0;
+      }).map(function (program) {
+        return {
+          value: program.id,
+          label: program.name
+        };
+      });
+    }
+    /* options for frequency selection in TVA form (must be TVA program, only shows that program's frequencies */
+
+  }, {
+    key: "frequencyOptions",
+    get: function get() {
+      var _this2 = this;
+
+      if (this.reportType !== TVA || this.tvaProgramId === null) {
+        return [BLANK_OPTION];
+      }
+
+      return this.programStore.getProgram(this.tvaProgramId).frequencies.map(function (id) {
+        return {
+          value: id,
+          label: _this2.periodLabels[id]
+        };
+      });
+    }
+    /* GET select option (value/label) for selected Program in TVA form */
+
+  }, {
+    key: "selectedTVAProgram",
+    get: function get() {
+      if (this.reportType !== TVA || this.tvaProgramId === null) {
+        return BLANK_OPTION;
+      }
+
+      return {
+        value: this.tvaProgramId,
+        label: this.programStore.getProgram(this.tvaProgramId).name
+      };
+    }
+    /* GET select option (value/label) for selected Program in Timeperiods form */
+
+  }, {
+    key: "selectedTimeperiodsProgram",
+    get: function get() {
+      if (this.reportType !== TIMEPERIODS || this.timeperiodsProgramId === null) {
+        return BLANK_OPTION;
+      }
+
+      return {
+        value: this.timeperiodsProgramId,
+        label: this.programStore.getProgram(this.timeperiodsProgramId).name
+      };
+    }
+    /* GET select option (value/label) for selected Frequency in TVA form */
+
+  }, {
+    key: "selectedFrequency",
+    get: function get() {
+      if (this.reportType !== TVA || this.tvaProgramId === null || this.frequencyId === null) {
+        return BLANK_OPTION;
+      }
+
+      return {
+        value: this.frequencyId,
+        label: this.periodLabels[this.frequencyId]
+      };
+    }
+    /* Whether to disable the most recent and show all radio buttons */
+
+  }, {
+    key: "periodCountDisabled",
+    get: function get() {
+      return this.reportType !== TVA || this.tvaProgramId === null || [3, 4, 5, 6, 7].indexOf(this.frequencyId) == -1;
+    }
+    /* GET most recent display - only show value if most recent is selected */
+
+  }, {
+    key: "mostRecentCountDisplay",
+    get: function get() {
+      if (!this.periodCountDisabled && this.mostRecent) {
+        return this.mostRecentCount;
+      }
+
+      return '';
+    }
+  }, {
+    key: "tvaURL",
+    get: function get() {
+      if (this.reportType === TVA && this.tvaProgramId !== null && this.frequencyId !== null) {
+        var url = "".concat(this.iptt_url).concat(this.tvaProgramId, "/targetperiods/?frequency=").concat(this.frequencyId);
+
+        if (this.frequencyId == 1 || this.frequencyId == 2) {
+          return url;
+        } else if (this.showAll) {
+          return "".concat(url, "&timeframe=1");
+        }
+
+        return "".concat(url, "&timeframe=2&numrecentcount=").concat(this.mostRecentCount);
+      }
+
+      return false;
+    }
+  }, {
+    key: "timeperiodsURL",
+    get: function get() {
+      if (this.reportType === TIMEPERIODS && this.timeperiodsProgramId !== null) {
+        return "".concat(this.iptt_url).concat(this.timeperiodsProgramId, "/timeperiods/") + "?frequency=7&timeframe=2&numrecentcount=2";
+      }
+
+      return false;
+    }
+  }]);
+
+  return QSRootStore;
+}(), _temp), (_descriptor = _applyDecoratedDescriptor(_class.prototype, "reportType", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return null;
+  }
+}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, "tvaProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return null;
+  }
+}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "timeperiodsProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return null;
+  }
+}), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "frequencyId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return null;
+  }
+}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "showAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return true;
+  }
+}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "mostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return false;
+  }
+}), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "mostRecentCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return 2;
+  }
+}), _applyDecoratedDescriptor(_class.prototype, "frequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedTVAProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTVAProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedTimeperiodsProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTimeperiodsProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedFrequency", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedFrequency"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "periodCountDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "periodCountDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "mostRecentCountDisplay", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "mostRecentCountDisplay"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setTVAProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setTVAProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setTimeperiodsProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setTimeperiodsProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setFrequency", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setFrequency"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setMostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setMostRecent"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setMostRecentCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setMostRecentCount"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setShowAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setShowAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tvaURL", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaURL"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "timeperiodsURL", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "timeperiodsURL"), _class.prototype)), _class);
+
+
 /***/ })
 
 },[["+aul","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_quickstart-7103b30b933b288c1185.js.map
+//# sourceMappingURL=iptt_quickstart-af0ebb7e11fc627415c8.js.map
