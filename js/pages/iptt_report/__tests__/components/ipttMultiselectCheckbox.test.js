@@ -1,8 +1,7 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import { IPTTMultiSelectCheckboxWrapper } from '../../components/selectWidgets';
+import { IPTTMultiselectCheckboxWrapper } from '../../components/selectWidgets';
 
-var hello = "hello";
 
 const labels = {
     emptySelect: 'empty label',
@@ -10,9 +9,9 @@ const labels = {
     selected: 'selected'
 };
 
-class TestItem extends IPTTMultiSelectCheckboxWrapper {
+class TestItem extends IPTTMultiselectCheckboxWrapper {
     onChange = (selected) => {
-        this.props.testHarness.setSelected(selected);
+        this.props.testHarness.selectedValue = selected;
     }
     get value() {
         return this.props.testHarness.selectedValue;

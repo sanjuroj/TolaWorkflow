@@ -15,7 +15,7 @@ import { contextFixture, reportData } from './fixtures';
 
 
 const labels = jsContext.labels;
-const reportAPI = new ReportAPI('/indicators/iptt_report_data/');
+const reportAPI = new ReportAPI(jsContext.api_url);
 const rootStore = new RootStore(jsContext, reportAPI);
 
 const routes = [
