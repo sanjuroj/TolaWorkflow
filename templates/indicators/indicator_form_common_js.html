@@ -458,10 +458,14 @@ function formSubmitContinue(isModal, rationale = '') {
         // if there are errors in periodic targets then do not submit the form
         if ($("#id_div_periodic_tables_placeholder input").parent().hasClass('has-error')) { return; }
 
-        let formObj = getIndicatorFormAsObject();
+        let formArr = $form.serializeArray();
+
+        if (formArr.find(e => e.name === 'is_cumulative') === undefined) {
+            formArr.push({name: 'is_cumulative', value: 3});
+        }
 
         // user entered rationale for change
-        formObj['rationale'] = rationale;
+        formArr.push({name: 'rationale', value: rationale});
 
         //disable submit button as we are posting and want to prevent double-saves while waiting:
         submitBtnName.attr('disabled', true);
@@ -469,7 +473,7 @@ function formSubmitContinue(isModal, rationale = '') {
         $.ajax({
             method: 'POST',
             url: form_url,
-            data: formObj,
+            data: formArr,
         }).done(function(data, textStatus, jqXHR) {
             //undisable submit button as the response is returned:
             submitBtnName.attr('disabled', false);
@@ -1035,6 +1039,11 @@ function formSubmitContinue(isModal, rationale = '') {
     function getIndicatorFormAsObject() {
         let $form = $('#indicator_update_form');
         let formObj = {};
+
+        // Turns out this is not great as serializeArray() will return multiple objs for a single name
+        // in the case of form fields with multiple values (like multi-selects)
+        // This causes data loss to occur. I've left it for now as no TRACKED_FIELDS currently have multiple values
+        // and hopefully this code will be redone soon anyways
         $form.serializeArray().forEach(function (x) {
             formObj[x.name] = x.value;
         });
