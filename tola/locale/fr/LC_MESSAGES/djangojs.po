@@ -257,7 +257,7 @@ msgid ""
 "target icon near the indicator name."
 msgstr ""
 "Certains indicateurs ont des cibles manquantes. Pour entrer ces valeurs, "
-"cliquez sur licône de la cible près du nom de lindicateur."
+"cliquez sur l’icône de la cible près du nom de l’indicateur."
 
 #: js/pages/program_page/components/program_metrics.js:140
 msgid "Indicators on track"
@@ -274,7 +274,7 @@ msgid ""
 "The indicator has no targets, no completed target periods, or no results "
 "reported."
 msgstr ""
-"Lindicateur na pas de cibles, pas de périodes cibles terminées ni de "
+"L’indicateur n’a pas de cibles, pas de périodes cibles terminées ni de "
 "résultats rapportés."
 
 #. Translators: Help text explaining what an "on track" indicator is. */
@@ -613,7 +613,7 @@ msgstr "Statut"
 
 #: js/pages/tola_management_pages/country/components/edit_objectives.js:191
 msgid "Delete Strategic Objective?"
-msgstr "Supprimer lobjectif stratégique ?"
+msgstr "Supprimer l’objectif stratégique ?"
 
 #. Translators: This is a button that allows the user to add a strategic objective. */}
 #: js/pages/tola_management_pages/country/components/edit_objectives.js:233
@@ -632,7 +632,7 @@ msgstr "Enregistré avec succès"
 #: js/pages/tola_management_pages/organization/models.js:104
 #: js/pages/tola_management_pages/user/models.js:190
 msgid "Saving Failed"
-msgstr "Échec de lenregistrement"
+msgstr "Échec de l’enregistrement"
 
 #: js/pages/tola_management_pages/country/models.js:182
 msgid "Successfully Deleted"
@@ -898,15 +898,15 @@ msgstr "Programme"
 
 #: js/pages/tola_management_pages/user/components/edit_user_history.js:61
 msgid "Resend Registration Email"
-msgstr "Envoyer une nouvelle fois un e-mail dinscription"
+msgstr "Envoyer une nouvelle fois un e-mail d’inscription"
 
 #: js/pages/tola_management_pages/user/components/edit_user_profile.js:135
 msgid "Preferred First Name"
-msgstr "Prénom dusage"
+msgstr "Prénom d’usage"
 
 #: js/pages/tola_management_pages/user/components/edit_user_profile.js:151
 msgid "Preferred Last Name"
-msgstr "Nom dusage"
+msgstr "Nom d’usage"
 
 #: js/pages/tola_management_pages/user/components/edit_user_profile.js:167
 msgid "Username"
@@ -991,7 +991,7 @@ msgstr "E-mail de vérification envoyé"
 #. Translators: Sending an email to the user did not work
 #: js/pages/tola_management_pages/user/models.js:442
 msgid "Verification email send failed"
-msgstr "Échec dans lenvoi de le-mail de vérification"
+msgstr "Échec dans l’envoi de l’e-mail de vérification"
 
 #. Translators: The countries a user is allowed to access */}
 #: js/pages/tola_management_pages/user/views.js:33
