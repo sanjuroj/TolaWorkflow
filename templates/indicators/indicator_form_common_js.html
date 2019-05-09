@@ -459,6 +459,10 @@ function formSubmitContinue(isModal, rationale = '') {
         if ($("#id_div_periodic_tables_placeholder input").parent().hasClass('has-error')) { return; }
 
         let formArr = $form.serializeArray();
+        let form_periodic_targets = getFormPeriodicTargets();
+        let periodic_targets_to_submit = $.isEmptyObject(form_periodic_targets) ?
+            'generateTargets' : JSON.stringify(form_periodic_targets);
+        formArr.push({"name": "periodic_targets", "value": periodic_targets_to_submit});
 
         if (formArr.find(e => e.name === 'is_cumulative') === undefined) {
             formArr.push({name: 'is_cumulative', value: 3});
