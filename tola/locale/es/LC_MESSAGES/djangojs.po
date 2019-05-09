@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-05-02 10:20-0700\n"
-"PO-Revision-Date: 2019-05-02 11:26-0700\n"
+"PO-Revision-Date: 2019-05-05 22:02-0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Eazy Po 0.9.5.3\n"
 
 #: js/base.js:327 js/base.js:328
 msgid ""
@@ -30,7 +30,7 @@ msgid "This action cannot be undone"
 msgstr "Advertencia: esta acción no se puede deshacer"
 
 #: js/base.js:335
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Removing this target means that %s result will no longer have targets "
 "associated with it."
@@ -41,13 +41,12 @@ msgstr[0] ""
 "Eliminar este objetivo implica que %s resultado no tedrá más objetivos "
 "asociados."
 msgstr[1] ""
-"Advertencia: Esta acción no se puede deshacer. Eliminar este objetivo "
-"significa que %s registros de datos ya no tendrán objetivos asociados.\n"
-"\n"
-"¿Proceder de todos modos?"
+"Eliminar este objetivo implica que %s resultados no tedrán más objetivos "
+"asociados."
 
 #: js/base.js:344
-#, fuzzy, python-format
+#, python-format
+#, approved
 #| msgid ""
 #| "data record/s will no longer be associated with the Life of Program "
 #| "target, and will need to be reassigned to new targets."
@@ -68,15 +67,18 @@ msgstr[0] ""
 "\n"
 " Proceder de todos modos?"
 msgstr[1] ""
-"los registros de datos ya no estarán asociados con el objetivo de vida del "
-"programa, y ​​deberán reasignarse a nuevos objetivos."
+"Si hacemos estos cambios, %s registros de datos no estarán más asociados con "
+"el objetivo de vida del programa (LoP), y necesitarán reasignarse a nuevos "
+"objetivos.\n"
+"\n"
+" Proceder de todos modos?"
 
-#. Translators: Button to approve a form
+#.  Translators: Button to approve a form
 #: js/base.js:356 js/base.js:455 js/base.js:505 js/base.js:549
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
-#. Translators: Button to cancel a form submission
+#.  Translators: Button to cancel a form submission
 #: js/base.js:358 js/base.js:457 js/base.js:507 js/base.js:551
 msgid "Cancel"
 msgstr "Cancelar"
@@ -159,13 +161,13 @@ msgstr "Eliminar"
 msgid "Edit"
 msgstr "Editar"
 
-#. Translators: Ex. Showing rows 1 to 50 of 92 */
+#.  Translators: Ex. Showing rows 1 to 50 of 92 */
 #: js/pages/document_list/components/document_list.js:201
 #, python-format
 msgid "Showing rows %(fromCount)s to %(toCount)s of %(totalCount)s"
 msgstr "Mostrando filas %(fromCount)s a %(toCount)s de %(totalCount)s"
 
-#. Translators: The number of indicators that do not have targets defined on them
+#.  Translators: The number of indicators that do not have targets defined on them
 #: js/pages/program_page/components/indicator_list.js:21
 #, python-format
 msgid "%s indicator has missing targets"
@@ -173,7 +175,7 @@ msgid_plural "%s indicators have missing targets"
 msgstr[0] "%s indicador no tiene objetivos"
 msgstr[1] "%s indicadores no tienen objetivos"
 
-#. Translators: The number of indicators that no one has entered in any results for
+#.  Translators: The number of indicators that no one has entered in any results for
 #: js/pages/program_page/components/indicator_list.js:25
 #, python-format
 msgid "%s indicator has missing results"
@@ -181,7 +183,7 @@ msgid_plural "%s indicators have missing results"
 msgstr[0] "%s indicador no tiene resultados"
 msgstr[1] "%s indicadores no tienen resultados"
 
-#. Translators: The number of indicators that contain results that are not backed up with evidence
+#.  Translators: The number of indicators that contain results that are not backed up with evidence
 #: js/pages/program_page/components/indicator_list.js:29
 #, python-format
 msgid "%s indicator has missing evidence"
@@ -189,21 +191,21 @@ msgid_plural "%s indicators have missing evidence"
 msgstr[0] "%s indicador no tiene evidencias"
 msgstr[1] "%s indicadores no tienen evidencias"
 
-#. Translators: shows what number of indicators are a certain percentage above target. Example: 3 indicators are >15% above target
+#.  Translators: shows what number of indicators are a certain percentage above target. Example: 3 indicators are >15% above target
 #: js/pages/program_page/components/indicator_list.js:33
 msgid "%s indicator is >15% above target"
 msgid_plural "%s indicators are >15% above target"
 msgstr[0] "%s indicador está >15% por encima del objetivo"
 msgstr[1] "%s indicadores están >15% por encima del objetivo"
 
-#. Translators: shows what number of indicators are a certain percentage below target. Example: 3 indicators are >15% below target
+#.  Translators: shows what number of indicators are a certain percentage below target. Example: 3 indicators are >15% below target
 #: js/pages/program_page/components/indicator_list.js:37
 msgid "%s indicator is >15% below target"
 msgid_plural "%s indicators are >15% below target"
 msgstr[0] "%s indicador está >15% por debajo del objetivo"
 msgstr[1] "%s indicadores están >15% por debajo del objetivo"
 
-#. Translators: shows what number of indicators are within a set range of target. Example: 3 indicators are on track
+#.  Translators: shows what number of indicators are within a set range of target. Example: 3 indicators are on track
 #: js/pages/program_page/components/indicator_list.js:41
 #, python-format
 msgid "%s indicator is on track"
@@ -211,7 +213,7 @@ msgid_plural "%s indicators are on track"
 msgstr[0] "%s indicador está encaminado"
 msgstr[1] "%s indicadores están encaminado"
 
-#. Translators: the number of indicators in a list. Example: 3 indicators
+#.  Translators: the number of indicators in a list. Example: 3 indicators
 #: js/pages/program_page/components/indicator_list.js:46
 #, python-format
 msgid "%s indicator"
@@ -268,12 +270,12 @@ msgstr ""
 msgid "Indicators on track"
 msgstr "Indicadores encaminados"
 
-#. Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
+#.  Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
 #: js/pages/program_page/components/program_metrics.js:153
 msgid "%(percentNonReporting)s% unavailable"
 msgstr "%(percentNonReporting)s% no disponible"
 
-#. Translators: help text for the percentage of indicators with no targets reporting data. */
+#.  Translators: help text for the percentage of indicators with no targets reporting data. */
 #: js/pages/program_page/components/program_metrics.js:164
 msgid ""
 "The indicator has no targets, no completed target periods, or no results "
@@ -282,7 +284,7 @@ msgstr ""
 "El indicador no tiene objetivos, ni períodos objetivo completos o no se "
 "informan resultados."
 
-#. Translators: Help text explaining what an "on track" indicator is. */
+#.  Translators: Help text explaining what an "on track" indicator is. */
 #: js/pages/program_page/components/program_metrics.js:190
 msgid ""
 "The actual value matches the target value, plus or minus 15%. So if your "
@@ -304,48 +306,48 @@ msgstr ""
 "d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>Vea nuestra "
 "documentación para mayor información.</a>"
 
-#. Translators: variable %(percentHigh)s shows what percentage of indicators are a certain percentage above target percent %(marginPercent)s. Example: 31% are >15% above target */
+#.  Translators: variable %(percentHigh)s shows what percentage of indicators are a certain percentage above target percent %(marginPercent)s. Example: 31% are >15% above target */
 #: js/pages/program_page/components/program_metrics.js:210
 msgid "<strong>%(percentHigh)s%</strong> are >%(marginPercent)s% above target"
 msgstr ""
 "<strong>%(percentHigh)s%</strong> está >%(marginPercent)s% por encima del "
 "objetivo"
 
-#. Translators: variable %s shows what percentage of indicators are within a set range of target. Example: 31%  are on track */
+#.  Translators: variable %s shows what percentage of indicators are within a set range of target. Example: 31%  are on track */
 #: js/pages/program_page/components/program_metrics.js:216
 msgid "<strong>%s%</strong> are on track"
 msgstr "<strong>%s%</strong> está encaminado"
 
-#. Translators: variable %(percentBelow)s shows what percentage of indicators are a certain percentage below target. The variable %(marginPercent)s is that percentage. Example: 31% are >15% below target */
+#.  Translators: variable %(percentBelow)s shows what percentage of indicators are a certain percentage below target. The variable %(marginPercent)s is that percentage. Example: 31% are >15% below target */
 #: js/pages/program_page/components/program_metrics.js:222
 msgid "<strong>%(percentBelow)s%</strong> are >%(marginPercent)s% below target"
 msgstr ""
 "<strong>%(percentBelow)s%</strong> está >%(marginPercent)s% por debajo del "
 "objetivo"
 
-#. Translators: message describing why this display does not show any data. # */}
+#.  Translators: message describing why this display does not show any data. # */}
 #: js/pages/program_page/components/program_metrics.js:244
 msgid "Unavailable until the first target period ends with results reported."
 msgstr ""
 "No disponible hasta finalizar el primer período objetivo con reporte de "
 "resultados."
 
-#. Translators: title of a graphic showing indicators with targets */
+#.  Translators: title of a graphic showing indicators with targets */
 #: js/pages/program_page/components/program_metrics.js:266
 msgid "Indicators with targets"
 msgstr "Indicadores con objetivos"
 
-#. Translators: a label in a graphic. Example: 31% have targets */
+#.  Translators: a label in a graphic. Example: 31% have targets */
 #: js/pages/program_page/components/program_metrics.js:269
 msgid "have targets"
 msgstr "tienen objetivos"
 
-#. Translators: a label in a graphic. Example: 31% no targets */
+#.  Translators: a label in a graphic. Example: 31% no targets */
 #: js/pages/program_page/components/program_metrics.js:272
 msgid "no targets"
 msgstr "sin objetivos"
 
-#. Translators: a link that displays a filtered list of indicators which are missing targets */
+#.  Translators: a link that displays a filtered list of indicators which are missing targets */
 #: js/pages/program_page/components/program_metrics.js:275
 msgid "Indicators missing targets"
 msgstr "Indicadores sin objetivos"
@@ -354,22 +356,22 @@ msgstr "Indicadores sin objetivos"
 msgid "No targets"
 msgstr "Sin objetivos"
 
-#. Translators: title of a graphic showing indicators with results */
+#.  Translators: title of a graphic showing indicators with results */
 #: js/pages/program_page/components/program_metrics.js:282
 msgid "Indicators with results"
 msgstr "Indicadores con resultados"
 
-#. Translators: a label in a graphic. Example: 31% have results */
+#.  Translators: a label in a graphic. Example: 31% have results */
 #: js/pages/program_page/components/program_metrics.js:285
 msgid "have results"
 msgstr "tienen resultados"
 
-#. Translators: a label in a graphic. Example: 31% no results */
+#.  Translators: a label in a graphic. Example: 31% no results */
 #: js/pages/program_page/components/program_metrics.js:288
 msgid "no results"
 msgstr "sin resultados"
 
-#. Translators: a link that displays a filtered list of indicators which are missing results */
+#.  Translators: a link that displays a filtered list of indicators which are missing results */
 #: js/pages/program_page/components/program_metrics.js:291
 msgid "Indicators missing results"
 msgstr "Indicadores sin resultados"
@@ -378,22 +380,22 @@ msgstr "Indicadores sin resultados"
 msgid "No results"
 msgstr "Sin resultados"
 
-#. Translators: title of a graphic showing results with evidence */
+#.  Translators: title of a graphic showing results with evidence */
 #: js/pages/program_page/components/program_metrics.js:298
 msgid "Results with evidence"
 msgstr "Resultados con evidencia"
 
-#. Translators: a label in a graphic. Example: 31% have evidence */
+#.  Translators: a label in a graphic. Example: 31% have evidence */
 #: js/pages/program_page/components/program_metrics.js:301
 msgid "have evidence"
 msgstr "hay evidencia adjunta"
 
-#. Translators: a label in a graphic. Example: 31% no evidence */
+#.  Translators: a label in a graphic. Example: 31% no evidence */
 #: js/pages/program_page/components/program_metrics.js:304
 msgid "no evidence"
 msgstr "no hay evidencia adjunta"
 
-#. Translators: a link that displays a filtered list of indicators which are missing evidence */
+#.  Translators: a link that displays a filtered list of indicators which are missing evidence */
 #: js/pages/program_page/components/program_metrics.js:307
 msgid "Indicators missing evidence"
 msgstr "Indicadores sin evidencias"
@@ -411,10 +413,9 @@ msgstr ""
 "borrar este informe fijado?"
 
 #: js/pages/tola_management_pages/audit_log/views.js:14
-#, fuzzy
 #| msgid "Disaggregation Value"
 msgid "Disaggregated values changed"
-msgstr "Valor de desagregación"
+msgstr "Valores desagregados modificados"
 
 #: js/pages/tola_management_pages/audit_log/views.js:34
 msgid "Targets changed"
@@ -426,12 +427,12 @@ msgstr "Objetivos modificados"
 msgid "N/A"
 msgstr "N/A"
 
-#. Translators: button label to show the details of all rows in a list */}
+#.  Translators: button label to show the details of all rows in a list */}
 #: js/pages/tola_management_pages/audit_log/views.js:79
 msgid "Expand all"
 msgstr "Expandir todos"
 
-#. Translators: button label to hide the details of all rows in a list */}
+#.  Translators: button label to hide the details of all rows in a list */}
 #: js/pages/tola_management_pages/audit_log/views.js:92
 msgid "Collapse all"
 msgstr "Colapsar todos"
@@ -602,7 +603,7 @@ msgstr "Logrado"
 msgid "Short name"
 msgstr "Nombre corto"
 
-#. Translators: Label for column identifying "active" or "inactive" user status */}
+#.  Translators: Label for column identifying "active" or "inactive" user status */}
 #: js/pages/tola_management_pages/country/components/edit_objectives.js:105
 #: js/pages/tola_management_pages/organization/components/edit_organization_history.js:59
 #: js/pages/tola_management_pages/organization/views.js:74
@@ -620,19 +621,19 @@ msgstr "Estado"
 msgid "Delete Strategic Objective?"
 msgstr "¿Eliminar Objetivo Estratégico?"
 
-#. Translators: This is a button that allows the user to add a strategic objective. */}
+#.  Translators: This is a button that allows the user to add a strategic objective. */}
 #: js/pages/tola_management_pages/country/components/edit_objectives.js:233
 msgid "Add strategic objective"
 msgstr "Agregar objetivo estratégico"
 
-#. Translators: Saving to the server succeeded
+#.  Translators: Saving to the server succeeded
 #: js/pages/tola_management_pages/country/models.js:174
 #: js/pages/tola_management_pages/organization/models.js:108
 #: js/pages/tola_management_pages/user/models.js:197
 msgid "Successfully Saved"
 msgstr "Guardado Exitosamente"
 
-#. Translators: Saving to the server failed
+#.  Translators: Saving to the server failed
 #: js/pages/tola_management_pages/country/models.js:178
 #: js/pages/tola_management_pages/organization/models.js:104
 #: js/pages/tola_management_pages/user/models.js:190
@@ -651,7 +652,7 @@ msgstr "Eliminado Exitosamente"
 msgid "Countries"
 msgstr "Países"
 
-#. Translators: Nothing selected by user
+#.  Translators: Nothing selected by user
 #: js/pages/tola_management_pages/country/views.js:21
 #: js/pages/tola_management_pages/country/views.js:33
 #: js/pages/tola_management_pages/country/views.js:45
@@ -831,26 +832,26 @@ msgstr "Guardado exitosamente"
 msgid "Saving failed"
 msgstr "Falló operación de guardado"
 
-#. Translators: Notify user that the program start and end date were successfully retrieved from the GAIT service and added to the newly saved Program
+#.  Translators: Notify user that the program start and end date were successfully retrieved from the GAIT service and added to the newly saved Program
 #: js/pages/tola_management_pages/program/models.js:198
 msgid "Successfully synced GAIT program start and end dates"
 msgstr ""
 "Se sincronizaron satisfactoriamente las fechas de inicio y fin del programa "
 "desde el servicio GAIT"
 
-#. Translators: Notify user that the program start and end date failed to be retrieved from the GAIT service with a specific reason appended after the :
+#.  Translators: Notify user that the program start and end date failed to be retrieved from the GAIT service with a specific reason appended after the :
 #: js/pages/tola_management_pages/program/models.js:204
 msgid "Failed to sync GAIT program start and end dates: "
 msgstr ""
 "Hubo un fallo en la sincronización de las fechas de inicio y fin del "
 "programa desde el servicio GAIT: "
 
-#. Translators: A request failed, ask the user if they want to try the request again
+#.  Translators: A request failed, ask the user if they want to try the request again
 #: js/pages/tola_management_pages/program/models.js:212
 msgid "Retry"
 msgstr "Reintentar"
 
-#. Translators: button label - ignore the current warning modal on display
+#.  Translators: button label - ignore the current warning modal on display
 #: js/pages/tola_management_pages/program/models.js:221
 msgid "Ignore"
 msgstr "Ignorar"
@@ -868,7 +869,7 @@ msgstr "Ver programas con este ID en GAIT."
 msgid "Are you sure you want to continue?"
 msgstr "¿Está seguro que quiere continuar?"
 
-#. Translators: error message when trying to connect to the server
+#.  Translators: error message when trying to connect to the server
 #: js/pages/tola_management_pages/program/models.js:304
 msgid "There was a network or server connection error."
 msgstr "Hubo un error de red o conectividad con el servidor."
@@ -885,10 +886,9 @@ msgstr "Seleccionar..."
 
 #: js/pages/tola_management_pages/program/views.js:138
 #: js/pages/tola_management_pages/user/views.js:159
-#, fuzzy
 #| msgid "Report Options"
 msgid "No options"
-msgstr "Opciones de informe"
+msgstr "Sin opciones"
 
 #: js/pages/tola_management_pages/program/views.js:166
 msgid "Set program status"
@@ -980,37 +980,37 @@ msgstr "Sí"
 msgid "No"
 msgstr "No"
 
-#. Translators: An email was sent to the user to verify that the email address is valid
+#.  Translators: An email was sent to the user to verify that the email address is valid
 #: js/pages/tola_management_pages/user/models.js:438
 msgid "Verification email sent"
 msgstr "Correo electrónico de verificación enviado"
 
-#. Translators: Sending an email to the user did not work
+#.  Translators: Sending an email to the user did not work
 #: js/pages/tola_management_pages/user/models.js:442
 msgid "Verification email send failed"
 msgstr "Falló el envío de correo electrónico de verificación"
 
-#. Translators: The countries a user is allowed to access */}
+#.  Translators: The countries a user is allowed to access */}
 #: js/pages/tola_management_pages/user/views.js:33
 msgid "Countries Permitted"
 msgstr "Países Permitidos"
 
-#. Translators: Primary country of the user */}
+#.  Translators: Primary country of the user */}
 #: js/pages/tola_management_pages/user/views.js:47
 msgid "Base Country"
 msgstr "País Principal"
 
-#. Translators: Set an account to active or inactive
+#.  Translators: Set an account to active or inactive
 #: js/pages/tola_management_pages/user/views.js:173
 msgid "Set account status"
 msgstr "Establecer estado de la cuenta"
 
-#. Translators: Associate a user with a program granting permission
+#.  Translators: Associate a user with a program granting permission
 #: js/pages/tola_management_pages/user/views.js:175
 msgid "Add to program"
 msgstr "Agregar al programa"
 
-#. Translators: Disassociate a user with a program removing permission
+#.  Translators: Disassociate a user with a program removing permission
 #: js/pages/tola_management_pages/user/views.js:177
 msgid "Remove from program"
 msgstr "Eliminar del programa"
@@ -1023,7 +1023,7 @@ msgstr "¿Administrador?"
 msgid "Add user"
 msgstr "Agregar Usuario"
 
-#. Translators: The highest level of administrator in the system */}
+#.  Translators: The highest level of administrator in the system */}
 #: js/pages/tola_management_pages/user/views.js:332
 msgid "Super Admin"
 msgstr "Super Administrador"
